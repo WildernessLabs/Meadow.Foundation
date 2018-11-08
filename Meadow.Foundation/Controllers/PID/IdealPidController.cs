@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Netduino.Foundation.Controllers.PID
+namespace Meadow.Foundation.Controllers.PID
 {
     public class IdealPidController : PidControllerBase
     {

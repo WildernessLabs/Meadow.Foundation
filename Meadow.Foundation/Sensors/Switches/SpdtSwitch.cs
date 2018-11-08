@@ -2,7 +2,7 @@ using Meadow;
 using Meadow.Hardware;
 using System;
 
-namespace Netduino.Foundation.Sensors.Switches
+namespace Meadow.Foundation.Sensors.Switches
 {
     /// <summary>
     /// Represents a simple, two position, Single-Pole-Dual-Throw (SPDT) switch that closes a circuit 

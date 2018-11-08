@@ -4,7 +4,7 @@ using System.Collections;
 using Meadow.Hardware;
 using System.Drawing;
 
-namespace Netduino.Foundation.LEDs
+namespace Meadow.Foundation.LEDs
 {
     /// <summary>
     /// Represents a Pulse-Width-Modulation (PWM) controlled RGB LED. Controlling an RGB LED with 

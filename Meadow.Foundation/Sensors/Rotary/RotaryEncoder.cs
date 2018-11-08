@@ -2,7 +2,7 @@ using Meadow;
 using Meadow.Hardware;
 using System;
 
-namespace Netduino.Foundation.Sensors.Rotary
+namespace Meadow.Foundation.Sensors.Rotary
 {
     public class RotaryEncoder : IRotaryEncoder
     {

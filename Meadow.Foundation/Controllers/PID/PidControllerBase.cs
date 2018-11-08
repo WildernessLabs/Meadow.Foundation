@@ -1,6 +1,6 @@
 using System;
 
-namespace Netduino.Foundation.Controllers.PID
+namespace Meadow.Foundation.Controllers.PID
 {
     public abstract class PidControllerBase : IPidController
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Netduino.Foundation.Communications
+namespace Meadow.Foundation.Communications
 {
     /// <summary>
     ///     I2CBus object used to communicate with an I2C device using the ICommunicationBus
@@ -45,7 +45,7 @@ namespace Netduino.Foundation.Communications
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="T:Netduino.Foundation.Core.I2CBus" /> class.
+        ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Core.I2CBus" /> class.
         /// </summary>
         /// <param name="address">Address of the device.</param>
         /// <param name="speed">Bus speed in kHz.</param>

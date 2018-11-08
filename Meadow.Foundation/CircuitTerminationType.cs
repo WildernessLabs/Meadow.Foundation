@@ -1,6 +1,6 @@
 using System;
 
-namespace Netduino.Foundation
+namespace Meadow.Foundation
 {
     /// <summary>
     /// Whether the circuit is terminated into the common/ground or a high (3.3V) voltage

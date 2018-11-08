@@ -1,4 +1,4 @@
-﻿namespace Netduino.Foundation.Spatial
+﻿namespace Meadow.Foundation.Spatial
 {
     /// <summary>
     ///     Euler angles to define the orientation.

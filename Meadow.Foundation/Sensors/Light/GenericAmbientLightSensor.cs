@@ -1,7 +1,7 @@
 ﻿//using System;
-//using Netduino.Foundation.SpecializedBlocks;
+//using Meadow.Foundation.SpecializedBlocks;
 
-//namespace Netduino.Foundation.Sensors.Light
+//namespace Meadow.Foundation.Sensors.Light
 //{
 //	/// <summary>
 //	/// Assumes an analog input range of 0v -> 3.3v and 1024 steps of resolution to describe that

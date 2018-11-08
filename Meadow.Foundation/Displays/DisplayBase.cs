@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Netduino.Foundation.Displays
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     ///     Define the interface for the display object.

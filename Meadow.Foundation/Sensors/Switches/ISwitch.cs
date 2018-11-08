@@ -1,6 +1,6 @@
 using System;
 
-namespace Netduino.Foundation.Sensors.Switches
+namespace Meadow.Foundation.Sensors.Switches
 {
     public interface ISwitch
     {

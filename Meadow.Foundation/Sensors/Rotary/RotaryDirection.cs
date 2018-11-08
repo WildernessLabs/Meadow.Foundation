@@ -1,4 +1,4 @@
-namespace Netduino.Foundation.Sensors.Rotary
+namespace Meadow.Foundation.Sensors.Rotary
 {
     public enum RotationDirection
     {

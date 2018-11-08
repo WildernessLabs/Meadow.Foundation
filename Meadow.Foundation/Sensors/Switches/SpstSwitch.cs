@@ -2,7 +2,7 @@ using System;
 using Meadow;
 using Meadow.Hardware;
 
-namespace Netduino.Foundation.Sensors.Switches
+namespace Meadow.Foundation.Sensors.Switches
 {
     /// <summary>
     /// Represents a simple, on/off, Single-Pole-Single-Throw (SPST) switch that closes a circuit 

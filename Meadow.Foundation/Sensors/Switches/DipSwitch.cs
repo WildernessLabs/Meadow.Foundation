@@ -2,7 +2,7 @@ using Meadow.Hardware;
 using System;
 using System.Diagnostics;
 
-namespace Netduino.Foundation.Sensors.Switches
+namespace Meadow.Foundation.Sensors.Switches
 {
     /// <summary>
     /// Represents a DIP-switch wired in a bus configuration, in which all switches 

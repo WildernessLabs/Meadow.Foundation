@@ -2,7 +2,7 @@ using Meadow;
 using Meadow.Hardware;
 using System;
 
-namespace Netduino.Foundation.Relays
+namespace Meadow.Foundation.Relays
 {
     public class Relay : IRelay
     {

@@ -3,7 +3,7 @@ using Meadow.Hardware;
 using System;
 using System.Collections;
 
-namespace Netduino.Foundation.Communications
+namespace Meadow.Foundation.Communications
 {
     /// <summary>
     ///     Singleton class used to allow access to multiple OneWire devices on a single pin

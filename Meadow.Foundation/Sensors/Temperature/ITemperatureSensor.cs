@@ -1,4 +1,4 @@
-namespace Netduino.Foundation.Sensors
+namespace Meadow.Foundation.Sensors
 {
     /// <summary>
     ///     Temperature sensor interface requirements.

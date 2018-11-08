@@ -2,7 +2,7 @@ using Meadow;
 using Meadow.Hardware;
 using System;
 
-namespace Netduino.Foundation.Sensors.Buttons
+namespace Meadow.Foundation.Sensors.Buttons
 {
 	/// <summary>
 	/// A simple push button. 

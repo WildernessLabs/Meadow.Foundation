@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 
-namespace Netduino.Foundation.Communications
+namespace Meadow.Foundation.Communications
 {
     /// <summary>
     ///     Provide a mechanism for reading lines of text from a SerialPort.

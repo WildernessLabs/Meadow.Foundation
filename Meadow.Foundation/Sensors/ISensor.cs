@@ -1,6 +1,6 @@
 using System;
 
-namespace Netduino.Foundation.Sensors
+namespace Meadow.Foundation.Sensors
 {
     public interface ISensor
     {

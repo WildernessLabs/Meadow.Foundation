@@ -3,7 +3,7 @@ using Meadow.Hardware;
 using System;
 using System.Threading;
 
-namespace Netduino.Foundation.Sensors.Temperature
+namespace Meadow.Foundation.Sensors.Temperature
 {
     /// <summary>
     ///     Provide the ability to read the temperature from the following sensors:

@@ -3,7 +3,7 @@ using Meadow.Hardware;
 using System;
 using System.Threading;
 
-namespace Netduino.Foundation.Generators
+namespace Meadow.Foundation.Generators
 {
     /// <summary>
     /// A Pulse Width Modulation Generator that can

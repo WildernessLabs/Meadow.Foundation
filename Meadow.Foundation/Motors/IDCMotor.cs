@@ -1,4 +1,4 @@
-namespace Netduino.Foundation.Motors
+namespace Meadow.Foundation.Motors
 {
     public interface IDCMotor
     {

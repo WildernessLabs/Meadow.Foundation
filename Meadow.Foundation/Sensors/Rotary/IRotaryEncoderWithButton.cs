@@ -1,6 +1,6 @@
-using Netduino.Foundation.Sensors.Buttons;
+using Meadow.Foundation.Sensors.Buttons;
 
-namespace Netduino.Foundation.Sensors.Rotary
+namespace Meadow.Foundation.Sensors.Rotary
 {
     public interface IRotaryEncoderWithButton : IRotaryEncoder, IButton
     {

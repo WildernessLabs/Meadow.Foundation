@@ -2,7 +2,7 @@ using Meadow;
 using Meadow.Hardware;
 using System.Threading;
 
-namespace Netduino.Foundation.LEDs
+namespace Meadow.Foundation.LEDs
 {
     public class Led
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.CompilerServices;
 /*
-namespace Netduino.Foundation.Communications
+namespace Meadow.Foundation.Communications
 {
     /// <summary>
     ///     Implement a software version of the SPI communication protocol.

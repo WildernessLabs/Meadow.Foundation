@@ -1,4 +1,4 @@
-namespace Netduino.Foundation.Sensors.Rotary
+namespace Meadow.Foundation.Sensors.Rotary
 {
     /// <summary>
     /// Represents a 2 bit version of GrayCode (https://en.wikipedia.org/wiki/Gray_code) used to 

@@ -1,4 +1,4 @@
-﻿namespace Netduino.Foundation.Spatial
+﻿namespace Meadow.Foundation.Spatial
 {
     /// <summary>
     ///     Quaternion coordinates object.

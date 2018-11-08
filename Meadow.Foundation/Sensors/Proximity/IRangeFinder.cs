@@ -1,4 +1,4 @@
-namespace Netduino.Foundation.Sensors.Proximity
+namespace Meadow.Foundation.Sensors.Proximity
 {
     public interface IRangeFinder
     {

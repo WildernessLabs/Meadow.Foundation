@@ -1,6 +1,6 @@
 using System;
 
-namespace Netduino.Foundation
+namespace Meadow.Foundation
 {
     /// <summary>
     /// Indicate the byte ordering for muli-byte words.

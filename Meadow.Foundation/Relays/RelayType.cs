@@ -1,4 +1,4 @@
-namespace Netduino.Foundation.Relays
+namespace Meadow.Foundation.Relays
 {
     public enum RelayType
     {

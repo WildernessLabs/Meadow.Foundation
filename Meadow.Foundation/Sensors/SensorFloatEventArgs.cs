@@ -1,6 +1,6 @@
 using System;
 
-namespace Netduino.Foundation.Sensors
+namespace Meadow.Foundation.Sensors
 {
     /// <summary>
     ///     Class to be used when sending floating point sensor data to the application

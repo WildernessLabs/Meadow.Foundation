@@ -1,6 +1,6 @@
 using System;
 
-namespace Netduino.Foundation.Sensors.Motion
+namespace Meadow.Foundation.Sensors.Motion
 {
 	public interface IAccelerometer
 	{

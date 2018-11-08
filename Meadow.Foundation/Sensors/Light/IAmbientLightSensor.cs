@@ -1,6 +1,6 @@
 using System;
 
-namespace Netduino.Foundation.Sensors.Light
+namespace Meadow.Foundation.Sensors.Light
 {
 	interface IAmbientLightSensor
 	{

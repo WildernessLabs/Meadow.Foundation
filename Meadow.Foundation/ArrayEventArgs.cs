@@ -1,6 +1,6 @@
 using System;
 
-namespace Netduino.Foundation
+namespace Meadow.Foundation
 {
     public class ArrayEventArgs : EventArgs
     {

@@ -1,4 +1,4 @@
-﻿namespace Netduino.Foundation.Spatial
+﻿namespace Meadow.Foundation.Spatial
 {
     /// <summary>
     ///     Vector in three dimensional space.

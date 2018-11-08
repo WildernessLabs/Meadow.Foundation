@@ -1,9 +1,9 @@
 using Meadow.Hardware;
-using Netduino.Foundation.Sensors.Buttons;
+using Meadow.Foundation.Sensors.Buttons;
 using System;
 
 
-namespace Netduino.Foundation.Sensors.Rotary
+namespace Meadow.Foundation.Sensors.Rotary
 {
     public class RotaryEncoderWithButton : RotaryEncoder, IRotaryEncoderWithButton
     {

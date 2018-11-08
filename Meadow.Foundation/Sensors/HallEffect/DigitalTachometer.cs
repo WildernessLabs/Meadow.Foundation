@@ -3,7 +3,7 @@ using Meadow.Hardware;
 using System;
 using System.Diagnostics;
 
-namespace Netduino.Foundation.Sensors.HallEffect
+namespace Meadow.Foundation.Sensors.HallEffect
 {
     public class LinearHallEffectTachometer
     {

@@ -1,4 +1,4 @@
-﻿namespace Netduino.Foundation.Sensors
+﻿namespace Meadow.Foundation.Sensors
 {
     /// <summary>
     ///     Pressure sensor interface requirements.

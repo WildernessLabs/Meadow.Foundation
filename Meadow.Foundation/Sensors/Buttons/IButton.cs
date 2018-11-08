@@ -1,6 +1,6 @@
 using System;
 
-namespace Netduino.Foundation.Sensors.Buttons
+namespace Meadow.Foundation.Sensors.Buttons
 {
 	public interface IButton
 	{

@@ -2,7 +2,7 @@ using Meadow;
 using Meadow.Hardware;
 using System;
 
-namespace Netduino.Foundation.Motors
+namespace Meadow.Foundation.Motors
 {
     public class HBridgeMotor : IDCMotor
     {

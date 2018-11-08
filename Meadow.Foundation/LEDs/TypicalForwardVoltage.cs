@@ -1,4 +1,4 @@
-namespace Netduino.Foundation.LEDs
+namespace Meadow.Foundation.LEDs
 {
     public static class TypicalForwardVoltage
     {

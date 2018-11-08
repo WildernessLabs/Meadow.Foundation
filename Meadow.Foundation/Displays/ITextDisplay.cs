@@ -1,6 +1,6 @@
 using System;
 
-namespace Netduino.Foundation.Displays
+namespace Meadow.Foundation.Displays
 {
     public interface ITextDisplay
     {

@@ -1,4 +1,4 @@
-namespace Netduino.Foundation.Controllers.PID
+namespace Meadow.Foundation.Controllers.PID
 {
     public interface IPidController
     {
