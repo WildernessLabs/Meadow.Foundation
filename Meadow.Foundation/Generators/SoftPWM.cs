@@ -14,8 +14,9 @@ namespace Netduino.Foundation.Generators
     {
         public DigitalOutputPort OutputPort { get; private set; }
 
-        public float DutyCycle {
-            get { return _dutyCycle; }
+        public float DutyCycle
+        {
+            get => _dutyCycle; 
             set {
                 _dutyCycle = value;
                 _onTimeMilliseconds = CalculateOnTimeMillis();
@@ -23,8 +24,10 @@ namespace Netduino.Foundation.Generators
                 //Debug.Print("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
         } protected float _dutyCycle;
-        public float Frequency {
-            get { return _frequency; }
+
+        public float Frequency
+        {
+            get => _frequency; 
             set {
                 if (Frequency <= 0) {
                     throw new Exception("Frequency must be > 0.");

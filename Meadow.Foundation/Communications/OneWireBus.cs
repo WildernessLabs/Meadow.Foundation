@@ -177,7 +177,7 @@ namespace Netduino.Foundation.Communications
                 result = new Devices(pin);
                 _devices.Add(result);
             }
-            return (result);
+            return result;
         }
 
         #endregion Methods
