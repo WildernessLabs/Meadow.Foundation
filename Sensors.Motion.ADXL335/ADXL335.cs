@@ -148,7 +148,6 @@ namespace Meadow.Foundation.Sensors.Motion
         
         #endregion Events and delegates
 
-
         #region Constructors
 
         /// <summary>

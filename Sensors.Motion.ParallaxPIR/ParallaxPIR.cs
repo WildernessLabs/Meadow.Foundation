@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Motion
         #region Member variables and fields
 
         /// <summary>
-        ///     Interrupt port
+        ///     Digital input port
         /// </summary>
         private readonly DigitalInputPort _digitalInputPort;
 

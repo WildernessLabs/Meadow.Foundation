@@ -18,27 +18,27 @@ namespace Meadow.Foundation.Sensors.Motion
         protected readonly ICommunicationBus _adxl362;
 
         /// <summary>
-        ///     Interrupt port attached to interrupt pin 1 on the ADXL362.
+        ///     Digital input port attached to interrupt pin 1 on the ADXL362.
         /// </summary>
-        private DigitalInputPort _interrupt1 = null;
+        private DigitalInputPort _digitalInputPort1 = null;
 
         /// <summary>
-        ///     Interrupt port attached to interrupt pin 2 on the ADXL362.
+        ///     Digital Input port attached to interrupt pin 2 on the ADXL362.
         /// </summary>
-        private DigitalInputPort _interrupt2 = null;
+        private DigitalInputPort _digitalInputPort2 = null;
 
         /// <summary>
-        ///     Last X value reported in the interrupt handler.
+        ///     Last X value reported in the Changed event handler.
         /// </summary>
         private short _lastX = 0;
 
         /// <summary>
-        ///     Last Y value reported in the interrupt handler.
+        ///     Last Y value reported in the Changed event handler.
         /// </summary>
         private short _lastY = 0;
 
         /// <summary>
-        ///     Last Z value reported in the interrupt handler.
+        ///     Last Z value reported in the Changed event handler.
         /// </summary>
         private short _lastZ = 0;
 
@@ -984,21 +984,21 @@ namespace Meadow.Foundation.Sensors.Motion
             _adxl362.WriteBytes(new byte[] { Command.WriteRegister, interruptMap1, interruptMap2 });
             if (interruptPin1 != Pins.GPIO_NONE)
             {
-                _interrupt1 = new DigitalInputPort(interruptPin1, false, MapResistorMode((interruptMap1 & 0xf0) > 0));
-                _interrupt1.Changed += InterruptChanged;
+                _digitalInputPort1 = new DigitalInputPort(interruptPin1, false, MapResistorMode((interruptMap1 & 0xf0) > 0));
+                _digitalInputPort1.Changed += InterruptChanged;
             }
             else
             {
-                _interrupt1 = null;
+                _digitalInputPort1 = null;
             }
             if (interruptPin2 != Pins.GPIO_NONE)
             {
-                _interrupt2 = new DigitalInputPort(interruptPin2, false, MapResistorMode((interruptMap2 & 0xf0) > 0));
-                _interrupt2.Changed += InterruptChanged;
+                _digitalInputPort2 = new DigitalInputPort(interruptPin2, false, MapResistorMode((interruptMap2 & 0xf0) > 0));
+                _digitalInputPort2.Changed += InterruptChanged;
             }
             else
             {
-                _interrupt2 = null;
+                _digitalInputPort2 = null;
             }
         }
 
