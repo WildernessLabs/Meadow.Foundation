@@ -24,10 +24,18 @@ namespace Hello_RGB
             var foo = Device.Pins.D01;
 
             // new up our onboard RGB LED
-            _onboardLed = new RgbPwmLed(
-                new PWMPort(Device.Pins.OnboardLEDRed), 
-                new PWMPort(Device.Pins.OnboardLEDGreen), 
-                new PWMPort(Device.Pins.OnboardLEDBlue));
+
+            // option 1, using pins:
+            _onboardLed = new RgbPwmLed(Device.Pins.OnboardLEDRed,
+                            Device.Pins.OnboardLEDBlue,
+                            Device.Pins.OnboardLEDGreen);
+
+            // option 2, using ports (e.g from an IO Expander chip)
+            //_onboardLed = new RgbPwmLed(
+                //new PWMPort(Device.Pins.OnboardLEDRed), 
+                //new PWMPort(Device.Pins.OnboardLEDGreen), 
+                //new PWMPort(Device.Pins.OnboardLEDBlue));
+
 
             // wherever you're at, you can get the current instance:
             // var foo = RGBApp.Current;

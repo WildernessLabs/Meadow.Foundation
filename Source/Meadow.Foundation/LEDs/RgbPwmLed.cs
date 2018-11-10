@@ -3,6 +3,7 @@ using System.Threading;
 using System.Collections;
 using Meadow.Hardware;
 using System.Drawing;
+using Meadow;
 
 namespace Meadow.Foundation.LEDs
 {
@@ -23,11 +24,8 @@ namespace Meadow.Foundation.LEDs
         }
 
         public bool IsCommonCathode { get; protected set; }
-        //public Cpu.PWMChannel RedPin { get; protected set; }
         public IPWMPort RedPWM { get; protected set; }
-        //public Cpu.PWMChannel GreenPin { get; protected set; }
         public IPWMPort BluePWM { get; protected set; }
-        //public Cpu.PWMChannel BluePin { get; protected set; }
         public IPWMPort GreenPWM { get; protected set; }
 
 
@@ -53,18 +51,32 @@ namespace Meadow.Foundation.LEDs
             get { return _color; }
         } protected Color _color = Color.Black;
 
-        /// <summary>
-        /// 
-        /// Implementation notes: Architecturally, it would be much cleaner to construct this class
-        /// as three PwmLeds. Then each one's implementation would be self-contained. However, that
-        /// would require three additional threads during ON; one contained by each PwmLed. For this
-        /// reason, I'm basically duplicating the functionality for all three in here. 
-        /// </summary>
-        /// <param name="redPwm"></param>
-        /// <param name="greenPwm"></param>
-        /// <param name="bluePwm"></param>
-        /// <param name="isCommonCathode"></param>
         public RgbPwmLed(
+                    IPwmPin redPwmPin, IPwmPin greenPwmPin, IPwmPin bluePwmPin,
+                    float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
+                    float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
+                    float blueLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
+                    bool isCommonCathode = true) 
+            : this(new PWMPort(redPwmPin), new PWMPort(greenPwmPin), 
+                   new PWMPort(bluePwmPin), redLedForwardVoltage, 
+                   greenLedForwardVoltage, blueLedForwardVoltage, 
+                   isCommonCathode)
+        {
+
+        }
+
+            /// <summary>
+            /// 
+            /// Implementation notes: Architecturally, it would be much cleaner to construct this class
+            /// as three PwmLeds. Then each one's implementation would be self-contained. However, that
+            /// would require three additional threads during ON; one contained by each PwmLed. For this
+            /// reason, I'm basically duplicating the functionality for all three in here. 
+            /// </summary>
+            /// <param name="redPwm"></param>
+            /// <param name="greenPwm"></param>
+            /// <param name="bluePwm"></param>
+            /// <param name="isCommonCathode"></param>
+            public RgbPwmLed(
             IPWMPort redPWM, IPWMPort greenPWM, IPWMPort bluePWM,
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited, 
             float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited, 
