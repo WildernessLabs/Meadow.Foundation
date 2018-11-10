@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Relays
             DigitalOut = port;
         }
 
-        public Relay(Pins pin, RelayType type = RelayType.NormallyOpen)
+        public Relay(IDigitalChannel pin, RelayType type = RelayType.NormallyOpen)
         {
             // if it's normally closed, we have to invert the "on" value
             Type = type;

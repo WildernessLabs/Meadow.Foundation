@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Switches
             }
         }
 
-        public SpdtSwitch(Pins pin)
+        public SpdtSwitch(IPin pin)
         {
             //Port:TODO Port.ResistorMode resistorMode = Port.ResistorMode.Disabled;
 

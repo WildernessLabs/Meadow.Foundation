@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Communications
             /// <summary>
             ///     Pin connected to the OneWire devices.
             /// </summary>
-            public Pins Pin { get; set; }
+            public IPin Pin { get; set; }
 
             /// <summary>
             ///     OutputPoert object used to talk to the OneWire bus.
@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Communications
             ///     Create a new instance of a OneWire Device object.
             /// </summary>
             /// <param name="pin">Pin connected to the OneWire devices.</param>
-            public Devices(Pins pin)
+            public Devices(IDigitalPin pin)
             {
                 Pin = pin;
                 Port = new DigitalOutputPort(pin, false);
@@ -161,7 +161,7 @@ namespace Meadow.Foundation.Communications
         /// </summary>
         /// <param name="pin">Pin number with the OneWire devices attached.</param>
         /// <returns><see cref="Devices"/> object for the specified pin.</returns>
-        public static Devices Add(Pins pin)
+        public static Devices Add(IDigitalPin pin)
         {
             Devices result = null;
             foreach (Devices device in _devices)

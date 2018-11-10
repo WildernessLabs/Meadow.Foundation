@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Generators
         protected int _offTimeMilliseconds = 0;
         protected bool _running = false;
 
-        public SoftPwm(Pins outputPin, float dutyCycle = 0.5f, float frequency = 1.0f)
+        public SoftPwm(IDigitalChannel outputPin, float dutyCycle = 0.5f, float frequency = 1.0f)
         {
             OutputPort = new DigitalOutputPort(outputPin, false);
             DutyCycle = dutyCycle;

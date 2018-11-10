@@ -21,12 +21,23 @@ namespace Hello_RGB
         {
             Console.WriteLine("Got here.");
 
+            var foo = Device.Pins.D01;
+
             // new up our onboard RGB LED
             _onboardLed = new RgbPwmLed(
                 new PWMPort(Device.Pins.OnboardLEDRed), 
                 new PWMPort(Device.Pins.OnboardLEDGreen), 
                 new PWMPort(Device.Pins.OnboardLEDBlue));
-            //_onboardLed = new RgbPwmLed(Device.Pins.OnboardLEDRed, Device.Pins.OnboardLEDGreen, Device.OnboardLEDBlue);
+
+            // TODO: maybe not even expose them this way?
+            // OR:
+            //_onboardLed = new RgbPwmLed(
+            //    new PWMPort(Device.Pwms.Pwm01),
+            //    new PWMPort(Device.Pwms.Pwm01),
+            //    new PWMPort(Device.Pwms.Pwm01)
+            //);
+
+
         }
 
         public override void Run()

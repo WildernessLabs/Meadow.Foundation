@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         // we need two sets of gray code results to determine direction of rotation
         protected TwoBitGrayCode[] _results = new TwoBitGrayCode[2];
 
-        public RotaryEncoder(Pins aPhasePin, Pins bPhasePin)
+        public RotaryEncoder(IPin aPhasePin, IPin bPhasePin)
         {
             this._aPhasePin = new DigitalInputPort(); //Port: TODO aPhasePin, true, H.Port.ResistorMode.PullUp, H.Port.InterruptMode.InterruptEdgeBoth);
             this._bPhasePin = new DigitalInputPort(); //Port: TODO bPhasePin, true, H.Port.ResistorMode.PullUp, H.Port.InterruptMode.InterruptEdgeBoth);

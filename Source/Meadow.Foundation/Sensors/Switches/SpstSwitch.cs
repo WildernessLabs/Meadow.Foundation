@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Switches
             protected set => Changed(this, new EventArgs());
         }
 
-        public SpstSwitch(Pins pin, CircuitTerminationType type)
+        public SpstSwitch(IPin pin, CircuitTerminationType type)
         {
             //Port: TODO
             /*

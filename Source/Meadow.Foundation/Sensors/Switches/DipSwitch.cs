@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Switches
         public ISwitch this[int i] => _switches[i];
         public ISwitch[] _switches = null;
 
-        public DipSwitch(Pins[] switchPins, CircuitTerminationType type)
+        public DipSwitch(IPin[] switchPins, CircuitTerminationType type)
         {
             //this.DigitalIns = new H.InterruptPort[switchPins.Length];            
             //this.IsOn = new bool[switchPins.Length];

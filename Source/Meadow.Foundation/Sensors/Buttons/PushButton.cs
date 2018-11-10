@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="inputPin"></param>
         /// <param name="type"></param>
         /// <param name="debounceDuration">in milliseconds</param>
-		public PushButton(Pins inputPin, CircuitTerminationType type, int debounceDuration = 20) 
+		public PushButton(IPin inputPin, CircuitTerminationType type, int debounceDuration = 20) 
 		{
             _circuitType = type;
             DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);

@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         protected ushort _numberOfReads = 0; //
 
 
-        public LinearHallEffectTachometer(Pins inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
+        public LinearHallEffectTachometer(IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F)
         {
             _numberOfMagnets = numberOfMagnets;

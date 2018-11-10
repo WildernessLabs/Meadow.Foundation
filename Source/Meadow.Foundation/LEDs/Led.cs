@@ -46,7 +46,7 @@ namespace Meadow.Foundation.LEDs
         /// Creates a LED through a pin directly from the Digital IO of the Netduino
         /// </summary>
         /// <param name="pin"></param>
-        public Led(Pins pin)
+        public Led(IDigitalChannel pin)
         {
             DigitalOut = new DigitalOutputPort(pin, !_onValue);
         }
