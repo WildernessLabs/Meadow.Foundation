@@ -29,7 +29,8 @@ namespace Hello_RGB
                 new PWMPort(Device.Pins.OnboardLEDGreen), 
                 new PWMPort(Device.Pins.OnboardLEDBlue));
 
-            // TODO: maybe not even expose them this way?
+            // TODO: maybe not even expose them this way? since we actually
+            // already know that they're PWM pins
             // OR:
             //_onboardLed = new RgbPwmLed(
             //    new PWMPort(Device.Pwms.Pwm01),
