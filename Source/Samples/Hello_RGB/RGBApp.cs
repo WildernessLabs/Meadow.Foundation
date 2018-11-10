@@ -28,17 +28,6 @@ namespace Hello_RGB
                 new PWMPort(Device.Pins.OnboardLEDRed), 
                 new PWMPort(Device.Pins.OnboardLEDGreen), 
                 new PWMPort(Device.Pins.OnboardLEDBlue));
-
-            // TODO: maybe not even expose them this way? since we actually
-            // already know that they're PWM pins
-            // OR:
-            //_onboardLed = new RgbPwmLed(
-            //    new PWMPort(Device.Pwms.Pwm01),
-            //    new PWMPort(Device.Pwms.Pwm01),
-            //    new PWMPort(Device.Pwms.Pwm01)
-            //);
-
-
         }
 
         public override void Run()
@@ -66,7 +55,7 @@ namespace Hello_RGB
                         // for a fun, fast rotation through the hue spectrum:
                         //Thread.Sleep (1);
                         // for a gentle walk through the forest of colors;
-                        Thread.Sleep(18);
+                        await Task.Delay(18);
                     }
                 }
             });
