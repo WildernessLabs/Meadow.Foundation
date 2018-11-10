@@ -28,6 +28,9 @@ namespace Hello_RGB
                 new PWMPort(Device.Pins.OnboardLEDRed), 
                 new PWMPort(Device.Pins.OnboardLEDGreen), 
                 new PWMPort(Device.Pins.OnboardLEDBlue));
+
+            // wherever you're at, you can get the current instance:
+            // var foo = RGBApp.Current;
         }
 
         public override void Run()
@@ -53,7 +56,7 @@ namespace Hello_RGB
                         //_onboardLed.SetColor(Color.FromHsba(((double)i / 360F), 1, 1));
 
                         // for a fun, fast rotation through the hue spectrum:
-                        //Thread.Sleep (1);
+                        //await Task.Delay(1);
                         // for a gentle walk through the forest of colors;
                         await Task.Delay(18);
                     }
