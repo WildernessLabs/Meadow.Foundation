@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Displays
         private EPDColorBase()
         {  }
 
-        public EPDColorBase(Pins chipSelectPin, Pins dcPin, Pins resetPin, Pins busyPin, SPI.SPI_module spiModule = SPI.SPI_module.SPI1, uint speedKHz = (uint)9500)
+        public EPDColorBase(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin, IDigitalPin busyPin, SPI.SPI_module spiModule = SPI.SPI_module.SPI1, uint speedKHz = (uint)9500)
         {
             dataCommandPort = new DigitalOutputPort(dcPin, false);
             resetPort = new DigitalOutputPort(resetPin, true);

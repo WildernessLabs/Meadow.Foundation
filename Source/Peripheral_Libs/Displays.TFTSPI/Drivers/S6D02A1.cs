@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     {
         private S6D02A1() { }
 
-        public S6D02A1(Pins chipSelectPin, Pins dcPin, Pins resetPin,
+        public S6D02A1(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
             uint width, uint height,
             SPI.SPI_module spiModule = SPI.SPI_module.SPI1,
             uint speedKHz = 9500) : base(chipSelectPin, dcPin, resetPin, width, height, spiModule, speedKHz)

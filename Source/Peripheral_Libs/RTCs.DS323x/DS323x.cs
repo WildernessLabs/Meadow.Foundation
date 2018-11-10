@@ -284,13 +284,15 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         ///     Setup the interrupts.
         /// </summary>
-        private Pins _interruptPin = Pins.GPIO_NONE;
+        // TODO: re-examine this; maybe we need a `DigitalPin.None` prop
+        private IDigitalPin _interruptPin = null;// IDigitalPin.GPIO_NONE;
 
-        protected Pins InterruptPin
+        protected IDigitalPin InterruptPin
         {
             set
             {
-                if (_interruptPin != Pins.GPIO_NONE)
+                //TODO: I changed this from IDigitalPin.GPIO_NONE to null
+                if (_interruptPin != null)
                 {
                     throw new Exception("Cannot change interrupt pin.");
                 }

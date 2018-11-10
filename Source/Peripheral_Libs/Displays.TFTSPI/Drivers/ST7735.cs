@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays
     {
         private ST7735() { }
 
-        public ST7735(Pins chipSelectPin, Pins dcPin, Pins resetPin,
+        public ST7735(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
             uint width, uint height,
             SPI.SPI_module spiModule = SPI.SPI_module.SPI1,
             uint speedKHz = 9500) : base(chipSelectPin, dcPin, resetPin, width, height, spiModule, speedKHz)

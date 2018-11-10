@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
         
         public override uint Width => 176;
 
-        public EPD2i7(Pins chipSelectPin, Pins dcPin, Pins resetPin, Pins busyPin,
+        public EPD2i7(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin, IDigitalPin busyPin,
             SPI.SPI_module spiModule = SPI.SPI_module.SPI1, uint speedKHz = 9500):base(chipSelectPin, dcPin, resetPin, busyPin, spiModule, speedKHz)
         { }
 

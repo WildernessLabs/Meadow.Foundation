@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays
     {
         private ILI9341() { }
 
-        public ILI9341(Pins chipSelectPin, Pins dcPin, Pins resetPin,
+        public ILI9341(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
             uint width, uint height,
             SPI.SPI_module spiModule = SPI.SPI_module.SPI1,
             uint speedKHz = 9500) : base(chipSelectPin, dcPin, resetPin, width, height, spiModule, speedKHz)

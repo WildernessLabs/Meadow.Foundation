@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays
 
     public class EPD2i9b : EPDColorBase
     {
-        public EPD2i9b(Pins chipSelectPin, Pins dcPin, Pins resetPin, Pins busyPin,
+        public EPD2i9b(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin, IDigitalPin busyPin,
                 SPI.SPI_module spiModule = SPI.SPI_module.SPI1, uint speedKHz = (uint)9500):base(chipSelectPin, dcPin, resetPin, busyPin, spiModule, speedKHz)
         { }
 

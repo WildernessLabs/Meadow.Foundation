@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Displays.LCD
 
         public TextDisplayConfig DisplayConfig { get; protected set; }
 
-        public Lcd2004(Pins RS, Pins E, Pins D4, Pins D5, Pins D6, Pins D7)
+        public Lcd2004(IDigitalPin RS, IDigitalPin E, IDigitalPin D4, IDigitalPin D5, IDigitalPin D6, IDigitalPin D7)
         {
             DisplayConfig = new TextDisplayConfig { Height = 4, Width = 20 };
 

@@ -116,7 +116,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.x74595
         /// <param name="pin">The pin number to create the port on.</param>
         /// <param name="initialState">Whether the pin is initially high or low.</param>
         /// <returns></returns>
-        public DigitalOutputPort CreateOutputPort(Pins pin, bool initialState)
+        public DigitalOutputPort CreateOutputPort(IDigitalPin pin, bool initialState)
         {
             return new DigitalOutputPort(pin, initialState);
 
