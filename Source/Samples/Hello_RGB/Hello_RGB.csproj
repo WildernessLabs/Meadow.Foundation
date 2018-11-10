@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Meadow.Foundation">
+      <HintPath>..\..\..\..\..\Meadow.Foundation\Meadow.Foundation\bin\Debug\netstandard2.0\Meadow.Foundation.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
+    <ProjectReference Include="..\..\Meadow.Foundation\Meadow.Foundation.csproj" />
+  </ItemGroup>
+</Project>
