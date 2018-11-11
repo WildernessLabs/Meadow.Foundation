@@ -802,7 +802,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="module">SPI module to use.</param>
         /// <param name="chipSelect">Chip select pin.</param>
         /// <param name="speed">Speed of the SPI bus.</param>
-        public ADXL362(SPI.SPI_module module, Pins chipSelect, ushort speed = 10)
+        public ADXL362(SPI.SPI_module module, IDigitalPin chipSelect, ushort speed = 10)
         {
             //
             //  ADXL362 works in SPI mode 0 (CPOL = 0, CPHA = 0).
@@ -979,10 +979,11 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin1">Pin connected to interrupt pin 1 on the ADXL362.</param>
         /// <param name="interruptMap2">Bit mask for interrupt pin 2</param>
         /// <param name="interruptPin2">Pin connected to interrupt pin 2 on the ADXL362.</param>
-        public void ConfigureInterrupts(byte interruptMap1, Pins interruptPin1, byte interruptMap2 = 0, Pins interruptPin2 = Pins.GPIO_NONE)
+        public void ConfigureInterrupts(byte interruptMap1, IDigitalPin interruptPin1, byte interruptMap2 = 0, IDigitalPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
         {
             _adxl362.WriteBytes(new byte[] { Command.WriteRegister, interruptMap1, interruptMap2 });
-            if (interruptPin1 != Pins.GPIO_NONE)
+            //TODO: I changed this from IDigitalPin.GPIO_NONE to null
+            if (interruptPin1 != null)
             {
                 _digitalInputPort1 = new DigitalInputPort(interruptPin1, false, MapResistorMode((interruptMap1 & 0xf0) > 0));
                 _digitalInputPort1.Changed += InterruptChanged;
@@ -991,7 +992,8 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 _digitalInputPort1 = null;
             }
-            if (interruptPin2 != Pins.GPIO_NONE)
+            //TODO: I changed this from IDigitalPin.GPIO_NONE to null
+            if (interruptPin2 != null)
             {
                 _digitalInputPort2 = new DigitalInputPort(interruptPin2, false, MapResistorMode((interruptMap2 & 0xf0) > 0));
                 _digitalInputPort2.Changed += InterruptChanged;
