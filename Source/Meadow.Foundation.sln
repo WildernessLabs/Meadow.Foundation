@@ -54,17 +54,18 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.TSL2561", "Peripheral_Libs\Sensors.Light.TSL2561\Sensors.Light.TSL2561.csproj", "{F9DB7EB9-A2A6-49F1-9BBD-E407668FD22B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Servo.Core", "Peripheral_Libs\Sensors.Servo.Core\Sensors.Servo.Core.csproj", "{93D0A373-7D7B-412A-A168-EBABB467FAA8}"
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ADXL335", "Sensors.Motion.ADXL335\Sensors.Motion.ADXL335.csproj", "{F1375C2B-478D-45F8-8D0A-61C6C3EE66F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ADXL345", "Sensors.Motion.ADXL345\Sensors.Motion.ADXL345.csproj", "{20E02A22-D53E-46C5-9DB5-8718FB81136A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ADXL335", "Peripheral_Libs\Sensors.Motion.ADXL335\Sensors.Motion.ADXL335.csproj", "{F1375C2B-478D-45F8-8D0A-61C6C3EE66F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ADXL362", "Sensors.Motion.ADXL362\Sensors.Motion.ADXL362.csproj", "{E3665EFF-2833-4786-AB87-BC5D21F3643B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ADXL345", "Peripheral_Libs\Sensors.Motion.ADXL345\Sensors.Motion.ADXL345.csproj", "{20E02A22-D53E-46C5-9DB5-8718FB81136A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.BNO055", "Sensors.Motion.BNO055\Sensors.Motion.BNO055.csproj", "{8A27FE07-EB21-4A62-B78E-39C1A0B991B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ADXL362", "Peripheral_Libs\Sensors.Motion.ADXL362\Sensors.Motion.ADXL362.csproj", "{E3665EFF-2833-4786-AB87-BC5D21F3643B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.MAG3110", "Sensors.Motion.MAG3110\Sensors.Motion.MAG3110.csproj", "{0830116E-79DF-41BB-918B-0A0527774045}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.BNO055", "Peripheral_Libs\Sensors.Motion.BNO055\Sensors.Motion.BNO055.csproj", "{8A27FE07-EB21-4A62-B78E-39C1A0B991B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ParallaxPIR", "Sensors.Motion.ParallaxPIR\Sensors.Motion.ParallaxPIR.csproj", "{D90EAB9F-3613-4395-9E3B-390AE3403A52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.MAG3110", "Peripheral_Libs\Sensors.Motion.MAG3110\Sensors.Motion.MAG3110.csproj", "{0830116E-79DF-41BB-918B-0A0527774045}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ParallaxPIR", "Peripheral_Libs\Sensors.Motion.ParallaxPIR\Sensors.Motion.ParallaxPIR.csproj", "{D90EAB9F-3613-4395-9E3B-390AE3403A52}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{ABFEB925-65AF-4C8C-B4C8-83F962AF6347}"
 EndProject

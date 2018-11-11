@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Meadow.Foundation\Meadow.Foundation.csproj" />
+    <ProjectReference Include="..\..\Meadow.Foundation\Meadow.Foundation.csproj" />
   </ItemGroup>
 
 </Project>
