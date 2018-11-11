@@ -1,6 +1,7 @@
 using Meadow;
 using Meadow.Hardware;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.LEDs
 {
@@ -16,12 +17,10 @@ namespace Meadow.Foundation.LEDs
                 // if turning on,
                 if (value)
                 {
-                    //this.DigitalOut.Write(_onValue); // turn on
                     DigitalOut.State = _onValue; // turn on
                 }
                 else
                 { // if turning off
-                    //this.DigitalOut.Write(!_onValue); // turn off
                     DigitalOut.State = !_onValue; // turn off
                 }
                 this._isOn = value;
@@ -30,7 +29,7 @@ namespace Meadow.Foundation.LEDs
         protected bool _isOn = false;
         protected bool _onValue = true;
 
-        protected Thread _animationThread = null;
+        protected Task _animationTask = null;
         protected bool _running = false;
 
         /// <summary>
@@ -61,17 +60,17 @@ namespace Meadow.Foundation.LEDs
             _running = true;
 
             IsOn = false;
-            _animationThread = new Thread(() => 
+            _animationTask = new Task(async () => 
             {
                 while (_running)
                 {
                     IsOn = true;
-                    Thread.Sleep((int)onDuration);
+                    await Task.Delay((int)onDuration);
                     IsOn = false;
-                    Thread.Sleep((int)offDuration);
+                    await Task.Delay((int)offDuration);
                 }
             });
-            _animationThread.Start();
+            _animationTask.Start();
         }
 
         /// <summary>
