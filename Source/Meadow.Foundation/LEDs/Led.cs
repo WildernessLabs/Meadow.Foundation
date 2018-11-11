@@ -34,6 +34,14 @@ namespace Meadow.Foundation.LEDs
         protected bool _running = false;
 
         /// <summary>
+        /// Creates a LED through a pin directly from the Digital IO of the board
+        /// </summary>
+        /// <param name="pin"></param>
+        public Led(IDigitalChannel pin) : this (new DigitalOutputPort(pin))
+        {
+        }
+
+        /// <summary>
         /// Creates a LED through a DigitalOutPutPort from an IO Expander
         /// </summary>
         /// <param name="port"></param>
@@ -42,14 +50,6 @@ namespace Meadow.Foundation.LEDs
             DigitalOut = port;
         }
 
-        /// <summary>
-        /// Creates a LED through a pin directly from the Digital IO of the Netduino
-        /// </summary>
-        /// <param name="pin"></param>
-        public Led(IDigitalChannel pin)
-        {
-            DigitalOut = new DigitalOutputPort(pin, !_onValue);
-        }
 
         /// <summary>
         /// Blink animation that turns the LED on and off based on the OnDuration and offDuration values in ms

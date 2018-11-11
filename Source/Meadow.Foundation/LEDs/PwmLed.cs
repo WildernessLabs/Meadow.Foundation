@@ -30,6 +30,14 @@ namespace Meadow.Foundation.LEDs
         protected bool _running = false;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="T:Meadow.Foundation.LEDs.PwmLed"/> class.
+        /// </summary>
+        /// <param name="pin">Pin.</param>
+        /// <param name="forwardVoltage">Forward voltage.</param>
+        public PwmLed(IPwmPin pin, float forwardVoltage) : this(new PWMPort(pin), forwardVoltage)
+        {}
+
+        /// <summary>
         /// Creates a new PwmLed on the specified PWM pin and limited to the appropriate 
         /// voltage based on the passed `forwardVoltage`. Typical LED forward voltages 
         /// can be found in the `TypicalForwardVoltage` class.
