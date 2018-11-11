@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Hardware;
-using Meadow.Foundation;
 using Meadow.Foundation.LEDs;
 
 namespace Hello_RGB
