@@ -60,6 +60,7 @@ namespace Meadow.Foundation.LEDs
             _running = true;
 
             IsOn = false;
+            //TODO: Make this cancellable
             _animationTask = new Task(async () => 
             {
                 while (_running)
