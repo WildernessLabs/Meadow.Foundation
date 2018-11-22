@@ -8,7 +8,7 @@ namespace Meadow.Foundation.LEDs
     /// Represents an LED whose voltage is limited by the duty-cycle of a PWM
     /// signal.
     /// </summary>
-    public class PwmLed
+    public class PwmLed : IPwmLed
     {
         /// <summary>
         /// The brightness of the LED, controlled by a PWM signal, and limited by the 
@@ -19,13 +19,32 @@ namespace Meadow.Foundation.LEDs
             get { return _brightness; }
         } protected float _brightness = 0;
 
+        public bool IsOn {
+            get { return _isOn; }
+            set
+            {
+                // if turning on,
+                if (value)
+                {
+                    Port.DutyCycle = _maximumPwmDuty; // turn on
+                }
+                else
+                { // if turning off
+                    Port.DutyCycle = 0; // turn off
+                }
+                this._isOn = value;
+            }
+        }
         protected bool _isOn = false;
 
         public float ForwardVoltage { get; protected set; }
 
         //
         protected float _maximumPwmDuty = 1;
-        protected IPWMPort _pwm = null;
+        public IPwmPort Port { get; protected set; }
+
+        IDigitalOutputPort ILed.Port => throw new NotImplementedException();
+
         protected Thread _animationThread = null;
         protected bool _running = false;
 
@@ -35,7 +54,8 @@ namespace Meadow.Foundation.LEDs
         /// <param name="pin">Pin.</param>
         /// <param name="forwardVoltage">Forward voltage.</param>
         public PwmLed(IPwmPin pin, float forwardVoltage) : this(new PWMPort(pin), forwardVoltage)
-        {}
+        {
+        }
 
         /// <summary>
         /// Creates a new PwmLed on the specified PWM pin and limited to the appropriate 
@@ -44,7 +64,7 @@ namespace Meadow.Foundation.LEDs
         /// </summary>
         /// <param name="pin"></param>
         /// <param name="forwardVoltage"></param>
-        public PwmLed(IPWMPort pwm, float forwardVoltage)
+        public PwmLed(IPwmPort pwm, float forwardVoltage)
         {
             // validate and persist forward voltage
             if (forwardVoltage < 0 || forwardVoltage > 3.3F) {
@@ -54,9 +74,10 @@ namespace Meadow.Foundation.LEDs
 
             this._maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
 
-            //this._pwm = new PWM(pin, 100, this._maximumPwmDuty, false);
-			this._pwm.Frequency = 100;
-			this._pwm.DutyCycle = this._maximumPwmDuty;
+            this.Port = pwm;
+            //this.Port = new PWM(pin, 100, this._maximumPwmDuty, false);
+			this.Port.Frequency = 100;
+			this.Port.DutyCycle = this._maximumPwmDuty;
         }
 
         public void SetBrightness(float brightness)
@@ -71,16 +92,16 @@ namespace Meadow.Foundation.LEDs
             // if 0, shut down the PWM (is this a good idea?)
             if (Brightness == 0)
             {
-                this._pwm.Stop();
+                this.Port.Stop();
                 this._isOn = false;
-                this._pwm.DutyCycle = 0;
+                this.Port.DutyCycle = 0;
             }
             else
             {
-                this._pwm.DutyCycle = this._maximumPwmDuty * Brightness;
+                this.Port.DutyCycle = this._maximumPwmDuty * Brightness;
                 if (!_isOn)
                 {
-                    this._pwm.Start();
+                    this.Port.Start();
                     this._isOn = true;
                 }
             }

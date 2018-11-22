@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Servos
     /// </summary>
     public abstract class ContinuousRotationServoBase : IContinuousRotationServo
     {
-        protected IPWMPort _pwm = null;
+        protected IPwmPort _pwm = null;
 
         /// <summary>
         /// Gets the ServoConfig that describes this servo.
@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Servos
         /// </summary>
         /// <param name="pin"></param>
         /// <param name="config"></param>
-        public ContinuousRotationServoBase(IPWMPort pwm, ServoConfig config)
+        public ContinuousRotationServoBase(IPwmPort pwm, ServoConfig config)
         {
             _config = config;
             // OLD

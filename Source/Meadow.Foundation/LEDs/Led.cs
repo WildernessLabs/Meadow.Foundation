@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.LEDs
 {
-    public class Led
+    public class Led : ILed
     {
-        public IDigitalOutputPort DigitalOut { get; protected set; }
+        public IDigitalOutputPort Port { get; protected set; }
 
         public bool IsOn
         {
@@ -17,11 +17,11 @@ namespace Meadow.Foundation.LEDs
                 // if turning on,
                 if (value)
                 {
-                    DigitalOut.State = _onValue; // turn on
+                    Port.State = _onValue; // turn on
                 }
                 else
                 { // if turning off
-                    DigitalOut.State = !_onValue; // turn off
+                    Port.State = !_onValue; // turn off
                 }
                 this._isOn = value;
             }
@@ -46,7 +46,7 @@ namespace Meadow.Foundation.LEDs
         /// <param name="port"></param>
         public Led(IDigitalOutputPort port)
         {
-            DigitalOut = port;
+            Port = port;
         }
 
 

@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Servos
 {
     public abstract class ServoBase : IServo
     {
-        protected IPWMPort _pwm = null;
+        protected IPwmPort _pwm = null;
 
         /// <summary>
         /// Gets the ServoConfig that describes this servo.
@@ -28,7 +28,7 @@ namespace Meadow.Foundation.Servos
         /// </summary>
         /// <param name="pin"></param>
         /// <param name="config"></param>
-        public ServoBase(IPWMPort pwm, ServoConfig config)
+        public ServoBase(IPwmPort pwm, ServoConfig config)
         {
             _config = config;
             // OLD

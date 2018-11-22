@@ -24,9 +24,9 @@ namespace Meadow.Foundation.LEDs
         }
 
         public bool IsCommonCathode { get; protected set; }
-        public IPWMPort RedPWM { get; protected set; }
-        public IPWMPort BluePWM { get; protected set; }
-        public IPWMPort GreenPWM { get; protected set; }
+        public IPwmPort RedPWM { get; protected set; }
+        public IPwmPort BluePWM { get; protected set; }
+        public IPwmPort GreenPWM { get; protected set; }
 
 
         // TODO: this should be based on voltage drop so it can be used with or without resistors.
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.LEDs
             /// <param name="bluePwm"></param>
             /// <param name="isCommonCathode"></param>
             public RgbPwmLed(
-            IPWMPort redPWM, IPWMPort greenPWM, IPWMPort bluePWM,
+            IPwmPort redPWM, IPwmPort greenPWM, IPwmPort bluePWM,
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited, 
             float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited, 
             float blueLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,

@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Servos
         /// </summary>
         /// <param name="pin"></param>
         /// <param name="config"></param>
-        public ContinuousRotationServo(IPWMPort pwm, ServoConfig config) : base (pwm, config)
+        public ContinuousRotationServo(IPwmPort pwm, ServoConfig config) : base (pwm, config)
         {
         }
     }

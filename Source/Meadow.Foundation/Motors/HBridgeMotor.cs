@@ -63,8 +63,8 @@ namespace Meadow.Foundation.Motors
             get { return _pwmFrequency; }
         } protected readonly float _pwmFrequency;
 
-        protected IPWMPort _motorLeftPwm = null; // H-Bridge 1A pin
-        protected IPWMPort _motorRighPwm = null; // H-Bridge 2A pin
+        protected IPwmPort _motorLeftPwm = null; // H-Bridge 1A pin
+        protected IPwmPort _motorRighPwm = null; // H-Bridge 2A pin
         protected DigitalOutputPort _enablePort = null; // if enabled, then IsNeutral = false
 
  
