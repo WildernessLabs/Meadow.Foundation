@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
@@ -67,6 +68,11 @@ namespace Hello_RGB
                 }
             });
             stuff.Start();
+        }
+
+        Color GetColorFromHSBA(int h, int s, int b, int a)
+        {
+
         }
     }
 }
