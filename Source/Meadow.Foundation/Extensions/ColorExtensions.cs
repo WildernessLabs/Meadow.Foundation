@@ -1,11 +1,10 @@
 ﻿using System.Drawing;
-using Meadow.Foundation;
 
-namespace HSBA
+namespace Meadow.Foundation
 {
     public static class ColorExtensions
     {
-        public static Color FromAHSV(this Color color, double alpha, double hue, double saturation, double value)
+        public static Color FromAhsv(this Color color, double alpha, double hue, double saturation, double value)
         {
             Converters.HsvToRgb(hue, saturation, value, out double red, out double green, out double blue);
 

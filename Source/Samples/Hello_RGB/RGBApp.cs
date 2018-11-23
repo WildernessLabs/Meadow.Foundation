@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation;
 using Meadow.Foundation.LEDs;
 
 namespace Hello_RGB
@@ -58,6 +59,8 @@ namespace Hello_RGB
 
                         // set the color of the RGB
                         // TODO TODO TODO TODO: Need to add extension method for this
+                        var clr = new Color();
+                        _onboardLed.SetColor(new Color().FromAhsv(1, (double)i / 360F, 1, 1));
                         //_onboardLed.SetColor(Color.FromHsba(((double)i / 360F), 1, 1));
 
                         // for a fun, fast rotation through the hue spectrum:
@@ -68,11 +71,6 @@ namespace Hello_RGB
                 }
             });
             stuff.Start();
-        }
-
-        Color GetColorFromHSBA(int h, int s, int b, int a)
-        {
-
         }
     }
 }
