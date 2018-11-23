@@ -59,8 +59,7 @@ namespace Hello_RGB
 
                         // set the color of the RGB
                         // TODO TODO TODO TODO: Need to add extension method for this
-                        var clr = new Color();
-                        _onboardLed.SetColor(new Color().FromAhsv(1, (double)i / 360F, 1, 1));
+                        _onboardLed.SetColor(new Color().FromAhsv(1, hue, 1, 1));
                         //_onboardLed.SetColor(Color.FromHsba(((double)i / 360F), 1, 1));
 
                         // for a fun, fast rotation through the hue spectrum:
