@@ -1,7 +1,7 @@
-using Meadow;
 using Meadow.Hardware;
 using System;
 using System.Drawing;
+using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -14,6 +14,14 @@ namespace Meadow.Foundation.Displays
             RASET = 0x2B,
             RAMWR = 0x2C
         };
+
+        public enum Rotation
+        {
+            Normal, //zero
+            Rotate_90, //in degrees
+            Rotate_180,
+            Rotate_270,
+        }
 
         #endregion
 
@@ -263,6 +271,34 @@ namespace Meadow.Foundation.Displays
             spi.Write(data);
         }
 
+        protected void DelayMs(int millseconds)
+        {
+            Thread.Sleep(millseconds);
+        }
+
+        protected void SendCommand(byte command)
+        {
+            dataCommandPort.State = Command;
+            Write(command);
+        }
+
+        protected void SendData(int data)
+        {
+            SendData((byte)data);
+        }
+
+        protected void SendData(byte data)
+        {
+            dataCommandPort.State = Data;
+            Write(data);
+        }
+
+        protected void SendData(byte[] data)
+        {
+            dataCommandPort.State = Data;
+            spi.Write(data);
+        }
+
         /// <summary>
         ///     Directly sets the display to a 16bpp color value
         /// </summary>
@@ -297,15 +333,19 @@ namespace Meadow.Foundation.Displays
             Array.Copy(spiBuffer, 0, spiBuffer, 256, 256);
 
             index = 512;
-            var line = 0;
             var Half = _height / 2;
-            while (++line < Half - 1)
+
+            while(index < spiBuffer.Length - 256)
             {
                 Array.Copy(spiBuffer, 0, spiBuffer, index, 256);
                 index += 256;
             }
 
-            Array.Copy(spiBuffer, 0, spiBuffer, index, spiBuffer.Length / 2);
+            while (index < spiBuffer.Length)
+            {
+                spiBuffer[index++] = high;
+                spiBuffer[index++] = low;
+            }
         }
 
         public void Dispose()
