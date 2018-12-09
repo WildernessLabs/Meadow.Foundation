@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Displays
         {
             dataCommandPort = new DigitalOutputPort(dcPin, false);
             resetPort = new DigitalOutputPort(resetPin, true);
-            busyPort = new DigitalInputPort(busyPin, true, DigitalPortBase.ResistorMode.Disabled);
+            busyPort = new DigitalInputPort(busyPin, true, ResistorMode.Disabled);
 
             var spiConfig = new Spi.Configuration(
                 SPI_mod: spiModule,

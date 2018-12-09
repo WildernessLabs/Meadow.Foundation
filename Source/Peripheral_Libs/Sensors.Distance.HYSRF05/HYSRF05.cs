@@ -58,7 +58,7 @@ namespace Netduino.Foundation.Sensors.Distance
 
             _triggerPort = new DigitalOutputPort(triggerPin, false);
 
-            _echoPort = new DigitalInputPort(echoPin, false, DigitalPortBase.ResistorMode.Disabled);
+            _echoPort = new DigitalInputPort(echoPin, false, ResistorMode.Disabled);
             _echoPort.Changed += OnEchoPort_Changed;
         }
 

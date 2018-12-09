@@ -50,17 +50,17 @@ namespace Meadow.Foundation.Sensors.Buttons
             DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
 
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
-            var resistorMode = DigitalPortBase.ResistorMode.Disabled;
+            var resistorMode = ResistorMode.Disabled;
             switch (type)
             {
                 case CircuitTerminationType.CommonGround:
-                    resistorMode = DigitalPortBase.ResistorMode.PullUp;
+                    resistorMode = ResistorMode.PullUp;
                     break;
                 case CircuitTerminationType.High:
-                    resistorMode = DigitalPortBase.ResistorMode.PullDown;
+                    resistorMode = ResistorMode.PullDown;
                     break;
                 case CircuitTerminationType.Floating:
-                    resistorMode = DigitalPortBase.ResistorMode.Disabled;
+                    resistorMode = ResistorMode.Disabled;
                     break;
             } 
 

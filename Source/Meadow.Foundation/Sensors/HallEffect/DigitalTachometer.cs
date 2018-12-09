@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
             //var resistorMode = (type == CircuitTerminationType.CommonGround) ? H.Port.ResistorMode.PullUp : H.Port.ResistorMode.PullDown;
 
             // create the interrupt port from the pin and resistor type
-            DigitalIn = new DigitalInputPort(inputPin, true, DigitalPortBase.ResistorMode.PullDown);
+            DigitalIn = new DigitalInputPort(inputPin, true, ResistorMode.PullDown);
 
             // wire up the interrupt handler
             DigitalIn.Changed += DigitalIn_Changed;

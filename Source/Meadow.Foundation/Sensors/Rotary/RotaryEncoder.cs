@@ -22,8 +22,8 @@ namespace Meadow.Foundation.Sensors.Rotary
         public RotaryEncoder(IDigitalPin aPhasePin, IDigitalPin bPhasePin)
         {
             //ToDo
-            _aPhasePin = new DigitalInputPort(aPhasePin, true, DigitalPortBase.ResistorMode.PullUp);
-            _bPhasePin = new DigitalInputPort(bPhasePin, true, DigitalPortBase.ResistorMode.PullUp);
+            _aPhasePin = new DigitalInputPort(aPhasePin, true, ResistorMode.PullUp);
+            _bPhasePin = new DigitalInputPort(bPhasePin, true, ResistorMode.PullUp);
 
             // both events go to the same event handler because we need to read both
             // pins to determine current orientation
