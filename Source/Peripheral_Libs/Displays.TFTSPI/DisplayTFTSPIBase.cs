@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Displays
         public DisplayTFTSpiBase(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
             uint width, uint height,
             Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
-            uint speedKHz = 9500)
+            uint speedKHz = 9500, bool idleClockState = false)
         {
             _width = width;
             _height = height;
@@ -68,13 +68,11 @@ namespace Meadow.Foundation.Displays
                 ChipSelect_ActiveState: false,
                 ChipSelect_SetupTime: 0,
                 ChipSelect_HoldTime: 0,
-                Clock_IdleState: false,
+                Clock_IdleState: idleClockState,
                 Clock_Edge: true,
                 Clock_RateKHz: speedKHz);
 
             spi = new Spi(spiConfig);
-
-            Initialize();
         }
 
         /// <summary>
@@ -345,6 +343,21 @@ namespace Meadow.Foundation.Displays
             {
                 spiBuffer[index++] = high;
                 spiBuffer[index++] = low;
+            }
+        }
+
+        public void ClearWithoutFullScreenBuffer(ushort color)
+        {
+            var buffer = new ushort[_width];
+
+            for (int x = 0; x < _width; x++)
+            {
+                buffer[x] = color;
+            }
+
+            for (int y = 0; y < _height; y++)
+            {
+                spi.Write(buffer);
             }
         }
 

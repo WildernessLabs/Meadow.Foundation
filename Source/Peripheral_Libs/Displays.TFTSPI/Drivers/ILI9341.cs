@@ -11,7 +11,9 @@ namespace Meadow.Foundation.Displays
             uint width, uint height,
             Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
             uint speedKHz = 9500) : base(chipSelectPin, dcPin, resetPin, width, height, spiModule, speedKHz)
-        { }
+        {
+            Initialize();
+        }
 
         protected override void Initialize()
         {
