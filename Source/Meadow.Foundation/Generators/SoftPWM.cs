@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Generators
     /// </summary>
 	public class SoftPwm
     {
-        public DigitalOutputPort OutputPort { get; private set; }
+        public DigitalOutputPort DigitalOutputPort { get; private set; }
 
         public float DutyCycle
         {
@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Generators
 
         public SoftPwm(IDigitalChannel outputPin, float dutyCycle = 0.5f, float frequency = 1.0f)
         {
-            OutputPort = new DigitalOutputPort(outputPin, false);
+            DigitalOutputPort = new DigitalOutputPort(outputPin, false);
             DutyCycle = dutyCycle;
             Frequency = frequency;
         }
@@ -60,9 +60,9 @@ namespace Meadow.Foundation.Generators
             { 
                 while (_running)
                 {
-                    OutputPort.State = true;
+                    DigitalOutputPort.State = true;
                     Thread.Sleep(_onTimeMilliseconds);
-                    OutputPort.State = false;
+                    DigitalOutputPort.State = false;
                     Thread.Sleep(_offTimeMilliseconds);
                 }
             });
@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Generators
 
             // need to make sure the port is off, otherwise it can get
             // stuck in an ON state.
-            OutputPort.State = false;
+            DigitalOutputPort.State = false;
         }
 
         /// <summary>
