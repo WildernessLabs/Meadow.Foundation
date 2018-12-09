@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 using System;
-using static Meadow.DigitalPortBase;
+using static Meadow.Hardware.DigitalPortBase;
 
 namespace Meadow.Foundation.Sensors.Motion
 {

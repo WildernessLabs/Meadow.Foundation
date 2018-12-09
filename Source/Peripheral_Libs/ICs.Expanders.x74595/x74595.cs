@@ -1,8 +1,7 @@
 ﻿using System;
-using Meadow;
 using Meadow.Hardware;
+using Meadow.Hardware.Communications;
 using Meadow.Utilities;
-using Meadow.Foundation.Communications;
 
 namespace Meadow.Foundation.ICs.IOExpanders.x74595
 {

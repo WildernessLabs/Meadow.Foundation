@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading;
-using Meadow;
 using Meadow.Hardware;
-using Meadow.Foundation.Communications;
+using Meadow.Hardware.Communications;
 
 namespace Meadow.Foundation.Sensors.Light
 {

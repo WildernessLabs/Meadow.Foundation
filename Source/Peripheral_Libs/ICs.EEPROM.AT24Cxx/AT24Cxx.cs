@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-using Meadow.Foundation.Communications;
+using Meadow.Hardware.Communications;
 
 namespace Meadow.Foundation.ICs.EEPROM
 {

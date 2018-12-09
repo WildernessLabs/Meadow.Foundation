@@ -1,8 +1,8 @@
-﻿using Meadow.Foundation.Communications;
+﻿using System;
+using System.Threading;
 using Meadow.Foundation.Helpers;
 using Meadow.Foundation.Spatial;
-using System;
-using System.Threading;
+using Meadow.Hardware.Communications;
 
 namespace Meadow.Foundation.Sensors.Motion
 {

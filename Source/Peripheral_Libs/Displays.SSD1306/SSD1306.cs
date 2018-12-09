@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using Meadow.Foundation.Communications;
+using Meadow.Hardware.Communications;
 
 namespace Meadow.Foundation.Displays
 {

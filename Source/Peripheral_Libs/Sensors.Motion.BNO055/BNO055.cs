@@ -1,6 +1,7 @@
 ﻿using Meadow.Foundation.Communications;
 using Meadow.Foundation.Helpers;
 using Meadow.Foundation.Spatial;
+using Meadow.Hardware.Communications;
 using System;
 using System.Threading;
 

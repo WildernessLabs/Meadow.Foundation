@@ -1,8 +1,7 @@
 using System;
-using Meadow;
-using Meadow.Hardware;
-using Meadow.Foundation.Communications;
 using Meadow.Foundation.Helpers;
+using Meadow.Hardware;
+using Meadow.Hardware.Communications;
 
 namespace Meadow.Foundation.RTCs
 {

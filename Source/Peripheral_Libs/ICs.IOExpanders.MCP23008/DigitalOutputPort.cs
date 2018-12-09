@@ -1,4 +1,4 @@
-using Meadow;
+using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
 {

@@ -1,6 +1,6 @@
 ﻿using System;
-using Meadow.Foundation.Communications;
 using System.Threading;
+using Meadow.Hardware.Communications;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {

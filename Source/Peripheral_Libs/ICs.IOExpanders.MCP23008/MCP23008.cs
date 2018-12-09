@@ -1,8 +1,8 @@
-using Meadow;
-using Meadow.Utilities;
-using Meadow.Foundation.Communications;
 using System;
 using System.Diagnostics;
+using Meadow.Hardware;
+using Meadow.Hardware.Communications;
+using Meadow.Utilities;
 
 namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
 {

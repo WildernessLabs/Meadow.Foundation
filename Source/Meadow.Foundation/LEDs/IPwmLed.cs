@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Hardware;
+
 namespace Meadow.Foundation.LEDs
 {
     /// <summary>

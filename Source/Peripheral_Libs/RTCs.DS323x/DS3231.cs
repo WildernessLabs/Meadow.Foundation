@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using Meadow.Foundation.Communications;
+using Meadow.Hardware.Communications;
 
 namespace Meadow.Foundation.RTCs
 {

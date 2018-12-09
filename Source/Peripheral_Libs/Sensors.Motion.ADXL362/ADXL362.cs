@@ -1,10 +1,10 @@
-﻿using Meadow.Foundation.Communications;
+﻿using System;
+using System.Threading;
 using Meadow.Foundation.Helpers;
 using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
-using System;
-using System.Threading;
-using static Meadow.DigitalPortBase;
+using Meadow.Hardware.Communications;
+using static Meadow.Hardware.DigitalPortBase;
 
 namespace Meadow.Foundation.Sensors.Motion
 {

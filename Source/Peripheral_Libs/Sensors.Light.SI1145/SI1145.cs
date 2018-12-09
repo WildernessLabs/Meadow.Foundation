@@ -1,5 +1,5 @@
 ﻿using System;
-using Meadow.Foundation.Communications;
+using Meadow.Hardware.Communications;
 
 namespace Meadow.Foundation.Sensors.Light
 {

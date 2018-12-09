@@ -8,7 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using Meadow.Hardware;
-using Meadow.Foundation.ICs.IOExpanders.MCP23008;
+using EX = Meadow.Foundation.ICs.IOExpanders.MCP23008;
 
 namespace Meadow.Foundation.Displays.LCD
 {
@@ -22,13 +22,13 @@ namespace Meadow.Foundation.Displays.LCD
         private const byte LCD_SETDDRAMADDR = 0x80;
         private const byte LCD_SETCGRAMADDR = 0x40;
 
-        protected Meadow.IDigitalOutputPort LCD_E;
-        protected Meadow.IDigitalOutputPort LCD_RS;
-        protected Meadow.IDigitalOutputPort LCD_D4;
-        protected Meadow.IDigitalOutputPort LCD_D5;
-        protected Meadow.IDigitalOutputPort LCD_D6;
-        protected Meadow.IDigitalOutputPort LCD_D7;
-        protected Meadow.IDigitalOutputPort LED_ON;
+        protected IDigitalOutputPort LCD_E;
+        protected IDigitalOutputPort LCD_RS;
+        protected IDigitalOutputPort LCD_D4;
+        protected IDigitalOutputPort LCD_D5;
+        protected IDigitalOutputPort LCD_D6;
+        protected IDigitalOutputPort LCD_D7;
+        protected IDigitalOutputPort LED_ON;
 
         private bool LCD_INSTRUCTION = false;
         private bool LCD_DATA = true;
@@ -40,17 +40,17 @@ namespace Meadow.Foundation.Displays.LCD
         {
             DisplayConfig = new TextDisplayConfig { Height = 4, Width = 20 };
 
-            LCD_RS = new Meadow.DigitalOutputPort(RS);
-            LCD_E =  new Meadow.DigitalOutputPort(E);
-            LCD_D4 = new Meadow.DigitalOutputPort(D4);
-            LCD_D5 = new Meadow.DigitalOutputPort(D5);
-            LCD_D6 = new Meadow.DigitalOutputPort(D6);
-            LCD_D7 = new Meadow.DigitalOutputPort(D7);
+            LCD_RS = new DigitalOutputPort(RS);
+            LCD_E =  new DigitalOutputPort(E);
+            LCD_D4 = new DigitalOutputPort(D4);
+            LCD_D5 = new DigitalOutputPort(D5);
+            LCD_D6 = new DigitalOutputPort(D6);
+            LCD_D7 = new DigitalOutputPort(D7);
 
             Initialize();
         }
 
-        public Lcd2004(MCP23008 mcp)
+        public Lcd2004(EX.MCP23008 mcp)
         {
             DisplayConfig = new TextDisplayConfig { Height = 4, Width = 20 };
 
