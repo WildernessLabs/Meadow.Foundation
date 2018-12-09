@@ -2,7 +2,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {
-    public class ST7789 : DisplayTFTSPIBase
+    public class ST7789 : DisplayTFTSpiBase
     {
         public override DisplayColorMode ColorMode => DisplayColorMode.Format16bppRgb565;
 
@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Displays
 
         public ST7789(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
             uint width, uint height,
-            SPI.SPI_module spiModule = SPI.SPI_module.SPI1,
+            Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
             uint speedKHz = 9500) : base(chipSelectPin, dcPin, resetPin, width, height, spiModule, speedKHz)
         {
             _width = width;

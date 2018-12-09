@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     SH31D sensor communicates using I2C.
         /// </summary>
-        private readonly I2CBus _sht31d;
+        private readonly I2cBus _sht31d;
 
         /// <summary>
         ///     Update interval in milliseconds
@@ -166,7 +166,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
             HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
             _updateInterval = updateInterval;
-            _sht31d = new I2CBus(address, speed);
+            _sht31d = new I2cBus(address, speed);
             if (updateInterval > 0)
             {
                 StartUpdating();

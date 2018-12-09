@@ -59,7 +59,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.x74595
         /// </summary>
         /// <param name="pins">Number of pins in the shift register (should be a multiple of 8 pins).</param>
         /// <param name="config">SPI Configuration object.</param>
-        public x74595(int pins, SPI.Configuration config)
+        public x74595(int pins, Spi.Configuration config)
         {
             if ((pins > 0) && ((pins % 8) == 0))
             {

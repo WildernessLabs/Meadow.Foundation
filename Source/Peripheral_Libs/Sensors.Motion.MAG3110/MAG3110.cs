@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     MAG3110 object.
         /// </summary>
-        private readonly I2CBus _mag3110;
+        private readonly I2cBus _mag3110;
 
         /// <summary>
         ///     Interrupt port used to detect then end of a conversion.
@@ -196,7 +196,7 @@ namespace Meadow.Foundation.Sensors.Motion
         // TODO: re-examine this; maybe we need a `DigitalPin.None` prop 
         public MAG3110(byte address = 0x0e, ushort speed = 400, IDigitalPin interruptPin = null) // Pins interruptPin = Pins.GPIO_NONE
         {
-            _mag3110 = new I2CBus(address, speed);
+            _mag3110 = new I2cBus(address, speed);
             var deviceID = _mag3110.ReadRegister((byte) Registers.WhoAmI);
             if (deviceID != 0xc4)
             {

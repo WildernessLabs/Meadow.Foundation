@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public class ST7735 : DisplayTFTSPIBase
+    public class ST7735 : DisplayTFTSpiBase
     {
         private DisplayType displayType;
 
@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Displays
 
         public ST7735(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
             uint width, uint height,
-            SPI.SPI_module spiModule = SPI.SPI_module.SPI1,
+            Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
             uint speedKHz = 9500, 
             DisplayType displayType = DisplayType.ST7735R) : base(chipSelectPin, dcPin, resetPin, width, height, spiModule, speedKHz)
         {

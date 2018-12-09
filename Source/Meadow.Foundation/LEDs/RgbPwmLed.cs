@@ -57,8 +57,8 @@ namespace Meadow.Foundation.LEDs
                     float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
                     float blueLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
                     bool isCommonCathode = true) 
-            : this(new PWMPort(redPwmPin), new PWMPort(greenPwmPin), 
-                   new PWMPort(bluePwmPin), redLedForwardVoltage, 
+            : this(new PwmPort(redPwmPin), new PwmPort(greenPwmPin), 
+                   new PwmPort(bluePwmPin), redLedForwardVoltage, 
                    greenLedForwardVoltage, blueLedForwardVoltage, 
                    isCommonCathode)
         {

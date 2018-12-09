@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
     {
         public event EventHandler InterruptRaised = delegate { };
 
-        private readonly I2CBus _i2cBus;
+        private readonly I2cBus _i2cBus;
 
         // state
         byte _iodir;
@@ -68,7 +68,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
             //SCK.Dispose();
 
             // configure our i2c bus so we can talk to the chip
-            this._i2cBus = new I2CBus(address, speed);
+            this._i2cBus = new I2cBus(address, speed);
 
             Debug.Print("initialized.");
 

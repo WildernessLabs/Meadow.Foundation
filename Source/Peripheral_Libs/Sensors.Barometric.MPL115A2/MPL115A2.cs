@@ -190,7 +190,7 @@ namespace Meadow.Foundation.Sensors.Barometric
             PressureChangeNotificationThreshold = pressureChangedNotificationThreshold;
             _updateInterval = updateInterval;
 
-            var device = new I2CBus(address, speed);
+            var device = new I2cBus(address, speed);
             _mpl115a2 = device;
             //
             //  Update the compensation data from the sensor.  The location and format of the

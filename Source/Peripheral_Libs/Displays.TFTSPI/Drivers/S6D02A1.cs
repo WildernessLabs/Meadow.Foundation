@@ -5,13 +5,13 @@ using System.Threading;
 namespace Meadow.Foundation.Displays
 {
     //Samsung S6D02A1 controller
-    public class S6D02A1 : DisplayTFTSPIBase
+    public class S6D02A1 : DisplayTFTSpiBase
     {
         private S6D02A1() { }
 
         public S6D02A1(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
             uint width, uint height,
-            SPI.SPI_module spiModule = SPI.SPI_module.SPI1,
+            Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
             uint speedKHz = 9500) : base(chipSelectPin, dcPin, resetPin, width, height, spiModule, speedKHz)
         { }
 

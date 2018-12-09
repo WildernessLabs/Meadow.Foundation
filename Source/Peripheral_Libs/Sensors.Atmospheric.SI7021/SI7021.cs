@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     SI7021 is an I2C device.
         /// </summary>
-        private readonly I2CBus _si7021;
+        private readonly I2cBus _si7021;
 
         /// <summary>
         ///     Update interval in milliseconds
@@ -240,7 +240,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
             HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
             _updateInterval = updateInterval;
-            _si7021 = new I2CBus(address, speed);
+            _si7021 = new I2cBus(address, speed);
             //
             //  Get the device ID.
             //

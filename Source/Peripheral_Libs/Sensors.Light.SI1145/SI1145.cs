@@ -208,7 +208,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="speed">Communication speed (default to 400 KHz).</param>
         public SI1145(byte address = 0x60, ushort speed = 400)
         {
-            I2CBus device = new I2CBus(address, speed);
+            I2cBus device = new I2cBus(address, speed);
             _si1145 = (ICommunicationBus) device;
             if (_si1145.ReadRegister(Registers.PartID) != 0x45)
             {

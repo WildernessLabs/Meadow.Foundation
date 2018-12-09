@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays
         protected DigitalOutputPort dataCommandPort;
         protected DigitalOutputPort resetPort;
         protected DigitalInputPort busyPort;
-        protected SPI spi;
+        protected Spi spi;
 
         protected const bool Data = true;
         protected const bool Command = false;

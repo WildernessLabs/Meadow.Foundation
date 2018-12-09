@@ -264,7 +264,7 @@ namespace Meadow.Foundation.Sensors.Motion
             _updateInterval = updateInterval;
             AccelerationChangeNotificationThreshold = accelerationChangeNotificationThreshold;
             
-            var device = new I2CBus(address, speed);
+            var device = new I2cBus(address, speed);
             _adxl345 = device;
             if (DeviceID != 0xe5)
             {

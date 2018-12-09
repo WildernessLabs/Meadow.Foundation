@@ -212,7 +212,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
         public SSD1306(byte address = 0x3c, ushort speed = 400, DisplayType displayType = DisplayType.OLED128x64)
         {
-            var display = new I2CBus(address, speed);
+            var display = new I2cBus(address, speed);
             _ssd1306 = display;
             switch (displayType)
             {

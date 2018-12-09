@@ -148,7 +148,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             _updateInterval = updateInterval;
             HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
-            _hih6130 = new I2CBus(address, speed);
+            _hih6130 = new I2cBus(address, speed);
             if (updateInterval > 0)
             {
                 StartUpdating();

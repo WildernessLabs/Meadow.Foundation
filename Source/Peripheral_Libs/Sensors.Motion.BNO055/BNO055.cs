@@ -1817,7 +1817,7 @@ namespace Meadow.Foundation.Sensors.Motion
 		    {
 		        throw new ArgumentOutOfRangeException("speed", "Maximum speed is 400kHz.");
 		    }
-            I2CBus device = new I2CBus(address, speed);
+            I2cBus device = new I2cBus(address, speed);
             _bno055 = (ICommunicationBus) device;
             if (_bno055.ReadRegister(Registers.ChipID) != 0xa0)
             {

@@ -372,7 +372,7 @@ namespace Meadow.Foundation.Sensors.Light
             LightLevelChangeNotificationThreshold = lightLevelChangeNotificationThreshold;
             _updateInterval = updateInterval;
 
-            var device = new I2CBus(address, speed);
+            var device = new I2cBus(address, speed);
             _tsl2561 = device;
             //
             //  Wait for the sensor to prepare the first reading (402ms after power on).

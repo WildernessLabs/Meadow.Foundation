@@ -19,13 +19,13 @@ namespace Meadow.Foundation.Displays
         private EPDBase()
         { }
 
-        public EPDBase(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin, IDigitalPin busyPin, SPI.SPI_module spiModule = SPI.SPI_module.SPI1, uint speedKHz = (uint)9500)
+        public EPDBase(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin, IDigitalPin busyPin, Spi.SPI_module spiModule = Spi.SPI_module.SPI1, uint speedKHz = (uint)9500)
         {
             dataCommandPort = new DigitalOutputPort(dcPin, false);
             resetPort = new DigitalOutputPort(resetPin, true);
             busyPort = new DigitalInputPort(busyPin, true, DigitalPortBase.ResistorMode.Disabled);
 
-            var spiConfig = new SPI.Configuration(
+            var spiConfig = new Spi.Configuration(
                 SPI_mod: spiModule,
                 ChipSelect_Port: chipSelectPin,
                 ChipSelect_ActiveState: false,
@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Displays
                 Clock_Edge: true,
                 Clock_RateKHz: speedKHz);
 
-            spi = new SPI(spiConfig);
+            spi = new Spi(spiConfig);
 
             imageBuffer = new byte[Width * Height / 8];
 

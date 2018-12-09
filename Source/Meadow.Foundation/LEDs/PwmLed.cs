@@ -53,7 +53,7 @@ namespace Meadow.Foundation.LEDs
         /// </summary>
         /// <param name="pin">Pin.</param>
         /// <param name="forwardVoltage">Forward voltage.</param>
-        public PwmLed(IPwmPin pin, float forwardVoltage) : this(new PWMPort(pin), forwardVoltage)
+        public PwmLed(IPwmPin pin, float forwardVoltage) : this(new PwmPort(pin), forwardVoltage)
         {
         }
 

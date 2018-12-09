@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract class DisplayTFTSPIBase : DisplayBase, IDisposable
+    public abstract class DisplayTFTSpiBase : DisplayBase, IDisposable
     {
         #region Enums
         public enum LcdCommand
@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Displays
 
         protected DigitalOutputPort dataCommandPort;
         protected DigitalOutputPort resetPort;
-        protected SPI spi;
+        protected Spi spi;
 
         protected readonly byte[] spiBuffer;
         protected readonly byte[] spiBOneByteBuffer = new byte[1];
@@ -45,13 +45,13 @@ namespace Meadow.Foundation.Displays
 
         protected abstract void Initialize();
 
-        internal DisplayTFTSPIBase()
+        internal DisplayTFTSpiBase()
         {
         }
 
-        public DisplayTFTSPIBase(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
+        public DisplayTFTSpiBase(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
             uint width, uint height,
-            SPI.SPI_module spiModule = SPI.SPI_module.SPI1,
+            Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
             uint speedKHz = 9500)
         {
             _width = width;
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Displays
             dataCommandPort = new DigitalOutputPort(dcPin, false);
             resetPort = new DigitalOutputPort(resetPin, true);
 
-            var spiConfig = new SPI.Configuration(
+            var spiConfig = new Spi.Configuration(
                 SPI_mod: spiModule,
                 ChipSelect_Port: chipSelectPin,
                 ChipSelect_ActiveState: false,
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Displays
                 Clock_Edge: true,
                 Clock_RateKHz: speedKHz);
 
-            spi = new SPI(spiConfig);
+            spi = new Spi(spiConfig);
 
             Initialize();
         }

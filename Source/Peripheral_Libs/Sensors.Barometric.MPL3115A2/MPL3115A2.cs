@@ -428,7 +428,7 @@ namespace Meadow.Foundation.Sensors.Barometric
             PressureChangeNotificationThreshold = pressureChangedNotificationThreshold;
             _updateInterval = updateInterval;
 
-            var device = new I2CBus(address, speed);
+            var device = new I2cBus(address, speed);
             _mpl3115a2 = device;
             if (_mpl3115a2.ReadRegister(Registers.WhoAmI) != 0xc4)
             {

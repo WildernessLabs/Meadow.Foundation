@@ -802,7 +802,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="module">SPI module to use.</param>
         /// <param name="chipSelect">Chip select pin.</param>
         /// <param name="speed">Speed of the SPI bus.</param>
-        public ADXL362(SPI.SPI_module module, IDigitalPin chipSelect, ushort speed = 10)
+        public ADXL362(Spi.SPI_module module, IDigitalPin chipSelect, ushort speed = 10)
         {
             //
             //  ADXL362 works in SPI mode 0 (CPOL = 0, CPHA = 0).

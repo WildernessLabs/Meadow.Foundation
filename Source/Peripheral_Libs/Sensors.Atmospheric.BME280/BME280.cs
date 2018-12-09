@@ -363,7 +363,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 throw new ArgumentOutOfRangeException(nameof(updateInterval), "Update period should be 0 or >= than " + MinimumPollingPeriod);
             }
 
-            _bme280 = new I2CBus(address, speed);
+            _bme280 = new I2cBus(address, speed);
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
             HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
             PressureChangeNotificationThreshold = pressureChangedNotificationThreshold;

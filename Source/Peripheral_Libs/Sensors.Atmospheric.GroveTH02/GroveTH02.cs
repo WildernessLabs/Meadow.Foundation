@@ -210,7 +210,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             float humidityChangeNotificationThreshold = 0.001F,
             float temperatureChangeNotificationThreshold = 0.001F)
         {
-            I2CBus device = new I2CBus(address, speed);
+            I2cBus device = new I2cBus(address, speed);
             _groveTH02 = (ICommunicationBus) device;
             if (humidityChangeNotificationThreshold < 0)
             {

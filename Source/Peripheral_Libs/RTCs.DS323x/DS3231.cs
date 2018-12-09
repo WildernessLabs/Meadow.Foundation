@@ -27,7 +27,7 @@ namespace Meadow.Foundation.RTCs
         // TODO: revisit; `DigitalPin.Empty`?
         public DS3231(byte address = 0x68, ushort speed = 100, IDigitalPin interruptPin = null /*Pins.GPIO_NONE*/)
         {
-            _ds323x = new I2CBus(address, speed);
+            _ds323x = new I2cBus(address, speed);
 
             // TODO: i changed this from GPIO_NONE
             // samples will need to pass null

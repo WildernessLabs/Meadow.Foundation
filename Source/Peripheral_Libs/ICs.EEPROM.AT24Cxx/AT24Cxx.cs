@@ -46,7 +46,7 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// <param name="memorySize">Total number of bytes in the EEPROM (default = 8192 - AT24C32).</param>
         public AT24Cxx(byte address = 0x50, ushort speed = 10, ushort pageSize = 32, ushort memorySize = 8192)
         {
-            var device = new I2CBus(address, speed);
+            var device = new I2cBus(address, speed);
             _eeprom = device;
             _pageSize = pageSize;
             _memorySize = memorySize;
