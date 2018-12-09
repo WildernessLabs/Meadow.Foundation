@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Meadow.Foundation\Meadow.Foundation.csproj" />
-    <ProjectReference Include="..\ICs.IOExpanders.MCP23008\ICs.IOExpanders.MCP23008.csproj" />
     <ProjectReference Include="..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
   </ItemGroup>
 
