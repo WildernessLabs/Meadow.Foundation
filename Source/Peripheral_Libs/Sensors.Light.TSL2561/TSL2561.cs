@@ -557,7 +557,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </param>
         /// <param name="pin">GPIO pin connected to the TSL2561 interrupt pin.  Set to null to use the previously supplied pin.</param>
         public void SetInterruptMode(InterruptMode mode, byte conversionCount,
-            Cpu.Pin pin = Cpu.Pin.GPIO_NONE)
+            IDigitalPin pin = null)
         {
             if (conversionCount > 15)
             {
@@ -567,7 +567,7 @@ namespace Meadow.Foundation.Sensors.Light
             //
             //  Attach the interrupt event before we turn on interrupts.
             //
-            if (pin != Cpu.Pin.GPIO_NONE)
+            if (pin != null)
             {
                 if (_interruptPin != null)
                 {
