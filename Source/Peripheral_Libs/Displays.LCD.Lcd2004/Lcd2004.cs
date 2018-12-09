@@ -105,9 +105,9 @@ namespace Meadow.Foundation.Displays.LCD
 
         private void ToggleEnable()
         {
-            LCD_E.State = (false);
-            LCD_E.State = (true);
-            LCD_E.State = (false);
+            LCD_E.State = false;
+            LCD_E.State = true;
+            LCD_E.State = false;
         }
 
         private byte GetLineAddress(int line)
