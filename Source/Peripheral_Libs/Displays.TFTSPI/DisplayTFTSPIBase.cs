@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract class DisplayTFTSpiBase : DisplayBase, IDisposable
+    public abstract class DisplayTftSpiBase : DisplayBase, IDisposable
     {
         #region Enums
         public enum LcdCommand
@@ -45,11 +45,11 @@ namespace Meadow.Foundation.Displays
 
         protected abstract void Initialize();
 
-        internal DisplayTFTSpiBase()
+        internal DisplayTftSpiBase()
         {
         }
 
-        public DisplayTFTSpiBase(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
+        public DisplayTftSpiBase(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
             uint width, uint height,
             Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
             uint speedKHz = 9500, bool idleClockState = false)

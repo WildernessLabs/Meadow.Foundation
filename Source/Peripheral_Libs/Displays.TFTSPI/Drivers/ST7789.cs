@@ -1,8 +1,9 @@
 using Meadow.Hardware;
+using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public class ST7789 : DisplayTFTSpiBase
+    public class ST7789 : DisplayTftSpiBase
     {
         private ST7789() { }
 
@@ -16,11 +17,11 @@ namespace Meadow.Foundation.Displays
 
         protected override void Initialize()
         {
-            resetPort.Write(true);
+            resetPort.State = true;
             Thread.Sleep(50);
-            resetPort.Write(false);
+            resetPort.State = false;
             Thread.Sleep(50);
-            resetPort.Write(true);
+            resetPort.State = true;
             Thread.Sleep(50);
 			
             SendCommand(SWRESET);
@@ -50,7 +51,7 @@ namespace Meadow.Foundation.Displays
 
             SetAddressWindow(0, 0, (byte)(_width - 1), (byte)(_height - 1));
 
-            dataCommandPort.Write(Data);
+            dataCommandPort.State = Data;
         }
 
         public void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)

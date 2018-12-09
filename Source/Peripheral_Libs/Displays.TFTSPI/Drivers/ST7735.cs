@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public class ST7735 : DisplayTFTSpiBase
+    public class ST7735 : DisplayTftSpiBase
     {
         private DisplayType displayType;
 

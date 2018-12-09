@@ -5,7 +5,7 @@ using System.Threading;
 namespace Meadow.Foundation.Displays
 {
     //Samsung S6D02A1 controller
-    public class S6D02A1 : DisplayTFTSpiBase
+    public class S6D02A1 : DisplayTftSpiBase
     {
         private S6D02A1() { }
 

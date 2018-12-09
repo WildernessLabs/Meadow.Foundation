@@ -3,7 +3,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {
-    public class ILI9341 : DisplayTFTSpiBase
+    public class ILI9341 : DisplayTftSpiBase
     {
         private ILI9341() { }
 
