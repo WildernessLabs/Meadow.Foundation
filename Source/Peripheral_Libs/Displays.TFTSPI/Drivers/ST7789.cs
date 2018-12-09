@@ -4,33 +4,29 @@ namespace Meadow.Foundation.Displays
 {
     public class ST7789 : DisplayTFTSpiBase
     {
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format16bppRgb565;
-
-        public override uint Width => _width;
-
-        public override uint Height => _height;
-
-        private ST7789()
-        {
-
-        }
+        private ST7789() { }
 
         public ST7789(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
             uint width, uint height,
             Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
             uint speedKHz = 9500) : base(chipSelectPin, dcPin, resetPin, width, height, spiModule, speedKHz)
         {
-            _width = width;
-            _height = height;
             Initialize();
         }
 
         protected override void Initialize()
         {
+            resetPort.Write(true);
+            Thread.Sleep(50);
+            resetPort.Write(false);
+            Thread.Sleep(50);
+            resetPort.Write(true);
+            Thread.Sleep(50);
+			
             SendCommand(SWRESET);
             DelayMs(150);
             SendCommand(SLPOUT);
-            DelayMs(150); //500
+            DelayMs(500); 
 
             SendCommand(COLMOD);
             SendData(0x55); //16 bit color
@@ -46,31 +42,15 @@ namespace Meadow.Foundation.Displays
             SendData(new byte[] { 0x00, 0x00, (byte)(Height >> 8), (byte)(Height & 0xFF) });
 
             SendCommand(INVON); //inversion on
+            DelayMs(10);
             SendCommand(NORON); //normal display
+            DelayMs(10);
             SendCommand(DISPON); //display on
+            DelayMs(500);
 
             SetAddressWindow(0, 0, (byte)(_width - 1), (byte)(_height - 1));
-        }
 
-        public void SetRotation(Rotation rotation)
-        {
-            SendCommand(MADCTL);
-
-            switch (rotation)
-            {
-                case Rotation.Normal:
-                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
-                    break;
-                case Rotation.Rotate_90:
-                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
-                    break;
-                case Rotation.Rotate_180:
-                    SendData(MADCTL_RGB);
-                    break;
-                case Rotation.Rotate_270:
-                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
-                    break;
-            }
+            dataCommandPort.Write(Data);
         }
 
         public void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
@@ -91,6 +71,27 @@ namespace Meadow.Foundation.Displays
             SendData((byte)(yEnd & 0xFF));     // YEND
 
             SendCommand(RAMWR); // write to RAM
+        }       
+	   
+	    public void SetRotation(Rotation rotation)
+        {
+            SendCommand(MADCTL);
+
+            switch (rotation)
+            {
+                case Rotation.Normal:
+                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
+                    break;
+                case Rotation.Rotate_90:
+                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
+                    break;
+                case Rotation.Rotate_180:
+                    SendData(MADCTL_RGB);
+                    break;
+                case Rotation.Rotate_270:
+                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
+                    break;
+            }
         }
 
         static byte XSTART      = 0;
