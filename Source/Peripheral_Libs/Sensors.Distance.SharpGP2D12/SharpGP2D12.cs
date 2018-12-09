@@ -7,7 +7,7 @@
 //	public class SharpGP2D12 : Block, IRangeFinder
 //	{
 //		public InputPort AnalogInput { get; private set; }
-//		public OutputPort DistanceOutput { get; private set; }
+//		public DigitalOutputPort DistanceOutput { get; private set; }
 
 //		LookupTable lookup;
 
@@ -22,7 +22,7 @@
 //		public SharpGP2D12()
 //		{
 //			AnalogInput = new InputPort(this, "AnalogInput", Units.Ratio);
-//			DistanceOutput = new OutputPort(this, "DistanceOutput", Units.Distance, 0);
+//			DistanceOutput = new DigitalOutputPort(this, "DistanceOutput", Units.Distance, 0);
 
 //			lookup = new LookupTable {
 //				{ 0.0912, 0.7904 },
