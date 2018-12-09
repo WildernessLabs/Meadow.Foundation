@@ -32,7 +32,7 @@ namespace Meadow.Foundation.LEDs
                 { // if turning off
                     Port.DutyCycle = 0; // turn off
                 }
-                this._isOn = value;
+                _isOn = value;
             }
         }
         protected bool _isOn = false;
@@ -70,14 +70,14 @@ namespace Meadow.Foundation.LEDs
             if (forwardVoltage < 0 || forwardVoltage > 3.3F) {
                 throw new ArgumentOutOfRangeException("forwardVoltage", "error, forward voltage must be between 0, and 3.3");
             }
-            this.ForwardVoltage = forwardVoltage;
+            ForwardVoltage = forwardVoltage;
 
-            this._maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
+            _maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
 
-            this.Port = pwm;
+            Port = pwm;
             //this.Port = new PWM(pin, 100, this._maximumPwmDuty, false);
-			this.Port.Frequency = 100;
-			this.Port.DutyCycle = this._maximumPwmDuty;
+			Port.Frequency = 100;
+			Port.DutyCycle = _maximumPwmDuty;
         }
 
         public void SetBrightness(float brightness)
@@ -87,22 +87,23 @@ namespace Meadow.Foundation.LEDs
                 throw new ArgumentOutOfRangeException("value", "err: brightness must be between 0 and 1, inclusive.");
             }
 
-            this._brightness = brightness;
+            _brightness = brightness;
 
             // if 0, shut down the PWM (is this a good idea?)
             if (Brightness == 0)
             {
-                this.Port.Stop();
-                this._isOn = false;
-                this.Port.DutyCycle = 0;
+                Port.Stop();
+                _isOn = false;
+                Port.DutyCycle = 0;
             }
             else
             {
-                this.Port.DutyCycle = this._maximumPwmDuty * Brightness;
+                Port.DutyCycle = _maximumPwmDuty * Brightness;
+
                 if (!_isOn)
                 {
-                    this.Port.Start();
-                    this._isOn = true;
+                    Port.Start();
+                    _isOn = true;
                 }
             }
         }
@@ -126,10 +127,10 @@ namespace Meadow.Foundation.LEDs
             }
 
             // stop any existing animations
-            this.Stop();
+            Stop();
             _running = true;
 
-            this._animationThread = new Thread(() => {
+            _animationThread = new Thread(() => {
                 while (_running)
                 {
                     this.SetBrightness(highBrightness);
@@ -138,7 +139,7 @@ namespace Meadow.Foundation.LEDs
                     Thread.Sleep(offDuration);
                 }
             });
-            this._animationThread.Start();
+            _animationThread.Start();
         }
 
         /// <summary>
@@ -159,10 +160,10 @@ namespace Meadow.Foundation.LEDs
             }
 
             // stop any existing animations
-            this.Stop();
+            Stop();
             _running = true;
 
-            this._animationThread = new Thread(() => 
+            _animationThread = new Thread(() => 
             {
                 // pulse the LED by taking the brightness from low to high and back again.
                 float brightness = lowBrightness;
@@ -192,7 +193,7 @@ namespace Meadow.Foundation.LEDs
                     Thread.Sleep(intervalTime);
                 }
             });
-            this._animationThread.Start();
+            _animationThread.Start();
         }
 
         /// <summary>

@@ -573,8 +573,7 @@ namespace Meadow.Foundation.Sensors.Light
                 {
                   //Port: TODO check  _interruptPin.Dispose();
                 }
-                _interruptPin = new DigitalInputPort(); //Port: TODO(pin, false, Spot.Port.ResistorMode.PullUp,
-                                                      // Spot.Port.InterruptMode.InterruptEdgeLow);
+                _interruptPin = new DigitalInputPort(pin, false, DigitalPortBase.ResistorMode.PullUp);
                 _interruptPin.Changed += InterruptPin_Changed;
             }
             else

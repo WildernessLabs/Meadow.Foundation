@@ -144,9 +144,8 @@ namespace Meadow.Foundation.LEDs
             TurnOn();
         }
 
-        // HACK/TODO: this is the signature I want, but it's broken until 4.4. (https://github.com/NETMF/netmf-interpreter/issues/87)
-        // using arraylist for now
         //public void StartRunningColors(Color[] colors, int[] durations, bool loop)
+        // using arraylist for now
         /// <summary>
         /// Animates through the listed colors for the specified durations. To use the same duration for all colors, 
         /// pass in an array with a length of 1 for `durations`.
@@ -253,9 +252,8 @@ namespace Meadow.Foundation.LEDs
             }
 
             // pre-calculate colors
-            //TODO HSBA extension 
-            Color highColor;// = Color.FromHsba(color.Hue, color.Saturation, highBrightness);
-            Color lowColor;// = Color.FromHsba(color.Hue, color.Saturation, lowBrightness);
+            Color highColor = Color.FromAhsv(1.0, color.GetHue(), color.GetSaturation(), highBrightness);
+            Color lowColor = Color.FromAhsv(1.0, color.GetHue(), color.GetSaturation(), lowBrightness);
 
             StartRunningColors(new ArrayList { highColor, lowColor }, new int[] { highDuration, lowDuration });
         }
@@ -326,13 +324,13 @@ namespace Meadow.Foundation.LEDs
             for (int i = 0; i < steps; i++)
             {
                 brightnessStep = lowBrightness + (brightnessIncrement * i);
-               //TODO colors.Add(Color.FromHsba(color.Hue, color.Saturation, brightnessStep));
+                colors.Add(Color.FromAhsv(1.0, Color.GetHue(), Color.GetSaturation(), brightnessStep));
             } // walk down (start at penultimate to not repeat, and finish at 1
 
             for (int i = steps - 2; i > 0; i--)
             {
                 brightnessStep = lowBrightness + (brightnessIncrement * i);
-                //TODO colors.Add(Color.FromHsba(color.Hue, color.Saturation, brightnessStep));
+                colors.Add(Color.FromAhsv(1.0, Color.GetHue(), Color.GetSaturation(), brightnessStep));
             }
 
             return new RunningColorsConfig()

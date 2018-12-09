@@ -35,8 +35,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         protected DateTime _revolutionTimeStart = DateTime.MinValue;
         protected ushort _numberOfReads = 0; //
 
-
-        public LinearHallEffectTachometer(IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
+        public LinearHallEffectTachometer(IDigitalPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F)
         {
             _numberOfMagnets = numberOfMagnets;
@@ -46,14 +45,13 @@ namespace Meadow.Foundation.Sensors.HallEffect
             //var resistorMode = (type == CircuitTerminationType.CommonGround) ? H.Port.ResistorMode.PullUp : H.Port.ResistorMode.PullDown;
 
             // create the interrupt port from the pin and resistor type
-            DigitalIn = new DigitalInputPort(); //Port: TODO (inputPin, true, H.Port.ResistorMode.PullDown, H.Port.InterruptMode.InterruptEdgeHigh);
+            DigitalIn = new DigitalInputPort(inputPin, true, DigitalPortBase.ResistorMode.PullDown);
 
             // wire up the interrupt handler
             DigitalIn.Changed += DigitalIn_Changed;
         }
 
         private void DigitalIn_Changed(object sender, PortEventArgs e)
-       // protected void DigitalIn_OnInterrupt(uint port, uint state, DateTime time)
         {
             var time = DateTime.Now;
 

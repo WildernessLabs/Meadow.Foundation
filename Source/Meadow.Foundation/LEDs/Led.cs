@@ -23,7 +23,7 @@ namespace Meadow.Foundation.LEDs
                 { // if turning off
                     Port.State = !_onValue; // turn off
                 }
-                this._isOn = value;
+                _isOn = value;
             }
         }
         protected bool _isOn = false;
@@ -60,7 +60,7 @@ namespace Meadow.Foundation.LEDs
             _running = true;
 
             IsOn = false;
-            //TODO: Make this cancellable
+            //TODO: Make this cancellable via Cancellation token
             _animationTask = new Task(async () => 
             {
                 while (_running)

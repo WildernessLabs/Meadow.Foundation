@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         public PushButton Button => _button;
         readonly PushButton _button;
 
-        public RotaryEncoderWithButton(IPin aPhasePin, IPin bPhasePin, IPin buttonPin, 
+        public RotaryEncoderWithButton(IDigitalPin aPhasePin, IDigitalPin bPhasePin, IDigitalPin buttonPin, 
             CircuitTerminationType buttonCircuitTerminationType, int debounceDuration = 20)
             : base(aPhasePin, bPhasePin)
         {

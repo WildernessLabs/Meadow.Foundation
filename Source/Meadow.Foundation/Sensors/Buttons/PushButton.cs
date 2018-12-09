@@ -44,29 +44,28 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="inputPin"></param>
         /// <param name="type"></param>
         /// <param name="debounceDuration">in milliseconds</param>
-		public PushButton(IPin inputPin, CircuitTerminationType type, int debounceDuration = 20) 
+		public PushButton(IDigitalPin inputPin, CircuitTerminationType type, int debounceDuration = 20) 
 		{
             _circuitType = type;
             DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
 
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
-            /* Port: TODO 
-            Port.ResistorMode resistorMode = H.Port.ResistorMode.Disabled;
+            var resistorMode = DigitalPortBase.ResistorMode.Disabled;
             switch (type)
             {
                 case CircuitTerminationType.CommonGround:
-                    resistorMode = Port.ResistorMode.PullUp;
+                    resistorMode = DigitalPortBase.ResistorMode.PullUp;
                     break;
                 case CircuitTerminationType.High:
-                    resistorMode = Port.ResistorMode.PullDown;
+                    resistorMode = DigitalPortBase.ResistorMode.PullDown;
                     break;
                 case CircuitTerminationType.Floating:
-                    resistorMode = Port.ResistorMode.Disabled;
+                    resistorMode = DigitalPortBase.ResistorMode.Disabled;
                     break;
-            } */
+            } 
 
             // create the interrupt port from the pin and resistor type
-            DigitalIn = new DigitalInputPort(); //TODO inputPin, true, resistorMode, H.Port.InterruptMode.InterruptEdgeBoth);
+            DigitalIn = new DigitalInputPort(inputPin, true, resistorMode);
 
 
             // wire up the interrupt handler
