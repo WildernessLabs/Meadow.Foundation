@@ -23,11 +23,11 @@ namespace Meadow.Foundation.Sensors.Switches
             }
         }
 
-        public SpdtSwitch(IPin pin)
+        public SpdtSwitch(IDigitalPin pin)
         {
-            //Port:TODO Port.ResistorMode resistorMode = Port.ResistorMode.Disabled;
+            var resistorMode = ResistorMode.Disabled;
 
-            DigitalIn = new DigitalInputPort(); //Port:TODO pin, true, resistorMode, H.Port.InterruptMode.InterruptEdgeBoth);
+            DigitalIn = new DigitalInputPort(pin, true, resistorMode);
 
             DigitalIn.Changed += DigitalIn_Changed;
         }

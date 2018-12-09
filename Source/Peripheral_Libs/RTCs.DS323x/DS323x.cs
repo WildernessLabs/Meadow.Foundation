@@ -296,8 +296,7 @@ namespace Meadow.Foundation.RTCs
                     throw new Exception("Cannot change interrupt pin.");
                 }
                 _interruptPin = value;
-                _interruptPort = new DigitalInputPort(); //Port: TODO (value, false, Microsoft.SPOT.Hardware.Port.ResistorMode.Disabled,
-                                                         // Microsoft.SPOT.Hardware.Port.InterruptMode.InterruptEdgeLow);
+                _interruptPort = new DigitalInputPort(value, false, ResistorMode.Disabled);
                 _interruptPort.Changed += InterruptPort_Changed;
             }
         }

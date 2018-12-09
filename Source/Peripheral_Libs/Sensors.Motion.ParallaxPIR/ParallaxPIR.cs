@@ -49,13 +49,13 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Create a new Parallax PIR object and hook up the Changed event handler.
         /// </summary>
-        /// <param name="digitalInputPort"></param>
-        public ParallaxPIR(IDigitalPin digitalInputPort)
+        /// <param name="inputPin"></param>
+        public ParallaxPIR(IDigitalPin inputPin)
         {
             //TODO: I changed this from Pins.GPIO_NONE to null
-            if (digitalInputPort != null)
+            if (inputPin != null)
             {
-                _digitalInputPort = new DigitalInputPort(); //TODO: port (digitalInputPort, false, ResistorMode.Disabled, InterruptMode.InterruptEdgeBoth);
+                _digitalInputPort = new DigitalInputPort(inputPin, false, ResistorMode.Disabled);
                 _digitalInputPort.Changed += DigitalInputPortChanged;
             }
             else

@@ -194,7 +194,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>
         /// <param name="interruptPin">Interrupt pin used to detect end of conversions.</param>
         // TODO: re-examine this; maybe we need a `DigitalPin.None` prop 
-        public MAG3110(byte address = 0x0e, ushort speed = 400, IDigitalPin interruptPin = null) // Pins interruptPin = Pins.GPIO_NONE
+        public MAG3110(byte address = 0x0e, ushort speed = 400, IDigitalPin interruptPin = null)
         {
             _mag3110 = new I2cBus(address, speed);
             var deviceID = _mag3110.ReadRegister((byte) Registers.WhoAmI);
@@ -202,11 +202,10 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
             }
-            //TODO: I changed this from Pins.GPIO_NONE to null
+ 
             if (interruptPin != null)
             {
-                _digitalInputPort = new DigitalInputPort(); //Port: TODO (value, false, Microsoft.SPOT.Hardware.Port.ResistorMode.Disabled,
-                                                            // Microsoft.SPOT.Hardware.Port.InterruptMode.InterruptEdgeLow);
+                _digitalInputPort = new DigitalInputPort(interruptPin, false, ResistorMode.Disabled);
                 _digitalInputPort.Changed += DigitalInputPortChanged;
             }
             Reset();

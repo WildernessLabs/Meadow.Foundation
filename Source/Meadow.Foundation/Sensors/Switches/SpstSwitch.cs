@@ -23,26 +23,24 @@ namespace Meadow.Foundation.Sensors.Switches
             protected set => Changed(this, new EventArgs());
         }
 
-        public SpstSwitch(IPin pin, CircuitTerminationType type)
+        public SpstSwitch(IDigitalPin pin, CircuitTerminationType type)
         {
-            //Port: TODO
-            /*
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
-            H.Port.ResistorMode resistorMode = H.Port.ResistorMode.Disabled;
+            var resistorMode = ResistorMode.Disabled;
             switch (type)
             {
                 case CircuitTerminationType.CommonGround:
-                    resistorMode = H.Port.ResistorMode.PullUp;
+                    resistorMode = ResistorMode.PullUp;
                     break;
                 case CircuitTerminationType.High:
-                    resistorMode = H.Port.ResistorMode.PullDown;
+                    resistorMode = ResistorMode.PullDown;
                     break;
                 case CircuitTerminationType.Floating:
-                    resistorMode = H.Port.ResistorMode.Disabled;
+                    resistorMode = ResistorMode.Disabled;
                     break;
-            } */
+            } 
 
-            this.DigitalIn = new DigitalInputPort(); //Port: TODO (pin, true, resistorMode, Microsoft.SPOT.Hardware.Port.InterruptMode.InterruptEdgeBoth);
+            this.DigitalIn = new DigitalInputPort(pin, true, resistorMode);
 
             this.DigitalIn.Changed += DigitalIn_Changed;
         }
