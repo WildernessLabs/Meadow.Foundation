@@ -20,17 +20,14 @@ namespace Meadow.Foundation.Displays
             ///     Scroll the display to the left.
             /// </summary>
             Left,
-
             /// <summary>
             ///     Scroll the display to the right.
             /// </summary>
             Right,
-
             /// <summary>
             ///     Scroll the display from the bottom left and vertically.
             /// </summary>
             RightAndVertical,
-
             /// <summary>
             ///     Scroll the display from the bottom right and vertically.
             /// </summary>
@@ -46,16 +43,18 @@ namespace Meadow.Foundation.Displays
             ///     0.96 128x64 pixel display.
             /// </summary>
             OLED128x64,
-
             /// <summary>
             ///     0.91 128x32 pixel display.
             /// </summary>
             OLED128x32,
-
             /// <summary>
             ///     64x48 pixel display.
             /// </summary>
-            //OLED64x48, (coming soon)
+            OLED64x48,
+            /// <summary>
+            ///     96x16 pixel display.
+            /// </summary>
+            OLED96x16,
         }
 
         #endregion Enums
@@ -99,10 +98,9 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         private readonly byte[] _oled128x64SetupSequence =
         {
-            0xae, 0xd5, 0x80, 0xa8, 0x3f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8, 0xda,
-            0x12, 0x81, 0xcf, 0xd9, 0xf1, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
+            0xae, 0xd5, 0x80, 0xa8, 0x3f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
+            0xda, 0x12, 0x81, 0xcf, 0xd9, 0xf1, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
         };
-
         /// <summary>
         ///     Sequence of bytes that should be sent to a 128x32 OLED display to setup the device.
         /// </summary>
@@ -110,6 +108,22 @@ namespace Meadow.Foundation.Displays
         {
             0xae, 0xd5, 0x80, 0xa8, 0x1f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
             0xda, 0x02, 0x81, 0x8f, 0xd9, 0x1f, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
+        };
+        /// <summary>
+        ///     Sequence of bytes that should be sent to a 96x16 OLED display to setup the device.
+        /// </summary>
+        private readonly byte[] _oled96x16SetupSequence =
+        {
+            0xae, 0xd5, 0x80, 0xa8, 0x1f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
+            0xda, 0x02, 0x81, 0xaf, 0xd9, 0x1f, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
+        };
+        /// <summary>
+        ///     Sequence of bytes that should be sent to a 64x48 OLED display to setup the device.
+        /// </summary>
+        private readonly byte[] _oled64x48SetupSequence =
+        {
+            0xae, 0xd5, 0x80, 0xa8, 0x3f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
+            0xda, 0x12, 0x81, 0xcf, 0xd9, 0xf1, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
         };
 
         #endregion Member variables / fields
@@ -133,14 +147,7 @@ namespace Meadow.Foundation.Displays
             set
             {
                 _invertDisplay = value;
-                if (value)
-                {
-                    SendCommand(0xa7);
-                }
-                else
-                {
-                    SendCommand(0xa6);
-                }
+                SendCommand((byte)(value ? 0xa7 : 0xa6));
             }
         }
 
@@ -172,14 +179,7 @@ namespace Meadow.Foundation.Displays
             set
             {
                 _sleep = value;
-                if (_sleep)
-                {
-                    SendCommand(0xae);
-                }
-                else
-                {
-                    SendCommand(0xaf);
-                }
+                SendCommand((byte)(_sleep ? 0xae : 0xaf));
             }
         }
 
@@ -188,6 +188,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         private bool _sleep;
 
+        private DisplayType _displayType;
+
         #endregion Properties
 
         #region Constructors
@@ -195,9 +197,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Default constructor is private to prevent it being used.
         /// </summary>
-        private SSD1306()
-        {
-        }
+        private SSD1306() { }
 
         /// <summary>
         ///     Create a new SSD1306 object using the default parameters for
@@ -212,11 +212,14 @@ namespace Meadow.Foundation.Displays
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
         public SSD1306(byte address = 0x3c, ushort speed = 400, DisplayType displayType = DisplayType.OLED128x64)
         {
-            var display = new I2cBus(address, speed);
-            _ssd1306 = display;
+            _displayType = displayType;
+
+            _ssd1306 = new I2CBus(address, speed);
+
             switch (displayType)
             {
                 case DisplayType.OLED128x64:
+                case DisplayType.OLED64x48:
                     _width = 128;
                     _height = 64;
                     SendCommands(_oled128x64SetupSequence);
@@ -226,11 +229,18 @@ namespace Meadow.Foundation.Displays
                     _height = 32;
                     SendCommands(_oled128x32SetupSequence);
                     break;
+                case DisplayType.OLED96x16:
+                    _width = 64;
+                    _height = 48;
+                    SendCommands(_oled96x16SetupSequence);
+                    break;
             }
-            var pages = _height / 8;
-            _buffer = new byte[_width * pages];
-            _showPreamble = new byte[] { 0x21, 0x00, (byte) (_width - 1), 0x22, 0x00, (byte) (pages - 1) };
+
+            _buffer = new byte[_width * _height / 8];
+            _showPreamble = new byte[] { 0x21, 0x00, (byte)(_width - 1), 0x22, 0x00, (byte)(_height/8 - 1) };
+
             IgnoreOutOfBoundsPixels = false;
+
             //
             //  Finally, put the display into a known state.
             //
@@ -277,6 +287,7 @@ namespace Meadow.Foundation.Displays
             const int PAGE_SIZE = 16;
             var data = new byte[PAGE_SIZE + 1];
             data[0] = 0x40;
+
             for (ushort index = 0; index < _buffer.Length; index += PAGE_SIZE)
             {
                 Array.Copy(_buffer, index, data, 1, PAGE_SIZE);
@@ -312,19 +323,23 @@ namespace Meadow.Foundation.Displays
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
         public override void DrawPixel(int x, int y, bool colored)
         {
+            if(_displayType == DisplayType.OLED64x48)
+            {
+                DrawPixel64x48(x, y, colored);
+                return;
+            }
+
             if ((x >= _width) || (y >= _height))
             {
                 if (!IgnoreOutOfBoundsPixels)
                 {
                     throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
                 }
-                //
-                //  If we get here then we have a problem but the application wants the
-                //  pixels to be thrown away if out of bounds of the display.
-                //
+                //  pixels to be thrown away if out of bounds of the display
                 return;
             }
-            var index = ((y / 8) * _width) + x;
+            var index = (y / 8 * _width) + x;
+
             if (colored)
             {
                 _buffer[index] = (byte) (_buffer[index] | (byte) (1 << (y % 8)));
@@ -332,6 +347,34 @@ namespace Meadow.Foundation.Displays
             else
             {
                 _buffer[index] = (byte) (_buffer[index] & ~(byte) (1 << (y % 8)));
+            }
+        }
+
+        private void DrawPixel64x48(int x, int y, bool colored)
+        {
+            if ((x >= 64) || (y >= 48))
+            {
+                if (!IgnoreOutOfBoundsPixels)
+                {
+                    throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
+                }
+                //  pixels to be thrown away if out of bounds of the display
+                return;
+            }
+
+            //offsets for landscape
+            x += 32;
+            y += 16;
+
+            var index = (y / 8 * _width) + x;
+
+            if (colored)
+            {
+                _buffer[index] = (byte)(_buffer[index] | (byte)(1 << (y % 8)));
+            }
+            else
+            {
+                _buffer[index] = (byte)(_buffer[index] & ~(byte)(1 << (y % 8)));
             }
         }
 
