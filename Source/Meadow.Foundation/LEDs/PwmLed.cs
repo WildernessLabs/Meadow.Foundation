@@ -75,7 +75,7 @@ namespace Meadow.Foundation.LEDs
             _maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
 
             Port = pwm;
-            //this.Port = new PWM(pin, 100, this._maximumPwmDuty, false);
+            //this.Port = new PWM(pin, 100, _maximumPwmDuty, false);
 			Port.Frequency = 100;
 			Port.DutyCycle = _maximumPwmDuty;
         }

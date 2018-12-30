@@ -7,12 +7,12 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         private string _command;
         public MenuSelectedEventArgs(string command)
         {
-            this._command = command;
+            _command = command;
         }
 
         public string Command
         {
-            get { return this._command; }
+            get { return _command; }
         }
     }
     public delegate void MenuSelectedHandler(object sender, MenuSelectedEventArgs e);
@@ -23,18 +23,18 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         private object _value;
         public ValueChangedEventArgs(string id, object value)
         {
-            this._id = id;
-            this._value = value;
+            _id = id;
+            _value = value;
         }
 
         public string ItemID
         {
-            get { return this._id; }
+            get { return _id; }
         }
 
         public object Value
         {
-            get { return this._value; }
+            get { return _value; }
         }
     }
     public delegate void ValueChangedHandler(object sender, ValueChangedEventArgs e);

@@ -45,7 +45,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
         //        return _sequentialAddressOperationEnabled;
         //    }
         //    set {
-        //        this._i2cBus.WriteRegister(_IOConfigurationRegister, (byte)(value ? 1 : 0));
+        //        _i2cBus.WriteRegister(_IOConfigurationRegister, (byte)(value ? 1 : 0));
         //    }
         //} private bool _sequentialAddressOperationEnabled = false;
 
@@ -68,7 +68,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
             //SCK.Dispose();
 
             // configure our i2c bus so we can talk to the chip
-            this._i2cBus = new I2cBus(address, speed);
+            _i2cBus = new I2cBus(address, speed);
 
             Debug.Print("initialized.");
 
@@ -78,14 +78,14 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
             //Thread.Sleep(100);
 
             // read in the initial state of the chip
-            _iodir = this._i2cBus.ReadRegister(_IODirectionRegister);
+            _iodir = _i2cBus.ReadRegister(_IODirectionRegister);
             // tried some sleeping, but also has no effect on its reliability
             //Thread.Sleep(100);
             //Debug.Print("IODIR: " + _iodir.ToString("X"));
-            _gpio = this._i2cBus.ReadRegister(_GPIORegister);
+            _gpio = _i2cBus.ReadRegister(_GPIORegister);
             //Thread.Sleep(100);
             //Debug.Print("GPIO: " + _gpio.ToString("X"));
-            _olat = this._i2cBus.ReadRegister(_OutputLatchRegister);
+            _olat = _i2cBus.ReadRegister(_OutputLatchRegister);
             //Thread.Sleep(100);
             //Debug.Print("OLAT: " + _olat.ToString("X"));
         }
@@ -103,13 +103,13 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
             }
 
             // the chip will automatically write all registers sequentially.
-            this._i2cBus.WriteRegisters(_IODirectionRegister, buffers);
+            _i2cBus.WriteRegisters(_IODirectionRegister, buffers);
 
             // save our state
-            this._iodir = buffers[0];
-            this._gpio = 0x00;
-            this._olat = 0x00;
-            this._gppu = 0x00;
+            _iodir = buffers[0];
+            _gpio = 0x00;
+            _olat = 0x00;
+            _gppu = 0x00;
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
 
                 // set the IODIR bit and write the setting
                 _iodir = BitHelpers.SetBit(_iodir, (byte)pin, (byte)direction);
-                this._i2cBus.WriteRegister(_IODirectionRegister, _iodir);
+                _i2cBus.WriteRegister(_IODirectionRegister, _iodir);
             }
             else
             {
@@ -191,22 +191,22 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
 
                 // refresh out pull up state
                 // TODO: do away with this and trust internal state?
-                _gppu = this._i2cBus.ReadRegister(_PullupResistorConfigurationRegister);
+                _gppu = _i2cBus.ReadRegister(_PullupResistorConfigurationRegister);
 
                 _gppu = BitHelpers.SetBit(_gppu, pin, enablePullUp);
 
-                this._i2cBus.WriteRegister(_PullupResistorConfigurationRegister, _gppu);
+                _i2cBus.WriteRegister(_PullupResistorConfigurationRegister, _gppu);
 
                 if (enableInterrupt)
                 {
                     // interrupt on change (whether or not we want to raise an interrupt on the interrupt pin on change)
-                    byte gpinten = this._i2cBus.ReadRegister(_InterruptOnChangeRegister);
+                    byte gpinten = _i2cBus.ReadRegister(_InterruptOnChangeRegister);
                     gpinten = BitHelpers.SetBit(gpinten, pin, true);
 
                     // interrupt control register; whether or not the change is based 
                     // on default comparison value, or if a change from previous. We 
                     // want to raise on change, so we set it to 0, always.
-                    byte interruptControl = this._i2cBus.ReadRegister(_InterruptControlRegister);
+                    byte interruptControl = _i2cBus.ReadRegister(_InterruptControlRegister);
                     interruptControl = BitHelpers.SetBit(interruptControl, pin, false);
                 }
             }
@@ -234,7 +234,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
                 _olat = BitHelpers.SetBit(_olat, (byte)pin, value);
 
                 // write to the output latch (actually does the output setting)
-                this._i2cBus.WriteRegister(_OutputLatchRegister, _olat);
+                _i2cBus.WriteRegister(_OutputLatchRegister, _olat);
             }
             else
             {
@@ -250,7 +250,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
                 this.SetPortDirection((byte)pin, PortDirectionType.Input);
 
                 // update our GPIO values
-                _gpio = this._i2cBus.ReadRegister(_GPIORegister);
+                _gpio = _i2cBus.ReadRegister(_GPIORegister);
 
                 // return the value on that port
                 return BitHelpers.GetBitValue(_gpio, (byte)pin);
@@ -269,11 +269,11 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
             // set all IO to output
             if (_iodir != 0) {
                 _iodir = 0;
-                this._i2cBus.WriteRegister(_IODirectionRegister, _iodir);
+                _i2cBus.WriteRegister(_IODirectionRegister, _iodir);
             }
             // write the output
             _olat = mask;
-            this._i2cBus.WriteRegister(_OutputLatchRegister, _olat);
+            _i2cBus.WriteRegister(_OutputLatchRegister, _olat);
         }
 
         protected bool IsValidPin(byte pin)

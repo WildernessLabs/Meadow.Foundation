@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Switches
         protected void HandleSwitchChange(int switchNumber)
         {
             Debug.Print("HandleSwitchChange: " + switchNumber.ToString() + ", total switches: " + (_switches.Length).ToString());
-            this.Changed(this, new ArrayEventArgs(switchNumber, this._switches[switchNumber]));
+            this.Changed(this, new ArrayEventArgs(switchNumber, _switches[switchNumber]));
         }
     }
 }

@@ -18,9 +18,9 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 
         public NumericBase(int min, int max, byte scale)
         {
-            this._max = max;
-            this._min = min;
-            this._scale = scale;
+            _max = max;
+            _min = min;
+            _scale = scale;
         }
 
         string NumericDisplay

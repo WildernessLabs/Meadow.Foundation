@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 
         public TimeBase(TimeMode timeMode)
         {
-            this._timeMode = timeMode;
+            _timeMode = timeMode;
         }
 
         string TimeDisplay
