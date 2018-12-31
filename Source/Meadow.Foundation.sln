@@ -51,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.SI1145", "Per
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.TSL2561", "Peripheral_Libs\Sensors.Light.TSL2561\Sensors.Light.TSL2561.csproj", "{F9DB7EB9-A2A6-49F1-9BBD-E407668FD22B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Servo.Core", "Peripheral_Libs\Sensors.Servo.Core\Sensors.Servo.Core.csproj", "{93D0A373-7D7B-412A-A168-EBABB467FAA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servos.Servo.Core", "Peripheral_Libs\Sensors.Servo.Core\Servos.Servo.Core.csproj", "{93D0A373-7D7B-412A-A168-EBABB467FAA8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.ADXL335", "Peripheral_Libs\Sensors.Motion.ADXL335\Sensors.Motion.ADXL335.csproj", "{F1375C2B-478D-45F8-8D0A-61C6C3EE66F0}"
 EndProject
