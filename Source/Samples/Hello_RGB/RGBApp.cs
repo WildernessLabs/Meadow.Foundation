@@ -23,10 +23,10 @@ namespace Hello_RGB
 
             // new up our onboard RGB LED
 
-            // option 1, using pins:
-            _onboardLed = new RgbPwmLed(Device.Pins.OnboardLEDRed,
-                            Device.Pins.OnboardLEDBlue,
-                            Device.Pins.OnboardLEDGreen);
+            // option 1, using pins: TODO
+          //  _onboardLed = new RgbPwmLed(Device.Pins.OnboardLEDRed,
+          //                  Device.Pins.OnboardLEDBlue,
+          //                  Device.Pins.OnboardLEDGreen);
 
             // option 2, using ports (e.g from an IO Expander chip)
             //_onboardLed = new RgbPwmLed(

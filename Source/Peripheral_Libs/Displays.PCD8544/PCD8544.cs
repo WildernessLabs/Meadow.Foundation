@@ -20,8 +20,8 @@ namespace Meadow.Foundation.Displays
         protected bool _invertDisplay = false;
 
         protected DigitalOutputPort dataCommandPort;
-        protected DgitalOutputPort resetPort;
-        protected SPI spi;
+        protected DigitalOutputPort resetPort;
+        protected Spi spi;
 
         protected byte[] spiBuffer;
 
@@ -44,17 +44,17 @@ namespace Meadow.Foundation.Displays
                 Clock_Edge: true,
                 Clock_RateKHz: speedKHz);
 
-            spi = new SPI(spiConfig);
+            spi = new Spi(spiConfig);
 
             Initialize();
         }
 
         private void Initialize()
         {
-            resetPort.Write(false);
-            resetPort.Write(true);
+            resetPort.State = (false);
+            resetPort.State = (true);
 
-            dataCommandPort.Write(false);
+            dataCommandPort.State = (false);
 
             // spi.Write(new byte[] { 0x21, 0xBF, 0x04, 0x14, 0x0C, 0x20, 0x0C });
 
@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Displays
                 0x0C // Set display control, normal mode. 0x0D for inverse, 0x0C for normal
             });
 
-            dataCommandPort.Write(true);
+            dataCommandPort.State = (true);
 
             Clear();
             Show();
@@ -79,9 +79,9 @@ namespace Meadow.Foundation.Displays
         {
             spiBuffer = new byte[Width * Height / 8];
 
-            dataCommandPort.Write(false);
+            dataCommandPort.State = (false);
             spi.Write(new byte[] { 0x80, 0x40 });
-            dataCommandPort.Write(true);
+            dataCommandPort.State = (true);
         }
 
         /// <summary>
@@ -160,9 +160,9 @@ namespace Meadow.Foundation.Displays
         private void Invert(bool inverse)
         {
             _invertDisplay = inverse;
-            dataCommandPort.Write(false);
+            dataCommandPort.State = (false);
             spi.Write(inverse ? new byte[] { 0x0D } : new byte[] { 0x0C });
-            dataCommandPort.Write(true);
+            dataCommandPort.State = (true);
         }
     }
 }

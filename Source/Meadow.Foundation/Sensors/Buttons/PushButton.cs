@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// Returns the current raw state of the switch. If the switch 
         /// is pressed (connected), returns true, otherwise false.
         /// </summary>
-        public bool State => (DigitalIn != null) ? !DigitalIn.Value : false;
+        public bool State => (DigitalIn != null) ? !DigitalIn.State : false;
 
         /// <summary>
         /// The minimum duration for a long press.

@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Switches
 
         public bool IsOn
         {
-            get => DigitalIn.Value;
+            get => DigitalIn.State;
             protected set => Changed(this, new EventArgs());
         }
 
@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Switches
 
         private void DigitalIn_Changed(object sender, PortEventArgs e)
         {
-            IsOn = DigitalIn.Value;
+            IsOn = DigitalIn.State;
         }
     }
 }

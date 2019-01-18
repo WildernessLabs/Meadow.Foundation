@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         private void DigitalInputPortChanged(object sender, PortEventArgs e)
         {
-            if (_digitalInputPort.Value)
+            if (_digitalInputPort.State)
             {
                 if (OnMotionStart != null)
                 {

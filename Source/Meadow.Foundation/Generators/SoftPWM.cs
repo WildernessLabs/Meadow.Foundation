@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Generators
     /// </summary>
 	public class SoftPwm
     {
-        public DigitalOutputPort DigitalOutputPort { get; private set; }
+        public IDigitalOutputPort DigitalOutputPort { get; private set; }
 
         public float DutyCycle
         {
@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Generators
         protected int _offTimeMilliseconds = 0;
         protected bool _running = false;
 
-        public SoftPwm(IDigitalChannel outputPin, float dutyCycle = 0.5f, float frequency = 1.0f)
+        public SoftPwm(IDigitalPin outputPin, float dutyCycle = 0.5f, float frequency = 1.0f)
         {
             DigitalOutputPort = new DigitalOutputPort(outputPin, false);
             DutyCycle = dutyCycle;

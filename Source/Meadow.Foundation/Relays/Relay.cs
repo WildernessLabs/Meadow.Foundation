@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Relays
 {
     public class Relay : IRelay
     {
-        public IDigitalOutputPort DigitalOut { get; protected set; }
+        public DigitalOutputPort DigitalOut { get; protected set; }
 
         public RelayType Type { get; protected set; }
 
@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Relays
         /// </summary>
         /// <param name="port"></param>
         /// <param name="type"></param>
-        public Relay(IDigitalOutputPort port, RelayType type = RelayType.NormallyOpen)
+        public Relay(DigitalOutputPort port, RelayType type = RelayType.NormallyOpen)
         {
             // if it's normally closed, we have to invert the "on" value
             Type = type;
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Relays
             DigitalOut = port;
         }
 
-        public Relay(IDigitalChannel pin, RelayType type = RelayType.NormallyOpen)
+        public Relay(IDigitalPin pin, RelayType type = RelayType.NormallyOpen)
         {
             // if it's normally closed, we have to invert the "on" value
             Type = type;

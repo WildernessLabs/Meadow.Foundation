@@ -10,6 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
+    <ProjectReference Include="..\..\..\meadow.core\source\Meadow.Core\Meadow.Core.csproj" />
   </ItemGroup>
 </Project>

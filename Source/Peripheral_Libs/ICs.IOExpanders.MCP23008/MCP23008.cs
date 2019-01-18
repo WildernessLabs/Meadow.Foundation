@@ -135,15 +135,12 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
             throw new System.Exception("Pin is out of range");
         }
 
-        public DigitalInputPort CreateInputPort(byte pin, bool enablePullUp = false)
+        public DigitalInputPort CreateInputPort(IDigitalPin pin, bool enablePullUp = false)
         {
-            if (IsValidPin(pin))
+            if (pin != null)
             {
-                // configure the pin
-                this.ConfigureInputPort(pin, enablePullUp, false);
-
                 // create the convenience class
-                DigitalInputPort port = new DigitalInputPort(this, pin, false);
+                DigitalInputPort port = new DigitalInputPort(pin, false, ResistorMode.PullUp);
 
                 return port;
             }

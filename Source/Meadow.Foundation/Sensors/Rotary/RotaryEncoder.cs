@@ -37,8 +37,8 @@ namespace Meadow.Foundation.Sensors.Rotary
 
             // the first time through (not processing) store the result in array slot 0.
             // second time through (is processing) store the result in array slot 2.
-            _results[_processing ? 1 : 0].APhase = this.APhasePin.Value;
-            _results[_processing ? 1 : 0].BPhase = this.BPhasePin.Value;
+            _results[_processing ? 1 : 0].APhase = this.APhasePin.State;
+            _results[_processing ? 1 : 0].BPhase = this.BPhasePin.State;
 
             // if this is the second result that we're reading, we should now have 
             // enough information to know which way it's turning, so process the
