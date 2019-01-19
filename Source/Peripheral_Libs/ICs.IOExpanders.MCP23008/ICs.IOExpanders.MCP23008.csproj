@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Version>0.0.0</Version>
+    <PackageId>Meadow.Foundation.ICs.IOExpanders.MCP23008</PackageId>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <Product>Meadow</Product>
   </PropertyGroup>
 
   <ItemGroup>

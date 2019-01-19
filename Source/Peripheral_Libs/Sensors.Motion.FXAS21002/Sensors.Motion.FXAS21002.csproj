@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.0.0</Version>
+    <PackageId>Meadow.Foundation.Sensors.Motion.FXAS21002</PackageId>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <Product>Meadow</Product>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Meadow.Foundation\Meadow.Foundation.csproj" />
-  </ItemGroup>
 
 </Project>

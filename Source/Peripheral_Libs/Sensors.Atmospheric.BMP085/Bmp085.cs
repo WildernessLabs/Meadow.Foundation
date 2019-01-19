@@ -1,9 +1,8 @@
 ﻿using System;
-using Microsoft.SPOT;
 
 namespace Netduino.Foundation.Sensors.Atmospheric
 {
-    public class Class1
+    public class BMP085
     {
     }
 }

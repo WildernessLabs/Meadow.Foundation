@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.0.0</Version>
+    <PackageId>Meadow.Foundation.Sensors.Atmospheric.HTU21DF</PackageId>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <Product>Meadow</Product>
   </PropertyGroup>
 
 </Project>
