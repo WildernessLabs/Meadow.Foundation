@@ -42,3 +42,12 @@ Copyright 2019, Wilderness Labs Inc.
 
 Authors: Bryan Costanich, Mark Stevens, Adrian Stevens, Jorge Ramirez, Brian Kim, Frank Krueger, Craig Dunn
 
+# Publishing Nuget Packages
+
+To trigger a new build:  
+- Go to project properties in VS 2017  
+- in the `Package` tab, increment either the MAJOR or MINOR `Package version`.  
+
+The CI job will pick up the changes, pack, and push the Nuget package.
+
+[![Build Status](http://jenkins.wildernesslabs.co/buildStatus/icon?job=Meadow.Foundation)](http://jenkins.wildernesslabs.co/job/Meadow.Foundation)
