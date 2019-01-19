@@ -18,7 +18,7 @@ nuget install Meadow.Foundation
 
 Meadow.Foundation, is open source and community powered. We love pull requests, so if you've got a driver to add, send it on over! For each peripheral driver, please include:
 
- * **Documentation** - Including a Fritzing breadboard schematic on wiring it up, sourcing info, and API docs. Please see other drivers for examples. Documentation is hosted on the Wilderness Labs [DocFx](http://github.com/wildernesslabs/docfx) site.
+ * **Documentation** - Including a Fritzing breadboard schematic on wiring it up, sourcing info, and API docs. Please see other drivers for examples. Documentation is hosted on the Wilderness Labs [DocFx](https://wildernesslabs.github.io/docfx/) site.
  * **Datasheet** - For the peripheral, if applicable.
  * **Sample** - Application illustrating usage of the peripheral.
 
