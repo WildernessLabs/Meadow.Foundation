@@ -165,7 +165,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="z">Analog pin connected to the Z axis output from the ADXL335 sensor.</param>
         /// <param name="updateInterval">Update interval for the sensor, set to 0 to put the sensor in polling mode.</param>
         /// <<param name="accelerationChangeNotificationThreshold">Acceleration change threshold.</param>
-        public ADXL335(Cpu.AnalogChannel x, Cpu.AnalogChannel y, Cpu.AnalogChannel z, ushort updateInterval = 100,
+        public ADXL335(IAnalogPin x, IAnalogPin y, IAnalogPin z, ushort updateInterval = 100,
                        double accelerationChangeNotificationThreshold = 0.1F)
         {
             if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
@@ -219,9 +219,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public void Update()
         {
-            X = ((_x.Value * SupplyVoltage) - _zeroGVoltage) / XVoltsPerG;
-            Y = ((_y.Value * SupplyVoltage) - _zeroGVoltage) / YVoltsPerG;
-            Z = ((_z.Value * SupplyVoltage) - _zeroGVoltage) / ZVoltsPerG;
+            X = ((_x.RawValue * SupplyVoltage) - _zeroGVoltage) / XVoltsPerG;
+            Y = ((_y.RawValue * SupplyVoltage) - _zeroGVoltage) / YVoltsPerG;
+            Z = ((_z.RawValue * SupplyVoltage) - _zeroGVoltage) / ZVoltsPerG;
             if ((_updateInterval != 0) && 
                 ((Math.Abs(X - _lastX) > AccelerationChangeNotificationThreshold) ||
                  (Math.Abs(Y - _lastY) > AccelerationChangeNotificationThreshold) ||
@@ -242,7 +242,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Vector object containing the raw sensor data from the analog pins.</returns>
         public Vector GetRawSensorData()
         {
-            return new Vector(_x.Value, _y.Value, _z.Value);
+            return new Vector(_x.RawValue, _y.RawValue, _z.RawValue);
         }
 
         #endregion Methods

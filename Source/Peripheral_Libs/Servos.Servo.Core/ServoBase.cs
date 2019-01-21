@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Servos
             }
 
             // calculate the appropriate pulse duration for the angle
-            double pulseDuration = CalculatePulseDuration(angle);
+            float pulseDuration = CalculatePulseDuration(angle);
             //Debug.Print("Pulse Duration: " + pulseDuration.ToString());
             
             // send our pulse to the servo to make it move
@@ -75,23 +75,23 @@ namespace Meadow.Foundation.Servos
             _angle = -1;
         }
 
-        protected double CalculatePulseDuration(int angle)
+        protected float CalculatePulseDuration(int angle)
         {
             // offset + (angle percent * duration length)
-            return _config.MinimumPulseDuration + (((double)angle / _config.MaximumAngle) * (_config.MaximumPulseDuration - _config.MinimumPulseDuration));
+            return _config.MinimumPulseDuration + (((float)angle / _config.MaximumAngle) * (_config.MaximumPulseDuration - _config.MinimumPulseDuration));
             // sample calcs:
             // 0 degrees time = 1000 + ( (0 / 180) * 1000 ) = 1,000 microseconds
             // 90 degrees time = 1000 + ( (90 / 180) * 1000 ) = 1,500 microseconds
             // 180 degrees time = 1000 + ( (180 / 180) * 1000 ) = 2,000 microseconds
         }
 
-        protected double CalculateDutyCycle(double pulseDuration)
+        protected float CalculateDutyCycle(float pulseDuration)
         {
             // the pulse duration is dependent on the frequency we're driving the servo at
             return pulseDuration / ((1.0f / (float)_config.Frequency) * 1000000f);
         }
 
-        protected void SendCommandPulse(double pulseDuration)
+        protected void SendCommandPulse(float pulseDuration)
         {
             //Debug.Print("Sending Command Pulse");
             _pwm.DutyCycle = CalculateDutyCycle(pulseDuration);

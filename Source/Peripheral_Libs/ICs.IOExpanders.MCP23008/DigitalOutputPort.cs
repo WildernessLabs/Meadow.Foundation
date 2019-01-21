@@ -24,9 +24,9 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
             get { return _initialState; }
         } 
 
-        protected DigitalOutputPort() : base(false) { }
+        protected DigitalOutputPort() : base(new DigitalChannelnfo(), false) { }
 
-        internal DigitalOutputPort(MCP23008 mcp, byte pin, bool initialState) : base(initialState)
+        internal DigitalOutputPort(MCP23008 mcp, byte pin, bool initialState) : base(new DigitalChannelnfo(), initialState)
         {
             _mcp = mcp;
             _pin = pin;

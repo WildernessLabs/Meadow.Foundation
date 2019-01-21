@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="dataBits">Number of data bits (default is 8 data bits).</param>
         /// <param name="stopBits">Number of stop bits (default is one stop bit).</param>
         public SerialLCD(TextDisplayConfig config = null,  string port = "COM1", int baudRate = 9600,
-            Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One)
+            ParityType parity = ParityType.None, int dataBits = 8, NumberOfStopBits stopBits = NumberOfStopBits.One)
         {
             if (config == null)
             {

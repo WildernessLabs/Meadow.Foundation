@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Servos
             }
 
             // calculate the appropriate pulse duration for the speed and direction
-            double pulseDuration = CalculatePulseDuration(direction, speed);
+            float pulseDuration = CalculatePulseDuration(direction, speed);
             //Debug.Print("Pulse Duration: " + pulseDuration.ToString());
 
             // send our pulse to the servo to make it move
@@ -97,7 +97,7 @@ namespace Meadow.Foundation.Servos
         /// <param name="direction"></param>
         /// <param name="speed"></param>
         /// <returns></returns>
-        protected double CalculatePulseDuration(RotationDirection direction, float speed)
+        protected float CalculatePulseDuration(RotationDirection direction, float speed)
         {
             // calculate the midpoint/neutral/stop
             int midpointPulseDuration = _config.MinimumPulseDuration + ((_config.MaximumPulseDuration - _config.MinimumPulseDuration) / 2);
@@ -118,13 +118,13 @@ namespace Meadow.Foundation.Servos
             return pulseDuration;
         }
 
-        protected double CalculateDutyCycle(double pulseDuration)
+        protected float CalculateDutyCycle(float pulseDuration)
         {
             // the pulse duration is dependent on the frequency we're driving the servo at
             return pulseDuration / ((1.0f / (float)_config.Frequency) * 1000000f);
         }
 
-        protected void SendCommandPulse(double pulseDuration)
+        protected void SendCommandPulse(float pulseDuration)
         {
             //Debug.Print("Sending Command Pulse");
             _pwm.DutyCycle = CalculateDutyCycle(pulseDuration);

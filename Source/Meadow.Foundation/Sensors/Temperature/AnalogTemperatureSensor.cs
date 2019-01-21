@@ -204,7 +204,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="calibration">Calibration for the analog temperature sensor.</param>
         /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
         /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
-        public AnalogTemperature(Cpu.AnalogChannel analogPin, KnownSensorType sensorType, Calibration calibration = null, 
+        public AnalogTemperature(IAnalogPin analogPin, KnownSensorType sensorType, Calibration calibration = null, 
             ushort updateInterval = MinimumPollingPeriod, float temperatureChangeNotificationThreshold = 0.001F)
         {
             if (temperatureChangeNotificationThreshold < 0)
@@ -290,7 +290,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public void Update()
         {
-            var reading = (float) (AnalogPort.Value * 3300);
+            var reading = (float) (AnalogPort.RawValue * 3300);
             reading -= _yIntercept;
             reading /= _millivoltsPerDegreeCentigrade;
             Temperature = reading;

@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Sensors.GPS
         /// <param name="parity">Parity.</param>
         /// <param name="dataBits">Number of data bits.</param>
         /// <param name="stopBits">Number of stop bits.</param>
-        public NMEA(string port, int baudRate, Parity parity, int dataBits, StopBits stopBits)
+        public NMEA(string port, int baudRate, ParityType parity, int dataBits, NumberOfStopBits stopBits)
         {
             _gps = new SerialTextFile(port, baudRate, parity, dataBits, stopBits, "\r\n");
             _gps.OnLineReceived += _gps_OnLineReceived;
