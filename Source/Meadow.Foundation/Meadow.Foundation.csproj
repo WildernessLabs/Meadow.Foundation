@@ -46,7 +46,6 @@
     <Compile Include="CircuitTerminationType.cs" />
     <Compile Include="Communications\SerialTextFile.cs" />
     <Compile Include="Controllers\PID\IdealPidController.cs" />
-    <Compile Include="Controllers\PID\IPidController.cs" />
     <Compile Include="Controllers\PID\PidControllerBase.cs" />
     <Compile Include="Controllers\PID\StandardPidController.cs" />
     <Compile Include="Displays\DisplayBase.cs" />
@@ -60,8 +59,6 @@
     <Compile Include="Helpers\DebugInformation.cs" />
     <Compile Include="Helpers\NumericExtensions.cs" />
     <Compile Include="LEDs\Helpers.cs" />
-    <Compile Include="LEDs\ILed.cs" />
-    <Compile Include="LEDs\IPwmLed.cs" />
     <Compile Include="LEDs\Led.cs" />
     <Compile Include="LEDs\PwmLed.cs" />
     <Compile Include="LEDs\RgbPwmLed.cs" />

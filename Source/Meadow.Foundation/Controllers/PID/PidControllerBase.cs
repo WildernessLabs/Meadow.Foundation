@@ -1,3 +1,4 @@
+using Meadow.Peripherals.Controllers.PID;
 using System;
 
 namespace Meadow.Foundation.Controllers.PID
