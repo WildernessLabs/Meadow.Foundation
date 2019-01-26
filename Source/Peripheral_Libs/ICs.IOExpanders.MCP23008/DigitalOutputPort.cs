@@ -22,11 +22,14 @@ namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
         public override bool InitialState
         {
             get { return _initialState; }
-        } 
+        }
 
-        protected DigitalOutputPort() : base(new DigitalChannelnfo(), false) { }
+        //ToDo - Adrian - this should be refactored into the base DigitalOutputPort class or have a seperate wrapper 
+        //vs having two different versions of DigitalOutoutPort
+        protected DigitalOutputPort() : base(null /*new DigitalChannelInfo()*/, false) 
+        { }
 
-        internal DigitalOutputPort(MCP23008 mcp, byte pin, bool initialState) : base(new DigitalChannelnfo(), initialState)
+        internal DigitalOutputPort(MCP23008 mcp, byte pin, bool initialState) : base(null /*new DigitalChannelInfo()*/, initialState)
         {
             _mcp = mcp;
             _pin = pin;
