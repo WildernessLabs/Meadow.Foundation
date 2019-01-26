@@ -49,9 +49,6 @@
     <Compile Include="Controllers\PID\PidControllerBase.cs" />
     <Compile Include="Controllers\PID\StandardPidController.cs" />
     <Compile Include="Displays\DisplayBase.cs" />
-    <Compile Include="Displays\IDisplay.cs" />
-    <Compile Include="Displays\ITextDisplay.cs" />
-    <Compile Include="Displays\TextDisplayConfig.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Generators\SoftPWM.cs" />
     <Compile Include="Helpers\Checksum.cs" />

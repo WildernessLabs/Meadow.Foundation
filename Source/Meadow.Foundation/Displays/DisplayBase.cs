@@ -1,9 +1,10 @@
-﻿using System.Drawing;
+﻿using Meadow.Peripherals.Displays;
+using System.Drawing;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    ///     Define the interface for the display object.
+    /// Define the interface for the display object.
     /// </summary>
     public abstract class DisplayBase : IDisplay
     {
@@ -18,6 +19,9 @@ namespace Meadow.Foundation.Displays
             Copy
         };
 
+        /// <summary>
+        /// 
+        /// </summary>
         public enum DisplayColorMode
         {
             Format1bpp, //1306 and single color ePaper
@@ -29,24 +33,34 @@ namespace Meadow.Foundation.Displays
             Format24bppRgb888 //not used
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public abstract DisplayColorMode ColorMode { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public abstract uint Width { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public abstract uint Height { get; }
 
         /// <summary>
-        ///     Indicate of the hardware driver should ignore out of bounds pixels
-        ///     or if the driver should generate an exception.
+        /// Indicate of the hardware driver should ignore out of bounds pixels
+        /// or if the driver should generate an exception.
         /// </summary>
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
         /// <summary>
-        ///     Transfer the contents of the buffer to the display.
+        /// Transfer the contents of the buffer to the display.
         /// </summary>
         public abstract void Show();
 
         /// <summary>
-        ///     Clear the display.
+        /// Clear the display.
         /// </summary>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
         public abstract void Clear(bool updateDisplay = false);
@@ -62,7 +76,7 @@ namespace Meadow.Foundation.Displays
 
 
         /// <summary>
-        ///     Copy a 1bpp bitmap to the display.
+        /// Copy a 1bpp bitmap to the display.
         /// </summary>
         /// <param name="x">Abscissa of the top left corner of the bitmap.</param>
         /// <param name="y">Ordinate of the top left corner of the bitmap.</param>
@@ -73,7 +87,7 @@ namespace Meadow.Foundation.Displays
         public abstract void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode);
 
         /// <summary>
-        ///     Copy a 1bpp bit bitmap to the display.
+        /// Copy a 1bpp bit bitmap to the display.
         /// </summary>
         /// <param name="x">Abscissa of the top left corner of the bitmap.</param>
         /// <param name="y">Ordinate of the top left corner of the bitmap.</param>
