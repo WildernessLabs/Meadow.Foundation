@@ -1,6 +1,7 @@
-using Meadow.Hardware;
 using System;
 using System.Threading;
+using Meadow.Hardware;
+using Meadow.Peripherals.Leds;
 
 namespace Meadow.Foundation.LEDs
 {
@@ -109,9 +110,20 @@ namespace Meadow.Foundation.LEDs
         }
 
         /// <summary>
+        /// Starts the blink animation.
+        /// </summary>
+        /// <param name="onDuration">On duration.</param>
+        /// <param name="offDuration">Off duration.</param>
+        public void StartBlink(uint onDuration = 200, uint offDuration = 200)
+        {
+            StartBlink(onDuration, offDuration, 1, 0);
+        }
+
+
+        /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
         /// </summary>
-        public void StartBlink(int onDuration = 200, int offDuration = 200, float highBrightness = 1, float lowBrightness = 0)
+        public void StartBlink(uint onDuration, uint offDuration, float highBrightness, float lowBrightness)
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {
@@ -134,9 +146,9 @@ namespace Meadow.Foundation.LEDs
                 while (_running)
                 {
                     this.SetBrightness(highBrightness);
-                    Thread.Sleep(onDuration);
+                    Thread.Sleep((int)onDuration);
                     this.SetBrightness(lowBrightness);
-                    Thread.Sleep(offDuration);
+                    Thread.Sleep((int)offDuration);
                 }
             });
             _animationThread.Start();

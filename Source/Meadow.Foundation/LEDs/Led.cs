@@ -1,14 +1,26 @@
 using Meadow;
+using Meadow.Peripherals.Leds;
 using Meadow.Hardware;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.LEDs
 {
+    /// <summary>
+    /// Represents a simple LED.
+    /// </summary>
     public class Led : ILed
     {
+        /// <summary>
+        /// Gets the port the LED is being driven by.
+        /// </summary>
+        /// <value>The port.</value>
         public IDigitalOutputPort Port { get; protected set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="T:Meadow.Foundation.LEDs.Led"/> is on.
+        /// </summary>
+        /// <value><c>true</c> if is on; otherwise, <c>false</c>.</value>
         public bool IsOn
         {
             get { return _isOn; }
@@ -75,7 +87,7 @@ namespace Meadow.Foundation.LEDs
         }
 
         /// <summary>
-        /// Stops blink animation.
+        /// Stops the LED when its blinking and/or turns it off.
         /// </summary>
         public void Stop()
         {
