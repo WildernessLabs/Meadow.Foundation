@@ -1,5 +1,5 @@
-using Meadow;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Buttons;
 using System;
 
 namespace Meadow.Foundation.Sensors.Buttons
@@ -31,15 +31,33 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         public TimeSpan LongPressThreshold { get; set; } = new TimeSpan(0, 0, 0, 0, 500);
 
+        /// <summary>
+        /// Returns digital input port.
+        /// </summary>
         public DigitalInputPort DigitalIn { get; private set; }
 
+        /// <summary>
+        /// Raised when a press starts (the button is pushed down; circuit is closed).
+        /// </summary>
         public event EventHandler PressStarted = delegate { };
+
+        /// <summary>
+        /// Raised when a press ends (the button is released; circuit is opened).
+        /// </summary>
         public event EventHandler PressEnded = delegate { };
-		public event EventHandler Clicked = delegate { };
+
+        /// <summary>
+        /// Raised when the button circuit is re-opened after it has been closed (at the end of a “press”.
+        /// </summary>
+        public event EventHandler Clicked = delegate { };
+
+        /// <summary>
+        /// Raised when the button circuit is pressed for at least 500ms.
+        /// </summary>
         public event EventHandler LongPressClicked = delegate { };
 
         /// <summary>
-        /// 
+        /// Creates a Push on a digital input port, especifying Circuit type, and optionally Debounce filter duration.
         /// </summary>
         /// <param name="inputPin"></param>
         /// <param name="type"></param>
@@ -67,12 +85,11 @@ namespace Meadow.Foundation.Sensors.Buttons
             // create the interrupt port from the pin and resistor type
             DigitalIn = new DigitalInputPort(inputPin, true, resistorMode);
 
-
             // wire up the interrupt handler
-            DigitalIn.Changed += DigitalIn_Changed;
+            DigitalIn.Changed += DigitalInChanged;
  		}
 
-        private void DigitalIn_Changed(object sender, PortEventArgs e)
+        private void DigitalInChanged(object sender, PortEventArgs e)
         {
               // check how much time has elapsed since the last click
             var timeSinceLast = DateTime.Now - _lastClicked;
