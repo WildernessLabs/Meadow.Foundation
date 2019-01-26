@@ -1,7 +1,5 @@
-using Meadow;
 using Meadow.Peripherals.Leds;
 using Meadow.Hardware;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.LEDs
