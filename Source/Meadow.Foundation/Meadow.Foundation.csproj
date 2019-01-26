@@ -61,7 +61,6 @@
     <Compile Include="LEDs\RgbPwmLed.cs" />
     <Compile Include="LEDs\TypicalForwardVoltage.cs" />
     <Compile Include="Motors\HBridgeMotor.cs" />
-    <Compile Include="Motors\IDCMotor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Relays\IRelay.cs" />
     <Compile Include="Relays\Relay.cs" />

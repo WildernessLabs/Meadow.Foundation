@@ -1,9 +1,12 @@
-using Meadow;
 using Meadow.Hardware;
+using Meadow.Peripherals.Motors;
 using System;
 
 namespace Meadow.Foundation.Motors
 {
+    /// <summary>
+    /// Generic h-bridge motor controller
+    /// </summary>
     public class HBridgeMotor : IDCMotor
     {
         /// <summary>
