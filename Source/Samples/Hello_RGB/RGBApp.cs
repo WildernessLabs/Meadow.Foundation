@@ -19,7 +19,7 @@ namespace Hello_RGB
         {
             Console.WriteLine("Got here.");
 
-            var foo = Device.Pins.D01;
+            //var foo = Device.Pins.D01;
 
             // new up our onboard RGB LED
 
@@ -39,10 +39,10 @@ namespace Hello_RGB
             // var foo = RGBApp.Current;
         }
 
-        public override void Run()
-        {
-            StartRunningColors();
-        }
+        //public override void Run()
+        //{
+        //    StartRunningColors();
+        //}
 
         public void StartRunningColors()
         {

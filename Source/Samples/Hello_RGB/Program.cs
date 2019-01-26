@@ -11,8 +11,8 @@ namespace Hello_RGB
         static void Main(string[] args)
         {
             // instantiate and run new meadow app
-            _app = new RGBApp();
-            _app.Run();
+            //_app = new RGBApp();
+            //_app.Run();
 
             // run forever
             Thread.Sleep(Timeout.Infinite);

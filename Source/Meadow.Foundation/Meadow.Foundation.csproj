@@ -1,18 +1,119 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.0.0</Version>
-    <Authors>Wilderness Labs, Inc</Authors>
-    <Product>Meadow</Product>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CEBD7F9A-4645-4A29-8A97-7889E241896F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Meadow.Foundation</RootNamespace>
+    <AssemblyName>Meadow.Foundation</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
-    <Folder Include="BaseClassses\" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ArrayEventArgs.cs" />
+    <Compile Include="CircuitTerminationType.cs" />
+    <Compile Include="Communications\SerialTextFile.cs" />
+    <Compile Include="Controllers\PID\IdealPidController.cs" />
+    <Compile Include="Controllers\PID\IPidController.cs" />
+    <Compile Include="Controllers\PID\PidControllerBase.cs" />
+    <Compile Include="Controllers\PID\StandardPidController.cs" />
+    <Compile Include="Displays\DisplayBase.cs" />
+    <Compile Include="Displays\IDisplay.cs" />
+    <Compile Include="Displays\ITextDisplay.cs" />
+    <Compile Include="Displays\TextDisplayConfig.cs" />
+    <Compile Include="Extensions\ColorExtensions.cs" />
+    <Compile Include="Generators\SoftPWM.cs" />
+    <Compile Include="Helpers\Checksum.cs" />
+    <Compile Include="Helpers\Converters.cs" />
+    <Compile Include="Helpers\DebugInformation.cs" />
+    <Compile Include="Helpers\NumericExtensions.cs" />
+    <Compile Include="LEDs\Helpers.cs" />
+    <Compile Include="LEDs\ILed.cs" />
+    <Compile Include="LEDs\IPwmLed.cs" />
+    <Compile Include="LEDs\Led.cs" />
+    <Compile Include="LEDs\PwmLed.cs" />
+    <Compile Include="LEDs\RgbPwmLed.cs" />
+    <Compile Include="LEDs\TypicalForwardVoltage.cs" />
+    <Compile Include="Motors\HBridgeMotor.cs" />
+    <Compile Include="Motors\IDCMotor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Relays\IRelay.cs" />
+    <Compile Include="Relays\Relay.cs" />
+    <Compile Include="Relays\RelayType.cs" />
+    <Compile Include="Sensors\Buttons\IButton.cs" />
+    <Compile Include="Sensors\Buttons\PushButton.cs" />
+    <Compile Include="Sensors\Distance\DistanceEventArgs.cs" />
+    <Compile Include="Sensors\Distance\IRangeFinder.cs" />
+    <Compile Include="Sensors\HallEffect\DigitalTachometer.cs" />
+    <Compile Include="Sensors\ICamera.cs" />
+    <Compile Include="Sensors\IHumiditySensor.cs" />
+    <Compile Include="Sensors\ILightSensor.cs" />
+    <Compile Include="Sensors\IPressureSensor.cs" />
+    <Compile Include="Sensors\ISensor.cs" />
+    <Compile Include="Sensors\Light\GenericAmbientLightSensor.cs" />
+    <Compile Include="Sensors\Light\IAmbientLightSensor.cs" />
+    <Compile Include="Sensors\Motion\IAccelerometer.cs" />
+    <Compile Include="Sensors\Proximity\IRangeFinder.cs" />
+    <Compile Include="Sensors\Rotary\IRotaryEncoder.cs" />
+    <Compile Include="Sensors\Rotary\IRotaryEncoderWithButton.cs" />
+    <Compile Include="Sensors\Rotary\RotaryDirection.cs" />
+    <Compile Include="Sensors\Rotary\RotaryEncoder.cs" />
+    <Compile Include="Sensors\Rotary\RotaryEncoderWithButton.cs" />
+    <Compile Include="Sensors\Rotary\RotaryTurnedEventArgs.cs" />
+    <Compile Include="Sensors\Rotary\TwoBitGrayCode.cs" />
+    <Compile Include="Sensors\SensorFloatEventArgs.cs" />
+    <Compile Include="Sensors\SensorVectorEventArgs.cs" />
+    <Compile Include="Sensors\Spatial\EulerAngles.cs" />
+    <Compile Include="Sensors\Spatial\Quaternion.cs" />
+    <Compile Include="Sensors\Spatial\Vector.cs" />
+    <Compile Include="Sensors\Switches\DipSwitch.cs" />
+    <Compile Include="Sensors\Switches\ISwitch.cs" />
+    <Compile Include="Sensors\Switches\SpdtSwitch.cs" />
+    <Compile Include="Sensors\Switches\SpstSwitch.cs" />
+    <Compile Include="Sensors\Temperature\AnalogTemperatureSensor.cs" />
+    <Compile Include="Sensors\Temperature\ITemperatureSensor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BaseClasses\" />
     <Folder Include="Enums\" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
+    <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
+      <Project>{b13c7bdd-77f5-45f8-bdb9-6cd368c67410}</Project>
+      <Name>Meadow.Core</Name>
+    </ProjectReference>
   </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
