@@ -1,15 +1,26 @@
-using Meadow;
 using Meadow.Hardware;
-using System;
+using Meadow.Peripherals.Relays;
 
 namespace Meadow.Foundation.Relays
 {
+    /// <summary>
+    /// Electrical switch (usually mechanical) that switches on an isolated circuit.
+    /// </summary>
     public class Relay : IRelay
     {
+        /// <summary>
+        /// Returns digital output port
+        /// </summary>
         public DigitalOutputPort DigitalOut { get; protected set; }
 
+        /// <summary>
+        /// Returns type of relay.
+        /// </summary>
         public RelayType Type { get; protected set; }
 
+        /// <summary>
+        /// Whether or not the relay is on. Setting this property will turn it on or off.
+        /// </summary>
         public bool IsOn {
             get => _isOn; 
             set
@@ -41,6 +52,11 @@ namespace Meadow.Foundation.Relays
             DigitalOut = port;
         }
 
+        /// <summary>
+        /// Creates a new Relay on an IDigitalOutputPort.
+        /// </summary>
+        /// <param name="pin"></param>
+        /// <param name="type"></param>
         public Relay(IDigitalPin pin, RelayType type = RelayType.NormallyOpen)
         {
             // if it's normally closed, we have to invert the "on" value
@@ -54,6 +70,9 @@ namespace Meadow.Foundation.Relays
             DigitalOut = new DigitalOutputPort(pin, !_onValue);
         }
 
+        /// <summary>
+        /// Toggles the relay on or off.
+        /// </summary>
         public void Toggle()
         {
             IsOn = !IsOn;
