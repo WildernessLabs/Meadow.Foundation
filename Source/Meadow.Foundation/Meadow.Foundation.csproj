@@ -73,7 +73,6 @@
     <Compile Include="Sensors\IPressureSensor.cs" />
     <Compile Include="Sensors\ISensor.cs" />
     <Compile Include="Sensors\Light\GenericAmbientLightSensor.cs" />
-    <Compile Include="Sensors\Proximity\IRangeFinder.cs" />
     <Compile Include="Sensors\Rotary\IRotaryEncoder.cs" />
     <Compile Include="Sensors\Rotary\IRotaryEncoderWithButton.cs" />
     <Compile Include="Sensors\Rotary\RotaryDirection.cs" />
@@ -97,6 +96,7 @@
     <Folder Include="BaseClasses\" />
     <Folder Include="Enums\" />
     <Folder Include="Sensors\Motion\" />
+    <Folder Include="Sensors\Proximity\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
