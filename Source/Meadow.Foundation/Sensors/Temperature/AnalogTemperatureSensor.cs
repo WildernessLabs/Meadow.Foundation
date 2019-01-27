@@ -1,5 +1,7 @@
 ﻿using Meadow;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Temperature;
 using System;
 using System.Threading;
 

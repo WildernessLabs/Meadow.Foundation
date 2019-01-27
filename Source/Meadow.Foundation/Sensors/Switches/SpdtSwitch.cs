@@ -1,4 +1,5 @@
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Switches;
 using System;
 

@@ -1,32 +1,41 @@
-using Meadow;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using System;
 using System.Diagnostics;
 
 namespace Meadow.Foundation.Sensors.HallEffect
 {
+    /// <summary>
+    /// Represents a Lineal Hall Effect Sensor
+    /// </summary>
     public class LinearHallEffectTachometer
     {
-
         /// <summary>
-        ///     Event raised when the RPM change is greater than the 
-        ///     RPMChangeNotificationThreshold value.
+        /// Event raised when the RPM change is greater than the 
+        /// RPMChangeNotificationThreshold value.
         /// </summary>
         public event SensorFloatEventHandler RPMsChanged = delegate { };
 
         /// <summary>
-        ///     Any changes to the RPMs that are greater than the RPM change
-        ///     threshold will cause an event to be raised when the instance is
-        ///     set to update automatically.
+        /// Any changes to the RPMs that are greater than the RPM change
+        /// threshold will cause an event to be raised when the instance is
+        /// set to update automatically.
         /// </summary>
         public float RPMChangeNotificationThreshold { get; set; } = 0.001F;
+
+        /// <summary>
+        /// Returns DigitalInputPort.
+        /// </summary>
         public DigitalInputPort DigitalIn { get; private set; }
 
+        /// <summary>
+        /// Returns number of magnets of the sensor.
+        /// </summary>
         public ushort NumberOfMagnets => _numberOfMagnets;
         private ushort _numberOfMagnets;
 
         /// <summary>
-        ///     
+        /// Returns number of revolutions per minute.
         /// </summary>
         public int RPMs => (int)_RPMs; 
 
@@ -35,6 +44,13 @@ namespace Meadow.Foundation.Sensors.HallEffect
         protected DateTime _revolutionTimeStart = DateTime.MinValue;
         protected ushort _numberOfReads = 0; //
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputPin"></param>
+        /// <param name="type"></param>
+        /// <param name="numberOfMagnets"></param>
+        /// <param name="rpmChangeNotificationThreshold"></param>
         public LinearHallEffectTachometer(IDigitalPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F)
         {

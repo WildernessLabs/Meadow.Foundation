@@ -67,16 +67,12 @@
     <Compile Include="Sensors\Distance\DistanceEventArgs.cs" />
     <Compile Include="Sensors\Distance\IRangeFinder.cs" />
     <Compile Include="Sensors\HallEffect\DigitalTachometer.cs" />
-    <Compile Include="Sensors\ICamera.cs" />
     <Compile Include="Sensors\IHumiditySensor.cs" />
-    <Compile Include="Sensors\ILightSensor.cs" />
     <Compile Include="Sensors\IPressureSensor.cs" />
-    <Compile Include="Sensors\ISensor.cs" />
     <Compile Include="Sensors\Light\GenericAmbientLightSensor.cs" />
     <Compile Include="Sensors\Rotary\RotaryEncoder.cs" />
     <Compile Include="Sensors\Rotary\RotaryEncoderWithButton.cs" />
     <Compile Include="Sensors\Rotary\TwoBitGrayCode.cs" />
-    <Compile Include="Sensors\SensorFloatEventArgs.cs" />
     <Compile Include="Sensors\SensorVectorEventArgs.cs" />
     <Compile Include="Sensors\Spatial\EulerAngles.cs" />
     <Compile Include="Sensors\Spatial\Quaternion.cs" />
@@ -85,7 +81,6 @@
     <Compile Include="Sensors\Switches\SpdtSwitch.cs" />
     <Compile Include="Sensors\Switches\SpstSwitch.cs" />
     <Compile Include="Sensors\Temperature\AnalogTemperatureSensor.cs" />
-    <Compile Include="Sensors\Temperature\ITemperatureSensor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BaseClasses\" />
