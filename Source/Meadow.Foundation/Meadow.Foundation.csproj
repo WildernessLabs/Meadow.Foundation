@@ -73,7 +73,6 @@
     <Compile Include="Sensors\IPressureSensor.cs" />
     <Compile Include="Sensors\ISensor.cs" />
     <Compile Include="Sensors\Light\GenericAmbientLightSensor.cs" />
-    <Compile Include="Sensors\Light\IAmbientLightSensor.cs" />
     <Compile Include="Sensors\Motion\IAccelerometer.cs" />
     <Compile Include="Sensors\Proximity\IRangeFinder.cs" />
     <Compile Include="Sensors\Rotary\IRotaryEncoder.cs" />

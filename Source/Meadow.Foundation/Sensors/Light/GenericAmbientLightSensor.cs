@@ -1,5 +1,5 @@
 ﻿//using System;
-//using Meadow.Foundation.SpecializedBlocks;
+//using Meadow.Peripherals.Sensors.Light;
 
 //namespace Meadow.Foundation.Sensors.Light
 //{
