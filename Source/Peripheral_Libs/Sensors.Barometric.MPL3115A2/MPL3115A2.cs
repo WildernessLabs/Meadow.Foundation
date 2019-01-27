@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Barometric
     /// <summary>
     ///     Driver for the MPL3115A2 pressure and humidity sensor.
     /// </summary>
-    public class MPL3115A2 : ITemperatureSensor, IPressureSensor
+    public class MPL3115A2 : ITemperatureSensor, IBarometricPressure
     {
         #region Constants
 

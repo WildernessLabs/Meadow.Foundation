@@ -67,8 +67,6 @@
     <Compile Include="Sensors\Distance\DistanceEventArgs.cs" />
     <Compile Include="Sensors\Distance\IRangeFinder.cs" />
     <Compile Include="Sensors\HallEffect\DigitalTachometer.cs" />
-    <Compile Include="Sensors\IHumiditySensor.cs" />
-    <Compile Include="Sensors\IPressureSensor.cs" />
     <Compile Include="Sensors\Light\GenericAmbientLightSensor.cs" />
     <Compile Include="Sensors\Rotary\RotaryEncoder.cs" />
     <Compile Include="Sensors\Rotary\RotaryEncoderWithButton.cs" />

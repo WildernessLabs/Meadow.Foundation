@@ -4,7 +4,7 @@ using Meadow.Hardware.Communications;
 
 namespace Meadow.Foundation.Sensors.Barometric
 {
-    public class MPL115A2 : ITemperatureSensor, IPressureSensor
+    public class MPL115A2 : ITemperatureSensor, IBarometricPressure
     {
         #region Constants
 
