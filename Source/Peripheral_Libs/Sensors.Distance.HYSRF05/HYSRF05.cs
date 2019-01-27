@@ -1,18 +1,35 @@
 using System;
 using System.Threading;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Distance;
 
-namespace Netduino.Foundation.Sensors.Distance
+namespace Meadow.Foundation.Sensors.Distance
 {
+    /// <summary>
+    /// HYSRF05 Distance Sensor.
+    /// </summary>
     public class HYSRF05 : IRangeFinder
     {
         #region Properties
 
+        /// <summary>
+        /// Returns current distance detected in cm.
+        /// </summary>
         public float CurrentDistance { get; private set; } = -1;
 
-        public float MinimumDistance => 2; //in cm
-        public float MaximumDistance => 450; //in cm
+        /// <summary>
+        /// Minimum valid distance in cm (CurrentDistance returns -1 if below).
+        /// </summary>
+        public float MinimumDistance => 2;
 
+        /// <summary>
+        /// Maximum valid distance in cm (CurrentDistance returns -1 if above).
+        /// </summary>
+        public float MaximumDistance => 450;
+
+        /// <summary>
+        /// Raised when an received a rebound trigger signal
+        /// </summary>
         public event DistanceDetectedEventHandler DistanceDetected = delegate { };
 
         #endregion
@@ -20,12 +37,12 @@ namespace Netduino.Foundation.Sensors.Distance
         #region Member variables / fields
 
         /// <summary>
-        ///     Trigger Pin.
+        /// Trigger Pin.
         /// </summary>
         protected DigitalOutputPort _triggerPort;
 
         /// <summary>
-        ///     Echo Pin.
+        /// Echo Pin.
         /// </summary>
         protected DigitalInputPort _echoPort;
 
@@ -36,16 +53,16 @@ namespace Netduino.Foundation.Sensors.Distance
         #region Constructors
 
         /// <summary>
-        ///     Default constructor is private to prevent it being called.
+        /// Default constructor is private to prevent it being called.
         /// </summary>
         private HYSRF05()
         {
         }
 
         /// <summary>
-        ///     Create a new HYSRF05 object and hook up the interrupt handler
-        ///     HSSRF05 must be running the default 4/5 pin mode
-        ///     3 pin mode is not supported on Netduino
+        /// Create a new HYSRF05 object and hook up the interrupt handler
+        /// HSSRF05 must be running the default 4/5 pin mode
+        /// 3 pin mode is not supported on Meadow
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
@@ -59,11 +76,14 @@ namespace Netduino.Foundation.Sensors.Distance
             _triggerPort = new DigitalOutputPort(triggerPin, false);
 
             _echoPort = new DigitalInputPort(echoPin, false, ResistorMode.Disabled);
-            _echoPort.Changed += OnEchoPort_Changed;
+            _echoPort.Changed += OnEchoPortChanged;
         }
 
         #endregion
 
+        /// <summary>
+        /// Sends a trigger signal
+        /// </summary>
         public void MeasureDistance()
         {
             CurrentDistance = -1;
@@ -78,7 +98,7 @@ namespace Netduino.Foundation.Sensors.Distance
             _triggerPort.State = false;
         }
 
-        private void OnEchoPort_Changed(object sender, PortEventArgs e)
+        private void OnEchoPortChanged(object sender, PortEventArgs e)
         {
             if (e.Value == true) //echo is high
             {
