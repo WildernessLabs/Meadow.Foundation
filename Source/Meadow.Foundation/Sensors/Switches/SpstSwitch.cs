@@ -1,6 +1,6 @@
 using System;
-using Meadow;
 using Meadow.Hardware;
+using Meadow.Peripherals.Switches;
 
 namespace Meadow.Foundation.Sensors.Switches
 {
@@ -13,16 +13,30 @@ namespace Meadow.Foundation.Sensors.Switches
     /// </summary>
     public class SpstSwitch : ISwitch, ISensor
     {
-        public event EventHandler Changed = delegate { };
-
-        public DigitalInputPort DigitalIn { get; protected set; }
-
+        /// <summary>
+        /// Describes whether or not the switch circuit is closed/connected (IsOn = true), or open (IsOn = false).
+        /// </summary>
         public bool IsOn
         {
             get => DigitalIn.State;
             protected set => Changed(this, new EventArgs());
         }
 
+        /// <summary>
+        /// Raised when the switch circuit is opened or closed.
+        /// </summary>
+        public event EventHandler Changed = delegate { };
+
+        /// <summary>
+        /// Returns the DigitalInputPort.
+        /// </summary>
+        public DigitalInputPort DigitalIn { get; protected set; }
+
+        /// <summary>
+        /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
+        /// </summary>
+        /// <param name="pin"></param>
+        /// <param name="type"></param>
         public SpstSwitch(IDigitalPin pin, CircuitTerminationType type)
         {
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
@@ -40,9 +54,9 @@ namespace Meadow.Foundation.Sensors.Switches
                     break;
             } 
 
-            this.DigitalIn = new DigitalInputPort(pin, true, resistorMode);
+            DigitalIn = new DigitalInputPort(pin, true, resistorMode);
 
-            this.DigitalIn.Changed += DigitalIn_Changed;
+            DigitalIn.Changed += DigitalIn_Changed;
         }
 
         private void DigitalIn_Changed(object sender, PortEventArgs e)

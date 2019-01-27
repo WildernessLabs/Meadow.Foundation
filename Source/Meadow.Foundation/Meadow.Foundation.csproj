@@ -82,7 +82,6 @@
     <Compile Include="Sensors\Spatial\Quaternion.cs" />
     <Compile Include="Sensors\Spatial\Vector.cs" />
     <Compile Include="Sensors\Switches\DipSwitch.cs" />
-    <Compile Include="Sensors\Switches\ISwitch.cs" />
     <Compile Include="Sensors\Switches\SpdtSwitch.cs" />
     <Compile Include="Sensors\Switches\SpstSwitch.cs" />
     <Compile Include="Sensors\Temperature\AnalogTemperatureSensor.cs" />

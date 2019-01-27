@@ -1,5 +1,5 @@
 using Meadow.Hardware;
-using System;
+using Meadow.Peripherals.Switches;
 using System.Diagnostics;
 
 namespace Meadow.Foundation.Sensors.Switches
@@ -7,16 +7,31 @@ namespace Meadow.Foundation.Sensors.Switches
     /// <summary>
     /// Represents a DIP-switch wired in a bus configuration, in which all switches 
     /// are terminated to the same ground/common or high pin.
-    /// 
-    /// Note: this is untested, as I don't have a dip switches at the moment :D
     /// </summary>
     public class DipSwitch
     {
-        public event ArrayEventHandler Changed = delegate { };
-
+        /// <summary>
+        /// Returns the ISwitch at the specified index.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <returns></returns>
         public ISwitch this[int i] => _switches[i];
+
+        /// <summary>
+        /// Returns the switch array.
+        /// </summary>
         public ISwitch[] _switches = null;
 
+        /// <summary>
+        /// Raised when one of the switches is switched on or off.
+        /// </summary>
+        public event ArrayEventHandler Changed = delegate { };
+
+        /// <summary>
+        /// Creates a new DipSwitch connected to the specified switchPins, with the CircuitTerminationType specified by the type parameters.
+        /// </summary>
+        /// <param name="switchPins"></param>
+        /// <param name="type"></param>
         public DipSwitch(IDigitalPin[] switchPins, CircuitTerminationType type)
         {
             //this.DigitalIns = new H.InterruptPort[switchPins.Length];            
@@ -41,7 +56,7 @@ namespace Meadow.Foundation.Sensors.Switches
         protected void HandleSwitchChange(int switchNumber)
         {
             Debug.Print("HandleSwitchChange: " + switchNumber.ToString() + ", total switches: " + (_switches.Length).ToString());
-            this.Changed(this, new ArrayEventArgs(switchNumber, _switches[switchNumber]));
+            Changed(this, new ArrayEventArgs(switchNumber, _switches[switchNumber]));
         }
     }
 }
