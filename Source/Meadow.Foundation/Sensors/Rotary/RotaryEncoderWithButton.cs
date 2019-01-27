@@ -1,45 +1,73 @@
+using System;
 using Meadow.Hardware;
 using Meadow.Foundation.Sensors.Buttons;
-using System;
-
+using Meadow.Peripherals.Sensors.Rotary;
 
 namespace Meadow.Foundation.Sensors.Rotary
 {
+    /// <summary>
+    /// Digital rotary encoder that uses two-bit Gray Code to encode rotation and has an integrated push button.
+    /// </summary>
     public class RotaryEncoderWithButton : RotaryEncoder, IRotaryEncoderWithButton
     {
-        public event EventHandler PressStarted = delegate { };
-        public event EventHandler PressEnded = delegate { };
-        public event EventHandler Clicked = delegate { };
-
-        public bool State => _button.State;
-
+        /// <summary>
+        /// Returns the PushButton that represents the integrated button.
+        /// </summary>
         public PushButton Button => _button;
         readonly PushButton _button;
 
+        /// <summary>
+        /// Returns the push button's state
+        /// </summary>
+        public bool State => _button.State;
+
+        /// <summary>
+        /// Raised when the button circuit is re-opened after it has been closed (at the end of a “press”.
+        /// </summary>
+        public event EventHandler Clicked = delegate { };
+
+        /// <summary>
+        /// Raised when a press ends (the button is released; circuit is opened).
+        /// </summary>
+        public event EventHandler PressEnded = delegate { };
+
+        /// <summary>
+        /// Raised when a press starts (the button is pushed down; circuit is closed).
+        /// </summary>
+        public event EventHandler PressStarted = delegate { };
+
+        /// <summary>
+        /// Instantiates a new RotaryEncoder on the specified pins that has an integrated button.
+        /// </summary>
+        /// <param name="aPhasePin"></param>
+        /// <param name="bPhasePin"></param>
+        /// <param name="buttonPin"></param>
+        /// <param name="buttonCircuitTerminationType"></param>
+        /// <param name="debounceDuration"></param>
         public RotaryEncoderWithButton(IDigitalPin aPhasePin, IDigitalPin bPhasePin, IDigitalPin buttonPin, 
             CircuitTerminationType buttonCircuitTerminationType, int debounceDuration = 20)
             : base(aPhasePin, bPhasePin)
         {
             _button = new PushButton(buttonPin, buttonCircuitTerminationType, debounceDuration);
 
-            _button.Clicked += Button_Clicked;
-            _button.PressStarted += Button_PressStarted;
-            _button.PressEnded += Button_PressEnded;
+            _button.Clicked += ButtonClicked;
+            _button.PressEnded += ButtonPressEnded;
+            _button.PressStarted += ButtonPressStarted;
         }
 
-        protected void Button_PressEnded(object sender, EventArgs e)
+        protected void ButtonClicked(object sender, EventArgs e)
         {
-            this.PressEnded(this, e);
+            Clicked(this, e);
         }
 
-        protected void Button_PressStarted(object sender, EventArgs e)
+        protected void ButtonPressEnded(object sender, EventArgs e)
         {
-            this.PressStarted(this, e);
+            PressEnded(this, e);
         }
 
-        protected void Button_Clicked(object sender, EventArgs e)
+        protected void ButtonPressStarted(object sender, EventArgs e)
         {
-            this.Clicked(this, e);
+            PressStarted(this, e);
         }
     }
 }

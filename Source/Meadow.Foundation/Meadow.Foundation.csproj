@@ -73,12 +73,8 @@
     <Compile Include="Sensors\IPressureSensor.cs" />
     <Compile Include="Sensors\ISensor.cs" />
     <Compile Include="Sensors\Light\GenericAmbientLightSensor.cs" />
-    <Compile Include="Sensors\Rotary\IRotaryEncoder.cs" />
-    <Compile Include="Sensors\Rotary\IRotaryEncoderWithButton.cs" />
-    <Compile Include="Sensors\Rotary\RotaryDirection.cs" />
     <Compile Include="Sensors\Rotary\RotaryEncoder.cs" />
     <Compile Include="Sensors\Rotary\RotaryEncoderWithButton.cs" />
-    <Compile Include="Sensors\Rotary\RotaryTurnedEventArgs.cs" />
     <Compile Include="Sensors\Rotary\TwoBitGrayCode.cs" />
     <Compile Include="Sensors\SensorFloatEventArgs.cs" />
     <Compile Include="Sensors\SensorVectorEventArgs.cs" />
