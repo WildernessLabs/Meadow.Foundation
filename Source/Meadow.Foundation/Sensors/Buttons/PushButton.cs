@@ -4,10 +4,12 @@ using System;
 
 namespace Meadow.Foundation.Sensors.Buttons
 {
-	/// <summary>
-	/// A simple push button. 
-	/// </summary>
-	public class PushButton : IButton
+    /// <summary>
+    /// A simple push button. 
+    /// 
+    /// Note: this class is not yet implemented.
+    /// </summary>
+    public class PushButton : IButton
 	{
         protected DateTime _lastClicked = DateTime.MinValue;
         protected DateTime _buttonPressStart = DateTime.MaxValue;

@@ -8,6 +8,8 @@ namespace Meadow.Foundation.LEDs
     /// <summary>
     /// Represents an LED whose voltage is limited by the duty-cycle of a PWM
     /// signal.
+    /// 
+    /// Note: this class is not yet implemented.
     /// </summary>
     public class PwmLed : IPwmLed
     {
