@@ -103,6 +103,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servos.Servo.Core", "Periph
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation", "Meadow.Foundation\Meadow.Foundation.csproj", "{CEBD7F9A-4645-4A29-8A97-7889E241896F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RelayToggle", "RelayToggle\RelayToggle.csproj", "{A24CFE5E-1A02-4268-A598-A8F1117EB52C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -293,6 +295,10 @@ Global
 		{CEBD7F9A-4645-4A29-8A97-7889E241896F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEBD7F9A-4645-4A29-8A97-7889E241896F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEBD7F9A-4645-4A29-8A97-7889E241896F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A24CFE5E-1A02-4268-A598-A8F1117EB52C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A24CFE5E-1A02-4268-A598-A8F1117EB52C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A24CFE5E-1A02-4268-A598-A8F1117EB52C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A24CFE5E-1A02-4268-A598-A8F1117EB52C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -343,6 +349,7 @@ Global
 		{EC3762B9-77D6-4248-8687-56D8665B0FC1} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{7336EFA0-2BAC-4C16-BF63-07E7B903A1B3} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{6EE731DA-3765-48D5-BA40-A4AD1F1F48F2} = {1152A5B3-3B95-442E-8923-B729F64D7441}
+		{A24CFE5E-1A02-4268-A598-A8F1117EB52C} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
