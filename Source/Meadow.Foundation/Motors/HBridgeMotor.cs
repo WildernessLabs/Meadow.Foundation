@@ -5,7 +5,9 @@ using System;
 namespace Meadow.Foundation.Motors
 {
     /// <summary>
-    /// Generic h-bridge motor controller
+    /// Generic h-bridge motor controller.
+    /// 
+    /// Note: this class is not yet implemented.
     /// </summary>
     public class HBridgeMotor : IDCMotor
     {
