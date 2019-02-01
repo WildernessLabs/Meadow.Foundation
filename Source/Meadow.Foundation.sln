@@ -103,7 +103,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servos.Servo.Core", "Periph
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation", "Meadow.Foundation\Meadow.Foundation.csproj", "{CEBD7F9A-4645-4A29-8A97-7889E241896F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RelayToggle", "RelayToggle\RelayToggle.csproj", "{A24CFE5E-1A02-4268-A598-A8F1117EB52C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RelayToggle", "Samples\RelayToggle\RelayToggle.csproj", "{A24CFE5E-1A02-4268-A598-A8F1117EB52C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

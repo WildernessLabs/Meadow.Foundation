@@ -59,16 +59,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
-      <Project>{b13c7bdd-77f5-45f8-bdb9-6cd368c67410}</Project>
-      <Name>Meadow.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Meadow.Foundation\Meadow.Foundation.csproj">
-      <Project>{cebd7f9a-4645-4a29-8a97-7889e241896f}</Project>
-      <Name>Meadow.Foundation</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.1">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.7.1 %28x86 and x64%29</ProductName>
@@ -79,6 +69,16 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
+      <Project>{b13c7bdd-77f5-45f8-bdb9-6cd368c67410}</Project>
+      <Name>Meadow.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Meadow.Foundation\Meadow.Foundation.csproj">
+      <Project>{cebd7f9a-4645-4a29-8a97-7889e241896f}</Project>
+      <Name>Meadow.Foundation</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
