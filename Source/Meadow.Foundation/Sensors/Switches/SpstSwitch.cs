@@ -11,6 +11,8 @@ namespace Meadow.Foundation.Sensors.Switches
     /// 
     /// Use the SwitchCircuitTerminationType to specify whether the other side of the switch
     /// terminates to ground or high.
+    /// 
+    /// Note: This class is not yet implemented.
     /// </summary>
     public class SpstSwitch : ISwitch, ISensor
     {

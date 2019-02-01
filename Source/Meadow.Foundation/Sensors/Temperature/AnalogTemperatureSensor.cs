@@ -8,27 +8,29 @@ using System.Threading;
 namespace Meadow.Foundation.Sensors.Temperature
 {
     /// <summary>
-    ///     Provide the ability to read the temperature from the following sensors:
-    ///     - TMP35 / 36 / 37
-    ///     - LM35 / 45
+    /// Provide the ability to read the temperature from the following sensors:
+    /// - TMP35 / 36 / 37
+    /// - LM35 / 45
+    /// 
+    /// Note: This class is not yet implemented.
     /// </summary>
     /// <remarks>
-    ///     <i>AnalogTemperature</i> provides a method of reading the temperature from
-    ///     linear analog temperature sensors.  There are a number of these sensors available
-    ///     including the commonly available TMP and LM series.
-    ///     Sensors of this type obey the following equation:
-    ///     y = mx + c
-    ///     where y is the reading in millivolts, m is the gradient (number of millivolts per
-    ///     degree centigrade and C is the point where the line would intercept the y axis.
-    ///     The <i>SensorType</i> enum defines the list of sensors with default settings in the
-    ///     library.  Unsupported sensors that use the same linear algorithm can be constructed
-    ///     by setting the sensor type to <i>SensorType.Custom</i> and providing the settings for
-    ///     the linear calculations.
-    ///     The default sensors have the following settings:
-    ///     Sensor              Millivolts at 25C    Millivolts per degree C
-    ///     TMP35, LM35, LM45       250                     10
-    ///     TMP36, LM50             750                     10
-    ///     TMP37                   500                     20
+    /// <i>AnalogTemperature</i> provides a method of reading the temperature from
+    /// linear analog temperature sensors.  There are a number of these sensors available
+    /// including the commonly available TMP and LM series.
+    /// Sensors of this type obey the following equation:
+    /// y = mx + c
+    /// where y is the reading in millivolts, m is the gradient (number of millivolts per
+    /// degree centigrade and C is the point where the line would intercept the y axis.
+    /// The <i>SensorType</i> enum defines the list of sensors with default settings in the
+    /// library.  Unsupported sensors that use the same linear algorithm can be constructed
+    /// by setting the sensor type to <i>SensorType.Custom</i> and providing the settings for
+    /// the linear calculations.
+    /// The default sensors have the following settings:
+    /// Sensor              Millivolts at 25C    Millivolts per degree C
+    /// TMP35, LM35, LM45       250                     10
+    /// TMP36, LM50             750                     10
+    /// TMP37                   500                     20
     /// </remarks>
     public class AnalogTemperature : ITemperatureSensor
     {

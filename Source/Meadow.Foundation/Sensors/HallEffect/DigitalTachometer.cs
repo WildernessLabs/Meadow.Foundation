@@ -6,7 +6,9 @@ using System.Diagnostics;
 namespace Meadow.Foundation.Sensors.HallEffect
 {
     /// <summary>
-    /// Represents a Lineal Hall Effect Sensor
+    /// Represents a Lineal Hall Effect tachometer.
+    /// 
+    /// Note: This class is not yet implemented.
     /// </summary>
     public class LinearHallEffectTachometer
     {

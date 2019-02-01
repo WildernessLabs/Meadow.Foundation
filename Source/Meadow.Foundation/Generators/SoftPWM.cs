@@ -9,6 +9,8 @@ namespace Meadow.Foundation.Generators
     /// A Pulse Width Modulation Generator that can
     /// generates waveforms in software. The maximum
     /// Frequency is about 100 Hz.
+    /// 
+    /// Note: This class is not yet implemented.
     /// </summary>
 	public class SoftPwm
     {
