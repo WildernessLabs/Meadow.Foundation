@@ -3,11 +3,20 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Audio
 {
+    /// <summary>
+    /// Represents a 2 pin piezo-electric speaker capable of generating tones
+    /// 
+    /// Note: This driver is not yet implemented
+    /// </summary>
     public class PiezoSpeaker : IToneGenerator
     {
         private IPwmPort _pwm;
         private bool _isPlaying = false;
 
+        /// <summary>
+        /// Create a new PiezoSpeaker instance
+        /// </summary>
+        /// <param name="pin">PWM Pin connected to the PiezoSpeaker</param>
         public PiezoSpeaker(IPwmPin pin)
         {
             _pwm = new PwmPort(pwmChannel, 100, 0, false);
