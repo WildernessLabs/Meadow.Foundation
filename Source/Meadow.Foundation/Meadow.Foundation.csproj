@@ -77,6 +77,7 @@
     <Compile Include="Sensors\Switches\SpdtSwitch.cs" />
     <Compile Include="Sensors\Switches\SpstSwitch.cs" />
     <Compile Include="Sensors\Temperature\AnalogTemperatureSensor.cs" />
+    <Compile Include="Speakers\PiezoSpeaker.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BaseClasses\" />
