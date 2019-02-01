@@ -1,9 +1,9 @@
-﻿using Meadow;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Temperature;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
@@ -292,12 +292,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         ///     Get the current temperature and update the Temperature property.
         /// </summary>
-        public void Update()
+        public async Task Update()
         {
-            var reading = (float) (AnalogPort.RawValue * 3300);
+            float reading = await AnalogPort.Read() * 3300;
             reading -= _yIntercept;
-            reading /= _millivoltsPerDegreeCentigrade;
-            Temperature = reading;
+            Temperature = reading / _millivoltsPerDegreeCentigrade; ;
         }
 
         #endregion Methods

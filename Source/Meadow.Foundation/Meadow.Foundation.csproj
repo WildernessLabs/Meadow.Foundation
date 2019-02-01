@@ -59,6 +59,7 @@
     <Compile Include="LEDs\Led.cs" />
     <Compile Include="LEDs\PwmLed.cs" />
     <Compile Include="LEDs\RgbPwmLed.cs" />
+    <Compile Include="LEDs\SegmentedLedBar.cs" />
     <Compile Include="LEDs\TypicalForwardVoltage.cs" />
     <Compile Include="Motors\HBridgeMotor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

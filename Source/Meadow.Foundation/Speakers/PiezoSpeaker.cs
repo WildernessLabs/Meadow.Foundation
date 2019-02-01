@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Meadow.Hardware;
+using Meadow.Peripherals.Speakers;
 
 namespace Meadow.Foundation.Audio
 {
@@ -19,7 +20,7 @@ namespace Meadow.Foundation.Audio
         /// <param name="pin">PWM Pin connected to the PiezoSpeaker</param>
         public PiezoSpeaker(IPwmPin pin)
         {
-            _pwm = new PwmPort(pwmChannel, 100, 0, false);
+            _pwm = new PwmPort(pin, 100, 0, false);
         }
 
         /// <summary>
