@@ -17,12 +17,12 @@ namespace Meadow.Foundation.Sensors.Switches
         /// </summary>
         /// <param name="i"></param>
         /// <returns></returns>
-        public ISwitch this[int i] => _switches[i];
+        public ISwitch this[int i] => Switches[i];
 
         /// <summary>
         /// Returns the switch array.
         /// </summary>
-        public ISwitch[] _switches = null;
+        public ISwitch[] Switches = null;
 
         /// <summary>
         /// Raised when one of the switches is switched on or off.
@@ -36,23 +36,23 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="type"></param>
         public DipSwitch(IDigitalPin[] switchPins, CircuitTerminationType type)
         {
-            _switches = new ISwitch[switchPins.Length];
+            Switches = new ISwitch[switchPins.Length];
 
             for (int i = 0; i < switchPins.Length; i++)
             {
                 //this.DigitalIns[i] = new H.InterruptPort(switchPins[i], true, resistorMode, Microsoft.SPOT.Hardware.Port.InterruptMode.InterruptEdgeBoth);
-                _switches[i] = new SpstSwitch(switchPins[i], type);
+                Switches[i] = new SpstSwitch(switchPins[i], type);
 
                 int index = i;
 
-                _switches[i].Changed += (s,e) => HandleSwitchChange(index);
+                Switches[i].Changed += (s,e) => HandleSwitchChange(index);
             }
         }
 
         protected void HandleSwitchChange(int switchNumber)
         {
-            Debug.Print("HandleSwitchChange: " + switchNumber.ToString() + ", total switches: " + (_switches.Length).ToString());
-            Changed(this, new ArrayEventArgs(switchNumber, _switches[switchNumber]));
+            Debug.Print("HandleSwitchChange: " + switchNumber.ToString() + ", total switches: " + (Switches.Length).ToString());
+            Changed(this, new ArrayEventArgs(switchNumber, Switches[switchNumber]));
         }
     }
 }
