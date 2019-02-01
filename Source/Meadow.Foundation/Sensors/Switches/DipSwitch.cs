@@ -36,8 +36,6 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="type"></param>
         public DipSwitch(IDigitalPin[] switchPins, CircuitTerminationType type)
         {
-            //this.DigitalIns = new H.InterruptPort[switchPins.Length];            
-            //this.IsOn = new bool[switchPins.Length];
             _switches = new ISwitch[switchPins.Length];
 
             for (int i = 0; i < switchPins.Length; i++)
@@ -45,13 +43,9 @@ namespace Meadow.Foundation.Sensors.Switches
                 //this.DigitalIns[i] = new H.InterruptPort(switchPins[i], true, resistorMode, Microsoft.SPOT.Hardware.Port.InterruptMode.InterruptEdgeBoth);
                 _switches[i] = new SpstSwitch(switchPins[i], type);
 
-                // capture the variable. oh, C#...
-                int iCopy = i;
+                int index = i;
 
-                _switches[i].Changed += (s,e) =>
-                {
-                    HandleSwitchChange(iCopy);
-                };
+                _switches[i].Changed += (s,e) => HandleSwitchChange(index);
             }
         }
 
