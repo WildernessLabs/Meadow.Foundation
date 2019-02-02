@@ -54,6 +54,9 @@ namespace Meadow.Foundation.Audio
             }
         }
 
+        /// <summary>
+        /// Stops a tone playing
+        /// </summary>
         public void StopTone()
         {
             _pwm.Stop();
