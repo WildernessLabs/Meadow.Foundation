@@ -6,11 +6,13 @@ using Meadow.Utilities;
 namespace Meadow.Foundation.ICs.IOExpanders.x74595
 {
     /// <summary>
-    ///     Provide an interface to connect to a 74595 shift register.
+    /// Provide an interface to connect to a 74595 shift register.
+    /// 
+    /// Note: this class is not yet implemented.
     /// </summary>
     /// <remarks>
-    ///     Control the outputs from a 74595 shift register (or a chain of shift registers)
-    ///     using a SPI interface.
+    /// Control the outputs from a 74595 shift register (or a chain of shift registers)
+    /// using a SPI interface.
     /// </remarks>
     public class x74595
     {

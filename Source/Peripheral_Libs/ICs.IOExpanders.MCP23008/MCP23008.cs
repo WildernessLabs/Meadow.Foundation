@@ -6,6 +6,11 @@ using Meadow.Utilities;
 
 namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
 {
+    /// <summary>
+    /// Provide an interface to connect to a MCP23008 port expander.
+    /// 
+    /// Note: this class is not yet implemented.
+    /// </summary>
     public class MCP23008
     {
         public event EventHandler InterruptRaised = delegate { };
