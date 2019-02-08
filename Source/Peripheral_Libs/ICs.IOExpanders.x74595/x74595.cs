@@ -3,7 +3,7 @@ using Meadow.Hardware;
 using Meadow.Hardware.Communications;
 using Meadow.Utilities;
 
-namespace Meadow.Foundation.ICs.IOExpanders.x74595
+namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Provide an interface to connect to a 74595 shift register.

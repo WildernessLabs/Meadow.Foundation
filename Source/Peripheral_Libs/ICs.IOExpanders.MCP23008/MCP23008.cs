@@ -4,7 +4,7 @@ using Meadow.Hardware;
 using Meadow.Hardware.Communications;
 using Meadow.Utilities;
 
-namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
+namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Provide an interface to connect to a MCP23008 port expander.

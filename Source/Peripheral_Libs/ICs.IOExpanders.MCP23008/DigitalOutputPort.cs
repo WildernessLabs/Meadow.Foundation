@@ -1,6 +1,6 @@
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.ICs.IOExpanders.MCP23008
+namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Convenience class for writing to pins on the MCP23008
