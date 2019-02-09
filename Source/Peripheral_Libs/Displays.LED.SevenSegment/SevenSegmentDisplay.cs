@@ -1,7 +1,7 @@
 ﻿using System;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation
+namespace Meadow.Foundation.Displays.LED
 {
     public class SevenSegmentDisplay
     {
