@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// Capacitive Soil Moisture Sensor
     /// 
-    /// Note: this class is not yet implemented.
+    /// Note: This class is not yet implemented.
     /// </summary>
     public class Capacitive : IMoistureSensor
     {
