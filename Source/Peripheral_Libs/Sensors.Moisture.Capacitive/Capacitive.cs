@@ -2,7 +2,7 @@
 using Meadow.Peripherals.Sensors.Moisture;
 using System.Threading.Tasks;
 
-namespace Sensors.Moisture
+namespace Meadow.Foundation.Sensors.Moisture
 {
     /// <summary>
     /// Capacitive Soil Moisture Sensor

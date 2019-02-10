@@ -3,7 +3,7 @@ using Meadow.Peripherals.Sensors.Moisture;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sensors.Moisture
+namespace Meadow.Foundation.Sensors.Moisture
 {
     /// <summary>
     /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor
