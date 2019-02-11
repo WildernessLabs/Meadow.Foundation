@@ -75,8 +75,11 @@ namespace Meadow.Foundation.LEDs
                 }
                 else if (_isPwm && i <= value + 1)
                 {
-                    SetLedBrightness(i - 1, value + 1 - i);
-                    break;
+                    SetLedBrightness(i - 1, value + 1 - i);                    
+                }
+                else
+                {
+                    SetLed(i - 1, false);
                 }
             }
         }
