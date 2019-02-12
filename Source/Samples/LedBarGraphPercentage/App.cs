@@ -4,12 +4,12 @@ using Meadow.Foundation.LEDs;
 using Meadow.Hardware;
 using System.Threading;
 
-namespace LedBarGraph
+namespace LedBarGraphPercentage
 {
     public class App : AppBase<F7Micro, App>
     {
         DigitalOutputPort _blueLED;
-        SegmentedLedBar _segmentedLedBar;
+        LedBarGraph _segmentedLedBar;
 
         public App()
         {
@@ -27,7 +27,7 @@ namespace LedBarGraph
             pins[8] = Device.Pins.D14;
             pins[9] = Device.Pins.D15;
 
-            _segmentedLedBar = new SegmentedLedBar(pins);
+            _segmentedLedBar = new LedBarGraph(pins);
 
             Run();
         }

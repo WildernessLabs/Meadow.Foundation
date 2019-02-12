@@ -109,7 +109,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Moisture.FC28", "Pe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Moisture.Capacitive", "Peripheral_Libs\Sensors.Moisture.Capacitive\Sensors.Moisture.Capacitive.csproj", "{5C149065-6631-49E5-99BC-92992C7B755F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedBarGraph", "Samples\LedBarGraph\LedBarGraph.csproj", "{D724BE01-652D-4CBE-AB1C-0B6E233DB410}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedBarGraphPercentage", "Samples\LedBarGraphPercentage\LedBarGraphPercentage.csproj", "{D724BE01-652D-4CBE-AB1C-0B6E233DB410}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

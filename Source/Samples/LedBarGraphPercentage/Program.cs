@@ -1,6 +1,6 @@
 ﻿using Meadow;
 
-namespace LedBarGraph
+namespace LedBarGraphPercentage
 {
     class Program
     {

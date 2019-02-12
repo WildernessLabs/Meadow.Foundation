@@ -4,7 +4,7 @@ using System;
 namespace Meadow.Foundation.LEDs
 {
 
-    public class SegmentedLedBar
+    public class LedBarGraph
     {
         public int Count => _isPwm ? _pwmLeds.Length : _leds.Length;
 
@@ -18,7 +18,7 @@ namespace Meadow.Foundation.LEDs
 
         protected bool _isPwm = false;
 
-        public SegmentedLedBar(IDigitalPin[] pins)
+        public LedBarGraph(IDigitalPin[] pins)
         {
             _leds = new Led[pins.Length];
 
@@ -28,7 +28,7 @@ namespace Meadow.Foundation.LEDs
             _isPwm = false;
         }
 
-        public SegmentedLedBar(IPwmPin[] pins, float forwardVoltage)
+        public LedBarGraph(IPwmPin[] pins, float forwardVoltage)
         {
             _pwmLeds = new PwmLed[pins.Length];
 

@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D724BE01-652D-4CBE-AB1C-0B6E233DB410}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>LedBarGraph</RootNamespace>
+    <RootNamespace>LedBarGraphPercentage</RootNamespace>
     <AssemblyName>app</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
