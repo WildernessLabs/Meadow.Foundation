@@ -28,7 +28,12 @@ namespace Meadow.Foundation.Servos
         /// Represents the HiTec "Standard" servo models. Angle: 0-180, Pulse: 900 - 1,200
         /// </summary>0
         public static ServoConfig HiTecStandard = new ServoConfig(minimumPulseDuration: 900, maximumPulseDuration: 2100, maximumAngle: 180);
-        
+
+        /// <summary>
+        /// Represents HiTec Digitial servo models with their default settings. Angle: 0-180, Pulse: 900 - 1,200
+        /// </summary>0
+        public static ServoConfig HiTechDigital = new ServoConfig(minimumPulseDuration: 900, maximumPulseDuration: 1200, maximumAngle: 180);
+
         /// <summary>
         /// Represents the JX HV 180 degree servo models. Angle: 0-180, Pulse: 500 - 2,500
         /// </summary>0
