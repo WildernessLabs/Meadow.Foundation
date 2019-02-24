@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware.Communications;
+using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Peripherals.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    ///     Provide access to the SI7021 temperature and humidity sensor.
+    /// Provide access to the SI7021 temperature and humidity sensor.
     /// </summary>
     public class SI7021 : ITemperatureSensor, IHumiditySensor
     {

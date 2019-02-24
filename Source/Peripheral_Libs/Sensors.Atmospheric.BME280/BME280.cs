@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware.Communications;
+using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Peripherals.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    ///     BME280 Temperature, Pressure and Humidity Sensor.
+    /// BME280 Temperature, Pressure and Humidity Sensor.
     /// </summary>
     /// <remarks>
-    ///     This class implements the functionality necessary to read the temperature, pressure and humidity
-    ///     from the Bosch BME280 sensor.
+    /// This class implements the functionality necessary to read the temperature, pressure and humidity
+    /// from the Bosch BME280 sensor.
     /// </remarks>
     public class BME280 : ITemperatureSensor, IHumiditySensor, IBarometricPressure
     {

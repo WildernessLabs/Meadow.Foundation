@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware.Communications;
+using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Peripherals.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    ///     Provide a mechanism for reading the temperature and humidity from
-    ///     a SHT31D temperature / humidity sensor.
+    /// Provide a mechanism for reading the temperature and humidity from
+    /// a SHT31D temperature / humidity sensor.
     /// </summary>
     /// <remarks>
-    ///     Readings from the sensor are made in Single-shot mode.
+    /// Readings from the sensor are made in Single-shot mode.
     /// </remarks>
     public class SHT31D : ITemperatureSensor, IHumiditySensor
     {

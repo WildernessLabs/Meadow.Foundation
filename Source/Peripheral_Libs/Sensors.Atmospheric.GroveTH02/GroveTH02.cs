@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware.Communications;
+using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Peripherals.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    ///     Grove TH02 temperature and humidity sensor.
+    /// Grove TH02 temperature and humidity sensor.
     /// </summary>
     public class GroveTH02 : ITemperatureSensor, IHumiditySensor
     {

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware.Communications;
+using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Peripherals.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    ///     Provide a mechanism for reading the Temperature and Humidity from
-    ///     a HIH6130 temperature and Humidity sensor.
+    /// Provide a mechanism for reading the Temperature and Humidity from
+    /// a HIH6130 temperature and Humidity sensor.
     /// </summary>
     public class HIH6130 : ITemperatureSensor, IHumiditySensor
     {
