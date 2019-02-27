@@ -3,7 +3,7 @@ using System.Threading;
 using Meadow.Foundation.Sensors;
 using Meadow.Hardware.Communications;
 
-namespace Netduino.Foundation.Sensors.Temperature
+namespace Meadow.Foundation.Sensors.Temperature
 {
     /// <summary>
     ///     TMP102 Temperature sensor object.
