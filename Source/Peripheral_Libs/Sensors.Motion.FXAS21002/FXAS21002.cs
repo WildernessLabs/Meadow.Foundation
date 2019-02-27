@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Netduino.Foundation.Sensors.Motion.FXAS21002
+namespace Meadow.Foundation.Sensors.Motion
 {
     public class FXAS21002
     {
