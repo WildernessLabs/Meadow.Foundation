@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Foundation.Sensors;
 using Meadow.Hardware.Communications;
+using Meadow.Peripherals.Temperature;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
