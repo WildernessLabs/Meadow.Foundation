@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DigitalOutputPort.cs" />
     <Compile Include="MCP23008.cs" />
     <Compile Include="MCPAddressTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

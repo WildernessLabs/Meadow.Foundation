@@ -2,6 +2,7 @@
 using Meadow.Hardware;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -217,11 +218,11 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Read the sensor output and convert the sensor readings into acceleration values.
         /// </summary>
-        public void Update()
+        public async Task Update()
         {
-            X = ((_x.RawValue * SupplyVoltage) - _zeroGVoltage) / XVoltsPerG;
-            Y = ((_y.RawValue * SupplyVoltage) - _zeroGVoltage) / YVoltsPerG;
-            Z = ((_z.RawValue * SupplyVoltage) - _zeroGVoltage) / ZVoltsPerG;
+            X = ((await _x.Read() * SupplyVoltage) - _zeroGVoltage) / XVoltsPerG;
+            Y = ((await _y.Read() * SupplyVoltage) - _zeroGVoltage) / YVoltsPerG;
+            Z = ((await _z.Read() * SupplyVoltage) - _zeroGVoltage) / ZVoltsPerG;
             if ((_updateInterval != 0) && 
                 ((Math.Abs(X - _lastX) > AccelerationChangeNotificationThreshold) ||
                  (Math.Abs(Y - _lastY) > AccelerationChangeNotificationThreshold) ||
@@ -240,9 +241,9 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     Get the raw analog input values from the sensor.
         /// </summary>
         /// <returns>Vector object containing the raw sensor data from the analog pins.</returns>
-        public Vector GetRawSensorData()
+        public async Task<Vector> GetRawSensorData()
         {
-            return new Vector(_x.RawValue, _y.RawValue, _z.RawValue);
+             return new Vector(await _x.Read(), await _y.Read(), await _z.Read());
         }
 
         #endregion Methods

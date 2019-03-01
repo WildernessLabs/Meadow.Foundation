@@ -2,6 +2,8 @@
 using System.Threading;
 using Meadow.Hardware;
 using Meadow.Hardware.Communications;
+using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Light;
 
 namespace Meadow.Foundation.Sensors.Light
 {

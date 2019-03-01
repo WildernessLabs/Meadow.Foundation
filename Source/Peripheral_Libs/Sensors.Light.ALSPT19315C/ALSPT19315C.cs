@@ -1,28 +1,10 @@
-﻿using Meadow;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System.Threading.Tasks;
 
 namespace Meadow.Fountation.Sensors.Light
 {
     public class ALSPT19315C
     {
-        #region Properties
-
-        /// <summary>
-        ///     Voltage being output by the sensor.
-        /// </summary>
-        public double Voltage
-        {
-            get
-            {
-                if (_referenceVoltagePort != null)
-                {
-                    _referenceVoltage = _referenceVoltagePort.RawValue * 3.3;
-                }
-                return _sensor.RawValue * _referenceVoltage;
-            }
-        }
-        #endregion Properties
-
         #region Member variables / fields
 
         /// <summary>
@@ -39,6 +21,14 @@ namespace Meadow.Fountation.Sensors.Light
         ///     Reference voltage.
         /// </summary>
         private double _referenceVoltage;
+
+        /// <summary>
+        ///     Voltage being output by the sensor.
+        /// </summary>
+        public async Task<double> GetVoltage()
+        {
+            return await _referenceVoltagePort.Read() * 3.3;
+        }
 
         #endregion Member variables / fields
 

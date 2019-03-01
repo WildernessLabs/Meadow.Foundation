@@ -1,6 +1,7 @@
 using System;
 
 using Meadow.Foundation.Sensors.Rotary;
+using Meadow.Peripherals.Sensors.Rotary;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {
@@ -53,7 +54,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             ValueChanged(this, new ValueChangedEventArgs(_itemID, _choices[_selectedIndex]));
         }
 
-        protected override void HandleRotated(object sender, Sensors.Rotary.RotaryTurnedEventArgs e)
+        protected override void HandleRotated(object sender, RotaryTurnedEventArgs e)
         {
             if (e.Direction == RotationDirection.Clockwise)
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware.Communications;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Temperature;
 
@@ -142,7 +143,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="humidityChangeNotificationThreshold">Changes in humidity greater than this value will trigger an event when updatePeriod > 0.</param>
         /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
         public SHT31D(byte address = 0x44, ushort speed = 100, ushort updateInterval = MinimumPollingPeriod,
-            float humidityChangeNotificationThreshold = 0.001F, float temperatureChangeNotificationThreshold = 0.001F)
+                        float humidityChangeNotificationThreshold = 0.001F, 
+                        float temperatureChangeNotificationThreshold = 0.001F)
         {
             if ((address != 0x44) && (address != 0x45))
             {
@@ -168,7 +170,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
             HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
             _updateInterval = updateInterval;
+
             _sht31d = new I2cBus(address, speed);
+
             if (updateInterval > 0)
             {
                 StartUpdating();

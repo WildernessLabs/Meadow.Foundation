@@ -7,8 +7,9 @@ Brian Kim 5/5/2018
 using System;
 using System.Diagnostics;
 using System.Threading;
+using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
-using EX = Meadow.Foundation.ICs.IOExpanders.MCP23008;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays.LCD
 {
@@ -50,7 +51,7 @@ namespace Meadow.Foundation.Displays.LCD
             Initialize();
         }
 
-        public Lcd2004(EX.MCP23008 mcp)
+        public Lcd2004(MCP23008 mcp)
         {
             DisplayConfig = new TextDisplayConfig { Height = 4, Width = 20 };
 

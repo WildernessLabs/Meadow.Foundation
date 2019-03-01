@@ -1,7 +1,5 @@
+using Meadow.Peripherals.Sensors.Rotary;
 using System;
-
-using Meadow.Foundation.Sensors.Rotary;
-using System.Text;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {

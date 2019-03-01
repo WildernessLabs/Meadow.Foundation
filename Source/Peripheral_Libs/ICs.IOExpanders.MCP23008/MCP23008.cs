@@ -131,7 +131,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 this.SetPortDirection(pin, PortDirectionType.Output);
 
                 // create the convenience class
-                DigitalOutputPort port = new DigitalOutputPort(this, pin, initialState);
+                DigitalOutputPort port = null; //ToDo = new DigitalOutputPort(pin, initialState);
 
                 // return the port
                 return port;

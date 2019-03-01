@@ -1,8 +1,6 @@
-using System;
-
-using Meadow.Foundation.Sensors.Rotary;
-using static Meadow.Foundation.Displays.TextDisplayMenu.InputTypes.Time;
-using Meadow.Foundation.Sensors.Buttons;
+using Meadow.Peripherals.Displays;
+using Meadow.Peripherals.Sensors.Buttons;
+using Meadow.Peripherals.Sensors.Rotary;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu
 {

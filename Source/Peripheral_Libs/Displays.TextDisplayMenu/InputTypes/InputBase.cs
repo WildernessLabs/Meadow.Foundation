@@ -1,7 +1,7 @@
 using System;
-
-using Meadow.Foundation.Sensors.Rotary;
-using Meadow.Foundation.Sensors.Buttons;
+using Meadow.Peripherals.Displays;
+using Meadow.Peripherals.Sensors.Buttons;
+using Meadow.Peripherals.Sensors.Rotary;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 
         protected abstract void HandlePrevious(object sender, EventArgs e);
         protected abstract void HandleNext(object sender, EventArgs e);
-        protected abstract void HandleRotated(object sender, Sensors.Rotary.RotaryTurnedEventArgs e);
+        protected abstract void HandleRotated(object sender, RotaryTurnedEventArgs e);
         protected abstract void HandleClicked(object sender, EventArgs e);
     }
 }

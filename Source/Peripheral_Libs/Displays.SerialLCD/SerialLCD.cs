@@ -1,4 +1,5 @@
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System;
 using System.Diagnostics;
 using System.Threading;
