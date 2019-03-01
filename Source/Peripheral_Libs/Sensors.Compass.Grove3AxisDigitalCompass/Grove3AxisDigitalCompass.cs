@@ -1,7 +1,7 @@
 ﻿//using System;
-//using Netduino.Foundation.SpecializedBlocks;
+//using Meadow.Foundation.SpecializedBlocks;
 
-//namespace Netduino.Foundation.Sensors.Location
+//namespace Meadow.Foundation.Sensors.Location
 //{
 //	public class Grove3AxisDigitalCompass : PollingI2CBlock
 //	{

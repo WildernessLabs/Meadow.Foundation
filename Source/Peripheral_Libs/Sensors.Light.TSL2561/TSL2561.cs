@@ -121,7 +121,7 @@ namespace Meadow.Foundation.Sensors.Light
         #region Member variables / fields.
 
         /// <summary>
-        ///     GPIO pin on the Netduino that is connected to the interrupt pin on the TSL2561.
+        ///     GPIO pin on that is connected to the interrupt pin on the TSL2561.
         /// </summary>
         private DigitalInputPort _interruptPin;
 

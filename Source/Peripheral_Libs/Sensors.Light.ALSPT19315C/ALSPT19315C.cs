@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using Meadow.Hardware;
 
-namespace Netduino.Fountation.Sensors.Light
+namespace Meadow.Fountation.Sensors.Light
 {
     public class ALSPT19315C
     {

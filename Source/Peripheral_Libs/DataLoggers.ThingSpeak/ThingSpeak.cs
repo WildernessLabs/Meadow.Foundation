@@ -3,7 +3,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 
-namespace Netduino.Foundation.DataLoggers
+namespace Meadow.Foundation.DataLoggers
 {
     public class ThingSpeak
     {

@@ -968,11 +968,11 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     Configure the interrupts for the ADXL362.
         /// </summary>
         /// <remark>
-        ///     Set the interrupt mask for interrupt pins 1 and 2 and connect Netduino
+        ///     Set the interrupt mask for interrupt pins 1 and 2
         ///     pins to the interrupt pins on the ADXL362 if requested.
         /// 
         ///     Interrupts can be disabled by passing 0 for the interrupt maps.  It is also
-        ///     possible to disconnect the Netduino and ADXL362 by setting the interrupt pin
+        ///     possible to disconnect and ADXL362 by setting the interrupt pin
         ///     to GPIO_NONE.
         /// </remark>
         /// <param name="interruptMap1">Bit mask for interrupt pin 1</param>
