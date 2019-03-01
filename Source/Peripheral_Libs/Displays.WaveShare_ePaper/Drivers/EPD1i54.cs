@@ -1,6 +1,6 @@
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Displays.ePaper
 {
     public class EPD1i54 : EPDBase
     {

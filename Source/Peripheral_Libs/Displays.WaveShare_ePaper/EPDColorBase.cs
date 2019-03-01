@@ -3,7 +3,7 @@ using System.Drawing;
 using Meadow.Hardware;
 using Meadow;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Displays.ePaper
 {
     /// <summary>
     ///     Provide an interface to the WaveShare ePaper 2 color displays

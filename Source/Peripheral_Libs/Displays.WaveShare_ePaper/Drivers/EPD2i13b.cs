@@ -1,7 +1,7 @@
 using System.Threading;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Displays.ePaper
 {
     /// <summary>
     ///     Provide an interface to the WaveShare ePaper color displays

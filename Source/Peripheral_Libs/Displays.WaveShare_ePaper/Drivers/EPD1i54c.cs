@@ -1,7 +1,7 @@
 using Meadow.Hardware;
 using System;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Displays.ePaper
 {
     public class EPD1i54c : EPDColorBase
     {
