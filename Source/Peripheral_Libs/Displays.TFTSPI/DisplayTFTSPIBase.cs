@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays.Tft
     public abstract class DisplayTftSpiBase : DisplayBase, IDisposable
     {
         #region Enums
-        public enum LcdCommand
+        protected enum LcdCommand
         {
             CASET = 0x2A,
             RASET = 0x2B,

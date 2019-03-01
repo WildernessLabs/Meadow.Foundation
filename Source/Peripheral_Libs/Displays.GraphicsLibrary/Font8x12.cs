@@ -1,4 +1,4 @@
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Graphics
 {
     public class Font8x12 : FontBase
     {

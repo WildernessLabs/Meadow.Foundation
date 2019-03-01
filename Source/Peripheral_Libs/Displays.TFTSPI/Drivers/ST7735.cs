@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Displays.Tft
             ST7735B, //done
         }
 
-        new public enum LcdCommand : byte
+        private new enum LcdCommand : byte
         {
             NOP = 0x0,
             SWRESET = 0x01,
@@ -80,12 +80,12 @@ namespace Meadow.Foundation.Displays.Tft
             GMCTRN1 = 0xE1
         }
 
-        protected void SendCommand(LcdCommand command)
+        private void SendCommand(LcdCommand command)
         {
             SendCommand((byte)command);
         }
 
-        protected void SendCommand(LcdCommand command, byte[] data)
+        private void SendCommand(LcdCommand command, byte[] data)
         {
             SendCommand((byte)command);
             SendData(data);
@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Displays.Tft
             dataCommandPort.State = Data;
         }
 
-        protected void CommonInit()
+        private void CommonInit()
         {
             SendCommand(LcdCommand.SWRESET);
             DelayMs(150);
@@ -187,10 +187,9 @@ namespace Meadow.Foundation.Displays.Tft
 
             SendCommand(LcdCommand.COLMOD);  // set color mode
             SendData(0x05);  // 16-bit color
-
         }
 
-        protected void Init7735B()
+        private void Init7735B()
         {
             SendCommand(LcdCommand.SWRESET);
             DelayMs(150);
@@ -267,7 +266,7 @@ namespace Meadow.Foundation.Displays.Tft
             DelayMs(500);
         }
 
-        protected void Init7735RGreen()
+        private void Init7735RGreen()
         {
             SendCommand(LcdCommand.CASET, new byte[] { 0x00, 0x02, 0x00, 0x7F + 0x02 });
             SendCommand(LcdCommand.RASET, new byte[] { 0x00, 0x01, 0x00, 0x9F + 0x01 });
@@ -276,13 +275,13 @@ namespace Meadow.Foundation.Displays.Tft
             _yOffset = 2;
         }
 
-        protected void Init7735RRed()
+        private void Init7735RRed()
         {
             SendCommand(LcdCommand.CASET, new byte[] { 0x00, 0x00, 0x00, 0x7F });
             SendCommand(LcdCommand.RASET, new byte[] { 0x00, 0x00, 0x00, 0x9F });
         }
 
-        protected void Init7735RGreen144x144()
+        private void Init7735RGreen144x144()
         {
             SendCommand(LcdCommand.CASET, new byte[] { 0x00, 0x00, 0x00, 0x7F });
             SendCommand(LcdCommand.RASET, new byte[] { 0x00, 0x00, 0x00, 0x7F });
@@ -290,7 +289,8 @@ namespace Meadow.Foundation.Displays.Tft
             _xOffset = 2;
             _yOffset = 1;
         }
-        protected void Init7735RGreen80x160()
+
+        private void Init7735RGreen80x160()
         {
             SendCommand(LcdCommand.CASET, new byte[] { 0x00, 0x00, 0x00, 0x7F });
             SendCommand(LcdCommand.RASET, new byte[] { 0x00, 0x00, 0x00, 0x9F });
@@ -299,7 +299,7 @@ namespace Meadow.Foundation.Displays.Tft
             _yOffset = 1;
         }
 
-        protected void Init7735REnd ()
+        private void Init7735REnd ()
         {
             SendCommand(LcdCommand.GMCTRP1);
             SendData(new byte[]
@@ -320,8 +320,7 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(LcdCommand.DISPON);
             Thread.Sleep(10);
         }
-
-
+        
         private void SetAddressWindow(byte x0, byte y0, byte x1, byte y1)
         {
             x0 += _xOffset;

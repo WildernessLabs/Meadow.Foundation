@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Meadow.Foundation.Displays;
+using System;
 using System.Drawing;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Graphics
 {
     /// <summary>
     ///     Provide high level graphics functions
@@ -10,8 +11,6 @@ namespace Meadow.Foundation.Displays
     {
         #region Member variables / fields
 
-        /// <summary>
-        /// </summary>
         private readonly DisplayBase _display;
 
         #endregion Member variables / fields

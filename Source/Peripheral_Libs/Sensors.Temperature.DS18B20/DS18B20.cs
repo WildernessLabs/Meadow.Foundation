@@ -234,7 +234,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                 //
                 //  Check to see if the change merits raising an event.
                 //
-                if ((_updateInterval > 0) && (System.Math.Abs(_lastNotifiedTemperature - value) >= TemperatureChangeNotificationThreshold))
+                if ((_updateInterval > 0) && (Math.Abs(_lastNotifiedTemperature - value) >= TemperatureChangeNotificationThreshold))
                 {
                     TemperatureChanged(this, new SensorFloatEventArgs(_lastNotifiedTemperature, value));
                     _lastNotifiedTemperature = value;

@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     How often should this sensor be read?
         /// </summary>
-        private readonly ushort _updateInterval;
+        private readonly ushort _updateInterval = 100;
 
         /// <summary>
         ///     Last X acceleration reading from the sensor.
@@ -192,7 +192,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             else
             {
-                Update();
+                Update().RunSynchronously();
             }
         }
 
@@ -205,10 +205,11 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         private void StartUpdating()
         {
-            Thread t = new Thread(() => {
+            var t = new Thread(async () => 
+            {
                 while (true)
                 {
-                    Update();
+                    await Update();
                     Thread.Sleep(_updateInterval);
                 }
             });
@@ -220,19 +221,18 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public async Task Update()
         {
-            X = ((await _x.Read() * SupplyVoltage) - _zeroGVoltage) / XVoltsPerG;
-            Y = ((await _y.Read() * SupplyVoltage) - _zeroGVoltage) / YVoltsPerG;
-            Z = ((await _z.Read() * SupplyVoltage) - _zeroGVoltage) / ZVoltsPerG;
+            X = (await _x.Read() * SupplyVoltage - _zeroGVoltage) / XVoltsPerG;
+            Y = (await _y.Read() * SupplyVoltage - _zeroGVoltage) / YVoltsPerG;
+            Z = (await _z.Read() * SupplyVoltage - _zeroGVoltage) / ZVoltsPerG;
+
             if ((_updateInterval != 0) && 
                 ((Math.Abs(X - _lastX) > AccelerationChangeNotificationThreshold) ||
                  (Math.Abs(Y - _lastY) > AccelerationChangeNotificationThreshold) ||
                  (Math.Abs(Z - _lastZ) > AccelerationChangeNotificationThreshold)))
             {
-                Vector lastNotifiedReading = new Vector(_lastX, _lastY, _lastZ);
-                Vector currentReading = new Vector(X, Y, Z);
-                _lastX = X;
-                _lastY = Y;
-                _lastZ = Z;
+                var lastNotifiedReading = new Vector(_lastX, _lastY, _lastZ);
+                var currentReading = new Vector(_lastX = X, _lastY = Y, _lastZ = Z);
+
                 AccelerationChanged(this, new SensorVectorEventArgs(lastNotifiedReading, currentReading));
             }
         }
