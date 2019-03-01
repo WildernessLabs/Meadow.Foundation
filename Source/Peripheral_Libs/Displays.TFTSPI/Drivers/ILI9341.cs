@@ -1,7 +1,7 @@
 using System.Threading;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Displays.Tft
 {
     public class ILI9341 : DisplayTftSpiBase
     {

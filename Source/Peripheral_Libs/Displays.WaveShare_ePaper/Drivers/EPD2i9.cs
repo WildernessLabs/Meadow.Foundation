@@ -1,6 +1,6 @@
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.Drivers
+namespace Meadow.Foundation.Displays.ePaper
 {
     public class EPD2i9 : EPD1i54
     {

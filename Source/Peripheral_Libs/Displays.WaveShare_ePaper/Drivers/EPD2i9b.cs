@@ -1,10 +1,8 @@
-using System;
 using System.Threading;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Displays.ePaper
 {
-
     public class EPD2i9b : EPDColorBase
     {
         public EPD2i9b(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin, IDigitalPin busyPin,
