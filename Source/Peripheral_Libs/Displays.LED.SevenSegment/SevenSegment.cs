@@ -3,7 +3,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.LED
 {
-    public class SevenSegmentDisplay
+    public class SevenSegment
     {
         public enum CharacterType
         {
@@ -60,7 +60,7 @@ namespace Meadow.Foundation.Displays.LED
         };
 
 
-        public SevenSegmentDisplay(IDigitalPin pinA, IDigitalPin pinB,
+        public SevenSegment(IDigitalPin pinA, IDigitalPin pinB,
                                    IDigitalPin pinC, IDigitalPin pinD,
                                    IDigitalPin pinE, IDigitalPin pinF,
                                    IDigitalPin pinG, IDigitalPin pinDecimal, 

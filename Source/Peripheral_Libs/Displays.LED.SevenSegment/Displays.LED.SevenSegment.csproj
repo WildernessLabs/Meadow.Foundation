@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SevenSegmentDisplay.cs" />
+    <Compile Include="SevenSegment.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
