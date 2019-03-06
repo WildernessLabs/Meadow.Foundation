@@ -1,7 +1,7 @@
 ﻿using Meadow.Hardware;
 using System.Threading.Tasks;
 
-namespace Meadow.Fountation.Sensors.Light
+namespace Meadow.Foundation.Sensors.Light
 {
     public class ALSPT19315C
     {
