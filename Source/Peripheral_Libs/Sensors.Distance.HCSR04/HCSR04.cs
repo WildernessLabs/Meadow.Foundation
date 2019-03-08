@@ -6,7 +6,7 @@ using System.Threading;
 namespace Meadow.Foundation.Sensors.Distance
 {
     /// <summary>
-    /// HCSR04 Distance Sensor.
+    /// HCSR04 Distance Sensor
     /// </summary>
     public class HCSR04 : IRangeFinder
     {
@@ -39,12 +39,12 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Trigger Pin.
         /// </summary>
-        protected DigitalOutputPort _triggerPort;
+        protected IDigitalOutputPort _triggerPort;
 
         /// <summary>
         /// Echo Pin.
         /// </summary>
-        protected DigitalInputPort _echoPort;
+        protected IDigitalInputPort _echoPort;
 
         protected long _tickStart;
 
@@ -64,11 +64,11 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
-        public HCSR04(IDigitalPin triggerPin, IDigitalPin echoPin)
+        public HCSR04(IIODevice device, IPin triggerPin, IPin echoPin)
         {
-            _triggerPort = new DigitalOutputPort(triggerPin, false);
+            _triggerPort = device.CreateDigitalOutputPort(triggerPin, false);
 
-            _echoPort = new DigitalInputPort(echoPin, false, ResistorMode.Disabled);
+            _echoPort = device.CreateDigitalInputPort(echoPin, true, false, ResistorMode.Disabled);
             _echoPort.Changed += OnEchoPortChanged;
         }
 
