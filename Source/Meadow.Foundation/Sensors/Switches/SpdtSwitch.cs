@@ -41,9 +41,8 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="pin"></param>
         public SpdtSwitch(IIODevice device, IPin pin)
         {
-            DigitalIn = device.CreateDigitalInputPort(pin, true, false, ResistorMode.Disabled);
-            // ToDo: Uncomment once added Changed event in IDigitalInputPort 
-            // DigitalIn.Changed += DigitalInChanged;
+            DigitalIn = device.CreateDigitalInputPort(pin, true, false, ResistorMode.Disabled);            
+            DigitalIn.Changed += DigitalInChanged;
         }
 
         private void DigitalInChanged(object sender, PortEventArgs e)

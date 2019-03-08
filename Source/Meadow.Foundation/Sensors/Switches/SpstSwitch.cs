@@ -57,9 +57,8 @@ namespace Meadow.Foundation.Sensors.Switches
                     break;
             } 
 
-            DigitalIn = device.CreateDigitalInputPort(pin, true, false, resistorMode);
-            // ToDo: Uncomment once added Changed event in IDigitalInputPort 
-            // DigitalIn.Changed += DigitalInChanged;
+            DigitalIn = device.CreateDigitalInputPort(pin, true, false, resistorMode);            
+            DigitalIn.Changed += DigitalInChanged;
         }
 
         private void DigitalIn_Changed(object sender, PortEventArgs e)

@@ -87,9 +87,8 @@ namespace Meadow.Foundation.Sensors.Buttons
             // create the interrupt port from the pin and resistor type
             DigitalIn = device.CreateDigitalInputPort(inputPin, true, false, resistorMode);
 
-            // wire up the interrupt handler     
-            // ToDo: Uncomment once added Changed event in IDigitalInputPort 
-            // DigitalIn.Changed += DigitalInChanged;            
+            // wire up the interrupt handler                 
+            DigitalIn.Changed += DigitalInChanged;            
         }
 
         private void DigitalInChanged(object sender, PortEventArgs e)
