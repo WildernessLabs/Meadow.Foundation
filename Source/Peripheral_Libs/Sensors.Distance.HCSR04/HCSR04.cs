@@ -60,15 +60,24 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         /// <summary>
-        /// Create a new HCSR04 object and hook up the interrupt handler.
+        /// Create a new HCSR04 object with an IO Device
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
-        public HCSR04(IIODevice device, IPin triggerPin, IPin echoPin)
-        {
-            _triggerPort = device.CreateDigitalOutputPort(triggerPin, false);
+        public HCSR04(IIODevice device, IPin triggerPin, IPin echoPin) :
+            this (device.CreateDigitalOutputPort(triggerPin, false), 
+                  device.CreateDigitalInputPort(echoPin, true, false, ResistorMode.Disabled)) { }
 
-            _echoPort = device.CreateDigitalInputPort(echoPin, true, false, ResistorMode.Disabled);
+        /// <summary>
+        /// Create a new HCSR04 object 
+        /// </summary>
+        /// <param name="triggerPin"></param>
+        /// <param name="echoPin"></param>
+        public HCSR04(IDigitalOutputPort triggerPin, IDigitalInputPort echoPin)
+        {
+            _triggerPort = triggerPin;
+
+            _echoPort = echoPin;
             _echoPort.Changed += OnEchoPortChanged;
         }
 

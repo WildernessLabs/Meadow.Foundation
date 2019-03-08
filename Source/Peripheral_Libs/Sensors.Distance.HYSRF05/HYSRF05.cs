@@ -60,22 +60,28 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         /// <summary>
+        /// Create a new HYSRF05 object with a IO Device
+        /// HSSRF05 must be running the default 4/5 pin mode
+        /// 3 pin mode is not supported on Meadow
+        /// </summary>
+        /// <param name="triggerPin"></param>
+        /// <param name="echoPin"></param>
+        public HYSRF05(IIODevice device, IPin triggerPin, IPin echoPin) :
+            this(device.CreateDigitalOutputPort(triggerPin, false),
+                device.CreateDigitalInputPort(echoPin, true, false, ResistorMode.Disabled)) { }
+
+        /// <summary>
         /// Create a new HYSRF05 object and hook up the interrupt handler
         /// HSSRF05 must be running the default 4/5 pin mode
         /// 3 pin mode is not supported on Meadow
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
-        public HYSRF05(IIODevice device, IPin triggerPin, IPin echoPin)
+        public HYSRF05(IDigitalOutputPort triggerPin, IDigitalInputPort echoPin)
         {
-            if (triggerPin == null || echoPin == null)
-            {
-                throw new Exception("Invalid pin for the HYSRF05.");
-            }
+            _triggerPort = triggerPin;
 
-            _triggerPort = device.CreateDigitalOutputPort(triggerPin, false);
-
-            _echoPort = device.CreateDigitalInputPort(echoPin, true, false, ResistorMode.Disabled);
+            _echoPort = echoPin;
             _echoPort.Changed += OnEchoPortChanged;
         }
 
