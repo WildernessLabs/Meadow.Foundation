@@ -140,20 +140,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 return port;
             }
 
-            throw new System.Exception("Pin is out of range");
+            throw new Exception("Pin is out of range");
         }
 
-        public DigitalInputPort CreateInputPort(IDigitalPin pin, bool enablePullUp = false)
+        public IDigitalInputPort CreateInputPort(IIODevice device, IPin pin, bool enablePullUp = false)
         {
             if (pin != null)
             {
-                // create the convenience class
-                DigitalInputPort port = new DigitalInputPort(pin, false, ResistorMode.PullUp);
-
-                return port;
+                return device.CreateDigitalInputPort(pin, false, false, ResistorMode.PullUp);
             }
 
-            throw new System.Exception("Pin is out of range");
+            throw new Exception("Pin is out of range");
         }
 
         /// <summary>
@@ -183,7 +180,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
             else
             {
-                throw new System.Exception("Pin is out of range");
+                throw new Exception("Pin is out of range");
             }
         }
 
@@ -217,7 +214,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
             else
             {
-                throw new System.Exception("Pin is out of range");
+                throw new Exception("Pin is out of range");
             }
         }
 
@@ -243,7 +240,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
             else
             {
-                throw new System.Exception("Pin is out of range");
+                throw new Exception("Pin is out of range");
             }
         }
 
@@ -261,7 +258,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 return BitHelpers.GetBitValue(_gpio, (byte)pin);
             }
 
-            throw new System.Exception("Pin is out of range");
+            throw new Exception("Pin is out of range");
         }
 
         /// <summary>
