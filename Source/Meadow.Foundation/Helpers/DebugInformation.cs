@@ -2,6 +2,9 @@ using System.Diagnostics;
 
 namespace Meadow.Foundation.Helpers
 {
+    /// <summary>
+    /// This class provides static helper methods used for debugging 
+    /// </summary>
     public class DebugInformation
     {
         #region Methods

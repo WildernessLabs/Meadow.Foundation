@@ -25,9 +25,22 @@ namespace Meadow.Foundation.LEDs
             public bool Loop { get; set; }
         }
 
+        /// <summary>
+        /// Is the LED using a common cathode
+        /// </summary>
         public bool IsCommonCathode { get; protected set; }
+
+        /// <summary>
+        /// Get the red LED port
+        /// </summary>
         public IPwmPort RedPWM { get; protected set; }
+        /// <summary>
+        /// Get the blue LED port
+        /// </summary>
         public IPwmPort BluePWM { get; protected set; }
+        /// <summary>
+        /// Get the green LED port
+        /// </summary>
         public IPwmPort GreenPWM { get; protected set; }
 
 
@@ -37,8 +50,20 @@ namespace Meadow.Foundation.LEDs
         protected float _maximumRedPwmDuty = 1;
         protected float _maximumGreenPwmDuty = 1;
         protected float _maximumBluePwmDuty = 1;
+
+        /// <summary>
+        /// Get the red LED forward voltage
+        /// </summary>
         public float RedForwardVoltage { get; protected set; }
+
+        /// <summary>
+        /// Get the green LED forward voltage
+        /// </summary>
         public float GreenForwardVoltage { get; protected set; }
+
+        /// <summary>
+        /// Get the blue LED forward voltage
+        /// </summary>
         public float BlueForwardVoltage { get; protected set; }
 
         protected Thread _animationThread = null;
@@ -46,23 +71,27 @@ namespace Meadow.Foundation.LEDs
         protected RunningColorsConfig _runningColorConfig = null;
 
         /// <summary>
-        /// The Color the LED has been set to.
+        /// The color the LED has been set to.
         /// </summary>
         public Color Color
         {
             get { return _color; }
         } protected Color _color = Color.Black;
 
-        public RgbPwmLed(
-                    IPwmPin redPwmPin, IPwmPin greenPwmPin, IPwmPin bluePwmPin,
+        public RgbPwmLed(IIODevice device,
+                    IPin redPwmPin, IPin greenPwmPin, IPin bluePwmPin,
                     float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
                     float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
                     float blueLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
                     bool isCommonCathode = true) 
+            //: this  - need PWM port
+            /*
+
+
             : this(new PwmPort(redPwmPin), new PwmPort(greenPwmPin), 
                    new PwmPort(bluePwmPin), redLedForwardVoltage, 
                    greenLedForwardVoltage, blueLedForwardVoltage, 
-                   isCommonCathode)
+                   isCommonCathode)*/
         {
 
         }

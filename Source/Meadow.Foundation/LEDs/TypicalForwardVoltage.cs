@@ -1,5 +1,8 @@
 namespace Meadow.Foundation.LEDs
 {
+    /// <summary>
+    /// Typical forward voltage values by LED color
+    /// </summary>
     public static class TypicalForwardVoltage
     {
         public const float Red = 1.8F;

@@ -13,14 +13,12 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <summary>
         /// Returns the pin connected to the A-phase output on the rotary encoder.
         /// </summary>
-        public DigitalInputPort APhasePin => _aPhasePin;
-        readonly DigitalInputPort _aPhasePin;
+        public DigitalInputPort APhasePort { get; }
 
         /// <summary>
         /// Returns the pin connected to the B-phase output on the rotary encoder.
         /// </summary>
-        public DigitalInputPort BPhasePin => _bPhasePin;
-        readonly DigitalInputPort _bPhasePin;
+        public DigitalInputPort BPhasePort { get; }
 
         /// <summary>
         /// Raised when the rotary encoder is rotated and returns a RotaryTurnedEventArgs object which describes the direction of rotation.
@@ -34,20 +32,27 @@ namespace Meadow.Foundation.Sensors.Rotary
         protected TwoBitGrayCode[] _results = new TwoBitGrayCode[2];
 
         /// <summary>
-        /// Instantiates a new RotaryEncoder on the specified pins.
+        /// Instantiate a new RotaryEncoder on the specified ports
+        /// </summary>
+        /// <param name="aPhasePort"></param>
+        /// <param name="bPhasePort"></param>
+        public RotaryEncoder(IDigitalInputPort aPhasePort, IDigitalInputPort bPhasePort)
+        {
+            // both events go to the same event handler because we need to read both
+            // pins to determine current orientation
+            APhasePort.Changed += PhasePinChanged;
+            BPhasePort.Changed += PhasePinChanged;
+        }
+
+        /// <summary>
+        /// Instantiate a new RotaryEncoder on the specified pins.
         /// </summary>
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
-        public RotaryEncoder(IDigitalPin aPhasePin, IDigitalPin bPhasePin)
+        public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
+            this(device.CreateDigitalInputPort(aPhasePin, true, true, ResistorMode.PullUp), 
+                 device.CreateDigitalInputPort(bPhasePin, true, true, ResistorMode.PullUp))
         {
-            //ToDo
-            _aPhasePin = new DigitalInputPort(aPhasePin, true, ResistorMode.PullUp);
-            _bPhasePin = new DigitalInputPort(bPhasePin, true, ResistorMode.PullUp);
-
-            // both events go to the same event handler because we need to read both
-            // pins to determine current orientation
-            _aPhasePin.Changed += PhasePinChanged;
-            _bPhasePin.Changed += PhasePinChanged;
         }
 
         private void PhasePinChanged(object sender, PortEventArgs e)
@@ -56,8 +61,8 @@ namespace Meadow.Foundation.Sensors.Rotary
 
             // the first time through (not processing) store the result in array slot 0.
             // second time through (is processing) store the result in array slot 2.
-            _results[_processing ? 1 : 0].APhase = APhasePin.State;
-            _results[_processing ? 1 : 0].BPhase = BPhasePin.State;
+            _results[_processing ? 1 : 0].APhase = APhasePort.State;
+            _results[_processing ? 1 : 0].BPhase = BPhasePort.State;
 
             // if this is the second result that we're reading, we should now have 
             // enough information to know which way it's turning, so process the

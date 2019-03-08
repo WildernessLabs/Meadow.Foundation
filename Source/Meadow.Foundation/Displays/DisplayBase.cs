@@ -4,7 +4,7 @@ using System.Drawing;
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Define the interface for the display object.
+    /// Abstract hardware display class 
     /// </summary>
     public abstract class DisplayBase : IDisplay
     {

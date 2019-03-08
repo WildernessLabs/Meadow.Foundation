@@ -4,7 +4,7 @@ using System.Text;
 namespace Meadow.Foundation.Helpers
 {
     /// <summary>
-    ///     Provide CRC and checksum methods.
+    ///     Provide CRC and checksum methods
     /// </summary>
     public class Checksum
     {

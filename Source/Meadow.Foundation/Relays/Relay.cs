@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Relays
         /// <summary>
         /// Returns digital output port
         /// </summary>
-        public DigitalOutputPort DigitalOut { get; protected set; }
+        public IDigitalOutputPort DigitalOut { get; protected set; }
 
         /// <summary>
         /// Returns type of relay.
@@ -40,14 +40,11 @@ namespace Meadow.Foundation.Relays
         /// </summary>
         /// <param name="port"></param>
         /// <param name="type"></param>
-        public Relay(DigitalOutputPort port, RelayType type = RelayType.NormallyOpen)
+        public Relay(IDigitalOutputPort port, RelayType type = RelayType.NormallyOpen)
         {
             // if it's normally closed, we have to invert the "on" value
             Type = type;
-            if (Type == RelayType.NormallyClosed)
-            {
-                _onValue = false;
-            }
+            _onValue = (Type == RelayType.NormallyClosed) ? false : true;
 
             DigitalOut = port;
         }
@@ -57,18 +54,9 @@ namespace Meadow.Foundation.Relays
         /// </summary>
         /// <param name="pin"></param>
         /// <param name="type"></param>
-        public Relay(IDigitalPin pin, RelayType type = RelayType.NormallyOpen)
-        {
-            // if it's normally closed, we have to invert the "on" value
-            Type = type;
-            if (Type == RelayType.NormallyClosed)
-            {
-                _onValue = false;
-            }
-
-            // create a digital output port shim
-            DigitalOut = new DigitalOutputPort(pin, !_onValue);
-        }
+        public Relay(IIODevice device, IPin pin, RelayType type = RelayType.NormallyOpen) : 
+            this (device.CreateDigitalOutputPort(pin), type)
+        { }
 
         /// <summary>
         /// Toggles the relay on or off.

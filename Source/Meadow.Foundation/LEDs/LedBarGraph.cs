@@ -29,12 +29,14 @@ namespace Meadow.Foundation.LEDs
         /// <summary>
         /// Create an LedBarGraph instance from an array of IDigitalPins
         /// </summary>
-        public LedBarGraph(IDigitalPin[] pins)
+        public LedBarGraph(IIODevice device, IPin[] pins)
         {
             _leds = new Led[pins.Length];
 
             for (int i = 0; i < pins.Length; i++)
-                _leds[i] = new Led(pins[i]);
+            {
+                _leds[i] = new Led(device, pins[i]);
+            }
 
             _isPwm = false;
         }
@@ -42,15 +44,23 @@ namespace Meadow.Foundation.LEDs
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPwnPin and a forwardVoltage for all LEDs in the bar graph
         /// </summary>
-        public LedBarGraph(IPwmPin[] pins, float forwardVoltage)
+        public LedBarGraph(IIODevice device, IPin[] pins, float forwardVoltage)
         {
             _pwmLeds = new PwmLed[pins.Length];
 
             for (int i = 0; i < pins.Length; i++)
-                _pwmLeds[i] = new PwmLed(pins[i], forwardVoltage);
+            {
+                _pwmLeds[i] = null; //ToDo - needs device.CreatePwmPort()     
+                   // new PwmLed(device, pins[i], forwardVoltage);
+            }
             _isPwm = true;
         }
 
+        /// <summary>
+        /// Set the LED state
+        /// </summary>
+        /// <param name="index">index of the LED</param>
+        /// <param name="isOn"></param>
         public void SetLed(int index, bool isOn)
         {
             if(_isPwm)
@@ -63,6 +73,11 @@ namespace Meadow.Foundation.LEDs
             }
         }
 
+        /// <summary>
+        /// Set the brightness of an individual LED when using PWM
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="brightness"></param>
         public void SetLedBrightness(int index, float brightness)
         {
             if (_isPwm == false)
@@ -71,6 +86,10 @@ namespace Meadow.Foundation.LEDs
             _pwmLeds[index].SetBrightness(brightness);
         }
 
+        /// <summary>
+        /// Set the percentage of LEDs that are on starting from index 0
+        /// </summary>
+        /// <param name="percentage"></param>
         void SetPercentage(float percentage) //assume 0 - 1
         {
             if (percentage < 0 || percentage > 1)

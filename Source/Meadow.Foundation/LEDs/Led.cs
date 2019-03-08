@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.LEDs
 {
     /// <summary>
-    /// Represents a simple LED.
+    /// Represents a simple LED
     /// </summary>
     public class Led : ILed
     {
         /// <summary>
-        /// Gets the port the LED is being driven by.
+        /// Gets the port that is driving the LED
         /// </summary>
-        /// <value>The port.</value>
+        /// <value>The port</value>
         public IDigitalOutputPort Port { get; protected set; }
 
         /// <summary>
@@ -46,9 +46,7 @@ namespace Meadow.Foundation.LEDs
         /// Creates a LED through a pin directly from the Digital IO of the board
         /// </summary>
         /// <param name="pin"></param>
-        public Led(IDigitalPin pin) : this (new DigitalOutputPort(pin))
-        {
-        }
+        public Led(IIODevice device, IPin pin) : this (device.CreateDigitalOutputPort(pin, false)) { }
 
         /// <summary>
         /// Creates a LED through a DigitalOutPutPort from an IO Expander
@@ -58,8 +56,7 @@ namespace Meadow.Foundation.LEDs
         {
             Port = port;
         }
-
-
+        
         /// <summary>
         /// Blink animation that turns the LED on and off based on the OnDuration and offDuration values in ms
         /// </summary>

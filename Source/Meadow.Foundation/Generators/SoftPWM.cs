@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Generators
     /// </summary>
 	public class SoftPwm
     {
-        public IDigitalOutputPort DigitalOutputPort { get; private set; }
+        IDigitalOutputPort _outputPort;
 
         public float DutyCycle
         {
@@ -46,13 +46,34 @@ namespace Meadow.Foundation.Generators
         protected int _offTimeMilliseconds = 0;
         protected bool _running = false;
 
-        public SoftPwm(IDigitalPin outputPin, float dutyCycle = 0.5f, float frequency = 1.0f)
+        /// <summary>
+        /// Instantiate a SoftPwm object that can perform PWM using digital pins
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="outputPin"></param>
+        /// <param name="dutyCycle"></param>
+        /// <param name="frequency"></param>
+        public SoftPwm(IIODevice device, IPin outputPin, float dutyCycle = 0.5f, float frequency = 1.0f) :
+            this(device.CreateDigitalOutputPort(outputPin, false), dutyCycle, frequency)
         {
-            DigitalOutputPort = new DigitalOutputPort(outputPin, false);
+        }
+
+        /// <summary>
+        /// Instantiate a SoftPwm object that can perform PWM using digital pins
+        /// </summary>
+        /// <param name="outputPort"></param>
+        /// <param name="dutyCycle"></param>
+        /// <param name="frequency"></param>
+        public SoftPwm(IDigitalOutputPort outputPort, float dutyCycle = 0.5f, float frequency = 1.0f)
+        {
+            _outputPort = outputPort;
             DutyCycle = dutyCycle;
             Frequency = frequency;
         }
 
+        /// <summary>
+        /// Start the pulse width modulation
+        /// </summary>
         public void Start()
         {
             _running = true;
@@ -62,15 +83,18 @@ namespace Meadow.Foundation.Generators
             { 
                 while (_running)
                 {
-                    DigitalOutputPort.State = true;
+                    _outputPort.State = true;
                     Thread.Sleep(_onTimeMilliseconds);
-                    DigitalOutputPort.State = false;
+                    _outputPort.State = false;
                     Thread.Sleep(_offTimeMilliseconds);
                 }
             });
             _th.Start();
         }
 
+        /// <summary>
+        /// Stop the pulse width modulation
+        /// </summary>
         public void Stop()
         {
             // setting this will wrap up the thread
@@ -78,11 +102,11 @@ namespace Meadow.Foundation.Generators
 
             // need to make sure the port is off, otherwise it can get
             // stuck in an ON state.
-            DigitalOutputPort.State = false;
+            _outputPort.State = false;
         }
 
         /// <summary>
-        /// Calculates the on time in milliseconds
+        /// Calculates the pulse on time in milliseconds
         /// </summary>
         protected int CalculateOnTimeMillis()
         {

@@ -1,5 +1,8 @@
 namespace Meadow.Foundation.LEDs
 {
+    /// <summary>
+    /// LED helper methods
+    /// </summary>
     public static class Helpers
     {
         /// <summary>

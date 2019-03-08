@@ -26,15 +26,14 @@ namespace Meadow.Foundation.Sensors.HallEffect
         public float RPMChangeNotificationThreshold { get; set; } = 0.001F;
 
         /// <summary>
-        /// Returns DigitalInputPort.
+        /// Input port for the tachometer
         /// </summary>
-        public DigitalInputPort DigitalIn { get; private set; }
+        public IDigitalInputPort InputPort { get; private set; }
 
         /// <summary>
         /// Returns number of magnets of the sensor.
         /// </summary>
-        public ushort NumberOfMagnets => _numberOfMagnets;
-        private ushort _numberOfMagnets;
+        public ushort NumberOfMagnets { get; }
 
         /// <summary>
         /// Returns number of revolutions per minute.
@@ -47,27 +46,36 @@ namespace Meadow.Foundation.Sensors.HallEffect
         protected ushort _numberOfReads = 0; //
 
         /// <summary>
-        /// 
+        /// LinearHallEffectTachometer driver
         /// </summary>
         /// <param name="inputPin"></param>
         /// <param name="type"></param>
         /// <param name="numberOfMagnets"></param>
         /// <param name="rpmChangeNotificationThreshold"></param>
-        public LinearHallEffectTachometer(IDigitalPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
+        public LinearHallEffectTachometer(IIODevice device, IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
+            ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F) :
+            this(device.CreateDigitalInputPort(inputPin), type, numberOfMagnets, rpmChangeNotificationThreshold)
+        {
+           
+        }
+
+        public LinearHallEffectTachometer(IDigitalInputPort inputPort, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F)
         {
-            _numberOfMagnets = numberOfMagnets;
+            NumberOfMagnets = numberOfMagnets;
             RPMChangeNotificationThreshold = rpmChangeNotificationThreshold;
 
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
             //var resistorMode = (type == CircuitTerminationType.CommonGround) ? H.Port.ResistorMode.PullUp : H.Port.ResistorMode.PullDown;
 
             // create the interrupt port from the pin and resistor type
-            DigitalIn = new DigitalInputPort(inputPin, true, ResistorMode.PullDown);
+            InputPort = inputPort;
 
             // wire up the interrupt handler
-            DigitalIn.Changed += DigitalIn_Changed;
+            //TODO InputPort.Changed += DigitalIn_Changed;
         }
+
+
 
         private void DigitalIn_Changed(object sender, PortEventArgs e)
         {
@@ -86,7 +94,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
             _numberOfReads++;
 
             // if we've made a full revolution
-            if (_numberOfReads == _numberOfMagnets)
+            if (_numberOfReads == NumberOfMagnets)
             {
                 //S.Debug.Print("Viva La Revolucion!");
                 // calculate how much time has elapsed since the start of the revolution 
