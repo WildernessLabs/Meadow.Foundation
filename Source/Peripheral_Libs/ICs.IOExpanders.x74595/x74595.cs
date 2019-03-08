@@ -117,9 +117,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="pin">The pin number to create the port on.</param>
         /// <param name="initialState">Whether the pin is initially high or low.</param>
         /// <returns></returns>
-        public DigitalOutputPort CreateOutputPort(IDigitalPin pin, bool initialState)
+        public IDigitalOutputPort CreateOutputPort(IIODevice device, IPin pin, bool initialState)
         {
-            return new DigitalOutputPort(pin, initialState);
+            return device.CreateDigitalOutputPort(pin, initialState);
 
            // throw new IndexOutOfRangeException(EM_PIN_RANGE_MESSAGE);
         }
