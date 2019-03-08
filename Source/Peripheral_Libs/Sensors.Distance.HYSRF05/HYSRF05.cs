@@ -39,12 +39,12 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Trigger Pin.
         /// </summary>
-        protected DigitalOutputPort _triggerPort;
+        protected IDigitalOutputPort _triggerPort;
 
         /// <summary>
         /// Echo Pin.
         /// </summary>
-        protected DigitalInputPort _echoPort;
+        protected IDigitalInputPort _echoPort;
 
         protected long _tickStart;
 
@@ -66,16 +66,16 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
-        public HYSRF05(IDigitalPin triggerPin, IDigitalPin echoPin)
+        public HYSRF05(IIODevice device, IPin triggerPin, IPin echoPin)
         {
             if (triggerPin == null || echoPin == null)
             {
                 throw new Exception("Invalid pin for the HYSRF05.");
             }
 
-            _triggerPort = new DigitalOutputPort(triggerPin, false);
+            _triggerPort = device.CreateDigitalOutputPort(triggerPin, false);
 
-            _echoPort = new DigitalInputPort(echoPin, false, ResistorMode.Disabled);
+            _echoPort = device.CreateDigitalInputPort(echoPin, true, false, ResistorMode.Disabled);
             _echoPort.Changed += OnEchoPortChanged;
         }
 
