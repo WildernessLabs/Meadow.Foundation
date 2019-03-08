@@ -18,9 +18,9 @@ namespace Meadow.Foundation.Audio
         /// Create a new PiezoSpeaker instance
         /// </summary>
         /// <param name="pin">PWM Pin connected to the PiezoSpeaker</param>
-        public PiezoSpeaker(IPwmPin pin)
+        public PiezoSpeaker(IIODevice device, IPin pin)
         {
-            _pwm = new PwmPort(pin, 100, 0, false);
+            _pwm = null;//TODO needs device.CreatePwmPort ..... new PwmPort(pin, 100, 0, false);
         }
 
         /// <summary>
