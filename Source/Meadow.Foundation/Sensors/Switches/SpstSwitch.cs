@@ -33,14 +33,14 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Returns the DigitalInputPort.
         /// </summary>
-        public DigitalInputPort DigitalIn { get; protected set; }
+        public IDigitalInputPort DigitalIn { get; protected set; }
 
         /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
         /// </summary>
         /// <param name="pin"></param>
         /// <param name="type"></param>
-        public SpstSwitch(IDigitalPin pin, CircuitTerminationType type)
+        public SpstSwitch(IIODevice device, IPin pin, CircuitTerminationType type)
         {
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
             var resistorMode = ResistorMode.Disabled;
@@ -57,9 +57,9 @@ namespace Meadow.Foundation.Sensors.Switches
                     break;
             } 
 
-            DigitalIn = new DigitalInputPort(pin, true, resistorMode);
-
-            DigitalIn.Changed += DigitalIn_Changed;
+            DigitalIn = device.CreateDigitalInputPort(pin, true, false, resistorMode);
+            // ToDo: Uncomment once added Changed event in IDigitalInputPort 
+            // DigitalIn.Changed += DigitalInChanged;
         }
 
         private void DigitalIn_Changed(object sender, PortEventArgs e)

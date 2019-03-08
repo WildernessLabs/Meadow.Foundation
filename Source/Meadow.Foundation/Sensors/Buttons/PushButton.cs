@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Returns digital input port.
         /// </summary>
-        public DigitalInputPort DigitalIn { get; private set; }
+        public IDigitalInputPort DigitalIn { get; private set; }
 
         /// <summary>
         /// Raised when a press starts (the button is pushed down; circuit is closed).
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="inputPin"></param>
         /// <param name="type"></param>
         /// <param name="debounceDuration">in milliseconds</param>
-		public PushButton(IDigitalPin inputPin, CircuitTerminationType type, int debounceDuration = 20) 
+		public PushButton(IIODevice device, IPin inputPin, CircuitTerminationType type, int debounceDuration = 20) 
 		{
             _circuitType = type;
             DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
@@ -85,11 +85,12 @@ namespace Meadow.Foundation.Sensors.Buttons
             } 
 
             // create the interrupt port from the pin and resistor type
-            DigitalIn = new DigitalInputPort(inputPin, true, resistorMode);
+            DigitalIn = device.CreateDigitalInputPort(inputPin, true, false, resistorMode);
 
-            // wire up the interrupt handler
-            DigitalIn.Changed += DigitalInChanged;
- 		}
+            // wire up the interrupt handler     
+            // ToDo: Uncomment once added Changed event in IDigitalInputPort 
+            // DigitalIn.Changed += DigitalInChanged;            
+        }
 
         private void DigitalInChanged(object sender, PortEventArgs e)
         {

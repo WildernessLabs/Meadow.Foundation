@@ -34,17 +34,14 @@ namespace Meadow.Foundation.Sensors.Switches
         /// </summary>
         /// <param name="switchPins"></param>
         /// <param name="type"></param>
-        public DipSwitch(IDigitalPin[] switchPins, CircuitTerminationType type)
+        public DipSwitch(IIODevice device, IPin[] switchPins, CircuitTerminationType type)
         {
             Switches = new ISwitch[switchPins.Length];
 
             for (int i = 0; i < switchPins.Length; i++)
-            {
-                //this.DigitalIns[i] = new H.InterruptPort(switchPins[i], true, resistorMode, Microsoft.SPOT.Hardware.Port.InterruptMode.InterruptEdgeBoth);
-                Switches[i] = new SpstSwitch(switchPins[i], type);
-
+            {                
+                Switches[i] = new SpstSwitch(device, switchPins[i], type);
                 int index = i;
-
                 Switches[i].Changed += (s,e) => HandleSwitchChange(index);
             }
         }

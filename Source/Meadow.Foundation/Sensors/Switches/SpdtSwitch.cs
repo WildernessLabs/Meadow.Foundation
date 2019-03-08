@@ -28,7 +28,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Returns the DigitalInputPort.
         /// </summary>
-        public DigitalInputPort DigitalIn { get; protected set; }
+        public IDigitalInputPort DigitalIn { get; protected set; }
 
         /// <summary>
         /// Raised when the switch circuit is opened or closed.
@@ -39,13 +39,11 @@ namespace Meadow.Foundation.Sensors.Switches
         /// Instantiates a new SpdtSwitch object with the center pin connected to the specified digital pin, one pin connected to common/ground and one pin connected to high/3.3V.
         /// </summary>
         /// <param name="pin"></param>
-        public SpdtSwitch(IDigitalPin pin)
+        public SpdtSwitch(IIODevice device, IPin pin)
         {
-            var resistorMode = ResistorMode.Disabled;
-
-            DigitalIn = new DigitalInputPort(pin, true, resistorMode);
-
-            DigitalIn.Changed += DigitalInChanged;
+            DigitalIn = device.CreateDigitalInputPort(pin, true, false, ResistorMode.Disabled);
+            // ToDo: Uncomment once added Changed event in IDigitalInputPort 
+            // DigitalIn.Changed += DigitalInChanged;
         }
 
         private void DigitalInChanged(object sender, PortEventArgs e)
