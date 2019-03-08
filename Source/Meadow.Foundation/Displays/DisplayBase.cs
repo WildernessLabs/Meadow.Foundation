@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     public abstract class DisplayBase : IDisplay
     {
         /// <summary>
-        /// 
+        /// Mode for copying 1 bit bitmaps
         /// </summary>
         public enum BitmapMode
         {
@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Displays
         };
 
         /// <summary>
-        /// 
+        /// Enum for Display color mode, defines bit depth and RGB order
         /// </summary>
         public enum DisplayColorMode
         {
@@ -34,17 +34,17 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// 
+        /// The DisplayColorMode for the current display
         /// </summary>
         public abstract DisplayColorMode ColorMode { get; }
 
         /// <summary>
-        /// 
+        /// Width of the display in pixels
         /// </summary>
         public abstract uint Width { get; }
 
         /// <summary>
-        /// 
+        /// Height of the display in pixels
         /// </summary>
         public abstract uint Height { get; }
 

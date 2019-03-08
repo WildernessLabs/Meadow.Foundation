@@ -3,11 +3,19 @@ using System;
 
 namespace Meadow.Foundation.LEDs
 {
-
+    /// <summary>
+    /// Represents an LED bar graph composed on multiple LEDs
+    /// </summary>
     public class LedBarGraph
     {
+        /// <summary>
+        /// The number of the LEDs in the bar graph
+        /// </summary>
         public int Count => _isPwm ? _pwmLeds.Length : _leds.Length;
 
+        /// <summary>
+        /// A value between 0 and 1 that controls the number of LEDs that are activated
+        /// </summary>
         public float Percentage
         {
             set => SetPercentage(value);
@@ -18,6 +26,9 @@ namespace Meadow.Foundation.LEDs
 
         protected bool _isPwm = false;
 
+        /// <summary>
+        /// Create an LedBarGraph instance from an array of IDigitalPins
+        /// </summary>
         public LedBarGraph(IDigitalPin[] pins)
         {
             _leds = new Led[pins.Length];
@@ -28,6 +39,9 @@ namespace Meadow.Foundation.LEDs
             _isPwm = false;
         }
 
+        /// <summary>
+        /// Create an LedBarGraph instance from an array of IPwnPin and a forwardVoltage for all LEDs in the bar graph
+        /// </summary>
         public LedBarGraph(IPwmPin[] pins, float forwardVoltage)
         {
             _pwmLeds = new PwmLed[pins.Length];

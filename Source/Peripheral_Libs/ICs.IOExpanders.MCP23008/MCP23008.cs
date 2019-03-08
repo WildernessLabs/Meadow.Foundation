@@ -13,7 +13,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// </summary>
     public class MCP23008
     {
-        public event EventHandler InterruptRaised = delegate { };
+        /// <summary>
+        ///     Raised on Interrupt
+        /// </summary>
+        public event EventHandler InterruptRaised = delegate { }; //ToDo - is this being used??
 
         private readonly I2cBus _i2cBus;
 

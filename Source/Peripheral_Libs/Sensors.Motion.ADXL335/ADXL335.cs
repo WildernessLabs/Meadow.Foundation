@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    ///     Provide an interface for the ADXL335 triple axis accelerometer.
+    ///     Driver for the ADXL335 triple axis accelerometer.
     /// </summary>
     public class ADXL335
     {
