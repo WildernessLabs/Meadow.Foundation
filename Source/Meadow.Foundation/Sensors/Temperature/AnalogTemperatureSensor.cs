@@ -142,7 +142,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     Analog port that the temperature sensor is attached to.
         /// </summary>
         /// <value>Analog port connected to the temperature sensor.</value>
-        private AnalogInputPort AnalogPort { get; set; }
+        private IAnalogInputPort AnalogPort { get; set; }
 
         /// <summary>
         ///     Temperature in degrees centigrade.
@@ -208,7 +208,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="calibration">Calibration for the analog temperature sensor.</param>
         /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
         /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
-        public AnalogTemperature(IAnalogPin analogPin, KnownSensorType sensorType, Calibration calibration = null, 
+        public AnalogTemperature(IIODevice device, IPin analogPin, KnownSensorType sensorType, Calibration calibration = null, 
             ushort updateInterval = MinimumPollingPeriod, float temperatureChangeNotificationThreshold = 0.001F)
         {
             if (temperatureChangeNotificationThreshold < 0)
@@ -233,7 +233,8 @@ namespace Meadow.Foundation.Sensors.Temperature
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
             _updateInterval = updateInterval;
 
-            AnalogPort = new AnalogInputPort(analogPin);
+            AnalogPort = null; // ToDo: needs device.CreateAnalogInputPort() ..... new AnalogInputPort(analogPin);
+
             switch (sensorType)
             {
                 case KnownSensorType.TMP35:
@@ -294,7 +295,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public async Task Update()
         {
-            float reading = await AnalogPort.Read() * 3300;
+            float reading = await AnalogPort.Read(1, _updateInterval) * 3300;
             reading -= _yIntercept;
             Temperature = reading / _millivoltsPerDegreeCentigrade; ;
         }
