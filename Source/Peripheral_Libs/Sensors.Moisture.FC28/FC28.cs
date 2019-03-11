@@ -17,12 +17,12 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Returns the analog input port
         /// </summary>
-        public AnalogInputPort AnalogPort { get; protected set; }
+        public IAnalogInputPort AnalogPort { get; protected set; }
 
         /// <summary>
         /// Returns the digital output port
         /// </summary>
-        public DigitalOutputPort DigitalPort { get; protected set; }
+        public IDigitalOutputPort DigitalPort { get; protected set; }
 
         /// <summary>
         /// Last value read from the moisture sensor.
@@ -36,20 +36,25 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Default constructor is private to prevent it being called.
         /// </summary>
-        private FC28()
-        {
+        private FC28() { }
 
-        }
+        /// <summary>
+        /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device.
+        /// </summary>
+        /// <param name="analogPort"></param>
+        /// <param name="digitalPort"></param>
+        public FC28(IIODevice device, IPin analogPin, IPin digitalPin) : 
+            this (device.CreateAnalogInputPort(analogPin), device.CreateDigitalOutputPort(digitalPin)) { }
 
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin and digital pin.
         /// </summary>
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
-        public FC28(IAnalogPin analogPort, IDigitalPin digitalPort)
+        public FC28(IAnalogInputPort analogPort, IDigitalOutputPort digitalPort)
         {
-            AnalogPort = new AnalogInputPort(analogPort);
-            DigitalPort = new DigitalOutputPort(digitalPort, false);
+            AnalogPort = analogPort;
+            DigitalPort = digitalPort;
         }
 
         #endregion
