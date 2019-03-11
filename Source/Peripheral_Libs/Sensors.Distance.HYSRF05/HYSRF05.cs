@@ -55,9 +55,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Default constructor is private to prevent it being called.
         /// </summary>
-        private HYSRF05()
-        {
-        }
+        private HYSRF05() { }
 
         /// <summary>
         /// Create a new HYSRF05 object with a IO Device

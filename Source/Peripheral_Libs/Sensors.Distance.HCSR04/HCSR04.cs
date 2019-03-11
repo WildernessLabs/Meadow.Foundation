@@ -55,9 +55,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Default constructor is private to prevent it being called.
         /// </summary>
-        private HCSR04()
-        {
-        }
+        private HCSR04() { }
 
         /// <summary>
         /// Create a new HCSR04 object with an IO Device
