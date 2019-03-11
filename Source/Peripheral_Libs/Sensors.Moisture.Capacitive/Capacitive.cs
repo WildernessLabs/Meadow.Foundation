@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Returns the analog input port
         /// </summary>
-        public AnalogInputPort AnalogPort { get; protected set; }
+        public IAnalogInputPort AnalogPort { get; protected set; }
 
         /// <summary>
         /// Last value read from the moisture sensor.
@@ -30,18 +30,23 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Default constructor is private to prevent it being called.
         /// </summary>
-        private Capacitive()
-        {
-
-        }
+        private Capacitive() { }
 
         /// <summary>
-        /// Creates a Capacitive soil moisture sensor object with the especified analog pin.
+        /// Creates a Capacitive soil moisture sensor object with the especified analog pin and a IO device.
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="analogPin"></param>
+        public Capacitive(IIODevice device, IPin analogPin) : 
+            this(device.CreateAnalogInputPort(analogPin)) { }
+
+        /// <summary>
+        /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort.
         /// </summary>
         /// <param name="analogPort"></param>
-        public Capacitive(IAnalogPin analogPort)
+        public Capacitive(IAnalogInputPort analogPort)
         {
-            AnalogPort = new AnalogInputPort(analogPort);
+            AnalogPort = analogPort;
         }
 
         #endregion
