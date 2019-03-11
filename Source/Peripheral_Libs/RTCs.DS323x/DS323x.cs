@@ -177,7 +177,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         ///     Interrupt port attached to the DS323x RTC module.
         /// </summary>
-        protected DigitalInputPort _interruptPort;
+        protected IDigitalInputPort _interruptPort;
 
         #endregion Member variables / fields
 
@@ -284,9 +284,8 @@ namespace Meadow.Foundation.RTCs
         ///     Setup the interrupts.
         /// </summary>
         // TODO: re-examine this; maybe we need a `DigitalPin.None` prop
-        private IDigitalPin _interruptPin = null;// IDigitalPin.GPIO_NONE;
-
-        protected IDigitalPin InterruptPin
+        private IDigitalInputPort _interruptPin = null;// IDigitalPin.GPIO_NONE;
+        protected IDigitalInputPort InterruptPin
         {
             set
             {
