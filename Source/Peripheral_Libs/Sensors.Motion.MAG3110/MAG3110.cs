@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Interrupt port used to detect then end of a conversion.
         /// </summary>
-        private readonly DigitalInputPort _digitalInputPort;
+        private readonly IDigitalInputPort _digitalInputPort;
 
         #endregion Member variables / fields
 
@@ -188,24 +188,34 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Create a new MAG3110 object using the default parameters for the component.
+        /// Create a new MAG3110 object using the default parameters for the component.
         /// </summary>
-        /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
-        /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>
+        /// <param name="device">IO Device.</param>
         /// <param name="interruptPin">Interrupt pin used to detect end of conversions.</param>
-        // TODO: re-examine this; maybe we need a `DigitalPin.None` prop 
-        public MAG3110(byte address = 0x0e, ushort speed = 400, IDigitalPin interruptPin = null)
+        /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
+        /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>        
+        public MAG3110(IIODevice device, IPin interruptPin = null, byte address = 0x0e, ushort speed = 400) :
+            this (device.CreateDigitalInputPort(interruptPin, true, false, ResistorMode.Disabled), address, speed) { }
+
+        /// <summary>
+        /// Create a new MAG3110 object using the default parameters for the component.
+        /// </summary>
+        /// <param name="interruptPort">Interrupt port used to detect end of conversions.</param>
+        /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
+        /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>        
+        public MAG3110(IDigitalInputPort interruptPort = null, byte address = 0x0e, ushort speed = 400)
         {
             _mag3110 = new I2cBus(address, speed);
+
             var deviceID = _mag3110.ReadRegister((byte) Registers.WhoAmI);
             if (deviceID != 0xc4)
             {
                 throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
             }
  
-            if (interruptPin != null)
+            if (interruptPort != null)
             {
-                _digitalInputPort = new DigitalInputPort(interruptPin, false, ResistorMode.Disabled);
+                _digitalInputPort = interruptPort;
                 _digitalInputPort.Changed += DigitalInputPortChanged;
             }
             Reset();
