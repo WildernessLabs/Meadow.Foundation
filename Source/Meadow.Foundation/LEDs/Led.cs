@@ -46,7 +46,8 @@ namespace Meadow.Foundation.LEDs
         /// Creates a LED through a pin directly from the Digital IO of the board
         /// </summary>
         /// <param name="pin"></param>
-        public Led(IIODevice device, IPin pin) : this (device.CreateDigitalOutputPort(pin, false)) { }
+        public Led(IIODevice device, IPin pin) : 
+            this (device.CreateDigitalOutputPort(pin, false)) { }
 
         /// <summary>
         /// Creates a LED through a DigitalOutPutPort from an IO Expander
