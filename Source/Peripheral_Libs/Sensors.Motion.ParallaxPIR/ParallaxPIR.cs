@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Digital input port
         /// </summary>
-        private readonly DigitalInputPort _digitalInputPort;
+        private readonly IDigitalInputPort _digitalInputPort;
 
         #endregion Member variables and fields
 
@@ -40,22 +40,28 @@ namespace Meadow.Foundation.Sensors.Motion
         #region Constructors
 
         /// <summary>
-        ///     Default constructor is private to prevent it being called.
+        /// Default constructor is private to prevent it being called.
         /// </summary>
-        private ParallaxPIR()
-        {
-        }
+        private ParallaxPIR() { }
 
         /// <summary>
-        ///     Create a new Parallax PIR object and hook up the Changed event handler.
+        /// Create a new Parallax PIR object connected to an input pin and IO Device.
         /// </summary>
-        /// <param name="inputPin"></param>
-        public ParallaxPIR(IDigitalPin inputPin)
+        /// <param name="device"></param>
+        /// <param name="inputPin"></param>        
+        public ParallaxPIR(IIODevice device, IPin inputPin) : 
+            this (device.CreateDigitalInputPort(inputPin, true, false, ResistorMode.Disabled)) { }
+
+        /// <summary>
+        /// Create a new Parallax PIR object connected to a interrupt port.
+        /// </summary>
+        /// <param name="digitalInputPort"></param>        
+        public ParallaxPIR(IDigitalInputPort digitalInputPort)
         {
             //TODO: I changed this from Pins.GPIO_NONE to null
-            if (inputPin != null)
+            if (digitalInputPort != null)
             {
-                _digitalInputPort = new DigitalInputPort(inputPin, false, ResistorMode.Disabled);
+                _digitalInputPort = digitalInputPort;
                 _digitalInputPort.Changed += DigitalInputPortChanged;
             }
             else
