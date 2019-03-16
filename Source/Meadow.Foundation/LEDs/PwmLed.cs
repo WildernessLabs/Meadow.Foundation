@@ -13,8 +13,6 @@ namespace Meadow.Foundation.LEDs
     /// </summary>
     public class PwmLed : IPwmLed
     {
-        IDigitalOutputPort ILed.Port => throw new NotImplementedException();
-
         protected Thread _animationThread = null;
         protected float _maximumPwmDuty = 1;
         protected bool _running = false;
@@ -23,8 +21,7 @@ namespace Meadow.Foundation.LEDs
         /// Gets the brightness of the LED, controlled by a PWM signal, and limited by the 
         /// calculated maximum voltage. Valid values are from 0 to 1, inclusive.
         /// </summary>
-        public float Brightness
-        {
+        public float Brightness {
             get { return _brightness; }
         }
         protected float _brightness = 0;
@@ -34,31 +31,27 @@ namespace Meadow.Foundation.LEDs
         /// </summary>
         public bool IsOn {
             get { return _isOn; }
-            set
-            {
+            set {
                 // if turning on,
-                if (value)
-                {
-                    PwmPort.DutyCycle = _maximumPwmDuty; // turn on
-                }
-                else
-                { // if turning off
-                    PwmPort.DutyCycle = 0; // turn off
+                if (value) {
+                    Port.DutyCycle = _maximumPwmDuty; // turn on
+                } else { // if turning off
+                    Port.DutyCycle = 0; // turn off
                 }
                 _isOn = value;
             }
         }
         protected bool _isOn = false;
 
+        ///// <summary>
+        ///// Gets the PwmPort
+        ///// </summary>
+        protected IPwmPort Port { get; set; }
+
         /// <summary>
         /// Gets the forward voltage value
         /// </summary>
         public float ForwardVoltage { get; protected set; }
-
-        /// <summary>
-        /// Gets the PwmPort
-        /// </summary>
-        public IPwmPort PwmPort { get; protected set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Meadow.Foundation.LEDs.PwmLed"/> class.
