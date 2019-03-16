@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Switches
             DigitalIn.Changed += DigitalInChanged;
         }
 
-        private void DigitalIn_Changed(object sender, PortEventArgs e)
+        private void DigitalInChanged(object sender, PortEventArgs e)
         {
             IsOn = DigitalIn.State;
         }

@@ -79,10 +79,10 @@ namespace Meadow.Foundation.LEDs
 
             _maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
 
-            PwmPort = pwmPort;
+            Port = pwmPort;
             //this.Port = new PWM(pin, 100, _maximumPwmDuty, false);
-			PwmPort.Frequency = 100;
-			PwmPort.DutyCycle = _maximumPwmDuty;
+			Port.Frequency = 100;
+			Port.DutyCycle = _maximumPwmDuty;
         }
 
         /// <summary>
@@ -101,17 +101,17 @@ namespace Meadow.Foundation.LEDs
             // if 0, shut down the PWM (is this a good idea?)
             if (Brightness == 0)
             {
-                PwmPort.Stop();
+                Port.Stop();
                 _isOn = false;
-                PwmPort.DutyCycle = 0;
+                Port.DutyCycle = 0;
             }
             else
             {
-                PwmPort.DutyCycle = _maximumPwmDuty * Brightness;
+                Port.DutyCycle = _maximumPwmDuty * Brightness;
 
                 if (!_isOn)
                 {
-                    PwmPort.Start();
+                    Port.Start();
                     _isOn = true;
                 }
             }
