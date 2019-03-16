@@ -50,7 +50,7 @@
     <Compile Include="Controllers\PID\StandardPidController.cs" />
     <Compile Include="Displays\DisplayBase.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
-    <Compile Include="Generators\SoftPWM.cs" />
+    <Compile Include="Generators\SoftPwmPort.cs" />
     <Compile Include="Helpers\Checksum.cs" />
     <Compile Include="Helpers\Converters.cs" />
     <Compile Include="Helpers\DebugInformation.cs" />
