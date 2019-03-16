@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -55,12 +55,11 @@
     <Compile Include="Helpers\Converters.cs" />
     <Compile Include="Helpers\DebugInformation.cs" />
     <Compile Include="Helpers\NumericExtensions.cs" />
-    <Compile Include="LEDs\Helpers.cs" />
-    <Compile Include="LEDs\Led.cs" />
-    <Compile Include="LEDs\PwmLed.cs" />
-    <Compile Include="LEDs\RgbPwmLed.cs" />
-    <Compile Include="LEDs\LedBarGraph.cs" />
-    <Compile Include="LEDs\TypicalForwardVoltage.cs" />
+    <Compile Include="Leds\Helpers.cs" />
+    <Compile Include="Leds\Led.cs" />
+    <Compile Include="Leds\PwmLed.cs" />
+    <Compile Include="Leds\RgbPwmLed.cs" />
+    <Compile Include="Leds\TypicalForwardVoltage.cs" />
     <Compile Include="Motors\HBridgeMotor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Relays\Relay.cs" />
@@ -79,6 +78,7 @@
     <Compile Include="Sensors\Switches\SpstSwitch.cs" />
     <Compile Include="Sensors\Temperature\AnalogTemperatureSensor.cs" />
     <Compile Include="Speakers\PiezoSpeaker.cs" />
+    <Compile Include="Leds\LedBarGraph.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BaseClasses\" />
