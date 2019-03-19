@@ -293,9 +293,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         ///     Get the current temperature and update the Temperature property.
         /// </summary>
-        public async Task Update()
+        public /*async Task*/ void Update()
         {
-            float reading = await AnalogPort.Read(1, _updateInterval) * 3300;
+            // TODO: re-implement
+            //float reading = await AnalogPort.Read(1, _updateInterval) * 3300;
+            float reading = 0f;
             reading -= _yIntercept;
             Temperature = reading / _millivoltsPerDegreeCentigrade; ;
         }

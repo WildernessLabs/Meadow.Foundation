@@ -1,6 +1,7 @@
 using Meadow;
 using Meadow.Hardware;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,7 +29,7 @@ namespace Meadow.Foundation.Generators
                 _dutyCycle = value;
                 _onTimeMilliseconds = CalculateOnTimeMillis();
                 _offTimeMilliseconds = CalculateOffTimeMillis();
-                //Debug.Print("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
+                Debug.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
         } protected float _dutyCycle;
 
@@ -41,7 +42,7 @@ namespace Meadow.Foundation.Generators
                 _frequency = value;
                 _onTimeMilliseconds = CalculateOnTimeMillis();
                 _offTimeMilliseconds = CalculateOffTimeMillis();
-                //Debug.Print("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
+                Debug.Print("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
         }
 
@@ -76,13 +77,13 @@ namespace Meadow.Foundation.Generators
         /// <param name="outputPort"></param>
         /// <param name="dutyCycle"></param>
         /// <param name="frequency"></param>
-        public SoftPwmPort(IDigitalOutputPort outputPort, float dutyCycle = 0.5f, float frequency = 1.0f)
+        public SoftPwmPort(IDigitalOutputPort outputPort, float dutyCycle = 0.0f, float frequency = 100f)
         {
             Port = outputPort;
             DutyCycle = dutyCycle;
             Frequency = frequency;
 
-            this.Channel = new PwmChannelInfo("SoftPwmChannel", 0, 10000, false, false);
+            this.Channel = new PwmChannelInfo("SoftPwmChannel", 0, 1000, false, false);
         }
 
         /// <summary>
