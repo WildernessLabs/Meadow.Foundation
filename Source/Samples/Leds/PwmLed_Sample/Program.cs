@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Threading;
+using Meadow;
 
 namespace PwmLed_Sample
 {
     class MainClass
     {
+        static IApp app;
+
         public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            app = new PwmLedApp();
+            Thread.Sleep(Timeout.Infinite);
         }
     }
 }

@@ -6,8 +6,8 @@
     <ProjectGuid>{BE05FE1F-44DB-4588-B0FB-6D71E77FC86C}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>PwmLed_Sample</RootNamespace>
-    <AssemblyName>PwmLed_Sample</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <AssemblyName>App</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,6 +32,17 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PwmLedApp.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
+      <Project>{B13C7BDD-77F5-45F8-BDB9-6CD368C67410}</Project>
+      <Name>Meadow.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Meadow.Foundation\Meadow.Foundation.csproj">
+      <Project>{CEBD7F9A-4645-4A29-8A97-7889E241896F}</Project>
+      <Name>Meadow.Foundation</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
