@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Generators
                 _frequency = value;
                 _onTimeMilliseconds = CalculateOnTimeMillis();
                 _offTimeMilliseconds = CalculateOffTimeMillis();
-                Debug.Print("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
+                Debug.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
         }
 
