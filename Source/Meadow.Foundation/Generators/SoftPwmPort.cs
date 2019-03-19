@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Generators
                 _dutyCycle = value;
                 _onTimeMilliseconds = CalculateOnTimeMillis();
                 _offTimeMilliseconds = CalculateOffTimeMillis();
-                Debug.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
+                Console.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
         } protected float _dutyCycle;
 
@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Generators
                 _frequency = value;
                 _onTimeMilliseconds = CalculateOnTimeMillis();
                 _offTimeMilliseconds = CalculateOffTimeMillis();
-                Debug.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
+                Console.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
         }
 

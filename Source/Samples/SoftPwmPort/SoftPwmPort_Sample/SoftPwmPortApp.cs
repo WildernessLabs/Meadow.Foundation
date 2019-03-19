@@ -16,9 +16,9 @@ namespace SoftPwmPort_Sample
         public SoftPwmPortApp()
         {
             digiOut = Device.CreateDigitalOutputPort(Device.Pins.D00);
-            Debug.WriteLine("digital out created");
+            Console.WriteLine("digital out created");
             softPwmPort = new SoftPwmPort(digiOut);
-            Debug.WriteLine("SoftPwmPort created");
+            Console.WriteLine("SoftPwmPort created");
             StartPulsing();
         }
 
