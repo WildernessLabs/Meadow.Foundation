@@ -18,7 +18,14 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// of rate limiting clicks. Decrease this time to allow users to click
         /// more quickly.
         /// </summary>
-        public TimeSpan DebounceDuration { get; set; }
+        public TimeSpan DebounceDuration
+        {
+            get => (DigitalIn != null) ? new TimeSpan(0, 0, 0, 0, DigitalIn.DebounceDuration) : TimeSpan.MinValue;
+            set
+            {
+                DigitalIn.DebounceDuration = (int) value.TotalMilliseconds;
+            }
+        }
 
         /// <summary>
         /// Returns the current raw state of the switch. If the switch 
@@ -60,10 +67,19 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         #region Member variables / fields
 
+        /// <summary>
+        /// Minimum DateTime value when the button was pushed
+        /// </summary>
         protected DateTime _lastClicked = DateTime.MinValue;
 
+        /// <summary>
+        /// Maximum DateTime value when the button was just pushed
+        /// </summary>
         protected DateTime _buttonPressStart = DateTime.MaxValue;
 
+        /// <summary>
+        /// Circuit Termination Type (CommonGround, High or Floating)
+        /// </summary>
         protected CircuitTerminationType _circuitType;
 
         #endregion
@@ -83,30 +99,14 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="mode"></param>
         /// <param name="type"></param>
         /// <param name="debounceDuration"></param>
-        public PushButton(IIODevice device, IPin inputPin, InterruptMode mode, CircuitTerminationType type, int debounceDuration = 20)
+        public PushButton(IIODevice device, IPin inputPin, InterruptMode interruptMode, int debounceDuration = 20)
         {
-            _circuitType = type;
             DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
 
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
-            var resistorMode = ResistorMode.Disabled;
-            switch (type)
-            {
-                case CircuitTerminationType.CommonGround:
-                    resistorMode = ResistorMode.PullUp;
-                    break;
-                case CircuitTerminationType.High:
-                    resistorMode = ResistorMode.PullDown;
-                    break;
-                case CircuitTerminationType.Floating:
-                    resistorMode = ResistorMode.Disabled;
-                    break;
-            }
+            var resistorMode = ResistorMode.Disabled;            
 
-            // create the interrupt port from the pin and resistor type
-            DigitalIn = device.CreateDigitalInputPort(inputPin, mode, resistorMode, debounceDuration);
-
-            // wire up the interrupt handler
+            DigitalIn = device.CreateDigitalInputPort(inputPin, interruptMode, resistorMode, debounceDuration);
             DigitalIn.Changed += DigitalInChanged;
         }
 
@@ -116,16 +116,17 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="interruptPort"></param>
         /// <param name="type"></param>
         /// <param name="debounceDuration"></param>
-        public PushButton(IDigitalInputPort interruptPort, CircuitTerminationType type, int debounceDuration = 20) 
+        public PushButton(IDigitalInputPort interruptPort, int debounceDuration = 20) 
 		{
-            _circuitType = type;
             DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
 
             DigitalIn = interruptPort;
-
-            // wire up the interrupt handler
             DigitalIn.Changed += DigitalInChanged;
         }
+
+        #endregion
+
+        #region Methods
 
         private void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
@@ -164,26 +165,34 @@ namespace Meadow.Foundation.Sensors.Buttons
             } */
         }
 
-        #endregion
-
-        #region Event Handlers
-
+        /// <summary>
+        /// Raised when the button circuit is re-opened after it has been closed (at the end of a “press”).
+        /// </summary>
         protected virtual void RaiseClicked ()
 		{
 			this.Clicked (this, EventArgs.Empty);
 		}
 
+        /// <summary>
+        /// Raised when a press starts (the button is pushed down; circuit is closed).
+        /// </summary>
         protected virtual void RaisePressStarted()
         {
             // raise the press started event
             this.PressStarted(this, new EventArgs());
         }
 
+        /// <summary>
+        /// Raised when a press ends (the button is released; circuit is opened).
+        /// </summary>
         protected virtual void RaisePressEnded()
         {
             this.PressEnded(this, new EventArgs());
         }
 
+        /// <summary>
+        /// Raised when the button circuit is pressed for at least 500ms.
+        /// </summary>
         protected virtual void RaiseLongPress()
         {
             this.LongPressClicked(this, new EventArgs());
