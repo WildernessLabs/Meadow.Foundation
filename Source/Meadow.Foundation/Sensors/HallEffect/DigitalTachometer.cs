@@ -71,13 +71,10 @@ namespace Meadow.Foundation.Sensors.HallEffect
             // create the interrupt port from the pin and resistor type
             InputPort = inputPort;
 
-            // wire up the interrupt handler
-            //TODO InputPort.Changed += DigitalIn_Changed;
+            InputPort.Changed += InputPortChanged;
         }
 
-
-
-        private void DigitalIn_Changed(object sender, PortEventArgs e)
+        void InputPortChanged(object sender, DigitalInputPortEventArgs e)
         {
             var time = DateTime.Now;
 

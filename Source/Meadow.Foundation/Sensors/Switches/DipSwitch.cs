@@ -34,13 +34,13 @@ namespace Meadow.Foundation.Sensors.Switches
         /// </summary>
         /// <param name="switchPins"></param>
         /// <param name="type"></param>
-        public DipSwitch(IIODevice device, IPin[] switchPins, CircuitTerminationType type)
+        public DipSwitch(IIODevice device, IPin[] switchPins, InterruptMode interruptMode, ResistorMode resistorMode)
         {
             Switches = new ISwitch[switchPins.Length];
 
             for (int i = 0; i < switchPins.Length; i++)
             {                
-                Switches[i] = new SpstSwitch(device, switchPins[i], type);
+                Switches[i] = new SpstSwitch(device, switchPins[i], interruptMode, resistorMode);
                 int index = i;
                 Switches[i].Changed += (s,e) => HandleSwitchChange(index);
             }

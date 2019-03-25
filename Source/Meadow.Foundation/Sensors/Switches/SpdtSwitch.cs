@@ -19,10 +19,7 @@ namespace Meadow.Foundation.Sensors.Switches
         public bool IsOn
         {
             get => DigitalIn.State;
-            protected set
-            {
-                Changed(this, new EventArgs());
-            }
+            protected set => Changed(this, new EventArgs());
         }
 
         /// <summary>
@@ -39,13 +36,25 @@ namespace Meadow.Foundation.Sensors.Switches
         /// Instantiates a new SpdtSwitch object with the center pin connected to the specified digital pin, one pin connected to common/ground and one pin connected to high/3.3V.
         /// </summary>
         /// <param name="pin"></param>
-        public SpdtSwitch(IIODevice device, IPin pin)
+        public SpdtSwitch(IIODevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20)
         {
-            DigitalIn = device.CreateDigitalInputPort(pin, true, false, ResistorMode.Disabled);            
+            DigitalIn = device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration); 
+
             DigitalIn.Changed += DigitalInChanged;
         }
 
-        private void DigitalInChanged(object sender, PortEventArgs e)
+        /// <summary>
+        /// Instantiates a new SpdtSwitch object with the center pin connected to the specified digital pin, one pin connected to common/ground and one pin connected to high/3.3V.
+        /// </summary>
+        public SpdtSwitch(IDigitalInputPort interruptPort)
+        {
+            DigitalIn = interruptPort;
+
+            // wire up the interrupt handler
+            DigitalIn.Changed += DigitalInChanged;
+        }
+
+        void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
             IsOn = DigitalIn.State;
         }

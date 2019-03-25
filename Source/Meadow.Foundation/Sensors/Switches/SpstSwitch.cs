@@ -39,29 +39,24 @@ namespace Meadow.Foundation.Sensors.Switches
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
         /// </summary>
         /// <param name="pin"></param>
-        /// <param name="type"></param>
-        public SpstSwitch(IIODevice device, IPin pin, CircuitTerminationType type)
+        public SpstSwitch(IIODevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20)
         {
-            // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
-            var resistorMode = ResistorMode.Disabled;
-            switch (type)
-            {
-                case CircuitTerminationType.CommonGround:
-                    resistorMode = ResistorMode.PullUp;
-                    break;
-                case CircuitTerminationType.High:
-                    resistorMode = ResistorMode.PullDown;
-                    break;
-                case CircuitTerminationType.Floating:
-                    resistorMode = ResistorMode.Disabled;
-                    break;
-            } 
-
-            DigitalIn = device.CreateDigitalInputPort(pin, true, false, resistorMode);            
+            DigitalIn = device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration);      
             DigitalIn.Changed += DigitalInChanged;
         }
 
-        private void DigitalInChanged(object sender, PortEventArgs e)
+        /// <summary>
+        /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
+        /// </summary>
+        public SpstSwitch(IDigitalInputPort interruptPort)
+        {
+            DigitalIn = interruptPort;
+
+            // wire up the interrupt handler
+            DigitalIn.Changed += DigitalInChanged;
+        }
+
+        void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
             IsOn = DigitalIn.State;
         }
