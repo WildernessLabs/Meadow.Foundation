@@ -11,9 +11,7 @@ namespace Meadow.Foundation.Sensors.Buttons
     /// </summary>
     public class PushButton : IButton
 	{
-        protected DateTime _lastClicked = DateTime.MinValue;
-        protected DateTime _buttonPressStart = DateTime.MaxValue;
-        protected CircuitTerminationType _circuitType;
+        #region Properties
 
         /// <summary>
         /// This duration controls the debounce filter. It also has the effect
@@ -58,14 +56,35 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         public event EventHandler LongPressClicked = delegate { };
 
+        #endregion
+
+        #region Member variables / fields
+
+        protected DateTime _lastClicked = DateTime.MinValue;
+
+        protected DateTime _buttonPressStart = DateTime.MaxValue;
+
+        protected CircuitTerminationType _circuitType;
+
+        #endregion
+
+        #region Constructors
+
         /// <summary>
-        /// Creates a Push on a digital input port, especifying Circuit type, and optionally Debounce filter duration.
+        /// Default constructor is private to prevent it being called.
         /// </summary>
+        private PushButton() { }
+
+        /// <summary>
+        /// Creates PushButto a digital input port connected on a IIOdevice, especifying Interrupt Mode, Circuit Type and optionally Debounce filter duration.
+        /// </summary>
+        /// <param name="device"></param>
         /// <param name="inputPin"></param>
+        /// <param name="mode"></param>
         /// <param name="type"></param>
-        /// <param name="debounceDuration">in milliseconds</param>
-		public PushButton(IIODevice device, IPin inputPin, CircuitTerminationType type, int debounceDuration = 20) 
-		{
+        /// <param name="debounceDuration"></param>
+        public PushButton(IIODevice device, IPin inputPin, InterruptMode mode, CircuitTerminationType type, int debounceDuration = 20)
+        {
             _circuitType = type;
             DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
 
@@ -82,18 +101,35 @@ namespace Meadow.Foundation.Sensors.Buttons
                 case CircuitTerminationType.Floating:
                     resistorMode = ResistorMode.Disabled;
                     break;
-            } 
+            }
 
             // create the interrupt port from the pin and resistor type
-            DigitalIn = device.CreateDigitalInputPort(inputPin, true, false, resistorMode);
+            DigitalIn = device.CreateDigitalInputPort(inputPin, mode, resistorMode, debounceDuration);
 
-            // wire up the interrupt handler                 
-            DigitalIn.Changed += DigitalInChanged;            
+            // wire up the interrupt handler
+            DigitalIn.Changed += DigitalInChanged;
         }
 
-        private void DigitalInChanged(object sender, PortEventArgs e)
+        /// <summary>
+        /// Creates a PushButton on a digital input portespecifying Interrupt Mode, Circuit Type and optionally Debounce filter duration.
+        /// </summary>
+        /// <param name="interruptPort"></param>
+        /// <param name="type"></param>
+        /// <param name="debounceDuration"></param>
+        public PushButton(IDigitalInputPort interruptPort, CircuitTerminationType type, int debounceDuration = 20) 
+		{
+            _circuitType = type;
+            DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
+
+            DigitalIn = interruptPort;
+
+            // wire up the interrupt handler
+            DigitalIn.Changed += DigitalInChanged;
+        }
+
+        private void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
-              // check how much time has elapsed since the last click
+            // check how much time has elapsed since the last click
             var timeSinceLast = DateTime.Now - _lastClicked;
             if (timeSinceLast <= DebounceDuration)
             {
@@ -128,7 +164,11 @@ namespace Meadow.Foundation.Sensors.Buttons
             } */
         }
 
-		protected virtual void RaiseClicked ()
+        #endregion
+
+        #region Event Handlers
+
+        protected virtual void RaiseClicked ()
 		{
 			this.Clicked (this, EventArgs.Empty);
 		}
@@ -148,5 +188,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             this.LongPressClicked(this, new EventArgs());
         }
-	}
+
+        #endregion
+    }
 }
