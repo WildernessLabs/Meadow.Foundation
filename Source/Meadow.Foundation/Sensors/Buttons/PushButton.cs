@@ -1,4 +1,4 @@
-using Meadow.Hardware;
+ï»¿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Buttons;
 using System;
 
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         public event EventHandler PressEnded = delegate { };
 
         /// <summary>
-        /// Raised when the button circuit is re-opened after it has been closed (at the end of a “press”.
+        /// Raised when the button circuit is re-opened after it has been closed (at the end of a ï¿½pressï¿½.
         /// </summary>
         public event EventHandler Clicked = delegate { };
 
@@ -99,14 +99,14 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="mode"></param>
         /// <param name="type"></param>
         /// <param name="debounceDuration"></param>
-        public PushButton(IIODevice device, IPin inputPin, InterruptMode interruptMode, int debounceDuration = 20)
+        public PushButton(IIODevice device, IPin inputPin, int debounceDuration = 20)
         {
             DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
 
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
             var resistorMode = ResistorMode.Disabled;            
 
-            DigitalIn = device.CreateDigitalInputPort(inputPin, interruptMode, resistorMode, debounceDuration);
+            DigitalIn = device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistorMode, debounceDuration);
             DigitalIn.Changed += DigitalInChanged;
         }
 
@@ -166,7 +166,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         }
 
         /// <summary>
-        /// Raised when the button circuit is re-opened after it has been closed (at the end of a “press”).
+        /// Raised when the button circuit is re-opened after it has been closed (at the end of a ï¿½pressï¿½).
         /// </summary>
         protected virtual void RaiseClicked ()
 		{

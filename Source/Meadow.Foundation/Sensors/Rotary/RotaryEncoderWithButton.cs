@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Meadow.Hardware;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Rotary;
@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         public bool State => _button.State;
 
         /// <summary>
-        /// Raised when the button circuit is re-opened after it has been closed (at the end of a “press”.
+        /// Raised when the button circuit is re-opened after it has been closed (at the end of a ï¿½pressï¿½.
         /// </summary>
         public event EventHandler Clicked = delegate { };
 
@@ -50,7 +50,7 @@ namespace Meadow.Foundation.Sensors.Rotary
             InterruptMode interruptMode, int debounceDuration = 20)
             : base(device, aPhasePin, bPhasePin)
         {
-            _button = new PushButton(device, buttonPin, interruptMode, debounceDuration);
+            _button = new PushButton(device, buttonPin, debounceDuration);
 
             _button.Clicked += ButtonClicked;
             _button.PressEnded += ButtonPressEnded;
