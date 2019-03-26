@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LedBarGraph")]
+[assembly: AssemblyTitle("LedBarGraph_Sample")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("LedBarGraph")]
+[assembly: AssemblyProduct("LedBarGraph_Sample")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("d724be01-652d-4cbe-ab1c-0b6e233db410")]
+[assembly: Guid("ad3b8e1a-0c3e-41ec-914b-33f85db049ec")]
 
 // Version information for an assembly consists of the following four values:
 //

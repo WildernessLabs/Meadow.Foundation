@@ -27,7 +27,7 @@ namespace Meadow.Foundation.LEDs
         protected bool _isPwm = false;
 
         /// <summary>
-        /// Create an LedBarGraph instance from an array of IDigitalPins
+        /// Create an LedBarGraph instance from an array of IPins
         /// </summary>
         public LedBarGraph(IIODevice device, IPin[] pins)
         {
@@ -36,6 +36,21 @@ namespace Meadow.Foundation.LEDs
             for (int i = 0; i < pins.Length; i++)
             {
                 _leds[i] = new Led(device, pins[i]);
+            }
+
+            _isPwm = false;
+        }
+
+        /// <summary>
+        /// Create an LedBarGraph instance from an array of IDigitalOutputPort
+        /// </summary>
+        public LedBarGraph(IDigitalOutputPort[] ports)
+        {
+            _leds = new Led[ports.Length];
+
+            for (int i = 0; i < ports.Length; i++)
+            {
+                _leds[i] = new Led(ports[i]);
             }
 
             _isPwm = false;
