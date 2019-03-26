@@ -115,6 +115,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Buttons", "Buttons", "{C0DE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PushButton_Sample", "Samples\Sensors\Buttons\PushButton_Sample\PushButton_Sample.csproj", "{72116D6B-753E-48A5-BDB6-6AEF9EE96AEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Led_Sample", "Samples\Leds\Led_Sample\Led_Sample.csproj", "{4E29C665-287F-4504-9F30-05B9369CE37C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -313,6 +315,10 @@ Global
 		{72116D6B-753E-48A5-BDB6-6AEF9EE96AEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72116D6B-753E-48A5-BDB6-6AEF9EE96AEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72116D6B-753E-48A5-BDB6-6AEF9EE96AEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E29C665-287F-4504-9F30-05B9369CE37C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E29C665-287F-4504-9F30-05B9369CE37C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E29C665-287F-4504-9F30-05B9369CE37C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E29C665-287F-4504-9F30-05B9369CE37C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -369,6 +375,7 @@ Global
 		{42FB04DA-A0C1-42D2-BF34-64B58A012C05} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
 		{C0DEAE79-922E-4B94-BE66-46281DA3FFBB} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
 		{72116D6B-753E-48A5-BDB6-6AEF9EE96AEB} = {C0DEAE79-922E-4B94-BE66-46281DA3FFBB}
+		{4E29C665-287F-4504-9F30-05B9369CE37C} = {CDF161D5-383A-4BEA-86F4-E9C17851509A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
