@@ -12,8 +12,10 @@ namespace PushButton_Sample
 
         public PushButtonApp()
         {
+            Console.WriteLine("Got here 1.");
             pushButton = new PushButton(Device, Device.Pins.D02);
 
+            Console.WriteLine("Got here 2.");
             pushButton.PressStarted += (s, e) => {
                 Console.WriteLine("Press started");
             };

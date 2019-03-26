@@ -6,11 +6,12 @@ namespace PushButton_Sample
 {
     class MainClass
     {
-        IApp app;
+        static IApp app;
 
         public static void Main(string[] args)
         {
-            
+            app = new PushButtonApp();
+            Thread.Sleep(Timeout.Infinite);
         }
     }
 }

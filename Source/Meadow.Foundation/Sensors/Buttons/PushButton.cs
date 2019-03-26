@@ -101,8 +101,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="debounceDuration"></param>
         public PushButton(IIODevice device, IPin inputPin, int debounceDuration = 20)
         {
-            DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
-
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
             var resistorMode = ResistorMode.Disabled;            
 
@@ -118,9 +116,8 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="debounceDuration"></param>
         public PushButton(IDigitalInputPort interruptPort, int debounceDuration = 20) 
 		{
-            DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
-
             DigitalIn = interruptPort;
+            DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
             DigitalIn.Changed += DigitalInChanged;
         }
 
@@ -130,25 +127,25 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         private void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
-            // check how much time has elapsed since the last click
-            var timeSinceLast = DateTime.Now - _lastClicked;
-            if (timeSinceLast <= DebounceDuration)
-            {
-                return;
-            }
-            _lastClicked = DateTime.Now;
+            //// check how much time has elapsed since the last click
+            //var timeSinceLast = DateTime.Now - _lastClicked;
+            //if (timeSinceLast <= DebounceDuration)
+            //{
+            //    return;
+            //}
+            //_lastClicked = DateTime.Now;
 
-            int STATE_PRESSED = _circuitType == CircuitTerminationType.High ? 1 : 0;
-            int STATE_RELEASED = _circuitType == CircuitTerminationType.High ? 0 : 1;
-            /* Port: TODO
-            if(state == STATE_PRESSED)
+            bool STATE_PRESSED = _circuitType == CircuitTerminationType.High ? true : false;
+            bool STATE_RELEASED = _circuitType == CircuitTerminationType.High ? false : true;
+            
+            if(State == STATE_PRESSED)
             {
                 // save our press start time (for long press event)
                 _buttonPressStart = DateTime.Now;
                 // raise our event in an inheritance friendly way
                 this.RaisePressStarted();
             }
-            else if(state == STATE_RELEASED)
+            else if(State == STATE_RELEASED)
             {
                 // calculate the press duration
                 TimeSpan pressDuration = DateTime.Now - _buttonPressStart;
@@ -162,7 +159,7 @@ namespace Meadow.Foundation.Sensors.Buttons
                 // raise the other events
                 this.RaisePressEnded();
                 this.RaiseClicked();
-            } */
+            }
         }
 
         /// <summary>
