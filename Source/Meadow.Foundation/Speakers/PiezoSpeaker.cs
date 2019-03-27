@@ -6,21 +6,30 @@ namespace Meadow.Foundation.Audio
 {
     /// <summary>
     /// Represents a 2 pin piezo-electric speaker capable of generating tones
-    /// 
-    /// Note: This driver is not yet implemented
     /// </summary>
     public class PiezoSpeaker : IToneGenerator
     {
-        private IPwmPort _pwm;
+        /// <summary>
+        /// Gets the port that is driving the Piezo Speaker
+        /// </summary>
+        public IPwmPort Port { get; protected set; }
+
         private bool _isPlaying = false;
 
         /// <summary>
         /// Create a new PiezoSpeaker instance
         /// </summary>
         /// <param name="pin">PWM Pin connected to the PiezoSpeaker</param>
-        public PiezoSpeaker(IIODevice device, IPin pin)
+        public PiezoSpeaker(IIODevice device, IPin pin, float frequency = 100, float dutyCycle = 0) :
+            this (device.CreatePwmPort(pin, frequency, dutyCycle)) { }
+
+        /// <summary>
+        /// Create a new PiezoSpeaker instance
+        /// </summary>
+        /// <param name="port"></param>
+        public PiezoSpeaker(IPwmPort port)
         {
-            _pwm = null;//TODO needs device.CreatePwmPort ..... new PwmPort(pin, 100, 0, false);
+            Port = port;
         }
 
         /// <summary>
@@ -39,15 +48,15 @@ namespace Meadow.Foundation.Audio
 
                 var period = (uint)(1000000 / frequency);
 
-                _pwm.Period = period;
-                _pwm.Duration = period / 2;
+                Port.Period = period;
+                Port.DutyCycle = period / 2;
 
-                _pwm.Start();
+                Port.Start();
 
                 if (duration > 0)
                 {
                     Thread.Sleep(duration);
-                    _pwm.Stop();
+                    Port.Stop();
                 }
 
                 _isPlaying = false;
@@ -59,7 +68,7 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         public void StopTone()
         {
-            _pwm.Stop();
+            Port.Stop();
         }
     }
 }
