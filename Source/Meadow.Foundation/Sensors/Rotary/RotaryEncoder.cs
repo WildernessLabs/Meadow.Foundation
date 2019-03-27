@@ -46,26 +46,28 @@ namespace Meadow.Foundation.Sensors.Rotary
         #region Constructors
 
         /// <summary>
+        /// Instantiate a new RotaryEncoder on the specified pins.
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="aPhasePin"></param>
+        /// <param name="bPhasePin"></param>
+        public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
+            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeFalling, ResistorMode.PullUp),
+                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeFalling, ResistorMode.PullUp)) { }
+
+        /// <summary>
         /// Instantiate a new RotaryEncoder on the specified ports
         /// </summary>
         /// <param name="aPhasePort"></param>
         /// <param name="bPhasePort"></param>
         public RotaryEncoder(IDigitalInputPort aPhasePort, IDigitalInputPort bPhasePort)
         {
-            // both events go to the same event handler because we need to read both
-            // pins to determine current orientation
+            APhasePort = aPhasePort;
+            BPhasePort = bPhasePort;
+
             APhasePort.Changed += PhasePinChanged;
             BPhasePort.Changed += PhasePinChanged;
         }
-
-        /// <summary>
-        /// Instantiate a new RotaryEncoder on the specified pins.
-        /// </summary>
-        /// <param name="aPhasePin"></param>
-        /// <param name="bPhasePin"></param>
-        public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
-            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeFalling, ResistorMode.PullUp), 
-                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeFalling, ResistorMode.PullUp)) { }
 
         #endregion
 
