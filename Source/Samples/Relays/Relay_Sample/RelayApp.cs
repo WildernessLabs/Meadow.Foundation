@@ -13,6 +13,8 @@ namespace Relay_Sample
         public RelayApp()
         {
             relay = new Relay(Device.CreateDigitalOutputPort(Device.Pins.D02));
+
+            TestRelay();
         }
 
         protected void TestRelay()
