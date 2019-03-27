@@ -34,6 +34,14 @@ namespace Meadow.Foundation.Relays
         protected bool _onValue = true;
 
         /// <summary>
+        /// Creates a new Relay on an IDigitalOutputPort.
+        /// </summary>
+        /// <param name="pin"></param>
+        /// <param name="type"></param>
+        public Relay(IIODevice device, IPin pin, RelayType type = RelayType.NormallyOpen) :
+            this(device.CreateDigitalOutputPort(pin), type) { }
+
+        /// <summary>
         /// Creates a new Relay on an IDigitalOutputPort. Allows you 
         /// to use any peripheral that exposes ports that conform to the
         /// IDigitalOutputPort, such as the MCP23008.
@@ -48,15 +56,6 @@ namespace Meadow.Foundation.Relays
 
             DigitalOut = port;
         }
-
-        /// <summary>
-        /// Creates a new Relay on an IDigitalOutputPort.
-        /// </summary>
-        /// <param name="pin"></param>
-        /// <param name="type"></param>
-        public Relay(IIODevice device, IPin pin, RelayType type = RelayType.NormallyOpen) : 
-            this (device.CreateDigitalOutputPort(pin), type)
-        { }
 
         /// <summary>
         /// Toggles the relay on or off.
