@@ -16,6 +16,8 @@ namespace Meadow.Foundation.Sensors.Switches
     /// </summary>
     public class SpstSwitch : ISwitch, ISensor
     {
+        #region Properties
+
         /// <summary>
         /// Describes whether or not the switch circuit is closed/connected (IsOn = true), or open (IsOn = false).
         /// </summary>
@@ -35,6 +37,10 @@ namespace Meadow.Foundation.Sensors.Switches
         /// </summary>
         public IDigitalInputPort DigitalIn { get; protected set; }
 
+        #endregion
+
+        #region Constructors
+
         /// <summary>
         /// Default constructor is private to prevent it being called.
         /// </summary>
@@ -53,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Switches
             this(device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount)) { }
 
         /// <summary>
-        /// Instantiates a new SpstSwitch object connected to the interrupt port.
+        /// Creates a SpstSwitch on a especified interrupt port
         /// </summary>
         /// <param name="interruptPort"></param>
         public SpstSwitch(IDigitalInputPort interruptPort)
@@ -62,9 +68,20 @@ namespace Meadow.Foundation.Sensors.Switches
             DigitalIn.Changed += DigitalInChanged;
         }
 
-        void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Event handler when switch value has been changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
             IsOn = DigitalIn.State;
         }
+
+        #endregion
     }
 }
