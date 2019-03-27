@@ -96,8 +96,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         /// <param name="device"></param>
         /// <param name="inputPin"></param>
-        /// <param name="mode"></param>
-        /// <param name="type"></param>
         /// <param name="debounceDuration"></param>
         public PushButton(IIODevice device, IPin inputPin, int debounceDuration = 20)
         {
@@ -112,7 +110,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// Creates a PushButton on a digital input portespecifying Interrupt Mode, Circuit Type and optionally Debounce filter duration.
         /// </summary>
         /// <param name="interruptPort"></param>
-        /// <param name="type"></param>
         /// <param name="debounceDuration"></param>
         public PushButton(IDigitalInputPort interruptPort, int debounceDuration = 20) 
 		{
