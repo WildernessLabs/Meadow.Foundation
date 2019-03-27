@@ -30,23 +30,52 @@ namespace Meadow.Foundation.Sensors.Switches
         public event ArrayEventHandler Changed = delegate { };
 
         /// <summary>
-        /// Creates a new DipSwitch connected to the specified switchPins, with the CircuitTerminationType specified by the type parameters.
+        /// Default constructor is private to prevent it being called.
         /// </summary>
+        private DipSwitch() { }
+
+        /// <summary>
+        /// Creates a new DipSwitch connected to the specified switchPins, with the InterruptMode and ResisterMode specified by the type parameters.
+        /// </summary>
+        /// <param name="device"></param>
         /// <param name="switchPins"></param>
-        /// <param name="type"></param>
-        public DipSwitch(IIODevice device, IPin[] switchPins, InterruptMode interruptMode, ResistorMode resistorMode)
+        /// <param name="interruptMode"></param>
+        /// <param name="resistorMode"></param>
+        /// <param name="debounceDuration"></param>
+        /// <param name="glitchFilterCycleCount"></param>
+        public DipSwitch(IIODevice device, IPin[] switchPins, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0)
         {
             Switches = new ISwitch[switchPins.Length];
 
             for (int i = 0; i < switchPins.Length; i++)
             {                
-                Switches[i] = new SpstSwitch(device, switchPins[i], interruptMode, resistorMode);
+                Switches[i] = new SpstSwitch(device, switchPins[i], interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount);
                 int index = i;
-                Switches[i].Changed += (s,e) => HandleSwitchChange(index);
+                Switches[i].Changed += (s,e) => HandleSwitchChanged(index);
             }
         }
 
-        protected void HandleSwitchChange(int switchNumber)
+        /// <summary>
+        /// Creates a new DipSwitch connected an array of Interrupt Ports
+        /// </summary>
+        /// <param name="interruptPorts"></param>
+        public DipSwitch(IDigitalInputPort[] interruptPorts)
+        {
+            Switches = new ISwitch[interruptPorts.Length];
+
+            for (int i = 0; i < interruptPorts.Length; i++)
+            {
+                Switches[i] = new SpstSwitch(interruptPorts[i]);
+                int index = i;
+                Switches[i].Changed += (s, e) => HandleSwitchChanged(index);
+            }
+        }
+
+        /// <summary>
+        /// Event handler when switched value has been changed
+        /// </summary>
+        /// <param name="switchNumber"></param>
+        protected void HandleSwitchChanged(int switchNumber)
         {
             Debug.Print("HandleSwitchChange: " + switchNumber.ToString() + ", total switches: " + (Switches.Length).ToString());
             Changed(this, new ArrayEventArgs(switchNumber, Switches[switchNumber]));

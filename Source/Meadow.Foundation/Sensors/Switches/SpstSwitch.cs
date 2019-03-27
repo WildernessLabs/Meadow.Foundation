@@ -36,23 +36,29 @@ namespace Meadow.Foundation.Sensors.Switches
         public IDigitalInputPort DigitalIn { get; protected set; }
 
         /// <summary>
-        /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
+        /// Default constructor is private to prevent it being called.
         /// </summary>
-        /// <param name="pin"></param>
-        public SpstSwitch(IIODevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20)
-        {
-            DigitalIn = device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration);      
-            DigitalIn.Changed += DigitalInChanged;
-        }
+        private SpstSwitch() { }
 
         /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
         /// </summary>
+        /// <param name="device"></param>
+        /// <param name="pin"></param>
+        /// <param name="interruptMode"></param>
+        /// <param name="resistorMode"></param>
+        /// <param name="debounceDuration"></param>
+        /// <param name="glitchFilterCycleCount"></param>
+        public SpstSwitch(IIODevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) :
+            this(device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount)) { }
+
+        /// <summary>
+        /// Instantiates a new SpstSwitch object connected to the interrupt port.
+        /// </summary>
+        /// <param name="interruptPort"></param>
         public SpstSwitch(IDigitalInputPort interruptPort)
         {
             DigitalIn = interruptPort;
-
-            // wire up the interrupt handler
             DigitalIn.Changed += DigitalInChanged;
         }
 

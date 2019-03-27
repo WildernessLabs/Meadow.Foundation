@@ -33,24 +33,29 @@ namespace Meadow.Foundation.Sensors.Switches
         public event EventHandler Changed = delegate { };
 
         /// <summary>
-        /// Instantiates a new SpdtSwitch object with the center pin connected to the specified digital pin, one pin connected to common/ground and one pin connected to high/3.3V.
+        /// Default constructor is private to prevent it being called.
         /// </summary>
-        /// <param name="pin"></param>
-        public SpdtSwitch(IIODevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20)
-        {
-            DigitalIn = device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration); 
-
-            DigitalIn.Changed += DigitalInChanged;
-        }
+        private SpdtSwitch() { }
 
         /// <summary>
         /// Instantiates a new SpdtSwitch object with the center pin connected to the specified digital pin, one pin connected to common/ground and one pin connected to high/3.3V.
         /// </summary>
+        /// <param name="device"></param>
+        /// <param name="pin"></param>
+        /// <param name="interruptMode"></param>
+        /// <param name="resistorMode"></param>
+        /// <param name="debounceDuration"></param>
+        /// <param name="glitchFilterCycleCount"></param>
+        public SpdtSwitch(IIODevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) :
+            this (device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount)) {}
+
+        /// <summary>
+        /// Instantiates a new SpdtSwitch object with the center pin connected to the specified digital pin, one pin connected to common/ground and one pin connected to high/3.3V.
+        /// </summary>
+        /// <param name="interruptPort"></param>
         public SpdtSwitch(IDigitalInputPort interruptPort)
         {
             DigitalIn = interruptPort;
-
-            // wire up the interrupt handler
             DigitalIn.Changed += DigitalInChanged;
         }
 
