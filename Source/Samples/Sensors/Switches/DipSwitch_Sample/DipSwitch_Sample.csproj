@@ -4,9 +4,9 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F308A754-2CE6-4C24-AE64-DF05C5084506}</ProjectGuid>
+    <ProjectGuid>{DF69B7D7-E35C-438D-9DA5-EAD06FD8BDB1}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>SpdtSwitch_Sample</RootNamespace>
+    <RootNamespace>DipSwitch_Sample</RootNamespace>
     <AssemblyName>App</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -43,16 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DipSwitchApp.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpdtSwitchApp.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
       <Project>{b13c7bdd-77f5-45f8-bdb9-6cd368c67410}</Project>
       <Name>Meadow.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Meadow.Foundation\Meadow.Foundation.csproj">
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation\Meadow.Foundation.csproj">
       <Project>{cebd7f9a-4645-4a29-8a97-7889e241896f}</Project>
       <Name>Meadow.Foundation</Name>
     </ProjectReference>

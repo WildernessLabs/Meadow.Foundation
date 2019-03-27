@@ -48,11 +48,11 @@
     <Compile Include="SpstSwitchApp.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
       <Project>{b13c7bdd-77f5-45f8-bdb9-6cd368c67410}</Project>
       <Name>Meadow.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Meadow.Foundation\Meadow.Foundation.csproj">
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation\Meadow.Foundation.csproj">
       <Project>{cebd7f9a-4645-4a29-8a97-7889e241896f}</Project>
       <Name>Meadow.Foundation</Name>
     </ProjectReference>

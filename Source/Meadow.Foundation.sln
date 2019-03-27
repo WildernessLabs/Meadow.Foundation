@@ -125,11 +125,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PiezoSpeaker_Sample", "Samp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Switches", "Switches", "{54831709-B9B1-45DB-8506-37214A412C5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DipSwitch_Sample", "Samples\Switches\DipSwitch_Sample\DipSwitch_Sample.csproj", "{DF69B7D7-E35C-438D-9DA5-EAD06FD8BDB1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DipSwitch_Sample", "Samples\Sensors\Switches\DipSwitch_Sample\DipSwitch_Sample.csproj", "{DF69B7D7-E35C-438D-9DA5-EAD06FD8BDB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpdtSwitch_Sample", "Samples\Switches\SpdtSwitch_Sample\SpdtSwitch_Sample.csproj", "{F308A754-2CE6-4C24-AE64-DF05C5084506}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpdtSwitch_Sample", "Samples\Sensors\Switches\SpdtSwitch_Sample\SpdtSwitch_Sample.csproj", "{F308A754-2CE6-4C24-AE64-DF05C5084506}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpstSwitch_Sample", "Samples\Switches\SpstSwitch_Sample\SpstSwitch_Sample.csproj", "{341F1C32-CEB7-4C1D-AC37-CAD5815775E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpstSwitch_Sample", "Samples\Sensors\Switches\SpstSwitch_Sample\SpstSwitch_Sample.csproj", "{341F1C32-CEB7-4C1D-AC37-CAD5815775E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rotary", "Rotary", "{11C859DF-C99C-42E2-A838-A5FBDB8C5D7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -413,6 +415,7 @@ Global
 		{DF69B7D7-E35C-438D-9DA5-EAD06FD8BDB1} = {54831709-B9B1-45DB-8506-37214A412C5E}
 		{F308A754-2CE6-4C24-AE64-DF05C5084506} = {54831709-B9B1-45DB-8506-37214A412C5E}
 		{341F1C32-CEB7-4C1D-AC37-CAD5815775E0} = {54831709-B9B1-45DB-8506-37214A412C5E}
+		{11C859DF-C99C-42E2-A838-A5FBDB8C5D7B} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
