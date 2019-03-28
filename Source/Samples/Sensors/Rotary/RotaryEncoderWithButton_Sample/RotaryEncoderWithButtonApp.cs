@@ -13,7 +13,7 @@ namespace RotaryEncoderWithButton_Sample
         public RotaryEncoderWithButtonApp()
         {
             Console.WriteLine("Initializing...");
-            rotaryEncoderWithButton = new RotaryEncoderWithButton(Device, Device.Pins.D00, Device.Pins.D01, Device.Pins.D02, Meadow.Hardware.InterruptMode.EdgeBoth);
+            rotaryEncoderWithButton = new RotaryEncoderWithButton(Device, Device.Pins.D00, Device.Pins.D01, Device.Pins.D02);
             rotaryEncoderWithButton.Rotated += RotaryEncoderRotated;
             rotaryEncoderWithButton.Clicked += RotaryEncoderButtonClicked;            
             rotaryEncoderWithButton.PressEnded += RotaryEncoderButtonPressEnded;
