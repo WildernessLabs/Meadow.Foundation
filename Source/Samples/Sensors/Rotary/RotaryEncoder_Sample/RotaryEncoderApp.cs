@@ -13,7 +13,7 @@ namespace RotaryEncoder_Sample
         public RotaryEncoderApp()
         {
             Console.WriteLine("Initializing...");
-            rotaryEncoder = new RotaryEncoder(Device, Device.Pins.A00, Device.Pins.D01);
+            rotaryEncoder = new RotaryEncoder(Device, Device.Pins.D00, Device.Pins.D01);
             rotaryEncoder.Rotated += RotaryEncoderRotated;
 
             Console.WriteLine("Start rotating the encoder...");
