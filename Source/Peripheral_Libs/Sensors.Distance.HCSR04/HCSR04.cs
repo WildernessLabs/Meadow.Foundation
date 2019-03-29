@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="echoPin"></param>
         public HCSR04(IIODevice device, IPin triggerPin, IPin echoPin) :
             this (device.CreateDigitalOutputPort(triggerPin, false), 
-                  device.CreateDigitalInputPort(echoPin, true, false, ResistorMode.Disabled)) { }
+                  device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth)) { }
 
         /// <summary>
         /// Create a new HCSR04 object 
@@ -98,7 +98,7 @@ namespace Meadow.Foundation.Sensors.Distance
             _triggerPort.State = false;
         }
 
-        private void OnEchoPortChanged(object sender, PortEventArgs e)
+        private void OnEchoPortChanged(object sender, DigitalInputPortEventArgs e)
         {
             if (e.Value == true)
             { 
