@@ -3,8 +3,15 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.LED
 {
+    /// <summary>
+    /// Seven Segment Display
+    /// </summary>
     public class SevenSegment
     {
+        #region Enums
+        /// <summary>
+        /// Valid Characters to display
+        /// </summary>
         public enum CharacterType
         {
             Zero,
@@ -27,18 +34,22 @@ namespace Meadow.Foundation.Displays.LED
             count
         }
 
-        private readonly DigitalOutputPort portA;
-        private readonly DigitalOutputPort portB;
-        private readonly DigitalOutputPort portC;
-        private readonly DigitalOutputPort portD;
-        private readonly DigitalOutputPort portE;
-        private readonly DigitalOutputPort portF;
-        private readonly DigitalOutputPort portG;
-        private readonly DigitalOutputPort portDecimal;
+        #endregion
 
-        private readonly bool isCommonCathode;
+        #region Member variables / fields
 
-        private byte[,] segments =
+        private readonly IDigitalOutputPort _portA;
+        private readonly IDigitalOutputPort _portB;
+        private readonly IDigitalOutputPort _portC;
+        private readonly IDigitalOutputPort _portD;
+        private readonly IDigitalOutputPort _portE;
+        private readonly IDigitalOutputPort _portF;
+        private readonly IDigitalOutputPort _portG;
+        private readonly IDigitalOutputPort _portDecimal;
+
+        private readonly bool _isCommonCathode;
+
+        private byte[,] _segments =
         {
              {1, 1, 1, 1, 1, 1, 0}, //0
              {0, 1, 1, 0, 0, 0, 0}, //1
@@ -59,45 +70,115 @@ namespace Meadow.Foundation.Displays.LED
              {0, 0, 0, 0, 0, 0, 0}, //blank
         };
 
+        #endregion
 
-        public SevenSegment(IDigitalPin pinA, IDigitalPin pinB,
-                                   IDigitalPin pinC, IDigitalPin pinD,
-                                   IDigitalPin pinE, IDigitalPin pinF,
-                                   IDigitalPin pinG, IDigitalPin pinDecimal, 
-                                   bool isCommonCathode)
+        #region Constructor
+
+        /// <summary>
+        /// Default constructor is private to prevent it being called.
+        /// </summary>
+        private SevenSegment() { }
+
+        /// <summary>
+        /// Creates a SevenSegment connected to the especified IPins to a IODevice
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="pinA"></param>
+        /// <param name="pinB"></param>
+        /// <param name="pinC"></param>
+        /// <param name="pinD"></param>
+        /// <param name="pinE"></param>
+        /// <param name="pinF"></param>
+        /// <param name="pinG"></param>
+        /// <param name="pinDecimal"></param>
+        /// <param name="isCommonCathode"></param>
+        public SevenSegment(
+            IIODevice device, 
+            IPin pinA, IPin pinB,
+            IPin pinC, IPin pinD,
+            IPin pinE, IPin pinF,
+            IPin pinG, IPin pinDecimal,
+            bool isCommonCathode) :
+            this(device.CreateDigitalOutputPort(pinA),
+                 device.CreateDigitalOutputPort(pinB),
+                 device.CreateDigitalOutputPort(pinC),
+                 device.CreateDigitalOutputPort(pinD),
+                 device.CreateDigitalOutputPort(pinE),
+                 device.CreateDigitalOutputPort(pinF),
+                 device.CreateDigitalOutputPort(pinG),
+                 device.CreateDigitalOutputPort(pinDecimal),
+                 isCommonCathode) { }
+
+        /// <summary>
+        /// Creates a SevenSegment connected to the especified IDigitalOutputPorts
+        /// </summary>
+        /// <param name="portA"></param>
+        /// <param name="portB"></param>
+        /// <param name="portC"></param>
+        /// <param name="portD"></param>
+        /// <param name="portE"></param>
+        /// <param name="portF"></param>
+        /// <param name="portG"></param>
+        /// <param name="portDecimal"></param>
+        /// <param name="isCommonCathode"></param>
+        public SevenSegment(
+            IDigitalOutputPort portA, IDigitalOutputPort portB,
+            IDigitalOutputPort portC, IDigitalOutputPort portD,
+            IDigitalOutputPort portE, IDigitalOutputPort portF,
+            IDigitalOutputPort portG, IDigitalOutputPort portDecimal, 
+            bool isCommonCathode)
         {
-            portA = new DigitalOutputPort(pinA, false);
-            portB = new DigitalOutputPort(pinB, false);
-            portC = new DigitalOutputPort(pinC, false);
-            portD = new DigitalOutputPort(pinD, false);
-            portE = new DigitalOutputPort(pinE, false);
-            portF = new DigitalOutputPort(pinF, false);
-            portG = new DigitalOutputPort(pinG, false);
-            portDecimal = new DigitalOutputPort(pinDecimal, false);
+            _portA = portA;
+            _portB = portB;
+            _portC = portC;
+            _portD = portD;
+            _portE = portE;
+            _portF = portF;
+            _portG = portG;
+            _portDecimal = portDecimal;
 
-            this.isCommonCathode = isCommonCathode;
+            _isCommonCathode = isCommonCathode;
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Displays the especified character
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="showDecimal"></param>
         public void SetDisplay(CharacterType character, bool showDecimal = false)
         {
-            portDecimal.State = isCommonCathode ? showDecimal : !showDecimal;
+            _portDecimal.State = _isCommonCathode ? showDecimal : !showDecimal;
 
             int index = (int)character;
 
-            portA.State = IsEnabled(segments[index, 0]);
-            portB.State = IsEnabled(segments[index, 1]);
-            portC.State = IsEnabled(segments[index, 2]);
-            portD.State = IsEnabled(segments[index, 3]);
-            portE.State = IsEnabled(segments[index, 4]);
-            portF.State = IsEnabled(segments[index, 5]);
-            portG.State = IsEnabled(segments[index, 6]);
+            _portA.State = IsEnabled(_segments[index, 0]);
+            _portB.State = IsEnabled(_segments[index, 1]);
+            _portC.State = IsEnabled(_segments[index, 2]);
+            _portD.State = IsEnabled(_segments[index, 3]);
+            _portE.State = IsEnabled(_segments[index, 4]);
+            _portF.State = IsEnabled(_segments[index, 5]);
+            _portG.State = IsEnabled(_segments[index, 6]);
         }
 
+        /// <summary>
+        /// Returns 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         bool IsEnabled (byte value)
         {
-            return isCommonCathode ? value == 1 : value == 0;
+            return _isCommonCathode ? value == 1 : value == 0;
         }
 
+        /// <summary>
+        /// Displays the especified valid character
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="showDecimal"></param>
         public void SetDisplay(Char character, bool showDecimal = false)
         {
             CharacterType charType;
@@ -113,5 +194,7 @@ namespace Meadow.Foundation.Displays.LED
 
             SetDisplay(charType, showDecimal);
         }
+
+        #endregion
     }
 }

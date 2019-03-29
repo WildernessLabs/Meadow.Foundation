@@ -6,7 +6,7 @@ using Meadow.Peripherals.Sensors.Distance;
 namespace Meadow.Foundation.Sensors.Distance
 {
     /// <summary>
-    /// HYSRF05 Distance Sensor.
+    /// HYSRF05 Distance Sensor
     /// </summary>
     public class HYSRF05 : IRangeFinder
     {
