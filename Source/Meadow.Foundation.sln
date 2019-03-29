@@ -135,6 +135,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RotaryEncoder_Sample", "Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RotaryEncoderWithButton_Sample", "Samples\Sensors\Rotary\RotaryEncoderWithButton_Sample\RotaryEncoderWithButton_Sample.csproj", "{4113EF3B-2A5C-4519-A1CA-CFC1D787965C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Distance", "Distance", "{CFF2587F-743A-4485-8F6B-16B15197AA12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCSR04_Sample", "Samples\Sensors\Distance\HCSR04_Sample\HCSR04_Sample.csproj", "{58784132-46A4-49F7-B204-F7D1F5DE8AEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -357,6 +361,10 @@ Global
 		{4113EF3B-2A5C-4519-A1CA-CFC1D787965C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4113EF3B-2A5C-4519-A1CA-CFC1D787965C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4113EF3B-2A5C-4519-A1CA-CFC1D787965C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58784132-46A4-49F7-B204-F7D1F5DE8AEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58784132-46A4-49F7-B204-F7D1F5DE8AEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58784132-46A4-49F7-B204-F7D1F5DE8AEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58784132-46A4-49F7-B204-F7D1F5DE8AEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -423,6 +431,8 @@ Global
 		{11C859DF-C99C-42E2-A838-A5FBDB8C5D7B} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
 		{8AE62CB8-0B71-4D0C-BFEA-532DA1017194} = {11C859DF-C99C-42E2-A838-A5FBDB8C5D7B}
 		{4113EF3B-2A5C-4519-A1CA-CFC1D787965C} = {11C859DF-C99C-42E2-A838-A5FBDB8C5D7B}
+		{CFF2587F-743A-4485-8F6B-16B15197AA12} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
+		{58784132-46A4-49F7-B204-F7D1F5DE8AEF} = {CFF2587F-743A-4485-8F6B-16B15197AA12}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
