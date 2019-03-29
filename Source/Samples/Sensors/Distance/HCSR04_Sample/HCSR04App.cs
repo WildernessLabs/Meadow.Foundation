@@ -19,7 +19,6 @@ namespace HCSR04_Sample
                 HCSR04.MeasureDistance();
                 Thread.Sleep(500);
             }
-
         }
 
         // Prints the measured distance after sending a trigger signal

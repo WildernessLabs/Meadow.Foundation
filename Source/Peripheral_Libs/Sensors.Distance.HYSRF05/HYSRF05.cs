@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="echoPin"></param>
         public HYSRF05(IIODevice device, IPin triggerPin, IPin echoPin) :
             this(device.CreateDigitalOutputPort(triggerPin, false),
-                device.CreateDigitalInputPort(echoPin, true, false, ResistorMode.Disabled)) { }
+                device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth)) { }
 
         /// <summary>
         /// Create a new HYSRF05 object and hook up the interrupt handler
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Distance
             _triggerPort.State = false;
         }
 
-        private void OnEchoPortChanged(object sender, PortEventArgs e)
+        private void OnEchoPortChanged(object sender, DigitalInputPortEventArgs e)
         {
             if (e.Value == true) //echo is high
             {
