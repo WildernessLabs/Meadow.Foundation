@@ -95,9 +95,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Moisture.FC28", "Pe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Moisture.Capacitive", "Peripheral_Libs\Sensors.Moisture.Capacitive\Sensors.Moisture.Capacitive.csproj", "{5C149065-6631-49E5-99BC-92992C7B755F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SoftPwmPort", "SoftPwmPort", "{BF064D45-0517-4B95-B486-E8BC09D4214C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generators", "Generators", "{BF064D45-0517-4B95-B486-E8BC09D4214C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftPwmPort_Sample", "Samples\SoftPwmPort\SoftPwmPort_Sample\SoftPwmPort_Sample.csproj", "{24DFC23B-18E5-475E-B59D-8A588F5D3176}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftPwmPort_Sample", "Samples\Generators\SoftPwmPort_Sample\SoftPwmPort_Sample.csproj", "{24DFC23B-18E5-475E-B59D-8A588F5D3176}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Leds", "Leds", "{CDF161D5-383A-4BEA-86F4-E9C17851509A}"
 EndProject

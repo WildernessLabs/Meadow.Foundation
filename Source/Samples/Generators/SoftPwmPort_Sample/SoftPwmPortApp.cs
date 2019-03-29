@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
@@ -9,13 +8,12 @@ using Meadow.Hardware;
 namespace SoftPwmPort_Sample
 {
     public class SoftPwmPortApp : AppBase<F7Micro, SoftPwmPortApp>
-    {
-        IDigitalOutputPort digiOut;
+    {        
         SoftPwmPort softPwmPort;
 
         public SoftPwmPortApp()
         {
-            digiOut = Device.CreateDigitalOutputPort(Device.Pins.D00);
+            IDigitalOutputPort digiOut = Device.CreateDigitalOutputPort(Device.Pins.D00);
             Console.WriteLine("digital out created");
             softPwmPort = new SoftPwmPort(digiOut);
             Console.WriteLine("SoftPwmPort created");
@@ -25,7 +23,9 @@ namespace SoftPwmPort_Sample
         public void StartPulsing()
         {
             softPwmPort.Start();
-            while (true) {
+
+            while (true)
+            {
                 softPwmPort.DutyCycle = 0.2f;
                 Thread.Sleep(500);
                 softPwmPort.DutyCycle = 0.5f;
