@@ -12,7 +12,7 @@ namespace SpdtSwitch_Sample
 
         public SpdtSwitchApp()
         {
-            spdtSwitch = new SpdtSwitch(Device.CreateDigitalInputPort(Device.Pins.D02, InterruptMode.EdgeFalling, ResistorMode.PullDown));
+            spdtSwitch = new SpdtSwitch(Device.CreateDigitalInputPort(Device.Pins.D15, InterruptMode.EdgeBoth, ResistorMode.PullDown));
             spdtSwitch.Changed += SpdtSwitchChanged;
 
             Console.WriteLine("Initial switch state, isOn: " + spdtSwitch.IsOn.ToString());
@@ -20,8 +20,7 @@ namespace SpdtSwitch_Sample
 
         private void SpdtSwitchChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("Switch Changed");
-            Console.WriteLine("Switch on: " + spdtSwitch.IsOn.ToString());
+            Console.WriteLine(spdtSwitch.IsOn?"Switch is on":"Switch is off");
         }
     }
 }
