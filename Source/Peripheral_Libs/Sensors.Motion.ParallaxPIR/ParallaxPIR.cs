@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// <summary>
     ///     Create a new Parallax PIR object.
     /// </summary>
-    public class ParallaxPIR
+    public class ParallaxPir
     {
         #region Member variables and fields
 
@@ -42,21 +42,21 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Default constructor is private to prevent it being called.
         /// </summary>
-        private ParallaxPIR() { }
+        private ParallaxPir() { }
 
         /// <summary>
         /// Create a new Parallax PIR object connected to an input pin and IO Device.
         /// </summary>
         /// <param name="device"></param>
         /// <param name="inputPin"></param>        
-        public ParallaxPIR(IIODevice device, IPin inputPin) : 
-            this (device.CreateDigitalInputPort(inputPin, true, false, ResistorMode.Disabled)) { }
+        public ParallaxPir(IIODevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) : 
+            this (device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount)) { }
 
         /// <summary>
         /// Create a new Parallax PIR object connected to a interrupt port.
         /// </summary>
         /// <param name="digitalInputPort"></param>        
-        public ParallaxPIR(IDigitalInputPort digitalInputPort)
+        public ParallaxPir(IDigitalInputPort digitalInputPort)
         {
             //TODO: I changed this from Pins.GPIO_NONE to null
             if (digitalInputPort != null)
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Catch the PIR motion change interrupts and work out which interrupt should be raised.
         /// </summary>
-        private void DigitalInputPortChanged(object sender, PortEventArgs e)
+        private void DigitalInputPortChanged(object sender, DigitalInputPortEventArgs e)
         {
             if (_digitalInputPort.State)
             {

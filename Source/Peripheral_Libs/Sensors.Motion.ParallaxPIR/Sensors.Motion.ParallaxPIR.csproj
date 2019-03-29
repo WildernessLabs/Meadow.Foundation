@@ -7,11 +7,12 @@
     <ProjectGuid>{87E309AA-058F-4596-9C28-746B25DAD39C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sensors.Motion.ParallaxPIR</RootNamespace>
-    <AssemblyName>Sensors.Motion.ParallaxPIR</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <RootNamespace>Sensors.Motion.ParallaxPir</RootNamespace>
+    <AssemblyName>Sensors.Motion.ParallaxPir</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ParallaxPIR.cs" />
+    <Compile Include="ParallaxPir.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

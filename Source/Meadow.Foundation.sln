@@ -81,7 +81,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.BNO055", "Pe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.MAG3110", "Peripheral_Libs\Sensors.Motion.MAG3110\Sensors.Motion.MAG3110.csproj", "{2859D907-F9C4-46E8-8CC3-DAA23FC3FA6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ParallaxPIR", "Peripheral_Libs\Sensors.Motion.ParallaxPIR\Sensors.Motion.ParallaxPIR.csproj", "{87E309AA-058F-4596-9C28-746B25DAD39C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ParallaxPir", "Peripheral_Libs\Sensors.Motion.ParallaxPir\Sensors.Motion.ParallaxPir.csproj", "{87E309AA-058F-4596-9C28-746B25DAD39C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Temperature.DS18B20", "Peripheral_Libs\Sensors.Temperature.DS18B20\Sensors.Temperature.DS18B20.csproj", "{EC3762B9-77D6-4248-8687-56D8665B0FC1}"
 EndProject
