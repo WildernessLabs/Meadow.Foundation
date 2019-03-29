@@ -1,5 +1,6 @@
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Switches;
+using System;
 using System.Diagnostics;
 
 namespace Meadow.Foundation.Sensors.Switches
@@ -87,7 +88,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="switchNumber"></param>
         protected void HandleSwitchChanged(int switchNumber)
         {
-            Debug.Print("HandleSwitchChange: " + switchNumber.ToString() + ", total switches: " + (Switches.Length).ToString());
+            Console.WriteLine("HandleSwitchChange: " + switchNumber.ToString() + ", total switches: " + (Switches.Length).ToString());
             Changed(this, new ArrayEventArgs(switchNumber, Switches[switchNumber]));
         }
 

@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Servos
 
             // calculate the appropriate pulse duration for the speed and direction
             float pulseDuration = CalculatePulseDuration(direction, speed);
-            //Debug.Print("Pulse Duration: " + pulseDuration.ToString());
+            //Console.WriteLine("Pulse Duration: " + pulseDuration.ToString());
 
             // send our pulse to the servo to make it move
             SendCommandPulse(pulseDuration);
@@ -126,7 +126,7 @@ namespace Meadow.Foundation.Servos
 
         protected void SendCommandPulse(float pulseDuration)
         {
-            //Debug.Print("Sending Command Pulse");
+            //Console.WriteLine("Sending Command Pulse");
             _pwm.DutyCycle = CalculateDutyCycle(pulseDuration);
             _pwm.Start(); // servo expects to run continuously
         }

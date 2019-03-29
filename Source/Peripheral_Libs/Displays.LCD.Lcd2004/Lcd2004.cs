@@ -1,4 +1,4 @@
-/*
+﻿/*
 Driver ported from http://wiki.sunfounder.cc/images/b/bb/LCD2004_for_Raspberry_Pi.zip
 For reference: http://wiki.sunfounder.cc/index.php?title=LCD2004_Module
 Brian Kim 5/5/2018
@@ -179,7 +179,7 @@ namespace Meadow.Foundation.Displays.LCD
 
         public void SetBrightness(float brightness = 0.75F)
         {
-            Debug.Print("Set brightness not enabled");
+            Console.WriteLine("Set brightness not enabled");
         }
 
         public void SaveCustomCharacter(byte[] characterMap, byte address)

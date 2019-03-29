@@ -1,4 +1,4 @@
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using System;
 using System.Diagnostics;
@@ -399,11 +399,11 @@ namespace Meadow.Foundation.Displays
             string lineText = text;
             if (text.Length > DisplayConfig.Width)
             {
-                Debug.Print("Text length exceeds number of columns, truncating.");
-                Debug.Print("Text length: " + text.Length.ToString() + ", Columns: " + DisplayConfig.Width.ToString());
+                Console.WriteLine("Text length exceeds number of columns, truncating.");
+                Console.WriteLine("Text length: " + text.Length.ToString() + ", Columns: " + DisplayConfig.Width.ToString());
                 //throw new Exception("Number characters must be <= columns");
                 lineText = text.Substring(0, DisplayConfig.Width);
-                Debug.Print("Truncating text to: " + lineText);
+                Console.WriteLine("Truncating text to: " + lineText);
             }
 
             // clear the line

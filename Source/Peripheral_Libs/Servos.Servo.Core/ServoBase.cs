@@ -1,4 +1,4 @@
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System;
 
 namespace Meadow.Foundation.Servos
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Servos
 
             // calculate the appropriate pulse duration for the angle
             float pulseDuration = CalculatePulseDuration(angle);
-            //Debug.Print("Pulse Duration: " + pulseDuration.ToString());
+            //Console.WriteLine("Pulse Duration: " + pulseDuration.ToString());
             
             // send our pulse to the servo to make it move
             SendCommandPulse(pulseDuration);
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Servos
 
         /// <summary>
         /// Stops the signal that controls the servo angle. For many servos, this will 
-        /// return the servo to its nuetral position (usually 0�).
+        /// return the servo to its nuetral position (usually 0º).
         /// </summary>
         public void Stop()
         {
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Servos
 
         protected void SendCommandPulse(float pulseDuration)
         {
-            //Debug.Print("Sending Command Pulse");
+            //Console.WriteLine("Sending Command Pulse");
             _pwm.DutyCycle = CalculateDutyCycle(pulseDuration);
             _pwm.Start(); // servo expects to run continuously
         }

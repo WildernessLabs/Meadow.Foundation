@@ -1,3 +1,4 @@
+﻿using System;
 using System.Diagnostics;
 
 namespace Meadow.Foundation.Helpers
@@ -83,14 +84,14 @@ namespace Meadow.Foundation.Helpers
             var start = startAddress;
             start &= 0xf0;
             var line = string.Empty;
-            Debug.Print("       0    1    2    3    4    5    6    7    8    9    a    b    c    d    e    f");
+            Console.WriteLine("       0    1    2    3    4    5    6    7    8    9    a    b    c    d    e    f");
             for (var index = start; index < (startAddress + registers.Length); index++)
             {
                 if ((index % 16) == 0)
                 {
                     if (line != string.Empty)
                     {
-                        Debug.Print(line);
+                        Console.WriteLine(line);
                     }
                     line = Hexadecimal(index) + ": ";
                 }
@@ -105,7 +106,7 @@ namespace Meadow.Foundation.Helpers
             }
             if (line != string.Empty)
             {
-                Debug.Print(line);
+                Console.WriteLine(line);
             }
         }
 

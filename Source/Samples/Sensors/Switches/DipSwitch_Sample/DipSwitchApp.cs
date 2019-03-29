@@ -13,15 +13,18 @@ namespace DipSwitch_Sample
 
         public DipSwitchApp()
         {
-            IDigitalInputPort[] ports = new IDigitalInputPort[8];
-            ports[0] = Device.CreateDigitalInputPort(Device.Pins.D06, InterruptMode.EdgeFalling, ResistorMode.PullDown);
-            ports[1] = Device.CreateDigitalInputPort(Device.Pins.D07, InterruptMode.EdgeFalling, ResistorMode.PullDown);
-            ports[2] = Device.CreateDigitalInputPort(Device.Pins.D08, InterruptMode.EdgeFalling, ResistorMode.PullDown);
-            ports[3] = Device.CreateDigitalInputPort(Device.Pins.D09, InterruptMode.EdgeFalling, ResistorMode.PullDown);
-            ports[4] = Device.CreateDigitalInputPort(Device.Pins.D10, InterruptMode.EdgeFalling, ResistorMode.PullDown);
-            ports[5] = Device.CreateDigitalInputPort(Device.Pins.D11, InterruptMode.EdgeFalling, ResistorMode.PullDown);
-            ports[6] = Device.CreateDigitalInputPort(Device.Pins.D12, InterruptMode.EdgeFalling, ResistorMode.PullDown);
-            ports[7] = Device.CreateDigitalInputPort(Device.Pins.D13, InterruptMode.EdgeFalling, ResistorMode.PullDown);
+            IDigitalInputPort[] ports =
+            {
+                Device.CreateDigitalInputPort(Device.Pins.D06, InterruptMode.EdgeFalling, ResistorMode.PullDown),
+                Device.CreateDigitalInputPort(Device.Pins.D07, InterruptMode.EdgeFalling, ResistorMode.PullDown),
+                Device.CreateDigitalInputPort(Device.Pins.D08, InterruptMode.EdgeFalling, ResistorMode.PullDown),
+                Device.CreateDigitalInputPort(Device.Pins.D09, InterruptMode.EdgeFalling, ResistorMode.PullDown),
+                Device.CreateDigitalInputPort(Device.Pins.D10, InterruptMode.EdgeFalling, ResistorMode.PullDown),
+                Device.CreateDigitalInputPort(Device.Pins.D11, InterruptMode.EdgeFalling, ResistorMode.PullDown),
+                Device.CreateDigitalInputPort(Device.Pins.D12, InterruptMode.EdgeFalling, ResistorMode.PullDown),
+                Device.CreateDigitalInputPort(Device.Pins.D13, InterruptMode.EdgeFalling, ResistorMode.PullDown),
+            };
+
             dipSwitch = new DipSwitch(ports);
 
             dipSwitch.Changed += DipSwitchChanged;

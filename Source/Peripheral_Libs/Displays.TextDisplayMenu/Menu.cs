@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Sensors.Rotary;
@@ -172,7 +172,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 _topDisplayLine = _currentMenuPage.ScrollPosition - _display.DisplayConfig.Height + 1;
             }
 
-            Debug.Print("Scroll: " + _currentMenuPage.ScrollPosition.ToString() + ", start: " + _topDisplayLine.ToString() + ", end: " + (_topDisplayLine + _display.DisplayConfig.Height - 1).ToString());
+            Console.WriteLine("Scroll: " + _currentMenuPage.ScrollPosition.ToString() + ", start: " + _topDisplayLine.ToString() + ", end: " + (_topDisplayLine + _display.DisplayConfig.Height - 1).ToString());
 
             byte lineNumber = 0;
 
@@ -448,7 +448,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             if (!moved)
             {
                 // play a sound?
-                Debug.Print("end of items");
+                Console.WriteLine("end of items");
             }
         }
 

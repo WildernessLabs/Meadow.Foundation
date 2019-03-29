@@ -1,4 +1,4 @@
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using System;
 using System.Diagnostics;
@@ -81,7 +81,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
             // if it's the very first read, set the time and bail out
             if (_numberOfReads == 0 && _revolutionTimeStart == DateTime.MinValue)
             {
-                //S.Debug.Print("First reading.");
+                //S.Console.WriteLine("First reading.");
                 _revolutionTimeStart = time;
                 _numberOfReads++;
                 return;
@@ -93,14 +93,14 @@ namespace Meadow.Foundation.Sensors.HallEffect
             // if we've made a full revolution
             if (_numberOfReads == NumberOfMagnets)
             {
-                //S.Debug.Print("Viva La Revolucion!");
+                //S.Console.WriteLine("Viva La Revolucion!");
                 // calculate how much time has elapsed since the start of the revolution 
                 var revolutionTime = time - _revolutionTimeStart;
 
-                //S.Debug.Print("RevTime Milliseconds: " + revolutionTime.Milliseconds.ToString());
+                //S.Console.WriteLine("RevTime Milliseconds: " + revolutionTime.Milliseconds.ToString());
 
                 if (revolutionTime.Milliseconds < 3) {
-                    //S.Debug.Print("rev time < 3. Garbage, bailing.");
+                    //S.Console.WriteLine("rev time < 3. Garbage, bailing.");
                     _numberOfReads = 0;
                     _revolutionTimeStart = time;
                     return;
@@ -110,12 +110,12 @@ namespace Meadow.Foundation.Sensors.HallEffect
                 // RPSecond = 1000 / revTime.millis
                 // PPMinute = RPSecond * 60
                 _RPMs = ((float)1000 / (float)revolutionTime.Milliseconds) * (float)60;
-                Debug.Print("RPMs: " + _RPMs);
+                Console.WriteLine("RPMs: " + _RPMs);
 
                 //if (revolutionTime.Milliseconds < 5) {
-                //    S.Debug.Print("revolution time was < 5. garbage results.");
+                //    S.Console.WriteLine("revolution time was < 5. garbage results.");
                 //} else {
-                //    S.Debug.Print("RPMs: " + _RPMs);
+                //    S.Console.WriteLine("RPMs: " + _RPMs);
                 //}
 
 

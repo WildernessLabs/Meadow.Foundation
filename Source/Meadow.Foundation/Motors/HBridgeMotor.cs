@@ -1,4 +1,4 @@
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Motors;
 using System;
 
@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Motors
                 var absoluteSpeed = Math.Min(Math.Abs(calibratedSpeed), 1);
                 var isForward = calibratedSpeed > 0;
 
-                //Debug.Print("calibrated speed: " + calibratedSpeed.ToString() + ", isForward: " + isForward.ToString());
+                //Console.WriteLine("calibrated speed: " + calibratedSpeed.ToString() + ", isForward: " + isForward.ToString());
 
                 // set speed. if forward, disable right pwm. otherwise disable left
                 _motorLeftPwm.DutyCycle = (isForward) ? absoluteSpeed : 0;

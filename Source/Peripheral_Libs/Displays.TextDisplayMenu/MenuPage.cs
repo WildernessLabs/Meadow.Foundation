@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu
@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             set {
                 if (value > MenuItems.Count - 1 || value < 0)
                 {
-                    Debug.Print("Attempting to set a scroll position outside of item range: " + value.ToString());
+                    Console.WriteLine("Attempting to set a scroll position outside of item range: " + value.ToString());
                 }
                 _scrollPosition = value;
             }

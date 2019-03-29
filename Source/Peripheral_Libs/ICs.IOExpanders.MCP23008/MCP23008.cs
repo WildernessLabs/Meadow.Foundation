@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using Meadow.Hardware;
 using Meadow.Hardware.Communications;
@@ -78,24 +78,24 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // configure our i2c bus so we can talk to the chip
             _i2cBus = new I2cBus(address, speed);
 
-            Debug.Print("initialized.");
+            Console.WriteLine("initialized.");
 
             // make sure the chip is in a default state
             Initialize();
-            Debug.Print("Chip Reset.");
+            Console.WriteLine("Chip Reset.");
             //Thread.Sleep(100);
 
             // read in the initial state of the chip
             _iodir = _i2cBus.ReadRegister(_IODirectionRegister);
             // tried some sleeping, but also has no effect on its reliability
             //Thread.Sleep(100);
-            //Debug.Print("IODIR: " + _iodir.ToString("X"));
+            //Console.WriteLine("IODIR: " + _iodir.ToString("X"));
             _gpio = _i2cBus.ReadRegister(_GPIORegister);
             //Thread.Sleep(100);
-            //Debug.Print("GPIO: " + _gpio.ToString("X"));
+            //Console.WriteLine("GPIO: " + _gpio.ToString("X"));
             _olat = _i2cBus.ReadRegister(_OutputLatchRegister);
             //Thread.Sleep(100);
-            //Debug.Print("OLAT: " + _olat.ToString("X"));
+            //Console.WriteLine("OLAT: " + _olat.ToString("X"));
         }
 
         protected void Initialize()

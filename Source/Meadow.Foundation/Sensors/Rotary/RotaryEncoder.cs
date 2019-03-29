@@ -1,4 +1,4 @@
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Rotary;
 
 namespace Meadow.Foundation.Sensors.Rotary
@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Rotary
 
         private void PhasePinChanged(object sender, DigitalInputPortEventArgs e)
         {
-            //Debug.Print((!_processing ? "1st result: " : "2nd result: ") + "A{" + (APhasePin.Read() ? "1" : "0") + "}, " + "B{" + (BPhasePin.Read() ? "1" : "0") + "}");
+            //Console.WriteLine((!_processing ? "1st result: " : "2nd result: ") + "A{" + (APhasePin.Read() ? "1" : "0") + "}, " + "B{" + (BPhasePin.Read() ? "1" : "0") + "}");
 
             // the first time through (not processing) store the result in array slot 0.
             // second time through (is processing) store the result in array slot 2.
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Rotary
             // if there hasn't been any change, then it's a garbage reading. so toss it out.
             if (_results[0].APhase == _results[1].APhase && 
                 _results[0].BPhase == _results[1].BPhase) 
-                //Debug.Print("Garbage");
+                //Console.WriteLine("Garbage");
                 return;
             
             // start by reading the a phase pin. if it's High
