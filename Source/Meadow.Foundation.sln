@@ -143,7 +143,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HYSRF05_Sample", "Samples\S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Motion", "Motion", "{9DFB9160-F13C-429D-99C1-D9F9C189C3FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallaxPir_Sample", "Samples\Motion\ParallaxPir_Sample\ParallaxPir_Sample.csproj", "{326A8A26-78A6-4674-942C-CBFF4BFC2FFC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallaxPir_Sample", "Samples\Sensors\Motion\ParallaxPir_Sample\ParallaxPir_Sample.csproj", "{326A8A26-78A6-4674-942C-CBFF4BFC2FFC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
