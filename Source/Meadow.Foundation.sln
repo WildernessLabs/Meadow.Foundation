@@ -149,6 +149,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Moisture", "Moisture", "{D5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capacitive_Sample", "Samples\Sensors\Moisture\Capacitive_Sample\Capacitive_Sample.csproj", "{0CF8558C-A78C-4EFD-B83E-D1B7DBC25E46}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FC28_Sample", "Samples\Sensors\Moisture\FC28_Sample\FC28_Sample.csproj", "{6C3C23D2-7B02-40F8-B001-CD675421055D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -387,6 +389,10 @@ Global
 		{0CF8558C-A78C-4EFD-B83E-D1B7DBC25E46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CF8558C-A78C-4EFD-B83E-D1B7DBC25E46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CF8558C-A78C-4EFD-B83E-D1B7DBC25E46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C3C23D2-7B02-40F8-B001-CD675421055D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C3C23D2-7B02-40F8-B001-CD675421055D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C3C23D2-7B02-40F8-B001-CD675421055D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C3C23D2-7B02-40F8-B001-CD675421055D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -460,6 +466,7 @@ Global
 		{326A8A26-78A6-4674-942C-CBFF4BFC2FFC} = {9DFB9160-F13C-429D-99C1-D9F9C189C3FB}
 		{D57711EC-8930-4271-A4D9-DB83A26C97EE} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
 		{0CF8558C-A78C-4EFD-B83E-D1B7DBC25E46} = {D57711EC-8930-4271-A4D9-DB83A26C97EE}
+		{6C3C23D2-7B02-40F8-B001-CD675421055D} = {D57711EC-8930-4271-A4D9-DB83A26C97EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
