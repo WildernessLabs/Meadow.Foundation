@@ -4,6 +4,7 @@ using Meadow.Hardware;
 using Meadow.Hardware.Communications;
 using Meadow.Utilities;
 
+/*
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
@@ -18,7 +19,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public event EventHandler InterruptRaised = delegate { }; //ToDo - is this being used??
 
-        private readonly I2cBus _i2cBus;
+      //  private readonly I2cBus _i2cBus;
 
         // state
         byte _iodir;
@@ -61,6 +62,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected MCP23008()
         { }
 
+        
+
         public MCP23008(bool pinA0, bool pinA1, bool pinA2, ushort speed = 100)
             : this(MCPAddressTable.GetAddressFromPins(pinA0, pinA1, pinA2), speed)
         {
@@ -76,7 +79,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             //SCK.Dispose();
 
             // configure our i2c bus so we can talk to the chip
-            _i2cBus = new I2cBus(address, speed);
+            //_i2cBus = new I2cBus(address, speed);
 
             Console.WriteLine("initialized.");
 
@@ -86,7 +89,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             //Thread.Sleep(100);
 
             // read in the initial state of the chip
-            _iodir = _i2cBus.ReadRegister(_IODirectionRegister);
+            /_iodir = _i2cBus.ReadRegister(_IODirectionRegister);
             // tried some sleeping, but also has no effect on its reliability
             //Thread.Sleep(100);
             //Console.WriteLine("IODIR: " + _iodir.ToString("X"));
@@ -292,3 +295,4 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
     }
 }
+*/
