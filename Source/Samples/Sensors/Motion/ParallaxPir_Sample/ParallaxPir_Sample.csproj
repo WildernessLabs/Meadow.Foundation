@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -35,15 +35,15 @@
     <Compile Include="ParallaxPirApp.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
       <Project>{B13C7BDD-77F5-45F8-BDB9-6CD368C67410}</Project>
       <Name>Meadow.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Meadow.Foundation\Meadow.Foundation.csproj">
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation\Meadow.Foundation.csproj">
       <Project>{CEBD7F9A-4645-4A29-8A97-7889E241896F}</Project>
       <Name>Meadow.Foundation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Peripheral_Libs\Sensors.Motion.ParallaxPir\Sensors.Motion.ParallaxPir.csproj">
+    <ProjectReference Include="..\..\..\..\Peripheral_Libs\Sensors.Motion.ParallaxPir\Sensors.Motion.ParallaxPir.csproj">
       <Project>{87E309AA-058F-4596-9C28-746B25DAD39C}</Project>
       <Name>Sensors.Motion.ParallaxPir</Name>
     </ProjectReference>
