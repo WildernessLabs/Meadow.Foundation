@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Lcd2004App.cs" />
+    <Compile Include="CharacterDisplayApp.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -59,9 +59,9 @@
       <Project>{cebd7f9a-4645-4a29-8a97-7889e241896f}</Project>
       <Name>Meadow.Foundation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Peripheral_Libs\Displays.LCD.Lcd2004\Displays.LCD.Lcd2004.csproj">
-      <Project>{a62994bb-886d-4c3f-a8e8-6f39af96f648}</Project>
-      <Name>Displays.Lcd.Lcd2004</Name>
+    <ProjectReference Include="..\..\..\Peripheral_Libs\Displays.LCD.CharacterDisplay\Displays.LCD.CharacterDisplay.csproj">
+      <Project>{A62994BB-886D-4C3F-A8E8-6F39AF96F648}</Project>
+      <Name>Displays.LCD.CharacterDisplay</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

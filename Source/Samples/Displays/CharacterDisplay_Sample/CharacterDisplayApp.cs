@@ -1,21 +1,21 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays.LCD;
+using Meadow.Foundation.Displays.Lcd;
 
-namespace Lcd2004_Sample
+namespace CharacterDisplay_Sample
 {
-    class Lcd2004App : AppBase<F7Micro, Lcd2004App>
+    class CharacterDisplayApp : AppBase<F7Micro, CharacterDisplayApp>
     {
-        Lcd2004 display;
+        CharacterDisplay display;
 
-        public Lcd2004App()
+        public CharacterDisplayApp()
         {
-            display = new Lcd2004(Device, Device.Pins.D05, Device.Pins.D07,
+            display = new CharacterDisplay(Device, Device.Pins.D05, Device.Pins.D07,
                 Device.Pins.D11, Device.Pins.D12, Device.Pins.D13, Device.Pins.D14,
                 16, 2);
 
             int count = 0;
-            display.WriteLine("Lcd2004", 0);
+            display.WriteLine("CharacterDisplay", 0);
 
             while (true)
             {

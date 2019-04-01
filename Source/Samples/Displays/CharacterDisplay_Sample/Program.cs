@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace Lcd2004_Sample
+namespace CharacterDisplay_Sample
 {
     class Program
     {
@@ -12,7 +12,7 @@ namespace Lcd2004_Sample
         {
             Console.WriteLine("Hello LCD");
 
-            app = new Lcd2004App();
+            app = new CharacterDisplayApp();
             Thread.Sleep(Timeout.Infinite);
         }
     }

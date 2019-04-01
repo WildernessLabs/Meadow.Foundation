@@ -1,6 +1,6 @@
 ﻿/*
-Driver ported from http://wiki.sunfounder.cc/images/b/bb/LCD2004_for_Raspberry_Pi.zip
-For reference: http://wiki.sunfounder.cc/index.php?title=LCD2004_Module
+Driver ported from http://wiki.sunfounder.cc/images/b/bb/CharacterDisplay_for_Raspberry_Pi.zip
+For reference: http://wiki.sunfounder.cc/index.php?title=CharacterDisplay_Module
 Brian Kim 5/5/2018
 */
 
@@ -11,7 +11,7 @@ using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays.Lcd
 {
-    public class Lcd2004 : ITextDisplay
+    public class CharacterDisplay : ITextDisplay
     {
         private byte LCD_LINE_1 = 0x80; // # LCD RAM address for the 1st line
         private byte LCD_LINE_2 = 0xC0; // # LCD RAM address for the 2nd line
@@ -35,8 +35,8 @@ namespace Meadow.Foundation.Displays.Lcd
 
         public TextDisplayConfig DisplayConfig { get; protected set; }
 
-        public Lcd2004(IIODevice device, IPin pinRS, IPin pinE, IPin pinD4, IPin pinD5, IPin pinD6, IPin pinD7, 
-            ushort rows = 20, ushort columns = 4)
+        public CharacterDisplay(IIODevice device, IPin pinRS, IPin pinE, IPin pinD4, IPin pinD5, IPin pinD6, IPin pinD7, 
+            ushort rows = 4, ushort columns = 20)
         {
             DisplayConfig = new TextDisplayConfig { Height = rows, Width = columns };
 
@@ -50,13 +50,13 @@ namespace Meadow.Foundation.Displays.Lcd
             Initialize();
         }
 
-        public Lcd2004(IDigitalOutputPort portRS,
+        public CharacterDisplay(IDigitalOutputPort portRS,
                         IDigitalOutputPort portE,
                         IDigitalOutputPort portD4,
                         IDigitalOutputPort portD5,
                         IDigitalOutputPort portD6,
                         IDigitalOutputPort portD7,
-                        ushort rows = 20, ushort columns = 4)
+                        ushort rows = 4, ushort columns = 20)
         {
             DisplayConfig = new TextDisplayConfig { Height = rows, Width = columns };
 
@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Displays.Lcd
             LCD_D7 = portD7;
         }
 
-    /*    public Lcd2004(MCP23008 mcp, ushort rows = 20, ushort columns = 4)
+    /*    public CharacterDisplay(MCP23008 mcp, ushort rows = 20, ushort columns = 4)
         {
             DisplayConfig = new TextDisplayConfig { Height = rows, Width = columns };
 
