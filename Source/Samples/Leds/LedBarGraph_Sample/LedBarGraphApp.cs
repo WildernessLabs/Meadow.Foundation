@@ -13,17 +13,20 @@ namespace LedBarGraph_Sample
 
         public LedBarGraphApp()
         {
-            IDigitalOutputPort[] ports = new IDigitalOutputPort[10];
-            ports[0] = Device.CreateDigitalOutputPort(Device.Pins.D06);
-            ports[1] = Device.CreateDigitalOutputPort(Device.Pins.D07);
-            ports[2] = Device.CreateDigitalOutputPort(Device.Pins.D08);
-            ports[3] = Device.CreateDigitalOutputPort(Device.Pins.D09);
-            ports[4] = Device.CreateDigitalOutputPort(Device.Pins.D10);
-            ports[5] = Device.CreateDigitalOutputPort(Device.Pins.D11);
-            ports[6] = Device.CreateDigitalOutputPort(Device.Pins.D01);
-            ports[7] = Device.CreateDigitalOutputPort(Device.Pins.D00);
-            ports[8] = Device.CreateDigitalOutputPort(Device.Pins.D14);
-            ports[9] = Device.CreateDigitalOutputPort(Device.Pins.D15);
+            IDigitalOutputPort[] ports = 
+            {
+                 Device.CreateDigitalOutputPort(Device.Pins.D06),
+                 Device.CreateDigitalOutputPort(Device.Pins.D07),
+                 Device.CreateDigitalOutputPort(Device.Pins.D08),
+                 Device.CreateDigitalOutputPort(Device.Pins.D09),
+                 Device.CreateDigitalOutputPort(Device.Pins.D10),
+                 Device.CreateDigitalOutputPort(Device.Pins.D11),
+                 Device.CreateDigitalOutputPort(Device.Pins.D01),
+                 Device.CreateDigitalOutputPort(Device.Pins.D00),
+                 Device.CreateDigitalOutputPort(Device.Pins.D14),
+                 Device.CreateDigitalOutputPort(Device.Pins.D15)
+            }; 
+
             ledBarGraph = new LedBarGraph(ports);
 
             TestLedBarGraph();
