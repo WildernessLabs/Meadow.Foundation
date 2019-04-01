@@ -10,8 +10,8 @@ namespace Lcd2004_Sample
 
         public Lcd2004App()
         {
-            display = new Lcd2004(Device, Device.Pins.D10, Device.Pins.D11,
-                Device.Pins.D12, Device.Pins.D13, Device.Pins.D14, Device.Pins.D15,
+            display = new Lcd2004(Device, Device.Pins.D05, Device.Pins.D07,
+                Device.Pins.D11, Device.Pins.D12, Device.Pins.D13, Device.Pins.D14,
                 16, 2);
 
             int count = 0;

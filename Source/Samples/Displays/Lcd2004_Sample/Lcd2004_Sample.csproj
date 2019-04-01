@@ -51,7 +51,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\meadow.core\source\Meadow.Core\Meadow.Core.csproj">
+    <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
       <Project>{b13c7bdd-77f5-45f8-bdb9-6cd368c67410}</Project>
       <Name>Meadow.Core</Name>
     </ProjectReference>

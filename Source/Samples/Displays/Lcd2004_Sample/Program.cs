@@ -1,10 +1,6 @@
 ﻿using Meadow;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Lcd2004_Sample
 {
@@ -14,6 +10,8 @@ namespace Lcd2004_Sample
 
         static void Main(string[] args)
         {
+            Console.WriteLine("Hello LCD");
+
             app = new Lcd2004App();
             Thread.Sleep(Timeout.Infinite);
         }
