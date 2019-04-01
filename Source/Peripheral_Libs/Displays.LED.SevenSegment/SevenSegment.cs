@@ -179,7 +179,7 @@ namespace Meadow.Foundation.Displays.LED
         /// </summary>
         /// <param name="character"></param>
         /// <param name="showDecimal"></param>
-        public void SetDisplay(Char character, bool showDecimal = false)
+        public void SetDisplay(char character, bool showDecimal = false)
         {
             CharacterType charType;
 

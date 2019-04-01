@@ -155,6 +155,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays", "Displays", "{C9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lcd2004_Sample", "Samples\Displays\Lcd2004_Sample\Lcd2004_Sample.csproj", "{9391E643-A2CA-4029-9C21-D071023D7E34}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenSegment_Sample", "Samples\Displays\SevenSegment_Sample\SevenSegment_Sample.csproj", "{EF16D771-77F1-4BD0-BE2E-160A473B2AD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -401,6 +403,10 @@ Global
 		{9391E643-A2CA-4029-9C21-D071023D7E34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9391E643-A2CA-4029-9C21-D071023D7E34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9391E643-A2CA-4029-9C21-D071023D7E34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF16D771-77F1-4BD0-BE2E-160A473B2AD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF16D771-77F1-4BD0-BE2E-160A473B2AD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF16D771-77F1-4BD0-BE2E-160A473B2AD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF16D771-77F1-4BD0-BE2E-160A473B2AD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -477,6 +483,7 @@ Global
 		{6C3C23D2-7B02-40F8-B001-CD675421055D} = {D57711EC-8930-4271-A4D9-DB83A26C97EE}
 		{C91FF68A-A43F-49A1-8A64-EFB7FC495FD5} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
 		{9391E643-A2CA-4029-9C21-D071023D7E34} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
+		{EF16D771-77F1-4BD0-BE2E-160A473B2AD2} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
