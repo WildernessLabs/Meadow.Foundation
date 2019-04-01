@@ -9,7 +9,7 @@ using System.Threading;
 using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 
-namespace Meadow.Foundation.Displays.LCD
+namespace Meadow.Foundation.Displays.Lcd
 {
     public class Lcd2004 : ITextDisplay
     {

@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLoggers.ThingSpeak", "P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.GraphicsLibrary", "Peripheral_Libs\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj", "{39B47FEE-9327-4F48-8758-23C85E437ED3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.LCD.Lcd2004", "Peripheral_Libs\Displays.LCD.Lcd2004\Displays.LCD.Lcd2004.csproj", "{A62994BB-886D-4C3F-A8E8-6F39AF96F648}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Lcd.Lcd2004", "Peripheral_Libs\Displays.LCD.Lcd2004\Displays.LCD.Lcd2004.csproj", "{A62994BB-886D-4C3F-A8E8-6F39AF96F648}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.LED.SevenSegment", "Peripheral_Libs\Displays.LED.SevenSegment\Displays.LED.SevenSegment.csproj", "{C22B17EC-3693-443C-B734-9E1B0C2AC05D}"
 EndProject
