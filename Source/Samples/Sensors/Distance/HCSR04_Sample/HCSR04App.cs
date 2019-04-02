@@ -11,13 +11,13 @@ namespace HCSR04_Sample
         public HCSR04App()
         {
             var HCSR04 = new HCSR04(Device, Device.Pins.D05, Device.Pins.D06);
-            HCSR04.DistanceDetected += HCSR04DistanceDetected; ;
+            HCSR04.DistanceDetected += HCSR04DistanceDetected;
 
             while (true)
             {
                 // Sends a trigger signal
                 HCSR04.MeasureDistance();
-                Thread.Sleep(500);
+                Thread.Sleep(1500);
             }
         }
 
