@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public delegate void MotionChange(object sender);
 
         /// <summary>
-        ///     Event raied when motion is detected.
+        ///     Event raised when motion is detected.
         /// </summary>
         public event MotionChange OnMotionStart;
 
@@ -81,17 +81,11 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (_digitalInputPort.State)
             {
-                if (OnMotionStart != null)
-                {
-                    OnMotionStart(this);
-                }
+                OnMotionStart?.Invoke(this);
             }
             else
             {
-                if (OnMotionEnd != null)
-                {
-                    OnMotionEnd(this);
-                }
+                OnMotionEnd?.Invoke(this);
             }
         }
 
