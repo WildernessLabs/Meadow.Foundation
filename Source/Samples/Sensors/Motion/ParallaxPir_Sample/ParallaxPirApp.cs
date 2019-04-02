@@ -22,7 +22,7 @@ namespace ParallaxPir_Sample
 
         void ParallaxPirOnMotionEnd(object sender)
         {
-            Console.WriteLine($"Motion ended {DateTime.Now}");
+            Console.WriteLine($"Motion endedt  {DateTime.Now}");
             blueLed.State = true;
 
         }
