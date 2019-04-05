@@ -1,7 +1,7 @@
 using Meadow.Peripherals.Controllers.PID;
 using System;
 
-namespace Meadow.Foundation.Controllers.PID
+namespace Meadow.Foundation.Controllers.Pid
 {
     public abstract class PidControllerBase : IPidController
     {

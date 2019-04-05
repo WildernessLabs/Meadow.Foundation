@@ -48,9 +48,9 @@
     <Compile Include="ArrayEventArgs.cs" />
     <Compile Include="CircuitTerminationType.cs" />
     <Compile Include="Communications\SerialTextFile.cs" />
-    <Compile Include="Controllers\PID\IdealPidController.cs" />
-    <Compile Include="Controllers\PID\PidControllerBase.cs" />
-    <Compile Include="Controllers\PID\StandardPidController.cs" />
+    <Compile Include="Controllers\Pid\IdealPidController.cs" />
+    <Compile Include="Controllers\Pid\PidControllerBase.cs" />
+    <Compile Include="Controllers\Pid\StandardPidController.cs" />
     <Compile Include="Displays\DisplayBase.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Generators\SoftPwmPort.cs" />

@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 
-namespace Meadow.Foundation.Controllers.PID
+namespace Meadow.Foundation.Controllers.Pid
 {
     public class StandardPidController : PidControllerBase
     {
