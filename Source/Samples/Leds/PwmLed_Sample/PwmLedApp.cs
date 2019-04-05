@@ -3,7 +3,7 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Generators;
-using Meadow.Foundation.LEDs;
+using Meadow.Foundation.Leds;
 using Meadow.Hardware;
 
 namespace PwmLed_Sample

@@ -1,6 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.LEDs;
+using Meadow.Foundation.Leds;
 using System;
 using System.Threading;
 

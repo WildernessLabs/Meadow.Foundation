@@ -2,7 +2,7 @@ using Meadow.Peripherals.Leds;
 using Meadow.Hardware;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.LEDs
+namespace Meadow.Foundation.Leds
 {
     /// <summary>
     /// Represents a simple LED
@@ -16,7 +16,7 @@ namespace Meadow.Foundation.LEDs
         public IDigitalOutputPort Port { get; protected set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="T:Meadow.Foundation.LEDs.Led"/> is on.
+        /// Gets or sets a value indicating whether this <see cref="T:Meadow.Foundation.Leds.Led"/> is on.
         /// </summary>
         /// <value><c>true</c> if is on; otherwise, <c>false</c>.</value>
         public bool IsOn

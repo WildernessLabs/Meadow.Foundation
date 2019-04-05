@@ -1,4 +1,4 @@
-namespace Meadow.Foundation.LEDs
+namespace Meadow.Foundation.Leds
 {
     /// <summary>
     /// LED helper methods

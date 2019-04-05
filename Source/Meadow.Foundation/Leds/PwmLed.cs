@@ -3,7 +3,7 @@ using System.Threading;
 using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
 
-namespace Meadow.Foundation.LEDs
+namespace Meadow.Foundation.Leds
 {
     /// <summary>
     /// Represents an LED whose voltage is limited by the duty-cycle of a PWM
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.LEDs
         public float ForwardVoltage { get; protected set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Meadow.Foundation.LEDs.PwmLed"/> class.
+        /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Leds.PwmLed"/> class.
         /// </summary>
         /// <param name="device">IO Device</param>
         /// <param name="pin">Pin</param>

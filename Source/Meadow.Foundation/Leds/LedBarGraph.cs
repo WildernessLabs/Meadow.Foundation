@@ -1,7 +1,7 @@
 ﻿using Meadow.Hardware;
 using System;
 
-namespace Meadow.Foundation.LEDs
+namespace Meadow.Foundation.Leds
 {
     /// <summary>
     /// Represents an LED bar graph composed on multiple LEDs

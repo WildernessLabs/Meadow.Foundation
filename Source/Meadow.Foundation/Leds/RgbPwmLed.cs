@@ -5,7 +5,7 @@ using Meadow.Hardware;
 using System.Drawing;
 using Meadow;
 
-namespace Meadow.Foundation.LEDs
+namespace Meadow.Foundation.Leds
 {
     /// <summary>
     /// Represents a Pulse-Width-Modulation (PWM) controlled RGB LED. Controlling an RGB LED with 
