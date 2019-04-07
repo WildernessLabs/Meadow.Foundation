@@ -61,6 +61,7 @@
     <Compile Include="Leds\Helpers.cs" />
     <Compile Include="Leds\Led.cs" />
     <Compile Include="Leds\PwmLed.cs" />
+    <Compile Include="Leds\RgbLed.cs" />
     <Compile Include="Leds\RgbPwmLed.cs" />
     <Compile Include="Leds\TypicalForwardVoltage.cs" />
     <Compile Include="Motors\HBridgeMotor.cs" />
