@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28711.60
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{ABFEB925-65AF-4C8C-B4C8-83F962AF6347}"
 EndProject
@@ -162,6 +162,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings", "FeatherWings", "{7EE5AF29-A4BD-472F-B4F0-8EAB994B61B1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoyWing_Sample", "Samples\FeatherWings\JoyWing_Sample\JoyWing_Sample.csproj", "{A4AAF044-54E8-4034-B2F8-4D677251706D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.SFSR02", "Peripheral_Libs\Sensors.Distance.SFSR02\Sensors.Distance.SFSR02.csproj", "{18634CF8-9D46-47D6-AF75-99C260F41036}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -421,6 +423,10 @@ Global
 		{A4AAF044-54E8-4034-B2F8-4D677251706D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4AAF044-54E8-4034-B2F8-4D677251706D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4AAF044-54E8-4034-B2F8-4D677251706D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18634CF8-9D46-47D6-AF75-99C260F41036}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18634CF8-9D46-47D6-AF75-99C260F41036}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18634CF8-9D46-47D6-AF75-99C260F41036}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18634CF8-9D46-47D6-AF75-99C260F41036}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -501,6 +507,7 @@ Global
 		{2189BB6D-C20C-4965-8789-438241B369B9} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{7EE5AF29-A4BD-472F-B4F0-8EAB994B61B1} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
 		{A4AAF044-54E8-4034-B2F8-4D677251706D} = {7EE5AF29-A4BD-472F-B4F0-8EAB994B61B1}
+		{18634CF8-9D46-47D6-AF75-99C260F41036} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
