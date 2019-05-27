@@ -73,13 +73,13 @@ namespace Meadow.Foundation.Sensors.Distance
         /// HSSRF05 must be running the default 4/5 pin mode
         /// 3 pin mode is not supported on Meadow
         /// </summary>
-        /// <param name="triggerPin"></param>
-        /// <param name="echoPin"></param>
-        public HYSRF05(IDigitalOutputPort triggerPin, IDigitalInputPort echoPin)
+        /// <param name="triggerPort"></param>
+        /// <param name="echoPort"></param>
+        public HYSRF05(IDigitalOutputPort triggerPort, IDigitalInputPort echoPort)
         {
-            _triggerPort = triggerPin;
+            _triggerPort = triggerPort;
 
-            _echoPort = echoPin;
+            _echoPort = echoPort;
             _echoPort.Changed += OnEchoPortChanged;
         }
 
