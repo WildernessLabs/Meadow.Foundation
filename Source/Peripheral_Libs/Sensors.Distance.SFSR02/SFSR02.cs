@@ -22,7 +22,7 @@ namespace Sensors.Distance.SFSR02
         /// <summary>
         /// Maximum valid distance in cm (CurrentDistance returns -1 if above).
         /// </summary>
-        public float MaximumDistance => 400;
+        public float MaximumDistance => 800;
 
         /// <summary>
         /// Raised when an received a rebound trigger signal
@@ -77,9 +77,13 @@ namespace Sensors.Distance.SFSR02
         /// </summary>
         public void MeasureDistance()
         {
+            _triggerEchoPort.Direction = PortDirectionType.Output;
+            _triggerEchoPort.State = false;
+            Thread.Sleep(1); //smallest amount of time we can wait
+
             CurrentDistance = -1;
 
-            // Raise trigger port to high for 10+ micro-seconds
+            // Raise trigger port to high for 20 micro-seconds
             _triggerEchoPort.State = true;
             Thread.Sleep(1); //smallest amount of time we can wait
 
@@ -87,6 +91,8 @@ namespace Sensors.Distance.SFSR02
             _tickStart = DateTime.Now.Ticks;
             // Trigger device to measure distance via sonic pulse
             _triggerEchoPort.State = false;
+        
+            _triggerEchoPort.Direction = PortDirectionType.Input;
         }
 
         private void OnEchoPortChanged(object sender, DigitalInputPortEventArgs e)

@@ -10,11 +10,13 @@ namespace SFSR02_Sample
     {
         public SFSR02App()
         {
-            var SFSR02 = new SFSR02(Device, Device.Pins.D05);
+            var SFSR02 = new SFSR02(Device, Device.Pins.D03);
             SFSR02.DistanceDetected += SFSR02DistanceDetected;
 
             while (true)
             {
+                Console.WriteLine("Measure Distance:");
+
                 // Sends a trigger signal
                 SFSR02.MeasureDistance();
                 Thread.Sleep(1500);
