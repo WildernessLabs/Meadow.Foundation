@@ -50,7 +50,7 @@ namespace Sensors.Distance.SFSR02
         private SFSR02() { }
 
         /// <summary>
-        /// Create a new HCSR04 object with an IO Device
+        /// Create a new SFSR02 object with an IO Device
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
@@ -59,7 +59,7 @@ namespace Sensors.Distance.SFSR02
         { }
 
         /// <summary>
-        /// Create a new HCSR04 object 
+        /// Create a new SFSR02 object 
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
@@ -92,14 +92,10 @@ namespace Sensors.Distance.SFSR02
         private void OnEchoPortChanged(object sender, DigitalInputPortEventArgs e)
         {
             if (e.Value == true)
-            // if(_echoPort.State == true)
             {
-                ///      Console.WriteLine("true");
                 _tickStart = DateTime.Now.Ticks;
                 return;
             }
-
-            //    Console.WriteLine("false");
 
             // Calculate Difference
             float elapsed = DateTime.Now.Ticks - _tickStart;
