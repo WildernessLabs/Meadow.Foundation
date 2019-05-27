@@ -1,29 +1,29 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Distance;
+using Sensors.Distance.SFSR02;
 using System;
 using System.Threading;
 
-namespace HCSR04_Sample
+namespace SFSR02_Sample
 {
-    public class HCSR04App : App<F7Micro, HCSR04App>
+    public class SFSR02App : App<F7Micro, SFSR02App>
     {
-        public HCSR04App()
+        public SFSR02App()
         {
-            var HCSR04 = new HCSR04(Device, Device.Pins.D05, Device.Pins.D06);
-            HCSR04.DistanceDetected += HCSR04DistanceDetected;
+            var SFSR02 = new SFSR02(Device, Device.Pins.D05);
+            SFSR02.DistanceDetected += SFSR02DistanceDetected;
 
             while (true)
             {
                 // Sends a trigger signal
-                HCSR04.MeasureDistance();
+                SFSR02.MeasureDistance();
                 Thread.Sleep(1500);
             }
         }
 
         // Prints the measured distance after sending a trigger signal
         // Valid distance ranges from 2cm to 400cm. Prints -1 otherwise.
-        private void HCSR04DistanceDetected(object sender, Meadow.Peripherals.Sensors.Distance.DistanceEventArgs e)
+        private void SFSR02DistanceDetected(object sender, Meadow.Peripherals.Sensors.Distance.DistanceEventArgs e)
         {
             Console.WriteLine(e.Distance.ToString());
         }
