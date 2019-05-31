@@ -6,7 +6,7 @@ using System;
 
 namespace SpdtSwitch_Sample
 {
-    public class SpdtSwitchApp : AppBase<F7Micro, SpdtSwitchApp>
+    public class SpdtSwitchApp : App<F7Micro, SpdtSwitchApp>
     {
         SpdtSwitch spdtSwitch;
 

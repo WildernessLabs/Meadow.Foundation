@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FC28_Sample
 {
-    public class FC28App : AppBase<F7Micro, FC28App>
+    public class FC28App : App<F7Micro, FC28App>
     {
         FC28 fc28;
 

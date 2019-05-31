@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Relay_Sample
 {
-    public class RelayApp : AppBase<F7Micro, RelayApp>
+    public class RelayApp : App<F7Micro, RelayApp>
     {
         Relay relay;
 

@@ -7,7 +7,7 @@ using static Meadow.Foundation.Displays.LED.SevenSegment;
 
 namespace SevenSegment_Sample
 {
-    public class SevenSegmentApp : AppBase<F7Micro, SevenSegmentApp>
+    public class SevenSegmentApp : App<F7Micro, SevenSegmentApp>
     {
         SevenSegment sevenSegment;
 

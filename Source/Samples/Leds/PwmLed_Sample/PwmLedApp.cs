@@ -8,7 +8,7 @@ using Meadow.Hardware;
 
 namespace PwmLed_Sample
 {
-    public class PwmLedApp : AppBase<F7Micro, PwmLedApp>
+    public class PwmLedApp : App<F7Micro, PwmLedApp>
     {
         IDigitalOutputPort port;
         SoftPwmPort pwm; // TODO: get rid of this when we get hadware PWM working.

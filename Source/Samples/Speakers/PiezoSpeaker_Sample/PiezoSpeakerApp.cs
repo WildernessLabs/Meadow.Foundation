@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace PiezoSpeaker_Sample
 {
-    public class PiezoSpeakerApp : AppBase<F7Micro, PiezoSpeakerApp>
+    public class PiezoSpeakerApp : App<F7Micro, PiezoSpeakerApp>
     {
         IDigitalOutputPort port;
         SoftPwmPort pwm; // TODO: get rid of this when we get hadware PWM working.

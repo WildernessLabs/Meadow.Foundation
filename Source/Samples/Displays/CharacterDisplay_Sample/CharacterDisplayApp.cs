@@ -4,7 +4,7 @@ using Meadow.Foundation.Displays.Lcd;
 
 namespace CharacterDisplay_Sample
 {
-    class CharacterDisplayApp : AppBase<F7Micro, CharacterDisplayApp>
+    class CharacterDisplayApp : App<F7Micro, CharacterDisplayApp>
     {
         CharacterDisplay display;
 

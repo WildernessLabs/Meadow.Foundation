@@ -5,7 +5,7 @@ using System;
 
 namespace RotaryEncoderWithButton_Sample
 {
-    public class RotaryEncoderWithButtonApp : AppBase<F7Micro, RotaryEncoderWithButtonApp>
+    public class RotaryEncoderWithButtonApp : App<F7Micro, RotaryEncoderWithButtonApp>
     {
         int value = 0;
         RotaryEncoderWithButton rotaryEncoderWithButton;

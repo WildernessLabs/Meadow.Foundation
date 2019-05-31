@@ -6,7 +6,7 @@ using Meadow.Hardware;
 
 namespace ParallaxPir_Sample
 {
-    public class ParallaxPirApp : AppBase<F7Micro, ParallaxPirApp>
+    public class ParallaxPirApp : App<F7Micro, ParallaxPirApp>
     {
         ParallaxPir parallaxPir;
         IDigitalOutputPort blueLed;

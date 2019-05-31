@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Led_Sample
 {
-    public class LedApp : AppBase<F7Micro, LedApp>
+    public class LedApp : App<F7Micro, LedApp>
     {
         Led led;
 
