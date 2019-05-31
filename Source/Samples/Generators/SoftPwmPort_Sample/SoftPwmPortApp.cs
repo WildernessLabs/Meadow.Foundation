@@ -7,7 +7,7 @@ using Meadow.Hardware;
 
 namespace SoftPwmPort_Sample
 {
-    public class SoftPwmPortApp : AppBase<F7Micro, SoftPwmPortApp>
+    public class SoftPwmPortApp : App<F7Micro, SoftPwmPortApp>
     {        
         SoftPwmPort softPwmPort;
 

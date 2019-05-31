@@ -69,13 +69,13 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Create a new HCSR04 object 
         /// </summary>
-        /// <param name="triggerPin"></param>
-        /// <param name="echoPin"></param>
-        public HCSR04(IDigitalOutputPort triggerPin, IDigitalInputPort echoPin)
+        /// <param name="triggerPort"></param>
+        /// <param name="echoPort"></param>
+        public HCSR04(IDigitalOutputPort triggerPort, IDigitalInputPort echoPort)
         {
-            _triggerPort = triggerPin;
+            _triggerPort = triggerPort;
 
-            _echoPort = echoPin;
+            _echoPort = echoPort;
             _echoPort.Changed += OnEchoPortChanged;
         }
 

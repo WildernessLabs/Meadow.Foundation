@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace LedBarGraph_Sample
 {
-    public class LedBarGraphApp : AppBase<F7Micro, LedBarGraphApp>
+    public class LedBarGraphApp : App<F7Micro, LedBarGraphApp>
     {
         LedBarGraph ledBarGraph;
 

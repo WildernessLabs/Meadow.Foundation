@@ -1,14 +1,11 @@
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Distance;
 using System;
 using System.Threading;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Distance;
 
-namespace Meadow.Foundation.Sensors.Distance
+namespace Sensors.Distance.SFSR02
 {
-    /// <summary>
-    /// HYSRF05 Distance Sensor
-    /// </summary>
-    public class HYSRF05 : IRangeFinder
+    public class SFSR02 : IRangeFinder
     {
         #region Properties
 
@@ -25,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Maximum valid distance in cm (CurrentDistance returns -1 if above).
         /// </summary>
-        public float MaximumDistance => 450;
+        public float MaximumDistance => 800;
 
         /// <summary>
         /// Raised when an received a rebound trigger signal
@@ -37,14 +34,9 @@ namespace Meadow.Foundation.Sensors.Distance
         #region Member variables / fields
 
         /// <summary>
-        /// Trigger Pin.
+        /// Trigger/Echo Pin
         /// </summary>
-        protected IDigitalOutputPort _triggerPort;
-
-        /// <summary>
-        /// Echo Pin.
-        /// </summary>
-        protected IDigitalInputPort _echoPort;
+        protected IBiDirectionalPort _triggerEchoPort;
 
         protected long _tickStart;
 
@@ -55,32 +47,27 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Default constructor is private to prevent it being called.
         /// </summary>
-        private HYSRF05() { }
+        private SFSR02() { }
 
         /// <summary>
-        /// Create a new HYSRF05 object with a IO Device
-        /// HSSRF05 must be running the default 4/5 pin mode
-        /// 3 pin mode is not supported on Meadow
+        /// Create a new SFSR02 object with an IO Device
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
-        public HYSRF05(IIODevice device, IPin triggerPin, IPin echoPin) :
-            this(device.CreateDigitalOutputPort(triggerPin, false),
-                device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth)) { }
+        public SFSR02(IIODevice device, IPin triggerEchoPin) :
+            this(device.CreateBiDirectionalPort(triggerEchoPin, false))
+        { }
 
         /// <summary>
-        /// Create a new HYSRF05 object and hook up the interrupt handler
-        /// HSSRF05 must be running the default 4/5 pin mode
-        /// 3 pin mode is not supported on Meadow
+        /// Create a new SFSR02 object 
         /// </summary>
-        /// <param name="triggerPort"></param>
-        /// <param name="echoPort"></param>
-        public HYSRF05(IDigitalOutputPort triggerPort, IDigitalInputPort echoPort)
+        /// <param name="triggerPin"></param>
+        /// <param name="echoPin"></param>
+        public SFSR02(IBiDirectionalPort triggerEchoPort)
         {
-            _triggerPort = triggerPort;
+            _triggerEchoPort = triggerEchoPort;
 
-            _echoPort = echoPort;
-            _echoPort.Changed += OnEchoPortChanged;
+            _triggerEchoPort.Changed += OnEchoPortChanged;
         }
 
         #endregion
@@ -90,21 +77,27 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public void MeasureDistance()
         {
+            _triggerEchoPort.Direction = PortDirectionType.Output;
+            _triggerEchoPort.State = false;
+            Thread.Sleep(1); //smallest amount of time we can wait
+
             CurrentDistance = -1;
 
-            // Raise trigger port to high for 10+ micro-seconds
-            _triggerPort.State = true;
+            // Raise trigger port to high for 20 micro-seconds
+            _triggerEchoPort.State = true;
             Thread.Sleep(1); //smallest amount of time we can wait
 
             // Start Clock
             _tickStart = DateTime.Now.Ticks;
             // Trigger device to measure distance via sonic pulse
-            _triggerPort.State = false;
+            _triggerEchoPort.State = false;
+        
+            _triggerEchoPort.Direction = PortDirectionType.Input;
         }
 
         private void OnEchoPortChanged(object sender, DigitalInputPortEventArgs e)
         {
-            if (e.Value == true) //echo is high
+            if (e.Value == true)
             {
                 _tickStart = DateTime.Now.Ticks;
                 return;
@@ -118,8 +111,8 @@ namespace Meadow.Foundation.Sensors.Distance
             // divide by 58 for cm (assume speed of sound is 340m/s)
             CurrentDistance = elapsed / 580f;
 
-            if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
-                CurrentDistance = -1;
+            //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
+            //       CurrentDistance = -1;
 
             DistanceDetected?.Invoke(this, new DistanceEventArgs(CurrentDistance));
         }

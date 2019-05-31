@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace HYSRF05_Sample
 {
-    public class HYSRF05App : AppBase<F7Micro, HYSRF05App>
+    public class HYSRF05App : App<F7Micro, HYSRF05App>
     {
         public HYSRF05App()
         {

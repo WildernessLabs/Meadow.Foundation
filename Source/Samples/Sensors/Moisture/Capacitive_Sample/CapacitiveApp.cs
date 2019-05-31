@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Capacitive_Sample
 {
-    public class CapacitiveApp : AppBase<F7Micro, CapacitiveApp>
+    public class CapacitiveApp : App<F7Micro, CapacitiveApp>
     {
         Capacitive capacitive;
 

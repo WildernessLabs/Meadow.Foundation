@@ -7,7 +7,7 @@ using System;
 
 namespace DipSwitch_Sample
 {
-    public class DipSwitchApp : AppBase<F7Micro, DipSwitchApp>
+    public class DipSwitchApp : App<F7Micro, DipSwitchApp>
     {
         DipSwitch dipSwitch;
 

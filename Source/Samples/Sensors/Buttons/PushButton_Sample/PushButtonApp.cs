@@ -6,7 +6,7 @@ using Meadow.Foundation.Sensors.Buttons;
 
 namespace PushButton_Sample
 {
-    public class PushButtonApp : AppBase<F7Micro, PushButtonApp>
+    public class PushButtonApp : App<F7Micro, PushButtonApp>
     {
         PushButton pushButton;
 

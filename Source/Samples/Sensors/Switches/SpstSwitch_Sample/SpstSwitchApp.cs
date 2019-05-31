@@ -6,7 +6,7 @@ using System;
 
 namespace SpstSwitch_Sample
 {
-    public class SpstSwitchApp : AppBase<F7Micro, SpstSwitchApp>
+    public class SpstSwitchApp : App<F7Micro, SpstSwitchApp>
     {
         SpstSwitch spstSwitch;
 

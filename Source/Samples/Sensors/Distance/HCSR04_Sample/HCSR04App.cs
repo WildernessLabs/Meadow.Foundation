@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace HCSR04_Sample
 {
-    public class HCSR04App : AppBase<F7Micro, HCSR04App>
+    public class HCSR04App : App<F7Micro, HCSR04App>
     {
         public HCSR04App()
         {
