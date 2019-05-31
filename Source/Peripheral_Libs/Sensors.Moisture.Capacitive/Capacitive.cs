@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <returns>Value ranges from 0 - 100</returns>
         public async Task<float> Read()
         {
-            Moisture = await AnalogPort.Read();
+            Moisture = AnalogPort.Read();
             return 100 - Map(Moisture, 0, 1023, 0, 100);
         }
 
