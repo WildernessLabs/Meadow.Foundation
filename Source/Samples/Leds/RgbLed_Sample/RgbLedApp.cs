@@ -2,21 +2,20 @@
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using System;
-using System.Drawing;
 using System.Threading;
 
 namespace RgbLed_Sample
 {
-    class RgbLedApp : AppBase<F7Micro, RgbLedApp>
+    class RgbLedApp : App<F7Micro, RgbLedApp>
     {
         RgbLed rgbLed;
 
         public RgbLedApp()
         {
             rgbLed = new RgbLed(
-                Device.CreateDigitalOutputPort(Device.Pins.D08),
-                Device.CreateDigitalOutputPort(Device.Pins.D07),
-                Device.CreateDigitalOutputPort(Device.Pins.D06));
+                Device.CreateDigitalOutputPort(Device.Pins.D02),
+                Device.CreateDigitalOutputPort(Device.Pins.D03),
+                Device.CreateDigitalOutputPort(Device.Pins.D04));
 
             TestRgbLed();
         }
@@ -25,17 +24,24 @@ namespace RgbLed_Sample
         {
             while (true)
             {
-                rgbLed.SetColor(Color.Red);
+                for (int i = 0; i < (int)RgbLed.Colors.count; i++)
+                {
+                    rgbLed.SetColor((RgbLed.Colors)i);
+                    Console.WriteLine(((RgbLed.Colors)i).ToString());
+                    Thread.Sleep(1000);
+                }
+
+         /*       rgbLed.SetColor(RgbLed.Colors.Red);
                 Console.WriteLine("Red");
                 Thread.Sleep(1000);
 
-                rgbLed.SetColor(Color.Green);
+                rgbLed.SetColor(RgbLed.Colors.Green);
                 Console.WriteLine("Green");
                 Thread.Sleep(1000);
 
-                rgbLed.SetColor(Color.Blue);
+                rgbLed.SetColor(RgbLed.Colors.Blue);
                 Console.WriteLine("Blue");
-                Thread.Sleep(1000);
+                Thread.Sleep(1000); */
             }
         }
     }

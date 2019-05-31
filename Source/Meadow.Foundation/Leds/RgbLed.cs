@@ -15,6 +15,7 @@ namespace Meadow.Foundation.Leds
             Cyan,
             White,
             Black,
+            count
         }
 
         protected Task _animationTask = null;
@@ -77,44 +78,44 @@ namespace Meadow.Foundation.Leds
             switch (color)
             {
                 case Colors.Red:
-                    RedPort.State = !IsCommonCathode;
-                    GreenPort.State = IsCommonCathode;
-                    BluePort.State = IsCommonCathode;
-                    break;
-                case Colors.Green:
                     RedPort.State = IsCommonCathode;
                     GreenPort.State = !IsCommonCathode;
-                    BluePort.State = IsCommonCathode;
+                    BluePort.State = !IsCommonCathode;
+                    break;
+                case Colors.Green:
+                    RedPort.State = !IsCommonCathode;
+                    GreenPort.State = IsCommonCathode;
+                    BluePort.State = !IsCommonCathode;
                     break;
                 case Colors.Blue:
                     RedPort.State = !IsCommonCathode;
-                    GreenPort.State = IsCommonCathode;
+                    GreenPort.State = !IsCommonCathode;
                     BluePort.State = IsCommonCathode;
                     break;
                 case Colors.Yellow:
-                    RedPort.State = !IsCommonCathode;
-                    GreenPort.State = !IsCommonCathode;
-                    BluePort.State = IsCommonCathode;
+                    RedPort.State = IsCommonCathode;
+                    GreenPort.State = IsCommonCathode;
+                    BluePort.State = !IsCommonCathode;
                     break;
                 case Colors.Magenta:
-                    RedPort.State = !IsCommonCathode;
-                    GreenPort.State = IsCommonCathode;
-                    BluePort.State = !IsCommonCathode;
-                    break;
-                case Colors.Cyan:
                     RedPort.State = IsCommonCathode;
                     GreenPort.State = !IsCommonCathode;
-                    BluePort.State = !IsCommonCathode;
+                    BluePort.State = IsCommonCathode;
+                    break;
+                case Colors.Cyan:
+                    RedPort.State = !IsCommonCathode;
+                    GreenPort.State = IsCommonCathode;
+                    BluePort.State = IsCommonCathode;
                     break;
                 case Colors.White:
-                    RedPort.State = !IsCommonCathode;
-                    GreenPort.State = !IsCommonCathode;
-                    BluePort.State = !IsCommonCathode;
-                    break;
-                case Colors.Black:
                     RedPort.State = IsCommonCathode;
                     GreenPort.State = IsCommonCathode;
                     BluePort.State = IsCommonCathode;
+                    break;
+                case Colors.Black:
+                    RedPort.State = !IsCommonCathode;
+                    GreenPort.State = !IsCommonCathode;
+                    BluePort.State = !IsCommonCathode;
                     break;
             }
         }
