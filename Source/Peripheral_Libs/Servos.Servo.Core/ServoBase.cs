@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Servos
         /// <summary>
         /// Instantiates a new Servo on the specified PWM Pin with the specified config.
         /// </summary>
-        /// <param name="pin"></param>
+        /// <param name="pwm"></param>
         /// <param name="config"></param>
         public ServoBase(IPwmPort pwm, ServoConfig config)
         {
@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Servos
         {
             // angle check
             if (angle < _config.MinimumAngle || angle > _config.MaximumAngle) {
-                throw new ArgumentOutOfRangeException("Angle must be within servo configuration tolerance.");
+                throw new ArgumentOutOfRangeException(nameof(angle), "Angle must be within servo configuration tolerance.");
             }
 
             // calculate the appropriate pulse duration for the angle
@@ -60,10 +60,6 @@ namespace Meadow.Foundation.Servos
             // update the state
             _angle = angle;
         }
-
-        //public void RotateTo(int angle, double speed)
-        //{
-        //}
 
         /// <summary>
         /// Stops the signal that controls the servo angle. For many servos, this will 

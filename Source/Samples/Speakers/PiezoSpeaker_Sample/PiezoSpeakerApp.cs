@@ -10,14 +10,13 @@ namespace PiezoSpeaker_Sample
 {
     public class PiezoSpeakerApp : App<F7Micro, PiezoSpeakerApp>
     {
-        IDigitalOutputPort port;
-        SoftPwmPort pwm; // TODO: get rid of this when we get hadware PWM working.
-        PiezoSpeaker piezoSpeaker;
+        readonly IDigitalOutputPort port;
+        readonly IPwmPort pwm; 
+        readonly PiezoSpeaker piezoSpeaker;
 
         public PiezoSpeakerApp()
         {
-            port = Device.CreateDigitalOutputPort(Device.Pins.D02);
-            pwm = new SoftPwmPort(port);
+            pwm = Device.CreatePwmPort(Device.Pins.D05);
             piezoSpeaker = new PiezoSpeaker(pwm);
 
             TestPiezoSpeaker();

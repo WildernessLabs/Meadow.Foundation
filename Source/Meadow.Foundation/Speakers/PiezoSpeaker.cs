@@ -46,10 +46,8 @@ namespace Meadow.Foundation.Audio
             {
                 _isPlaying = true;
 
-                var period = (uint)(1000000 / frequency);
-
-                Port.Period = period;
-                Port.DutyCycle = period / 2;
+                Port.Frequency = frequency;
+                Port.DutyCycle = 0.5f;
 
                 Port.Start();
 

@@ -158,7 +158,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharacterDisplay_Sample", "Samples\Displays\CharacterDisplay_Sample\CharacterDisplay_Sample.csproj", "{9391E643-A2CA-4029-9C21-D071023D7E34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RgbLed_Sample", "Samples\Leds\RgbLed_Sample\RgbLed_Sample.csproj", "{1115255B-078E-4B29-B1B9-FD099711965E}"
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatherWings.JoyWing", "Peripheral_Libs\FeatherWings.JoyWing\FeatherWings.JoyWing.csproj", "{2189BB6D-C20C-4965-8789-438241B369B9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings", "FeatherWings", "{7EE5AF29-A4BD-472F-B4F0-8EAB994B61B1}"
 EndProject
@@ -167,6 +166,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.SFSR02", "Peripheral_Libs\Sensors.Distance.SFSR02\Sensors.Distance.SFSR02.csproj", "{18634CF8-9D46-47D6-AF75-99C260F41036}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFSR02_Sample", "Samples\Sensors\Distance\SFSR02_Sample\SFSR02_Sample.csproj", "{41A9DF15-0943-415D-A58C-DFBA1A8AFB97}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Servos", "Servos", "{FB5E6B67-6F54-435B-B684-A53ADE5094D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servo_Sample", "Samples\Servos\Servo_Sample\Servo_Sample.csproj", "{F477E7F7-A9F8-4A03-8099-975B8CE805BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -438,6 +441,10 @@ Global
 		{41A9DF15-0943-415D-A58C-DFBA1A8AFB97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41A9DF15-0943-415D-A58C-DFBA1A8AFB97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41A9DF15-0943-415D-A58C-DFBA1A8AFB97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F477E7F7-A9F8-4A03-8099-975B8CE805BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F477E7F7-A9F8-4A03-8099-975B8CE805BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F477E7F7-A9F8-4A03-8099-975B8CE805BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F477E7F7-A9F8-4A03-8099-975B8CE805BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -521,6 +528,8 @@ Global
 		{A4AAF044-54E8-4034-B2F8-4D677251706D} = {7EE5AF29-A4BD-472F-B4F0-8EAB994B61B1}
 		{18634CF8-9D46-47D6-AF75-99C260F41036} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{41A9DF15-0943-415D-A58C-DFBA1A8AFB97} = {CFF2587F-743A-4485-8F6B-16B15197AA12}
+		{FB5E6B67-6F54-435B-B684-A53ADE5094D4} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
+		{F477E7F7-A9F8-4A03-8099-975B8CE805BB} = {FB5E6B67-6F54-435B-B684-A53ADE5094D4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
