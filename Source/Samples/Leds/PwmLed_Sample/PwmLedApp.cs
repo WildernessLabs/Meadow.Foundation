@@ -2,7 +2,6 @@
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Generators;
 using Meadow.Foundation.Leds;
 using Meadow.Hardware;
 
@@ -10,36 +9,35 @@ namespace PwmLed_Sample
 {
     public class PwmLedApp : App<F7Micro, PwmLedApp>
     {
-        IDigitalOutputPort port;
-        SoftPwmPort pwm; // TODO: get rid of this when we get hadware PWM working.
-        PwmLed led;
+        readonly IPwmPort pwm; 
+        readonly PwmLed led;
 
         public PwmLedApp()
         {
-            port = Device.CreateDigitalOutputPort(Device.Pins.D00);
-            pwm = new SoftPwmPort(port);
+            pwm = Device.CreatePwmPort(Device.Pins.D05);
+
             led = new PwmLed(pwm, 3.3f);
-            this.TestLed();
+            TestLed();
         }
 
         protected void TestLed()
         {
-            while (true) {
-                Console.WriteLine("Turning the LED on for a bit.");
+            while (true)
+            {
+                Console.WriteLine("Turning the LED on for 1 second");
                 led.IsOn = true;
                 Thread.Sleep(1000);
                 led.IsOn = false;
 
-                Console.WriteLine("Blinking the LED for a bit.");
+                Console.WriteLine("Blinking the LED for 1 second");
                 led.StartBlink();
                 Thread.Sleep(1000);
                 led.Stop();
 
-                Console.WriteLine("Pulsing the LED for a bit.");
+                Console.WriteLine("Pulsing the LED for 2 seconds");
                 led.StartPulse();
-                Thread.Sleep(5000);
+                Thread.Sleep(2000);
                 led.Stop();
-
             }
         }
     }

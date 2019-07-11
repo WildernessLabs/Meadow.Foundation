@@ -1,7 +1,7 @@
 ﻿using Meadow.Foundation.Communications;
 using Meadow.Foundation.Helpers;
 using Meadow.Foundation.Spatial;
-using Meadow.Hardware.Communications;
+using Meadow.Hardware;
 using System;
 using System.Threading;
 
@@ -1817,8 +1817,9 @@ namespace Meadow.Foundation.Sensors.Motion
 		    {
 		        throw new ArgumentOutOfRangeException("speed", "Maximum speed is 400kHz.");
 		    }
-            I2cBus device = new I2cBus(address, speed);
-            _bno055 = (ICommunicationBus) device;
+
+            _bno055 = new I2cBus(address, speed);
+
             if (_bno055.ReadRegister(Registers.ChipID) != 0xa0)
             {
                 throw new Exception("Sensor ID should be 0xa0.");

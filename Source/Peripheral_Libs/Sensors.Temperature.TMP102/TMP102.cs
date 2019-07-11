@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Hardware.Communications;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Temperature;
 
@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         ///     TMP102 sensor.
         /// </summary>
-        private readonly ICommunicationBus _tmp102;
+        private readonly I2cBus _tmp102;
 
         /// <summary>
         ///     Update interval in milliseconds

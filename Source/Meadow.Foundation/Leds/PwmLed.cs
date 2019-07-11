@@ -13,35 +13,29 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class PwmLed : IPwmLed
     {
-        protected Thread _animationThread = null;
+        protected Thread _animationThread;
         protected float _maximumPwmDuty = 1;
-        protected bool _running = false;
+        protected bool _running;
 
         /// <summary>
         /// Gets the brightness of the LED, controlled by a PWM signal, and limited by the 
         /// calculated maximum voltage. Valid values are from 0 to 1, inclusive.
         /// </summary>
-        public float Brightness {
-            get { return _brightness; }
-        }
-        protected float _brightness = 0;
+        public float Brightness { get; private set; } = 0;
 
         /// <summary>
         /// Gets or Sets the state of the LED
         /// </summary>
-        public bool IsOn {
-            get { return _isOn; }
+        public bool IsOn
+        {
+            get => _isOn; 
             set {
-                // if turning on,
-                if (value) {
-                    Port.DutyCycle = _maximumPwmDuty; // turn on
-                } else { // if turning off
-                    Port.DutyCycle = 0; // turn off
-                }
+                if (value) Port.DutyCycle = _maximumPwmDuty; // turn on
+                else Port.DutyCycle = 0; // turn off
                 _isOn = value;
             }
         }
-        protected bool _isOn = false;
+        protected bool _isOn;
 
         ///// <summary>
         ///// Gets the PwmPort
@@ -67,20 +61,19 @@ namespace Meadow.Foundation.Leds
         /// voltage based on the passed `forwardVoltage`. Typical LED forward voltages 
         /// can be found in the `TypicalForwardVoltage` class.
         /// </summary>
-        /// <param name="pin"></param>
+        /// <param name="pwmPort"></param>
         /// <param name="forwardVoltage"></param>
         public PwmLed(IPwmPort pwmPort, float forwardVoltage)
         {
             // validate and persist forward voltage
-            if (forwardVoltage < 0 || forwardVoltage > 3.3F) {
-                throw new ArgumentOutOfRangeException("forwardVoltage", "error, forward voltage must be between 0, and 3.3");
-            }
+            if (forwardVoltage < 0 || forwardVoltage > 3.3F) 
+                throw new ArgumentOutOfRangeException(nameof(forwardVoltage), "error, forward voltage must be between 0, and 3.3");
+            
             ForwardVoltage = forwardVoltage;
 
             _maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
 
             Port = pwmPort;
-            //this.Port = new PWM(pin, 100, _maximumPwmDuty, false);
 			Port.Frequency = 100;
 			Port.DutyCycle = _maximumPwmDuty;
         }
@@ -93,13 +86,13 @@ namespace Meadow.Foundation.Leds
         {
             if (brightness < 0 || brightness > 1)
             {
-                throw new ArgumentOutOfRangeException("value", "err: brightness must be between 0 and 1, inclusive.");
+                throw new ArgumentOutOfRangeException(nameof(brightness), "err: brightness must be between 0 and 1, inclusive.");
             }
 
-            _brightness = brightness;
+            Brightness = brightness;
 
             // if 0, shut down the PWM (is this a good idea?)
-            if (Brightness == 0)
+            if (Brightness <= 0.0)
             {
                 Port.Stop();
                 _isOn = false;
@@ -133,17 +126,11 @@ namespace Meadow.Foundation.Leds
         public void StartBlink(uint onDuration, uint offDuration, float highBrightness, float lowBrightness)
         {
             if (highBrightness > 1 || highBrightness <= 0)
-            {
-                throw new ArgumentOutOfRangeException("onBrightness", "onBrightness must be > 0 and <= 1");
-            }
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
             if (lowBrightness >= 1 || lowBrightness < 0)
-            {
-                throw new ArgumentOutOfRangeException("offBrightness", "lowBrightness must be >= 0 and < 1");
-            }
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
             if (lowBrightness >= highBrightness)
-            {
                 throw new Exception("offBrightness must be less than onBrightness");
-            }
 
             // stop any existing animations
             Stop();
@@ -167,11 +154,11 @@ namespace Meadow.Foundation.Leds
         public void StartPulse(int pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0) {
-                throw new ArgumentOutOfRangeException("highBrightness", "highBrightness must be > 0 and <= 1");
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "highBrightness must be > 0 and <= 1");
             }
             if (lowBrightness >= 1 || lowBrightness < 0)
             {
-                throw new ArgumentOutOfRangeException("lowBrightness", "lowBrightness must be >= 0 and < 1");
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
             }
             if (lowBrightness >= highBrightness)
             {
@@ -197,8 +184,9 @@ namespace Meadow.Foundation.Leds
                 while (_running)
                 {
                     // are we brightening or dimming?
-                    if (brightness <= lowBrightness) { ascending = true; }
-                    else if (brightness == highBrightness) { ascending = false; }
+                    if (brightness <= lowBrightness) ascending = true; 
+                    else if (Math.Abs(brightness - highBrightness) < 0.001) ascending = false;
+
                     brightness += (ascending) ? changeUp : changeDown;
 
                     // float math error clamps
