@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Meadow.Foundation
+﻿namespace Meadow.Foundation
 {
     /// <summary>
     /// Static class for color extension methods 
@@ -20,7 +18,9 @@ namespace Meadow.Foundation
         {
             Converters.HsvToRgb(hue, saturation, value, out double red, out double green, out double blue);
 
-            return Color.FromArgb((int)(255.0 * alpha), (int)(255.0 * red), (int)(255.0 * green), (int)(255.0 * blue));
+            return new Color(red, green, blue, alpha);
+
+           // return Color.FromArgb((int)(255.0 * alpha), (int)(255.0 * red), (int)(255.0 * green), (int)(255.0 * blue));
         }
     }
 }

@@ -83,6 +83,7 @@
     <Compile Include="Sensors\Temperature\AnalogTemperatureSensor.cs" />
     <Compile Include="Speakers\PiezoSpeaker.cs" />
     <Compile Include="Leds\LedBarGraph.cs" />
+    <Compile Include="Color.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BaseClasses\" />

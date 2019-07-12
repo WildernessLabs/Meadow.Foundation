@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Collections;
 using Meadow.Hardware;
-using System.Drawing;
 using Meadow;
 
 namespace Meadow.Foundation.Leds
@@ -32,9 +31,9 @@ namespace Meadow.Foundation.Leds
         // TODO: this should be based on voltage drop so it can be used with or without resistors.
         protected double dutyCycleMax = 0.3; // RGB Led doesn't seem to get much brighter than at 30%
 
-        protected float _maximumRedPwmDuty = 1;
-        protected float _maximumGreenPwmDuty = 1;
-        protected float _maximumBluePwmDuty = 1;
+        protected double _maximumRedPwmDuty = 1;
+        protected double _maximumGreenPwmDuty = 1;
+        protected double _maximumBluePwmDuty = 1;
 
         /// <summary>
         /// Is the LED using a common cathode
@@ -113,7 +112,7 @@ namespace Meadow.Foundation.Leds
             /// <param name="bluePwm"></param>
             /// <param name="isCommonCathode"></param>
         public RgbPwmLed(
-            IPwmPort redPWM, IPwmPort greenPWM, IPwmPort bluePWM,
+            IPwmPort redPwm, IPwmPort greenPwm, IPwmPort bluePwm,
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited, 
             float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited, 
             float blueLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
@@ -121,13 +120,13 @@ namespace Meadow.Foundation.Leds
         {
             // validate and persist forward voltages
             if (redLedForwardVoltage < 0 || redLedForwardVoltage > 3.3F) {
-                throw new ArgumentOutOfRangeException("redLedForwardVoltage", "error, forward voltage must be between 0, and 3.3");
+                throw new ArgumentOutOfRangeException(nameof(redLedForwardVoltage), "error, forward voltage must be between 0, and 3.3");
             } RedForwardVoltage = redLedForwardVoltage;
             if (greenLedForwardVoltage < 0 || greenLedForwardVoltage > 3.3F) {
-                throw new ArgumentOutOfRangeException("greenLedForwardVoltage", "error, forward voltage must be between 0, and 3.3");
+                throw new ArgumentOutOfRangeException(nameof(greenLedForwardVoltage), "error, forward voltage must be between 0, and 3.3");
             } GreenForwardVoltage = greenLedForwardVoltage;
             if (blueLedForwardVoltage < 0 || blueLedForwardVoltage > 3.3F) {
-                throw new ArgumentOutOfRangeException("blueLedForwardVoltage", "error, forward voltage must be between 0, and 3.3");
+                throw new ArgumentOutOfRangeException(nameof(blueLedForwardVoltage), "error, forward voltage must be between 0, and 3.3");
             } BlueForwardVoltage = blueLedForwardVoltage;
             
             // calculate and set maximum PWM duty cycles
@@ -137,17 +136,17 @@ namespace Meadow.Foundation.Leds
 
             IsCommonCathode = isCommonCathode;
 
-            RedPWM = redPWM;
-            GreenPWM = greenPWM;
-            BluePWM = bluePWM;
+            RedPWM = redPwm;
+            GreenPWM = greenPwm;
+            BluePWM = bluePwm;
 
 			RedPWM.Frequency = GreenPWM.Frequency = BluePWM.Frequency = 100;
 			RedPWM.DutyCycle = GreenPWM.DutyCycle = BluePWM.DutyCycle = 0;
 			RedPWM.Inverted  = GreenPWM.Inverted  = BluePWM.Inverted  = !isCommonCathode;
             
-            RedPWM = redPWM;
-            GreenPWM = greenPWM;
-            BluePWM = bluePWM;
+            RedPWM = redPwm;
+            GreenPWM = greenPwm;
+            BluePWM = bluePwm;
         }
 
         private RunningColorsConfig GetFadeConfig(Color colorStart, Color colorEnd, int duration)
@@ -163,7 +162,8 @@ namespace Meadow.Foundation.Leds
                 double g = colorStart.G * (steps - i) / steps + colorEnd.G * i / steps;
                 double b = colorStart.B * (steps - i) / steps + colorEnd.B * i / steps;
 
-                var color = Color.FromArgb((int)(255.0 * r), (int)(255.0 * g), (int)(255.0 * b), 255);
+                //  var color = Color.FromArgb((int)(255.0 * r), (int)(255.0 * g), (int)(255.0 * b), 255);
+                var color = new Color(r, g, b, 1);
 
                 colors.Add(color);
             } // walk down (start at penultimate to not repeat, and finish at 1
@@ -193,13 +193,13 @@ namespace Meadow.Foundation.Leds
             for (int i = 0; i < steps; i++)
             {
                 brightnessStep = lowBrightness + (brightnessIncrement * i);
-                colors.Add(Color.FromAhsv(1.0, Color.GetHue(), Color.GetSaturation(), brightnessStep));
+                colors.Add(Color.FromAhsv(1.0, Color.Hue, Color.Saturation, brightnessStep));
             } // walk down (start at penultimate to not repeat, and finish at 1
 
             for (int i = steps - 2; i > 0; i--)
             {
                 brightnessStep = lowBrightness + (brightnessIncrement * i);
-                colors.Add(Color.FromAhsv(1.0, Color.GetHue(), Color.GetSaturation(), brightnessStep));
+                colors.Add(Color.FromAhsv(1.0, Color.Hue, Color.Saturation, brightnessStep));
             }
 
             return new RunningColorsConfig()
@@ -215,9 +215,9 @@ namespace Meadow.Foundation.Leds
             _color = color;
 
             // set the color based on the RGB values
-            RedPWM.DutyCycle = (_color.R * _maximumRedPwmDuty);
-            GreenPWM.DutyCycle = (_color.G * _maximumGreenPwmDuty);
-            BluePWM.DutyCycle = (_color.B * _maximumBluePwmDuty);
+            RedPWM.DutyCycle = (float)(_color.R * _maximumRedPwmDuty);
+            GreenPWM.DutyCycle = (float)(_color.G * _maximumGreenPwmDuty);
+            BluePWM.DutyCycle = (float)(_color.B * _maximumBluePwmDuty);
 
             // start our PWMs.
             TurnOn();
@@ -301,11 +301,11 @@ namespace Meadow.Foundation.Leds
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {
-                throw new ArgumentOutOfRangeException("onBrightness", "onBrightness must be > 0 and <= 1");
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
             }
             if (lowBrightness >= 1 || lowBrightness < 0)
             {
-                throw new ArgumentOutOfRangeException("offBrightness", "lowBrightness must be >= 0 and < 1");
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
             }
             if (lowBrightness >= highBrightness)
             {
@@ -313,8 +313,8 @@ namespace Meadow.Foundation.Leds
             }
 
             // pre-calculate colors
-            Color highColor = Color.FromAhsv(1.0, color.GetHue(), color.GetSaturation(), highBrightness);
-            Color lowColor = Color.FromAhsv(1.0, color.GetHue(), color.GetSaturation(), lowBrightness);
+            Color highColor = Color.FromAhsv(1.0, color.Hue, color.Saturation, highBrightness);
+            Color lowColor = Color.FromAhsv(1.0, color.Hue, color.Saturation, lowBrightness);
 
             StartRunningColors(new ArrayList { highColor, lowColor }, new int[] { highDuration, lowDuration });
         }
@@ -326,12 +326,12 @@ namespace Meadow.Foundation.Leds
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {
-                throw new ArgumentOutOfRangeException("highBrightness", "highBrightness must be between 0 and 1");
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "highBrightness must be between 0 and 1");
             }
 
             if (lowBrightness >= 1 || lowBrightness < 0)
             {
-                throw new ArgumentOutOfRangeException("lowBrightness", "lowBrightness must be between 0 and 1");
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be between 0 and 1");
             }
 
             if (lowBrightness >= highBrightness)
