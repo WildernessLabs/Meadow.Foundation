@@ -13,9 +13,9 @@ namespace RgbLed_Sample
         public RgbLedApp()
         {
             rgbLed = new RgbLed(
-                Device.CreateDigitalOutputPort(Device.Pins.D02),
-                Device.CreateDigitalOutputPort(Device.Pins.D03),
-                Device.CreateDigitalOutputPort(Device.Pins.D04));
+                Device.CreateDigitalOutputPort(Device.Pins.D11),
+                Device.CreateDigitalOutputPort(Device.Pins.D05),
+                Device.CreateDigitalOutputPort(Device.Pins.D02));
 
             TestRgbLed();
         }
@@ -24,14 +24,14 @@ namespace RgbLed_Sample
         {
             while (true)
             {
-                for (int i = 0; i < (int)RgbLed.Colors.count; i++)
-                {
-                    rgbLed.SetColor((RgbLed.Colors)i);
-                    Console.WriteLine(((RgbLed.Colors)i).ToString());
-                    Thread.Sleep(1000);
-                }
+                //for (int i = 0; i < (int)RgbLed.Colors.count; i++)
+                //{
+                //    rgbLed.SetColor((RgbLed.Colors)i);
+                //    Console.WriteLine(((RgbLed.Colors)i).ToString());
+                //    Thread.Sleep(1000);
+                //}
 
-         /*       rgbLed.SetColor(RgbLed.Colors.Red);
+                rgbLed.SetColor(RgbLed.Colors.Red);
                 Console.WriteLine("Red");
                 Thread.Sleep(1000);
 
@@ -41,7 +41,7 @@ namespace RgbLed_Sample
 
                 rgbLed.SetColor(RgbLed.Colors.Blue);
                 Console.WriteLine("Blue");
-                Thread.Sleep(1000); */
+                Thread.Sleep(1000);
             }
         }
     }
