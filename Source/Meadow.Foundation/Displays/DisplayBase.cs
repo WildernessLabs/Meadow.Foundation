@@ -1,5 +1,4 @@
 ﻿using Meadow.Peripherals.Displays;
-using System.Drawing;
 
 namespace Meadow.Foundation.Displays
 {
