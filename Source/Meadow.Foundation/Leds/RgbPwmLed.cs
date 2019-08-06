@@ -143,10 +143,6 @@ namespace Meadow.Foundation.Leds
 			RedPWM.Frequency = GreenPWM.Frequency = BluePWM.Frequency = 100;
 			RedPWM.DutyCycle = GreenPWM.DutyCycle = BluePWM.DutyCycle = 0;
 			RedPWM.Inverted  = GreenPWM.Inverted  = BluePWM.Inverted  = !isCommonCathode;
-            
-            RedPWM = redPwm;
-            GreenPWM = greenPwm;
-            BluePWM = bluePwm;
         }
 
         private RunningColorsConfig GetFadeConfig(Color colorStart, Color colorEnd, int duration)
