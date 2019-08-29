@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Drawing;
 using Meadow.Hardware;
-using Meadow.Hardware.Communications;
 
 namespace Meadow.Foundation.Displays
 {
@@ -77,7 +75,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     SPI object
         /// </summary>
-        protected Spi spi;
+        protected SpiBus spi;
 
         protected DigitalOutputPort dataCommandPort;
         protected DigitalOutputPort resetPort;
@@ -88,7 +86,8 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     SSD1306 display.
         /// </summary>
-        private readonly ICommunicationBus _I2CBus;
+        private readonly II2cPeripheral _I2cPeriferal;
+        private readonly II2cBus _i2CBus;
 
         /// <summary>
         ///     Width of the display in pixels.
@@ -228,11 +227,11 @@ namespace Meadow.Foundation.Displays
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="speedKHz">Speed of the SPI bus.</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
-        public SSD1306(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
-            Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
+        public SSD1306(IPin chipSelectPin, IPin dcPin, IPin resetPin,
+         //    SpiMo  SPI_module spiModule = Spi.SPI_module.SPI1,
             uint speedKHz = 9500, DisplayType displayType = DisplayType.OLED128x64)
         {
-            dataCommandPort = new DigitalOutputPort(dcPin, false);
+          /*  dataCommandPort = new DigitalOutputPort(dcPin, false);
             resetPort = new DigitalOutputPort(resetPin, true);
 
             var spiConfig = new Spi.Configuration(
@@ -249,7 +248,7 @@ namespace Meadow.Foundation.Displays
 
             connectionType = ConnectionType.SPI;
 
-            InitSSD1306(displayType);
+            InitSSD1306(displayType); */
         }
 
         /// <summary>
@@ -263,11 +262,14 @@ namespace Meadow.Foundation.Displays
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="speed">Speed of the I2C bus.</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
-        public SSD1306(byte address = 0x3c, ushort speed = 400, DisplayType displayType = DisplayType.OLED128x64)
+        public SSD1306(IIODevice device, IPin pinClock, IPin pinData,
+            byte address = 0x3c, ushort speed = 400, DisplayType displayType = DisplayType.OLED128x64)
         {
             _displayType = displayType;
 
-            _I2CBus = new I2cBus(address, speed);
+            _i2CBus = device.CreateI2cBus(pinClock, pinData, speed);
+
+            _I2cPeriferal = new I2cPeripheral(_i2CBus, address);
 
             connectionType = ConnectionType.I2C;
 
@@ -322,12 +324,12 @@ namespace Meadow.Foundation.Displays
         {
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Command;
-                spi.Write(new byte[] { command });
+            //    dataCommandPort.State = Command;
+            //    spi.Write(new byte[] { command });
             }
             else
             {
-                _I2CBus.WriteBytes(new byte[] { 0x00, command });
+                _I2cPeriferal.WriteBytes(new byte[] { 0x00, command });
             }
         }
 
@@ -343,12 +345,12 @@ namespace Meadow.Foundation.Displays
 
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Command;
-                spi.Write(commands);
+             //   dataCommandPort.State = Command;
+             //   spi.Write(commands);
             }
             else
             {
-                _I2CBus.WriteBytes(data);
+                _I2cPeriferal.WriteBytes(data);
             }
         }
 
@@ -367,8 +369,8 @@ namespace Meadow.Foundation.Displays
 
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Data;
-                spi.Write(_buffer);
+             //   dataCommandPort.State = Data;
+             //   spi.Write(_buffer);
             }
             else
             {
@@ -376,7 +378,7 @@ namespace Meadow.Foundation.Displays
                 {
                     Array.Copy(_buffer, index, data, 1, PAGE_SIZE);
                     SendCommand(0x40);
-                    _I2CBus.WriteBytes(data);
+                    _I2cPeriferal.WriteBytes(data);
                 }
             }
         }

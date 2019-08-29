@@ -173,6 +173,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servo_Sample", "Samples\Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RgbPwmLed_Sample", "Samples\Leds\RgbPwmLed_Sample\RgbPwmLed_Sample.csproj", "{E6816538-C1CD-4EA4-B79A-30B8831920C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSD1306Display_Sample", "Samples\Displays\SSD1306Display_Sample\SSD1306Display_Sample.csproj", "{D2D3105D-0876-49A3-89BD-0CD6457312DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -447,6 +449,10 @@ Global
 		{E6816538-C1CD-4EA4-B79A-30B8831920C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6816538-C1CD-4EA4-B79A-30B8831920C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6816538-C1CD-4EA4-B79A-30B8831920C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2D3105D-0876-49A3-89BD-0CD6457312DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2D3105D-0876-49A3-89BD-0CD6457312DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2D3105D-0876-49A3-89BD-0CD6457312DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2D3105D-0876-49A3-89BD-0CD6457312DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -532,6 +538,7 @@ Global
 		{FB5E6B67-6F54-435B-B684-A53ADE5094D4} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
 		{F477E7F7-A9F8-4A03-8099-975B8CE805BB} = {FB5E6B67-6F54-435B-B684-A53ADE5094D4}
 		{E6816538-C1CD-4EA4-B79A-30B8831920C7} = {CDF161D5-383A-4BEA-86F4-E9C17851509A}
+		{D2D3105D-0876-49A3-89BD-0CD6457312DE} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
