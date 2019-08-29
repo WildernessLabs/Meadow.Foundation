@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29102.190
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{ABFEB925-65AF-4C8C-B4C8-83F962AF6347}"
 EndProject
@@ -174,6 +174,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RgbPwmLed_Sample", "Samples\Leds\RgbPwmLed_Sample\RgbPwmLed_Sample.csproj", "{E6816538-C1CD-4EA4-B79A-30B8831920C7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSD1306Display_Sample", "Samples\Displays\SSD1306Display_Sample\SSD1306Display_Sample.csproj", "{D2D3105D-0876-49A3-89BD-0CD6457312DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.GY521", "Peripheral_Libs\Sensors.Motion.GY521\Sensors.Motion.GY521.csproj", "{68F64D84-97F6-44B2-9469-CDAEC8B3A826}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GY521_Sample", "Samples\Sensors\Motion\GY521_Sample\GY521_Sample.csproj", "{BD0D67D9-5A8B-4169-8928-6A7F60FE5502}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -453,6 +457,14 @@ Global
 		{D2D3105D-0876-49A3-89BD-0CD6457312DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2D3105D-0876-49A3-89BD-0CD6457312DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2D3105D-0876-49A3-89BD-0CD6457312DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68F64D84-97F6-44B2-9469-CDAEC8B3A826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68F64D84-97F6-44B2-9469-CDAEC8B3A826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68F64D84-97F6-44B2-9469-CDAEC8B3A826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68F64D84-97F6-44B2-9469-CDAEC8B3A826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD0D67D9-5A8B-4169-8928-6A7F60FE5502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD0D67D9-5A8B-4169-8928-6A7F60FE5502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD0D67D9-5A8B-4169-8928-6A7F60FE5502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD0D67D9-5A8B-4169-8928-6A7F60FE5502}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -539,6 +551,8 @@ Global
 		{F477E7F7-A9F8-4A03-8099-975B8CE805BB} = {FB5E6B67-6F54-435B-B684-A53ADE5094D4}
 		{E6816538-C1CD-4EA4-B79A-30B8831920C7} = {CDF161D5-383A-4BEA-86F4-E9C17851509A}
 		{D2D3105D-0876-49A3-89BD-0CD6457312DE} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
+		{68F64D84-97F6-44B2-9469-CDAEC8B3A826} = {1152A5B3-3B95-442E-8923-B729F64D7441}
+		{BD0D67D9-5A8B-4169-8928-6A7F60FE5502} = {9DFB9160-F13C-429D-99C1-D9F9C189C3FB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
