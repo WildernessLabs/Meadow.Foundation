@@ -11,7 +11,7 @@ namespace GY521_Sample
     {
         public GY521App()
         {
-            Console.WriteLine("+I2CApp");
+            Console.WriteLine("+GY521App");
 
             var i2c = Device.CreateI2cBus();
 
@@ -37,6 +37,5 @@ namespace GY521_Sample
                 Thread.Sleep(2000);
             }
         }
-
     }
 }

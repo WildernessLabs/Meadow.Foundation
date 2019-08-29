@@ -7,7 +7,7 @@
     <ProjectGuid>{BD0D67D9-5A8B-4169-8928-6A7F60FE5502}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>GY521_Sample</RootNamespace>
-    <AssemblyName>GY521_Sample</AssemblyName>
+    <AssemblyName>App</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
