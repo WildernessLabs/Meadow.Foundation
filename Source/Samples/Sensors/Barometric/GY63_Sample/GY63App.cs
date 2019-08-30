@@ -28,6 +28,8 @@ namespace GY63_Sample
             {
                 Console.WriteLine(" Reading...");
 
+                sensor.ReadTemperature();
+
                 Thread.Sleep(2000);
             }
         }
