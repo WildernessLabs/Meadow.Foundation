@@ -29,10 +29,15 @@ namespace Meadow.Foundation.Leds
         public bool IsOn
         {
             get => _isOn; 
-            set {
-                if (value) Port.DutyCycle = _maximumPwmDuty; // turn on
-                else Port.DutyCycle = 0; // turn off
+            set
+            {
+                Port.Stop();
+                if (value)
+                    Port.DutyCycle = _maximumPwmDuty; // turn on
+                else
+                    Port.DutyCycle = 0; // turn off
                 _isOn = value;
+                Port.Start();
             }
         }
         protected bool _isOn;
@@ -95,17 +100,17 @@ namespace Meadow.Foundation.Leds
             if (Brightness <= 0.0)
             {
                 Port.Stop();
-                _isOn = false;
+                IsOn = false;
                 Port.DutyCycle = 0;
             }
             else
             {
                 Port.DutyCycle = _maximumPwmDuty * Brightness;
 
-                if (!_isOn)
+                if (!IsOn)
                 {
                     Port.Start();
-                    _isOn = true;
+                    IsOn = true;
                 }
             }
         }
