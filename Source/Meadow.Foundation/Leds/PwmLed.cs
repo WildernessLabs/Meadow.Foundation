@@ -96,23 +96,9 @@ namespace Meadow.Foundation.Leds
 
             Brightness = brightness;
 
-            // if 0, shut down the PWM (is this a good idea?)
-            if (Brightness <= 0.0)
-            {
-                Port.Stop();
-                IsOn = false;
-                Port.DutyCycle = 0;
-            }
-            else
-            {
-                Port.DutyCycle = _maximumPwmDuty * Brightness;
-
-                if (!IsOn)
-                {
-                    Port.Start();
-                    IsOn = true;
-                }
-            }
+            Port.Stop();
+            Port.DutyCycle = _maximumPwmDuty * Brightness;
+            Port.Start();
         }
 
         /// <summary>
