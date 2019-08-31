@@ -26,11 +26,18 @@ namespace GY63_Sample
 
             while (true)
             {
-                Console.WriteLine(" Reading...");
+                Thread.Sleep(1000);
+
+                Console.WriteLine(" Reading Temp...");
 
                 sensor.ReadTemperature();
 
-                Thread.Sleep(2000);
+                /*
+                Console.WriteLine(" Reading Pressure...");
+
+                sensor.ReadPressure();
+                */
+                Thread.Sleep(1000);
             }
         }
 

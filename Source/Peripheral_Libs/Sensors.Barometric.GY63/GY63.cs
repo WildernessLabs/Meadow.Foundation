@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Barometric
 {
-    internal abstract class GY63Impl
+    internal abstract class GY63Base
     {
         protected GY63.Resolution Resolution { get; set; }
 
@@ -24,13 +25,13 @@ namespace Meadow.Foundation.Sensors.Barometric
             ReadADC = 0x00,
         }
 
-        internal GY63Impl(GY63.Resolution resolution)
+        internal GY63Base(GY63.Resolution resolution)
         {
             Resolution = resolution;
         }
     }
 
-    internal class GY63I2C : GY63Impl
+    internal class GY63I2C : GY63Base
     {
         private II2cBus _i2c;
         private byte _address;
@@ -44,21 +45,29 @@ namespace Meadow.Foundation.Sensors.Barometric
 
         public override void Reset()
         {
-            _i2c.WriteData(_address, (byte)Commands.Reset);
+            var cmd = (byte)Commands.Reset;
+            Console.WriteLine($"Sending {cmd:X2} to {_address:X2}");
+            _i2c.WriteData(_address, cmd);
         }
 
         public override void BeginTempConversion()
         {
-            var cmd = (byte)Commands.ConvertD2 + 2 * (byte)Resolution;
+            var cmd = (byte)((byte)Commands.ConvertD2 + 2 * (byte)Resolution);
+            Console.WriteLine($"Sending {cmd:X2} to {_address:X2}");
+            _i2c.WriteData(_address, cmd);
         }
 
         public override void BeginPressureConversion()
         {
-            var cmd = (byte)Commands.ConvertD1 + 2 * (byte)Resolution;
+            var cmd = (byte)((byte)Commands.ConvertD1 + 2 * (byte)Resolution);
+            Console.WriteLine($"Sending {cmd:X2} to {_address:X2}");
+            _i2c.WriteData(_address, cmd);
         }
 
         public override byte[] ReadData()
         {
+            // write a
+            _i2c.WriteData(_address, (byte)Commands.ReadADC);
             var data = _i2c.ReadData(_address, 3);
             return data;
         }
@@ -66,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Barometric
 
     public class GY63
     {
-        private GY63Impl _impl;
+        private GY63Base _impl;
 
         public enum Resolution
         {
@@ -130,6 +139,21 @@ namespace Meadow.Foundation.Sensors.Barometric
         public int ReadTemperature()
         {
             _impl.BeginTempConversion();
+            Thread.Sleep(10); // 1 + 2 * Resolution
+
+            // we get back 24 bits (3 bytes), regardless of the resolution we're asking for
+            var data = _impl.ReadData();
+
+            var result = data[2] | data[1] << 8 | data[0] << 16;
+
+            return result;
+        }
+
+        public int ReadPressure()
+        {
+            _impl.BeginPressureConversion();
+
+            Thread.Sleep(10); // 1 + 2 * Resolution
 
             // we get back 24 bits (3 bytes), regardless of the resolution we're asking for
             var data = _impl.ReadData();
