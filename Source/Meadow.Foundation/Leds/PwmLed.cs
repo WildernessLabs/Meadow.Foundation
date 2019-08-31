@@ -29,10 +29,15 @@ namespace Meadow.Foundation.Leds
         public bool IsOn
         {
             get => _isOn; 
-            set {
-                if (value) Port.DutyCycle = _maximumPwmDuty; // turn on
-                else Port.DutyCycle = 0; // turn off
+            set
+            {
+                Port.Stop();
+                if (value)
+                    Port.DutyCycle = _maximumPwmDuty; // turn on
+                else
+                    Port.DutyCycle = 0; // turn off
                 _isOn = value;
+                Port.Start();
             }
         }
         protected bool _isOn;
@@ -91,23 +96,9 @@ namespace Meadow.Foundation.Leds
 
             Brightness = brightness;
 
-            // if 0, shut down the PWM (is this a good idea?)
-            if (Brightness <= 0.0)
-            {
-                Port.Stop();
-                _isOn = false;
-                Port.DutyCycle = 0;
-            }
-            else
-            {
-                Port.DutyCycle = _maximumPwmDuty * Brightness;
-
-                if (!_isOn)
-                {
-                    Port.Start();
-                    _isOn = true;
-                }
-            }
+            Port.Stop();
+            Port.DutyCycle = _maximumPwmDuty * Brightness;
+            Port.Start();
         }
 
         /// <summary>
