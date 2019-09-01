@@ -150,38 +150,45 @@ namespace Meadow.Foundation.RTCs
 
         private static DateTime FromRTCTime(byte[] rtcData)
         {
-            // is the RTC in 12- or 24-hour mode?
-            byte hour = rtcData[2];
-
-            if ((hour & 0x40) != 0)
+            try
             {
-                unchecked
+                // is the RTC in 12- or 24-hour mode?
+                byte hour = rtcData[2];
+
+                if ((hour & 0x40) != 0)
                 {
-                    // 12-hour mode
-                    hour &= (byte)~0x40;
-                    if ((hour & 0x20) != 0)
+                    unchecked
                     {
-                        // we're after 12 )PM)
-                        hour &= (byte)~0x20;
-                        hour += 12;
+                        // 12-hour mode
+                        hour &= (byte)~0x40;
+                        if ((hour & 0x20) != 0)
+                        {
+                            // we're after 12 )PM)
+                            hour &= (byte)~0x20;
+                            hour += 12;
+                        }
                     }
                 }
+
+                var y = FromBCD(rtcData[6]) + OriginYear;
+                var M = FromBCD(rtcData[5]);
+                var d = FromBCD(rtcData[4]);
+                var h = FromBCD(hour);
+                var m = FromBCD(rtcData[1]);
+                var s = FromBCD((byte)(rtcData[0] & 0x7f));
+
+                return new DateTime(
+                    y, // year
+                    M, // month
+                    d, // day
+                    h, // hour
+                    m, // minute
+                    s); // second
             }
-
-            var y = FromBCD(rtcData[6]) + OriginYear;
-            var M = FromBCD(rtcData[5]);
-            var d = FromBCD(rtcData[4]);
-            var h = FromBCD(hour);
-            var m = FromBCD(rtcData[1]);
-            var s = FromBCD((byte)(rtcData[0] & 0x7f));
-
-            return new DateTime(
-                y, // year
-                M, // month
-                d, // day
-                h, // hour
-                m, // minute
-                s); // second
+            catch
+            {
+                return DateTime.MinValue;
+            }
         }
 
         public enum SquareWaveFrequency

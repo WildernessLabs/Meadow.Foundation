@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{91A8055F-7EE5-4DBD-A9E5-8FF7B72DA9BA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RTCs.DS1307</RootNamespace>
-    <AssemblyName>DS1307</AssemblyName>
+    <ProjectGuid>{38CC05F2-D244-4CDD-8B2F-E1D514AFBDB8}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>BME280_Sample</RootNamespace>
+    <AssemblyName>App</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -41,13 +43,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DS1307.cs" />
+    <Compile Include="BME280App.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
       <Project>{B13C7BDD-77F5-45F8-BDB9-6CD368C67410}</Project>
       <Name>Meadow.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Peripheral_Libs\Sensors.Atmospheric.BME280\Sensors.Atmospheric.BME280.csproj">
+      <Project>{BF5F85AA-512F-49F1-A208-06C653D13AFF}</Project>
+      <Name>Sensors.Atmospheric.BME280</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
