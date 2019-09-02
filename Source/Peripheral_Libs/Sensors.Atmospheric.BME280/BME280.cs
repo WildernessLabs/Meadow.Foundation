@@ -351,7 +351,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Init(updateInterval, humidityChangeNotificationThreshold, temperatureChangeNotificationThreshold, pressureChangedNotificationThreshold);
         }
 
-        public BME280(ISpiBus spi, IPin chipSelect, ushort updateInterval = MinimumPollingPeriod,
+        public BME280(ISpiBus spi, IDigitalOutputPort chipSelect, ushort updateInterval = MinimumPollingPeriod,
                       float humidityChangeNotificationThreshold = 0.001F,
                       float temperatureChangeNotificationThreshold = 0.001F,
                       float pressureChangedNotificationThreshold = 10.0F)
@@ -538,6 +538,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void Update()
         {
             var readings = _bme280.ReadRegisters(0xf7, 8);
+            Console.WriteLine($"  Readings: {BitConverter.ToString(readings)}");
             //
             //  Temperature calculation from section 4.2.3 of the datasheet.
             //

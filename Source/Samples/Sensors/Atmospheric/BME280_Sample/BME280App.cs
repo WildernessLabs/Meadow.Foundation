@@ -56,7 +56,7 @@ namespace BME280_Sample
             if (pollMode)
             {
                 // for now we're just tying the CS to VCC
-                IPin chipSelect = null;
+                IDigitalOutputPort chipSelect = Device.CreateDigitalOutputPort(Device.Pins.D04);
 
                 _bme280 = new BME280(spi, chipSelect, updateInterval: 0);
 
