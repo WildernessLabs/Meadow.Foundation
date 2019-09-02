@@ -164,7 +164,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Update interval in milliseconds
         /// </summary>
-        private readonly ushort _updateInterval = 100;
+        private ushort _updateInterval = 100;
 
         #endregion Member Variables
 
@@ -348,11 +348,45 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
 
             _bme280 = new BME280I2C(i2c, (byte)busAddress);
+            Init(updateInterval, humidityChangeNotificationThreshold, temperatureChangeNotificationThreshold, pressureChangedNotificationThreshold);
+        }
+
+        public BME280(ISpiBus spi, IPin chipSelect, ushort updateInterval = MinimumPollingPeriod,
+                      float humidityChangeNotificationThreshold = 0.001F,
+                      float temperatureChangeNotificationThreshold = 0.001F,
+                      float pressureChangedNotificationThreshold = 10.0F)
+        {
+            if (humidityChangeNotificationThreshold < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(humidityChangeNotificationThreshold), "Humidity threshold should be >= 0");
+            }
+            if (temperatureChangeNotificationThreshold < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(temperatureChangeNotificationThreshold), "Temperature threshold should be >= 0");
+            }
+            if (pressureChangedNotificationThreshold < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pressureChangedNotificationThreshold), "Pressure threshold should be >= 0");
+            }
+            if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
+            {
+                throw new ArgumentOutOfRangeException(nameof(updateInterval), "Update period should be 0 or >= than " + MinimumPollingPeriod);
+            }
+
+            _bme280 = new BME280SPI(spi, chipSelect);
+            Init(updateInterval, humidityChangeNotificationThreshold, temperatureChangeNotificationThreshold, pressureChangedNotificationThreshold);
+        }
+
+        private void Init(ushort updateInterval,
+                    float humidityChangeNotificationThreshold,
+                    float temperatureChangeNotificationThreshold,
+                    float pressureChangedNotificationThreshold)
+        {
+            _updateInterval = updateInterval;
 
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
             HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
             PressureChangeNotificationThreshold = pressureChangedNotificationThreshold;
-            _updateInterval = updateInterval;
             ReadCompensationData();
             //
             //  Update the configuration information and start sampling.
