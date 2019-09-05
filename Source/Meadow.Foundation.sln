@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.645
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{ABFEB925-65AF-4C8C-B4C8-83F962AF6347}"
 EndProject
@@ -184,6 +184,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RTCs", "RTCs", "{3451B08F-CBCA-4AD2-8865-3EBEC4AABD1B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS1307_Sample", "Samples\RTCs\DS1307_Sample\DS1307_Sample.csproj", "{4159CCC6-8EA0-43B1-87B7-1760BD710B50}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Moisture", "Moisture", "{8C9FD54B-8EDC-4AA1-BD94-BFED83BA289F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capacitive_Sample", "Samples\Moisture\Capacitive_Sample\Capacitive_Sample.csproj", "{5F427C43-0ACD-477A-9E31-ADE83456B7AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -479,6 +483,10 @@ Global
 		{4159CCC6-8EA0-43B1-87B7-1760BD710B50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4159CCC6-8EA0-43B1-87B7-1760BD710B50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4159CCC6-8EA0-43B1-87B7-1760BD710B50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F427C43-0ACD-477A-9E31-ADE83456B7AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F427C43-0ACD-477A-9E31-ADE83456B7AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F427C43-0ACD-477A-9E31-ADE83456B7AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F427C43-0ACD-477A-9E31-ADE83456B7AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -570,6 +578,8 @@ Global
 		{91A8055F-7EE5-4DBD-A9E5-8FF7B72DA9BA} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{3451B08F-CBCA-4AD2-8865-3EBEC4AABD1B} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
 		{4159CCC6-8EA0-43B1-87B7-1760BD710B50} = {3451B08F-CBCA-4AD2-8865-3EBEC4AABD1B}
+		{8C9FD54B-8EDC-4AA1-BD94-BFED83BA289F} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
+		{5F427C43-0ACD-477A-9E31-ADE83456B7AF} = {8C9FD54B-8EDC-4AA1-BD94-BFED83BA289F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
