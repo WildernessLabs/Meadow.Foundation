@@ -48,10 +48,6 @@
     <Compile Include="RgbLedApp.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\Meadow.Foundation\Meadow.Foundation.csproj">
       <Project>{CEBD7F9A-4645-4A29-8A97-7889E241896F}</Project>
       <Name>Meadow.Foundation</Name>
