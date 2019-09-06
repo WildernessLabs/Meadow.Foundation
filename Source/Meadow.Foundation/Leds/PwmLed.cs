@@ -144,7 +144,8 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void StartPulse(int pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
         {
-            if (highBrightness > 1 || highBrightness <= 0) {
+            if (highBrightness > 1 || highBrightness <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "highBrightness must be > 0 and <= 1");
             }
             if (lowBrightness >= 1 || lowBrightness < 0)
@@ -175,14 +176,19 @@ namespace Meadow.Foundation.Leds
                 while (_running)
                 {
                     // are we brightening or dimming?
-                    if (brightness <= lowBrightness) ascending = true; 
-                    else if (Math.Abs(brightness - highBrightness) < 0.001) ascending = false;
+                    if (brightness <= lowBrightness)
+                        ascending = true; 
+                    else if (Math.Abs(brightness - highBrightness) < 0.001)
+                        ascending = false;
 
                     brightness += (ascending) ? changeUp : changeDown;
 
                     // float math error clamps
-                    if (brightness < 0) { brightness = 0; }
-                    else if (brightness > 1) { brightness = 1; }
+                    if (brightness < 0)
+                        brightness = 0;
+                    else 
+                    if (brightness > 1)
+                        brightness = 1;
 
                     // set our actual brightness
                     this.SetBrightness(brightness);
