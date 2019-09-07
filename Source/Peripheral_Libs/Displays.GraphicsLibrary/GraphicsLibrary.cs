@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Displays;
 using System;
-using System.Drawing;
 
 namespace Meadow.Foundation.Graphics
 {
