@@ -8,8 +8,7 @@ namespace Meadow.Foundation.Displays.Tft
         private ST7789() { }
 
         public ST7789(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width, uint height,
-            uint speedKHz = 9500) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, speedKHz)
+            uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
         {
             Initialize();
         }

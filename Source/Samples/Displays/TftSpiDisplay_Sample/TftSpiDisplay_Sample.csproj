@@ -6,7 +6,7 @@
     <ProjectGuid>{7109E486-B75F-414A-8673-D49AC6C2A1D8}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>TftSpiDisplay_Sample</RootNamespace>
-    <AssemblyName>TftSpiDisplay_Sample</AssemblyName>
+    <AssemblyName>App</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

@@ -37,7 +37,6 @@ namespace Meadow.Foundation.Displays.Tft
         protected ISpiPeripheral spiDisplay;
 
         protected readonly byte[] spiBuffer;
-        protected readonly byte[] spiBOneByteBuffer = new byte[1];
 
         protected uint _width;
         protected uint _height;
@@ -52,8 +51,7 @@ namespace Meadow.Foundation.Displays.Tft
         }
 
         public DisplayTftSpiBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width, uint height,
-            uint speedKHz = 9500, bool idleClockState = false)
+            uint width, uint height)
         {
             _width = width;
             _height = height;
@@ -252,8 +250,7 @@ namespace Meadow.Foundation.Displays.Tft
 
         protected void Write(byte value)
         {
-            spiBOneByteBuffer[0] = value;
-            spiDisplay.WriteBytes(spiBOneByteBuffer);
+            spiDisplay.WriteByte(value);
         }
 
         protected void Write(byte[] data)

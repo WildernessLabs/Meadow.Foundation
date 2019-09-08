@@ -16,18 +16,20 @@ namespace TftSpiDisplay_Sample
             Console.WriteLine("TftSpi sample");
             Console.WriteLine("Create Spi bus");
 
-            spiBus = Device.CreateSpiBus();
+            spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, 2000);
+            
 
             Console.WriteLine("Create SSD1351 driver instance");
             display = new SSD1351(device: Device, spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                width: 128, height: 128,
-                speedKHz: 9500);
+                width: 128, height: 128);
+                
 
             Console.WriteLine("Clear display");
-            display.Clear(true);
+            display.ClearScreen(250);
+            display.Refresh();
 
             Console.WriteLine("Draw lines");
             for (int i = 0; i < 30; i++)
