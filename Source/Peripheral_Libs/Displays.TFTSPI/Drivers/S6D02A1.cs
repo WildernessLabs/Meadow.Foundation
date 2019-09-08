@@ -9,10 +9,9 @@ namespace Meadow.Foundation.Displays.Tft
     {
         private S6D02A1() { }
 
-        public S6D02A1(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
+        public S6D02A1(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height,
-            Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
-            uint speedKHz = 9500) : base(chipSelectPin, dcPin, resetPin, width, height, spiModule, speedKHz)
+            uint speedKHz = 9500) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, speedKHz)
         {
             Initialize();
         }

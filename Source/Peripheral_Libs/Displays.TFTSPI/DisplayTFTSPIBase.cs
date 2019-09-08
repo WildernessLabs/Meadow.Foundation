@@ -30,9 +30,11 @@ namespace Meadow.Foundation.Displays.Tft
         public override uint Width => _width;
         public override uint Height => _height;
 
-        protected DigitalOutputPort dataCommandPort;
-        protected DigitalOutputPort resetPort;
-        protected Spi spi;
+        protected IDigitalOutputPort dataCommandPort;
+        protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort chipSelectPort;
+        protected ISpiBus spi;
+        protected ISpiPeripheral spiDisplay;
 
         protected readonly byte[] spiBuffer;
         protected readonly byte[] spiBOneByteBuffer = new byte[1];
@@ -49,9 +51,8 @@ namespace Meadow.Foundation.Displays.Tft
         {
         }
 
-        public DisplayTftSpiBase(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
+        public DisplayTftSpiBase(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height,
-            Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
             uint speedKHz = 9500, bool idleClockState = false)
         {
             _width = width;
@@ -59,20 +60,11 @@ namespace Meadow.Foundation.Displays.Tft
 
             spiBuffer = new byte[_width * _height * sizeof(ushort)];
 
-            dataCommandPort = new DigitalOutputPort(dcPin, false);
-            resetPort = new DigitalOutputPort(resetPin, true);
+            dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
+            resetPort = device.CreateDigitalOutputPort(resetPin, true);
+            chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false);
 
-            var spiConfig = new Spi.Configuration(
-                SPI_mod: spiModule,
-                ChipSelect_Port: chipSelectPin,
-                ChipSelect_ActiveState: false,
-                ChipSelect_SetupTime: 0,
-                ChipSelect_HoldTime: 0,
-                Clock_IdleState: idleClockState,
-                Clock_Edge: true,
-                Clock_RateKHz: speedKHz);
-
-            spi = new Spi(spiConfig);
+            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
         }
 
         /// <summary>
@@ -223,7 +215,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// </summary>
         public void Refresh()
         {
-            spi.Write(spiBuffer);
+            spiDisplay.WriteBytes(spiBuffer);
         }
 
         private ushort Get16BitColorFromRGB(byte red, byte green, byte blue)
@@ -261,12 +253,12 @@ namespace Meadow.Foundation.Displays.Tft
         protected void Write(byte value)
         {
             spiBOneByteBuffer[0] = value;
-            spi.Write(spiBOneByteBuffer);
+            spiDisplay.WriteBytes(spiBOneByteBuffer);
         }
 
         protected void Write(byte[] data)
         {
-            spi.Write(data);
+            spiDisplay.WriteBytes(data);
         }
 
         protected void DelayMs(int millseconds)
@@ -294,7 +286,7 @@ namespace Meadow.Foundation.Displays.Tft
         protected void SendData(byte[] data)
         {
             dataCommandPort.State = Data;
-            spi.Write(data);
+            spiDisplay.WriteBytes(data);
         }
 
         /// <summary>
@@ -346,6 +338,8 @@ namespace Meadow.Foundation.Displays.Tft
             }
         }
 
+        /*
+         * from Netduino testing, can safely remove
         public void ClearWithoutFullScreenBuffer(ushort color)
         {
             var buffer = new ushort[_width];
@@ -357,13 +351,12 @@ namespace Meadow.Foundation.Displays.Tft
 
             for (int y = 0; y < _height; y++)
             {
-                spi.Write(buffer);
+                spiDisplay.WriteBytes(buffer);
             }
-        }
+        }*/
 
         public void Dispose()
         {
-            spi.Dispose();
             spi = null;
             dataCommandPort = null;
             resetPort = null;

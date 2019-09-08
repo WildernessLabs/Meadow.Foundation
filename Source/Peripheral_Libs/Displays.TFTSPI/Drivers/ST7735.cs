@@ -12,11 +12,10 @@ namespace Meadow.Foundation.Displays.Tft
 
         private ST7735() { }
 
-        public ST7735(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
+        public ST7735(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height,
-            Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
             uint speedKHz = 9500, 
-            DisplayType displayType = DisplayType.ST7735R) : base(chipSelectPin, dcPin, resetPin, width, height, spiModule, speedKHz)
+            DisplayType displayType = DisplayType.ST7735R) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, speedKHz)
         {
             this.displayType = displayType;
 
