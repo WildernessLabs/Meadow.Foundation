@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays.Tft
     {
         private SSD1351() { }
 
-        public SSD1351(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public SSD1351(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height,
             uint speedKHz = 9500) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, speedKHz)
         {

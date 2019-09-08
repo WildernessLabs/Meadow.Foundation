@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Displays.Tft
         {
         }
 
-        public DisplayTftSpiBase(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public DisplayTftSpiBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height,
             uint speedKHz = 9500, bool idleClockState = false)
         {
