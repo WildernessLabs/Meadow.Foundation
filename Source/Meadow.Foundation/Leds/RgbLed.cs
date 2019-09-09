@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Leds
@@ -19,7 +20,7 @@ namespace Meadow.Foundation.Leds
         }
 
         protected Task _animationTask = null;
-        protected bool _running = false;
+        protected CancellationTokenSource _cancellationTokenSource = null;
 
         public Colors Color { get; protected set; }
 
@@ -55,16 +56,18 @@ namespace Meadow.Foundation.Leds
             GreenPort = greenPort;
             BluePort = bluePort;
             IsCommonCathode = isCommonCathode;
+
+            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public void Stop()
         {
-            _running = false;
+            _cancellationTokenSource.Cancel();
         }
 
         public void TurnOff()
         {
-            _running = false;
+            _cancellationTokenSource.Cancel();
             SetColor(Colors.Black);
         }
 
@@ -122,21 +125,31 @@ namespace Meadow.Foundation.Leds
 
         public void StartBlink(Colors color, uint onDuration = 200, uint offDuration = 200)
         {
-            _running = true;
+            if (!_cancellationTokenSource.Token.IsCancellationRequested)
+                _cancellationTokenSource.Cancel();
 
             SetColor(Colors.Black);
-            //TODO: Make this cancellable via Cancellation token
+
             _animationTask = new Task(async () =>
             {
-                while (_running)
-                {
-                    SetColor(color);
-                    await Task.Delay((int)onDuration);
-                    SetColor(Colors.Black);
-                    await Task.Delay((int)offDuration);
-                }
+                _cancellationTokenSource = new CancellationTokenSource();
+                await StartBlinkAsync(color, onDuration, offDuration, _cancellationTokenSource.Token);
             });
             _animationTask.Start();
+        }
+
+        protected async Task StartBlinkAsync(Colors color, uint onDuration, uint offDuration, CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
+                SetColor(color);
+                await Task.Delay((int)onDuration);
+                SetColor(Colors.Black);
+                await Task.Delay((int)offDuration);
+            }
         }
     }
 }

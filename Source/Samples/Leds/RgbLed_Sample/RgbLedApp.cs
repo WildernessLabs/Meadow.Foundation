@@ -9,7 +9,7 @@ namespace RgbLed_Sample
 {
     class RgbLedApp : App<F7Micro, RgbLedApp>
     {
-        List<RgbLed> rgbLeds;
+        protected List<RgbLed> rgbLeds;
 
         public RgbLedApp()
         {
@@ -54,7 +54,6 @@ namespace RgbLed_Sample
                         rgbLed.SetColor((RgbLed.Colors)i);
                         Thread.Sleep(500);
                     }
-                    rgbLed.Stop();
                 }
 
                 Console.WriteLine("Blinking through each color on each RGB LED...");
@@ -65,7 +64,6 @@ namespace RgbLed_Sample
                         rgbLed.StartBlink((RgbLed.Colors)i);
                         Thread.Sleep(3000);
                     }
-                    rgbLed.Stop();
                 }
             }
         }
