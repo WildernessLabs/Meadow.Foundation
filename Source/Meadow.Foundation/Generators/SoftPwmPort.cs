@@ -83,7 +83,7 @@ namespace Meadow.Foundation.Generators
             DutyCycle = dutyCycle;
             Frequency = frequency;
 
-            this.Channel = new PwmChannelInfo("SoftPwmChannel", 0, 1000, false, false);
+            this.Channel = new PwmChannelInfo("SoftPwmChannel", 0, 0, 1000, 1000, false, false);
         }
 
         /// <summary>
