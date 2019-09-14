@@ -194,6 +194,139 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        ///  Draw a  triangle
+        /// </summary>
+        ///  <param name="x0">Vertex #0 x coordinate</param>
+        ///  <param name="y0">Vertex #0 y coordinate</param>
+        ///  <param name="x1">Vertex #1 x coordinate</param>
+        ///  <param name="y1">Vertex #1 y coordinate</param>
+        ///  <param name="x2">Vertex #2 x coordinate</param>
+        ///  <param name="y2">Vertex #2 y coordinate</param>
+        ///  <param name="color">Color of triangle</param>
+        ///  <param name="filled">Draw a filled triangle?</param>
+        public void DrawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, Color color, bool filled = false)
+        {
+            if(filled)
+            {
+                DrawTriangleFilled(x0, y0, x1, y1, x2, y2, color);
+            }
+            else
+            {
+                DrawLine(x0, y0, x1, y1, color);
+                DrawLine(x1, y1, x2, y2, color);
+                DrawLine(x2, y2, x0, y0, color);
+            }
+        }
+
+        /// <summary>
+        ///  Draw a  triangle
+        /// </summary>
+        /// <remarks>
+        /// Draw triangle method for 1 bit displays
+        /// </remarks>
+        /// <param name="x0">Vertex #0 x coordinate</param>
+        /// <param name="y0">Vertex #0 y coordinate</param>
+        /// <param name="x1">Vertex #1 x coordinate</param>
+        /// <param name="y1">Vertex #1 y coordinate</param>
+        /// <param name="x2">Vertex #2 x coordinate</param>
+        /// <param name="y2">Vertex #2 y coordinate</param>
+        /// <param name="colored">Should the triangle add (true) or remove (false)</param>
+        /// <param name="filled">Draw a filled triangle?</param>
+        public void DrawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, bool colored, bool filled = false)
+        {
+            if (filled)
+                DrawTriangleFilled(x0, y0, x1, y1, x2, y2, colored ? Color.White : Color.Black);
+            else 
+                DrawTriangle(x0, y0, x1, y1, x2, y2, colored ? Color.White : Color.Black);
+        }
+
+        void Swap(ref int value1, ref int value2)
+        {
+            int temp = value1;
+            value1 = value2;
+            value2 = temp;
+        }
+
+        /// <summary>
+        /// Draw a filled triangle
+        /// </summary>
+        /// <param name="x0">Vertex #0 x coordinate</param>
+        /// <param name="y0">Vertex #0 y coordinate</param>
+        /// <param name="x1">Vertex #1 x coordinate</param>
+        /// <param name="y1">Vertex #1 y coordinate</param>
+        /// <param name="x2">Vertex #2 x coordinate</param>
+        /// <param name="y2">Vertex #2 y coordinate</param>
+        /// <param name="color">Color to fill/draw with</param>
+        void DrawTriangleFilled(int x0, int y0, int x1, int y1, int x2, int y2, Color color)
+        {
+            // Sort coordinates by Y order (y2 >= y1 >= y0)
+            if (y0 > y1)
+            {
+                Swap(ref y0, ref y1);
+                Swap(ref x0, ref x1);
+            }
+            if (y1 > y2)
+            {
+                Swap(ref y2, ref y1);
+                Swap(ref x2, ref x1);
+            }
+            if (y0 > y1)
+            {
+                Swap(ref y0, ref y1);
+                Swap(ref x0, ref x1);
+            }
+
+            if (y0 == y2)
+            { // Handle awkward all-on-same-line case as its own thing
+                int x = x0, len = x0;
+                if (x1 < x) x = x1;
+                else if (x1 > len) len = x1;
+                if (x2 < x) x = x2;
+                else if (x2 > len) len = x2;
+                DrawHorizontalLine(x, y0, len - x + 1, color);
+                return;
+            }
+
+            int dx01 = x1 - x0,
+                dy01 = y1 - y0,
+                dx02 = x2 - x0,
+                dy02 = y2 - y0,
+                dx12 = x2 - x1,
+                dy12 = y2 - y1;
+            int sa = 0, sb = 0;
+
+            int last = (y1 == y2) ? y1 : y1 - 1;
+
+            int a, b, y;
+            for (y = y0; y <= last; y++)
+            {
+                a = x0 + sa / dy01;
+                b = x0 + sb / dy02;
+                sa += dx01;
+                sb += dx02;
+
+                if (a > b)
+                    Swap(ref a, ref b);
+                DrawHorizontalLine(a, y, b - a + 1, color);
+            }
+
+            // For lower part of triangle, find scanline crossings for segments
+            // 0-2 and 1-2.  This loop is skipped if y1=y2.
+            sa = dx12 * (y - y1);
+            sb = dx02 * (y - y0);
+            for (; y <= y2; y++)
+            {
+                a = x1 + sa / dy12;
+                b = x0 + sb / dy02;
+                sa += dx12;
+                sb += dx02;
+
+                if (a > b) Swap(ref a, ref b);
+                DrawHorizontalLine(a, y, b - a + 1, color);
+            }
+        }
+
+        /// <summary>
         ///     Draw a dircle.
         /// </summary>
         /// <remarks>
