@@ -73,9 +73,8 @@ namespace Meadow.Foundation.Displays
         public override uint Height => _height;
 
         /// <summary>
-        ///     SPI object
+        ///     SSD1306 SPI display
         /// </summary>
-        protected ISpiBus _spiBus; //probably don't need this reference
         protected ISpiPeripheral _spiPeripheral;
 
         protected IDigitalOutputPort dataCommandPort;
@@ -86,10 +85,9 @@ namespace Meadow.Foundation.Displays
         protected const bool Command = false;
 
         /// <summary>
-        ///     SSD1306 display.
+        ///     SSD1306 I2C display
         /// </summary>
         private readonly II2cPeripheral _I2cPeriferal;
-        private readonly II2cBus _i2CBus;
 
         /// <summary>
         ///     Width of the display in pixels.
@@ -235,7 +233,6 @@ namespace Meadow.Foundation.Displays
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false);
 
-            _spiBus = spiBus;
             _spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
             connectionType = ConnectionType.SPI;
@@ -254,14 +251,12 @@ namespace Meadow.Foundation.Displays
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="speed">Speed of the I2C bus.</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
-        public SSD1306(IIODevice device, IPin pinClock, IPin pinData,
+        public SSD1306(II2cBus i2cBus, IPin pinClock, IPin pinData,
             byte address = 0x3c, ushort speed = 400, DisplayType displayType = DisplayType.OLED128x64)
         {
             _displayType = displayType;
 
-            _i2CBus = device.CreateI2cBus(pinClock, pinData, speed);
-
-            _I2cPeriferal = new I2cPeripheral(_i2CBus, address);
+            _I2cPeriferal = new I2cPeripheral(i2cBus, address);
 
             connectionType = ConnectionType.I2C;
 
@@ -284,8 +279,8 @@ namespace Meadow.Foundation.Displays
                     SendCommands(_oled128x32SetupSequence);
                     break;
                 case DisplayType.OLED96x16:
-                    _width = 64;
-                    _height = 48;
+                    _width  = 96;
+                    _height = 16;
                     SendCommands(_oled96x16SetupSequence);
                     break;
             }
