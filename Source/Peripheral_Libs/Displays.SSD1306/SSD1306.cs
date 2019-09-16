@@ -75,10 +75,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     SPI object
         /// </summary>
-        protected SpiBus spi;
+        protected ISpiBus _spiBus; //probably don't need this reference
+        protected ISpiPeripheral _spiPeripheral;
 
-        protected DigitalOutputPort dataCommandPort;
-        protected DigitalOutputPort resetPort;
+        protected IDigitalOutputPort dataCommandPort;
+        protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort chipSelectPort;
         protected ConnectionType connectionType;
         protected const bool Data = true;
         protected const bool Command = false;
@@ -224,31 +226,21 @@ namespace Meadow.Foundation.Displays
         ///     This can be changed by setting the <seealso cref="IgnoreOutOfBoundsPixels" />
         ///     property to true.
         /// </remarks>
-        /// <param name="address">Address of the bus on the I2C display.</param>
-        /// <param name="speedKHz">Speed of the SPI bus.</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
-        public SSD1306(IPin chipSelectPin, IPin dcPin, IPin resetPin,
-         //    SpiMo  SPI_module spiModule = Spi.SPI_module.SPI1,
-            uint speedKHz = 9500, DisplayType displayType = DisplayType.OLED128x64)
+        ///
+        public SSD1306(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+            DisplayType displayType = DisplayType.OLED128x64)
         {
-          /*  dataCommandPort = new DigitalOutputPort(dcPin, false);
-            resetPort = new DigitalOutputPort(resetPin, true);
+            dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
+            resetPort = device.CreateDigitalOutputPort(resetPin, true);
+            chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false);
 
-            var spiConfig = new Spi.Configuration(
-                SPI_mod: spiModule,
-                ChipSelect_Port: chipSelectPin,
-                ChipSelect_ActiveState: false,
-                ChipSelect_SetupTime: 0,
-                ChipSelect_HoldTime: 0,
-                Clock_IdleState: false,
-                Clock_Edge: true,
-                Clock_RateKHz: speedKHz);
-
-            spi = new Spi(spiConfig);
+            _spiBus = spiBus;
+            _spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
             connectionType = ConnectionType.SPI;
 
-            InitSSD1306(displayType); */
+            InitSSD1306(displayType); 
         }
 
         /// <summary>
@@ -324,8 +316,8 @@ namespace Meadow.Foundation.Displays
         {
             if (connectionType == ConnectionType.SPI)
             {
-            //    dataCommandPort.State = Command;
-            //    spi.Write(new byte[] { command });
+                dataCommandPort.State = Command;
+                _spiPeripheral.WriteByte(command);
             }
             else
             {
@@ -345,8 +337,8 @@ namespace Meadow.Foundation.Displays
 
             if (connectionType == ConnectionType.SPI)
             {
-             //   dataCommandPort.State = Command;
-             //   spi.Write(commands);
+                dataCommandPort.State = Command;
+                _spiPeripheral.WriteBytes(commands);
             }
             else
             {
@@ -369,8 +361,8 @@ namespace Meadow.Foundation.Displays
 
             if (connectionType == ConnectionType.SPI)
             {
-             //   dataCommandPort.State = Data;
-             //   spi.Write(_buffer);
+                dataCommandPort.State = Data;
+                _spiPeripheral.WriteBytes(_buffer);
             }
             else
             {
