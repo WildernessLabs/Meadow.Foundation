@@ -1,15 +1,16 @@
-<Project Sdk="Meadow.Sdk/1">
+<Project Sdk="Meadow.Sdk/1.1">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WildernessLabs.Meadow.Assemblies" Version="0.1" />
+    <PackageReference Include="WildernessLabs.Meadow.Assemblies" Version="0.1.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Meadow.Foundation\Meadow.Foundation.csproj" />
     <ProjectReference Include="..\..\..\Peripheral_Libs\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
     <ProjectReference Include="..\..\..\Peripheral_Libs\Displays.SSD1306\Displays.SSD1306.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
   </ItemGroup>
 </Project>
