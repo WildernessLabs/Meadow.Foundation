@@ -20,23 +20,13 @@ namespace Meadow.Foundation.Displays.ePaper
         private EPDColorBase()
         {  }
 
-        public EPDColorBase(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin, IDigitalPin busyPin, Spi.SPI_module spiModule = Spi.SPI_module.SPI1, uint speedKHz = (uint)9500)
+        public EPDColorBase(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin)
         {
-            dataCommandPort = new DigitalOutputPort(dcPin, false);
-            resetPort = new DigitalOutputPort(resetPin, true);
-            busyPort = new DigitalInputPort(busyPin, true, ResistorMode.Disabled);
+            dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
+            resetPort = device.CreateDigitalOutputPort(resetPin, true);
+            busyPort = device.CreateDigitalInputPort(busyPin);
 
-            var spiConfig = new Spi.Configuration(
-                SPI_mod: spiModule,
-                ChipSelect_Port: chipSelectPin,
-                ChipSelect_ActiveState: false,
-                ChipSelect_SetupTime: 0,
-                ChipSelect_HoldTime: 0,
-                Clock_IdleState: false,
-                Clock_Edge: true,
-                Clock_RateKHz: speedKHz);
-
-            spi = new Spi(spiConfig);
+            spi = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(chipSelectPin));
 
             blackImageBuffer = new byte[Width * Height / 8];
             colorImageBuffer = new byte[Width * Height / 8];

@@ -5,8 +5,8 @@ namespace Meadow.Foundation.Displays.ePaper
 {
     public class EPD1i54c : EPDColorBase
     {
-        public EPD1i54c(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin, IDigitalPin busyPin,
-            Spi.SPI_module spiModule = Spi.SPI_module.SPI1, uint speedKHz = (uint)9500) : base(chipSelectPin, dcPin, resetPin, busyPin, spiModule, speedKHz)
+        public EPD1i54c(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
+            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
         { }
 
         public override uint Width => 152;

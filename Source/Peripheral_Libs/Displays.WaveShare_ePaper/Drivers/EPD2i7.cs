@@ -8,8 +8,8 @@ namespace Meadow.Foundation.Displays.ePaper
         
         public override uint Width => 176;
 
-        public EPD2i7(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin, IDigitalPin busyPin,
-            Spi.SPI_module spiModule = Spi.SPI_module.SPI1, uint speedKHz = 9500):base(chipSelectPin, dcPin, resetPin, busyPin, spiModule, speedKHz)
+        public EPD2i7(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
+            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
         { }
 
         protected override void Initialize()
