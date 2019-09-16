@@ -193,6 +193,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.ST7565", "Peripher
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TftSpiDisplay_Sample", "Samples\Displays\TftSpiDisplay_Sample\TftSpiDisplay_Sample.csproj", "{7109E486-B75F-414A-8673-D49AC6C2A1D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveShare_ePaper_Sample", "Samples\Displays\WaveShare_ePaper_Sample\WaveShare_ePaper_Sample.csproj", "{552B0A7B-2755-42A4-B876-BEBC6E47DE42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -499,6 +501,10 @@ Global
 		{7109E486-B75F-414A-8673-D49AC6C2A1D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7109E486-B75F-414A-8673-D49AC6C2A1D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7109E486-B75F-414A-8673-D49AC6C2A1D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{552B0A7B-2755-42A4-B876-BEBC6E47DE42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{552B0A7B-2755-42A4-B876-BEBC6E47DE42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{552B0A7B-2755-42A4-B876-BEBC6E47DE42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{552B0A7B-2755-42A4-B876-BEBC6E47DE42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -594,6 +600,7 @@ Global
 		{5F427C43-0ACD-477A-9E31-ADE83456B7AF} = {8C9FD54B-8EDC-4AA1-BD94-BFED83BA289F}
 		{A4A653DD-A6C1-41B0-B1C3-17FF97CE8CC4} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{7109E486-B75F-414A-8673-D49AC6C2A1D8} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
+		{552B0A7B-2755-42A4-B876-BEBC6E47DE42} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

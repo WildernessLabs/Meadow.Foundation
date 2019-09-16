@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Displays.ePaper
 {
     public class EPD4i2b : EPDColorBase
     {
-        public EPD4i2b(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
+        public EPD4i2b(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
         { }
 

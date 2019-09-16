@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays.ePaper
         
         public override uint Width => 176;
 
-        public EPD2i7(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
+        public EPD2i7(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
         { }
 

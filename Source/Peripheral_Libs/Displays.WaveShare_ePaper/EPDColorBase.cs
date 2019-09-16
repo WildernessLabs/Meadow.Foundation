@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Displays.ePaper
         private EPDColorBase()
         {  }
 
-        public EPDColorBase(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin)
+        public EPDColorBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin)
         {
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             resetPort = device.CreateDigitalOutputPort(resetPin, true);

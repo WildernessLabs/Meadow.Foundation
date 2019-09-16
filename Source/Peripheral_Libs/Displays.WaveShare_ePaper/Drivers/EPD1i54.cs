@@ -4,7 +4,7 @@ namespace Meadow.Foundation.Displays.ePaper
 {
     public class EPD1i54 : EPDBase
     {
-        public EPD1i54(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
+        public EPD1i54(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
         { }
 
