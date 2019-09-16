@@ -9,7 +9,7 @@ namespace TftSpiDisplay_Sample
 {
     public class TftSpiDisplayApp : App<F7Micro, TftSpiDisplayApp>
     {
-        SSD1331 display;
+        DisplayTftSpiBase display;
         ISpiBus spiBus;
 
         public TftSpiDisplayApp()
@@ -20,15 +20,17 @@ namespace TftSpiDisplay_Sample
             spiBus = Device.CreateSpiBus();// Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, 2000);
             
 
-            Console.WriteLine("Create SSD1351 driver instance");
-            display = new SSD1331(device: Device, spiBus: spiBus,
+            Console.WriteLine("Create display driver instance");
+            display = new ST7789(device: Device, spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                width: 96, height: 64);
+                width: 240, height: 240);
 
-            var graphicsLib = new GraphicsLibrary(display);
-            graphicsLib.CurrentFont = new Font8x12();
+            Console.WriteLine("Create graphics lib");
+
+        /*    var graphicsLib = new GraphicsLibrary(display);
+            graphicsLib.CurrentFont = new Font8x8();
 
             graphicsLib.Clear();
 
@@ -36,12 +38,14 @@ namespace TftSpiDisplay_Sample
 
             graphicsLib.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, true);
 
+            //graphicsLib.DrawCircle()
+
             graphicsLib.DrawText(5, 5, "Meadow F7 SPI");
 
-            graphicsLib.Show();
+            graphicsLib.Show();*/
 
 
-            /*Console.WriteLine("Clear display");
+            Console.WriteLine("Clear display");
             display.ClearScreen(250);
             display.Refresh();
 
@@ -53,7 +57,7 @@ namespace TftSpiDisplay_Sample
                 display.DrawPixel(60 + i, i, true);
             }
 
-            display.Show(); */
+            display.Show(); 
         }
     }
 }

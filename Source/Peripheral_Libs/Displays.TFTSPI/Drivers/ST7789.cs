@@ -1,4 +1,5 @@
 using Meadow.Hardware;
+using System;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays.Tft
@@ -15,6 +16,8 @@ namespace Meadow.Foundation.Displays.Tft
 
         protected override void Initialize()
         {
+            chipSelectPort.State = false;
+
             resetPort.State = true;
             Thread.Sleep(50);
             resetPort.State = false;
@@ -40,14 +43,22 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(RASET);
             SendData(new byte[] { 0x00, 0x00, (byte)(Height >> 8), (byte)(Height & 0xFF) });
 
+            Console.WriteLine("Set Address Window");
+
+            SetAddressWindow(0, 0, (byte)(_width - 1), (byte)(_height - 1));
+
+            Console.WriteLine("Set Rotation");
+
+            SetRotation(Rotation.Normal);
+
+            Console.WriteLine("Init display");
+
             SendCommand(INVON); //inversion on
             DelayMs(10);
             SendCommand(NORON); //normal display
             DelayMs(10);
             SendCommand(DISPON); //display on
             DelayMs(500);
-
-            SetAddressWindow(0, 0, (byte)(_width - 1), (byte)(_height - 1));
 
             dataCommandPort.State = Data;
         }
