@@ -5,8 +5,8 @@ namespace Meadow.Foundation.Displays.ePaper
 {
     public class EPD2i13 : EPDBase
     {
-        public EPD2i13(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin, IDigitalPin busyPin,
-    Spi.SPI_module spiModule = Spi.SPI_module.SPI1, uint speedKHz = (uint)9500):base(chipSelectPin, dcPin, resetPin, busyPin, spiModule, speedKHz)
+        public EPD2i13(IIODevice device, SpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
+            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
         { }
 
         public override uint Width => 128;
