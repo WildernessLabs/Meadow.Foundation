@@ -19,32 +19,21 @@ namespace Meadow.Foundation.Displays
         }
         protected bool _invertDisplay = false;
 
-        protected DigitalOutputPort dataCommandPort;
-        protected DigitalOutputPort resetPort;
-        protected Spi spi;
+        protected IDigitalOutputPort dataCommandPort;
+        protected IDigitalOutputPort resetPort;
+        protected ISpiPeripheral spi;
 
         protected byte[] spiBuffer;
 
-        public PCD8544(IDigitalPin chipSelectPin, IDigitalPin dcPin, IDigitalPin resetPin,
-            Spi.SPI_module spiModule = Spi.SPI_module.SPI1,
-            uint speedKHz = 4000)
+        public PCD8544(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
             spiBuffer = new byte[Width * Height / 8];
 
-            dataCommandPort = new DigitalOutputPort(dcPin, true);
-            resetPort = new DigitalOutputPort(resetPin, true);
+            dataCommandPort = device.CreateDigitalOutputPort(dcPin, true);
+            resetPort = device.CreateDigitalOutputPort(resetPin, true);
+            var chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
 
-            var spiConfig = new Spi.Configuration(
-                SPI_mod: spiModule,
-                ChipSelect_Port: chipSelectPin,
-                ChipSelect_ActiveState: false,
-                ChipSelect_SetupTime: 0,
-                ChipSelect_HoldTime: 0,
-                Clock_IdleState: false,
-                Clock_Edge: true,
-                Clock_RateKHz: speedKHz);
-
-            spi = new Spi(spiConfig);
+            spi = new SpiPeripheral(spiBus, chipSelectPort);
 
             Initialize();
         }
@@ -58,7 +47,7 @@ namespace Meadow.Foundation.Displays
 
             // spi.Write(new byte[] { 0x21, 0xBF, 0x04, 0x14, 0x0C, 0x20, 0x0C });
 
-            spi.Write(new byte[]
+            spi.WriteBytes(new byte[]
             {
                 0x21, // LCD Extended Commands.
                 0xBF, // Set LCD Vop (Contrast). //0xB0 for 5V, 0XB1 for 3.3v, 0XBF if screen too dark
@@ -80,7 +69,7 @@ namespace Meadow.Foundation.Displays
             spiBuffer = new byte[Width * Height / 8];
 
             dataCommandPort.State = (false);
-            spi.Write(new byte[] { 0x80, 0x40 });
+            spi.WriteBytes(new byte[] { 0x80, 0x40 });
             dataCommandPort.State = (true);
         }
 
@@ -154,14 +143,14 @@ namespace Meadow.Foundation.Displays
 
         public override void Show()
         {
-            spi.Write(spiBuffer);
+            spi.WriteBytes(spiBuffer);
         }
 
         private void Invert(bool inverse)
         {
             _invertDisplay = inverse;
             dataCommandPort.State = (false);
-            spi.Write(inverse ? new byte[] { 0x0D } : new byte[] { 0x0C });
+            spi.WriteBytes(inverse ? new byte[] { 0x0D } : new byte[] { 0x0C });
             dataCommandPort.State = (true);
         }
     }
