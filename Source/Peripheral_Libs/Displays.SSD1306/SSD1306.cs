@@ -249,10 +249,9 @@ namespace Meadow.Foundation.Displays
         ///     property to true.
         /// </remarks>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        /// <param name="speed">Speed of the I2C bus.</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
-        public SSD1306(II2cBus i2cBus, IPin pinClock, IPin pinData,
-            byte address = 0x3c, ushort speed = 400, DisplayType displayType = DisplayType.OLED128x64)
+        public SSD1306(II2cBus i2cBus, 
+            byte address = 0x3c, DisplayType displayType = DisplayType.OLED128x64)
         {
             _displayType = displayType;
 

@@ -54,7 +54,7 @@ namespace SSD1306Display_Sample
             var i2CBus = Device.CreateI2cBus();
 
             Console.WriteLine("Create Display");
-            display = new SSD1306(i2CBus, Device.Pins.D08, Device.Pins.D07, 60, 400, SSD1306.DisplayType.OLED128x32);
+            display = new SSD1306(i2CBus, 60, SSD1306.DisplayType.OLED128x32);
         }
 
         void TestRawDisplayAPI()
