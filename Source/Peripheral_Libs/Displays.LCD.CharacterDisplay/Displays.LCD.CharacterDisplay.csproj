@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Displays.LCD.Lcd2004</RootNamespace>
-    <AssemblyName>Displays.LCD.CharacterDisplay</AssemblyName>
+    <AssemblyName>CharacterDisplay</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -40,10 +40,10 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="Meadow.Core">
-      <HintPath>..\..\packages\Meadow.0.4.221\lib\net472\Meadow.Core.dll</HintPath>
+      <HintPath>..\..\packages\Meadow.0.6.245\lib\net472\Meadow.Core.dll</HintPath>
     </Reference>
     <Reference Include="Meadow.Foundation">
-      <HintPath>..\..\packages\Meadow.Foundation.0.3.142\lib\net472\Meadow.Foundation.dll</HintPath>
+      <HintPath>..\..\packages\Meadow.Foundation.0.7.227\lib\net472\Meadow.Foundation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
