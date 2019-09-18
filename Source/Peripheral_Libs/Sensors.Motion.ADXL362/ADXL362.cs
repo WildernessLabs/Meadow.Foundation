@@ -3,8 +3,6 @@ using System.Threading;
 using Meadow.Foundation.Helpers;
 using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
-using Meadow.Hardware.Communications;
-using static Meadow.Hardware.DigitalPortBase;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -15,17 +13,17 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     ADXL362 sensor object.
         /// </summary>
-        protected readonly ICommunicationBus _adxl362;
+        protected readonly ISpiPeripheral _adxl362;
 
         /// <summary>
         ///     Digital input port attached to interrupt pin 1 on the ADXL362.
         /// </summary>
-        private DigitalInputPort _digitalInputPort1 = null;
+        private IDigitalInputPort _digitalInputPort1;
 
         /// <summary>
         ///     Digital Input port attached to interrupt pin 2 on the ADXL362.
         /// </summary>
-        private DigitalInputPort _digitalInputPort2 = null;
+        private IDigitalInputPort _digitalInputPort2 = null;
 
         /// <summary>
         ///     Last X value reported in the Changed event handler.
@@ -799,15 +797,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Create a new ADXL362 object using the specified SPI module.
         /// </summary>
-        /// <param name="module">SPI module to use.</param>
+        /// <param name="spiBus">Spi Bus object</param>
         /// <param name="chipSelect">Chip select pin.</param>
-        /// <param name="speed">Speed of the SPI bus.</param>
-        public ADXL362(Spi.SPI_module module, IDigitalPin chipSelect, ushort speed = 10)
+        public ADXL362(IIODevice device, ISpiBus spiBus, IPin chipSelect, ushort speed = 10)
         {
             //
             //  ADXL362 works in SPI mode 0 (CPOL = 0, CPHA = 0).
             //
-            _adxl362 = new SPIBus(module, chipSelect, speed);
+            _adxl362 = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(chipSelect));
             Reset();
             Start();
         }
@@ -956,11 +953,11 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (activeLow)
             {
-                return (InterruptMode.InterruptEdgeLow);
+                return (InterruptMode.LevelLow);
             }
             else
             {
-                return(InterruptMode.InterruptEdgeHigh);
+                return(InterruptMode.LevelHigh);
             }
         }
 
@@ -979,13 +976,13 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin1">Pin connected to interrupt pin 1 on the ADXL362.</param>
         /// <param name="interruptMap2">Bit mask for interrupt pin 2</param>
         /// <param name="interruptPin2">Pin connected to interrupt pin 2 on the ADXL362.</param>
-        public void ConfigureInterrupts(byte interruptMap1, IDigitalPin interruptPin1, byte interruptMap2 = 0, IDigitalPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
+        public void ConfigureInterrupts(IIODevice device, byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
         {
             _adxl362.WriteBytes(new byte[] { Command.WriteRegister, interruptMap1, interruptMap2 });
             //TODO: I changed this from IDigitalPin.GPIO_NONE to null
             if (interruptPin1 != null)
             {
-                _digitalInputPort1 = new DigitalInputPort(interruptPin1, false, MapResistorMode((interruptMap1 & 0xf0) > 0));
+                _digitalInputPort1 = device.CreateDigitalInputPort(interruptPin1, InterruptMode.EdgeRising, MapResistorMode((interruptMap1 & 0xf0) > 0));
                 _digitalInputPort1.Changed += InterruptChanged;
             }
             else
@@ -995,7 +992,7 @@ namespace Meadow.Foundation.Sensors.Motion
             //TODO: I changed this from IDigitalPin.GPIO_NONE to null
             if (interruptPin2 != null)
             {
-                _digitalInputPort2 = new DigitalInputPort(interruptPin2, false, MapResistorMode((interruptMap2 & 0xf0) > 0));
+                _digitalInputPort2 = device.CreateDigitalInputPort(interruptPin2, InterruptMode.EdgeRising, MapResistorMode((interruptMap2 & 0xf0) > 0));
                 _digitalInputPort2.Changed += InterruptChanged;
             }
             else
@@ -1007,7 +1004,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Sensor has generated an interrupt, work out what to do.
         /// </summary>
-        private void InterruptChanged(object sender, PortEventArgs e)
+        private void InterruptChanged(object sender, DigitalInputPortEventArgs e)
         {
             var status = Status;
             if ((status & StatusBitsMask.ActivityDetected) != 0)
