@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Hardware.Communications;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Temperature;
@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     HIH6130 sensor object.
         /// </summary>
-        private readonly ICommunicationBus _hih6130;
+        private readonly II2cPeripheral _hih6130;
         
         /// <summary>
         ///     Update interval in milliseconds
@@ -127,11 +127,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Create a new HIH6130 object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the HIH6130 (default = 0x27).</param>
-        /// <param name="speed">Speed of the I2C bus (default = 100 KHz).</param>
+        /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
         /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
         /// <param name="humidityChangeNotificationThreshold">Changes in humidity greater than this value will trigger an event when updatePeriod > 0.</param>
         /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
-        public HIH6130(byte address = 0x27, ushort speed = 100, ushort updateInterval = MinimumPollingPeriod,
+        public HIH6130(II2cBus i2cBus, byte address = 0x27, ushort updateInterval = MinimumPollingPeriod,
                        float humidityChangeNotificationThreshold = 0.001F, 
                        float temperatureChangeNotificationThreshold = 0.001F)
         {
@@ -151,7 +151,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             _updateInterval = updateInterval;
             HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
-            _hih6130 = new I2cBus(address, speed);
+
+            _hih6130 = new I2cPeripheral(i2cBus, address);
+
             if (updateInterval > 0)
             {
                 StartUpdating();
