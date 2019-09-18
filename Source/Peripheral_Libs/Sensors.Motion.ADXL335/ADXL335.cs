@@ -26,17 +26,17 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Analog input channel connected to the x axis.
         /// </summary>
-        private readonly AnalogInputPort _x;
+        private readonly IAnalogInputPort _xPort;
 
         /// <summary>
         ///     Analog input channel connected to the x axis.
         /// </summary>
-        private readonly AnalogInputPort _y;
+        private readonly IAnalogInputPort _yPort;
 
         /// <summary>
         ///     Analog input channel connected to the x axis.
         /// </summary>
-        private readonly AnalogInputPort _z;
+        private readonly IAnalogInputPort _zPort;
 
         /// <summary>
         ///     Voltage that represents 0g.  This is the supply voltage / 2.
@@ -166,7 +166,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="z">Analog pin connected to the Z axis output from the ADXL335 sensor.</param>
         /// <param name="updateInterval">Update interval for the sensor, set to 0 to put the sensor in polling mode.</param>
         /// <<param name="accelerationChangeNotificationThreshold">Acceleration change threshold.</param>
-        public ADXL335(IAnalogPin x, IAnalogPin y, IAnalogPin z, ushort updateInterval = 100,
+        public ADXL335(IIODevice device, IPin x, IPin y, IPin z, ushort updateInterval = 100,
                        double accelerationChangeNotificationThreshold = 0.1F)
         {
             if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
@@ -175,9 +175,9 @@ namespace Meadow.Foundation.Sensors.Motion
                     "Update interval should be 0 or greater than " + MinimumPollingPeriod);    
             }
 
-            _x = new AnalogInputPort(x);
-            _y = new AnalogInputPort(y);
-            _z = new AnalogInputPort(z);
+            _xPort = device.CreateAnalogInputPort(x);
+            _yPort = device.CreateAnalogInputPort(y);
+            _zPort = device.CreateAnalogInputPort(z);
             //
             //  Now set the default calibration data.
             //
@@ -221,9 +221,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public async Task Update()
         {
-            X = (await _x.Read() * SupplyVoltage - _zeroGVoltage) / XVoltsPerG;
-            Y = (await _y.Read() * SupplyVoltage - _zeroGVoltage) / YVoltsPerG;
-            Z = (await _z.Read() * SupplyVoltage - _zeroGVoltage) / ZVoltsPerG;
+            X = ( _xPort.Read() * SupplyVoltage - _zeroGVoltage) / XVoltsPerG;
+            Y = ( _yPort.Read() * SupplyVoltage - _zeroGVoltage) / YVoltsPerG;
+            Z = ( _zPort.Read() * SupplyVoltage - _zeroGVoltage) / ZVoltsPerG;
 
             if ((_updateInterval != 0) && 
                 ((Math.Abs(X - _lastX) > AccelerationChangeNotificationThreshold) ||
@@ -243,7 +243,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Vector object containing the raw sensor data from the analog pins.</returns>
         public async Task<Vector> GetRawSensorData()
         {
-             return new Vector(await _x.Read(), await _y.Read(), await _z.Read());
+             return new Vector( _xPort.Read(),  _yPort.Read(),  _zPort.Read());
         }
 
         #endregion Methods
