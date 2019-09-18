@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Hardware.Communications;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Temperature;
@@ -81,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     GroveTH02 object.
         /// </summary>
-        private readonly ICommunicationBus _groveTH02 = null;
+        private readonly II2cPeripheral _groveTH02 = null;
 
         /// <summary>
         ///     Update interval in milliseconds
@@ -205,16 +205,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Create a new GroveTH02 object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the Grove TH02 (default = 0x4-).</param>
-        /// <param name="speed">Speed of the I2C bus (default = 100 KHz).</param>
+        /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
         /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
         /// <param name="humidityChangeNotificationThreshold">Changes in humidity greater than this value will trigger an event when updatePeriod > 0.</param>
         /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
-        public GroveTH02(byte address = 0x40, ushort speed = 100, ushort updateInterval = MinimumPollingPeriod,
+        public GroveTH02(II2cBus i2cBus, byte address = 0x40, ushort updateInterval = MinimumPollingPeriod,
             float humidityChangeNotificationThreshold = 0.001F,
             float temperatureChangeNotificationThreshold = 0.001F)
         {
-            I2cBus device = new I2cBus(address, speed);
-            _groveTH02 = (ICommunicationBus) device;
+            _groveTH02 = new I2cPeripheral(i2cBus, address);
+
             if (humidityChangeNotificationThreshold < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(humidityChangeNotificationThreshold), "Humidity threshold should be >= 0");
