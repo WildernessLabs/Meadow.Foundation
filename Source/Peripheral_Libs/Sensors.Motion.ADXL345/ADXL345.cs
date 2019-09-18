@@ -2,7 +2,7 @@
 using System.Threading;
 using Meadow.Foundation.Helpers;
 using Meadow.Foundation.Spatial;
-using Meadow.Hardware.Communications;
+using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Communication bus used to communicate with the sensor.
         /// </summary>
-        private readonly ICommunicationBus _adxl345;
+        private readonly II2cPeripheral _adxl345;
 
         /// <summary>
         ///     How often should this sensor be read?
@@ -240,20 +240,15 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     Create a new instance of the ADXL345 communicating over the I2C interface.
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
-        /// <param name="speed">Speed of the I2C bus in KHz</param>
+        /// <param name="i2cBus">I2C bus</param>
         /// <param name="updateInterval">How frequently this sensor should be updated.</param>
         /// <param name="accelerationChangeNotificationThreshold">Notification threshold, changes greater than +/- this value will generate and interrupt.</param>
-        public ADXL345(byte address = 0x53, ushort speed = 100, ushort updateInterval = 100, 
+        public ADXL345(II2cBus i2cBus, byte address = 0x53, ushort updateInterval = 100, 
                        double accelerationChangeNotificationThreshold = 5.0F)
         {
             if ((address != 0x1d) && (address != 0x53))
             {
                 throw new ArgumentOutOfRangeException(nameof(address), "ADXL345 address can only be 0x1d or 0x53.");
-            }
-            if ((speed < 10) || (speed > 400))
-            {
-                throw new ArgumentOutOfRangeException(nameof(speed), 
-                    "ADXL345 speed should be between 10 kHz and 400 kHz inclusive.");
             }
             if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
             {
@@ -264,7 +259,7 @@ namespace Meadow.Foundation.Sensors.Motion
             _updateInterval = updateInterval;
             AccelerationChangeNotificationThreshold = accelerationChangeNotificationThreshold;
             
-            var device = new I2cBus(address, speed);
+            var device = new I2cPeripheral(i2cBus, address);
             _adxl345 = device;
             if (DeviceID != 0xe5)
             {
