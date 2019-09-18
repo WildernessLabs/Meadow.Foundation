@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Hardware.Communications;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Temperature;
@@ -153,7 +153,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
         ///     selection to be made in the constructor.
         /// </remarks>
-        private readonly ICommunicationBus _bme280;
+        private readonly II2cPeripheral _bme280;
 
         /// <summary>
         ///     Compensation data from the sensor.
@@ -331,12 +331,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
         /// </summary>
         /// <param name="address">I2C address of the sensor (default = 0x77).</param>
-        /// <param name="speed">Speed of the I2C bus (default = 100KHz).</param>
         /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
         /// <param name="humidityChangeNotificationThreshold">Changes in humidity greater than this value will trigger an event when updatePeriod > 0.</param>
         /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
         /// <param name="pressureChangedNotificationThreshold">Changes in pressure greater than this value will trigger an event when updatePeriod > 0.</param>
-        public BME280(byte address = 0x77, ushort speed = 100, ushort updateInterval = MinimumPollingPeriod,
+        public BME280(II2cBus i2cBus, byte address = 0x77, ushort speed = 100, ushort updateInterval = MinimumPollingPeriod,
                       float humidityChangeNotificationThreshold = 0.001F,
                       float temperatureChangeNotificationThreshold = 0.001F,
                       float pressureChangedNotificationThreshold = 10.0F)
@@ -344,10 +343,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             if ((address != 0x76) && (address != 0x77))
             {
                 throw new ArgumentOutOfRangeException(nameof(address), "Address should be 0x76 or 0x77");
-            }
-            if ((speed < 10) || (speed > 3400))
-            {
-                throw new ArgumentOutOfRangeException(nameof(speed), "Speed should be 10 KHz to 3,400 KHz.");
             }
             if (humidityChangeNotificationThreshold < 0)
             {
@@ -366,7 +361,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 throw new ArgumentOutOfRangeException(nameof(updateInterval), "Update period should be 0 or >= than " + MinimumPollingPeriod);
             }
 
-            _bme280 = new I2cBus(address, speed);
+            _bme280 = new I2cPeripheral(i2cBus, address);
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
             HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
             PressureChangeNotificationThreshold = pressureChangedNotificationThreshold;
