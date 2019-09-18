@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Diagnostics;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu
