@@ -1,7 +1,6 @@
 using System;
 using Meadow.Foundation.Helpers;
 using Meadow.Hardware;
-using Meadow.Hardware.Communications;
 
 namespace Meadow.Foundation.RTCs
 {
@@ -172,7 +171,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         ///     DS323x Real Time Clock object.
         /// </summary>
-        protected ICommunicationBus _ds323x = null;
+        protected II2cPeripheral _ds323x = null;
 
         /// <summary>
         ///     Interrupt port attached to the DS323x RTC module.
@@ -280,26 +279,6 @@ namespace Meadow.Foundation.RTCs
             }
         }
 
-        /// <summary>
-        ///     Setup the interrupts.
-        /// </summary>
-        // TODO: re-examine this; maybe we need a `DigitalPin.None` prop
-        private IDigitalInputPort _interruptPin = null;// IDigitalPin.GPIO_NONE;
-        protected IDigitalInputPort InterruptPin
-        {
-            set
-            {
-                //TODO: I changed this from IDigitalPin.GPIO_NONE to null
-                if (_interruptPin != null)
-                {
-                    throw new Exception("Cannot change interrupt pin.");
-                }
-                _interruptPin = value;
-                _interruptPort = new DigitalInputPort(value, false, ResistorMode.Disabled);
-                _interruptPort.Changed += InterruptPort_Changed;
-            }
-        }
-
         #endregion Properties
 
         #region Methods
@@ -307,7 +286,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         ///     Alarm interrupt has been raised, work out which one and raise the necessary event.
         /// </summary>
-        private void InterruptPort_Changed(object sender, PortEventArgs e)
+        protected void InterruptPort_Changed(object sender, EventArgs e)
         {
             if ((OnAlarm1Raised != null) || (OnAlarm2Raised != null))
             {
