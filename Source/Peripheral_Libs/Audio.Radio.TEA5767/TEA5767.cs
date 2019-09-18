@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Audio.Radio
         /// <summary>
         ///     TEA5767 radio.
         /// </summary>
-        private readonly II2cPeripheral _I2CBus;
+        private readonly II2cPeripheral _I2cPeripheral;
 
         #endregion Member variables / fields
 
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Audio.Radio
         /// <param name="address">Address of the bus on the I2C display.</param>
         public TEA5767(II2cBus i2cBus, byte address = 0x60)
         {
-            _I2CBus = new I2cPeripheral(i2cBus, address);
+            _I2cPeripheral = new I2cPeripheral(i2cBus, address);
 
             InitTEA5767();
         }
@@ -153,7 +153,7 @@ namespace Meadow.Foundation.Audio.Radio
 
         void TransmitData()
         {
-            _I2CBus.WriteBytes(transmissionData);
+            _I2cPeripheral.WriteBytes(transmissionData);
 
             Thread.Sleep(100);
         }
@@ -198,7 +198,7 @@ namespace Meadow.Foundation.Audio.Radio
 
         void ReadStatus()
         {
-            reception_data = _I2CBus.ReadBytes(5);
+            reception_data = _I2cPeripheral.ReadBytes(5);
             Thread.Sleep(100);
         }
 
