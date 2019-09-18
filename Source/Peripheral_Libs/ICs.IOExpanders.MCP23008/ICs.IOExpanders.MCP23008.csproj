@@ -40,6 +40,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Meadow.Core">
+      <HintPath>..\..\packages\Meadow.0.6.245\lib\net472\Meadow.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MCP23008.cs" />
@@ -47,14 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
-      <Project>{b13c7bdd-77f5-45f8-bdb9-6cd368c67410}</Project>
-      <Name>Meadow.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Meadow.Foundation\Meadow.Foundation.csproj">
-      <Project>{cebd7f9a-4645-4a29-8a97-7889e241896f}</Project>
-      <Name>Meadow.Foundation</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
