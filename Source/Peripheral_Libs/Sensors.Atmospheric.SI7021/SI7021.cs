@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Hardware.Communications;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Temperature;
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     SI7021 is an I2C device.
         /// </summary>
-        private readonly I2cBus _si7021;
+        private readonly II2cPeripheral _si7021;
 
         /// <summary>
         ///     Update interval in milliseconds
@@ -216,17 +216,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Create a new SI7021 temperature and humidity sensor.
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40).</param>
-        /// <param name="speed">Speed of the I2C interface (default to 100 KHz).</param>
+        /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
         /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
         /// <param name="humidityChangeNotificationThreshold">Changes in humidity greater than this value will trigger an event when updatePeriod > 0.</param>
         /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
-        public SI7021(byte address = 0x40, ushort speed = 100, ushort updateInterval = MinimumPollingPeriod,
+        public SI7021(II2cBus i2cBus, byte address = 0x40, ushort updateInterval = MinimumPollingPeriod,
             float humidityChangeNotificationThreshold = 0.001F, float temperatureChangeNotificationThreshold = 0.001F)
         {
-            if (speed > 1000)
-            {
-                throw new ArgumentOutOfRangeException(nameof(speed), "Speed should be between 0 and 1000 KHz");
-            }
             if (humidityChangeNotificationThreshold < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(humidityChangeNotificationThreshold), "Humidity threshold should be >= 0");
@@ -243,7 +239,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
             HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
             _updateInterval = updateInterval;
-            _si7021 = new I2cBus(address, speed);
+            _si7021 = new I2cPeripheral(i2cBus, address);
             //
             //  Get the device ID.
             //
