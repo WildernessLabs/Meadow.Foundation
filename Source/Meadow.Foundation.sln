@@ -195,6 +195,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TftSpiDisplay_Sample", "Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveShare_ePaper_Sample", "Samples\Displays\WaveShare_ePaper_Sample\WaveShare_ePaper_Sample.csproj", "{552B0A7B-2755-42A4-B876-BEBC6E47DE42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Radio.TEA5767", "Peripheral_Libs\Audio.Radio.TEA5767\Audio.Radio.TEA5767.csproj", "{059E5CF5-C88B-440E-94CC-404F1F94056F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -505,6 +507,10 @@ Global
 		{552B0A7B-2755-42A4-B876-BEBC6E47DE42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{552B0A7B-2755-42A4-B876-BEBC6E47DE42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{552B0A7B-2755-42A4-B876-BEBC6E47DE42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{059E5CF5-C88B-440E-94CC-404F1F94056F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{059E5CF5-C88B-440E-94CC-404F1F94056F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{059E5CF5-C88B-440E-94CC-404F1F94056F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{059E5CF5-C88B-440E-94CC-404F1F94056F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -601,6 +607,7 @@ Global
 		{A4A653DD-A6C1-41B0-B1C3-17FF97CE8CC4} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{7109E486-B75F-414A-8673-D49AC6C2A1D8} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
 		{552B0A7B-2755-42A4-B876-BEBC6E47DE42} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
+		{059E5CF5-C88B-440E-94CC-404F1F94056F} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
