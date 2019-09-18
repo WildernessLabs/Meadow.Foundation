@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TextDisplayMenu", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TFTSPI", "Peripheral_Libs\Displays.TFTSPI\Displays.TFTSPI.csproj", "{A25A42EC-8886-4119-AE41-B596C5434F94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.WaveShare_ePaper", "Peripheral_Libs\Displays.WaveShare_ePaper\Displays.WaveShare_ePaper.csproj", "{1D6BBEB4-D98D-4EC0-A9B3-FE7272435DF9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.WaveShareEPaper", "Peripheral_Libs\Displays.WaveShare_ePaper\Displays.WaveShareEPaper.csproj", "{1D6BBEB4-D98D-4EC0-A9B3-FE7272435DF9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.EEPROM.AT24Cxx", "Peripheral_Libs\ICs.EEPROM.AT24Cxx\ICs.EEPROM.AT24Cxx.csproj", "{2A6223F6-19E9-4A40-9A9D-AD42B7CDFCDA}"
 EndProject

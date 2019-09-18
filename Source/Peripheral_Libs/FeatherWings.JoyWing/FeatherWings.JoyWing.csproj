@@ -1,46 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Meadow.Sdk/1.1">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2189BB6D-C20C-4965-8789-438241B369B9}</ProjectGuid>
+    <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
-    <RootNamespace>FeatherWings.JoyWing</RootNamespace>
-    <AssemblyName>FeatherWings.JoyWing</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <AssemblyName>JoyWing</AssemblyName>
+    <PackageVersion>0.1.0</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="Meadow.Core">
-      <HintPath>..\..\packages\Meadow.0.6.245\lib\net472\Meadow.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Meadow.Foundation">
-      <HintPath>..\..\packages\Meadow.Foundation.0.7.227\lib\net472\Meadow.Foundation.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Meadow.Foundation" Version="0.7.227" />
+    <PackageReference Include="Meadow" Version="0.6.245" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="JoyWing.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

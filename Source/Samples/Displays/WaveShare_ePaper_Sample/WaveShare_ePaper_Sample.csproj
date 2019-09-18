@@ -10,7 +10,7 @@
     <PackageReference Include="Meadow.Foundation" Version="0.7.227" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Peripheral_Libs\Displays.WaveShare_ePaper\Displays.WaveShare_ePaper.csproj" />
     <ProjectReference Include="..\..\..\Peripheral_Libs\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
+    <ProjectReference Include="..\..\..\Peripheral_Libs\Displays.WaveShare_ePaper\Displays.WaveShareEPaper.csproj" />
   </ItemGroup>
 </Project>
