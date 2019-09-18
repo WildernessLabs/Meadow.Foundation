@@ -17,7 +17,7 @@ namespace ParallaxPir_Sample
             parallaxPir.OnMotionStart += ParallaxPirOnMotionStart;
             parallaxPir.OnMotionEnd += ParallaxPirOnMotionEnd;
 
-            blueLed = Device.CreateDigitalOutputPort(Device.Pins.OnboardLEDBlue);
+            blueLed = Device.CreateDigitalOutputPort(Device.Pins.OnboardLedBlue);
         }
 
         void ParallaxPirOnMotionEnd(object sender)
