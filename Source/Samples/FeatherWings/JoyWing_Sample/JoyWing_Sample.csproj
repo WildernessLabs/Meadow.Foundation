@@ -28,6 +28,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Meadow.Core">
+      <HintPath>..\..\..\packages\Meadow.0.6.245\lib\net472\Meadow.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Meadow.Foundation">
+      <HintPath>..\..\..\packages\Meadow.Foundation.0.7.227\lib\net472\Meadow.Foundation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -35,14 +41,13 @@
     <Compile Include="JoyWingApp.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
-      <Project>{B13C7BDD-77F5-45F8-BDB9-6CD368C67410}</Project>
-      <Name>Meadow.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Peripheral_Libs\FeatherWings.JoyWing\FeatherWings.JoyWing.csproj">
       <Project>{2189BB6D-C20C-4965-8789-438241B369B9}</Project>
       <Name>FeatherWings.JoyWing</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>FeatherWings.JoyWing</RootNamespace>
     <AssemblyName>FeatherWings.JoyWing</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,20 +28,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Meadow.Core">
+      <HintPath>..\..\packages\Meadow.0.6.245\lib\net472\Meadow.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Meadow.Foundation">
+      <HintPath>..\..\packages\Meadow.Foundation.0.7.227\lib\net472\Meadow.Foundation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JoyWing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
-      <Project>{B13C7BDD-77F5-45F8-BDB9-6CD368C67410}</Project>
-      <Name>Meadow.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Meadow.Foundation\Meadow.Foundation.csproj">
-      <Project>{CEBD7F9A-4645-4A29-8A97-7889E241896F}</Project>
-      <Name>Meadow.Foundation</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
