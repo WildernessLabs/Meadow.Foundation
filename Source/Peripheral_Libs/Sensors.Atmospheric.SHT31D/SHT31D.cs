@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Hardware.Communications;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Temperature;
@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     SH31D sensor communicates using I2C.
         /// </summary>
-        private readonly I2cBus _sht31d;
+        private readonly II2cPeripheral _sht31d;
 
         /// <summary>
         ///     Update interval in milliseconds
@@ -138,21 +138,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Create a new SHT31D object.
         /// </summary>
         /// <param name="address">Sensor address (should be 0x44 or 0x45).</param>
-        /// <param name="speed">Bus speed (0-1000 KHz).</param>
+        /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
         /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
         /// <param name="humidityChangeNotificationThreshold">Changes in humidity greater than this value will trigger an event when updatePeriod > 0.</param>
         /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
-        public SHT31D(byte address = 0x44, ushort speed = 100, ushort updateInterval = MinimumPollingPeriod,
+        public SHT31D(II2cBus i2cBus, byte address = 0x44, ushort updateInterval = MinimumPollingPeriod,
                         float humidityChangeNotificationThreshold = 0.001F, 
                         float temperatureChangeNotificationThreshold = 0.001F)
         {
             if ((address != 0x44) && (address != 0x45))
             {
                 throw new ArgumentOutOfRangeException(nameof(address), "Address should be 0x44 or 0x45");
-            }
-            if (speed > 1000)
-            {
-                throw new ArgumentOutOfRangeException(nameof(speed), "Speed should be between 0 and 1000 KHz");
             }
             if (humidityChangeNotificationThreshold < 0)
             {
@@ -171,7 +167,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
             _updateInterval = updateInterval;
 
-            _sht31d = new I2cBus(address, speed);
+            _sht31d = new I2cPeripheral(i2cBus, address);
 
             if (updateInterval > 0)
             {
