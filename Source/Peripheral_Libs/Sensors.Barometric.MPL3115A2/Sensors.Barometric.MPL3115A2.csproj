@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Meadow.Sdk/1.1">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-    <OutputType>library</OutputType>
+    <OutputType>Library</OutputType>
     <AssemblyName>MPL3115A2</AssemblyName>
     <PackageVersion>0.1.0</PackageVersion>
   </PropertyGroup>
