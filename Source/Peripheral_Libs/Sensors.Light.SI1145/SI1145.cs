@@ -1,5 +1,5 @@
 ﻿using System;
-using Meadow.Hardware.Communications;
+using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Light
 {
@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         ///     Command bus object used to communicate with the SI1145 sensor.
         /// </summary>
-        private ICommunicationBus _si1145;
+        private II2cPeripheral _si1145;
 
         #endregion Member variables and fields
 
@@ -205,11 +205,10 @@ namespace Meadow.Foundation.Sensors.Light
         ///     Create a new SI1145 sensor object.
         /// </summary>
         /// <param name="address">Address of the chip on the I2C bus (default to 0x60).</param>
-        /// <param name="speed">Communication speed (default to 400 KHz).</param>
-        public SI1145(byte address = 0x60, ushort speed = 400)
+        /// <param name="iscBus">I2cBus (default to 400 KHz).</param>
+        public SI1145(II2cBus i2cBus, byte address = 0x60)
         {
-            I2cBus device = new I2cBus(address, speed);
-            _si1145 = (ICommunicationBus) device;
+            _si1145 = new I2cPeripheral(i2cBus, address);
             if (_si1145.ReadRegister(Registers.PartID) != 0x45)
             {
                 throw new Exception("Invalid part ID");
