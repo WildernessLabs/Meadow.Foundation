@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Meadow.Sdk/1.1">
  <PropertyGroup>
    <TargetFramework>net472</TargetFramework>
-   <OutputType>library</OutputType>
+   <OutputType>Library</OutputType>
    <AssemblyName>Meadow.Foundation</AssemblyName>   
    <Company>Wilderness Labs, Inc</Company>
    <PackageProjectUrl>http://beta-developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>

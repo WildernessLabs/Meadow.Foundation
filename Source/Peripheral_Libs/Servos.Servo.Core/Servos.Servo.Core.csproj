@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Meadow.Sdk/1.1">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-    <OutputType>library</OutputType>
+    <OutputType>Library</OutputType>
     <AssemblyName>Servo</AssemblyName>
     <PackageVersion>0.7.0</PackageVersion>
   </PropertyGroup>

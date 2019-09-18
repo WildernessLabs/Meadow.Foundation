@@ -199,6 +199,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Radio.TEA5767", "Peri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatherWings.JoyWing", "Peripheral_Libs\FeatherWings.JoyWing\FeatherWings.JoyWing.csproj", "{2189BB6D-C20C-4965-8789-438241B369B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCD8854Display_Sample", "Samples\Displays\PCD8854Display_Sample\PCD8854Display_Sample.csproj", "{6032FDEF-69CA-4B4E-BC33-61950B0C0874}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -517,6 +519,10 @@ Global
 		{2189BB6D-C20C-4965-8789-438241B369B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2189BB6D-C20C-4965-8789-438241B369B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2189BB6D-C20C-4965-8789-438241B369B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6032FDEF-69CA-4B4E-BC33-61950B0C0874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6032FDEF-69CA-4B4E-BC33-61950B0C0874}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6032FDEF-69CA-4B4E-BC33-61950B0C0874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6032FDEF-69CA-4B4E-BC33-61950B0C0874}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -615,6 +621,7 @@ Global
 		{552B0A7B-2755-42A4-B876-BEBC6E47DE42} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
 		{059E5CF5-C88B-440E-94CC-404F1F94056F} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{2189BB6D-C20C-4965-8789-438241B369B9} = {1152A5B3-3B95-442E-8923-B729F64D7441}
+		{6032FDEF-69CA-4B4E-BC33-61950B0C0874} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
