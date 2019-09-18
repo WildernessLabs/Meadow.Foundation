@@ -1,5 +1,4 @@
-﻿using Meadow.Foundation.Communications;
-using Meadow.Foundation.Helpers;
+﻿using Meadow.Foundation.Helpers;
 using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
 using System;
@@ -1425,7 +1424,7 @@ namespace Meadow.Foundation.Sensors.Motion
 		/// <summary>
 		///     BNO055 object.
 		/// </summary>
-		private readonly ICommunicationBus _bno055 = null;
+		private readonly II2cPeripheral _bno055 = null;
 
         /// <summary>
         ///     Sensor readings from the last time the BNO055 was polled.
@@ -1806,19 +1805,15 @@ namespace Meadow.Foundation.Sensors.Motion
 		///     Create a new BNO055 object using the default parameters for the component.
 		/// </summary>
 		/// <param name="address">Address of the BNO055 (default = 0x28).</param>
-		/// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>
-		public BNO055(byte address = 0x28, ushort speed = 400)
+		/// <param name="i2cBus">I2C bus (default = 400 KHz).</param>
+		public BNO055(II2cBus i2cBus, byte address = 0x28)
 		{
             if ((address != 0x28) && (address != 0x29))
             {
                 throw new ArgumentOutOfRangeException("address", "Address should be 0x28 or 0x29.");
             }
-		    if (speed > 400)
-		    {
-		        throw new ArgumentOutOfRangeException("speed", "Maximum speed is 400kHz.");
-		    }
 
-            _bno055 = new I2cBus(address, speed);
+            _bno055 = new I2cPeripheral(i2cBus, address);
 
             if (_bno055.ReadRegister(Registers.ChipID) != 0xa0)
             {
