@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware;
-using Meadow.Hardware.Communications;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Temperature;
 
+
+/*
 namespace Meadow.Foundation.Sensors.Temperature
 {
+    //requires OneWireBus class - we need a OneWire implimentation
+
     public class DS18B20 : ITemperatureSensor
     {
         #region Enums
@@ -319,7 +322,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="deviceID">Address of the DS18B20 device.</param>
         /// <param name="updateInterval">Update period in milliseconds.  Note that this most be greater than the conversion period for the sensor.</param>
         /// <param name="temperatureChangeNotificationThreshold">Threshold for temperature changes that will generate an interrupt.</param>
-        public DS18B20(IDigitalPin oneWirePin, UInt64 deviceID = 0, ushort updateInterval = MinimumPollingPeriod, 
+        public DS18B20(IPin oneWirePin, UInt64 deviceID = 0, ushort updateInterval = MinimumPollingPeriod, 
             float temperatureChangeNotificationThreshold = 0.001F)
         {
             if (oneWirePin == null)
@@ -542,4 +545,4 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         #endregion Methods
     }
-}
+} */
