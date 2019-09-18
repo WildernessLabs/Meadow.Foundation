@@ -10,12 +10,12 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         ///     Analog port connected to the sensor.
         /// </summary>
-        private readonly AnalogInputPort _sensor;
+        private readonly IAnalogInputPort _sensor;
 
         /// <summary>
         ///     Analog port connected to the reference voltage.
         /// </summary>
-        private readonly AnalogInputPort _referenceVoltagePort;
+        private readonly IAnalogInputPort _referenceVoltagePort;
 
         /// <summary>
         ///     Reference voltage.
@@ -25,9 +25,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         ///     Voltage being output by the sensor.
         /// </summary>
-        public async Task<double> GetVoltage()
+        public double GetVoltage()
         {
-            return await _referenceVoltagePort.Read() * 3.3;
+            return _referenceVoltagePort.Read() * 3.3;
         }
 
         #endregion Member variables / fields
@@ -46,9 +46,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         /// <param name="pin">AnalogChannel connected to the sensor.</param>
         /// <param name="referenceVoltage">Reference voltage.</param>
-        public ALSPT19315C(IAnalogPin pin, double referenceVoltage)
+        public ALSPT19315C(IIODevice device, IPin pin, double referenceVoltage)
         {
-            _sensor = new AnalogInputPort(pin);
+            _sensor = device.CreateAnalogInputPort(pin);
             _referenceVoltagePort = null;
             _referenceVoltage = referenceVoltage;
         }
@@ -58,10 +58,10 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         /// <param name="pin">Analog channel connected to the sensor.</param>
         /// <param name="referenceVoltagePin">Analog channel connected to the reference voltage souce.</param>
-        public ALSPT19315C(IAnalogPin pin, IAnalogPin referenceVoltagePin)
+        public ALSPT19315C(IIODevice device, IPin pin, IPin referenceVoltagePin)
         {
-            _sensor = new AnalogInputPort(pin);
-            _referenceVoltagePort = new AnalogInputPort(referenceVoltagePin);
+            _sensor = device.CreateAnalogInputPort(pin);
+            _referenceVoltagePort = device.CreateAnalogInputPort(referenceVoltagePin);
         }
 
         #endregion Constructors
