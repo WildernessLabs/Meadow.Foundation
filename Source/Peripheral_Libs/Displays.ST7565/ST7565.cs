@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -74,10 +75,10 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     SPI object
         /// </summary>
-        protected ISpiBus spi;
+        protected ISpiPeripheral spiPerihperal;
 
-        protected DigitalOutputPort dataCommandPort;
-        protected DigitalOutputPort resetPort;
+        protected IDigitalOutputPort dataCommandPort;
+        protected IDigitalOutputPort resetPort;
         protected const bool Data = true;
         protected const bool Command = false;
 
@@ -144,26 +145,15 @@ namespace Meadow.Foundation.Displays
         ///     property to true.
         /// </remarks>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        /// <param name="speedKHz">Speed of the SPI bus.</param>
         /// <param name="displayType">Type of ST7565 display (default = 128x64 pixel display).</param>
-        public ST7565(IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            SPI.SPI_module spiModule = SPI.SPI_module.SPI1,
-            uint speedKHz = 9500, uint width = 128, uint height = 64)
+        public ST7565(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+            uint width = 128, uint height = 64)
         {
-            dataCommandPort = new OutputPort(dcPin, false);
-            resetPort = new OutputPort(resetPin, false);
+            dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
+            resetPort = device.CreateDigitalOutputPort(resetPin, false);
+            var chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
 
-            var spiConfig = new SPI.Configuration(
-                SPI_mod: spiModule,
-                ChipSelect_Port: chipSelectPin,
-                ChipSelect_ActiveState: false,
-                ChipSelect_SetupTime: 0,
-                ChipSelect_HoldTime: 0,
-                Clock_IdleState: false,
-                Clock_Edge: true,
-                Clock_RateKHz: speedKHz);
-
-            spi = new SPI(spiConfig);
+            spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
 
             _width = width;
             _height = height;
@@ -178,15 +168,13 @@ namespace Meadow.Foundation.Displays
 
         private void InitST7565()
         {
-
-
             _buffer = new byte[_width * _height / 8];
 
             IgnoreOutOfBoundsPixels = false;
 
-            resetPort.Write(false);
+            resetPort.State = false;
             Thread.Sleep(50);
-            resetPort.Write(true);
+            resetPort.State = true;
 
             SendCommand(DisplayCommand.LcdVoltageBias7);
             SendCommand(DisplayCommand.AdcSelectNormal);
@@ -227,8 +215,8 @@ namespace Meadow.Foundation.Displays
         /// <param name="command">Command byte to send to the display.</param>
         private void SendCommand(byte command)
         {
-            dataCommandPort.Write(Command);
-            spi.Write(new byte[] { command });
+            dataCommandPort.State = Command;
+            spiPerihperal.WriteBytes(new byte[] { command });
         }
 
         /// <summary>
@@ -241,8 +229,8 @@ namespace Meadow.Foundation.Displays
             data[0] = 0x00;
             Array.Copy(commands, 0, data, 1, commands.Length);
 
-            dataCommandPort.Write(Command);
-            spi.Write(commands);
+            dataCommandPort.State = Command;
+            spiPerihperal.WriteBytes(commands);
         }
 
         protected const int StartColumnOffset = 0; // 1;
@@ -262,9 +250,9 @@ namespace Meadow.Foundation.Displays
                 SendCommand((int)(DisplayCommand.ColumnAddressHigh) | 0);
                 SendCommand(DisplayCommand.EnterReadModifyWriteMode);
 
-                dataCommandPort.Write(Data);
+                dataCommandPort.State = Data;
                 Array.Copy(_buffer, (int)(Width * page), pageBuffer, 0, pageSize);
-                spi.Write(pageBuffer);
+                spiPerihperal.WriteBytes(pageBuffer);
             }
         }
 
