@@ -1,6 +1,5 @@
 ﻿using System;
 using Meadow.Hardware;
-using Meadow.Hardware.Communications;
 using Meadow.Utilities;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -40,7 +39,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         ///     SPI interface used to communicate with the shift registers.
         /// </summary>
-        private readonly ICommunicationBus _spi;
+        private readonly ISpiPeripheral _spi;
 
         #endregion Member variables / fields
 
@@ -60,15 +59,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
         ///     Constructor a ShiftRegister74595 object.
         /// </summary>
         /// <param name="pins">Number of pins in the shift register (should be a multiple of 8 pins).</param>
-        /// <param name="config">SPI Configuration object.</param>
-        public x74595(int pins, Spi.Configuration config)
+        /// <param name="spiBus">SpiBus object</param>
+        public x74595(ISpiBus spiBus, int pins)
         {
             if ((pins > 0) && ((pins % 8) == 0))
             {
                 _pins = new bool[pins];
                 _numberOfChips = pins / 8;
                 Clear();
-                _spi = new SPIBus(config);
+
+                _spi = new SpiPeripheral(spiBus, null);
             }
             else
             {
