@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Hardware.Communications;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Temperature;
@@ -197,7 +197,7 @@ namespace Meadow.Foundation.Sensors.Barometric
         /// <summary>
         ///     Object used to communicate with the sensor.
         /// </summary>
-        private readonly ICommunicationBus _mpl3115a2;
+        private readonly II2cPeripheral _mpl3115a2;
 
         /// <summary>
         ///     Update interval in milliseconds
@@ -403,17 +403,13 @@ namespace Meadow.Foundation.Sensors.Barometric
         ///     Create a new MPL3115A2 object with the default address and speed settings.
         /// </summary>
         /// <param name="address">Address of the sensor (default = 0x60).</param>
-        /// <param name="speed">Bus speed to use when communicating with the sensor (Maximum is 400 kHz).</param>
+        /// <param name="i2cBus">I2cBus (Maximum is 400 kHz).</param>
         /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
         /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
         /// <param name="pressureChangedNotificationThreshold">Changes in pressure greater than this value will trigger an event when updatePeriod > 0.</param>
-        public MPL3115A2(byte address = 0x60, ushort speed = 400, ushort updateInterval = MinimumPollingPeriod,
+        public MPL3115A2(II2cBus i2cBus, byte address = 0x60, ushort updateInterval = MinimumPollingPeriod,
             float temperatureChangeNotificationThreshold = 0.001F, float pressureChangedNotificationThreshold = 10.0F)
         {
-            if ((speed < 10) || (speed > 1000))
-            {
-                throw new ArgumentOutOfRangeException(nameof(speed), "Speed should be 10 KHz to 3,400 KHz.");
-            }
             if (temperatureChangeNotificationThreshold < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(temperatureChangeNotificationThreshold), "Temperature threshold should be >= 0");
@@ -431,7 +427,7 @@ namespace Meadow.Foundation.Sensors.Barometric
             PressureChangeNotificationThreshold = pressureChangedNotificationThreshold;
             _updateInterval = updateInterval;
 
-            var device = new I2cBus(address, speed);
+            var device = new I2cPeripheral(i2cBus, address);
             _mpl3115a2 = device;
             if (_mpl3115a2.ReadRegister(Registers.WhoAmI) != 0xc4)
             {
