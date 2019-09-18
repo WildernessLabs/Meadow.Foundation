@@ -1,8 +1,5 @@
-﻿using Meadow.Foundation.Communications;
-using Meadow.Hardware;
-using Meadow.Hardware.Communications;
+﻿using Meadow.Hardware;
 using System;
-using static Meadow.Hardware.DigitalPortBase;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -67,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     MAG3110 object.
         /// </summary>
-        private readonly I2cBus _mag3110;
+        private readonly II2cPeripheral _mag3110;
 
         /// <summary>
         ///     Interrupt port used to detect then end of a conversion.
@@ -194,18 +191,18 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin">Interrupt pin used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
         /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>        
-        public MAG3110(IIODevice device, IPin interruptPin = null, byte address = 0x0e, ushort speed = 400) :
-            this (device.CreateDigitalInputPort(interruptPin, true, false, ResistorMode.Disabled), address, speed) { }
+        public MAG3110(IIODevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = 0x0e, ushort speed = 400) :
+            this (i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address) { }
 
         /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component.
         /// </summary>
         /// <param name="interruptPort">Interrupt port used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
-        /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>        
-        public MAG3110(IDigitalInputPort interruptPort = null, byte address = 0x0e, ushort speed = 400)
+        /// <param name="i2cBus">I2C bus object - default = 400 KHz).</param>        
+        public MAG3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = 0x0e)
         {
-            _mag3110 = new I2cBus(address, speed);
+            _mag3110 = new I2cPeripheral(i2cBus, address);
 
             var deviceID = _mag3110.ReadRegister((byte) Registers.WhoAmI);
             if (deviceID != 0xc4)
@@ -257,7 +254,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Interrupt from the MAG3110 conversion complete interrupt.
         /// </summary>
-        private void DigitalInputPortChanged(object sender, PortEventArgs e)
+        private void DigitalInputPortChanged(object sender, DigitalInputPortEventArgs e)
         {
             if (OnReadingComplete != null)
             {
