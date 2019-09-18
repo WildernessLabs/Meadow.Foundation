@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         ///     TMP102 sensor.
         /// </summary>
-        private readonly I2cBus _tmp102;
+        private readonly II2cPeripheral _tmp102;
 
         /// <summary>
         ///     Update interval in milliseconds
@@ -137,14 +137,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>
-        /// <param name="speed">Speed of the communication with the sensor.</param>
-        public TMP102(byte address = 0x48, ushort speed = 100, ushort updateInterval = MinimumPollingPeriod,
+        public TMP102(IIODevice device, II2cBus i2cBus, byte address = 0x48, ushort updateInterval = MinimumPollingPeriod,
             float temperatureChangeNotificationThreshold = 0.001F)
         {
-            if ((speed < 10) || (speed > 1000))
-            {
-                throw new ArgumentOutOfRangeException(nameof(speed), "Speed should be 10 KHz to 3,400 KHz.");
-            }
+            _tmp102 = new I2cPeripheral(i2cBus, address);
+
             if (temperatureChangeNotificationThreshold < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(temperatureChangeNotificationThreshold), "Temperature threshold should be >= 0");
@@ -157,7 +154,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
             _updateInterval = updateInterval;
 
-            _tmp102 = new I2cBus(address, speed);
             var configuration = _tmp102.ReadRegisters(0x01, 2);
             _sensorResolution = (configuration[1] & 0x10) > 0 ?
                                  Resolution.Resolution13Bits : Resolution.Resolution12Bits;
