@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-using Meadow.Hardware.Communications;
+using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.EEPROM
 {
@@ -14,7 +14,7 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// <summary>
         ///     Communication bus used to communicate with the EEPEOM.
         /// </summary>
-        private readonly ICommunicationBus _eeprom;
+        private readonly II2cPeripheral _eeprom;
 
         /// <summary>
         ///     Number of bytes in a page.
@@ -41,12 +41,11 @@ namespace Meadow.Foundation.ICs.EEPROM
         ///     Create a new AT24Cxx object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the MAG3110 (default = 0x50).</param>
-        /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>
         /// <param name="pageSize">Number of bytes in a page (default = 32 - AT24C32).</param>
         /// <param name="memorySize">Total number of bytes in the EEPROM (default = 8192 - AT24C32).</param>
-        public AT24Cxx(byte address = 0x50, ushort speed = 10, ushort pageSize = 32, ushort memorySize = 8192)
+        public AT24Cxx(II2cBus i2cBus, byte address = 0x50, ushort pageSize = 32, ushort memorySize = 8192)
         {
-            var device = new I2cBus(address, speed);
+            var device = new I2cPeripheral(i2cBus, address);
             _eeprom = device;
             _pageSize = pageSize;
             _memorySize = memorySize;
