@@ -1,0 +1,25 @@
+# Meadow.Foundation pipeline
+# Reference: https://aka.ms/yaml
+
+trigger:
+- master
+
+pool: "Default"
+
+steps:
+- task: ShellScript@2
+  inputs:
+    scriptPath: build.sh
+- task: CopyFiles@2
+  inputs:
+    contents: |
+     source/Meadow.Foundation/bin/Debug/Meadow.Foundation.dll
+     source/Meadow.Foundation/bin/Debug/Meadow.Foundation.pdb
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: Meadow.Foundation
+- task: ShellScript@2
+  inputs:
+    scriptPath: bump-submodule.sh 
