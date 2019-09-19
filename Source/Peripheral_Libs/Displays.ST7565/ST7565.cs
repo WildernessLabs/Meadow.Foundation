@@ -265,7 +265,9 @@ namespace Meadow.Foundation.Displays
             Array.Clear(_buffer, 0, _buffer.Length);
 
             if (updateDisplay)
+            {
                 Show();
+            }
         }
 
         public override void DrawPixel(int x, int y, Color color)

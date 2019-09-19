@@ -201,6 +201,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatherWings.JoyWing", "Per
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCD8854Display_Sample", "Samples\Displays\PCD8854Display_Sample\PCD8854Display_Sample.csproj", "{6032FDEF-69CA-4B4E-BC33-61950B0C0874}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ST7565Display_Sample", "Samples\Displays\ST7565Display_Sample\ST7565Display_Sample.csproj", "{3F8B1E35-E185-48A8-B9AE-E59C62E3DD28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -523,6 +525,10 @@ Global
 		{6032FDEF-69CA-4B4E-BC33-61950B0C0874}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6032FDEF-69CA-4B4E-BC33-61950B0C0874}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6032FDEF-69CA-4B4E-BC33-61950B0C0874}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F8B1E35-E185-48A8-B9AE-E59C62E3DD28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F8B1E35-E185-48A8-B9AE-E59C62E3DD28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F8B1E35-E185-48A8-B9AE-E59C62E3DD28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F8B1E35-E185-48A8-B9AE-E59C62E3DD28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -622,6 +628,7 @@ Global
 		{059E5CF5-C88B-440E-94CC-404F1F94056F} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{2189BB6D-C20C-4965-8789-438241B369B9} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{6032FDEF-69CA-4B4E-BC33-61950B0C0874} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
+		{3F8B1E35-E185-48A8-B9AE-E59C62E3DD28} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
