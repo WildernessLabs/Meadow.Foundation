@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Externals", "Externals", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataLoggers", "DataLoggers", "{8D36DAE2-0D21-44C8-A7EF-D74F17CE5915}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{B13C7BDD-77F5-45F8-BDB9-6CD368C67410}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Peripherals_Lib", "Peripherals_Lib", "{1152A5B3-3B95-442E-8923-B729F64D7441}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLoggers", "Peripheral_Libs\DataLoggers\DataLoggers.csproj", "{FD5F9B6E-4A6D-4C3D-8656-1E5D28FFD4FE}"
@@ -207,10 +205,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B13C7BDD-77F5-45F8-BDB9-6CD368C67410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B13C7BDD-77F5-45F8-BDB9-6CD368C67410}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B13C7BDD-77F5-45F8-BDB9-6CD368C67410}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B13C7BDD-77F5-45F8-BDB9-6CD368C67410}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FD5F9B6E-4A6D-4C3D-8656-1E5D28FFD4FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FD5F9B6E-4A6D-4C3D-8656-1E5D28FFD4FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD5F9B6E-4A6D-4C3D-8656-1E5D28FFD4FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -528,7 +522,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B13C7BDD-77F5-45F8-BDB9-6CD368C67410} = {514C0FAE-20CF-4909-9CF3-DF6B176BBF91}
 		{FD5F9B6E-4A6D-4C3D-8656-1E5D28FFD4FE} = {8D36DAE2-0D21-44C8-A7EF-D74F17CE5915}
 		{D31DA391-FDCF-4574-A368-CFA17C53C6E6} = {8D36DAE2-0D21-44C8-A7EF-D74F17CE5915}
 		{3E40314D-537E-4F25-8D95-3271913E44FC} = {8D36DAE2-0D21-44C8-A7EF-D74F17CE5915}
