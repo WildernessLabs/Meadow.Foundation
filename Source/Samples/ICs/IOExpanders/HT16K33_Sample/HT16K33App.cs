@@ -13,12 +13,16 @@ namespace BasicHT16K33_Sample
 
         public HT16K33App()
         {
+            Console.WriteLine("Create I2C bus");
             var i2cBus = Device.CreateI2cBus();
 
+            Console.WriteLine("Create HT16K33");
             ht16k33 = new HT16K33(i2cBus);
 
             int index = 0;
             bool on = true;
+
+            Console.WriteLine("Cycle HT16K33 outputs");
 
             // write your code here
             while (true)
