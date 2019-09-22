@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="WildernessLabs.Meadow.Assemblies" Version="0.1.1" />
-    <PackageReference Include="Meadow.Foundation" Version="0.8.0" />
+    <PackageReference Include="Meadow.Foundation" Version="0.8.1" />
     <PackageReference Include="Meadow" Version="0.6.245" />
   </ItemGroup>
   <ItemGroup>

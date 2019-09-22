@@ -17,7 +17,7 @@
     <Description>Driver for SSD1306 OLED display</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.8.0" />
+    <PackageReference Include="Meadow.Foundation" Version="0.8.1" />
     <PackageReference Include="Meadow" Version="0.7.0" />
   </ItemGroup>
 </Project>
