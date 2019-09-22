@@ -5,14 +5,8 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow" Version="0.7.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.LCD.CharacterDisplay" Version="0.6.1" />
     <PackageReference Include="WildernessLabs.Meadow.Assemblies" Version="0.1.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Meadow.Foundation\Meadow.Foundation.csproj" />
-    <ProjectReference Include="..\..\..\Peripheral_Libs\Displays.LCD.CharacterDisplay\Displays.LCD.CharacterDisplay.csproj" />
+    <PackageReference Include="Meadow" Version="0.7.0" />
   </ItemGroup>
 </Project>
