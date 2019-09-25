@@ -3,7 +3,7 @@ using Meadow.Peripherals.Sensors.Distance;
 using System;
 using System.Threading;
 
-namespace Sensors.Distance.SFSR02
+namespace Meadow.Foundation.Sensors.Distance
 {
     public class SFSR02 : IRangeFinder
     {
