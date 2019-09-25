@@ -89,7 +89,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Moisture.Capacitive
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generators", "Generators", "{BF064D45-0517-4B95-B486-E8BC09D4214C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftPwmPort_Sample", "Samples\Generators\SoftPwmPort_Sample\SoftPwmPort_Sample.csproj", "{24DFC23B-18E5-475E-B59D-8A588F5D3176}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoftPwmPort_Sample", "Samples\Generators\SoftPwmPort_Sample\SoftPwmPort_Sample.csproj", "{24DFC23B-18E5-475E-B59D-8A588F5D3176}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Leds", "Leds", "{CDF161D5-383A-4BEA-86F4-E9C17851509A}"
 EndProject
@@ -123,29 +123,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpstSwitch_Sample", "Sample
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rotary", "Rotary", "{11C859DF-C99C-42E2-A838-A5FBDB8C5D7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RotaryEncoder_Sample", "Samples\Sensors\Rotary\RotaryEncoder_Sample\RotaryEncoder_Sample.csproj", "{8AE62CB8-0B71-4D0C-BFEA-532DA1017194}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RotaryEncoder_Sample", "Samples\Sensors\Rotary\RotaryEncoder_Sample\RotaryEncoder_Sample.csproj", "{8AE62CB8-0B71-4D0C-BFEA-532DA1017194}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RotaryEncoderWithButton_Sample", "Samples\Sensors\Rotary\RotaryEncoderWithButton_Sample\RotaryEncoderWithButton_Sample.csproj", "{4113EF3B-2A5C-4519-A1CA-CFC1D787965C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RotaryEncoderWithButton_Sample", "Samples\Sensors\Rotary\RotaryEncoderWithButton_Sample\RotaryEncoderWithButton_Sample.csproj", "{4113EF3B-2A5C-4519-A1CA-CFC1D787965C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Distance", "Distance", "{CFF2587F-743A-4485-8F6B-16B15197AA12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCSR04_Sample", "Samples\Sensors\Distance\HCSR04_Sample\HCSR04_Sample.csproj", "{58784132-46A4-49F7-B204-F7D1F5DE8AEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSR04_Sample", "Samples\Sensors\Distance\HCSR04_Sample\HCSR04_Sample.csproj", "{58784132-46A4-49F7-B204-F7D1F5DE8AEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HYSRF05_Sample", "Samples\Sensors\Distance\HYSRF05_Sample\HYSRF05_Sample.csproj", "{28EAA909-FC6D-4D9C-9D91-65764B91AC7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HYSRF05_Sample", "Samples\Sensors\Distance\HYSRF05_Sample\HYSRF05_Sample.csproj", "{28EAA909-FC6D-4D9C-9D91-65764B91AC7A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Motion", "Motion", "{9DFB9160-F13C-429D-99C1-D9F9C189C3FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallaxPir_Sample", "Samples\Sensors\Motion\ParallaxPir_Sample\ParallaxPir_Sample.csproj", "{326A8A26-78A6-4674-942C-CBFF4BFC2FFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParallaxPir_Sample", "Samples\Sensors\Motion\ParallaxPir_Sample\ParallaxPir_Sample.csproj", "{326A8A26-78A6-4674-942C-CBFF4BFC2FFC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Moisture", "Moisture", "{D57711EC-8930-4271-A4D9-DB83A26C97EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capacitive_Sample", "Samples\Sensors\Moisture\Capacitive_Sample\Capacitive_Sample.csproj", "{0CF8558C-A78C-4EFD-B83E-D1B7DBC25E46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capacitive_Sample", "Samples\Sensors\Moisture\Capacitive_Sample\Capacitive_Sample.csproj", "{0CF8558C-A78C-4EFD-B83E-D1B7DBC25E46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FC28_Sample", "Samples\Sensors\Moisture\FC28_Sample\FC28_Sample.csproj", "{6C3C23D2-7B02-40F8-B001-CD675421055D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FC28_Sample", "Samples\Sensors\Moisture\FC28_Sample\FC28_Sample.csproj", "{6C3C23D2-7B02-40F8-B001-CD675421055D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays", "Displays", "{C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenSegment_Sample", "Samples\Displays\SevenSegment_Sample\SevenSegment_Sample.csproj", "{EF16D771-77F1-4BD0-BE2E-160A473B2AD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SevenSegment_Sample", "Samples\Displays\SevenSegment_Sample\SevenSegment_Sample.csproj", "{EF16D771-77F1-4BD0-BE2E-160A473B2AD2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.LCD.CharacterDisplay", "Peripheral_Libs\Displays.LCD.CharacterDisplay\Displays.LCD.CharacterDisplay.csproj", "{A62994BB-886D-4C3F-A8E8-6F39AF96F648}"
 EndProject
@@ -155,7 +155,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RgbLed_Sample", "Samples\Le
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings", "FeatherWings", "{7EE5AF29-A4BD-472F-B4F0-8EAB994B61B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoyWing_Sample", "Samples\FeatherWings\JoyWing_Sample\JoyWing_Sample.csproj", "{A4AAF044-54E8-4034-B2F8-4D677251706D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoyWing_Sample", "Samples\FeatherWings\JoyWing_Sample\JoyWing_Sample.csproj", "{A4AAF044-54E8-4034-B2F8-4D677251706D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.SFSR02", "Peripheral_Libs\Sensors.Distance.SFSR02\Sensors.Distance.SFSR02.csproj", "{18634CF8-9D46-47D6-AF75-99C260F41036}"
 EndProject
@@ -171,17 +171,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSD1306Display_Sample", "Sa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.GY521", "Peripheral_Libs\Sensors.Motion.GY521\Sensors.Motion.GY521.csproj", "{68F64D84-97F6-44B2-9469-CDAEC8B3A826}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GY521_Sample", "Samples\Sensors\Motion\GY521_Sample\GY521_Sample.csproj", "{BD0D67D9-5A8B-4169-8928-6A7F60FE5502}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GY521_Sample", "Samples\Sensors\Motion\GY521_Sample\GY521_Sample.csproj", "{BD0D67D9-5A8B-4169-8928-6A7F60FE5502}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.DS1307", "Peripheral_Libs\RTCs.DS1307\RTCs.DS1307.csproj", "{91A8055F-7EE5-4DBD-A9E5-8FF7B72DA9BA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RTCs", "RTCs", "{3451B08F-CBCA-4AD2-8865-3EBEC4AABD1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DS1307_Sample", "Samples\RTCs\DS1307_Sample\DS1307_Sample.csproj", "{4159CCC6-8EA0-43B1-87B7-1760BD710B50}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Moisture", "Moisture", "{8C9FD54B-8EDC-4AA1-BD94-BFED83BA289F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capacitive_Sample", "Samples\Moisture\Capacitive_Sample\Capacitive_Sample.csproj", "{5F427C43-0ACD-477A-9E31-ADE83456B7AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DS1307_Sample", "Samples\RTCs\DS1307_Sample\DS1307_Sample.csproj", "{4159CCC6-8EA0-43B1-87B7-1760BD710B50}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.ST7565", "Peripheral_Libs\Displays.ST7565\Displays.ST7565.csproj", "{A4A653DD-A6C1-41B0-B1C3-17FF97CE8CC4}"
 EndProject
@@ -499,10 +495,6 @@ Global
 		{4159CCC6-8EA0-43B1-87B7-1760BD710B50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4159CCC6-8EA0-43B1-87B7-1760BD710B50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4159CCC6-8EA0-43B1-87B7-1760BD710B50}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F427C43-0ACD-477A-9E31-ADE83456B7AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F427C43-0ACD-477A-9E31-ADE83456B7AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F427C43-0ACD-477A-9E31-ADE83456B7AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F427C43-0ACD-477A-9E31-ADE83456B7AF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A4A653DD-A6C1-41B0-B1C3-17FF97CE8CC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A4A653DD-A6C1-41B0-B1C3-17FF97CE8CC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4A653DD-A6C1-41B0-B1C3-17FF97CE8CC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -633,8 +625,6 @@ Global
 		{91A8055F-7EE5-4DBD-A9E5-8FF7B72DA9BA} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{3451B08F-CBCA-4AD2-8865-3EBEC4AABD1B} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
 		{4159CCC6-8EA0-43B1-87B7-1760BD710B50} = {3451B08F-CBCA-4AD2-8865-3EBEC4AABD1B}
-		{8C9FD54B-8EDC-4AA1-BD94-BFED83BA289F} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
-		{5F427C43-0ACD-477A-9E31-ADE83456B7AF} = {8C9FD54B-8EDC-4AA1-BD94-BFED83BA289F}
 		{A4A653DD-A6C1-41B0-B1C3-17FF97CE8CC4} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{7109E486-B75F-414A-8673-D49AC6C2A1D8} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
 		{552B0A7B-2755-42A4-B876-BEBC6E47DE42} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
