@@ -1,16 +1,14 @@
-<Project Sdk="Meadow.Sdk/1.1">
+﻿<Project Sdk="Meadow.Sdk/1.1">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.7.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.SSD1306" Version="0.9.1" />
     <PackageReference Include="WildernessLabs.Meadow.Assemblies" Version="0.1.1" />
-    <PackageReference Include="Meadow" Version="0.6.245" />
-    <PackageReference Include="Meadow.Foundation" Version="0.7.227" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Peripheral_Libs\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
-    <ProjectReference Include="..\..\..\Peripheral_Libs\Displays.SSD1306\Displays.SSD1306.csproj" />
+    <PackageReference Include="Meadow" Version="0.7.0" />
+    <PackageReference Include="Meadow.Foundation" Version="0.8.1" />
   </ItemGroup>
 </Project>

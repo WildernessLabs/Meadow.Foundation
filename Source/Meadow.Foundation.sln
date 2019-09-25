@@ -5,89 +5,87 @@ VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{ABFEB925-65AF-4C8C-B4C8-83F962AF6347}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Externals", "Externals", "{514C0FAE-20CF-4909-9CF3-DF6B176BBF91}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Peripherals_Lib", "Peripherals_Lib", "{1152A5B3-3B95-442E-8923-B729F64D7441}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLoggers", "Peripheral_Libs\DataLoggers\DataLoggers.csproj", "{FD5F9B6E-4A6D-4C3D-8656-1E5D28FFD4FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLoggers", "Peripheral_Libs\DataLoggers\DataLoggers.csproj", "{FD5F9B6E-4A6D-4C3D-8656-1E5D28FFD4FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLoggers.AdafruitIO", "Peripheral_Libs\DataLoggers.AdafruitIO\DataLoggers.AdafruitIO.csproj", "{D31DA391-FDCF-4574-A368-CFA17C53C6E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLoggers.AdafruitIO", "Peripheral_Libs\DataLoggers.AdafruitIO\DataLoggers.AdafruitIO.csproj", "{D31DA391-FDCF-4574-A368-CFA17C53C6E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLoggers.ThingSpeak", "Peripheral_Libs\DataLoggers.ThingSpeak\DataLoggers.ThingSpeak.csproj", "{3E40314D-537E-4F25-8D95-3271913E44FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLoggers.ThingSpeak", "Peripheral_Libs\DataLoggers.ThingSpeak\DataLoggers.ThingSpeak.csproj", "{3E40314D-537E-4F25-8D95-3271913E44FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.GraphicsLibrary", "Peripheral_Libs\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj", "{39B47FEE-9327-4F48-8758-23C85E437ED3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.GraphicsLibrary", "Peripheral_Libs\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj", "{39B47FEE-9327-4F48-8758-23C85E437ED3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.LED.SevenSegment", "Peripheral_Libs\Displays.LED.SevenSegment\Displays.LED.SevenSegment.csproj", "{C22B17EC-3693-443C-B734-9E1B0C2AC05D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.LED.SevenSegment", "Peripheral_Libs\Displays.LED.SevenSegment\Displays.LED.SevenSegment.csproj", "{C22B17EC-3693-443C-B734-9E1B0C2AC05D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.PCD8544", "Peripheral_Libs\Displays.PCD8544\Displays.PCD8544.csproj", "{E524C6A9-0670-4F67-8797-50AAF4436EFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.PCD8544", "Peripheral_Libs\Displays.PCD8544\Displays.PCD8544.csproj", "{E524C6A9-0670-4F67-8797-50AAF4436EFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.SerialLCD", "Peripheral_Libs\Displays.SerialLCD\Displays.SerialLCD.csproj", "{5CCBF84E-3821-445E-AE1E-27197FE58E64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.SerialLCD", "Peripheral_Libs\Displays.SerialLCD\Displays.SerialLCD.csproj", "{5CCBF84E-3821-445E-AE1E-27197FE58E64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.SSD1306", "Peripheral_Libs\Displays.SSD1306\Displays.SSD1306.csproj", "{1FC69529-25BE-4312-AE78-AE8DF59DD4E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.SSD1306", "Peripheral_Libs\Displays.SSD1306\Displays.SSD1306.csproj", "{1FC69529-25BE-4312-AE78-AE8DF59DD4E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TextDisplayMenu", "Peripheral_Libs\Displays.TextDisplayMenu\Displays.TextDisplayMenu.csproj", "{9B0AD17C-65BA-4B71-AA5F-8FF60E9A7086}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TextDisplayMenu", "Peripheral_Libs\Displays.TextDisplayMenu\Displays.TextDisplayMenu.csproj", "{9B0AD17C-65BA-4B71-AA5F-8FF60E9A7086}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TFTSPI", "Peripheral_Libs\Displays.TFTSPI\Displays.TFTSPI.csproj", "{A25A42EC-8886-4119-AE41-B596C5434F94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TFTSPI", "Peripheral_Libs\Displays.TFTSPI\Displays.TFTSPI.csproj", "{A25A42EC-8886-4119-AE41-B596C5434F94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.WaveShareEPaper", "Peripheral_Libs\Displays.WaveShare_ePaper\Displays.WaveShareEPaper.csproj", "{1D6BBEB4-D98D-4EC0-A9B3-FE7272435DF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.WaveShareEPaper", "Peripheral_Libs\Displays.WaveShare_ePaper\Displays.WaveShareEPaper.csproj", "{1D6BBEB4-D98D-4EC0-A9B3-FE7272435DF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.EEPROM.AT24Cxx", "Peripheral_Libs\ICs.EEPROM.AT24Cxx\ICs.EEPROM.AT24Cxx.csproj", "{2A6223F6-19E9-4A40-9A9D-AD42B7CDFCDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.EEPROM.AT24Cxx", "Peripheral_Libs\ICs.EEPROM.AT24Cxx\ICs.EEPROM.AT24Cxx.csproj", "{2A6223F6-19E9-4A40-9A9D-AD42B7CDFCDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.MCP23008", "Peripheral_Libs\ICs.IOExpanders.MCP23008\ICs.IOExpanders.MCP23008.csproj", "{629CECBE-572A-4888-8457-16A133D60DEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.MCP23008", "Peripheral_Libs\ICs.IOExpanders.MCP23008\ICs.IOExpanders.MCP23008.csproj", "{629CECBE-572A-4888-8457-16A133D60DEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.x74595", "Peripheral_Libs\ICs.IOExpanders.x74595\ICs.IOExpanders.x74595.csproj", "{22375809-FF4F-4E4C-BD91-D06948722873}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.x74595", "Peripheral_Libs\ICs.IOExpanders.x74595\ICs.IOExpanders.x74595.csproj", "{22375809-FF4F-4E4C-BD91-D06948722873}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTCs.DS323x", "Peripheral_Libs\RTCs.DS323x\RTCs.DS323x.csproj", "{8A38534B-00F2-41A1-8226-9FCF7BE438C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.DS323x", "Peripheral_Libs\RTCs.DS323x\RTCs.DS323x.csproj", "{8A38534B-00F2-41A1-8226-9FCF7BE438C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.BME280", "Peripheral_Libs\Sensors.Atmospheric.BME280\Sensors.Atmospheric.BME280.csproj", "{BF5F85AA-512F-49F1-A208-06C653D13AFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.BME280", "Peripheral_Libs\Sensors.Atmospheric.BME280\Sensors.Atmospheric.BME280.csproj", "{BF5F85AA-512F-49F1-A208-06C653D13AFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.GroveTH02", "Peripheral_Libs\Sensors.Atmospheric.GroveTH02\Sensors.Atmospheric.GroveTH02.csproj", "{B363E9E0-A069-4D5E-B93E-604A48228054}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.GroveTH02", "Peripheral_Libs\Sensors.Atmospheric.GroveTH02\Sensors.Atmospheric.GroveTH02.csproj", "{B363E9E0-A069-4D5E-B93E-604A48228054}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.HIH6130", "Peripheral_Libs\Sensors.Atmospheric.HIH6130\Sensors.Atmospheric.HIH6130.csproj", "{F94687BD-150D-4409-9BDA-F145429DE99F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.HIH6130", "Peripheral_Libs\Sensors.Atmospheric.HIH6130\Sensors.Atmospheric.HIH6130.csproj", "{F94687BD-150D-4409-9BDA-F145429DE99F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.SHT31D", "Peripheral_Libs\Sensors.Atmospheric.SHT31D\Sensors.Atmospheric.SHT31D.csproj", "{BECE561F-4163-42F7-B714-F8DE4CD492BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.SHT31D", "Peripheral_Libs\Sensors.Atmospheric.SHT31D\Sensors.Atmospheric.SHT31D.csproj", "{BECE561F-4163-42F7-B714-F8DE4CD492BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.SI7021", "Peripheral_Libs\Sensors.Atmospheric.SI7021\Sensors.Atmospheric.SI7021.csproj", "{4AF71137-7F34-4A90-9E94-DE8471C01E94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.SI7021", "Peripheral_Libs\Sensors.Atmospheric.SI7021\Sensors.Atmospheric.SI7021.csproj", "{4AF71137-7F34-4A90-9E94-DE8471C01E94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Barometric.MPL115A2", "Peripheral_Libs\Sensors.Barometric.MPL115A2\Sensors.Barometric.MPL115A2.csproj", "{C9FA6589-B135-42B4-A72D-55FE1CDF8EFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Barometric.MPL115A2", "Peripheral_Libs\Sensors.Barometric.MPL115A2\Sensors.Barometric.MPL115A2.csproj", "{C9FA6589-B135-42B4-A72D-55FE1CDF8EFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Barometric.MPL3115A2", "Peripheral_Libs\Sensors.Barometric.MPL3115A2\Sensors.Barometric.MPL3115A2.csproj", "{CA685B83-4BA6-48CC-97F4-696F01E0A133}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Barometric.MPL3115A2", "Peripheral_Libs\Sensors.Barometric.MPL3115A2\Sensors.Barometric.MPL3115A2.csproj", "{CA685B83-4BA6-48CC-97F4-696F01E0A133}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.HCSR04", "Peripheral_Libs\Sensors.Distance.HCSR04\Sensors.Distance.HCSR04.csproj", "{C2AC322C-E778-4052-9D4D-22B148D4A8E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.HCSR04", "Peripheral_Libs\Sensors.Distance.HCSR04\Sensors.Distance.HCSR04.csproj", "{C2AC322C-E778-4052-9D4D-22B148D4A8E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.HYSRF05", "Peripheral_Libs\Sensors.Distance.HYSRF05\Sensors.Distance.HYSRF05.csproj", "{F2574AD2-84D2-4267-B38F-3A8A147B041B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.HYSRF05", "Peripheral_Libs\Sensors.Distance.HYSRF05\Sensors.Distance.HYSRF05.csproj", "{F2574AD2-84D2-4267-B38F-3A8A147B041B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.GPS.NMEA", "Peripheral_Libs\Sensors.GPS.NMEA\Sensors.GPS.NMEA.csproj", "{5C24EFE9-9AE1-4CA0-A244-0F0C7382B2EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.GPS.NMEA", "Peripheral_Libs\Sensors.GPS.NMEA\Sensors.GPS.NMEA.csproj", "{5C24EFE9-9AE1-4CA0-A244-0F0C7382B2EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.ALSPT19315C", "Peripheral_Libs\Sensors.Light.ALSPT19315C\Sensors.Light.ALSPT19315C.csproj", "{8D17BD69-0B8C-45EB-9DD4-15D6B2CBFC7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.ALSPT19315C", "Peripheral_Libs\Sensors.Light.ALSPT19315C\Sensors.Light.ALSPT19315C.csproj", "{8D17BD69-0B8C-45EB-9DD4-15D6B2CBFC7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.SI1145", "Peripheral_Libs\Sensors.Light.SI1145\Sensors.Light.SI1145.csproj", "{B2AF88EB-854F-4F16-B99F-7648736807BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.SI1145", "Peripheral_Libs\Sensors.Light.SI1145\Sensors.Light.SI1145.csproj", "{B2AF88EB-854F-4F16-B99F-7648736807BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.TSL2561", "Peripheral_Libs\Sensors.Light.TSL2561\Sensors.Light.TSL2561.csproj", "{41C2800D-E7D4-4DF7-AE70-5A43A435894E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.TSL2561", "Peripheral_Libs\Sensors.Light.TSL2561\Sensors.Light.TSL2561.csproj", "{41C2800D-E7D4-4DF7-AE70-5A43A435894E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ADXL335", "Peripheral_Libs\Sensors.Motion.ADXL335\Sensors.Motion.ADXL335.csproj", "{23E147A3-42E3-407C-8CB7-B8174428E698}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.ADXL335", "Peripheral_Libs\Sensors.Motion.ADXL335\Sensors.Motion.ADXL335.csproj", "{23E147A3-42E3-407C-8CB7-B8174428E698}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ADXL345", "Peripheral_Libs\Sensors.Motion.ADXL345\Sensors.Motion.ADXL345.csproj", "{94AF5AD3-DDA4-4F11-80A9-E7AF00C2F050}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.ADXL345", "Peripheral_Libs\Sensors.Motion.ADXL345\Sensors.Motion.ADXL345.csproj", "{94AF5AD3-DDA4-4F11-80A9-E7AF00C2F050}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ADXL362", "Peripheral_Libs\Sensors.Motion.ADXL362\Sensors.Motion.ADXL362.csproj", "{3F85B4BC-59D2-45ED-A68C-77C5620CA5B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.ADXL362", "Peripheral_Libs\Sensors.Motion.ADXL362\Sensors.Motion.ADXL362.csproj", "{3F85B4BC-59D2-45ED-A68C-77C5620CA5B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.BNO055", "Peripheral_Libs\Sensors.Motion.BNO055\Sensors.Motion.BNO055.csproj", "{43FBEC3D-2E84-4AB8-8D85-5C972B1F176C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.BNO055", "Peripheral_Libs\Sensors.Motion.BNO055\Sensors.Motion.BNO055.csproj", "{43FBEC3D-2E84-4AB8-8D85-5C972B1F176C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.MAG3110", "Peripheral_Libs\Sensors.Motion.MAG3110\Sensors.Motion.MAG3110.csproj", "{2859D907-F9C4-46E8-8CC3-DAA23FC3FA6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.MAG3110", "Peripheral_Libs\Sensors.Motion.MAG3110\Sensors.Motion.MAG3110.csproj", "{2859D907-F9C4-46E8-8CC3-DAA23FC3FA6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ParallaxPir", "Peripheral_Libs\Sensors.Motion.ParallaxPir\Sensors.Motion.ParallaxPir.csproj", "{87E309AA-058F-4596-9C28-746B25DAD39C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.ParallaxPir", "Peripheral_Libs\Sensors.Motion.ParallaxPir\Sensors.Motion.ParallaxPir.csproj", "{87E309AA-058F-4596-9C28-746B25DAD39C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Temperature.DS18B20", "Peripheral_Libs\Sensors.Temperature.DS18B20\Sensors.Temperature.DS18B20.csproj", "{EC3762B9-77D6-4248-8687-56D8665B0FC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.DS18B20", "Peripheral_Libs\Sensors.Temperature.DS18B20\Sensors.Temperature.DS18B20.csproj", "{EC3762B9-77D6-4248-8687-56D8665B0FC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Temperature.TMP102", "Peripheral_Libs\Sensors.Temperature.TMP102\Sensors.Temperature.TMP102.csproj", "{7336EFA0-2BAC-4C16-BF63-07E7B903A1B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.TMP102", "Peripheral_Libs\Sensors.Temperature.TMP102\Sensors.Temperature.TMP102.csproj", "{7336EFA0-2BAC-4C16-BF63-07E7B903A1B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servos.Servo.Core", "Peripheral_Libs\Servos.Servo.Core\Servos.Servo.Core.csproj", "{6EE731DA-3765-48D5-BA40-A4AD1F1F48F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servos.Servo.Core", "Peripheral_Libs\Servos.Servo.Core\Servos.Servo.Core.csproj", "{6EE731DA-3765-48D5-BA40-A4AD1F1F48F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation", "Meadow.Foundation\Meadow.Foundation.csproj", "{CEBD7F9A-4645-4A29-8A97-7889E241896F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Foundation", "Meadow.Foundation\Meadow.Foundation.csproj", "{CEBD7F9A-4645-4A29-8A97-7889E241896F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Moisture.FC28", "Peripheral_Libs\Sensors.Moisture.FC28\Sensors.Moisture.FC28.csproj", "{3830801F-EE66-4D8F-BDC3-52618CC03B27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Moisture.FC28", "Peripheral_Libs\Sensors.Moisture.FC28\Sensors.Moisture.FC28.csproj", "{3830801F-EE66-4D8F-BDC3-52618CC03B27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Moisture.Capacitive", "Peripheral_Libs\Sensors.Moisture.Capacitive\Sensors.Moisture.Capacitive.csproj", "{5C149065-6631-49E5-99BC-92992C7B755F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Moisture.Capacitive", "Peripheral_Libs\Sensors.Moisture.Capacitive\Sensors.Moisture.Capacitive.csproj", "{5C149065-6631-49E5-99BC-92992C7B755F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generators", "Generators", "{BF064D45-0517-4B95-B486-E8BC09D4214C}"
 EndProject
@@ -95,33 +93,33 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftPwmPort_Sample", "Sampl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Leds", "Leds", "{CDF161D5-383A-4BEA-86F4-E9C17851509A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PwmLed_Sample", "Samples\Leds\PwmLed_Sample\PwmLed_Sample.csproj", "{BE05FE1F-44DB-4588-B0FB-6D71E77FC86C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PwmLed_Sample", "Samples\Leds\PwmLed_Sample\PwmLed_Sample.csproj", "{BE05FE1F-44DB-4588-B0FB-6D71E77FC86C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors", "Sensors", "{42FB04DA-A0C1-42D2-BF34-64B58A012C05}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Buttons", "Buttons", "{C0DEAE79-922E-4B94-BE66-46281DA3FFBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PushButton_Sample", "Samples\Sensors\Buttons\PushButton_Sample\PushButton_Sample.csproj", "{72116D6B-753E-48A5-BDB6-6AEF9EE96AEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PushButton_Sample", "Samples\Sensors\Buttons\PushButton_Sample\PushButton_Sample.csproj", "{72116D6B-753E-48A5-BDB6-6AEF9EE96AEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Led_Sample", "Samples\Leds\Led_Sample\Led_Sample.csproj", "{4E29C665-287F-4504-9F30-05B9369CE37C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Led_Sample", "Samples\Leds\Led_Sample\Led_Sample.csproj", "{4E29C665-287F-4504-9F30-05B9369CE37C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedBarGraph_Sample", "Samples\Leds\LedBarGraph_Sample\LedBarGraph_Sample.csproj", "{AD3B8E1A-0C3E-41EC-914B-33F85DB049EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LedBarGraph_Sample", "Samples\Leds\LedBarGraph_Sample\LedBarGraph_Sample.csproj", "{AD3B8E1A-0C3E-41EC-914B-33F85DB049EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Relays", "Relays", "{2CC36EF9-D2F8-429F-8B78-6F93243FA359}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Relay_Sample", "Samples\Relays\Relay_Sample\Relay_Sample.csproj", "{0BFA5E44-05BE-4EB9-94E5-9416F1563DFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Relay_Sample", "Samples\Relays\Relay_Sample\Relay_Sample.csproj", "{0BFA5E44-05BE-4EB9-94E5-9416F1563DFF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Speakers", "Speakers", "{163FF72D-9067-40E9-86D7-4FC4D5795A47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PiezoSpeaker_Sample", "Samples\Speakers\PiezoSpeaker_Sample\PiezoSpeaker_Sample.csproj", "{D7348B62-09FD-4822-90D3-73A194EC6ED0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PiezoSpeaker_Sample", "Samples\Speakers\PiezoSpeaker_Sample\PiezoSpeaker_Sample.csproj", "{D7348B62-09FD-4822-90D3-73A194EC6ED0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Switches", "Switches", "{54831709-B9B1-45DB-8506-37214A412C5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DipSwitch_Sample", "Samples\Sensors\Switches\DipSwitch_Sample\DipSwitch_Sample.csproj", "{DF69B7D7-E35C-438D-9DA5-EAD06FD8BDB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DipSwitch_Sample", "Samples\Sensors\Switches\DipSwitch_Sample\DipSwitch_Sample.csproj", "{DF69B7D7-E35C-438D-9DA5-EAD06FD8BDB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpdtSwitch_Sample", "Samples\Sensors\Switches\SpdtSwitch_Sample\SpdtSwitch_Sample.csproj", "{F308A754-2CE6-4C24-AE64-DF05C5084506}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpdtSwitch_Sample", "Samples\Sensors\Switches\SpdtSwitch_Sample\SpdtSwitch_Sample.csproj", "{F308A754-2CE6-4C24-AE64-DF05C5084506}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpstSwitch_Sample", "Samples\Sensors\Switches\SpstSwitch_Sample\SpstSwitch_Sample.csproj", "{341F1C32-CEB7-4C1D-AC37-CAD5815775E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpstSwitch_Sample", "Samples\Sensors\Switches\SpstSwitch_Sample\SpstSwitch_Sample.csproj", "{341F1C32-CEB7-4C1D-AC37-CAD5815775E0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rotary", "Rotary", "{11C859DF-C99C-42E2-A838-A5FBDB8C5D7B}"
 EndProject
@@ -149,33 +147,33 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays", "Displays", "{C9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenSegment_Sample", "Samples\Displays\SevenSegment_Sample\SevenSegment_Sample.csproj", "{EF16D771-77F1-4BD0-BE2E-160A473B2AD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.LCD.CharacterDisplay", "Peripheral_Libs\Displays.LCD.CharacterDisplay\Displays.LCD.CharacterDisplay.csproj", "{A62994BB-886D-4C3F-A8E8-6F39AF96F648}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.LCD.CharacterDisplay", "Peripheral_Libs\Displays.LCD.CharacterDisplay\Displays.LCD.CharacterDisplay.csproj", "{A62994BB-886D-4C3F-A8E8-6F39AF96F648}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharacterDisplay_Sample", "Samples\Displays\CharacterDisplay_Sample\CharacterDisplay_Sample.csproj", "{9391E643-A2CA-4029-9C21-D071023D7E34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharacterDisplay_Sample", "Samples\Displays\CharacterDisplay_Sample\CharacterDisplay_Sample.csproj", "{9391E643-A2CA-4029-9C21-D071023D7E34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RgbLed_Sample", "Samples\Leds\RgbLed_Sample\RgbLed_Sample.csproj", "{1115255B-078E-4B29-B1B9-FD099711965E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RgbLed_Sample", "Samples\Leds\RgbLed_Sample\RgbLed_Sample.csproj", "{1115255B-078E-4B29-B1B9-FD099711965E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings", "FeatherWings", "{7EE5AF29-A4BD-472F-B4F0-8EAB994B61B1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoyWing_Sample", "Samples\FeatherWings\JoyWing_Sample\JoyWing_Sample.csproj", "{A4AAF044-54E8-4034-B2F8-4D677251706D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.SFSR02", "Peripheral_Libs\Sensors.Distance.SFSR02\Sensors.Distance.SFSR02.csproj", "{18634CF8-9D46-47D6-AF75-99C260F41036}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.SFSR02", "Peripheral_Libs\Sensors.Distance.SFSR02\Sensors.Distance.SFSR02.csproj", "{18634CF8-9D46-47D6-AF75-99C260F41036}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFSR02_Sample", "Samples\Sensors\Distance\SFSR02_Sample\SFSR02_Sample.csproj", "{41A9DF15-0943-415D-A58C-DFBA1A8AFB97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFSR02_Sample", "Samples\Sensors\Distance\SFSR02_Sample\SFSR02_Sample.csproj", "{41A9DF15-0943-415D-A58C-DFBA1A8AFB97}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Servos", "Servos", "{FB5E6B67-6F54-435B-B684-A53ADE5094D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servo_Sample", "Samples\Servos\Servo_Sample\Servo_Sample.csproj", "{F477E7F7-A9F8-4A03-8099-975B8CE805BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servo_Sample", "Samples\Servos\Servo_Sample\Servo_Sample.csproj", "{F477E7F7-A9F8-4A03-8099-975B8CE805BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RgbPwmLed_Sample", "Samples\Leds\RgbPwmLed_Sample\RgbPwmLed_Sample.csproj", "{E6816538-C1CD-4EA4-B79A-30B8831920C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RgbPwmLed_Sample", "Samples\Leds\RgbPwmLed_Sample\RgbPwmLed_Sample.csproj", "{E6816538-C1CD-4EA4-B79A-30B8831920C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSD1306Display_Sample", "Samples\Displays\SSD1306Display_Sample\SSD1306Display_Sample.csproj", "{D2D3105D-0876-49A3-89BD-0CD6457312DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSD1306Display_Sample", "Samples\Displays\SSD1306Display_Sample\SSD1306Display_Sample.csproj", "{D2D3105D-0876-49A3-89BD-0CD6457312DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.GY521", "Peripheral_Libs\Sensors.Motion.GY521\Sensors.Motion.GY521.csproj", "{68F64D84-97F6-44B2-9469-CDAEC8B3A826}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.GY521", "Peripheral_Libs\Sensors.Motion.GY521\Sensors.Motion.GY521.csproj", "{68F64D84-97F6-44B2-9469-CDAEC8B3A826}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GY521_Sample", "Samples\Sensors\Motion\GY521_Sample\GY521_Sample.csproj", "{BD0D67D9-5A8B-4169-8928-6A7F60FE5502}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTCs.DS1307", "Peripheral_Libs\RTCs.DS1307\RTCs.DS1307.csproj", "{91A8055F-7EE5-4DBD-A9E5-8FF7B72DA9BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.DS1307", "Peripheral_Libs\RTCs.DS1307\RTCs.DS1307.csproj", "{91A8055F-7EE5-4DBD-A9E5-8FF7B72DA9BA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RTCs", "RTCs", "{3451B08F-CBCA-4AD2-8865-3EBEC4AABD1B}"
 EndProject
@@ -185,31 +183,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Moisture", "Moisture", "{8C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capacitive_Sample", "Samples\Moisture\Capacitive_Sample\Capacitive_Sample.csproj", "{5F427C43-0ACD-477A-9E31-ADE83456B7AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.ST7565", "Peripheral_Libs\Displays.ST7565\Displays.ST7565.csproj", "{A4A653DD-A6C1-41B0-B1C3-17FF97CE8CC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.ST7565", "Peripheral_Libs\Displays.ST7565\Displays.ST7565.csproj", "{A4A653DD-A6C1-41B0-B1C3-17FF97CE8CC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TftSpiDisplay_Sample", "Samples\Displays\TftSpiDisplay_Sample\TftSpiDisplay_Sample.csproj", "{7109E486-B75F-414A-8673-D49AC6C2A1D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TftSpiDisplay_Sample", "Samples\Displays\TftSpiDisplay_Sample\TftSpiDisplay_Sample.csproj", "{7109E486-B75F-414A-8673-D49AC6C2A1D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveShare_ePaper_Sample", "Samples\Displays\WaveShare_ePaper_Sample\WaveShare_ePaper_Sample.csproj", "{552B0A7B-2755-42A4-B876-BEBC6E47DE42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaveShare_ePaper_Sample", "Samples\Displays\WaveShare_ePaper_Sample\WaveShare_ePaper_Sample.csproj", "{552B0A7B-2755-42A4-B876-BEBC6E47DE42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Radio.TEA5767", "Peripheral_Libs\Audio.Radio.TEA5767\Audio.Radio.TEA5767.csproj", "{059E5CF5-C88B-440E-94CC-404F1F94056F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Audio.Radio.TEA5767", "Peripheral_Libs\Audio.Radio.TEA5767\Audio.Radio.TEA5767.csproj", "{059E5CF5-C88B-440E-94CC-404F1F94056F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatherWings.JoyWing", "Peripheral_Libs\FeatherWings.JoyWing\FeatherWings.JoyWing.csproj", "{2189BB6D-C20C-4965-8789-438241B369B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.JoyWing", "Peripheral_Libs\FeatherWings.JoyWing\FeatherWings.JoyWing.csproj", "{2189BB6D-C20C-4965-8789-438241B369B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCD8854Display_Sample", "Samples\Displays\PCD8854Display_Sample\PCD8854Display_Sample.csproj", "{6032FDEF-69CA-4B4E-BC33-61950B0C0874}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PCD8854Display_Sample", "Samples\Displays\PCD8854Display_Sample\PCD8854Display_Sample.csproj", "{6032FDEF-69CA-4B4E-BC33-61950B0C0874}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ST7565Display_Sample", "Samples\Displays\ST7565Display_Sample\ST7565Display_Sample.csproj", "{3F8B1E35-E185-48A8-B9AE-E59C62E3DD28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ST7565Display_Sample", "Samples\Displays\ST7565Display_Sample\ST7565Display_Sample.csproj", "{3F8B1E35-E185-48A8-B9AE-E59C62E3DD28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.HT16K33", "Peripheral_Libs\ICs.IOExpanders.HT16K33\ICs.IOExpanders.HT16K33.csproj", "{F7DBDC9F-AE76-4783-85DF-68C2320981B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.HT16K33", "Peripheral_Libs\ICs.IOExpanders.HT16K33\ICs.IOExpanders.HT16K33.csproj", "{F7DBDC9F-AE76-4783-85DF-68C2320981B9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs", "ICs", "{1D6BE89C-45AF-47CB-AD4D-D16BD3C8E452}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IOExpanders", "IOExpanders", "{D80E3907-D385-4937-93C1-ABCB4D4FA404}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HT16K33_Sample", "Samples\ICs\IOExpanders\HT16K33_Sample\HT16K33_Sample.csproj", "{7B2B2C81-51EB-43B7-B9EC-8CC5FED26EFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HT16K33_Sample", "Samples\ICs\IOExpanders\HT16K33_Sample\HT16K33_Sample.csproj", "{7B2B2C81-51EB-43B7-B9EC-8CC5FED26EFE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Audio", "Audio", "{447718E5-967E-41D6-BD42-33537FFE9115}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TEA5767_Sample", "Samples\Audio\TEA5767_Sample\TEA5767_Sample.csproj", "{67C8B2A4-2426-4ADC-B055-E9BF67BB339A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TEA5767_Sample", "Samples\Audio\TEA5767_Sample\TEA5767_Sample.csproj", "{67C8B2A4-2426-4ADC-B055-E9BF67BB339A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

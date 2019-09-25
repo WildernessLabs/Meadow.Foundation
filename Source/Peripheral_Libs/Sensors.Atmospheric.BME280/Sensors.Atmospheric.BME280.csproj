@@ -6,7 +6,6 @@
     <PackageVersion>0.1.0</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.7.227" />
-    <PackageReference Include="Meadow" Version="0.7.0" />
+    <PackageReference Include="Meadow.Foundation" Version="0.8.1" />
   </ItemGroup>
 </Project>

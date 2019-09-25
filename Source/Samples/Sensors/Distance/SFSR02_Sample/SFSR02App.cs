@@ -1,6 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Sensors.Distance.SFSR02;
+using Meadow.Foundation.Sensors.Distance;
 using System;
 using System.Threading;
 

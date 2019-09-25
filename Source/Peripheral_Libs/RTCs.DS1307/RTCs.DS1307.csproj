@@ -18,6 +18,5 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation" Version="0.8.1" />
-    <PackageReference Include="Meadow" Version="0.7.0" />
   </ItemGroup>
 </Project>
