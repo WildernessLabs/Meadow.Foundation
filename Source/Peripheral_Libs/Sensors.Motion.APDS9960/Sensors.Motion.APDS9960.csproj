@@ -1,12 +1,11 @@
-<Project Sdk="Meadow.Sdk/1.1">
+﻿<Project Sdk="Meadow.Sdk/1.1">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>APD9960</AssemblyName>
+    <AssemblyName>APDS9960</AssemblyName>
     <PackageVersion>0.1.0</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation" Version="0.8.1" />
-    <PackageReference Include="Meadow" Version="0.7.0" />
   </ItemGroup>
 </Project>

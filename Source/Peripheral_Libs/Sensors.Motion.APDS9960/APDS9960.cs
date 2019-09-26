@@ -2,7 +2,7 @@
 using System.Threading;
 using Meadow.Hardware;
 
-namespace Netduino.Foundation.Sensors.Motion
+namespace Meadow.Foundation.Sensors.Motion
 {
     public class APDS9960
     {
@@ -192,7 +192,7 @@ namespace Netduino.Foundation.Sensors.Motion
         {
             _apds9960 = new I2cPeripheral(i2cBus, address);
 
-            if(interruptPin != null)
+            if (interruptPin != null)
             {
                 interruptPort = device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled);
 
