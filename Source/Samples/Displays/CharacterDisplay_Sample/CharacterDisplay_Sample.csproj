@@ -7,6 +7,6 @@
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation.Displays.LCD.CharacterDisplay" Version="0.6.1" />
     <PackageReference Include="WildernessLabs.Meadow.Assemblies" Version="0.1.1" />
-    <PackageReference Include="Meadow" Version="0.7.0" />
+    <PackageReference Include="Meadow" Version="0.8.0" />
   </ItemGroup>
 </Project>

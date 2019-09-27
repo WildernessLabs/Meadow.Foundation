@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.7.0" />
     <PackageReference Include="WildernessLabs.Meadow.Assemblies" Version="0.1.1" />
-    <PackageReference Include="Meadow" Version="0.7.0" />
+    <PackageReference Include="Meadow" Version="0.8.0" />
     <PackageReference Include="Meadow.Foundation" Version="0.8.1" />
   </ItemGroup>
   <ItemGroup>    
