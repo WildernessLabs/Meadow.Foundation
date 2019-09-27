@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1">
+﻿<Project Sdk="Meadow.Sdk/1.1">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
@@ -9,10 +9,10 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, IOExpanders, HT16K33</PackageTags>
-    <AssemblyVersion>0.5.0</AssemblyVersion>
-    <PackageVersion>0.5.0</PackageVersion>
-    <FileVersion>0.5.0</FileVersion>
-    <Version>0.5.0</Version>
+    <AssemblyVersion>0.6.0</AssemblyVersion>
+    <PackageVersion>0.6.0</PackageVersion>
+    <FileVersion>0.6.0</FileVersion>
+    <Version>0.6.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for a HT16K33 IO Expander</Description>
   </PropertyGroup>
