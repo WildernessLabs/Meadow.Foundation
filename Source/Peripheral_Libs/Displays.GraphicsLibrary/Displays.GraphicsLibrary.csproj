@@ -17,6 +17,6 @@
     <Description>Graphics Library</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.8.1" />
+    <PackageReference Include="Meadow.Foundation" Version="0.9.0" />
   </ItemGroup>
 </Project>

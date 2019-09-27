@@ -17,6 +17,6 @@
     <Description>Driver for TEA5767 FM radio module</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.8.1" />
+    <PackageReference Include="Meadow.Foundation" Version="0.9.0" />
   </ItemGroup>
 </Project>
