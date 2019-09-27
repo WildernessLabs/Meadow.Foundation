@@ -10,16 +10,12 @@ namespace WaveShare_ePaper_Sample
 {
     public class WaveShareEPaperApp : App<F7Micro, WaveShareEPaperApp>
     {
-        IDigitalOutputPort redLed;
-        IDigitalOutputPort blueLed;
-        IDigitalOutputPort greenLed;
-
         EPD2i9b display;
         ISpiBus spiBus;
 
         public WaveShareEPaperApp()
         {
-            Console.WriteLine("TftSpi sample");
+            Console.WriteLine("ePaper sample");
             Console.WriteLine("Create Spi bus");
 
             spiBus = Device.CreateSpiBus();// Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, 2000);
@@ -32,59 +28,31 @@ namespace WaveShare_ePaper_Sample
                 resetPin: Device.Pins.D00,
                 busyPin: Device.Pins.D03);
 
-            display.Clear();
-
-            for(int i = 0; i < 20; i++)
-            {
-                display.DrawPixel(i, i, true);
-                display.DrawPixel(i, i + 2, false);
-            }
-
-            display.Show();
-
-            Console.WriteLine("Create graphics lib");
 
             var graphics = new GraphicsLibrary(display);
 
-            graphics.Clear();
+            //any color but black will show the ePaper alternate color 
+            graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Red, false);
 
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(0, 0, "ePaper on Meadow");
+            graphics.DrawText(2, 2, ".NET Conf 2019");
+            graphics.DrawText(2, 20, "Meadow F7");
+
+            int ySpacing = 6;
+
+            for (int i = 0; i < 3; i++)
+            {
+                graphics.DrawLine(2, 70 + ySpacing * i, 22, 50 + ySpacing * i);
+                graphics.DrawLine(22, 50 + ySpacing * i, 42, 70 + ySpacing * i);
+                graphics.DrawLine(44, 70 + ySpacing * i, 64, 50 + ySpacing * i);
+                graphics.DrawLine(64, 50 + ySpacing * i, 84, 70 + ySpacing * i);
+                graphics.DrawLine(86, 70 + ySpacing * i, 106, 50 + ySpacing * i);
+                graphics.DrawLine(106, 50 + ySpacing * i, 126, 70 + ySpacing * i);
+            }
+
+            Console.WriteLine("Show");
 
             graphics.Show();
-
-
-
-
-            //  ConfigurePorts();
-            //  BlinkLeds();
-        }
-
-        public void ConfigurePorts()
-        {
-            Console.WriteLine("Creating Outputs...");
-            redLed = Device.CreateDigitalOutputPort(Device.Pins.OnboardLedRed);
-            blueLed = Device.CreateDigitalOutputPort(Device.Pins.OnboardLedBlue);
-            greenLed = Device.CreateDigitalOutputPort(Device.Pins.OnboardLedGreen);
-        }
-
-        public void BlinkLeds()
-        {
-            var state = false;
-
-            while (true)
-            {
-                state = !state;
-
-                Console.WriteLine($"State: {state}");
-
-                redLed.State = state;
-                Thread.Sleep(500);
-                blueLed.State = state;
-                Thread.Sleep(500);
-                greenLed.State = state;
-                Thread.Sleep(500);
-            }
         }
     }
 }
