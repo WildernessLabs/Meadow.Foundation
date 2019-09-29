@@ -13,8 +13,8 @@ steps:
 - task: CopyFiles@2
   inputs:
     contents: |
-     source/Meadow.Foundation/bin/Debug/Meadow.Foundation.dll
-     source/Meadow.Foundation/bin/Debug/Meadow.Foundation.pdb
+     source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.dll
+     source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.pdb
     targetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
   inputs:
