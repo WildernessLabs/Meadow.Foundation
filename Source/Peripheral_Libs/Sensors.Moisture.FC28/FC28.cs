@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         {
             DigitalPort.State = true;
             Thread.Sleep(5);
-            var sample = AnalogPort.Read();
+            var sample = await AnalogPort.Read();
             DigitalPort.State = false;
 
             Moisture = 100 - Map(sample, 0, 1023, 0, 100);

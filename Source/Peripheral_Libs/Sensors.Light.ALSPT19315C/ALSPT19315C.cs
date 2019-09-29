@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public double GetVoltage()
         {
-            return _referenceVoltagePort.Read() * 3.3;
+            return _referenceVoltagePort.Read().Result * 3.3;
         }
 
         #endregion Member variables / fields

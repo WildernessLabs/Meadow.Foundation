@@ -221,9 +221,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public async Task Update()
         {
-            X = ( _xPort.Read() * SupplyVoltage - _zeroGVoltage) / XVoltsPerG;
-            Y = ( _yPort.Read() * SupplyVoltage - _zeroGVoltage) / YVoltsPerG;
-            Z = ( _zPort.Read() * SupplyVoltage - _zeroGVoltage) / ZVoltsPerG;
+            X = ( _xPort.Read().Result * SupplyVoltage - _zeroGVoltage) / XVoltsPerG;
+            Y = ( _yPort.Read().Result * SupplyVoltage - _zeroGVoltage) / YVoltsPerG;
+            Z = ( _zPort.Read().Result * SupplyVoltage - _zeroGVoltage) / ZVoltsPerG;
 
             if ((_updateInterval != 0) && 
                 ((Math.Abs(X - _lastX) > AccelerationChangeNotificationThreshold) ||
@@ -243,7 +243,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Vector object containing the raw sensor data from the analog pins.</returns>
         public async Task<Vector> GetRawSensorData()
         {
-             return new Vector( _xPort.Read(),  _yPort.Read(),  _zPort.Read());
+             return new Vector( _xPort.Read().Result,  _yPort.Read().Result,  _zPort.Read().Result);
         }
 
         #endregion Methods

@@ -16,7 +16,7 @@ namespace FC28_Sample
             fc28 = new FC28(Device.CreateAnalogInputPort(Device.Pins.A01),
                 Device.CreateDigitalOutputPort(Device.Pins.D01));
 
-            TestFC28SensorAsync();
+            TestFC28SensorAsync().Wait();
         }
 
         protected async Task TestFC28SensorAsync()
