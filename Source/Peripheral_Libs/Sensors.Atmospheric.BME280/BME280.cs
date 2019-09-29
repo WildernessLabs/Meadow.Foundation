@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
@@ -26,6 +27,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #endregion Constants
 
         #region Enums
+
+        public enum ChipType : byte
+        {
+            BMP = 0x58,
+            BME = 0x60
+        }
 
         /// <summary>
         ///     Valid oversampling values.
@@ -101,6 +108,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Sixteen
         }
 
+        public enum I2cAddress : byte
+        {
+            Adddress0x76 = 0x76,
+            Adddress0x77 = 0x77
+        }
+
         #endregion Enums
 
         #region Classes / structures
@@ -130,18 +143,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             public sbyte H6;
         }
 
-        /// <summary>
-        ///     Registers used to control the BME280.
-        /// </summary>
-        private static class Registers
-        {
-            public const byte Humidity = 0xf2;
-            public const byte Status = 0xf3;
-            public const byte Measurement = 0xf4;
-            public const byte Configuration = 0xf5;
-            public const byte Reset = 0xe0;
-        }
-
         #endregion Internal Structures
 
         #region Member Variables / fields
@@ -153,7 +154,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
         ///     selection to be made in the constructor.
         /// </remarks>
-        private readonly II2cPeripheral _bme280;
+        private readonly BME280Comms _bme280;
 
         /// <summary>
         ///     Compensation data from the sensor.
@@ -163,7 +164,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Update interval in milliseconds
         /// </summary>
-        private readonly ushort _updateInterval = 100;
+        private ushort _updateInterval = 100;
 
         #endregion Member Variables
 
@@ -315,9 +316,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #endregion Events and delegates
 
         #region Constructors
-
         /// <summary>
-        ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
+        /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
         /// </summary>
         /// <remarks>
         ///     This constructor is private to force the use of the constructor which defines the
@@ -331,19 +331,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
         /// </summary>
         /// <param name="address">I2C address of the sensor (default = 0x77).</param>
+        /// <param name="i2c">I2C Bus to use for communicating with the sensor</param>
+        /// <param name="busAddress">I2C address of the sensor (default = 0x77).</param>
         /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
         /// <param name="humidityChangeNotificationThreshold">Changes in humidity greater than this value will trigger an event when updatePeriod > 0.</param>
         /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
         /// <param name="pressureChangedNotificationThreshold">Changes in pressure greater than this value will trigger an event when updatePeriod > 0.</param>
-        public BME280(II2cBus i2cBus, byte address = 0x77, ushort speed = 100, ushort updateInterval = MinimumPollingPeriod,
+        public BME280(II2cBus i2c, I2cAddress busAddress = I2cAddress.Adddress0x77, ushort updateInterval = MinimumPollingPeriod,
                       float humidityChangeNotificationThreshold = 0.001F,
                       float temperatureChangeNotificationThreshold = 0.001F,
                       float pressureChangedNotificationThreshold = 10.0F)
         {
-            if ((address != 0x76) && (address != 0x77))
-            {
-                throw new ArgumentOutOfRangeException(nameof(address), "Address should be 0x76 or 0x77");
-            }
             if (humidityChangeNotificationThreshold < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(humidityChangeNotificationThreshold), "Humidity threshold should be >= 0");
@@ -361,11 +359,46 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 throw new ArgumentOutOfRangeException(nameof(updateInterval), "Update period should be 0 or >= than " + MinimumPollingPeriod);
             }
 
-            _bme280 = new I2cPeripheral(i2cBus, address);
+            _bme280 = new BME280I2C(i2c, (byte)busAddress);
+            Init(updateInterval, humidityChangeNotificationThreshold, temperatureChangeNotificationThreshold, pressureChangedNotificationThreshold);
+        }
+
+        public BME280(ISpiBus spi, IDigitalOutputPort chipSelect, ushort updateInterval = MinimumPollingPeriod,
+                      float humidityChangeNotificationThreshold = 0.001F,
+                      float temperatureChangeNotificationThreshold = 0.001F,
+                      float pressureChangedNotificationThreshold = 10.0F)
+        {
+            if (humidityChangeNotificationThreshold < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(humidityChangeNotificationThreshold), "Humidity threshold should be >= 0");
+            }
+            if (temperatureChangeNotificationThreshold < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(temperatureChangeNotificationThreshold), "Temperature threshold should be >= 0");
+            }
+            if (pressureChangedNotificationThreshold < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pressureChangedNotificationThreshold), "Pressure threshold should be >= 0");
+            }
+            if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
+            {
+                throw new ArgumentOutOfRangeException(nameof(updateInterval), "Update period should be 0 or >= than " + MinimumPollingPeriod);
+            }
+
+            _bme280 = new BME280SPI(spi, chipSelect);
+            Init(updateInterval, humidityChangeNotificationThreshold, temperatureChangeNotificationThreshold, pressureChangedNotificationThreshold);
+        }
+
+        private void Init(ushort updateInterval,
+                    float humidityChangeNotificationThreshold,
+                    float temperatureChangeNotificationThreshold,
+                    float pressureChangedNotificationThreshold)
+        {
+            _updateInterval = updateInterval;
+
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
             HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
             PressureChangeNotificationThreshold = pressureChangedNotificationThreshold;
-            _updateInterval = updateInterval;
             ReadCompensationData();
             //
             //  Update the configuration information and start sampling.
@@ -437,16 +470,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //
             //  Put to sleep to allow the configuration to be changed.
             //
-            _bme280.WriteRegister(Registers.Measurement, 0x00);
+            _bme280.WriteRegister(BME280Comms.Register.Measurement, 0x00);
 
             var data = (byte) ((((byte) Standby << 5) & 0xe0) | (((byte) Filter << 2) & 0x1c));
-            _bme280.WriteRegister(Registers.Configuration, data);
+            _bme280.WriteRegister(BME280Comms.Register.Configuration, data);
             data = (byte) ((byte) HumidityOverSampling & 0x07);
-            _bme280.WriteRegister(Registers.Humidity, data);
+            _bme280.WriteRegister(BME280Comms.Register.Humidity, data);
             data = (byte) ((((byte) TemperatureOverSampling << 5) & 0xe0) |
                            (((byte) PressureOversampling << 2) & 0x1c) |
                            ((byte) Mode & 0x03));
-            _bme280.WriteRegister(Registers.Measurement, data);
+            _bme280.WriteRegister(BME280Comms.Register.Measurement, data);
         }
 
         /// <summary>
@@ -457,7 +490,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </remarks>
         public void Reset()
         {
-            _bme280.WriteRegister(Registers.Reset, 0xb6);
+            _bme280.WriteRegister(BME280Comms.Register.Reset, 0xb6);
             UpdateConfiguration();
         }
 
@@ -517,6 +550,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void Update()
         {
             var readings = _bme280.ReadRegisters(0xf7, 8);
+            Console.WriteLine($"  Readings: {BitConverter.ToString(readings)}");
             //
             //  Temperature calculation from section 4.2.3 of the datasheet.
             //
@@ -632,6 +666,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
             //
             Humidity = (float) (v_x1_u32r >> 12) / 1024;
+        }
+
+        public byte GetChipID()
+        {
+            return _bme280.ReadRegisters((byte)BME280Comms.Register.ChipID, 1).First();
         }
 
         #endregion Methods
