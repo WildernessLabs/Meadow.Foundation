@@ -233,7 +233,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
             _updateInterval = updateInterval;
 
-            AnalogPort = null; // ToDo: needs device.CreateAnalogInputPort() ..... new AnalogInputPort(analogPin);
+            AnalogPort = device.CreateAnalogInputPort(analogPin);
 
             switch (sensorType)
             {
@@ -293,13 +293,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         ///     Get the current temperature and update the Temperature property.
         /// </summary>
-        public /*async Task*/ void Update()
+        public async void Update()
         {
-            // TODO: re-implement
-            //float reading = await AnalogPort.Read(1, _updateInterval) * 3300;
-            float reading = 0f;
+            float reading = await AnalogPort.Read(1, _updateInterval);
             reading -= _yIntercept;
-            Temperature = reading / _millivoltsPerDegreeCentigrade; ;
+            Temperature = reading * _millivoltsPerDegreeCentigrade;
         }
 
         #endregion Methods
