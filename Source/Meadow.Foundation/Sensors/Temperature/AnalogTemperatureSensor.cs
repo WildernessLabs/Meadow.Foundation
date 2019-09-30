@@ -11,8 +11,6 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// Provide the ability to read the temperature from the following sensors:
     /// - TMP35 / 36 / 37
     /// - LM35 / 45
-    /// 
-    /// Note: This class is not yet implemented.
     /// </summary>
     /// <remarks>
     /// <i>AnalogTemperature</i> provides a method of reading the temperature from

@@ -211,6 +211,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BME280_Sample", "Samples\Se
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Atmospheric", "Atmospheric", "{2A778A21-37A2-440A-AA89-F5F255D766D6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Temperature", "Temperature", "{8484C0CB-2610-4C24-BE1B-5097DA9B095B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalogTemperature_Sample", "Samples\Sensors\Temperature\AnalogTemperature_Sample\AnalogTemperature_Sample.csproj", "{FE41489F-80EB-4883-B526-C3994231CE66}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -549,6 +553,10 @@ Global
 		{38CC05F2-D244-4CDD-8B2F-E1D514AFBDB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38CC05F2-D244-4CDD-8B2F-E1D514AFBDB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38CC05F2-D244-4CDD-8B2F-E1D514AFBDB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE41489F-80EB-4883-B526-C3994231CE66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE41489F-80EB-4883-B526-C3994231CE66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE41489F-80EB-4883-B526-C3994231CE66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE41489F-80EB-4883-B526-C3994231CE66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -655,6 +663,8 @@ Global
 		{FF6680CF-4873-4161-A475-5729EF1C93F7} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{38CC05F2-D244-4CDD-8B2F-E1D514AFBDB8} = {2A778A21-37A2-440A-AA89-F5F255D766D6}
 		{2A778A21-37A2-440A-AA89-F5F255D766D6} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
+		{8484C0CB-2610-4C24-BE1B-5097DA9B095B} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
+		{FE41489F-80EB-4883-B526-C3994231CE66} = {8484C0CB-2610-4C24-BE1B-5097DA9B095B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
