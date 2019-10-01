@@ -9,14 +9,14 @@ namespace RgbPwmLed_Sample
 {
     class RgbPwmLedApp : App<F7Micro, RgbPwmLedApp>
     {
-        RgbPwmLed rgbPwmLed;
+        readonly RgbPwmLed rgbPwmLed;
 
         public RgbPwmLedApp()
         {
             rgbPwmLed = new RgbPwmLed(
-                Device.CreatePwmPort(Device.Pins.D11),
-                Device.CreatePwmPort(Device.Pins.D05),
-                Device.CreatePwmPort(Device.Pins.D02));
+                Device.CreatePwmPort(Device.Pins.OnboardLedRed),
+                Device.CreatePwmPort(Device.Pins.OnboardLedGreen),
+                Device.CreatePwmPort(Device.Pins.OnboardLedBlue));
 
             TestRgbPwmLed();
         }
