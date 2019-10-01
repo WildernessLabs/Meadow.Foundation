@@ -9,29 +9,31 @@ namespace Led_Sample
 {
     public class LedApp : App<F7Micro, LedApp>
     {
-        List<Led> leds;
+        readonly List<Led> leds;
 
         public LedApp()
         {
             Console.WriteLine("Initializing...");
 
-            leds = new List<Led>();
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D00, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D01, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D02, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D03, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D04, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D05, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D06, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D07, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D08, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D09, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D10, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D11, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D12, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D13, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D14, false)));
-            leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D15, false)));
+            leds = new List<Led>
+            {
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D00, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D01, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D02, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D03, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D04, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D05, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D06, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D07, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D08, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D09, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D10, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D11, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D12, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D13, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D14, false)),
+                new Led(Device.CreateDigitalOutputPort(Device.Pins.D15, false))
+            };
 
             TestLeds();
         }

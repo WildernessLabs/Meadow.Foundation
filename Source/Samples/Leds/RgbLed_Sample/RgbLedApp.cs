@@ -15,27 +15,25 @@ namespace RgbLed_Sample
         {
             Console.WriteLine("Initializing...");
 
-            rgbLeds = new List<RgbLed>();
-            rgbLeds.Add(new RgbLed(
-                Device.CreateDigitalOutputPort(Device.Pins.D02),
-                Device.CreateDigitalOutputPort(Device.Pins.D03),
-                Device.CreateDigitalOutputPort(Device.Pins.D04))
-            );
-            rgbLeds.Add(new RgbLed(
-                Device.CreateDigitalOutputPort(Device.Pins.D05),
-                Device.CreateDigitalOutputPort(Device.Pins.D06),
-                Device.CreateDigitalOutputPort(Device.Pins.D07))
-            );
-            rgbLeds.Add(new RgbLed(
-                Device.CreateDigitalOutputPort(Device.Pins.D08),
-                Device.CreateDigitalOutputPort(Device.Pins.D09),
-                Device.CreateDigitalOutputPort(Device.Pins.D10))
-            );
-            rgbLeds.Add(new RgbLed(
-                Device.CreateDigitalOutputPort(Device.Pins.D11),
-                Device.CreateDigitalOutputPort(Device.Pins.D12),
-                Device.CreateDigitalOutputPort(Device.Pins.D13))
-            );
+            rgbLeds = new List<RgbLed>
+            {
+                new RgbLed(
+                    Device.CreateDigitalOutputPort(Device.Pins.D02),
+                    Device.CreateDigitalOutputPort(Device.Pins.D03),
+                    Device.CreateDigitalOutputPort(Device.Pins.D04)),
+                new RgbLed(
+                    Device.CreateDigitalOutputPort(Device.Pins.D05),
+                    Device.CreateDigitalOutputPort(Device.Pins.D06),
+                    Device.CreateDigitalOutputPort(Device.Pins.D07)),
+                new RgbLed(
+                    Device.CreateDigitalOutputPort(Device.Pins.D08),
+                    Device.CreateDigitalOutputPort(Device.Pins.D09),
+                    Device.CreateDigitalOutputPort(Device.Pins.D10)),
+                new RgbLed(
+                    Device.CreateDigitalOutputPort(Device.Pins.D11),
+                    Device.CreateDigitalOutputPort(Device.Pins.D12),
+                    Device.CreateDigitalOutputPort(Device.Pins.D13))
+            };
 
             TestRgbLeds();
         }
