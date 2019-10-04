@@ -2,7 +2,6 @@
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Hardware;
 using Meadow.Foundation.ICs.IOExpanders;
 
 namespace BasicHT16K33_Sample
@@ -39,11 +38,6 @@ namespace BasicHT16K33_Sample
 
                 Thread.Sleep(100);
             }
-
-
-
-
         }
     }
-
 }
