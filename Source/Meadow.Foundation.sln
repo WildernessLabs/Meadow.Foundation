@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.645
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{ABFEB925-65AF-4C8C-B4C8-83F962AF6347}"
 EndProject
@@ -207,13 +207,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TEA5767_Sample", "Samples\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.APDS9960", "Peripheral_Libs\Sensors.Motion.APDS9960\Sensors.Motion.APDS9960.csproj", "{FF6680CF-4873-4161-A475-5729EF1C93F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BME280_Sample", "Samples\Sensors\Atmospheric\BME280_Sample\BME280_Sample.csproj", "{38CC05F2-D244-4CDD-8B2F-E1D514AFBDB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BME280_Sample", "Samples\Sensors\Atmospheric\BME280_Sample\BME280_Sample.csproj", "{38CC05F2-D244-4CDD-8B2F-E1D514AFBDB8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Atmospheric", "Atmospheric", "{2A778A21-37A2-440A-AA89-F5F255D766D6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Temperature", "Temperature", "{8484C0CB-2610-4C24-BE1B-5097DA9B095B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalogTemperature_Sample", "Samples\Sensors\Temperature\AnalogTemperature_Sample\AnalogTemperature_Sample.csproj", "{FE41489F-80EB-4883-B526-C3994231CE66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnalogTemperature_Sample", "Samples\Sensors\Temperature\AnalogTemperature_Sample\AnalogTemperature_Sample.csproj", "{FE41489F-80EB-4883-B526-C3994231CE66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCP23008_Sample", "Samples\ICs\IOExpanders\MCP23008_Sample\MCP23008_Sample.csproj", "{D00C6547-A30B-4D48-BC3B-E494A5B0CA1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -557,6 +559,12 @@ Global
 		{FE41489F-80EB-4883-B526-C3994231CE66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE41489F-80EB-4883-B526-C3994231CE66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE41489F-80EB-4883-B526-C3994231CE66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D00C6547-A30B-4D48-BC3B-E494A5B0CA1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D00C6547-A30B-4D48-BC3B-E494A5B0CA1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D00C6547-A30B-4D48-BC3B-E494A5B0CA1E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D00C6547-A30B-4D48-BC3B-E494A5B0CA1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D00C6547-A30B-4D48-BC3B-E494A5B0CA1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D00C6547-A30B-4D48-BC3B-E494A5B0CA1E}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -665,6 +673,7 @@ Global
 		{2A778A21-37A2-440A-AA89-F5F255D766D6} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
 		{8484C0CB-2610-4C24-BE1B-5097DA9B095B} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
 		{FE41489F-80EB-4883-B526-C3994231CE66} = {8484C0CB-2610-4C24-BE1B-5097DA9B095B}
+		{D00C6547-A30B-4D48-BC3B-E494A5B0CA1E} = {D80E3907-D385-4937-93C1-ABCB4D4FA404}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
