@@ -16,6 +16,9 @@ namespace Meadow.Foundation.Displays.ePaper
         public override uint Width => 104;
         public override uint Height => 212;
 
+        protected override bool IsBlackInverted => false;
+        protected override bool IsColorInverted => false;
+
         protected override void Initialize()
         {
             Reset();

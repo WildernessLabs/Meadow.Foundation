@@ -60,9 +60,11 @@ namespace Meadow.Foundation.Displays
 
         protected virtual void WaitUntilIdle()
         {
-            while (busyPort.State == false)
+            int count = 0;
+            while (busyPort.State == false && count < 20)
             {
                 DelayMs(50);
+                count++;
             }
         }
     }

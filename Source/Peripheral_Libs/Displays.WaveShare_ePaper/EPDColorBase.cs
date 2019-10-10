@@ -10,6 +10,9 @@ namespace Meadow.Foundation.Displays.ePaper
     /// </summary>
     public abstract class EPDColorBase : SPIDisplayBase
     {
+        protected abstract bool IsBlackInverted { get; }
+        protected abstract bool IsColorInverted { get; }
+
         public override DisplayColorMode ColorMode => DisplayColorMode.Format2bpp;
 
         protected readonly byte[] blackImageBuffer;
@@ -70,8 +73,9 @@ namespace Meadow.Foundation.Displays.ePaper
 
             for (int i = 0; i < blackImageBuffer.Length; i++)
             {
-                blackImageBuffer[i] = colored ? (byte)0 : (byte)255;
-                colorImageBuffer[i] = 255;
+                blackImageBuffer[i] = colored ? (byte) 0 : (byte) 255;
+
+                colorImageBuffer[i] = IsColorInverted ? (byte) 0 : (byte)255;//first val should be 0
             }
 
             if (updateDisplay)
@@ -129,20 +133,27 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void DrawPixel(int x, int y, bool colored)
         {
+            if (xRefreshStart == -1)
+                xRefreshStart = x;
+
             xRefreshStart = Math.Min(x, xRefreshStart);
             xRefreshEnd = Math.Max(x, xRefreshEnd);
             yRefreshStart = Math.Min(y, yRefreshStart);
             yRefreshEnd = Math.Max(y, yRefreshEnd);
 
             if (colored)
-            {
+            {   //0x80 = 128 = 0b_10000000
                 blackImageBuffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
             }
             else
             {
                 blackImageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
             }
-            colorImageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
+
+            if(IsColorInverted)
+                colorImageBuffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
+            else
+                colorImageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
         }
 
         public void DrawColoredPixel(int x, int y, bool colored)
@@ -152,7 +163,8 @@ namespace Meadow.Foundation.Displays.ePaper
             yRefreshStart = Math.Min(y, yRefreshStart);
             yRefreshEnd = Math.Max(y, yRefreshEnd);
 
-            if (colored)
+            if ((colored && !IsColorInverted) ||
+                (!colored && IsColorInverted))
             {
                 colorImageBuffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
             }
@@ -194,9 +206,8 @@ namespace Meadow.Foundation.Displays.ePaper
                 DrawPixel(x, y, colored);
             }
         }
-            
 
-        // 2.13 B (red) commands
+        // 2.13b + 2.7b (red) commands
         protected static byte PANEL_SETTING                     = 0x00;
         protected static byte POWER_SETTING                     = 0x01;
         protected static byte POWER_OFF                         = 0x02;
@@ -209,11 +220,14 @@ namespace Meadow.Foundation.Displays.ePaper
         protected static byte DATA_STOP                         = 0x11;
         protected static byte DISPLAY_REFRESH                   = 0x12;
         protected static byte DATA_START_TRANSMISSION_2         = 0x13;
-        protected static byte VCOM_LUT                          = 0x20;
-        protected static byte W2W_LUT                           = 0x21;
-        protected static byte B2W_LUT                           = 0x22;
-        protected static byte W2B_LUT                           = 0x23;
-        protected static byte B2B_LUT                           = 0x24;
+        protected static byte PARTIAL_DATA_START_TRANSMISSION_1 = 0x14;
+        protected static byte PARTIAL_DATA_START_TRANSMISSION_2 = 0x15;
+        protected static byte PARTIAL_DISPLAY_REFRESH           = 0x16;
+        protected static byte LUT_FOR_VCOM                      = 0x20;
+        protected static byte LUT_WHITE_TO_WHITE                = 0x21;
+        protected static byte LUT_BLACK_TO_WHITE                = 0x22;
+        protected static byte LUT_WHITE_TO_BLACK                = 0x23;
+        protected static byte LUT_BLACK_TO_BLACK                = 0x24;
         protected static byte PLL_CONTROL                       = 0x30;
         protected static byte TEMPERATURE_SENSOR_CALIBRATION    = 0x40;
         protected static byte TEMPERATURE_SENSOR_SELECTION      = 0x41;
@@ -223,6 +237,7 @@ namespace Meadow.Foundation.Displays.ePaper
         protected static byte LOW_POWER_DETECTION               = 0x51;
         protected static byte TCON_SETTING                      = 0x60;
         protected static byte RESOLUTION_SETTING                = 0x61;
+        protected static byte SOURCE_AND_GATE_START_SETTING     = 0x62;
         protected static byte GET_STATUS                        = 0x71;
         protected static byte AUTO_MEASURE_VCOM                 = 0x80;
         protected static byte READ_VCOM_VALUE                   = 0x81;
