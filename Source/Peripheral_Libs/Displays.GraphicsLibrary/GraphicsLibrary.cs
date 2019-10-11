@@ -21,7 +21,23 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public FontBase CurrentFont { get; set; }
 
+        /// <summary>
+        /// Current rotation used for drawing pixels to the display
+        /// </summary>
+        public Rotation CurrentRotation { get; set; } = Rotation.Default;
+
         #endregion Properties
+
+        /// <summary>
+        /// Display rotation 
+        /// </summary>
+        public enum Rotation
+        {
+            Default,
+            _90Degrees,
+            _180Degrees,
+            _270Degrees
+        }
 
         #region Constructors
 
@@ -46,7 +62,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public void DrawPixel (int x, int y, bool colored = true)
         {
-            _display.DrawPixel(x, y, colored);
+            _display.DrawPixel(GetXForRotation(x,y), GetYForRotation(x,y), colored);
         }
 
         /// <summary>
@@ -57,7 +73,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">Color of pixel.</param>
         public void DrawPixel (int x, int y, Color color)
         {
-            _display.DrawPixel(x, y, color);
+            _display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), color);
         }
 
         /// <summary>
@@ -123,7 +139,7 @@ namespace Meadow.Foundation.Graphics
             var y = y0;
             for (var x = x0; x <= x1; x++)
             {
-                _display.DrawPixel(steep ? y : x, steep ? x : y, color);
+                DrawPixel(steep ? y : x, steep ? x : y, color);
                 error = error - dy;
                 if (error < 0)
                 {
@@ -144,7 +160,7 @@ namespace Meadow.Foundation.Graphics
         {
             for (var x = x0; (x - x0) < length; x++)
             {
-                _display.DrawPixel(x, y0, colored);
+                DrawPixel(x, y0, colored);
             }
         }
 
@@ -159,7 +175,7 @@ namespace Meadow.Foundation.Graphics
         {
             for (var x = x0; (x - x0) < length; x++)
             {
-                _display.DrawPixel(x, y0, color);
+                DrawPixel(x, y0, color);
             }
         }
 
@@ -174,7 +190,7 @@ namespace Meadow.Foundation.Graphics
         {
             for (var y = y0; (y - y0) < length; y++)
             {
-                _display.DrawPixel(x0, y, colored);
+                DrawPixel(x0, y, colored);
             }
         }
 
@@ -189,7 +205,7 @@ namespace Meadow.Foundation.Graphics
         {
             for (var y = y0; (y - y0) < length; y++)
             {
-                _display.DrawPixel(x0, y, color);
+                DrawPixel(x0, y, color);
             }
         }
 
@@ -379,14 +395,14 @@ namespace Meadow.Foundation.Graphics
                 }
                 else
                 {
-                    _display.DrawPixel(centerX + x, centerY + y, color);
-                    _display.DrawPixel(centerX + y, centerY + x, color);
-                    _display.DrawPixel(centerX - y, centerY + x, color);
-                    _display.DrawPixel(centerX - x, centerY + y, color);
-                    _display.DrawPixel(centerX - x, centerY - y, color);
-                    _display.DrawPixel(centerX - y, centerY - x, color);
-                    _display.DrawPixel(centerX + x, centerY - y, color);
-                    _display.DrawPixel(centerX + y, centerY - x, color);
+                    DrawPixel(centerX + x, centerY + y, color);
+                    DrawPixel(centerX + y, centerY + x, color);
+                    DrawPixel(centerX - y, centerY + x, color);
+                    DrawPixel(centerX - x, centerY + y, color);
+                    DrawPixel(centerX - x, centerY - y, color);
+                    DrawPixel(centerX - y, centerY - x, color);
+                    DrawPixel(centerX + x, centerY - y, color);
+                    DrawPixel(centerX + y, centerY - x, color);
                 }
                 if (d < 0)
                 {
@@ -575,7 +591,26 @@ namespace Meadow.Foundation.Graphics
         /// <param name="bitmapMode">How should the bitmap be transferred to the display?</param>
         public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, DisplayBase.BitmapMode bitmapMode)
         {
-            _display.DrawBitmap(x, y, width, height, bitmap, bitmapMode);
+            if ((width * height) != bitmap.Length)
+            {
+                throw new ArgumentException("Width and height do not match the bitmap size.");
+            }
+
+            for (var ordinate = 0; ordinate < height; ordinate++)
+            {
+                for (var abscissa = 0; abscissa < width; abscissa++)
+                {
+                    var b = bitmap[(ordinate * width) + abscissa];
+                    byte mask = 0x01;
+
+                    for (var pixel = 0; pixel < 8; pixel++)
+                    {
+                        if ((b & mask) > 0)
+                            DrawPixel(x + (8 * abscissa) + pixel, y + ordinate);
+                        mask <<= 1;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -591,7 +626,58 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the bitmap.</param>
         public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
         {
-            _display.DrawBitmap(x, y, width, height, bitmap, color);
+            if ((width * height) != bitmap.Length)
+            {
+                throw new ArgumentException("Width and height do not match the bitmap size.");
+            }
+
+            for (var ordinate = 0; ordinate < height; ordinate++)
+            {
+                for (var abscissa = 0; abscissa < width; abscissa++)
+                {
+                    var b = bitmap[(ordinate * width) + abscissa];
+                    byte mask = 0x01;
+
+                    for (var pixel = 0; pixel < 8; pixel++)
+                    {
+                        if ((b & mask) > 0)
+                            DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, color);
+                        mask <<= 1;
+                    }
+                }
+            }
+        }
+
+        public int GetXForRotation(int x, int y)
+        {
+            switch(CurrentRotation)
+            {
+                case Rotation._90Degrees:
+                    return (int)_display.Width - y;
+                case Rotation._180Degrees:
+                    return (int)_display.Width - x;
+                case Rotation._270Degrees:
+                    return (int)y;
+                case Rotation.Default:
+                default:
+                    return x;
+            }
+        }
+
+        public int GetYForRotation(int x, int y)
+        {
+            switch (CurrentRotation)
+            {
+                case Rotation._90Degrees:
+                    return x; 
+                case Rotation._180Degrees:
+                    return (int)_display.Height - y;
+                case Rotation._270Degrees:
+                    return (int)_display.Height - x;
+                case Rotation.Default:
+                default:
+                    return y;
+            }
         }
 
         #endregion Display
