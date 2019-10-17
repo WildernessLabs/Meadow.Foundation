@@ -10,9 +10,7 @@ namespace Meadow.Foundation.Leds
     /// PWM allows for more colors to be expressed than if it were simply controlled with normal
     /// digital outputs which provide only binary control at each pin. As such, a PWM controlled 
     /// RGB LED can express millions of colors, as opposed to the 8 colors that can be expressed
-    /// via binary digital output.
-    /// 
-    /// Note: this class is not yet implemented.
+    /// via binary digital output.  
     /// </summary>
     public class RgbPwmLed
     {

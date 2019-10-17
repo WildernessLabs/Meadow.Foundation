@@ -6,8 +6,6 @@ namespace Meadow.Foundation.Sensors.Buttons
 {
     /// <summary>
     /// A simple push button. 
-    /// 
-    /// Note: this class is not yet implemented.
     /// </summary>
     public class PushButton : IButton
 	{
