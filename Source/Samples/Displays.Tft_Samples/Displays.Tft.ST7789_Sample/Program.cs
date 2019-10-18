@@ -12,7 +12,6 @@ namespace Displays.Tft.ST7789_Sample
 
             // instantiate and run new meadow app
             app = new MeadowApp();
-            Thread.Sleep(Timeout.Infinite);
         }
     }
 }

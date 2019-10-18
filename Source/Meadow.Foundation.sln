@@ -203,6 +203,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.HT16K33_Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generators.SoftPwmPort_Sample", "Samples\Meadow.Foundation_Samples\Generators.SoftPwmPort_Sample\Generators.SoftPwmPort_Sample.csproj", "{0F44EC13-996C-49F1-8521-9357A1563038}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tft.SSD1351_Sample", "Samples\Displays.Tft_Samples\Displays.Tft.SSD1351_Sample\Displays.Tft.SSD1351_Sample.csproj", "{D155429D-2A05-4890-B19C-CF2C5A33CFC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -595,6 +597,10 @@ Global
 		{0F44EC13-996C-49F1-8521-9357A1563038}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F44EC13-996C-49F1-8521-9357A1563038}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0F44EC13-996C-49F1-8521-9357A1563038}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{D155429D-2A05-4890-B19C-CF2C5A33CFC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D155429D-2A05-4890-B19C-CF2C5A33CFC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D155429D-2A05-4890-B19C-CF2C5A33CFC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D155429D-2A05-4890-B19C-CF2C5A33CFC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -697,6 +703,7 @@ Global
 		{AE082671-A4AB-4CE1-AF89-A43917D7C306} = {1F758504-5B30-49E2-AACB-260233263436}
 		{E901720D-637E-4CD8-8047-D667D73D30DB} = {12C33B3E-A1A7-4FA2-AC02-E71C86B80E63}
 		{0F44EC13-996C-49F1-8521-9357A1563038} = {3BE5580B-FC86-4674-A2E0-65C31814D2E6}
+		{D155429D-2A05-4890-B19C-CF2C5A33CFC9} = {1F758504-5B30-49E2-AACB-260233263436}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
