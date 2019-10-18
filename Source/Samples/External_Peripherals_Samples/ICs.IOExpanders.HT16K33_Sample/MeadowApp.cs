@@ -4,33 +4,34 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 
-namespace BasicHT16K33_Sample
+namespace ICs.IOExpanders.HT16K33_Sample
 {
-    public class HT16K33App : App<F7Micro, HT16K33App>
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        HT16K33 ht16k33;
+        protected HT16K33 ht16k33;
 
-        public HT16K33App()
+        public MeadowApp()
         {
-            Console.WriteLine("Create I2C bus");
-            var i2cBus = Device.CreateI2cBus();
+            Console.WriteLine("Initialize...");
+            ht16k33 = new HT16K33(Device.CreateI2cBus());
 
-            Console.WriteLine("Create HT16K33");
-            ht16k33 = new HT16K33(i2cBus);
+            TestHT16K33();
+        }
+
+        protected void TestHT16K33() 
+        {
+            Console.WriteLine("TestHT16K33...");
 
             int index = 0;
             bool on = true;
 
-            Console.WriteLine("Cycle HT16K33 outputs");
-
-            // write your code here
             while (true)
             {
                 ht16k33.ToggleLed((byte)index, on);
                 ht16k33.UpdateDisplay();
                 index++;
 
-                if(index >= 128)
+                if (index >= 128)
                 {
                     index = 0;
                     on = !on;

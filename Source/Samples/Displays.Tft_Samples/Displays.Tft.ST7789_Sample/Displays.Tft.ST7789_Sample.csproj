@@ -5,9 +5,9 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.10.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Peripheral_Libs\ICs.IOExpanders.MCP23008\ICs.IOExpanders.MCP23008.csproj" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.6.0" />
   </ItemGroup>
 </Project>

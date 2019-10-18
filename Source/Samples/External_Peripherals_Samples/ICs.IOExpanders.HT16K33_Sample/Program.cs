@@ -1,14 +1,16 @@
 ﻿using Meadow;
 
-namespace BasicHT16K33_Sample
+namespace ICs.IOExpanders.HT16K33_Sample
 {
     class Program
     {
         static IApp app;
         public static void Main(string[] args)
         {
+            if (args.Length > 0 && args[0] == "--exitOnDebug") return;
+
             // instantiate and run new meadow app
-            app = new HT16K33App();
+            app = new MeadowApp();
         }
     }
 }

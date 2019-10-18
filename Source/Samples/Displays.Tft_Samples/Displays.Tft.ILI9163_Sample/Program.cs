@@ -1,6 +1,7 @@
 ﻿using Meadow;
+using System.Threading;
 
-namespace MCP23008_Sample
+namespace Displays.Tft.ILI9163_Sample
 {
     class Program
     {
@@ -10,7 +11,8 @@ namespace MCP23008_Sample
             if (args.Length > 0 && args[0] == "--exitOnDebug") return;
 
             // instantiate and run new meadow app
-            app = new MCP23008App();
+            app = new MeadowApp();
+            Thread.Sleep(Timeout.Infinite);
         }
     }
 }

@@ -1,31 +1,31 @@
-﻿using Meadow;
+﻿using System;
+using System.Threading;
+using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.RTCs;
-using Meadow.Hardware;
-using System;
-using System.Threading;
 
-namespace DS1307_Sample
+namespace RTCs.DS1307_Sample
 {
-    public class DS1307App : App<F7Micro, DS1307App>
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        public DS1307App()
+        protected DS1307 rtc;
+
+        public MeadowApp()
         {
-            Console.WriteLine("+DS1307App");
+            Console.WriteLine("Initializing...");
 
-            var i2c = Device.CreateI2cBus();
+            rtc = new DS1307(Device.CreateI2cBus());
 
-            DS1307Test(i2c);
+            DS1307Test();
         }
 
-        private void DS1307Test(II2cBus i2c)
+        protected void DS1307Test()
         {
-            Console.WriteLine("+DS1307 Test");
+            Console.WriteLine("DS1307Test...");
 
-            var rtc = new DS1307(i2c);
-
-            Console.Write(" Checking IsRunning...");
+            var now = new DateTime();
             var running = rtc.IsRunning;
+
             Console.WriteLine($"{(running ? "is running" : "is not running")}");
 
             if (!running)
@@ -33,8 +33,6 @@ namespace DS1307_Sample
                 Console.WriteLine(" Starting RTC...");
                 rtc.IsRunning = true;
             }
-
-            DateTime now = new DateTime();
 
             while (true)
             {
@@ -48,13 +46,9 @@ namespace DS1307_Sample
                 var rand = new Random();
 
                 if (now.Year < 2019)
-                {
                     now = DateTime.Now;
-                }
                 else
-                {
                     now = now.AddSeconds(rand.Next(1, 30));
-                }
 
                 Console.WriteLine($" Setting RTC to : {now.ToString("MM/dd/yy HH:mm:ss")}");
 

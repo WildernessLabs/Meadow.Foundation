@@ -5,23 +5,26 @@ using Meadow.Devices;
 using Meadow.Foundation.Generators;
 using Meadow.Hardware;
 
-namespace SoftPwmPort_Sample
+namespace Generators.SoftPwmPort_Sample
 {
-    public class SoftPwmPortApp : App<F7Micro, SoftPwmPortApp>
-    {        
-        SoftPwmPort softPwmPort;
+    public class MeadowApp : App<F7Micro, MeadowApp>
+    {
+        protected SoftPwmPort softPwmPort;
 
-        public SoftPwmPortApp()
+        public MeadowApp()
         {
+            Console.WriteLine("Initializing...");
+
             IDigitalOutputPort digiOut = Device.CreateDigitalOutputPort(Device.Pins.D00);
-            Console.WriteLine("digital out created");
-            softPwmPort = new SoftPwmPort(digiOut);
-            Console.WriteLine("SoftPwmPort created");
-            StartPulsing();
+            softPwmPort = new SoftPwmPort(digiOut);           
+            
+            TestSoftPwmPort();
         }
 
-        public void StartPulsing()
+        protected void TestSoftPwmPort()
         {
+            Console.WriteLine("TestSoftPwmPort...");
+
             softPwmPort.Start();
 
             while (true)
