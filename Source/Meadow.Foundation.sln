@@ -113,10 +113,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.LCD.CharacterDispl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharacterDisplay_Sample", "Samples\Displays\CharacterDisplay_Sample\CharacterDisplay_Sample.csproj", "{9391E643-A2CA-4029-9C21-D071023D7E34}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings", "FeatherWings", "{7EE5AF29-A4BD-472F-B4F0-8EAB994B61B1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoyWing_Sample", "Samples\FeatherWings\JoyWing_Sample\JoyWing_Sample.csproj", "{A4AAF044-54E8-4034-B2F8-4D677251706D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.SFSR02", "Peripheral_Libs\Sensors.Distance.SFSR02\Sensors.Distance.SFSR02.csproj", "{18634CF8-9D46-47D6-AF75-99C260F41036}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFSR02_Sample", "Samples\Sensors\Distance\SFSR02_Sample\SFSR02_Sample.csproj", "{41A9DF15-0943-415D-A58C-DFBA1A8AFB97}"
@@ -189,21 +185,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.ePaper_Samples", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External_Peripherals_Samples", "External_Peripherals_Samples", "{12C33B3E-A1A7-4FA2-AC02-E71C86B80E63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servos.Servo_Sample", "Samples\External_Peripherals_Samples\Servos.Servo_Sample\Servos.Servo_Sample.csproj", "{F01BBB8C-6588-47CB-BCF8-B1291BBEFDCF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servos.Servo_Sample", "Samples\External_Peripherals_Samples\Servos.Servo_Sample\Servos.Servo_Sample.csproj", "{F01BBB8C-6588-47CB-BCF8-B1291BBEFDCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Radio.TEA5767_Sample", "Samples\External_Peripherals_Samples\Audio.Radio.TEA5767_Sample\Audio.Radio.TEA5767_Sample.csproj", "{8D00024B-7990-4381-B2CB-7A1F4966C740}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Audio.Radio.TEA5767_Sample", "Samples\External_Peripherals_Samples\Audio.Radio.TEA5767_Sample\Audio.Radio.TEA5767_Sample.csproj", "{8D00024B-7990-4381-B2CB-7A1F4966C740}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTCs.DS1307_Sample", "Samples\External_Peripherals_Samples\RTCs.DS1307_Sample\RTCs.DS1307_Sample.csproj", "{6C267175-ADB6-4A0F-AF3D-9B181644B746}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.DS1307_Sample", "Samples\External_Peripherals_Samples\RTCs.DS1307_Sample\RTCs.DS1307_Sample.csproj", "{6C267175-ADB6-4A0F-AF3D-9B181644B746}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tft.ILI9163_Sample", "Samples\Displays.Tft_Samples\Displays.Tft.ILI9163_Sample\Displays.Tft.ILI9163_Sample.csproj", "{B7F7D0AF-D5D2-4F0D-B93D-94B95F782BE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Tft.ILI9163_Sample", "Samples\Displays.Tft_Samples\Displays.Tft.ILI9163_Sample\Displays.Tft.ILI9163_Sample.csproj", "{B7F7D0AF-D5D2-4F0D-B93D-94B95F782BE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tft.ST7789_Sample", "Samples\Displays.Tft_Samples\Displays.Tft.ST7789_Sample\Displays.Tft.ST7789_Sample.csproj", "{AE082671-A4AB-4CE1-AF89-A43917D7C306}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Tft.ST7789_Sample", "Samples\Displays.Tft_Samples\Displays.Tft.ST7789_Sample\Displays.Tft.ST7789_Sample.csproj", "{AE082671-A4AB-4CE1-AF89-A43917D7C306}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.HT16K33_Sample", "Samples\External_Peripherals_Samples\ICs.IOExpanders.HT16K33_Sample\ICs.IOExpanders.HT16K33_Sample.csproj", "{E901720D-637E-4CD8-8047-D667D73D30DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.HT16K33_Sample", "Samples\External_Peripherals_Samples\ICs.IOExpanders.HT16K33_Sample\ICs.IOExpanders.HT16K33_Sample.csproj", "{E901720D-637E-4CD8-8047-D667D73D30DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generators.SoftPwmPort_Sample", "Samples\Meadow.Foundation_Samples\Generators.SoftPwmPort_Sample\Generators.SoftPwmPort_Sample.csproj", "{0F44EC13-996C-49F1-8521-9357A1563038}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generators.SoftPwmPort_Sample", "Samples\Meadow.Foundation_Samples\Generators.SoftPwmPort_Sample\Generators.SoftPwmPort_Sample.csproj", "{0F44EC13-996C-49F1-8521-9357A1563038}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tft.SSD1351_Sample", "Samples\Displays.Tft_Samples\Displays.Tft.SSD1351_Sample\Displays.Tft.SSD1351_Sample.csproj", "{D155429D-2A05-4890-B19C-CF2C5A33CFC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Tft.SSD1351_Sample", "Samples\Displays.Tft_Samples\Displays.Tft.SSD1351_Sample\Displays.Tft.SSD1351_Sample.csproj", "{D155429D-2A05-4890-B19C-CF2C5A33CFC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatherWings.JoyWing_Sample", "Samples\External_Peripherals_Samples\FeatherWings.JoyWing_Sample\FeatherWings.JoyWing_Sample.csproj", "{C187AA17-7F07-42E4-84FF-B90B91A6648A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -403,10 +401,6 @@ Global
 		{9391E643-A2CA-4029-9C21-D071023D7E34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9391E643-A2CA-4029-9C21-D071023D7E34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9391E643-A2CA-4029-9C21-D071023D7E34}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A4AAF044-54E8-4034-B2F8-4D677251706D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A4AAF044-54E8-4034-B2F8-4D677251706D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A4AAF044-54E8-4034-B2F8-4D677251706D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A4AAF044-54E8-4034-B2F8-4D677251706D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{18634CF8-9D46-47D6-AF75-99C260F41036}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{18634CF8-9D46-47D6-AF75-99C260F41036}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18634CF8-9D46-47D6-AF75-99C260F41036}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -601,6 +595,12 @@ Global
 		{D155429D-2A05-4890-B19C-CF2C5A33CFC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D155429D-2A05-4890-B19C-CF2C5A33CFC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D155429D-2A05-4890-B19C-CF2C5A33CFC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C187AA17-7F07-42E4-84FF-B90B91A6648A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C187AA17-7F07-42E4-84FF-B90B91A6648A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C187AA17-7F07-42E4-84FF-B90B91A6648A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C187AA17-7F07-42E4-84FF-B90B91A6648A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C187AA17-7F07-42E4-84FF-B90B91A6648A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C187AA17-7F07-42E4-84FF-B90B91A6648A}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -658,8 +658,6 @@ Global
 		{EF16D771-77F1-4BD0-BE2E-160A473B2AD2} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
 		{A62994BB-886D-4C3F-A8E8-6F39AF96F648} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{9391E643-A2CA-4029-9C21-D071023D7E34} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
-		{7EE5AF29-A4BD-472F-B4F0-8EAB994B61B1} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
-		{A4AAF044-54E8-4034-B2F8-4D677251706D} = {7EE5AF29-A4BD-472F-B4F0-8EAB994B61B1}
 		{18634CF8-9D46-47D6-AF75-99C260F41036} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{41A9DF15-0943-415D-A58C-DFBA1A8AFB97} = {CFF2587F-743A-4485-8F6B-16B15197AA12}
 		{D2D3105D-0876-49A3-89BD-0CD6457312DE} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
@@ -704,6 +702,7 @@ Global
 		{E901720D-637E-4CD8-8047-D667D73D30DB} = {12C33B3E-A1A7-4FA2-AC02-E71C86B80E63}
 		{0F44EC13-996C-49F1-8521-9357A1563038} = {3BE5580B-FC86-4674-A2E0-65C31814D2E6}
 		{D155429D-2A05-4890-B19C-CF2C5A33CFC9} = {1F758504-5B30-49E2-AACB-260233263436}
+		{C187AA17-7F07-42E4-84FF-B90B91A6648A} = {12C33B3E-A1A7-4FA2-AC02-E71C86B80E63}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
