@@ -3,55 +3,74 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
+using Meadow.Hardware;
 
 namespace Displays.Tft.ST7789_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        protected ST7789 sT7789;
-        protected GraphicsLibrary graphics;
+        DisplayTftSpiBase display;
+        ISpiBus spiBus;
 
         public MeadowApp()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("TftSpi sample");
+            Console.WriteLine("Create Spi bus");
 
-            sT7789 = new ST7789
-            (
-                device: Device, 
-                spiBus: Device.CreateSpiBus(),
+            var config = new SpiBus.ClockConfiguration(6000, SpiBus.Mode.Mode2);
+            spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
+
+            Console.WriteLine("Create display driver instance");
+
+            display = new ST7789(device: Device, spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                width: 240, height: 240
-            );
+                width: 240, height: 240);
 
-            graphics = new GraphicsLibrary(sT7789);
+            Console.WriteLine("Create graphics lib");
 
-            TestST7789();
-        }
+            var graphicsLib = new GraphicsLibrary(display);
+            graphicsLib.CurrentFont = new Font8x12();
 
-        protected void TestST7789()
-        {
-            Console.WriteLine("TestST7789...");
+            graphicsLib.Clear();
 
-            // Drawing natively in the display
-            sT7789.ClearScreen(250);
-            sT7789.Refresh();
-            for (int i = 0; i < 30; i++)
-            {
-                sT7789.DrawPixel(i, i, true);
-                sT7789.DrawPixel(30 + i, i, true);
-                sT7789.DrawPixel(60 + i, i, true);
-            }
-            sT7789.Show();
+            graphicsLib.DrawTriangle(120, 20, 200, 100, 120, 100, Meadow.Foundation.Color.Red, false);
 
-            // Drawing with Display Graphics Library
-            //graphics.CurrentFont = new Font8x8();
-            //graphics.Clear();
-            //graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
-            //graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, true);            
-            //graphics.DrawText(5, 5, "Meadow F7 SPI");
-            //graphics.Show();
+            graphicsLib.DrawRectangle(140, 30, 40, 90, Meadow.Foundation.Color.Yellow, false);
+
+            graphicsLib.DrawCircle(160, 80, 40, Meadow.Foundation.Color.Cyan, false);
+
+            int indent = 5;
+            int spacing = 14;
+            int y = indent;
+
+            graphicsLib.DrawText(indent, y, "Meadow F7 SPI ST7789!!");
+
+            graphicsLib.DrawText(indent, y += spacing, "Red", Meadow.Foundation.Color.Red);
+
+            graphicsLib.DrawText(indent, y += spacing, "Purple", Meadow.Foundation.Color.Purple);
+
+            graphicsLib.DrawText(indent, y += spacing, "BlueViolet", Meadow.Foundation.Color.BlueViolet);
+
+            graphicsLib.DrawText(indent, y += spacing, "Blue", Meadow.Foundation.Color.Blue);
+
+            graphicsLib.DrawText(indent, y += spacing, "Cyan", Meadow.Foundation.Color.Cyan);
+
+            graphicsLib.DrawText(indent, y += spacing, "LawnGreen", Meadow.Foundation.Color.LawnGreen);
+
+            graphicsLib.DrawText(indent, y += spacing, "GreenYellow", Meadow.Foundation.Color.GreenYellow);
+
+            graphicsLib.DrawText(indent, y += spacing, "Yellow", Meadow.Foundation.Color.Yellow);
+
+            graphicsLib.DrawText(indent, y += spacing, "Orange", Meadow.Foundation.Color.Orange);
+
+            graphicsLib.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
+
+
+            graphicsLib.Show();
+
+            Console.WriteLine("Show complete");
         }
     }
 }
