@@ -93,12 +93,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoftPwmPort_Sample", "Sampl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors", "Sensors", "{42FB04DA-A0C1-42D2-BF34-64B58A012C05}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rotary", "Rotary", "{11C859DF-C99C-42E2-A838-A5FBDB8C5D7B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RotaryEncoder_Sample", "Samples\Sensors\Rotary\RotaryEncoder_Sample\RotaryEncoder_Sample.csproj", "{8AE62CB8-0B71-4D0C-BFEA-532DA1017194}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RotaryEncoderWithButton_Sample", "Samples\Sensors\Rotary\RotaryEncoderWithButton_Sample\RotaryEncoderWithButton_Sample.csproj", "{4113EF3B-2A5C-4519-A1CA-CFC1D787965C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Distance", "Distance", "{CFF2587F-743A-4485-8F6B-16B15197AA12}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSR04_Sample", "Samples\Sensors\Distance\HCSR04_Sample\HCSR04_Sample.csproj", "{58784132-46A4-49F7-B204-F7D1F5DE8AEF}"
@@ -130,10 +124,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.SFSR02", "Peripheral_Libs\Sensors.Distance.SFSR02\Sensors.Distance.SFSR02.csproj", "{18634CF8-9D46-47D6-AF75-99C260F41036}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFSR02_Sample", "Samples\Sensors\Distance\SFSR02_Sample\SFSR02_Sample.csproj", "{41A9DF15-0943-415D-A58C-DFBA1A8AFB97}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Servos", "Servos", "{FB5E6B67-6F54-435B-B684-A53ADE5094D4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servo_Sample", "Samples\Servos\Servo_Sample\Servo_Sample.csproj", "{F477E7F7-A9F8-4A03-8099-975B8CE805BB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSD1306Display_Sample", "Samples\Displays\SSD1306Display_Sample\SSD1306Display_Sample.csproj", "{D2D3105D-0876-49A3-89BD-0CD6457312DE}"
 EndProject
@@ -187,33 +177,41 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCP23008_Sample", "Samples\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meadow.Foundation_Samples", "Meadow.Foundation_Samples", "{3BE5580B-FC86-4674-A2E0-65C31814D2E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.Led_Sample", "Meadow.Foundation_Samples\Leds.Led_Sample\Leds.Led_Sample.csproj", "{CE9ED513-2102-411E-8E3B-5FBD0F664B02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leds.Led_Sample", "Samples\Meadow.Foundation_Samples\Leds.Led_Sample\Leds.Led_Sample.csproj", "{CE9ED513-2102-411E-8E3B-5FBD0F664B02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.LedBarGraph_Sample", "Meadow.Foundation_Samples\Leds.LedBarGraph_Sample\Leds.LedBarGraph_Sample.csproj", "{4266C5D4-E9B3-4124-914D-C824B7D86291}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leds.LedBarGraph_Sample", "Samples\Meadow.Foundation_Samples\Leds.LedBarGraph_Sample\Leds.LedBarGraph_Sample.csproj", "{4266C5D4-E9B3-4124-914D-C824B7D86291}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.PwmLed_Sample", "Meadow.Foundation_Samples\Leds.PwmLed_Sample\Leds.PwmLed_Sample.csproj", "{6748B933-7200-4E22-821C-1777B45C4CC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leds.PwmLed_Sample", "Samples\Meadow.Foundation_Samples\Leds.PwmLed_Sample\Leds.PwmLed_Sample.csproj", "{6748B933-7200-4E22-821C-1777B45C4CC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.RgbLed_Sample", "Meadow.Foundation_Samples\Leds.RgbLed_Sample\Leds.RgbLed_Sample.csproj", "{787A5260-D5A0-40AE-B330-C26E3DF88CD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leds.RgbLed_Sample", "Samples\Meadow.Foundation_Samples\Leds.RgbLed_Sample\Leds.RgbLed_Sample.csproj", "{787A5260-D5A0-40AE-B330-C26E3DF88CD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.RgbPwmLed_Sample", "Meadow.Foundation_Samples\Leds.RgbPwmLed_Sample\Leds.RgbPwmLed_Sample.csproj", "{82A4705E-4F8A-4653-A527-78F22DC25CCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leds.RgbPwmLed_Sample", "Samples\Meadow.Foundation_Samples\Leds.RgbPwmLed_Sample\Leds.RgbPwmLed_Sample.csproj", "{82A4705E-4F8A-4653-A527-78F22DC25CCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motor.HBridgeMotor_Sample", "Meadow.Foundation_Samples\Motor.HBridgeMotor_Sample\Motor.HBridgeMotor_Sample.csproj", "{5F1C00B3-0336-45F1-896E-05A80BAE9C8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Motor.HBridgeMotor_Sample", "Samples\Meadow.Foundation_Samples\Motor.HBridgeMotor_Sample\Motor.HBridgeMotor_Sample.csproj", "{5F1C00B3-0336-45F1-896E-05A80BAE9C8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Relays.Relay_Sample", "Meadow.Foundation_Samples\Relays.Relay_Sample\Relays.Relay_Sample.csproj", "{8BC911F4-7287-4527-A9E9-C2769ABDCC6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Relays.Relay_Sample", "Samples\Meadow.Foundation_Samples\Relays.Relay_Sample\Relays.Relay_Sample.csproj", "{8BC911F4-7287-4527-A9E9-C2769ABDCC6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Buttons.PushButton_Sample", "Meadow.Foundation_Samples\Sensors.Buttons.PushButton_Sample\Sensors.Buttons.PushButton_Sample.csproj", "{120DDB91-933D-4858-8B02-E9E341CFD182}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Buttons.PushButton_Sample", "Samples\Meadow.Foundation_Samples\Sensors.Buttons.PushButton_Sample\Sensors.Buttons.PushButton_Sample.csproj", "{120DDB91-933D-4858-8B02-E9E341CFD182}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Switches.SpdtSwitch_Sample", "Meadow.Foundation_Samples\Sensors.Switches.SpdtSwitch_Sample\Sensors.Switches.SpdtSwitch_Sample.csproj", "{1993C63C-7366-4642-877B-DA8655A22D62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Switches.SpdtSwitch_Sample", "Samples\Meadow.Foundation_Samples\Sensors.Switches.SpdtSwitch_Sample\Sensors.Switches.SpdtSwitch_Sample.csproj", "{1993C63C-7366-4642-877B-DA8655A22D62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Switches.DipSwitch_Sample", "Meadow.Foundation_Samples\Sensors.Switches.DipSwitch_Sample\Sensors.Switches.DipSwitch_Sample.csproj", "{9F47BF9C-7776-47E3-9F51-CB835A6331AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Switches.DipSwitch_Sample", "Samples\Meadow.Foundation_Samples\Sensors.Switches.DipSwitch_Sample\Sensors.Switches.DipSwitch_Sample.csproj", "{9F47BF9C-7776-47E3-9F51-CB835A6331AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Switches.SpstSwitch_Sample", "Meadow.Foundation_Samples\Sensors.Switches.SpstSwitch_Sample\Sensors.Switches.SpstSwitch_Sample.csproj", "{38C03E4F-75BC-42A6-8344-DDDAADBF7FE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Switches.SpstSwitch_Sample", "Samples\Meadow.Foundation_Samples\Sensors.Switches.SpstSwitch_Sample\Sensors.Switches.SpstSwitch_Sample.csproj", "{38C03E4F-75BC-42A6-8344-DDDAADBF7FE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.PiezoSpeaker_Sample", "Meadow.Foundation_Samples\Audio.PiezoSpeaker_Sample\Audio.PiezoSpeaker_Sample.csproj", "{4F9693B3-C383-4F34-8449-ABF74ACD14EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Audio.PiezoSpeaker_Sample", "Samples\Meadow.Foundation_Samples\Audio.PiezoSpeaker_Sample\Audio.PiezoSpeaker_Sample.csproj", "{4F9693B3-C383-4F34-8449-ABF74ACD14EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Rotary.RotaryEncoder_Sample", "Meadow.Foundation_Samples\Sensors.Rotary.RotaryEncoder_Sample\Sensors.Rotary.RotaryEncoder_Sample.csproj", "{4AF0AEEE-E5BE-46CA-BD77-541A05F5924E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Rotary.RotaryEncoder_Sample", "Samples\Meadow.Foundation_Samples\Sensors.Rotary.RotaryEncoder_Sample\Sensors.Rotary.RotaryEncoder_Sample.csproj", "{4AF0AEEE-E5BE-46CA-BD77-541A05F5924E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Rotary.RotaryEncoderWithButton_Sample", "Meadow.Foundation_Samples\Sensors.Rotary.RotaryEncoderWithButton_Sample\Sensors.Rotary.RotaryEncoderWithButton_Sample.csproj", "{D0014F62-1B0C-4721-88FE-CAB7D2E3FC0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Rotary.RotaryEncoderWithButton_Sample", "Samples\Meadow.Foundation_Samples\Sensors.Rotary.RotaryEncoderWithButton_Sample\Sensors.Rotary.RotaryEncoderWithButton_Sample.csproj", "{D0014F62-1B0C-4721-88FE-CAB7D2E3FC0D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.Tft_Samples", "Displays.Tft_Samples", "{1F758504-5B30-49E2-AACB-260233263436}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.ePaper_Samples", "Displays.ePaper_Samples", "{1500AA3E-F9ED-460D-87B0-23CC138B4983}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External_Peripherals_Samples", "External_Peripherals_Samples", "{12C33B3E-A1A7-4FA2-AC02-E71C86B80E63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servos.Servo_Sample", "Samples\External_Peripherals_Samples\Servos.Servo_Sample\Servos.Servo_Sample.csproj", "{F01BBB8C-6588-47CB-BCF8-B1291BBEFDCF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -385,14 +383,6 @@ Global
 		{24DFC23B-18E5-475E-B59D-8A588F5D3176}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24DFC23B-18E5-475E-B59D-8A588F5D3176}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24DFC23B-18E5-475E-B59D-8A588F5D3176}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8AE62CB8-0B71-4D0C-BFEA-532DA1017194}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8AE62CB8-0B71-4D0C-BFEA-532DA1017194}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8AE62CB8-0B71-4D0C-BFEA-532DA1017194}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8AE62CB8-0B71-4D0C-BFEA-532DA1017194}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4113EF3B-2A5C-4519-A1CA-CFC1D787965C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4113EF3B-2A5C-4519-A1CA-CFC1D787965C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4113EF3B-2A5C-4519-A1CA-CFC1D787965C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4113EF3B-2A5C-4519-A1CA-CFC1D787965C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{58784132-46A4-49F7-B204-F7D1F5DE8AEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{58784132-46A4-49F7-B204-F7D1F5DE8AEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58784132-46A4-49F7-B204-F7D1F5DE8AEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -437,10 +427,6 @@ Global
 		{41A9DF15-0943-415D-A58C-DFBA1A8AFB97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41A9DF15-0943-415D-A58C-DFBA1A8AFB97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41A9DF15-0943-415D-A58C-DFBA1A8AFB97}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F477E7F7-A9F8-4A03-8099-975B8CE805BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F477E7F7-A9F8-4A03-8099-975B8CE805BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F477E7F7-A9F8-4A03-8099-975B8CE805BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F477E7F7-A9F8-4A03-8099-975B8CE805BB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2D3105D-0876-49A3-89BD-0CD6457312DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D2D3105D-0876-49A3-89BD-0CD6457312DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2D3105D-0876-49A3-89BD-0CD6457312DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -603,6 +589,12 @@ Global
 		{D0014F62-1B0C-4721-88FE-CAB7D2E3FC0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0014F62-1B0C-4721-88FE-CAB7D2E3FC0D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D0014F62-1B0C-4721-88FE-CAB7D2E3FC0D}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F01BBB8C-6588-47CB-BCF8-B1291BBEFDCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F01BBB8C-6588-47CB-BCF8-B1291BBEFDCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F01BBB8C-6588-47CB-BCF8-B1291BBEFDCF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F01BBB8C-6588-47CB-BCF8-B1291BBEFDCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F01BBB8C-6588-47CB-BCF8-B1291BBEFDCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F01BBB8C-6588-47CB-BCF8-B1291BBEFDCF}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -650,9 +642,6 @@ Global
 		{BF064D45-0517-4B95-B486-E8BC09D4214C} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
 		{24DFC23B-18E5-475E-B59D-8A588F5D3176} = {BF064D45-0517-4B95-B486-E8BC09D4214C}
 		{42FB04DA-A0C1-42D2-BF34-64B58A012C05} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
-		{11C859DF-C99C-42E2-A838-A5FBDB8C5D7B} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
-		{8AE62CB8-0B71-4D0C-BFEA-532DA1017194} = {11C859DF-C99C-42E2-A838-A5FBDB8C5D7B}
-		{4113EF3B-2A5C-4519-A1CA-CFC1D787965C} = {11C859DF-C99C-42E2-A838-A5FBDB8C5D7B}
 		{CFF2587F-743A-4485-8F6B-16B15197AA12} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
 		{58784132-46A4-49F7-B204-F7D1F5DE8AEF} = {CFF2587F-743A-4485-8F6B-16B15197AA12}
 		{28EAA909-FC6D-4D9C-9D91-65764B91AC7A} = {CFF2587F-743A-4485-8F6B-16B15197AA12}
@@ -669,8 +658,6 @@ Global
 		{A4AAF044-54E8-4034-B2F8-4D677251706D} = {7EE5AF29-A4BD-472F-B4F0-8EAB994B61B1}
 		{18634CF8-9D46-47D6-AF75-99C260F41036} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{41A9DF15-0943-415D-A58C-DFBA1A8AFB97} = {CFF2587F-743A-4485-8F6B-16B15197AA12}
-		{FB5E6B67-6F54-435B-B684-A53ADE5094D4} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
-		{F477E7F7-A9F8-4A03-8099-975B8CE805BB} = {FB5E6B67-6F54-435B-B684-A53ADE5094D4}
 		{D2D3105D-0876-49A3-89BD-0CD6457312DE} = {C91FF68A-A43F-49A1-8A64-EFB7FC495FD5}
 		{68F64D84-97F6-44B2-9469-CDAEC8B3A826} = {1152A5B3-3B95-442E-8923-B729F64D7441}
 		{BD0D67D9-5A8B-4169-8928-6A7F60FE5502} = {9DFB9160-F13C-429D-99C1-D9F9C189C3FB}
@@ -696,6 +683,7 @@ Global
 		{8484C0CB-2610-4C24-BE1B-5097DA9B095B} = {42FB04DA-A0C1-42D2-BF34-64B58A012C05}
 		{FE41489F-80EB-4883-B526-C3994231CE66} = {8484C0CB-2610-4C24-BE1B-5097DA9B095B}
 		{D00C6547-A30B-4D48-BC3B-E494A5B0CA1E} = {D80E3907-D385-4937-93C1-ABCB4D4FA404}
+		{3BE5580B-FC86-4674-A2E0-65C31814D2E6} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
 		{CE9ED513-2102-411E-8E3B-5FBD0F664B02} = {3BE5580B-FC86-4674-A2E0-65C31814D2E6}
 		{4266C5D4-E9B3-4124-914D-C824B7D86291} = {3BE5580B-FC86-4674-A2E0-65C31814D2E6}
 		{6748B933-7200-4E22-821C-1777B45C4CC0} = {3BE5580B-FC86-4674-A2E0-65C31814D2E6}
@@ -710,6 +698,10 @@ Global
 		{4F9693B3-C383-4F34-8449-ABF74ACD14EE} = {3BE5580B-FC86-4674-A2E0-65C31814D2E6}
 		{4AF0AEEE-E5BE-46CA-BD77-541A05F5924E} = {3BE5580B-FC86-4674-A2E0-65C31814D2E6}
 		{D0014F62-1B0C-4721-88FE-CAB7D2E3FC0D} = {3BE5580B-FC86-4674-A2E0-65C31814D2E6}
+		{1F758504-5B30-49E2-AACB-260233263436} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
+		{1500AA3E-F9ED-460D-87B0-23CC138B4983} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
+		{12C33B3E-A1A7-4FA2-AC02-E71C86B80E63} = {ABFEB925-65AF-4C8C-B4C8-83F962AF6347}
+		{F01BBB8C-6588-47CB-BCF8-B1291BBEFDCF} = {12C33B3E-A1A7-4FA2-AC02-E71C86B80E63}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

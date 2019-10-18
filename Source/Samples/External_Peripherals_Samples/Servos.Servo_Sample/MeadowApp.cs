@@ -3,27 +3,27 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Servos;
-using Meadow.Hardware;
 
-namespace Servo_Sample
+namespace Servos.Servo_Sample
 {
-    public class ServoApp : App<F7Micro, ServoApp>
-    {
-        readonly IPwmPort pwm;
-        readonly Servo servo;
+    public class MeadowApp : App<F7Micro, MeadowApp>
+    {        
+        protected Servo servo;
 
-        public ServoApp() 
+        public MeadowApp()
         {
-            pwm = Device.CreatePwmPort(Device.Pins.D05);
+            Console.WriteLine("Initializing...");
 
-            servo = new Servo(pwm, NamedServoConfigs.Ideal180Servo);
+            servo = new Servo(Device.CreatePwmPort(Device.Pins.D05), NamedServoConfigs.Ideal180Servo);
 
             TestServo();
         }
 
         void TestServo()
         {
-            while(true)
+            Console.WriteLine("TestServo...");
+
+            while (true)
             {
                 if (servo.Angle <= servo.Config.MinimumAngle)
                 {
