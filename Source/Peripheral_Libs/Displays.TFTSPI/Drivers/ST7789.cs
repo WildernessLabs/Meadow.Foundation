@@ -6,6 +6,9 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class ST7789 : DisplayTftSpiBase
     {
+        private byte _xOffset;
+        private byte _yOffset;
+
         private ST7789() { }
 
         public ST7789(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
@@ -16,15 +19,14 @@ namespace Meadow.Foundation.Displays.Tft
 
         protected override void Initialize()
         {
-            chipSelectPort.State = false;
-
             resetPort.State = true;
             Thread.Sleep(50);
             resetPort.State = false;
             Thread.Sleep(50);
             resetPort.State = true;
             Thread.Sleep(50);
-			
+
+            _xOffset = _yOffset = 0;
             SendCommand(SWRESET);
             DelayMs(150);
             SendCommand(SLPOUT);
@@ -35,21 +37,14 @@ namespace Meadow.Foundation.Displays.Tft
             DelayMs(10);
 
             SendCommand(MADCTL);
-            SendData(0x00);
+            SendData(0x00); //some variants use 0x08
 
             SendCommand(CASET);
-            SendData(new byte[] { 0x00, 0x00, (byte)(Width >> 8), (byte)(Width & 0xFF) });
+
+            SendData(new byte[] { 0, 0, 0, (byte)Width });
 
             SendCommand(RASET);
-            SendData(new byte[] { 0x00, 0x00, (byte)(Height >> 8), (byte)(Height & 0xFF) });
-
-            Console.WriteLine("Set Address Window");
-
-            SetAddressWindow(0, 0, (byte)(_width - 1), (byte)(_height - 1));
-
-            Console.WriteLine("Set Rotation");
-
-            SetRotation(Rotation.Normal);
+            SendData(new byte[] { 0, 0, (byte)(Height >> 8), (byte)(Height & 0xFF) });
 
             Console.WriteLine("Init display");
 
@@ -60,28 +55,36 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(DISPON); //display on
             DelayMs(500);
 
+            SetAddressWindow(0, 0, (byte)(_width - 1), (byte)(_height - 1));
+
             dataCommandPort.State = Data;
         }
 
-        public void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
+
+        private void SetAddressWindow(byte x0, byte y0, byte x1, byte y1)
         {
-            uint xStart = x0 + XSTART, xEnd = x1 + XSTART;
-            uint yStart = y0 + YSTART, yEnd = y1 + YSTART;
-            
-            SendCommand(CASET); // column address set
-            SendData((byte)(xStart >> 8));
-            SendData((byte)(xStart & 0xFF));    // XSTART 
-            SendData((byte)(xEnd >> 8));
-            SendData((byte)(xEnd & 0xFF));     // XEND
+            x0 += _xOffset;
+            y0 += _yOffset;
 
-            SendCommand(RASET); // row address set
-            SendData((byte)(yStart >> 8));
-            SendData((byte)(yStart & 0xFF));    // YSTART
-            SendData((byte)(yEnd >> 8));
-            SendData((byte)(yEnd & 0xFF));     // YEND
+            x1 += _xOffset;
+            y1 += _yOffset;
 
-            SendCommand(RAMWR); // write to RAM
-        }       
+            SendCommand(CASET);  // column addr set
+            dataCommandPort.State = Data;
+            Write(0x00);
+            Write(x0);   // XSTART 
+            Write(0x00);
+            Write(x1);   // XEND
+
+            SendCommand(RASET);  // row addr set
+            dataCommandPort.State = Data;
+            Write(0x00);
+            Write(y0);    // YSTART
+            Write(0x00);
+            Write(y1);    // YEND
+
+            SendCommand(RAMWR);  // write to RAM
+        }
 	   
 	    public void SetRotation(Rotation rotation)
         {
