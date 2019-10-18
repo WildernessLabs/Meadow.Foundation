@@ -1,17 +1,19 @@
-﻿using Meadow;
+﻿using System;
+using System.Threading;
+using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Relays;
-using System;
-using System.Threading;
 
-namespace Relay_Sample
+namespace Relays.Relay_Sample
 {
-    public class RelayApp : App<F7Micro, RelayApp>
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Relay relay;
+        protected Relay relay;
 
-        public RelayApp()
+        public MeadowApp()
         {
+            Console.WriteLine("Initializing...");
+
             relay = new Relay(Device.CreateDigitalOutputPort(Device.Pins.D02));
 
             TestRelay();
@@ -19,6 +21,8 @@ namespace Relay_Sample
 
         protected void TestRelay()
         {
+            Console.WriteLine("TestRelay...");
+
             var state = false;
 
             while (true)

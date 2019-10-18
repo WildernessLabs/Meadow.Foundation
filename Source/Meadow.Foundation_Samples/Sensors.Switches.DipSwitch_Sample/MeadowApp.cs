@@ -1,18 +1,20 @@
-﻿using Meadow;
+﻿using System;
+using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Switches;
 using Meadow.Hardware;
 using Meadow.Peripherals.Switches;
-using System;
 
-namespace DipSwitch_Sample
+namespace Sensors.Switches.DipSwitch_Sample
 {
-    public class DipSwitchApp : App<F7Micro, DipSwitchApp>
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        DipSwitch dipSwitch;
+        protected DipSwitch dipSwitch;
 
-        public DipSwitchApp()
+        public MeadowApp()
         {
+            Console.WriteLine("Initializing...");
+
             IDigitalInputPort[] ports =
             {
                 Device.CreateDigitalInputPort(Device.Pins.D06, InterruptMode.LevelHigh, ResistorMode.PullDown),
@@ -26,13 +28,12 @@ namespace DipSwitch_Sample
             };
 
             dipSwitch = new DipSwitch(ports);
+            dipSwitch.Changed += (s,e) =>
+            {
+                Console.WriteLine("Switch " + e.ItemIndex + " changed to " + (((ISwitch)e.Item).IsOn ? "on" : "off"));
+            };
 
-            dipSwitch.Changed += DipSwitchChanged;
-        }
-
-        private void DipSwitchChanged(object sender, Meadow.Foundation.ArrayEventArgs e)
-        {
-            Console.WriteLine("Switch " + e.ItemIndex + " changed to " + (((ISwitch)e.Item).IsOn ? "on" : "off"));
+            Console.WriteLine("DipSwitch...");
         }
     }
 }
