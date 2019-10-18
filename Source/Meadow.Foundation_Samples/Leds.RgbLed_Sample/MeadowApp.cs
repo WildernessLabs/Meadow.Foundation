@@ -1,17 +1,17 @@
-﻿using Meadow;
-using Meadow.Devices;
-using Meadow.Foundation.Leds;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Meadow;
+using Meadow.Devices;
+using Meadow.Foundation.Leds;
 
-namespace RgbLed_Sample
+namespace Leds.RgbLed_Sample
 {
-    class RgbLedApp : App<F7Micro, RgbLedApp>
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
         protected List<RgbLed> rgbLeds;
 
-        public RgbLedApp()
+        public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 

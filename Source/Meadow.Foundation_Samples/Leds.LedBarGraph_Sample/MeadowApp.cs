@@ -1,32 +1,33 @@
-﻿using Meadow;
+﻿using System;
+using System.Threading;
+using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using Meadow.Hardware;
-using System;
-using System.Threading;
 
-namespace LedBarGraph_Sample
+namespace Leds.LedBarGraph_Sample
 {
-    public class LedBarGraphApp : App<F7Micro, LedBarGraphApp>
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        LedBarGraph ledBarGraph;
+        protected LedBarGraph ledBarGraph;
 
-        public LedBarGraphApp()
+        public MeadowApp()
         {
-            IDigitalOutputPort[] ports = 
+            Console.WriteLine("Initializing...");
+
+            IDigitalOutputPort[] ports =
             {
+                 Device.CreateDigitalOutputPort(Device.Pins.D05),
                  Device.CreateDigitalOutputPort(Device.Pins.D06),
                  Device.CreateDigitalOutputPort(Device.Pins.D07),
                  Device.CreateDigitalOutputPort(Device.Pins.D08),
                  Device.CreateDigitalOutputPort(Device.Pins.D09),
                  Device.CreateDigitalOutputPort(Device.Pins.D10),
                  Device.CreateDigitalOutputPort(Device.Pins.D11),
-                 Device.CreateDigitalOutputPort(Device.Pins.D01),
-                 Device.CreateDigitalOutputPort(Device.Pins.D00),
-                 Device.CreateDigitalOutputPort(Device.Pins.D14),
-                 Device.CreateDigitalOutputPort(Device.Pins.D15)
-            }; 
-
+                 Device.CreateDigitalOutputPort(Device.Pins.D12),
+                 Device.CreateDigitalOutputPort(Device.Pins.D13),
+                 Device.CreateDigitalOutputPort(Device.Pins.D14)
+            };
             ledBarGraph = new LedBarGraph(ports);
 
             TestLedBarGraph();
@@ -34,6 +35,8 @@ namespace LedBarGraph_Sample
 
         protected void TestLedBarGraph()
         {
+            Console.WriteLine("TestLedBarGraph...");
+
             float percentage = 0;
 
             while (true)
@@ -54,11 +57,13 @@ namespace LedBarGraph_Sample
                     Thread.Sleep(300);
                 }
 
+                Thread.Sleep(1000);
+
                 Console.WriteLine("Turning them on using Percentage...");
                 while (percentage <= 1)
                 {
                     percentage += 0.10f;
-                    ledBarGraph.Percentage = Math.Min(1.0f, percentage);                    
+                    ledBarGraph.Percentage = Math.Min(1.0f, percentage);
                     Thread.Sleep(100);
                 }
 
@@ -68,7 +73,7 @@ namespace LedBarGraph_Sample
                 while (percentage >= 0)
                 {
                     percentage -= 0.10f;
-                    ledBarGraph.Percentage = Math.Max(0.0f, percentage); ;                    
+                    ledBarGraph.Percentage = Math.Max(0.0f, percentage); ;
                     Thread.Sleep(100);
                 }
 

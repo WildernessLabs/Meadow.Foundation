@@ -1,17 +1,17 @@
-﻿using Meadow;
-using Meadow.Devices;
-using Meadow.Foundation.Leds;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Meadow;
+using Meadow.Devices;
+using Meadow.Foundation.Leds;
 
-namespace PwmLed_Sample
+namespace Leds.PwmLed_Sample
 {
-    public class PwmLedApp : App<F7Micro, PwmLedApp>
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
         List<PwmLed> pwmLeds;
 
-        public PwmLedApp()
+        public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
@@ -38,49 +38,45 @@ namespace PwmLed_Sample
         {
             Console.WriteLine("TestPwmLeds...");
 
-            bool state = true;
-
             while (true)
             {
                 Console.WriteLine("Turning on and off each led for 1 second");
                 foreach (var pwmLed in pwmLeds)
                 {
-                    pwmLed.IsOn = state;
+                    pwmLed.IsOn = true;
                     Thread.Sleep(500);
-                    //pwmLed.IsOn = false;
+                    pwmLed.IsOn = false;
                 }
 
-                state = !state;
+                Console.WriteLine("Blinking the LED for a bit.");
+                foreach (var pwmLed in pwmLeds)
+                {
+                    pwmLed.StartBlink();
+                    Thread.Sleep(3000);
+                    pwmLed.Stop();
+                }
 
-                //Console.WriteLine("Blinking the LED for a bit.");
-                //foreach (var pwmLed in pwmLeds)
-                //{
-                //    pwmLed.StartBlink();
-                //    Thread.Sleep(3000);
-                //    pwmLed.Stop();
-                //}
+                Console.WriteLine("Pulsing the LED for a bit.");
+                foreach (var pwmLed in pwmLeds)
+                {
+                    pwmLed.StartPulse();
+                    Thread.Sleep(3000);
+                    pwmLed.Stop();
+                }
 
-                //Console.WriteLine("Pulsing the LED for a bit.");
-                //foreach (var pwmLed in pwmLeds)
-                //{
-                //    pwmLed.StartPulse();
-                //    Thread.Sleep(3000);
-                //    pwmLed.Stop();
-                //}
-
-                //Console.WriteLine("Set brightness the LED for a bit.");
-                //foreach (var pwmLed in pwmLeds)
-                //{
-                //    pwmLed.SetBrightness(0.25f);
-                //    Thread.Sleep(500);
-                //    pwmLed.SetBrightness(0.5f);
-                //    Thread.Sleep(500);
-                //    pwmLed.SetBrightness(0.75f);
-                //    Thread.Sleep(500);
-                //    pwmLed.SetBrightness(1.0f);
-                //    Thread.Sleep(500);
-                //    pwmLed.Stop();
-                //}
+                Console.WriteLine("Set brightness the LED for a bit.");
+                foreach (var pwmLed in pwmLeds)
+                {
+                    pwmLed.SetBrightness(0.25f);
+                    Thread.Sleep(500);
+                    pwmLed.SetBrightness(0.5f);
+                    Thread.Sleep(500);
+                    pwmLed.SetBrightness(0.75f);
+                    Thread.Sleep(500);
+                    pwmLed.SetBrightness(1.0f);
+                    Thread.Sleep(500);
+                    pwmLed.Stop();
+                }
             }
         }
     }
