@@ -4,30 +4,30 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Motors;
 
-namespace HBridgeMotor_Sample
+namespace Motor.HBridgeMotor_Sample
 {
-    public class HBridgeMotorApp : App<F7Micro, HBridgeMotorApp>
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        HBridgeMotor motor1;
+        protected HBridgeMotor motor1;
 
-        public HBridgeMotorApp()
+        public MeadowApp()
         {
-            ConfigurePorts();
+            Console.WriteLine("Initializing...");
+
+            motor1 = new HBridgeMotor
+            (
+                a1Pin: Device.CreatePwmPort(Device.Pins.D07),
+                a2Pin: Device.CreatePwmPort(Device.Pins.D08),
+                enablePin: Device.CreateDigitalOutputPort(Device.Pins.D09)
+            );
+            
             TestMotor();
         }
 
-        public void ConfigurePorts()
+        protected void TestMotor()
         {
-            motor1 = new HBridgeMotor
-            (
-                a1Pin: Device.CreatePwmPort(Device.Pins.D02),
-                a2Pin: Device.CreatePwmPort(Device.Pins.D03),
-                enablePin: Device.CreateDigitalOutputPort(Device.Pins.D04)
-            );
-        }
+            Console.WriteLine("TestMotor...");
 
-        public void TestMotor()
-        {
             while (true)
             {
                 // Motor Forwards

@@ -1,6 +1,6 @@
 ﻿using Meadow;
 
-namespace HBridgeMotor_Sample
+namespace Motor.HBridgeMotor_Sample
 {
     class Program
     {
@@ -10,7 +10,7 @@ namespace HBridgeMotor_Sample
             if (args.Length > 0 && args[0] == "--exitOnDebug") return;
 
             // instantiate and run new meadow app
-            app = new HBridgeMotorApp();
+            app = new MeadowApp();
         }
     }
 }
