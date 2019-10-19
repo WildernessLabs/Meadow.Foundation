@@ -1,19 +1,19 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.ePaper;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
-namespace WaveShare_ePaper_Sample
+namespace Displays.ePaper.EPD2i9b_Sample
 {
-    public class WaveShareEPaperApp : App<F7Micro, WaveShareEPaperApp>
+    /* Driver in development */
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
         EPD2i9b display;
         ISpiBus spiBus;
 
-        public WaveShareEPaperApp()
+        public MeadowApp()
         {
             Console.WriteLine("ePaper sample");
             Console.WriteLine("Create Spi bus");

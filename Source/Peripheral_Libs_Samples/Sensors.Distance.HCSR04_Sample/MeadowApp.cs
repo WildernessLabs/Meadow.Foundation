@@ -1,22 +1,25 @@
-﻿using Meadow;
+﻿using System;
+using System.Threading;
+using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
-using System;
-using System.Threading;
 
-namespace HCSR04_Sample
+namespace Sensors.Distance.HCSR04_Sample
 {
-    public class HCSR04App : App<F7Micro, HCSR04App>
+    /* Driver in development */
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        public HCSR04App()
+        HCSR04 hCSR04;
+
+        public MeadowApp()
         {
-            var HCSR04 = new HCSR04(Device, Device.Pins.D05, Device.Pins.D06);
-            HCSR04.DistanceDetected += HCSR04DistanceDetected;
+            hCSR04 = new HCSR04(Device, Device.Pins.D05, Device.Pins.D06);
+            hCSR04.DistanceDetected += HCSR04DistanceDetected;
 
             while (true)
             {
                 // Sends a trigger signal
-                HCSR04.MeasureDistance();
+                hCSR04.MeasureDistance();
                 Thread.Sleep(1500);
             }
         }

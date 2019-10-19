@@ -1,24 +1,27 @@
-﻿using Meadow;
+﻿using System;
+using System.Threading;
+using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
-using System;
-using System.Threading;
 
-namespace SFSR02_Sample
+namespace Sensors.Distance.SFSR02_Sample
 {
-    public class SFSR02App : App<F7Micro, SFSR02App>
+    /* Driver in development */
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        public SFSR02App()
+        SFSR02 sFSR02;
+
+        public MeadowApp()
         {
-            var SFSR02 = new SFSR02(Device, Device.Pins.D03);
-            SFSR02.DistanceDetected += SFSR02DistanceDetected;
+            sFSR02 = new SFSR02(Device, Device.Pins.D03);
+            sFSR02.DistanceDetected += SFSR02DistanceDetected;
 
             while (true)
             {
                 Console.WriteLine("Measure Distance:");
 
                 // Sends a trigger signal
-                SFSR02.MeasureDistance();
+                sFSR02.MeasureDistance();
                 Thread.Sleep(1500);
             }
         }

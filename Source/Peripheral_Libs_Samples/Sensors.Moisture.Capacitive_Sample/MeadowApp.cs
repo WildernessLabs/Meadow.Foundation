@@ -1,24 +1,25 @@
-﻿using Meadow;
-using Meadow.Devices;
-using Meadow.Foundation.Sensors.Moisture;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Meadow;
+using Meadow.Devices;
+using Meadow.Foundation.Sensors.Moisture;
 
-namespace Capacitive_Sample
+namespace Sensors.Moisture.Capacitive_Sample
 {
-    public class CapacitiveApp : App<F7Micro, CapacitiveApp>
+    /* Driver in development */
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
         Capacitive capacitive;
 
-        public CapacitiveApp()
+        public MeadowApp()
         {
             capacitive = new Capacitive(Device.CreateAnalogInputPort(Device.Pins.A01));
 
             TestCapacitiveSensorAsync();
         }
 
-        protected async Task TestCapacitiveSensorAsync()
+        async Task TestCapacitiveSensorAsync()
         {
             while (true)
             {

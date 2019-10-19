@@ -1,22 +1,25 @@
-﻿using Meadow;
+﻿using System;
+using System.Threading;
+using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
-using System;
-using System.Threading;
 
-namespace HYSRF05_Sample
+namespace Sensors.Distance.HYSRF05_Sample
 {
-    public class HYSRF05App : App<F7Micro, HYSRF05App>
+    /* Driver in development */
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        public HYSRF05App()
+        HYSRF05 hYSRF05;
+
+        public MeadowApp()
         {
-            var HYSRF05 = new HYSRF05(Device, Device.Pins.D05, Device.Pins.D06);
-            HYSRF05.DistanceDetected += HYSRF05DistanceDetected; ;
+            hYSRF05 = new HYSRF05(Device, Device.Pins.D05, Device.Pins.D06);
+            hYSRF05.DistanceDetected += HYSRF05DistanceDetected;
 
             while (true)
             {
                 // Sends a trigger signal
-                HYSRF05.MeasureDistance();
+                hYSRF05.MeasureDistance();
                 Thread.Sleep(500);
             }
         }

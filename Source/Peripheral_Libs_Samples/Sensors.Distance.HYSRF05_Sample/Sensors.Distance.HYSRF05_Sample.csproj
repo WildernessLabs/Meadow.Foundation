@@ -5,10 +5,9 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WildernessLabs.Meadow.Assemblies" Version="0.1.1" />
-    <PackageReference Include="Meadow" Version="0.8.0" />
+    <PackageReference Include="Meadow.Foundation" Version="0.10.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Peripheral_Libs\Sensors.Moisture.FC28\Sensors.Moisture.FC28.csproj" />
+    <ProjectReference Include="..\..\Peripheral_Libs\Sensors.Distance.HYSRF05\Sensors.Distance.HYSRF05.csproj" />
   </ItemGroup>
 </Project>

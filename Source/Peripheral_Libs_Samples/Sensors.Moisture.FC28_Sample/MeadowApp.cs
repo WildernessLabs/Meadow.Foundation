@@ -1,17 +1,18 @@
-﻿using Meadow;
-using Meadow.Devices;
-using Meadow.Foundation.Sensors.Moisture;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Meadow;
+using Meadow.Devices;
+using Meadow.Foundation.Sensors.Moisture;
 
-namespace FC28_Sample
+namespace Sensors.Moisture.FC28_Sample
 {
-    public class FC28App : App<F7Micro, FC28App>
+    /* Driver in development */
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
         FC28 fc28;
 
-        public FC28App()
+        public MeadowApp()
         {
             fc28 = new FC28(Device.CreateAnalogInputPort(Device.Pins.A01),
                 Device.CreateDigitalOutputPort(Device.Pins.D01));
@@ -19,7 +20,7 @@ namespace FC28_Sample
             TestFC28SensorAsync().Wait();
         }
 
-        protected async Task TestFC28SensorAsync()
+        async Task TestFC28SensorAsync()
         {
             while (true)
             {
