@@ -9,14 +9,11 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, SevenSegment, Display</PackageTags>
-    <AssemblyVersion>0.8.0</AssemblyVersion>
-    <PackageVersion>0.8.0</PackageVersion>
-    <FileVersion>0.8.0</FileVersion>
-    <Version>0.8.0</Version>
+    <Version>0.8.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for seven segment displays</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.9.0" />
+    <PackageReference Include="Meadow.Foundation" Version="0.10.5" />
   </ItemGroup>
 </Project>

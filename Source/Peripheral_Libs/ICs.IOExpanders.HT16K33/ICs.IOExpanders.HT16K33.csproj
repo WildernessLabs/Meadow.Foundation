@@ -8,15 +8,12 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.HT16K33</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, IOExpanders, HT16K33</PackageTags>
-    <AssemblyVersion>0.6.0</AssemblyVersion>
-    <PackageVersion>0.6.0</PackageVersion>
-    <FileVersion>0.6.0</FileVersion>
-    <Version>0.6.0</Version>
+    <PackageTags>Meadow.Foundation, IOExpanders, HT16K33</PackageTags>    
+    <Version>0.6.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for a HT16K33 IO Expander</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.9.0" />
+    <PackageReference Include="Meadow.Foundation" Version="0.10.5" />
   </ItemGroup>
 </Project>
