@@ -16,12 +16,12 @@ namespace Sensors.Moisture.Capacitive_Sample
 
             capacitive = new Capacitive(Device.CreateAnalogInputPort(Device.Pins.A01));
 
-            TestCapacitiveSensorAsync();
+            TestCapacitiveSensor();
         }
 
-        void TestCapacitiveSensorAsync()
+        void TestCapacitiveSensor()
         {
-            Console.WriteLine("TestCapacitiveSensorAsync...");
+            Console.WriteLine("TestCapacitiveSensor...");
 
             // Use ReadRaw(); to get dry and moist values
             for (int i = 0; i < 10; i++)

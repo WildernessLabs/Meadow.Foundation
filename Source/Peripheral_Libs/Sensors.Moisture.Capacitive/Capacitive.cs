@@ -21,14 +21,14 @@ namespace Meadow.Foundation.Sensors.Moisture
         public float Moisture { get; private set; }
 
         /// <summary>
-        /// Boundary value of most moist soil
-        /// </summary>
-        public float MaximumMoisture { get; set; }
-
-        /// <summary>
         /// Boundary value of most dry soil 
         /// </summary>
         public float MinimumMoisture { get; set; }
+
+        /// <summary>
+        /// Boundary value of most moist soil
+        /// </summary>
+        public float MaximumMoisture { get; set; }
 
         #endregion
 
@@ -44,8 +44,8 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="device"></param>
         /// <param name="analogPin"></param>
-        public Capacitive(IIODevice device, IPin analogPin, float minMoistureValue = 0f, float maxMoistureValue = 5f) : 
-            this(device.CreateAnalogInputPort(analogPin), minMoistureValue, maxMoistureValue) { }
+        public Capacitive(IIODevice device, IPin analogPin, float minimumMoisture = 0f, float maximumMoisture = 5f) : 
+            this(device.CreateAnalogInputPort(analogPin), minimumMoisture, maximumMoisture) { }
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort.
