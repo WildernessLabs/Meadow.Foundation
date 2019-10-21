@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.BME280" Version="0.5.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.BME280" Version="0.5.1" />
   </ItemGroup>
 </Project>

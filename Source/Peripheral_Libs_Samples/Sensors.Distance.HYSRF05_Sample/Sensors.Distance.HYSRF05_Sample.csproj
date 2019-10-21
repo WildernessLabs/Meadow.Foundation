@@ -5,9 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.10.0" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Peripheral_Libs\Sensors.Distance.HYSRF05\Sensors.Distance.HYSRF05.csproj" />
   </ItemGroup>
 </Project>
