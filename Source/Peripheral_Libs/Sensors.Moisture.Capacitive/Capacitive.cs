@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="device"></param>
         /// <param name="analogPin"></param>
-        public Capacitive(IIODevice device, IPin analogPin, float minMoistureValue = 4.31f, float maxMoistureValue = 2.39f) : 
+        public Capacitive(IIODevice device, IPin analogPin, float minMoistureValue = 0f, float maxMoistureValue = 5f) : 
             this(device.CreateAnalogInputPort(analogPin), minMoistureValue, maxMoistureValue) { }
 
         /// <summary>
