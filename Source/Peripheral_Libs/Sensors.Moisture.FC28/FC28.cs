@@ -1,14 +1,11 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Moisture;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Moisture
 {
     /// <summary>
-    /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor
-    /// 
-    /// Note: This class is not yet implemented.
+    /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor    
     /// </summary>
     public class FC28 : IMoistureSensor
     {
@@ -29,6 +26,16 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public float Moisture { get; private set; }
 
+        /// <summary>
+        /// Boundary value of most dry soil 
+        /// </summary>
+        public float MinimumMoisture { get; set; }
+
+        /// <summary>
+        /// Boundary value of most moist soil
+        /// </summary>
+        public float MaximumMoisture { get; set; }
+
         #endregion
 
         #region Constructors
@@ -43,18 +50,20 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
-        public FC28(IIODevice device, IPin analogPin, IPin digitalPin) : 
-            this (device.CreateAnalogInputPort(analogPin), device.CreateDigitalOutputPort(digitalPin)) { }
+        public FC28(IIODevice device, IPin analogPin, IPin digitalPin, float minimumMoisture = 0f, float maximumMoisture = 5f) : 
+            this (device.CreateAnalogInputPort(analogPin), device.CreateDigitalOutputPort(digitalPin), minimumMoisture, maximumMoisture) { }
 
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin and digital pin.
         /// </summary>
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
-        public FC28(IAnalogInputPort analogPort, IDigitalOutputPort digitalPort)
+        public FC28(IAnalogInputPort analogPort, IDigitalOutputPort digitalPort, float minimumMoisture = 0f, float maximumMoisture = 5f)
         {
             AnalogPort = analogPort;
             DigitalPort = digitalPort;
+            MinimumMoisture = minimumMoisture;
+            MaximumMoisture = maximumMoisture;
         }
 
         #endregion
@@ -62,18 +71,34 @@ namespace Meadow.Foundation.Sensors.Moisture
         #region Methods
 
         /// <summary>
-        /// Returns the soil moisture current value.
+        /// Returns the raw soil moisture current value
         /// </summary>
-        /// <returns>Value ranges from 0 - 100</returns>
-        public async Task<float> Read()
+        /// <returns>Value ranges from 0.0f - 5.0f</returns>
+        public float ReadRaw()
         {
             DigitalPort.State = true;
             Thread.Sleep(5);
-            var sample = await AnalogPort.Read();
+            float value = AnalogPort.Read().Result;
             DigitalPort.State = false;
 
-            Moisture = 100 - Map(sample, 0, 1023, 0, 100);
-            return Moisture;
+            return value;
+        }
+
+        /// <summary>
+        /// Returns the soil moisture current value.
+        /// </summary>
+        /// <returns>Value ranges from 0 - 100</returns>
+        public float Read()
+        {
+            DigitalPort.State = true;
+            Thread.Sleep(5);
+            Moisture = AnalogPort.Read().Result;
+            DigitalPort.State = false;
+
+            if (MinimumMoisture > MaximumMoisture)
+                return 100 - Map(Moisture, MaximumMoisture, MinimumMoisture, 0, 100);
+            else
+                return 100 - Map(Moisture, MinimumMoisture, MaximumMoisture, 0, 100);
         }
 
         /// <summary>
