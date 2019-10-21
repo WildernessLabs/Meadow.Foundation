@@ -1,13 +1,10 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Moisture;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Moisture
 {
     /// <summary>
     /// Capacitive Soil Moisture Sensor
-    /// 
-    /// Note: This class is not yet implemented.
     /// </summary>
     public class Capacitive : IMoistureSensor
     {
@@ -23,6 +20,16 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public float Moisture { get; private set; }
 
+        /// <summary>
+        /// Boundary value of most moist soil
+        /// </summary>
+        public float MaximumMoisture { get; set; }
+
+        /// <summary>
+        /// Boundary value of most dry soil 
+        /// </summary>
+        public float MinimumMoisture { get; set; }
+
         #endregion
 
         #region Constructors
@@ -37,16 +44,18 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="device"></param>
         /// <param name="analogPin"></param>
-        public Capacitive(IIODevice device, IPin analogPin) : 
-            this(device.CreateAnalogInputPort(analogPin)) { }
+        public Capacitive(IIODevice device, IPin analogPin, float minMoistureValue = 4.31f, float maxMoistureValue = 2.39f) : 
+            this(device.CreateAnalogInputPort(analogPin), minMoistureValue, maxMoistureValue) { }
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort.
         /// </summary>
         /// <param name="analogPort"></param>
-        public Capacitive(IAnalogInputPort analogPort)
+        public Capacitive(IAnalogInputPort analogPort, float minimumMoisture = 0f, float maximumMoisture = 5f)
         {
             AnalogPort = analogPort;
+            MinimumMoisture = minimumMoisture;
+            MaximumMoisture = maximumMoisture;
         }
 
         #endregion
@@ -54,13 +63,26 @@ namespace Meadow.Foundation.Sensors.Moisture
         #region Methods
 
         /// <summary>
+        /// Returns the raw soil moisture current value
+        /// </summary>
+        /// <returns>Value ranges from 0.0f - 5.0f</returns>
+        public float ReadRaw() 
+        { 
+            return AnalogPort.Read().Result;
+        }
+
+        /// <summary>
         /// Returns the soil moisture current value.
         /// </summary>
         /// <returns>Value ranges from 0 - 100</returns>
-        public async Task<float> Read()
+        public float Read()
         {
             Moisture = AnalogPort.Read().Result;
-            return 100 - Map(Moisture, 0, 1023, 0, 100);
+
+            if (MinimumMoisture > MaximumMoisture)
+                return 100 - Map(Moisture, MaximumMoisture, MinimumMoisture, 0, 100);
+            else
+                return 100 - Map(Moisture, MinimumMoisture, MaximumMoisture, 0, 100);
         }
 
         /// <summary>
