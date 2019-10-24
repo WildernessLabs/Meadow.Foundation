@@ -8,7 +8,7 @@ namespace Displays.Tft.ILI9163_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        ILI9163 display;
+        ILI9341 display;
         GraphicsLibrary graphics;
 
         public MeadowApp()
@@ -17,32 +17,23 @@ namespace Displays.Tft.ILI9163_Sample
 
             var spiBus = Device.CreateSpiBus();
 
-            display = new ILI9163
+            display = new ILI9341
             (
-                device: Device, 
+                device: Device,
                 spiBus: spiBus,
-                chipSelectPin: Device.Pins.D02,
-                dcPin: Device.Pins.D01,
-                resetPin: Device.Pins.D00,
-                width: 128, height: 160
+                chipSelectPin: Device.Pins.D13,
+                dcPin: Device.Pins.D14,
+                resetPin: Device.Pins.D15,
+                width: 240, height: 320
             );
 
             graphics = new GraphicsLibrary(display);
 
-            TestILI9163();
+            TestDisplay();
         }
 
-        void TestILI9163() 
+        void TestDisplay()
         {
-            Console.WriteLine("Clear display");
-
-            // Drawing natively in the display
-            display.ClearScreen(250);
-
-            Console.WriteLine("Refresh");
-
-            display.Refresh();
-
             Console.WriteLine("Draw");
 
             for (int i = 0; i < 30; i++)
@@ -56,9 +47,12 @@ namespace Displays.Tft.ILI9163_Sample
 
             display.Show();
 
-            Console.WriteLine("Show complete");
+            //force a collection
+            GC.Collect();
 
-            // Drawing with Display Graphics Library
+            Console.WriteLine("Show complete"); 
+
+            // Draw with Display Graphics Library
             graphics.CurrentFont = new Font8x8();
             graphics.Clear();
             graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);

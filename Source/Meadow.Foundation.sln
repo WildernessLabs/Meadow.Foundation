@@ -183,6 +183,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.SFSR02_Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.ePaper.EPD2i9b_Sample", "Peripheral_Libs_Samples\Displays.ePaper.EPD2i9b_Sample\Displays.ePaper.EPD2i9b_Sample.csproj", "{17941C59-56C7-4A09-B330-09C53767ADB4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tft.ILI9341_Sample", "Peripheral_Libs_Samples\Displays.Tft.ILI9341_Sample\Displays.Tft.ILI9341_Sample.csproj", "{B54A2F5E-1CE2-4902-B061-6D3B207F5C15}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -611,6 +613,10 @@ Global
 		{17941C59-56C7-4A09-B330-09C53767ADB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17941C59-56C7-4A09-B330-09C53767ADB4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{17941C59-56C7-4A09-B330-09C53767ADB4}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B54A2F5E-1CE2-4902-B061-6D3B207F5C15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B54A2F5E-1CE2-4902-B061-6D3B207F5C15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B54A2F5E-1CE2-4902-B061-6D3B207F5C15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B54A2F5E-1CE2-4902-B061-6D3B207F5C15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -702,6 +708,7 @@ Global
 		{A8DC1435-1377-4E86-81DA-79DD5C646782} = {F7EF2F6C-AD28-4D9B-BE49-D028A8E2FE95}
 		{C2B6AC69-CBCB-4CF8-B614-B8781EB44C6F} = {F7EF2F6C-AD28-4D9B-BE49-D028A8E2FE95}
 		{17941C59-56C7-4A09-B330-09C53767ADB4} = {F7EF2F6C-AD28-4D9B-BE49-D028A8E2FE95}
+		{B54A2F5E-1CE2-4902-B061-6D3B207F5C15} = {F7EF2F6C-AD28-4D9B-BE49-D028A8E2FE95}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
