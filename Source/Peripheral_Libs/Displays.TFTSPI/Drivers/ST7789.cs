@@ -55,13 +55,13 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(DISPON); //display on
             DelayMs(500);
 
-            SetAddressWindow(0, 0, (byte)(_width - 1), (byte)(_height - 1));
+            SetAddressWindow(0, 0, (_width - 1), (_height - 1));
 
             dataCommandPort.State = Data;
         }
 
 
-        private void SetAddressWindow(byte x0, byte y0, byte x1, byte y1)
+        private void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
         {
             x0 += _xOffset;
             y0 += _yOffset;
@@ -71,17 +71,17 @@ namespace Meadow.Foundation.Displays.Tft
 
             SendCommand(CASET);  // column addr set
             dataCommandPort.State = Data;
-            Write(0x00);
-            Write(x0);   // XSTART 
-            Write(0x00);
-            Write(x1);   // XEND
+            Write((byte)(x0 >> 8));
+            Write((byte)(x0 & 0xff));   // XSTART 
+            Write((byte)(x1 >> 8));
+            Write((byte)(x1 & 0xff));   // XEND
 
             SendCommand(RASET);  // row addr set
             dataCommandPort.State = Data;
-            Write(0x00);
-            Write(y0);    // YSTART
-            Write(0x00);
-            Write(y1);    // YEND
+            Write((byte)(y0 >> 8));
+            Write((byte)(y0 & 0xff));    // YSTART
+            Write((byte)(y1 >> 8));
+            Write((byte)(y1 & 0xff));    // YEND
 
             SendCommand(RAMWR);  // write to RAM
         }

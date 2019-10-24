@@ -46,28 +46,26 @@ namespace Meadow.Foundation.Displays.Tft
             Thread.Sleep(120);
             SendCommand(ILI9341_DISPON, null);
 
-            SetAddressWindow(0, 0, (byte)(_width - 1), (byte)(_height - 1));
+            SetAddressWindow(0, 0, _width - 1, _height - 1);
 
             dataCommandPort.State = (Data);
         }
 
-        private void SetAddressWindow(byte x0, byte y0, byte x1, byte y1)
+        private void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
         {
-            dataCommandPort.State = (Command);
-            Write((byte)LcdCommand.CASET);  // column addr set
-            dataCommandPort.State = (Data);
-            Write(0x0);
-            Write(x0);   // XSTART 
-            Write(0x0);
-            Write(x1);   // XEND
+            SendCommand((byte)LcdCommand.CASET);  // column addr set
+            dataCommandPort.State = Data;
+            Write((byte)(x0 >> 8));
+            Write((byte)(x0 & 0xff));   // XSTART 
+            Write((byte)(x1 >> 8));
+            Write((byte)(x1 & 0xff));   // XEND
 
-            dataCommandPort.State = (Command);
-            Write((byte)LcdCommand.RASET);  // row addr set
-            dataCommandPort.State = (Data);
-            Write(0x0);
-            Write(y0);    // YSTART
-            Write(0x0);
-            Write(y1);    // YEND
+            SendCommand((byte)LcdCommand.RASET);  // row addr set
+            dataCommandPort.State = Data;
+            Write((byte)(y0 >> 8));
+            Write((byte)(y0 & 0xff));    // YSTART
+            Write((byte)(y1 >> 8));
+            Write((byte)(y1 & 0xff));    // YEND
 
             dataCommandPort.State = (Command);
             Write((byte)LcdCommand.RAMWR);  // write to RAM */

@@ -71,20 +71,21 @@ namespace Meadow.Foundation.Displays.Tft
 
             SendCommand(CMD_DISPLAYON);	//--turn on oled panel   
 
-            SetAddressWindow(0, 0, (byte)(_width - 1), (byte)(_height - 1));
+            SetAddressWindow(0, 0, (_width - 1), (_height - 1));
 
             dataCommandPort.State = Data;
         }
 
-        private void SetAddressWindow(byte x0, byte y0, byte x1, byte y1)
+        //looks like this display only supports dimensions of 255 or less
+        private void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
         {
             SendCommand(0x15);  // column addr set
-            SendCommand(x0);
-            SendCommand(x1);
+            SendCommand((byte)x0);
+            SendCommand((byte)x1);
 
             SendCommand(0x75);  // row addr set
-            SendCommand(y0);
-            SendCommand(y1);
+            SendCommand((byte)y0);
+            SendCommand((byte)y1);
         }
 
         // Timing Delays

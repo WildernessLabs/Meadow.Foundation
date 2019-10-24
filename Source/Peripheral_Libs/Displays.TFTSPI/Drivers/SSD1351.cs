@@ -79,20 +79,21 @@ namespace Meadow.Foundation.Displays.Tft
 
             SendCommand(CMD_DISPLAYON);
             
-            SetAddressWindow(0, 0, (byte)(_width - 1), (byte)(_height - 1));
+            SetAddressWindow(0, 0, (_width - 1), (_height - 1));
 
             dataCommandPort.State = Data;
         }
 
-        private void SetAddressWindow(byte x0, byte y0, byte x1, byte y1)
+        //looks like this display only supports dimensions of 255 or less
+        private void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
         {
             SendCommand(CMD_SETCOLUMN);  // column addr set
-            SendData(x0);
-            SendData(x1);
+            SendData((byte)x0);
+            SendData((byte)x1);
 
             SendCommand(CMD_SETROW);  // row addr set
-            SendData(y0);
-            SendData(y1);
+            SendData((byte)y0);
+            SendData((byte)y1);
 
             SendCommand(CMD_WRITERAM);
         }
