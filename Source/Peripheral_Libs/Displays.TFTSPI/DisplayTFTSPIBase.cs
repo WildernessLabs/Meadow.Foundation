@@ -33,10 +33,11 @@ namespace Meadow.Foundation.Displays.Tft
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
         protected IDigitalOutputPort chipSelectPort;
-        protected ISpiBus spi;
+        protected SpiBus spi;
         protected ISpiPeripheral spiDisplay;
 
         protected readonly byte[] spiBuffer;
+        protected readonly byte[] spiReceive;
 
         protected uint _width;
         protected uint _height;
@@ -56,7 +57,10 @@ namespace Meadow.Foundation.Displays.Tft
             _width = width;
             _height = height;
 
+            spi = (SpiBus)spiBus;
+
             spiBuffer = new byte[_width * _height * sizeof(ushort)];
+            spiReceive = new byte[_width * _height * sizeof(ushort)];
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
@@ -213,7 +217,9 @@ namespace Meadow.Foundation.Displays.Tft
         /// </summary>
         public void Refresh()
         {
-            spiDisplay.WriteBytes(spiBuffer);
+           // spiDisplay.WriteBytes(spiBuffer);
+
+            spi.Exchange(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive);
         }
 
         private ushort Get16BitColorFromRGB(byte red, byte green, byte blue)
