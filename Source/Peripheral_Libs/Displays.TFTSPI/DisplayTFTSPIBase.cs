@@ -63,8 +63,8 @@ namespace Meadow.Foundation.Displays.Tft
             spiReceive = new byte[_width * _height * sizeof(ushort)];
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
-            resetPort = device.CreateDigitalOutputPort(resetPin, true);
-            chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false);
+            if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }
+            if (chipSelectPin != null) { chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false); }
 
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
         }
@@ -217,7 +217,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// </summary>
         public void Refresh()
         {
-           // spiDisplay.WriteBytes(spiBuffer);
+            // spiDisplay.WriteBytes(spiBuffer);
 
             spi.Exchange(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive);
         }
@@ -328,7 +328,7 @@ namespace Meadow.Foundation.Displays.Tft
             index = 512;
             var Half = _height / 2;
 
-            while(index < spiBuffer.Length - 256)
+            while (index < spiBuffer.Length - 256)
             {
                 Array.Copy(spiBuffer, 0, spiBuffer, index, 256);
                 index += 256;

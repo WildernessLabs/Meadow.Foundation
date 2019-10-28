@@ -20,19 +20,23 @@ namespace Meadow.Foundation.Displays
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
-        protected ISpiPeripheral spi;
+        protected ISpiPeripheral spiDisplay;
+        protected SpiBus spi;
 
         protected byte[] spiBuffer;
+        protected readonly byte[] spiReceive;
 
         public PCD8544(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
             spiBuffer = new byte[Width * Height / 8];
+            spiReceive = new byte[Width * Height / 8];
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, true);
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             var chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
 
-            spi = new SpiPeripheral(spiBus, chipSelectPort);
+            spi = (SpiBus)spiBus;
+            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
 
             Initialize();
         }
@@ -46,7 +50,7 @@ namespace Meadow.Foundation.Displays
 
             // spi.Write(new byte[] { 0x21, 0xBF, 0x04, 0x14, 0x0C, 0x20, 0x0C });
 
-            spi.WriteBytes(new byte[]
+            spiDisplay.WriteBytes(new byte[]
             {
                 0x21, // LCD Extended Commands.
                 0xBF, // Set LCD Vop (Contrast). //0xB0 for 5V, 0XB1 for 3.3v, 0XBF if screen too dark
@@ -68,7 +72,7 @@ namespace Meadow.Foundation.Displays
             spiBuffer = new byte[Width * Height / 8];
 
             dataCommandPort.State = (false);
-            spi.WriteBytes(new byte[] { 0x80, 0x40 });
+            spiDisplay.WriteBytes(new byte[] { 0x80, 0x40 });
             dataCommandPort.State = (true);
         }
 
@@ -142,14 +146,16 @@ namespace Meadow.Foundation.Displays
 
         public override void Show()
         {
-            spi.WriteBytes(spiBuffer);
+          //  spiDisplay.WriteBytes(spiBuffer);
+
+            spi.Exchange(null, ChipSelectMode.ActiveLow, spiBuffer, spiReceive);
         }
 
         private void Invert(bool inverse)
         {
             _invertDisplay = inverse;
             dataCommandPort.State = (false);
-            spi.WriteBytes(inverse ? new byte[] { 0x0D } : new byte[] { 0x0C });
+            spiDisplay.WriteBytes(inverse ? new byte[] { 0x0D } : new byte[] { 0x0C });
             dataCommandPort.State = (true);
         }
     }

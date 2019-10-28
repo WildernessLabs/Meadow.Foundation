@@ -75,7 +75,8 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     SSD1306 SPI display
         /// </summary>
-        protected ISpiPeripheral _spiPeripheral;
+        protected ISpiPeripheral spiDisplay;
+        protected SpiBus spi;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
@@ -103,6 +104,7 @@ namespace Meadow.Foundation.Displays
         ///     Buffer holding the pixels in the display.
         /// </summary>
         private byte[] _buffer;
+        private byte[] _spiReceive;
 
         /// <summary>
         ///     Sequence of command bytes that must be sent to the display before
@@ -233,7 +235,8 @@ namespace Meadow.Foundation.Displays
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false);
 
-            _spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spi = (SpiBus)spiBus;
+            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
 
             connectionType = ConnectionType.SPI;
 
@@ -311,7 +314,7 @@ namespace Meadow.Foundation.Displays
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                _spiPeripheral.WriteByte(command);
+                spiDisplay.WriteByte(command);
             }
             else
             {
@@ -332,7 +335,7 @@ namespace Meadow.Foundation.Displays
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                _spiPeripheral.WriteBytes(commands);
+                spiDisplay.WriteBytes(commands);
             }
             else
             {
@@ -355,8 +358,10 @@ namespace Meadow.Foundation.Displays
 
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Data;
-                _spiPeripheral.WriteBytes(_buffer);
+             //   dataCommandPort.State = Data;
+             //   spiDisplay.WriteBytes(_buffer);
+
+                spi.Exchange(chipSelectPort, ChipSelectMode.ActiveLow, _buffer, _spiReceive);
             }
             else
             {
