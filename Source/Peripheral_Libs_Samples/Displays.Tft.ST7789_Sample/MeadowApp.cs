@@ -17,7 +17,7 @@ namespace Displays.Tft.ST7789_Sample
             Console.WriteLine("TftSpi sample");
             Console.WriteLine("Create Spi bus");
 
-            var config = new SpiBus.ClockConfiguration(6000, SpiBus.Mode.Mode2);
+            var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode2);
             spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             Console.WriteLine("Create display driver instance");
