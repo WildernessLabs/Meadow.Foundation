@@ -9,10 +9,10 @@
    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
    <PackageTags>Meadow, Meadow.Foundation</PackageTags>
-   <Version>0.10.5</Version>
+   <Version>0.10.6</Version>
    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
  </PropertyGroup>
  <ItemGroup>
-   <PackageReference Include="Meadow" Version="0.8.5" />
+   <PackageReference Include="Meadow" Version="0.8.6" />
  </ItemGroup>
 </Project>
