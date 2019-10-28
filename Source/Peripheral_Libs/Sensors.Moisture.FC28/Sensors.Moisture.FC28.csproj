@@ -14,6 +14,6 @@
     <Description>Driver for FC28 Soil Moisture sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.10.5" />
+    <PackageReference Include="Meadow.Foundation" Version="0.10.6" />
   </ItemGroup>
 </Project>
