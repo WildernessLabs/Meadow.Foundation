@@ -653,9 +653,9 @@ namespace Meadow.Foundation.Graphics
             switch(CurrentRotation)
             {
                 case Rotation._90Degrees:
-                    return (int)_display.Width - y;
+                    return (int)_display.Width - y - 1;
                 case Rotation._180Degrees:
-                    return (int)_display.Width - x;
+                    return (int)_display.Width - x - 1;
                 case Rotation._270Degrees:
                     return (int)y;
                 case Rotation.Default:
@@ -671,9 +671,9 @@ namespace Meadow.Foundation.Graphics
                 case Rotation._90Degrees:
                     return x; 
                 case Rotation._180Degrees:
-                    return (int)_display.Height - y;
+                    return (int)_display.Height - y - 1;
                 case Rotation._270Degrees:
-                    return (int)_display.Height - x;
+                    return (int)_display.Height - x - 1;
                 case Rotation.Default:
                 default:
                     return y;
