@@ -361,7 +361,7 @@ namespace Meadow.Foundation.Displays
              //   dataCommandPort.State = Data;
              //   spiDisplay.WriteBytes(_buffer);
 
-                spi.Exchange(chipSelectPort, ChipSelectMode.ActiveLow, _buffer, _spiReceive);
+                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, _buffer, _spiReceive);
             }
             else
             {

@@ -219,7 +219,7 @@ namespace Meadow.Foundation.Displays.Tft
         {
             // spiDisplay.WriteBytes(spiBuffer);
 
-            spi.Exchange(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive);
+            spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive);
         }
 
         private ushort Get16BitColorFromRGB(byte red, byte green, byte blue)

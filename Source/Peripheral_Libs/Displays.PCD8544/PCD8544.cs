@@ -148,7 +148,7 @@ namespace Meadow.Foundation.Displays
         {
           //  spiDisplay.WriteBytes(spiBuffer);
 
-            spi.Exchange(null, ChipSelectMode.ActiveLow, spiBuffer, spiReceive);
+            spi.ExchangeData(null, ChipSelectMode.ActiveLow, spiBuffer, spiReceive);
         }
 
         private void Invert(bool inverse)
