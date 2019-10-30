@@ -5,6 +5,6 @@
     <AssemblyName>WaveShareEPaper</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.10.6" />
+    <PackageReference Include="Meadow.Foundation" Version="0.10.8" />
   </ItemGroup>
 </Project>

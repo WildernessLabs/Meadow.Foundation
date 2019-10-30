@@ -319,7 +319,7 @@ namespace Meadow.Foundation.Displays.Tft
             Thread.Sleep(10);
         }
         
-        private void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
+        protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
         {
             x0 += _xOffset;
             y0 += _yOffset;

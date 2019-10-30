@@ -80,9 +80,11 @@ namespace Meadow.Foundation.Sensors.Moisture
             Moisture = AnalogPort.Read().Result;
 
             if (MinimumMoisture > MaximumMoisture)
+            {
                 return 100 - Map(Moisture, MaximumMoisture, MinimumMoisture, 0, 100);
-            else
-                return 100 - Map(Moisture, MinimumMoisture, MaximumMoisture, 0, 100);
+            }
+            
+            return 100 - Map(Moisture, MinimumMoisture, MaximumMoisture, 0, 100);
         }
 
         /// <summary>

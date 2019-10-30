@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Displays.Tft
         }
 
         //looks like this display only supports dimensions of 255 or less
-        private void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
+        protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
         {
             SendCommand(CMD_SETCOLUMN);  // column addr set
             SendData((byte)x0);
