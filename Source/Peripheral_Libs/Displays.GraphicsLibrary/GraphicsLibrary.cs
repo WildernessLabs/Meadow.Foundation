@@ -516,37 +516,76 @@ namespace Meadow.Foundation.Graphics
             {
                 bitMap = new byte[text.Length * CurrentFont.Height * CurrentFont.Width / 8];
 
+                byte[] characterMap;
+
                 for (int i = 0; i < text.Length; i++)
                 {
-                    var characterMap = CurrentFont[text[i]];
+                    characterMap = CurrentFont[text[i]];
 
+                    //copy data for 1 character at a time going top to bottom
                     for (int segment = 0; segment < CurrentFont.Height; segment++)
                     {
                         bitMap[i + (segment * text.Length)] = characterMap[segment];
                     }
                 }
             }
+            else if (CurrentFont.Width == 12)
+            {
+                var len = 3 * ((text.Length + text.Length % 3) / 2);
+                bitMap = new byte[len * CurrentFont.Height];
+
+                byte[] characterMap1, characterMap2;
+                int index = 0;
+
+                for (int i = 0; i < text.Length; i += 2) //2 chracters, 3 bytes ... 24 bytes total so the math is good
+                {
+                    //grab two characters at once to fill a complete byte
+                    characterMap1 = CurrentFont[text[i]];
+                    characterMap2 = (i + 1 < text.Length) ? CurrentFont[text[i + 1]] : CurrentFont[' '];
+
+                    //    for (int j = 0; j < characterMap1.Length; j += 3) //3 bytes = 2 rows
+                    int cIndex = 0;
+                    for (int j = 0; j < CurrentFont.Height; j += 2)
+                    {
+                        //first row - spans 3 bytes (for 2 chars)
+                    
+                        bitMap[index + (j + 0) * len + 0] = characterMap1[cIndex]; //good
+                        bitMap[index + (j + 0) * len + 1] = (byte)((characterMap1[cIndex + 1] & 0x0F) | (characterMap2[cIndex] << 4)); //bad?
+                        bitMap[index + (j + 0) * len + 2] = (byte)((characterMap2[cIndex] >> 4) | (characterMap2[cIndex + 1] << 4)); //good
+
+                        //2nd row
+                        bitMap[index + (j + 1) * len + 0] = (byte)((characterMap1[cIndex + 1] >> 4) | characterMap1[cIndex + 2] << 4); //good
+                        bitMap[index + (j + 1) * len + 1] = (byte)((characterMap1[cIndex + 2] >> 4) | characterMap2[cIndex + 1] & 0xF0); //bad?
+                        bitMap[index + (j + 1) * len + 2] = (byte)((characterMap2[cIndex + 2])); //good
+
+                        cIndex += 3;
+                    }
+                    index += 3;
+                }
+                Console.WriteLine("Font buffer complete");
+            }
             else if (CurrentFont.Width == 4)
             {
-                var len = (text.Length + text.Length % 2)/2;
+                var len = (text.Length + text.Length % 2) / 2;
                 bitMap = new byte[len * CurrentFont.Height];
                 byte[] characterMap1, characterMap2;
 
                 for (int i = 0; i < len; i++)
                 {
-                    characterMap1 = CurrentFont[text[2*i]];
-                    characterMap2 = (i * 2 + 1 < text.Length) ? CurrentFont[text[2 * i + 1]] : CurrentFont[' '];
+                    //grab two characters at once to fill a complete byte
+                    characterMap1 = CurrentFont[text[2 * i]];
+                    characterMap2 = (2 * i + 1 < text.Length) ? CurrentFont[text[2 * i + 1]] : CurrentFont[' '];
 
                     for (int j = 0; j < characterMap1.Length; j++)
                     {
                         bitMap[i + (j * 2 + 0) * len] = (byte)((characterMap1[j] & 0x0F) | (characterMap2[j] << 4));
-                        bitMap[i + (j * 2 + 1) * len] = (byte)((characterMap1[j] >> 4)   | (characterMap2[j] & 0xF0));
+                        bitMap[i + (j * 2 + 1) * len] = (byte)((characterMap1[j] >> 4) | (characterMap2[j] & 0xF0));
                     }
                 }
             }
             else
             {
-                throw new Exception("Font width must be 4, or 8");
+                throw new Exception("Font width must be 4, 8, or 12");
             }
             return bitMap;
         }
