@@ -66,6 +66,8 @@ namespace Meadow.Foundation.Displays.Lcd
             LCD_D5 = portD5;
             LCD_D6 = portD6;
             LCD_D7 = portD7;
+
+            Initialize();
         }
 
     /*    public CharacterDisplay(MCP23008 mcp, ushort rows = 20, ushort columns = 4)
