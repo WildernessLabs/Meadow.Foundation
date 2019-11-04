@@ -501,7 +501,9 @@ namespace Meadow.Foundation.Graphics
         public void DrawText(int x, int y, string text, Color color)
         {
             if (CurrentFont == null)
+            {
                 throw new Exception("CurrentFont must be set before calling DrawText.");
+            }
 
             byte[] bitMap = GetBytesForTextBitmap(text);
             
@@ -531,32 +533,30 @@ namespace Meadow.Foundation.Graphics
             }
             else if (CurrentFont.Width == 12)
             {
-                var len = 3 * ((text.Length + text.Length % 3) / 2);
+                var len = (text.Length + text.Length % 2) * 3 / 2;
                 bitMap = new byte[len * CurrentFont.Height];
 
-                byte[] characterMap1, characterMap2;
+                byte[] charMap1, charMap2;
                 int index = 0;
 
                 for (int i = 0; i < text.Length; i += 2) //2 chracters, 3 bytes ... 24 bytes total so the math is good
                 {
-                    //grab two characters at once to fill a complete byte
-                    characterMap1 = CurrentFont[text[i]];
-                    characterMap2 = (i + 1 < text.Length) ? CurrentFont[text[i + 1]] : CurrentFont[' '];
-
-                    //    for (int j = 0; j < characterMap1.Length; j += 3) //3 bytes = 2 rows
+                    //grab two characters at once
+                    charMap1 = CurrentFont[text[i]];
+                    charMap2 = (i + 1 < text.Length) ? CurrentFont[text[i + 1]] : CurrentFont[' '];
+                    
                     int cIndex = 0;
                     for (int j = 0; j < CurrentFont.Height; j += 2)
                     {
                         //first row - spans 3 bytes (for 2 chars)
-                    
-                        bitMap[index + (j + 0) * len + 0] = characterMap1[cIndex]; //good
-                        bitMap[index + (j + 0) * len + 1] = (byte)((characterMap1[cIndex + 1] & 0x0F) | (characterMap2[cIndex] << 4)); //bad?
-                        bitMap[index + (j + 0) * len + 2] = (byte)((characterMap2[cIndex] >> 4) | (characterMap2[cIndex + 1] << 4)); //good
+                        bitMap[index + (j + 0) * len + 0] = charMap1[cIndex]; //good
+                        bitMap[index + (j + 0) * len + 1] = (byte)((charMap1[cIndex + 1] & 0x0F) | (charMap2[cIndex] << 4)); //bad?
+                        bitMap[index + (j + 0) * len + 2] = (byte)((charMap2[cIndex] >> 4) | (charMap2[cIndex + 1] << 4)); //good
 
                         //2nd row
-                        bitMap[index + (j + 1) * len + 0] = (byte)((characterMap1[cIndex + 1] >> 4) | characterMap1[cIndex + 2] << 4); //good
-                        bitMap[index + (j + 1) * len + 1] = (byte)((characterMap1[cIndex + 2] >> 4) | characterMap2[cIndex + 1] & 0xF0); //bad?
-                        bitMap[index + (j + 1) * len + 2] = (byte)((characterMap2[cIndex + 2])); //good
+                        bitMap[index + (j + 1) * len + 0] = (byte)((charMap1[cIndex + 1] >> 4) | charMap1[cIndex + 2] << 4); //good
+                        bitMap[index + (j + 1) * len + 1] = (byte)((charMap1[cIndex + 2] >> 4) | charMap2[cIndex + 1] & 0xF0); //bad?
+                        bitMap[index + (j + 1) * len + 2] = (byte)((charMap2[cIndex + 2])); //good
 
                         cIndex += 3;
                     }
@@ -568,24 +568,24 @@ namespace Meadow.Foundation.Graphics
             {
                 var len = (text.Length + text.Length % 2) / 2;
                 bitMap = new byte[len * CurrentFont.Height];
-                byte[] characterMap1, characterMap2;
+                byte[] charMap1, charMap2;
 
                 for (int i = 0; i < len; i++)
                 {
                     //grab two characters at once to fill a complete byte
-                    characterMap1 = CurrentFont[text[2 * i]];
-                    characterMap2 = (2 * i + 1 < text.Length) ? CurrentFont[text[2 * i + 1]] : CurrentFont[' '];
+                    charMap1 = CurrentFont[text[2 * i]];
+                    charMap2 = (2 * i + 1 < text.Length) ? CurrentFont[text[2 * i + 1]] : CurrentFont[' '];
 
-                    for (int j = 0; j < characterMap1.Length; j++)
+                    for (int j = 0; j < charMap1.Length; j++)
                     {
-                        bitMap[i + (j * 2 + 0) * len] = (byte)((characterMap1[j] & 0x0F) | (characterMap2[j] << 4));
-                        bitMap[i + (j * 2 + 1) * len] = (byte)((characterMap1[j] >> 4) | (characterMap2[j] & 0xF0));
+                        bitMap[i + (j * 2 + 0) * len] = (byte)((charMap1[j] & 0x0F) | (charMap2[j] << 4));
+                        bitMap[i + (j * 2 + 1) * len] = (byte)((charMap1[j] >> 4) | (charMap2[j] & 0xF0));
                     }
                 }
             }
             else
             {
-                throw new Exception("Font width must be 4, 8, or 12");
+                throw new Exception("Font width must be 4, 6, 8, or 12");
             }
             return bitMap;
         }
@@ -680,7 +680,9 @@ namespace Meadow.Foundation.Graphics
                     for (var pixel = 0; pixel < 8; pixel++)
                     {
                         if ((b & mask) > 0)
+                        {
                             DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, color);
+                        }
                         mask <<= 1;
                     }
                 }
