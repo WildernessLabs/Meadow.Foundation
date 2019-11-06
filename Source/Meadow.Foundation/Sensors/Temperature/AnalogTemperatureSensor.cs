@@ -226,7 +226,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             // this is where the magic is: this allows us to extend the IObservable
             // pattern through the sensor driver
             _analogInputPort.Subscribe(
-                new FilterableObserver<FloatChangeResult>(
+                new FilterableObserver<FloatChangeResult, float>(
                     h => {
                         var newTemp = VoltageToTemperature(h.New);
                         var oldTemp = VoltageToTemperature(h.Old);

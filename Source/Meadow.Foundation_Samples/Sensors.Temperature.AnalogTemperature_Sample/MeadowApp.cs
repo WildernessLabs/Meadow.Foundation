@@ -23,26 +23,24 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             );
 
 
-            analogTemperature.Subscribe(new FilterableObserver<FloatChangeResult>(
+            analogTemperature.Subscribe(new FilterableObserver<FloatChangeResult, float>(
                 h => {
                     Console.WriteLine($"Temp changed by a degree; new: {h.New}, old: {h.Old}");
                 },
                 e => {
-                    return (e.Delta > 1);
+                    return (Math.Abs(e.Delta) > 1);
                 }
                 ));
 
-            ReadTemp();
+            //ReadTemp();
 
             analogTemperature.StartUpdating();
         }
 
-        protected void ReadTemp()
+        protected async Task ReadTemp()
         {
-            Task t = new Task(async () => {
-                Console.WriteLine($"Initial temp: { await analogTemperature.Read()}");
-            });
-            t.Start();
+            var temp = await analogTemperature.Read();
+            Console.WriteLine($"Initial temp: { temp }");
         }
     }
 }
