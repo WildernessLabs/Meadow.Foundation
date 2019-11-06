@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         private Capacitive() { }
 
         /// <summary>
-        /// Creates a Capacitive soil moisture sensor object with the especified analog pin and a IO device.
+        /// Creates a Capacitive soil moisture sensor object with the specified analog pin and a IO device.
         /// </summary>
         /// <param name="device"></param>
         /// <param name="analogPin"></param>
@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         {
             // read the voltage
             float voltage = await this.AnalogInputPort.Read(sampleCount, sampleInterval);
-            // convert and save to our temp property for later retreival
+            // convert and save to our temp property for later retrieval
             this.Moisture = VoltageToMoisture(voltage);
             // return
             return this.Moisture;
