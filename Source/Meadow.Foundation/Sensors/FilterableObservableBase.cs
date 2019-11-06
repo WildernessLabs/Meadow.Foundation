@@ -1,41 +1,46 @@
-﻿//using System;
-//using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-//namespace Meadow.Foundation.Sensors
-//{
-//    public abstract class FilterableObservableSensorBase<C> where C : IChangeResult<T> where T : yourmom
-//    {
-//        // collection of observers
-//        protected List<IObserver<C>> _observers { get; set; } = new List<IObserver<C>>();
+namespace Meadow.Foundation.Sensors
+{
+    public abstract class FilterableObservableBase<C,T> : IObservable<C> where C : IChangeResult<T>
+    {
+        // collection of observers
+        protected List<IObserver<C>> _observers { get; set; } = new List<IObserver<C>>();
 
-//        public FilterableObservableSensorBase()
-//        {
-//        }
+        public FilterableObservableBase()
+        {
+        }
 
-//        public IDisposable Subscribe(IObserver<C> observer)
-//        {
-//            if (!_observers.Contains(observer))
-//                _observers.Add(observer);
+        protected void NotifyObservers(C changeResult)
+        {
+            _observers.ForEach(x => x.OnNext(changeResult));
+        }
 
-//            return new Unsubscriber(_observers, observer);
-//        }
+        public IDisposable Subscribe(IObserver<C> observer)
+        {
+            if (!_observers.Contains(observer))
+                _observers.Add(observer);
 
-//        private class Unsubscriber : IDisposable
-//        {
-//            private List<IObserver<C>> _observers;
-//            private IObserver<C> _observer;
+            return new Unsubscriber(_observers, observer);
+        }
 
-//            public Unsubscriber(List<IObserver<C>> observers, IObserver<C> observer)
-//            {
-//                this._observers = observers;
-//                this._observer = observer;
-//            }
+        private class Unsubscriber : IDisposable
+        {
+            private List<IObserver<C>> _observers;
+            private IObserver<C> _observer;
 
-//            public void Dispose()
-//            {
-//                if (!(_observer == null)) _observers.Remove(_observer);
-//            }
-//        }
+            public Unsubscriber(List<IObserver<C>> observers, IObserver<C> observer)
+            {
+                this._observers = observers;
+                this._observer = observer;
+            }
 
-//    }
-//}
+            public void Dispose()
+            {
+                if (!(_observer == null)) _observers.Remove(_observer);
+            }
+        }
+
+    }
+}
