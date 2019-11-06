@@ -2,6 +2,7 @@
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Temperature;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,10 +31,15 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP36, LM50             750                     10
     /// TMP37                   500                     20
     /// </remarks>
-    public class AnalogTemperature : ITemperatureSensor
+    public class AnalogTemperature : FilterableObservableBase<FloatChangeResult, float>, ITemperatureSensor //IObservable<FloatChangeResult>
     {
+        /// <summary>
+        /// Raised when the value of the reading changes.
+        /// </summary>
+        public event EventHandler<FloatChangeResult> Changed = delegate { };
+
         #region Local classes
-        
+
         /// <summary>
         ///     Calibration class for new sensor types.  This allows new sensors
         ///     to be used with this class.
@@ -46,20 +52,20 @@ namespace Meadow.Foundation.Sensors.Temperature
             /// <summary>
             ///     Sample reading as specified in the product data sheet.
             /// </summary>
-            public int SampleReading { get; private set; } = 25;
+            public int SampleReading { get; protected set; } = 25;
 
             /// <summary>
             ///     Millivolt reading the sensor will generate when the sensor
             ///     is at the Samplereading temperature.  This value can be
             ///     obtained from the data sheet. 
             /// </summary>
-            public int MillivoltsAtSampleReading { get; private set; } = 250;
+            public int MillivoltsAtSampleReading { get; protected set; } = 250;
 
             /// <summary>
             ///     Linear change in the sensor output (in millivolts) per 1 degree C
             ///     change in temperature.
             /// </summary>
-            public int MillivoltsPerDegreeCentigrade { get; private set; } = 10;
+            public int MillivoltsPerDegreeCentigrade { get; protected set; } = 10;
 
             /// <summary>
             ///     Default constructor.  Create a new Calibration object with default values
@@ -82,20 +88,11 @@ namespace Meadow.Foundation.Sensors.Temperature
                 MillivoltsPerDegreeCentigrade = millivoltsPerDegreeCentigrade;
             }
         }
-        
+
         #endregion Local classes
-        
-        #region Constants
 
-        /// <summary>
-        ///     Minimum value that should be used for the polling frequency.
-        /// </summary>
-        public const ushort MinimumPollingPeriod = 100;
-
-        #endregion Constants
-        
         #region Enums
-        
+
         /// <summary>
         ///     Type of temperature sensor.
         /// </summary>
@@ -114,6 +111,8 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         #region Member variables /fields
 
+        protected IAnalogInputPort _analogInputPort;
+
         /// <summary>
         ///     Millivolts per degree centigrade for the sensor attached to the analog port.
         /// </summary>
@@ -126,11 +125,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     Point where the line y = mx +c would intercept the y-axis.
         /// </summary>
         private readonly float _yIntercept;
-
-        /// <summary>
-        ///     Update interval in milliseconds
-        /// </summary>
-        private readonly ushort _updateInterval = 100;
 
         #endregion Member variables / fields
 
@@ -149,33 +143,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     The temperature is given by the following calculation:
         ///     temperature = (reading in millivolts - yIntercept) / millivolts per degree centigrade
         /// </remarks>
-        public float Temperature
-        {
-            get { return _temperature; }
-            private set
-            {
-                _temperature = value;
-                //
-                //  Check to see if the change merits raising an event.
-                //
-                if ((_updateInterval > 0) &&
-                    (Math.Abs(_lastNotifiedTemperature - value) >= TemperatureChangeNotificationThreshold))
-                {
-                    TemperatureChanged(this, new SensorFloatEventArgs(_lastNotifiedTemperature, value));
-                    _lastNotifiedTemperature = value;
-                }
-            }
-        }
-
-        private float _temperature;
-        private float _lastNotifiedTemperature = 0.0F;
-
-        /// <summary>
-        ///     Any changes in the temperature that are greater than the temperature
-        ///     threshold will cause an event to be raised when the instance is
-        ///     set to update automatically.
-        /// </summary>
-        public float TemperatureChangeNotificationThreshold { get; set; } = 0.001F;
+        public float Temperature { get; protected set; }
+        private float _previousTemperature = 0.0F;
 
         #endregion Properties
 
@@ -185,7 +154,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     Event raised when the temperature change is greater than the 
         ///     TemperatureChangeNotificationThreshold value.
         /// </summary>
-        public event SensorFloatEventHandler TemperatureChanged = delegate { };
+        public event EventHandler<FloatChangeResult> TemperatureChanged = delegate { };
 
         #endregion Events and delegates
 
@@ -204,37 +173,31 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
         /// <param name="sensorType">Type of sensor attached to the analog port.</param>
         /// <param name="calibration">Calibration for the analog temperature sensor.</param>
-        /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
-        /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
-        public AnalogTemperature(IIODevice device, IPin analogPin, KnownSensorType sensorType, Calibration calibration = null, 
-            ushort updateInterval = MinimumPollingPeriod, float temperatureChangeNotificationThreshold = 0.001F)
+        public AnalogTemperature(
+            IIODevice device,
+            IPin analogPin,
+            KnownSensorType sensorType,
+            Calibration calibration = null
+            ) : this(device.CreateAnalogInputPort(analogPin), sensorType, calibration)
         {
-            if (temperatureChangeNotificationThreshold < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(temperatureChangeNotificationThreshold),
-                    "Temperature threshold should be >= 0");
-            }
+        }
 
-            if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
-            {
-                throw new ArgumentOutOfRangeException(nameof(updateInterval),
-                    "Update period should be 0 or >= than " + MinimumPollingPeriod);
-            }
+        public AnalogTemperature(
+            IAnalogInputPort analogInputPort,
+            KnownSensorType sensorType,
+            Calibration calibration = null
+            )
+        {
+            this._analogInputPort = analogInputPort;
+
             //
             //  If the calibration object is null use the defaults for TMP35.
             //
-            if (calibration == null)
-            {
+            if (calibration == null) {
                 calibration = new Calibration();
             }
 
-            TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
-            _updateInterval = updateInterval;
-
-            AnalogPort = device.CreateAnalogInputPort(analogPin);
-
-            switch (sensorType)
-            {
+            switch (sensorType) {
                 case KnownSensorType.TMP35:
                 case KnownSensorType.LM35:
                 case KnownSensorType.LM45:
@@ -258,14 +221,22 @@ namespace Meadow.Foundation.Sensors.Temperature
                     throw new ArgumentException("Unknown sensor type", nameof(sensorType));
             }
 
-            if (updateInterval > 0)
-            {
-                StartUpdating();
-            }
-            else
-            {
-                Update();
-            }
+            // wire up our observable
+            // have to convert from voltage to temp units for our consumers
+            // this is where the magic is: this allows us to extend the IObservable
+            // pattern through the sensor driver
+            _analogInputPort.Subscribe(
+                new FilterableObserver<FloatChangeResult>(
+                    h => {
+                        var newTemp = VoltageToTemperature(h.New);
+                        var oldTemp = VoltageToTemperature(h.Old);
+                        this.Temperature = newTemp; // save state
+                        _previousTemperature = oldTemp;
+                        RaiseChangedAndNotify(new FloatChangeResult(
+                            newTemp,
+                            oldTemp));
+                    })
+                );
         }
 
         #endregion Constructors
@@ -273,29 +244,57 @@ namespace Meadow.Foundation.Sensors.Temperature
         #region Methods
 
         /// <summary>
-        ///     Start the update process.
+        /// Convenience method to get the current temperature. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        private void StartUpdating()
+        /// <param name="sampleCount">The number of sample readings to take. 
+        /// must be greater than 0.</param>
+        /// <param name="sampleInterval">The interval, in milliseconds, between
+        /// sample readings.</param>
+        /// <returns></returns>
+        public async Task<float> Read(int sampleCount = 10, int sampleInterval = 40)
         {
-            Thread t = new Thread(() =>
-            {
-                while (true)
-                {
-                    Update();
-                    Thread.Sleep(_updateInterval);
-                }
-            });
-            t.Start();
+            float voltage = await this._analogInputPort.Read(sampleCount, sampleInterval);
+            return VoltageToTemperature(voltage);
         }
 
         /// <summary>
-        ///     Get the current temperature and update the Temperature property.
+        /// Starts continuously sampling the temperature. Also triggers the
+        /// events to fire, and IObservable subscribers to get notified.
         /// </summary>
-        public async void Update()
+        /// <param name="sampleCount"></param>
+        /// <param name="sampleIntervalDuration"></param>
+        /// <param name="sampleSleepDuration"></param>
+        public void StartUpdating(
+            int sampleCount = 10,
+            int sampleIntervalDuration = 40,
+            int sampleSleepDuration = 0)
         {
-            float reading = await AnalogPort.Read(1, _updateInterval);
-            reading -= _yIntercept;
-            Temperature = reading * _millivoltsPerDegreeCentigrade;
+            _analogInputPort.StartSampling(sampleCount, sampleIntervalDuration, sampleSleepDuration);
+        }
+
+        /// <summary>
+        /// Stops sampling the temperature.
+        /// </summary>
+        public void StopUpdating() {
+            _analogInputPort.StopSampling();
+        }
+
+        protected void RaiseChangedAndNotify(FloatChangeResult changeResult)
+        {
+            Changed?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+        /// <summary>
+        /// Converts a voltage value to a celsius temp, based on the current
+        /// calibration values.
+        /// </summary>
+        /// <param name="voltage"></param>
+        /// <returns></returns>
+        protected float VoltageToTemperature(float voltage) {
+            var yAdjusted = voltage - _yIntercept;
+            return yAdjusted * _millivoltsPerDegreeCentigrade * 10;
         }
 
         #endregion Methods
