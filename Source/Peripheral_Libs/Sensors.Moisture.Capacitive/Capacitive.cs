@@ -1,34 +1,32 @@
-﻿using Meadow.Hardware;
+﻿using System;
+using System.Threading.Tasks;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Moisture;
+//using Meadow.Foundation.Sensors;
 
 namespace Meadow.Foundation.Sensors.Moisture
 {
     /// <summary>
     /// Capacitive Soil Moisture Sensor
     /// </summary>
-    public class Capacitive : IMoistureSensor
+    public class Capacitive : FilterableObservableBase<FloatChangeResult, float>, IMoistureSensor
     {
+        /// <summary>
+        /// Raised when the value of the reading changes.
+        /// </summary>
+        public event EventHandler<FloatChangeResult> Changed = delegate { };
+
         #region Properties
 
         /// <summary>
         /// Returns the analog input port
         /// </summary>
-        public IAnalogInputPort AnalogPort { get; protected set; }
+        public IAnalogInputPort AnalogInputPort { get; protected set; }
 
         /// <summary>
         /// Last value read from the moisture sensor.
         /// </summary>
-        public float Moisture { get; private set; }
-
-        /// <summary>
-        /// Boundary value of most dry soil 
-        /// </summary>
-        public float MinimumMoisture { get; set; }
-
-        /// <summary>
-        /// Boundary value of most moist soil
-        /// </summary>
-        public float MaximumMoisture { get; set; }
+        public float Moisture { get; protected set; }
 
         #endregion
 
@@ -44,18 +42,34 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="device"></param>
         /// <param name="analogPin"></param>
-        public Capacitive(IIODevice device, IPin analogPin, float minimumMoisture = 0f, float maximumMoisture = 5f) : 
-            this(device.CreateAnalogInputPort(analogPin), minimumMoisture, maximumMoisture) { }
+        public Capacitive(IIODevice device, IPin analogPin)
+            : this(device.CreateAnalogInputPort(analogPin)) {
+        }
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort.
         /// </summary>
         /// <param name="analogPort"></param>
-        public Capacitive(IAnalogInputPort analogPort, float minimumMoisture = 0f, float maximumMoisture = 5f)
+        public Capacitive(IAnalogInputPort analogPort)
         {
-            AnalogPort = analogPort;
-            MinimumMoisture = minimumMoisture;
-            MaximumMoisture = maximumMoisture;
+            AnalogInputPort = analogPort;
+
+            // wire up our observable
+            // have to convert from voltage to temp units for our consumers
+            // this is where the magic is: this allows us to extend the IObservable
+            // pattern through the sensor driver
+            AnalogInputPort.Subscribe(
+                new FilterableObserver<FloatChangeResult, float>(
+                    h => {
+                        var newMoisture = VoltageToMoisture(h.New);
+                        var oldMoisture = VoltageToMoisture(h.Old);
+                        this.Moisture = newMoisture; // save state
+                        RaiseChangedAndNotify(new FloatChangeResult(
+                            newMoisture,
+                            oldMoisture));
+                    })
+                );
+
         }
 
         #endregion
@@ -63,28 +77,56 @@ namespace Meadow.Foundation.Sensors.Moisture
         #region Methods
 
         /// <summary>
-        /// Returns the raw soil moisture current value
+        /// Convenience method to get the current soil moisture. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        /// <returns>Value ranges from 0.0f - 5.0f</returns>
-        public float ReadRaw() 
-        { 
-            return AnalogPort.Read().Result;
+        /// <param name="sampleCount">The number of sample readings to take. 
+        /// must be greater than 0.</param>
+        /// <param name="sampleInterval">The interval, in milliseconds, between
+        /// sample readings.</param>
+        /// <returns></returns>
+        public async Task<float> Read(int sampleCount = 10, int sampleInterval = 40)
+        {
+            // read the voltage
+            float voltage = await this.AnalogInputPort.Read(sampleCount, sampleInterval);
+            // convert and save to our temp property for later retreival
+            this.Moisture = VoltageToMoisture(voltage);
+            // return
+            return this.Moisture;
         }
 
         /// <summary>
-        /// Returns the soil moisture current value.
+        /// Starts continuously sampling the temperature. Also triggers the
+        /// events to fire, and IObservable subscribers to get notified.
         /// </summary>
-        /// <returns>Value ranges from 0 - 100</returns>
-        public float Read()
+        /// <param name="sampleCount"></param>
+        /// <param name="sampleIntervalDuration"></param>
+        /// <param name="sampleSleepDuration"></param>
+        public void StartUpdating(
+            int sampleCount = 10,
+            int sampleIntervalDuration = 40,
+            int sampleSleepDuration = 0)
         {
-            Moisture = AnalogPort.Read().Result;
+            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, sampleSleepDuration);
+        }
 
-            if (MinimumMoisture > MaximumMoisture)
-            {
-                return 100 - Map(Moisture, MaximumMoisture, MinimumMoisture, 0, 100);
-            }
-            
-            return 100 - Map(Moisture, MinimumMoisture, MaximumMoisture, 0, 100);
+        /// <summary>
+        /// Stops sampling the temperature.
+        /// </summary>
+        public void StopUpdating()
+        {
+            AnalogInputPort.StopSampling();
+        }
+
+        protected void RaiseChangedAndNotify(FloatChangeResult changeResult)
+        {
+            Changed?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+
+        protected float VoltageToMoisture(float voltage) {
+            return Map(voltage, 0f, 1.0f, 0f, 3.3f);
         }
 
         /// <summary>
