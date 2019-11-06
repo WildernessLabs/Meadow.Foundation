@@ -14,7 +14,7 @@ AnalogTemperature analogTemperature = new AnalogTemperature
     sensorType: AnalogTemperature.KnownSensorType.LM35
 );
 
-var temp = ReadTemp().Result;
+var temp = analogTemperature.Read().Wait();
 ```
 
 Later on, that value can be accessed via the `Temperature` property:
