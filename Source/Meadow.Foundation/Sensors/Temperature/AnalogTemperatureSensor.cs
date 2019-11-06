@@ -111,7 +111,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         #region Member variables /fields
 
-        protected IAnalogInputPort _analogInputPort;
+        public IAnalogInputPort AnalogInputPort { get; protected set; }
 
         /// <summary>
         ///     Millivolts per degree centigrade for the sensor attached to the analog port.
@@ -144,19 +144,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     temperature = (reading in millivolts - yIntercept) / millivolts per degree centigrade
         /// </remarks>
         public float Temperature { get; protected set; }
-        private float _previousTemperature = 0.0F;
 
         #endregion Properties
 
-        #region Events and delegates
-
-        /// <summary>
-        ///     Event raised when the temperature change is greater than the 
-        ///     TemperatureChangeNotificationThreshold value.
-        /// </summary>
-        public event EventHandler<FloatChangeResult> TemperatureChanged = delegate { };
-
-        #endregion Events and delegates
 
         #region Constructor(s)
 
@@ -188,7 +178,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             Calibration calibration = null
             )
         {
-            this._analogInputPort = analogInputPort;
+            this.AnalogInputPort = analogInputPort;
 
             //
             //  If the calibration object is null use the defaults for TMP35.
@@ -225,13 +215,12 @@ namespace Meadow.Foundation.Sensors.Temperature
             // have to convert from voltage to temp units for our consumers
             // this is where the magic is: this allows us to extend the IObservable
             // pattern through the sensor driver
-            _analogInputPort.Subscribe(
+            AnalogInputPort.Subscribe(
                 new FilterableObserver<FloatChangeResult, float>(
                     h => {
                         var newTemp = VoltageToTemperature(h.New);
                         var oldTemp = VoltageToTemperature(h.Old);
                         this.Temperature = newTemp; // save state
-                        _previousTemperature = oldTemp;
                         RaiseChangedAndNotify(new FloatChangeResult(
                             newTemp,
                             oldTemp));
@@ -254,8 +243,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <returns></returns>
         public async Task<float> Read(int sampleCount = 10, int sampleInterval = 40)
         {
-            float voltage = await this._analogInputPort.Read(sampleCount, sampleInterval);
-            return VoltageToTemperature(voltage);
+            // read the voltage
+            float voltage = await this.AnalogInputPort.Read(sampleCount, sampleInterval);
+            // convert and save to our temp property for later retreival
+            this.Temperature = VoltageToTemperature(voltage);
+            // return
+            return this.Temperature;
         }
 
         /// <summary>
@@ -270,14 +263,14 @@ namespace Meadow.Foundation.Sensors.Temperature
             int sampleIntervalDuration = 40,
             int sampleSleepDuration = 0)
         {
-            _analogInputPort.StartSampling(sampleCount, sampleIntervalDuration, sampleSleepDuration);
+            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, sampleSleepDuration);
         }
 
         /// <summary>
         /// Stops sampling the temperature.
         /// </summary>
         public void StopUpdating() {
-            _analogInputPort.StopSampling();
+            AnalogInputPort.StopSampling();
         }
 
         protected void RaiseChangedAndNotify(FloatChangeResult changeResult)

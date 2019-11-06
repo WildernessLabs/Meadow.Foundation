@@ -32,7 +32,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
                 }
                 ));
 
-            //ReadTemp();
+            //ReadTemp().Result;
 
             analogTemperature.StartUpdating();
         }
