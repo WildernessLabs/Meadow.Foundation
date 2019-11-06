@@ -185,6 +185,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.ePaper.EPD2i9b_Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tft.ILI9341_Sample", "Peripheral_Libs_Samples\Displays.Tft.ILI9341_Sample\Displays.Tft.ILI9341_Sample.csproj", "{B54A2F5E-1CE2-4902-B061-6D3B207F5C15}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{FC6F70DF-E877-4287-A1B4-A30BB9272743}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -617,6 +619,10 @@ Global
 		{B54A2F5E-1CE2-4902-B061-6D3B207F5C15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B54A2F5E-1CE2-4902-B061-6D3B207F5C15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B54A2F5E-1CE2-4902-B061-6D3B207F5C15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC6F70DF-E877-4287-A1B4-A30BB9272743}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC6F70DF-E877-4287-A1B4-A30BB9272743}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC6F70DF-E877-4287-A1B4-A30BB9272743}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC6F70DF-E877-4287-A1B4-A30BB9272743}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
