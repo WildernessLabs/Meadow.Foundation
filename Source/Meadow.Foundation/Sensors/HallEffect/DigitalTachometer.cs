@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// Event raised when the RPM change is greater than the 
         /// RPMChangeNotificationThreshold value.
         /// </summary>
-        public event SensorFloatEventHandler RPMsChanged = delegate { };
+        public event EventHandler<FloatChangeResult> RPMsChanged = delegate { };
 
         /// <summary>
         /// Any changes to the RPMs that are greater than the RPM change
@@ -133,7 +133,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
 
         protected void OnRaiseRPMChanged()
         {
-            RPMsChanged(this, new SensorFloatEventArgs(_lastNotifiedRPMs, _RPMs));
+            RPMsChanged(this, new FloatChangeResult(_lastNotifiedRPMs, _RPMs));
             _lastNotifiedRPMs = _RPMs;
         }
     }
