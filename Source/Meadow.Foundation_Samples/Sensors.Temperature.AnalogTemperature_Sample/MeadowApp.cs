@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
@@ -18,32 +19,52 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             (
                 device: Device,
                 analogPin: Device.Pins.A00,
-                sensorType: AnalogTemperature.KnownSensorType.LM35,
-                updateInterval: 1000,
-                temperatureChangeNotificationThreshold: 0.1F
+                sensorType: AnalogTemperature.KnownSensorType.LM35
             );
 
-            TestAnalogTemperature();
+            //TestAnalogTemperature();
+
+
+            analogTemperature.Subscribe(new FilterableObserver<FloatChangeResult>(
+                h => {
+                    Console.WriteLine($"Temp changed by a degree; new: {h.New}, old: {h.Old}");
+                },
+                e => {
+                    return (e.Delta > 1);
+                }
+                ));
+
+            ReadTemp();
+
+            analogTemperature.StartUpdating();
         }
 
-        protected void TestAnalogTemperature()
+        protected void ReadTemp()
         {
-            Console.WriteLine("TestAnalogTemperature...");
-
-            // Before update;
-            analogTemperature.Update();
-
-            while (true)
-            {
-                Console.WriteLine(analogTemperature.Temperature);
-                Thread.Sleep(1000);
-            }
-
-            // Connect an interrupt handler.
-            analogTemperature.TemperatureChanged += (s, e) =>
-            {
-                Console.WriteLine("Temperature: " + e.CurrentValue.ToString("f2"));
-            };
+            Task t = new Task(async () => {
+                Console.WriteLine($"Initial temp: { await analogTemperature.Read()}");
+            });
+            t.Start();
         }
+
+        //protected void TestAnalogTemperature()
+        //{
+        //    Console.WriteLine("TestAnalogTemperature...");
+
+        //    // Before update;
+        //    analogTemperature.Update();
+
+        //    while (true)
+        //    {
+        //        Console.WriteLine(analogTemperature.Temperature);
+        //        Thread.Sleep(1000);
+        //    }
+
+        //    // Connect an interrupt handler.
+        //    analogTemperature.TemperatureChanged += (s, e) =>
+        //    {
+        //        Console.WriteLine("Temperature: " + e.CurrentValue.ToString("f2"));
+        //    };
+        //}
     }
 }
