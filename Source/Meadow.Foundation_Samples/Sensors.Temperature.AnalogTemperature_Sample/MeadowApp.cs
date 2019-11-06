@@ -22,8 +22,6 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
                 sensorType: AnalogTemperature.KnownSensorType.LM35
             );
 
-            //TestAnalogTemperature();
-
 
             analogTemperature.Subscribe(new FilterableObserver<FloatChangeResult>(
                 h => {
@@ -46,25 +44,5 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             });
             t.Start();
         }
-
-        //protected void TestAnalogTemperature()
-        //{
-        //    Console.WriteLine("TestAnalogTemperature...");
-
-        //    // Before update;
-        //    analogTemperature.Update();
-
-        //    while (true)
-        //    {
-        //        Console.WriteLine(analogTemperature.Temperature);
-        //        Thread.Sleep(1000);
-        //    }
-
-        //    // Connect an interrupt handler.
-        //    analogTemperature.TemperatureChanged += (s, e) =>
-        //    {
-        //        Console.WriteLine("Temperature: " + e.CurrentValue.ToString("f2"));
-        //    };
-        //}
     }
 }
