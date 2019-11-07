@@ -130,7 +130,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         public void StartUpdating(
             int sampleCount = 10,
             int sampleIntervalDuration = 40,
-            int readIntervalDuration = 0)
+            int readIntervalDuration = 1000)
         {
             AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, readIntervalDuration);
         }
