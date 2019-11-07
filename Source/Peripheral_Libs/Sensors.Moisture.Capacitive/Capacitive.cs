@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<FloatChangeResult> Changed = delegate { };
+        public event EventHandler<FloatChangeResult> MoistureChanged = delegate { };
 
         #region Properties
 
@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Sensors.Moisture
 
         protected void RaiseChangedAndNotify(FloatChangeResult changeResult)
         {
-            Changed?.Invoke(this, changeResult);
+            MoistureChanged?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 

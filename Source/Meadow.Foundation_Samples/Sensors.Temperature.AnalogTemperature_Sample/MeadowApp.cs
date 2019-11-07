@@ -34,7 +34,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
                 ));
 
             // classical .NET events can also be used:
-            analogTemperature.Changed += (object sender, FloatChangeResult e) => {
+            analogTemperature.TemperatureChanged += (object sender, FloatChangeResult e) => {
                 Console.WriteLine($"Temp Changed, temp: {e.New}ºC");
             };
 
@@ -52,7 +52,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
         protected async Task ReadTemp()
         {
-            var temp = await analogTemperature.Read();
+            var temp = await analogTemperature.ReadTemperature();
             Console.WriteLine($"Initial temp: { temp }");
         }
     }

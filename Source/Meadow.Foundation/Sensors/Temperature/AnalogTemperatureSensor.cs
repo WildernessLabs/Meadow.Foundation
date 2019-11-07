@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<FloatChangeResult> Changed = delegate { };
+        public event EventHandler<FloatChangeResult> TemperatureChanged = delegate { };
 
         #region Local classes
 
@@ -241,7 +241,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        public async Task<float> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
+        public async Task<float> ReadTemperature(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
             // read the voltage
             float voltage = await this.AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
@@ -282,7 +282,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         protected void RaiseChangedAndNotify(FloatChangeResult changeResult)
         {
-            Changed?.Invoke(this, changeResult);
+            TemperatureChanged?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
