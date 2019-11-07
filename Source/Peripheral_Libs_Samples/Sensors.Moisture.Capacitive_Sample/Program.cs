@@ -1,4 +1,5 @@
 ﻿using Meadow;
+using System.Threading;
 
 namespace Sensors.Moisture.Capacitive_Sample
 {
@@ -11,6 +12,7 @@ namespace Sensors.Moisture.Capacitive_Sample
 
             // instantiate and run new meadow app
             app = new MeadowApp();
+            Thread.Sleep(Timeout.Infinite);
         }
     }
 }

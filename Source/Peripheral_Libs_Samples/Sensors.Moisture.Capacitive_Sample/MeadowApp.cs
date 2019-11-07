@@ -3,6 +3,7 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Moisture;
+using Meadow.Hardware;
 
 namespace Sensors.Moisture.Capacitive_Sample
 {
@@ -14,38 +15,45 @@ namespace Sensors.Moisture.Capacitive_Sample
         {
             Console.WriteLine("Initializing...");
 
-            capacitive = new Capacitive(Device.CreateAnalogInputPort(Device.Pins.A01));
+            capacitive = new Capacitive(
+                analogPort: Device.CreateAnalogInputPort(Device.Pins.A01),
+                minimumVoltageCalibration: 2.84f,
+                maximumVoltageCalibration: 1.60f
+            );
+            //capacitive.Changed += CapacitiveChanged;
 
-            TestCapacitiveSensor();
+            //TestCapacitiveUpdating();
+            TestCapacitiveRead();
         }
 
-        void TestCapacitiveSensor()
+        private void CapacitiveChanged(object sender, FloatChangeResult e)
+        {
+            Console.WriteLine($"Raw: {capacitive.Moisture} | Moisture {(int)(e.New * 100)}%");
+        }
+
+        void TestCapacitiveUpdating() 
+        {
+            Console.WriteLine("TestCapacitiveUpdating...");
+
+            capacitive.StartUpdating();
+        }
+
+        void TestCapacitiveRead()
         {
             Console.WriteLine("TestCapacitiveSensor...");
 
-            // Use ReadRaw(); to get dry and moist values
-            for (int i = 0; i < 10; i++)
-            {
-                Console.WriteLine(capacitive.ReadRaw());
-                Thread.Sleep(1000);
-            }
-
-            // Update boundary values when determined
-            capacitive.MinimumMoisture = 2.84f; // On open air
-            capacitive.MaximumMoisture = 1.37f; // Dipped in water
-
-            // Use Read(); to get soil moisture value from 0 - 100
+            // Use Read(); to get soil moisture value from 0f - 1f
             while (true)
             {
-                int moisture = (int) capacitive.Read();
+                float moisture = capacitive.Read().Result;
 
-                if (moisture > 100)
-                    moisture = 100;
+                if (moisture > 1.0f)
+                    moisture = 1.0f;
                 else 
                 if (moisture < 0)
                     moisture = 0;
 
-                Console.WriteLine($"Raw: {capacitive.Moisture} | Moisture {moisture}%");
+                Console.WriteLine($"Raw: {capacitive.Moisture} | Moisture {(int) (moisture * 100)}%");
                 Thread.Sleep(1000);
             }
         }

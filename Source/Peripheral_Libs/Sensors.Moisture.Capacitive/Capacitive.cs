@@ -28,6 +28,16 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public float Moisture { get; protected set; }
 
+        /// <summary>
+        /// Voltage value of most dry soil 
+        /// </summary>
+        public float MinimumVoltageCalibration { get; set; }
+
+        /// <summary>
+        /// Voltage value of most moist soil
+        /// </summary>
+        public float MaximumVoltageCalibration { get; set; }
+
         #endregion
 
         #region Constructors
@@ -42,17 +52,19 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="device"></param>
         /// <param name="analogPin"></param>
-        public Capacitive(IIODevice device, IPin analogPin)
-            : this(device.CreateAnalogInputPort(analogPin)) {
+        public Capacitive(IIODevice device, IPin analogPin, float minimumVoltageCalibration = 0f, float maximumVoltageCalibration = 3.3f)
+            : this(device.CreateAnalogInputPort(analogPin), minimumVoltageCalibration, maximumVoltageCalibration) {
         }
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort.
         /// </summary>
         /// <param name="analogPort"></param>
-        public Capacitive(IAnalogInputPort analogPort)
+        public Capacitive(IAnalogInputPort analogPort, float minimumVoltageCalibration = 0f, float maximumVoltageCalibration = 3.3f)
         {
             AnalogInputPort = analogPort;
+            MinimumVoltageCalibration = minimumVoltageCalibration;
+            MaximumVoltageCalibration = maximumVoltageCalibration;
 
             // wire up our observable
             // have to convert from voltage to temp units for our consumers
@@ -63,13 +75,12 @@ namespace Meadow.Foundation.Sensors.Moisture
                     h => {
                         var newMoisture = VoltageToMoisture(h.New);
                         var oldMoisture = VoltageToMoisture(h.Old);
-                        this.Moisture = newMoisture; // save state
+                        Moisture = newMoisture; // save state
                         RaiseChangedAndNotify(new FloatChangeResult(
                             newMoisture,
                             oldMoisture));
                     })
                 );
-
         }
 
         #endregion
@@ -88,11 +99,11 @@ namespace Meadow.Foundation.Sensors.Moisture
         public async Task<float> Read(int sampleCount = 10, int sampleInterval = 40)
         {
             // read the voltage
-            float voltage = await this.AnalogInputPort.Read(sampleCount, sampleInterval);
+            float voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
             // convert and save to our temp property for later retrieval
-            this.Moisture = VoltageToMoisture(voltage);
+            Moisture = VoltageToMoisture(voltage);
             // return
-            return this.Moisture;
+            return Moisture;
         }
 
         /// <summary>
@@ -124,9 +135,14 @@ namespace Meadow.Foundation.Sensors.Moisture
             base.NotifyObservers(changeResult);
         }
 
+        protected float VoltageToMoisture(float voltage) 
+        {
+            if (MinimumVoltageCalibration > MaximumVoltageCalibration)
+            {
+                return 1f - Map(voltage, MaximumVoltageCalibration, MinimumVoltageCalibration, 0f, 1.0f);
+            }
 
-        protected float VoltageToMoisture(float voltage) {
-            return Map(voltage, 0f, 1.0f, 0f, 3.3f);
+            return 1f - Map(voltage, MinimumVoltageCalibration, MaximumVoltageCalibration, 0f, 1.0f);
         }
 
         /// <summary>
