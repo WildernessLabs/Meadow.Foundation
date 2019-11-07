@@ -252,22 +252,25 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         /// <summary>
-        /// Starts continuously sampling the temperature. Also triggers the
-        /// events to fire, and IObservable subscribers to get notified.
+        /// Starts continuously sampling the sensor.
+        ///
+        /// This method also starts raising `Changed` events and IObservable
+        /// subscribers getting notified. Use the `readIntervalDuration` parameter
+        /// to specify how often events and notifications are raised/sent.
         /// </summary>
         /// <param name="sampleCount">How many samples to take during a given
         /// reading. These are automatically averaged to reduce noise.</param>
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
-        /// <param name="sampleSleepDuration">The time, in milliseconds, to wait
-        /// in between readings. This value determines how often `Changed`
-        /// events are raised and `IObservable` consumers are notified..</param>
+        /// <param name="readIntervalDuration">The time, in milliseconds, to wait
+        /// between sets of sample readings. This value determines how often
+        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
         public void StartUpdating(
             int sampleCount = 10,
             int sampleIntervalDuration = 40,
-            int sampleSleepDuration = 100)
+            int readIntervalDuration = 100)
         {
-            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, sampleSleepDuration);
+            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, readIntervalDuration);
         }
 
         /// <summary>

@@ -52,7 +52,11 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="device"></param>
         /// <param name="analogPin"></param>
-        public Capacitive(IIODevice device, IPin analogPin, float minimumVoltageCalibration = 0f, float maximumVoltageCalibration = 3.3f)
+        public Capacitive(
+            IIODevice device,
+            IPin analogPin,
+            float minimumVoltageCalibration = 0f,
+            float maximumVoltageCalibration = 3.3f)
             : this(device.CreateAnalogInputPort(analogPin), minimumVoltageCalibration, maximumVoltageCalibration) {
         }
 
@@ -60,7 +64,10 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort.
         /// </summary>
         /// <param name="analogPort"></param>
-        public Capacitive(IAnalogInputPort analogPort, float minimumVoltageCalibration = 0f, float maximumVoltageCalibration = 3.3f)
+        public Capacitive(
+            IAnalogInputPort analogPort,
+            float minimumVoltageCalibration = 0f,
+            float maximumVoltageCalibration = 3.3f)
         {
             AnalogInputPort = analogPort;
             MinimumVoltageCalibration = minimumVoltageCalibration;
@@ -107,18 +114,25 @@ namespace Meadow.Foundation.Sensors.Moisture
         }
 
         /// <summary>
-        /// Starts continuously sampling the temperature. Also triggers the
-        /// events to fire, and IObservable subscribers to get notified.
+        /// Starts continuously sampling the sensor.
+        ///
+        /// This method also starts raising `Changed` events and IObservable
+        /// subscribers getting notified. Use the `readIntervalDuration` parameter
+        /// to specify how often events and notifications are raised/sent.
         /// </summary>
-        /// <param name="sampleCount"></param>
-        /// <param name="sampleIntervalDuration"></param>
-        /// <param name="sampleSleepDuration"></param>
+        /// <param name="sampleCount">How many samples to take during a given
+        /// reading. These are automatically averaged to reduce noise.</param>
+        /// <param name="sampleIntervalDuration">The time, in milliseconds,
+        /// to wait in between samples during a reading.</param>
+        /// <param name="readIntervalDuration">The time, in milliseconds, to wait
+        /// between sets of sample readings. This value determines how often
+        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
         public void StartUpdating(
             int sampleCount = 10,
             int sampleIntervalDuration = 40,
-            int sampleSleepDuration = 0)
+            int readIntervalDuration = 0)
         {
-            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, sampleSleepDuration);
+            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, readIntervalDuration);
         }
 
         /// <summary>
