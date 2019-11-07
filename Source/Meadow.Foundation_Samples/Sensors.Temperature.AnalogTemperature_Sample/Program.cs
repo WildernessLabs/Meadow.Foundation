@@ -1,4 +1,5 @@
 ﻿using Meadow;
+using System.Threading;
 
 namespace Sensors.Temperature.AnalogTemperature_Sample
 {
@@ -11,6 +12,8 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
             // instantiate and run new meadow app
             app = new MeadowApp();
+
+            Thread.Sleep(Timeout.Infinite);
         }
     }
 }

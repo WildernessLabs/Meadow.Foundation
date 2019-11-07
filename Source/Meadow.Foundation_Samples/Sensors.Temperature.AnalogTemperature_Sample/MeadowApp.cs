@@ -15,14 +15,15 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
         {
             Console.WriteLine("Initializing...");
 
-            analogTemperature = new AnalogTemperature
-            (
+            // configure our AnalogTemperature sensor
+            analogTemperature = new AnalogTemperature (
                 device: Device,
                 analogPin: Device.Pins.A00,
                 sensorType: AnalogTemperature.KnownSensorType.LM35
             );
 
-
+            // Example that uses an IObersvable subscription to only be notified
+            // when the temperature changes by at least a degree.
             analogTemperature.Subscribe(new FilterableObserver<FloatChangeResult, float>(
                 h => {
                     Console.WriteLine($"Temp changed by a degree; new: {h.New}, old: {h.Old}");
@@ -32,9 +33,21 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
                 }
                 ));
 
+            // classical .NET events can also be used:
+            analogTemperature.Changed += (object sender, FloatChangeResult e) => {
+                Console.WriteLine($"Temp Changed, temp: {e.New}ºC");
+            };
+
+            // Get an initial reading.
             ReadTemp().Wait();
 
+            // Spin up the sampling thread so that events are raised and
+            // IObservable notifications are sent.
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+            Console.WriteLine($"Calling StartUpdating(), elapsed time: {stopwatch.ElapsedMilliseconds}");
             analogTemperature.StartUpdating();
+            Console.WriteLine($"Updating returned, elapsed time: {stopwatch.ElapsedMilliseconds}");
         }
 
         protected async Task ReadTemp()

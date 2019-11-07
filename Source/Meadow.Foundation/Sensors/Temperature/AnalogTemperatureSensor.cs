@@ -237,14 +237,14 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
         /// <param name="sampleCount">The number of sample readings to take. 
-        /// must be greater than 0.</param>
-        /// <param name="sampleInterval">The interval, in milliseconds, between
-        /// sample readings.</param>
-        /// <returns></returns>
-        public async Task<float> Read(int sampleCount = 10, int sampleInterval = 40)
+        /// Must be greater than 0. These samples are automatically averaged.</param>
+        /// <param name="sampleIntervalDuration">The time, in milliseconds,
+        /// to wait in between samples during a reading.</param>
+        /// <returns>A float value that's ann average value of all the samples taken.</returns>
+        public async Task<float> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
             // read the voltage
-            float voltage = await this.AnalogInputPort.Read(sampleCount, sampleInterval);
+            float voltage = await this.AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
             // convert and save to our temp property for later retreival
             this.Temperature = VoltageToTemperature(voltage);
             // return
@@ -255,13 +255,17 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// Starts continuously sampling the temperature. Also triggers the
         /// events to fire, and IObservable subscribers to get notified.
         /// </summary>
-        /// <param name="sampleCount"></param>
-        /// <param name="sampleIntervalDuration"></param>
-        /// <param name="sampleSleepDuration"></param>
+        /// <param name="sampleCount">How many samples to take during a given
+        /// reading. These are automatically averaged to reduce noise.</param>
+        /// <param name="sampleIntervalDuration">The time, in milliseconds,
+        /// to wait in between samples during a reading.</param>
+        /// <param name="sampleSleepDuration">The time, in milliseconds, to wait
+        /// in between readings. This value determines how often `Changed`
+        /// events are raised and `IObservable` consumers are notified..</param>
         public void StartUpdating(
             int sampleCount = 10,
             int sampleIntervalDuration = 40,
-            int sampleSleepDuration = 0)
+            int sampleSleepDuration = 100)
         {
             AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, sampleSleepDuration);
         }
