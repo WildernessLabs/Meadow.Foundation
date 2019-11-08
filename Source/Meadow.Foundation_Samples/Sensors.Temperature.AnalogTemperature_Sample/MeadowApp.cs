@@ -43,11 +43,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
             // Spin up the sampling thread so that events are raised and
             // IObservable notifications are sent.
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            stopwatch.Start();
-            Console.WriteLine($"Calling StartUpdating(), elapsed time: {stopwatch.ElapsedMilliseconds}");
             analogTemperature.StartUpdating();
-            Console.WriteLine($"Updating returned, elapsed time: {stopwatch.ElapsedMilliseconds}");
         }
 
         protected async Task ReadTemp()

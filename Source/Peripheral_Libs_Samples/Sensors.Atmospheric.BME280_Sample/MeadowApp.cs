@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
@@ -9,85 +10,59 @@ namespace Sensors.Atmospheric.BME280_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        BME280 _bme280;
+        BME280 bme280;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            //TestI2cBME280(true);
-            TestSpiBME280(true);
-        }
-
-        void TestI2cBME280(bool pollMode)
-        {
-            Console.WriteLine("TestI2cBME280...");
-
+            // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus();
+            bme280 = new BME280 (
+                i2c,
+                BME280.I2cAddress.Adddress0x77 //default
+            );
 
-            if (pollMode)
-            {
-                _bme280 = new BME280
-                (
-                    i2c, 
-                    BME280.I2cAddress.Adddress0x77, 
-                    updateInterval: 0
-                );
+            // TODO: SPI version
 
-                Console.WriteLine($"ChipID: {_bme280.GetChipID():X2}");
-                Thread.Sleep(1000);
-                
-                Console.WriteLine("Reset");
-                _bme280.Reset();
 
-                while (true)
-                {
-                    _bme280.Update();
-                    Console.WriteLine($"T: { _bme280.Temperature}  H: {_bme280.Humidity}  P: {_bme280.Pressure}");
-                    Thread.Sleep(1000);
-                }
-            }
-            else
-            {
-                // TODO:
-            }
+            // classical .NET events can also be used:
+            bme280.TemperatureChanged += (object sender, FloatChangeResult e) => {
+                Console.WriteLine($"Temp Changed, temp: {e.New}ºC");
+            };
+            bme280.PressureChanged += (object sender, FloatChangeResult e) => {
+                Console.WriteLine($"Presure Changed, pressure: {e.New}hPa");
+            };
+            bme280.HumidityChanged += (object sender, FloatChangeResult e) => {
+                Console.WriteLine($"Humidty Changed, temp: {e.New}%");
+            };
+
+
+            // just for funsies.
+            Console.WriteLine($"ChipID: {bme280.GetChipID():X2}");
+            Thread.Sleep(1000);
+
+            // is this necessary? if so, it should probably be tucked into the driver
+            Console.WriteLine("Reset");
+            bme280.Reset();
+
+            // get an initial reading
+            ReadConditions().Wait();
+
+            // start updating continuously
+            bme280.StartUpdating();
+
+            Console.WriteLine("Feeling cute, might delete later.");
         }
 
-        void TestSpiBME280(bool pollMode)
+        protected async Task ReadConditions()
         {
-            Console.WriteLine("TestSpiBME280...");
-
-            var spi = Device.CreateSpiBus();
-
-            if (pollMode)
-            {
-                // for now we're just tying the CS to VCC
-                IDigitalOutputPort chipSelect = Device.CreateDigitalOutputPort(Device.Pins.D04);
-
-                _bme280 = new BME280
-                (
-                    spi, 
-                    chipSelect, 
-                    updateInterval: 0
-                );
-
-                Console.WriteLine($"ChipID: {_bme280.GetChipID():X2}");
-                Thread.Sleep(1000);
-                
-                Console.WriteLine("Reset");
-                _bme280.Reset();
-
-                while (true)
-                {
-                    _bme280.Update();
-                    Console.WriteLine($"T: { _bme280.Temperature}  H: {_bme280.Humidity}  P: {_bme280.Pressure}");
-                    Thread.Sleep(1000);
-                }
-            }
-            else
-            {
-                // TODO:
-            }
+            var conditions = await bme280.Read();
+            Console.WriteLine("Initial Readings:");
+            Console.WriteLine($"  Temperature: {conditions.Temperature}ºC");
+            Console.WriteLine($"  Pressure: {conditions.Pressure}hPa");
+            Console.WriteLine($"  Relative Humidity: {conditions.Humidity}%");
         }
+
     }
 }
