@@ -3,7 +3,6 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Moisture;
-using Meadow.Hardware;
 
 namespace Sensors.Moisture.Capacitive_Sample
 {
@@ -18,15 +17,15 @@ namespace Sensors.Moisture.Capacitive_Sample
             capacitive = new Capacitive(
                 analogPort: Device.CreateAnalogInputPort(Device.Pins.A01),
                 minimumVoltageCalibration: 2.84f,
-                maximumVoltageCalibration: 1.60f
+                maximumVoltageCalibration: 1.63f
             );
-            //capacitive.Changed += CapacitiveChanged;
+            capacitive.Updated += CapacitiveUpdated;
 
-            //TestCapacitiveUpdating();
-            TestCapacitiveRead();
+            TestCapacitiveUpdating();
+            //TestCapacitiveRead();
         }
 
-        private void CapacitiveChanged(object sender, FloatChangeResult e)
+        void CapacitiveUpdated(object sender, FloatChangeResult e)
         {
             Console.WriteLine($"Raw: {capacitive.Moisture} | Moisture {(int)(e.New * 100)}%");
         }

@@ -12,9 +12,9 @@ namespace Meadow.Foundation.Sensors.Moisture
     public class Capacitive : FilterableObservableBase<FloatChangeResult, float>, IMoistureSensor
     {
         /// <summary>
-        /// Raised when the value of the reading changes.
+        /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
         /// </summary>
-        public event EventHandler<FloatChangeResult> MoistureChanged = delegate { };
+        public event EventHandler<FloatChangeResult> Updated = delegate { };
 
         #region Properties
 
@@ -96,10 +96,10 @@ namespace Meadow.Foundation.Sensors.Moisture
 
         /// <summary>
         /// Convenience method to get the current soil moisture. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        /// StartUpdating() and StopUpdating().
         /// </summary>
         /// <param name="sampleCount">The number of sample readings to take. 
-        /// must be greater than 0.</param>
+        /// Must be greater than 0.</param>
         /// <param name="sampleInterval">The interval, in milliseconds, between
         /// sample readings.</param>
         /// <returns></returns>
@@ -116,8 +116,8 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Starts continuously sampling the sensor.
         ///
-        /// This method also starts raising `Changed` events and IObservable
-        /// subscribers getting notified. Use the `readIntervalDuration` parameter
+        /// This method also starts raising `Updated` events and IObservable
+        /// subscribers getting notified. Use the `standbyDuration` parameter
         /// to specify how often events and notifications are raised/sent.
         /// </summary>
         /// <param name="sampleCount">How many samples to take during a given
@@ -126,7 +126,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// to wait in between samples during a reading.</param>
         /// <param name="standbyDuration">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
-        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
+        /// `Updated` events are raised and `IObservable` consumers are notified.</param>
         public void StartUpdating(
             int sampleCount = 10,
             int sampleIntervalDuration = 40,
@@ -136,7 +136,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         }
 
         /// <summary>
-        /// Stops sampling the temperature.
+        /// Stops sampling the sensor.
         /// </summary>
         public void StopUpdating()
         {
@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Sensors.Moisture
 
         protected void RaiseChangedAndNotify(FloatChangeResult changeResult)
         {
-            MoistureChanged?.Invoke(this, changeResult);
+            Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
