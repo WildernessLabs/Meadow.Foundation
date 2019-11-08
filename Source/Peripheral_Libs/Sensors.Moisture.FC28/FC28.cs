@@ -1,20 +1,26 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Moisture;
-using System.Threading;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Moisture
 {
     /// <summary>
     /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor    
     /// </summary>
-    public class FC28 : IMoistureSensor
+    public class FC28 : FilterableObservableBase<FloatChangeResult, float>, IMoistureSensor
     {
+        /// <summary>
+        /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
+        /// </summary>
+        public event EventHandler<FloatChangeResult> Updated = delegate { };
+
         #region Properties
 
         /// <summary>
         /// Returns the analog input port
         /// </summary>
-        public IAnalogInputPort AnalogPort { get; protected set; }
+        public IAnalogInputPort AnalogInputPort { get; protected set; }
 
         /// <summary>
         /// Returns the digital output port
@@ -27,14 +33,14 @@ namespace Meadow.Foundation.Sensors.Moisture
         public float Moisture { get; private set; }
 
         /// <summary>
-        /// Boundary value of most dry soil 
+        /// Voltage value of most dry soil 
         /// </summary>
-        public float MinimumMoisture { get; set; }
+        public float MinimumVoltageCalibration { get; set; }
 
         /// <summary>
-        /// Boundary value of most moist soil
+        /// Voltage value of most moist soil
         /// </summary>
-        public float MaximumMoisture { get; set; }
+        public float MaximumVoltageCalibration { get; set; }
 
         #endregion
 
@@ -50,20 +56,29 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
-        public FC28(IIODevice device, IPin analogPin, IPin digitalPin, float minimumMoisture = 0f, float maximumMoisture = 5f) : 
-            this (device.CreateAnalogInputPort(analogPin), device.CreateDigitalOutputPort(digitalPin), minimumMoisture, maximumMoisture) { }
+        public FC28(
+            IIODevice device, 
+            IPin analogPin, 
+            IPin digitalPin, 
+            float minimumVoltageCalibration = 0f, 
+            float maximumVoltageCalibration = 3.3f) : 
+            this (device.CreateAnalogInputPort(analogPin), device.CreateDigitalOutputPort(digitalPin), minimumVoltageCalibration, maximumVoltageCalibration) { }
 
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin and digital pin.
         /// </summary>
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
-        public FC28(IAnalogInputPort analogPort, IDigitalOutputPort digitalPort, float minimumMoisture = 0f, float maximumMoisture = 5f)
+        public FC28(
+            IAnalogInputPort analogPort, 
+            IDigitalOutputPort digitalPort, 
+            float minimumVoltageCalibration = 0f, 
+            float maximumVoltageCalibration = 3.3f)
         {
-            AnalogPort = analogPort;
+            AnalogInputPort  = analogPort;
             DigitalPort = digitalPort;
-            MinimumMoisture = minimumMoisture;
-            MaximumMoisture = maximumMoisture;
+            MinimumVoltageCalibration = minimumVoltageCalibration;
+            MaximumVoltageCalibration = maximumVoltageCalibration;
         }
 
         #endregion
@@ -71,34 +86,71 @@ namespace Meadow.Foundation.Sensors.Moisture
         #region Methods
 
         /// <summary>
-        /// Returns the raw soil moisture current value
+        /// Convenience method to get the current soil moisture. For frequent reads, use
+        /// StartUpdating() and StopUpdating().
         /// </summary>
-        /// <returns>Value ranges from 0.0f - 5.0f</returns>
-        public float ReadRaw()
+        /// <param name="sampleCount">The number of sample readings to take. 
+        /// Must be greater than 0.</param>
+        /// <param name="sampleInterval">The interval, in milliseconds, between
+        /// sample readings.</param>
+        /// <returns></returns>
+        public async Task<float> Read(int sampleCount = 10, int sampleInterval = 40)
         {
             DigitalPort.State = true;
-            Thread.Sleep(5);
-            float value = AnalogPort.Read().Result;
+            float voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
             DigitalPort.State = false;
 
-            return value;
+            // convert and save to our temp property for later retrieval
+            Moisture = VoltageToMoisture(voltage);
+            return Moisture;
         }
 
         /// <summary>
-        /// Returns the soil moisture current value.
+        /// Starts continuously sampling the sensor.
+        ///
+        /// This method also starts raising `Updated` events and IObservable
+        /// subscribers getting notified. Use the `standbyDuration` parameter
+        /// to specify how often events and notifications are raised/sent.
         /// </summary>
-        /// <returns>Value ranges from 0 - 100</returns>
-        public float Read()
+        /// <param name="sampleCount">How many samples to take during a given
+        /// reading. These are automatically averaged to reduce noise.</param>
+        /// <param name="sampleIntervalDuration">The time, in milliseconds,
+        /// to wait in between samples during a reading.</param>
+        /// <param name="standbyDuration">The time, in milliseconds, to wait
+        /// between sets of sample readings. This value determines how often
+        /// `Updated` events are raised and `IObservable` consumers are notified.</param>
+        public void StartUpdating(
+            int sampleCount = 10,
+            int sampleIntervalDuration = 40,
+            int standbyDuration = 1000)
         {
             DigitalPort.State = true;
-            Thread.Sleep(5);
-            Moisture = AnalogPort.Read().Result;
-            DigitalPort.State = false;
+            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
+        }
 
-            if (MinimumMoisture > MaximumMoisture)
-                return 100 - Map(Moisture, MaximumMoisture, MinimumMoisture, 0, 100);
-            else
-                return 100 - Map(Moisture, MinimumMoisture, MaximumMoisture, 0, 100);
+        /// <summary>
+        /// Stops sampling the sensor.
+        /// </summary>
+        public void StopUpdating()
+        {
+            AnalogInputPort.StopSampling();
+            DigitalPort.State = false;
+        }
+
+        protected void RaiseChangedAndNotify(FloatChangeResult changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+        protected float VoltageToMoisture(float voltage)
+        {
+            if (MinimumVoltageCalibration > MaximumVoltageCalibration)
+            {
+                return 1f - Map(voltage, MaximumVoltageCalibration, MinimumVoltageCalibration, 0f, 1.0f);
+            }
+
+            return 1f - Map(voltage, MinimumVoltageCalibration, MaximumVoltageCalibration, 0f, 1.0f);
         }
 
         /// <summary>

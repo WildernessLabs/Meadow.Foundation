@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Moisture;
-//using Meadow.Foundation.Sensors;
 
 namespace Meadow.Foundation.Sensors.Moisture
 {
@@ -56,9 +55,8 @@ namespace Meadow.Foundation.Sensors.Moisture
             IIODevice device,
             IPin analogPin,
             float minimumVoltageCalibration = 0f,
-            float maximumVoltageCalibration = 3.3f)
-            : this(device.CreateAnalogInputPort(analogPin), minimumVoltageCalibration, maximumVoltageCalibration) {
-        }
+            float maximumVoltageCalibration = 3.3f) : 
+            this(device.CreateAnalogInputPort(analogPin), minimumVoltageCalibration, maximumVoltageCalibration) { }
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort.
