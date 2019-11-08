@@ -375,18 +375,29 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 AtmosphericConditions oldConditions;
                 AtmosphericConditionChangeResult result;
                 Task.Factory.StartNew(async () => {
+                    while (true) {
+                        // TODO: someone please review; is this the correct
+                        // place to do this?
+                        // check for cancel (doing this here instead of 
+                        // while(!ct.IsCancellationRequested), so we can perform 
+                        // cleanup
+                        if (ct.IsCancellationRequested) {
+                            // do task clean up here
+                            _observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        oldConditions = Conditions;
 
-                    oldConditions = Conditions;
+                        // read
+                        await Read(temperatureSampleCount, pressureSampleCount, humiditySampleCount);
 
-                    // read
-                    await Read(temperatureSampleCount, pressureSampleCount, humiditySampleCount);
+                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
 
-                    result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+                        RaiseChangedAndNotify(result);
 
-                    RaiseChangedAndNotify(result);
-
-                    // sleep for the appropriate interval
-                    await Task.Delay(standbyDuration);
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
+                    }
                 }, SamplingTokenSource.Token);
             }
         }

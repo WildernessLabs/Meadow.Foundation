@@ -40,11 +40,11 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             // just for funsies.
             Console.WriteLine($"ChipID: {bme280.GetChipID():X2}");
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
 
-            // is this necessary? if so, it should probably be tucked into the driver
-            Console.WriteLine("Reset");
-            bme280.Reset();
+            //// is this necessary? if so, it should probably be tucked into the driver
+            //Console.WriteLine("Reset");
+            //bme280.Reset();
 
             // get an initial reading
             ReadConditions().Wait();
