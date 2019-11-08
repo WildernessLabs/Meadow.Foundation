@@ -27,7 +27,7 @@ namespace Sensors.Moisture.Capacitive_Sample
 
         void CapacitiveUpdated(object sender, FloatChangeResult e)
         {
-            Console.WriteLine($"Raw: {capacitive.Moisture} | Moisture {(int)(e.New * 100)}%");
+            Console.WriteLine($"Moisture {(int)(e.New * 100)}%");
         }
 
         void TestCapacitiveUpdating() 
@@ -52,7 +52,7 @@ namespace Sensors.Moisture.Capacitive_Sample
                 if (moisture < 0)
                     moisture = 0;
 
-                Console.WriteLine($"Raw: {capacitive.Moisture} | Moisture {(int) (moisture * 100)}%");
+                Console.WriteLine($"Moisture {(int) (moisture * 100)}%");
                 Thread.Sleep(1000);
             }
         }

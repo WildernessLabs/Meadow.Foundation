@@ -14,39 +14,46 @@ namespace Sensors.Moisture.FC28_Sample
         {
             Console.WriteLine("Initializing...");
 
-            fc28 = new FC28(Device.CreateAnalogInputPort(Device.Pins.A01),
-                Device.CreateDigitalOutputPort(Device.Pins.D15));
+            fc28 = new FC28(
+                Device.CreateAnalogInputPort(Device.Pins.A01),
+                Device.CreateDigitalOutputPort(Device.Pins.D15),
+                minimumVoltageCalibration: 3.24f,
+                maximumVoltageCalibration: 2.25f
+            );
+            fc28.Updated += FC28Updated;
 
-            TestFC28Sensor();
+            TestFC28Updating();
+            //TestFC28Read();
         }
 
-        void TestFC28Sensor()
+        void FC28Updated(object sender, FloatChangeResult e)
+        {
+            Console.WriteLine($"Moisture {(int)(e.New * 100)}%");
+        }
+
+        void TestFC28Updating() 
+        {
+            Console.WriteLine("TestFC28Updating...");
+
+            fc28.StartUpdating();
+        }
+
+        void TestFC28Read()
         {
             Console.WriteLine("TestFC28Sensor...");
-
-            // Use ReadRaw(); to get dry and moist values
-            for (int i = 0; i < 10; i++)
-            {
-                Console.WriteLine(fc28.ReadRaw());
-                Thread.Sleep(1000);
-            }
-
-            // Update boundary values when determined
-            fc28.MinimumMoisture = 3.24f; // On open air
-            fc28.MaximumMoisture = 2.25f; // Dipped in water
 
             // Use Read(); to get soil moisture value from 0 - 100
             while (true)
             {
-                int moisture = (int)fc28.Read();
+                float moisture = fc28.Read().Result;
 
-                if (moisture > 100)
-                    moisture = 100;
+                if (moisture > 1.0f)
+                    moisture = 1.0f;
                 else
                 if (moisture < 0)
                     moisture = 0;
 
-                Console.WriteLine($"Raw: {fc28.Moisture} | Moisture {moisture}%");
+                Console.WriteLine($"Moisture {(int)(moisture * 100)}%");
                 Thread.Sleep(1000);
             }
         }
