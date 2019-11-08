@@ -262,15 +262,15 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// reading. These are automatically averaged to reduce noise.</param>
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
-        /// <param name="readIntervalDuration">The time, in milliseconds, to wait
+        /// <param name="standbyDuration">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
         public void StartUpdating(
             int sampleCount = 10,
             int sampleIntervalDuration = 40,
-            int readIntervalDuration = 100)
+            int standbyDuration = 100)
         {
-            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, readIntervalDuration);
+            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
         }
 
         /// <summary>
