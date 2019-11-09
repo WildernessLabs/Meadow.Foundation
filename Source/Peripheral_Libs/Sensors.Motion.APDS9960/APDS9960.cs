@@ -386,7 +386,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         byte ReadGesture()
         {
-            byte toRead, bytesRead;
+            byte toRead;
             byte[] buf = new byte[256];
 
             byte gestureReceived;
