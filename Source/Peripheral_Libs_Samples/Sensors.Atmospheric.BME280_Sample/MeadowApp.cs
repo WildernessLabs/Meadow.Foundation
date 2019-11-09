@@ -34,7 +34,6 @@ namespace Sensors.Atmospheric.BME280_Sample
                     Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New.Temperature}, old: {h.Old.Temperature}");
                 },
                 e => {
-                    Console.Write("Here");
                     return (
                         (Math.Abs(e.Delta.Temperature) > 1)
                         &&
@@ -65,7 +64,6 @@ namespace Sensors.Atmospheric.BME280_Sample
             // start updating continuously
             bme280.StartUpdating();
 
-            Console.WriteLine("Feeling cute, might delete later.");
         }
 
         protected async Task ReadConditions()
