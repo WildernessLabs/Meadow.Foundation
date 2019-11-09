@@ -187,6 +187,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tft.ILI9341_Sample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{FC6F70DF-E877-4287-A1B4-A30BB9272743}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.SI7021_Sample", "Peripheral_Libs_Samples\Sensors.Atmospheric.SI7021_Sample\Sensors.Atmospheric.SI7021_Sample.csproj", "{C470FAE3-7BA6-40EB-B9A2-AA0E7F574D90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -623,6 +625,10 @@ Global
 		{FC6F70DF-E877-4287-A1B4-A30BB9272743}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC6F70DF-E877-4287-A1B4-A30BB9272743}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC6F70DF-E877-4287-A1B4-A30BB9272743}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C470FAE3-7BA6-40EB-B9A2-AA0E7F574D90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C470FAE3-7BA6-40EB-B9A2-AA0E7F574D90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C470FAE3-7BA6-40EB-B9A2-AA0E7F574D90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C470FAE3-7BA6-40EB-B9A2-AA0E7F574D90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -715,6 +721,7 @@ Global
 		{C2B6AC69-CBCB-4CF8-B614-B8781EB44C6F} = {F7EF2F6C-AD28-4D9B-BE49-D028A8E2FE95}
 		{17941C59-56C7-4A09-B330-09C53767ADB4} = {F7EF2F6C-AD28-4D9B-BE49-D028A8E2FE95}
 		{B54A2F5E-1CE2-4902-B061-6D3B207F5C15} = {F7EF2F6C-AD28-4D9B-BE49-D028A8E2FE95}
+		{C470FAE3-7BA6-40EB-B9A2-AA0E7F574D90} = {F7EF2F6C-AD28-4D9B-BE49-D028A8E2FE95}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
