@@ -9,10 +9,12 @@ using Meadow.Peripherals.Sensors.Temperature;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Provide access to the SI7021 temperature and humidity sensor.
+    /// Provide access to the Si70xx series (Si7020, Si7021, and Si7030)
+    /// temperature and humidity sensors.
+    ///
+    /// Note: This sensor is not working yet.
     /// </summary>
-    // TODO: shouldn't this be Si70xx? Since it supports the Si7013, 7020, and 7021?
-    public class SI7021 :
+    public class Si70xx :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         ICompositeAtmosphericSensor
     {
@@ -113,7 +115,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Default constructor (private to prevent the user from calling this).
         /// </summary>
-        private SI7021()
+        private Si70xx()
         {
         }
 
@@ -122,7 +124,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40).</param>
         /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
-        public SI7021(II2cBus i2cBus, byte address = 0x40)
+        public Si70xx(II2cBus i2cBus, byte address = 0x40)
         {
             _si7021 = new I2cPeripheral(i2cBus, address);
             Init();

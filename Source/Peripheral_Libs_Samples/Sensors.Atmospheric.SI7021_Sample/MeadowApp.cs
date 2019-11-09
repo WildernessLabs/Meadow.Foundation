@@ -11,7 +11,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        SI7021 si7021;
+        Si70xx si7021;
 
         public MeadowApp()
         {
@@ -19,7 +19,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
             // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus();
-            si7021 = new SI7021(
+            si7021 = new Si70xx(
                 i2c
             );
 

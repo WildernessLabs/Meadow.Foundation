@@ -43,7 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.HIH6130
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.SHT31D", "Peripheral_Libs\Sensors.Atmospheric.SHT31D\Sensors.Atmospheric.SHT31D.csproj", "{BECE561F-4163-42F7-B714-F8DE4CD492BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.SI7021", "Peripheral_Libs\Sensors.Atmospheric.SI7021\Sensors.Atmospheric.SI7021.csproj", "{4AF71137-7F34-4A90-9E94-DE8471C01E94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Si70xx", "Peripheral_Libs\Sensors.Atmospheric.SI7021\Sensors.Atmospheric.Si70xx.csproj", "{4AF71137-7F34-4A90-9E94-DE8471C01E94}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Barometric.MPL115A2", "Peripheral_Libs\Sensors.Barometric.MPL115A2\Sensors.Barometric.MPL115A2.csproj", "{C9FA6589-B135-42B4-A72D-55FE1CDF8EFB}"
 EndProject
