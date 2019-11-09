@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Hardware;
 
@@ -25,16 +26,28 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             // TODO: SPI version
 
+            // Example that uses an IObersvable subscription to only be notified
+            // when the temperature changes by at least a degree, and humidty by 5%.
+            // (blowing hot breath on the sensor should trigger)
+            bme280.Subscribe(new FilterableObserver<AtmosphericConditionChangeResult, AtmosphericConditions>(
+                h => {
+                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New.Temperature}, old: {h.Old.Temperature}");
+                },
+                e => {
+                    Console.Write("Here");
+                    return (
+                        (Math.Abs(e.Delta.Temperature) > 1)
+                        &&
+                        (Math.Abs(e.Delta.Pressure) > 5)
+                        );
+                }
+                ));
 
             // classical .NET events can also be used:
-            bme280.TemperatureChanged += (object sender, FloatChangeResult e) => {
-                Console.WriteLine($"Temp Changed, temp: {e.New}ºC");
-            };
-            bme280.PressureChanged += (object sender, FloatChangeResult e) => {
-                Console.WriteLine($"Presure Changed, pressure: {e.New}hPa");
-            };
-            bme280.HumidityChanged += (object sender, FloatChangeResult e) => {
-                Console.WriteLine($"Humidty Changed, temp: {e.New}%");
+            bme280.Updated += (object sender, AtmosphericConditionChangeResult e) => {
+                Console.WriteLine($"  Temperature: {e.New.Temperature}ºC");
+                Console.WriteLine($"  Pressure: {e.New.Pressure}hPa");
+                Console.WriteLine($"  Relative Humidity: {e.New.Humidity}%");
             };
 
 

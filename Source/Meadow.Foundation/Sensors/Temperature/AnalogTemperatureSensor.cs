@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Temperature;
+using Meadow.Peripherals.Sensors.Temperature;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -31,12 +31,12 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP36, LM50             750                     10
     /// TMP37                   500                     20
     /// </remarks>
-    public class AnalogTemperature : FilterableObservableBase<FloatChangeResult, float>, ITemperatureSensor //IObservable<FloatChangeResult>
+    public class AnalogTemperature : FilterableObservableBase<FloatChangeResult, float>, ITemperatureSensor
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<FloatChangeResult> TemperatureChanged = delegate { };
+        public event EventHandler<FloatChangeResult> Updated = delegate { };
 
         #region Local classes
 
@@ -221,7 +221,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                         var newTemp = VoltageToTemperature(h.New);
                         var oldTemp = VoltageToTemperature(h.Old);
                         this.Temperature = newTemp; // save state
-                        RaiseChangedAndNotify(new FloatChangeResult(
+                        RaiseEventsAndNotify(new FloatChangeResult(
                             newTemp,
                             oldTemp));
                     })
@@ -280,9 +280,9 @@ namespace Meadow.Foundation.Sensors.Temperature
             AnalogInputPort.StopSampling();
         }
 
-        protected void RaiseChangedAndNotify(FloatChangeResult changeResult)
+        protected void RaiseEventsAndNotify(FloatChangeResult changeResult)
         {
-            TemperatureChanged?.Invoke(this, changeResult);
+            Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 

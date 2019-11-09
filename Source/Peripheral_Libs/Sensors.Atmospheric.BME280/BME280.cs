@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -16,14 +15,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// This class implements the functionality necessary to read the temperature, pressure and humidity
     /// from the Bosch BME280 sensor.
     /// </remarks>
-    public class BME280 : FilterableObservableBase<FloatChangeResult, float>, ITemperatureSensor, IHumiditySensor, IBarometricPressure
+    public class BME280 :
+        FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        ICompositeAtmosphericSensor
     {
         #region Constants
 
-        /// <summary>
-        ///     Minimum value that should be used for the polling frequency.
-        /// </summary>
-        public const ushort MinimumPollingPeriod = 100;
+        ///// <summary>
+        /////     Minimum value that should be used for the polling frequency.
+        ///// </summary>
+        //public const ushort MinimumPollingPeriod = 100;
 
         #endregion Constants
 
@@ -204,7 +205,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The AtmosphericConditions from the last reading.
         /// </summary>
-        public AtmosphericConditions Conditions { get; protected set; }
+        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
 
         /// <summary>
         /// The temperature, in degrees celsius (ºC), from the last reading.
@@ -238,15 +239,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         /// <summary>
         /// </summary>
-        public event EventHandler<FloatChangeResult> TemperatureChanged = delegate { };
-
-        /// <summary>
-        /// </summary>
-        public event EventHandler<FloatChangeResult> HumidityChanged = delegate { };
-
-        /// <summary>
-        /// </summary>
-        public event EventHandler<FloatChangeResult> PressureChanged = delegate { };
+        public event EventHandler<AtmosphericConditionChangeResult> Updated = delegate { };
 
         #endregion Events and delegates
 
@@ -296,19 +289,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             UpdateConfiguration(configuration);
         }
 
-        //event SensorFloatEventHandler ITemperatureSensor.TemperatureChanged
-        //{
-        //    add
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-
-        //    remove
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-        //}
-
         #endregion Constructors
 
         #region Methods
@@ -340,7 +320,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void StartUpdating(
             Oversample temperatureSampleCount = Oversample.OversampleX8,
             Oversample pressureSampleCount = Oversample.OversampleX8,
-            Oversample humiditySampleCount = Oversample.OversampleX8,
+            Oversample humiditySampleCount = Oversample.OversampleX1,
             int standbyDuration = 1000)
         {
             // TODO: for standby durations of 1,000ms and less, the sensor
@@ -386,13 +366,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             _observers.ForEach(x => x.OnCompleted());
                             break;
                         }
+                        // capture history
                         oldConditions = Conditions;
 
                         // read
                         await Read(temperatureSampleCount, pressureSampleCount, humiditySampleCount);
 
+                        // build a new result with the old and new conditions
                         result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
 
+                        // let everyone know
                         RaiseChangedAndNotify(result);
 
                         // sleep for the appropriate interval
@@ -404,17 +387,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
         {
-            TemperatureChanged?.Invoke(this,
-                new FloatChangeResult(changeResult.New.Temperature, changeResult.Old.Temperature));
-            PressureChanged?.Invoke(this,
-                new FloatChangeResult(changeResult.New.Pressure, changeResult.Old.Pressure));
-            HumidityChanged?.Invoke(this,
-                new FloatChangeResult(changeResult.New.Humidity, changeResult.Old.Humidity));
-            // TODO: what to do here? the interfaces require that this implement
-            // IObservable<FloatChangeResult>, but it really should be
-            // IObservable<AtmosphericConditionChangeResult>
-            // actually, that's not right either. 
-            //base.NotifyObservers(changeResult);
+            Updated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
         }
 
         /// <summary>
@@ -661,34 +635,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         #endregion Methods
 
-        public class AtmosphericConditions
-        {
-            /// <summary>
-            /// The temperature, in degrees celsius (ºC).
-            /// </summary>
-            public float Temperature { get; set; }
-            /// <summary>
-            /// The pressure, in hectopascals (hPa), which is equal to one
-            /// millibar, or 1/10th of a kilopascal (kPa)/centibar.
-            /// </summary>
-            public float Pressure { get; set; }
-            /// <summary>
-            /// The humidity, in percent relative humidity.
-            /// </summary>
-            public float Humidity { get; set; }
-        }
-
-        public class AtmosphericConditionChangeResult : IChangeResult<AtmosphericConditions>
-        {
-            public AtmosphericConditions New { get; set; }
-            public AtmosphericConditions Old { get; set; }
-
-            public AtmosphericConditionChangeResult(
-                AtmosphericConditions newValue, AtmosphericConditions oldValue) {
-                New = newValue;
-                Old = oldValue;
-            }
-        }
 
         public class Configuration
         {
