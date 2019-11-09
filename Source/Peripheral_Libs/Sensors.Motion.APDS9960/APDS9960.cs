@@ -410,12 +410,12 @@ namespace Meadow.Foundation.Sensors.Motion
                 // bytesRead is unused but produces sideffects needed for readGesture to work
                 // ToDo - check on this bytesRead = this->read(APDS9960_GFIFO_U, buf, toRead);
 
-                if (System.Math.Abs((int)buf[0] - (int)buf[1]) > 13)
+                if (Math.Abs((int)buf[0] - (int)buf[1]) > 13)
                 {
                     up_down_diff += (int)buf[0] - (int)buf[1];
                 }
 
-                if (System.Math.Abs((int)buf[2] - (int)buf[3]) > 13)
+                if (Math.Abs((int)buf[2] - (int)buf[3]) > 13)
                 {
                     left_right_diff += (int)buf[2] - (int)buf[3];
                 }
@@ -498,10 +498,10 @@ namespace Meadow.Foundation.Sensors.Motion
         //ToDo - check byte order ... Arduino driver doesn't specify 
         void GetColorData(out int R, out int G, out int B, out int C)
         {
-            R = _apds9960.ReadUShort(APDS9960_RDATAL, Meadow.ByteOrder.BigEndian);
-            G = _apds9960.ReadUShort(APDS9960_GDATAL, Meadow.ByteOrder.BigEndian);
-            B = _apds9960.ReadUShort(APDS9960_BDATAL, Meadow.ByteOrder.BigEndian);
-            C = _apds9960.ReadUShort(APDS9960_CDATAL, Meadow.ByteOrder.BigEndian);
+            R = _apds9960.ReadUShort(APDS9960_RDATAL, ByteOrder.BigEndian);
+            G = _apds9960.ReadUShort(APDS9960_GDATAL, ByteOrder.BigEndian);
+            B = _apds9960.ReadUShort(APDS9960_BDATAL, ByteOrder.BigEndian);
+            C = _apds9960.ReadUShort(APDS9960_CDATAL, ByteOrder.BigEndian);
         }
 
         void EnableColorInterrupt(bool enableInterrupt)
