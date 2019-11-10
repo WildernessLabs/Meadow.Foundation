@@ -8,6 +8,6 @@
     <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Peripheral_Libs\Displays.ST7565\Displays.ST7565.csproj" />
+    <ProjectReference Include="..\..\Driver\Displays.ST7565\Displays.ST7565.csproj" />
   </ItemGroup>
 </Project>
