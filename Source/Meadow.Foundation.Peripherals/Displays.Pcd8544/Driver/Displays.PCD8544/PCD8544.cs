@@ -18,6 +18,8 @@ namespace Meadow.Foundation.Displays
         }
         protected bool _invertDisplay = false;
 
+        protected Color currentPen = Color.White;
+
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
         protected ISpiPeripheral spiDisplay;
@@ -116,6 +118,21 @@ namespace Meadow.Foundation.Displays
             DrawBitmap(x, y, width, height, bitmap, BitmapMode.And);
         }
 
+        public override void SetPenColor(Color pen)
+        {
+            currentPen = pen;
+        }
+
+        /// <summary>
+        ///     Coordinates start with index 0
+        /// </summary>
+        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
+        public override void DrawPixel(int x, int y)
+        {
+            DrawPixel(x, y, currentPen);
+        }
+
         /// <summary>
         ///     Coordinates start with index 0
         /// </summary>
@@ -137,6 +154,12 @@ namespace Meadow.Foundation.Displays
                 spiBuffer[index] &= (byte)~bitMask;
         }
 
+        /// <summary>
+        ///     Coordinates start with index 0
+        /// </summary>
+        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
+        /// <param name="color">any value other than black will make the pixel visible</param>
         public override void DrawPixel(int x, int y, Color color)
         {
             var colored = (color == Color.Black) ? false : true;
