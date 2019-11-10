@@ -68,9 +68,9 @@ namespace Meadow.Foundation.Displays
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Width => _width;
+        public override uint Width { get; }
 
-        public override uint Height => _height;
+        public override uint Height { get; }
 
         /// <summary>
         ///     SPI object
@@ -79,32 +79,20 @@ namespace Meadow.Foundation.Displays
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
+
         protected const bool Data = true;
         protected const bool Command = false;
 
-        /// <summary>
-        ///     Width of the display in pixels.
-        /// </summary>
-        private uint _width;
-
-        /// <summary>
-        ///     Height of the display in pixels.
-        /// </summary>
-        private uint _height;
+        protected Color currentPen = Color.White;
 
         /// <summary>
         ///     Buffer holding the pixels in the display.
         /// </summary>
-        private byte[] _buffer;
+        private byte[] buffer;
 
         #endregion Member variables / fields
 
         #region Properties
-
-        /// <summary>
-        ///     Backing variable for the InvertDisplay property.
-        /// </summary>
-        private bool _invertDisplay;
 
         /// <summary>
         ///     Invert the entire display (true) or return to normal mode (false).
@@ -139,13 +127,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Create a new ST7565 object using the default parameters for
         /// </summary>
-        /// <remarks>
-        ///     Note that by default, any pixels out of bounds will throw and exception.
-        ///     This can be changed by setting the <seealso cref="IgnoreOutOfBoundsPixels" />
-        ///     property to true.
-        /// </remarks>
-        /// <param name="address">Address of the bus on the I2C display.</param>
-        /// <param name="displayType">Type of ST7565 display (default = 128x64 pixel display).</param>
         public ST7565(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width = 128, uint height = 64)
         {
@@ -155,8 +136,8 @@ namespace Meadow.Foundation.Displays
 
             spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
 
-            _width = width;
-            _height = height;
+            Width = width;
+            Height = height;
 
             InitST7565();
         }
@@ -168,7 +149,7 @@ namespace Meadow.Foundation.Displays
 
         private void InitST7565()
         {
-            _buffer = new byte[_width * _height / 8];
+            buffer = new byte[Width * Height / 8];
 
             IgnoreOutOfBoundsPixels = false;
 
@@ -235,7 +216,7 @@ namespace Meadow.Foundation.Displays
 
         protected const int StartColumnOffset = 0; // 1;
         protected const int pageSize = 128;
-        protected int[] pageReference = new int[] { 4, 5, 6, 7, 0, 1, 2, 3 };
+        protected int[] pageReference = { 4, 5, 6, 7, 0, 1, 2, 3 };
         protected byte[] pageBuffer = new byte[pageSize];
 
         /// <summary>
@@ -251,7 +232,7 @@ namespace Meadow.Foundation.Displays
                 SendCommand(DisplayCommand.EnterReadModifyWriteMode);
 
                 dataCommandPort.State = Data;
-                Array.Copy(_buffer, (int)(Width * page), pageBuffer, 0, pageSize);
+                Array.Copy(buffer, (int)(Width * page), pageBuffer, 0, pageSize);
                 spiPerihperal.WriteBytes(pageBuffer);
             }
         }
@@ -262,7 +243,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="updateDisplay">Immediately update the display when true.</param>
         public override void Clear(bool updateDisplay = false)
         {
-            Array.Clear(_buffer, 0, _buffer.Length);
+            Array.Clear(buffer, 0, buffer.Length);
 
             if (updateDisplay)
             {
@@ -270,6 +251,27 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        public override void SetPenColor(Color pen)
+        {
+            currentPen = pen;
+        }
+
+        /// <summary>
+        ///     Draw pixel using current pen
+        /// </summary>
+        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
+        public override void DrawPixel(int x, int y)
+        {
+            DrawPixel(x, y, currentPen);
+        }
+
+        /// <summary>
+        ///     Coordinates start with index 0
+        /// </summary>
+        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
+        /// <param name="color">Any color = turn on pixel, black = turn off pixel</param>
         public override void DrawPixel(int x, int y, Color color)
         {
             var colored = (color == Color.Black) ? false : true;
@@ -285,7 +287,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
         public override void DrawPixel(int x, int y, bool colored)
         {
-            if ((x >= _width) || (y >= _height))
+            if ((x >= Width) || (y >= Height))
             {
                 if (!IgnoreOutOfBoundsPixels)
                 {
@@ -294,15 +296,15 @@ namespace Meadow.Foundation.Displays
                 //  pixels to be thrown away if out of bounds of the display
                 return;
             }
-            var index = (y / 8 * _width) + x;
+            var index = (y / 8 * Width) + x;
 
             if (colored)
             {
-                _buffer[index] = (byte)(_buffer[index] | (byte)(1 << (y % 8)));
+                buffer[index] = (byte)(buffer[index] | (byte)(1 << (y % 8)));
             }
             else
             {
-                _buffer[index] = (byte)(_buffer[index] & ~(byte)(1 << (y % 8)));
+                buffer[index] = (byte)(buffer[index] & ~(byte)(1 << (y % 8)));
             }
         }
 
@@ -372,6 +374,7 @@ namespace Meadow.Foundation.Displays
             if ((direction == ScrollDirection.Left) || (direction == ScrollDirection.Right))
             {
                 commands = new byte[] { 0x26, 0x00, startPage, 0x00, endPage, 0x00, 0xff, 0x2f };
+
                 if (direction == ScrollDirection.Left)
                 {
                     commands[0] = 0x27;
@@ -380,6 +383,7 @@ namespace Meadow.Foundation.Displays
             else
             {
                 byte scrollDirection;
+
                 if (direction == ScrollDirection.LeftAndVertical)
                 {
                     scrollDirection = 0x2a;
@@ -388,8 +392,8 @@ namespace Meadow.Foundation.Displays
                 {
                     scrollDirection = 0x29;
                 }
-                commands = new byte[]
-                    { 0xa3, 0x00, (byte) _height, scrollDirection, 0x00, startPage, 0x00, endPage, 0x01, 0x2f };
+
+                commands = new byte[] { 0xa3, 0x00, (byte) Height, scrollDirection, 0x00, startPage, 0x00, endPage, 0x01, 0x2f };
             }
             SendCommands(commands);
         }
