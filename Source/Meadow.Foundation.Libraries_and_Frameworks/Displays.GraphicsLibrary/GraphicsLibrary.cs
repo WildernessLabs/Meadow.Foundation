@@ -55,13 +55,25 @@ namespace Meadow.Foundation.Graphics
         #region Methods
 
         /// <summary>
+        ///     Draw a single pixel using the pen color
+        /// </summary>
+        /// <param name="x">x location </param>
+        /// <param name="y">y location</param>
+        public void DrawPixel(int x, int y)
+        {
+            _display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y));
+        }
+
+        /// <summary>
         ///     Draw a single pixel 
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public void DrawPixel (int x, int y, bool colored = true)
+        public void DrawPixel (int x, int y, bool colored)
         {
+
+
             _display.DrawPixel(GetXForRotation(x,y), GetYForRotation(x,y), colored);
         }
 
@@ -111,6 +123,8 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawLine(int x0, int y0, int x1, int y1, Color color)
         {
+            _display.SetPenColor(color);
+
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
             if (steep)
             {
@@ -139,7 +153,7 @@ namespace Meadow.Foundation.Graphics
             var y = y0;
             for (var x = x0; x <= x1; x++)
             {
-                DrawPixel(steep ? y : x, steep ? x : y, color);
+                DrawPixel(steep ? y : x, steep ? x : y);
                 error = error - dy;
                 if (error < 0)
                 {
@@ -173,9 +187,11 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawHorizontalLine(int x0, int y0, int length, Color color)
         {
+            _display.SetPenColor(color);
+
             for (var x = x0; (x - x0) < length; x++)
             {
-                DrawPixel(x, y0, color);
+                DrawPixel(x, y0);
             }
         }
 
@@ -203,9 +219,11 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawVerticalLine(int x0, int y0, int length, Color color)
         {
+            _display.SetPenColor(color);
+
             for (var y = y0; (y - y0) < length; y++)
             {
-                DrawPixel(x0, y, color);
+                DrawPixel(x0, y);
             }
         }
 
@@ -381,6 +399,8 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Draw a filled circle?</param>
         public void DrawCircle(int centerX, int centerY, int radius, Color color, bool filled = false)
         {
+            _display.SetPenColor(color);
+
             var d = (5 - (radius * 4)) / 4;
             var x = 0;
             var y = radius;
@@ -388,21 +408,21 @@ namespace Meadow.Foundation.Graphics
             {
                 if (filled)
                 {
-                    DrawLine(centerX + x, centerY + y, centerX - x, centerY + y, color);
-                    DrawLine(centerX + x, centerY - y, centerX - x, centerY - y, color);
-                    DrawLine(centerX - y, centerY + x, centerX + y, centerY + x, color);
-                    DrawLine(centerX - y, centerY - x, centerX + y, centerY - x, color);
+                    DrawLine(centerX + x, centerY + y, centerX - x, centerY + y);
+                    DrawLine(centerX + x, centerY - y, centerX - x, centerY - y);
+                    DrawLine(centerX - y, centerY + x, centerX + y, centerY + x);
+                    DrawLine(centerX - y, centerY - x, centerX + y, centerY - x);
                 }
                 else
                 {
-                    DrawPixel(centerX + x, centerY + y, color);
-                    DrawPixel(centerX + y, centerY + x, color);
-                    DrawPixel(centerX - y, centerY + x, color);
-                    DrawPixel(centerX - x, centerY + y, color);
-                    DrawPixel(centerX - x, centerY - y, color);
-                    DrawPixel(centerX - y, centerY - x, color);
-                    DrawPixel(centerX + x, centerY - y, color);
-                    DrawPixel(centerX + y, centerY - x, color);
+                    DrawPixel(centerX + x, centerY + y);
+                    DrawPixel(centerX + y, centerY + x);
+                    DrawPixel(centerX - y, centerY + x);
+                    DrawPixel(centerX - x, centerY + y);
+                    DrawPixel(centerX - x, centerY - y);
+                    DrawPixel(centerX - y, centerY - x);
+                    DrawPixel(centerX + x, centerY - y);
+                    DrawPixel(centerX + y, centerY - x);
                 }
                 if (d < 0)
                 {
@@ -670,6 +690,8 @@ namespace Meadow.Foundation.Graphics
                 throw new ArgumentException("Width and height do not match the bitmap size.");
             }
 
+            _display.SetPenColor(color);
+
             for (var ordinate = 0; ordinate < height; ordinate++)
             {
                 for (var abscissa = 0; abscissa < width; abscissa++)
@@ -681,7 +703,7 @@ namespace Meadow.Foundation.Graphics
                     {
                         if ((b & mask) > 0)
                         {
-                            DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, color);
+                            DrawPixel(x + (8 * abscissa) + pixel, y + ordinate);
                         }
                         mask <<= 1;
                     }
