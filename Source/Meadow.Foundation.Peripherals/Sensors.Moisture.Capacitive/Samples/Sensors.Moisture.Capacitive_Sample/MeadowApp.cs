@@ -19,15 +19,23 @@ namespace Sensors.Moisture.Capacitive_Sample
                 minimumVoltageCalibration: 2.84f,
                 maximumVoltageCalibration: 1.63f
             );
-            capacitive.Updated += CapacitiveUpdated;
+
+            capacitive.Subscribe(new FilterableObserver<FloatChangeResult, float>(
+                h => {
+                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New}, old: {h.Old}, delta: {h.Delta}");
+                },
+                e => {
+                    return true;
+                }
+            ));
+
+            capacitive.Updated += (object sender, FloatChangeResult e) => 
+            {
+                Console.WriteLine($"Moisture {(int)(e.New * 100)}%");
+            };
 
             TestCapacitiveUpdating();
             //TestCapacitiveRead();
-        }
-
-        void CapacitiveUpdated(object sender, FloatChangeResult e)
-        {
-            Console.WriteLine($"Moisture {(int)(e.New * 100)}%");
         }
 
         void TestCapacitiveUpdating() 

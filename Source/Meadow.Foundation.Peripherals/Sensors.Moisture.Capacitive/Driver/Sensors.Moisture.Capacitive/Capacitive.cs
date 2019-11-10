@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Moisture;
@@ -15,12 +16,27 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public event EventHandler<FloatChangeResult> Updated = delegate { };
 
+        #region Member Variables / fields
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
         /// Returns the analog input port
         /// </summary>
         public IAnalogInputPort AnalogInputPort { get; protected set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the analog input port is currently
+        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
+        /// </summary>
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
 
         /// <summary>
         /// Last value read from the moisture sensor.
@@ -130,7 +146,14 @@ namespace Meadow.Foundation.Sensors.Moisture
             int sampleIntervalDuration = 40,
             int standbyDuration = 1000)
         {
-            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
+            lock (_lock)
+            {
+                if (!IsSampling) return;
+
+                IsSampling = true;
+
+                AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
+            }
         }
 
         /// <summary>
@@ -138,7 +161,14 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public void StopUpdating()
         {
-            AnalogInputPort.StopSampling();
+            lock (_lock)
+            {
+                if (!IsSampling) return;
+
+                AnalogInputPort.StopSampling();
+
+                IsSampling = false;
+            }
         }
 
         protected void RaiseChangedAndNotify(FloatChangeResult changeResult)
