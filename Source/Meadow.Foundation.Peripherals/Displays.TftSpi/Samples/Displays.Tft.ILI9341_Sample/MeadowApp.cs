@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading;
 using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation;
 using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
 
@@ -29,7 +31,40 @@ namespace Displays.Tft.ILI9163_Sample
 
             graphics = new GraphicsLibrary(display);
 
+            FontTest();
+
+            Thread.Sleep(40000);
+
             TestDisplay();
+        }
+
+        void FontTest()
+        {
+            graphics.Clear();
+
+            int yPos = 0;
+
+            graphics.CurrentFont = new Font4x8();
+            graphics.DrawText(0, yPos, "Font_4x8: ABCdef123@#$", Color.Red);
+            yPos += 12;
+
+            graphics.CurrentFont = new Font8x8();
+            graphics.DrawText(0, yPos, "Font_8x8: ABCdef123@#$", Color.Orange);
+            yPos += 12;
+
+            graphics.CurrentFont = new Font8x12();
+            graphics.DrawText(0, yPos, "Font_8x12: ABCdef123@#$", Color.Yellow);
+            yPos += 16;
+
+            graphics.CurrentFont = new Font12x16();
+            graphics.DrawText(0, yPos, "Font_12x16: ABCdef123@#$", Color.LawnGreen);
+            yPos += 20;
+
+            graphics.CurrentFont = new Font12x20();
+            graphics.DrawText(0, yPos, "Font_12x20: ABCdef123@#$", Color.Cyan);
+            yPos += 22;
+
+            graphics.Show();
         }
 
         void TestDisplay()
