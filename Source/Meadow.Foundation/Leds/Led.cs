@@ -1,19 +1,20 @@
-using Meadow.Peripherals.Leds;
 using Meadow.Hardware;
+using Meadow.Peripherals.Leds;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Leds
 {
-    /// <summary>
-    /// Represents a simple LED
-    /// </summary>
-    public class Led : ILed
+	/// <summary>
+	/// Represents a simple LED
+	/// </summary>
+	public class Led : ILed
     {
-        /// <summary>
-        /// Gets the port that is driving the LED
-        /// </summary>
-        /// <value>The port</value>
-        public IDigitalOutputPort Port { get; protected set; }
+		#region Properties
+		/// <summary>
+		/// Gets the port that is driving the LED
+		/// </summary>
+		/// <value>The port</value>
+		public IDigitalOutputPort Port { get; protected set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="T:Meadow.Foundation.Leds.Led"/> is on.
@@ -21,32 +22,25 @@ namespace Meadow.Foundation.Leds
         /// <value><c>true</c> if is on; otherwise, <c>false</c>.</value>
         public bool IsOn
         {
-            get { return _isOn; }
-            set
-            {
-                // if turning on,
-                if (value)
-                {
-                    Port.State = _onValue; // turn on
-                }
-                else
-                { // if turning off
-                    Port.State = !_onValue; // turn off
-                }
-                _isOn = value;
-            }
+            get { return Port.State; }
+            set { Port.State = value; }
         }
-        protected bool _isOn = false;
+		#endregion
+
+		#region Fields
+		protected bool _isOn = false;
         protected bool _onValue = true;
 
         protected Task _animationTask = null;
         protected bool _running = false;
+		#endregion
 
-        /// <summary>
-        /// Creates a LED through a pin directly from the Digital IO of the board
-        /// </summary>
-        /// <param name="pin"></param>
-        public Led(IIODevice device, IPin pin) : 
+		#region Constructor(s)
+		/// <summary>
+		/// Creates a LED through a pin directly from the Digital IO of the board
+		/// </summary>
+		/// <param name="pin"></param>
+		public Led(IIODevice device, IPin pin) : 
             this (device.CreateDigitalOutputPort(pin, false)) { }
 
         /// <summary>
@@ -57,13 +51,15 @@ namespace Meadow.Foundation.Leds
         {
             Port = port;
         }
-        
-        /// <summary>
-        /// Blink animation that turns the LED on and off based on the OnDuration and offDuration values in ms
-        /// </summary>
-        /// <param name="onDuration"></param>
-        /// <param name="offDuration"></param>
-        public void StartBlink(uint onDuration = 200, uint offDuration = 200)
+		#endregion
+
+		#region Public Methods
+		/// <summary>
+		/// Blink animation that turns the LED on and off based on the OnDuration and offDuration values in ms
+		/// </summary>
+		/// <param name="onDuration"></param>
+		/// <param name="offDuration"></param>
+		public void StartBlink(uint onDuration = 200, uint offDuration = 200)
         {
             _running = true;
 
@@ -90,5 +86,6 @@ namespace Meadow.Foundation.Leds
             _running = false;
             _isOn = false;
         }
-    }
+		#endregion
+	}
 }
