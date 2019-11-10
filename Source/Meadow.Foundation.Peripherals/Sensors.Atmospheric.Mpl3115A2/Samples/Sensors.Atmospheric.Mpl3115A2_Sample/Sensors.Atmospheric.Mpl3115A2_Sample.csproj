@@ -1,0 +1,10 @@
+<Project Sdk="Meadow.Sdk/1.1">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.MPL3115A2\Sensors.Atmospheric.MPL3115A2.csproj" />
+  </ItemGroup>
+</Project>
