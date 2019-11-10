@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Temperature;
 using System;
 using System.Collections.Generic;
@@ -31,12 +32,14 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP36, LM50             750                     10
     /// TMP37                   500                     20
     /// </remarks>
-    public class AnalogTemperature : FilterableObservableBase<FloatChangeResult, float>, ITemperatureSensor
+    public class AnalogTemperature
+        : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        ITemperatureSensor
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<FloatChangeResult> Updated = delegate { };
+        public event EventHandler<AtmosphericConditionChangeResult> Updated = delegate { };
 
         #region Local classes
 
@@ -145,6 +148,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </remarks>
         public float Temperature { get; protected set; }
 
+        float ITemperatureSensor.Temperature => throw new NotImplementedException();
+
         #endregion Properties
 
 
@@ -221,9 +226,11 @@ namespace Meadow.Foundation.Sensors.Temperature
                         var newTemp = VoltageToTemperature(h.New);
                         var oldTemp = VoltageToTemperature(h.Old);
                         this.Temperature = newTemp; // save state
-                        RaiseEventsAndNotify(new FloatChangeResult(
-                            newTemp,
-                            oldTemp));
+                        RaiseEventsAndNotify(
+                            new AtmosphericConditionChangeResult(
+                            new AtmosphericConditions(newTemp, 0, 0),
+                            new AtmosphericConditions(oldTemp, 0, 0)
+                            ));
                     })
                 );
         }
@@ -241,14 +248,15 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        public async Task<float> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
+        public async Task<AtmosphericConditions> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
             // read the voltage
             float voltage = await this.AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
             // convert and save to our temp property for later retreival
             this.Temperature = VoltageToTemperature(voltage);
             // return
-            return this.Temperature;
+            return new AtmosphericConditions(this.Temperature, 0, 0);
+            //return this.Temperature;
         }
 
         /// <summary>
@@ -280,7 +288,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             AnalogInputPort.StopSampling();
         }
 
-        protected void RaiseEventsAndNotify(FloatChangeResult changeResult)
+        protected void RaiseEventsAndNotify(AtmosphericConditionChangeResult changeResult)
         {
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

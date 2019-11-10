@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -17,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </remarks>
     public class BME280 :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        ICompositeAtmosphericSensor
+        IAtmosphericSensor, ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         #region Constants
 

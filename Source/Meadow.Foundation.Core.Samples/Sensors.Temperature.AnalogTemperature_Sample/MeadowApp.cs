@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
+using Meadow.Peripherals.Sensors.Atmospheric;
 
 namespace Sensors.Temperature.AnalogTemperature_Sample
 {
@@ -24,18 +25,18 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree.
-            analogTemperature.Subscribe(new FilterableObserver<FloatChangeResult, float>(
+            analogTemperature.Subscribe(new FilterableObserver<AtmosphericConditionChangeResult, AtmosphericConditions>(
                 h => {
-                    Console.WriteLine($"Temp changed by a degree; new: {h.New}, old: {h.Old}");
+                    Console.WriteLine($"Temp changed by a degree; new: {h.New.Temperature}, old: {h.Old.Temperature}");
                 },
                 e => {
-                    return (Math.Abs(e.Delta) > 1);
+                    return (Math.Abs(e.Delta.Temperature) > 1);
                 }
                 ));
 
             // classical .NET events can also be used:
-            analogTemperature.Updated += (object sender, FloatChangeResult e) => {
-                Console.WriteLine($"Temp Changed, temp: {e.New}ºC");
+            analogTemperature.Updated += (object sender, AtmosphericConditionChangeResult e) => {
+                Console.WriteLine($"Temp Changed, temp: {e.New.Temperature}ºC");
             };
 
             // Get an initial reading.

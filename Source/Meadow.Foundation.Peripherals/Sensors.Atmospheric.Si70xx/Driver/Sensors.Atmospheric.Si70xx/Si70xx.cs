@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public class Si70xx :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        ICompositeAtmosphericSensor
+        IAtmosphericSensor
     {
         /// <summary>
         /// </summary>
@@ -85,24 +85,20 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Get / Set the resolution of the sensor.
         /// </summary>
-        public byte Resolution
-        {
-            get
-            {
+        public byte Resolution {
+            get {
                 var register = _si7021.ReadRegister(Registers.ReadUserRegister1);
-                var resolution = (byte) ((register >> 7) | (register & 0x01));
+                var resolution = (byte)((register >> 7) | (register & 0x01));
                 return resolution;
             }
-            set
-            {
-                if (value > 3)
-                {
+            set {
+                if (value > 3) {
                     throw new ArgumentException("Resolution should be in the range 0-3");
                 }
                 var register = _si7021.ReadRegister(Registers.ReadUserRegister1);
                 register &= 0x7e;
-                var mask = (byte) (value & 0x01);
-                mask |= (byte) ((value & 0x02) << 7);
+                var mask = (byte)(value & 0x01);
+                mask |= (byte)((value & 0x02) << 7);
                 register |= mask;
                 _si7021.WriteRegister(Registers.WriteUserRegister1, register);
             }
@@ -309,8 +305,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             var register = _si7021.ReadRegister(Registers.ReadUserRegister1);
             register &= 0xfd;
-            if (onOrOff)
-            {
+            if (onOrOff) {
                 register |= 0x02;
             }
             _si7021.WriteRegister(Registers.WriteUserRegister1, register);
