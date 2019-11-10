@@ -68,9 +68,9 @@ namespace Meadow.Foundation.Displays
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Width => _width;
+        public override uint Width => width;
 
-        public override uint Height => _height;
+        public override uint Height => height;
 
         /// <summary>
         ///     SSD1306 SPI display
@@ -88,34 +88,36 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     SSD1306 I2C display
         /// </summary>
-        private readonly II2cPeripheral _I2cPeriferal;
+        private readonly II2cPeripheral i2cPeriferal;
 
         /// <summary>
         ///     Width of the display in pixels.
         /// </summary>
-        private uint _width;
+        private uint width;
 
         /// <summary>
         ///     Height of the display in pixels.
         /// </summary>
-        private uint _height;
+        private uint height;
+
+        private Color currentPen;
 
         /// <summary>
         ///     Buffer holding the pixels in the display.
         /// </summary>
-        private byte[] _buffer;
-        private byte[] _spiReceive;
+        private byte[] buffer;
+        private byte[] spiReceive;
 
         /// <summary>
         ///     Sequence of command bytes that must be sent to the display before
         ///     the Show method can send the data buffer.
         /// </summary>
-        private byte[] _showPreamble;
+        private byte[] showPreamble;
 
         /// <summary>
         ///     Sequence of bytes that should be sent to a 128x64 OLED display to setup the device.
         /// </summary>
-        private readonly byte[] _oled128x64SetupSequence =
+        private readonly byte[] oled128x64SetupSequence =
         {
             0xae, 0xd5, 0x80, 0xa8, 0x3f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
             0xda, 0x12, 0x81, 0xcf, 0xd9, 0xf1, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
@@ -123,7 +125,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Sequence of bytes that should be sent to a 128x32 OLED display to setup the device.
         /// </summary>
-        private readonly byte[] _oled128x32SetupSequence =
+        private readonly byte[] oled128x32SetupSequence =
         {
             0xae, 0xd5, 0x80, 0xa8, 0x1f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
             0xda, 0x02, 0x81, 0x8f, 0xd9, 0x1f, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
@@ -131,7 +133,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Sequence of bytes that should be sent to a 96x16 OLED display to setup the device.
         /// </summary>
-        private readonly byte[] _oled96x16SetupSequence =
+        private readonly byte[] oled96x16SetupSequence =
         {
             0xae, 0xd5, 0x80, 0xa8, 0x1f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
             0xda, 0x02, 0x81, 0xaf, 0xd9, 0x1f, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
@@ -139,7 +141,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Sequence of bytes that should be sent to a 64x48 OLED display to setup the device.
         /// </summary>
-        private readonly byte[] _oled64x48SetupSequence =
+        private readonly byte[] oled64x48SetupSequence =
         {
             0xae, 0xd5, 0x80, 0xa8, 0x3f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
             0xda, 0x12, 0x81, 0xcf, 0xd9, 0xf1, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
@@ -258,7 +260,7 @@ namespace Meadow.Foundation.Displays
         {
             _displayType = displayType;
 
-            _I2cPeriferal = new I2cPeripheral(i2cBus, address);
+            i2cPeriferal = new I2cPeripheral(i2cBus, address);
 
             connectionType = ConnectionType.I2C;
 
@@ -271,24 +273,24 @@ namespace Meadow.Foundation.Displays
             {
                 case DisplayType.OLED128x64:
                 case DisplayType.OLED64x48:
-                    _width = 128;
-                    _height = 64;
-                    SendCommands(_oled128x64SetupSequence);
+                    width = 128;
+                    height = 64;
+                    SendCommands(oled128x64SetupSequence);
                     break;
                 case DisplayType.OLED128x32:
-                    _width = 128;
-                    _height = 32;
-                    SendCommands(_oled128x32SetupSequence);
+                    width = 128;
+                    height = 32;
+                    SendCommands(oled128x32SetupSequence);
                     break;
                 case DisplayType.OLED96x16:
-                    _width  = 96;
-                    _height = 16;
-                    SendCommands(_oled96x16SetupSequence);
+                    width  = 96;
+                    height = 16;
+                    SendCommands(oled96x16SetupSequence);
                     break;
             }
 
-            _buffer = new byte[_width * _height / 8];
-            _showPreamble = new byte[] { 0x21, 0x00, (byte)(_width - 1), 0x22, 0x00, (byte)(_height/8 - 1) };
+            buffer = new byte[width * height / 8];
+            showPreamble = new byte[] { 0x21, 0x00, (byte)(width - 1), 0x22, 0x00, (byte)(height/8 - 1) };
 
             IgnoreOutOfBoundsPixels = false;
 
@@ -318,7 +320,7 @@ namespace Meadow.Foundation.Displays
             }
             else
             {
-                _I2cPeriferal.WriteBytes(new byte[] { 0x00, command });
+                i2cPeriferal.WriteBytes(new byte[] { 0x00, command });
             }
         }
 
@@ -339,7 +341,7 @@ namespace Meadow.Foundation.Displays
             }
             else
             {
-                _I2cPeriferal.WriteBytes(data);
+                i2cPeriferal.WriteBytes(data);
             }
         }
 
@@ -348,7 +350,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public override void Show()
         {
-            SendCommands(_showPreamble);
+            SendCommands(showPreamble);
             //
             //  Send the buffer page by page.
             //
@@ -361,15 +363,15 @@ namespace Meadow.Foundation.Displays
              //   dataCommandPort.State = Data;
              //   spiDisplay.WriteBytes(_buffer);
 
-                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, _buffer, _spiReceive);
+                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, buffer, spiReceive);
             }
             else
             {
-                for (ushort index = 0; index < _buffer.Length; index += PAGE_SIZE)
+                for (ushort index = 0; index < buffer.Length; index += PAGE_SIZE)
                 {
-                    Array.Copy(_buffer, index, data, 1, PAGE_SIZE);
+                    Array.Copy(buffer, index, data, 1, PAGE_SIZE);
                     SendCommand(0x40);
-                    _I2cPeriferal.WriteBytes(data);
+                    i2cPeriferal.WriteBytes(data);
                 }
             }
         }
@@ -380,12 +382,36 @@ namespace Meadow.Foundation.Displays
         /// <param name="updateDisplay">Immediately update the display when true.</param>
         public override void Clear(bool updateDisplay = false)
         {
-            Array.Clear(_buffer, 0, _buffer.Length);
+            Array.Clear(buffer, 0, buffer.Length);
 
             if (updateDisplay)
                 Show();
         }
 
+        /// <summary>
+        ///     Set the pen color, black is off, any other color is on
+        /// </summary>   
+        public override void SetPenColor(Color pen)
+        {
+            currentPen = pen;
+        }
+
+        /// <summary>
+        ///     Draw a pixel to the display using the pen
+        /// </summary>    
+        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
+        public override void DrawPixel(int x, int y)
+        {
+            DrawPixel(x, y, currentPen);
+        }
+
+        /// <summary>
+        ///     Draw a pixel to the display - coordinates start with index 0
+        /// </summary>
+        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
+        /// <param name="color">Black - pixel off, any color - turn on pixel</param>
         public override void DrawPixel(int x, int y, Color color)
         {
             var colored = (color == Color.Black) ? false : true;
@@ -394,7 +420,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Coordinates start with index 0
+        ///     Draw a pixel to the display - coordinates start with index 0
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
@@ -407,7 +433,7 @@ namespace Meadow.Foundation.Displays
                 return;
             }
 
-            if ((x >= _width) || (y >= _height))
+            if ((x >= width) || (y >= height))
             {
                 if (!IgnoreOutOfBoundsPixels)
                 {
@@ -416,15 +442,15 @@ namespace Meadow.Foundation.Displays
                 //  pixels to be thrown away if out of bounds of the display
                 return;
             }
-            var index = (y / 8 * _width) + x;
+            var index = (y / 8 * width) + x;
 
             if (colored)
             {
-                _buffer[index] = (byte) (_buffer[index] | (byte) (1 << (y % 8)));
+                buffer[index] = (byte) (buffer[index] | (byte) (1 << (y % 8)));
             }
             else
             {
-                _buffer[index] = (byte) (_buffer[index] & ~(byte) (1 << (y % 8)));
+                buffer[index] = (byte) (buffer[index] & ~(byte) (1 << (y % 8)));
             }
         }
 
@@ -444,15 +470,15 @@ namespace Meadow.Foundation.Displays
             x += 32;
             y += 16;
 
-            var index = (y / 8 * _width) + x;
+            var index = (y / 8 * width) + x;
 
             if (colored)
             {
-                _buffer[index] = (byte)(_buffer[index] | (byte)(1 << (y % 8)));
+                buffer[index] = (byte)(buffer[index] | (byte)(1 << (y % 8)));
             }
             else
             {
-                _buffer[index] = (byte)(_buffer[index] & ~(byte)(1 << (y % 8)));
+                buffer[index] = (byte)(buffer[index] & ~(byte)(1 << (y % 8)));
             }
         }
 
@@ -539,7 +565,7 @@ namespace Meadow.Foundation.Displays
                     scrollDirection = 0x29;
                 }
                 commands = new byte[]
-                    { 0xa3, 0x00, (byte) _height, scrollDirection, 0x00, startPage, 0x00, endPage, 0x01, 0x2f };
+                    { 0xa3, 0x00, (byte) height, scrollDirection, 0x00, startPage, 0x00, endPage, 0x01, 0x2f };
             }
             SendCommands(commands);
         }
