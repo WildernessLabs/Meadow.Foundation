@@ -26,8 +26,8 @@ namespace Meadow.Foundation.Displays.Tft
 
         //these displays typically support 12, 16 & 18 bit but the current driver only supports 16
         public override DisplayColorMode ColorMode => DisplayColorMode.Format16bppRgb565;
-        public override uint Width => _width;
-        public override uint Height => _height;
+        public override uint Width => width;
+        public override uint Height => height;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
@@ -38,9 +38,11 @@ namespace Meadow.Foundation.Displays.Tft
         protected readonly byte[] spiBuffer;
         protected readonly byte[] spiReceive;
 
-        protected uint _width;
-        protected uint _height;
-        protected uint _yMax;
+        protected ushort currentPen;
+
+        protected uint width;
+        protected uint height;
+        protected uint yMax;
 
         protected const bool Data = true;
         protected const bool Command = false;
@@ -54,13 +56,13 @@ namespace Meadow.Foundation.Displays.Tft
         public DisplayTftSpiBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height)
         {
-            _width = width;
-            _height = height;
+            this.width = width;
+            this.height = height;
 
             spi = (SpiBus)spiBus;
 
-            spiBuffer = new byte[_width * _height * sizeof(ushort)];
-            spiReceive = new byte[_width * _height * sizeof(ushort)];
+            spiBuffer = new byte[this.width * this.height * sizeof(ushort)];
+            spiReceive = new byte[this.width * this.height * sizeof(ushort)];
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }
@@ -69,7 +71,7 @@ namespace Meadow.Foundation.Displays.Tft
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
         }
 
-        protected abstract void SetAddressWindow(uint x1, uint x2, uint y1, uint y2);
+        protected abstract void SetAddressWindow(uint x0, uint y0, uint x1, uint y1);
 
         /// <summary>
         ///     Clear the display.
@@ -167,6 +169,25 @@ namespace Meadow.Foundation.Displays.Tft
         }
 
         /// <summary>
+        ///     Sets the pen color used for DrawPixel calls
+        ///     <param name="pen">Pen color</param>
+        /// </summary>
+        public override void SetPenColor(Color pen)
+        {
+            currentPen = Get16BitColorFromColor(pen);
+        }
+
+        /// <summary>
+        ///     Draw a single pixel using the current pen
+        /// </summary>
+        /// <param name="x">x location </param>
+        /// <param name="y">y location</param>
+        public override void DrawPixel(int x, int y)
+        {
+            SetPixel(x, y, currentPen);
+        }
+
+        /// <summary>
         ///     Draw a single pixel 
         /// </summary>
         /// <param name="x">x location </param>
@@ -214,15 +235,15 @@ namespace Meadow.Foundation.Displays.Tft
         /// <param name="color">16bpp (565) encoded color value</param>
         private void SetPixel(int x, int y, ushort color)
         {
-            if (x < 0 || y < 0 || x >= _width || y >= _height)
+            if (x < 0 || y < 0 || x >= width || y >= height)
                 return;
 
-            var index = ((y * _width) + x) * sizeof(ushort);
+            var index = ((y * width) + x) * sizeof(ushort);
 
             spiBuffer[index] = (byte)(color >> 8);
             spiBuffer[++index] = (byte)(color);
 
-            _yMax = (uint)Math.Max(_yMax, y);
+            yMax = (uint)Math.Max(yMax, y);
         }
 
         /// <summary>
@@ -232,16 +253,16 @@ namespace Meadow.Foundation.Displays.Tft
         {
             // spiDisplay.WriteBytes(spiBuffer);
 
-            if (_yMax == 0)
+            if (yMax == 0)
                 return;
 
-            SetAddressWindow(0, 0, Width - 1, _yMax);
+            SetAddressWindow(0, 0, Width - 1, yMax);
 
-            int len = (int)((_yMax + 1) * Width * 2);
+            int len = (int)((yMax + 1) * Width * 2);
 
             dataCommandPort.State = (Data);
             spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive, len);
-            _yMax = 0;
+            yMax = 0;
         }
 
         private ushort Get16BitColorFromRGB(byte red, byte green, byte blue)
@@ -353,7 +374,7 @@ namespace Meadow.Foundation.Displays.Tft
                 spiBuffer[index++] = low;
             }
 
-            _yMax = Height - 1;
+            yMax = Height - 1;
         }
 
         /*

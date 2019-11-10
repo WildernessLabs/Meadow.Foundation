@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Displays.Tft
             Thread.Sleep(120);
             SendCommand(ILI9341_DISPON, null);
 
-            SetAddressWindow(0, 0, _width - 1, _height - 1);
+            SetAddressWindow(0, 0, width - 1,  height - 1);
 
             dataCommandPort.State = (Data);
         }
@@ -84,7 +84,7 @@ namespace Meadow.Foundation.Displays.Tft
         }
 
         //static byte ILI9341_SLPIN      = 0x10;
-        static byte ILI9341_SLPOUT     = 0x11;
+        static byte ILI9341_SLPOUT = 0x11;
         //static byte ILI9341_PTLON      = 0x12;
         //static byte ILI9341_NORON      = 0x13;
         //static byte ILI9341_RDMODE     = 0x0A;
@@ -94,18 +94,18 @@ namespace Meadow.Foundation.Displays.Tft
         //static byte ILI9341_RDSELFDIAG = 0x0F;
         //static byte ILI9341_INVOFF     = 0x20;
         //static byte ILI9341_INVON      = 0x21;
-        static byte ILI9341_GAMMASET   = 0x26;
+        static byte ILI9341_GAMMASET = 0x26;
         //static byte ILI9341_DISPOFF    = 0x28;
-        static byte ILI9341_DISPON     = 0x29;
+        static byte ILI9341_DISPON = 0x29;
         //static byte ILI9341_CASET      = 0x2A;
         //static byte ILI9341_PASET      = 0x2B;
         //static byte ILI9341_RAMWR      = 0x2C;
         //static byte ILI9341_RAMRD      = 0x2E;
         //static byte ILI9341_PTLAR      = 0x30;
         //static byte ILI9341_VSCRDEF    = 0x33;
-        static byte ILI9341_MADCTL     = 0x36;
+        static byte ILI9341_MADCTL = 0x36;
         //static byte ILI9341_VSCRSADD   = 0x37;
-        static byte ILI9341_PIXFMT     = 0x3A;
+        static byte ILI9341_PIXFMT = 0x3A;
 
         static byte ILI9341_FRMCTR1 = 0xB1;
         //static byte ILI9341_FRMCTR2 = 0xB2;

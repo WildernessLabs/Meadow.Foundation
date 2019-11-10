@@ -103,7 +103,7 @@ namespace Meadow.Foundation.Displays.Tft
             if (displayType == DisplayType.ST7735B)
             {
                 Init7735B();
-                SetAddressWindow(0, 0, (_width - 1), (_height - 1));
+                SetAddressWindow(0, 0, (width - 1), (height - 1));
                 return;
             }
 
@@ -120,14 +120,14 @@ namespace Meadow.Foundation.Displays.Tft
 
             Init7735REnd();
 
-            if(displayType == DisplayType.ST7735R_80x160 || 
+            if (displayType == DisplayType.ST7735R_80x160 ||
                 displayType == DisplayType.ST7735R_BlackTab)
             {
                 SendCommand(LcdCommand.MADCTL, new byte[] { 0xC0 });
                 SendCommand(LcdCommand.INVOFF);
             }
 
-            SetAddressWindow(0, 0, (_width - 1), (_height - 1));
+            SetAddressWindow(0, 0, (width - 1), (height - 1));
 
             dataCommandPort.State = Data;
         }
@@ -156,7 +156,7 @@ namespace Meadow.Foundation.Displays.Tft
 
             SendCommand(LcdCommand.INVCTR);  // display inversion control
             SendData(0x07);  // no inversion
-    
+
             SendCommand(LcdCommand.PWCTR1);  // power control
             SendData(0xA2);
             SendData(0x02);      // -4.6V
@@ -195,7 +195,7 @@ namespace Meadow.Foundation.Displays.Tft
             DelayMs(150);
 
             SendCommand(LcdCommand.COLMOD);  // set color mode
-            dataCommandPort.State= Data;
+            dataCommandPort.State = Data;
             Write(0x05);  // 16-bit color
 
             SendCommand(LcdCommand.FRMCTR1);  // frame rate control - normal mode
@@ -211,7 +211,7 @@ namespace Meadow.Foundation.Displays.Tft
             SendData(0x07);  // no inversion
 
             SendCommand(LcdCommand.PWCTR1);  // power control
-            dataCommandPort.State= Data;
+            dataCommandPort.State = Data;
             Write(0x02);
             Write(0x70);
             Write(10);
@@ -220,7 +220,7 @@ namespace Meadow.Foundation.Displays.Tft
             SendData(0xC5);      // VGH25 = 2.4C VGSEL = -10 VGH = 3 * AVDD
 
             SendCommand(LcdCommand.PWCTR3);  // power control
-            dataCommandPort.State= Data;
+            dataCommandPort.State = Data;
             Write(0x01);      // Opamp current small 
             Write(0x02);      // Boost frequency
 
@@ -297,7 +297,7 @@ namespace Meadow.Foundation.Displays.Tft
             _yOffset = 1;
         }
 
-        private void Init7735REnd ()
+        private void Init7735REnd()
         {
             SendCommand(LcdCommand.GMCTRP1);
             SendData(new byte[]
@@ -318,7 +318,7 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(LcdCommand.DISPON);
             Thread.Sleep(10);
         }
-        
+
         protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
         {
             x0 += _xOffset;

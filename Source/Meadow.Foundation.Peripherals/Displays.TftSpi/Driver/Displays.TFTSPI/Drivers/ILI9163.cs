@@ -146,7 +146,7 @@ namespace Meadow.Foundation.Displays.Tft
             Write(0x29);           // Set display on
             Thread.Sleep(10);
 
-            SetAddressWindow(0, 0, (_width - 1), (_height - 1));
+            SetAddressWindow(0, 0, (width - 1), (height - 1));
 
             dataCommandPort.State = (Data);
         }

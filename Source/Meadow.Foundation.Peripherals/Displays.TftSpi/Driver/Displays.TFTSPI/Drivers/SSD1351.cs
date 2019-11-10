@@ -36,10 +36,10 @@ namespace Meadow.Foundation.Displays.Tft
             SendData(0x7F);
 
             SendCommand(CMD_SETCOLUMN); //column address
-            SendData(new byte[] { 0x00, (byte)(_width - 1) });
+            SendData(new byte[] { 0x00, (byte)(width - 1) });
 
             SendCommand(CMD_SETROW); //row address
-            SendData(new byte[] { 0x00, (byte)(_height - 1) });
+            SendData(new byte[] { 0x00, (byte)(height - 1) });
 
             SendCommand(CMD_SETREMAP);
             SendData(new byte[] { 0x70, 0x04 }); //change 2nd value to 0x04 for BGR
@@ -79,7 +79,7 @@ namespace Meadow.Foundation.Displays.Tft
 
             SendCommand(CMD_DISPLAYON);
             
-            SetAddressWindow(0, 0, (_width - 1), (_height - 1));
+            SetAddressWindow(0, 0, (width - 1), (height - 1));
 
             dataCommandPort.State = Data;
         }
