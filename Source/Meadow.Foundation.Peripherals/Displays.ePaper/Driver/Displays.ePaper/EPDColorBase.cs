@@ -1,7 +1,5 @@
 using System;
-using System.Drawing;
 using Meadow.Hardware;
-using Meadow;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
@@ -129,6 +127,11 @@ namespace Meadow.Foundation.Displays.ePaper
                     }
                 }
             }
+        }
+
+        public override void DrawPixel(int x, int y)
+        {
+            DrawPixel(x, y, currentPen);
         }
 
         public override void DrawPixel(int x, int y, bool colored)

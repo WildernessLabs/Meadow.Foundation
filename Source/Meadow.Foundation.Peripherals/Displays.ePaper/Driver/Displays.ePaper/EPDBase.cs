@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Hardware;
 using System;
-using System.Drawing;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
@@ -165,6 +164,11 @@ namespace Meadow.Foundation.Displays.ePaper
             {
                 imageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
             }
+        }
+
+        public override void DrawPixel(int x, int y)
+        {
+            DrawPixel(x, y, currentPen);
         }
 
         /// <summary>
