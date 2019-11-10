@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Displays
             Format16bppRgb555, //not used
             Format16bppRgb565, //TFT in 16 bit mode
             Format18bppRgb666, //TFT in 18 bit mode
-            Format24bppRgb888 //not used
+            Format24bppRgb888  //not currently used
         }
 
         /// <summary>
@@ -67,12 +67,28 @@ namespace Meadow.Foundation.Displays
         public abstract void DrawPixel(int x, int y, Color color);
 
         /// <summary>
+        /// Draw a single pixel at the specified color
+        /// For performance, set the pen and then use the overload without a color value
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="colored"></param>
         public abstract void DrawPixel(int x, int y, bool colored);
 
+        /// <summary>
+        /// Draw a single pixel using the pen color
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public abstract void DrawPixel(int x, int y); 
+
+        /// <summary>
+        /// Set the pen color
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="colored"></param>
+        public abstract void SetPenColor(Color pen);
 
         /// <summary>
         /// Copy a 1bpp bitmap to the display.
