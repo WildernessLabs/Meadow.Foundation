@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Peripheral_Libs\Sensors.Moisture.Capacitive\Sensors.Moisture.Capacitive.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Moisture.Capacitive\Sensors.Moisture.Capacitive.csproj" />
   </ItemGroup>
 </Project>
