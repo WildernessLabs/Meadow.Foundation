@@ -93,13 +93,12 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// Creates PushButto a digital input port connected on a IIOdevice, especifying Interrupt Mode, Circuit Type and optionally Debounce filter duration.
         /// </summary>
         /// <param name="device"></param>
-        /// <param name="inputPin"></param>
-        /// <param name="debounceDuration"></param>
-        public PushButton(IIODevice device, IPin inputPin, int debounceDuration = 20)
+        /// <param name="inputPin">The input pin to bind this button to.</param>
+        /// <param name="debounceDuration">the duration in miliseconds to debounce the button for</param>
+		/// <param name="resistorMode">Pull up or pull down</param>
+        public PushButton(IIODevice device, IPin inputPin, ResistorMode resistorMode = ResistorMode.Disabled, int debounceDuration = 20)
         {
-            // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
-            var resistorMode = ResistorMode.Disabled;            
-
+            // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.    
             DigitalIn = device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistorMode, debounceDuration);
             DigitalIn.Changed += DigitalInChanged;
         }
