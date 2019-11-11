@@ -3,18 +3,18 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
+    //EPD 2i9B
     /// <summary>
     ///     Provide an interface to the WaveShare ePaper color displays
     ///     104x212, 2.13inch E-Ink display HAT for Raspberry Pi, three-color, SPI interface 
     /// </summary>
-    public class EPD2i13b : EPDColorBase
+    public class IL0373 : EPDColorBase
     {
-        public EPD2i13b(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
-        { }
-
-        public override uint Width => 104;
-        public override uint Height => 212;
+        public IL0373(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+            uint width, uint height) :
+            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
+        {
+        }
 
         protected override bool IsBlackInverted => false;
         protected override bool IsColorInverted => false;
@@ -31,13 +31,15 @@ namespace Meadow.Foundation.Displays.ePaper
 
             WaitUntilIdle();
             SendCommand(PANEL_SETTING);
-            SendData(0x8F);
+            SendData(0xCF);
             SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
-            SendData(0x37);
+            SendData(0x77);
             SendCommand(RESOLUTION_SETTING);
-            SendData(0x68);//width 104
-            SendData(0x00);
-            SendData(0xD4);//height 212
+            SendData((byte)(Height & 0xFF));//width 128
+            SendData((byte)(Width >> 8) & 0xFF);
+            SendData((byte)(Width & 0xFF));
+            SendCommand(VCM_DC_SETTING);
+            SendData(0x0A);
         }
 
         protected void SetPartialWindow(byte[] bufferBlack, byte[] bufferColor, int x, int y, int width, int height)
@@ -53,6 +55,7 @@ namespace Meadow.Foundation.Displays.ePaper
             SendData(0x01);         // Gates scan both inside and outside of the partial window. (default) 
             DelayMs(2);
             SendCommand(DATA_START_TRANSMISSION_1);
+
             if (bufferBlack != null)
             {
                 for (int i = 0; i < width / 8 * height; i++)
@@ -173,7 +176,7 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         //clear the frame data from the SRAM, this doesn't update the display
-        protected virtual void ClearFrame()
+        protected void ClearFrame()
         {
             SendCommand(DATA_START_TRANSMISSION_1);
             Thread.Sleep(2);

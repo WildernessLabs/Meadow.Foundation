@@ -2,22 +2,22 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
-    public class EPD1i54 : EPDBase
+    //WaveShare 1.54" BW
+    public class SSD1608 : EPDBase
     {
-        public EPD1i54(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
-        { }
-
-        public override uint Width => 200;
-        public override uint Height => 200;
+        public SSD1608(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+            uint width = 200, uint height = 200) :
+            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
+        {
+        }
 
         protected override void Initialize()
         {
             Reset();
 
             SendCommand(DRIVER_OUTPUT_CONTROL);
-            SendData(199);
-            SendData(199 >> 8);
+            SendData((byte)(Height - 1));
+            SendData((int)(Height - 1) >> 8);
             SendData(0x00);                     // GD = 0; SM = 0; TB = 0;
 
             SendCommand(BOOSTER_SOFT_START_CONTROL);

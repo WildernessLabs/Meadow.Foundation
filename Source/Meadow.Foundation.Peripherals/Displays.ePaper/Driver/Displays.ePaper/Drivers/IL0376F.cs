@@ -3,14 +3,14 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
-    public class EPD1i54b : EPDColorBase
+    //EPD1i54B
+    //EPD1i54C
+    public class IL0376F : EPDColorBase
     {
-        public EPD1i54b(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
+        public IL0376F(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+            uint width = 200, uint height = 200) :
+            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }
-
-        public override uint Width => 200;
-        public override uint Height => 200;
 
         protected override bool IsBlackInverted => false;
         protected override bool IsColorInverted => false;
@@ -38,9 +38,10 @@ namespace Meadow.Foundation.Displays.ePaper
             SendCommand(PLL_CONTROL);
             SendData(0x39);
             SendCommand(RESOLUTION_SETTING);
-            SendData(0xC8);
-            SendData(0x00);
-            SendData(0xC8);
+            SendData((byte)(Height >> 8) & 0xFF);
+            SendData((byte)(Height & 0xFF));//width 128
+            SendData((byte)(Width >> 8) & 0xFF);
+            SendData((byte)(Width & 0xFF));
             SendCommand(VCM_DC_SETTING);
             SendData(0x0E);
 

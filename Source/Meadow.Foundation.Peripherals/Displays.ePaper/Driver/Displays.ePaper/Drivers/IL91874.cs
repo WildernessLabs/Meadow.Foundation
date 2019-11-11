@@ -7,16 +7,13 @@ namespace Meadow.Foundation.Displays.ePaper
     ///     Provide an interface to the WaveShare ePaper color displays
     ///     264x176, 2.7inch tri color e-Ink display / SPI interface 
     /// </summary>
-    public class EPD2i7b : EPDColorBase
+    public class IL91874 : EPDColorBase
     {
-        public EPD2i7b(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
+        public IL91874(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+            uint width = 176, uint height = 264) :
+            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         {
         }
-
-        public override uint Width => 176;
-
-        public override uint Height => 264;
 
         protected override bool IsBlackInverted => false;
 
