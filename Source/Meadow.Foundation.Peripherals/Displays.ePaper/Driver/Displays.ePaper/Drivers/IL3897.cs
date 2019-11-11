@@ -3,22 +3,21 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
-    public class EPD2i13 : EPDBase
+    //EPD2i13
+    public class IL3897 : EPDBase
     {
-        public EPD2i13(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
+        public IL3897(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+            uint width = 122, uint height = 250) :
+            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }
-
-        public override uint Width => 128;
-        public override uint Height => 250;
 
         protected override void Initialize()
         {
             Reset();
 
             SendCommand(DRIVER_OUTPUT_CONTROL);
-            SendData(199);
-            SendData(199 >> 8);
+            SendData((int)(Width - 1));
+            SendData((int)(Width - 1) >> 8);
             SendData(0x00);                     // GD = 0; SM = 0; TB = 0;
 
             SendCommand(BOOSTER_SOFT_START_CONTROL);

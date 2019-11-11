@@ -13,6 +13,8 @@ namespace Meadow.Foundation.Displays
         protected IDigitalInputPort busyPort;
         protected ISpiPeripheral spi;
 
+        protected Color currentPen = Color.White;
+
         protected const bool Data = true;
         protected const bool Command = false;
 
@@ -20,6 +22,11 @@ namespace Meadow.Foundation.Displays
         {
             spiBOneByteBuffer[0] = value;
             spi.WriteBytes(spiBOneByteBuffer);
+        }
+
+        public override void SetPenColor(Color pen)
+        {
+            currentPen = pen;
         }
 
         protected void Reset()

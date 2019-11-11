@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(0x29, null);                // Display on
             SendCommand(0x2c, null);				// Memory write
 
-            SetAddressWindow(0, 0, (_width - 1), (_height - 1));
+            SetAddressWindow(0, 0, (width - 1), (height - 1));
 
             dataCommandPort.State = (Data);
         }
@@ -95,7 +95,7 @@ namespace Meadow.Foundation.Displays.Tft
             dataCommandPort.State = (Command);
             Write(command);
 
-            if(data != null)
+            if (data != null)
             {
                 dataCommandPort.State = (Data);
                 for (int i = 0; i < data.Length; i++)

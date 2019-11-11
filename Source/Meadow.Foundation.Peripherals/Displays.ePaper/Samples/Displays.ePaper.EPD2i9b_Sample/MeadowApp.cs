@@ -10,7 +10,7 @@ namespace Displays.ePaper.EPD2i9b_Sample
     /* Driver in development */
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        EPD2i9b display;
+        IL0373 display;
         ISpiBus spiBus;
 
         public MeadowApp()
@@ -22,11 +22,13 @@ namespace Displays.ePaper.EPD2i9b_Sample
 
 
             Console.WriteLine("Create display driver instance");
-            display = new EPD2i9b(device: Device, spiBus: spiBus,
+            display = new IL0373(device: Device, spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                busyPin: Device.Pins.D03);
+                busyPin: Device.Pins.D03,
+                width: 102,
+                height: 212);
 
 
             var graphics = new GraphicsLibrary(display);

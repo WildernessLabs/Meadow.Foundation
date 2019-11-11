@@ -7,8 +7,8 @@ namespace Meadow.Foundation.Displays.Tft
     {
         private SSD1331() { }
 
-         public SSD1331(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+        public SSD1331(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+           uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
         {
             Initialize();
         }
@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Displays.Tft
 
             SendCommand(CMD_DISPLAYON);	//--turn on oled panel   
 
-            SetAddressWindow(0, 0, (_width - 1), (_height - 1));
+            SetAddressWindow(0, 0, (width - 1), (height - 1));
 
             dataCommandPort.State = Data;
         }
@@ -98,28 +98,28 @@ namespace Meadow.Foundation.Displays.Tft
         //static byte CMD_FILL 			= 0x26;
         //static byte CMD_SETCOLUMN 		= 0x15;
         //static byte CMD_SETROW    		= 0x75;
-        static byte CMD_CONTRASTA 		= 0x81;
-        static byte CMD_CONTRASTB 		= 0x82;
-        static byte CMD_CONTRASTC		= 0x83;
-        static byte CMD_MASTERCURRENT 	= 0x87;
-        static byte CMD_SETREMAP 		= 0xA0;
-        static byte CMD_STARTLINE 		= 0xA1;
-        static byte CMD_DISPLAYOFFSET 	= 0xA2;
-        static byte CMD_NORMALDISPLAY 	= 0xA4;
+        static byte CMD_CONTRASTA = 0x81;
+        static byte CMD_CONTRASTB = 0x82;
+        static byte CMD_CONTRASTC = 0x83;
+        static byte CMD_MASTERCURRENT = 0x87;
+        static byte CMD_SETREMAP = 0xA0;
+        static byte CMD_STARTLINE = 0xA1;
+        static byte CMD_DISPLAYOFFSET = 0xA2;
+        static byte CMD_NORMALDISPLAY = 0xA4;
         //static byte CMD_DISPLAYALLON  	= 0xA5;
         //static byte CMD_DISPLAYALLOFF 	= 0xA6;
         //static byte CMD_INVERTDISPLAY 	= 0xA7;
-        static byte CMD_SETMULTIPLEX  	= 0xA8;
-        static byte CMD_SETMASTER 		= 0xAD;
-        static byte CMD_DISPLAYOFF 		= 0xAE;
-        static byte CMD_DISPLAYON     	= 0xAF;
-        static byte CMD_POWERMODE 		= 0xB0;
-        static byte CMD_PRECHARGE 		= 0xB1;
-        static byte CMD_CLOCKDIV 		= 0xB3;
-        static byte CMD_PRECHARGEA 		= 0x8A;
-        static byte CMD_PRECHARGEB 		= 0x8B;
+        static byte CMD_SETMULTIPLEX = 0xA8;
+        static byte CMD_SETMASTER = 0xAD;
+        static byte CMD_DISPLAYOFF = 0xAE;
+        static byte CMD_DISPLAYON = 0xAF;
+        static byte CMD_POWERMODE = 0xB0;
+        static byte CMD_PRECHARGE = 0xB1;
+        static byte CMD_CLOCKDIV = 0xB3;
+        static byte CMD_PRECHARGEA = 0x8A;
+        static byte CMD_PRECHARGEB = 0x8B;
         //static byte CMD_PRECHARGEC 		= 0x8C;
-        static byte CMD_PRECHARGELEVEL 	= 0xBB;
-        static byte CMD_VCOMH 			= 0xBE;
+        static byte CMD_PRECHARGELEVEL = 0xBB;
+        static byte CMD_VCOMH = 0xBE;
     }
 }

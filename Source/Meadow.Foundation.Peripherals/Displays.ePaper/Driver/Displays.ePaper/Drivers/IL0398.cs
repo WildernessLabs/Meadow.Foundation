@@ -1,16 +1,16 @@
-using System.Threading;
 using Meadow.Hardware;
+using System.Threading;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
-    public class EPD2i9b : EPDColorBase
+    //WaveShare 4.2" B tri color
+    public class IL0398 : EPDColorBase
     {
-        public EPD2i9b(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin)
-        { }
-
-        public override uint Width => 128;
-        public override uint Height => 296;
+        public IL0398(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+            uint width, uint height) :
+            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
+        {
+        }
 
         protected override bool IsBlackInverted => false;
         protected override bool IsColorInverted => false;
@@ -26,24 +26,23 @@ namespace Meadow.Foundation.Displays.ePaper
             SendCommand(POWER_ON);
 
             WaitUntilIdle();
-            SendCommand(PANEL_SETTING);
-            SendData(0x8F);
-            SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
-            SendData(0x77);
+            SendCommand(0x0F);
+
             SendCommand(RESOLUTION_SETTING);
-            SendData(0x80);//width 128
-            SendData(0x01);
-            SendData(0x28);//height 296
-            SendCommand(VCM_DC_SETTING);
-            SendData(0X0A);
+            SendData((byte)(Height >> 8) & 0xFF);
+            SendData((byte)(Height & 0xFF));
+            SendData((byte)(Width >> 8) & 0xFF);
+            SendData((byte)(Width & 0xFF));
         }
 
         protected void SetPartialWindow(byte[] bufferBlack, byte[] bufferColor, int x, int y, int width, int height)
         {
             SendCommand(PARTIAL_IN);
             SendCommand(PARTIAL_WINDOW);
+            SendData(x >> 8);
             SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
-            SendData(((x & 0xf8) + width - 1) | 0x07);
+            SendData(((x & 0x1f8) + width - 1) >> 8);
+            SendData(((x & 0x1f8) + width - 1) | 0x07);
             SendData(y >> 8);
             SendData(y & 0xff);
             SendData((y + height - 1) >> 8);
@@ -59,13 +58,7 @@ namespace Meadow.Foundation.Displays.ePaper
                     SendData(bufferBlack[i]);
                 }
             }
-            else
-            {
-                for (int i = 0; i < width / 8 * height; i++)
-                {
-                    SendData(0x00);
-                }
-            }
+
             DelayMs(2);
             SendCommand(DATA_START_TRANSMISSION_2);
 
@@ -76,13 +69,7 @@ namespace Meadow.Foundation.Displays.ePaper
                     SendData(bufferColor[i]);
                 }
             }
-            else
-            {
-                for (int i = 0; i < width / 8 * height; i++)
-                {
-                    SendData(0x00);
-                }
-            }
+
             DelayMs(2);
             SendCommand(PARTIAL_OUT);
         }
@@ -91,8 +78,10 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             SendCommand(PARTIAL_IN);
             SendCommand(PARTIAL_WINDOW);
+            SendData(x >> 8);
             SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
-            SendData(((x & 0xf8) + width - 1) | 0x07);
+            SendData(((x & 0x1f8) + width - 1) >> 8);
+            SendData(((x & 0x1f8) + width - 1) | 0x07);
             SendData(y >> 8);
             SendData(y & 0xff);
             SendData((y + height - 1) >> 8);
@@ -106,13 +95,6 @@ namespace Meadow.Foundation.Displays.ePaper
                 for (int i = 0; i < width / 8 * height; i++)
                 {
                     SendData(bufferBlack[i]);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < width / 8 * height; i++)
-                {
-                    SendData(0x00);
                 }
             }
 
@@ -124,8 +106,10 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             SendCommand(PARTIAL_IN);
             SendCommand(PARTIAL_WINDOW);
-            SendData(x & 0xf8);
-            SendData(((x & 0xf8) + width - 1) | 0x07);
+            SendData(x >> 8);
+            SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
+            SendData(((x & 0x1f8) + width - 1) >> 8);
+            SendData(((x & 0x1f8) + width - 1) | 0x07);
             SendData(y >> 8);
             SendData(y & 0xff);
             SendData((y + height - 1) >> 8);
@@ -139,13 +123,6 @@ namespace Meadow.Foundation.Displays.ePaper
                 for (int i = 0; i < width / 8 * height; i++)
                 {
                     SendData(bufferColor[i]);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < width / 8 * height; i++)
-                {
-                    SendData(0x00);
                 }
             }
 
@@ -172,14 +149,8 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         //clear the frame data from the SRAM, this doesn't update the display
-        protected void ClearFrame()
+        protected virtual void ClearFrame()
         {
-            SendCommand(RESOLUTION_SETTING);
-            SendData((int)Width >> 8);
-            SendData((int)Width & 0xff);
-            SendData((int)Height >> 8);
-            SendData((int)Height & 0xff);
-
             SendCommand(DATA_START_TRANSMISSION_1);
             Thread.Sleep(2);
 
@@ -232,13 +203,6 @@ namespace Meadow.Foundation.Displays.ePaper
             WaitUntilIdle();
             SendCommand(DEEP_SLEEP);
             SendData(0xA5); //check code
-        }
-
-        public void Dispose()
-        {
-            spi = null;
-            dataCommandPort = null;
-            resetPort = null;
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using Meadow;
+﻿ using Meadow;
 using Meadow.Hardware;
 using System;
-using System.Drawing;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
@@ -16,11 +15,21 @@ namespace Meadow.Foundation.Displays.ePaper
 
         int xRefreshStart, yRefreshStart, xRefreshEnd, yRefreshEnd;
 
+        public override uint Width => _width;
+        public override uint Height => _height;
+
+        uint _width;
+        uint _height;
+
         private EPDBase()
         { }
 
-        public EPDBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin)
+        public EPDBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+            uint width, uint height)
         {
+            _width = width;
+            _height = height;
+
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             busyPort = device.CreateDigitalInputPort(busyPin);
@@ -165,6 +174,11 @@ namespace Meadow.Foundation.Displays.ePaper
             {
                 imageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
             }
+        }
+
+        public override void DrawPixel(int x, int y)
+        {
+            DrawPixel(x, y, currentPen);
         }
 
         /// <summary>
