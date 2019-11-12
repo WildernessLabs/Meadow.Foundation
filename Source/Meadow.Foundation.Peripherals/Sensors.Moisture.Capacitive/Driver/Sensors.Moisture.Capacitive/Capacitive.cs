@@ -19,8 +19,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         #region Member Variables / fields
 
         // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
+        private object _lock = new object();        
 
         #endregion
 
@@ -146,14 +145,7 @@ namespace Meadow.Foundation.Sensors.Moisture
             int sampleIntervalDuration = 40,
             int standbyDuration = 1000)
         {
-            lock (_lock)
-            {
-                if (!IsSampling) return;
-
-                IsSampling = true;
-
-                AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
-            }
+            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
         }
 
         /// <summary>
@@ -161,14 +153,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
-                if (!IsSampling) return;
-
-                AnalogInputPort.StopSampling();
-
-                IsSampling = false;
-            }
+            AnalogInputPort.StopSampling();
         }
 
         protected void RaiseChangedAndNotify(FloatChangeResult changeResult)

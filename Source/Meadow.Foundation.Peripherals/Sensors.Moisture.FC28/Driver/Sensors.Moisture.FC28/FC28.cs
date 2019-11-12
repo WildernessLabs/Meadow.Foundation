@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Moisture;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Moisture
@@ -15,7 +16,18 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public event EventHandler<FloatChangeResult> Updated = delegate { };
 
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
         #region Properties
+
+        /// <summary>
+        /// Gets a value indicating whether the sensor is currently in a sampling
+        /// loop. Call StartSampling() to spin up the sampling process.
+        /// </summary>
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
 
         /// <summary>
         /// Returns the analog input port
@@ -124,8 +136,49 @@ namespace Meadow.Foundation.Sensors.Moisture
             int sampleIntervalDuration = 40,
             int standbyDuration = 1000)
         {
-            DigitalPort.State = true;
-            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
+            // thread safety
+            lock (_lock)
+            {
+                if (IsSampling) 
+                    return;
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                float oldConditions;
+                FloatChangeResult result;
+                Task.Factory.StartNew(async () => {
+                    while (true)
+                    {
+                        // TODO: someone please review; is this the correct
+                        // place to do this?
+                        // check for cancel (doing this here instead of 
+                        // while(!ct.IsCancellationRequested), so we can perform 
+                        // cleanup
+                        if (ct.IsCancellationRequested)
+                        {                            
+                            // do task clean up here
+                            _observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Moisture;
+
+                        // read                        
+                        Moisture = Read(sampleCount, sampleIntervalDuration).Result;
+                        
+                        // build a new result with the old and new conditions
+                        result = new FloatChangeResult(oldConditions, Moisture);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
+                    }
+                }, SamplingTokenSource.Token);
+            }
         }
 
         /// <summary>
@@ -133,8 +186,17 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public void StopUpdating()
         {
-            AnalogInputPort.StopSampling();
-            DigitalPort.State = false;
+            lock (_lock)
+            {
+                if (!IsSampling) return;
+
+                if (SamplingTokenSource != null)
+                {
+                    SamplingTokenSource.Cancel();                    
+                }
+
+                IsSampling = false;
+            }
         }
 
         protected void RaiseChangedAndNotify(FloatChangeResult changeResult)

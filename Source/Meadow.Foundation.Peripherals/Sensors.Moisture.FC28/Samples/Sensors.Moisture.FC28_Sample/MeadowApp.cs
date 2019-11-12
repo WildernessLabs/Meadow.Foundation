@@ -20,20 +20,28 @@ namespace Sensors.Moisture.FC28_Sample
                 minimumVoltageCalibration: 3.24f,
                 maximumVoltageCalibration: 2.25f
             );
-            fc28.Updated += FC28Updated;
 
             TestFC28Updating();
             //TestFC28Read();
         }
 
-        void FC28Updated(object sender, FloatChangeResult e)
-        {
-            Console.WriteLine($"Moisture {(int)(e.New * 100)}%");
-        }
-
         void TestFC28Updating() 
         {
             Console.WriteLine("TestFC28Updating...");
+
+            fc28.Subscribe(new FilterableObserver<FloatChangeResult, float>(
+                h => {
+                    Console.WriteLine($"Moisture values: {Math.Truncate(h.New)}, old: {Math.Truncate(h.Old)}, delta: {h.DeltaPercent}");
+                },
+                e => {
+                    return true;
+                }
+            ));
+
+            fc28.Updated += (object sender, FloatChangeResult e) =>
+            {
+                Console.WriteLine($"Moisture Updated: {e.New}");
+            };
 
             fc28.StartUpdating();
         }
