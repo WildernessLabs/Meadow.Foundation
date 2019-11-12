@@ -303,7 +303,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.TftSpi", "Displays
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8FB70D12-1111-480B-B64C-B8EB65977F58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TFTSPI", "Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TFTSPI\Displays.TFTSPI.csproj", "{1D798CC4-66E8-4BE2-82E7-D87F36DFEFA8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi", "Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TFTSPI\Displays.TFTSPI.csproj", "{1D798CC4-66E8-4BE2-82E7-D87F36DFEFA8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tft.ILI9163_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.Tft.ILI9163_Sample\Displays.Tft.ILI9163_Sample.csproj", "{567D2D74-00EE-45A6-8B46-B97692011317}"
 EndProject
