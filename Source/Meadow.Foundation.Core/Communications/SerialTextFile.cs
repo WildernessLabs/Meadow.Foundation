@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Communications
         /// <param name="dataBits">Data bits.</param>
         /// <param name="stopBits">Stop bits.</param>
         /// <param name="endOfLine">Text indicating the end of a line of text.</param>
-        public SerialTextFile(string port, int baudRate, ParityType parity, int dataBits, NumberOfStopBits stopBits,
+        public SerialTextFile(string port, int baudRate, Parity parity, int dataBits, StopBits stopBits,
             string endOfLine)
         {
             _serialPort = new SerialPort(port, baudRate, parity, dataBits, stopBits);
