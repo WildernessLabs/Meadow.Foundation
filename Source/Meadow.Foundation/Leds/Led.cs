@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Leds
 	/// Represents a simple LED
 	/// </summary>
 	public class Led : ILed
-    {
+	{
 		#region Properties
 		/// <summary>
 		/// Gets the port that is driving the LED
@@ -16,23 +16,25 @@ namespace Meadow.Foundation.Leds
 		/// <value>The port</value>
 		public IDigitalOutputPort Port { get; protected set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="T:Meadow.Foundation.Leds.Led"/> is on.
-        /// </summary>
-        /// <value><c>true</c> if is on; otherwise, <c>false</c>.</value>
-        public bool IsOn
-        {
-            get { return Port.State; }
-            set { Port.State = value; }
-        }
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="T:Meadow.Foundation.Leds.Led"/> is on.
+		/// </summary>
+		/// <value><c>true</c> if is on; otherwise, <c>false</c>.</value>
+		public bool IsOn
+		{
+			get { return _isOn; }
+			set
+			{
+				_isOn = value;
+				Port.State = _isOn;
+			}
+		}
 		#endregion
 
 		#region Fields
 		protected bool _isOn = false;
-        protected bool _onValue = true;
-
-        protected Task _animationTask = null;
-        protected bool _running = false;
+		protected Task _animationTask = null;
+		protected bool _running = false;
 		#endregion
 
 		#region Constructor(s)
@@ -40,17 +42,18 @@ namespace Meadow.Foundation.Leds
 		/// Creates a LED through a pin directly from the Digital IO of the board
 		/// </summary>
 		/// <param name="pin"></param>
-		public Led(IIODevice device, IPin pin) : 
-            this (device.CreateDigitalOutputPort(pin, false)) { }
+		public Led(IIODevice device, IPin pin) :
+			this(device.CreateDigitalOutputPort(pin, false))
+		{ }
 
-        /// <summary>
-        /// Creates a LED through a DigitalOutPutPort from an IO Expander
-        /// </summary>
-        /// <param name="port"></param>
-        public Led(IDigitalOutputPort port)
-        {
-            Port = port;
-        }
+		/// <summary>
+		/// Creates a LED through a DigitalOutPutPort from an IO Expander
+		/// </summary>
+		/// <param name="port"></param>
+		public Led(IDigitalOutputPort port)
+		{
+			Port = port;
+		}
 		#endregion
 
 		#region Public Methods
@@ -60,32 +63,32 @@ namespace Meadow.Foundation.Leds
 		/// <param name="onDuration"></param>
 		/// <param name="offDuration"></param>
 		public void StartBlink(uint onDuration = 200, uint offDuration = 200)
-        {
-            _running = true;
+		{
+			_running = true;
 
-            IsOn = false;
-            //TODO: Make this cancellable via Cancellation token
-            _animationTask = new Task(async () => 
-            {
-                while (_running)
-                {
-                    IsOn = true;
-                    await Task.Delay((int)onDuration);
-                    IsOn = false;
-                    await Task.Delay((int)offDuration);
-                }
-            });
-            _animationTask.Start();
-        }
+			IsOn = false;
+			//TODO: Make this cancellable via Cancellation token
+			_animationTask = new Task(async () =>
+			{
+				while (_running)
+				{
+					IsOn = true;
+					await Task.Delay((int)onDuration);
+					IsOn = false;
+					await Task.Delay((int)offDuration);
+				}
+			});
+			_animationTask.Start();
+		}
 
-        /// <summary>
-        /// Stops the LED when its blinking and/or turns it off.
-        /// </summary>
-        public void Stop()
-        {
-            _running = false;
-            _isOn = false;
-        }
+		/// <summary>
+		/// Stops the LED when its blinking and/or turns it off.
+		/// </summary>
+		public void Stop()
+		{
+			_running = false;
+			_isOn = false;
+		}
 		#endregion
 	}
 }
