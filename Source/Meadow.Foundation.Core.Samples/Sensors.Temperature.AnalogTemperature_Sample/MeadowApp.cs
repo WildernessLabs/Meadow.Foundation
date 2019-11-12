@@ -49,8 +49,8 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
         protected async Task ReadTemp()
         {
-            var temp = await analogTemperature.Read();
-            Console.WriteLine($"Initial temp: { temp }");
+            var conditions = await analogTemperature.Read();
+            Console.WriteLine($"Initial temp: { conditions.Temperature }");
         }
     }
 }
