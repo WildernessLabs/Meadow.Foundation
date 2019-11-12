@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Barometric
     /// </summary>
     public class MPL3115A2 :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        ICompositeAtmosphericSensor
+        IAtmosphericSensor
     {
         /// <summary>
         ///     Object used to communicate with the sensor.
@@ -56,18 +56,13 @@ namespace Meadow.Foundation.Sensors.Barometric
         ///     Changes the SBYB bit in Control register 1 to put the device to sleep
         ///     or to allow measurements to be made.
         /// </remarks>
-        public bool Standby
-        {
-            get { return(_mpl3115a2.ReadRegister(Registers.Control1) & 0x01) > 0; }
-            set
-            {
+        public bool Standby {
+            get { return (_mpl3115a2.ReadRegister(Registers.Control1) & 0x01) > 0; }
+            set {
                 var status = _mpl3115a2.ReadRegister(Registers.Control1);
-                if (value)
-                {
-                    status &= (byte) ~ControlRegisterBits.Active;
-                }
-                else
-                {
+                if (value) {
+                    status &= (byte)~ControlRegisterBits.Active;
+                } else {
                     status |= ControlRegisterBits.Active;
                 }
                 _mpl3115a2.WriteRegister(Registers.Control1, status);
@@ -77,8 +72,7 @@ namespace Meadow.Foundation.Sensors.Barometric
         /// <summary>
         ///     Get the status register from the sensor.
         /// </summary>
-        public byte Status
-        {
+        public byte Status {
             get { return _mpl3115a2.ReadRegister(Registers.Status); }
         }
 
@@ -112,9 +106,9 @@ namespace Meadow.Foundation.Sensors.Barometric
                 throw new Exception("Unexpected device ID, expected 0xc4");
             }
             _mpl3115a2.WriteRegister(Registers.Control1,
-                                     (byte) (ControlRegisterBits.Active | ControlRegisterBits.OverSample128));
+                                     (byte)(ControlRegisterBits.Active | ControlRegisterBits.OverSample128));
             _mpl3115a2.WriteRegister(Registers.DataConfiguration,
-                                     (byte) (ConfigurationRegisterBits.DataReadyEvent |
+                                     (byte)(ConfigurationRegisterBits.DataReadyEvent |
                                              ConfigurationRegisterBits.EnablePressureEvent |
                                              ConfigurationRegisterBits.EnableTemperatureEvent));
         }
@@ -160,6 +154,11 @@ namespace Meadow.Foundation.Sensors.Barometric
                 return conditions;
             });
         }
+
+        //public void StartUpdating()
+        //{
+        //    StartUpdating(1000);
+        //}
 
         public void StartUpdating(
             int standbyDuration = 1000)
@@ -246,7 +245,7 @@ namespace Meadow.Foundation.Sensors.Barometric
             pressure |= csb;
             pressure <<= 8;
             pressure |= lsb;
-            return (float) (pressure / 64.0);
+            return (float)(pressure / 64.0);
         }
 
         /// <summary>
@@ -259,12 +258,12 @@ namespace Meadow.Foundation.Sensors.Barometric
         private byte[] EncodePressure(double pressure)
         {
             var result = new byte[3];
-            var temp = (uint) (pressure * 64);
-            result[2] = (byte) (temp & 0xff);
+            var temp = (uint)(pressure * 64);
+            result[2] = (byte)(temp & 0xff);
             temp >>= 8;
-            result[1] = (byte) (temp & 0xff);
+            result[1] = (byte)(temp & 0xff);
             temp >>= 8;
-            result[0] = (byte) (temp & 0xff);
+            result[0] = (byte)(temp & 0xff);
             return result;
         }
 
@@ -279,7 +278,7 @@ namespace Meadow.Foundation.Sensors.Barometric
             ushort temperature = msb;
             temperature <<= 8;
             temperature |= lsb;
-            return (float) (temperature / 256.0);
+            return (float)(temperature / 256.0);
         }
 
         /// <summary>
@@ -292,10 +291,10 @@ namespace Meadow.Foundation.Sensors.Barometric
         private byte[] EncodeTemperature(double temperature)
         {
             var result = new byte[2];
-            var temp = (ushort) (temperature * 256);
-            result[1] = (byte) (temp & 0xff);
+            var temp = (ushort)(temperature * 256);
+            result[1] = (byte)(temp & 0xff);
             temp >>= 8;
-            result[0] = (byte) (temp & 0xff);
+            result[0] = (byte)(temp & 0xff);
             return result;
         }
 
