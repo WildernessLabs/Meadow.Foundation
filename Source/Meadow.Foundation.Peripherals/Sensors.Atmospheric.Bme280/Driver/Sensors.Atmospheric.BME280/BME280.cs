@@ -313,7 +313,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             configuration.Filter = FilterCoefficient.Off;
             UpdateConfiguration(configuration);
 
-            this.Conditions = await ReadSensor();
+            this.Conditions = await Read();
 
             return Conditions;
         }
@@ -505,7 +505,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Formulas - section 4.2.3 Compensation Formulas
         ///     The integer formulas have been used to try and keep the calculations performant.
         /// </remarks>
-        protected async Task<AtmosphericConditions> ReadSensor()
+        protected async Task<AtmosphericConditions> Read()
         {
             return await Task.Run(() => {
                 AtmosphericConditions conditions = new AtmosphericConditions();
