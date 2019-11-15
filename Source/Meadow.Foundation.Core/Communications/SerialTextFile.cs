@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using System;
+using Meadow.Hardware;
 
 namespace Meadow.Foundation.Communications
 {
@@ -21,23 +22,23 @@ namespace Meadow.Foundation.Communications
         /// <summary>
         ///     Serial port object that the
         /// </summary>
-        private readonly SerialPort _serialPort;
+        private readonly ISerialPort serialPort;
 
         /// <summary>
         ///     Buffer to hold the incoming text from the serial port.
         /// </summary>
-        private string _buffer = string.Empty;
+        private string buffer = string.Empty;
 
         /// <summary>
         ///     The static buffer is used when processing the text coming in from the
         ///     serial port.
         /// </summary>
-        private readonly byte[] _staticBuffer = new byte[MAXIMUM_BUFFER_SIZE];
+        private readonly byte[] staticBuffer = new byte[MAXIMUM_BUFFER_SIZE];
 
         /// <summary>
         ///     Character(s) that indicate an end of line in the text stream.
         /// </summary>
-        private readonly string _endOfLine = "\r\n";
+        private readonly string LINE_END = "\n";
 
         #endregion Member variables / fields
 
@@ -76,12 +77,12 @@ namespace Meadow.Foundation.Communications
         /// <param name="dataBits">Data bits.</param>
         /// <param name="stopBits">Stop bits.</param>
         /// <param name="endOfLine">Text indicating the end of a line of text.</param>
-        public SerialTextFile(string port, int baudRate, Parity parity, int dataBits, StopBits stopBits,
+        public SerialTextFile(IIODevice device, SerialPortName port, int baudRate, Parity parity, int dataBits, StopBits stopBits,
             string endOfLine)
         {
-            _serialPort = new SerialPort(port, baudRate, parity, dataBits, stopBits);
-            _endOfLine = endOfLine;
-            _serialPort.DataReceived += _serialPort_DataReceived;
+            serialPort = device.CreateSerialPort(port, baudRate, parity, dataBits, stopBits);
+            LINE_END = endOfLine;
+            serialPort.DataReceived += SerialPortDataReceived;
         }
 
         #endregion Constructors
@@ -93,9 +94,12 @@ namespace Meadow.Foundation.Communications
         /// </summary>
         public void Open()
         {
-            if (!_serialPort.IsOpen)
+            Console.WriteLine("SerialTextFile: Open");
+
+            if (!serialPort.IsOpen)
             {
-                _serialPort.Open();
+                Console.WriteLine("SerialTextFile: _serialPort.Open");
+                serialPort.Open();
             }
         }
 
@@ -107,11 +111,11 @@ namespace Meadow.Foundation.Communications
         /// </remarks>
         public void Close()
         {
-            if (_serialPort.IsOpen)
+            if (serialPort.IsOpen)
             {
-                _serialPort.Close();
+                serialPort.Close();
             }
-            _buffer = "";
+            buffer = "";
         }
 
         #endregion Methods
@@ -121,30 +125,49 @@ namespace Meadow.Foundation.Communications
         /// <summary>
         ///     Process the data from the serial port.
         /// </summary>
-        private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
+            Console.WriteLine("SerialTextFile: SerialPortDataReceived");
+
             if (e.EventType == SerialDataType.Chars)
             {
-                lock (_buffer)
+                lock (buffer)
                 {
-                    int amount = ((SerialPort) sender).Read(_staticBuffer, 0, MAXIMUM_BUFFER_SIZE);
+                    int amount = ((SerialPort) sender).Read(staticBuffer, 0, MAXIMUM_BUFFER_SIZE);
+
+                    Console.WriteLine($"Data amount: {amount}");
+
                     if (amount > 0)
                     {
                         for (var index = 0; index < amount; index++)
                         {
-                            _buffer += (char) _staticBuffer[index];
+                            buffer += (char) staticBuffer[index];
                         }
                     }
-                    var eolMarkerPosition = _buffer.IndexOf(_endOfLine);
+                    var eolMarkerPosition = buffer.IndexOf(LINE_END);
+
+                    Console.WriteLine($"eol: {eolMarkerPosition}");
+
+                    Console.WriteLine($"Buffer: {buffer}");
+
                     while (eolMarkerPosition >= 0)
                     {
-                        var line = _buffer.Substring(0, eolMarkerPosition);
-                        _buffer = _buffer.Substring(eolMarkerPosition + 2);
-                        eolMarkerPosition = _buffer.IndexOf(_endOfLine);
-                        if (OnLineReceived != null)
+                        var line = buffer.Substring(0, eolMarkerPosition);
+                        buffer = buffer.Substring(eolMarkerPosition + 2);
+                        eolMarkerPosition = buffer.IndexOf(LINE_END);
+
+                        Console.WriteLine($"Line: {line}");
+
+                        if(OnLineReceived != null)
                         {
-                            OnLineReceived(this, line);
+                            Console.WriteLine("fire OnLineReceived");
                         }
+                        else
+                        {
+                            Console.WriteLine("null sir");
+                        }
+
+                        OnLineReceived?.Invoke(this, line);
                     }
                 }
             }
