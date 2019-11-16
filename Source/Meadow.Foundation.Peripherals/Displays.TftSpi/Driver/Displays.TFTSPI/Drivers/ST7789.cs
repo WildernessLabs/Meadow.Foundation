@@ -6,8 +6,8 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class ST7789 : DisplayTftSpiBase
     {
-        private byte _xOffset;
-        private byte _yOffset;
+        private byte xOffset;
+        private byte yOffset;
 
         private ST7789() { }
 
@@ -26,7 +26,17 @@ namespace Meadow.Foundation.Displays.Tft
             resetPort.State = true;
             Thread.Sleep(50);
 
-            _xOffset = _yOffset = 0;
+            if(width == 135)
+            {   //unknown if this is consistant across all displays with this res
+                xOffset = 52;
+                yOffset = 40;
+            }
+            else
+            {
+                xOffset = yOffset = 0;
+            }
+
+            
             SendCommand(SWRESET);
             DelayMs(150);
             SendCommand(SLPOUT);
@@ -63,11 +73,11 @@ namespace Meadow.Foundation.Displays.Tft
 
         protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
         {
-            x0 += _xOffset;
-            y0 += _yOffset;
+            x0 += xOffset;
+            y0 += yOffset;
 
-            x1 += _xOffset;
-            y1 += _yOffset;
+            x1 += xOffset;
+            y1 += yOffset;
 
             SendCommand(CASET);  // column addr set
             dataCommandPort.State = Data;
