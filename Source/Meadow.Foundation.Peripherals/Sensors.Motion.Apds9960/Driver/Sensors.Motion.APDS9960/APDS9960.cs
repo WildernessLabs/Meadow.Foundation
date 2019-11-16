@@ -204,7 +204,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         private void InterruptPort_Changed(object sender, DigitalInputPortEventArgs e)
         {
-
+            Console.WriteLine($"Motion detected: {e.Value}");
         }
 
         #endregion Constructors
