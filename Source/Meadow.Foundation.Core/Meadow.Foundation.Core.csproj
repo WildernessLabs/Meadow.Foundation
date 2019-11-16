@@ -11,6 +11,7 @@
    <PackageTags>Meadow, Meadow.Foundation</PackageTags>
    <Version>0.10.8</Version>
    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+   <RootNamespace>Meadow.Foundation</RootNamespace>
  </PropertyGroup>
  <ItemGroup>
    <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
