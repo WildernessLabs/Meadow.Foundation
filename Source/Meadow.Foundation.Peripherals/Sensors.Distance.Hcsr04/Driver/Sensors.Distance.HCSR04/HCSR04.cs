@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
-        public event DistanceDetectedEventHandler DistanceDetected = delegate { };
+        public event EventHandler<DistanceEventArgs> DistanceDetected = delegate { };
 
         #endregion
 
@@ -39,14 +39,14 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Trigger Pin.
         /// </summary>
-        protected IDigitalOutputPort _triggerPort;
+        protected IDigitalOutputPort triggerPort;
 
         /// <summary>
         /// Echo Pin.
         /// </summary>
-        protected IDigitalInputPort _echoPort;
+        protected IDigitalInputPort echoPort;
 
-        protected long _tickStart;
+        protected long tickStart;
 
         #endregion
 
@@ -73,10 +73,10 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="echoPort"></param>
         public HCSR04(IDigitalOutputPort triggerPort, IDigitalInputPort echoPort)
         {
-            _triggerPort = triggerPort;
+            this.triggerPort = triggerPort;
 
-            _echoPort = echoPort;
-            _echoPort.Changed += OnEchoPortChanged;
+            this.echoPort = echoPort;
+            this.echoPort.Changed += OnEchoPortChanged;
         }
 
         #endregion
@@ -89,13 +89,13 @@ namespace Meadow.Foundation.Sensors.Distance
             CurrentDistance = -1;
 
             // Raise trigger port to high for 10+ micro-seconds
-            _triggerPort.State = true;
+            triggerPort.State = true;
             Thread.Sleep(1); //smallest amount of time we can wait
 
             // Start Clock
-            _tickStart = DateTime.Now.Ticks;
+            tickStart = DateTime.Now.Ticks;
             // Trigger device to measure distance via sonic pulse
-            _triggerPort.State = false;
+            triggerPort.State = false;
         }
 
         private void OnEchoPortChanged(object sender, DigitalInputPortEventArgs e)
@@ -104,14 +104,14 @@ namespace Meadow.Foundation.Sensors.Distance
           // if(_echoPort.State == true)
             {
           ///      Console.WriteLine("true");
-                _tickStart = DateTime.Now.Ticks;
+                tickStart = DateTime.Now.Ticks;
                 return;
             }
 
         //    Console.WriteLine("false");
 
             // Calculate Difference
-            float elapsed = DateTime.Now.Ticks - _tickStart;
+            float elapsed = DateTime.Now.Ticks - tickStart;
 
             // Return elapsed ticks
             // x10 for ticks to micro sec
