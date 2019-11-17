@@ -1,10 +1,10 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.LCD.CharacterDisplay" Version="0.7.1" />
+    <ProjectReference Include="..\..\Driver\Displays.LCD.CharacterDisplay\Displays.LCD.CharacterDisplay.csproj" />
   </ItemGroup>
 </Project>
