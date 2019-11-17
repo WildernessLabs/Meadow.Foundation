@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Temperature;
+using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -14,7 +14,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <remarks>
     /// Readings from the sensor are made in Single-shot mode.
     /// </remarks>
-    public class SHT31D : ITemperatureSensor, IHumiditySensor
+    public class SHT31D : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
         #region Constants
 
@@ -30,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     SH31D sensor communicates using I2C.
         /// </summary>
-        private readonly II2cPeripheral _sht31d;
+        private readonly II2cPeripheral sht31d;
 
         /// <summary>
         ///     Update interval in milliseconds
@@ -42,55 +43,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #region Properties
 
         /// <summary>
-        ///     Get the last humidity reading from the sensor.
+        /// The temperature, in degrees celsius (ºC), from the last reading.
         /// </summary>
-        /// <remarks>
-        ///     The Update method should be called before the data in this property
-        ///     contains valid data.
-        /// </remarks>
-        public float Humidity
-        {
-            get { return _humidity; }
-            private set
-            {
-                _humidity = value;
-                //
-                //  Check to see if the change merits raising an event.
-                //
-                if ((_updateInterval > 0) && (Math.Abs(_lastNotifiedHumidity - value) >= HumidityChangeNotificationThreshold))
-                {
-                    HumidityChanged(this, new SensorFloatEventArgs(_lastNotifiedHumidity, value));
-                    _lastNotifiedHumidity = value;
-                }
-            }
-        }
-        private float _humidity;
-        private float _lastNotifiedHumidity = 0.0F;
+        public float Temperature => Conditions.Temperature;
 
         /// <summary>
-        ///     Get the last temperature reading.
+        /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
-        /// <remarks>
-        ///     The Update method should be called before the data in this property
-        ///     contains valid data.
-        /// </remarks>
-        public float Temperature
-        {
-            get { return _temperature; }
-            private set
-            {
-                _temperature = value;
-                //
-                //  Check to see if the change merits raising an event.
-                //
-                if ((_updateInterval > 0) && (Math.Abs(_lastNotifiedTemperature - value) >= TemperatureChangeNotificationThreshold))
-                {
-                    TemperatureChanged(this, new SensorFloatEventArgs(_lastNotifiedTemperature, value));
-                    _lastNotifiedTemperature = value;
-                }
-            }
-        }
-        private float _temperature;
+        public float Humidity => Conditions.Humidity;
+
+
+        private float _lastNotifiedHumidity = 0.0F;
         private float _lastNotifiedTemperature = 0.0F;
 
         /// <summary>
@@ -107,21 +70,27 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public float HumidityChangeNotificationThreshold { get; set; } = 0.001F;
 
+        /// <summary>
+        /// The AtmosphericConditions from the last reading.
+        /// </summary>
+        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+        /// <summary>
+        /// Gets a value indicating whether the analog input port is currently
+        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
+        /// </summary>
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
+
         #endregion Properties
 
         #region Events and delegates
 
-        /// <summary>
-        ///     Event raised when the temperature change is greater than the 
-        ///     TemperatureChangeNotificationThreshold value.
-        /// </summary>
-        public event SensorFloatEventHandler TemperatureChanged = delegate { };
-
-        /// <summary>
-        ///     Event raised when the humidity change is greater than the
-        ///     HumidityChangeNotificationThreshold value.
-        /// </summary>
-        public event SensorFloatEventHandler HumidityChanged = delegate { };
+        public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
         #endregion Events and delegates
 
@@ -139,44 +108,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (should be 0x44 or 0x45).</param>
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
-        /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
-        /// <param name="humidityChangeNotificationThreshold">Changes in humidity greater than this value will trigger an event when updatePeriod > 0.</param>
-        /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
-        public SHT31D(II2cBus i2cBus, byte address = 0x44, ushort updateInterval = MinimumPollingPeriod,
-                        float humidityChangeNotificationThreshold = 0.001F, 
-                        float temperatureChangeNotificationThreshold = 0.001F)
+        public SHT31D(II2cBus i2cBus, byte address = 0x44)
         {
             if ((address != 0x44) && (address != 0x45))
             {
                 throw new ArgumentOutOfRangeException(nameof(address), "Address should be 0x44 or 0x45");
             }
-            if (humidityChangeNotificationThreshold < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(humidityChangeNotificationThreshold), "Humidity threshold should be >= 0");
-            }
-            if (temperatureChangeNotificationThreshold < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(temperatureChangeNotificationThreshold), "Temperature threshold should be >= 0");
-            }
-            if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
-            {
-                throw new ArgumentOutOfRangeException(nameof(updateInterval), "Update period should be 0 or >= than " + MinimumPollingPeriod);
-            }
 
-            TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
-            HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
-            _updateInterval = updateInterval;
-
-            _sht31d = new I2cPeripheral(i2cBus, address);
-
-            if (updateInterval > 0)
-            {
-                StartUpdating();
-            }
-            else
-            {
-                Update();
-            }
+            sht31d = new I2cPeripheral(i2cBus, address);
         }
 
         #endregion Constructors
@@ -184,18 +123,87 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #region Methods
 
         /// <summary>
-        ///     Start the update process.
+        /// Convenience method to get the current sensor readings. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        private void StartUpdating()
+        public async Task<AtmosphericConditions> Read()
         {
-            Thread t = new Thread(() => {
-                while (true)
+            Conditions = await Read();
+
+            return Conditions;
+        }
+
+        public void StartUpdating(int standbyDuration = 1000)
+        {
+            // thread safety
+            lock (_lock)
+            {
+                if (IsSampling) return;
+
+                // state muh-cheen
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                AtmosphericConditions oldConditions;
+                AtmosphericConditionChangeResult result;
+                Task.Factory.StartNew(async () => {
+                    while (true)
+                    {
+                        // TODO: someone please review; is this the correct
+                        // place to do this?
+                        // check for cancel (doing this here instead of 
+                        // while(!ct.IsCancellationRequested), so we can perform 
+                        // cleanup
+                        if (ct.IsCancellationRequested)
+                        {
+                            // do task clean up here
+                            _observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Conditions;
+
+                        // read
+                        Update();
+
+                        // build a new result with the old and new conditions
+                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+        /// <summary>
+        /// Stops sampling the temperature.
+        /// </summary>
+        public void StopUpdating()
+        {
+            lock (_lock)
+            {
+                if (!IsSampling) return;
+
+                if (SamplingTokenSource != null)
                 {
-                    Update();
-                    Thread.Sleep(_updateInterval);
+                    SamplingTokenSource.Cancel();
                 }
-            });
-            t.Start();
+
+                // state muh-cheen
+                IsSampling = false;
+            }
         }
 
         /// <summary>
@@ -203,9 +211,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void Update()
         {
-            var data = _sht31d.WriteRead(new byte[] { 0x2c, 0x06 }, 6);
-            Humidity = (100 * (float) ((data[3] << 8) + data[4])) / 65535;
-            Temperature = ((175 * (float) ((data[0] << 8) + data[1])) / 65535) - 45;
+            var data = sht31d.WriteRead(new byte[] { 0x2c, 0x06 }, 6);
+            Conditions.Humidity = (100 * (float) ((data[3] << 8) + data[4])) / 65535;
+            Conditions.Temperature = ((175 * (float) ((data[0] << 8) + data[1])) / 65535) - 45;
         }
 
         #endregion
