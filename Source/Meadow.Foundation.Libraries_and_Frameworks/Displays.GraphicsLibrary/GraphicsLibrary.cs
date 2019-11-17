@@ -24,14 +24,14 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Current rotation used for drawing pixels to the display
         /// </summary>
-        public Rotation CurrentRotation { get; set; } = Rotation.Default;
+        public RotationType Rotation { get; set; } = RotationType.Default;
 
         #endregion Properties
 
         /// <summary>
         /// Display rotation 
         /// </summary>
-        public enum Rotation
+        public enum RotationType
         {
             Default,
             _90Degrees,
@@ -713,15 +713,15 @@ namespace Meadow.Foundation.Graphics
 
         public int GetXForRotation(int x, int y)
         {
-            switch(CurrentRotation)
+            switch(Rotation)
             {
-                case Rotation._90Degrees:
+                case RotationType._90Degrees:
                     return (int)_display.Width - y - 1;
-                case Rotation._180Degrees:
+                case RotationType._180Degrees:
                     return (int)_display.Width - x - 1;
-                case Rotation._270Degrees:
+                case RotationType._270Degrees:
                     return (int)y;
-                case Rotation.Default:
+                case RotationType.Default:
                 default:
                     return x;
             }
@@ -729,15 +729,15 @@ namespace Meadow.Foundation.Graphics
 
         public int GetYForRotation(int x, int y)
         {
-            switch (CurrentRotation)
+            switch (Rotation)
             {
-                case Rotation._90Degrees:
+                case RotationType._90Degrees:
                     return x; 
-                case Rotation._180Degrees:
+                case RotationType._180Degrees:
                     return (int)_display.Height - y - 1;
-                case Rotation._270Degrees:
+                case RotationType._270Degrees:
                     return (int)_display.Height - x - 1;
-                case Rotation.Default:
+                case RotationType.Default:
                 default:
                     return y;
             }
