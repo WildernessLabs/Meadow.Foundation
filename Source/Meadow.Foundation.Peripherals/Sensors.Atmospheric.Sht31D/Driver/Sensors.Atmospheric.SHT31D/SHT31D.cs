@@ -17,26 +17,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public class SHT31D : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
-        #region Constants
-
-        /// <summary>
-        ///     Minimum value that should be used for the polling frequency.
-        /// </summary>
-        public const ushort MinimumPollingPeriod = 100;
-
-        #endregion Constants
-
         #region Member variables / fields
 
         /// <summary>
         ///     SH31D sensor communicates using I2C.
         /// </summary>
         private readonly II2cPeripheral sht31d;
-
-        /// <summary>
-        ///     Update interval in milliseconds
-        /// </summary>
-        private readonly ushort _updateInterval = 100;
 
         #endregion Member variables / fields
 
@@ -51,24 +37,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
         public float Humidity => Conditions.Humidity;
-
-
-        private float _lastNotifiedHumidity = 0.0F;
-        private float _lastNotifiedTemperature = 0.0F;
-
-        /// <summary>
-        ///     Any changes in the temperature that are greater than the temperature
-        ///     threshold will cause an event to be raised when the instance is
-        ///     set to update automatically.
-        /// </summary>
-        public float TemperatureChangeNotificationThreshold { get; set; } = 0.001F;
-
-        /// <summary>
-        ///     Any changes in the humidity that are greater than the humidity
-        ///     threshold will cause an event to be raised when the instance is
-        ///     set to update automatically.
-        /// </summary>
-        public float HumidityChangeNotificationThreshold { get; set; } = 0.001F;
 
         /// <summary>
         /// The AtmosphericConditions from the last reading.
@@ -151,11 +119,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 Task.Factory.StartNew(async () => {
                     while (true)
                     {
-                        // TODO: someone please review; is this the correct
-                        // place to do this?
-                        // check for cancel (doing this here instead of 
-                        // while(!ct.IsCancellationRequested), so we can perform 
-                        // cleanup
                         if (ct.IsCancellationRequested)
                         {
                             // do task clean up here
@@ -196,10 +159,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 if (!IsSampling) return;
 
-                if (SamplingTokenSource != null)
-                {
-                    SamplingTokenSource.Cancel();
-                }
+                SamplingTokenSource?.Cancel();
 
                 // state muh-cheen
                 IsSampling = false;

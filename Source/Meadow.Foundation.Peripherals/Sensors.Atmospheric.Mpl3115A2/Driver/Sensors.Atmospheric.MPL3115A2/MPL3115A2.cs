@@ -34,20 +34,13 @@ namespace Meadow.Foundation.Sensors.Barometric
         /// <summary>
         /// The temperature, in degrees celsius (ºC), from the last reading.
         /// </summary>
-        public float Temperature {
-            get {
-                return Conditions.Temperature;
-            }
-        }
+        public float Temperature => Conditions.Temperature;
+
         /// <summary>
         /// The pressure, in hectopascals (hPa), from the last reading. 1 hPa
         /// is equal to one millibar, or 1/10th of a kilopascal (kPa)/centibar.
         /// </summary>
-        public float Pressure {
-            get {
-                return Conditions.Pressure;
-            }
-        }
+        public float Pressure => Conditions.Pressure;
 
         /// <summary>
         ///     Check if the part is in standby mode or change the standby mode.
@@ -72,9 +65,7 @@ namespace Meadow.Foundation.Sensors.Barometric
         /// <summary>
         ///     Get the status register from the sensor.
         /// </summary>
-        public byte Status {
-            get { return _mpl3115a2.ReadRegister(Registers.Status); }
-        }
+        public byte Status => _mpl3115a2.ReadRegister(Registers.Status); 
 
         /// <summary>
         /// </summary>
@@ -177,10 +168,6 @@ namespace Meadow.Foundation.Sensors.Barometric
                 AtmosphericConditionChangeResult result;
                 Task.Factory.StartNew(async () => {
                     while (true) {
-                        // TODO: someone please review; is this the correct
-                        // place to do this?
-                        // check for cancel (doing this here instead of 
-                        // while(!ct.IsCancellationRequested), so we can perform 
                         // cleanup
                         if (ct.IsCancellationRequested) {
                             // do task clean up here
@@ -220,9 +207,7 @@ namespace Meadow.Foundation.Sensors.Barometric
             lock (_lock) {
                 if (!IsSampling) return;
 
-                if (SamplingTokenSource != null) {
-                    SamplingTokenSource.Cancel();
-                }
+                SamplingTokenSource?.Cancel();
 
                 // state muh-cheen
                 IsSampling = false;

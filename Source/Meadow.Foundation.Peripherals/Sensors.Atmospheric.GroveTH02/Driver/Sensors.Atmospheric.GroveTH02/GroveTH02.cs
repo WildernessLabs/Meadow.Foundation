@@ -204,11 +204,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 Task.Factory.StartNew(async () => {
                     while (true)
                     {
-                        // TODO: someone please review; is this the correct
-                        // place to do this?
-                        // check for cancel (doing this here instead of 
-                        // while(!ct.IsCancellationRequested), so we can perform 
-                        // cleanup
                         if (ct.IsCancellationRequested)
                         {
                             // do task clean up here
@@ -249,10 +244,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 if (!IsSampling) return;
 
-                if (SamplingTokenSource != null)
-                {
-                    SamplingTokenSource.Cancel();
-                }
+                SamplingTokenSource?.Cancel();
 
                 // state muh-cheen
                 IsSampling = false;
