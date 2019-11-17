@@ -2,8 +2,6 @@
 using System.Threading;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Temperature;
-
 
 /*
 namespace Meadow.Foundation.Sensors.Temperature
