@@ -16,12 +16,12 @@ namespace Meadow.Foundation.Sensors.GPS
         /// <summary>
         ///     NMEA decoders available to the GPS.
         /// </summary>
-        private readonly Hashtable _decoders = new Hashtable();
+        private readonly Hashtable decoders = new Hashtable();
 
         /// <summary>
         ///     GPS serial input.
         /// </summary>
-        private readonly SerialTextFile _gps;
+        private readonly SerialTextFile gps;
 
         #endregion Member variables / fields
 
@@ -43,10 +43,10 @@ namespace Meadow.Foundation.Sensors.GPS
         /// <param name="parity">Parity.</param>
         /// <param name="dataBits">Number of data bits.</param>
         /// <param name="stopBits">Number of stop bits.</param>
-        public NMEA(string port, int baudRate, ParityType parity, int dataBits, NumberOfStopBits stopBits)
+        public NMEA(IIODevice device, SerialPortName port, int baudRate, Parity parity, int dataBits, StopBits stopBits)
         {
-            _gps = new SerialTextFile(port, baudRate, parity, dataBits, stopBits, "\r\n");
-            _gps.OnLineReceived += _gps_OnLineReceived;
+            gps = new SerialTextFile(device, port, baudRate, parity, dataBits, stopBits, "\r\n");
+            gps.OnLineReceived += GpsOnLineReceived;
         }
 
         #endregion Constructors
@@ -59,11 +59,11 @@ namespace Meadow.Foundation.Sensors.GPS
         /// <param name="decoder">NMEA decoder.</param>
         public void AddDecoder(NMEADecoder decoder)
         {
-            if (_decoders.Contains(decoder.Prefix))
+            if (decoders.Contains(decoder.Prefix))
             {
                 throw new Exception(decoder.Prefix + " already registered.");
             }
-            _decoders.Add(decoder.Prefix, decoder);
+            decoders.Add(decoder.Prefix, decoder);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Sensors.GPS
         /// </summary>
         public void Open()
         {
-            _gps.Open();
+            gps.Open();
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Meadow.Foundation.Sensors.GPS
         /// </summary>
         public void Close()
         {
-            _gps.Close();
+            gps.Close();
         }
 
         #endregion Methods
@@ -93,8 +93,10 @@ namespace Meadow.Foundation.Sensors.GPS
         ///     Unknown message types will be discarded.
         /// </remarks>
         /// <param name="line">GPS text for processing.</param>
-        private void _gps_OnLineReceived(object sender, string line)
+        private void GpsOnLineReceived(object sender, string line)
         {
+            Console.WriteLine($"GpsOnLineR - {line}");
+
             if (line.Length > 0)
             {
                 var checksumLocation = line.LastIndexOf('*');
@@ -107,7 +109,7 @@ namespace Meadow.Foundation.Sensors.GPS
                         var elements = actualData.Split(',');
                         if (elements.Length > 0)
                         {
-                            var decoder = (NMEADecoder) _decoders[elements[0]];
+                            var decoder = (NMEADecoder) decoders[elements[0]];
                             if (decoder != null)
                             {
                                 decoder.Process(elements);

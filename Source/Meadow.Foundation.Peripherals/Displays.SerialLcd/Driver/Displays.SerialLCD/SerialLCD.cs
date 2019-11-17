@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     ///     Encapsulate the functionality required to control the Sparkfun serial LCD display.
     /// </summary>
-    public class SerialLCD : IDisposable, ITextDisplay
+    public class SerialLCD : ITextDisplay
     {
         #region Properties
 
@@ -101,12 +101,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Comp port being used to communicate with the display.
         /// </summary>
-        private readonly SerialPort _comPort;
-
-        /// <summary>
-        ///     Track if Dispose has been called.
-        /// </summary>
-        private bool _disposed;
+        private readonly ISerialPort comPort;
 
         /// <summary>
         ///     object for using lock() to do thread synch
@@ -128,13 +123,12 @@ namespace Meadow.Foundation.Displays
         ///     Create a new SerialLCD object.
         /// </summary>
         /// <param name="config">TextDisplayConfig object defining the LCD dimension (null will default to 16x2).</param>
-        /// <param name="port">Com port the display is connected to.</param>
         /// <param name="baudRate">Baud rate to use (default = 9600).</param>
         /// <param name="parity">Parity to use (default is None).</param>
         /// <param name="dataBits">Number of data bits (default is 8 data bits).</param>
         /// <param name="stopBits">Number of stop bits (default is one stop bit).</param>
-        public SerialLCD(TextDisplayConfig config = null,  string port = "COM1", int baudRate = 9600,
-            ParityType parity = ParityType.None, int dataBits = 8, NumberOfStopBits stopBits = NumberOfStopBits.One)
+        public SerialLCD(IIODevice device, SerialPortName port, TextDisplayConfig config = null, int baudRate = 9600,
+            Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One)
         {
             if (config == null)
             {
@@ -146,8 +140,9 @@ namespace Meadow.Foundation.Displays
                 DisplayConfig = config;
             }
 
-            _comPort = new SerialPort(port, baudRate, parity, dataBits, stopBits);
-            _comPort.Open();
+            comPort = device.CreateSerialPort(port, baudRate, dataBits, parity, stopBits);
+
+            comPort.Open();
 
             // configure the LCD controller for the appropriate screen size
             byte lines = 0;
@@ -180,42 +175,6 @@ namespace Meadow.Foundation.Displays
 
         #endregion Constructors
 
-        #region Implement IDisposable
-
-        /// <summary>
-        ///     Implement IDisposable.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            //
-            // Call to GC.SupressFinalize will take this object off the finalization queue 
-            // and prevent multiple executions.
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        ///     Initiate object disposal.
-        /// </summary>
-        /// <param name="disposing">
-        ///     Flag used to determine if the method is being called by the runtime (false) or programmatically
-        ///     (true).
-        /// </param>
-        private void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _comPort.Close();
-                    _comPort.Dispose();
-                }
-                _disposed = true; // Done - prevent accidental or intentional Dispose calls.
-            }
-        }
-
-        #endregion Implement IDisposable
-
         #region Methods
 
         /// <summary>
@@ -227,7 +186,7 @@ namespace Meadow.Foundation.Displays
             // critical section so we don't have mixed messages
             lock (_lock)
             {
-                _comPort.Write(buffer, 0, buffer.Length);
+                comPort.Write(buffer, 0, buffer.Length);
             }
         }
 
