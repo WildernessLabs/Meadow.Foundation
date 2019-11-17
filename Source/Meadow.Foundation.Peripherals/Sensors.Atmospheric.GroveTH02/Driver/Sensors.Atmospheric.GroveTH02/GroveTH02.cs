@@ -83,7 +83,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     GroveTH02 object.
         /// </summary>
-        private readonly II2cPeripheral groveTH02 = null;
+        private readonly II2cPeripheral groveTH02;
 
         /// <summary>
         ///     Update interval in milliseconds
@@ -103,23 +103,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
         public float Humidity => Conditions.Humidity;
-
-
-        private float _lastNotifiedTemperature = 0.0F;
-
-        /// <summary>
-        ///     Any changes in the temperature that are greater than the temperature
-        ///     threshold will cause an event to be raised when the instance is
-        ///     set to update automatically.
-        /// </summary>
-        public float TemperatureChangeNotificationThreshold { get; set; } = 0.001F;
-
-        /// <summary>
-        ///     Any changes in the humidity that are greater than the humidity
-        ///     threshold will cause an event to be raised when the instance is
-        ///     set to update automatically.
-        /// </summary>
-        public float HumidityChangeNotificationThreshold { get; set; } = 0.001F;
 
         /// <summary>
         ///     Get / set the heater status.
@@ -165,7 +148,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         #region Events and delegates
 
-
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
         #endregion Events and delegates
@@ -184,35 +166,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Address of the Grove TH02 (default = 0x4-).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
-        /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
-        /// <param name="humidityChangeNotificationThreshold">Changes in humidity greater than this value will trigger an event when updatePeriod > 0.</param>
-        /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
-        public GroveTH02(II2cBus i2cBus, byte address = 0x40,
-            ushort updateInterval = MinimumPollingPeriod,
-            float humidityChangeNotificationThreshold = 0.001F,
-            float temperatureChangeNotificationThreshold = 0.001F)
+        public GroveTH02(II2cBus i2cBus, byte address = 0x40)
         {
             groveTH02 = new I2cPeripheral(i2cBus, address);
-
-            if (humidityChangeNotificationThreshold < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(humidityChangeNotificationThreshold), "Humidity threshold should be >= 0");
-            }
-            if (humidityChangeNotificationThreshold < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(temperatureChangeNotificationThreshold), "Temperature threshold should be >= 0");
-            }
-            TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
-            HumidityChangeNotificationThreshold = humidityChangeNotificationThreshold;
-            _updateInterval = updateInterval;
-            if (updateInterval > 0)
-            {
-                StartUpdating();
-            }
-            else
-            {
-                Update();
-            }
         }
 
         #endregion Constructors
@@ -223,8 +179,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        /// <param name="temperatureSampleCount">The number of sample readings to take. 
-        /// Must be greater than 0. These samples are automatically averaged.</param>
         public async Task<AtmosphericConditions> Read()
         {
             Conditions = await Read();
