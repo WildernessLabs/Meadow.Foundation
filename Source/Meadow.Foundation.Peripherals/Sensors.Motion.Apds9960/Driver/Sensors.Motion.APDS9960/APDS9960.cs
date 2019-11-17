@@ -4,82 +4,90 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class APDS9960
+    public class Apds9960
     {
         #region Member variables / fields
 
         /// <summary>
         ///     Communication bus used to communicate with the sensor.
+        ///     This driver is a work-in-progress, contributions are always welcome
         /// </summary>
-        private readonly II2cPeripheral _apds9960;
+        private readonly II2cPeripheral apds9960;
 
-        private APDS9960Control control = new APDS9960Control();
-        private APDS9960Enable enable = new APDS9960Enable();
-        private APDS9960Persistance persistance = new APDS9960Persistance();
-        private APDS9960Pulse pulse = new APDS9960Pulse();
-        private APDS9960GestureStatus gestureStatus = new APDS9960GestureStatus();
-        private APDS9960Status status = new APDS9960Status();
+        private readonly APDS9960Control control = new APDS9960Control();
+        private readonly APDS9960Enable enable = new APDS9960Enable();
+        private readonly APDS9960Persistance persistance = new APDS9960Persistance();
+        private readonly APDS9960Pulse pulse = new APDS9960Pulse();
+        private readonly APDS9960GestureStatus gestureStatus = new APDS9960GestureStatus();
+        private readonly APDS9960Status status = new APDS9960Status();
 
-        private APDS9960Config2 config2 = new APDS9960Config2();
+        private readonly APDS9960Config2 config2 = new APDS9960Config2();
 
-        private APDS9960GConfig1 gconfig1 = new APDS9960GConfig1();
-        private APDS9960GConfig2 gconfig2 = new APDS9960GConfig2();
-        private APDS9960GConfig3 gconfig3 = new APDS9960GConfig3();
-        private APDS9960GConfig4 gconfig4 = new APDS9960GConfig4();
+        private readonly APDS9960GConfig1 gconfig1 = new APDS9960GConfig1();
+        private readonly APDS9960GConfig2 gconfig2 = new APDS9960GConfig2();
+        private readonly APDS9960GConfig3 gconfig3 = new APDS9960GConfig3();
+        private readonly APDS9960GConfig4 gconfig4 = new APDS9960GConfig4();
 
         private byte upCount, downCount, leftCount, rightCount;
 
         /** I2C Registers */
-        static byte APDS9960_RAM = 0x00;
-        static byte APDS9960_ENABLE = 0x80;
-        static byte APDS9960_ATIME = 0x81;
-        static byte APDS9960_WTIME = 0x83;
-        static byte APDS9960_AILTIL = 0x84;
-        static byte APDS9960_AILTH = 0x85;
-        static byte APDS9960_AIHTL = 0x86;
-        static byte APDS9960_AIHTH = 0x87;
-        static byte APDS9960_PILT = 0x89;
-        static byte APDS9960_PIHT = 0x8B;
-        static byte APDS9960_PERS = 0x8C;
-        static byte APDS9960_CONFIG1 = 0x8D;
-        static byte APDS9960_PPULSE = 0x8E;
-        static byte APDS9960_CONTROL = 0x8F;
-        static byte APDS9960_CONFIG2 = 0x90;
-        static byte APDS9960_ID = 0x92;
-        static byte APDS9960_STATUS = 0x93;
-        static byte APDS9960_CDATAL = 0x94;
-        static byte APDS9960_CDATAH = 0x95;
-        static byte APDS9960_RDATAL = 0x96;
-        static byte APDS9960_RDATAH = 0x97;
-        static byte APDS9960_GDATAL = 0x98;
-        static byte APDS9960_GDATAH = 0x99;
-        static byte APDS9960_BDATAL = 0x9A;
-        static byte APDS9960_BDATAH = 0x9B;
-        static byte APDS9960_PDATA = 0x9C;
-        static byte APDS9960_POFFSET_UR = 0x9D;
-        static byte APDS9960_POFFSET_DL = 0x9E;
-        static byte APDS9960_CONFIG3 = 0x9F;
-        static byte APDS9960_GPENTH = 0xA0;
-        static byte APDS9960_GEXTH = 0xA1;
-        static byte APDS9960_GCONF1 = 0xA2;
-        static byte APDS9960_GCONF2 = 0xA3;
-        static byte APDS9960_GOFFSET_U = 0xA4;
-        static byte APDS9960_GOFFSET_D = 0xA5;
-        static byte APDS9960_GOFFSET_L = 0xA7;
-        static byte APDS9960_GOFFSET_R = 0xA9;
-        static byte APDS9960_GPULSE = 0xA6;
-        static byte APDS9960_GCONF3 = 0xAA;
-        static byte APDS9960_GCONF4 = 0xAB;
-        static byte APDS9960_GFLVL = 0xAE;
-        static byte APDS9960_GSTATUS = 0xAF;
-        static byte APDS9960_IFORCE = 0xE4;
-        static byte APDS9960_PICLEAR = 0xE5;
-        static byte APDS9960_CICLEAR = 0xE6;
-        static byte APDS9960_AICLEAR = 0xE7;
-        static byte APDS9960_GFIFO_U = 0xFC;
-        static byte APDS9960_GFIFO_D = 0xFD;
-        static byte APDS9960_GFIFO_L = 0xFE;
-        static byte APDS9960_GFIFO_R = 0xFF;
+        static readonly byte APDS9960_RAM = 0x00;
+        static readonly byte APDS9960_ENABLE = 0x80;
+        static readonly byte APDS9960_ATIME = 0x81;
+        static readonly byte APDS9960_WTIME = 0x83;
+        static readonly byte APDS9960_AILTIL = 0x84;
+        static readonly byte APDS9960_AILTH = 0x85;
+        static readonly byte APDS9960_AIHTL = 0x86;
+        static readonly byte APDS9960_AIHTH = 0x87;
+        static readonly byte APDS9960_PILT = 0x89;
+        static readonly byte APDS9960_PIHT = 0x8B;
+        static readonly byte APDS9960_PERS = 0x8C;
+        static readonly byte APDS9960_CONFIG1 = 0x8D;
+        static readonly byte APDS9960_PPULSE = 0x8E;
+        static readonly byte APDS9960_CONTROL = 0x8F;
+        static readonly byte APDS9960_CONFIG2 = 0x90;
+        static readonly byte APDS9960_ID = 0x92;
+        static readonly byte APDS9960_STATUS = 0x93;
+        static readonly byte APDS9960_CDATAL = 0x94;
+        static readonly byte APDS9960_CDATAH = 0x95;
+        static readonly byte APDS9960_RDATAL = 0x96;
+        static readonly byte APDS9960_RDATAH = 0x97;
+        static readonly byte APDS9960_GDATAL = 0x98;
+        static readonly byte APDS9960_GDATAH = 0x99;
+        static readonly byte APDS9960_BDATAL = 0x9A;
+        static readonly byte APDS9960_BDATAH = 0x9B;
+        static readonly byte APDS9960_PDATA = 0x9C;
+        static readonly byte APDS9960_POFFSET_UR = 0x9D;
+        static readonly byte APDS9960_POFFSET_DL = 0x9E;
+        static readonly byte APDS9960_CONFIG3 = 0x9F;
+        static readonly byte APDS9960_GPENTH = 0xA0;
+        static readonly byte APDS9960_GEXTH = 0xA1;
+        static readonly byte APDS9960_GCONF1 = 0xA2;
+        static readonly byte APDS9960_GCONF2 = 0xA3;
+        static readonly byte APDS9960_GOFFSET_U = 0xA4;
+        static readonly byte APDS9960_GOFFSET_D = 0xA5;
+        static readonly byte APDS9960_GOFFSET_L = 0xA7;
+        static readonly byte APDS9960_GOFFSET_R = 0xA9;
+        static readonly byte APDS9960_GPULSE = 0xA6;
+        static readonly byte APDS9960_GCONF3 = 0xAA;
+        static readonly byte APDS9960_GCONF4 = 0xAB;
+        static readonly byte APDS9960_GFLVL = 0xAE;
+        static readonly byte APDS9960_GSTATUS = 0xAF;
+        static readonly byte APDS9960_IFORCE = 0xE4;
+        static readonly byte APDS9960_PICLEAR = 0xE5;
+        static readonly byte APDS9960_CICLEAR = 0xE6;
+        static readonly byte APDS9960_AICLEAR = 0xE7;
+        static readonly byte APDS9960_GFIFO_U = 0xFC;
+        static readonly byte APDS9960_GFIFO_D = 0xFD;
+        static readonly byte APDS9960_GFIFO_L = 0xFE;
+        static readonly byte APDS9960_GFIFO_R = 0xFF;
+
+        static readonly byte APDS9960_UP = 0x01;    /**< Gesture Up */
+        static readonly byte APDS9960_DOWN = 0x02;  /**< Gesture Down */
+        static readonly byte APDS9960_LEFT = 0x03;  /**< Gesture Left */
+        static readonly byte APDS9960_RIGHT = 0x04; /**< Gesture Right */
+
+        IDigitalInputPort interruptPort;
 
         #endregion
 
@@ -165,13 +173,6 @@ namespace Meadow.Foundation.Sensors.Motion
             GPL_32US = 0x03, // Pulse 32us
         };
 
-        static byte APDS9960_UP = 0x01;    /**< Gesture Up */
-        static byte APDS9960_DOWN = 0x02;  /**< Gesture Down */
-        static byte APDS9960_LEFT = 0x03;  /**< Gesture Left */
-        static byte APDS9960_RIGHT = 0x04; /**< Gesture Right */
-
-        IDigitalInputPort interruptPort;
-
         #endregion
 
         #region Constructors
@@ -179,7 +180,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Make the default constructor private so that it cannot be used.
         /// </summary>
-        private APDS9960()
+        private Apds9960()
         {
         }
 
@@ -188,9 +189,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">SI2C bus object</param>
-        public APDS9960(IIODevice device, II2cBus i2cBus, IPin interruptPin, byte address = 0x39)
+        public Apds9960(IIODevice device, II2cBus i2cBus, IPin interruptPin, byte address = 0x39)
         {
-            _apds9960 = new I2cPeripheral(i2cBus, address);
+            apds9960 = new I2cPeripheral(i2cBus, address);
 
             if (interruptPin != null)
             {
@@ -212,7 +213,7 @@ namespace Meadow.Foundation.Sensors.Motion
         #region methods
         void Apds9960Init()
         {
-            var result = _apds9960.ReadRegister(0);// APDS9960_ID);
+            var result = apds9960.ReadRegister(0);// APDS9960_ID);
 
             if (result != 0xAB)
                 throw new Exception("APDS9960 isn't connected");
@@ -230,13 +231,13 @@ namespace Meadow.Foundation.Sensors.Motion
             if (time < 0) time = 0;
 
             /* Update the timing register */
-            _apds9960.WriteRegister(APDS9960_ATIME, (byte)time);
+            apds9960.WriteRegister(APDS9960_ATIME, (byte)time);
         }
 
         //Returns the integration time for the ADC of the APDS9960, in millis
         float GetADCIntegrationTime()
         {
-            float time = _apds9960.ReadRegister(APDS9960_ATIME);
+            float time = apds9960.ReadRegister(APDS9960_ATIME);
             //this doesn't look right ....
             return (256 - time) * 2.78f;
         }
@@ -248,39 +249,39 @@ namespace Meadow.Foundation.Sensors.Motion
 
             /* Update the timing register */
 
-            _apds9960.WriteRegister(APDS9960_CONTROL, control.Get());
+            apds9960.WriteRegister(APDS9960_CONTROL, control.Get());
         }
 
         //Returns the ADC gain
         ADCGain GetADCGain()
         {
-            return (ADCGain)(_apds9960.ReadRegister(APDS9960_CONTROL) & 0x03);
+            return (ADCGain)(apds9960.ReadRegister(APDS9960_CONTROL) & 0x03);
         }
 
         void SetProximityGain(ProximityGain gain)
         {
             control.PGAIN = (byte)gain;
 
-            _apds9960.WriteRegister(APDS9960_CONTROL, control.Get());
+            apds9960.WriteRegister(APDS9960_CONTROL, control.Get());
         }
 
         ProximityGain GetProximityGain()
         {
-            return (ProximityGain)(_apds9960.ReadRegister(APDS9960_CONTROL) & 0x0C);
+            return (ProximityGain)(apds9960.ReadRegister(APDS9960_CONTROL) & 0x0C);
         }
 
         public void EnableProximity(bool enableProximity)
         {
             enable.PEN = enableProximity ? (byte)1 : (byte)0;
 
-            _apds9960.WriteRegister(APDS9960_ENABLE, enable.Get());
+            apds9960.WriteRegister(APDS9960_ENABLE, enable.Get());
         }
 
         public void EnableProximityInterrupt(bool enableInterrupt)
         {
             enable.PIEN = enableInterrupt ? (byte)1 : (byte)0;
 
-            _apds9960.WriteRegister(APDS9960_ENABLE, enable.Get());
+            apds9960.WriteRegister(APDS9960_ENABLE, enable.Get());
 
             if (enableInterrupt)
             {
@@ -290,14 +291,14 @@ namespace Meadow.Foundation.Sensors.Motion
 
         public void SetProximityInterruptThreshhold(byte low, byte high, byte persistance = 4)
         {
-            _apds9960.WriteRegister(APDS9960_PILT, high);
-            _apds9960.WriteRegister(APDS9960_PIHT, low);
+            apds9960.WriteRegister(APDS9960_PILT, high);
+            apds9960.WriteRegister(APDS9960_PIHT, low);
 
             if (persistance > 7) persistance = 7;
 
             this.persistance.PPERS = persistance;
 
-            _apds9960.WriteRegister(APDS9960_PERS, this.persistance.Get());
+            apds9960.WriteRegister(APDS9960_PERS, this.persistance.Get());
         }
 
         //Sets number of proxmity pulses
@@ -309,17 +310,17 @@ namespace Meadow.Foundation.Sensors.Motion
             pulse.PPULSE = count;
             pulse.PPLEN = (byte)length;
 
-            _apds9960.WriteRegister(APDS9960_PPULSE, pulse.Get());
+            apds9960.WriteRegister(APDS9960_PPULSE, pulse.Get());
         }
 
         byte ReadProximity()
         {
-            return _apds9960.ReadRegister(APDS9960_PDATA);
+            return apds9960.ReadRegister(APDS9960_PDATA);
         }
 
         bool IsGestureValid()
         {
-            gestureStatus.Set(_apds9960.ReadRegister(APDS9960_GSTATUS));
+            gestureStatus.Set(apds9960.ReadRegister(APDS9960_GSTATUS));
             return gestureStatus.GVALID == 1;
         }
 
@@ -333,33 +334,33 @@ namespace Meadow.Foundation.Sensors.Motion
         void SetGestureDimentions(byte dimensions)
         {
             gconfig3.GDIMS = dimensions;
-            _apds9960.WriteRegister(APDS9960_GCONF3, gconfig3.Get());
+            apds9960.WriteRegister(APDS9960_GCONF3, gconfig3.Get());
         }
 
         //Sets gesture FIFO Threshold
         void SetGestureFIFOThreshold(byte threshhold)
         {
             gconfig1.GFIFOTH = threshhold;
-            _apds9960.WriteRegister(APDS9960_GCONF1, gconfig1.Get());
+            apds9960.WriteRegister(APDS9960_GCONF1, gconfig1.Get());
         }
 
         void SetGestureGain(byte gain)
         {
             gconfig2.GGAIN = gain;
-            _apds9960.WriteRegister(APDS9960_GCONF2, gconfig2.Get());
+            apds9960.WriteRegister(APDS9960_GCONF2, gconfig2.Get());
         }
 
         void SetGestureProximityThreshold(byte threshhold)
         {
-            _apds9960.WriteRegister(APDS9960_GPENTH, threshhold);
+            apds9960.WriteRegister(APDS9960_GPENTH, threshhold);
         }
 
         void SetGestureOffset(byte offsetUp, byte offsetDown, byte offsetLeft, byte offsetRight)
         {
-            _apds9960.WriteRegister(APDS9960_GOFFSET_U, offsetUp);
-            _apds9960.WriteRegister(APDS9960_GOFFSET_D, offsetDown);
-            _apds9960.WriteRegister(APDS9960_GOFFSET_L, offsetLeft);
-            _apds9960.WriteRegister(APDS9960_GOFFSET_R, offsetRight);
+            apds9960.WriteRegister(APDS9960_GOFFSET_U, offsetUp);
+            apds9960.WriteRegister(APDS9960_GOFFSET_D, offsetDown);
+            apds9960.WriteRegister(APDS9960_GOFFSET_L, offsetLeft);
+            apds9960.WriteRegister(APDS9960_GOFFSET_R, offsetRight);
         }
 
         public void EnableGestures(bool enable)
@@ -367,11 +368,11 @@ namespace Meadow.Foundation.Sensors.Motion
             if (enable == false)
             {
                 gconfig4.GMODE = 0;
-                _apds9960.WriteRegister(APDS9960_GCONF4, gconfig4.Get());
+                apds9960.WriteRegister(APDS9960_GCONF4, gconfig4.Get());
             }
 
             this.enable.GEN = enable ? (byte)1 : (byte)0;
-            _apds9960.WriteRegister(APDS9960_ENABLE, this.enable.Get());
+            apds9960.WriteRegister(APDS9960_ENABLE, this.enable.Get());
 
             ResetCounts();
         }
@@ -386,7 +387,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         byte ReadGesture()
         {
-            byte toRead, bytesRead;
+            byte toRead;
             byte[] buf = new byte[256];
 
             byte gestureReceived;
@@ -405,17 +406,17 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 Thread.Sleep(30);
 
-                toRead = _apds9960.ReadRegister(APDS9960_GFLVL);
+                toRead = apds9960.ReadRegister(APDS9960_GFLVL);
 
                 // bytesRead is unused but produces sideffects needed for readGesture to work
                 // ToDo - check on this bytesRead = this->read(APDS9960_GFIFO_U, buf, toRead);
 
-                if (System.Math.Abs((int)buf[0] - (int)buf[1]) > 13)
+                if (Math.Abs((int)buf[0] - (int)buf[1]) > 13)
                 {
                     up_down_diff += (int)buf[0] - (int)buf[1];
                 }
 
-                if (System.Math.Abs((int)buf[2] - (int)buf[3]) > 13)
+                if (Math.Abs((int)buf[2] - (int)buf[3]) > 13)
                 {
                     left_right_diff += (int)buf[2] - (int)buf[3];
                 }
@@ -475,22 +476,22 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             config2.LED_BOOST = (byte)boost;
 
-            _apds9960.WriteRegister(APDS9960_CONFIG2, config2.Get());
+            apds9960.WriteRegister(APDS9960_CONFIG2, config2.Get());
 
             control.LDRIVE = (byte)drive;
 
-            _apds9960.WriteRegister(APDS9960_CONTROL, control.Get());
+            apds9960.WriteRegister(APDS9960_CONTROL, control.Get());
         }
 
         public void EnableColorSensor(bool colorEnabled)
         {
             enable.AEN = colorEnabled ? (byte)1 : (byte)0;
-            _apds9960.WriteRegister(APDS9960_ENABLE, enable.Get());
+            apds9960.WriteRegister(APDS9960_ENABLE, enable.Get());
         }
 
         bool IsColorDataReady()
         {
-            status.Set(_apds9960.ReadRegister(APDS9960_STATUS));
+            status.Set(apds9960.ReadRegister(APDS9960_STATUS));
             return status.AVALID == 1;
         }
 
@@ -498,36 +499,36 @@ namespace Meadow.Foundation.Sensors.Motion
         //ToDo - check byte order ... Arduino driver doesn't specify 
         void GetColorData(out int R, out int G, out int B, out int C)
         {
-            R = _apds9960.ReadUShort(APDS9960_RDATAL, Meadow.ByteOrder.BigEndian);
-            G = _apds9960.ReadUShort(APDS9960_GDATAL, Meadow.ByteOrder.BigEndian);
-            B = _apds9960.ReadUShort(APDS9960_BDATAL, Meadow.ByteOrder.BigEndian);
-            C = _apds9960.ReadUShort(APDS9960_CDATAL, Meadow.ByteOrder.BigEndian);
+            R = apds9960.ReadUShort(APDS9960_RDATAL, ByteOrder.BigEndian);
+            G = apds9960.ReadUShort(APDS9960_GDATAL, ByteOrder.BigEndian);
+            B = apds9960.ReadUShort(APDS9960_BDATAL, ByteOrder.BigEndian);
+            C = apds9960.ReadUShort(APDS9960_CDATAL, ByteOrder.BigEndian);
         }
 
         void EnableColorInterrupt(bool enableInterrupt)
         {
             enable.AIEN = enableInterrupt ? (byte)1 : (byte)0;
-            _apds9960.WriteRegister(APDS9960_ENABLE, enable.Get());
+            apds9960.WriteRegister(APDS9960_ENABLE, enable.Get());
         }
 
         void ClearInterrupt()
         {
             //ToDo - Arduino driver call here includes a null in the param list 
-            _apds9960.WriteRegister(APDS9960_AICLEAR, 0);
+            apds9960.WriteRegister(APDS9960_AICLEAR, 0);
         }
 
         public void SetInteruptLimits(int low, int high)
         {
-            _apds9960.WriteRegister(APDS9960_AILTIL, (byte)(low & 0xFF));
-            _apds9960.WriteRegister(APDS9960_AILTH, (byte)(low >> 8));
-            _apds9960.WriteRegister(APDS9960_AIHTL, (byte)(high & 0xFF));
-            _apds9960.WriteRegister(APDS9960_AIHTH, (byte)(high >> 8));
+            apds9960.WriteRegister(APDS9960_AILTIL, (byte)(low & 0xFF));
+            apds9960.WriteRegister(APDS9960_AILTH, (byte)(low >> 8));
+            apds9960.WriteRegister(APDS9960_AIHTL, (byte)(high & 0xFF));
+            apds9960.WriteRegister(APDS9960_AIHTH, (byte)(high >> 8));
         }
 
         //enable sensor
         public void Enable(bool enable)
         {
-            _apds9960.WriteRegister(APDS9960_ENABLE, (byte)(enable ? 1 : 0));
+            apds9960.WriteRegister(APDS9960_ENABLE, (byte)(enable ? 1 : 0));
         }
 
         #endregion

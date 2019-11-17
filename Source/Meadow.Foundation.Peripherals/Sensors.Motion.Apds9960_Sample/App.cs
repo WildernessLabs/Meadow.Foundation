@@ -10,7 +10,7 @@ namespace BasicSensors.Motion.Apds9960_Sample
 {
     public class App : App<F7Micro, App>
     {
-        APDS9960 sensor;
+        Apds9960 sensor;
 
         public App()
         {
@@ -21,7 +21,7 @@ namespace BasicSensors.Motion.Apds9960_Sample
         {
             Console.WriteLine("Creating Outputs...");
 
-            sensor = new APDS9960(Device, Device.CreateI2cBus(), Device.Pins.D04);
+            sensor = new Apds9960(Device, Device.CreateI2cBus(), Device.Pins.D04);
             sensor.Enable(true);
         }
     }
