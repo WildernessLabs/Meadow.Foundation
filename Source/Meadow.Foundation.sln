@@ -111,7 +111,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Apds9960", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D744EA2C-4534-42ED-B7BB-CC511762C509}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.APDS9960", "Meadow.Foundation.Peripherals\Sensors.Motion.Apds9960\Driver\Sensors.Motion.APDS9960\Sensors.Motion.APDS9960.csproj", "{894672CE-285A-40E7-98C7-EEBC530BBF24}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Apds9960", "Meadow.Foundation.Peripherals\Sensors.Motion.Apds9960\Driver\Sensors.Motion.APDS9960\Sensors.Motion.APDS9960.csproj", "{894672CE-285A-40E7-98C7-EEBC530BBF24}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Adxl362", "Sensors.Motion.Adxl362", "{4E2218F3-0F2C-4E03-A66F-186515BB7BCE}"
 EndProject
@@ -383,9 +383,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Apds9960_Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.SHT31D_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.SHT31D_Sample\Sensors.Atmospheric.SHT31D_Sample.csproj", "{51B930DB-5D89-417E-A78F-4A365CAA17D2}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Moisture.FC28", "Meadow.Foundation.Peripherals\Sensors.Moisture.FC28\Driver\Sensors.Moisture.FC28\Sensors.Moisture.FC28.csproj", "{493095BE-2769-4FC1-9B83-14550821186E}"
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Moisture.FC28", "Meadow.Foundation.Peripherals\Sensors.Moisture.FC28\Driver\Sensors.Moisture.FC28\Sensors.Moisture.FC28.csproj", "{5B8B4327-8936-4AC1-B77D-1D219A897ECF}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Tft.ST7789_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.Tft.ST7789_Sample\Displays.Tft.ST7789_Sample.csproj", "{A6F5B6C5-E725-4D48-8E9C-2EBA5771FFFF}"
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Tft.ST7789_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.Tft.ST7789_Sample\Displays.Tft.ST7789_Sample.csproj", "{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -761,14 +761,14 @@ Global
 		{51B930DB-5D89-417E-A78F-4A365CAA17D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51B930DB-5D89-417E-A78F-4A365CAA17D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51B930DB-5D89-417E-A78F-4A365CAA17D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{493095BE-2769-4FC1-9B83-14550821186E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{493095BE-2769-4FC1-9B83-14550821186E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{493095BE-2769-4FC1-9B83-14550821186E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{493095BE-2769-4FC1-9B83-14550821186E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A6F5B6C5-E725-4D48-8E9C-2EBA5771FFFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6F5B6C5-E725-4D48-8E9C-2EBA5771FFFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6F5B6C5-E725-4D48-8E9C-2EBA5771FFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6F5B6C5-E725-4D48-8E9C-2EBA5771FFFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B8B4327-8936-4AC1-B77D-1D219A897ECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B8B4327-8936-4AC1-B77D-1D219A897ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B8B4327-8936-4AC1-B77D-1D219A897ECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B8B4327-8936-4AC1-B77D-1D219A897ECF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -959,8 +959,8 @@ Global
 		{9B327DE1-1656-480E-B5B8-B826277AA200} = {F0E1BC04-A17B-4604-9EC9-51AFE3A1942D}
 		{B148426F-25BD-4632-9307-E9EC36063D0E} = {D744EA2C-4534-42ED-B7BB-CC511762C509}
 		{51B930DB-5D89-417E-A78F-4A365CAA17D2} = {6A664586-4544-4427-8FC1-2A8E306BE7A3}
-		{493095BE-2769-4FC1-9B83-14550821186E} = {52FB475F-A6C4-4BDC-8CC3-B81EA0FD3446}
-		{A6F5B6C5-E725-4D48-8E9C-2EBA5771FFFF} = {8FB70D12-1111-480B-B64C-B8EB65977F58}
+		{5B8B4327-8936-4AC1-B77D-1D219A897ECF} = {52FB475F-A6C4-4BDC-8CC3-B81EA0FD3446}
+		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4} = {8FB70D12-1111-480B-B64C-B8EB65977F58}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
