@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Temperature;
+using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
     /// <summary>
     ///     TMP102 Temperature sensor object.
     /// </summary>    
-    public class TMP102 : ITemperatureSensor
+    public class TMP102 :
+        FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        IAtmosphericSensor, ITemperatureSensor
     {
-        #region Constants
-
-        /// <summary>
-        ///     Minimum value that should be used for the polling frequency.
-        /// </summary>
-        public const ushort MinimumPollingPeriod = 100;
-
-        #endregion Constants
-
         #region Enums
 
         /// <summary>
@@ -45,12 +39,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         ///     TMP102 sensor.
         /// </summary>
-        private readonly II2cPeripheral _tmp102;
-
-        /// <summary>
-        ///     Update interval in milliseconds
-        /// </summary>
-        private readonly ushort _updateInterval = 100;
+        private readonly II2cPeripheral tmp102;
 
         #endregion Member variables / fields
 
@@ -69,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             get { return _sensorResolution; }
             set
             {
-                var configuration = _tmp102.ReadRegisters(0x01, 2);
+                var configuration = tmp102.ReadRegisters(0x01, 2);
                 if (value == Resolution.Resolution12Bits)
                 {
                     configuration[1] &= 0xef;
@@ -78,49 +67,37 @@ namespace Meadow.Foundation.Sensors.Temperature
                 {
                     configuration[1] |= 0x10;
                 }
-                _tmp102.WriteRegisters(0x01, configuration);
+                tmp102.WriteRegisters(0x01, configuration);
                 _sensorResolution = value;
             }
         }
 
         /// <summary>
-        ///     Temperature (in degrees centigrade).
+        /// The temperature, in degrees celsius (ºC), from the last reading.
         /// </summary>
-        public float Temperature
-        {
-            get { return _temperature; }
-            private set
-            {
-                _temperature = value;
-                //
-                //  Check to see if the change merits raising an event.
-                //
-                if ((_updateInterval > 0) && (Math.Abs(_lastNotifiedTemperature - value) >= TemperatureChangeNotificationThreshold))
-                {
-                    TemperatureChanged(this, new SensorFloatEventArgs(_lastNotifiedTemperature, value));
-                    _lastNotifiedTemperature = value;
-                }
-            }
-        }
-        private float _temperature;
-        private float _lastNotifiedTemperature = 0.0F;
+        public float Temperature => Conditions.Temperature;
 
         /// <summary>
-        ///     Any changes in the temperature that are greater than the temperature
-        ///     threshold will cause an event to be raised when the instance is
-        ///     set to update automatically.
+        /// The AtmosphericConditions from the last reading.
         /// </summary>
-        public float TemperatureChangeNotificationThreshold { get; set; } = 0.001F;
+        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+        /// <summary>
+        /// Gets a value indicating whether the analog input port is currently
+        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
+        /// </summary>
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
 
         #endregion Properties
 
         #region Events and delegates
 
-        /// <summary>
-        ///     Event raised when the temperature change is greater than the 
-        ///     TemperatureChangeNotificationThreshold value.
-        /// </summary>
-        public event SensorFloatEventHandler TemperatureChanged = delegate { };
+        public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
         #endregion Events and delegates
 
@@ -137,34 +114,14 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>
-        public TMP102(IIODevice device, II2cBus i2cBus, byte address = 0x48, ushort updateInterval = MinimumPollingPeriod,
-            float temperatureChangeNotificationThreshold = 0.001F)
+        public TMP102(IIODevice device, II2cBus i2cBus, byte address = 0x48)
         {
-            _tmp102 = new I2cPeripheral(i2cBus, address);
+            tmp102 = new I2cPeripheral(i2cBus, address);
 
-            if (temperatureChangeNotificationThreshold < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(temperatureChangeNotificationThreshold), "Temperature threshold should be >= 0");
-            }
-            if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
-            {
-                throw new ArgumentOutOfRangeException(nameof(updateInterval), "Update period should be 0 or >= than " + MinimumPollingPeriod);
-            }
+            var configuration = tmp102.ReadRegisters(0x01, 2);
 
-            TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
-            _updateInterval = updateInterval;
-
-            var configuration = _tmp102.ReadRegisters(0x01, 2);
             _sensorResolution = (configuration[1] & 0x10) > 0 ?
                                  Resolution.Resolution13Bits : Resolution.Resolution12Bits;
-            if (updateInterval > 0)
-            {
-                StartUpdating();
-            }
-            else
-            {
-                Update();
-            }
         }
 
         #endregion Constructors
@@ -172,18 +129,79 @@ namespace Meadow.Foundation.Sensors.Temperature
         #region Methods
 
         /// <summary>
-        ///     Start the update process.
+        /// Convenience method to get the current sensor readings. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        private void StartUpdating()
+        public async Task<AtmosphericConditions> Read()
         {
-            Thread t = new Thread(() => {
-                while (true)
-                {
-                    Update();
-                    Thread.Sleep(_updateInterval);
-                }
-            });
-            t.Start();
+            Conditions = await Read();
+
+            return Conditions;
+        }
+
+        public void StartUpdating(int standbyDuration = 1000)
+        {
+            // thread safety
+            lock (_lock)
+            {
+                if (IsSampling) return;
+
+                // state muh-cheen
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                AtmosphericConditions oldConditions;
+                AtmosphericConditionChangeResult result;
+                Task.Factory.StartNew(async () => {
+                    while (true)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            // do task clean up here
+                            _observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Conditions;
+
+                        // read
+                        Update(); //syncrhnous for this driver 
+
+                        // build a new result with the old and new conditions
+                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+        /// <summary>
+        /// Stops sampling the temperature.
+        /// </summary>
+        public void StopUpdating()
+        {
+            lock (_lock)
+            {
+                if (!IsSampling) return;
+
+                SamplingTokenSource?.Cancel();
+
+                // state muh-cheen
+                IsSampling = false;
+            }
         }
 
         /// <summary>
@@ -191,7 +209,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public void Update()
         {
-            var temperatureData = _tmp102.ReadRegisters(0x00, 2);
+            var temperatureData = tmp102.ReadRegisters(0x00, 2);
+
             var sensorReading = 0;
             if (SensorResolution == Resolution.Resolution12Bits)
             {
@@ -201,7 +220,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             {
                 sensorReading = (temperatureData[0] << 5) | (temperatureData[1] >> 3);
             }
-            Temperature = (float) (sensorReading * 0.0625);
+            Conditions.Temperature = (float) (sensorReading * 0.0625);
         }
 
         #endregion Methods
