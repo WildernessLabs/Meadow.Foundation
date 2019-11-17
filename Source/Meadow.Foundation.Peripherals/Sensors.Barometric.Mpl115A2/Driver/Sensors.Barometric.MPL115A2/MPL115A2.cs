@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Temperature;
+using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Barometric
 {
-    public class MPL115A2 : ITemperatureSensor, IBarometricPressure
+    public class MPL115A2 :
+        FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        IAtmosphericSensor, ITemperatureSensor, IBarometricPressureSensor
     {
-        #region Constants
-
-        /// <summary>
-        ///     Minimum value that should be used for the polling frequency.
-        /// </summary>
-        public const ushort MinimumPollingPeriod = 100;
-
-        #endregion Constants
-
         #region Structures
 
         /// <summary>
@@ -57,79 +50,36 @@ namespace Meadow.Foundation.Sensors.Barometric
         #region Properties
 
         /// <summary>
-        ///     Temperature reading from last update.
+        /// The temperature, in degrees celsius (ºC), from the last reading.
         /// </summary>
-        public float Temperature
-        {
-            get { return _temperature; }
-            private set
-            {
-                _temperature = value;
-                //
-                //  Check to see if the change merits raising an event.
-                //
-                if ((_updateInterval > 0) && (Math.Abs(_lastNotifiedTemperature - value) >= TemperatureChangeNotificationThreshold))
-                {
-                    TemperatureChanged(this, new SensorFloatEventArgs(_lastNotifiedTemperature, value));
-                    _lastNotifiedTemperature = value;
-                }
-            }
-        }
-        private float _temperature;
-        private float _lastNotifiedTemperature = 0.0F;
+        public float Temperature => Conditions.Temperature;
 
         /// <summary>
-        ///     Pressure reading from the sensor.
+        /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
-        /// <value>Current pressure reading from the sensor in Pascals (divide by 100 for hPa).</value>
-        public float Pressure
-        {
-            get { return _pressure; }
-            private set
-            {
-                _pressure = value;
-                //
-                //  Check to see if the change merits raising an event.
-                //
-                if ((_updateInterval > 0) && (Math.Abs(_lastNotifiedPressure - value) >= PressureChangeNotificationThreshold))
-                {
-                    PressureChanged(this, new SensorFloatEventArgs(_lastNotifiedPressure, value));
-                    _lastNotifiedPressure = value;
-                }
-            }
-        }
-        private float _pressure;
-        private float _lastNotifiedPressure = 0.0F;
+        public float Pressure => Conditions.Pressure;
 
         /// <summary>
-        ///     Any changes in the temperature that are greater than the temperature
-        ///     threshold will cause an event to be raised when the instance is
-        ///     set to update automatically.
+        /// The AtmosphericConditions from the last reading.
         /// </summary>
-        public float TemperatureChangeNotificationThreshold { get; set; } = 0.001F;
+        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
 
         /// <summary>
-        ///     Any changes in the pressure that are greater than the pressure
-        ///     threshold will cause an event to be raised when the instance is
-        ///     set to update automatically.
+        /// Gets a value indicating whether the analog input port is currently
+        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
         /// </summary>
-        public float PressureChangeNotificationThreshold { get; set; } = 0.001F;
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
 
         #endregion Properties
 
         #region Events and delegates
 
-        /// <summary>
-        ///     Event raised when the temperature change is greater than the 
-        ///     TemperatureChangeNotificationThreshold value.
-        /// </summary>
-        public event SensorFloatEventHandler TemperatureChanged = delegate { };
-
-        /// <summary>
-        ///     Event raised when the change in pressure is greater than the
-        ///     PresshureChangeNotificationThreshold value.
-        /// </summary>
-        public event SensorFloatEventHandler PressureChanged = delegate { };
+        public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
         #endregion Events and delegates
 
@@ -138,12 +88,12 @@ namespace Meadow.Foundation.Sensors.Barometric
         /// <summary>
         ///     SI7021 is an I2C device.
         /// </summary>
-        private readonly II2cPeripheral _mpl115a2;
+        private readonly II2cPeripheral mpl115a2;
 
         /// <summary>
         ///     doubleing point variants of the compensation coefficients from the sensor.
         /// </summary>
-        private Coefficients _coefficients;
+        private Coefficients coefficients;
 
         /// <summary>
         ///     Update interval in milliseconds
@@ -166,36 +116,15 @@ namespace Meadow.Foundation.Sensors.Barometric
         /// </summary>
         /// <param name="address">Sensor address (default to 0x60).</param>
         /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
-        /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
-        /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
-        /// <param name="pressureChangedNotificationThreshold">Changes in pressure greater than this value will trigger an event when updatePeriod > 0.</param>
-        public MPL115A2(II2cBus i2cBus, byte address = 0x60, ushort updateInterval = MinimumPollingPeriod,
-            float temperatureChangeNotificationThreshold = 0.001F, float pressureChangedNotificationThreshold = 10.0F)
+        public MPL115A2(II2cBus i2cBus, byte address = 0x60)
         {
-            if (temperatureChangeNotificationThreshold < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(temperatureChangeNotificationThreshold), "Temperature threshold should be >= 0");
-            }
-            if (pressureChangedNotificationThreshold < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(pressureChangedNotificationThreshold), "Pressure threshold should be >= 0");
-            }
-            if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
-            {
-                throw new ArgumentOutOfRangeException(nameof(updateInterval), "Update period should be 0 or >= than " + MinimumPollingPeriod);
-            }
-
-            TemperatureChangeNotificationThreshold = temperatureChangeNotificationThreshold;
-            PressureChangeNotificationThreshold = pressureChangedNotificationThreshold;
-            _updateInterval = updateInterval;
-
             var device = new I2cPeripheral(i2cBus, address);
-            _mpl115a2 = device;
+            mpl115a2 = device;
             //
             //  Update the compensation data from the sensor.  The location and format of the
             //  compensation data can be found on pages 5 and 6 of the datasheet.
             //
-            var data = _mpl115a2.ReadRegisters(Registers.A0MSB, 8);
+            var data = mpl115a2.ReadRegisters(Registers.A0MSB, 8);
             var a0 = (short) (ushort) ((data[0] << 8) | data[1]);
             var b1 = (short) (ushort) ((data[2] << 8) | data[3]);
             var b2 = (short) (ushort) ((data[4] << 8) | data[5]);
@@ -208,7 +137,7 @@ namespace Meadow.Foundation.Sensors.Barometric
             //  Datasheet, section 3.1
             //  a0 is signed with 12 integer bits followed by 3 fractional bits so divide by 2^3 (8)
             //
-            _coefficients.A0 = (double) a0 / 8;
+            coefficients.A0 = (double) a0 / 8;
             //
             //  b1 is 2 integer bits followed by 7 fractional bits.  The lower bits are all 0
             //  so the format is:
@@ -216,11 +145,11 @@ namespace Meadow.Foundation.Sensors.Barometric
             //
             //  So we need to divide by 2^13 (8192)
             //
-            _coefficients.B1 = (double) b1 / 8192;
+            coefficients.B1 = (double) b1 / 8192;
             //
             //  b2 is signed integer (1 bit) followed by 14 fractional bits so divide by 2^14 (16384).
             //
-            _coefficients.B2 = (double) b2 / 16384;
+            coefficients.B2 = (double) b2 / 16384;
             //
             //  c12 is signed with no integer bits but padded with 9 zeroes:
             //      sign 0.000 000 000 f12...f0
@@ -228,15 +157,7 @@ namespace Meadow.Foundation.Sensors.Barometric
             //  So we need to divide by 2^22 (4,194,304) - 13 doubleing point bits 
             //  plus 9 leading zeroes.
             //
-            _coefficients.C12 = (double) c12 / 4194304;
-            if (updateInterval > 0)
-            {
-                StartUpdating();
-            }
-            else
-            {
-                Update();
-            }
+            coefficients.C12 = (double) c12 / 4194304;
         }
 
         #endregion Constructors
@@ -244,47 +165,110 @@ namespace Meadow.Foundation.Sensors.Barometric
         #region Methods
 
         /// <summary>
-        ///     Start the update process.
+        /// Convenience method to get the current sensor readings. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        private void StartUpdating()
+        public async Task<AtmosphericConditions> Read()
         {
-            Thread t = new Thread(() => {
-                while (true)
-                {
-                    Update();
-                    Thread.Sleep(_updateInterval);
-                }
-            });
-            t.Start();
+            Conditions = await Read();
+
+            return Conditions;
+        }
+
+        public void StartUpdating(int standbyDuration = 1000)
+        {
+            // thread safety
+            lock (_lock)
+            {
+                if (IsSampling) return;
+
+                // state muh-cheen
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                AtmosphericConditions oldConditions;
+                AtmosphericConditionChangeResult result;
+                Task.Factory.StartNew(async () => {
+                    while (true)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            // do task clean up here
+                            _observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Conditions;
+
+                        // read
+                        await Update();
+
+                        // build a new result with the old and new conditions
+                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+        /// <summary>
+        /// Stops sampling the temperature.
+        /// </summary>
+        public void StopUpdating()
+        {
+            lock (_lock)
+            {
+                if (!IsSampling) return;
+
+                SamplingTokenSource?.Cancel();
+
+                // state muh-cheen
+                IsSampling = false;
+            }
         }
 
         /// <summary>
         ///     Update the temperature and pressure from the sensor and set the Pressure property.
         /// </summary>
-        public void Update()
+        public async Task Update()
         {
             //
             //  Tell the sensor to take a temperature and pressure reading, wait for
             //  3ms (see section 2.2 of the datasheet) and then read the ADC values.
             //
-            _mpl115a2.WriteBytes(new byte[] { Registers.StartConversion, 0x00 });
-            Thread.Sleep(5);
-            var data = _mpl115a2.ReadRegisters(Registers.PressureMSB, 4);
+            mpl115a2.WriteBytes(new byte[] { Registers.StartConversion, 0x00 });
+
+            await Task.Delay(5);
+
+            var data = mpl115a2.ReadRegisters(Registers.PressureMSB, 4);
             //
             //  Extract the sensor data, note that this is a 10-bit reading so move
             //  the data right 6 bits (see section 3.1 of the datasheet).
             //
             var pressure = (ushort) (((data[0] << 8) + data[1]) >> 6);
             var temperature = (ushort) (((data[2] << 8) + data[3]) >> 6);
-            Temperature = (float) ((temperature - 498.0) / -5.35) + 25;
+            Conditions.Temperature = (float) ((temperature - 498.0) / -5.35) + 25;
             //
             //  Now use the calculations in section 3.2 to determine the
             //  current pressure reading.
             //
             const double PRESSURE_CONSTANT = 65.0 / 1023.0;
-            var compensatedPressure = _coefficients.A0 + ((_coefficients.B1 + (_coefficients.C12 * temperature))
-                                                          * pressure) + (_coefficients.B2 * temperature);
-            Pressure = (float) (PRESSURE_CONSTANT * compensatedPressure) + 50;
+            var compensatedPressure = coefficients.A0 + ((coefficients.B1 + (coefficients.C12 * temperature))
+                                                          * pressure) + (coefficients.B2 * temperature);
+            Conditions.Pressure = (float) (PRESSURE_CONSTANT * compensatedPressure) + 50;
         }
 
         #endregion Methods
