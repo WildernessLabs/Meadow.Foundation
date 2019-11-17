@@ -3,7 +3,6 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors;
 
 namespace BasicSensors.Atmospheric.SHT31D_Sample
 {
@@ -27,18 +26,14 @@ namespace BasicSensors.Atmospheric.SHT31D_Sample
             Console.WriteLine("Init sensor...");
 
             sensor = new SHT31D(Device.CreateI2cBus());
-            sensor.TemperatureChanged += Sensor_TemperatureChanged;
-            sensor.HumidityChanged += Sensor_HumidityChanged;
+            sensor.Updated += Sensor_Updated;
+
         }
 
-        private void Sensor_HumidityChanged(object sender, SensorFloatEventArgs e)
+        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Atmospheric.AtmosphericConditionChangeResult e)
         {
-            Console.WriteLine($"Humidity: {e.CurrentValue}");
-        }
-
-        private void Sensor_TemperatureChanged(object sender, SensorFloatEventArgs e)
-        {
-            Console.WriteLine($"Temp: {e.CurrentValue}");
+            Console.WriteLine($"Temp: {e.New.Temperature}");
+            Console.WriteLine($"Humidity: {e.New.Humidity}");
         }
     }
 }
