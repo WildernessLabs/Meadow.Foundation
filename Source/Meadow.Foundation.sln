@@ -381,7 +381,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.GPS.NMEA_Sample", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Apds9960_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Apds9960_Sample\Sensors.Motion.Apds9960_Sample.csproj", "{B148426F-25BD-4632-9307-E9EC36063D0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.SHT31D_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.SHT31D_Sample\Sensors.Atmospheric.SHT31D_Sample.csproj", "{51B930DB-5D89-417E-A78F-4A365CAA17D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.SHT31D_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.SHT31D\Samples\Sensors.Atmospheric.SHT31D_Sample\Sensors.Atmospheric.SHT31D_Sample.csproj", "{51B930DB-5D89-417E-A78F-4A365CAA17D2}"
 EndProject
 Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Moisture.FC28", "Meadow.Foundation.Peripherals\Sensors.Moisture.FC28\Driver\Sensors.Moisture.FC28\Sensors.Moisture.FC28.csproj", "{5B8B4327-8936-4AC1-B77D-1D219A897ECF}"
 EndProject
