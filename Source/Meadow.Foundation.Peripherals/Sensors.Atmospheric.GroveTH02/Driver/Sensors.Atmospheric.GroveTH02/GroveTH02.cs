@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Temperature;
+using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Grove TH02 temperature and humidity sensor.
     /// </summary>
-    public class GroveTH02 : ITemperatureSensor, IHumiditySensor
+    public class GroveTH02 :
+        FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
         #region Constants
 
@@ -81,7 +83,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     GroveTH02 object.
         /// </summary>
-        private readonly II2cPeripheral _groveTH02 = null;
+        private readonly II2cPeripheral groveTH02 = null;
 
         /// <summary>
         ///     Update interval in milliseconds
@@ -93,47 +95,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #region Properties
 
         /// <summary>
-        ///     Humidity reading from the last update.
+        /// The temperature, in degrees celsius (ºC), from the last reading.
         /// </summary>
-        public float Humidity
-        {
-            get { return _humidity; }
-            private set
-            {
-                _humidity = value;
-                //
-                //  Check to see if the change merits raising an event.
-                //
-                if ((_updateInterval > 0) && (Math.Abs(_lastNotifiedHumidity - value) >= HumidityChangeNotificationThreshold))
-                {
-                    HumidityChanged(this, new SensorFloatEventArgs(_lastNotifiedHumidity, value));
-                    _lastNotifiedHumidity = value;
-                }
-            }
-        }
-        private float _humidity;
-        private float _lastNotifiedHumidity = 0.0F;
+        public float Temperature => Conditions.Temperature;
 
         /// <summary>
-        ///     Temperature reading from last update.
+        /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
-        public float Temperature
-        {
-            get { return _temperature; }
-            private set
-            {
-                _temperature = value;
-                //
-                //  Check to see if the change merits raising an event.
-                //
-                if ((_updateInterval > 0) && (Math.Abs(_lastNotifiedTemperature - value) >= TemperatureChangeNotificationThreshold))
-                {
-                    TemperatureChanged(this, new SensorFloatEventArgs(_lastNotifiedTemperature, value));
-                    _lastNotifiedTemperature = value;
-                }
-            }
-        }
-        private float _temperature;
+        public float Humidity => Conditions.Humidity;
+
+
         private float _lastNotifiedTemperature = 0.0F;
 
         /// <summary>
@@ -157,11 +128,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             get
             {
-                return ((_groveTH02.ReadRegister(Registers.Config) & HeaterOnBit) > 0);
+                return ((groveTH02.ReadRegister(Registers.Config) & HeaterOnBit) > 0);
             }
             set
             {
-                byte config = _groveTH02.ReadRegister(Registers.Config);
+                byte config = groveTH02.ReadRegister(Registers.Config);
                 if (value)
                 {
                     config |= HeaterOnBit;                    
@@ -170,25 +141,32 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 {
                     config &= HeaterMask;
                 }
-                _groveTH02.WriteRegister(Registers.Config, config);
+                groveTH02.WriteRegister(Registers.Config, config);
             }
         }
+
+        /// <summary>
+        /// The AtmosphericConditions from the last reading.
+        /// </summary>
+        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+        /// <summary>
+        /// Gets a value indicating whether the analog input port is currently
+        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
+        /// </summary>
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
 
         #endregion
 
         #region Events and delegates
 
-        /// <summary>
-        ///     Event raised when the temperature change is greater than the 
-        ///     TemperatureChangeNotificationThreshold value.
-        /// </summary>
-        public event SensorFloatEventHandler TemperatureChanged = delegate { };
 
-        /// <summary>
-        ///     Event raised when the humidity change is greater than the
-        ///     HumidityChangeNotificationThreshold value.
-        /// </summary>
-        public event SensorFloatEventHandler HumidityChanged = delegate { };
+        public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
         #endregion Events and delegates
 
@@ -209,11 +187,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="updateInterval">Number of milliseconds between samples (0 indicates polling to be used)</param>
         /// <param name="humidityChangeNotificationThreshold">Changes in humidity greater than this value will trigger an event when updatePeriod > 0.</param>
         /// <param name="temperatureChangeNotificationThreshold">Changes in temperature greater than this value will trigger an event when updatePeriod > 0.</param>
-        public GroveTH02(II2cBus i2cBus, byte address = 0x40, ushort updateInterval = MinimumPollingPeriod,
+        public GroveTH02(II2cBus i2cBus, byte address = 0x40,
+            ushort updateInterval = MinimumPollingPeriod,
             float humidityChangeNotificationThreshold = 0.001F,
             float temperatureChangeNotificationThreshold = 0.001F)
         {
-            _groveTH02 = new I2cPeripheral(i2cBus, address);
+            groveTH02 = new I2cPeripheral(i2cBus, address);
 
             if (humidityChangeNotificationThreshold < 0)
             {
@@ -241,56 +220,130 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #region Methods
 
         /// <summary>
-        ///     Start the update process.
+        /// Convenience method to get the current sensor readings. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        private void StartUpdating()
+        /// <param name="temperatureSampleCount">The number of sample readings to take. 
+        /// Must be greater than 0. These samples are automatically averaged.</param>
+        public async Task<AtmosphericConditions> Read()
         {
-            Thread t = new Thread(() => {
-                while (true)
+            Conditions = await Read();
+
+            return Conditions;
+        }
+
+        public void StartUpdating(int standbyDuration = 1000)
+        {
+            // thread safety
+            lock (_lock)
+            {
+                if (IsSampling) return;
+
+                // state muh-cheen
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                AtmosphericConditions oldConditions;
+                AtmosphericConditionChangeResult result;
+                Task.Factory.StartNew(async () => {
+                    while (true)
+                    {
+                        // TODO: someone please review; is this the correct
+                        // place to do this?
+                        // check for cancel (doing this here instead of 
+                        // while(!ct.IsCancellationRequested), so we can perform 
+                        // cleanup
+                        if (ct.IsCancellationRequested)
+                        {
+                            // do task clean up here
+                            _observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Conditions;
+
+                        // read
+                        await Update();
+
+                        // build a new result with the old and new conditions
+                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+        /// <summary>
+        /// Stops sampling the temperature.
+        /// </summary>
+        public void StopUpdating()
+        {
+            lock (_lock)
+            {
+                if (!IsSampling) return;
+
+                if (SamplingTokenSource != null)
                 {
-                    Update();
-                    Thread.Sleep(_updateInterval);
+                    SamplingTokenSource.Cancel();
                 }
-            });
-            t.Start();
+
+                // state muh-cheen
+                IsSampling = false;
+            }
         }
 
         /// <summary>
         ///     Force the sensor to make a reading and update the relevant properties.
         /// </summary>
-        public void Update()
+        async Task Update()
         {
             int temp = 0;
             //
             //  Get the humidity first.
             //
-            _groveTH02.WriteRegister(Registers.Config, StartMeasurement);
+            groveTH02.WriteRegister(Registers.Config, StartMeasurement);
             //
             //  Maximum conversion time should be 40ms but loop just in case 
             //  it takes longer.
             //
-            Thread.Sleep(40);
-            while ((_groveTH02.ReadRegister(Registers.Status) & 0x01) > 0) ;
-            byte[] data = _groveTH02.ReadRegisters(Registers.DataHigh, 2);
+
+            await Task.Delay(40);
+
+            while ((groveTH02.ReadRegister(Registers.Status) & 0x01) > 0) ;
+            byte[] data = groveTH02.ReadRegisters(Registers.DataHigh, 2);
             temp = data[0] << 8;
             temp |= data[1];
             temp >>= 4;
-            Humidity = (((float) temp) / 16) - 24;
+            Conditions.Humidity = (((float) temp) / 16) - 24;
             //
             //  Now get the temperature.
             //
-            _groveTH02.WriteRegister(Registers.Config, StartMeasurement | MeasureTemperature);
+            groveTH02.WriteRegister(Registers.Config, StartMeasurement | MeasureTemperature);
             //
             //  Maximum conversion time should be 40ms but loop just in case 
             //  it takes longer.
             //
-            Thread.Sleep(40);
-            while ((_groveTH02.ReadRegister(Registers.Status) & 0x01) > 0) ;
-            data = _groveTH02.ReadRegisters(Registers.DataHigh, 2);
+            await Task.Delay(40);
+
+            while ((groveTH02.ReadRegister(Registers.Status) & 0x01) > 0) ;
+            data = groveTH02.ReadRegisters(Registers.DataHigh, 2);
             temp = data[0] << 8;
             temp |= data[1];
             temp >>= 2;
-            Temperature = (((float) temp) / 32) - 50;
+            Conditions.Temperature = (((float) temp) / 32) - 50;
         }
 
         #endregion
