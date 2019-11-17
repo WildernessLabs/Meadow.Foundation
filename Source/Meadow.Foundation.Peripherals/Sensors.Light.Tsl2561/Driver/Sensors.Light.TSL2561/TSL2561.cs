@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Light;
 
 namespace Meadow.Foundation.Sensors.Light
@@ -10,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     ///     Driver for the TSL2561 light-to-digital converter.
     /// </summary>
-    public class TSL2561 : IDisposable, ILightSensor
+    public class TSL2561 : IDisposable //, ILightSensor
     {
         #region Constants
 
@@ -174,7 +172,7 @@ namespace Meadow.Foundation.Sensors.Light
                 _lightLevel = value;
                 if ((_updateInterval > 0) && (Math.Abs(_lastNotifiedLux - value) >= LightLevelChangeNotificationThreshold))
                 {
-                    LightLevelChanged(this, new SensorFloatEventArgs(_lastNotifiedLux, value));
+                    LightLevelChanged(this, value);
                     _lastNotifiedLux = value;
                 }
             }
@@ -329,7 +327,7 @@ namespace Meadow.Foundation.Sensors.Light
         ///     Event raised when the temperature change is greater than the 
         ///     TemperatureChangeNotificationThreshold value.
         /// </summary>
-        public event SensorFloatEventHandler LightLevelChanged = delegate { };
+        public event EventHandler<float> LightLevelChanged = delegate { };
 
         #endregion Event definitions
 
