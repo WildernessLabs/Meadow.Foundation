@@ -5,7 +5,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.11.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sensors.Motion.Apds9960\Driver\Sensors.Motion.APDS9960\Sensors.Motion.APDS9960.csproj" />
