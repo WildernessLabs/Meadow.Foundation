@@ -60,8 +60,8 @@ namespace Displays.Tft.ILI9163_Sample
             graphics.DrawText(0, yPos, "Font_12x16: ABCdef123@#$", Color.LawnGreen);
             yPos += 20;
 
-            graphics.CurrentFont = new Font12x20();
-            graphics.DrawText(0, yPos, "Font_12x20: ABCdef123@#$", Color.Cyan);
+            //graphics.CurrentFont = new Font12x20();
+            //graphics.DrawText(0, yPos, "Font_12x20: ABCdef123@#$", Color.Cyan);
             yPos += 22;
 
             graphics.Show();
