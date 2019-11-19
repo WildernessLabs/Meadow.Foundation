@@ -582,7 +582,6 @@ namespace Meadow.Foundation.Graphics
                     }
                     index += 3;
                 }
-                Console.WriteLine("Font buffer complete");
             }
             else if (CurrentFont.Width == 4)
             {
