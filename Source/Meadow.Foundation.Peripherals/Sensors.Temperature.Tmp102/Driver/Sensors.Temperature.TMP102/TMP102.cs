@@ -114,7 +114,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>
-        public TMP102(IIODevice device, II2cBus i2cBus, byte address = 0x48)
+        public TMP102(II2cBus i2cBus, byte address = 0x48)
         {
             tmp102 = new I2cPeripheral(i2cBus, address);
 

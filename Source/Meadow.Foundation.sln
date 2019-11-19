@@ -385,6 +385,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Moisture.FC28", "Me
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tft.ST7789_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.Tft.ST7789_Sample\Displays.Tft.ST7789_Sample.csproj", "{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Temperature.TMP102_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Samples\Sensors.Temperature.Tmp102_Sample\Sensors.Temperature.TMP102_Sample.csproj", "{AD79B41E-E216-4A64-9E00-6E8DE501EEF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -763,6 +765,10 @@ Global
 		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD79B41E-E216-4A64-9E00-6E8DE501EEF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD79B41E-E216-4A64-9E00-6E8DE501EEF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD79B41E-E216-4A64-9E00-6E8DE501EEF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD79B41E-E216-4A64-9E00-6E8DE501EEF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -955,6 +961,7 @@ Global
 		{51B930DB-5D89-417E-A78F-4A365CAA17D2} = {6A664586-4544-4427-8FC1-2A8E306BE7A3}
 		{5B8B4327-8936-4AC1-B77D-1D219A897ECF} = {52FB475F-A6C4-4BDC-8CC3-B81EA0FD3446}
 		{E9FFB865-C247-4DEF-82AF-EE03ED7599D4} = {8FB70D12-1111-480B-B64C-B8EB65977F58}
+		{AD79B41E-E216-4A64-9E00-6E8DE501EEF9} = {D5471726-76C5-46DD-9931-6328C6A3D375}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
