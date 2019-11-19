@@ -17,8 +17,7 @@ namespace BasicSensors.Atmospheric.SHT31D_Sample
             Console.WriteLine($"Temp: {sensor.Temperature}");
             Console.WriteLine($"Humidity: {sensor.Humidity}");
 
-
-            Thread.Sleep(-1);
+            sensor.StartUpdating();
         }
 
         public void InitHardware()
