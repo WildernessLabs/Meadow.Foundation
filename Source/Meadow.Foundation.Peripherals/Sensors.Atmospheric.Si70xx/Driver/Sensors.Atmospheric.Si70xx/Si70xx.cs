@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -14,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public class Si70xx :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor
+        IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
         /// </summary>
@@ -24,11 +25,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     SI7021 is an I2C device.
         /// </summary>
         protected readonly II2cPeripheral _si7021;
-
-        /// <summary>
-        ///     Update interval in milliseconds
-        /// </summary>
-        private readonly ushort _updateInterval = 100;
 
         // internal thread lock
         private object _lock = new object();
@@ -76,16 +72,21 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Get / Set the resolution of the sensor.
         /// </summary>
-        public byte Resolution {
-            get {
+        public byte Resolution
+        {
+            get
+            {
                 var register = _si7021.ReadRegister(Registers.ReadUserRegister1);
                 var resolution = (byte)((register >> 7) | (register & 0x01));
                 return resolution;
             }
-            set {
-                if (value > 3) {
+            set
+            {
+                if (value > 3)
+                {
                     throw new ArgumentException("Resolution should be in the range 0-3");
                 }
+
                 var register = _si7021.ReadRegister(Registers.ReadUserRegister1);
                 register &= 0x7e;
                 var mask = (byte)(value & 0x01);
