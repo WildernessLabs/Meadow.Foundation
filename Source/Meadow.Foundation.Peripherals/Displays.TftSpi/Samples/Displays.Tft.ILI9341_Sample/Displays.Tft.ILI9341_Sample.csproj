@@ -5,8 +5,10 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.4" />
     <PackageReference Include="Meadow.Foundation" Version="0.11.0" />
-    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.6.5" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.7.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
   </ItemGroup>
 </Project>
