@@ -67,7 +67,6 @@ namespace Meadow.Foundation.Leds
         {
             _running = true;
 
-            IsOn = false;
             //TODO: Make this cancellable via Cancellation token
             _animationTask = new Task(async () => 
             {
