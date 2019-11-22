@@ -1,0 +1,11 @@
+<Project Sdk="Meadow.Sdk/1.1">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.11.0" />
+    <ProjectReference Include="..\Sensors.GPS.NMEA\Sensors.GPS.NMEA.csproj" />
+  </ItemGroup>
+</Project>
