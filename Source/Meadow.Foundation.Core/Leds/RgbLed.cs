@@ -19,11 +19,7 @@ namespace Meadow.Foundation.Leds
 
         public IDigitalOutputPort BluePort { get; set; }
 
-        //public bool IsCommonCathode { get; protected set; }
-
         public CommonType Common { get; protected set; }
-
-        //protected bool _onState;
 
         private RgbLed () { }
 
