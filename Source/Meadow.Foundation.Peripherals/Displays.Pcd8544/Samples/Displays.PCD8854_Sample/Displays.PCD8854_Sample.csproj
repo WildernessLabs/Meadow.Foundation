@@ -5,7 +5,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.4" />
-    <PackageReference Include="Meadow.Foundation.Displays.PCD8544" Version="0.5.3" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
+    <ProjectReference Include="..\..\Driver\Displays.PCD8544\Displays.PCD8544.csproj" />
   </ItemGroup>
 </Project>

@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Sensors.Motion.ParallaxPIR" Version="0.8.1" />
+    <ProjectReference Include="..\..\Driver\Sensors.Motion.ParallaxPIR\Sensors.Motion.ParallaxPir.csproj" />
   </ItemGroup>
 </Project>

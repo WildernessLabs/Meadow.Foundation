@@ -14,9 +14,9 @@
     <Description>Driver for the ThingSpeak data logging system</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.11.0" />
+    <ProjectReference Include="..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.DataLoggers" Version="0.5.1" />
+    <ProjectReference Include="..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>
