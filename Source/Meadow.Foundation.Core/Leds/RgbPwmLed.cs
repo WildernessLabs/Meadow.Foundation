@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Meadow.Hardware;
 using System.Threading.Tasks;
+using static Meadow.Peripherals.Leds.IRgbLed;
 
 namespace Meadow.Foundation.Leds
 {
@@ -49,7 +50,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Is the LED using a common cathode
         /// </summary>
-        public bool IsCommonCathode { get; protected set; }
+        //public bool IsCommonCathode { get; protected set; }
+        public CommonType Common { get; protected set; }
 
         /// <summary>
         /// Get the red LED port
@@ -102,12 +104,12 @@ namespace Meadow.Foundation.Leds
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float blueLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
-            bool isCommonCathode = true) :
+            CommonType commonType = CommonType.CommonCathode) :
             this(device.CreatePwmPort(redPwmPin),
                   device.CreatePwmPort(greenPwmPin),
                   device.CreatePwmPort(bluePwmPin),
                   redLedForwardVoltage, greenLedForwardVoltage, blueLedForwardVoltage,
-                  isCommonCathode)
+                  commonType)
         { }
 
         /// <summary>
@@ -125,7 +127,7 @@ namespace Meadow.Foundation.Leds
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float blueLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
-            bool isCommonCathode = true)
+            CommonType commonType = CommonType.CommonCathode)
         {
             // validate and persist forward voltages
             if (redLedForwardVoltage < 0 || redLedForwardVoltage > MAX_FORWARD_VOLTAGE)
@@ -146,12 +148,13 @@ namespace Meadow.Foundation.Leds
             }
             BlueForwardVoltage = blueLedForwardVoltage;
 
+            this.Common = commonType;
+
             // calculate and set maximum PWM duty cycles
+            // TODO: i believe these have to be inverted for CommonAnode
             maxRedDutyCycle = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
             maxGreenDutyCycle = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
-            maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);
-
-            IsCommonCathode = isCommonCathode;
+            maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);            
 
             cancellationTokenSource = new CancellationTokenSource();
 
@@ -171,7 +174,9 @@ namespace Meadow.Foundation.Leds
         {
             RedPwm.Frequency = GreenPwm.Frequency = BluePwm.Frequency = DEFAULT_FREQUENCY;
             RedPwm.DutyCycle = GreenPwm.DutyCycle = BluePwm.DutyCycle = DEFAULT_DUTY_CYCLE;
-            RedPwm.Inverted = GreenPwm.Inverted = BluePwm.Inverted = !IsCommonCathode;
+            // invertthe PWM signal if it common anode
+            RedPwm.Inverted = GreenPwm.Inverted = BluePwm.Inverted
+                = (this.Common == CommonType.CommonAnode);
         }
 
         /// <summary>
