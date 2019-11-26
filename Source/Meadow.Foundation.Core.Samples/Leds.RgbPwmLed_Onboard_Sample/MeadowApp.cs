@@ -32,18 +32,21 @@ namespace Leds.RgbPwmLed_Onboard_Sample
 
         public void RunColors()
         {
-            // loop through the entire hue spectrum (360 degrees)
-            for (int i = 0; i < 360; i++) {
-                var hue = ((double)i / 360F);
-                Console.WriteLine($"Hue: {hue}");
+            while (true) {
 
-                // set the color of the RGB
-                _onboard.SetColor(Color.FromHsba((hue), 1, 1));
+                // loop through the entire hue spectrum (360 degrees)
+                for (int i = 0; i < 360; i++) {
+                    var hue = ((double)i / 360F);
+                    Console.WriteLine($"Hue: {hue}");
 
-                // for a fun, fast rotation through the hue spectrum:
-                //Thread.Sleep (1);
-                // for a gentle walk through the forest of colors;
-                Thread.Sleep(18);
+                    // set the color of the RGB
+                    _onboard.SetColor(Color.FromHsba((hue), 1, 1));
+
+                    // for a fun, fast rotation through the hue spectrum:
+                    //Thread.Sleep (1);
+                    // for a gentle walk through the forest of colors;
+                    Thread.Sleep(40);
+                }
             }
         }
     }

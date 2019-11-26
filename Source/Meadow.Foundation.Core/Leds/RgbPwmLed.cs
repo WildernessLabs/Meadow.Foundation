@@ -24,7 +24,11 @@ namespace Meadow.Foundation.Leds
         protected double maxBlueDutyCycle = 1;
 
         /// <summary>
-        /// Enables / disables the LED but toggling the PWM 
+        /// Enables / disables the LED but toggling the PWM
+        ///
+        /// TODO: What's the use case for enabling? maybe this
+        /// should just be State, which would return whether or
+        /// not it's running.
         /// </summary>
         public bool IsEnabled
         {
@@ -33,9 +37,15 @@ namespace Meadow.Foundation.Leds
             {
                 if (value)
                 {
-                    BluePwm?.Start();
-                    GreenPwm?.Start();
-                    RedPwm?.Start();
+                    if (BluePwm != null) {
+                        if (!BluePwm.State) { BluePwm.Start(); }
+                    }
+                    if (GreenPwm != null) {
+                        if (!GreenPwm.State) { GreenPwm.Start(); }
+                    }
+                    if (RedPwm != null) {
+                        if (!RedPwm.State) { RedPwm.Start(); }
+                    }
                 }
                 else
                 {
@@ -43,9 +53,10 @@ namespace Meadow.Foundation.Leds
                     RedPwm?.Stop();
                     GreenPwm?.Stop();
                 }
+                isEnabled = value;
             }
         }
-        protected bool isEnabled = true;
+        protected bool isEnabled = false;
 
         /// <summary>
         /// Is the LED using a common cathode
@@ -152,6 +163,7 @@ namespace Meadow.Foundation.Leds
 
             // calculate and set maximum PWM duty cycles
             // TODO: i believe these have to be inverted for CommonAnode
+            // actually, that's handled by setting PWM to inversion
             maxRedDutyCycle = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
             maxGreenDutyCycle = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
             maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);            
@@ -187,7 +199,7 @@ namespace Meadow.Foundation.Leds
         {
             Color = ledColor;
 
-            IsEnabled = false;
+            //IsEnabled = false;
 
             // set the color based on the RGB values
             RedPwm.DutyCycle = (float)(Color.R * maxRedDutyCycle);

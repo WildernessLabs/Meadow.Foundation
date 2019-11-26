@@ -29,13 +29,13 @@ namespace Meadow.Foundation.Leds
             get => _isOn; 
             set
             {
-                Port.Stop();
+                //Port.Stop();
                 if (value)
                     Port.DutyCycle = _maximumPwmDuty; // turn on
                 else
                     Port.DutyCycle = 0; // turn off
                 _isOn = value;
-                Port.Start();
+                //Port.Start();
             }
         }
         protected bool _isOn;
