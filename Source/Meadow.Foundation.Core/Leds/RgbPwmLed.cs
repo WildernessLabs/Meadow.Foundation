@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Leds
     public class RgbPwmLed
     {
         readonly float MAX_FORWARD_VOLTAGE = 3.3f;
-        readonly int DEFAULT_FREQUENCY = 100; //hz
+        readonly int DEFAULT_FREQUENCY = 200; //hz
         readonly float DEFAULT_DUTY_CYCLE = 0f;
 
         protected double maxRedDutyCycle = 1;
