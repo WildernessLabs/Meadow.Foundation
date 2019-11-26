@@ -94,9 +94,11 @@ namespace Meadow.Foundation.Leds
 
             Brightness = brightness;
 
-            Port.Stop();
+            //Port.Stop();
             Port.DutyCycle = _maximumPwmDuty * Brightness;
-            Port.Start();
+            if (!Port.State) {
+                Port.Start();
+            }
         }
 
         /// <summary>
