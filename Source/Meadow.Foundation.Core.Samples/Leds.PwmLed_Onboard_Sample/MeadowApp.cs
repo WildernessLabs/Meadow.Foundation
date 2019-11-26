@@ -32,23 +32,19 @@ namespace Leds.PwmLed_Onboard_Sample
 
         public void PulseLeds()
         {
-            var state = false;
-
             while (true) {
-                state = !state;
-
                 //    Console.WriteLine($"State: {state}");
-                if (state) { this._redPwmLed.StartPulse(500, lowBrightness: 0.05f); }
-                else { this._redPwmLed.Stop(); }
+                this._redPwmLed.StartPulse(500, lowBrightness: 0.05f);
                 Thread.Sleep(500);
+                this._redPwmLed.Stop();
 
-                if (state) { this._bluePwmLed.StartPulse(500, lowBrightness: 0.05f); }
-                else { this._bluePwmLed.Stop(); }
+                this._bluePwmLed.StartPulse(500, lowBrightness: 0.05f);
                 Thread.Sleep(500);
+                this._bluePwmLed.Stop();
 
-                if (state) { this._greenPwmLed.StartPulse(500, lowBrightness: 0.05f); }
-                else { this._greenPwmLed.Stop(); }
+                this._greenPwmLed.StartPulse(500, lowBrightness: 0.05f);
                 Thread.Sleep(500);
+                this._greenPwmLed.Stop();
 
             }
         }
