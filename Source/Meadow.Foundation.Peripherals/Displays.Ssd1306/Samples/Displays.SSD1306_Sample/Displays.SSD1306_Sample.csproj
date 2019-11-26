@@ -5,7 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.4" />
-    <PackageReference Include="Meadow.Foundation.Displays.SSD1306" Version="0.10.3" />
+    <PackageReference Include="Meadow.Foundation.Displays.SSD1306" Version="0.11.0" />
   </ItemGroup>
 </Project>
