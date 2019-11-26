@@ -40,6 +40,8 @@ namespace Meadow.Foundation.Leds
         }
         protected bool _isOn;
 
+        protected bool _inverted;
+
         ///// <summary>
         ///// Gets the PwmPort
         ///// </summary>
@@ -56,8 +58,9 @@ namespace Meadow.Foundation.Leds
         /// <param name="device">IO Device</param>
         /// <param name="pin">Pin</param>
         /// <param name="forwardVoltage">Forward voltage</param>
-        public PwmLed(IIODevice device, IPin pin, float forwardVoltage) : 
-            this (device.CreatePwmPort(pin), forwardVoltage) { }
+        public PwmLed(IIODevice device, IPin pin,
+            float forwardVoltage, bool inverted = false) : 
+            this (device.CreatePwmPort(pin), forwardVoltage, inverted) { }
 
         /// <summary>
         /// Creates a new PwmLed on the specified PWM pin and limited to the appropriate 
@@ -66,13 +69,16 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="pwmPort"></param>
         /// <param name="forwardVoltage"></param>
-        public PwmLed(IPwmPort pwmPort, float forwardVoltage)
+        public PwmLed(IPwmPort pwmPort, float forwardVoltage,
+            bool inverted = false)
         {
             // validate and persist forward voltage
             if (forwardVoltage < 0 || forwardVoltage > 3.3F) 
                 throw new ArgumentOutOfRangeException(nameof(forwardVoltage), "error, forward voltage must be between 0, and 3.3");
             
             ForwardVoltage = forwardVoltage;
+
+            this._inverted = inverted;
 
             _maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
 
@@ -96,6 +102,7 @@ namespace Meadow.Foundation.Leds
 
             //Port.Stop();
             Port.DutyCycle = _maximumPwmDuty * Brightness;
+            Port.Inverted = this._inverted;
             if (!Port.State) {
                 Port.Start();
             }
