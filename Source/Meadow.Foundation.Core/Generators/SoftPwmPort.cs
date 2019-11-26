@@ -48,6 +48,8 @@ namespace Meadow.Foundation.Generators
 
         public IPwmChannelInfo Channel {get; protected set;}
 
+        public bool State => this._running;
+
         public IPin Pin => Port.Pin;
 
         IDigitalChannelInfo IPort<IDigitalChannelInfo>.Channel => throw new NotImplementedException();
