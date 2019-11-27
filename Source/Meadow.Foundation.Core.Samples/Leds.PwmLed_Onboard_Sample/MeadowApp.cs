@@ -3,6 +3,7 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 
 namespace Leds.PwmLed_Onboard_Sample
@@ -16,7 +17,7 @@ namespace Leds.PwmLed_Onboard_Sample
         public MeadowApp()
         {
             ConfigurePeripherals();
-            BrightnessTest(10);
+            BrightnessTest(5);
             PulseLeds();
         }
 
@@ -24,11 +25,11 @@ namespace Leds.PwmLed_Onboard_Sample
         {
             Console.WriteLine("Creating peripherals...");
             this._redPwmLed = new PwmLed(Device,
-                Device.Pins.OnboardLedRed, TypicalForwardVoltage.ResistorLimited, inverted:true);
+                Device.Pins.OnboardLedRed, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
             this._greenPwmLed = new PwmLed(Device,
-                Device.Pins.OnboardLedGreen, TypicalForwardVoltage.ResistorLimited, inverted: true);
+                Device.Pins.OnboardLedGreen, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
             this._bluePwmLed = new PwmLed(Device,
-                Device.Pins.OnboardLedBlue, TypicalForwardVoltage.ResistorLimited, inverted: true);
+                Device.Pins.OnboardLedBlue, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
         }
 
         public void BrightnessTest(int loopCount)

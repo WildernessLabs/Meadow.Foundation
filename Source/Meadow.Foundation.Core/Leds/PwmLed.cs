@@ -58,9 +58,13 @@ namespace Meadow.Foundation.Leds
         /// <param name="device">IO Device</param>
         /// <param name="pin">Pin</param>
         /// <param name="forwardVoltage">Forward voltage</param>
+        /// <param name="terminationType">Whether the other end of the LED is
+        /// hooked to ground or High. Typically used for RGB Leds which can have
+        /// either a common cathode, or common anode. But can also enable an LED
+        /// to be reversed by inverting the PWM signal.</param>
         public PwmLed(IIODevice device, IPin pin,
-            float forwardVoltage, bool inverted = false) : 
-            this (device.CreatePwmPort(pin), forwardVoltage, inverted) { }
+            float forwardVoltage, CircuitTerminationType terminationType = CircuitTerminationType.CommonGround) : 
+            this (device.CreatePwmPort(pin), forwardVoltage, terminationType) { }
 
         /// <summary>
         /// Creates a new PwmLed on the specified PWM pin and limited to the appropriate 
@@ -70,7 +74,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="pwmPort"></param>
         /// <param name="forwardVoltage"></param>
         public PwmLed(IPwmPort pwmPort, float forwardVoltage,
-            bool inverted = false)
+            CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
             // validate and persist forward voltage
             if (forwardVoltage < 0 || forwardVoltage > 3.3F) 
@@ -78,7 +82,7 @@ namespace Meadow.Foundation.Leds
             
             ForwardVoltage = forwardVoltage;
 
-            this._inverted = inverted;
+            this._inverted = (terminationType == CircuitTerminationType.High);
 
             _maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
 
