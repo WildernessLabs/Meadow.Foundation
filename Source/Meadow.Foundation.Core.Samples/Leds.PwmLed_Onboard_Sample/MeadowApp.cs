@@ -16,7 +16,7 @@ namespace Leds.PwmLed_Onboard_Sample
         public MeadowApp()
         {
             ConfigurePeripherals();
-            //BrightnessTest(10);
+            BrightnessTest(10);
             PulseLeds();
         }
 
