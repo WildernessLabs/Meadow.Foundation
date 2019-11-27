@@ -87,13 +87,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B80C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.MAG3110", "Meadow.Foundation.Peripherals\Sensors.Motion.Mag3110\Driver\Sensors.Motion.MAG3110\Sensors.Motion.MAG3110.csproj", "{02E56C68-5B09-4331-9E5D-7FD9217594F0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.GY521", "Sensors.Motion.GY521", "{A4089518-DBDB-4E12-8A31-D916859259F0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Mpu6050", "Sensors.Motion.Mpu6050", "{A4089518-DBDB-4E12-8A31-D916859259F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.GY521", "Meadow.Foundation.Peripherals\Sensors.Motion.GY521\Driver\Sensors.Motion.GY521\Sensors.Motion.GY521.csproj", "{8E502C49-9E7E-4EE7-B1F2-9E005FCB1961}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Mpu6050", "Meadow.Foundation.Peripherals\Sensors.Motion.Mpu6050\Driver\Sensors.Motion.Mpu6050\Sensors.Motion.Mpu6050.csproj", "{8E502C49-9E7E-4EE7-B1F2-9E005FCB1961}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{35BE1129-CB5E-4003-987A-5EE41423EA72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.GY521_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.GY521\Samples\Sensors.Motion.GY521_Sample\Sensors.Motion.GY521_Sample.csproj", "{7387C800-5C6C-4AA8-87E8-7FF04DF189F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Mpu6050_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Mpu6050\Samples\Sensors.Motion.Mpu6050_Sample\Sensors.Motion.Mpu6050_Sample.csproj", "{7387C800-5C6C-4AA8-87E8-7FF04DF189F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Fxas21002", "Sensors.Motion.Fxas21002", "{0D9F0275-3A9D-4502-9DCC-CD9FC6915827}"
 EndProject
