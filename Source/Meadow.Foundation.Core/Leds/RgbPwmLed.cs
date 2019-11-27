@@ -200,12 +200,17 @@ namespace Meadow.Foundation.Leds
             Color = ledColor;
 
             //IsEnabled = false;
+            var red   = (float)(Color.R * maxRedDutyCycle);
+            var green = (float)(Color.G * maxGreenDutyCycle);
+            var blue  = (float)(Color.B * maxBlueDutyCycle);
+            Console.WriteLine($"Red duty: {red}, green: {green}, blue: {blue}");
 
             // set the color based on the RGB values
             RedPwm.DutyCycle = (float)(Color.R * maxRedDutyCycle);
             GreenPwm.DutyCycle = (float)(Color.G * maxGreenDutyCycle);
             BluePwm.DutyCycle = (float)(Color.B * maxBlueDutyCycle);
 
+            
             IsEnabled = true;
         }
 
@@ -323,12 +328,14 @@ namespace Meadow.Foundation.Leds
 
                 SetColor(color, brightness);
 
-                await Task.Delay(80);
+                // TODO: what is this 80 ms delay? shouldn't it be intervalTime?
+                //await Task.Delay(80);
+                await Task.Delay(intervalTime);
             }
         }
         protected void SetColor(Color color, float brightness)
         {
-            IsEnabled = false;
+            //IsEnabled = false;
 
             RedPwm.DutyCycle = (float)(color.R * brightness);
             GreenPwm.DutyCycle = (float)(color.G * brightness);
