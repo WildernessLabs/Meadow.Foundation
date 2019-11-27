@@ -9,7 +9,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Motion, Mpu6050</PackageTags>    
-    <Version>0.5.2</Version>
+    <Version>0.5.3</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for Mpu6050 motion sensor</Description>
   </PropertyGroup>
