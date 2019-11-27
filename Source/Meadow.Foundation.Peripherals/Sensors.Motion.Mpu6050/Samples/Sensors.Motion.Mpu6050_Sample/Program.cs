@@ -1,6 +1,6 @@
 ﻿using Meadow;
 
-namespace Sensors.Motion.GY521_Sample
+namespace Sensors.Motion.mpu5060_Sample
 {
     class Program
     {

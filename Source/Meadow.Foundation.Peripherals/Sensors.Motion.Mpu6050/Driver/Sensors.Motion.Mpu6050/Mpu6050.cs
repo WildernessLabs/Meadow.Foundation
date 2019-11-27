@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class GY521
+    public class Mpu6050
     {
         private enum Registers : byte
         {
@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         public byte Address { get; }
 
-        public GY521(II2cBus bus, byte address = 0x68)
+        public Mpu6050(II2cBus bus, byte address = 0x68)
         {
             Address = address;
             _bus = bus;
