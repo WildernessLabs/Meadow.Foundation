@@ -39,6 +39,16 @@ namespace Meadow.Foundation.Graphics
             _270Degrees
         }
 
+        /// <summary>
+        /// Return the height of the display after accounting for the rotation.
+        /// </summary>
+        public uint Height =>  Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? _display.Height : _display.Width;
+
+        /// <summary>
+        /// Return the width of the display after accounting for the rotation.
+        /// </summary>
+        public uint Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? _display.Width : _display.Height;
+
         #region Constructors
 
         /// <summary>
