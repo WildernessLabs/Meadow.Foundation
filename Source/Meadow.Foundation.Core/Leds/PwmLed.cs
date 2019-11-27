@@ -103,6 +103,10 @@ namespace Meadow.Foundation.Leds
             Console.WriteLine($"DutyCycle: {_maximumPwmDuty * Brightness}");
             Console.WriteLine($"PortState: {Port.State}");
 
+            //if (_inverted) {
+            //    var duty = 1 / _maximumPwmDuty * Brightness;
+            //}
+
             //Port.Stop();
             Port.DutyCycle = _maximumPwmDuty * Brightness;
             if (!Port.State) {
@@ -185,8 +189,15 @@ namespace Meadow.Foundation.Leds
                 Console.WriteLine($"Interval Time * Steps: {intervalTime * steps}");
 
                 // TODO: Consider pre calculating these and making a RunBrightnessAnimation like with RgbPwmLed
+                System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+                stopwatch.Start();
+                int count = 0;
                 while (_running)
                 {
+                    stopwatch.Reset();
+
+                    Console.WriteLine($"Count: {count}");
+
                     // are we brightening or dimming?
                     if (brightness <= lowBrightness) {
                         ascending = true;
@@ -206,8 +217,13 @@ namespace Meadow.Foundation.Leds
                     // set our actual brightness
                     this.SetBrightness(brightness);
 
+                    Console.WriteLine($"Elapsed time: {stopwatch.ElapsedMilliseconds}");
+                    //stopwatch.Reset();
+
                     // go to sleep, my friend.
                     Thread.Sleep(intervalTime);
+
+                    count++;
                 }
             });
             _animationThread.Start();
