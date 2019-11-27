@@ -2,9 +2,9 @@
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Motion;
+//using Meadow.Foundation.Sensors.Motion;
 
-namespace Sensors.Motion.GY521_Sample
+namespace Sensors.Motion.mpu5060_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
