@@ -99,6 +99,7 @@ namespace Meadow.Foundation.Leds
             }
 
             Brightness = brightness;
+            Console.WriteLine($"Brightness: {brightness}");
 
             //Port.Stop();
             Port.DutyCycle = _maximumPwmDuty * Brightness;
@@ -174,7 +175,7 @@ namespace Meadow.Foundation.Leds
                 float brightness = lowBrightness;
                 bool ascending = true;
                 int intervalTime = 60; // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
-                float steps = pulseDuration / intervalTime;
+                float steps = (pulseDuration / 2f) / intervalTime; // divide in half because each way is half the duration
                 float changeAmount = (highBrightness - lowBrightness) / steps;
                 float changeUp = changeAmount;
                 float changeDown = -1 * changeAmount;
@@ -183,10 +184,11 @@ namespace Meadow.Foundation.Leds
                 while (_running)
                 {
                     // are we brightening or dimming?
-                    if (brightness <= lowBrightness)
-                        ascending = true; 
-                    else if (Math.Abs(brightness - highBrightness) < 0.001)
+                    if (brightness <= lowBrightness) {
+                        ascending = true;
+                    } else if (Math.Abs(brightness - highBrightness) < 0.001) {
                         ascending = false;
+                    }
 
                     brightness += (ascending) ? changeUp : changeDown;
 
