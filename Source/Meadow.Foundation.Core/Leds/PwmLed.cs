@@ -29,16 +29,18 @@ namespace Meadow.Foundation.Leds
             get => _isOn; 
             set
             {
-                Port.Stop();
+                //Port.Stop();
                 if (value)
                     Port.DutyCycle = _maximumPwmDuty; // turn on
                 else
                     Port.DutyCycle = 0; // turn off
                 _isOn = value;
-                Port.Start();
+                //Port.Start();
             }
         }
         protected bool _isOn;
+
+        protected bool _inverted;
 
         ///// <summary>
         ///// Gets the PwmPort
@@ -56,8 +58,13 @@ namespace Meadow.Foundation.Leds
         /// <param name="device">IO Device</param>
         /// <param name="pin">Pin</param>
         /// <param name="forwardVoltage">Forward voltage</param>
-        public PwmLed(IIODevice device, IPin pin, float forwardVoltage) : 
-            this (device.CreatePwmPort(pin), forwardVoltage) { }
+        /// <param name="terminationType">Whether the other end of the LED is
+        /// hooked to ground or High. Typically used for RGB Leds which can have
+        /// either a common cathode, or common anode. But can also enable an LED
+        /// to be reversed by inverting the PWM signal.</param>
+        public PwmLed(IIODevice device, IPin pin,
+            float forwardVoltage, CircuitTerminationType terminationType = CircuitTerminationType.CommonGround) : 
+            this (device.CreatePwmPort(pin), forwardVoltage, terminationType) { }
 
         /// <summary>
         /// Creates a new PwmLed on the specified PWM pin and limited to the appropriate 
@@ -66,7 +73,8 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="pwmPort"></param>
         /// <param name="forwardVoltage"></param>
-        public PwmLed(IPwmPort pwmPort, float forwardVoltage)
+        public PwmLed(IPwmPort pwmPort, float forwardVoltage,
+            CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
             // validate and persist forward voltage
             if (forwardVoltage < 0 || forwardVoltage > 3.3F) 
@@ -74,29 +82,40 @@ namespace Meadow.Foundation.Leds
             
             ForwardVoltage = forwardVoltage;
 
+            this._inverted = (terminationType == CircuitTerminationType.High);
+
             _maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
 
             Port = pwmPort;
-			Port.Frequency = 100;
+            Port.Inverted = this._inverted;
+            Port.Frequency = 100;
 			Port.DutyCycle = _maximumPwmDuty;
         }
 
         /// <summary>
-        /// Sets the LED to a especific brightness.
+        /// Sets the LED to a specific brightness.
         /// </summary>
         /// <param name="brightness">Valid values are from 0 to 1, inclusive</param>
         public void SetBrightness(float brightness)
         {
-            if (brightness < 0 || brightness > 1)
-            {
+            if (brightness < 0 || brightness > 1) {
                 throw new ArgumentOutOfRangeException(nameof(brightness), "err: brightness must be between 0 and 1, inclusive.");
             }
 
             Brightness = brightness;
+            Console.WriteLine($"Brightness: {brightness}");
+            Console.WriteLine($"DutyCycle: {_maximumPwmDuty * Brightness}");
+            Console.WriteLine($"PortState: {Port.State}");
 
-            Port.Stop();
+            //if (_inverted) {
+            //    var duty = 1 / _maximumPwmDuty * Brightness;
+            //}
+
+            //Port.Stop();
             Port.DutyCycle = _maximumPwmDuty * Brightness;
-            Port.Start();
+            if (!Port.State) {
+                Port.Start();
+            }
         }
 
         /// <summary>
@@ -165,19 +184,30 @@ namespace Meadow.Foundation.Leds
                 float brightness = lowBrightness;
                 bool ascending = true;
                 int intervalTime = 60; // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
-                float steps = pulseDuration / intervalTime;
+                float steps = (pulseDuration / 2f) / intervalTime; // divide in half because each way is half the duration
                 float changeAmount = (highBrightness - lowBrightness) / steps;
                 float changeUp = changeAmount;
                 float changeDown = -1 * changeAmount;
 
+                Console.WriteLine($"Pulse Duration: {pulseDuration}, steps: {steps}, intervalTime: {intervalTime}");
+                Console.WriteLine($"Interval Time * Steps: {intervalTime * steps}");
+
                 // TODO: Consider pre calculating these and making a RunBrightnessAnimation like with RgbPwmLed
+                System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+                stopwatch.Start();
+                int count = 0;
                 while (_running)
                 {
+                    stopwatch.Reset();
+
+                    Console.WriteLine($"Count: {count}");
+
                     // are we brightening or dimming?
-                    if (brightness <= lowBrightness)
-                        ascending = true; 
-                    else if (Math.Abs(brightness - highBrightness) < 0.001)
+                    if (brightness <= lowBrightness) {
+                        ascending = true;
+                    } else if (Math.Abs(brightness - highBrightness) < 0.001) {
                         ascending = false;
+                    }
 
                     brightness += (ascending) ? changeUp : changeDown;
 
@@ -191,8 +221,13 @@ namespace Meadow.Foundation.Leds
                     // set our actual brightness
                     this.SetBrightness(brightness);
 
+                    Console.WriteLine($"Elapsed time: {stopwatch.ElapsedMilliseconds}");
+                    //stopwatch.Reset();
+
                     // go to sleep, my friend.
                     Thread.Sleep(intervalTime);
+
+                    count++;
                 }
             });
             _animationThread.Start();
