@@ -336,6 +336,10 @@ namespace Meadow.Foundation.Leds
         protected void SetColor(Color color, float brightness)
         {
             //IsEnabled = false;
+            var red   = (float)(Color.R * maxRedDutyCycle);
+            var green = (float)(Color.G * maxGreenDutyCycle);
+            var blue  = (float)(Color.B * maxBlueDutyCycle);
+            Console.WriteLine($"Red duty: {red}, green: {green}, blue: {blue}");
 
             RedPwm.DutyCycle = (float)(color.R * brightness);
             GreenPwm.DutyCycle = (float)(color.G * brightness);

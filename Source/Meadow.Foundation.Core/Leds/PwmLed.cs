@@ -83,27 +83,28 @@ namespace Meadow.Foundation.Leds
             _maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
 
             Port = pwmPort;
-			Port.Frequency = 100;
+            Port.Inverted = this._inverted;
+            Port.Frequency = 100;
 			Port.DutyCycle = _maximumPwmDuty;
         }
 
         /// <summary>
-        /// Sets the LED to a especific brightness.
+        /// Sets the LED to a specific brightness.
         /// </summary>
         /// <param name="brightness">Valid values are from 0 to 1, inclusive</param>
         public void SetBrightness(float brightness)
         {
-            if (brightness < 0 || brightness > 1)
-            {
+            if (brightness < 0 || brightness > 1) {
                 throw new ArgumentOutOfRangeException(nameof(brightness), "err: brightness must be between 0 and 1, inclusive.");
             }
 
             Brightness = brightness;
             Console.WriteLine($"Brightness: {brightness}");
+            Console.WriteLine($"DutyCycle: {_maximumPwmDuty * Brightness}");
+            Console.WriteLine($"PortState: {Port.State}");
 
             //Port.Stop();
             Port.DutyCycle = _maximumPwmDuty * Brightness;
-            Port.Inverted = this._inverted;
             if (!Port.State) {
                 Port.Start();
             }
@@ -179,6 +180,9 @@ namespace Meadow.Foundation.Leds
                 float changeAmount = (highBrightness - lowBrightness) / steps;
                 float changeUp = changeAmount;
                 float changeDown = -1 * changeAmount;
+
+                Console.WriteLine($"Pulse Duration: {pulseDuration}, steps: {steps}, intervalTime: {intervalTime}");
+                Console.WriteLine($"Interval Time * Steps: {intervalTime * steps}");
 
                 // TODO: Consider pre calculating these and making a RunBrightnessAnimation like with RgbPwmLed
                 while (_running)

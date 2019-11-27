@@ -16,6 +16,7 @@ namespace Leds.PwmLed_Onboard_Sample
         public MeadowApp()
         {
             ConfigurePeripherals();
+            BrightnessTest(10);
             PulseLeds();
         }
 
@@ -30,20 +31,38 @@ namespace Leds.PwmLed_Onboard_Sample
                 Device.Pins.OnboardLedBlue, TypicalForwardVoltage.ResistorLimited, inverted: true);
         }
 
+        public void BrightnessTest(int loopCount)
+        {
+            for (int i = 0; i < loopCount; i++) {
+                Console.WriteLine("Blue On");
+                _bluePwmLed.SetBrightness(1);
+                Thread.Sleep(2000);
+                _bluePwmLed.SetBrightness(0);
+                Console.WriteLine("Blue Off");
+                Thread.Sleep(2000);
+            }
+        }
+
         public void PulseLeds()
         {
             while (true) {
                 //    Console.WriteLine($"State: {state}");
-                this._redPwmLed.StartPulse(10000, lowBrightness: 0.05f);
-                Thread.Sleep(10000);
+                Console.WriteLine("Pulse Red.");
+                this._redPwmLed.StartPulse(5000, lowBrightness: 0.05f);
+                Thread.Sleep(5000);
+                Console.WriteLine("Stop Red.");
                 this._redPwmLed.Stop();
 
+                Console.WriteLine("Pulse Blue.");
                 this._bluePwmLed.StartPulse(500, lowBrightness: 0.05f);
                 Thread.Sleep(2000);
+                Console.WriteLine("Stop Blue.");
                 this._bluePwmLed.Stop();
 
+                Console.WriteLine("Pulse Green.");
                 this._greenPwmLed.StartPulse(300, lowBrightness: 0.0f);
                 Thread.Sleep(2000);
+                Console.WriteLine("Stop Green.");
                 this._greenPwmLed.Stop();
 
             }
