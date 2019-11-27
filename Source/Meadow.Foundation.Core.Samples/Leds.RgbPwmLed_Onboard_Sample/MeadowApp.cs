@@ -16,7 +16,8 @@ namespace Leds.RgbPwmLed_Onboard_Sample
         public MeadowApp()
         {
             ConfigurePeripherals();
-            RunColors();
+            TestSomeColors();
+            //RunColors();
         }
 
         public void ConfigurePeripherals()
@@ -28,6 +29,15 @@ namespace Leds.RgbPwmLed_Onboard_Sample
                 Device.Pins.OnboardLedGreen,
                 Device.Pins.OnboardLedBlue,
                 commonType: CommonType.CommonAnode);            
+        }
+
+        public void TestSomeColors()
+        {
+            _onboard.SetColor(Color.Crimson);
+            Thread.Sleep(3000);
+            _onboard.SetColor(Color.MediumPurple);
+            Thread.Sleep(3000);
+            _onboard.SetColor(Color.FromHex("#23abe3"));
         }
 
         public void RunColors()

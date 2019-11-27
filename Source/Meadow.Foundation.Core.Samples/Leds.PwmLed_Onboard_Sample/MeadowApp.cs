@@ -23,19 +23,19 @@ namespace Leds.PwmLed_Onboard_Sample
         {
             Console.WriteLine("Creating peripherals...");
             this._redPwmLed = new PwmLed(Device,
-                Device.Pins.OnboardLedRed, TypicalForwardVoltage.Red, inverted:true);
+                Device.Pins.OnboardLedRed, TypicalForwardVoltage.ResistorLimited, inverted:true);
             this._greenPwmLed = new PwmLed(Device,
-                Device.Pins.OnboardLedGreen, TypicalForwardVoltage.Green, inverted: true);
+                Device.Pins.OnboardLedGreen, TypicalForwardVoltage.ResistorLimited, inverted: true);
             this._bluePwmLed = new PwmLed(Device,
-                Device.Pins.OnboardLedBlue, TypicalForwardVoltage.Blue, inverted: true);
+                Device.Pins.OnboardLedBlue, TypicalForwardVoltage.ResistorLimited, inverted: true);
         }
 
         public void PulseLeds()
         {
             while (true) {
                 //    Console.WriteLine($"State: {state}");
-                this._redPwmLed.StartPulse(400, lowBrightness: 0.05f);
-                Thread.Sleep(2000);
+                this._redPwmLed.StartPulse(10000, lowBrightness: 0.05f);
+                Thread.Sleep(10000);
                 this._redPwmLed.Stop();
 
                 this._bluePwmLed.StartPulse(500, lowBrightness: 0.05f);
