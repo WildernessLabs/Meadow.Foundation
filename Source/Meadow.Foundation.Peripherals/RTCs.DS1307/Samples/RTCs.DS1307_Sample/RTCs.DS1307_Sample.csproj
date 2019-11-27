@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.RTCs.DS1307" Version="0.7.1" />
+    <ProjectReference Include="..\..\Driver\RTCs.DS1307\RTCs.DS1307.csproj" />
   </ItemGroup>
 </Project>

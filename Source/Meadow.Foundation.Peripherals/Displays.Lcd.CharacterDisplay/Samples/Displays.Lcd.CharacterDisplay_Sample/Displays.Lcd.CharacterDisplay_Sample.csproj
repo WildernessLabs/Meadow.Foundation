@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.LCD.CharacterDisplay" Version="0.7.2" />
+    <ProjectReference Include="..\..\Driver\Displays.LCD.CharacterDisplay\Displays.LCD.CharacterDisplay.csproj" />
   </ItemGroup>
 </Project>
