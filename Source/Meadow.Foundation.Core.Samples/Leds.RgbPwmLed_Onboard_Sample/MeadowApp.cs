@@ -55,7 +55,7 @@ namespace Leds.RgbPwmLed_Onboard_Sample
                     // for a fun, fast rotation through the hue spectrum:
                     //Thread.Sleep (1);
                     // for a gentle walk through the forest of colors;
-                    Thread.Sleep(40);
+                    Thread.Sleep(18);
                 }
             }
         }

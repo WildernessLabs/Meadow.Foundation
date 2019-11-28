@@ -183,25 +183,23 @@ namespace Meadow.Foundation.Leds
                 // pulse the LED by taking the brightness from low to high and back again.
                 float brightness = lowBrightness;
                 bool ascending = true;
-                int intervalTime = 60; // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
+                // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default.
+                // TODO: when AOT is enabled, we should be able to lower this to like 40 for smoother
+                int intervalTime = 60;
                 float steps = (pulseDuration / 2f) / intervalTime; // divide in half because each way is half the duration
                 float changeAmount = (highBrightness - lowBrightness) / steps;
                 float changeUp = changeAmount;
                 float changeDown = -1 * changeAmount;
 
-                Console.WriteLine($"Pulse Duration: {pulseDuration}, steps: {steps}, intervalTime: {intervalTime}");
-                Console.WriteLine($"Interval Time * Steps: {intervalTime * steps}");
+                //Console.WriteLine($"Pulse Duration: {pulseDuration}, steps: {steps}, intervalTime: {intervalTime}");
+                //Console.WriteLine($"Interval Time * Steps: {intervalTime * steps}");
 
                 // TODO: Consider pre calculating these and making a RunBrightnessAnimation like with RgbPwmLed
-                System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-                stopwatch.Start();
-                int count = 0;
+
+                // TODO BUGBUG: we lose ~40-60ms to the processing in each loop, so the timing actually drifts.
+                // pulse takes longer than it should.
                 while (_running)
                 {
-                    stopwatch.Reset();
-
-                    Console.WriteLine($"Count: {count}");
-
                     // are we brightening or dimming?
                     if (brightness <= lowBrightness) {
                         ascending = true;
@@ -212,22 +210,16 @@ namespace Meadow.Foundation.Leds
                     brightness += (ascending) ? changeUp : changeDown;
 
                     // float math error clamps
-                    if (brightness < 0)
-                        brightness = 0;
-                    else 
-                    if (brightness > 1)
-                        brightness = 1;
+                    if (brightness < 0) { brightness = 0; }
+                    else if (brightness > 1) { brightness = 1; }
 
                     // set our actual brightness
                     this.SetBrightness(brightness);
 
-                    Console.WriteLine($"Elapsed time: {stopwatch.ElapsedMilliseconds}");
-                    //stopwatch.Reset();
-
                     // go to sleep, my friend.
-                    Thread.Sleep(intervalTime);
-
-                    count++;
+                    // HACK: we're sleeping for less time because of the tieme lost to
+                    // processing, so we're speeding up the interval time.
+                    Thread.Sleep(intervalTime / 2);
                 }
             });
             _animationThread.Start();

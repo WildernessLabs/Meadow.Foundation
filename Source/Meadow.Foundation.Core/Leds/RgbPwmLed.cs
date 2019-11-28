@@ -162,8 +162,6 @@ namespace Meadow.Foundation.Leds
             this.Common = commonType;
 
             // calculate and set maximum PWM duty cycles
-            // TODO: i believe these have to be inverted for CommonAnode
-            // actually, that's handled by setting PWM to inversion
             maxRedDutyCycle = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
             maxGreenDutyCycle = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
             maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);            
