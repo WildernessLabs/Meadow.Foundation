@@ -17,7 +17,7 @@ namespace Leds.RgbPwmLed_Onboard_Sample
         {
             ConfigurePeripherals();
             TestSomeColors();
-            //RunColors();
+            RunColors();
         }
 
         public void ConfigurePeripherals()
