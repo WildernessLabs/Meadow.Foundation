@@ -385,7 +385,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.RgbPwmLed_Onboard_Samp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.ePaper.IL0373_Sample", "Meadow.Foundation.Peripherals\Displays.ePaper\Samples\Displays.ePaper.IL0373_Sample\Displays.ePaper.IL0373_Sample.csproj", "{88EAF52E-CE8F-4E99-A565-D9843B6AE2E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi.ILI9163_JpgSample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.ILI9163_JpgSample\Displays.TftSpi.ILI9163_JpgSample.csproj", "{96C759A6-B673-4A27-B98C-BE3B027E8A47}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi.ILI9341_JpgSample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.ILI9163_JpgSample\Displays.TftSpi.ILI9341_JpgSample.csproj", "{96C759A6-B673-4A27-B98C-BE3B027E8A47}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi.ILI9163_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.ILI9163_Sample\Displays.TftSpi.ILI9163_Sample.csproj", "{067DFAE9-4CB8-4E0E-AE50-E67BB680A1AB}"
 EndProject

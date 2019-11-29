@@ -42,7 +42,7 @@
 using System;
 
 #pragma warning disable 1591
-namespace KeyJ
+namespace NanoJpeg
 {
     // nj_result_t: Result codes for njDecode().
     public enum nj_result_t
@@ -108,15 +108,17 @@ namespace KeyJ
         public int rstinterval;
         public byte[] rgb;
     }
+
     public class nj_exception : Exception { }
+
     public class NanoJPEG
     {
         public nj_context_t nj = new nj_context_t();
-        public static readonly byte[] njZZ = new byte[] { 0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18,
+        public static readonly byte[] njZZ = { 0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18,
             11, 4, 5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13, 6, 7, 14, 21, 28, 35,
             42, 49, 56, 57, 50, 43, 36, 29, 22, 15, 23, 30, 37, 44, 51, 58, 59, 52, 45,
             38, 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63 };
-        public static byte njClip(int x)
+        public static byte Clip(int x)
         {
             return (byte)((x < 0) ? 0 : ((x > 0xFF) ? 0xFF : (byte)x));
         }
@@ -126,6 +128,7 @@ namespace KeyJ
         public static readonly int W5 = 1609;
         public static readonly int W6 = 1108;
         public static readonly int W7 = 565;
+
         public void njRowIDCT(int[] blk, int coef)
         {
             int x0, x1, x2, x3, x4, x5, x6, x7, x8;
@@ -182,7 +185,7 @@ namespace KeyJ
                 | (x6 = blk[coef + 8 * 5])
                 | (x7 = blk[coef + 8 * 3])) == 0)
             {
-                x1 = njClip(((blk[coef] + 32) >> 6) + 128);
+                x1 = Clip(((blk[coef] + 32) >> 6) + 128);
                 for (x0 = 8; x0 != 0; --x0)
                 {
                     pixels[outv] = (byte)x1;
@@ -212,14 +215,14 @@ namespace KeyJ
             x0 -= x2;
             x2 = (181 * (x4 + x5) + 128) >> 8;
             x4 = (181 * (x4 - x5) + 128) >> 8;
-            pixels[outv] = njClip(((x7 + x1) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x3 + x2) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x0 + x4) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x8 + x6) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x8 - x6) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x0 - x4) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x3 - x2) >> 14) + 128); outv += stride;
-            pixels[outv] = njClip(((x7 - x1) >> 14) + 128);
+            pixels[outv] = Clip(((x7 + x1) >> 14) + 128); outv += stride;
+            pixels[outv] = Clip(((x3 + x2) >> 14) + 128); outv += stride;
+            pixels[outv] = Clip(((x0 + x4) >> 14) + 128); outv += stride;
+            pixels[outv] = Clip(((x8 + x6) >> 14) + 128); outv += stride;
+            pixels[outv] = Clip(((x8 - x6) >> 14) + 128); outv += stride;
+            pixels[outv] = Clip(((x0 - x4) >> 14) + 128); outv += stride;
+            pixels[outv] = Clip(((x3 - x2) >> 14) + 128); outv += stride;
+            pixels[outv] = Clip(((x7 - x1) >> 14) + 128);
         }
         public void njThrow(nj_result_t e)
         {
@@ -305,16 +308,19 @@ namespace KeyJ
             if (nj.length > nj.size) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
             njSkip(2);
         }
-        public void njSkipMarker()
+
+        public void SkipMarker()
         {
             njDecodeLength();
             njSkip(nj.length);
         }
-        public void njDecodeSOF()
+
+        public void DecodeSOF()
         {
             int i, ssxmax = 0, ssymax = 0;
             nj_component_t c;
             njDecodeLength();
+
             if (nj.length < 9) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
             if (nj.posb[nj.pos] != 8) njThrow(nj_result_t.NJ_UNSUPPORTED);
             nj.height = njDecode16(nj.pos + 1);
@@ -371,7 +377,8 @@ namespace KeyJ
             }
             njSkip(nj.length);
         }
-        public void njDecodeDHT()
+
+        public void DecodeDHT()
         {
             int codelen, currcnt, remain, spread, i, j;
             nj_vlc_code_t[] vlc;
@@ -424,7 +431,8 @@ namespace KeyJ
             }
             if (nj.length != 0) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
         }
-        public void njDecodeDQT()
+
+        public void DecodeDQT()
         {
             int i;
             byte[] t;
@@ -441,14 +449,16 @@ namespace KeyJ
             }
             if (nj.length != 0) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
         }
-        public void njDecodeDRI()
+
+        public void DecodeDRI()
         {
             njDecodeLength();
             if (nj.length < 2) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
             nj.rstinterval = njDecode16(nj.pos);
             njSkip(nj.length);
         }
-        public int njGetVLC(nj_vlc_code_t[] vlc, ref byte code)
+
+        public int GetVLC(nj_vlc_code_t[] vlc, ref byte code)
         {
             int value = njShowBits(16);
             int bits = vlc[value].bits;
@@ -463,17 +473,18 @@ namespace KeyJ
                 value += ((-1) << bits) + 1;
             return value;
         }
-        public void njDecodeBlock(nj_component_t c, int outv)
+
+        public void DecodeBlock(nj_component_t c, int outv)
         {
             byte discard = 0;
             byte code = 0;
             int value, coef = 0;
             nj.block = new int[64];
-            c.dcpred += njGetVLC(nj.vlctab[c.dctabsel], ref discard);
+            c.dcpred += GetVLC(nj.vlctab[c.dctabsel], ref discard);
             nj.block[0] = (c.dcpred) * nj.qtab[c.qtsel][0];
             do
             {
-                value = njGetVLC(nj.vlctab[c.actabsel], ref code);
+                value = GetVLC(nj.vlctab[c.actabsel], ref code);
                 if (code == 0) break;  // EOB
                 if ((code & 0x0F) == 0 && (code != 0xF0)) njThrow(nj_result_t.NJ_SYNTAX_ERROR);
                 coef += (code >> 4) + 1;
@@ -485,7 +496,8 @@ namespace KeyJ
             for (coef = 0; coef < 8; ++coef)
                 njColIDCT(nj.block, coef, c.pixels, outv + coef, c.stride);
         }
-        public void njDecodeScan()
+
+        public void DecodeScan()
         {
             int i, mbx, mby, sbx, sby;
             int rstcount = nj.rstinterval, nextrst = 0;
@@ -514,7 +526,7 @@ namespace KeyJ
                     {
                         for (sbx = 0; sbx < c.ssx; ++sbx)
                         {
-                            njDecodeBlock(c, ((mby * c.ssy + sby) * c.stride + mbx * c.ssx + sbx) << 3);
+                            DecodeBlock(c, ((mby * c.ssy + sby) * c.stride + mbx * c.ssx + sbx) << 3);
                             if (nj.error != nj_result_t.NJ_OK) njThrow(nj.error);
                         }
                     }
@@ -551,9 +563,9 @@ namespace KeyJ
         public static readonly int CF2B = (-11);
         public static byte CF(int x)
         {
-            return njClip(((x) + 64) >> 7);
+            return Clip(((x) + 64) >> 7);
         }
-        public void njUpsampleH(nj_component_t c)
+        public void UpsampleH(nj_component_t c)
         {
             int xmax = c.width - 3;
             byte[] outv;
@@ -581,7 +593,7 @@ namespace KeyJ
             c.stride = c.width;
             c.pixels = outv;
         }
-        public void njUpsampleV(nj_component_t c)
+        public void UpsampleV(nj_component_t c)
         {
             int w = c.width, s1 = c.stride, s2 = s1 + s1;
             byte[] outv;
@@ -612,7 +624,7 @@ namespace KeyJ
             c.stride = c.width;
             c.pixels = outv;
         }
-        public void njConvert()
+        public void Convert()
         {
             int i;
             nj_component_t c;
@@ -621,9 +633,9 @@ namespace KeyJ
                 c = nj.comp[i];
                 while ((c.width < nj.width) || (c.height < nj.height))
                 {
-                    if (c.width < nj.width) njUpsampleH(c);
+                    if (c.width < nj.width) UpsampleH(c);
                     if (nj.error != nj_result_t.NJ_OK) return;
-                    if (c.height < nj.height) njUpsampleV(c);
+                    if (c.height < nj.height) UpsampleV(c);
                     if (nj.error != nj_result_t.NJ_OK) return;
                 }
                 if ((c.width < nj.width) || (c.height < nj.height)) njThrow(nj_result_t.NJ_INTERNAL_ERR);
@@ -640,9 +652,9 @@ namespace KeyJ
                         int y = nj.comp[0].pixels[py + x] << 8;
                         int cb = nj.comp[1].pixels[pcb + x] - 128;
                         int cr = nj.comp[2].pixels[pcr + x] - 128;
-                        nj.rgb[prgb++] = njClip((y + 359 * cr + 128) >> 8);
-                        nj.rgb[prgb++] = njClip((y - 88 * cb - 183 * cr + 128) >> 8);
-                        nj.rgb[prgb++] = njClip((y + 454 * cb + 128) >> 8);
+                        nj.rgb[prgb++] = Clip((y + 359 * cr + 128) >> 8);
+                        nj.rgb[prgb++] = Clip((y - 88 * cb - 183 * cr + 128) >> 8);
+                        nj.rgb[prgb++] = Clip((y + 454 * cb + 128) >> 8);
                     }
                     py += nj.comp[0].stride;
                     pcb += nj.comp[1].stride;
@@ -670,7 +682,7 @@ namespace KeyJ
                 nj.comp[0].stride = nj.comp[0].width;
             }
         }
-        public void njInit()
+        public void Init()
         {
             nj = new nj_context_t();
         }
@@ -678,7 +690,7 @@ namespace KeyJ
         {
             try
             {
-                njInit();
+                Init();
                 nj.posb = jpeg;
                 nj.pos = 0;
                 nj.size = jpeg.Length & 0x7FFFFFFF;
@@ -691,16 +703,16 @@ namespace KeyJ
                     njSkip(2);
                     switch (nj.posb[nj.pos - 1])
                     {
-                        case 0xC0: njDecodeSOF(); break;
+                        case 0xC0: DecodeSOF(); break;
                         // case 0xC2: njDecodeSOF(); break;
-                        case 0xC4: njDecodeDHT(); break;
-                        case 0xDB: njDecodeDQT(); break;
-                        case 0xDD: njDecodeDRI(); break;
-                        case 0xDA: njDecodeScan(); break;
-                        case 0xFE: njSkipMarker(); break;
+                        case 0xC4: DecodeDHT(); break;
+                        case 0xDB: DecodeDQT(); break;
+                        case 0xDD: DecodeDRI(); break;
+                        case 0xDA: DecodeScan(); break;
+                        case 0xFE: SkipMarker(); break;
                         default:
                             if ((nj.posb[nj.pos - 1] & 0xF0) == 0xE0)
-                                njSkipMarker();
+                                SkipMarker();
                             else
                                 njThrow(nj_result_t.NJ_UNSUPPORTED);
                             break;
@@ -708,7 +720,7 @@ namespace KeyJ
                 }
                 if (nj.error != nj_result_t.__NJ_FINISHED) return nj.error;
                 nj.error = nj_result_t.NJ_OK;
-                njConvert();
+                Convert();
                 return nj.error;
             }
             catch (nj_exception)
@@ -716,26 +728,18 @@ namespace KeyJ
                 return nj.error;
             }
         }
-        public int njGetWidth()
-        {
-            return nj.width;
-        }
-        public int njGetHeight()
-        {
-            return nj.height;
-        }
-        public bool njIsColor()
-        {
-            return nj.ncomp != 1;
-        }
-        public byte[] njGetImage()
+        public int Width => nj.width;
+
+        public int Height => nj.height;
+
+        public bool IsColor => nj.ncomp != 1;
+
+        public byte[] GetImage()
         {
             return nj.ncomp == 1 ? nj.comp[0].pixels : nj.rgb;
         }
-        public int njGetImageSize()
-        {
-            return nj.width * nj.height * nj.ncomp;
-        }
+
+        public int GetImageSize => nj.width * nj.height * nj.ncomp;
     }
 }
 #pragma warning restore 1591
