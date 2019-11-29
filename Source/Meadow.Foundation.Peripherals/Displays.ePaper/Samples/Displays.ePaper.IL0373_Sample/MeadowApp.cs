@@ -5,7 +5,7 @@ using Meadow.Foundation.Displays.ePaper;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
-namespace Displays.ePaper.EPD2i9b_Sample
+namespace Displays.ePaper.IL0373_Sample
 {
     /* Driver in development */
     public class MeadowApp : App<F7Micro, MeadowApp>
@@ -37,7 +37,7 @@ namespace Displays.ePaper.EPD2i9b_Sample
             graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Red, false);
 
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(2, 2, ".NET Conf 2019");
+            graphics.DrawText(2, 2, ".IL0373");
             graphics.DrawText(2, 20, "Meadow F7");
 
             int ySpacing = 6;

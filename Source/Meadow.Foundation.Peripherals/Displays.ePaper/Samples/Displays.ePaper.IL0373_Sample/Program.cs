@@ -1,6 +1,6 @@
 ﻿using Meadow;
 
-namespace Displays.ePaper.EPD2i9b_Sample
+namespace Displays.ePaper.IL0373_Sample
 {
     class Program
     {
