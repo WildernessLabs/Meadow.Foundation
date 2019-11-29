@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     Magnetometer    N/A         10 Hz
     ///     Gyroscope       2000 dps    32 Hz
     /// </remarks>
-	public class BNO055
+	public class Bno055
 	{
         #region Enums
 
