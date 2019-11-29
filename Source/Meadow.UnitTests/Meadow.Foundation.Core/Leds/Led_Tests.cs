@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using Xunit;
 
-namespace Meadow.UnitTests
+namespace Meadow.UnitTests.Meadow.Foundation.Core.Leds
 {
 	public class Led_Tests
 	{
