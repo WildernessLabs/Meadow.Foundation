@@ -9,14 +9,13 @@ namespace Meadow.Foundation.Sensors.Buttons
     /// </summary>
     public class PushButton : IButton
 	{
-        #region Properties
-
-        /// <summary>
-        /// This duration controls the debounce filter. It also has the effect
-        /// of rate limiting clicks. Decrease this time to allow users to click
-        /// more quickly.
-        /// </summary>
-        public TimeSpan DebounceDuration
+		#region Properties
+		/// <summary>
+		/// This duration controls the debounce filter. It also has the effect
+		/// of rate limiting clicks. Decrease this time to allow users to click
+		/// more quickly.
+		/// </summary>
+		public TimeSpan DebounceDuration
         {
             get => (DigitalIn != null) ? new TimeSpan(0, 0, 0, 0, DigitalIn.DebounceDuration) : TimeSpan.MinValue;
             set
@@ -26,10 +25,18 @@ namespace Meadow.Foundation.Sensors.Buttons
         }
 
         /// <summary>
-        /// Returns the current raw state of the switch. If the switch 
-        /// is pressed (connected), returns true, otherwise false.
+        /// Returns the sanitized state of the switch. If the switch 
+        /// is pressed, returns true, otherwise false.
         /// </summary>
-        public bool State => (DigitalIn != null) ? !DigitalIn.State : false;
+        public bool State
+		{
+			get
+			{
+				bool currentState = DigitalIn?.Resistor == ResistorMode.PullDown ? true : false;
+
+				return (_state == currentState) ? true : false;
+			}
+		}
 
         /// <summary>
         /// The minimum duration for a long press.
@@ -60,15 +67,18 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// Raised when the button circuit is pressed for at least 500ms.
         /// </summary>
         public event EventHandler LongPressClicked = delegate { };
+		#endregion
 
-        #endregion
+		#region Member variables / fields
+		/// <summary>
+		/// Returns the current raw state of the switch.
+		/// </summary>
+		protected bool _state => (DigitalIn != null) ? !DigitalIn.State : false;
 
-        #region Member variables / fields
-
-        /// <summary>
-        /// Minimum DateTime value when the button was pushed
-        /// </summary>
-        protected DateTime _lastClicked = DateTime.MinValue;
+		/// <summary>
+		/// Minimum DateTime value when the button was pushed
+		/// </summary>
+		protected DateTime _lastClicked = DateTime.MinValue;
 
         /// <summary>
         /// Maximum DateTime value when the button was just pushed
@@ -95,12 +105,10 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="device"></param>
         /// <param name="inputPin"></param>
         /// <param name="debounceDuration"></param>
-        public PushButton(IIODevice device, IPin inputPin, int debounceDuration = 20)
+        public PushButton(IIODevice device, IPin inputPin, ResistorMode resistor, int debounceDuration = 20)
         {
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
-            var resistorMode = ResistorMode.Disabled;            
-
-            DigitalIn = device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistorMode, debounceDuration);
+            DigitalIn = device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistor, debounceDuration);
             DigitalIn.Changed += DigitalInChanged;
         }
 
@@ -109,9 +117,10 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         /// <param name="interruptPort"></param>
         /// <param name="debounceDuration"></param>
-        public PushButton(IDigitalInputPort interruptPort, int debounceDuration = 20) 
+        public PushButton(IDigitalInputPort interruptPort, ResistorMode resistor, int debounceDuration = 20) 
 		{
             DigitalIn = interruptPort;
+			DigitalIn.Resistor = resistor;
             DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
             DigitalIn.Changed += DigitalInChanged;
         }
@@ -122,25 +131,19 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         private void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
-            //// check how much time has elapsed since the last click
-            //var timeSinceLast = DateTime.Now - _lastClicked;
-            //if (timeSinceLast <= DebounceDuration)
-            //{
-            //    return;
-            //}
-            //_lastClicked = DateTime.Now;
-
-            bool STATE_PRESSED = _circuitType == CircuitTerminationType.High ? true : false;
-            bool STATE_RELEASED = _circuitType == CircuitTerminationType.High ? false : true;
+			bool STATE_PRESSED = DigitalIn.Resistor == ResistorMode.PullDown ? true : false;
+			bool STATE_RELEASED = DigitalIn.Resistor == ResistorMode.PullDown ? false : true;
+            //bool STATE_PRESSED = _circuitType == CircuitTerminationType.High ? true : false;
+            //bool STATE_RELEASED = _circuitType == CircuitTerminationType.High ? false : true;
             
-            if(State == STATE_PRESSED)
+            if(State)
             {
                 // save our press start time (for long press event)
                 _buttonPressStart = DateTime.Now;
                 // raise our event in an inheritance friendly way
                 this.RaisePressStarted();
             }
-            else if(State == STATE_RELEASED)
+            else if(State == false)
             {
                 // calculate the press duration
                 TimeSpan pressDuration = DateTime.Now - _buttonPressStart;
