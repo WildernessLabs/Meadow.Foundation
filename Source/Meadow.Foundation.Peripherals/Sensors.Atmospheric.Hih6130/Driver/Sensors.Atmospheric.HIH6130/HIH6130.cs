@@ -88,7 +88,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public async Task<AtmosphericConditions> Read()
         {
-            Conditions = await Read();
+            await Update();
 
             return Conditions;
         }
