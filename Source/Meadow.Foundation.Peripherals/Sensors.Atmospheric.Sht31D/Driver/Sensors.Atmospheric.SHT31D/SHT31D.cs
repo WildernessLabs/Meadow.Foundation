@@ -94,11 +94,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public async Task<AtmosphericConditions> Read()
+        public Task<AtmosphericConditions> Read()
         {
-            Conditions = await Read();
+            Update();
 
-            return Conditions;
+            return Task.FromResult(Conditions);
         }
 
         public void StartUpdating(int standbyDuration = 1000)

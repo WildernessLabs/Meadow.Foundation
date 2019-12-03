@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Temperature;
 
@@ -12,7 +10,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Bosch BMP085 digital pressure and temperature sensor.
     /// </summary>
-    public class Bmp085
+    public class Bmp085 : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        IAtmosphericSensor, IBarometricPressureSensor, ITemperatureSensor
     {
         #region Member variables / fields
 
@@ -27,9 +26,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         // These wait times correspond to the oversampling settings.  
         // Please see the datasheet for this sensor for more information.
         private readonly byte[] pressureWaitTime = { 5, 8, 14, 26 };
-
-        private const int TransactionTimeout = 1000; //ms
-        private Timer sensorTimer;
 
         // Calibration data backing stores
         private short _ac1;
@@ -46,7 +42,33 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         #endregion Member variables / fields
 
-        #region Properties 
+        #region Properties
+
+        /// <summary>
+        /// Pressure
+        /// </summary>
+        public float Pressure => Conditions.Pressure;
+
+        /// <summary>
+        /// The temperature, in degrees celsius (ºC), from the last reading.
+        /// </summary>
+        public float Temperature => Conditions.Temperature;
+
+        /// <summary>
+        /// The AtmosphericConditions from the last reading.
+        /// </summary>
+        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+                /// <summary>
+        /// Gets a value indicating whether the analog input port is currently
+        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
+        /// </summary>
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
 
         public static int DEFAULT_SPEED => 40000; // BMP085 clock rate
 
@@ -64,6 +86,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         #endregion Enums
 
+        #region Events and delegates
+
+        public event EventHandler<AtmosphericConditionChangeResult> Updated;
+
+        #endregion Events and delegates
+
+        #region Constructors
+
         /// <summary>
         /// Provide a mechanism for reading the temperature and humidity from
         /// a Bmp085 temperature / humidity sensor.
@@ -72,34 +102,99 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             bmp085 = new I2cPeripheral(i2cBus, address);
 
-
-            Address = address;
-
             oversamplingSetting = (byte)deviceMode;
 
             // Get calibration data that will be used for future measurement taking.
             GetCalibrationData();
 
             // Take initial measurements.
-            TakeMeasurements();
-
-            // Take new measurements every 30 seconds.
-            sensorTimer = new Timer(TakeMeasurements, null, 200, 30000);
+            Update();
         }
 
+        #endregion Constructors
+
+        #region Methods
+
         /// <summary>
-        /// Calculates the compensated pressure and temperature.
+        /// Convenience method to get the current sensor readings. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        private void TakeMeasurements()
+        public Task<AtmosphericConditions> Read()
         {
-            TakeMeasurements(null);
+            Update();
+
+            return Task.FromResult(Conditions);
+        }
+
+        public void StartUpdating(int standbyDuration = 1000)
+        {
+            // thread safety
+            lock (_lock)
+            {
+                if (IsSampling) return;
+
+                // state muh-cheen
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                AtmosphericConditions oldConditions;
+                AtmosphericConditionChangeResult result;
+                Task.Factory.StartNew(async () => {
+                    while (true)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            // do task clean up here
+                            _observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Conditions;
+
+                        // read
+                        Update();
+
+                        // build a new result with the old and new conditions
+                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+        /// <summary>
+        /// Stops sampling the temperature.
+        /// </summary>
+        public void StopUpdating()
+        {
+            lock (_lock)
+            {
+                if (!IsSampling) return;
+
+                SamplingTokenSource?.Cancel();
+
+                // state muh-cheen
+                IsSampling = false;
+            }
         }
 
         /// <summary>
         /// Calculates the compensated pressure and temperature.
         /// </summary>
-        /// <param name="state"></param>
-        private void TakeMeasurements(object state)
+        private void Update()
         {
             long x1, x2, x3, b3, b4, b5, b6, b7, p;
 
@@ -111,13 +206,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             x1 = (ut - _ac6) * _ac5 >> 15;
             x2 = (_mc << 11) / (x1 + _md);
             b5 = x1 + x2;
-            _celsius = (float)((b5 + 8) >> 4) / 10;
+
+            Conditions.Temperature = (float)((b5 + 8) >> 4) / 10;
 
             // calculate the compensated pressure
             b6 = b5 - 4000;
             x1 = (_b2 * (b6 * b6 >> 12)) >> 11;
             x2 = _ac2 * b6 >> 11;
             x3 = x1 + x2;
+
             switch (oversamplingSetting)
             {
                 case 0:
@@ -144,7 +241,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             x1 = (p >> 8) * (p >> 8);
             x1 = (x1 * 3038) >> 16;
             x2 = (-7357 * p) >> 16;
-            _pascal = (int)(p + ((x1 + x2 + 3791) >> 4));
+
+            Conditions.Pressure = (int)(p + ((x1 + x2 + 3791) >> 4));
         }
 
         private long ReadUncompensatedTemperature()
@@ -207,37 +305,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return (short)((data[0] << 8) | data[1]);
         } 
 
-        private byte _address;
-        public byte Address
-        {
-            get { return _address; }
-            private set { _address = value; }
-        }
-
-        private int _pascal;
-        public int Pascal
-        {
-            get { return _pascal; }
-        }
-
-        public float InchesMercury
-        {
-            get
-            {
-                return (float)(_pascal / 3386.389);
-            }
-        }
-
-        private float _celsius;
-        public float Celsius
-        {
-            get { return _celsius; }
-        }
+        
 
         public void Dispose()
         {
-            sensorTimer.Dispose();
-        } 
+        }
 
+        #endregion Methods
     }
 }
