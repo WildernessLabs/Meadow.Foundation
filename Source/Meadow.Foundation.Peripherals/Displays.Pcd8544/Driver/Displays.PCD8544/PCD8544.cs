@@ -5,6 +5,8 @@ namespace Meadow.Foundation.Displays
 {
     public class PCD8544 : DisplayBase
     {
+        public static int DEFAULT_SPEED = 4000;
+
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
         public override uint Height => 48;
@@ -22,6 +24,7 @@ namespace Meadow.Foundation.Displays
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort chipSelectPort;
         protected ISpiPeripheral spiDisplay;
         protected SpiBus spi;
 
@@ -35,7 +38,7 @@ namespace Meadow.Foundation.Displays
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, true);
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
-            var chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
+            chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
 
             spi = (SpiBus)spiBus;
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
@@ -49,8 +52,6 @@ namespace Meadow.Foundation.Displays
             resetPort.State = (true);
 
             dataCommandPort.State = (false);
-
-            // spi.Write(new byte[] { 0x21, 0xBF, 0x04, 0x14, 0x0C, 0x20, 0x0C });
 
             spiDisplay.WriteBytes(new byte[]
             {
@@ -68,14 +69,29 @@ namespace Meadow.Foundation.Displays
             Clear();
             Show();
         }
-        
+
+
+        /// <summary>
+        ///     Clear the display
+        /// </summary>
+        /// <remarks>
+        ///     Clears the internal memory buffer 
+        /// </remarks>
+        /// <param name="updateDisplay">If true, it will force a display update</param>
         public override void Clear(bool updateDisplay = false)
         {
             spiBuffer = new byte[Width * Height / 8];
 
-            dataCommandPort.State = (false);
-            spiDisplay.WriteBytes(new byte[] { 0x80, 0x40 });
-            dataCommandPort.State = (true);
+            for(int i = 0; i < spiBuffer.Length; i++)
+            {
+                spiBuffer[i] = 0;
+            }
+
+            if(updateDisplay)
+            {
+                Show();
+            }
+  
         }
 
         /// <summary>
@@ -141,7 +157,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
         public override void DrawPixel(int x, int y, bool colored)
         {
-            if (x < 0 || x >= 84 || y < 0 || y >= 48)
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
                 return; // out of the range! return true to indicate failure.
 
             ushort index = (ushort)((x % 84) + (int)(y * 0.125) * 84);
@@ -149,9 +165,13 @@ namespace Meadow.Foundation.Displays
             byte bitMask = (byte)(1 << (y % 8));
 
             if (colored)
+            {
                 spiBuffer[index] |= bitMask;
+            }
             else
+            {
                 spiBuffer[index] &= (byte)~bitMask;
+            }
         }
 
         /// <summary>
@@ -162,7 +182,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="color">any value other than black will make the pixel visible</param>
         public override void DrawPixel(int x, int y, Color color)
         {
-            var colored = (color == Color.Black) ? false : true;
+            var colored = color != Color.Black;
 
             DrawPixel(x, y, colored);
         }
@@ -171,7 +191,7 @@ namespace Meadow.Foundation.Displays
         {
           //  spiDisplay.WriteBytes(spiBuffer);
 
-            spi.ExchangeData(null, ChipSelectMode.ActiveLow, spiBuffer, spiReceive);
+            spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive);
         }
 
         private void Invert(bool inverse)
