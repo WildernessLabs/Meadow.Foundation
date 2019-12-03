@@ -1424,12 +1424,12 @@ namespace Meadow.Foundation.Sensors.Motion
 		/// <summary>
 		///     BNO055 object.
 		/// </summary>
-		private readonly II2cPeripheral _bno055 = null;
+		private readonly II2cPeripheral bno055;
 
         /// <summary>
         ///     Sensor readings from the last time the BNO055 was polled.
         /// </summary>
-        private byte[] _sensorReadings = null;
+        private byte[] _sensorReadings;
 
         /// <summary>
         ///     Current accelerometer units.
@@ -1455,7 +1455,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
 	    public int Temperature
 	    {
-	        get { return (_bno055.ReadRegister(Registers.Temperature)); }
+	        get { return (bno055.ReadRegister(Registers.Temperature)); }
 	    }
 
         /// <summary>
@@ -1465,13 +1465,13 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
             get
             {
-                return (Sensor) _bno055.ReadRegister(Registers.TemperatureSource);
+                return (Sensor)bno055.ReadRegister(Registers.TemperatureSource);
             }
 	        set
 	        {
 	            if ((value == Sensor.Accelerometer) || (value == Sensor.Gyroscope))
 	            {
-	                _bno055.WriteRegister(Registers.TemperatureSource, (byte) value);
+	                bno055.WriteRegister(Registers.TemperatureSource, (byte) value);
 	            }
 	            else
 	            {
@@ -1487,11 +1487,11 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
             get
             {
-                return(_bno055.ReadRegister(Registers.PowerMode));
+                return(bno055.ReadRegister(Registers.PowerMode));
             }
             set
             {
-                _bno055.WriteRegister(Registers.PowerMode, value);
+                bno055.WriteRegister(Registers.PowerMode, value);
                 Thread.Sleep(15);
             }
 	    }
@@ -1506,7 +1506,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-                return(_bno055.ReadRegister(Registers.OperatingMode));
+                return(bno055.ReadRegister(Registers.OperatingMode));
 	        }
 	        set
 	        {
@@ -1514,7 +1514,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	            {
 	                throw new ArgumentOutOfRangeException();
 	            }
-                _bno055.WriteRegister(Registers.OperatingMode, value);
+                bno055.WriteRegister(Registers.OperatingMode, value);
                 Thread.Sleep(20);
 	        }
 	    }
@@ -1533,7 +1533,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
             get
             {
-                return _bno055.ReadRegister(Registers.PageID);
+                return bno055.ReadRegister(Registers.PageID);
             }
 	        set
 	        {
@@ -1541,7 +1541,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	            {
 	                throw new ArgumentOutOfRangeException();
 	            }
-	            _bno055.WriteRegister(Registers.PageID, value);
+	            bno055.WriteRegister(Registers.PageID, value);
 	        }
 	    }
 
@@ -1740,7 +1740,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            return (((_bno055.ReadRegister(Registers.CalibrationStatus) >> 6) & 0x03) != 0);
+	            return (((bno055.ReadRegister(Registers.CalibrationStatus) >> 6) & 0x03) != 0);
 	        }
 	    }
 
@@ -1751,7 +1751,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            return (((_bno055.ReadRegister(Registers.CalibrationStatus) >> 2) & 0x03) != 0);
+	            return (((bno055.ReadRegister(Registers.CalibrationStatus) >> 2) & 0x03) != 0);
 	        }
 	    }
 
@@ -1762,7 +1762,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            return (((_bno055.ReadRegister(Registers.CalibrationStatus) >> 4) & 0x03) != 0);
+	            return (((bno055.ReadRegister(Registers.CalibrationStatus) >> 4) & 0x03) != 0);
 	        }
 	    }
 
@@ -1771,7 +1771,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    /// </summary>
 	    public bool IsMagnetometerCalibrated
 	    {
-	        get { return ((_bno055.ReadRegister(Registers.CalibrationStatus) & 0x03) != 0); }
+	        get { return ((bno055.ReadRegister(Registers.CalibrationStatus) & 0x03) != 0); }
 	    }
 
 	    /// <summary>
@@ -1797,7 +1797,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
 		///     Default constructor is private to prevent the developer from calling it.
 		/// </summary>
-		private BNO055()
+		private Bno055()
 		{
 		}
 
@@ -1806,16 +1806,16 @@ namespace Meadow.Foundation.Sensors.Motion
 		/// </summary>
 		/// <param name="address">Address of the BNO055 (default = 0x28).</param>
 		/// <param name="i2cBus">I2C bus (default = 400 KHz).</param>
-		public BNO055(II2cBus i2cBus, byte address = 0x28)
+		public Bno055(II2cBus i2cBus, byte address = 0x28)
 		{
             if ((address != 0x28) && (address != 0x29))
             {
                 throw new ArgumentOutOfRangeException("address", "Address should be 0x28 or 0x29.");
             }
 
-            _bno055 = new I2cPeripheral(i2cBus, address);
+            bno055 = new I2cPeripheral(i2cBus, address);
 
-            if (_bno055.ReadRegister(Registers.ChipID) != 0xa0)
+            if (bno055.ReadRegister(Registers.ChipID) != 0xa0)
             {
                 throw new Exception("Sensor ID should be 0xa0.");
             }
@@ -1839,7 +1839,7 @@ namespace Meadow.Foundation.Sensors.Motion
 		/// </remarks>
 		public void Read()
 		{
-		    _sensorReadings = _bno055.ReadRegisters(Registers.AccelerometerXLSB,
+		    _sensorReadings = bno055.ReadRegisters(Registers.AccelerometerXLSB,
 		                                            (ushort) (Registers.GravityVectorZMSB - Registers.AccelerometerXLSB));
 		}
 
@@ -1876,7 +1876,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
 	    public void DisplayRegisters()
         {
-            var registers = _bno055.ReadRegisters(Registers.ChipID, 0x6a);
+            var registers = bno055.ReadRegisters(Registers.ChipID, 0x6a);
             DebugInformation.DisplayRegisters(0x00, registers);
         }
 

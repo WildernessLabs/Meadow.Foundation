@@ -395,6 +395,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.MPL115A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl345_Sample", "Meadow.Foundation.Peripherals\Sample\Sensors.Motion.Adxl345_Sample\Sensors.Motion.Adxl345_Sample.csproj", "{3A0F2725-99FD-4DE6-9E1B-0942CC970D4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Bno055_Sample", "Meadow.Foundation.Peripherals\Samples\Sensors.Motion.Bno055_Sample\Sensors.Motion.Bno055_Sample.csproj", "{6F75A043-B66A-44BB-A4F4-5004000C842C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -801,6 +803,10 @@ Global
 		{3A0F2725-99FD-4DE6-9E1B-0942CC970D4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A0F2725-99FD-4DE6-9E1B-0942CC970D4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A0F2725-99FD-4DE6-9E1B-0942CC970D4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F75A043-B66A-44BB-A4F4-5004000C842C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F75A043-B66A-44BB-A4F4-5004000C842C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F75A043-B66A-44BB-A4F4-5004000C842C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F75A043-B66A-44BB-A4F4-5004000C842C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -997,6 +1003,7 @@ Global
 		{66D2F66B-E8E7-480C-956B-C8C24F92E948} = {C724C5EE-7972-41DA-9FDB-42416980F25C}
 		{4F109888-DBC1-4432-9303-F29E2AF7EC83} = {DD2F1AA1-B2FB-40B7-9537-0070F5F97173}
 		{3A0F2725-99FD-4DE6-9E1B-0942CC970D4F} = {8DD795F4-2DA9-447B-BE2E-BD6C9F2B2FE5}
+		{6F75A043-B66A-44BB-A4F4-5004000C842C} = {07F59EFA-8D03-489D-BB05-905C3B0A7699}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
