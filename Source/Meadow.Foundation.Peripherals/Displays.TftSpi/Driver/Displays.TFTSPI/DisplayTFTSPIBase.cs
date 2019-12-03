@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Displays.Tft
 
             if (updateDisplay)
             {
-                Refresh();
+                Show();
             }
         }
 
@@ -249,7 +249,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// <summary>
         ///     Draw the display buffer to screen
         /// </summary>
-        public void Refresh()
+        public override void Show()
         {
             // spiDisplay.WriteBytes(spiBuffer);
 
@@ -282,11 +282,6 @@ namespace Meadow.Foundation.Displays.Tft
             byte blue = (byte)(color.B * 255.0);
 
             return Get16BitColorFromRGB(red, green, blue);
-        }
-
-        public override void Show()
-        {
-            Refresh();
         }
 
         protected void Write(byte value)
