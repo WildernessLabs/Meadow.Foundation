@@ -308,7 +308,9 @@ namespace Meadow.Foundation.Sensors.Motion
         void SetProximityPulse(PulseLength length, byte count)
         {
             if (count < 1 || count > 64)
+            {
                 throw new ArgumentOutOfRangeException();
+            }
 
             pulse.PPULSE = count;
             pulse.PPLEN = (byte)length;
