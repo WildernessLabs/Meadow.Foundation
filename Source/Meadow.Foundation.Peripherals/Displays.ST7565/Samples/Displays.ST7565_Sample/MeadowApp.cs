@@ -35,23 +35,13 @@ namespace Displays.ST7565_Sample
         {
             Console.WriteLine("TestST7565...");
 
-            // Drawing natively in the display
-            sT7565.Clear(true);
-            for (int i = 0; i < 30; i++)
-            {
-                sT7565.DrawPixel(i, i, true);
-                sT7565.DrawPixel(30 + i, i, true);
-                sT7565.DrawPixel(60 + i, i, true);
-            }
-            sT7565.Show();
-
             // Drawing with Display Graphics Library
-            //graphics.CurrentFont = new Font8x8();
-            //graphics.Clear();
-            //graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
-            //graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, true);            
-            //graphics.DrawText(5, 5, "Meadow F7 SPI");
-            //graphics.Show();
+            graphics.CurrentFont = new Font8x8();
+            graphics.Clear();
+            graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
+            graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, true);            
+            graphics.DrawText(5, 5, "ST7565");
+            graphics.Show();
         }
     }
 }

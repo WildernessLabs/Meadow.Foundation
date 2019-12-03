@@ -79,6 +79,7 @@ namespace Meadow.Foundation.Displays
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort chipSelectPort;
 
         protected const bool Data = true;
         protected const bool Command = false;
@@ -132,7 +133,7 @@ namespace Meadow.Foundation.Displays
         {
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             resetPort = device.CreateDigitalOutputPort(resetPin, false);
-            var chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
+            chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
 
             spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
 
