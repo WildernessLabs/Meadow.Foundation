@@ -10,25 +10,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Provide access to the Si70xx series (Si7020, Si7021, and Si7030)
     /// temperature and humidity sensors.
-    ///
-    /// Note: This sensor is not working yet.
     /// </summary>
     public class Si70xx :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
-        /// <summary>
-        /// </summary>
-        public event EventHandler<AtmosphericConditionChangeResult> Updated = delegate { };
+        #region Events and delegates
 
-        /// <summary>
-        ///     SI7021 is an I2C device.
-        /// </summary>
-        protected readonly II2cPeripheral _si7021;
+        public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
+        #endregion Events and delegates
 
         #region Properties
 
@@ -38,8 +29,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
-
-        /// <summary>
+		
+        public int DEFAULT_SPEED => 400;
+		
+		/// <summary>
         /// The AtmosphericConditions from the last reading.
         /// </summary>
         public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
@@ -69,43 +62,65 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public byte FirmwareRevision { get; private set; }
 
-        /// <summary>
-        ///     Get / Set the resolution of the sensor.
-        /// </summary>
-        public byte Resolution
-        {
-            get
-            {
-                var register = _si7021.ReadRegister(Registers.ReadUserRegister1);
-                var resolution = (byte)((register >> 7) | (register & 0x01));
-                return resolution;
-            }
-            set
-            {
-                if (value > 3)
-                {
-                    throw new ArgumentException("Resolution should be in the range 0-3");
-                }
-
-                var register = _si7021.ReadRegister(Registers.ReadUserRegister1);
-                register &= 0x7e;
-                var mask = (byte)(value & 0x01);
-                mask |= (byte)((value & 0x02) << 7);
-                register |= mask;
-                _si7021.WriteRegister(Registers.WriteUserRegister1, register);
-            }
-        }
-
         #endregion Properties
 
-        #region Constructors
+        #region Member variables / fields
+		
+        /// <summary>
+        ///     SI7021 is an I2C device.
+        /// </summary>
+        protected readonly II2cPeripheral _si7021;
 
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+        private const byte TRIGGER_TEMP_MEASURE_NOHOLD = 0xF3;
+        private const byte TRIGGER_HUMD_MEASURE_NOHOLD = 0xF5;
+        private const byte TRIGGER_TEMP_MEASURE_HOLD = 0xE3;
+        private const byte TRIGGER_HUMD_MEASURE_HOLD = 0xE5;
+
+        private const byte WRITE_USER_REGISTER = 0xE6;
+        private const byte READ_USER_REGISTER = 0xE7;
+        private const byte READ_HEATER_REGISTER = 0x11;
+        private const byte WRITE_HEATER_REGISTER = 0x51;
+        private const byte SOFT_RESET = 0x0F;
+
+        #endregion Member variables /fields
+
+        #region Enums
+
+        /// <summary>
+        ///     Specific device type / model
+        /// </summary>
+        public enum DeviceType
+        {
+            Unknown = 0x00,
+            Si7013 = 0x0d,
+            Si7020 = 0x14,
+            Si7021 = 0x15,
+            EngineeringSample = 0xff
+        }
+
+        /// <summary>
+        ///     Resolution of sensor data
+        /// </summary>
+        public enum SensorResolution : byte
+        {
+            TEMP14_HUM12 = 0x00,
+            TEMP12_HUM8 = 0x01,
+            TEMP13_HUM10 = 0x80,
+            TEMP11_HUM11 = 0x81,
+        }
+
+        #endregion Enums
+
+        #region Contstructors
+		
         /// <summary>
         ///     Default constructor (private to prevent the user from calling this).
         /// </summary>
-        private Si70xx()
-        {
-        }
+        private Si70xx() { }
 
         /// <summary>
         ///     Create a new SI7021 temperature and humidity sensor.
@@ -115,14 +130,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Si70xx(II2cBus i2cBus, byte address = 0x40)
         {
             _si7021 = new I2cPeripheral(i2cBus, address);
-            Init();
+			
+            Initialize();
         }
+		
+		#endregion Constructors
 
-        /// <summary>
-        /// 
-        /// </summary>
-        protected void Init()
+        #region Methods
+
+        protected void Initialize()
         {
+            _si7021.WriteByte(SOFT_RESET);
+					 			
+			Thread.Sleep(100);
             //
             //  Get the device ID.
             //
@@ -154,15 +174,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             } else {
                 SensorType = (DeviceType)part2[0];
             }
-            //
-            //  Update the firmware revision.
-            // TODO: why? 
-            var firmware = _si7021.WriteRead(new[]
-            {
-                Registers.ReadFirmwareRevisionPart1,
-                Registers.ReadFirmwareRevisionPart2
-            }, 1);
-            FirmwareRevision = firmware[0];
+
+
+            SetResolution(SensorResolution.TEMP11_HUM11);
         }
 
         #endregion Constructors
@@ -208,23 +222,21 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 return conditions;
             });
         }
-
-
-        /// <summary>
+		
+		/// <summary>
         ///     Reset the sensor and take a fresh reading.
         /// </summary>
         public void Reset()
         {
-            _si7021.WriteByte(Registers.Reset);
+            _si7021.WriteByte(READ_USER_REGISTER);
             Thread.Sleep(50);
-            ReadSensor(); // is this needed? why are we doing that?
         }
 
-        public void StartUpdating(
-            int standbyDuration = 1000)
+        public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock) {
+            lock (_lock)
+            {
                 if (IsSampling) return;
 
                 // state muh-cheen
@@ -235,10 +247,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 AtmosphericConditions oldConditions;
                 AtmosphericConditionChangeResult result;
+
                 Task.Factory.StartNew(async () => {
-                    while (true) {
+                    while (true)
+                    {
                         // cleanup
-                        if (ct.IsCancellationRequested) {
+                        if (ct.IsCancellationRequested)
+                        {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -273,7 +288,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock) {
+            lock (_lock)
+            {
                 if (!IsSampling) return;
 
                 SamplingTokenSource?.Cancel();
@@ -282,62 +298,49 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 IsSampling = false;
             }
         }
-
-        /// <summary>
-        ///     Turn the heater on or off.
+		
+		/// <summary>
+		/// Turn the heater on or off.
         /// </summary>
         /// <param name="onOrOff">Heater status, true = turn heater on, false = turn heater off.</param>
         public void Heater(bool onOrOff)
         {
-            var register = _si7021.ReadRegister(Registers.ReadUserRegister1);
+            var register = _si7021.ReadRegister(READ_USER_REGISTER);
             register &= 0xfd;
-            if (onOrOff) {
+
+            if (onOrOff) 
+			{
                 register |= 0x02;
             }
-            _si7021.WriteRegister(Registers.WriteUserRegister1, register);
+            _si7021.WriteRegister(WRITE_USER_REGISTER, register);
+        }
+		
+		//Set sensor resolution
+        /*******************************************************************************************/
+        //Sets the sensor resolution to one of four levels
+        //Page 12:
+        // 0/0 = 12bit RH, 14bit Temp
+        // 0/1 = 8bit RH, 12bit Temp
+        // 1/0 = 10bit RH, 13bit Temp
+        // 1/1 = 11bit RH, 11bit Temp
+        //Power on default is 0/0
+        void SetResolution(SensorResolution resolution)
+        {
+            byte userData = htu21d.ReadRegister(READ_USER_REGISTER); //Go get the current register state
+                                                                         //userRegister &= 0b01111110; //Turn off the resolution bits
+                                                                         //resolution &= 0b10000001; //Turn off all other bits but resolution bits
+                                                                         //userRegister |= resolution; //Mask in the requested resolution bits
+            var res = (byte)resolution;                                         
+
+            userData &= 0x73; //Turn off the resolution bits
+            res &= 0x81; //Turn off all other bits but resolution bits
+            userData |= res; //Mask in the requested resolution bits
+
+            //Request a write to user register
+            htu21d.WriteBytes(new byte[] { WRITE_USER_REGISTER }); //Write to the user register
+            htu21d.WriteBytes(new byte[] { userData }); //Write the new resolution bits
         }
 
         #endregion Methods
-
-        #region Enums
-
-        /// <summary>
-        ///     Specific device type / model.
-        /// </summary>
-        public enum DeviceType
-        {
-            Unknown = 0x00,
-            Si7013 = 0x0d,
-            Si7020 = 0x14,
-            Si7021 = 0x15,
-            EngineeringSample = 0xff
-        }
-
-        #endregion Enums
-
-        #region Classes / structures
-
-        /// <summary>
-        ///     Device registers.
-        /// </summary>
-        private static class Registers
-        {
-            public static readonly byte MeasureHumidityWithHold = 0xe5;
-            public static readonly byte MeasureHumidityNoHold = 0xf5;
-            public static readonly byte MeasureTemperatureWithHold = 0xe3;
-            public static readonly byte MeasureTemperatureNoHold = 0xf3;
-            public static readonly byte ReadPreviousTemperatureMeasurement = 0xe0;
-            public static readonly byte Reset = 0xfe;
-            public static readonly byte WriteUserRegister1 = 0xe6;
-            public static readonly byte ReadUserRegister1 = 0xe7;
-            public static readonly byte ReadIDFirstBytePart1 = 0xfa;
-            public static readonly byte ReadIDFirstBytePart2 = 0x0f;
-            public static readonly byte ReadIDSecondBytePart1 = 0xfc;
-            public static readonly byte ReadIDSecondBytePart2 = 0xc9;
-            public static readonly byte ReadFirmwareRevisionPart1 = 0x84;
-            public static readonly byte ReadFirmwareRevisionPart2 = 0xb8;
-        }
-
-        #endregion Classes / Structures
     }
 }
