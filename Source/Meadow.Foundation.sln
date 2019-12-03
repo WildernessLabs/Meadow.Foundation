@@ -395,6 +395,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi.SSD1351_Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi.ST7789_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.ST7789_Sample\Displays.TftSpi.ST7789_Sample.csproj", "{90059A47-16EE-4F00-B1B2-98642B6F7F8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bmp085", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bmp085\Driver\Sensors.Atmospheric.Bmp085\Sensors.Atmospheric.Bmp085.csproj", "{66D2F66B-E8E7-480C-956B-C8C24F92E948}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -793,6 +795,10 @@ Global
 		{90059A47-16EE-4F00-B1B2-98642B6F7F8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90059A47-16EE-4F00-B1B2-98642B6F7F8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90059A47-16EE-4F00-B1B2-98642B6F7F8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66D2F66B-E8E7-480C-956B-C8C24F92E948}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66D2F66B-E8E7-480C-956B-C8C24F92E948}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66D2F66B-E8E7-480C-956B-C8C24F92E948}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66D2F66B-E8E7-480C-956B-C8C24F92E948}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -989,6 +995,7 @@ Global
 		{A87B269D-ADB6-49B1-AD79-C99D9CF2D4E1} = {8FB70D12-1111-480B-B64C-B8EB65977F58}
 		{45747796-E2D3-49B5-AD6C-65863E0C4E60} = {8FB70D12-1111-480B-B64C-B8EB65977F58}
 		{90059A47-16EE-4F00-B1B2-98642B6F7F8F} = {8FB70D12-1111-480B-B64C-B8EB65977F58}
+		{66D2F66B-E8E7-480C-956B-C8C24F92E948} = {C724C5EE-7972-41DA-9FDB-42416980F25C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
