@@ -5,7 +5,7 @@ using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Temperature;
 
-namespace Meadow.Foundation.Sensors.Barometric
+namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public class MPL115A2 :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
