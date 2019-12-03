@@ -211,12 +211,15 @@ namespace Meadow.Foundation.Sensors.Motion
         #endregion Constructors
 
         #region methods
+
         void Apds9960Init()
         {
-            var result = apds9960.ReadRegister(0);// APDS9960_ID);
+            var result = apds9960.ReadRegister(APDS9960_ID);
 
             if (result != 0xAB)
-                throw new Exception("APDS9960 isn't connected");
+            {
+                throw new Exception($"APDS9960 isn't connected: {result}");
+            }
         }
 
         //Sets the integration time for the ADC of the APDS9960, in millis
