@@ -213,7 +213,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{6A66
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.SHT31D", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Sht31D\Driver\Sensors.Atmospheric.SHT31D\Sensors.Atmospheric.SHT31D.csproj", "{81E6E143-8752-45A9-8BDA-C6F4730A7DF1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Htu21DF", "Sensors.Atmospheric.Htu21DF", "{27F8F5B1-F535-4116-BB16-63454D21D13B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Htu21d", "Sensors.Atmospheric.Htu21d", "{27F8F5B1-F535-4116-BB16-63454D21D13B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Hih6130", "Sensors.Atmospheric.Hih6130", "{91CA9079-8D10-4A3B-AE42-CB49781687C0}"
 EndProject
@@ -395,9 +395,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl345_Samp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Bno055_Sample", "Meadow.Foundation.Peripherals\Samples\Sensors.Motion.Bno055_Sample\Sensors.Motion.Bno055_Sample.csproj", "{6F75A043-B66A-44BB-A4F4-5004000C842C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Htu21DF", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21DF\Driver\Sensors.Atmospheric.Htu21DF\Sensors.Atmospheric.Htu21DF.csproj", "{D9602FE1-2701-4B64-BB2C-60168F8DAF60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Htu21d", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21DF\Driver\Sensors.Atmospheric.Htu21DF\Sensors.Atmospheric.Htu21d.csproj", "{D9602FE1-2701-4B64-BB2C-60168F8DAF60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Htu21DF_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21DF\Samples\Sensors.Atmospheric.Htu21DF_Sample\Sensors.Atmospheric.Htu21DF_Sample.csproj", "{29BBDF1D-0635-4C08-B5A4-24B3BCB385C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Htu21d_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21DF\Samples\Sensors.Atmospheric.Htu21DF_Sample\Sensors.Atmospheric.Htu21d_Sample.csproj", "{29BBDF1D-0635-4C08-B5A4-24B3BCB385C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

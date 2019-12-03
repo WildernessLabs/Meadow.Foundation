@@ -51,6 +51,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private const byte WRITE_USER_REGISTER = 0xE6;
         private const byte READ_USER_REGISTER = 0xE7;
+        private const byte READ_HEATER_REGISTER = 0x11;
+        private const byte WRITE_HEATER_REGISTER = 0x51;
         private const byte SOFT_RESET = 0x0F;
 
         static II2cPeripheral htu21d;
@@ -63,6 +65,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         #endregion Events and delegates
 
+        #region Enums
+
+        enum SensorResolution : byte
+        {
+            TEMP14_HUM12 = 0x00,
+            TEMP12_HUM8 = 0x01,
+            TEMP13_HUM10 = 0x80,
+            TEMP11_HUM11 = 0x81,
+        }
+
+        #endregion Enums
+
         #region Contstructors
 
         private Htu21d() { }
@@ -71,11 +85,22 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Htu21d(II2cBus i2cBus, byte address = 0x40)
         {
             htu21d = new I2cPeripheral(i2cBus, address);
+
+            Initialize();
         }
 
         #endregion Constructors
 
         #region Methods
+
+        private void Initialize ()
+        {
+            htu21d.WriteByte(SOFT_RESET);
+
+            Thread.Sleep(100);
+
+            SetResolution(SensorResolution.TEMP11_HUM11);
+        }
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -219,19 +244,21 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         // 1/0 = 10bit RH, 13bit Temp
         // 1/1 = 11bit RH, 11bit Temp
         //Power on default is 0/0
-        void SetResolution(byte resolution)
+        void SetResolution(SensorResolution resolution)
         {
-            byte userRegister = htu21d.ReadRegister(READ_USER_REGISTER); //Go get the current register state
-                                                      //userRegister &= 0b01111110; //Turn off the resolution bits
-                                                      //resolution &= 0b10000001; //Turn off all other bits but resolution bits
-                                                      //userRegister |= resolution; //Mask in the requested resolution bits
-            userRegister &= 0x73; //Turn off the resolution bits
-            resolution &= 0x81; //Turn off all other bits but resolution bits
-            userRegister |= resolution; //Mask in the requested resolution bits
+            byte userData = htu21d.ReadRegister(READ_USER_REGISTER); //Go get the current register state
+                                                                         //userRegister &= 0b01111110; //Turn off the resolution bits
+                                                                         //resolution &= 0b10000001; //Turn off all other bits but resolution bits
+                                                                         //userRegister |= resolution; //Mask in the requested resolution bits
+            var res = (byte)resolution;                                         
+
+            userData &= 0x73; //Turn off the resolution bits
+            res &= 0x81; //Turn off all other bits but resolution bits
+            userData |= res; //Mask in the requested resolution bits
 
             //Request a write to user register
             htu21d.WriteBytes(new byte[] { WRITE_USER_REGISTER }); //Write to the user register
-            htu21d.WriteBytes(new byte[] { userRegister }); //Write the new resolution bits
+            htu21d.WriteBytes(new byte[] { userData }); //Write the new resolution bits
         }
 
         #endregion Methods
