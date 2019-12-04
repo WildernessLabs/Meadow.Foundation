@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Atmospheric;
 using System.Threading.Tasks;
 
@@ -17,23 +14,19 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
         {
             Console.WriteLine("Initializing...");
 
-            // configure our BME280 on the I2C Bus
+            // configure our SI7021 on the I2C Bus
             var i2c = Device.CreateI2cBus();
-            si7021 = new Si70xx(
-                i2c
-            );
+
+            si7021 = new Si70xx(i2c);
 
             // just for funsies.
             Console.WriteLine($"Chip Serial: {si7021.SerialNumber}");
-            //Thread.Sleep(1000);
-
 
             // get an initial reading
             ReadConditions().Wait();
 
             // start updating continuously
             si7021.StartUpdating();
-
         }
 
         protected async Task ReadConditions()
@@ -44,6 +37,5 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
             Console.WriteLine($"  Pressure: {conditions.Pressure}hPa");
             Console.WriteLine($"  Relative Humidity: {conditions.Humidity}%");
         }
-
     }
 }

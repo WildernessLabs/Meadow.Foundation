@@ -71,10 +71,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        private const byte TRIGGER_TEMP_MEASURE_NOHOLD = 0xF3;
-        private const byte TRIGGER_HUMD_MEASURE_NOHOLD = 0xF5;
-        private const byte TRIGGER_TEMP_MEASURE_HOLD = 0xE3;
-        private const byte TRIGGER_HUMD_MEASURE_HOLD = 0xE5;
+        private const byte TEMPERATURE_MEASURE_NOHOLD = 0xF3;
+        private const byte HUMDITY_MEASURE_NOHOLD = 0xF5;
+        private const byte TEMPERATURE_MEASURE_HOLD = 0xE3;
+        private const byte HUMDITY_MEASURE_HOLD = 0xE5;
+        private const byte TEMPERATURE_MEASURE_PREVIOUS = 0xE0;
 
         private const byte WRITE_USER_REGISTER = 0xE6;
         private const byte READ_USER_REGISTER = 0xE7;
@@ -128,39 +129,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             htu21d.WriteByte(SOFT_RESET);
 					 			
 			Thread.Sleep(100);
-            //
-            //  Get the device ID.
-            //
-            var part1 = _si7021.WriteRead(new[]
-            {
-                Registers.ReadIDFirstBytePart1,
-                Registers.ReadIDFirstBytePart2
-            }, 8);
-            var part2 = _si7021.WriteRead(new[]
-            {
-                Registers.ReadIDSecondBytePart1,
-                Registers.ReadIDSecondBytePart2
-            }, 6);
-            SerialNumber = 0;
-            for (var index = 0; index < 4; index++) {
-                SerialNumber <<= 8;
-                SerialNumber += part1[index * 2];
-            }
-            SerialNumber <<= 8;
-            SerialNumber += part2[0];
-            SerialNumber <<= 8;
-            SerialNumber += part2[1];
-            SerialNumber <<= 8;
-            SerialNumber += part2[3];
-            SerialNumber <<= 8;
-            SerialNumber += part2[4];
-            if ((part2[0] == 0) || (part2[0] == 0xff)) {
-                SensorType = DeviceType.EngineeringSample;
-            } else {
-                SensorType = (DeviceType)part2[0];
-            }
-
-
+          
             SetResolution(SensorResolution.TEMP11_HUM11);
         }
 
@@ -175,7 +144,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public async Task<AtmosphericConditions> Read()
         {
             // update confiruation for a one-off read
-            this.Conditions = await ReadSensor();
+            Conditions = await ReadSensor();
 
             return Conditions;
         }
@@ -185,12 +154,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             AtmosphericConditions conditions = new AtmosphericConditions();
 
             return await Task.Run(() => {
-                htu21d.WriteByte(Registers.MeasureHumidityNoHold);
+                htu21d.WriteByte(HUMDITY_MEASURE_NOHOLD);
                 //
                 //  Maximum conversion time is 12ms (page 5 of the datasheet).
                 //
                 Thread.Sleep(25);
-                var data = _si7021.ReadBytes(3);
+                var data = htu21d.ReadBytes(3);
                 var humidityReading = (ushort)((data[0] << 8) + data[1]);
                 conditions.Humidity = ((125 * (float)humidityReading) / 65536) - 6;
                 if (conditions.Humidity < 0) {
@@ -200,7 +169,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         conditions.Humidity = 100;
                     }
                 }
-                data = _si7021.ReadRegisters(Registers.ReadPreviousTemperatureMeasurement, 2);
+                data = htu21d.ReadRegisters(TEMPERATURE_MEASURE_PREVIOUS, 2);
                 var temperatureReading = (short)((data[0] << 8) + data[1]);
                 conditions.Temperature = (float)(((175.72 * temperatureReading) / 65536) - 46.85);
 
@@ -233,7 +202,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 AtmosphericConditions oldConditions;
                 AtmosphericConditionChangeResult result;
 
-                Task.Factory.StartNew(async () => {
+                Task.Factory.StartNew(async () =>
+                {
                     while (true)
                     {
                         // cleanup
@@ -247,7 +217,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         oldConditions = Conditions;
 
                         // read
-                        Conditions = await Update();
+                        Conditions = await ReadSensor();
 
                         // build a new result with the old and new conditions
                         result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
@@ -257,6 +227,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                         // sleep for the appropriate interval
                         await Task.Delay(standbyDuration);
+
+                        Console.WriteLine("loop");
                     }
                 }, SamplingTokenSource.Token);
             }
@@ -290,14 +262,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="onOrOff">Heater status, true = turn heater on, false = turn heater off.</param>
         public void Heater(bool onOrOff)
         {
-            var register = _si7021.ReadRegister(READ_USER_REGISTER);
+            var register = htu21d.ReadRegister(READ_USER_REGISTER);
             register &= 0xfd;
 
             if (onOrOff) 
 			{
                 register |= 0x02;
             }
-            htd21d.WriteRegister(WRITE_USER_REGISTER, register);
+            htu21d.WriteRegister(WRITE_USER_REGISTER, register);
         }
 		
 		//Set sensor resolution

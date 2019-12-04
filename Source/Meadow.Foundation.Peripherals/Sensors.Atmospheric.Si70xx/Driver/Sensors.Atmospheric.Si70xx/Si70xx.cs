@@ -69,22 +69,28 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     SI7021 is an I2C device.
         /// </summary>
-        protected readonly II2cPeripheral _si7021;
+        protected readonly II2cPeripheral si7021;
 
         // internal thread lock
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        private const byte TRIGGER_TEMP_MEASURE_NOHOLD = 0xF3;
-        private const byte TRIGGER_HUMD_MEASURE_NOHOLD = 0xF5;
-        private const byte TRIGGER_TEMP_MEASURE_HOLD = 0xE3;
-        private const byte TRIGGER_HUMD_MEASURE_HOLD = 0xE5;
+        private const byte TEMPERATURE_MEASURE_NOHOLD = 0xF3;
+        private const byte HUMDITY_MEASURE_NOHOLD = 0xF5;
+        private const byte TEMPERATURE_MEASURE_HOLD = 0xE3;
+        private const byte HUMDITY_MEASURE_HOLD = 0xE5;
+        private const byte TEMPERATURE_MEASURE_PREVIOUS = 0xE0;
 
         private const byte WRITE_USER_REGISTER = 0xE6;
         private const byte READ_USER_REGISTER = 0xE7;
         private const byte READ_HEATER_REGISTER = 0x11;
         private const byte WRITE_HEATER_REGISTER = 0x51;
         private const byte SOFT_RESET = 0x0F;
+
+        public const byte READ_ID_PART1 = 0xfa;
+        public const byte READ_ID_PART2 = 0x0f;
+        public const byte READ_2ND_ID_PART1 = 0xfc;
+        public const byte READ_2ND_ID_PART2 = 0xc9;
 
         #endregion Member variables /fields
 
@@ -129,7 +135,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
         public Si70xx(II2cBus i2cBus, byte address = 0x40)
         {
-            _si7021 = new I2cPeripheral(i2cBus, address);
+            si7021 = new I2cPeripheral(i2cBus, address);
 			
             Initialize();
         }
@@ -140,21 +146,21 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected void Initialize()
         {
-            _si7021.WriteByte(SOFT_RESET);
+            si7021.WriteByte(SOFT_RESET);
 					 			
 			Thread.Sleep(100);
             //
             //  Get the device ID.
             //
-            var part1 = _si7021.WriteRead(new[]
+            var part1 = si7021.WriteRead(new[]
             {
-                Registers.ReadIDFirstBytePart1,
-                Registers.ReadIDFirstBytePart2
+                READ_ID_PART1,
+                READ_ID_PART2
             }, 8);
-            var part2 = _si7021.WriteRead(new[]
+            var part2 = si7021.WriteRead(new[]
             {
-                Registers.ReadIDSecondBytePart1,
-                Registers.ReadIDSecondBytePart2
+                READ_2ND_ID_PART1,
+                READ_2ND_ID_PART2
             }, 6);
             SerialNumber = 0;
             for (var index = 0; index < 4; index++) {
@@ -200,12 +206,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             AtmosphericConditions conditions = new AtmosphericConditions();
 
             return await Task.Run(() => {
-                _si7021.WriteByte(Registers.MeasureHumidityNoHold);
+                si7021.WriteByte(HUMDITY_MEASURE_NOHOLD);
                 //
                 //  Maximum conversion time is 12ms (page 5 of the datasheet).
                 //
                 Thread.Sleep(25);
-                var data = _si7021.ReadBytes(3);
+                var data = si7021.ReadBytes(3);
                 var humidityReading = (ushort)((data[0] << 8) + data[1]);
                 conditions.Humidity = ((125 * (float)humidityReading) / 65536) - 6;
                 if (conditions.Humidity < 0) {
@@ -215,7 +221,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         conditions.Humidity = 100;
                     }
                 }
-                data = _si7021.ReadRegisters(Registers.ReadPreviousTemperatureMeasurement, 2);
+                data = si7021.ReadRegisters(TEMPERATURE_MEASURE_PREVIOUS, 2);
                 var temperatureReading = (short)((data[0] << 8) + data[1]);
                 conditions.Temperature = (float)(((175.72 * temperatureReading) / 65536) - 46.85);
 
@@ -228,7 +234,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void Reset()
         {
-            _si7021.WriteByte(READ_USER_REGISTER);
+            si7021.WriteByte(READ_USER_REGISTER);
             Thread.Sleep(50);
         }
 
@@ -262,7 +268,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         oldConditions = Conditions;
 
                         // read
-                        await Read();
+                        Conditions = await Read();
 
                         // build a new result with the old and new conditions
                         result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
@@ -305,14 +311,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="onOrOff">Heater status, true = turn heater on, false = turn heater off.</param>
         public void Heater(bool onOrOff)
         {
-            var register = _si7021.ReadRegister(READ_USER_REGISTER);
+            var register = si7021.ReadRegister(READ_USER_REGISTER);
             register &= 0xfd;
 
             if (onOrOff) 
 			{
                 register |= 0x02;
             }
-            _si7021.WriteRegister(WRITE_USER_REGISTER, register);
+            si7021.WriteRegister(WRITE_USER_REGISTER, register);
         }
 		
 		//Set sensor resolution
@@ -326,7 +332,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         //Power on default is 0/0
         void SetResolution(SensorResolution resolution)
         {
-            byte userData = htu21d.ReadRegister(READ_USER_REGISTER); //Go get the current register state
+            byte userData = si7021.ReadRegister(READ_USER_REGISTER); //Go get the current register state
                                                                          //userRegister &= 0b01111110; //Turn off the resolution bits
                                                                          //resolution &= 0b10000001; //Turn off all other bits but resolution bits
                                                                          //userRegister |= resolution; //Mask in the requested resolution bits
@@ -337,8 +343,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             userData |= res; //Mask in the requested resolution bits
 
             //Request a write to user register
-            htu21d.WriteBytes(new byte[] { WRITE_USER_REGISTER }); //Write to the user register
-            htu21d.WriteBytes(new byte[] { userData }); //Write the new resolution bits
+            si7021.WriteBytes(new byte[] { WRITE_USER_REGISTER }); //Write to the user register
+            si7021.WriteBytes(new byte[] { userData }); //Write the new resolution bits
         }
 
         #endregion Methods
