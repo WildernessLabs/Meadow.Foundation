@@ -399,6 +399,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Htu21d"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Htu21d_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21DF\Samples\Sensors.Atmospheric.Htu21DF_Sample\Sensors.Atmospheric.Htu21d_Sample.csproj", "{29BBDF1D-0635-4C08-B5A4-24B3BCB385C1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Camera.ArducamMini", "Sensors.Camera.ArducamMini", "{12B24D04-F1A5-4CB8-AC7F-13E965EC982D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Camera.ArducamMini", "Meadow.Foundation.Peripherals\Sensors.Camera.ArducamMini\Driver\Sensors.Camera.ArducamMini\Sensors.Camera.ArducamMini.csproj", "{BCDCFDE4-F61E-4352-897D-30B42423819F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{43DB9DE8-A36D-41CC-947F-07CC8276D585}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Camera.ArucamMini_Sample", "Meadow.Foundation.Peripherals\Sensors.Camera.ArducamMini\Samples\Sensors.Camera.ArucamMini_Sample\Sensors.Camera.ArucamMini_Sample.csproj", "{0F681E0D-33EE-4FEC-94C7-CDB89B2DB461}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -817,6 +825,14 @@ Global
 		{29BBDF1D-0635-4C08-B5A4-24B3BCB385C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29BBDF1D-0635-4C08-B5A4-24B3BCB385C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29BBDF1D-0635-4C08-B5A4-24B3BCB385C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCDCFDE4-F61E-4352-897D-30B42423819F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCDCFDE4-F61E-4352-897D-30B42423819F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCDCFDE4-F61E-4352-897D-30B42423819F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCDCFDE4-F61E-4352-897D-30B42423819F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F681E0D-33EE-4FEC-94C7-CDB89B2DB461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F681E0D-33EE-4FEC-94C7-CDB89B2DB461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F681E0D-33EE-4FEC-94C7-CDB89B2DB461}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F681E0D-33EE-4FEC-94C7-CDB89B2DB461}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1015,6 +1031,10 @@ Global
 		{6F75A043-B66A-44BB-A4F4-5004000C842C} = {07F59EFA-8D03-489D-BB05-905C3B0A7699}
 		{D9602FE1-2701-4B64-BB2C-60168F8DAF60} = {27F8F5B1-F535-4116-BB16-63454D21D13B}
 		{29BBDF1D-0635-4C08-B5A4-24B3BCB385C1} = {27F8F5B1-F535-4116-BB16-63454D21D13B}
+		{12B24D04-F1A5-4CB8-AC7F-13E965EC982D} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{BCDCFDE4-F61E-4352-897D-30B42423819F} = {12B24D04-F1A5-4CB8-AC7F-13E965EC982D}
+		{43DB9DE8-A36D-41CC-947F-07CC8276D585} = {12B24D04-F1A5-4CB8-AC7F-13E965EC982D}
+		{0F681E0D-33EE-4FEC-94C7-CDB89B2DB461} = {43DB9DE8-A36D-41CC-947F-07CC8276D585}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
