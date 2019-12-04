@@ -39,10 +39,6 @@ namespace Displays.Tft.ILI9163_Sample
             // Drawing natively in the display
             display.ClearScreen(250);
 
-            Console.WriteLine("Refresh");
-
-            display.Refresh();
-
             Console.WriteLine("Draw");
 
             for (int i = 0; i < 30; i++)
