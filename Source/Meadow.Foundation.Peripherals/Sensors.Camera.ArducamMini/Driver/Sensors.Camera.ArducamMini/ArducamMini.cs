@@ -116,10 +116,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
         private byte ReadBus(byte address)
         {
-            byte[] dataOut = { address, 0x00 };
-            var dataIn = spiDevice.WriteRead(dataOut, 2);
-
-            return dataIn[0];
+            return spiDevice.ReadRegister(address);
         }
 
         private byte ReadI2cRegister(byte address)
@@ -190,7 +187,7 @@ namespace Meadow.Foundation.Sensors.Camera
             return length;
         }
 
-        public byte ReadFIFO()
+        public byte ReadFifo()
         {
             return ReadBus(SINGLE_FIFO_READ);
         }
@@ -205,8 +202,7 @@ namespace Meadow.Foundation.Sensors.Camera
             {
                 for (int i = 0; i < ReadFifoLength(); i++)
                 {
-                    ms.WriteByte(ReadFIFO());
-
+                    ms.WriteByte(ReadFifo());
                 }
 
                 return ms.ToArray();
