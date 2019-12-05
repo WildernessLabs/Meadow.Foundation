@@ -407,6 +407,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{43DB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Camera.ArucamMini_Sample", "Meadow.Foundation.Peripherals\Sensors.Camera.ArducamMini\Samples\Sensors.Camera.ArucamMini_Sample\Sensors.Camera.ArucamMini_Sample.csproj", "{0F681E0D-33EE-4FEC-94C7-CDB89B2DB461}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Si1145_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Si1145\Samples\Sensors.Light.Si1145_Sample\Sensors.Light.Si1145_Sample.csproj", "{DDF9E618-A25E-45E8-8435-D6C60E097C44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -833,6 +835,10 @@ Global
 		{0F681E0D-33EE-4FEC-94C7-CDB89B2DB461}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F681E0D-33EE-4FEC-94C7-CDB89B2DB461}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F681E0D-33EE-4FEC-94C7-CDB89B2DB461}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDF9E618-A25E-45E8-8435-D6C60E097C44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDF9E618-A25E-45E8-8435-D6C60E097C44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDF9E618-A25E-45E8-8435-D6C60E097C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDF9E618-A25E-45E8-8435-D6C60E097C44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1035,6 +1041,7 @@ Global
 		{BCDCFDE4-F61E-4352-897D-30B42423819F} = {12B24D04-F1A5-4CB8-AC7F-13E965EC982D}
 		{43DB9DE8-A36D-41CC-947F-07CC8276D585} = {12B24D04-F1A5-4CB8-AC7F-13E965EC982D}
 		{0F681E0D-33EE-4FEC-94C7-CDB89B2DB461} = {43DB9DE8-A36D-41CC-947F-07CC8276D585}
+		{DDF9E618-A25E-45E8-8435-D6C60E097C44} = {B99DE5A0-FF26-4805-BBB2-2739582191C0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
