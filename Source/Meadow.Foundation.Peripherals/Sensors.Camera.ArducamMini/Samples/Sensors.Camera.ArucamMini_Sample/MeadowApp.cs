@@ -20,7 +20,7 @@ namespace MeadowApp
         {
             Console.WriteLine("Creating output ports...");
 
-            camera = new ArducamMini(Device.CreateI2cBus());
+            camera = new ArducamMini(Device, Device.CreateSpiBus(), Device.Pins.D00, Device.CreateI2cBus());
 
             Thread.Sleep(1000);
 
@@ -32,6 +32,15 @@ namespace MeadowApp
             Console.WriteLine("Capture started");
 
             Thread.Sleep(1000);
+
+            if(camera.IsCaptureComplete())
+            {
+                Console.WriteLine("Capture complete");
+
+                var data = camera.GetImageData();
+
+                Console.WriteLine($"Jpeg captured {data.Length}");
+            }
         }
     }
 }
