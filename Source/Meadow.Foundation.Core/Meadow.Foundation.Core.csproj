@@ -16,4 +16,7 @@
  <ItemGroup>
     <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
  </ItemGroup>
+ <ItemGroup>
+   <Folder Include="Sensors\HID\" />
+ </ItemGroup>
 </Project>
