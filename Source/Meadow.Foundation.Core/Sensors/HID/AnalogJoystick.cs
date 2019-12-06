@@ -60,7 +60,6 @@ namespace Meadow.Foundation.Sensors.HID
             {
                 this.Calibration = calibration;
             }
-
         }
 
         #endregion Constructors
@@ -90,8 +89,6 @@ namespace Meadow.Foundation.Sensors.HID
             {
                 h = await HorizontalInputPort.Read();
                 v = await VerticalInputPort.Read();
-
-
             }
         }
 
@@ -120,7 +117,7 @@ namespace Meadow.Foundation.Sensors.HID
             {
                 if (v > Calibration.VerticalCenter + Calibration.DeadZone) { return JoystickPosition.UpLeft; }
                 if (v < Calibration.VerticalCenter - Calibration.DeadZone) { return JoystickPosition.DownLeft; }
-                return JoystickPosition.Right;
+                return JoystickPosition.Left;
             }
 
             return JoystickPosition.Center;

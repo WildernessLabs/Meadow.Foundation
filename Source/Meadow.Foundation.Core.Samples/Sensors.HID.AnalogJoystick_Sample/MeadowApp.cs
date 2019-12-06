@@ -15,7 +15,6 @@ namespace MeadowApp
         public MeadowApp()
         {
             ConfigurePorts();
-            BlinkLeds();
         }
 
         public void ConfigurePorts()
@@ -24,25 +23,10 @@ namespace MeadowApp
             redLed = Device.CreateDigitalOutputPort(Device.Pins.OnboardLedRed);
             blueLed = Device.CreateDigitalOutputPort(Device.Pins.OnboardLedBlue);
             greenLed = Device.CreateDigitalOutputPort(Device.Pins.OnboardLedGreen);
+
+
+
         }
 
-        public void BlinkLeds()
-        {
-            var state = false;
-
-            while (true)
-            {
-                state = !state;
-
-                Console.WriteLine($"State: {state}");
-
-                redLed.State = state;
-                Thread.Sleep(500);
-                blueLed.State = state;
-                Thread.Sleep(500);
-                greenLed.State = state;
-                Thread.Sleep(500);
-            }
-        }
     }
 }
