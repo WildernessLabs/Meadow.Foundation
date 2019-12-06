@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.HID
@@ -13,9 +14,6 @@ namespace Meadow.Foundation.Sensors.HID
         public JoystickPosition Position { get; }
 
         public JoystickCalibration Calibration { get; protected set; }
-
-        public float Horizontal = 0;
-        public float Vertical = 0;
 
         #endregion
 
@@ -95,12 +93,6 @@ namespace Meadow.Foundation.Sensors.HID
 
 
             }
-
-
-
-
-
-
         }
 
         // helper method to check joystick position
@@ -112,12 +104,36 @@ namespace Meadow.Foundation.Sensors.HID
             return false;
         }
 
-        public JoystickPosition GetPosition()
+        public async Task<JoystickPosition> GetPosition()
         {
-            //math time
+            var h = await GetHorizontalValue();
+            var v = await GetVerticalValue();
 
+            if(h > Calibration.HorizontalCenter + Calibration.DeadZone)
+            {
+                if(v > Calibration.VerticalCenter + Calibration.DeadZone) { return JoystickPosition.UpRight; }
+                if(v < Calibration.VerticalCenter - Calibration.DeadZone) { return JoystickPosition.DownRight; }
+                return JoystickPosition.Right;
+            }
+
+            if (h < Calibration.HorizontalCenter - Calibration.DeadZone)
+            {
+                if (v > Calibration.VerticalCenter + Calibration.DeadZone) { return JoystickPosition.UpLeft; }
+                if (v < Calibration.VerticalCenter - Calibration.DeadZone) { return JoystickPosition.DownLeft; }
+                return JoystickPosition.Right;
+            }
 
             return JoystickPosition.Center;
+        }
+
+        public Task<float> GetHorizontalValue()
+        {
+            return HorizontalInputPort.Read();
+        }
+
+        public Task<float> GetVerticalValue()
+        {
+            return VerticalInputPort.Read();
         }
 
         public void StartUpdating (int sampleCount = 3,
