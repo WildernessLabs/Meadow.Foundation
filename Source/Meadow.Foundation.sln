@@ -413,6 +413,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Camera.ArducamMini_
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.HID.AnalogJoystick_Sample", "Meadow.Foundation.Core.Samples\Sensors.HID.AnalogJoystick_Sample\Sensors.HID.AnalogJoystick_Sample.csproj", "{B31580AC-6F58-4EF4-93C5-6DAF204266A2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Motors.Stepper.Uln2003", "Motors.Stepper.Uln2003", "{33B2B22A-A3E5-4758-A4DC-E6ABB40A87DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motors.Stepper.Uln2003", "Meadow.Foundation.Peripherals\Motors.Stepper.Uln2003\Driver\Motors.Stepper.Uln2003\Motors.Stepper.Uln2003.csproj", "{39A460CD-2A0E-4FE2-9F48-552AC6D8344D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motors.Stepper.Uln2003_Sample", "Meadow.Foundation.Peripherals\Motors.Stepper.Uln2003\Samples\Motors.Stepper.Uln2003_Sample\Motors.Stepper.Uln2003_Sample.csproj", "{994DAB4F-3DE9-470B-8A30-F86EBA3684E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -851,6 +857,14 @@ Global
 		{B31580AC-6F58-4EF4-93C5-6DAF204266A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B31580AC-6F58-4EF4-93C5-6DAF204266A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B31580AC-6F58-4EF4-93C5-6DAF204266A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39A460CD-2A0E-4FE2-9F48-552AC6D8344D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39A460CD-2A0E-4FE2-9F48-552AC6D8344D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39A460CD-2A0E-4FE2-9F48-552AC6D8344D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39A460CD-2A0E-4FE2-9F48-552AC6D8344D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{994DAB4F-3DE9-470B-8A30-F86EBA3684E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{994DAB4F-3DE9-470B-8A30-F86EBA3684E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{994DAB4F-3DE9-470B-8A30-F86EBA3684E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{994DAB4F-3DE9-470B-8A30-F86EBA3684E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1056,6 +1070,9 @@ Global
 		{DDF9E618-A25E-45E8-8435-D6C60E097C44} = {B99DE5A0-FF26-4805-BBB2-2739582191C0}
 		{90713460-758B-4DD6-AD25-7421D0798722} = {43DB9DE8-A36D-41CC-947F-07CC8276D585}
 		{B31580AC-6F58-4EF4-93C5-6DAF204266A2} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
+		{33B2B22A-A3E5-4758-A4DC-E6ABB40A87DD} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{39A460CD-2A0E-4FE2-9F48-552AC6D8344D} = {33B2B22A-A3E5-4758-A4DC-E6ABB40A87DD}
+		{994DAB4F-3DE9-470B-8A30-F86EBA3684E7} = {33B2B22A-A3E5-4758-A4DC-E6ABB40A87DD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
