@@ -17,7 +17,7 @@ namespace MeadowApp
 
             var chars = new Character[] { Character.A, Character.B, Character.C, Character.D };
 
-            display.Display(chars);
+            display.Show(chars);
 
             /*
             Console.WriteLine("0");

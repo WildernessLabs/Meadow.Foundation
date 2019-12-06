@@ -2,18 +2,6 @@
 
 namespace Meadow.Foundation.Displays.Tm1637
 {
-    /// <summary>
-    /// 
-    /// bit 0 = a       _a_
-    /// bit 1 = b      |   |
-    /// bit 2 = c      f   b
-    /// bit 3 = d      |_g_|
-    /// bit 4 = e      |   |
-    /// bit 5 = f      e   c
-    /// bit 6 = g      |_d_|  .dp
-    /// bit 7 = dp
-    /// 
-    /// </summary>
     [Flags]
     public enum Character : byte
     {
