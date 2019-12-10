@@ -4,9 +4,11 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class Apds9960
+    public class Apds9960O
     {
         #region Member variables / fields
+
+
 
         /// <summary>
         ///     Communication bus used to communicate with the sensor.
@@ -29,6 +31,10 @@ namespace Meadow.Foundation.Sensors.Motion
         private readonly APDS9960GConfig4 gconfig4 = new APDS9960GConfig4();
 
         private byte upCount, downCount, leftCount, rightCount;
+
+        /* Acceptable device IDs */
+        static readonly byte APDS9960_ID_1 = 0xAB;
+        static readonly byte APDS9960_ID_2 = 0x9C; 
 
         /** I2C Registers */
         static readonly byte APDS9960_RAM = 0x00;
@@ -180,7 +186,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Make the default constructor private so that it cannot be used.
         /// </summary>
-        private Apds9960()
+        private Apds9960O()
         {
         }
 
@@ -189,7 +195,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">SI2C bus object</param>
-        public Apds9960(IIODevice device, II2cBus i2cBus, IPin interruptPin, byte address = 0x39)
+        public Apds9960O(IIODevice device, II2cBus i2cBus, IPin interruptPin, byte address = 0x39)
         {
             apds9960 = new I2cPeripheral(i2cBus, address);
 
@@ -216,10 +222,12 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             var result = apds9960.ReadRegister(APDS9960_ID);
 
-            if (result != 0xAB)
+            if ((result != APDS9960_ID_1) && (result != APDS9960_ID_2))
             {
                 throw new Exception($"APDS9960 isn't connected: {result}");
             }
+
+        //    apds9960.WriteRegister(APDS9960_ATIME, DEFAULT_ATIME);
         }
 
         //Sets the integration time for the ADC of the APDS9960, in millis
@@ -230,8 +238,8 @@ namespace Meadow.Foundation.Sensors.Motion
 
             time = 256 - time / 2.78f;
 
-            if (time > 255) time = 255;
-            if (time < 0) time = 0;
+            if (time > 255) { time = 255; }
+            if (time < 0) { time = 0; }
 
             /* Update the timing register */
             apds9960.WriteRegister(APDS9960_ATIME, (byte)time);
