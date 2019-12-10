@@ -32,16 +32,24 @@ namespace BasicSensors.Motion.Apds9960_Sample
 
             while (true)
             {
-                if(sensor.IsGestureAvailable())
-                {
-                    Console.WriteLine($"Gesture: {sensor.ReadGesture()}");
-                }
-                else
-                {
-                    Console.WriteLine("No gesture detected");
-                }
+             //   Console.WriteLine($"Ambient: {sensor.ReadAmbientLight()}");
+             //   Console.WriteLine($"Blue:    {sensor.ReadBlueLight()}");
+             //   Console.WriteLine($"Green:   {sensor.ReadGreenLight()}");
+             //   Console.WriteLine($"Red:     {sensor.ReadRedLight()}");
 
-                Thread.Sleep(5000);
+                Console.WriteLine($"Prox: {sensor.ReadProximity()}");
+                Thread.Sleep(2000);
+
+                /*    if(sensor.IsGestureAvailable())
+                    {
+                        Console.WriteLine($"Gesture: {sensor.ReadGesture()}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No gesture detected");
+                    }
+
+                    Thread.Sleep(5000); */
             }
         }
 
@@ -51,8 +59,13 @@ namespace BasicSensors.Motion.Apds9960_Sample
 
             sensor = new Apds9960(Device, Device.CreateI2cBus(), Device.Pins.D04);
 
-            Console.WriteLine("EnabledGestureSensor");
-            sensor.EnableGestureSensor(false);
+            sensor.EnableProximitySensor(false);
+            sensor.SetProximityGain(2);
+          //  sensor.EnableLightSensor(false);
+
+         //   Console.WriteLine("EnabledGestureSensor");
+         //   sensor.EnableGestureSensor(false);
+
         }
     }
 }

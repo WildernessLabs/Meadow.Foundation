@@ -399,15 +399,8 @@ namespace Meadow.Foundation.Sensors.Motion
             apds9960.WriteRegister(APDS9960_ENABLE, reg_val);
         }
 
-        /**
-         * @brief Starts the light (R/G/B/Ambient) sensor on the APDS-9960
-         *
-         * @param[in] interrupts true to enable hardware interrupt on high or low light
-         * @return True if sensor enabled correctly. False on error.
-         */
-        bool enableLightSensor(bool interrupts)
+        public void EnableLightSensor(bool interrupts)
         {
-
             /* Set default gain, interrupts, enable power, and enable sensor */
             SetAmbientLightGain(DEFAULT_AGAIN);
     
@@ -415,28 +408,14 @@ namespace Meadow.Foundation.Sensors.Motion
     
             EnablePower(true);
             SetMode(AMBIENT_LIGHT, 1);
-
-            return true;
-
         }
 
-        /**
-         * @brief Ends the light sensor on the APDS-9960
-         *
-         * @return True if sensor disabled correctly. False on error.
-         */
-        void DisableLightSensor()
+        public void DisableLightSensor()
         {
             SetAmbientLightIntEnable(false);
             SetMode(AMBIENT_LIGHT, 0);
         }
 
-        /**
-         * @brief Starts the proximity sensor on the APDS-9960
-         *
-         * @param[in] interrupts true to enable hardware external interrupt on proximity
-         * @return True if sensor enabled correctly. False on error.
-         */
         public void EnableProximitySensor(bool interrupts)
         {
             /* Set default gain, LED, interrupts, enable power, and enable sensor */
@@ -455,11 +434,6 @@ namespace Meadow.Foundation.Sensors.Motion
             SetMode(PROXIMITY, 1);
         }
 
-        /**
-         * @brief Ends the proximity sensor on the APDS-9960
-         *
-         * @return True if sensor disabled correctly. False on error.
-         */
         public void DisableProximitySensor()
         {
             SetProximityIntEnable(0);
@@ -502,11 +476,6 @@ namespace Meadow.Foundation.Sensors.Motion
             return true;
         }
 
-        /**
-         * @brief Ends the gesture recognition engine on the APDS-9960
-         *
-         * @return True if engine disabled correctly. False on error.
-         */
         public void DisableGestureSensor()
         {
             ResetGestureParameters();
@@ -515,11 +484,6 @@ namespace Meadow.Foundation.Sensors.Motion
             SetMode(GESTURE, 0);
         }
 
-        /**
-         * @brief Determines if there is a gesture available for reading
-         *
-         * @return True if gesture available. False otherwise.
-         */
         public bool IsGestureAvailable()
         {
             byte val = apds9960.ReadRegister(APDS9960_GSTATUS);
@@ -531,11 +495,6 @@ namespace Meadow.Foundation.Sensors.Motion
             return val == 1;
         }
 
-        /**
-         * @brief Processes a gesture event and returns best guessed gesture
-         *
-         * @return Number corresponding to gesture. -1 on error.
-         */
         public Direction ReadGesture()
         {
             /* Make sure that power and gesture is on and data is valid */
@@ -628,12 +587,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        /**
-         * Turn the APDS-9960 on
-         *
-         * @return True if operation successful. False otherwise.
-         */
-        void EnablePower(bool enable)
+        public void EnablePower(bool enable)
         {
             SetMode(POWER, (byte)(enable ? 1 : 0));
         }
@@ -641,78 +595,46 @@ namespace Meadow.Foundation.Sensors.Motion
         /*******************************************************************************
          * Ambient light and color sensor controls
          ******************************************************************************/
-
-        /**
-         * @brief Reads the ambient (clear) light level as a 16-bit value
-         *
-         * @param[out] val value of the light sensor.
-         * @return True if operation successful. False otherwise.
-         */
-        short ReadAmbientLight()
+        public ushort ReadAmbientLight()
         {
             byte val = apds9960.ReadRegister(APDS9960_CDATAL);
 
             byte val_byte = apds9960.ReadRegister(APDS9960_CDATAH);
 
-            return (short)(val + (val_byte << 8));
+            return (ushort)(val + (val_byte << 8));
         }
 
-        /**
-         * @brief Reads the red light level as a 16-bit value
-         *
-         * @param[out] val value of the light sensor.
-         * @return True if operation successful. False otherwise.
-         */
-        short ReadRedLight()
+        public ushort ReadRedLight()
         {
             byte val = apds9960.ReadRegister(APDS9960_RDATAL);
 
             byte val_byte = apds9960.ReadRegister(APDS9960_RDATAH);
 
-            return (short)(val + (val_byte << 8));
+            return (ushort)(val + (val_byte << 8));
         }
 
-        /**
-         * @brief Reads the green light level as a 16-bit value
-         *
-         * @param[out] val value of the light sensor.
-         * @return True if operation successful. False otherwise.
-         */
-        short ReadGreenLight()
+        public ushort ReadGreenLight()
         {
             byte val = apds9960.ReadRegister(APDS9960_GDATAL);
 
             byte val_byte = apds9960.ReadRegister(APDS9960_GDATAH);
 
-            return (short)(val + (val_byte << 8));
+            return (ushort)(val + (val_byte << 8));
         }
 
-        /**
-         * @brief Reads the red light level as a 16-bit value
-         *
-         * @param[out] val value of the light sensor.
-         * @return True if operation successful. False otherwise.
-         */
-        short ReadBlueLight()
+        public ushort ReadBlueLight()
         {
             byte val = apds9960.ReadRegister(APDS9960_BDATAL);
 
             byte val_byte = apds9960.ReadRegister(APDS9960_BDATAH);
 
-            return (short)(val + (val_byte << 8));
+            return (ushort)(val + (val_byte << 8));
         }
 
         /*******************************************************************************
          * Proximity sensor controls
          ******************************************************************************/
-
-        /**
-         * @brief Reads the proximity level as an 8-bit value
-         *
-         * @param[out] val value of the proximity sensor.
-         * @return True if operation successful. False otherwise.
-         */
-        byte ReadProximity()
+        public byte ReadProximity()
         {
             return apds9960.ReadRegister(APDS9960_PDATA);
         }
@@ -1007,7 +929,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return lower threshold
          */
-        byte GetProxIntLowThresh()
+        public byte GetProxIntLowThresh()
         {
             return apds9960.ReadRegister(APDS9960_PILT);
         }
@@ -1018,7 +940,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] threshold the lower proximity threshold
          * @return True if operation successful. False otherwise.
          */
-        void SetProxIntLowThresh(byte threshold)
+        public void SetProxIntLowThresh(byte threshold)
         {
             apds9960.WriteRegister(APDS9960_PILT, threshold);
         }
@@ -1028,7 +950,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return high threshold
          */
-        byte GetProxIntHighThresh()
+        public byte GetProxIntHighThresh()
         {
             return apds9960.ReadRegister(APDS9960_PIHT);
         }
@@ -1039,7 +961,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] threshold the high proximity threshold
          * @return True if operation successful. False otherwise.
          */
-        void SetProxIntHighThresh(byte threshold)
+        public void SetProxIntHighThresh(byte threshold)
         {
             apds9960.WriteRegister(APDS9960_PIHT, threshold);
         }
@@ -1055,7 +977,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return the value of the LED drive strength. 0xFF on failure.
          */
-        byte GetLEDDrive()
+        public byte GetLEDDrive()
         {
             byte val = apds9960.ReadRegister(APDS9960_CONTROL);
 
@@ -1077,7 +999,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] drive the value (0-3) for the LED drive strength
          * @return True if operation successful. False otherwise.
          */
-        bool SetLEDDrive(byte drive)
+        public bool SetLEDDrive(byte drive)
         {
             byte val = apds9960.ReadRegister(APDS9960_CONTROL);
 
@@ -1104,7 +1026,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return the value of the proximity gain. 0xFF on failure.
          */
-        byte GetProximityGain()
+        public byte GetProximityGain()
         {
             byte val = apds9960.ReadRegister(APDS9960_CONTROL);
 
@@ -1126,7 +1048,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] drive the value (0-3) for the gain
          * @return True if operation successful. False otherwise.
          */
-        void SetProximityGain(byte drive)
+        public void SetProximityGain(byte drive)
         {
             byte val = apds9960.ReadRegister(APDS9960_CONTROL);
 
@@ -1519,7 +1441,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             var val_byte = apds9960.ReadRegister(APDS9960_AILTH);
       
-            return (byte)(threshold + ((short)val_byte << 8));
+            return (byte)(threshold + ((ushort)val_byte << 8));
         }
 
         /**
@@ -1553,7 +1475,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             var val_byte = apds9960.ReadRegister(APDS9960_AIHTH);
 
-            return (byte)(threshold + ((short)val_byte << 8));
+            return (byte)(threshold + ((ushort)val_byte << 8));
         }
 
         /**
@@ -1562,7 +1484,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] threshold high threshold value for interrupt to trigger
          * @return True if operation successful. False otherwise.
          */
-        void SetLightIntHighThreshold(short threshold)
+        void SetLightIntHighThreshold(ushort threshold)
         {
             /* Break 16-bit threshold into 2 8-bit values */
             byte val_low = (byte)(threshold & 0x00FF);
