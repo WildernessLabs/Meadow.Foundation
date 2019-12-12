@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
-    public class ALSPT19315C
+    public class Alspt19315C
     {
         #region Member variables / fields
 
@@ -13,21 +13,11 @@ namespace Meadow.Foundation.Sensors.Light
         private readonly IAnalogInputPort _sensor;
 
         /// <summary>
-        ///     Analog port connected to the reference voltage.
-        /// </summary>
-        private readonly IAnalogInputPort _referenceVoltagePort;
-
-        /// <summary>
-        ///     Reference voltage.
-        /// </summary>
-        private double _referenceVoltage;
-
-        /// <summary>
         ///     Voltage being output by the sensor.
         /// </summary>
-        public async Task<double> GetVoltage()
+        public Task<float> GetVoltage()
         {
-            return await _referenceVoltagePort.Read() * 3.3;
+            return _sensor.Read();
         }
 
         #endregion Member variables / fields
@@ -37,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         ///     Default constructor (private to prevent it being used).
         /// </summary>
-        private ALSPT19315C()
+        private Alspt19315C()
         {
         }
 
@@ -45,23 +35,9 @@ namespace Meadow.Foundation.Sensors.Light
         ///     Create a new light sensor object using a static reference voltage.
         /// </summary>
         /// <param name="pin">AnalogChannel connected to the sensor.</param>
-        /// <param name="referenceVoltage">Reference voltage.</param>
-        public ALSPT19315C(IIODevice device, IPin pin, double referenceVoltage)
+        public Alspt19315C(IIODevice device, IPin pin)
         {
             _sensor = device.CreateAnalogInputPort(pin);
-            _referenceVoltagePort = null;
-            _referenceVoltage = referenceVoltage;
-        }
-
-        /// <summary>
-        ///     Create a new light sensor object using a dynaic reference voltage.
-        /// </summary>
-        /// <param name="pin">Analog channel connected to the sensor.</param>
-        /// <param name="referenceVoltagePin">Analog channel connected to the reference voltage souce.</param>
-        public ALSPT19315C(IIODevice device, IPin pin, IPin referenceVoltagePin)
-        {
-            _sensor = device.CreateAnalogInputPort(pin);
-            _referenceVoltagePort = device.CreateAnalogInputPort(referenceVoltagePin);
         }
 
         #endregion Constructors
