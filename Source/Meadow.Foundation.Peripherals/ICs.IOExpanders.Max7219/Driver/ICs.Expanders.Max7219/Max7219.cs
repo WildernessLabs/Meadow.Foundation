@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -48,20 +50,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         internal enum Register : byte
         {
-            NOOP = 0x0,
-            DIGIT0 = 0x1,
-            DIGIT1 = 0x2,
-            DIGIT2 = 0x3,
-            DIGIT3 = 0x4,
-            DIGIT4 = 0x5,
-            DIGIT5 = 0x6,
-            DIGIT6 = 0x7,
-            DIGIT7 = 0x8,
-            DECODEMODE = 0x9,
-            INTENSITY = 0xA,
-            SCANLIMIT = 0xB,
-            SHUTDOWN = 0xC,
-            DISPLAYTEST = 0xF
+            NOOP        = 0x00,
+            DIGIT0      = 0x01,
+            DIGIT1      = 0x02,
+            DIGIT2      = 0x03,
+            DIGIT3      = 0x04,
+            DIGIT4      = 0x05,
+            DIGIT5      = 0x06,
+            DIGIT6      = 0x07,
+            DIGIT7      = 0x08,
+            DECODEMODE  = 0x09,
+            INTENSITY   = 0x0A,
+            SCANLIMIT   = 0x0B,
+            SHUTDOWN    = 0x0C,
+            DISPLAYTEST = 0x0F
         }
 
         #endregion Enums
@@ -101,6 +103,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SetRegister(Register.SHUTDOWN, 1); // not shutdown mode
             Brightness(4); //intensity, range: 0..15
             ClearAll();
+        }
+
+        public void TestDisplay(int timeInMs = 1000)
+        {
+            SetRegister(Register.DISPLAYTEST, 0xFF);
+
+            Thread.Sleep(timeInMs);
+
+            SetRegister(Register.DISPLAYTEST, 0); 
         }
 
 
@@ -186,7 +197,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private void ValidateIndex(int index, out int deviceId, out int digit)
         {
             if (index < 0 || index > Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(index), $"Invalid index {index}");
+            }
             deviceId = Math.DivRem(index, NumDigits, out digit);
         }
 
@@ -208,6 +221,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             for (int digit = 0; digit < NumDigits; digit++)
             {
                 var i = 0;
+
                 for (var deviceId = DeviceCount - 1; deviceId >= 0; deviceId--)
                 {
                     _writeBuffer[i++] = (byte)((int)Register.DIGIT0 + digit);
