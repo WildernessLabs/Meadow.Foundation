@@ -25,9 +25,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         ///     Voltage being output by the sensor.
         /// </summary>
-        public double GetVoltage()
+        public async Task<double> GetVoltage()
         {
-            return _referenceVoltagePort.Read().Result * 3.3;
+            return await _referenceVoltagePort.Read() * 3.3;
         }
 
         #endregion Member variables / fields
