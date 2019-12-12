@@ -1,13 +1,13 @@
 ﻿using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
     ///     Driver for the ADXL335 triple axis accelerometer.
+    ///     +/- 3g
     /// </summary>
     public class Adxl335
     {
@@ -51,17 +51,17 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Last X acceleration reading from the sensor.
         /// </summary>
-        private double _lastX = 0;
+        private double _lastX;
 
         /// <summary>
         ///     Last Y reading from the sensor.
         /// </summary>
-        private double _lastY = 0;
+        private double _lastY;
         
         /// <summary>
         ///     Last Z reading from the sensor.
         /// </summary>
-        private double _lastZ = 0;
+        private double _lastZ;
 
         #endregion Member variables / fields
 
@@ -117,7 +117,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         public double SupplyVoltage
         {
-            get { return _supplyVoltage; }
+            get => _supplyVoltage; 
             set
             {
                 _supplyVoltage = value;
