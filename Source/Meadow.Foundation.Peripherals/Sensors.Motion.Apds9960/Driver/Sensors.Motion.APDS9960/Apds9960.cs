@@ -29,13 +29,13 @@ namespace Meadow.Foundation.Sensors.Motion
 
         IDigitalInputPort interruptPort;
 
-        gesture_data_type gesture_data_;
-        int gesture_ud_delta_;
-        int gesture_lr_delta_;
-        int gesture_ud_count_;
-        int gesture_lr_count_;
-        int gesture_near_count_;
-        int gesture_far_count_;
+        GestureData gestureData;
+        int gestureUdDelta;
+        int gestureLrDelta;
+        int gestureUdCount;
+        int gestureLrCount;
+        int gestureNearCount;
+        int gestureFarCount;
         State gestureState;
         Direction gestureDirection;
 
@@ -254,16 +254,16 @@ namespace Meadow.Foundation.Sensors.Motion
                 interruptPort.Changed += InterruptPort_Changed;
             }
 
-            gesture_data_ = new gesture_data_type();
+            gestureData = new GestureData();
 
-            gesture_ud_delta_ = 0;
-            gesture_lr_delta_ = 0;
+            gestureUdDelta = 0;
+            gestureLrDelta = 0;
 
-            gesture_ud_count_ = 0;
-            gesture_lr_count_ = 0;
+            gestureUdCount = 0;
+            gestureLrCount = 0;
 
-            gesture_near_count_ = 0;
-            gesture_far_count_ = 0;
+            gestureNearCount = 0;
+            gestureFarCount = 0;
 
             gestureState = 0;
             gestureDirection = (int)Direction.NONE;
@@ -548,12 +548,12 @@ namespace Meadow.Foundation.Sensors.Motion
                         {
                             for (int i = 0; i < bytes_read; i += 4)
                             {
-                                gesture_data_.u_data[gesture_data_.index] = fifo_data[i + 0];
-                                gesture_data_.d_data[gesture_data_.index] = fifo_data[i + 1];
-                                gesture_data_.l_data[gesture_data_.index] = fifo_data[i + 2];
-                                gesture_data_.r_data[gesture_data_.index] = fifo_data[i + 3];
-                                gesture_data_.index++;
-                                gesture_data_.total_gestures++;
+                                gestureData.UData[gestureData.Index] = fifo_data[i + 0];
+                                gestureData.DData[gestureData.Index] = fifo_data[i + 1];
+                                gestureData.LData[gestureData.Index] = fifo_data[i + 2];
+                                gestureData.RData[gestureData.Index] = fifo_data[i + 3];
+                                gestureData.Index++;
+                                gestureData.TotalGestures++;
                             }
 
                             /* Filter and process gesture data. Decode near/far state */
@@ -568,8 +568,8 @@ namespace Meadow.Foundation.Sensors.Motion
                             }
 
                             /* Reset data */
-                            gesture_data_.index = 0;
-                            gesture_data_.total_gestures = 0;
+                            gestureData.Index = 0;
+                            gestureData.TotalGestures = 0;
                         }
                     }
                 }
@@ -648,17 +648,17 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void ResetGestureParameters()
         {
-            gesture_data_.index = 0;
-            gesture_data_.total_gestures = 0;
+            gestureData.Index = 0;
+            gestureData.TotalGestures = 0;
 
-            gesture_ud_delta_ = 0;
-            gesture_lr_delta_ = 0;
+            gestureUdDelta = 0;
+            gestureLrDelta = 0;
 
-            gesture_ud_count_ = 0;
-            gesture_lr_count_ = 0;
+            gestureUdCount = 0;
+            gestureLrCount = 0;
 
-            gesture_near_count_ = 0;
-            gesture_far_count_ = 0;
+            gestureNearCount = 0;
+            gestureFarCount = 0;
 
             gestureState = 0;
             gestureDirection = (int)Direction.NONE;
@@ -688,28 +688,28 @@ namespace Meadow.Foundation.Sensors.Motion
             int i;
 
             /* If we have less than 4 total gestures, that's not enough */
-            if (gesture_data_.total_gestures <= 4)
+            if (gestureData.TotalGestures <= 4)
             {
                 return false;
             }
 
             /* Check to make sure our data isn't out of bounds */
-            if ((gesture_data_.total_gestures <= 32) && 
-                (gesture_data_.total_gestures > 0) )
+            if ((gestureData.TotalGestures <= 32) && 
+                (gestureData.TotalGestures > 0) )
             {
                 /* Find the first value in U/D/L/R above the threshold */
-                for (i = 0; i < gesture_data_.total_gestures; i++)
+                for (i = 0; i < gestureData.TotalGestures; i++)
                 {
-                    if ((gesture_data_.u_data[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gesture_data_.d_data[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gesture_data_.l_data[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gesture_data_.r_data[i] > GESTURE_THRESHOLD_OUT))
+                    if ((gestureData.UData[i] > GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.DData[i] > GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.LData[i] > GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.RData[i] > GESTURE_THRESHOLD_OUT))
                     {
 
-                        u_first = gesture_data_.u_data[i];
-                        d_first = gesture_data_.d_data[i];
-                        l_first = gesture_data_.l_data[i];
-                        r_first = gesture_data_.r_data[i];
+                        u_first = gestureData.UData[i];
+                        d_first = gestureData.DData[i];
+                        l_first = gestureData.LData[i];
+                        r_first = gestureData.RData[i];
                         break;
                     }
                 }
@@ -721,18 +721,18 @@ namespace Meadow.Foundation.Sensors.Motion
                     return false;
                 }
                 /* Find the last value in U/D/L/R above the threshold */
-                for (i = gesture_data_.total_gestures - 1; i >= 0; i--)
+                for (i = gestureData.TotalGestures - 1; i >= 0; i--)
                 {
-                    if ((gesture_data_.u_data[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gesture_data_.d_data[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gesture_data_.l_data[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gesture_data_.r_data[i] > GESTURE_THRESHOLD_OUT))
+                    if ((gestureData.UData[i] > GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.DData[i] > GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.LData[i] > GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.RData[i] > GESTURE_THRESHOLD_OUT))
                     {
 
-                        u_last = gesture_data_.u_data[i];
-                        d_last = gesture_data_.d_data[i];
-                        l_last = gesture_data_.l_data[i];
-                        r_last = gesture_data_.r_data[i];
+                        u_last = gestureData.UData[i];
+                        d_last = gestureData.DData[i];
+                        l_last = gestureData.LData[i];
+                        r_last = gestureData.RData[i];
                         break;
                     }
                 }
@@ -749,39 +749,39 @@ namespace Meadow.Foundation.Sensors.Motion
             lr_delta = lr_ratio_last - lr_ratio_first;
 
             /* Accumulate the UD and LR delta values */
-            gesture_ud_delta_ += ud_delta;
-            gesture_lr_delta_ += lr_delta;
+            gestureUdDelta += ud_delta;
+            gestureLrDelta += lr_delta;
 
             /* Determine U/D gesture */
-            if (gesture_ud_delta_ >= GESTURE_SENSITIVITY_1)
+            if (gestureUdDelta >= GESTURE_SENSITIVITY_1)
             {
-                gesture_ud_count_ = 1;
+                gestureUdCount = 1;
             }
-            else if (gesture_ud_delta_ <= -GESTURE_SENSITIVITY_1)
+            else if (gestureUdDelta <= -GESTURE_SENSITIVITY_1)
             {
-                gesture_ud_count_ = -1;
+                gestureUdCount = -1;
             }
             else
             {
-                gesture_ud_count_ = 0;
+                gestureUdCount = 0;
             }
 
             /* Determine L/R gesture */
-            if (gesture_lr_delta_ >= GESTURE_SENSITIVITY_1)
+            if (gestureLrDelta >= GESTURE_SENSITIVITY_1)
             {
-                gesture_lr_count_ = 1;
+                gestureLrCount = 1;
             }
-            else if (gesture_lr_delta_ <= -GESTURE_SENSITIVITY_1)
+            else if (gestureLrDelta <= -GESTURE_SENSITIVITY_1)
             {
-                gesture_lr_count_ = -1;
+                gestureLrCount = -1;
             }
             else
             {
-                gesture_lr_count_ = 0;
+                gestureLrCount = 0;
             }
 
             /* Determine Near/Far gesture */
-            if ((gesture_ud_count_ == 0) && (gesture_lr_count_ == 0))
+            if ((gestureUdCount == 0) && (gestureLrCount == 0))
             {
                 if ((Math.Abs(ud_delta) < GESTURE_SENSITIVITY_2) && 
                     (Math.Abs(lr_delta) < GESTURE_SENSITIVITY_2) )
@@ -789,14 +789,14 @@ namespace Meadow.Foundation.Sensors.Motion
 
                     if ((ud_delta == 0) && (lr_delta == 0))
                     {
-                        gesture_near_count_++;
+                        gestureNearCount++;
                     }
                     else if ((ud_delta != 0) || (lr_delta != 0))
                     {
-                        gesture_far_count_++;
+                        gestureFarCount++;
                     }
 
-                    if ((gesture_near_count_ >= 10) && (gesture_far_count_ >= 2))
+                    if ((gestureNearCount >= 10) && (gestureFarCount >= 2))
                     {
                         if ((ud_delta == 0) && (lr_delta == 0))
                         {
@@ -816,15 +816,15 @@ namespace Meadow.Foundation.Sensors.Motion
 
                     if ((ud_delta == 0) && (lr_delta == 0))
                     {
-                        gesture_near_count_++;
+                        gestureNearCount++;
                     }
 
-                    if (gesture_near_count_ >= 10)
+                    if (gestureNearCount >= 10)
                     {
-                        gesture_ud_count_ = 0;
-                        gesture_lr_count_ = 0;
-                        gesture_ud_delta_ = 0;
-                        gesture_lr_delta_ = 0;
+                        gestureUdCount = 0;
+                        gestureLrCount = 0;
+                        gestureUdDelta = 0;
+                        gestureLrDelta = 0;
                     }
                 }
             }
@@ -852,25 +852,25 @@ namespace Meadow.Foundation.Sensors.Motion
             }
 
             /* Determine swipe direction */
-            if ((gesture_ud_count_ == -1) && (gesture_lr_count_ == 0))
+            if ((gestureUdCount == -1) && (gestureLrCount == 0))
             {
                 gestureDirection = Direction.UP;
             }
-            else if ((gesture_ud_count_ == 1) && (gesture_lr_count_ == 0))
+            else if ((gestureUdCount == 1) && (gestureLrCount == 0))
             {
                 gestureDirection = Direction.DOWN;
             }
-            else if ((gesture_ud_count_ == 0) && (gesture_lr_count_ == 1))
+            else if ((gestureUdCount == 0) && (gestureLrCount == 1))
             {
                 gestureDirection = Direction.RIGHT;
             }
-            else if ((gesture_ud_count_ == 0) && (gesture_lr_count_ == -1))
+            else if ((gestureUdCount == 0) && (gestureLrCount == -1))
             {
                 gestureDirection = Direction.LEFT;
             }
-            else if ((gesture_ud_count_ == -1) && (gesture_lr_count_ == 1))
+            else if ((gestureUdCount == -1) && (gestureLrCount == 1))
             {
-                if (Math.Abs(gesture_ud_delta_) > Math.Abs(gesture_lr_delta_))
+                if (Math.Abs(gestureUdDelta) > Math.Abs(gestureLrDelta))
                 {
                     gestureDirection = Direction.UP;
                 }
@@ -879,9 +879,9 @@ namespace Meadow.Foundation.Sensors.Motion
                     gestureDirection = Direction.RIGHT;
                 }
             }
-            else if ((gesture_ud_count_ == 1) && (gesture_lr_count_ == -1))
+            else if ((gestureUdCount == 1) && (gestureLrCount == -1))
             {
-                if (Math.Abs(gesture_ud_delta_) > Math.Abs(gesture_lr_delta_))
+                if (Math.Abs(gestureUdDelta) > Math.Abs(gestureLrDelta))
                 {
                     gestureDirection = Direction.DOWN;
                 }
@@ -890,9 +890,9 @@ namespace Meadow.Foundation.Sensors.Motion
                     gestureDirection = Direction.LEFT;
                 }
             }
-            else if ((gesture_ud_count_ == -1) && (gesture_lr_count_ == -1))
+            else if ((gestureUdCount == -1) && (gestureLrCount == -1))
             {
-                if (Math.Abs(gesture_ud_delta_) > Math.Abs(gesture_lr_delta_))
+                if (Math.Abs(gestureUdDelta) > Math.Abs(gestureLrDelta))
                 {
                     gestureDirection = Direction.UP;
                 }
@@ -901,9 +901,9 @@ namespace Meadow.Foundation.Sensors.Motion
                     gestureDirection = Direction.LEFT;
                 }
             }
-            else if ((gesture_ud_count_ == 1) && (gesture_lr_count_ == 1))
+            else if ((gestureUdCount == 1) && (gestureLrCount == 1))
             {
-                if (Math.Abs(gesture_ud_delta_) > Math.Abs(gesture_lr_delta_))
+                if (Math.Abs(gestureUdDelta) > Math.Abs(gestureLrDelta))
                 {
                     gestureDirection = Direction.DOWN;
                 }
@@ -1699,16 +1699,16 @@ namespace Meadow.Foundation.Sensors.Motion
         #region Classes
 
         /* Container for gesture data */
-        public class gesture_data_type
+        public class GestureData
         {
-            public byte[] u_data = new byte[32];
-            public byte[] d_data = new byte[32];
-            public byte[] l_data = new byte[32];
-            public byte[] r_data = new byte[32];
-            public byte index;
-            public byte total_gestures;
-            public byte in_threshold;
-            public byte out_threshold;
+            public byte[] UData { get; set; } = new byte[32]; 
+            public byte[] DData { get; set; } = new byte[32];
+            public byte[] LData { get; set; } = new byte[32];
+            public byte[] RData { get; set; } = new byte[32];
+            public byte Index { get; set; }
+            public byte TotalGestures { get; set; }
+            public byte InThreshold { get; set; }
+            public byte OutThreshold { get; set; }
         }
 
         #endregion Classes
