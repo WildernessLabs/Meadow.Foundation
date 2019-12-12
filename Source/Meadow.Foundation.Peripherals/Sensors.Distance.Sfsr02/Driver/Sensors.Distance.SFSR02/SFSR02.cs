@@ -52,8 +52,8 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Create a new SFSR02 object with an IO Device
         /// </summary>
-        /// <param name="triggerPin"></param>
-        /// <param name="echoPin"></param>
+        /// <param name="triggerEchoPin"></param>
+        /// <param name="device"></param>
         public SFSR02(IIODevice device, IPin triggerEchoPin) :
             this(device.CreateBiDirectionalPort(triggerEchoPin, false))
         { }
@@ -61,17 +61,13 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Create a new SFSR02 object 
         /// </summary>
-        /// <param name="triggerPin"></param>
-        /// <param name="echoPin"></param>
+        /// <param name="triggerEchoPort"></param>
         public SFSR02(IBiDirectionalPort triggerEchoPort)
         {
             this.triggerEchoPort = triggerEchoPort;
 
             this.triggerEchoPort.Changed += OnEchoPortChanged;
         }
-
-
-    
 
         #endregion
 
