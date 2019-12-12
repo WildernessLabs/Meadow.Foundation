@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// <summary>
     ///     Driver for the ADXL335 triple axis accelerometer.
     /// </summary>
-    public class ADXL335
+    public class Adxl335
     {
         #region Constants
 
@@ -126,11 +126,6 @@ namespace Meadow.Foundation.Sensors.Motion
         }
         
         /// <summary>
-        ///     Acceleration as read from the 
-        /// </summary>
-        private Vector Acceleration { get; set; }
-
-        /// <summary>
         ///     Any changes in the acceleration that are greater than the acceleration
         ///     threshold will cause an event to be raised when the instance is
         ///     set to update automatically.
@@ -154,7 +149,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Make the default constructor private so that the developer cannot access it.
         /// </summary>
-        private ADXL335()
+        private Adxl335()
         {
         }
 
@@ -166,7 +161,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="z">Analog pin connected to the Z axis output from the ADXL335 sensor.</param>
         /// <param name="updateInterval">Update interval for the sensor, set to 0 to put the sensor in polling mode.</param>
         /// <<param name="accelerationChangeNotificationThreshold">Acceleration change threshold.</param>
-        public ADXL335(IIODevice device, IPin x, IPin y, IPin z, ushort updateInterval = 100,
+        public Adxl335(IIODevice device, IPin x, IPin y, IPin z, ushort updateInterval = 100,
                        double accelerationChangeNotificationThreshold = 0.1F)
         {
             if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
@@ -188,7 +183,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             if (updateInterval > 0)
             {
-                StartUpdating();
+                var t = StartUpdating();
             }
             else
             {
@@ -203,17 +198,13 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Start the update process.
         /// </summary>
-        private void StartUpdating()
+        private async Task StartUpdating()
         {
-            var t = new Thread(async () => 
+            while (true)
             {
-                while (true)
-                {
-                    await Update();
-                    Thread.Sleep(_updateInterval);
-                }
-            });
-            t.Start();
+                await Update();
+                await Task.Delay(_updateInterval);
+            }
         }
 
         /// <summary>
@@ -221,19 +212,19 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public async Task Update()
         {
-            X = ( _xPort.Read().Result * SupplyVoltage - _zeroGVoltage) / XVoltsPerG;
-            Y = ( _yPort.Read().Result * SupplyVoltage - _zeroGVoltage) / YVoltsPerG;
-            Z = ( _zPort.Read().Result * SupplyVoltage - _zeroGVoltage) / ZVoltsPerG;
+            X = (await _xPort.Read() - _zeroGVoltage) / XVoltsPerG;
+            Y = (await _yPort.Read() - _zeroGVoltage) / YVoltsPerG;
+            Z = (await _zPort.Read() - _zeroGVoltage) / ZVoltsPerG;
 
-            if ((_updateInterval != 0) && 
+            if (_updateInterval == 0 ||
                 ((Math.Abs(X - _lastX) > AccelerationChangeNotificationThreshold) ||
-                 (Math.Abs(Y - _lastY) > AccelerationChangeNotificationThreshold) ||
-                 (Math.Abs(Z - _lastZ) > AccelerationChangeNotificationThreshold)))
+                (Math.Abs(Y - _lastY) > AccelerationChangeNotificationThreshold) ||
+                (Math.Abs(Z - _lastZ) > AccelerationChangeNotificationThreshold)))
             {
                 var lastNotifiedReading = new Vector(_lastX, _lastY, _lastZ);
                 var currentReading = new Vector(_lastX = X, _lastY = Y, _lastZ = Z);
 
-                AccelerationChanged(this, new SensorVectorEventArgs(lastNotifiedReading, currentReading));
+                AccelerationChanged?.Invoke(this, new SensorVectorEventArgs(lastNotifiedReading, currentReading));
             }
         }
 
@@ -243,7 +234,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Vector object containing the raw sensor data from the analog pins.</returns>
         public async Task<Vector> GetRawSensorData()
         {
-             return new Vector( _xPort.Read().Result,  _yPort.Read().Result,  _zPort.Read().Result);
+             return new Vector(await _xPort.Read(), await _yPort.Read(), await _zPort.Read());
         }
 
         #endregion Methods

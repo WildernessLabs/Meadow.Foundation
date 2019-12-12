@@ -452,7 +452,7 @@ namespace Meadow.Foundation.Sensors.Motion
             /* Enable gesture mode
                Set ENABLE to 0 (power off)
                Set WTIME to 0xFF
-               Set AUX to LED_BOOST_300
+               Set AUX to LED_BOOST_100
                Enable PON, WEN, PEN, GEN in ENABLE 
             */
             Console.WriteLine("ResetGestureParameters");
@@ -461,7 +461,7 @@ namespace Meadow.Foundation.Sensors.Motion
             apds9960.WriteRegister(APDS9960_PPULSE, DEFAULT_GESTURE_PPULSE);
 
             Console.WriteLine("SetLEDBoost");
-            SetLEDBoost(LED_BOOST_300);
+            SetLEDBoost(LED_BOOST_100);
 
             Console.WriteLine("SetGestureIntEnable");
             SetGestureIntEnable((byte)(interrupts?1:0));
