@@ -1,7 +1,7 @@
 ﻿using System;
 using Meadow.Hardware;
 
-namespace Meadow.Foudnation.Motors.Stepper
+namespace Meadow.Foundation.Motors.Stepper
 {
     /// <summary>
     /// This class is for controlling stepper motors that are controlled by a 4 pin controller board.
