@@ -2,7 +2,7 @@
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foudnation.Motors.Stepper;
+using Meadow.Foundation.Motors.Stepper;
 
 namespace MeadowApp
 {
