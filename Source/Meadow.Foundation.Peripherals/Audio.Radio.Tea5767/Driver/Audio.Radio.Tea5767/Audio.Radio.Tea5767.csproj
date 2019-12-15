@@ -2,13 +2,13 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>TEA5767</AssemblyName>
+    <AssemblyName>Tea5767</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Audio.Radio.TEA5767</PackageId>
+    <PackageId>Meadow.Foundation.Audio.Radio.Tea5767</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, Audio, TEA5767</PackageTags>    
+    <PackageTags>Meadow.Foundation, Audio, TEA5767</PackageTags>
     <Version>0.6.2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for TEA5767 FM radio module</Description>

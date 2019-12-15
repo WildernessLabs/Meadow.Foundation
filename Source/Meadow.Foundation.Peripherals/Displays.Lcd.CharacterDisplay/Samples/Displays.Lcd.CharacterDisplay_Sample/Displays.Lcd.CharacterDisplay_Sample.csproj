@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Displays.LCD.CharacterDisplay\Displays.LCD.CharacterDisplay.csproj" />
+    <ProjectReference Include="..\..\Driver\Displays.LCD.CharacterDisplay\Displays.Lcd.CharacterDisplay.csproj" />
   </ItemGroup>
 </Project>
