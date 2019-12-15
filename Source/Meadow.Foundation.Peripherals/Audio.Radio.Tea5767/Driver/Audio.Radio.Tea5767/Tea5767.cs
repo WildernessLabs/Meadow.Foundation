@@ -4,7 +4,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Audio.Radio
 {
-    public class TEA5767
+    public class Tea5767
     {
         #region Member variables / fields
         /// <summary>
@@ -65,13 +65,13 @@ namespace Meadow.Foundation.Audio.Radio
         /// <summary>
         ///     Default constructor is private to prevent it being used.
         /// </summary>
-        private TEA5767() { }
+        private Tea5767() { }
 
         /// <summary>
         ///     Create a new TEA5767 object using the default parameters
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public TEA5767(II2cBus i2cBus, byte address = 0x60)
+        public Tea5767(II2cBus i2cBus, byte address = 0x60)
         {
             _I2cPeripheral = new I2cPeripheral(i2cBus, address);
 

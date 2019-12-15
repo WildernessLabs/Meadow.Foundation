@@ -8,13 +8,13 @@ namespace Audio.Radio.TEA5767_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        protected TEA5767 radio;
+        protected Tea5767 radio;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
             
-            radio = new TEA5767(Device.CreateI2cBus());
+            radio = new Tea5767(Device.CreateI2cBus());
 
             TestTEA5767();
         }

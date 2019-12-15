@@ -347,9 +347,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Audio.Radio.Tea5767", "Audi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{4242C2C7-8B81-41D4-A716-D717B6424C50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Radio.TEA5767", "Meadow.Foundation.Peripherals\Audio.Radio.Tea5767\Driver\Audio.Radio.TEA5767\Audio.Radio.TEA5767.csproj", "{F127FAF5-FC55-46F1-8DFD-3A4CC461E6BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Radio.Tea5767", "Meadow.Foundation.Peripherals\Audio.Radio.Tea5767\Driver\Audio.Radio.Tea5767\Audio.Radio.Tea5767.csproj", "{F127FAF5-FC55-46F1-8DFD-3A4CC461E6BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Radio.TEA5767_Sample", "Meadow.Foundation.Peripherals\Audio.Radio.Tea5767\Samples\Audio.Radio.TEA5767_Sample\Audio.Radio.TEA5767_Sample.csproj", "{EE44DCDF-F3C4-4ACF-A593-8CE018B86648}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Radio.Tea5767_Sample", "Meadow.Foundation.Peripherals\Audio.Radio.Tea5767\Samples\Audio.Radio.Tea5767_Sample\Audio.Radio.Tea5767_Sample.csproj", "{EE44DCDF-F3C4-4ACF-A593-8CE018B86648}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.MPL3115A2", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl3115A2\Driver\Sensors.Atmospheric.MPL3115A2\Sensors.Atmospheric.MPL3115A2.csproj", "{7CAFA9B7-75D9-40F7-85D0-FD534D9199BA}"
 EndProject
