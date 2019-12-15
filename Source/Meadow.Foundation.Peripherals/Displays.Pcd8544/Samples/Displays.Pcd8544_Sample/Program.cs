@@ -1,6 +1,6 @@
 ﻿using Meadow;
 
-namespace Displays.PCD8854_Sample
+namespace Displays.Pcd8854_Sample
 {
     class Program
     {

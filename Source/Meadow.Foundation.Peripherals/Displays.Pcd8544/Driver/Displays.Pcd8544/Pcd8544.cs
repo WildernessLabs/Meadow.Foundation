@@ -3,7 +3,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {
-    public class PCD8544 : DisplayBase
+    public class Pcd8544 : DisplayBase
     {
         public static int DEFAULT_SPEED = 4000;
 
@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Displays
         protected byte[] spiBuffer;
         protected readonly byte[] spiReceive;
 
-        public PCD8544(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
+        public Pcd8544(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
             spiBuffer = new byte[Width * Height / 8];
             spiReceive = new byte[Width * Height / 8];

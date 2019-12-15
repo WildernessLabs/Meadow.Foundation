@@ -317,9 +317,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.Pcd8544", "Display
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{6F6FFBD9-7326-4C38-A4A6-C0052212645F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.PCD8544", "Meadow.Foundation.Peripherals\Displays.Pcd8544\Driver\Displays.PCD8544\Displays.PCD8544.csproj", "{FC4B4BEC-27D5-4D5C-B081-A6025828EC4C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Pcd8544", "Meadow.Foundation.Peripherals\Displays.Pcd8544\Driver\Displays.Pcd8544\Displays.Pcd8544.csproj", "{FC4B4BEC-27D5-4D5C-B081-A6025828EC4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.PCD8854_Sample", "Meadow.Foundation.Peripherals\Displays.Pcd8544\Samples\Displays.PCD8854_Sample\Displays.PCD8854_Sample.csproj", "{CA570661-8538-41A4-8610-DFC0BCE4F6A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Pcd8544_Sample", "Meadow.Foundation.Peripherals\Displays.Pcd8544\Samples\Displays.Pcd8544_Sample\Displays.Pcd8544_Sample.csproj", "{CA570661-8538-41A4-8610-DFC0BCE4F6A9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.Led.SevenSegment", "Displays.Led.SevenSegment", "{E3EE5C6F-BAD2-4F28-8659-839B0EA7FA21}"
 EndProject

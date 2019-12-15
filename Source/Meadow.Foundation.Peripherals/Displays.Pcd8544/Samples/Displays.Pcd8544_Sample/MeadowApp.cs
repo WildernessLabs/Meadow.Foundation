@@ -5,20 +5,20 @@ using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 
-namespace Displays.PCD8854_Sample
+namespace Displays.Pcd8854_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        PCD8544 display;
+        Pcd8544 display;
         GraphicsLibrary graphics;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            var config = new Meadow.Hardware.SpiClockConfiguration(PCD8544.DEFAULT_SPEED, Meadow.Hardware.SpiClockConfiguration.Mode.Mode0);
+            var config = new Meadow.Hardware.SpiClockConfiguration(Pcd8544.DEFAULT_SPEED, Meadow.Hardware.SpiClockConfiguration.Mode.Mode0);
 
-            display = new PCD8544
+            display = new Pcd8544
             (
                 device: Device,
                 spiBus: Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config),
