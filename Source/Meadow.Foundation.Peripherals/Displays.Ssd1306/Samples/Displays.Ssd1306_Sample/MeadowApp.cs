@@ -5,12 +5,12 @@ using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 
-namespace Displays.SSD1306_Sample
+namespace Displays.Ssd1306_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         GraphicsLibrary graphics;
-        SSD1306 display;
+        Ssd1306 display;
 
         public MeadowApp()
         {
@@ -30,14 +30,14 @@ namespace Displays.SSD1306_Sample
         {
             Console.WriteLine("Create Display with SPI...");
 
-            display = new SSD1306
+            display = new Ssd1306
             (
                 device: Device, 
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                displayType: SSD1306.DisplayType.OLED128x64
+                displayType: Ssd1306.DisplayType.OLED128x64
             );
         }
 
@@ -45,11 +45,11 @@ namespace Displays.SSD1306_Sample
         {
             Console.WriteLine("Create Display with I2C...");
 
-            display = new SSD1306
+            display = new Ssd1306
             (
                 i2cBus: Device.CreateI2cBus(), 
                 address: 60, 
-                displayType: SSD1306.DisplayType.OLED128x32
+                displayType: Ssd1306.DisplayType.OLED128x32
             );
         }
 

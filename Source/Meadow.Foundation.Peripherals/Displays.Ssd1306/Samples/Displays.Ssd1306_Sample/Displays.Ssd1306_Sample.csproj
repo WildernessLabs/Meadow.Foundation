@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Displays.SSD1306\Displays.SSD1306.csproj" />
+    <ProjectReference Include="..\..\Driver\Displays.SSD1306\Displays.Ssd1306.csproj" />
   </ItemGroup>
 </Project>

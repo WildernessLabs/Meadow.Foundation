@@ -4,9 +4,9 @@ using Meadow.Hardware;
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    ///     Provide an interface to the SSD1306 family of OLED displays.
+    /// Provide an interface to the SSD1306 family of OLED displays.
     /// </summary>
-    public class SSD1306 : DisplayBase
+    public class Ssd1306 : DisplayBase
     {
         #region Enums
 
@@ -218,7 +218,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Default constructor is private to prevent it being used.
         /// </summary>
-        private SSD1306() { }
+        private Ssd1306() { }
 
         /// <summary>
         ///     Create a new SSD1306 object using the default parameters for
@@ -230,7 +230,7 @@ namespace Meadow.Foundation.Displays
         /// </remarks>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
         ///
-        public SSD1306(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ssd1306(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             DisplayType displayType = DisplayType.OLED128x64)
         {
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
@@ -255,7 +255,7 @@ namespace Meadow.Foundation.Displays
         /// </remarks>
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
-        public SSD1306(II2cBus i2cBus, 
+        public Ssd1306(II2cBus i2cBus, 
             byte address = 0x3c, DisplayType displayType = DisplayType.OLED128x64)
         {
             _displayType = displayType;

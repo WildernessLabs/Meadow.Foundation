@@ -1,6 +1,6 @@
 ﻿using Meadow;
 
-namespace Displays.SSD1306_Sample
+namespace Displays.Ssd1306_Sample
 {
     class Program
     {

@@ -303,9 +303,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.Ssd1306", "Display
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{FAD4D2B5-D578-413A-B776-5AE1F43D6CFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.SSD1306", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.SSD1306\Displays.SSD1306.csproj", "{4FF1B34A-D1BC-4367-AA64-DAB27A8F2FA5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1306", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj", "{4FF1B34A-D1BC-4367-AA64-DAB27A8F2FA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.SSD1306_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Samples\Displays.SSD1306_Sample\Displays.SSD1306_Sample.csproj", "{26B53252-FA5A-44D3-8F77-9994A9212BB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1306_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Samples\Displays.Ssd1306_Sample\Displays.Ssd1306_Sample.csproj", "{26B53252-FA5A-44D3-8F77-9994A9212BB5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.SerialLcd", "Displays.SerialLcd", "{57DA2155-A4F4-46C0-B888-E1E424739050}"
 EndProject
