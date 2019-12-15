@@ -5,7 +5,7 @@ using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
-namespace BasicDisplays.Tft.SSD1351_Sample
+namespace BasicDisplays.Tft.Ssd1351_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
@@ -21,7 +21,7 @@ namespace BasicDisplays.Tft.SSD1351_Sample
 
             Console.WriteLine("Create display driver instance");
 
-            display = new SSD1351(device: Device, spiBus: spiBus,
+            display = new Ssd1351(device: Device, spiBus: spiBus,
                        chipSelectPin: Device.Pins.D02,
                        dcPin: Device.Pins.D01,
                        resetPin: Device.Pins.D00,

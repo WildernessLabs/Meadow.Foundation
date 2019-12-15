@@ -4,11 +4,11 @@ using Meadow.Devices;
 using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
 
-namespace Displays.Tft.ILI9163_Sample
+namespace Displays.Tft.Ili9163_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        ILI9163 display;
+        Ili9163 display;
         GraphicsLibrary graphics;
 
         public MeadowApp()
@@ -17,7 +17,7 @@ namespace Displays.Tft.ILI9163_Sample
 
             var spiBus = Device.CreateSpiBus();
 
-            display = new ILI9163
+            display = new Ili9163
             (
                 device: Device, 
                 spiBus: spiBus,

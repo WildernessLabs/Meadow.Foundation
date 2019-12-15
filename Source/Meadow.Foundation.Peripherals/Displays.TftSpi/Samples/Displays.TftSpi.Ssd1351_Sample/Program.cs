@@ -1,7 +1,6 @@
-﻿using System.Threading;
-using Meadow;
+﻿using Meadow;
 
-namespace MeadowApp
+namespace BasicDisplays.Tft.Ssd1351_Sample
 {
     class Program
     {
@@ -10,8 +9,6 @@ namespace MeadowApp
         {
             // instantiate and run new meadow app
             app = new MeadowApp();
-
-            Thread.Sleep(Timeout.Infinite);
         }
     }
 }

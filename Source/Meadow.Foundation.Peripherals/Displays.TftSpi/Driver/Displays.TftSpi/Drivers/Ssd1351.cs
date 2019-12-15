@@ -3,11 +3,11 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.Tft
 {
-    public class SSD1351 : DisplayTftSpiBase
+    public class Ssd1351 : DisplayTftSpiBase
     {
-        private SSD1351() { }
+        private Ssd1351() { }
 
-        public SSD1351(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ssd1351(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
         {
             Initialize();

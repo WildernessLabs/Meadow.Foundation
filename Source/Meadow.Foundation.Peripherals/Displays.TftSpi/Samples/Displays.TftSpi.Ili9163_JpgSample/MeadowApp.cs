@@ -9,11 +9,11 @@ using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
 using NanoJpeg;
 
-namespace MeadowApp
+namespace Displays.TftSpi.Ili9341_JpgSample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        ILI9341 display;
+        Ili9341 display;
         GraphicsLibrary graphics;
 
         public MeadowApp()
@@ -22,7 +22,7 @@ namespace MeadowApp
 
             var spiBus = Device.CreateSpiBus();
 
-            display = new ILI9341
+            display = new Ili9341
             (
                 device: Device,
                 spiBus: spiBus,

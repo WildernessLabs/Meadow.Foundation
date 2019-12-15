@@ -3,11 +3,11 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.Tft
 {
-    public class ILI9341 : DisplayTftSpiBase
+    public class Ili9341 : DisplayTftSpiBase
     {
-        private ILI9341() { }
+        private Ili9341() { }
 
-        public ILI9341(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ili9341(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
         {
             Initialize();

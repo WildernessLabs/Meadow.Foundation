@@ -1,6 +1,7 @@
-﻿using Meadow;
+﻿using System.Threading;
+using Meadow;
 
-namespace BasicDisplays.Tft.SSD1351_Sample
+namespace Displays.TftSpi.Ili9341_JpgSample
 {
     class Program
     {
@@ -9,6 +10,8 @@ namespace BasicDisplays.Tft.SSD1351_Sample
         {
             // instantiate and run new meadow app
             app = new MeadowApp();
+
+            Thread.Sleep(Timeout.Infinite);
         }
     }
 }
