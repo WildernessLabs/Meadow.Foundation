@@ -1,6 +1,6 @@
 ﻿using Meadow;
 
-namespace Displays.LED.SevenSegment_Sample
+namespace Displays.Led.SevenSegment_Sample
 {
     class Program
     {

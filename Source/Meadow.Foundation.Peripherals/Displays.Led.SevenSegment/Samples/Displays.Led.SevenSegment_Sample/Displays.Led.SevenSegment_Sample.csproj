@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Displays.LED.SevenSegment\Displays.LED.SevenSegment.csproj" />
+    <ProjectReference Include="..\..\Driver\Displays.LED.SevenSegment\Displays.Led.SevenSegment.csproj" />
   </ItemGroup>
 </Project>

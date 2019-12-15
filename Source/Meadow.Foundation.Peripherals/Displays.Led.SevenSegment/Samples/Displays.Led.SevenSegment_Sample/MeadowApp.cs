@@ -2,9 +2,9 @@
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays.LED;
+using Meadow.Foundation.Displays.Led;
 
-namespace Displays.LED.SevenSegment_Sample
+namespace Displays.Led.SevenSegment_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {

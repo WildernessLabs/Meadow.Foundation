@@ -325,9 +325,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.Led.SevenSegment",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{6E6E1F6E-8689-4D5C-814F-2A92E63B365F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.LED.SevenSegment", "Meadow.Foundation.Peripherals\Displays.Led.SevenSegment\Driver\Displays.LED.SevenSegment\Displays.LED.SevenSegment.csproj", "{88036FB7-461C-4B94-9FB2-F4F131F410FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Led.SevenSegment", "Meadow.Foundation.Peripherals\Displays.Led.SevenSegment\Driver\Displays.Led.SevenSegment\Displays.Led.SevenSegment.csproj", "{88036FB7-461C-4B94-9FB2-F4F131F410FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.LED.SevenSegment_Sample", "Meadow.Foundation.Peripherals\Displays.Led.SevenSegment\Samples\Displays.LED.SevenSegment_Sample\Displays.LED.SevenSegment_Sample.csproj", "{669939E5-4039-4BC3-843A-16EC086C7566}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Led.SevenSegment_Sample", "Meadow.Foundation.Peripherals\Displays.Led.SevenSegment\Samples\Displays.Led.SevenSegment_Sample\Displays.Led.SevenSegment_Sample.csproj", "{669939E5-4039-4BC3-843A-16EC086C7566}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.Lcd.CharacterDisplay", "Displays.Lcd.CharacterDisplay", "{14A0EE78-5C03-42A4-8BFE-D0FD16764EAF}"
 EndProject
