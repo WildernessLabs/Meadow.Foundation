@@ -61,7 +61,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servos.Servo_Sample", "Mead
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Temperature.Tmp102", "Sensors.Temperature.Tmp102", "{92FF91F9-027A-47AC-8315-64547A80F54C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Temperature.TMP102", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Driver\Sensors.Temperature.TMP102\Sensors.Temperature.TMP102.csproj", "{E3A79085-41A4-4F86-90D1-8BC4F53FA625}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Temperature.Tmp102", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Driver\Sensors.Temperature.Tmp102\Sensors.Temperature.Tmp102.csproj", "{E3A79085-41A4-4F86-90D1-8BC4F53FA625}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{C31B4F18-78CB-4DC6-A09A-FD00C0303A80}"
 EndProject
@@ -365,7 +365,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.SHT31D_
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Moisture.FC28", "Meadow.Foundation.Peripherals\Sensors.Moisture.FC28\Driver\Sensors.Moisture.FC28\Sensors.Moisture.FC28.csproj", "{5B8B4327-8936-4AC1-B77D-1D219A897ECF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Temperature.TMP102_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Samples\Sensors.Temperature.Tmp102_Sample\Sensors.Temperature.TMP102_Sample.csproj", "{AD79B41E-E216-4A64-9E00-6E8DE501EEF9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Temperature.Tmp102_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Samples\Sensors.Temperature.Tmp102_Sample\Sensors.Temperature.Tmp102_Sample.csproj", "{AD79B41E-E216-4A64-9E00-6E8DE501EEF9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{00DA9FB4-106B-46B6-BEA6-886534833B65}"
 EndProject

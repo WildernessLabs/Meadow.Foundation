@@ -5,11 +5,11 @@ using Meadow.Foundation.Sensors.Temperature;
 
 namespace Sensors.Temperature.TMP102_Sample
 {
-    public class App : App<F7Micro, App>
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        TMP102 sensor;
+        Tmp102 sensor;
 
-        public App()
+        public MeadowApp()
         {
             InitHardware();
 
@@ -20,7 +20,7 @@ namespace Sensors.Temperature.TMP102_Sample
         {
             Console.WriteLine("Creating output ports...");
 
-            sensor = new TMP102(Device.CreateI2cBus());
+            sensor = new Tmp102(Device.CreateI2cBus());
             sensor.Updated += Sensor_Updated;
         }
 

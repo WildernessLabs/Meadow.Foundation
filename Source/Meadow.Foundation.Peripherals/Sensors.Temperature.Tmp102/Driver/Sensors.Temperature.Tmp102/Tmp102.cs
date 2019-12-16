@@ -8,9 +8,9 @@ using Meadow.Peripherals.Sensors.Temperature;
 namespace Meadow.Foundation.Sensors.Temperature
 {
     /// <summary>
-    ///     TMP102 Temperature sensor object.
+    /// TMP102 Temperature sensor object.
     /// </summary>    
-    public class TMP102 :
+    public class Tmp102 :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor
     {
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         ///     Default constructor (private to prevent it being called).
         /// </summary>
-        private TMP102()
+        private Tmp102()
         {
         }
 
@@ -114,7 +114,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>
-        public TMP102(II2cBus i2cBus, byte address = 0x48)
+        public Tmp102(II2cBus i2cBus, byte address = 0x48)
         {
             tmp102 = new I2cPeripheral(i2cBus, address);
 
