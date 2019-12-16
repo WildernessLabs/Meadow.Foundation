@@ -11,7 +11,7 @@ namespace Sensors.Atmospheric.BME280_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        BME280 bme280;
+        Bme280 bme280;
 
         public MeadowApp()
         {
@@ -19,9 +19,9 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus();
-            bme280 = new BME280 (
+            bme280 = new Bme280 (
                 i2c,
-                BME280.I2cAddress.Adddress0x77 //default
+                Bme280.I2cAddress.Adddress0x77 //default
             );
 
             // TODO: SPI version

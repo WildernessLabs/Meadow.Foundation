@@ -233,9 +233,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Bme280"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{21C511DD-43DD-486E-86D7-18D8F6810ACD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.BME280", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme280\Driver\Sensors.Atmospheric.BME280\Sensors.Atmospheric.BME280.csproj", "{2085BFAE-2937-4D5D-A62D-A387BDFDBDF8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bme280", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme280\Driver\Sensors.Atmospheric.BME280\Sensors.Atmospheric.Bme280.csproj", "{2085BFAE-2937-4D5D-A62D-A387BDFDBDF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.BME280_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme280\Samples\Sensors.Atmospheric.BME280_Sample\Sensors.Atmospheric.BME280_Sample.csproj", "{6F8A46C3-72BF-478E-A16D-54B9CDDE05F9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bme280_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme280\Samples\Sensors.Atmospheric.BME280_Sample\Sensors.Atmospheric.Bme280_Sample.csproj", "{6F8A46C3-72BF-478E-A16D-54B9CDDE05F9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RTCs.DS1307", "RTCs.DS1307", "{D5C58443-E77C-472D-B5A9-FAC05B40334C}"
 EndProject

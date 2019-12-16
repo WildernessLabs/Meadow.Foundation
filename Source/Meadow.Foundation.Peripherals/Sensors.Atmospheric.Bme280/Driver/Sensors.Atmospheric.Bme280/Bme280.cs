@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// This class implements the functionality necessary to read the temperature, pressure and humidity
     /// from the Bosch BME280 sensor.
     /// </remarks>
-    public class BME280 :
+    public class Bme280 :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
@@ -174,7 +174,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
         ///     selection to be made in the constructor.
         /// </remarks>
-        private readonly BME280Comms _bme280;
+        private readonly Bme280Comms _bme280;
 
         /// <summary>
         ///     Compensation data from the sensor.
@@ -242,7 +242,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     This constructor is private to force the use of the constructor which defines the
         ///     communication parameters for the sensor.
         /// </remarks>
-        private BME280()
+        private Bme280()
         {
         }
 
@@ -251,15 +251,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="i2c">I2C Bus to use for communicating with the sensor</param>
         /// <param name="busAddress">I2C address of the sensor (default = 0x77).</param>
-        public BME280(II2cBus i2c, I2cAddress busAddress = I2cAddress.Adddress0x77)
+        public Bme280(II2cBus i2c, I2cAddress busAddress = I2cAddress.Adddress0x77)
         {
-            _bme280 = new BME280I2C(i2c, (byte)busAddress);
+            _bme280 = new Bme280I2C(i2c, (byte)busAddress);
             Init();
         }
 
-        public BME280(ISpiBus spi, IDigitalOutputPort chipSelect)
+        public Bme280(ISpiBus spi, IDigitalOutputPort chipSelect)
         {
-            _bme280 = new BME280SPI(spi, chipSelect);
+            _bme280 = new Bme280SPI(spi, chipSelect);
             Init();
         }
 
@@ -410,16 +410,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //
             //  Put to sleep to allow the configuration to be changed.
             //
-            _bme280.WriteRegister(BME280Comms.Register.Measurement, 0x00);
+            _bme280.WriteRegister(Bme280Comms.Register.Measurement, 0x00);
 
             var data = (byte) ((((byte) configuration.Standby << 5) & 0xe0) | (((byte)configuration.Filter << 2) & 0x1c));
-            _bme280.WriteRegister(BME280Comms.Register.Configuration, data);
+            _bme280.WriteRegister(Bme280Comms.Register.Configuration, data);
             data = (byte) ((byte)configuration.HumidityOverSampling & 0x07);
-            _bme280.WriteRegister(BME280Comms.Register.Humidity, data);
+            _bme280.WriteRegister(Bme280Comms.Register.Humidity, data);
             data = (byte) ((( (byte)configuration.TemperatureOverSampling << 5) & 0xe0) |
                            (( (byte)configuration.PressureOversampling << 2) & 0x1c) |
                            ( (byte)configuration.Mode & 0x03));
-            _bme280.WriteRegister(BME280Comms.Register.Measurement, data);
+            _bme280.WriteRegister(Bme280Comms.Register.Measurement, data);
         }
 
         /// <summary>
@@ -430,7 +430,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </remarks>
         public void Reset()
         {
-            _bme280.WriteRegister(BME280Comms.Register.Reset, 0xb6);
+            _bme280.WriteRegister(Bme280Comms.Register.Reset, 0xb6);
             UpdateConfiguration(configuration);
         }
 
@@ -614,7 +614,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         public byte GetChipID()
         {
-            return _bme280.ReadRegisters((byte)BME280Comms.Register.ChipID, 1).First();
+            return _bme280.ReadRegisters((byte)Bme280Comms.Register.ChipID, 1).First();
         }
 
         #endregion Methods

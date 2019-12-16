@@ -3,12 +3,12 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    internal class BME280I2C : BME280Comms
+    internal class Bme280I2C : Bme280Comms
     {
         private II2cBus _i2c;
         private byte _address;
 
-        internal BME280I2C(II2cBus i2c, byte busAddress)
+        internal Bme280I2C(II2cBus i2c, byte busAddress)
         {
             if ((busAddress != 0x76) && (busAddress != 0x77))
             {
