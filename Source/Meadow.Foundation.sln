@@ -123,7 +123,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Adxl335", "S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{1A14B121-F317-44C8-90D8-F81E7ADDA451}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.ADXL335", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl335\Driver\Sensors.Motion.ADXL335\Sensors.Motion.ADXL335.csproj", "{56F2E797-4E21-4282-A169-972B5BE97B5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl335", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl335\Driver\Sensors.Motion.Adxl335\Sensors.Motion.Adxl335.csproj", "{56F2E797-4E21-4282-A169-972B5BE97B5B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Moisture.FC28", "Sensors.Moisture.FC28", "{52FB475F-A6C4-4BDC-8CC3-B81EA0FD3446}"
 EndProject
