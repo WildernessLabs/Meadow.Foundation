@@ -4,7 +4,7 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Audio.Radio;
 
-namespace Audio.Radio.TEA5767_Sample
+namespace Audio.Radio.Tea5767_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {

@@ -1,6 +1,6 @@
 ﻿using Meadow;
 
-namespace Audio.Radio.TEA5767_Sample
+namespace Audio.Radio.Tea5767_Sample
 {
     class Program
     {
