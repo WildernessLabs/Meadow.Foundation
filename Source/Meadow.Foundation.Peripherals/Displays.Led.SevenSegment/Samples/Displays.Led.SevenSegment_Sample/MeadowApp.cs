@@ -16,21 +16,21 @@ namespace Displays.Led.SevenSegment_Sample
 
             sevenSegment = new SevenSegment
             (
-                portA: Device.CreateDigitalOutputPort(Device.Pins.D01),
-                portB: Device.CreateDigitalOutputPort(Device.Pins.D00),
-                portC: Device.CreateDigitalOutputPort(Device.Pins.D08),
+                portA: Device.CreateDigitalOutputPort(Device.Pins.D14),
+                portB: Device.CreateDigitalOutputPort(Device.Pins.D15),
+                portC: Device.CreateDigitalOutputPort(Device.Pins.D06),
                 portD: Device.CreateDigitalOutputPort(Device.Pins.D07),
-                portE: Device.CreateDigitalOutputPort(Device.Pins.D06),
-                portF: Device.CreateDigitalOutputPort(Device.Pins.D11),
-                portG: Device.CreateDigitalOutputPort(Device.Pins.D09),
-                portDecimal: Device.CreateDigitalOutputPort(Device.Pins.D10),
+                portE: Device.CreateDigitalOutputPort(Device.Pins.D08),
+                portF: Device.CreateDigitalOutputPort(Device.Pins.D13),
+                portG: Device.CreateDigitalOutputPort(Device.Pins.D12),
+                portDecimal: Device.CreateDigitalOutputPort(Device.Pins.D05),
                 isCommonCathode: false
             );
 
             TestSevenSegment();
         }
 
-        protected void TestSevenSegment()
+        void TestSevenSegment()
         {
             Console.WriteLine("TestSevenSegment...");
 
