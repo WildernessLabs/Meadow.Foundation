@@ -28,7 +28,7 @@ namespace Sensors.Distance.HYSRF05_Sample
         // Valid distance ranges from 2cm to 400cm. Prints -1 otherwise.
         private void HYSRF05DistanceDetected(object sender, Meadow.Peripherals.Sensors.Distance.DistanceEventArgs e)
         {
-            Console.WriteLine(e.Distance.ToString());
+            Console.WriteLine($"{e.Distance}");
         }
     }
 }
