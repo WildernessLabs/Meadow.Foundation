@@ -311,7 +311,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.SerialLcd", "Displ
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{DE5A7D8B-9378-4807-8E70-588B9106E1A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.SerialLCD", "Meadow.Foundation.Peripherals\Displays.SerialLcd\Driver\Displays.SerialLCD\Displays.SerialLCD.csproj", "{99E0211B-C3BB-428D-92D4-F1A02EF031D4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.SerialLcd", "Meadow.Foundation.Peripherals\Displays.SerialLcd\Driver\Displays.SerialLcd\Displays.SerialLcd.csproj", "{99E0211B-C3BB-428D-92D4-F1A02EF031D4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.Pcd8544", "Displays.Pcd8544", "{0CD6A482-3CA0-4627-969E-7E27C1AE9352}"
 EndProject
@@ -405,7 +405,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Si1145_Sample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Camera.ArducamMini_Display_Sample", "Meadow.Foundation.Peripherals\Sensors.Camera.ArducamMini\Samples\Sensors.Camera.ArducamMini_Display_Sample\Sensors.Camera.ArducamMini_Display_Sample.csproj", "{90713460-758B-4DD6-AD25-7421D0798722}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.HID.AnalogJoystick_Sample", "Meadow.Foundation.Core.Samples\Sensors.HID.AnalogJoystick_Sample\Sensors.HID.AnalogJoystick_Sample.csproj", "{B31580AC-6F58-4EF4-93C5-6DAF204266A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Hid.AnalogJoystick_Sample", "Meadow.Foundation.Core.Samples\Sensors.Hid.AnalogJoystick_Sample\Sensors.Hid.AnalogJoystick_Sample.csproj", "{B31580AC-6F58-4EF4-93C5-6DAF204266A2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Motors.Stepper.Uln2003", "Motors.Stepper.Uln2003", "{33B2B22A-A3E5-4758-A4DC-E6ABB40A87DD}"
 EndProject

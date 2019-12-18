@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Sensors.HID
+namespace Meadow.Foundation.Sensors.Hid
 {
     public class AnalogJoystick
     {

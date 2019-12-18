@@ -12,9 +12,9 @@ namespace Meadow.Foundation.Displays
 
 
     /// <summary>
-    ///     Encapsulate the functionality required to control the Sparkfun serial LCD display.
+    ///     Encapsulate the functionality required to control the Sparkfun serial Lcd display.
     /// </summary>
-    public class SerialLCD : ITextDisplay
+    public class SerialLcd : ITextDisplay
     {
         #region Properties
 
@@ -50,7 +50,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Describe the number of lines and characters on the display.
         /// </summary>
-        public enum LCDDimensions
+        public enum LcdDimensions
         {
             Characters20Wide = 0x03,
             Characters16Wide = 0x04,
@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Possible baud rates for the display.
         /// </summary>
-        public enum LCDBaudRate
+        public enum LcdBaudRate
         {
             Baud2400 = 11,
             Baud4800,
@@ -115,24 +115,24 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Make the default constructor private to prevent it being called.
         /// </summary>
-        private SerialLCD()
+        private SerialLcd()
         {
         }
 
         /// <summary>
-        ///     Create a new SerialLCD object.
+        ///     Create a new SerialLcd object.
         /// </summary>
-        /// <param name="config">TextDisplayConfig object defining the LCD dimension (null will default to 16x2).</param>
+        /// <param name="config">TextDisplayConfig object defining the Lcd dimension (null will default to 16x2).</param>
         /// <param name="baudRate">Baud rate to use (default = 9600).</param>
         /// <param name="parity">Parity to use (default is None).</param>
         /// <param name="dataBits">Number of data bits (default is 8 data bits).</param>
         /// <param name="stopBits">Number of stop bits (default is one stop bit).</param>
-        public SerialLCD(IIODevice device, SerialPortName port, TextDisplayConfig config = null, int baudRate = 9600,
+        public SerialLcd(IIODevice device, SerialPortName port, TextDisplayConfig config = null, int baudRate = 9600,
             Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One)
         {
             if (config == null)
             {
-                // assume a 16x2 LCD.
+                // assume a 16x2 Lcd.
                 DisplayConfig = new TextDisplayConfig() { Height = 2, Width = 16 };
             } 
             else
@@ -144,16 +144,16 @@ namespace Meadow.Foundation.Displays
 
             comPort.Open();
 
-            // configure the LCD controller for the appropriate screen size
+            // configure the Lcd controller for the appropriate screen size
             byte lines = 0;
             byte characters = 0;
             switch (DisplayConfig.Width)
             {
                 case 16:
-                    characters = (byte)LCDDimensions.Characters16Wide;
+                    characters = (byte)LcdDimensions.Characters16Wide;
                     break;
                 case 20:
-                    characters = (byte)LCDDimensions.Characters20Wide;
+                    characters = (byte)LcdDimensions.Characters20Wide;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(config.Width), "Display width should be 16 or 20.");
@@ -161,10 +161,10 @@ namespace Meadow.Foundation.Displays
             switch (DisplayConfig.Height)
             {
                 case 2:
-                    lines = (byte)LCDDimensions.Lines2;
+                    lines = (byte)LcdDimensions.Lines2;
                     break;
                 case 4:
-                    lines = (byte)LCDDimensions.Lines4;
+                    lines = (byte)LcdDimensions.Lines4;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(config.Height), "Display height should be 2 or 4 lines.");
@@ -211,7 +211,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Change the baud rate of the display using the command interface.
         /// </summary>
-        public void SetBaudRate(LCDBaudRate baudRate)
+        public void SetBaudRate(LcdBaudRate baudRate)
         {
             Send(new[] { ConfigurationCommandCharacter, (byte) baudRate });
         }
@@ -400,7 +400,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Sets the backlight brightness of the LCD. Valid values
+        ///     Sets the backlight brightness of the Lcd. Valid values
         ///     are 0 through 1. Sleeps for 125milliseconds after setting
         ///     to let the display settle.
         ///     
@@ -433,7 +433,7 @@ namespace Meadow.Foundation.Displays
         /// Custom characters are defined as charater maps and can 
         /// be created using online graphical tools such as the one
         /// found at:
-        /// http://maxpromer.github.io/LCD-Character-Creator/
+        /// http://maxpromer.github.io/Lcd-Character-Creator/
         /// 
         /// **Note:** due to .Net's underlying string implementation,
         /// slot 0 is unusable unless you decode the string yourself 
@@ -451,7 +451,7 @@ namespace Meadow.Foundation.Displays
                 throw new ArgumentOutOfRangeException(nameof(address), "Address must be 0 - 7");
             }
 
-            // tell the LCD we want to save a character to an address
+            // tell the Lcd we want to save a character to an address
             // 0x4 + address
             // 0x40 = save in slot 0, 0x40 + (6 * 8) = save in slot 6
 
