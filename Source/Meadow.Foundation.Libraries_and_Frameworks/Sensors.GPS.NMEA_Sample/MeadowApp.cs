@@ -8,12 +8,12 @@ using System.Text;
 
 namespace BasicSensors.GPS.NMEA_Sample
 {
-    public class App : App<F7Micro, App>
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
         SerialPort sp;
         byte[] data = new byte[4096];
 
-        public App()
+        public MeadowApp()
         {
              GpsLoopTest();
             // LoopBackTest();

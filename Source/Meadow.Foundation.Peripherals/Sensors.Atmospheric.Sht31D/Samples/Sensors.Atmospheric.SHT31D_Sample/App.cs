@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
 
 namespace BasicSensors.Atmospheric.SHT31D_Sample
 {
-    public class App : App<F7Micro, App>
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
         SHT31D sensor;
 
-        public App()
+        public MeadowApp()
         {
             InitHardware();
 

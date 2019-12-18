@@ -16,16 +16,6 @@ namespace BasicSensors.Motion.Apds9960_Sample
             TestNewDriver();
         }
 
-        void TestOldDriver()
-        {
-            var sensor = new Apds9960O(Device, Device.CreateI2cBus(), Device.Pins.D04);
-
-            sensor.Enable(true);
-
-            
-
-        }
-
         void TestNewDriver()
         { 
             InitHardware();
