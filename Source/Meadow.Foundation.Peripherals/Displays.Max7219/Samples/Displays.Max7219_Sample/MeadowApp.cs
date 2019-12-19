@@ -2,8 +2,7 @@
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Hardware;
+using Meadow.Foundation.Displays;
 
 namespace MeadowApp
 {
