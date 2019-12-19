@@ -26,7 +26,7 @@ namespace MeadowApp
 
         public void InitHardware()
         {
-            Console.WriteLine("Creating output ports...");
+            Console.WriteLine("Init...");
 
             sensor = new Bno055(Device.CreateI2cBus(), 0x28);
 

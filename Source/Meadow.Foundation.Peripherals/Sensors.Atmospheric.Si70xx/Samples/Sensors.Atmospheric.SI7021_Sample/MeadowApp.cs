@@ -15,11 +15,10 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
             Console.WriteLine("Initializing...");
 
             // configure our SI7021 on the I2C Bus
-            var i2c = Device.CreateI2cBus();
+            var i2cBus = Device.CreateI2cBus();
 
-            si7021 = new Si70xx(i2c);
+            si7021 = new Si70xx(i2cBus);
 
-            // just for funsies.
             Console.WriteLine($"Chip Serial: {si7021.SerialNumber}");
 
             // get an initial reading

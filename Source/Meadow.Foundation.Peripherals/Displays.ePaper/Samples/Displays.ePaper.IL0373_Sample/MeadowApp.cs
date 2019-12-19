@@ -11,15 +11,13 @@ namespace Displays.ePaper.IL0373_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         IL0373 display;
-        ISpiBus spiBus;
 
         public MeadowApp()
         {
             Console.WriteLine("ePaper sample");
             Console.WriteLine("Create Spi bus");
 
-            spiBus = Device.CreateSpiBus();// Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, 2000);
-
+            var spiBus = Device.CreateSpiBus();// Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, 2000);
 
             Console.WriteLine("Create display driver instance");
             display = new IL0373(device: Device, spiBus: spiBus,
@@ -30,14 +28,13 @@ namespace Displays.ePaper.IL0373_Sample
                 width: 102,
                 height: 212);
 
-
             var graphics = new GraphicsLibrary(display);
 
             //any color but black will show the ePaper alternate color 
             graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Red, false);
 
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(2, 2, ".IL0373");
+            graphics.DrawText(2, 2, "IL0373");
             graphics.DrawText(2, 20, "Meadow F7");
 
             int ySpacing = 6;

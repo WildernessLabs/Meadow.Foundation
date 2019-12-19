@@ -16,10 +16,10 @@ namespace Audio.Radio.Tea5767_Sample
             
             radio = new Tea5767(Device.CreateI2cBus());
 
-            TestTEA5767();
+            Scan();
         }
 
-        protected void TestTEA5767() 
+        protected void Scan() 
         {
             Console.WriteLine("TestTEA5767...");
 

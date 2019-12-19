@@ -29,8 +29,7 @@ namespace MeadowApp
 
         private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Atmospheric.AtmosphericConditionChangeResult e)
         {
-            Console.WriteLine($"Temp {e.New.Temperature}");
-            Console.WriteLine($"Hum {e.New.Humidity}");
+            Console.WriteLine($"Temp: {e.New.Temperature}, Humidity: {e.New.Humidity}");
         }
     }
 }
