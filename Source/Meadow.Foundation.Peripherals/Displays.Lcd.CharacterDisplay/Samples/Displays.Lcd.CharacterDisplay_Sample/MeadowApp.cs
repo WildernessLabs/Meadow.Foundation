@@ -22,7 +22,8 @@ namespace Displays.Lcd.CharacterDisplay_Sample
                 pinD4: Device.Pins.D13,
                 pinD5: Device.Pins.D12,
                 pinD6: Device.Pins.D11,
-                pinD7: Device.Pins.D10
+                pinD7: Device.Pins.D10,
+                rows: 2, columns: 16    // Adjust dimensions to fit your display
             );
 
             TestCharacterDisplay();
