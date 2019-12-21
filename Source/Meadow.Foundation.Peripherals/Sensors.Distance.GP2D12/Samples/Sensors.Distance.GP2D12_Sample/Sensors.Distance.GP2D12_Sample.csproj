@@ -1,12 +1,9 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.11.0" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Driver\Sensors.Distance.SharpGP2D12\Sensors.Distance.GP2D12.csproj" />
   </ItemGroup>

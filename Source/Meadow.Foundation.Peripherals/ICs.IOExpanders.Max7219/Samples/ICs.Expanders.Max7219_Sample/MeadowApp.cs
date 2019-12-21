@@ -87,6 +87,5 @@ namespace MeadowApp
 
             display = new Max7219(Device, Device.CreateSpiBus(), Device.Pins.D02, 1, true);
         }
-
     }
 }
