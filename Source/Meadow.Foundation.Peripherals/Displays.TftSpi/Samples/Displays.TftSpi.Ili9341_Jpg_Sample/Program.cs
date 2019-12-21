@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Meadow;
 
-namespace Displays.TftSpi.Ili9341_JpgSample
+namespace Displays.TftSpi.Ili9341_Jpg_Sample
 {
     class Program
     {
