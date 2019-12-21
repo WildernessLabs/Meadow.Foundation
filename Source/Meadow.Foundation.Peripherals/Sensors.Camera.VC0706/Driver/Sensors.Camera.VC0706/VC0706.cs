@@ -4,7 +4,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Camera
 {
-    public class CameraVC0706 : ICamera, IDisposable
+    public class Vc0706 : ICamera, IDisposable
     {
         #region enums
 
@@ -46,13 +46,13 @@ namespace Meadow.Foundation.Sensors.Camera
 
         private ISerialPort serialPort;
 
-        private VC0706Core _vc0706;
+        private Vc0706Core _vc0706;
 
-        public CameraVC0706(IIODevice device, SerialPortName serialPortName, int baudRate)
+        public Vc0706(IIODevice device, SerialPortName serialPortName, int baudRate)
         {
             serialPort = device.CreateSerialPort(serialPortName, baudRate);
 
-            _vc0706 = new VC0706Core();
+            _vc0706 = new Vc0706Core();
 
             
         }

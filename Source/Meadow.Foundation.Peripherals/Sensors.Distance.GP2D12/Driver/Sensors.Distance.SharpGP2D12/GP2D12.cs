@@ -6,7 +6,7 @@ using Meadow.Peripherals.Sensors.Distance;
 
 namespace Sensors.Distance
 {
-    public class GP2D12 : IRangeFinder
+    public class Gp2D12 : IRangeFinder
     {
         #region Member variables / fields
 
@@ -23,9 +23,9 @@ namespace Sensors.Distance
         #endregion Member variables / fields
 
         #region Constructors
-        private GP2D12() { }
+        private Gp2D12() { }
 
-        public GP2D12(IIODevice device, IPin analogInputPin)
+        public Gp2D12(IIODevice device, IPin analogInputPin)
         {
             analogInputPort = device.CreateAnalogInputPort(analogInputPin);
             analogInputPort.Changed += AnalogInputPort_Changed;

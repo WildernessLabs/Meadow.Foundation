@@ -4,12 +4,12 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    internal class Bme280SPI : Bme280Comms
+    internal class Bme280Spi : Bme280Comms
     {
         private ISpiBus _spi;
         private IDigitalOutputPort _chipSelect;
 
-        internal Bme280SPI(ISpiBus spi, IDigitalOutputPort chipSelect = null)
+        internal Bme280Spi(ISpiBus spi, IDigitalOutputPort chipSelect = null)
         {
             _spi = spi;
             _chipSelect = chipSelect;

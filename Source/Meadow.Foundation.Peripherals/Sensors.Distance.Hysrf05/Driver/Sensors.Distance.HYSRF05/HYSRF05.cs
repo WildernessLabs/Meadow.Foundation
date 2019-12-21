@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// HYSRF05 Distance Sensor
     /// </summary>
-    public class HYSRF05 : IRangeFinder
+    public class Hysrf05 : IRangeFinder
     {
         #region Properties
 
@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Default constructor is private to prevent it being called.
         /// </summary>
-        private HYSRF05() { }
+        private Hysrf05() { }
 
         /// <summary>
         /// Create a new HYSRF05 object with a IO Device
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
-        public HYSRF05(IIODevice device, IPin triggerPin, IPin echoPin) :
+        public Hysrf05(IIODevice device, IPin triggerPin, IPin echoPin) :
             this(device.CreateDigitalOutputPort(triggerPin, false),
                 device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth)) { }
 
@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         /// <param name="triggerPort"></param>
         /// <param name="echoPort"></param>
-        public HYSRF05(IDigitalOutputPort triggerPort, IDigitalInputPort echoPort)
+        public Hysrf05(IDigitalOutputPort triggerPort, IDigitalInputPort echoPort)
         {
             this.triggerPort = triggerPort;
 

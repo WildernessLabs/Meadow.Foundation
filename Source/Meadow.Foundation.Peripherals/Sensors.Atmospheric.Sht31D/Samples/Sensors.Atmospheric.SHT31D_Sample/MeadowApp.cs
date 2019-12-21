@@ -7,7 +7,7 @@ namespace BasicSensors.Atmospheric.SHT31D_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        SHT31D sensor;
+        Sht31D sensor;
 
         public MeadowApp()
         {
@@ -23,7 +23,7 @@ namespace BasicSensors.Atmospheric.SHT31D_Sample
         {
             Console.WriteLine("Init sensor...");
 
-            sensor = new SHT31D(Device.CreateI2cBus());
+            sensor = new Sht31D(Device.CreateI2cBus());
             sensor.Updated += Sensor_Updated;
 
         }

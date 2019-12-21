@@ -6,7 +6,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Camera
 {
-    public class VC0706Core : IDisposable
+    public class Vc0706Core : IDisposable
     {
         #region enums
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Foundation.Displays.Tm1637;
+using Meadow.Foundation.Displays;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Hardware;

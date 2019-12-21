@@ -4,9 +4,9 @@ using System.Threading;
 namespace Meadow.Foundation.Displays.ePaper
 {
     //WaveShare 4.2" B tri color
-    public class IL0398 : EPDColorBase
+    public class Il0398 : EpdColorBase
     {
-        public IL0398(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public Il0398(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             uint width, uint height) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         {

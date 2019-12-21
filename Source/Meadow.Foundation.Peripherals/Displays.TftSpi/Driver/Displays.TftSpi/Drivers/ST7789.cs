@@ -4,14 +4,14 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.Tft
 {
-    public class ST7789 : DisplayTftSpiBase
+    public class St7789 : DisplayTftSpiBase
     {
         private byte xOffset;
         private byte yOffset;
 
-        private ST7789() { }
+        private St7789() { }
 
-        public ST7789(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public St7789(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
         {
             Initialize();

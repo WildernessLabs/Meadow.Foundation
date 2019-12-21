@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// 
     /// Note: this class is not yet implemented.
     /// </summary>
-    public class MCP23008
+    public class Mcp23008
     {
         /// <summary>
         ///     Raised on Interrupt
@@ -57,7 +57,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         //} private bool _sequentialAddressOperationEnabled = false;
 
 
-        protected MCP23008()
+        protected Mcp23008()
         { }
 
 
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // nothing goes here
         } */
 
-        public MCP23008(II2cBus i2cBus, byte address = 0x20)
+        public Mcp23008(II2cBus i2cBus, byte address = 0x20)
         {
             // tried this, based on a forum post, but seems to have no effect.
             //H.OutputPort SDA = new H.OutputPort(N.Pins.GPIO_PIN_A4, false);

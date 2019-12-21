@@ -259,7 +259,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         public Bme280(ISpiBus spi, IDigitalOutputPort chipSelect)
         {
-            _bme280 = new Bme280SPI(spi, chipSelect);
+            _bme280 = new Bme280Spi(spi, chipSelect);
             Init();
         }
 

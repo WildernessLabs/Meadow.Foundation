@@ -22,7 +22,7 @@ namespace Displays.Tft.ST7789_Sample
 
             Console.WriteLine("Create display driver instance");
 
-            display = new ST7789(device: Device, spiBus: spiBus,
+            display = new St7789(device: Device, spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,

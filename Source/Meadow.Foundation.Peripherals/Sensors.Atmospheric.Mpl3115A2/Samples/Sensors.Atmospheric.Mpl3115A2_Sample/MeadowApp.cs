@@ -11,7 +11,7 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        MPL3115A2 mpl3115A2;
+        Mpl3115A2 mpl3115A2;
 
         public MeadowApp()
         {
@@ -19,7 +19,7 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
 
             // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus();
-            mpl3115A2 = new MPL3115A2(
+            mpl3115A2 = new Mpl3115A2(
                 i2c
             );
 

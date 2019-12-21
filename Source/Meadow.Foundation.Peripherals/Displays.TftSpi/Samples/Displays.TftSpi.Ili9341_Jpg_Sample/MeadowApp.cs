@@ -9,7 +9,7 @@ using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
 using NanoJpeg;
 
-namespace Displays.TftSpi.Ili9341_JpgSample
+namespace Displays.TftSpi.Ili9341_Jpg_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {

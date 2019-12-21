@@ -3,16 +3,16 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.Tft
 {
-    public class ST7735 : DisplayTftSpiBase
+    public class St7735 : DisplayTftSpiBase
     {
         private DisplayType displayType;
 
         private byte _xOffset;
         private byte _yOffset;
 
-        private ST7735() { }
+        private St7735() { }
 
-        public ST7735(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public St7735(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height,
             DisplayType displayType = DisplayType.ST7735R) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
         {

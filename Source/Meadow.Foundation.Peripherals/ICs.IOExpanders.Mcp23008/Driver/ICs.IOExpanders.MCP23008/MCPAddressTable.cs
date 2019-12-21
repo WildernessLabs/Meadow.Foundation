@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 0   1	0	0	1	1	0	 0x26	  38
 0   1	0	0	1	1	1	 0x27	  39
 */
-    public class MCPAddressTable
+    public class McpAddressTable
     {
         public static byte GetAddressFromPins(bool pinA0, bool pinA1, bool pinA2) {
 

@@ -8,14 +8,14 @@ namespace Displays.ST7565_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        ST7565 sT7565;
+        St7565 sT7565;
         GraphicsLibrary graphics;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            sT7565 = new ST7565
+            sT7565 = new St7565
             (
                 device: Device, 
                 spiBus: Device.CreateSpiBus(),

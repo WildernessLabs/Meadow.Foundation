@@ -2,7 +2,7 @@
 using System.Threading;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.ICs.IOExpanders
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Max7219 LED matrix driver
