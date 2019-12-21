@@ -185,10 +185,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.HCSR04", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.HCSR04_Sample", "Meadow.Foundation.Peripherals\Sensors.Distance.Hcsr04\Samples\Sensors.Distance.HCSR04_Sample\Sensors.Distance.HCSR04_Sample.csproj", "{041FFFB3-926E-471A-9C2B-343311824B30}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Compass.Grove3AxisDigitalCompass", "Sensors.Compass.Grove3AxisDigitalCompass", "{4769B4B4-0E2B-435E-9074-8514B546456E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{34F22F85-6BE4-441A-8AE2-F8FF0B1CE799}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Mpl3115A2", "Sensors.Atmospheric.Mpl3115A2", "{50A0527F-7CFF-40E3-B8C5-1BB915139BA5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D9E26608-83A9-4146-8B06-5CF9EF3E4F7A}"
@@ -209,7 +205,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Sht31D"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{6A664586-4544-4427-8FC1-2A8E306BE7A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.SHT31D", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Sht31D\Driver\Sensors.Atmospheric.SHT31D\Sensors.Atmospheric.SHT31D.csproj", "{81E6E143-8752-45A9-8BDA-C6F4730A7DF1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Sht31D", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Sht31D\Driver\Sensors.Atmospheric.SHT31D\Sensors.Atmospheric.SHT31D.csproj", "{81E6E143-8752-45A9-8BDA-C6F4730A7DF1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Htu21d", "Sensors.Atmospheric.Htu21d", "{27F8F5B1-F535-4116-BB16-63454D21D13B}"
 EndProject
@@ -387,7 +383,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi.ST7789_Samp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bmp085", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bmp085\Driver\Sensors.Atmospheric.Bmp085\Sensors.Atmospheric.Bmp085.csproj", "{66D2F66B-E8E7-480C-956B-C8C24F92E948}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.MPL115A2", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl115A2\Driver\Sensors.Atmospheric.MPL115A2\Sensors.Atmospheric.MPL115A2.csproj", "{4F109888-DBC1-4432-9303-F29E2AF7EC83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Mpl115A2", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl115A2\Driver\Sensors.Atmospheric.MPL115A2\Sensors.Atmospheric.MPL115A2.csproj", "{4F109888-DBC1-4432-9303-F29E2AF7EC83}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Htu21d", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21DF\Driver\Sensors.Atmospheric.Htu21DF\Sensors.Atmospheric.Htu21d.csproj", "{D9602FE1-2701-4B64-BB2C-60168F8DAF60}"
 EndProject
@@ -1063,8 +1059,6 @@ Global
 		{22F9AB41-151C-41EB-A662-1C155E9B067E} = {FEBB8878-9AB6-4AE1-BF04-F4F74A147C3C}
 		{BB051C9D-49C5-46C5-B8B1-5E459179C761} = {FEBB8878-9AB6-4AE1-BF04-F4F74A147C3C}
 		{041FFFB3-926E-471A-9C2B-343311824B30} = {22F9AB41-151C-41EB-A662-1C155E9B067E}
-		{4769B4B4-0E2B-435E-9074-8514B546456E} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
-		{34F22F85-6BE4-441A-8AE2-F8FF0B1CE799} = {4769B4B4-0E2B-435E-9074-8514B546456E}
 		{50A0527F-7CFF-40E3-B8C5-1BB915139BA5} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{D9E26608-83A9-4146-8B06-5CF9EF3E4F7A} = {50A0527F-7CFF-40E3-B8C5-1BB915139BA5}
 		{DD2F1AA1-B2FB-40B7-9537-0070F5F97173} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}

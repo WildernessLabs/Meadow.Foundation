@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     ///     Driver for the TSL2561 light-to-digital converter.
     /// </summary>
-    public class TSL2561 : IDisposable //, ILightSensor
+    public class Tsl2561 : IDisposable //, ILightSensor
     {
         #region Constants
 
@@ -339,7 +339,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <remarks>
         ///     Default constructor is private to force the setting of the I2C parameters.
         /// </remarks>
-        private TSL2561()
+        private Tsl2561()
         {
         }
 
@@ -353,7 +353,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
         /// <param name="updateInterval">Update interval for the sensor (in milliseconds).</param>
         /// <param name="lightLevelChangeNotificationThreshold">Changes in light level greater than this value will generate an interrupt in auto-update mode.</param>
-        public TSL2561(II2cBus i2cBus, byte address = (byte) Addresses.Default, ushort updateInterval = MinimumPollingPeriod,
+        public Tsl2561(II2cBus i2cBus, byte address = (byte) Addresses.Default, ushort updateInterval = MinimumPollingPeriod,
             float lightLevelChangeNotificationThreshold = 10.0F)
         {
             if ((address != (byte) Addresses.Address0) && (address != (byte) Addresses.Default) &&

@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// <summary>
     ///     Provide an interface to the WaveShare ePaper 2 color displays
     /// </summary>
-    public abstract class EPDColorBase : SPIDisplayBase
+    public abstract class EpdColorBase : SpiDisplayBase
     {
         protected abstract bool IsBlackInverted { get; }
         protected abstract bool IsColorInverted { get; }
@@ -24,10 +24,10 @@ namespace Meadow.Foundation.Displays.ePaper
         uint _width;
         uint _height;
 
-        private EPDColorBase()
+        private EpdColorBase()
         {  }
 
-        public EPDColorBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public EpdColorBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             uint width, uint height)
         {
             _width = width;

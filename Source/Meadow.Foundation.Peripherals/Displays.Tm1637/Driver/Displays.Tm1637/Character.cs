@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Meadow.Foundation.Displays.Tm1637
+namespace Meadow.Foundation.Displays
 {
     [Flags]
     public enum Character : byte

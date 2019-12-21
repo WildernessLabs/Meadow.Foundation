@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
-    public class SFSR02 : IRangeFinder
+    public class Sfsr02 : IRangeFinder
     {
         #region Properties
 
@@ -47,14 +47,14 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Default constructor is private to prevent it being called.
         /// </summary>
-        private SFSR02() { }
+        private Sfsr02() { }
 
         /// <summary>
         /// Create a new SFSR02 object with an IO Device
         /// </summary>
         /// <param name="triggerEchoPin"></param>
         /// <param name="device"></param>
-        public SFSR02(IIODevice device, IPin triggerEchoPin) :
+        public Sfsr02(IIODevice device, IPin triggerEchoPin) :
             this(device.CreateBiDirectionalPort(triggerEchoPin, false))
         { }
 
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// Create a new SFSR02 object 
         /// </summary>
         /// <param name="triggerEchoPort"></param>
-        public SFSR02(IBiDirectionalPort triggerEchoPort)
+        public Sfsr02(IBiDirectionalPort triggerEchoPort)
         {
             this.triggerEchoPort = triggerEchoPort;
 

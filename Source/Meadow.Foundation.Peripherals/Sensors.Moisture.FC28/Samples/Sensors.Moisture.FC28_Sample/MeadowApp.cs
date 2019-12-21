@@ -8,13 +8,13 @@ namespace Sensors.Moisture.FC28_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        FC28 fc28;
+        Fc28 fc28;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            fc28 = new FC28(
+            fc28 = new Fc28(
                 Device.CreateAnalogInputPort(Device.Pins.A01),
                 Device.CreateDigitalOutputPort(Device.Pins.D15),
                 minimumVoltageCalibration: 3.24f,

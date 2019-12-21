@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Grove TH02 temperature and humidity sensor.
     /// </summary>
-    public class GroveTH02 :
+    public class GroveTh02 :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
@@ -157,7 +157,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Default constructor is private to prevent the developer from calling it.
         /// </summary>
-        private GroveTH02()
+        private GroveTh02()
         {
         }
 
@@ -166,7 +166,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Address of the Grove TH02 (default = 0x4-).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
-        public GroveTH02(II2cBus i2cBus, byte address = 0x40)
+        public GroveTh02(II2cBus i2cBus, byte address = 0x40)
         {
             groveTH02 = new I2cPeripheral(i2cBus, address);
         }

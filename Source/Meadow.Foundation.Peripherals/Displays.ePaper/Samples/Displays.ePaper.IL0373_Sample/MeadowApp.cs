@@ -10,7 +10,7 @@ namespace Displays.ePaper.IL0373_Sample
     /* Driver in development */
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        IL0373 display;
+        Il0373 display;
 
         public MeadowApp()
         {
@@ -20,7 +20,7 @@ namespace Displays.ePaper.IL0373_Sample
             var spiBus = Device.CreateSpiBus();// Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, 2000);
 
             Console.WriteLine("Create display driver instance");
-            display = new IL0373(device: Device, spiBus: spiBus,
+            display = new Il0373(device: Device, spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,

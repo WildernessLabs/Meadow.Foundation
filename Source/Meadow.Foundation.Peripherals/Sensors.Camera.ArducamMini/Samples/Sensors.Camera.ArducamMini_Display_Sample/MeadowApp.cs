@@ -14,7 +14,7 @@ namespace MeadowApp
     {
         ArducamMini camera;
 
-        ST7789 display;
+        St7789 display;
 
         GraphicsLibrary graphics;
         

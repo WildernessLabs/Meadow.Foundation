@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract class SPIDisplayBase : DisplayBase
+    public abstract class SpiDisplayBase : DisplayBase
     {
         protected readonly byte[] spiBOneByteBuffer = new byte[1];
 

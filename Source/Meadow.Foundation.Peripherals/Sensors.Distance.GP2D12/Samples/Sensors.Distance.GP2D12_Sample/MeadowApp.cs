@@ -7,7 +7,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        GP2D12 sensor;
+        Gp2D12 sensor;
 
         public MeadowApp()
         {
@@ -25,7 +25,7 @@ namespace MeadowApp
         {
             Console.WriteLine("Initialize...");
 
-            sensor = new GP2D12(Device, Device.Pins.A01);
+            sensor = new Gp2D12(Device, Device.Pins.A01);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     ///     Provide an interface to the ST7565 family of displays.
     /// </summary>
-    public class ST7565 : DisplayBase
+    public class St7565 : DisplayBase
     {
         #region Enums
 
@@ -123,12 +123,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Default constructor is private to prevent it being used.
         /// </summary>
-        private ST7565() { }
+        private St7565() { }
 
         /// <summary>
         ///     Create a new ST7565 object using the default parameters for
         /// </summary>
-        public ST7565(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public St7565(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width = 128, uint height = 64)
         {
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.Tm1637
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents Tm1637 segment display
