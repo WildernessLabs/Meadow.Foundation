@@ -228,24 +228,16 @@ namespace Meadow.Foundation.Displays.ePaper
          */
         void DisplayFrame(byte[] bufferBlack, byte[] bufferRed)
         {
-            var sendBuffer = new byte[Width / 8];
-
             if (bufferBlack != null)
             {
-                Console.WriteLine("Send black data");
-
                 SendCommand(DATA_START_TRANSMISSION_1);
                 DelayMs(2);
 
-              //  SendData(bufferBlack);
                 for (int i = 0; i < Width * Height / 8; i++) 
                 {   //I bet we can optimize this .... seems silly to send a byte at a time
                      SendData(bufferBlack[i]);
-                    
                 } 
                 DelayMs(2);
-
-                Console.WriteLine("Send black data complete");
             }
 
             if (bufferRed != null)
@@ -258,8 +250,6 @@ namespace Meadow.Foundation.Displays.ePaper
                     SendData(bufferRed[i]);  
                 }  
                 DelayMs(2);
-
-                Console.WriteLine("Send red data complete");
             }
 
             SendCommand(DISPLAY_REFRESH);

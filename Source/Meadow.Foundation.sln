@@ -371,99 +371,104 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.RgbPwmLed_Onboard_Samp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Hid.AnalogJoystick_Sample", "Meadow.Foundation.Core.Samples\Sensors.Hid.AnalogJoystick_Sample\Sensors.Hid.AnalogJoystick_Sample.csproj", "{50D09365-81F0-4313-A7AF-F2CD76DE4998}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Motion.Bno055_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Bno055\Samples\Sensors.Motion.Bno055_Sample\Sensors.Motion.Bno055_Sample.csproj", "{CFDF7779-7CB1-404F-98D7-CD9129959ABE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Bno055_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Bno055\Samples\Sensors.Motion.Bno055_Sample\Sensors.Motion.Bno055_Sample.csproj", "{CFDF7779-7CB1-404F-98D7-CD9129959ABE}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Motion.Adxl345_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl345\Samples\Sensors.Motion.Adxl345_Sample\Sensors.Motion.Adxl345_Sample.csproj", "{24210BC3-3BC6-4417-8527-767FB926E351}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl345_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl345\Samples\Sensors.Motion.Adxl345_Sample\Sensors.Motion.Adxl345_Sample.csproj", "{24210BC3-3BC6-4417-8527-767FB926E351}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Motion.Adxl335_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl335\Samples\Sensors.Motion.Adxl335_Sample\Sensors.Motion.Adxl335_Sample.csproj", "{B7837F50-B544-45D4-8C97-3A6DCF05DE9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl335_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl335\Samples\Sensors.Motion.Adxl335_Sample\Sensors.Motion.Adxl335_Sample.csproj", "{B7837F50-B544-45D4-8C97-3A6DCF05DE9A}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Motion.Adxl335", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl335\Driver\Sensors.Motion.Adxl335\Sensors.Motion.Adxl335.csproj", "{1405AD06-32A9-4032-9C0D-09E72774AE1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl335", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl335\Driver\Sensors.Motion.Adxl335\Sensors.Motion.Adxl335.csproj", "{1405AD06-32A9-4032-9C0D-09E72774AE1B}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Light.Si1145_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Si1145\Samples\Sensors.Light.Si1145_Sample\Sensors.Light.Si1145_Sample.csproj", "{9EDDBA25-327C-4108-8BE2-CA3745C0B5E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Si1145_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Si1145\Samples\Sensors.Light.Si1145_Sample\Sensors.Light.Si1145_Sample.csproj", "{9EDDBA25-327C-4108-8BE2-CA3745C0B5E8}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Light.Alspt19315C_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Alspt19315C\Samples\Sensors.Light.Alspt19315C_Sample\Sensors.Light.Alspt19315C_Sample.csproj", "{DBB7EE95-28A5-4910-9E02-3ACF24155EBD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Alspt19315C_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Alspt19315C\Samples\Sensors.Light.Alspt19315C_Sample\Sensors.Light.Alspt19315C_Sample.csproj", "{DBB7EE95-28A5-4910-9E02-3ACF24155EBD}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Light.Alspt19315C", "Meadow.Foundation.Peripherals\Sensors.Light.Alspt19315C\Driver\Sensors.Light.Alspt19315C\Sensors.Light.Alspt19315C.csproj", "{AD7C7A79-C05E-482B-A9FD-928F55EE501A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Alspt19315C", "Meadow.Foundation.Peripherals\Sensors.Light.Alspt19315C\Driver\Sensors.Light.Alspt19315C\Sensors.Light.Alspt19315C.csproj", "{AD7C7A79-C05E-482B-A9FD-928F55EE501A}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Distance.GP2D12_Sample", "Meadow.Foundation.Peripherals\Sensors.Distance.GP2D12\Samples\Sensors.Distance.GP2D12_Sample\Sensors.Distance.GP2D12_Sample.csproj", "{772FBE86-C49D-47A8-9215-CF1C42E997DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.GP2D12_Sample", "Meadow.Foundation.Peripherals\Sensors.Distance.GP2D12\Samples\Sensors.Distance.GP2D12_Sample\Sensors.Distance.GP2D12_Sample.csproj", "{772FBE86-C49D-47A8-9215-CF1C42E997DB}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Distance.GP2D12", "Meadow.Foundation.Peripherals\Sensors.Distance.GP2D12\Driver\Sensors.Distance.SharpGP2D12\Sensors.Distance.GP2D12.csproj", "{F69B73B5-C790-4BA4-AAEB-11CBE8CE8841}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.GP2D12", "Meadow.Foundation.Peripherals\Sensors.Distance.GP2D12\Driver\Sensors.Distance.SharpGP2D12\Sensors.Distance.GP2D12.csproj", "{F69B73B5-C790-4BA4-AAEB-11CBE8CE8841}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Atmospheric.MPL115A2", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl115A2\Driver\Sensors.Atmospheric.MPL115A2\Sensors.Atmospheric.MPL115A2.csproj", "{E522EEA4-F54D-4532-ABDD-468EEBCA8D38}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.MPL115A2", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl115A2\Driver\Sensors.Atmospheric.MPL115A2\Sensors.Atmospheric.MPL115A2.csproj", "{E522EEA4-F54D-4532-ABDD-468EEBCA8D38}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Atmospheric.Htu21d", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21DF\Driver\Sensors.Atmospheric.Htu21DF\Sensors.Atmospheric.Htu21d.csproj", "{52C4B58D-FC12-41F4-981F-53B5745416D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Htu21d", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21DF\Driver\Sensors.Atmospheric.Htu21DF\Sensors.Atmospheric.Htu21d.csproj", "{52C4B58D-FC12-41F4-981F-53B5745416D3}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Atmospheric.Htu21d_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21DF\Samples\Sensors.Atmospheric.Htu21DF_Sample\Sensors.Atmospheric.Htu21d_Sample.csproj", "{5E750F6A-1DB8-4C77-A345-88D7017B6DD5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Htu21d_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21DF\Samples\Sensors.Atmospheric.Htu21DF_Sample\Sensors.Atmospheric.Htu21d_Sample.csproj", "{5E750F6A-1DB8-4C77-A345-88D7017B6DD5}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Atmospheric.HIH6130_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Hih6130\Samples\Sensors.Atmospheric.HIH6130_Sample\Sensors.Atmospheric.HIH6130_Sample.csproj", "{4A4A34E6-1EC7-41FA-9E64-540004AECEF3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.HIH6130_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Hih6130\Samples\Sensors.Atmospheric.HIH6130_Sample\Sensors.Atmospheric.HIH6130_Sample.csproj", "{4A4A34E6-1EC7-41FA-9E64-540004AECEF3}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Atmospheric.Bmp085", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bmp085\Driver\Sensors.Atmospheric.Bmp085\Sensors.Atmospheric.Bmp085.csproj", "{6BCF441E-3B00-4E57-B43B-E31EA5FCFB21}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bmp085", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bmp085\Driver\Sensors.Atmospheric.Bmp085\Sensors.Atmospheric.Bmp085.csproj", "{6BCF441E-3B00-4E57-B43B-E31EA5FCFB21}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Atmospheric.Bme280_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme280\Samples\Sensors.Atmospheric.BME280_Sample\Sensors.Atmospheric.Bme280_Sample.csproj", "{FDB10227-BAF7-467B-869D-11E38E3A82B3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bme280_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme280\Samples\Sensors.Atmospheric.BME280_Sample\Sensors.Atmospheric.Bme280_Sample.csproj", "{FDB10227-BAF7-467B-869D-11E38E3A82B3}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Atmospheric.Bme280", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme280\Driver\Sensors.Atmospheric.BME280\Sensors.Atmospheric.Bme280.csproj", "{C129C890-8608-49E8-A37B-6850E0C5F190}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bme280", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme280\Driver\Sensors.Atmospheric.BME280\Sensors.Atmospheric.Bme280.csproj", "{C129C890-8608-49E8-A37B-6850E0C5F190}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.TftSpi.Ili9341_Jpg_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.Ili9341_Jpg_Sample\Displays.TftSpi.Ili9341_Jpg_Sample.csproj", "{B7AE79AA-7A8A-4525-8424-BC4BA3DED485}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi.Ili9341_Jpg_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.Ili9341_Jpg_Sample\Displays.TftSpi.Ili9341_Jpg_Sample.csproj", "{B7AE79AA-7A8A-4525-8424-BC4BA3DED485}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.TftSpi.Ili9163_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.Ili9163_Sample\Displays.TftSpi.Ili9163_Sample.csproj", "{0F65D020-6646-4F44-87DD-3010234B030C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi.Ili9163_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.Ili9163_Sample\Displays.TftSpi.Ili9163_Sample.csproj", "{0F65D020-6646-4F44-87DD-3010234B030C}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.TftSpi.Ili9341_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.Ili9341_Sample\Displays.TftSpi.Ili9341_Sample.csproj", "{811B36D1-B486-4FC2-BE51-2EE484F3DC62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi.Ili9341_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.Ili9341_Sample\Displays.TftSpi.Ili9341_Sample.csproj", "{811B36D1-B486-4FC2-BE51-2EE484F3DC62}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.TftSpi.SSD1351_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.SSD1351_Sample\Displays.TftSpi.SSD1351_Sample.csproj", "{9304C245-7836-41FC-9E47-5F3F3CC59DF9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi.SSD1351_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.SSD1351_Sample\Displays.TftSpi.SSD1351_Sample.csproj", "{9304C245-7836-41FC-9E47-5F3F3CC59DF9}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.TftSpi.ST7789_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.ST7789_Sample\Displays.TftSpi.ST7789_Sample.csproj", "{4DF9BBCA-526B-4DE8-95BF-79DFAA3F333B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi.ST7789_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.ST7789_Sample\Displays.TftSpi.ST7789_Sample.csproj", "{4DF9BBCA-526B-4DE8-95BF-79DFAA3F333B}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.TftSpi", "Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TftSpi\Displays.TftSpi.csproj", "{BB809BC3-7074-4732-BABD-3907BB1B08C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TftSpi", "Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TftSpi\Displays.TftSpi.csproj", "{BB809BC3-7074-4732-BABD-3907BB1B08C3}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Ssd1306_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Samples\Displays.Ssd1306_Sample\Displays.Ssd1306_Sample.csproj", "{547529E6-200B-45C4-BCB7-EABC1E1DD378}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1306_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Samples\Displays.Ssd1306_Sample\Displays.Ssd1306_Sample.csproj", "{547529E6-200B-45C4-BCB7-EABC1E1DD378}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Ssd1306", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj", "{DFA5AA4C-F521-4F53-90F2-7262BF41C2BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1306", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj", "{DFA5AA4C-F521-4F53-90F2-7262BF41C2BE}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.SerialLcd", "Meadow.Foundation.Peripherals\Displays.SerialLcd\Driver\Displays.SerialLcd\Displays.SerialLcd.csproj", "{18AAE079-06BD-4533-BFCA-9551427B539A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.SerialLcd", "Meadow.Foundation.Peripherals\Displays.SerialLcd\Driver\Displays.SerialLcd\Displays.SerialLcd.csproj", "{18AAE079-06BD-4533-BFCA-9551427B539A}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Pcd8544_Sample", "Meadow.Foundation.Peripherals\Displays.Pcd8544\Samples\Displays.Pcd8544_Sample\Displays.Pcd8544_Sample.csproj", "{C5E08DC8-43DF-4959-ACBF-5AC1182256C6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Pcd8544_Sample", "Meadow.Foundation.Peripherals\Displays.Pcd8544\Samples\Displays.Pcd8544_Sample\Displays.Pcd8544_Sample.csproj", "{C5E08DC8-43DF-4959-ACBF-5AC1182256C6}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Pcd8544", "Meadow.Foundation.Peripherals\Displays.Pcd8544\Driver\Displays.Pcd8544\Displays.Pcd8544.csproj", "{C23EF0A9-1BB7-4DDA-85D7-E629AC65D220}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Pcd8544", "Meadow.Foundation.Peripherals\Displays.Pcd8544\Driver\Displays.Pcd8544\Displays.Pcd8544.csproj", "{C23EF0A9-1BB7-4DDA-85D7-E629AC65D220}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Led.SevenSegment_Sample", "Meadow.Foundation.Peripherals\Displays.Led.SevenSegment\Samples\Displays.Led.SevenSegment_Sample\Displays.Led.SevenSegment_Sample.csproj", "{1E6B662E-61F5-43E8-9FB7-6879F29C6943}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Led.SevenSegment_Sample", "Meadow.Foundation.Peripherals\Displays.Led.SevenSegment\Samples\Displays.Led.SevenSegment_Sample\Displays.Led.SevenSegment_Sample.csproj", "{1E6B662E-61F5-43E8-9FB7-6879F29C6943}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Led.SevenSegment", "Meadow.Foundation.Peripherals\Displays.Led.SevenSegment\Driver\Displays.Led.SevenSegment\Displays.Led.SevenSegment.csproj", "{B54B1C3D-DB38-4835-AE4E-4F2877C26332}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Led.SevenSegment", "Meadow.Foundation.Peripherals\Displays.Led.SevenSegment\Driver\Displays.Led.SevenSegment\Displays.Led.SevenSegment.csproj", "{B54B1C3D-DB38-4835-AE4E-4F2877C26332}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Lcd.CharacterDisplay", "Meadow.Foundation.Peripherals\Displays.Lcd.CharacterDisplay\Driver\Displays.Lcd.CharacterDisplay\Displays.Lcd.CharacterDisplay.csproj", "{C6178701-C96F-4929-A255-396A7F7F8483}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Lcd.CharacterDisplay", "Meadow.Foundation.Peripherals\Displays.Lcd.CharacterDisplay\Driver\Displays.Lcd.CharacterDisplay\Displays.Lcd.CharacterDisplay.csproj", "{C6178701-C96F-4929-A255-396A7F7F8483}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.ePaper.IL0373_Sample", "Meadow.Foundation.Peripherals\Displays.ePaper\Samples\Displays.ePaper.IL0373_Sample\Displays.ePaper.IL0373_Sample.csproj", "{F7F2529F-BB90-4AFB-B404-3C0C68D089CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.ePaper.IL0373_Sample", "Meadow.Foundation.Peripherals\Displays.ePaper\Samples\Displays.ePaper.IL0373_Sample\Displays.ePaper.IL0373_Sample.csproj", "{F7F2529F-BB90-4AFB-B404-3C0C68D089CD}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Audio.Radio.Tea5767_Sample", "Meadow.Foundation.Peripherals\Audio.Radio.Tea5767\Samples\Audio.Radio.Tea5767_Sample\Audio.Radio.Tea5767_Sample.csproj", "{376219C3-330A-47D2-8F93-5E5CCB02E956}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Radio.Tea5767_Sample", "Meadow.Foundation.Peripherals\Audio.Radio.Tea5767\Samples\Audio.Radio.Tea5767_Sample\Audio.Radio.Tea5767_Sample.csproj", "{376219C3-330A-47D2-8F93-5E5CCB02E956}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Audio.Radio.Tea5767", "Meadow.Foundation.Peripherals\Audio.Radio.Tea5767\Driver\Audio.Radio.Tea5767\Audio.Radio.Tea5767.csproj", "{EFE5FD47-B161-487C-B931-B83126532A7C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Radio.Tea5767", "Meadow.Foundation.Peripherals\Audio.Radio.Tea5767\Driver\Audio.Radio.Tea5767\Audio.Radio.Tea5767.csproj", "{EFE5FD47-B161-487C-B931-B83126532A7C}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Camera.ArducamMini", "Meadow.Foundation.Peripherals\Sensors.Camera.ArducamMini\Driver\Sensors.Camera.ArducamMini\Sensors.Camera.ArducamMini.csproj", "{59146D61-A710-4AE9-8D7F-85C045699AD3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Camera.ArducamMini", "Meadow.Foundation.Peripherals\Sensors.Camera.ArducamMini\Driver\Sensors.Camera.ArducamMini\Sensors.Camera.ArducamMini.csproj", "{59146D61-A710-4AE9-8D7F-85C045699AD3}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Camera.ArucamMini_Sample", "Meadow.Foundation.Peripherals\Sensors.Camera.ArducamMini\Samples\Sensors.Camera.ArucamMini_Sample\Sensors.Camera.ArucamMini_Sample.csproj", "{5DA62D41-4CFA-4883-ADCC-A643E2680B0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Camera.ArucamMini_Sample", "Meadow.Foundation.Peripherals\Sensors.Camera.ArducamMini\Samples\Sensors.Camera.ArucamMini_Sample\Sensors.Camera.ArucamMini_Sample.csproj", "{5DA62D41-4CFA-4883-ADCC-A643E2680B0E}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Camera.ArducamMini_Display_Sample", "Meadow.Foundation.Peripherals\Sensors.Camera.ArducamMini\Samples\Sensors.Camera.ArducamMini_Display_Sample\Sensors.Camera.ArducamMini_Display_Sample.csproj", "{258D6A4F-509A-43E2-84A7-E691CF9645C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Camera.ArducamMini_Display_Sample", "Meadow.Foundation.Peripherals\Sensors.Camera.ArducamMini\Samples\Sensors.Camera.ArducamMini_Display_Sample\Sensors.Camera.ArducamMini_Display_Sample.csproj", "{258D6A4F-509A-43E2-84A7-E691CF9645C2}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Motors.Stepper.Uln2003", "Meadow.Foundation.Peripherals\Motors.Stepper.Uln2003\Driver\Motors.Stepper.Uln2003\Motors.Stepper.Uln2003.csproj", "{A6FA75A5-66A2-4D6A-84C1-63EBB0740BB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motors.Stepper.Uln2003", "Meadow.Foundation.Peripherals\Motors.Stepper.Uln2003\Driver\Motors.Stepper.Uln2003\Motors.Stepper.Uln2003.csproj", "{A6FA75A5-66A2-4D6A-84C1-63EBB0740BB4}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Motors.Stepper.Uln2003_Sample", "Meadow.Foundation.Peripherals\Motors.Stepper.Uln2003\Samples\Motors.Stepper.Uln2003_Sample\Motors.Stepper.Uln2003_Sample.csproj", "{2D89403F-00BF-409B-8EB7-4B0CFDADB4AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motors.Stepper.Uln2003_Sample", "Meadow.Foundation.Peripherals\Motors.Stepper.Uln2003\Samples\Motors.Stepper.Uln2003_Sample\Motors.Stepper.Uln2003_Sample.csproj", "{2D89403F-00BF-409B-8EB7-4B0CFDADB4AB}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Tm1637", "Meadow.Foundation.Peripherals\Displays.Tm1637\Driver\Displays.Tm1637\Displays.Tm1637.csproj", "{75205134-854D-4487-816F-952F6C8F04B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tm1637", "Meadow.Foundation.Peripherals\Displays.Tm1637\Driver\Displays.Tm1637\Displays.Tm1637.csproj", "{75205134-854D-4487-816F-952F6C8F04B0}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Tm1637_Sample", "Meadow.Foundation.Peripherals\Displays.Tm1637\Samples\Displays.Tm1637_Sample\Displays.Tm1637_Sample.csproj", "{7DC2E34D-5199-4DCC-9F2F-32C506BCBD79}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Tm1637_Sample", "Meadow.Foundation.Peripherals\Displays.Tm1637\Samples\Displays.Tm1637_Sample\Displays.Tm1637_Sample.csproj", "{7DC2E34D-5199-4DCC-9F2F-32C506BCBD79}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Motion.Adxl337_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl337\Samples\Sensors.Motion.Adxl337_Sample\Sensors.Motion.Adxl337_Sample.csproj", "{5527D24A-621C-49B9-8779-21A46806E565}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl337_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl337\Samples\Sensors.Motion.Adxl337_Sample\Sensors.Motion.Adxl337_Sample.csproj", "{5527D24A-621C-49B9-8779-21A46806E565}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Motion.Adxl337", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl337\Driver\Sensors.Motion.Adxl337\Sensors.Motion.Adxl337.csproj", "{760B0D12-9A9C-4E57-8954-5DD256296F91}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl337", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl337\Driver\Sensors.Motion.Adxl337\Sensors.Motion.Adxl337.csproj", "{760B0D12-9A9C-4E57-8954-5DD256296F91}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Motion.Adxl377", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl377\Driver\Sensors.Motion.Adxl377\Sensors.Motion.Adxl377.csproj", "{04409BAC-0E4D-4B3D-B18B-9C53A27D6067}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl377", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl377\Driver\Sensors.Motion.Adxl377\Sensors.Motion.Adxl377.csproj", "{04409BAC-0E4D-4B3D-B18B-9C53A27D6067}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Motion.Adxl377_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl377\Samples\Sensors.Motion.Adxl377_Sample\Sensors.Motion.Adxl377_Sample.csproj", "{A25917D1-E199-40CD-8E72-2CACDFEDB2F9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl377_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl377\Samples\Sensors.Motion.Adxl377_Sample\Sensors.Motion.Adxl377_Sample.csproj", "{A25917D1-E199-40CD-8E72-2CACDFEDB2F9}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Camera.VC0706", "Meadow.Foundation.Peripherals\Sensors.Camera.VC0706\Driver\Sensors.Camera.VC0706\Sensors.Camera.VC0706.csproj", "{FF42BA8B-C849-4132-AB76-7D77F26DED99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Camera.VC0706", "Meadow.Foundation.Peripherals\Sensors.Camera.VC0706\Driver\Sensors.Camera.VC0706\Sensors.Camera.VC0706.csproj", "{FF42BA8B-C849-4132-AB76-7D77F26DED99}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Max7219", "Meadow.Foundation.Peripherals\Displays.Max7219\Driver\Displays.Max7219\Displays.Max7219.csproj", "{25FE647A-6B04-4477-9C8C-80196FB6915F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Max7219", "Meadow.Foundation.Peripherals\Displays.Max7219\Driver\Displays.Max7219\Displays.Max7219.csproj", "{25FE647A-6B04-4477-9C8C-80196FB6915F}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Displays.Max7219_Sample", "Meadow.Foundation.Peripherals\Displays.Max7219\Samples\Displays.Max7219_Sample\Displays.Max7219_Sample.csproj", "{53904347-5FE4-4DDE-BBD0-1137193AA029}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Max7219_Sample", "Meadow.Foundation.Peripherals\Displays.Max7219\Samples\Displays.Max7219_Sample\Displays.Max7219_Sample.csproj", "{53904347-5FE4-4DDE-BBD0-1137193AA029}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65C50059-6C22-43E9-88DE-AD73F7F108C8}"
+	ProjectSection(SolutionItems) = preProject
+		Meadow.Foundation.sln = Meadow.Foundation.sln
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -227,8 +227,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                         // sleep for the appropriate interval
                         await Task.Delay(standbyDuration);
-
-                        Console.WriteLine("loop");
                     }
                 }, SamplingTokenSource.Token);
             }

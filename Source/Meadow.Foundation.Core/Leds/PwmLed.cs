@@ -103,17 +103,11 @@ namespace Meadow.Foundation.Leds
             }
 
             Brightness = brightness;
-            Console.WriteLine($"Brightness: {brightness}");
-            Console.WriteLine($"DutyCycle: {_maximumPwmDuty * Brightness}");
-            Console.WriteLine($"PortState: {Port.State}");
 
-            //if (_inverted) {
-            //    var duty = 1 / _maximumPwmDuty * Brightness;
-            //}
-
-            //Port.Stop();
             Port.DutyCycle = _maximumPwmDuty * Brightness;
-            if (!Port.State) {
+
+            if (!Port.State)
+            {
                 Port.Start();
             }
         }

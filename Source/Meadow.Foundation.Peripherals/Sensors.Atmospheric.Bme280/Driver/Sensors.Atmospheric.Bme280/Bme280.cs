@@ -494,7 +494,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 AtmosphericConditions conditions = new AtmosphericConditions();
 
                 var readings = _bme280.ReadRegisters(0xf7, 8);
-                Console.WriteLine($"  Readings: {BitConverter.ToString(readings)}");
                 //
                 //  Temperature calculation from section 4.2.3 of the datasheet.
                 //

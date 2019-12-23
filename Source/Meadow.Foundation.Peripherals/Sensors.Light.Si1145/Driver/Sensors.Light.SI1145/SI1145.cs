@@ -158,8 +158,6 @@ namespace Meadow.Foundation.Sensors.Light
                 throw new Exception("Invalid part ID");
             }
 
-            Console.WriteLine("Found Si1145");
-
             Initialize();
         }
 

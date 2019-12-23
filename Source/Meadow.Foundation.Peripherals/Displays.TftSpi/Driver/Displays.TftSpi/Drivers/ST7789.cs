@@ -56,8 +56,6 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(RASET);
             SendData(new byte[] { 0, 0, (byte)(Height >> 8), (byte)(Height & 0xFF) });
 
-            Console.WriteLine("Init display");
-
             SendCommand(INVON); //inversion on
             DelayMs(10);
             SendCommand(NORON); //normal display
