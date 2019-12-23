@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Camera.ArducamMini\Sensors.Camera.ArducamMini.csproj" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Motion.ArducamMini" Version="0.1.0" />
   </ItemGroup>
 </Project>

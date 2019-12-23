@@ -1,10 +1,10 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Displays.Tm1637\Driver\Displays.Tm1637\Displays.Tm1637.csproj" />
+    <PackageReference Include="Meadow.Foundation.Displays.Tm1637" Version="0.1.0" />
   </ItemGroup>
 </Project>

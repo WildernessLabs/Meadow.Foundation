@@ -1,10 +1,10 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Audio.Radio.Tea5767\Audio.Radio.Tea5767.csproj" />
+    <PackageReference Include="Meadow.Foundation.Audio.Radio.Tea5767" Version="0.6.2" />
   </ItemGroup>
 </Project>

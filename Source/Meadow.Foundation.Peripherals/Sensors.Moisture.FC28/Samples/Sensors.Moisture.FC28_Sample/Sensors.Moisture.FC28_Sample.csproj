@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Moisture.FC28\Sensors.Moisture.FC28.csproj" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Moisture.Fc28" Version="0.5.1" />
   </ItemGroup>
 </Project>

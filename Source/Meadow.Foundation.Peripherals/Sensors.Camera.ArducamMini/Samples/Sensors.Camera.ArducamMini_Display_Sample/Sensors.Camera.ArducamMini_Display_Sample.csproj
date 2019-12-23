@@ -5,7 +5,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Camera.ArducamMini\Sensors.Camera.ArducamMini.csproj" />
-    <ProjectReference Include="..\..\..\Displays.TftSpi\Driver\Displays.TftSpi\Displays.TftSpi.csproj" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Motion.ArducamMini" Version="0.1.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.7.1" />
   </ItemGroup>
 </Project>
