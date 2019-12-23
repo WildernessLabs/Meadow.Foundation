@@ -14,7 +14,7 @@
     <Description>Driver for the Adafruit IO data logging system</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.12.0" />
+    <PackageReference Include="Meadow.Foundation" Version="0.12.1" />
     <PackageReference Include="Meadow.Foundation.DataLoggers" Version="0.5.1" />
   </ItemGroup>
 </Project>

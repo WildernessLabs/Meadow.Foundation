@@ -13,6 +13,6 @@
     <Description>Driver for VC0706 camera</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.12.0" />
+    <PackageReference Include="Meadow.Foundation" Version="0.12.1" />
   </ItemGroup>
 </Project>

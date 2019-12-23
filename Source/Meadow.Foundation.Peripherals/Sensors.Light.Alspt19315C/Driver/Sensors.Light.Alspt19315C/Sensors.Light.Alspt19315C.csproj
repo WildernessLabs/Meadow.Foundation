@@ -14,7 +14,7 @@
     <Description>Driver for ALS-PT19 sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.12.0" />
+    <PackageReference Include="Meadow.Foundation" Version="0.12.1" />
   </ItemGroup>
 </Project>
 
