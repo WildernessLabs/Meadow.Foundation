@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor    
     /// </summary>
-    public class FC28 : FilterableObservableBase<FloatChangeResult, float>, IMoistureSensor
+    public class Fc28 : FilterableObservableBase<FloatChangeResult, float>, IMoistureSensor
     {
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
@@ -61,14 +61,14 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Default constructor is private to prevent it being called.
         /// </summary>
-        private FC28() { }
+        private Fc28() { }
 
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device.
         /// </summary>
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
-        public FC28(
+        public Fc28(
             IIODevice device, 
             IPin analogPin, 
             IPin digitalPin, 
@@ -81,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
-        public FC28(
+        public Fc28(
             IAnalogInputPort analogPort, 
             IDigitalOutputPort digitalPort, 
             float minimumVoltageCalibration = 0f, 

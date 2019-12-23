@@ -8,13 +8,13 @@ namespace RTCs.DS1307_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        protected DS1307 rtc;
+        protected Ds1307 rtc;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            rtc = new DS1307(Device.CreateI2cBus());
+            rtc = new Ds1307(Device.CreateI2cBus());
 
             DS1307Test();
         }

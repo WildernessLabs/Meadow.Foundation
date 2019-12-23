@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// HCSR04 Distance Sensor
     /// </summary>
-    public class HCSR04 : IRangeFinder
+    public class Hcsr04 : IRangeFinder
     {
         #region Properties
 
@@ -55,14 +55,14 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Default constructor is private to prevent it being called.
         /// </summary>
-        private HCSR04() { }
+        private Hcsr04() { }
 
         /// <summary>
         /// Create a new HCSR04 object with an IO Device
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
-        public HCSR04(IIODevice device, IPin triggerPin, IPin echoPin) :
+        public Hcsr04(IIODevice device, IPin triggerPin, IPin echoPin) :
             this (device.CreateDigitalOutputPort(triggerPin, false), 
                   device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth)) { }
 
@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         /// <param name="triggerPort"></param>
         /// <param name="echoPort"></param>
-        public HCSR04(IDigitalOutputPort triggerPort, IDigitalInputPort echoPort)
+        public Hcsr04(IDigitalOutputPort triggerPort, IDigitalInputPort echoPort)
         {
             this.triggerPort = triggerPort;
 

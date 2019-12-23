@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Provide a mechanism for reading the Temperature and Humidity from
     /// a HIH6130 temperature and Humidity sensor.
     /// </summary>
-    public class HIH6130 : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+    public class Hih6130 : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
         #region Member variables / fields
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Default constructor is private to prevent the developer from calling it.
         /// </summary>
-        private HIH6130()
+        private Hih6130()
         {
         }
 
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Address of the HIH6130 (default = 0x27).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
-        public HIH6130(II2cBus i2cBus, byte address = 0x27)
+        public Hih6130(II2cBus i2cBus, byte address = 0x27)
         {
             hih6130 = new I2cPeripheral(i2cBus, address);
         }
@@ -88,7 +88,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public async Task<AtmosphericConditions> Read()
         {
-            Conditions = await Read();
+            await Update();
 
             return Conditions;
         }

@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// <summary>
     ///     Provide an interface to the WaveShare ePaper monochrome displays
     /// </summary>
-    public abstract class EPDBase : SPIDisplayBase
+    public abstract class EpdBase : SpiDisplayBase
     {
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
@@ -21,10 +21,10 @@ namespace Meadow.Foundation.Displays.ePaper
         uint _width;
         uint _height;
 
-        private EPDBase()
+        private EpdBase()
         { }
 
-        public EPDBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public EpdBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             uint width, uint height)
         {
             _width = width;

@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Generators
         public float Duration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public float Period { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool Inverted { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public TimeScaleFactor Scale { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public TimeScale TimeScale { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public float DutyCycle {
             get => _dutyCycle;
@@ -47,6 +47,8 @@ namespace Meadow.Foundation.Generators
         }
 
         public IPwmChannelInfo Channel {get; protected set;}
+
+        public bool State => this._running;
 
         public IPin Pin => Port.Pin;
 

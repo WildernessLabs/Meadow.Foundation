@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Meadow.Hardware;
 using System.Threading.Tasks;
+using static Meadow.Peripherals.Leds.IRgbLed;
 
 namespace Meadow.Foundation.Leds
 {
@@ -15,7 +16,7 @@ namespace Meadow.Foundation.Leds
     public class RgbPwmLed
     {
         readonly float MAX_FORWARD_VOLTAGE = 3.3f;
-        readonly int DEFAULT_FREQUENCY = 100; //hz
+        readonly int DEFAULT_FREQUENCY = 200; //hz
         readonly float DEFAULT_DUTY_CYCLE = 0f;
 
         protected double maxRedDutyCycle = 1;
@@ -23,7 +24,11 @@ namespace Meadow.Foundation.Leds
         protected double maxBlueDutyCycle = 1;
 
         /// <summary>
-        /// Enables / disables the LED but toggling the PWM 
+        /// Enables / disables the LED but toggling the PWM
+        ///
+        /// TODO: What's the use case for enabling? maybe this
+        /// should just be State, which would return whether or
+        /// not it's running.
         /// </summary>
         public bool IsEnabled
         {
@@ -32,9 +37,15 @@ namespace Meadow.Foundation.Leds
             {
                 if (value)
                 {
-                    BluePwm?.Start();
-                    GreenPwm?.Start();
-                    RedPwm?.Start();
+                    if (BluePwm != null) {
+                        if (!BluePwm.State) { BluePwm.Start(); }
+                    }
+                    if (GreenPwm != null) {
+                        if (!GreenPwm.State) { GreenPwm.Start(); }
+                    }
+                    if (RedPwm != null) {
+                        if (!RedPwm.State) { RedPwm.Start(); }
+                    }
                 }
                 else
                 {
@@ -42,14 +53,16 @@ namespace Meadow.Foundation.Leds
                     RedPwm?.Stop();
                     GreenPwm?.Stop();
                 }
+                isEnabled = value;
             }
         }
-        protected bool isEnabled = true;
+        protected bool isEnabled = false;
 
         /// <summary>
         /// Is the LED using a common cathode
         /// </summary>
-        public bool IsCommonCathode { get; protected set; }
+        //public bool IsCommonCathode { get; protected set; }
+        public CommonType Common { get; protected set; }
 
         /// <summary>
         /// Get the red LED port
@@ -102,12 +115,12 @@ namespace Meadow.Foundation.Leds
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float blueLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
-            bool isCommonCathode = true) :
+            CommonType commonType = CommonType.CommonCathode) :
             this(device.CreatePwmPort(redPwmPin),
                   device.CreatePwmPort(greenPwmPin),
                   device.CreatePwmPort(bluePwmPin),
                   redLedForwardVoltage, greenLedForwardVoltage, blueLedForwardVoltage,
-                  isCommonCathode)
+                  commonType)
         { }
 
         /// <summary>
@@ -125,7 +138,7 @@ namespace Meadow.Foundation.Leds
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float blueLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
-            bool isCommonCathode = true)
+            CommonType commonType = CommonType.CommonCathode)
         {
             // validate and persist forward voltages
             if (redLedForwardVoltage < 0 || redLedForwardVoltage > MAX_FORWARD_VOLTAGE)
@@ -146,12 +159,12 @@ namespace Meadow.Foundation.Leds
             }
             BlueForwardVoltage = blueLedForwardVoltage;
 
+            this.Common = commonType;
+
             // calculate and set maximum PWM duty cycles
             maxRedDutyCycle = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
             maxGreenDutyCycle = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
-            maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);
-
-            IsCommonCathode = isCommonCathode;
+            maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);            
 
             cancellationTokenSource = new CancellationTokenSource();
 
@@ -171,7 +184,9 @@ namespace Meadow.Foundation.Leds
         {
             RedPwm.Frequency = GreenPwm.Frequency = BluePwm.Frequency = DEFAULT_FREQUENCY;
             RedPwm.DutyCycle = GreenPwm.DutyCycle = BluePwm.DutyCycle = DEFAULT_DUTY_CYCLE;
-            RedPwm.Inverted = GreenPwm.Inverted = BluePwm.Inverted = !IsCommonCathode;
+            // invertthe PWM signal if it common anode
+            RedPwm.Inverted = GreenPwm.Inverted = BluePwm.Inverted
+                = (this.Common == CommonType.CommonAnode);
         }
 
         /// <summary>
@@ -182,13 +197,18 @@ namespace Meadow.Foundation.Leds
         {
             Color = ledColor;
 
-            IsEnabled = false;
+            //IsEnabled = false;
+            var red   = (float)(Color.R * maxRedDutyCycle);
+            var green = (float)(Color.G * maxGreenDutyCycle);
+            var blue  = (float)(Color.B * maxBlueDutyCycle);
+            Console.WriteLine($"Red duty: {red}, green: {green}, blue: {blue}");
 
             // set the color based on the RGB values
             RedPwm.DutyCycle = (float)(Color.R * maxRedDutyCycle);
             GreenPwm.DutyCycle = (float)(Color.G * maxGreenDutyCycle);
             BluePwm.DutyCycle = (float)(Color.B * maxBlueDutyCycle);
 
+            
             IsEnabled = true;
         }
 
@@ -306,12 +326,18 @@ namespace Meadow.Foundation.Leds
 
                 SetColor(color, brightness);
 
-                await Task.Delay(80);
+                // TODO: what is this 80 ms delay? shouldn't it be intervalTime?
+                //await Task.Delay(80);
+                await Task.Delay(intervalTime);
             }
         }
         protected void SetColor(Color color, float brightness)
         {
-            IsEnabled = false;
+            //IsEnabled = false;
+            var red   = (float)(Color.R * maxRedDutyCycle);
+            var green = (float)(Color.G * maxGreenDutyCycle);
+            var blue  = (float)(Color.B * maxBlueDutyCycle);
+            Console.WriteLine($"Red duty: {red}, green: {green}, blue: {blue}");
 
             RedPwm.DutyCycle = (float)(color.R * brightness);
             GreenPwm.DutyCycle = (float)(color.G * brightness);

@@ -18,7 +18,7 @@ namespace Sensors.Switches.SpstSwitch_Sample
             spstSwitch.Changed += (s,e) => 
             {
                 Console.WriteLine("Switch Changed");
-                Console.WriteLine("Switch on: " + spstSwitch.IsOn.ToString());
+                Console.WriteLine($"Switch on: {spstSwitch.IsOn}");
             };
 
             Console.WriteLine("SpstSwitch ready...");

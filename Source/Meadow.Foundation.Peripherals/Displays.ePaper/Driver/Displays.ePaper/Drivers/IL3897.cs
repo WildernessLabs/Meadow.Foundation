@@ -4,9 +4,9 @@ using Meadow.Hardware;
 namespace Meadow.Foundation.Displays.ePaper
 {
     //EPD2i13
-    public class IL3897 : EPDBase
+    public class Il3897 : EpdBase
     {
-        public IL3897(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public Il3897(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             uint width = 122, uint height = 250) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }

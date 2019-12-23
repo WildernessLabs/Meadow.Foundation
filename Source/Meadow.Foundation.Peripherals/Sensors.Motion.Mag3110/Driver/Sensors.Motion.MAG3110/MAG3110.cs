@@ -3,7 +3,7 @@ using System;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class MAG3110
+    public class Mag3110
     {
         #region Structures
 
@@ -180,7 +180,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Default constructor is private to prevent the developer from calling it.
         /// </summary>
-        private MAG3110()
+        private Mag3110()
         {
         }
 
@@ -191,7 +191,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin">Interrupt pin used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
         /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>        
-        public MAG3110(IIODevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = 0x0e, ushort speed = 400) :
+        public Mag3110(IIODevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = 0x0e, ushort speed = 400) :
             this (i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address) { }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPort">Interrupt port used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
         /// <param name="i2cBus">I2C bus object - default = 400 KHz).</param>        
-        public MAG3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = 0x0e)
+        public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = 0x0e)
         {
             _mag3110 = new I2cPeripheral(i2cBus, address);
 

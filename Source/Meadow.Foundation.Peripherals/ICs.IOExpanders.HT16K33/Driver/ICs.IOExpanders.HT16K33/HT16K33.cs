@@ -5,7 +5,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     //128 LED driver
     //39 key input
-    public class HT16K33
+    public class Ht16K33
     {
         #region Enums
         public enum BlinkRate : byte
@@ -69,14 +69,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         ///     Default HT16K33 constructor is private to prevent it from being used.
         /// </summary>
-        private HT16K33() { }
+        private Ht16K33() { }
 
         /// <summary>
         ///     Create a new HT16K33 object using the default parameters
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="i2cBus">I2C bus instance</param>
-        public HT16K33(II2cBus i2cBus, byte address = 0x70)
+        public Ht16K33(II2cBus i2cBus, byte address = 0x70)
         {
             _I2cPeripheral = new I2cPeripheral(i2cBus, address);
 
