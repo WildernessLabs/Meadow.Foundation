@@ -13,12 +13,6 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for Uln2003 as a stepper motor controller</Description>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation" Version="0.12.1" />
   </ItemGroup>
