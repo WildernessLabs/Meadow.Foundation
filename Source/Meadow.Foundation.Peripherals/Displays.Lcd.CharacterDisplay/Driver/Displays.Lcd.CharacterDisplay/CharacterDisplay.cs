@@ -153,10 +153,11 @@ namespace Meadow.Foundation.Displays.Lcd
 
         public void WriteLine(string text, byte lineNumber)
         {
-            ClearLine(lineNumber);
             SetLineAddress(lineNumber);
 
-            var bytes = System.Text.Encoding.UTF8.GetBytes(text);
+            // Instead of clearing the line first, pad it with empty space on the end
+            var paddedString = text.PadRight(DisplayConfig.Width, ' ');
+            var bytes = System.Text.Encoding.UTF8.GetBytes(paddedString);
             foreach (var b in bytes)
             {
                 SendByte(b, LCD_DATA);
