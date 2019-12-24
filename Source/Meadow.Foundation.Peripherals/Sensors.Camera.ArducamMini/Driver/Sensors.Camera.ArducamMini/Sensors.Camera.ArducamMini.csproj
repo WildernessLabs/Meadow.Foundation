@@ -5,11 +5,11 @@
     <AssemblyName>ArducamMini</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Motion.ArducamMini</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Camera.ArducamMini</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Arducam, ArducamMini, Camera</PackageTags>    
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for ArducamMini camera controller</Description>
   </PropertyGroup>
