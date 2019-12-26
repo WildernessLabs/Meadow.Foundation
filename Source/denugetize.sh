@@ -5,14 +5,14 @@ declare -A packages
 packages["Meadow"]="./Meadow.Core/source/Meadow.Core/Meadow.Core.csproj"
 for proj in $(find . -name "*.csproj" -print | xargs grep -l "PackageId")
 do
-    id=$(grep 'PackageId' $proj | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
+    id=$(grep '<PackageId' $proj | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
     packages[$id]=$proj
 done
 
 # now, open up each csproj file and replace the PackageReferences with ProjectReferences
 for proj in $(find . -name "*.csproj" -print | xargs grep -l "PackageReference")
 do
-    refs=$(grep 'PackageReference' $proj | awk -F"\"" '{print $2}')
+    refs=$(grep '<PackageReference' $proj | awk -F"\"" '{print $2}')
 
     for package in $refs
     do
