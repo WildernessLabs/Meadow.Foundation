@@ -4,7 +4,9 @@ Meadow.Foundation greatly simplifies the task of building connected things with 
 
 # Documentation
 
-[link to site]
+You can read more Meadow.Foundation and how to get started in our [beta developer site](http://beta-developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
+
+Refer to our [Meadow.Foundation Peripherals Status](https://docs.google.com/spreadsheets/d/1U0asbAYjQgJ6dvqVXnvL8X1BPZiGZcpNl-GsdKagp2s/edit#gid=0) spreadsheet to track the progress of all the peripherals we're supporting in our latest version.
 
 ## Using
 
