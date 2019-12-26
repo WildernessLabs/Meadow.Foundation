@@ -8,74 +8,9 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Barometric
 {
-    internal abstract class GY63Base
+    public class MS5611
     {
-        protected GY63.Resolution Resolution { get; set; }
-
-        public abstract void Reset();
-        public abstract void BeginTempConversion();
-        public abstract void BeginPressureConversion();
-        public abstract byte[] ReadData();
-
-        protected enum Commands : byte
-        {
-            Reset = 0x1e,
-            ConvertD1 = 0x40,
-            ConvertD2 = 0x50,
-            ReadADC = 0x00,
-        }
-
-        internal GY63Base(GY63.Resolution resolution)
-        {
-            Resolution = resolution;
-        }
-    }
-
-    internal class GY63I2C : GY63Base
-    {
-        private II2cBus _i2c;
-        private byte _address;
-
-        internal GY63I2C(II2cBus i2c, byte address, GY63.Resolution resolution)
-            : base(resolution)
-        {
-            _i2c = i2c;
-            _address = address;
-        }
-
-        public override void Reset()
-        {
-            var cmd = (byte)Commands.Reset;
-            Console.WriteLine($"Sending {cmd:X2} to {_address:X2}");
-            _i2c.WriteData(_address, cmd);
-        }
-
-        public override void BeginTempConversion()
-        {
-            var cmd = (byte)((byte)Commands.ConvertD2 + 2 * (byte)Resolution);
-            Console.WriteLine($"Sending {cmd:X2} to {_address:X2}");
-            _i2c.WriteData(_address, cmd);
-        }
-
-        public override void BeginPressureConversion()
-        {
-            var cmd = (byte)((byte)Commands.ConvertD1 + 2 * (byte)Resolution);
-            Console.WriteLine($"Sending {cmd:X2} to {_address:X2}");
-            _i2c.WriteData(_address, cmd);
-        }
-
-        public override byte[] ReadData()
-        {
-            // write a
-            _i2c.WriteData(_address, (byte)Commands.ReadADC);
-            var data = _i2c.ReadData(_address, 3);
-            return data;
-        }
-    }
-
-    public class GY63
-    {
-        private GY63Base _impl;
+        private MS5611Base _impl;
 
         public enum Resolution
         {
@@ -92,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Barometric
         /// <param name="i2c"></param>
         /// <param name="address">0x76 is CSB is pulled low, 0x77 if CSB is pulled high</param>
         /// <param name="resolution"></param>
-        public GY63(II2cBus i2c, byte address = 0x76, Resolution resolution = Resolution.OSR_1024)
+        public MS5611(II2cBus i2c, byte address = 0x76, Resolution resolution = Resolution.OSR_1024)
         {
             switch (address)
             {
@@ -104,7 +39,7 @@ namespace Meadow.Foundation.Sensors.Barometric
                     throw new ArgumentOutOfRangeException("Address must be 0x76 or 0x77");
             }
             
-            _impl = new GY63I2C(i2c, address, resolution);
+            _impl = new MS5611I2C(i2c, address, resolution);
         }
 
         /// <summary>
@@ -112,8 +47,9 @@ namespace Meadow.Foundation.Sensors.Barometric
         /// </summary>
         /// <param name="spi"></param>
         /// <param name="resolution"></param>
-        public GY63(ISpiBus spi, Resolution resolution = Resolution.OSR_1024)
+        public MS5611(ISpiBus spi, IPin chipSelect, Resolution resolution = Resolution.OSR_1024)
         {
+            _impl = new MS5611SPI(spi, chipSelect, resolution);
         }
 
         public void Reset()

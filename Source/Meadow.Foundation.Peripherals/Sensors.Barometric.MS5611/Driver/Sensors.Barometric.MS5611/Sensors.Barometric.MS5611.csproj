@@ -7,8 +7,8 @@
     <ProjectGuid>{C53B3B87-839E-4752-B998-6C1673E316FC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sensors.Barometric.GY63</RootNamespace>
-    <AssemblyName>GY63</AssemblyName>
+    <RootNamespace>Sensors.Barometric.MS5611</RootNamespace>
+    <AssemblyName>MS5611</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -41,13 +41,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GY63.cs" />
+    <Compile Include="MS5611Base.cs" />
+    <Compile Include="MS5611I2C.cs" />
+    <Compile Include="MS5611.cs" />
+    <Compile Include="MS5611SPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
-      <Project>{B13C7BDD-77F5-45F8-BDB9-6CD368C67410}</Project>
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj">
+      <Project>{00da9fb4-106b-46b6-bea6-886534833b65}</Project>
       <Name>Meadow.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj">
+      <Project>{cebd7f9a-4645-4a29-8a97-7889e241896f}</Project>
+      <Name>Meadow.Foundation.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
