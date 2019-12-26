@@ -27,12 +27,20 @@ namespace Meadow.Foundation.Motors.Stepper
             {
                 mode = value;
 
-                currentSwitchingSequence = mode switch
-                {
-                    StepperMode.FullStepSinglePhase => fullStepSinglePhaseSequence,
-                    StepperMode.FullStepDualPhase => fullStepDualPhaseSequence,
-                    _ => halfStepSequence
-                };
+                if (mode == StepperMode.FullStepSinglePhase)
+                    currentSwitchingSequence = fullStepSinglePhaseSequence;
+                else if (mode == StepperMode.FullStepDualPhase)
+                    currentSwitchingSequence = fullStepDualPhaseSequence;
+                else
+                    currentSwitchingSequence = halfStepSequence;
+
+                // C# 8
+                //currentSwitchingSequence = mode switch
+                //{
+                //    StepperMode.FullStepSinglePhase => fullStepSinglePhaseSequence,
+                //    StepperMode.FullStepDualPhase => fullStepDualPhaseSequence,
+                //    _ => halfStepSequence
+                //};
             }
         }
 

@@ -13,7 +13,7 @@
     <EmbeddedResource Include="house.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.7.1" />
-    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.7" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.7.2" />
+    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.8" />
   </ItemGroup>
 </Project>

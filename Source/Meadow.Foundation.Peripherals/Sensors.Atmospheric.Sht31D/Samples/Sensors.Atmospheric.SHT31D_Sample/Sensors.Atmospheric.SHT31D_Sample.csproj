@@ -5,7 +5,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.12.1" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Sht31D" Version="0.1.1" />
+    <PackageReference Include="Meadow.Foundation" Version="0.12.2" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Sht31D" Version="0.1.2" />
   </ItemGroup>
 </Project>

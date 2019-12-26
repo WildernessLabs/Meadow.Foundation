@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Audio.Radio.Tea5767" Version="0.6.2" />
+    <PackageReference Include="Meadow.Foundation.Audio.Radio.Tea5767" Version="0.6.3" />
   </ItemGroup>
 </Project>

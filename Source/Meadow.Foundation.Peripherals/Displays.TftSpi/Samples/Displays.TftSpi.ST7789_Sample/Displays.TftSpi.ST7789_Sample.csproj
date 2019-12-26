@@ -1,11 +1,11 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.7" />
-    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.7.1" />
+    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.8" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.7.2" />
   </ItemGroup>
 </Project>
