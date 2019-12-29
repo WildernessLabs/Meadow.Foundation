@@ -44,26 +44,113 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Raised when a press starts (the button is pushed down; circuit is closed).
         /// </summary>
-        public event EventHandler PressStarted = delegate { };
+        private EventHandler _pressStarted = delegate {};
+        public event EventHandler PressStarted
+        {
+            add
+            {
+                if(DigitalIn.InterruptMode == InterruptMode.None)
+                {
+                    throw new ArgumentException("To receive a PressStarted event, you must have an interrupt enabled");
+                }
+                lock (_eventSyncRoot)
+                {
+                    _pressStarted += value;
+                }
+            }
+            remove
+            {
+                lock (_eventSyncRoot)
+                {
+                    _pressStarted -= value;
+                }
+            }
+        }
 
         /// <summary>
         /// Raised when a press ends (the button is released; circuit is opened).
         /// </summary>
-        public event EventHandler PressEnded = delegate { };
+        private EventHandler _pressEnded = delegate { };
+        public event EventHandler PressEnded
+        {
+            add
+            {
+                if (DigitalIn.InterruptMode != InterruptMode.EdgeBoth)
+                {
+                    throw new ArgumentException("To receive a PressEnded event, you must have both interrupts enabled");
+                }
+                lock (_eventSyncRoot)
+                {
+                    _pressEnded += value;
+                }
+            }
+            remove
+            {
+                lock (_eventSyncRoot)
+                {
+                    _pressEnded -= value;
+                }
+            }
+        }
 
         /// <summary>
         /// Raised when the button circuit is re-opened after it has been closed (at the end of a �press�.
         /// </summary>
-        public event EventHandler Clicked = delegate { };
+        private EventHandler _clicked = delegate { };
+        public event EventHandler Clicked
+        {
+            add
+            {
+                if (DigitalIn.InterruptMode != InterruptMode.EdgeBoth)
+                {
+                    throw new ArgumentException("To receive a Clicked event, you must have both interrupts enabled");
+                }
+                lock (_eventSyncRoot)
+                {
+                    _clicked += value;
+                }
+            }
+            remove
+            {
+                lock (_eventSyncRoot)
+                {
+                    _clicked -= value;
+                }
+            }
+        }
 
         /// <summary>
         /// Raised when the button circuit is pressed for at least 500ms.
         /// </summary>
-        public event EventHandler LongPressClicked = delegate { };
+        private EventHandler _longPressClicked = delegate { };
+        public event EventHandler LongPressClicked
+        {
+            add
+            {
+                if (DigitalIn.InterruptMode != InterruptMode.EdgeBoth)
+                {
+                    throw new ArgumentException("To receive a LongPressClicked event, you must have both interrupts enabled");
+                }
+                lock (_eventSyncRoot)
+                {
+                    _longPressClicked += value;
+                }
+            }
+            remove
+            {
+                lock (_eventSyncRoot)
+                {
+                    _longPressClicked -= value;
+                }
+            }
+        }
+
 
         #endregion
 
         #region Member variables / fields
+
+        private object _eventSyncRoot = new object();
 
         /// <summary>
         /// Minimum DateTime value when the button was pushed
@@ -162,7 +249,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseClicked ()
 		{
-			this.Clicked (this, EventArgs.Empty);
+			this._clicked (this, EventArgs.Empty);
 		}
 
         /// <summary>
@@ -171,7 +258,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected virtual void RaisePressStarted()
         {
             // raise the press started event
-            this.PressStarted(this, new EventArgs());
+            this._pressStarted(this, new EventArgs());
         }
 
         /// <summary>
@@ -179,7 +266,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressEnded()
         {
-            this.PressEnded(this, new EventArgs());
+            this._pressEnded(this, new EventArgs());
         }
 
         /// <summary>
@@ -187,7 +274,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseLongPress()
         {
-            this.LongPressClicked(this, new EventArgs());
+            this._longPressClicked(this, new EventArgs());
         }
 
         #endregion
