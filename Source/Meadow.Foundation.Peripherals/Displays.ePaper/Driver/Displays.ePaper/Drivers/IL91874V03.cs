@@ -5,9 +5,9 @@ namespace Meadow.Foundation.Displays.ePaper
     //similar to IL91874 ... appears to be an old version v0.3
     //GxGDEW027W3
     //currently hard coded to the avaliable display size 
-    public class IL91874V03 : EPDBase
+    public class Il91874V03 : EpdBase
     {
-        public IL91874V03(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public Il91874V03(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             uint width = 176, uint height = 264) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }

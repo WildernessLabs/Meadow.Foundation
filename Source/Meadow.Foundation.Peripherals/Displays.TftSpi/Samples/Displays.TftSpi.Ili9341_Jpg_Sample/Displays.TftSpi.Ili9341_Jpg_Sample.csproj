@@ -1,0 +1,19 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="rpsls.jpg" />
+    <None Remove="house.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="rpsls.jpg" />
+    <EmbeddedResource Include="house.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.7.2" />
+    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.8" />
+  </ItemGroup>
+</Project>

@@ -6,7 +6,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class ADXL362
+    public class Adxl362
     {
         #region Member variables / fields
 
@@ -790,7 +790,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Default constructor is private to prevent it being used.
         /// </summary>
-        private ADXL362()
+        private Adxl362()
         {
         }
 
@@ -799,7 +799,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="spiBus">Spi Bus object</param>
         /// <param name="chipSelect">Chip select pin.</param>
-        public ADXL362(IIODevice device, ISpiBus spiBus, IPin chipSelect, ushort speed = 10)
+        public Adxl362(IIODevice device, ISpiBus spiBus, IPin chipSelect, ushort speed = 10)
         {
             //
             //  ADXL362 works in SPI mode 0 (CPOL = 0, CPHA = 0).

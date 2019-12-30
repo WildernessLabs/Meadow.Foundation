@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Servo" Version="0.8.1" />
+    <PackageReference Include="Meadow.Foundation.Servo" Version="0.8.2" />
   </ItemGroup>
 </Project>

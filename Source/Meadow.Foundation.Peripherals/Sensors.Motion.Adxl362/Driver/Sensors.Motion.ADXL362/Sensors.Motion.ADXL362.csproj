@@ -3,9 +3,9 @@
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>ADXL362</AssemblyName>
-    <PackageVersion>0.1.0</PackageVersion>
+    <Version>0.1.0</Version>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.11.0" />
+    <PackageReference Include="Meadow.Foundation" Version="0.12.1" />
   </ItemGroup>
 </Project>

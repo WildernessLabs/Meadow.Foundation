@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// <summary>
     ///     Driver for the ADXL345 3-axis digital accelerometer capable of measuring
     /// </summary>
-    public class ADXL345
+    public class Adxl345
     {
         #region Constants
 
@@ -130,22 +130,6 @@ namespace Meadow.Foundation.Sensors.Motion
         #region Properties
 
         /// <summary>
-        ///     Get the device ID, this should return 0xe5.
-        /// </summary>
-        public byte DeviceID
-        {
-            get
-            {
-                var deviceID = _adxl345.ReadRegister(Registers.DeviceID);
-                if (deviceID != 0xe5)
-                {
-                    throw new Exception("Invalid device ID: " + deviceID + ", expected 229 (0xe5)");
-                }
-                return deviceID;
-            }
-        }
-
-        /// <summary>
         ///     Acceleration along the X-axis.
         /// </summary>
         /// <remarks>
@@ -232,9 +216,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Make the default constructor private so that it cannot be used.
         /// </summary>
-        private ADXL345()
-        {
-        }
+        private Adxl345() { }
 
         /// <summary>
         ///     Create a new instance of the ADXL345 communicating over the I2C interface.
@@ -243,7 +225,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="i2cBus">I2C bus</param>
         /// <param name="updateInterval">How frequently this sensor should be updated.</param>
         /// <param name="accelerationChangeNotificationThreshold">Notification threshold, changes greater than +/- this value will generate and interrupt.</param>
-        public ADXL345(II2cBus i2cBus, byte address = 0x53, ushort updateInterval = 100, 
+        public Adxl345(II2cBus i2cBus, byte address = 0x53, ushort updateInterval = 100, 
                        double accelerationChangeNotificationThreshold = 5.0F)
         {
             if ((address != 0x1d) && (address != 0x53))
@@ -258,10 +240,12 @@ namespace Meadow.Foundation.Sensors.Motion
             
             _updateInterval = updateInterval;
             AccelerationChangeNotificationThreshold = accelerationChangeNotificationThreshold;
-            
-            var device = new I2cPeripheral(i2cBus, address);
-            _adxl345 = device;
-            if (DeviceID != 0xe5)
+
+            _adxl345 = new I2cPeripheral(i2cBus, address);
+
+            var deviceID = _adxl345.ReadRegister(Registers.DeviceID);
+
+            if (deviceID != 0xe5)
             {
                 throw new Exception("Invalid device ID.");
             }
@@ -284,7 +268,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         private void StartUpdating()
         {
-            Thread t = new Thread(() => {
+            Thread t = new Thread(() =>
+            {
                 while (true)
                 {
                     Update();
@@ -322,6 +307,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 data |= 0x40;
             }
             data |= (byte) frequency;
+
             _adxl345.WriteRegister(Registers.PowerControl, data);
         }
 
@@ -363,6 +349,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 data |= 0x02;
             }
             data |= (byte) range;
+
             _adxl345.WriteRegister(Registers.DataFormat, data);
         }
 
@@ -380,11 +367,14 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 throw new ArgumentOutOfRangeException(nameof(dataRate), "Data rate should be in the range 0-15 inclusive");
             }
+
             var data = dataRate;
+
             if (lowPower)
             {
                 data |= 0x10;
             }
+
             _adxl345.WriteRegister(Registers.DataRate, data);
         }
 
@@ -401,6 +391,7 @@ namespace Meadow.Foundation.Sensors.Motion
             X = (short) (data[0] + (data[1] << 8));
             Y = (short) (data[2] + (data[3] << 8));
             Z = (short) (data[4] + (data[5] << 8));
+
             if ((_updateInterval != 0) && 
                 ((Math.Abs(X - _lastX) > AccelerationChangeNotificationThreshold) ||
                  (Math.Abs(Y - _lastY) > AccelerationChangeNotificationThreshold) ||
@@ -411,7 +402,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 _lastX = X;
                 _lastY = Y;
                 _lastZ = Z;
-                AccelerationChanged(this, new SensorVectorEventArgs(lastNotifiedReading, currentReading));
+
+                AccelerationChanged?.Invoke(this, new SensorVectorEventArgs(lastNotifiedReading, currentReading));
             }
         }
 

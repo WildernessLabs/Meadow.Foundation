@@ -110,7 +110,6 @@ namespace Meadow.Foundation.Sensors.HallEffect
                 // RPSecond = 1000 / revTime.millis
                 // PPMinute = RPSecond * 60
                 _RPMs = ((float)1000 / (float)revolutionTime.Milliseconds) * (float)60;
-                Console.WriteLine("RPMs: " + _RPMs);
 
                 //if (revolutionTime.Milliseconds < 5) {
                 //    S.Console.WriteLine("revolution time was < 5. garbage results.");

@@ -1,11 +1,11 @@
-<Project Sdk="Meadow.Sdk/1.1">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.11.0" />
-    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.SHT31D\Sensors.Atmospheric.SHT31D.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.12.2" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Sht31D" Version="0.1.2" />
   </ItemGroup>
 </Project>

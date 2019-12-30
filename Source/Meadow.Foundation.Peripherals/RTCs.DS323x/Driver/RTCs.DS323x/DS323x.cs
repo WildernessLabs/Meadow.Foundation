@@ -4,7 +4,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.RTCs
 {
-    public class DS323x
+    public class Ds323x
     {
         #region Classes / structures
 
@@ -222,7 +222,7 @@ namespace Meadow.Foundation.RTCs
             get
             {
                 var data = _ds323x.ReadRegisters(Registers.TemperatureMSB, 2);
-                var temperature = (ushort) ((data[0] << 2) | (data[1] >> 6));
+                var temperature = (ushort)((data[0] << 2) | (data[1] >> 6));
                 return temperature * 0.25;
             }
         }
@@ -315,7 +315,7 @@ namespace Meadow.Foundation.RTCs
             byte hour = 0;
             if ((data[2] & 0x40) != 0)
             {
-                hour = Converters.BCDToByte((byte) (data[2] & 0x1f));
+                hour = Converters.BCDToByte((byte)(data[2] & 0x1f));
                 if ((data[2] & 0x20) != 0)
                 {
                     hour += 12;
@@ -323,12 +323,12 @@ namespace Meadow.Foundation.RTCs
             }
             else
             {
-                hour = Converters.BCDToByte((byte) (data[2] & 0x3f));
+                hour = Converters.BCDToByte((byte)(data[2] & 0x3f));
             }
             var wday = data[3];
             var day = Converters.BCDToByte(data[4]);
-            var month = Converters.BCDToByte((byte) (data[5] & 0x7f));
-            var year = (ushort) (1900 + Converters.BCDToByte(data[6]));
+            var month = Converters.BCDToByte((byte)(data[5] & 0x7f));
+            var year = (ushort)(1900 + Converters.BCDToByte(data[6]));
             if ((data[5] & 0x80) != 0)
             {
                 year += 100;
@@ -345,20 +345,20 @@ namespace Meadow.Foundation.RTCs
         {
             var data = new byte[7];
 
-            data[0] = Converters.ByteToBCD((byte) dt.Second);
-            data[1] = Converters.ByteToBCD((byte) dt.Minute);
-            data[2] = Converters.ByteToBCD((byte) dt.Hour);
-            data[3] = (byte) dt.DayOfWeek;
-            data[4] = Converters.ByteToBCD((byte) dt.Day);
-            data[5] = Converters.ByteToBCD((byte) dt.Month);
+            data[0] = Converters.ByteToBCD((byte)dt.Second);
+            data[1] = Converters.ByteToBCD((byte)dt.Minute);
+            data[2] = Converters.ByteToBCD((byte)dt.Hour);
+            data[3] = (byte)dt.DayOfWeek;
+            data[4] = Converters.ByteToBCD((byte)dt.Day);
+            data[5] = Converters.ByteToBCD((byte)dt.Month);
             if (dt.Year > 1999)
             {
                 data[5] |= 0x80;
-                data[6] = Converters.ByteToBCD((byte) ((dt.Year - 2000) & 0xff));
+                data[6] = Converters.ByteToBCD((byte)((dt.Year - 2000) & 0xff));
             }
             else
             {
-                data[6] = Converters.ByteToBCD((byte) ((dt.Year - 1900) & 0xff));
+                data[6] = Converters.ByteToBCD((byte)((dt.Year - 1900) & 0xff));
             }
             return data;
         }
@@ -414,22 +414,22 @@ namespace Meadow.Foundation.RTCs
             {
                 data = new byte[5];
                 element = 1;
-                data[0] = Converters.ByteToBCD((byte) (time.Second & 0xff));
+                data[0] = Converters.ByteToBCD((byte)(time.Second & 0xff));
             }
             else
             {
                 data = new byte[4];
                 register = Registers.Alarm2Minutes;
             }
-            data[element++] = Converters.ByteToBCD((byte) (time.Minute & 0xff));
-            data[element++] = Converters.ByteToBCD((byte) (time.Hour & 0xff));
+            data[element++] = Converters.ByteToBCD((byte)(time.Minute & 0xff));
+            data[element++] = Converters.ByteToBCD((byte)(time.Hour & 0xff));
             if ((type == AlarmType.WhenDayHoursMinutesMatch) || (type == AlarmType.WhenDayHoursMinutesSecondsMatch))
             {
-                data[element] = (byte) (DayOfWeekToByte(time.DayOfWeek) | 0x40);
+                data[element] = (byte)(DayOfWeekToByte(time.DayOfWeek) | 0x40);
             }
             else
             {
-                data[element] = Converters.ByteToBCD((byte) (time.Day & 0xff));
+                data[element] = Converters.ByteToBCD((byte)(time.Day & 0xff));
             }
             switch (type)
             {
@@ -485,12 +485,12 @@ namespace Meadow.Foundation.RTCs
             //  Turn the relevant alarm on.
             //
             var controlRegister = ControlRegister;
-            var bits = (byte) ControlRegisterBits.A1IE;
+            var bits = (byte)ControlRegisterBits.A1IE;
             if (alarm == Alarm.Alarm2Raised)
             {
-                bits = (byte) ControlRegisterBits.A2IE;
+                bits = (byte)ControlRegisterBits.A2IE;
             }
-            controlRegister |= (byte) ControlRegisterBits.INTCON;
+            controlRegister |= (byte)ControlRegisterBits.INTCON;
             controlRegister |= bits;
             ControlRegister = controlRegister;
         }

@@ -44,6 +44,26 @@ Copyright 2019, Wilderness Labs Inc.
 
 Authors: Bryan Costanich, Mark Stevens, Adrian Stevens, Jorge Ramirez, Brian Kim, Frank Krueger, Craig Dunn
 
+## Developer Mode
+
+To make local development easier, there's a script to convert all the PackageReferences to ProjectReferences:
+
+```bash
+cd Source
+./denugetize.sh
+```
+
+Make sure the script is executable by running `chmod u+x denugetize.sh`
+
+To change the references back to PackageReferences:
+
+```bash
+cd Source
+./nugetize.sh
+```
+
+Make sure the script is executable by running `chmod u+x nugetize.sh`
+
 # Publishing Nuget Packages
 
 To trigger a new build:  

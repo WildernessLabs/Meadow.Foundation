@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.RTCs
 {
-    public class DS1307
+    public class Ds1307
     {
         private const int OriginYear = 1980;
 
@@ -12,7 +12,7 @@ namespace Meadow.Foundation.RTCs
 
         public byte Address { get; } = 0x68;
 
-        public DS1307(II2cBus bus)
+        public Ds1307(II2cBus bus)
         {
             _bus = bus;
         }

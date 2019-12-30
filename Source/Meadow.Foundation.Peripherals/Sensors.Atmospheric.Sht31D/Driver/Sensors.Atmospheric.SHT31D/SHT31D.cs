@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <remarks>
     /// Readings from the sensor are made in Single-shot mode.
     /// </remarks>
-    public class SHT31D : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+    public class Sht31D : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
         #region Member variables / fields
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Default constructor (made private to prevent it being called).
         /// </summary>
-        private SHT31D()
+        private Sht31D()
         {
         }
 
@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (should be 0x44 or 0x45).</param>
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
-        public SHT31D(II2cBus i2cBus, byte address = 0x44)
+        public Sht31D(II2cBus i2cBus, byte address = 0x44)
         {
             if ((address != 0x44) && (address != 0x45))
             {
@@ -94,11 +94,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public async Task<AtmosphericConditions> Read()
+        public Task<AtmosphericConditions> Read()
         {
-            Conditions = await Read();
+            Update();
 
-            return Conditions;
+            return Task.FromResult(Conditions);
         }
 
         public void StartUpdating(int standbyDuration = 1000)

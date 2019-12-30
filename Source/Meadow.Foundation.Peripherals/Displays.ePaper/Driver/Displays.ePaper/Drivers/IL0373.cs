@@ -8,9 +8,9 @@ namespace Meadow.Foundation.Displays.ePaper
     ///     Provide an interface to the WaveShare ePaper color displays
     ///     104x212, 2.13inch E-Ink display HAT for Raspberry Pi, three-color, SPI interface 
     /// </summary>
-    public class IL0373 : EPDColorBase
+    public class Il0373 : EpdColorBase
     {
-        public IL0373(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public Il0373(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             uint width, uint height) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         {
