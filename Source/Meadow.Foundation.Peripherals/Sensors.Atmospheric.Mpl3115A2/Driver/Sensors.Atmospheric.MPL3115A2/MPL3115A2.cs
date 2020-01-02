@@ -2,15 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 
-namespace Meadow.Foundation.Sensors.Barometric
+namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     ///     Driver for the MPL3115A2 pressure and humidity sensor.
     /// </summary>
-    public class Mpl3115A2 :
+    public class Mpl3115a2 :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor
     {
@@ -80,7 +79,7 @@ namespace Meadow.Foundation.Sensors.Barometric
         /// <summary>
         ///     Default constructor (private to prevent it being called).
         /// </summary>
-        private Mpl3115A2()
+        private Mpl3115a2()
         {
         }
 
@@ -89,7 +88,7 @@ namespace Meadow.Foundation.Sensors.Barometric
         /// </summary>
         /// <param name="address">Address of the sensor (default = 0x60).</param>
         /// <param name="i2cBus">I2cBus (Maximum is 400 kHz).</param>
-        public Mpl3115A2(II2cBus i2cBus, byte address = 0x60)
+        public Mpl3115a2(II2cBus i2cBus, byte address = 0x60)
         {
             var device = new I2cPeripheral(i2cBus, address);
             _mpl3115a2 = device;

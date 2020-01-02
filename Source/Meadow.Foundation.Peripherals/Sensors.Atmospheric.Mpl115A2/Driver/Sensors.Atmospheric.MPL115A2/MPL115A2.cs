@@ -7,7 +7,7 @@ using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    public class MPL115A2 :
+    public class Mpl115a2 :
         FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IBarometricPressureSensor
     {
@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Default constructor (private to prevent the user from calling this).
         /// </summary>
-        private MPL115A2()
+        private Mpl115a2()
         {
         }
 
@@ -116,7 +116,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (default to 0x60).</param>
         /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
-        public MPL115A2(II2cBus i2cBus, byte address = 0x60)
+        public Mpl115a2(II2cBus i2cBus, byte address = 0x60)
         {
             var device = new I2cPeripheral(i2cBus, address);
             mpl115a2 = device;

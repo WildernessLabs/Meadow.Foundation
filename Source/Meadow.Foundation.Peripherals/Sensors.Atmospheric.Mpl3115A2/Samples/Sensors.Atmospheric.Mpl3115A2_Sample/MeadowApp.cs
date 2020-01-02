@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Hardware;
-using Meadow.Foundation.Sensors.Barometric;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using System.Threading.Tasks;
+using Meadow.Foundation.Sensors.Atmospheric;
 
 namespace Sensors.Atmospheric.Mpl3115A2_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Mpl3115A2 mpl3115A2;
+        Mpl3115a2 mpl3115A2;
 
         public MeadowApp()
         {
@@ -19,7 +17,7 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
 
             // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus();
-            mpl3115A2 = new Mpl3115A2(
+            mpl3115A2 = new Mpl3115a2(
                 i2c
             );
 
