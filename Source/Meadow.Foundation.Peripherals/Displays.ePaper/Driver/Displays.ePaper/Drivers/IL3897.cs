@@ -3,7 +3,10 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
-    //EPD2i13
+    //aka WaveShare EPD2i13
+    /// <summary>
+    ///     Represents an Il3897 ePaper display
+    /// </summary>
     public class Il3897 : EpdBase
     {
         public Il3897(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,

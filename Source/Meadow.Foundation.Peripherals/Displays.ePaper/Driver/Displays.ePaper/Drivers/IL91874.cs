@@ -4,7 +4,7 @@ using Meadow.Hardware;
 namespace Meadow.Foundation.Displays.ePaper
 {
     /// <summary>
-    ///     Provide an interface to the WaveShare ePaper color displays
+    ///     Represents IL91874 ePaper color displays
     ///     264x176, 2.7inch tri color e-Ink display / SPI interface 
     /// </summary>
     public class Il91874 : EpdColorBase

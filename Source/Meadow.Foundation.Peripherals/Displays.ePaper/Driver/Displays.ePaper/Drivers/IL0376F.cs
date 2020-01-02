@@ -5,6 +5,10 @@ namespace Meadow.Foundation.Displays.ePaper
 {
     //EPD1i54B
     //EPD1i54C
+    /// <summary>
+    ///     Represents an Il0376F ePaper color display
+    ///     200x200, e-Ink three-color display, SPI interface 
+    /// </summary>
     public class Il0376F : EpdColorBase
     {
         public Il0376F(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,

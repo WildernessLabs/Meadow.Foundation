@@ -3,10 +3,10 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
-    //EPD 2i9B
+    //aka WaveShare EPD 2i9B
     /// <summary>
-    ///     Provide an interface to the WaveShare ePaper color displays
-    ///     104x212, 2.13inch E-Ink display HAT for Raspberry Pi, three-color, SPI interface 
+    ///     Represents an Il0373 ePaper color display
+    ///     104x212, 2.13inch E-Ink three-color display, SPI interface 
     /// </summary>
     public class Il0373 : EpdColorBase
     {

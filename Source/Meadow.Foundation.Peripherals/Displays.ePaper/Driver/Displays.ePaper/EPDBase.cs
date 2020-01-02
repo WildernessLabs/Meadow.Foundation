@@ -5,7 +5,7 @@ using System;
 namespace Meadow.Foundation.Displays.ePaper
 {
     /// <summary>
-    ///     Provide an interface to the WaveShare ePaper monochrome displays
+    ///     Provide an interface for ePaper monochrome displays
     /// </summary>
     public abstract class EpdBase : SpiDisplayBase
     {

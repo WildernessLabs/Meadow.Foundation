@@ -3,6 +3,9 @@ using Meadow.Hardware;
 namespace Meadow.Foundation.Displays.ePaper
 {
     //WaveShare 1.54" BW
+    /// <summary>
+    ///     Represents an Ssd1608 ePaper display
+    /// </summary>
     public class Ssd1608 : EpdBase
     {
         public Ssd1608(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
