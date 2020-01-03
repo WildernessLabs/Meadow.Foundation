@@ -488,6 +488,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Temt6000", "M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Temt6000_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Temt6000\Samples\Sensors.Light.Temt6000_Sample\Sensors.Light.Temt6000_Sample.csproj", "{E05DC818-719E-4EB5-AF5F-A6C9C3C9D01B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTCs.DS323x_Sample", "Meadow.Foundation.Peripherals\RTCs.DS323x\Samples\RTCs.DS323x_Sample\RTCs.DS323x_Sample.csproj", "{A059BFE2-87FD-482C-B1DC-5C8023C79DA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1018,6 +1020,10 @@ Global
 		{E05DC818-719E-4EB5-AF5F-A6C9C3C9D01B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E05DC818-719E-4EB5-AF5F-A6C9C3C9D01B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E05DC818-719E-4EB5-AF5F-A6C9C3C9D01B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A059BFE2-87FD-482C-B1DC-5C8023C79DA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A059BFE2-87FD-482C-B1DC-5C8023C79DA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A059BFE2-87FD-482C-B1DC-5C8023C79DA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A059BFE2-87FD-482C-B1DC-5C8023C79DA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1259,6 +1265,7 @@ Global
 		{3DAA8F7C-7F99-4515-9467-CC88D1D92145} = {606456FE-9938-47EB-9327-001915575421}
 		{CC00EF84-5144-4FFC-B194-56086D47BFAB} = {606456FE-9938-47EB-9327-001915575421}
 		{E05DC818-719E-4EB5-AF5F-A6C9C3C9D01B} = {3DAA8F7C-7F99-4515-9467-CC88D1D92145}
+		{A059BFE2-87FD-482C-B1DC-5C8023C79DA0} = {C32CCF68-5D86-4337-BF37-4053C7F01848}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
