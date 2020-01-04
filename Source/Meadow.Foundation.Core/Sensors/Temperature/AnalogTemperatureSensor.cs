@@ -1,10 +1,7 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Temperature;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
@@ -177,22 +174,19 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
         }
 
-        public AnalogTemperature(
-            IAnalogInputPort analogInputPort,
-            KnownSensorType sensorType,
-            Calibration calibration = null
-            )
+        public AnalogTemperature(IAnalogInputPort analogInputPort,
+                                 KnownSensorType sensorType,
+                                 Calibration calibration = null)
         {
-            this.AnalogInputPort = analogInputPort;
+            AnalogInputPort = analogInputPort;
 
             //
             //  If the calibration object is null use the defaults for TMP35.
             //
-            if (calibration == null) {
-                calibration = new Calibration();
-            }
+            if (calibration == null) { calibration = new Calibration(); }
 
-            switch (sensorType) {
+            switch (sensorType)
+            {
                 case KnownSensorType.TMP35:
                 case KnownSensorType.LM35:
                 case KnownSensorType.LM45:
@@ -220,19 +214,23 @@ namespace Meadow.Foundation.Sensors.Temperature
             // have to convert from voltage to temp units for our consumers
             // this is where the magic is: this allows us to extend the IObservable
             // pattern through the sensor driver
-            AnalogInputPort.Subscribe(
+            AnalogInputPort.Subscribe
+            (
                 new FilterableObserver<FloatChangeResult, float>(
                     h => {
                         var newTemp = VoltageToTemperature(h.New);
                         var oldTemp = VoltageToTemperature(h.Old);
-                        this.Temperature = newTemp; // save state
-                        RaiseEventsAndNotify(
+                        Temperature = newTemp; // save state
+                        RaiseEventsAndNotify
+                        (
                             new AtmosphericConditionChangeResult(
-                            new AtmosphericConditions(newTemp, 0, 0),
-                            new AtmosphericConditions(oldTemp, 0, 0)
-                            ));
-                    })
-                );
+                                new AtmosphericConditions(newTemp, 0, 0),
+                                new AtmosphericConditions(oldTemp, 0, 0)
+                            )
+                        );
+                    }
+                )
+           );
         }
 
         #endregion Constructors
@@ -251,12 +249,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         public async Task<AtmosphericConditions> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
             // read the voltage
-            float voltage = await this.AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
+            float voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
             // convert and save to our temp property for later retreival
-            this.Temperature = VoltageToTemperature(voltage);
+            Temperature = VoltageToTemperature(voltage);
             // return
-            return new AtmosphericConditions(this.Temperature, 0, 0);
-            //return this.Temperature;
+            return new AtmosphericConditions(Temperature, 0, 0);
+            //return Temperature;
         }
 
         /// <summary>
@@ -300,8 +298,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="voltage"></param>
         /// <returns></returns>
-        protected float VoltageToTemperature(float voltage) {
-            var yAdjusted = voltage - _yIntercept;
+        protected float VoltageToTemperature(float voltage)
+        {  
+            var yAdjusted = voltage * 1000 - _yIntercept;
             return yAdjusted * _millivoltsPerDegreeCentigrade * 10;
         }
 
