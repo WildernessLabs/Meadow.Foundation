@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         public IPwmPort Port { get; protected set; }
 
-        private bool _isPlaying = false;
+        private bool isPlaying = false;
 
         /// <summary>
         /// Create a new PiezoSpeaker instance
@@ -39,12 +39,14 @@ namespace Meadow.Foundation.Audio
         /// <param name="duration">How long the note is played in milliseconds, if durration is 0, tone plays indefinitely</param>
         public void PlayTone(float frequency, int duration = 0)
         {
-            if (frequency <= 0)
-                throw new System.Exception("frequency must be greater than 0");
-
-            if (!_isPlaying)
+            if (frequency <= 1)
             {
-                _isPlaying = true;
+                throw new System.Exception("Piezo frequency must be greater than 1");
+            }
+
+            if (!isPlaying)
+            {
+                isPlaying = true;
 
                 Port.Frequency = frequency;
                 Port.DutyCycle = 0.5f;
@@ -57,7 +59,7 @@ namespace Meadow.Foundation.Audio
                     Port.Stop();
                 }
 
-                _isPlaying = false;
+                isPlaying = false;
             }
         }
 
