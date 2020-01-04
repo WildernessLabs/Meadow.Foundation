@@ -17,9 +17,7 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
 
             // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus();
-            mpl3115A2 = new Mpl3115a2(
-                i2c
-            );
+            mpl3115A2 = new Mpl3115a2(i2c);
 
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree, and humidty by 5%.
@@ -28,23 +26,26 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
                 h => {
                     Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New.Temperature}, old: {h.Old.Temperature}");
                 },
-                e => {
-                    return (
-                        (Math.Abs(e.Delta.Temperature) > 1)
-                        &&
+                e =>
+                {
+                    return
+                    (
+                        (Math.Abs(e.Delta.Temperature) > 1) &&
                         (Math.Abs(e.Delta.Pressure) > 5)
-                        );
+                    );
                 }
-                ));
+            ));
 
             // classical .NET events can also be used:
-            mpl3115A2.Updated += (object sender, AtmosphericConditionChangeResult e) => {
-                Console.WriteLine($"  Temperature: {e.New.Temperature}ºC");
-                Console.WriteLine($"  Pressure: {e.New.Pressure}hPa");
-            };
+            mpl3115A2.Updated += (object sender, AtmosphericConditionChangeResult e) =>
+            {
+                Console.WriteLine($"Temperature: {e.New.Temperature}C, Pressure: {e.New.Pressure}hPa");
+            }; 
 
             // get an initial reading
             ReadConditions().Wait();
+
+            Console.WriteLine("Begin updates");
 
             // start updating continuously
             mpl3115A2.StartUpdating();
@@ -54,9 +55,7 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
         protected async Task ReadConditions()
         {
             var conditions = await mpl3115A2.Read();
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {conditions.Temperature}ºC");
-            Console.WriteLine($"  Pressure: {conditions.Pressure}hPa");
+            Console.WriteLine($"Temperature: {conditions.Temperature}C, Pressure: {conditions.Pressure}hPa");
         }
     }
 }

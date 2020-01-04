@@ -48,13 +48,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Changes the SBYB bit in Control register 1 to put the device to sleep
         ///     or to allow measurements to be made.
         /// </remarks>
-        public bool Standby {
-            get { return (_mpl3115a2.ReadRegister(Registers.Control1) & 0x01) > 0; }
-            set {
+        public bool Standby
+        {
+            get => (_mpl3115a2.ReadRegister(Registers.Control1) & 0x01) > 0;
+            set
+            {
                 var status = _mpl3115a2.ReadRegister(Registers.Control1);
-                if (value) {
+                if(value)
+                {
                     status &= (byte)~ControlRegisterBits.Active;
-                } else {
+                } else
+                {
                     status |= ControlRegisterBits.Active;
                 }
                 _mpl3115a2.WriteRegister(Registers.Control1, status);
@@ -80,8 +84,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Default constructor (private to prevent it being called).
         /// </summary>
         private Mpl3115a2()
-        {
-        }
+        { }
 
         /// <summary>
         ///     Create a new MPL3115A2 object with the default address and speed settings.
@@ -90,17 +93,20 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2cBus">I2cBus (Maximum is 400 kHz).</param>
         public Mpl3115a2(II2cBus i2cBus, byte address = 0x60)
         {
-            var device = new I2cPeripheral(i2cBus, address);
-            _mpl3115a2 = device;
-            if (_mpl3115a2.ReadRegister(Registers.WhoAmI) != 0xc4) {
+            _mpl3115a2 = new I2cPeripheral(i2cBus, address);
+
+            if (_mpl3115a2.ReadRegister(Registers.WhoAmI) != 0xc4)
+            {
                 throw new Exception("Unexpected device ID, expected 0xc4");
             }
             _mpl3115a2.WriteRegister(Registers.Control1,
-                                     (byte)(ControlRegisterBits.Active | ControlRegisterBits.OverSample128));
+                                     (byte)(ControlRegisterBits.Active |
+                                            ControlRegisterBits.OverSample128));
+
             _mpl3115a2.WriteRegister(Registers.DataConfiguration,
                                      (byte)(ConfigurationRegisterBits.DataReadyEvent |
-                                             ConfigurationRegisterBits.EnablePressureEvent |
-                                             ConfigurationRegisterBits.EnableTemperatureEvent));
+                                            ConfigurationRegisterBits.EnablePressureEvent |
+                                            ConfigurationRegisterBits.EnableTemperatureEvent));
         }
 
         #endregion
@@ -116,14 +122,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public async Task<AtmosphericConditions> Read()
         {
             // do a one off read and save the results
-            this.Conditions = await ReadSensor();
+            Conditions = await ReadSensor();
             // return the data
             return Conditions;
         }
 
         protected async Task<AtmosphericConditions> ReadSensor()
         {
-            return await Task.Run(() => {
+            return await Task.Run(() =>
+            {
                 AtmosphericConditions conditions = new AtmosphericConditions();
                 //
                 //  Force the sensor to make a reading by setting the OST bit in Control
@@ -133,9 +140,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //
                 //  Pause until both temperature and pressure readings are available.
                 //            
-                while ((Status & 0x06) != 0x06) {
+                while ((Status & 0x06) != 0x06)
+                {
                     Thread.Sleep(5);
                 }
+
                 Thread.Sleep(100);
                 var data = _mpl3115a2.ReadRegisters(Registers.PressureMSB, 5);
                 conditions.Pressure = DecodePresssure(data[0], data[1], data[2]);
@@ -145,17 +154,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             });
         }
 
-        //public void StartUpdating()
-        //{
-        //    StartUpdating(1000);
-        //}
-
-        public void StartUpdating(
-            int standbyDuration = 1000)
+        public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock) {
-                if (IsSampling) return;
+            lock (_lock)
+            {
+                Console.WriteLine($"Start Updating {IsSampling}");
+
+                if (IsSampling) { return; }
 
                 // state muh-cheen
                 IsSampling = true;
@@ -165,22 +171,32 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 AtmosphericConditions oldConditions;
                 AtmosphericConditionChangeResult result;
-                Task.Factory.StartNew(async () => {
-                    while (true) {
+
+                Task.Run(async ()=> 
+                {
+                    Console.WriteLine("Start thread");
+
+                    while (true)
+                    {
                         // cleanup
-                        if (ct.IsCancellationRequested) {
-                            // do task clean up here
+                        if (ct.IsCancellationRequested)
+                        {   // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
                         oldConditions = Conditions;
 
+                        Thread.Sleep(50);
+                        Console.WriteLine("Read");
+
                         // read
                         await Read();
 
                         // build a new result with the old and new conditions
                         result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+
+                        Console.WriteLine("Notify");
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -194,8 +210,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
         {
+            Thread.Sleep(50);
+
+            Console.WriteLine($"RaiseChangedAndNotify {Updated != null}");
+
             Updated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+        //    base.NotifyObservers(changeResult);
         }
 
         /// <summary>
@@ -203,8 +223,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock) {
-                if (!IsSampling) return;
+            lock (_lock)
+            {
+                if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
 
