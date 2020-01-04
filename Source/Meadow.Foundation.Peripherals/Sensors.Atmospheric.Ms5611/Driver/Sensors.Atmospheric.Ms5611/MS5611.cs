@@ -39,7 +39,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Connect to the GY63 using SPI (PS must be pulled low)
+        /// Connect to the Ms5611 using SPI (PS must be pulled low)
         /// </summary>
         /// <param name="spi"></param>
         /// <param name="resolution"></param>
