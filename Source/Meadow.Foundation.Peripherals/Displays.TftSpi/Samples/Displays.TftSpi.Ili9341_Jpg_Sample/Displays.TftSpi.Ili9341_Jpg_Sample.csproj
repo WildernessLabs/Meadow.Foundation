@@ -5,15 +5,17 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="rpsls.jpg" />
     <None Remove="house.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="rpsls.jpg" />
-    <EmbeddedResource Include="house.jpg" />
+    <None Remove="meadow-logo.jpg" />
+    <None Remove="meadow.jpg" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.7.2" />
     <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.8" />
+    <PackageReference Include="SimpleJpegDecoder" Version="0.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="meadow-logo.jpg" />
+    <EmbeddedResource Include="meadow.jpg" />
   </ItemGroup>
 </Project>

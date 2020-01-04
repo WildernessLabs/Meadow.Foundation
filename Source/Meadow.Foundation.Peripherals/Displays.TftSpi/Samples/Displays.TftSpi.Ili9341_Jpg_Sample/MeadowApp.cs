@@ -7,7 +7,7 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
-using NanoJpeg;
+using SimpleJpegDecoder;
 
 namespace Displays.TftSpi.Ili9341_Jpg_Sample
 {
@@ -62,27 +62,24 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
 
         void JpegTest()
         {
-            Console.WriteLine("JpgTest");
+            Console.WriteLine("Jpeg Test");
 
-            var jpgData = LoadResource("house.jpg");
+            var jpgData = LoadResource("meadow.jpg");
 
-            Console.WriteLine($"Loaded {jpgData.Length} bytes");
+            Console.WriteLine($"Loaded {jpgData.Length} bytes, decoding jpeg ...");
 
-            var nanoJpeg = new NanoJPEG();
-            nanoJpeg.njDecode(jpgData);
-
-            Console.WriteLine("Jpeg decoded");
-
-            var jpg = nanoJpeg.GetImage();
+            var decoder = new JpegDecoder();
+            var jpg = decoder.DecodeJpeg(jpgData);
 
             Console.WriteLine($"Jpeg decoded is {jpg.Length} bytes");
-            Console.WriteLine($"Width {nanoJpeg.Width}");
-            Console.WriteLine($"Height {nanoJpeg.Height}");
+            Console.WriteLine($"Width {decoder.Width}");
+            Console.WriteLine($"Height {decoder.Height}");
 
             graphics.Clear();
+            graphics.DrawRectangle(0, 0, 240, 320, Color.White, true);
 
             int x = 0;
-            int y = 0;
+            int y = (320 - decoder.Height) / 2; 
             byte r, g, b;
 
             for (int i = 0; i < jpg.Length; i += 3)
@@ -95,7 +92,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
 
                 x++;
 
-                if(x % nanoJpeg.Width == 0)
+                if(x % decoder.Width == 0)
                 {
                     y++;
                     x = 0;
@@ -110,8 +107,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
         byte[] LoadResource(string filename)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = $"Displays.TftSpi.ILI9341_JpgSample.{filename}";
-                              //   Displays.TftSpi.ILI9341_JpgSample
+            var resourceName = $"Displays.TftSpi.Ili9341_Jpg_Sample.{filename}";
 
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             {
