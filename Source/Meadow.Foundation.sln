@@ -500,6 +500,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8D88
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.5611_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Ms5611\Samples\Sensors.Atmospheric.Ms5611_Sample\Sensors.Atmospheric.5611_Sample.csproj", "{5EC99271-9105-42BF-B347-69EA5376D305}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Enviromental.Ags01Db", "Enviromental.Ags01Db", "{0479C1FF-33D0-4315-9846-8031661C6707}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Environmental.Ags01Db", "Meadow.Foundation.Peripherals\Environmental.Ags01Db\Driver\Environmental.Ags01Db\Environmental.Ags01Db.csproj", "{1E121B57-CE4C-4B9A-ABCF-3A4D6E969DAC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Environmental.Ags01Db_Sample", "Meadow.Foundation.Peripherals\Environmental.Ags01Db\Samples\Environmental.Ags01Db_Sample\Environmental.Ags01Db_Sample.csproj", "{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1046,6 +1054,14 @@ Global
 		{5EC99271-9105-42BF-B347-69EA5376D305}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EC99271-9105-42BF-B347-69EA5376D305}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EC99271-9105-42BF-B347-69EA5376D305}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E121B57-CE4C-4B9A-ABCF-3A4D6E969DAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E121B57-CE4C-4B9A-ABCF-3A4D6E969DAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E121B57-CE4C-4B9A-ABCF-3A4D6E969DAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E121B57-CE4C-4B9A-ABCF-3A4D6E969DAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1293,6 +1309,10 @@ Global
 		{8C890579-33B9-4DE8-98B4-52B3E5893F8C} = {3FF07962-C887-495B-9B0E-EA2313B1F4AE}
 		{8D88D2E1-5DD8-4C59-AE7A-F269F537AC05} = {3FF07962-C887-495B-9B0E-EA2313B1F4AE}
 		{5EC99271-9105-42BF-B347-69EA5376D305} = {8D88D2E1-5DD8-4C59-AE7A-F269F537AC05}
+		{0479C1FF-33D0-4315-9846-8031661C6707} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{1E121B57-CE4C-4B9A-ABCF-3A4D6E969DAC} = {0479C1FF-33D0-4315-9846-8031661C6707}
+		{EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5} = {0479C1FF-33D0-4315-9846-8031661C6707}
+		{0722E9DF-04ED-416B-B3D7-24104A3B3FA7} = {EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

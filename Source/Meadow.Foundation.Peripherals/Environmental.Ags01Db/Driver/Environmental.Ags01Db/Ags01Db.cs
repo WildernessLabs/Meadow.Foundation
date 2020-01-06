@@ -1,26 +1,17 @@
 using System;
 using System.Buffers.Binary;
-using System.Threading;
 using Meadow.Hardware;
 
-namespace Environmental.Ags01Db
+namespace Meadow.Foundation.Environmental
 {
+
+    /// <summary>
+    /// Represents an AGS01DB MEMS VOC gas / air quality sensor
+    /// Pinout (left to right, label side down): VDD, SDA, GND, SCL
+    /// Note: requires pullup resistors on SDA/SCL
+    /// </summary>
     public class Ags01Db
     {
-        #region Properties
-
-        /// <summary>
-        /// ASG01DB VOC (Volatile Organic Compounds) Gas Concentration (ppm)
-        /// </summary>
-        public double Concentration => GetConcentration(); 
-
-        /// <summary>
-        /// ASG01DB Version
-        /// </summary>
-        public byte Version => GetVersion(); 
-
-        #endregion Properties
-
         #region Constants
 
         private const byte CRC_POLYNOMIAL = 0x31;
@@ -35,9 +26,7 @@ namespace Environmental.Ags01Db
 
         #region Member variables / fields
 
-        II2cPeripheral sensor;
-
-        int _lastMeasurement;
+        private readonly II2cPeripheral sensor;
 
         #endregion Member variables / fields
 
@@ -58,27 +47,18 @@ namespace Environmental.Ags01Db
         /// Get ASG01DB VOC Gas Concentration
         /// </summary>
         /// <returns>Concentration (ppm)</returns>
-        private double GetConcentration()
+        public double GetConcentration()
         {
-            // The time of two measurements should be more than 2s.
-            while (Environment.TickCount - _lastMeasurement < 2000)
-            {
-                Thread.Sleep(TimeSpan.FromMilliseconds(Environment.TickCount - _lastMeasurement));
-            }
-
-
-            // Details in the Datasheet P5
-            // Write command MSB, LSB
             var data = new byte[] { ASG_DATA_MSB, ASG_DATA_LSB };
 
             sensor.WriteBytes(data);
             var readBuffer = sensor.ReadBytes(3);
 
             // CRC check
-            if (!CheckCrc8(readBuffer, 2, readBuffer[1]))
-            {
-                return -1;
-            }
+         //   if (!CheckCrc8(readBuffer, 2, readBuffer[1]))
+         //   {
+         //       return -1;
+         //   }
 
             ushort res = BinaryPrimitives.ReadUInt16BigEndian(readBuffer.AsSpan(0, 2));
 
@@ -89,13 +69,14 @@ namespace Environmental.Ags01Db
         /// Get ASG01DB Version
         /// </summary>
         /// <returns>Version</returns>
-        private byte GetVersion()
+        public byte GetVersion()
         {
             // Details in the Datasheet P5
             // Write command MSB, LSB
             var data = new byte[] { ASG_VERSION_MSB, ASG_VERSION_LSB };
 
             sensor.WriteBytes(data);
+
             var readBuffer = sensor.ReadBytes(2);
 
             // CRC check
