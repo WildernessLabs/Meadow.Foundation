@@ -7,14 +7,14 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Max7219 LED matrix driver
     /// </summary>
-    public class Max7219
+    public class Max7219 : DisplayBase
     {
         #region Properties
 
         /// <summary>
         /// MAX7219 Spi Clock Frequency
         /// </summary>
-        public int SpiClockFrequency => 10000000;
+        public static int SpiClockFrequency => 10000000;
 
         /// <summary>
         /// Number of digits Register per Module
@@ -32,6 +32,12 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public int Length => DeviceCount * NumDigits;
 
+        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+
+        public override uint Width => 8;
+
+        public override uint Height => (uint)(8 * DeviceCount);
+
         #endregion Properties
 
         #region Member variables / fields
@@ -48,11 +54,20 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         private readonly byte[,] _buffer;
 
+        private Color currentPen;
+
         private readonly byte DECIMAL = 0b10000000;
 
         #endregion Member variables / fields
 
         #region Enums
+
+        public enum Max7219Type
+        {
+            Character, 
+            Digital,
+            Display, 
+        }
 
         public enum CharacterType : byte
         {
@@ -100,7 +115,7 @@ namespace Meadow.Foundation.Displays
 
         private Max7219() { }
 
-        public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceCount = 0, bool characterMode = false)
+        public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceCount = 1, Max7219Type maxMode = Max7219Type.Display)
         {
             max7219 = new SpiPeripheral(spiBus, csPort);
 
@@ -109,15 +124,15 @@ namespace Meadow.Foundation.Displays
             _buffer = new byte[DeviceCount, NumDigits];
             _writeBuffer = new byte[2 * DeviceCount];
 
-            Initialize(characterMode);
+            Initialize(maxMode);
         }
 
         /// <summary>
         /// Creates a Max7219 Device given a <see paramref="spiBus" /> to communicate over and the
         /// number of devices that are cascaded.
         /// </summary>
-        public Max7219(IIODevice device, ISpiBus spiBus, IPin csPin, int deviceCount = 1, bool characterMode = false)
-            : this(spiBus, device.CreateDigitalOutputPort(csPin), deviceCount, characterMode)
+        public Max7219(IIODevice device, ISpiBus spiBus, IPin csPin, int deviceCount = 1, Max7219Type maxMode = Max7219Type.Display)
+            : this(spiBus, device.CreateDigitalOutputPort(csPin), deviceCount, maxMode)
         { }   
 
         #endregion Constructors
@@ -125,14 +140,14 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Standard initialization routine.
         /// </summary>
-        void Initialize(bool characterMode)
+        void Initialize(Max7219Type maxMode)
         {
-            SetRegister(Register.DecodeMode, (byte)(characterMode?0xFF:0)); // use matrix(0) or digits
+            SetRegister(Register.DecodeMode, (byte)((maxMode == Max7219Type.Character)? 0xFF:0)); // use matrix(0) or digits
             SetRegister(Register.ScanLimit, 7); //show all 8 digits
             SetRegister(Register.DisplayTest, 0); // no display test
             SetRegister(Register.ShutDown, 1); // not shutdown mode
-            Brightness(4); //intensity, range: 0..15
-            ClearAll();
+            SetBrightness(4); //intensity, range: 0..15
+            Clear();
         }
 
         public void SetNumber(int value, int deviceId = 0)
@@ -178,14 +193,14 @@ namespace Meadow.Foundation.Displays
             SetRegister(Register.DisplayTest, 0); 
         }
 
-        public void SetMode(bool characterMode)
+        public void SetMode(Max7219Type maxMode)
         {
-            SetRegister(Register.DecodeMode, (byte)(characterMode ? 0xFF : 0)); 
+            SetRegister(Register.DecodeMode, (byte)((maxMode == Max7219Type.Character) ? 0xFF : 0)); // use matrix(0) or digits
         }
 
-        /// <summary>
-        /// Sends data to a specific register replicated for all cascaded devices
-        /// </summary>
+            /// <summary>
+            /// Sends data to a specific register replicated for all cascaded devices
+            /// </summary>
         internal void SetRegister(Register register, byte data)
         {
             var i = 0;
@@ -202,7 +217,7 @@ namespace Meadow.Foundation.Displays
         /// Sets the brightness of all cascaded devices to the same intensity level.
         /// </summary>
         /// <param name="intensity">intensity level ranging from 0..15. </param>
-        public void Brightness(int intensity)
+        public void SetBrightness(int intensity)
         {
             if (intensity < 0 || intensity > 15)
             {
@@ -238,7 +253,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Writes all the Values to the devices.
         /// </summary>
-        public void Show()
+        public override void Show()
         {
             WriteBuffer(_buffer);
         }
@@ -310,9 +325,70 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Clears the buffer from the given start to end and flushes
         /// </summary>
-        public void ClearAll()
+        public override void Clear(bool updateDisplay = false)
         {
             Clear(0, DeviceCount);
+
+            if(updateDisplay)
+            {
+                Show();
+            }
+        }
+
+        public override void DrawPixel(int x, int y, Color color)
+        {
+            DrawPixel(x, y, color != Color.Black);
+        }
+
+        public override void DrawPixel(int x, int y, bool colored)
+        {
+            var index = x;
+            var display = y / 8;//   DeviceCount - y / 8 - 1;
+
+            if (colored)
+            {
+                _buffer[display, index] = (byte)(_buffer[display, index] | (byte)(1 << (y % 8)));
+            }
+            else
+            {
+                _buffer[display, index] = (byte)(_buffer[display, index] & ~(byte)(1 << (y % 8)));
+            }
+        }
+
+        public override void DrawPixel(int x, int y)
+        {
+            DrawPixel(x, y, currentPen);
+        }
+
+        public override void SetPenColor(Color pen)
+        {
+            currentPen = pen;
+        }
+
+        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
+        {
+            if ((width * height) != bitmap.Length)
+            {
+                throw new ArgumentException("Width and height do not match the bitmap size.");
+            }
+            for (var ordinate = 0; ordinate < height; ordinate++)
+            {
+                for (var abscissa = 0; abscissa < width; abscissa++)
+                {
+                    var b = bitmap[(ordinate * width) + abscissa];
+                    byte mask = 0x01;
+                    for (var pixel = 0; pixel < 8; pixel++)
+                    {
+                        DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, (b & mask) > 0);
+                        mask <<= 1;
+                    }
+                }
+            }
+        }
+
+        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
+        {
+            DrawBitmap(x, y, width, height, bitmap, BitmapMode.And);
         }
     }
 }

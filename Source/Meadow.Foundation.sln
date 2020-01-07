@@ -464,7 +464,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl377", "M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Camera.VC0706", "Meadow.Foundation.Peripherals\Sensors.Camera.VC0706\Driver\Sensors.Camera.VC0706\Sensors.Camera.VC0706.csproj", "{C67AE10A-C0FE-4B16-8F46-CE97B3F8202D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Max7219_Sample", "Meadow.Foundation.Peripherals\Displays.Max7219\Samples\Displays.Max7219_Sample\Displays.Max7219_Sample.csproj", "{ED60DDC5-1B29-46E9-A8D8-01DBC18E04EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Max7219_7Segment_Sample", "Meadow.Foundation.Peripherals\Displays.Max7219\Samples\Displays.Max7219_Sample\Displays.Max7219_7Segment_Sample.csproj", "{ED60DDC5-1B29-46E9-A8D8-01DBC18E04EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Max7219", "Meadow.Foundation.Peripherals\Displays.Max7219\Driver\Displays.Max7219\Displays.Max7219.csproj", "{F917BD5A-7837-4F57-84D6-5C15816DA8DE}"
 EndProject
@@ -507,6 +507,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Environmental.Ags01Db_Sample", "Meadow.Foundation.Peripherals\Environmental.Ags01Db\Samples\Environmental.Ags01Db_Sample\Environmental.Ags01Db_Sample.csproj", "{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Max7219_8x8x4_Sample", "Meadow.Foundation.Peripherals\Displays.Max7219\Samples\Displays.Max7219_8x8x4_Sample\Displays.Max7219_8x8x4_Sample.csproj", "{AD8951D6-7AF1-40DB-92FE-4517E538E57C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1062,6 +1064,10 @@ Global
 		{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD8951D6-7AF1-40DB-92FE-4517E538E57C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD8951D6-7AF1-40DB-92FE-4517E538E57C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD8951D6-7AF1-40DB-92FE-4517E538E57C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD8951D6-7AF1-40DB-92FE-4517E538E57C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1313,6 +1319,7 @@ Global
 		{1E121B57-CE4C-4B9A-ABCF-3A4D6E969DAC} = {0479C1FF-33D0-4315-9846-8031661C6707}
 		{EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5} = {0479C1FF-33D0-4315-9846-8031661C6707}
 		{0722E9DF-04ED-416B-B3D7-24104A3B3FA7} = {EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5}
+		{AD8951D6-7AF1-40DB-92FE-4517E538E57C} = {8AA8CB22-1E97-463D-863F-484236E1C24C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

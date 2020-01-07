@@ -24,8 +24,8 @@ namespace MeadowApp
 
         void CharacterDemo()
         {
-            display.SetMode(true);
-            display.ClearAll();
+            display.SetMode(Max7219.Max7219Type.Character);
+            display.Clear();
 
             for (int i = 0; i < 8; i++)
             {
@@ -53,7 +53,7 @@ namespace MeadowApp
 
         void TestCharacterMode()
         {
-            display.SetMode(true);
+            display.SetMode(Max7219.Max7219Type.Character);
 
             for (int i = 0; i < (int)Max7219.CharacterType.count; i++)
             {
@@ -68,7 +68,9 @@ namespace MeadowApp
         
         void TestDigitalMode()
         {
-            display.SetMode(false);
+            Console.WriteLine("Digital test");
+
+            display.SetMode(Max7219.Max7219Type.Digital);
 
             for (byte i = 0; i < 64; i++)
             {
@@ -84,7 +86,9 @@ namespace MeadowApp
         {
             Console.WriteLine("Init...");
 
-            display = new Max7219(Device, Device.CreateSpiBus(), Device.Pins.D02, 1, true);
+            display = new Max7219(Device, Device.CreateSpiBus(), Device.Pins.D01, 1, Max7219.Max7219Type.Character);
+
+            Console.WriteLine("Max7219 instantiated");
         }
     }
 }
