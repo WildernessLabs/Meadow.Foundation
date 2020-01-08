@@ -276,7 +276,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y2">Vertex #2 y coordinate</param>
         /// <param name="colored">Should the triangle add (true) or remove (false)</param>
         /// <param name="filled">Draw a filled triangle?</param>
-        public void DrawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, bool colored, bool filled = false)
+        public void DrawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, bool colored = true, bool filled = false)
         {
             if (filled)
                 DrawTriangleFilled(x0, y0, x1, y1, x2, y2, colored ? Color.White : Color.Black);
