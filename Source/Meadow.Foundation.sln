@@ -510,6 +510,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Environmental.Ags01Db_Sampl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Max7219_8x8x4_Sample", "Meadow.Foundation.Peripherals\Displays.Max7219\Samples\Displays.Max7219_8x8x4_Sample\Displays.Max7219_8x8x4_Sample.csproj", "{AD8951D6-7AF1-40DB-92FE-4517E538E57C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.SerialLcd_Sample", "Meadow.Foundation.Peripherals\Displays.SerialLcd\Samples\Displays.SerialLcd_Sample\Displays.SerialLcd_Sample.csproj", "{F90B33E0-99FF-4D89-98CE-E23B742C15DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1068,6 +1070,10 @@ Global
 		{AD8951D6-7AF1-40DB-92FE-4517E538E57C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD8951D6-7AF1-40DB-92FE-4517E538E57C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD8951D6-7AF1-40DB-92FE-4517E538E57C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F90B33E0-99FF-4D89-98CE-E23B742C15DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F90B33E0-99FF-4D89-98CE-E23B742C15DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F90B33E0-99FF-4D89-98CE-E23B742C15DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F90B33E0-99FF-4D89-98CE-E23B742C15DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1320,6 +1326,7 @@ Global
 		{EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5} = {0479C1FF-33D0-4315-9846-8031661C6707}
 		{0722E9DF-04ED-416B-B3D7-24104A3B3FA7} = {EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5}
 		{AD8951D6-7AF1-40DB-92FE-4517E538E57C} = {8AA8CB22-1E97-463D-863F-484236E1C24C}
+		{F90B33E0-99FF-4D89-98CE-E23B742C15DF} = {DE5A7D8B-9378-4807-8E70-588B9106E1A8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
