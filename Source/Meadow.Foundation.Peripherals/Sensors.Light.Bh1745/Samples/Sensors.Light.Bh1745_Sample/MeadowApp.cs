@@ -15,11 +15,11 @@ namespace MeadowApp
 
         RgbPwmLed rgbLed;
 
-        public double GetQuantizedColor(double value)
+        public double GetQuantizedValue(double value)
         {
             if (value < 0.3)
                 return 0;
-            if (value < 0.75)
+            if (value < 0.8)
                 return 0.5;
             return 1;
         }
@@ -36,12 +36,14 @@ namespace MeadowApp
 
             while (true)
             {
-                color = sensor.GetCompensatedColor();
+                color = sensor.GetColor();
 
                 Console.WriteLine($"Color: {color.R}, {color.G}, {color.B}");
 
                 //quantize color for RGB to make color detection more obvious
-                color = new Color(GetQuantizedColor(color.R), GetQuantizedColor(color.G), GetQuantizedColor(color.B));
+                color = new Color(GetQuantizedValue(color.R),
+                                  GetQuantizedValue(color.G),
+                                  GetQuantizedValue(color.B));
                 
                 rgbLed.SetColor(color);
 

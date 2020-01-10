@@ -416,7 +416,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Gets the compensated color reading from the sensor
         /// </summary>
         /// <returns></returns>
-        public Color GetCompensatedColor()
+        public Color GetColor()
         {
             var clearData = ReadClearDataRegister();
 
