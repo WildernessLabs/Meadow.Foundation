@@ -82,8 +82,6 @@ namespace Meadow.Foundation.Graphics
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public void DrawPixel (int x, int y, bool colored)
         {
-
-
             _display.DrawPixel(GetXForRotation(x,y), GetYForRotation(x,y), colored);
         }
 
@@ -279,9 +277,13 @@ namespace Meadow.Foundation.Graphics
         public void DrawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, bool colored = true, bool filled = false)
         {
             if (filled)
+            {
                 DrawTriangleFilled(x0, y0, x1, y1, x2, y2, colored ? Color.White : Color.Black);
-            else 
+            }
+            else
+            {
                 DrawTriangle(x0, y0, x1, y1, x2, y2, colored ? Color.White : Color.Black);
+            }
         }
 
         void Swap(ref int value1, ref int value2)
@@ -350,7 +352,9 @@ namespace Meadow.Foundation.Graphics
                 sb += dx02;
 
                 if (a > b)
+                {
                     Swap(ref a, ref b);
+                }
                 DrawHorizontalLine(a, y, b - a + 1, color);
             }
 
@@ -365,7 +369,7 @@ namespace Meadow.Foundation.Graphics
                 sa += dx12;
                 sb += dx02;
 
-                if (a > b) Swap(ref a, ref b);
+                if (a > b) { Swap(ref a, ref b); }
                 DrawHorizontalLine(a, y, b - a + 1, color);
             }
         }
@@ -418,10 +422,10 @@ namespace Meadow.Foundation.Graphics
             {
                 if (filled)
                 {
-                    DrawLine(centerX + x, centerY + y, centerX - x, centerY + y);
-                    DrawLine(centerX + x, centerY - y, centerX - x, centerY - y);
-                    DrawLine(centerX - y, centerY + x, centerX + y, centerY + x);
-                    DrawLine(centerX - y, centerY - x, centerX + y, centerY - x);
+                    DrawLine(centerX + x, centerY + y, centerX - x, centerY + y, color);
+                    DrawLine(centerX + x, centerY - y, centerX - x, centerY - y, color);
+                    DrawLine(centerX - y, centerY + x, centerX + y, centerY + x, color);
+                    DrawLine(centerX - y, centerY - x, centerX + y, centerY - x, color);
                 }
                 else
                 {
@@ -460,6 +464,7 @@ namespace Meadow.Foundation.Graphics
         {
             width--;
             height--;
+
             if (filled)
             {
                 for (var i = 0; i <= height; i++)
@@ -489,6 +494,7 @@ namespace Meadow.Foundation.Graphics
         {
             width--;
             height--;
+
             if (filled)
             {
                 for (var i = 0; i <= height; i++)
