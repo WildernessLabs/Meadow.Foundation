@@ -98,7 +98,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Provide a mechanism for reading the temperature and humidity from
         /// a Bmp085 temperature / humidity sensor.
         /// </summary>
-        public Bmp085(II2cBus i2cBus, byte address, DeviceMode deviceMode)
+        public Bmp085(II2cBus i2cBus, byte address = 0x77, DeviceMode deviceMode = DeviceMode.Standard)
         {
             bmp085 = new I2cPeripheral(i2cBus, address);
 
