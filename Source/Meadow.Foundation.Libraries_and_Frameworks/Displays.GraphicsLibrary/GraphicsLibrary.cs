@@ -39,6 +39,13 @@ namespace Meadow.Foundation.Graphics
             _270Degrees
         }
 
+        public enum ScaleFactor
+        {
+            X1 = 1,
+            X2 = 2,
+            X3 = 3,
+        }
+
         /// <summary>
         /// Return the height of the display after accounting for the rotation.
         /// </summary>
@@ -71,7 +78,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">y location</param>
         public void DrawPixel(int x, int y)
         {
-            if (IsInBounds(x, y) == false)
+            if (IsPixelInBounds(x, y) == false)
             {
                 return;
             }
@@ -86,7 +93,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public void DrawPixel (int x, int y, bool colored)
         {
-            if (IsInBounds(x, y) == false)
+            if (IsPixelInBounds(x, y) == false)
             {
                 return;
             }
@@ -101,7 +108,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">Color of pixel.</param>
         public void DrawPixel (int x, int y, Color color)
         {
-            if(IsInBounds(x, y) == false)
+            if(IsPixelInBounds(x, y) == false)
             {
                 return;
             }
@@ -127,7 +134,7 @@ namespace Meadow.Foundation.Graphics
             DrawLine(x0, y0, x1, y1, (colored ? Color.White : Color.Black));
         }
 
-        private bool IsInBounds(int x, int y)
+        private bool IsPixelInBounds(int x, int y)
         {
             if (x < 0 || y < 0 || x >= Width || y >= Height)
             {
@@ -538,14 +545,16 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">Abscissa of the location of the text.</param>
         /// <param name="y">Ordinate of the location of the text.</param>
         /// <param name="text">Text to display.</param>
-        public void DrawText(int x, int y, string text)
+        public void DrawText(int x, int y, string text, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             if (CurrentFont == null)
+            {
                 throw new Exception("CurrentFont must be set before calling DrawText.");
+            }
 
             byte[] bitMap = GetBytesForTextBitmap(text);
 
-            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height, CurrentFont.Height, bitMap, DisplayBase.BitmapMode.And);
+            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height, CurrentFont.Height, bitMap, DisplayBase.BitmapMode.And, scaleFactor);
         }
 
         /// <summary>
@@ -555,7 +564,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">Ordinate of the location of the text.</param>
         /// <param name="text">Text to display.</param>
         /// <param name="color">Color of the text.</param>
-        public void DrawText(int x, int y, string text, Color color)
+        public void DrawText(int x, int y, string text, Color color, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             if (CurrentFont == null)
             {
@@ -564,7 +573,7 @@ namespace Meadow.Foundation.Graphics
 
             byte[] bitMap = GetBytesForTextBitmap(text);
             
-            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height, CurrentFont.Height, bitMap, color);
+            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height, CurrentFont.Height, bitMap, color, scaleFactor);
         }
 
         private byte[] GetBytesForTextBitmap(string text)
@@ -684,12 +693,14 @@ namespace Meadow.Foundation.Graphics
         /// <param name="height">Height of the bitmap in bytes.</param>
         /// <param name="bitmap">Bitmap to display.</param>
         /// <param name="bitmapMode">How should the bitmap be transferred to the display?</param>
-        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, DisplayBase.BitmapMode bitmapMode)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, DisplayBase.BitmapMode bitmapMode, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             if ((width * height) != bitmap.Length)
             {
                 throw new ArgumentException("Width and height do not match the bitmap size.");
             }
+
+            int scale = (int)scaleFactor;
 
             for (var ordinate = 0; ordinate < height; ordinate++)
             {
@@ -701,7 +712,32 @@ namespace Meadow.Foundation.Graphics
                     for (var pixel = 0; pixel < 8; pixel++)
                     {
                         if ((b & mask) > 0)
-                            DrawPixel(x + (8 * abscissa) + pixel, y + ordinate);
+                        {
+                            //not elegant but works for now
+                       /*     if(scaleFactor == ScaleFactor.X2)
+                            {
+                                //hard code for 2x for now
+                                DrawPixel(x + (8 * abscissa) * 2 + pixel * 2,     y + ordinate * 2);
+                                DrawPixel(x + (8 * abscissa) * 2 + pixel * 2 + 1, y + ordinate * 2);
+                                DrawPixel(x + (8 * abscissa) * 2 + pixel * 2,     y + ordinate * 2 + 1);
+                                DrawPixel(x + (8 * abscissa) * 2 + pixel * 2 + 1, y + ordinate * 2 + 1);
+                            } */
+                            if (scaleFactor != ScaleFactor.X1)
+                            {
+                                for (int i = 0; i < scale; i++)
+                                {
+                                    for (int j = 0; j < scale; j++)
+                                    {
+                                        DrawPixel(x + (8 * abscissa) * scale + pixel * scale + i, y + ordinate * scale + j);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //1x
+                                DrawPixel(x + (8 * abscissa) + pixel, y + ordinate);
+                            }
+                        }
                         mask <<= 1;
                     }
                 }
@@ -719,32 +755,11 @@ namespace Meadow.Foundation.Graphics
         /// <param name="height">Height of the bitmap in bytes.</param>
         /// <param name="bitmap">Bitmap to display.</param>
         /// <param name="color">The color of the bitmap.</param>
-        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
-            if ((width * height) != bitmap.Length)
-            {
-                throw new ArgumentException("Width and height do not match the bitmap size.");
-            }
-
             _display.SetPenColor(color);
 
-            for (var ordinate = 0; ordinate < height; ordinate++)
-            {
-                for (var abscissa = 0; abscissa < width; abscissa++)
-                {
-                    var b = bitmap[(ordinate * width) + abscissa];
-                    byte mask = 0x01;
-
-                    for (var pixel = 0; pixel < 8; pixel++)
-                    {
-                        if ((b & mask) > 0)
-                        {
-                            DrawPixel(x + (8 * abscissa) + pixel, y + ordinate);
-                        }
-                        mask <<= 1;
-                    }
-                }
-            }
+            DrawBitmap(x, y, width, height, bitmap, DisplayBase.BitmapMode.Copy, scaleFactor);
         }
 
         public int GetXForRotation(int x, int y)

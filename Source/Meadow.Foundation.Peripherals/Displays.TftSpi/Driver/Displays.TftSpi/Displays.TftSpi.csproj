@@ -14,7 +14,6 @@
     <Description>Drivers for SPI thin-film-transistor displays (Current version supports: ILI9163, ILI9341, S6D02A1, SSD1331, SSD1351, ST7735, ST7789)</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.8.7" />
-    <PackageReference Include="Meadow.Foundation" Version="0.12.1" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
   </ItemGroup>
 </Project>

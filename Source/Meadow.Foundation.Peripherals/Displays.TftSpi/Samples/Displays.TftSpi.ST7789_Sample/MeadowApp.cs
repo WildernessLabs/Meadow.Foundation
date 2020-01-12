@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading;
 using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation;
 using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
@@ -9,12 +11,28 @@ namespace Displays.Tft.ST7789_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        GraphicsLibrary graphicsLib;
         DisplayTftSpiBase display;
         ISpiBus spiBus;
 
         public MeadowApp()
         {
             Console.WriteLine("TftSpi sample");
+
+            Initialize();
+
+            while (true)
+            {
+                FontScaleTest();
+                Thread.Sleep(5000);
+
+                ColorFontTest();
+                Thread.Sleep(5000);
+            }
+        }
+
+        void Initialize()
+        {
             Console.WriteLine("Create Spi bus");
 
             var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode3);
@@ -30,7 +48,31 @@ namespace Displays.Tft.ST7789_Sample
 
             Console.WriteLine("Create graphics lib");
 
-            var graphicsLib = new GraphicsLibrary(display);
+            graphicsLib = new GraphicsLibrary(display);
+        }
+
+        void FontScaleTest()
+        {
+            graphicsLib.CurrentFont = new Font12x20();
+
+            graphicsLib.Clear();
+
+            graphicsLib.DrawText(0, 0, "2x Scale", Color.Blue, GraphicsLibrary.ScaleFactor.X2);
+
+            graphicsLib.DrawText(0, 48, "12x20 Font", Color.Green, GraphicsLibrary.ScaleFactor.X2);
+
+            graphicsLib.DrawText(0, 96, "0123456789", Color.Yellow, GraphicsLibrary.ScaleFactor.X2);
+
+            graphicsLib.DrawText(0, 144, "!@#$%^&*()", Color.Orange, GraphicsLibrary.ScaleFactor.X2);
+
+            graphicsLib.DrawText(0, 192, "3x!", Color.OrangeRed, GraphicsLibrary.ScaleFactor.X3);
+
+
+            graphicsLib.Show();
+        }
+
+        void ColorFontTest()
+        {
             graphicsLib.CurrentFont = new Font8x12();
 
             graphicsLib.Clear();
