@@ -71,6 +71,10 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">y location</param>
         public void DrawPixel(int x, int y)
         {
+            if (IsInBounds(x, y) == false)
+            {
+                return;
+            }
             _display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y));
         }
 
@@ -82,7 +86,11 @@ namespace Meadow.Foundation.Graphics
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public void DrawPixel (int x, int y, bool colored)
         {
-            _display.DrawPixel(GetXForRotation(x,y), GetYForRotation(x,y), colored);
+            if (IsInBounds(x, y) == false)
+            {
+                return;
+            }
+            _display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), colored);
         }
 
         /// <summary>
@@ -93,6 +101,10 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">Color of pixel.</param>
         public void DrawPixel (int x, int y, Color color)
         {
+            if(IsInBounds(x, y) == false)
+            {
+                return;
+            }
             _display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), color);
         }
 
@@ -113,6 +125,15 @@ namespace Meadow.Foundation.Graphics
         public void DrawLine(int x0, int y0, int x1, int y1, bool colored = true)
         {
             DrawLine(x0, y0, x1, y1, (colored ? Color.White : Color.Black));
+        }
+
+        private bool IsInBounds(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= Width || y >= Height)
+            {
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
