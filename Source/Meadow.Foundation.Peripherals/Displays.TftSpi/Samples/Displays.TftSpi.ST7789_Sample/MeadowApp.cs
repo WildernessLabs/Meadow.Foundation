@@ -23,6 +23,12 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
+                StrokeTest();
+                Thread.Sleep(25000);
+
+                ShapeTest();
+                Thread.Sleep(5000);
+
                 FontScaleTest();
                 Thread.Sleep(5000);
 
@@ -49,6 +55,66 @@ namespace Displays.Tft.ST7789_Sample
             Console.WriteLine("Create graphics lib");
 
             graphicsLib = new GraphicsLibrary(display);
+        }
+
+        void ShapeTest()
+        {
+            graphicsLib.Clear();
+
+            graphicsLib.DrawCircle(60, 60, 20, Color.Purple);
+            graphicsLib.DrawRectangle(10, 10, 30, 60, Color.Red);
+            graphicsLib.DrawTriangle(20, 20, 10, 70, 60, 60, Color.Green);
+
+            graphicsLib.DrawCircle(90, 60, 20, Color.Cyan, true);
+            graphicsLib.DrawRectangle(100, 100, 30, 10, Color.Yellow, true);
+            graphicsLib.DrawTriangle(120, 20, 110, 70, 160, 60, Color.Pink, true);
+
+            graphicsLib.DrawLine(10, 120, 110, 130, Color.SlateGray);
+
+            graphicsLib.Show();
+        }
+
+        void StrokeTest()
+        {
+            graphicsLib.Clear();
+
+            graphicsLib.Stroke = 1;
+            graphicsLib.DrawLine(5, 5,  115, 5,  Color.SteelBlue);
+            graphicsLib.Stroke = 2;
+            graphicsLib.DrawLine(5, 25, 115, 25, Color.SteelBlue);
+            graphicsLib.Stroke = 3;
+            graphicsLib.DrawLine(5, 45, 115, 45, Color.SteelBlue);
+            graphicsLib.Stroke = 4;
+            graphicsLib.DrawLine(5, 65, 115, 65, Color.SteelBlue);
+            graphicsLib.Stroke = 5;
+            graphicsLib.DrawLine(5, 85, 115, 85, Color.SteelBlue);
+
+            graphicsLib.Stroke = 1;
+            graphicsLib.DrawLine(135, 5, 135, 115, Color.SlateGray);
+            graphicsLib.Stroke = 2;
+            graphicsLib.DrawLine(155, 5, 155, 115, Color.SlateGray);
+            graphicsLib.Stroke = 3;
+            graphicsLib.DrawLine(175, 5, 175, 115, Color.SlateGray);
+            graphicsLib.Stroke = 4;
+            graphicsLib.DrawLine(195, 5, 195, 115, Color.SlateGray);
+            graphicsLib.Stroke = 5;
+            graphicsLib.DrawLine(215, 5, 215, 115, Color.SlateGray);
+
+            graphicsLib.Stroke = 1;
+            graphicsLib.DrawLine(5,  125, 115, 235, Color.Silver);
+            graphicsLib.Stroke = 2;
+            graphicsLib.DrawLine(25, 125, 135, 235, Color.Silver);
+            graphicsLib.Stroke = 3;
+            graphicsLib.DrawLine(45, 125, 155, 235, Color.Silver);
+            graphicsLib.Stroke = 4;
+            graphicsLib.DrawLine(65, 125, 175, 235, Color.Silver);
+            graphicsLib.Stroke = 5;
+            graphicsLib.DrawLine(85, 125, 195, 235, Color.Silver);
+
+            graphicsLib.Stroke = 2;
+            graphicsLib.DrawRectangle(2, 2, 236, 236, Color.DimGray, false);
+
+            graphicsLib.Show();
         }
 
         void FontScaleTest()

@@ -26,6 +26,11 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public RotationType Rotation { get; set; } = RotationType.Default;
 
+        /// <summary>
+        /// Stroke / line thickness when drawing lines or shape outlines
+        /// </summary>
+        public int Stroke { get; set; }
+
         #endregion Properties
 
         /// <summary>
@@ -115,25 +120,6 @@ namespace Meadow.Foundation.Graphics
             _display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), color);
         }
 
-        /// <summary>
-        ///     Draw a line using Bresenhams line drawing algorithm.
-        /// </summary>
-        /// <remarks>
-        ///     Bresenhams line drawing algoritm:
-        ///     https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-        ///     C# Implementation:
-        ///     https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-        /// </remarks>
-        /// <param name="x0">Abscissa of the starting point of the line.</param>
-        /// <param name="y0">Ordinate of the starting point of the line</param>
-        /// <param name="x1">Abscissa of the end point of the line.</param>
-        /// <param name="y1">Ordinate of the end point of the line</param>
-        /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public void DrawLine(int x0, int y0, int x1, int y1, bool colored = true)
-        {
-            DrawLine(x0, y0, x1, y1, (colored ? Color.White : Color.Black));
-        }
-
         private bool IsPixelInBounds(int x, int y)
         {
             if (x < 0 || y < 0 || x >= Width || y >= Height)
@@ -156,10 +142,74 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y0">Ordinate of the starting point of the line</param>
         /// <param name="x1">Abscissa of the end point of the line.</param>
         /// <param name="y1">Ordinate of the end point of the line</param>
+        /// <param name="colored">Turn the pixel on (true) or off (false).</param>
+        public void DrawLine(int x0, int y0, int x1, int y1, bool colored)
+        {
+            DrawLine(x0, y0, x1, y1, (colored ? Color.White : Color.Black));
+        }
+
+        /// <summary>
+        ///     Draw a line using Bresenhams line drawing algorithm.
+        /// </summary>
+        /// <remarks>
+        ///     Bresenhams line drawing algoritm:
+        ///     https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+        ///     C# Implementation:
+        ///     https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+        /// </remarks>
+        /// <param name="x0">Abscissa of the starting point of the line.</param>
+        /// <param name="y0">Ordinate of the starting point of the line</param>
+        /// <param name="x1">Abscissa of the end point of the line.</param>
+        /// <param name="y1">Ordinate of the end point of the line</param>
         /// <param name="color">The color of the line.</param>
         public void DrawLine(int x0, int y0, int x1, int y1, Color color)
         {
             _display.SetPenColor(color);
+
+            if(Stroke == 1)
+            {
+                DrawLine(x0, y0, x1, y1);
+                return;
+            }
+
+            if(IsTallerThanWide(x0, y0, x1, y1))
+            {
+                int xOffset = Stroke / 2;
+
+                for(int i = 0; i < Stroke; i++)
+                {
+                    DrawLine(x0 - xOffset + i, y0, x1 - xOffset + i, y1);
+                }
+            }
+            else
+            {
+                int yOffset = Stroke / 2;
+
+                for (int i = 0; i < Stroke; i++)
+                {
+                    DrawLine(x0, y0 - yOffset + i, x1, y1 - yOffset + i);
+                }
+            }
+        }
+
+        private bool IsTallerThanWide(int x0, int y0, int x1, int y1)
+        {
+            return Math.Abs(x0 - x1) < Math.Abs(y0 - y1);
+        }
+
+        private void DrawLine(int x0, int y0, int x1, int y1)
+        { 
+          /*  if(x0 == x1)
+            {
+                DrawHorizontalLine(x0, y0, x1 - x0);
+                return;
+            }
+
+            if (y0 == y1)
+            {
+                DrawVerticalLine(x0, y0, y1 - y0);
+                return;
+            } */
 
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
             if (steep)
@@ -206,8 +256,14 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y0">Ordinate of the starting point of the line.</param>
         /// <param name="length">Length of the line to draw.</param>
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public void DrawHorizontalLine(int x0, int y0, int length, bool colored = true)
+        public void DrawHorizontalLine(int x0, int y0, int length, bool colored)
         {
+            if(length < 0)
+            {
+                x0 += length;
+                length *= -1;
+            }
+
             for (var x = x0; (x - x0) < length; x++)
             {
                 DrawPixel(x, y0, colored);
@@ -224,6 +280,16 @@ namespace Meadow.Foundation.Graphics
         public void DrawHorizontalLine(int x0, int y0, int length, Color color)
         {
             _display.SetPenColor(color);
+            DrawHorizontalLine(x0, y0, length);
+
+        }
+        private void DrawHorizontalLine(int x0, int y0, int length)
+        {
+            if (length < 0)
+            {
+                x0 += length;
+                length *= -1;
+            }
 
             for (var x = x0; (x - x0) < length; x++)
             {
@@ -238,8 +304,14 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y0">Ordinate of the starting point of the line.</param>
         /// <param name="length">Length of the line to draw.</param>
         /// <param name="colored">Show the line when (true) or off (false).</param>
-        public void DrawVerticalLine(int x0, int y0, int length, bool colored = true)
+        public void DrawVerticalLine(int x0, int y0, int length, bool colored)
         {
+            if (length < 0)
+            {
+                y0 += length;
+                length *= -1;
+            }
+
             for (var y = y0; (y - y0) < length; y++)
             {
                 DrawPixel(x0, y, colored);
@@ -256,6 +328,17 @@ namespace Meadow.Foundation.Graphics
         public void DrawVerticalLine(int x0, int y0, int length, Color color)
         {
             _display.SetPenColor(color);
+
+            DrawVerticalLine(x0, y0, length);
+        }
+
+        private void DrawVerticalLine(int x0, int y0, int length)
+        {
+            if (length < 0)
+            {
+                y0 += length;
+                length *= -1;
+            }
 
             for (var y = y0; (y - y0) < length; y++)
             {
