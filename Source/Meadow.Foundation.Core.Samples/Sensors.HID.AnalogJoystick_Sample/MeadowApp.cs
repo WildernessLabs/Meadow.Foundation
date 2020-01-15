@@ -1,32 +1,50 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Hardware;
+using Meadow.Foundation.Sensors.Hid;
+using System;
+using System.Threading.Tasks;
+using static Meadow.Foundation.Sensors.Hid.AnalogJoystick;
 
 namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        IDigitalOutputPort redLed;
-        IDigitalOutputPort blueLed;
-        IDigitalOutputPort greenLed;
+        AnalogJoystick joystick;
 
         public MeadowApp()
         {
-            ConfigurePorts();
+            Console.WriteLine("MeadowApp()...");
+
+            joystick = new AnalogJoystick(
+                Device.CreateAnalogInputPort(Device.Pins.A01), 
+                Device.CreateAnalogInputPort(Device.Pins.A00));
+
+            TestAnalogJoystick();
         }
 
-        public void ConfigurePorts()
+        async Task TestAnalogJoystick() 
         {
-            Console.WriteLine("Creating output ports...");
-            redLed = Device.CreateDigitalOutputPort(Device.Pins.OnboardLedRed);
-            blueLed = Device.CreateDigitalOutputPort(Device.Pins.OnboardLedBlue);
-            greenLed = Device.CreateDigitalOutputPort(Device.Pins.OnboardLedGreen);
+            Console.WriteLine("TestAnalogJoystick()...");
 
+            //JoystickPosition position;
 
+            //await joystick.SetCenterPosition();
 
+            //while (true)
+            //{
+            //    position = await joystick.GetPosition();
+            //    Console.WriteLine($"{position}");
+            //}
+
+            float x, y;
+
+            while (true) 
+            {
+                x = await joystick.GetHorizontalValue();
+                y = await joystick.GetVerticalValue();
+
+                Console.WriteLine($"({x},{y})");
+            }
         }
-
     }
 }
