@@ -199,17 +199,17 @@ namespace Meadow.Foundation.Graphics
 
         private void DrawLine(int x0, int y0, int x1, int y1)
         { 
-          /*  if(x0 == x1)
+            if(y0 == y1)
             {
                 DrawHorizontalLine(x0, y0, x1 - x0);
                 return;
             }
 
-            if (y0 == y1)
+            if (x0 == x1)
             {
                 DrawVerticalLine(x0, y0, y1 - y0);
                 return;
-            } */
+            } 
 
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
             if (steep)
@@ -526,29 +526,63 @@ namespace Meadow.Foundation.Graphics
         {
             _display.SetPenColor(color);
 
+            if (filled)
+            {
+                DrawCircleFilled(centerX, centerY, radius);
+            }
+            else
+            {
+                int offset = Stroke / 2;
+
+                for (int i = 0; i < Stroke; i++)
+                {
+                    DrawCircleOutline(centerX, centerY, radius - offset + i);
+                }
+            }
+        }
+
+        private void DrawCircleOutline(int centerX, int centerY, int radius)
+        {
+            var d = (5 - (radius * 4)) / 4;
+            var x = 0;
+            var y = radius;
+
+            while (x <= y)
+            {
+                DrawPixel(centerX + x, centerY + y);
+                DrawPixel(centerX + y, centerY + x);
+                DrawPixel(centerX - y, centerY + x);
+                DrawPixel(centerX - x, centerY + y);
+                DrawPixel(centerX - x, centerY - y);
+                DrawPixel(centerX - y, centerY - x);
+                DrawPixel(centerX + x, centerY - y);
+                DrawPixel(centerX + y, centerY - x);
+
+                if (d < 0)
+                {
+                    d += (2 * x) + 1;
+                }
+                else
+                {
+                    d += (2 * (x - y)) + 1;
+                    y--;
+                }
+                x++;
+            }
+        }
+
+        private void DrawCircleFilled(int centerX, int centerY, int radius)
+        { 
             var d = (5 - (radius * 4)) / 4;
             var x = 0;
             var y = radius;
             while (x <= y)
             {
-                if (filled)
-                {
-                    DrawLine(centerX + x, centerY + y, centerX - x, centerY + y, color);
-                    DrawLine(centerX + x, centerY - y, centerX - x, centerY - y, color);
-                    DrawLine(centerX - y, centerY + x, centerX + y, centerY + x, color);
-                    DrawLine(centerX - y, centerY - x, centerX + y, centerY - x, color);
-                }
-                else
-                {
-                    DrawPixel(centerX + x, centerY + y);
-                    DrawPixel(centerX + y, centerY + x);
-                    DrawPixel(centerX - y, centerY + x);
-                    DrawPixel(centerX - x, centerY + y);
-                    DrawPixel(centerX - x, centerY - y);
-                    DrawPixel(centerX - y, centerY - x);
-                    DrawPixel(centerX + x, centerY - y);
-                    DrawPixel(centerX + y, centerY - x);
-                }
+                DrawLine(centerX + x, centerY + y, centerX - x, centerY + y);
+                DrawLine(centerX + x, centerY - y, centerX - x, centerY - y);
+                DrawLine(centerX - y, centerY + x, centerX + y, centerY + x);
+                DrawLine(centerX - y, centerY - x, centerX + y, centerY - x);
+
                 if (d < 0)
                 {
                     d += (2 * x) + 1;

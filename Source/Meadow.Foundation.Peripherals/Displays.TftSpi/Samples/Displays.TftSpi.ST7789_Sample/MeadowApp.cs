@@ -24,7 +24,7 @@ namespace Displays.Tft.ST7789_Sample
             while (true)
             {
                 StrokeTest();
-                Thread.Sleep(25000);
+                Thread.Sleep(5000);
 
                 ShapeTest();
                 Thread.Sleep(5000);
@@ -33,6 +33,9 @@ namespace Displays.Tft.ST7789_Sample
                 Thread.Sleep(5000);
 
                 ColorFontTest();
+                Thread.Sleep(5000);
+
+                CircleTest();
                 Thread.Sleep(5000);
             }
         }
@@ -55,6 +58,34 @@ namespace Displays.Tft.ST7789_Sample
             Console.WriteLine("Create graphics lib");
 
             graphicsLib = new GraphicsLibrary(display);
+        }
+
+        void CircleTest()
+        {
+            graphicsLib.Clear();
+
+            graphicsLib.Stroke = 1;
+            graphicsLib.DrawCircle(120, 120, 20, Color.Purple);
+
+            graphicsLib.Stroke = 2;
+            graphicsLib.DrawCircle(120, 120, 30, Color.Red);
+
+            graphicsLib.Stroke = 3;
+            graphicsLib.DrawCircle(120, 120, 40, Color.Orange);
+
+            graphicsLib.Stroke = 4;
+            graphicsLib.DrawCircle(120, 120, 50, Color.Yellow);
+
+            graphicsLib.Stroke = 5;
+            graphicsLib.DrawCircle(120, 120, 60, Color.LawnGreen);
+
+            graphicsLib.Stroke = 6;
+            graphicsLib.DrawCircle(120, 120, 70, Color.Cyan);
+
+            graphicsLib.Stroke = 7;
+            graphicsLib.DrawCircle(120, 120, 80, Color.Blue);
+
+            graphicsLib.Show();
         }
 
         void ShapeTest()
