@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Stroke / line thickness when drawing lines or shape outlines
         /// </summary>
-        public int Stroke { get; set; }
+        public int Stroke { get; set; } = 1;
 
         #endregion Properties
 
