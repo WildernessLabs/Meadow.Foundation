@@ -243,7 +243,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.x74595", "I
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{BA4E26C9-BFF0-48B1-9D53-315F6906AF06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.x74595", "Meadow.Foundation.Peripherals\ICs.IOExpanders.x74595\Driver\ICs.IOExpanders.x74595\ICs.IOExpanders.x74595.csproj", "{C4E371CD-452B-445D-968A-FA2805A13DEE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.X74595", "Meadow.Foundation.Peripherals\ICs.IOExpanders.x74595\Driver\ICs.IOExpanders.x74595\ICs.IOExpanders.x74595.csproj", "{C4E371CD-452B-445D-968A-FA2805A13DEE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.Mcp23008", "ICs.IOExpanders.Mcp23008", "{240F389E-5109-4266-AE58-04DEAC585F22}"
 EndProject
@@ -537,6 +537,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bmp180_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bmp180\Samples\Sensors.Atmospheric.Bmp180_Sample\Sensors.Atmospheric.Bmp180_Sample.csproj", "{0DB4BE62-0EFB-4DDA-B2E8-1C5240546488}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bmp085_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bmp085\Samples\Sensors.Atmospheric.Bmp085_Sample\Sensors.Atmospheric.Bmp085_Sample.csproj", "{A6D542CD-CB3E-443C-B7EE-11ABDA5D1F81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.x74595_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.x74595\Samples\ICs.IOExpanders.x74595_Sample\ICs.IOExpanders.x74595_Sample.csproj", "{DC59998F-8CE4-4BAC-BEC4-B12EDE047B60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1128,6 +1130,10 @@ Global
 		{A6D542CD-CB3E-443C-B7EE-11ABDA5D1F81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6D542CD-CB3E-443C-B7EE-11ABDA5D1F81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6D542CD-CB3E-443C-B7EE-11ABDA5D1F81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC59998F-8CE4-4BAC-BEC4-B12EDE047B60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC59998F-8CE4-4BAC-BEC4-B12EDE047B60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC59998F-8CE4-4BAC-BEC4-B12EDE047B60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC59998F-8CE4-4BAC-BEC4-B12EDE047B60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1394,6 +1400,7 @@ Global
 		{54512143-15FA-4A68-B54D-FEFE15AC41D6} = {E91B1973-3022-4231-879D-D8F9E2ABE14C}
 		{0DB4BE62-0EFB-4DDA-B2E8-1C5240546488} = {5A65EF5B-99A7-415E-928B-14F05BEBD31F}
 		{A6D542CD-CB3E-443C-B7EE-11ABDA5D1F81} = {4A2BBDB4-6130-4C9D-9947-12F39309E8E9}
+		{DC59998F-8CE4-4BAC-BEC4-B12EDE047B60} = {BA4E26C9-BFF0-48B1-9D53-315F6906AF06}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

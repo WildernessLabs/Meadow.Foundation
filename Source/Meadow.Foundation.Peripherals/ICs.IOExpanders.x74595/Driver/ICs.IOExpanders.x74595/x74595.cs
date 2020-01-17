@@ -13,33 +13,33 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// Control the outputs from a 74595 shift register (or a chain of shift registers)
     /// using a SPI interface.
     /// </remarks>
-    public class x74595
+    public partial class x74595 : IIODevice
     {
-        #region Constants
+        #region Properties
 
-        /// <summary>
-        ///     Error message for a pin number out of range exception.
-        /// </summary>
-        private const string EM_PIN_RANGE_MESSAGE = "x74595: Pin number is out of range.";
+        public PinDefinitions Pins { get; } = new PinDefinitions();
+
+        #endregion
+
+        #region Constants
 
         #endregion
 
         #region Member variables / fields
 
         /// <summary>
-        ///     Array containing the pins to be output to the shift register.
-        /// </summary>
-        private readonly bool[] _pins;
-
-        /// <summary>
         ///     Number of chips required to implement this ShiftRegister.
         /// </summary>
         private readonly int _numberOfChips;
+
+        private byte[] _latchData;
 
         /// <summary>
         ///     SPI interface used to communicate with the shift registers.
         /// </summary>
         private readonly ISpiPeripheral _spi;
+
+        public DeviceCapabilities Capabilities => throw new NotImplementedException();
 
         #endregion Member variables / fields
 
@@ -56,24 +56,25 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        ///     Constructor a ShiftRegister74595 object.
+        ///     Constructor a ShiftRegister 74595 object.
         /// </summary>
         /// <param name="pins">Number of pins in the shift register (should be a multiple of 8 pins).</param>
         /// <param name="spiBus">SpiBus object</param>
-        public x74595(ISpiBus spiBus, int pins)
+        public x74595(IIODevice device, ISpiBus spiBus, IPin pinChipSelect, int pins = 8)
         {
-            if ((pins > 0) && ((pins % 8) == 0))
+           // if ((pins > 0) && ((pins % 8) == 0))
+            if(pins == 8)
             {
-                _pins = new bool[pins];
                 _numberOfChips = pins / 8;
-                Clear();
 
-                _spi = new SpiPeripheral(spiBus, null);
+                _latchData = new byte[_numberOfChips];
+
+                _spi = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(pinChipSelect));
             }
             else
             {
                 throw new ArgumentOutOfRangeException(
-                    "x74595: Size must be greater than zero and a multiple of 8 pins");
+                    "x74595: Size must be greater than zero and a multiple of 8 pins, driver is currently limited to one chip (8 pins)");
             }
         }
 
@@ -82,46 +83,30 @@ namespace Meadow.Foundation.ICs.IOExpanders
         #region Methods
 
         /// <summary>
-        ///     Overload the index operator to allow the user to get/set a particular
-        ///     pin in the shift register.
-        /// </summary>
-        /// <param name="pin">Bit number to get/set.</param>
-        /// <returns>Value in the specified pin.</returns>
-        public bool this[int pin]
-        {
-            get
-            {
-                if ((pin >= 0) && (pin < _pins.Length))
-                {
-                    return _pins[pin];
-                }
-                throw new IndexOutOfRangeException(EM_PIN_RANGE_MESSAGE);
-            }
-            set
-            {
-                if ((pin >= 0) && (pin < _pins.Length))
-                {
-                    _pins[pin] = value;
-                    LatchData();
-                }
-                else
-                {
-                    throw new IndexOutOfRangeException(EM_PIN_RANGE_MESSAGE);
-                }
-            }
-        }
-
-        /// <summary>
         /// Creates a new DigitalOutputPort using the specified pin and initial state.
         /// </summary>
         /// <param name="pin">The pin number to create the port on.</param>
         /// <param name="initialState">Whether the pin is initially high or low.</param>
         /// <returns></returns>
-        public IDigitalOutputPort CreateOutputPort(IIODevice device, IPin pin, bool initialState)
+        public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState)
         {
-            return device.CreateDigitalOutputPort(pin, initialState);
+            if (IsValidPin(pin))
+            {
+                // create the convenience class
+                return new DigitalOutputPort(this, pin, initialState);
+            }
 
-           // throw new IndexOutOfRangeException(EM_PIN_RANGE_MESSAGE);
+            throw new Exception("Pin is out of range");
+        }
+
+        public void Clear(bool update = true)
+        {
+            _latchData = new byte[_numberOfChips];
+
+            if(update)
+            {
+                _spi.WriteBytes(_latchData);
+            }
         }
 
         /// <summary>
@@ -129,88 +114,71 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="pin">The pin to write to.</param>
         /// <param name="value">The value to write. True for high, false for low.</param>
-        public void WriteToPort(byte pin, bool value)
+        public void WriteToPin(IPin pin, bool value)
         {
             if (IsValidPin(pin))
             {
-                // write new value on the specific pin
-                _pins[pin] = value;
-
-                // send the data to the SPI interface.
-                LatchData();
+                //ToDo multichip logic
+                _latchData[0] =  BitHelpers.SetBit(_latchData[0], (byte)pin.Key, value);
             }
             else
             {
-                throw new IndexOutOfRangeException(EM_PIN_RANGE_MESSAGE);
+                throw new Exception("Pin is out of range");
             }
+            _spi.WriteBytes(_latchData);
         }
 
         /// <summary>
-        /// Outputs a byte value across all of the pins by writing directly 
-        /// to the shift register.
+        /// Checks whether or not the pin passed in exists on the chip.
         /// </summary>
-        /// <param name="mask"></param>
-        public void WriteToPorts(byte mask)
+        protected bool IsValidPin(IPin pin)
         {
-            for (byte i = 0; i < 8; i++)
-            {
-                _pins[i] = BitHelpers.GetBitValue(mask, i);
-            }
-
-            // send the data to the SPI interface.
-            LatchData();
+            return Pins.AllPins.Contains(pin);
         }
 
-        /// <summary>
-        ///     Clear all of the pins in the shift register.
-        /// </summary>
-        /// <param name="latch">If true, latch the data after the shift register is cleared (default is false)?</param>
-        public void Clear(bool latch = false)
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled, int debounceDuration = 0, int glitchFilterCycleCount = 0)
         {
-            for (var index = 0; index < _pins.Length; index++)
-            {
-                _pins[index] = false;
-            }
-
-            if (latch)
-            {
-                LatchData();
-            }
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        ///     Send the data to the SPI interface.
-        /// </summary>
-        protected void LatchData()
+        public IBiDirectionalPort CreateBiDirectionalPort(IPin pin, bool initialState = false, bool glitchFilter = false, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled, PortDirectionType initialDirection = PortDirectionType.Input)
         {
-            var data = new byte[_numberOfChips];
-
-            for (var chip = 0; chip < _numberOfChips; chip++)
-            {
-                var dataByte = _numberOfChips - chip - 1;
-                data[dataByte] = 0;
-                byte bitValue = 1;
-                var offset = chip * 8;
-                for (var bit = 0; bit < 8; bit++)
-                {
-                    if (_pins[offset + bit])
-                    {
-                        data[dataByte] |= bitValue;
-                    }
-                    bitValue <<= 1;
-                }
-            }
-            _spi.WriteBytes(data);
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        ///     Check if the specified pin is valid.
-        /// </summary>
-        /// <param name="pin">Pin number</param>
-        /// <returns>True if the pin number is valid, false if it not.</returns>
-        protected bool IsValidPin(byte pin)
+        public IAnalogInputPort CreateAnalogInputPort(IPin pin, float voltageReference = 3.3F)
         {
-            return (pin <= _pins.Length);
+            throw new NotImplementedException();
+        }
+
+        public IPwmPort CreatePwmPort(IPin pin, float frequency = 100, float dutyCycle = 0.5F, bool invert = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISerialPort CreateSerialPort(SerialPortName portName, int baudRate, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, int readBufferSize = 4096)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISpiBus CreateSpiBus(IPin[] pins, long speed)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, long speed)
+        {
+            throw new NotImplementedException();
+        }
+
+        public II2cBus CreateI2cBus(IPin[] pins, ushort speed = 100)
+        {
+            throw new NotImplementedException();
+        }
+
+        public II2cBus CreateI2cBus(IPin clock, IPin data, ushort speed = 100)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
