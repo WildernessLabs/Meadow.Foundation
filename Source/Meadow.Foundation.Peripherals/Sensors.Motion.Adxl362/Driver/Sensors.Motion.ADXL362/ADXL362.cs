@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Digital Input port attached to interrupt pin 2 on the ADXL362.
         /// </summary>
-        private IDigitalInputPort _digitalInputPort2 = null;
+        private IDigitalInputPort _digitalInputPort2;
 
         /// <summary>
         ///     Last X value reported in the Changed event handler.
@@ -979,7 +979,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public void ConfigureInterrupts(IIODevice device, byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
         {
             _adxl362.WriteBytes(new byte[] { Command.WriteRegister, interruptMap1, interruptMap2 });
-            //TODO: I changed this from IDigitalPin.GPIO_NONE to null
+
             if (interruptPin1 != null)
             {
                 _digitalInputPort1 = device.CreateDigitalInputPort(interruptPin1, InterruptMode.EdgeRising, MapResistorMode((interruptMap1 & 0xf0) > 0));
@@ -989,7 +989,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 _digitalInputPort1 = null;
             }
-            //TODO: I changed this from IDigitalPin.GPIO_NONE to null
+
             if (interruptPin2 != null)
             {
                 _digitalInputPort2 = device.CreateDigitalInputPort(interruptPin2, InterruptMode.EdgeRising, MapResistorMode((interruptMap2 & 0xf0) > 0));
@@ -1021,7 +1021,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Display the register contents.
         /// </summary>
-        public void DisplayRegisters()
+        private void DisplayRegisters()
         {
             var command = new byte[] { Command.Readegister, 0x00 };
             var registers = _adxl362.WriteRead(command, 6);
