@@ -32,7 +32,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
         {
             var conditions = await si7021.Read();
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {conditions.Temperature}ºC");
+            Console.WriteLine($"  Temperature: {conditions.Temperature}°C");
             Console.WriteLine($"  Pressure: {conditions.Pressure}hPa");
             Console.WriteLine($"  Relative Humidity: {conditions.Humidity}%");
         }

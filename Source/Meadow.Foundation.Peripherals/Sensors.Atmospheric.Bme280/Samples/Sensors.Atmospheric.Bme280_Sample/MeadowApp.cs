@@ -44,7 +44,7 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             // classical .NET events can also be used:
             bme280.Updated += (object sender, AtmosphericConditionChangeResult e) => {
-                Console.WriteLine($"  Temperature: {e.New.Temperature}ºC");
+                Console.WriteLine($"  Temperature: {e.New.Temperature}°C");
                 Console.WriteLine($"  Pressure: {e.New.Pressure}hPa");
                 Console.WriteLine($"  Relative Humidity: {e.New.Humidity}%");
             };
@@ -70,7 +70,7 @@ namespace Sensors.Atmospheric.BME280_Sample
         {
             var conditions = await bme280.Read();
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {conditions.Temperature}ºC");
+            Console.WriteLine($"  Temperature: {conditions.Temperature}°C");
             Console.WriteLine($"  Pressure: {conditions.Pressure}hPa");
             Console.WriteLine($"  Relative Humidity: {conditions.Humidity}%");
         }

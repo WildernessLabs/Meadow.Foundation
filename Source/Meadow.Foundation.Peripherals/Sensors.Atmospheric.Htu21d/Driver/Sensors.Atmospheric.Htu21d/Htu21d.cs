@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
 
         /// <summary>
-        /// The temperature, in degrees celsius (ºC), from the last reading.
+        /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
         public float Temperature => Conditions.Temperature;
 

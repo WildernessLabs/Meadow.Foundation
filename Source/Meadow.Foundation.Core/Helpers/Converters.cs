@@ -78,7 +78,7 @@ namespace Meadow.Foundation
         /// HSV to rgb. Note that for RGB LED use, you probably want a constant 100% brightness. This doesn't do that. 
         /// For that Algorithm, check out: https://blog.adafruit.com/2012/03/14/constant-brightness-hsb-to-rgb-algorithm/
         /// </summary>
-        /// <param name="hue">Hue in degress (0-359º).</param>
+        /// <param name="hue">Hue in degress (0-359°).</param>
         /// <param name="saturation">Saturation.</param>
         /// <param name="brightValue">Brightness value.</param>
         /// <param name="r">The red component. (0-1)</param>

@@ -36,7 +36,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
             // classical .NET events can also be used:
             analogTemperature.Updated += (object sender, AtmosphericConditionChangeResult e) => {
-                Console.WriteLine($"Temp Changed, temp: {e.New.Temperature}ºC");
+                Console.WriteLine($"Temp Changed, temp: {e.New.Temperature}°C");
             };
 
             // Get an initial reading.
