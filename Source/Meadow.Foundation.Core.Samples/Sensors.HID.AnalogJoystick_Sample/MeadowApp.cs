@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Hid;
 using System;
 using System.Threading.Tasks;
-using static Meadow.Foundation.Sensors.Hid.AnalogJoystick;
 
 namespace MeadowApp
 {
@@ -19,7 +18,7 @@ namespace MeadowApp
                 Device.CreateAnalogInputPort(Device.Pins.A01), 
                 Device.CreateAnalogInputPort(Device.Pins.A00));
 
-            TestAnalogJoystick();
+            var t = TestAnalogJoystick();
         }
 
         async Task TestAnalogJoystick() 
