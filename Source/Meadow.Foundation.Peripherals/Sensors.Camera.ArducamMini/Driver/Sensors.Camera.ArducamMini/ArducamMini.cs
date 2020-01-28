@@ -47,9 +47,6 @@ namespace Meadow.Foundation.Sensors.Camera
 
         protected IDigitalOutputPort chipSelectPort;
 
-        //  private I2CDevice.Configuration i2cReadConfig = new I2CDevice.Configuration(0x60 >> 1, 100);
-        //  private I2CDevice.Configuration i2cWriteConfig = new I2CDevice.Configuration(0x61 >> 1, 100);
-
 
         #region Constructors 
 
@@ -82,24 +79,15 @@ namespace Meadow.Foundation.Sensors.Camera
 
         protected byte ReadSpiRegister(byte address)
         {
-            return spiDevice.WriteRead(new byte[] { address, 0 }, 2)[1];
+            // return spiDevice.WriteRead(new byte[] { address, 0 }, 2)[1];
+            //return spiDevice.ReadRegister(address);
+            spiDevice.WriteByte(address);
+            return spiDevice.ReadBytes(1)[0];
         }
 
-        protected byte WriteSpiRegister(byte address, byte value)
+        protected void WriteSpiRegister(byte address, byte value)
         {
-            byte[] writeBuffer = new byte[2];
-
-            writeBuffer[0] = (byte)(address + 0x80);
-            writeBuffer[1] = value;
-            spiDevice.WriteBytes(writeBuffer);
-            Thread.Sleep(10);
-
-            writeBuffer[0] = address;
-            writeBuffer[1] = 0;
-            var readBuffer = spiDevice.WriteRead(writeBuffer, 2);
-            Thread.Sleep(10);
-
-            return readBuffer[1];
+            spiDevice.WriteRegister(address, value);
         } 
 
         protected void WriteI2cRegisters(SensorReg[] regs)
@@ -112,11 +100,6 @@ namespace Meadow.Foundation.Sensors.Camera
                     Thread.Sleep(10);
                 }
             }
-        }
-
-        private byte ReadBus(byte address)
-        {
-            return spiDevice.ReadRegister(address);
         }
 
         private byte ReadI2cRegister(byte address)
@@ -141,17 +124,11 @@ namespace Meadow.Foundation.Sensors.Camera
             Console.WriteLine("OV2640_JPEG_INIT...");
             WriteI2cRegisters(InitSettings.JPEG_INIT);
 
-            Thread.Sleep(500);
-
             Console.WriteLine("OV2640_YUV422...");
             WriteI2cRegisters(InitSettings.YUV422);
 
-            Thread.Sleep(500);
-
             Console.WriteLine("OV2640_JPEG...");
             WriteI2cRegisters(InitSettings.JPEG);
-
-            Thread.Sleep(500);
 
             WriteI2cRegister(0xff, 0x01);
             Thread.Sleep(10);
@@ -189,7 +166,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
         public byte ReadFifo()
         {
-            return ReadBus(SINGLE_FIFO_READ);
+            return spiDevice.ReadRegister(SINGLE_FIFO_READ);
         }
 
         public byte[] GetImageData()
