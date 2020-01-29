@@ -550,6 +550,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{109B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Dht12_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Dhtxx\Samples\Sensors.Atmospheric.Dht12_Sample\Sensors.Atmospheric.Dht12_Sample.csproj", "{9A6C11B0-8803-4097-8BBB-DB1257EEEF7B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Hcsens0040", "Sensors.Motion.Hcsens0040", "{75E65F82-D53E-4C41-81DE-57950C05900E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D78EB96C-0105-4D6A-A34D-BD271912617E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Hcsens0040", "Meadow.Foundation.Peripherals\Sensors.Motion.Hcsens0040\Driver\Sensors.Motion.Hcsens0040\Sensors.Motion.Hcsens0040.csproj", "{D162B2AE-0343-4257-ABF3-E501DB6CB549}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Hcsens0040_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Hcsens0040\Samples\Sensors.Motion.Hcsens0040_Sample\Sensors.Motion.Hcsens0040_Sample.csproj", "{DA828BA9-E57F-4579-B6B0-55910247408F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1156,6 +1164,14 @@ Global
 		{9A6C11B0-8803-4097-8BBB-DB1257EEEF7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A6C11B0-8803-4097-8BBB-DB1257EEEF7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A6C11B0-8803-4097-8BBB-DB1257EEEF7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D162B2AE-0343-4257-ABF3-E501DB6CB549}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D162B2AE-0343-4257-ABF3-E501DB6CB549}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D162B2AE-0343-4257-ABF3-E501DB6CB549}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D162B2AE-0343-4257-ABF3-E501DB6CB549}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA828BA9-E57F-4579-B6B0-55910247408F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA828BA9-E57F-4579-B6B0-55910247408F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA828BA9-E57F-4579-B6B0-55910247408F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA828BA9-E57F-4579-B6B0-55910247408F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1428,6 +1444,10 @@ Global
 		{A50E7383-8111-4516-B76E-E4133242B835} = {6C716EDD-C29C-47F5-8366-28FC209E06E0}
 		{109B0BE9-7083-4473-B528-25425CA84E76} = {6C716EDD-C29C-47F5-8366-28FC209E06E0}
 		{9A6C11B0-8803-4097-8BBB-DB1257EEEF7B} = {109B0BE9-7083-4473-B528-25425CA84E76}
+		{75E65F82-D53E-4C41-81DE-57950C05900E} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{D78EB96C-0105-4D6A-A34D-BD271912617E} = {75E65F82-D53E-4C41-81DE-57950C05900E}
+		{D162B2AE-0343-4257-ABF3-E501DB6CB549} = {75E65F82-D53E-4C41-81DE-57950C05900E}
+		{DA828BA9-E57F-4579-B6B0-55910247408F} = {D78EB96C-0105-4D6A-A34D-BD271912617E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
