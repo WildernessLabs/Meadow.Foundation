@@ -502,11 +502,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.5611_Sa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Enviromental.Ags01Db", "Sensors.Enviromental.Ags01Db", "{0479C1FF-33D0-4315-9846-8031661C6707}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Environmental.Ags01Db", "Meadow.Foundation.Peripherals\Environmental.Ags01Db\Driver\Environmental.Ags01Db\Sensors.Environmental.Ags01Db.csproj", "{1E121B57-CE4C-4B9A-ABCF-3A4D6E969DAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Environmental.Ags01Db", "Meadow.Foundation.Peripherals\Sensors.Environmental.Ags01Db\Driver\Sensors.Environmental.Ags01Db\Sensors.Environmental.Ags01Db.csproj", "{1E121B57-CE4C-4B9A-ABCF-3A4D6E969DAC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Environmental.Ags01Db_Sample", "Meadow.Foundation.Peripherals\Environmental.Ags01Db\Samples\Environmental.Ags01Db_Sample\Environmental.Ags01Db_Sample.csproj", "{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Environmental.Ags01Db_Sample", "Meadow.Foundation.Peripherals\Sensors.Environmental.Ags01Db\Samples\Environmental.Ags01Db_Sample\Environmental.Ags01Db_Sample.csproj", "{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Max7219_8x8x4_Sample", "Meadow.Foundation.Peripherals\Displays.Max7219\Samples\Displays.Max7219_8x8x4_Sample\Displays.Max7219_8x8x4_Sample.csproj", "{AD8951D6-7AF1-40DB-92FE-4517E538E57C}"
 EndProject
