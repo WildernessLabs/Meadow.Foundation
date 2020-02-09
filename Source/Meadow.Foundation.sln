@@ -500,9 +500,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8D88
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.5611_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Ms5611\Samples\Sensors.Atmospheric.Ms5611_Sample\Sensors.Atmospheric.5611_Sample.csproj", "{5EC99271-9105-42BF-B347-69EA5376D305}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Enviromental.Ags01Db", "Enviromental.Ags01Db", "{0479C1FF-33D0-4315-9846-8031661C6707}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Enviromental.Ags01Db", "Sensors.Enviromental.Ags01Db", "{0479C1FF-33D0-4315-9846-8031661C6707}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Environmental.Ags01Db", "Meadow.Foundation.Peripherals\Environmental.Ags01Db\Driver\Environmental.Ags01Db\Environmental.Ags01Db.csproj", "{1E121B57-CE4C-4B9A-ABCF-3A4D6E969DAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Environmental.Ags01Db", "Meadow.Foundation.Peripherals\Environmental.Ags01Db\Driver\Environmental.Ags01Db\Sensors.Environmental.Ags01Db.csproj", "{1E121B57-CE4C-4B9A-ABCF-3A4D6E969DAC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5}"
 EndProject
@@ -554,9 +554,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Hcsens0040",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D78EB96C-0105-4D6A-A34D-BD271912617E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Hcsens0040", "Meadow.Foundation.Peripherals\Sensors.Motion.Hcsens0040\Driver\Sensors.Motion.Hcsens0040\Sensors.Motion.Hcsens0040.csproj", "{D162B2AE-0343-4257-ABF3-E501DB6CB549}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Hcsens0040", "Meadow.Foundation.Peripherals\Sensors.Motion.Hcsens0040\Driver\Sensors.Motion.Hcsens0040\Sensors.Motion.Hcsens0040.csproj", "{D162B2AE-0343-4257-ABF3-E501DB6CB549}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Hcsens0040_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Hcsens0040\Samples\Sensors.Motion.Hcsens0040_Sample\Sensors.Motion.Hcsens0040_Sample.csproj", "{DA828BA9-E57F-4579-B6B0-55910247408F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Hcsens0040_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Hcsens0040\Samples\Sensors.Motion.Hcsens0040_Sample\Sensors.Motion.Hcsens0040_Sample.csproj", "{DA828BA9-E57F-4579-B6B0-55910247408F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
