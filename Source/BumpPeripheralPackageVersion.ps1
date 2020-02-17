@@ -1,12 +1,17 @@
 ﻿
-$path = "Meadow.Foundation.Peripherals"
+$path = "Meadow.Foundation.Libraries_and_Frameworks"
+$driver = ""
+
+#$path = "Meadow.Foundation.Peripherals"
+#$driver = "\Driver\$dir"
+
 $dirs = Get-ChildItem $path -Directory 
 
 ForEach($dir in $dirs) {
     Write-Host($dir)
 
-    if(Test-Path -Path ".\$path\$dir\Driver\$dir\$dir.csproj" -PathType Leaf){
-        $file = Get-ChildItem ".\$path\$dir\Driver\$dir\$dir.csproj" -file | Select-Object DirectoryName, name
+    if(Test-Path -Path ".\$path\$dir$driver\$dir.csproj" -PathType Leaf){
+        $file = Get-ChildItem ".\$path\$dir$driver\$dir.csproj" -file | Select-Object DirectoryName, name
         #Write-Host($file)
         $xml = [xml](Get-Content ("{0}\{1}" -f $file.DirectoryName, $file.Name))
         
@@ -19,12 +24,12 @@ ForEach($dir in $dirs) {
             Write-Host($ogVersion.ToString())
             Write-Host($newVersion)
 
-            $contents = Get-Content ".\$path\$dir\Driver\$dir\$dir.csproj"
+            $contents = Get-Content ".\$path\$dir$driver\$dir.csproj"
             $contents = $contents -creplace $ogVersion.ToString(), $newVersion
-            $contents | Set-Content ".\$path\$dir\Driver\$dir\$dir.csproj" -encoding UTF8
+            $contents | Set-Content ".\$path\$dir$driver\$dir.csproj" -encoding UTF8
         }
     }
     else{
-        Write-Host("Does not exist - .\$path\$dir\Driver\$dir\$dir.csproj")
+        Write-Host("Does not exist - .\$path\$dir$driver\$dir.csproj")
     }   
 }
