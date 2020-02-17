@@ -2,7 +2,7 @@ using System;
 using System.Buffers.Binary;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Environmental
+namespace Meadow.Foundation.Sensors.Environmental
 {
 
     /// <summary>
