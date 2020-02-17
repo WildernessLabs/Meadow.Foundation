@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
@@ -9,7 +9,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Light, Temt6000</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for Temt6000</Description>
   </PropertyGroup>
