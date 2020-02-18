@@ -5,7 +5,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 
-namespace Displays.Ssd1306_Sample
+namespace Displays.Ssd1309_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
@@ -26,6 +26,7 @@ namespace Displays.Ssd1306_Sample
             Thread.Sleep(Timeout.Infinite);
         }
 
+        //untested
         void CreateSpiDisplay()
         {
             Console.WriteLine("Create Display with SPI...");
@@ -70,9 +71,10 @@ namespace Displays.Ssd1306_Sample
             graphics = new GraphicsLibrary(display);
 
             graphics.Clear();
-            graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(0, 0, "Meadow F7");
-            graphics.DrawRectangle(5, 14, 30, 10, true);
+            graphics.CurrentFont = new Font12x16();
+            graphics.DrawText(0, 0, "SSD1309");
+            graphics.DrawText(0, 24, "MeadowB3.7");
+            graphics.DrawText(0, 48, "4-8x faster");
 
             graphics.Show();
         }

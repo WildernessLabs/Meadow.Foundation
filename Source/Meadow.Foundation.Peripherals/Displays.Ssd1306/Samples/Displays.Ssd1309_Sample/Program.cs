@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Meadow;
 
-namespace Displays.Ssd1306_Sample
+namespace Displays.Ssd1309_Sample
 {
     class Program
     {
