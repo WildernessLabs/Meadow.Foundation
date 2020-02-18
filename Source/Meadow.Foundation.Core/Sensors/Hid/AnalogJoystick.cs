@@ -105,19 +105,40 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             var h = await GetHorizontalValue();
             var v = await GetVerticalValue();
-
-            if(h > Calibration.HorizontalCenter + Calibration.DeadZone)
+            
+            if (h > Calibration.HorizontalCenter + Calibration.DeadZone)
             {
-                if(v > Calibration.VerticalCenter + Calibration.DeadZone) { return JoystickPosition.UpRight; }
-                if(v < Calibration.VerticalCenter - Calibration.DeadZone) { return JoystickPosition.DownRight; }
+                if (v > Calibration.VerticalCenter + Calibration.DeadZone) 
+                { 
+                    return JoystickPosition.UpRight; 
+                }
+                if (v < Calibration.VerticalCenter - Calibration.DeadZone) 
+                { 
+                    return JoystickPosition.DownRight; 
+                }
+
                 return JoystickPosition.Right;
             }
-
-            if (h < Calibration.HorizontalCenter - Calibration.DeadZone)
+            else if (h < Calibration.HorizontalCenter - Calibration.DeadZone)
             {
-                if (v > Calibration.VerticalCenter + Calibration.DeadZone) { return JoystickPosition.UpLeft; }
-                if (v < Calibration.VerticalCenter - Calibration.DeadZone) { return JoystickPosition.DownLeft; }
+                if (v > Calibration.VerticalCenter + Calibration.DeadZone) 
+                { 
+                    return JoystickPosition.UpLeft; 
+                }
+                if (v < Calibration.VerticalCenter - Calibration.DeadZone) 
+                { 
+                    return JoystickPosition.DownLeft; 
+                }
+
                 return JoystickPosition.Left;
+            }
+            else if (v > Calibration.VerticalCenter + Calibration.DeadZone)
+            {
+                return JoystickPosition.Up;
+            }
+            else if (v < Calibration.VerticalCenter - Calibration.DeadZone)
+            {
+                return JoystickPosition.Down;
             }
 
             return JoystickPosition.Center;
