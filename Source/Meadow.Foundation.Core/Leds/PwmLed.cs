@@ -26,16 +26,11 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public bool IsOn
         {
-            get => _isOn; 
-            set
+            get => _isOn;
+            set 
             {
-                //Port.Stop();
-                if (value)
-                    Port.DutyCycle = _maximumPwmDuty; // turn on
-                else
-                    Port.DutyCycle = 0; // turn off
+                Port.DutyCycle = value ? _maximumPwmDuty : 0;
                 _isOn = value;
-                //Port.Start();
             }
         }
         protected bool _isOn;
@@ -77,8 +72,10 @@ namespace Meadow.Foundation.Leds
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
             // validate and persist forward voltage
-            if (forwardVoltage < 0 || forwardVoltage > 3.3F) 
+            if (forwardVoltage < 0 || forwardVoltage > 3.3F)
+            {
                 throw new ArgumentOutOfRangeException(nameof(forwardVoltage), "error, forward voltage must be between 0, and 3.3");
+            }
             
             ForwardVoltage = forwardVoltage;
 
@@ -89,7 +86,8 @@ namespace Meadow.Foundation.Leds
             Port = pwmPort;
             Port.Inverted = this._inverted;
             Port.Frequency = 100;
-			Port.DutyCycle = _maximumPwmDuty;
+            Port.DutyCycle = _maximumPwmDuty;
+            Port.Start();
         }
 
         /// <summary>
@@ -98,7 +96,8 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness">Valid values are from 0 to 1, inclusive</param>
         public void SetBrightness(float brightness)
         {
-            if (brightness < 0 || brightness > 1) {
+            if (brightness < 0 || brightness > 1) 
+            {
                 throw new ArgumentOutOfRangeException(nameof(brightness), "err: brightness must be between 0 and 1, inclusive.");
             }
 
