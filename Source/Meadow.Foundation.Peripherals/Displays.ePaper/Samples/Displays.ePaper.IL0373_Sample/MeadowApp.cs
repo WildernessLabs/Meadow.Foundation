@@ -41,12 +41,12 @@ namespace Displays.ePaper.IL0373_Sample
 
             for (int i = 0; i < 3; i++)
             {
-                graphics.DrawLine(2, 70 + ySpacing * i, 22, 50 + ySpacing * i);
-                graphics.DrawLine(22, 50 + ySpacing * i, 42, 70 + ySpacing * i);
-                graphics.DrawLine(44, 70 + ySpacing * i, 64, 50 + ySpacing * i);
-                graphics.DrawLine(64, 50 + ySpacing * i, 84, 70 + ySpacing * i);
-                graphics.DrawLine(86, 70 + ySpacing * i, 106, 50 + ySpacing * i);
-                graphics.DrawLine(106, 50 + ySpacing * i, 126, 70 + ySpacing * i);
+                graphics.DrawLine(2, 70 + ySpacing * i, 22, 50 + ySpacing * i, true);
+                graphics.DrawLine(22, 50 + ySpacing * i, 42, 70 + ySpacing * i, true);
+                graphics.DrawLine(44, 70 + ySpacing * i, 64, 50 + ySpacing * i, true);
+                graphics.DrawLine(64, 50 + ySpacing * i, 84, 70 + ySpacing * i, true);
+                graphics.DrawLine(86, 70 + ySpacing * i, 106, 50 + ySpacing * i, true);
+                graphics.DrawLine(106, 50 + ySpacing * i, 126, 70 + ySpacing * i, true);
             }
 
             Console.WriteLine("Show");

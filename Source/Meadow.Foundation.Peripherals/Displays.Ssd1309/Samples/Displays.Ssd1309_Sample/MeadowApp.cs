@@ -36,7 +36,7 @@ namespace Displays.Ssd1306_Sample
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
-                resetPin: Device.Pins.D00,
+                resetPin: Device.Pins.D00
             );
         }
 
