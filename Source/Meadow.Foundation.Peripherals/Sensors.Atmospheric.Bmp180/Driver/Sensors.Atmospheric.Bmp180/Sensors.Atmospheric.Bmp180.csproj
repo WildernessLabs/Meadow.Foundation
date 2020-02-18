@@ -14,6 +14,6 @@
     <Description>Driver for BMP180 atmospheric sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.12.2" />
+    <PackageReference Include="Meadow.Foundation" Version="0.13.0" />
   </ItemGroup>
 </Project>

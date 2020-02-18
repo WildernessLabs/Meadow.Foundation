@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Sensors.Moisture.Fc28" Version="0.5.2" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Moisture.Fc28" Version="0.5.3" />
   </ItemGroup>
 </Project>

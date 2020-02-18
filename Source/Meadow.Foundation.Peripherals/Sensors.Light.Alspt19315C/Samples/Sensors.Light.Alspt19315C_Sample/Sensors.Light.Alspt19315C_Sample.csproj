@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Sensors.Light.Alspt19" Version="" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Light.Alspt19" Version="0.1.1" />
   </ItemGroup>
 </Project>

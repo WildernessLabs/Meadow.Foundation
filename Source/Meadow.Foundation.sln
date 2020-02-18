@@ -558,6 +558,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Hcsens0040",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Hcsens0040_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Hcsens0040\Samples\Sensors.Motion.Hcsens0040_Sample\Sensors.Motion.Hcsens0040_Sample.csproj", "{DA828BA9-E57F-4579-B6B0-55910247408F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1309_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Samples\Displays.Ssd1309_Sample\Displays.Ssd1309_Sample.csproj", "{E892BB59-C15A-4B60-A891-61DA944D56DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1172,6 +1174,10 @@ Global
 		{DA828BA9-E57F-4579-B6B0-55910247408F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA828BA9-E57F-4579-B6B0-55910247408F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA828BA9-E57F-4579-B6B0-55910247408F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E892BB59-C15A-4B60-A891-61DA944D56DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E892BB59-C15A-4B60-A891-61DA944D56DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E892BB59-C15A-4B60-A891-61DA944D56DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E892BB59-C15A-4B60-A891-61DA944D56DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1448,6 +1454,7 @@ Global
 		{D78EB96C-0105-4D6A-A34D-BD271912617E} = {75E65F82-D53E-4C41-81DE-57950C05900E}
 		{D162B2AE-0343-4257-ABF3-E501DB6CB549} = {75E65F82-D53E-4C41-81DE-57950C05900E}
 		{DA828BA9-E57F-4579-B6B0-55910247408F} = {D78EB96C-0105-4D6A-A34D-BD271912617E}
+		{E892BB59-C15A-4B60-A891-61DA944D56DA} = {FAD4D2B5-D578-413A-B776-5AE1F43D6CFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
