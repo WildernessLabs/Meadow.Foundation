@@ -101,9 +101,8 @@ namespace Meadow.Foundation.Sensors.Distance
         private void OnEchoPortChanged(object sender, DigitalInputPortEventArgs e)
         {
             if (e.Value == true)
-          // if(_echoPort.State == true)
+          // if(echoPort.State == true)
             {
-          ///      Console.WriteLine("true");
                 tickStart = DateTime.Now.Ticks;
                 return;
             }
@@ -111,13 +110,19 @@ namespace Meadow.Foundation.Sensors.Distance
         //    Console.WriteLine("false");
 
             // Calculate Difference
-            float elapsed = DateTime.Now.Ticks - tickStart;
+            var elapsed = DateTime.Now.Ticks - tickStart;
 
             // Return elapsed ticks
             // x10 for ticks to micro sec
             // divide by 58 for cm (assume speed of sound is 340m/s)
-            CurrentDistance = elapsed / 580f;
+            var curDis = elapsed / 580;
 
+            CurrentDistance = curDis; 
+
+            //debug - remove 
+            Console.WriteLine($"{elapsed}, {curDis}, {CurrentDistance}, {DateTime.Now.Ticks}");
+
+            //restore this before publishing to hide false results 
         //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
         //       CurrentDistance = -1;
 

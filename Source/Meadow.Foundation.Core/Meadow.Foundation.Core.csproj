@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
  <PropertyGroup>
    <TargetFramework>net472</TargetFramework>
    <OutputType>Library</OutputType>
@@ -9,11 +9,11 @@
    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
    <PackageTags>Meadow, Meadow.Foundation</PackageTags>
-   <Version>0.12.2</Version>
+   <Version>0.13.1</Version>
    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
    <RootNamespace>Meadow.Foundation</RootNamespace>
  </PropertyGroup>
  <ItemGroup>
-   <PackageReference Include="Meadow" Version="0.10.2" />
+   <PackageReference Include="Meadow" Version="0.11.0" />
  </ItemGroup>
 </Project>

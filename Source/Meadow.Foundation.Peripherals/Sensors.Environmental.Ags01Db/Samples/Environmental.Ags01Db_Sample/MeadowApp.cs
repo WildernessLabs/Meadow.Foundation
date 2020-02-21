@@ -2,7 +2,7 @@
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Environmental;
+using Meadow.Foundation.Sensors.Environmental;
 
 namespace MeadowApp
 {

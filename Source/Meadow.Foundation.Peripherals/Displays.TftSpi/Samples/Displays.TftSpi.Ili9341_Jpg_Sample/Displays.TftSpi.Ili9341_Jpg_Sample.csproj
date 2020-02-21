@@ -10,7 +10,7 @@
     <None Remove="meadow.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.7.2" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.7.4" />
     <PackageReference Include="SimpleJpegDecoder" Version="0.1.1" />
   </ItemGroup>
   <ItemGroup>

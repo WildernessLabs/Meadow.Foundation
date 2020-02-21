@@ -2,17 +2,18 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Dhxxx</AssemblyName>
+    <AssemblyName>Dhtxx</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Dhtxx</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, Atmospheric, DHT10, DHT12, DHXxx</PackageTags>    
-    <Version>0.1.0</Version>
+    <PackageTags>Meadow.Foundation, Atmospheric, DHT10, DHT12, Dhtxx</PackageTags>    
+    <Version>0.1.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for DHT family of atmospheric sensors</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.12.2" />
+    <PackageReference Include="Meadow.Foundation" Version="0.13.0" />
   </ItemGroup>
 </Project>

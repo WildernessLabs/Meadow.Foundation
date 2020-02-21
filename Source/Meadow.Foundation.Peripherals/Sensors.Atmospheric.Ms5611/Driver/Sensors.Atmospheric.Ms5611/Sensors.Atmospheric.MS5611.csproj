@@ -2,10 +2,18 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>MS5611</AssemblyName>
-    <Version>0.1.0</Version>
+    <AssemblyName>Ms5611</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.Sensors.Atmospheric.Ms5611</PackageId>
+    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation, Atmospheric, Ms5611</PackageTags>
+    <Version>0.1.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Driver for MS5611</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.12.1" />
+    <PackageReference Include="Meadow.Foundation" Version="0.13.0" />
   </ItemGroup>
 </Project>

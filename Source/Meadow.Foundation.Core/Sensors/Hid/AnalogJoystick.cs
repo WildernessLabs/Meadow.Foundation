@@ -125,12 +125,12 @@ namespace Meadow.Foundation.Sensors.Hid
 
         public Task<float> GetHorizontalValue()
         {
-            return HorizontalInputPort.Read();
+            return HorizontalInputPort.Read(1);
         }
 
         public Task<float> GetVerticalValue()
         {
-            return VerticalInputPort.Read();
+            return VerticalInputPort.Read(1);
         }
 
         public void StartUpdating (int sampleCount = 3,

@@ -49,7 +49,7 @@ namespace Displays.Ssd1306_Sample
             (
                 i2cBus: Device.CreateI2cBus(), 
                 address: 60, 
-                displayType: Ssd1306.DisplayType.OLED128x32
+                displayType: Ssd1306.DisplayType.OLED128x64
             );
         }
 
