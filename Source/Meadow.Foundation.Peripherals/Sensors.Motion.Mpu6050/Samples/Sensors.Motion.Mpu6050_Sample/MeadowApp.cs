@@ -8,33 +8,30 @@ namespace Sensors.Motion.mpu5060_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Mpu6050 mpu5060;
+        MPU6050 mpu;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing");
 
-            mpu5060 = new Mpu6050(Device.CreateI2cBus());
+            mpu = new MPU6050(Device.CreateI2cBus(), 0x69);
 
-            TestMpu6050();
-        }
-
-        private void TestMpu6050()
-        {
-            Console.WriteLine("TestMpu6050...");
-
-            // Wake
-            mpu5060.Wake();
+            mpu.AccelerationXChanged += OnRotated;
+            mpu.AccelerationYChanged += OnRotated;
+            mpu.AccelerationZChanged += OnRotated;
+            mpu.AccelerationChangeThreshold = 0.05f;
+            mpu.StartSampling(TimeSpan.FromMilliseconds(500));
 
             while (true)
             {
-                Console.WriteLine("Reading...");
-
-                mpu5060.Refresh();
-                Console.WriteLine($" ({mpu5060.AccelerationX:X4},{mpu5060.AccelerationY:X4},{mpu5060.AccelerationZ:X4}) ({mpu5060.GyroX:X4},{mpu5060.GyroY:X4},{mpu5060.GyroZ:X4}) {mpu5060.Temperature}");
-                
-                Thread.Sleep(2000);
+                Console.WriteLine($"{mpu.TemperatureC}C");
+                Thread.Sleep(5000);
             }
+        }
+
+        void OnRotated(float before, float after)
+        {
+            Console.WriteLine($"Acc: ({mpu.AccelerationX}, {mpu.AccelerationY}, {mpu.AccelerationZ})");
         }
     }
 }
