@@ -31,7 +31,7 @@ namespace MeadowApp
 
                     try
                     {
-                        bus.Configuration.SpeedKHz = spd;
+//                        bus.Configuration.SpeedKHz = spd;
 
                         Console.WriteLine($" @{bus.Configuration.SpeedKHz} Silicon Revision: 0x{radio.GetVersion():x2}");
                     }
