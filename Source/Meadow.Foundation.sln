@@ -558,7 +558,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Hcsens0040",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Hcsens0040_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Hcsens0040\Samples\Sensors.Motion.Hcsens0040_Sample\Sensors.Motion.Hcsens0040_Sample.csproj", "{DA828BA9-E57F-4579-B6B0-55910247408F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1309_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Samples\Displays.Ssd1309_Sample\Displays.Ssd1309_Sample.csproj", "{E892BB59-C15A-4B60-A891-61DA944D56DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd1309_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Samples\Displays.Ssd1309_Sample\Displays.Ssd1309_Sample.csproj", "{E892BB59-C15A-4B60-A891-61DA944D56DA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transceivers.SX127x", "Meadow.Foundation.Peripherals\Transceivers.SX127x\Driver\Transceivers.SX127x\Transceivers.SX127x.csproj", "{D1728292-F7A8-4D43-8E34-88F9E82B0A7B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Transceivers.SX127x", "Transceivers.SX127x", "{C415618A-929B-4B4D-9139-346A90EBC538}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transceivers.SX127x_Sample", "Meadow.Foundation.Peripherals\Transceivers.SX127x\Samples\Transceivers.SX127x_Sample\Transceivers.SX127x_Sample.csproj", "{AAFE4A7E-18BF-4836-8AEC-BFFF9633D0BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{87A9D829-699E-4A9F-940A-ADF6AD6005E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1178,6 +1186,18 @@ Global
 		{E892BB59-C15A-4B60-A891-61DA944D56DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E892BB59-C15A-4B60-A891-61DA944D56DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E892BB59-C15A-4B60-A891-61DA944D56DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1728292-F7A8-4D43-8E34-88F9E82B0A7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1728292-F7A8-4D43-8E34-88F9E82B0A7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1728292-F7A8-4D43-8E34-88F9E82B0A7B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D1728292-F7A8-4D43-8E34-88F9E82B0A7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1728292-F7A8-4D43-8E34-88F9E82B0A7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1728292-F7A8-4D43-8E34-88F9E82B0A7B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{AAFE4A7E-18BF-4836-8AEC-BFFF9633D0BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAFE4A7E-18BF-4836-8AEC-BFFF9633D0BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAFE4A7E-18BF-4836-8AEC-BFFF9633D0BC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{AAFE4A7E-18BF-4836-8AEC-BFFF9633D0BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAFE4A7E-18BF-4836-8AEC-BFFF9633D0BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAFE4A7E-18BF-4836-8AEC-BFFF9633D0BC}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1455,6 +1475,10 @@ Global
 		{D162B2AE-0343-4257-ABF3-E501DB6CB549} = {75E65F82-D53E-4C41-81DE-57950C05900E}
 		{DA828BA9-E57F-4579-B6B0-55910247408F} = {D78EB96C-0105-4D6A-A34D-BD271912617E}
 		{E892BB59-C15A-4B60-A891-61DA944D56DA} = {FAD4D2B5-D578-413A-B776-5AE1F43D6CFE}
+		{D1728292-F7A8-4D43-8E34-88F9E82B0A7B} = {C415618A-929B-4B4D-9139-346A90EBC538}
+		{C415618A-929B-4B4D-9139-346A90EBC538} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{AAFE4A7E-18BF-4836-8AEC-BFFF9633D0BC} = {87A9D829-699E-4A9F-940A-ADF6AD6005E9}
+		{87A9D829-699E-4A9F-940A-ADF6AD6005E9} = {C415618A-929B-4B4D-9139-346A90EBC538}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
