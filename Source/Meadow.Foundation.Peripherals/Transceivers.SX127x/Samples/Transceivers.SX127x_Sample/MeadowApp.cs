@@ -24,6 +24,7 @@ namespace MeadowApp
 
             while (true)
             {
+                // this is purely a test for supporting changing bus speed in SPI - remove when the radio is implemented
                 foreach (var spd in bus.SupportedSpeeds)
                 {
                     Console.WriteLine($"{spd}");
