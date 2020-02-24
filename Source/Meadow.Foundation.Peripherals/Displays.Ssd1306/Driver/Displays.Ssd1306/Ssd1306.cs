@@ -196,7 +196,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public bool Sleep
         {
-            get { return(_sleep); }
+            get => _sleep;
             set
             {
                 _sleep = value;
@@ -290,6 +290,12 @@ namespace Meadow.Foundation.Displays
             }
 
             buffer = new byte[width * height / 8];
+
+            if(connectionType == ConnectionType.SPI)
+            {
+                spiReceive = new byte[width * height / 8];
+            }
+
             showPreamble = new byte[] { 0x21, 0x00, (byte)(width - 1), 0x22, 0x00, (byte)(height/8 - 1) };
 
             IgnoreOutOfBoundsPixels = false;
@@ -360,10 +366,11 @@ namespace Meadow.Foundation.Displays
 
             if (connectionType == ConnectionType.SPI)
             {
-             //   dataCommandPort.State = Data;
-             //   spiDisplay.WriteBytes(_buffer);
+                   dataCommandPort.State = Data;
+                   spiDisplay.WriteBytes(buffer);
 
-                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, buffer, spiReceive);
+              //  dataCommandPort.State = Data;
+              //  spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, buffer, spiReceive);
             }
             else
             {
@@ -385,7 +392,9 @@ namespace Meadow.Foundation.Displays
             Array.Clear(buffer, 0, buffer.Length);
 
             if (updateDisplay)
+            {
                 Show();
+            }
         }
 
         /// <summary>
