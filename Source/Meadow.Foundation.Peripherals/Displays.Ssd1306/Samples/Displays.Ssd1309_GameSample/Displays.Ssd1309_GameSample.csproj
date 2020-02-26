@@ -1,10 +1,10 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.Ssd1306" Version="0.12.1" />
+    <ProjectReference Include="..\..\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj" />
   </ItemGroup>
 </Project>

@@ -422,7 +422,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TftSpi", "Meadow.F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd1306_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Samples\Displays.Ssd1306_Sample\Displays.Ssd1306_Sample.csproj", "{16CFD509-CEA6-4038-B504-5C026C2A464F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd1306", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj", "{7F69F8CB-5C1A-461B-90FC-360367CD65CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1306", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj", "{7F69F8CB-5C1A-461B-90FC-360367CD65CF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.SerialLcd", "Meadow.Foundation.Peripherals\Displays.SerialLcd\Driver\Displays.SerialLcd\Displays.SerialLcd.csproj", "{BBF3CB03-A56D-4B8D-88CD-0F69355AC17B}"
 EndProject
@@ -583,6 +583,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{E96F47CD-B37D-44D1-A7CE-B5B0624ECE81}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transceivers.SX127x_Sample", "Meadow.Foundation.Peripherals\Transceivers.SX127x\Samples\Transceivers.SX127x_Sample\Transceivers.SX127x_Sample.csproj", "{D9AE3936-204E-4FE7-84BD-5684B2172C37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1309_GameSample", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Samples\Displays.Ssd1309_GameSample\Displays.Ssd1309_GameSample.csproj", "{F5596859-93D3-41D0-8988-FFA24F4A2152}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Hmc5883", "Sensors.Motion.Hmc5883", "{ED862B12-EBF8-49BB-8F2A-01760F6D60E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1238,6 +1242,10 @@ Global
 		{D9AE3936-204E-4FE7-84BD-5684B2172C37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9AE3936-204E-4FE7-84BD-5684B2172C37}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9AE3936-204E-4FE7-84BD-5684B2172C37}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F5596859-93D3-41D0-8988-FFA24F4A2152}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5596859-93D3-41D0-8988-FFA24F4A2152}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5596859-93D3-41D0-8988-FFA24F4A2152}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5596859-93D3-41D0-8988-FFA24F4A2152}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1527,6 +1535,8 @@ Global
 		{5EAD3691-54CF-4294-8358-44D874F78EDB} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{E96F47CD-B37D-44D1-A7CE-B5B0624ECE81} = {5EAD3691-54CF-4294-8358-44D874F78EDB}
 		{D9AE3936-204E-4FE7-84BD-5684B2172C37} = {E96F47CD-B37D-44D1-A7CE-B5B0624ECE81}
+		{F5596859-93D3-41D0-8988-FFA24F4A2152} = {FAD4D2B5-D578-413A-B776-5AE1F43D6CFE}
+		{ED862B12-EBF8-49BB-8F2A-01760F6D60E7} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

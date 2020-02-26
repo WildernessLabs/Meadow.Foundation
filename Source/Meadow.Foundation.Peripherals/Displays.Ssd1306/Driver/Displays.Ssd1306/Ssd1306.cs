@@ -366,11 +366,8 @@ namespace Meadow.Foundation.Displays
 
             if (connectionType == ConnectionType.SPI)
             {
-                   dataCommandPort.State = Data;
-                   spiDisplay.WriteBytes(buffer);
-
-              //  dataCommandPort.State = Data;
-              //  spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, buffer, spiReceive);
+                dataCommandPort.State = Data;
+                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, buffer, spiReceive);
             }
             else
             {
