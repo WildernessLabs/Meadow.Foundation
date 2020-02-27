@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Breakout;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
@@ -25,32 +26,63 @@ namespace MeadowApp
         IDigitalInterruptPort portRight;
         IDigitalInterruptPort portDown;
 
-        SnakeGame game;
+        SnakeGame snakeGame;
+        BreakoutGame breakoutGame;
 
         public MeadowApp()
         {
             Initialize();
 
-            game = new SnakeGame(64, 128);
+            breakoutGame = new BreakoutGame(64, 128);
+            StartBreakoutLoop();
 
-            StartGameLoop();
+          //  snakeGame = new SnakeGame(64, 128);
+          //  StartSnakeLoop();
 
         }
 
-        void StartGameLoop()
+        void StartBreakoutLoop()
+        {
+            while (true)
+            {
+                breakoutGame.Update();
+
+                graphics.Clear(false);
+
+                graphics.DrawCircle(breakoutGame.Ball.X, breakoutGame.Ball.Y, breakoutGame.Ball.Radius, true, true);
+                    
+
+                graphics.DrawRectangle(breakoutGame.Paddle.X, breakoutGame.Paddle.Y,
+                    breakoutGame.Paddle.Width, breakoutGame.Paddle.Height,
+                    true);
+
+                for (int i = 0; i < breakoutGame.Blocks.Length; i++)
+                {
+                    if (breakoutGame.Blocks[i].IsVisible)
+                    {
+                        graphics.DrawRectangle(breakoutGame.Blocks[i].X, breakoutGame.Blocks[i].Y,
+                            breakoutGame.Blocks[i].Width, breakoutGame.Blocks[i].Height);
+                    }
+                }
+
+                graphics.Show();
+            }
+        }
+
+        void StartSnakeLoop()
         {
             while(true)
             {
                 graphics.Clear();
 
-                game.Update();
+                snakeGame.Update();
                 //draw food
-                graphics.DrawPixel(game.FoodPosition.X, game.FoodPosition.Y);
+                graphics.DrawPixel(snakeGame.FoodPosition.X, snakeGame.FoodPosition.Y);
 
                 //draw food
-                for (int i = 0; i < game.SnakePosition.Count; i++)
+                for (int i = 0; i < snakeGame.SnakePosition.Count; i++)
                 {
-                    var point = (Point)game.SnakePosition[i];
+                    var point = (Point)snakeGame.SnakePosition[i];
 
                     graphics.DrawPixel(point.X, point.Y);
                 }
@@ -61,7 +93,7 @@ namespace MeadowApp
                 //show
                 graphics.Show();
 
-                Thread.Sleep(250 - game.Level * 5);
+                Thread.Sleep(250 - snakeGame.Level * 5);
             }
         }
 
@@ -130,7 +162,9 @@ namespace MeadowApp
             /*    graphics.Clear();
                 graphics.DrawText(0, 0, "R" + count++);
                 graphics.Show(); */
-            game.Direction = SnakeDirection.Right;
+            //   snakeGame.Direction = SnakeDirection.Right;
+
+            breakoutGame.Right(breakoutGame.Paddle.Width);
         }
 
         private void PortDown_Changed(object sender, DigitalInputPortEventArgs e)
@@ -138,7 +172,7 @@ namespace MeadowApp
             /*  graphics.Clear();
               graphics.DrawText(0, 0, "D" + count++);
               graphics.Show(); */
-            game.Direction = SnakeDirection.Down;
+      //      snakeGame.Direction = SnakeDirection.Down;
         }
 
         private void PortUp_Changed(object sender, DigitalInputPortEventArgs e)
@@ -147,7 +181,9 @@ namespace MeadowApp
             graphics.DrawText(0, 0, "U" + count++);
             graphics.Show(); */
 
-            game.Direction = SnakeDirection.Up;
+        //    snakeGame.Direction = SnakeDirection.Up;
+
+
         }
 
         private void PortLeft_Changed(object sender, DigitalInputPortEventArgs e)
@@ -156,11 +192,12 @@ namespace MeadowApp
             graphics.DrawText(0, 0, "L" + count++);
             graphics.Show(); */
 
-            game.Direction = SnakeDirection.Left;
+            //  snakeGame.Direction = SnakeDirection.Left;
+
+            breakoutGame.Left(breakoutGame.Paddle.Width);
         }
 
         int count = 0;
-
         private void BtnRight_Clicked(object sender, EventArgs e)
         {
             graphics.Clear();
