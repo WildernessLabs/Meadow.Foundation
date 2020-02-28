@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Hid;
 using System.Threading.Tasks;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
-    public class AnalogJoystick
+    public class AnalogJoystick 
+        : FilterableObservableBase<JoystickConditionChangeResult, JoystickConditions>
     {
         #region Properties
 
