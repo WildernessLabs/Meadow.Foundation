@@ -14,13 +14,13 @@ namespace Sensors.Rotary.RotaryEncoder_Sample
         {
             Console.WriteLine("Initializing...");
 
-            rotaryEncoder = new RotaryEncoder(Device, Device.Pins.D00, Device.Pins.D01);
+            rotaryEncoder = new RotaryEncoder(Device, Device.Pins.D13, Device.Pins.D14);
             rotaryEncoder.Rotated += (s, e) => 
             {
                 if (e.Direction == Meadow.Peripherals.Sensors.Rotary.RotationDirection.Clockwise)
-                    value++;
+                { value++; }
                 else
-                    value--;
+                { value--; }
 
                 Console.WriteLine("Value = {0}", value);
             };
