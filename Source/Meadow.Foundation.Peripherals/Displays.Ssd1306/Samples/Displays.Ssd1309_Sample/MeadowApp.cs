@@ -27,8 +27,6 @@ namespace Displays.Ssd1309_Sample
             TestDisplayGraphicsAPI();
             Thread.Sleep(10000);
 
-       //     Clock();
-
             Grid();
 
             Count();
@@ -36,7 +34,6 @@ namespace Displays.Ssd1309_Sample
             Bounce();
         }
 
-        //untested
         void CreateSpiDisplay()
         {
             Console.WriteLine("Create Display with SPI...");
@@ -47,8 +44,8 @@ namespace Displays.Ssd1309_Sample
 
             display = new Ssd1309
             (
-                device: Device, 
-                spiBus: bus, 
+                device: Device,
+                spiBus: bus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00
@@ -61,17 +58,17 @@ namespace Displays.Ssd1309_Sample
 
             display = new Ssd1309
             (
-                i2cBus: Device.CreateI2cBus(), 
+                i2cBus: Device.CreateI2cBus(),
                 address: 60
             );
         }
 
-        void Clock ()
+        void Clock()
         {
             for (int i = 0; i < 10000; i++)
             {
-           
-                  
+
+
 
 
             }
@@ -87,12 +84,12 @@ namespace Displays.Ssd1309_Sample
             {
                 display.Clear();
 
-                for(int i = xOffset; i < display.Width; i += spacing)
+                for (int i = xOffset; i < display.Width; i += spacing)
                 {
                     graphics.DrawVerticalLine(i, 0, (int)display.Height, true);
                 }
 
-                for(int j = yOffset; j < display.Height; j += spacing)
+                for (int j = yOffset; j < display.Height; j += spacing)
                 {
                     graphics.DrawHorizontalLine(0, j, (int)display.Width, true);
                 }
@@ -113,7 +110,7 @@ namespace Displays.Ssd1309_Sample
 
             stopwatch.Start();
 
-            for(int i = 0; i < 9999; i++)
+            for (int i = 0; i < 9999; i++)
             {
                 display.Clear();
                 graphics.DrawText(0, 0, $"{i}");
@@ -145,7 +142,7 @@ namespace Displays.Ssd1309_Sample
                 x += xV;
                 y += yV;
 
-                if(x <= 0 || x >= display.Width - 1)
+                if (x <= 0 || x >= display.Width - 1)
                 {
                     xV *= -1;
                 }
@@ -173,7 +170,7 @@ namespace Displays.Ssd1309_Sample
             display.Show();
         }
 
-        void TestDisplayGraphicsAPI() 
+        void TestDisplayGraphicsAPI()
         {
             graphics = new GraphicsLibrary(display);
 

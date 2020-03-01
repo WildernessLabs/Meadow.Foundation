@@ -604,6 +604,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{3BB4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Max44009_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Max44009\Samples\Sensors.Light.Max44009_Sample\Sensors.Light.Max44009_Sample.csproj", "{466BAAFF-79D5-47D0-8A61-71EED9E94B17}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1039_3DCubeSample", "Meadow.Foundation.Peripherals\Displays.Ssd1306\Samples\Displays.Ssd1039_3DCubeSample\Displays.Ssd1039_3DCubeSample.csproj", "{2B3D4217-C4E9-42C0-853F-0181BC75CE55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1282,6 +1284,10 @@ Global
 		{466BAAFF-79D5-47D0-8A61-71EED9E94B17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{466BAAFF-79D5-47D0-8A61-71EED9E94B17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{466BAAFF-79D5-47D0-8A61-71EED9E94B17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B3D4217-C4E9-42C0-853F-0181BC75CE55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B3D4217-C4E9-42C0-853F-0181BC75CE55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B3D4217-C4E9-42C0-853F-0181BC75CE55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B3D4217-C4E9-42C0-853F-0181BC75CE55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1581,6 +1587,7 @@ Global
 		{F15B5202-B450-4C93-9EDE-1BC0BB1D780E} = {736DBD67-A8CB-4D56-90A7-936F3A62EC2A}
 		{3BB43F5A-E05D-4E59-9ACE-053C60608E33} = {736DBD67-A8CB-4D56-90A7-936F3A62EC2A}
 		{466BAAFF-79D5-47D0-8A61-71EED9E94B17} = {3BB43F5A-E05D-4E59-9ACE-053C60608E33}
+		{2B3D4217-C4E9-42C0-853F-0181BC75CE55} = {FAD4D2B5-D578-413A-B776-5AE1F43D6CFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
