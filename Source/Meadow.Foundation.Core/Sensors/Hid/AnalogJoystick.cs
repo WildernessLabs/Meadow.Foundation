@@ -1,15 +1,22 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Hid;
+using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
     public class AnalogJoystick 
-        : FilterableObservableBase<JoystickConditionChangeResult, JoystickConditions>
+        : FilterableObservableBase<JoystickPositionChangeResult, JoystickPosition>
     {
+        /// <summary>
+        /// Raised when the value of the reading changes.
+        /// </summary>
+        public event EventHandler<JoystickPositionChangeResult> Updated = delegate { };
+
         #region Properties
 
         public IAnalogInputPort HorizontalInputPort { get; protected set; }
+
         public IAnalogInputPort VerticalInputPort { get; protected set; }
 
         public JoystickPosition Position { get; }
@@ -34,7 +41,6 @@ namespace Meadow.Foundation.Sensors.Hid
             DownRight,
             DownLeft,
         }
-
 
         #endregion Enums
 
@@ -70,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
         #endregion Constructors
 
-        #region Method
+        #region Methods
 
         //call to set the joystick center position
         public async Task SetCenterPosition()
