@@ -32,7 +32,15 @@ namespace MeadowApp
                 Device.CreateAnalogInputPort(Device.Pins.A00),
                 calibration, true);
 
-            var t = TestAnalogJoystick();
+            joystick.Updated += JoystickUpdated;
+            joystick.StartUpdating();
+
+            //var t = TestAnalogJoystick();
+        }
+
+        private void JoystickUpdated(object sender, Meadow.Peripherals.Sensors.Hid.JoystickPositionChangeResult e)
+        {
+            Console.WriteLine($"({e.New.HorizontalValue} , {e.New.VerticalValue})");
         }
 
         async Task TestAnalogJoystick() 

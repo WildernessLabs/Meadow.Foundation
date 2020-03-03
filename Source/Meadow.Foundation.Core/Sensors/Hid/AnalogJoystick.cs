@@ -25,6 +25,10 @@ namespace Meadow.Foundation.Sensors.Hid
 
         public bool IsInverted { get; protected set; }
 
+        public float HorizontalValue { get; protected set; }
+
+        public float VerticalValue { get; protected set; }
+
         #endregion
 
         #region Enums
@@ -72,6 +76,40 @@ namespace Meadow.Foundation.Sensors.Hid
             {
                 Calibration = calibration;
             }
+
+            HorizontalInputPort.Subscribe
+            (
+                new FilterableObserver<FloatChangeResult, float>(
+                    h => 
+                    {
+                        HorizontalValue = h.New;
+                        RaiseEventsAndNotify
+                        (
+                            new JoystickPositionChangeResult(
+                                new Peripherals.Sensors.Hid.JoystickPosition(h.New, VerticalValue),
+                                new Peripherals.Sensors.Hid.JoystickPosition(h.Old, VerticalValue)
+                            )
+                        );
+                    }
+                )
+            );
+
+            VerticalInputPort.Subscribe
+            (
+                new FilterableObserver<FloatChangeResult, float>(
+                    v =>
+                    {
+                        VerticalValue = v.New;
+                        RaiseEventsAndNotify
+                        (
+                            new JoystickPositionChangeResult(
+                                new Peripherals.Sensors.Hid.JoystickPosition(HorizontalValue, v.New),
+                                new Peripherals.Sensors.Hid.JoystickPosition(HorizontalValue, v.Old)
+                            )
+                        );
+                    }
+                )
+           );
         }
 
         #endregion Constructors
@@ -81,8 +119,8 @@ namespace Meadow.Foundation.Sensors.Hid
         //call to set the joystick center position
         public async Task SetCenterPosition()
         {
-            var hCenter = await HorizontalInputPort.Read();
-            var vCenter = await VerticalInputPort.Read();
+            var hCenter = await HorizontalInputPort.Read(1);
+            var vCenter = await VerticalInputPort.Read(1);
 
             Calibration = new JoystickCalibration(
                 hCenter, Calibration.HorizontalMin, Calibration.HorizontalMax,
@@ -177,6 +215,12 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             HorizontalInputPort.StopSampling();
             VerticalInputPort.StopSampling();
+        }
+
+        protected void RaiseEventsAndNotify(JoystickPositionChangeResult changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
         }
 
         #endregion Methods
