@@ -16,7 +16,7 @@ namespace MeadowApp
 
         public MeadowApp()
         {
-            Console.WriteLine("MeadowApp()...");
+            Console.WriteLine("Initializing...");
 
             Up = new Led(Device.CreateDigitalOutputPort(Device.Pins.D07));
             Down = new Led(Device.CreateDigitalOutputPort(Device.Pins.D04));
@@ -24,13 +24,15 @@ namespace MeadowApp
             Right = new Led(Device.CreateDigitalOutputPort(Device.Pins.D03));
 
             var calibration = new JoystickCalibration(
-                1.58f, 0.02f, 3.29f,
-                1.58f, 0.02f, 3.29f, 
-                0.20f);
+                1.58f, 0f, 3.3f,
+                1.58f, 0f, 3.3f, 
+                0.26f);
             joystick = new AnalogJoystick(
                 Device.CreateAnalogInputPort(Device.Pins.A01), 
                 Device.CreateAnalogInputPort(Device.Pins.A00),
-                calibration, true);
+                null, false);
+
+            var t = joystick.SetCenterPosition(); //fire and forget 
 
             joystick.Updated += JoystickUpdated;
             joystick.StartUpdating();
@@ -40,7 +42,7 @@ namespace MeadowApp
 
         private void JoystickUpdated(object sender, Meadow.Peripherals.Sensors.Hid.JoystickPositionChangeResult e)
         {
-            Console.WriteLine($"({e.New.HorizontalValue} , {e.New.VerticalValue})");
+            Console.WriteLine($"({e.New.HorizontalValue}, {e.New.VerticalValue})");
         }
 
         async Task TestAnalogJoystick() 
@@ -59,38 +61,38 @@ namespace MeadowApp
                 var position = await joystick.GetPosition();
                 switch (position)
                 {
-                    case JoystickPosition.Up:
+                    case DigitalJoystickPosition.Up:
                         Down.IsOn = Left.IsOn = Right.IsOn = false;
                         Up.IsOn = true;
                         break;
-                    case JoystickPosition.Down:
+                    case DigitalJoystickPosition.Down:
                         Up.IsOn = Left.IsOn = Right.IsOn = false;
                         Down.IsOn = true;
                         break;
-                    case JoystickPosition.Left:
+                    case DigitalJoystickPosition.Left:
                         Up.IsOn = Down.IsOn = Right.IsOn = false;
                         Left.IsOn = true;
                         break;
-                    case JoystickPosition.Right:
+                    case DigitalJoystickPosition.Right:
                         Up.IsOn = Down.IsOn = Left.IsOn = false;
                         Right.IsOn = true;
                         break;
-                    case JoystickPosition.Center:
+                    case DigitalJoystickPosition.Center:
                         Up.IsOn = Down.IsOn = Left.IsOn = Right.IsOn = false;
                         break;
-                    case JoystickPosition.UpLeft:
+                    case DigitalJoystickPosition.UpLeft:
                         Down.IsOn = Right.IsOn = false;
                         Up.IsOn = Left.IsOn = true;
                         break;
-                    case JoystickPosition.UpRight:
+                    case DigitalJoystickPosition.UpRight:
                         Down.IsOn = Left.IsOn = false;
                         Up.IsOn = Right.IsOn = true;
                         break;
-                    case JoystickPosition.DownLeft:
+                    case DigitalJoystickPosition.DownLeft:
                         Up.IsOn = Right.IsOn = false;
                         Down.IsOn = Left.IsOn = true;
                         break;
-                    case JoystickPosition.DownRight:
+                    case DigitalJoystickPosition.DownRight:
                         Up.IsOn = Left.IsOn = false;
                         Down.IsOn = Right.IsOn = true;
                         break;

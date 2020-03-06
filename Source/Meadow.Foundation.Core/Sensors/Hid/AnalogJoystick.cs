@@ -17,9 +17,9 @@ namespace Meadow.Foundation.Sensors.Hid
 
         public IAnalogInputPort HorizontalInputPort { get; protected set; }
 
-        public IAnalogInputPort VerticalInputPort { get; protected set; }
+        public  IAnalogInputPort VerticalInputPort { get; protected set; }
 
-        public JoystickPosition Position { get; }
+        public DigitalJoystickPosition Position { get; }
 
         public JoystickCalibration Calibration { get; protected set; }
 
@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
         #region Enums
 
-        public enum JoystickPosition
+        public enum DigitalJoystickPosition
         {
             Center,
             Up,
@@ -49,8 +49,6 @@ namespace Meadow.Foundation.Sensors.Hid
         #endregion Enums
 
         #region Member variables / fields
-
-        
         
         #endregion Member variables / fields
 
@@ -61,33 +59,46 @@ namespace Meadow.Foundation.Sensors.Hid
         public AnalogJoystick(IIODevice device, IPin horizontalPin, IPin verticalPin, JoystickCalibration calibration = null, bool isInverted = false) :
             this(device.CreateAnalogInputPort(horizontalPin), device.CreateAnalogInputPort(verticalPin), calibration, isInverted) { }
 
-        public AnalogJoystick(IAnalogInputPort horizontalInputPort, IAnalogInputPort verticalInputPort, 
+        public AnalogJoystick(IAnalogInputPort horizontalInputPort, IAnalogInputPort verticalInputPort,
             JoystickCalibration calibration = null, bool isInverted = false)
         {
             HorizontalInputPort = horizontalInputPort;
             VerticalInputPort = verticalInputPort;
             IsInverted = isInverted;
 
-            if (calibration == null)
-            {
-                Calibration = new JoystickCalibration();
+            if (calibration == null) {
+                Calibration = new JoystickCalibration(3.3f);
             }
-            else
-            {
+            else {
                 Calibration = calibration;
             }
+
+            InitSubscriptions();
+        }
+
+        void InitSubscriptions()
+        {
 
             HorizontalInputPort.Subscribe
             (
                 new FilterableObserver<FloatChangeResult, float>(
-                    h => 
-                    {
+                    h => {
                         HorizontalValue = h.New;
+                        if ((Math.Abs(h.Old - Calibration.HorizontalCenter) < Calibration.DeadZone) &&
+                            (Math.Abs(h.New - Calibration.HorizontalCenter) < Calibration.DeadZone))
+                        {
+                            return;
+                        }
+
+                        var oldH = GetNormalizedPosition(h.Old, true);
+                        var newH = GetNormalizedPosition(h.New, true);
+                        var v = GetNormalizedPosition(VerticalValue, false);
+
                         RaiseEventsAndNotify
                         (
                             new JoystickPositionChangeResult(
-                                new Peripherals.Sensors.Hid.JoystickPosition(h.New, VerticalValue),
-                                new Peripherals.Sensors.Hid.JoystickPosition(h.Old, VerticalValue)
+                                new JoystickPosition(newH, v),
+                                new JoystickPosition(oldH, v)
                             )
                         );
                     }
@@ -97,14 +108,23 @@ namespace Meadow.Foundation.Sensors.Hid
             VerticalInputPort.Subscribe
             (
                 new FilterableObserver<FloatChangeResult, float>(
-                    v =>
-                    {
+                    v => {
                         VerticalValue = v.New;
+                        if ((Math.Abs(v.Old - Calibration.VerticalCenter) < Calibration.DeadZone) &&
+                            (Math.Abs(v.New - Calibration.VerticalCenter) < Calibration.DeadZone))
+                        { 
+                            return;     
+                        }
+
+                        var oldV = GetNormalizedPosition(v.Old, false);
+                        var newV = GetNormalizedPosition(v.New, false);
+                        var h = GetNormalizedPosition(HorizontalValue, true);
+
                         RaiseEventsAndNotify
                         (
                             new JoystickPositionChangeResult(
-                                new Peripherals.Sensors.Hid.JoystickPosition(HorizontalValue, v.New),
-                                new Peripherals.Sensors.Hid.JoystickPosition(HorizontalValue, v.Old)
+                                new JoystickPosition(h, newV),
+                                new JoystickPosition(h, oldV)
                             )
                         );
                     }
@@ -142,7 +162,7 @@ namespace Meadow.Foundation.Sensors.Hid
         }
 
         // helper method to check joystick position
-        public bool IsJoystickInPosition(JoystickPosition position)
+        public bool IsJoystickInPosition(DigitalJoystickPosition position)
         {
             if (position == Position)
                 return true;
@@ -150,47 +170,37 @@ namespace Meadow.Foundation.Sensors.Hid
             return false;
         }
 
-        public async Task<JoystickPosition> GetPosition()
+        public async Task<DigitalJoystickPosition> GetPosition()
         {
             var h = await GetHorizontalValue();
             var v = await GetVerticalValue();
             
-            if (h > Calibration.HorizontalCenter + Calibration.DeadZone)
-            {
-                if (v > Calibration.VerticalCenter + Calibration.DeadZone) 
-                { 
-                    return IsInverted ? JoystickPosition.DownLeft : JoystickPosition.UpRight; 
+            if (h > Calibration.HorizontalCenter + Calibration.DeadZone) {
+                if (v > Calibration.VerticalCenter + Calibration.DeadZone) { 
+                    return IsInverted ? DigitalJoystickPosition.DownLeft : DigitalJoystickPosition.UpRight; 
                 }
-                if (v < Calibration.VerticalCenter - Calibration.DeadZone) 
-                { 
-                    return IsInverted ? JoystickPosition.UpLeft : JoystickPosition.DownRight; 
+                if (v < Calibration.VerticalCenter - Calibration.DeadZone) {  
+                    return IsInverted ? DigitalJoystickPosition.UpLeft : DigitalJoystickPosition.DownRight; 
                 }
-
-                return IsInverted ? JoystickPosition.Left : JoystickPosition.Right;
+                return IsInverted ? DigitalJoystickPosition.Left : DigitalJoystickPosition.Right;
             }
-            else if (h < Calibration.HorizontalCenter - Calibration.DeadZone)
-            {
-                if (v > Calibration.VerticalCenter + Calibration.DeadZone) 
-                {
-                    return IsInverted ? JoystickPosition.DownRight : JoystickPosition.UpLeft; 
+            else if (h < Calibration.HorizontalCenter - Calibration.DeadZone) {
+                if (v > Calibration.VerticalCenter + Calibration.DeadZone) {
+                    return IsInverted ? DigitalJoystickPosition.DownRight : DigitalJoystickPosition.UpLeft; 
                 }
-                if (v < Calibration.VerticalCenter - Calibration.DeadZone) 
-                {
-                    return IsInverted ? JoystickPosition.UpRight : JoystickPosition.DownLeft; 
+                if (v < Calibration.VerticalCenter - Calibration.DeadZone) {
+                    return IsInverted ? DigitalJoystickPosition.UpRight : DigitalJoystickPosition.DownLeft; 
                 }
-
-                return IsInverted ? JoystickPosition.Right : JoystickPosition.Left;
+                return IsInverted ? DigitalJoystickPosition.Right : DigitalJoystickPosition.Left;
             }
-            else if (v > Calibration.VerticalCenter + Calibration.DeadZone)
-            {
-                return IsInverted ? JoystickPosition.Down : JoystickPosition.Up;
+            else if (v > Calibration.VerticalCenter + Calibration.DeadZone) {
+                return IsInverted ? DigitalJoystickPosition.Down : DigitalJoystickPosition.Up;
             }
-            else if (v < Calibration.VerticalCenter - Calibration.DeadZone)
-            {
-                return IsInverted ? JoystickPosition.Up : JoystickPosition.Down;
+            else if (v < Calibration.VerticalCenter - Calibration.DeadZone) {
+                return IsInverted ? DigitalJoystickPosition.Up : DigitalJoystickPosition.Down;
             }
 
-            return JoystickPosition.Center;
+            return DigitalJoystickPosition.Center;
         }
 
         public Task<float> GetHorizontalValue()
@@ -223,6 +233,34 @@ namespace Meadow.Foundation.Sensors.Hid
             base.NotifyObservers(changeResult);
         }
 
+        float GetNormalizedPosition(float value, bool isHorizontal)
+        {
+            float normalized;
+
+            if(isHorizontal)
+            {
+                if(value <= Calibration.HorizontalCenter) {
+                    normalized = (value - Calibration.HorizontalCenter) / (Calibration.HorizontalCenter - Calibration.HorizontalMin);
+                }
+                else {
+                    normalized = (value - Calibration.HorizontalCenter) / (Calibration.HorizontalMax - Calibration.HorizontalCenter);
+                }
+            }
+            else
+            {
+                if (value <= Calibration.VerticalCenter)
+                {
+                    normalized = (value - Calibration.VerticalCenter) / (Calibration.VerticalCenter - Calibration.VerticalMin);
+                }
+                else
+                {
+                    normalized = (value - Calibration.VerticalCenter) / (Calibration.VerticalMax - Calibration.VerticalCenter);
+                }
+            }
+
+            return IsInverted ? -1 * normalized : normalized;
+        }
+
         #endregion Methods
 
         #region Local classes
@@ -246,8 +284,17 @@ namespace Meadow.Foundation.Sensors.Hid
 
             public float DeadZone { get; protected set; }
 
-            public JoystickCalibration()
+            public JoystickCalibration(float analogVoltage)
             {
+                HorizontalCenter = analogVoltage / 2;
+                HorizontalMin = 0;
+                HorizontalMax = analogVoltage;
+
+                VerticalCenter = analogVoltage / 2;
+                VerticalMin = 0;
+                VerticalMax = analogVoltage;
+
+                DeadZone = 0.2f;
             }
 
             public JoystickCalibration(float horizontalCenter, float horizontalMin, float horizontalMax,
