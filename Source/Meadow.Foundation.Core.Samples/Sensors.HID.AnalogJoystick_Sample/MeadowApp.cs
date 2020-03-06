@@ -11,29 +11,24 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Led Up, Down, Left, Right;
+        PwmLed Up, Down, Left, Right;
         AnalogJoystick joystick;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            Up = new Led(Device.CreateDigitalOutputPort(Device.Pins.D07));
-            Down = new Led(Device.CreateDigitalOutputPort(Device.Pins.D04));
-            Left = new Led(Device.CreateDigitalOutputPort(Device.Pins.D02));
-            Right = new Led(Device.CreateDigitalOutputPort(Device.Pins.D03));
+            Up = new PwmLed(   Device.CreatePwmPort(Device.Pins.D07, 100, 0.0f), TypicalForwardVoltage.Red);
+            Down = new PwmLed( Device.CreatePwmPort(Device.Pins.D04, 100, 0.0f), TypicalForwardVoltage.Red);
+            Left = new PwmLed( Device.CreatePwmPort(Device.Pins.D02, 100, 0.0f), TypicalForwardVoltage.Red);
+            Right = new PwmLed(Device.CreatePwmPort(Device.Pins.D03, 100, 0.0f), TypicalForwardVoltage.Red);
 
-            var calibration = new JoystickCalibration(
-                1.58f, 0f, 3.3f,
-                1.58f, 0f, 3.3f, 
-                0.26f);
             joystick = new AnalogJoystick(
                 Device.CreateAnalogInputPort(Device.Pins.A01), 
                 Device.CreateAnalogInputPort(Device.Pins.A00),
                 null, false);
 
-            var t = joystick.SetCenterPosition(); //fire and forget 
-
+            joystick.SetCenterPosition(); //fire and forget 
             joystick.Updated += JoystickUpdated;
             joystick.StartUpdating();
 
@@ -42,6 +37,27 @@ namespace MeadowApp
 
         private void JoystickUpdated(object sender, Meadow.Peripherals.Sensors.Hid.JoystickPositionChangeResult e)
         {
+            if (e.New.HorizontalValue < 0.2f)
+            {
+                Left.SetBrightness(0f);
+                Right.SetBrightness(0f);
+            }
+            if (e.New.VerticalValue < 0.2f)
+            {
+                Up.SetBrightness(0f);
+                Down.SetBrightness(0f);
+            }
+
+            if (e.New.HorizontalValue > 0)
+                Left.SetBrightness(Math.Abs(e.New.HorizontalValue));
+            else
+                Right.SetBrightness(Math.Abs(e.New.HorizontalValue));
+
+            if (e.New.VerticalValue > 0)
+                Down.SetBrightness(Math.Abs(e.New.VerticalValue));
+            else
+                Up.SetBrightness(Math.Abs(e.New.VerticalValue));
+
             Console.WriteLine($"({e.New.HorizontalValue}, {e.New.VerticalValue})");
         }
 
