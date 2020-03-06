@@ -21,15 +21,5 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
             }
         }
-
-        internal class SpiMcpDeviceComms : SpiPeripheralWithAddress, IMcpDeviceComms
-        {
-            public SpiMcpDeviceComms(ISpiBus bus, IDigitalOutputPort chipSelect,
-                byte peripheralAddress)
-                : base(bus, chipSelect, peripheralAddress)
-            {
-            }
-        }
-
     }
 }
