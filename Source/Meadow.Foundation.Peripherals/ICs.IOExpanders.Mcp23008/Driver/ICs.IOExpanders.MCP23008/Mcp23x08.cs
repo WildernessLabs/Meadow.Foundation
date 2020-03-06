@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using Meadow.Hardware;
 using Meadow.Utilities;
 
@@ -35,7 +33,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         byte _olat;
         byte _gppu;
         byte _iocon;
-        byte _inputStates;
 
         /// <summary>
         ///     object for using lock() to do thread synch
@@ -111,12 +108,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             try
             {
-                //Console.WriteLine("Interrupt triggered.");
-
                 // sus out which pin fired
                 byte intflag = this._mcpDevice.ReadRegister(RegisterAddresses.InterruptFlagRegister);
-                // According to the docs, this is the pin that caused the interrupt, but possibly not
-                // the only one.
                 byte currentValues = this._mcpDevice.ReadRegister(RegisterAddresses.GPIORegister);
 
                 //Console.WriteLine($"Input flag:          {intflag:X2}");
@@ -164,7 +157,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             _olat = 0x00;
             _gppu = 0x00;
             _iocon = 0x00;
-            _inputStates = 0x00;
 
             _iodir = _mcpDevice.ReadRegister(RegisterAddresses.IODirectionRegister);
             _gpio = _mcpDevice.ReadRegister(RegisterAddresses.GPIORegister);
@@ -269,7 +261,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 if (interruptMode != InterruptMode.None)
                 {
-                    Console.WriteLine($"Enabling interrupt on {pin}");
                     // interrupt on change (whether or not we want to raise an interrupt on the interrupt pin on change)
                     byte gpinten = _mcpDevice.ReadRegister(RegisterAddresses.InterruptOnChangeRegister);
                     gpinten = BitHelpers.SetBit(gpinten, (byte)pin.Key, true);
@@ -277,7 +268,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                     // Set the default value for the pin for interrupts.
                     var interruptValue = interruptMode == InterruptMode.EdgeFalling || interruptMode == InterruptMode.LevelLow;
-                    Console.WriteLine($"Setting {pin.Name} interrupt value to {interruptValue}");
                     byte defVal = _mcpDevice.ReadRegister(RegisterAddresses.DefaultComparisonValueRegister);
                     defVal = BitHelpers.SetBit(defVal, (byte)pin.Key, interruptValue);
                     _mcpDevice.WriteRegister(RegisterAddresses.DefaultComparisonValueRegister, defVal);
@@ -291,7 +281,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     // on default comparison value, or if a change from previous. We 
                     // want to raise on change, so we set it to 0, always.
                     var interruptControl = interruptMode != InterruptMode.EdgeBoth;
-                    Console.WriteLine($"Setting {pin.Name} interrupt control to {interruptControl}");
                     var intCon = _mcpDevice.ReadRegister(RegisterAddresses.InterruptControlRegister);
                     intCon = BitHelpers.SetBit(intCon, (byte)pin.Key, interruptControl);
                     _mcpDevice.WriteRegister(RegisterAddresses.InterruptControlRegister, intCon);

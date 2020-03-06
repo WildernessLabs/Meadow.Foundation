@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Resources;
 using Meadow.Hardware;
 using Meadow.Utilities;
 
@@ -14,7 +13,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             private readonly IPin _pin;
             private DateTime _lastChangeTime;
             private bool _lastState;
-            private readonly InterruptMode _interruptMode;
 
             public override bool State
             {
