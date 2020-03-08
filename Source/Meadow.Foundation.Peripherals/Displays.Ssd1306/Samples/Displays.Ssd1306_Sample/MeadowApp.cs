@@ -14,8 +14,8 @@ namespace Displays.Ssd1306_Sample
 
         public MeadowApp()
         {
-            CreateSpiDisplay();
-            //CreateI2CDisplay();
+            //CreateSpiDisplay();
+            CreateI2CDisplay();
 
             Console.WriteLine("Test display API");
             TestRawDisplayAPI();

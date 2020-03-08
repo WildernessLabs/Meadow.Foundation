@@ -52,8 +52,8 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
         public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
-            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp),
-                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp)) { }
+            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 200, 50),
+                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 200, 50)) { }
 
         /// <summary>
         /// Instantiate a new RotaryEncoder on the specified ports
@@ -78,7 +78,7 @@ namespace Meadow.Foundation.Sensors.Rotary
             //Console.WriteLine((!_processing ? "1st result: " : "2nd result: ") + "A{" + (APhasePin.Read() ? "1" : "0") + "}, " + "B{" + (BPhasePin.Read() ? "1" : "0") + "}");
 
             // the first time through (not processing) store the result in array slot 0.
-            // second time through (is processing) store the result in array slot 2.
+            // second time through (is processing) store the result in array slot 1.
             _results[_processing ? 1 : 0].APhase = APhasePort.State;
             _results[_processing ? 1 : 0].BPhase = BPhasePort.State;
 

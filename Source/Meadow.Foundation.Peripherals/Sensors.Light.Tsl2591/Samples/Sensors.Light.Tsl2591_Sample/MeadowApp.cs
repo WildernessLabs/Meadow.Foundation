@@ -3,7 +3,6 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Light;
-using Meadow.Foundation.Sensors.Motion;
 
 namespace Sensors.Light.Tsl2591_Sample
 {

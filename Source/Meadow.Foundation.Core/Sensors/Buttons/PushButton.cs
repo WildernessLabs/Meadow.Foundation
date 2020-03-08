@@ -248,9 +248,9 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// Raised when the button circuit is re-opened after it has been closed (at the end of a �press�).
         /// </summary>
         protected virtual void RaiseClicked ()
-		{
-			this._clicked (this, EventArgs.Empty);
-		}
+        {
+                this._clicked (this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// Raised when a press starts (the button is pushed down; circuit is closed).

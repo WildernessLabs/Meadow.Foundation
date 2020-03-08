@@ -6,8 +6,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Provide an interface to connect to a 74595 shift register.
-    /// 
-    /// Note: this class is not yet implemented.
     /// </summary>
     /// <remarks>
     /// Control the outputs from a 74595 shift register (or a chain of shift registers)

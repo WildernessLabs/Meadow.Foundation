@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Hid;
 using System;
-using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -12,38 +11,19 @@ namespace MeadowApp
 
         public MeadowApp()
         {
-            Console.WriteLine("MeadowApp()...");
-
             joystick = new AnalogJoystick(
                 Device.CreateAnalogInputPort(Device.Pins.A01), 
-                Device.CreateAnalogInputPort(Device.Pins.A00));
+                Device.CreateAnalogInputPort(Device.Pins.A00),
+                null, false);
 
-            var t = TestAnalogJoystick();
+            joystick.SetCenterPosition(); //fire and forget 
+            joystick.Updated += JoystickUpdated;
+            joystick.StartUpdating();
         }
 
-        async Task TestAnalogJoystick() 
+        void JoystickUpdated(object sender, Meadow.Peripherals.Sensors.Hid.JoystickPositionChangeResult e)
         {
-            Console.WriteLine("TestAnalogJoystick()...");
-
-            //JoystickPosition position;
-
-            //await joystick.SetCenterPosition();
-
-            //while (true)
-            //{
-            //    position = await joystick.GetPosition();
-            //    Console.WriteLine($"{position}");
-            //}
-
-            float x, y;
-
-            while (true) 
-            {
-                x = await joystick.GetHorizontalValue();
-                y = await joystick.GetVerticalValue();
-
-                Console.WriteLine($"({x},{y})");
-            }
+            Console.WriteLine($"({e.New.HorizontalValue}, {e.New.VerticalValue})");
         }
     }
 }
