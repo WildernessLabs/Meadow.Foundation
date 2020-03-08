@@ -245,11 +245,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{BA4E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.x74595", "Meadow.Foundation.Peripherals\ICs.IOExpanders.x74595\Driver\ICs.IOExpanders.x74595\ICs.IOExpanders.x74595.csproj", "{C4E371CD-452B-445D-968A-FA2805A13DEE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.Mcp23008", "ICs.IOExpanders.Mcp23008", "{240F389E-5109-4266-AE58-04DEAC585F22}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.Mcp23x08", "ICs.IOExpanders.Mcp23x08", "{240F389E-5109-4266-AE58-04DEAC585F22}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{1A91B800-DC03-4199-AE38-4BD57195416F}"
+	ProjectSection(SolutionItems) = preProject
+		Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Samples\ICs.IOExpanders.Mcp23x08_InputSample\ICs.IOExpanders.Mcp23x08_InputSample.csproj = Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Samples\ICs.IOExpanders.Mcp23x08_InputSample\ICs.IOExpanders.Mcp23x08_InputSample.csproj
+		Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Samples\ICs.IOExpanders.Mcp23x08_OutputSample\ICs.IOExpanders.Mcp23x08_OutputSample.csproj = Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Samples\ICs.IOExpanders.Mcp23x08_OutputSample\ICs.IOExpanders.Mcp23x08_OutputSample.csproj
+	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.MCP23008", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Driver\ICs.IOExpanders.MCP23008\ICs.IOExpanders.MCP23008.csproj", "{E5256D16-2D8E-4A38-913C-863AB9819D53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.MCP23x08", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Driver\ICs.IOExpanders.MCP23008\ICs.IOExpanders.MCP23x08.csproj", "{E5256D16-2D8E-4A38-913C-863AB9819D53}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.Ht16K33", "ICs.IOExpanders.Ht16K33", "{E95B5F1B-244F-4B45-AC8E-B2483DB0C980}"
 EndProject
@@ -1268,6 +1272,12 @@ Global
 		{D9AE3936-204E-4FE7-84BD-5684B2172C37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9AE3936-204E-4FE7-84BD-5684B2172C37}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9AE3936-204E-4FE7-84BD-5684B2172C37}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{071D9B48-F030-4958-A35F-3ECCF63BF70F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{071D9B48-F030-4958-A35F-3ECCF63BF70F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{071D9B48-F030-4958-A35F-3ECCF63BF70F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{071D9B48-F030-4958-A35F-3ECCF63BF70F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{071D9B48-F030-4958-A35F-3ECCF63BF70F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{071D9B48-F030-4958-A35F-3ECCF63BF70F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{F5596859-93D3-41D0-8988-FFA24F4A2152}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F5596859-93D3-41D0-8988-FFA24F4A2152}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5596859-93D3-41D0-8988-FFA24F4A2152}.Release|Any CPU.ActiveCfg = Release|Any CPU

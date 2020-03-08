@@ -3,9 +3,10 @@
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>MCP23008</AssemblyName>
-    <Version>0.1.1</Version>
+    <PackageVersion>0.1.1</PackageVersion>
+    <RootNamespace>Meadow.Foundation.ICs.IOExpanders</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.13.0" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>
