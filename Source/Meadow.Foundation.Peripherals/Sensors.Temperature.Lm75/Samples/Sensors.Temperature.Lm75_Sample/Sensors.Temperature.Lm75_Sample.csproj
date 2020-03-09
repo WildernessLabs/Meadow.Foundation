@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Sensors.Temperature.Lm75" Version="0.1.0" />
+    <ProjectReference Include="..\..\Driver\Sensors.Temperature.Lm75\Sensors.Temperature.Lm75.csproj" />
   </ItemGroup>
 </Project>

@@ -9,6 +9,8 @@ namespace Meadow.Foundation.Sensors.Motion
     {
         /// <summary>
         /// QMC5883L Default I2C Address
+        /// 
+        /// This driver is untested
         /// </summary>
         new public const byte DefaultI2cAddress = 0x0D;
 

@@ -7,6 +7,8 @@ namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
     ///     Driver for the Hmc5883 digital compass.
+    ///     
+    /// This driver is untested
     /// </summary>
     public class Hmc5883
     {

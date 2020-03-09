@@ -25,20 +25,13 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
 
         public void ConfigurePeripherals()
         {
-            // I2C Version:
-            // ------------
-            // create a new mcp with all the address pins pulled high for
-            // an address of 0x27/39
-            //var i2cBus = Device.CreateI2cBus();
-            //_mcp = new Mcp23x08(i2cBus, true, true, true);
-
-            // SPI Version
-            // -----------
-            //
-            var spiBus = Device.CreateSpiBus(6000);
-            var chipSelect = Device.CreateDigitalOutputPort(Device.Pins.D01);
-            _mcp = new Mcp23x08(spiBus, chipSelect);
-
+            IDigitalInputPort interruptPort =
+                Device.CreateDigitalInputPort(
+                    Device.Pins.D00,
+                    InterruptMode.EdgeRising);
+            // create a new mcp with all the address pins pulled low for
+            // an address of 0x20/32
+            _mcp = new Mcp23x08(Device.CreateI2cBus(), false, false, false, interruptPort);
         }
 
         void TestDigitalOutputPorts(int loopCount)

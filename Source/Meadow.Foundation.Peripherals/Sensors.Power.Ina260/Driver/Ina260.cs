@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Sensors.Power.Ina260
+namespace Meadow.Foundation.Sensors.Power
 {
     public class Ina260 : IDisposable
     {

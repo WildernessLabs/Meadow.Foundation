@@ -1,10 +1,10 @@
-<Project Sdk="Meadow.Sdk/1.1">
+﻿<Project Sdk="Meadow.Sdk/1.1">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Sensors.Motion.Hmc5883" Version="0.1.0" />
+    <ProjectReference Include="..\..\..\Driver\Sensors.Motion.Hmc5883\Sensors.Motion.Hmc5883.csproj" />
   </ItemGroup>
 </Project>
