@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Bmp180\Sensors.Atmospheric.Bmp180.csproj" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Bmp180" Version="0.1.1" />
   </ItemGroup>
 </Project>

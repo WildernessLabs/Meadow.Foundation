@@ -8,6 +8,6 @@
     <PackageReference Include="Meadow.Foundation.Sensors.Motion.Mpu6050" Version="0.5.5" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Motion.Mpu6050\Sensors.Motion.Mpu6050.csproj" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Motion.Mpu6050" Version="0.5.5" />
   </ItemGroup>
 </Project>

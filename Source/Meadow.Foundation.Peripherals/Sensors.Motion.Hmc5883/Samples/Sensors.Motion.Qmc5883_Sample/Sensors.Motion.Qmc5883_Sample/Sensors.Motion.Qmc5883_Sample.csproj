@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Driver\Sensors.Motion.Hmc5883\Sensors.Motion.Hmc5883.csproj" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Motion.Hmc5883" Version="0.1.0" />
   </ItemGroup>
 </Project>

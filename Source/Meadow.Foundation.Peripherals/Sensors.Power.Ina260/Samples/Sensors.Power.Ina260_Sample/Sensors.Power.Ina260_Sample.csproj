@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Power.Ina260.csproj" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Power.Ina260" Version="0.0.1" />
   </ItemGroup>
 </Project>
