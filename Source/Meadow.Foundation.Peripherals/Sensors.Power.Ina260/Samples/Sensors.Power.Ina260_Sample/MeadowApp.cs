@@ -17,7 +17,7 @@ namespace MeadowApp
         {
             Console.WriteLine("Initialize...");
             var bus = Device.CreateI2cBus();
-            var ina = new INA260(bus);
+            var ina = new Ina260(bus);
 
             Console.WriteLine($"-- INA260 Sample App ---");
             Console.WriteLine($"Manufacturer: {ina.ManufacturerID}");
