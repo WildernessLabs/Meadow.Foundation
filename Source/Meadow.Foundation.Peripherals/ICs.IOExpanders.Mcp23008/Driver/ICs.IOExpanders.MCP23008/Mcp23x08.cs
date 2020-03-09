@@ -7,8 +7,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Provide an interface to connect to a MCP23008 port expander.
-    /// 
-    /// Note: this class is not yet implemented.
     /// </summary>
     public partial class Mcp23x08 : IIODevice
     {
