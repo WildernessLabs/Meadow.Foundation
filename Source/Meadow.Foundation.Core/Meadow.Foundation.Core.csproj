@@ -14,6 +14,6 @@
    <RootNamespace>Meadow.Foundation</RootNamespace>
  </PropertyGroup>
  <ItemGroup>
-   <PackageReference Include="Meadow" Version="0.11.1" />
+   <PackageReference Include="Meadow" Version="0.11.2" />
  </ItemGroup>
 </Project>

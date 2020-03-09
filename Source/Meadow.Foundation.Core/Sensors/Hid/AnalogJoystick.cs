@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
+    /// <summary>
+    /// 2-axis analog joystick
+    /// </summary>
     public class AnalogJoystick 
         : FilterableObservableBase<JoystickPositionChangeResult, JoystickPosition>
     {
