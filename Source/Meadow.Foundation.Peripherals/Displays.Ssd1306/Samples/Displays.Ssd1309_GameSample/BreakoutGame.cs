@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Breakout
+namespace Displays.Ssd1309_3DCube_Sample
 {
     public class BreakoutGame
     {

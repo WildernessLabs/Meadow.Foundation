@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-namespace MeadowApp
+namespace Displays.Ssd1309_3DCube_Sample
 {
     public class Point
     {

@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using System.Threading;
 
-namespace ICs.IOExpanders.Mcp23x08_Sample
+namespace ICs.IOExpanders.Mcp23x08_Output_Sample
 {
     class Program
     {

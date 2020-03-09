@@ -6,7 +6,7 @@ using Meadow.Hardware;
 using Meadow.Foundation.ICs.IOExpanders;
 using System.Collections.Generic;
 
-namespace ICs.IOExpanders.Mcp23x08_Sample
+namespace ICs.IOExpanders.Mcp23x08_Output_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {

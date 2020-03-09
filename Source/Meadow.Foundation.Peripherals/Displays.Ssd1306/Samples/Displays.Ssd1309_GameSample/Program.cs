@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Meadow;
 
-namespace MeadowApp
+namespace Displays.Ssd1309_3DCube_Sample
 {
     class Program
     {

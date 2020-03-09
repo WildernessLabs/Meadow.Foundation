@@ -8,7 +8,7 @@ using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
 
-namespace ICs.IOExpanders.Mcp23x08_InputSample
+namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using Breakout;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
@@ -10,7 +9,7 @@ using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 
-namespace MeadowApp
+namespace Displays.Ssd1309_3DCube_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
