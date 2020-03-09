@@ -3,5 +3,8 @@
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
-  </PropertyGroup>  
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Mcp23x08" Version="0.1.2" />
+  </ItemGroup>  
 </Project>
