@@ -7,8 +7,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Provide an interface to connect to a MCP23008 port expander.
-    /// 
-    /// Note: this class is not yet implemented.
     /// </summary>
     public partial class Mcp23x08 : IIODevice
     {
@@ -439,6 +437,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         public IPwmPort CreatePwmPort(IPin pin, float frequency = 100, float dutyCycle = 0.5F, bool invert = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, SpiClockConfiguration config)
+        {
+            throw new NotImplementedException();
+        }
+
+        public II2cBus CreateI2cBus(IPin[] pins, int frequencyHz = 100000)
+        {
+            throw new NotImplementedException();
+        }
+
+        public II2cBus CreateI2cBus(IPin clock, IPin data, int frequencyHz = 100000)
         {
             throw new NotImplementedException();
         }

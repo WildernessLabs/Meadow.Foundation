@@ -12,12 +12,8 @@
     <Version>0.0.9</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for SX127x LoRa transceiver</Description>
-    <RootNamespace>Meadow.Foundation.Transceivers</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.13.1" />
+    <PackageReference Include="Meadow.Foundation" Version="0.13.2" />
   </ItemGroup>
 </Project>

@@ -3,9 +3,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Sensors.Power
+namespace Meadow.Foundation.Sensors.Power.Ina260
 {
-    public class INA260 : IDisposable
+    public class Ina260 : IDisposable
     {
         /// <summary>
         ///     Valid addresses for the sensor.
@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Power
         public bool IsSampling { get; private set; }
         public byte Address { get; private set; }
 
-        public INA260(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Ina260(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             if (i2cBus == null) throw new ArgumentNullException(nameof(i2cBus));
 
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Power
         }
 
 
-        public INA260(II2cBus i2cBus, Addresses address)
+        public Ina260(II2cBus i2cBus, Addresses address)
             : this(i2cBus, (byte)address)
         {
         }

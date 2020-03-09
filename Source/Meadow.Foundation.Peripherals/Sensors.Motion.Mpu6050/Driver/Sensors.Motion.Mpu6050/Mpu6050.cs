@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class MPU6050 : IDisposable
+    public class Mpu6050 : IDisposable
     {
         /// <summary>
         ///     Valid addresses for the sensor.
@@ -75,14 +75,14 @@ namespace Meadow.Foundation.Sensors.Motion
         public bool IsSampling { get; private set; }
         public byte Address { get; private set; }
 
-        public MPU6050(II2cBus bus, byte address = 0x68)
+        public Mpu6050(II2cBus bus, byte address = 0x68)
         {
             if (bus == null) throw new ArgumentNullException(nameof(bus));
 
             Initialize(address);
         }
 
-        public MPU6050(II2cBus bus, Addresses address)
+        public Mpu6050(II2cBus bus, Addresses address)
             : this(bus, (byte)address)
         {
         }
