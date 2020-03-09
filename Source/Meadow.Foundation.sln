@@ -614,9 +614,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{6873
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Lm75_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Lm75\Samples\Sensors.Temperature.Lm75_Sample\Sensors.Temperature.Lm75_Sample.csproj", "{3E532ECC-8E02-4BAE-9606-6A1007DD24B1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Mcp23x08_Input_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Samples\ICs.IOExpanders.Mcp23x08_Input_Sample\ICs.IOExpanders.Mcp23x08_Input_Sample.csproj", "{1411913F-2E8D-4BF2-BBAB-D02AE78BFE50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Mcp23x08_Input_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23x08\Samples\ICs.IOExpanders.Mcp23x08_Input_Sample\ICs.IOExpanders.Mcp23x08_Input_Sample.csproj", "{1411913F-2E8D-4BF2-BBAB-D02AE78BFE50}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Mcp23x08_Output_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23008\Samples\ICs.IOExpanders.Mcp23x08_Output_Sample\ICs.IOExpanders.Mcp23x08_Output_Sample.csproj", "{98D0E7F6-830E-4FF7-B7AB-ECC3A6D15E42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Mcp23x08_Output_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23x08\Samples\ICs.IOExpanders.Mcp23x08_Output_Sample\ICs.IOExpanders.Mcp23x08_Output_Sample.csproj", "{98D0E7F6-830E-4FF7-B7AB-ECC3A6D15E42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

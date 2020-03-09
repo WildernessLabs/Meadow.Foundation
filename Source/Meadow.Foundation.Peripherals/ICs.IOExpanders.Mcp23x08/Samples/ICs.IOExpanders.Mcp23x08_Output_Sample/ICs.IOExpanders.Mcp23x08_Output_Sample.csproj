@@ -4,7 +4,4 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Driver\ICs.IOExpanders.MCP23008\ICs.IOExpanders.Mcp23x08.csproj" />
-  </ItemGroup>
 </Project>
