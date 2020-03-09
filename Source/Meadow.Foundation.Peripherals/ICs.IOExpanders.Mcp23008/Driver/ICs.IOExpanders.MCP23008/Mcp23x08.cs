@@ -440,5 +440,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             throw new NotImplementedException();
         }
+
+        public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, SpiClockConfiguration config)
+        {
+            throw new NotImplementedException();
+        }
+
+        public II2cBus CreateI2cBus(IPin[] pins, int frequencyHz = 100000)
+        {
+            throw new NotImplementedException();
+        }
+
+        public II2cBus CreateI2cBus(IPin clock, IPin data, int frequencyHz = 100000)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
