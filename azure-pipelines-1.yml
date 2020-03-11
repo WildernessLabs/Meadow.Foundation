@@ -26,3 +26,8 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
     msbuildArgs: /property:langversion=latest
+
+- task: CopyFiles@2
+  inputs:
+    contents: '**/*.nupkg'
+    targetFolder: $(Build.ArtifactStagingDirectory)
