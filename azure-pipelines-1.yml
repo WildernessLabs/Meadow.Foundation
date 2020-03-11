@@ -6,8 +6,7 @@
 trigger:
 - pipelinedev
 
-pool:
-  vmImage: 'vs2017-win2016'
+pool: 'Hosted VS2017'
 
 variables:
   solution: '**/Meadow.Foundation.sln'
