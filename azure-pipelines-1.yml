@@ -45,7 +45,7 @@ steps:
   inputs:
     command: 'push'
     feedsToUse: 'select'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/*.nupkg'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)\**\*.nupkg'
     nuGetFeedType: 'internal'
     publishVstsFeed: 'Meadow.Foundation'
     versioningScheme: 'off'
