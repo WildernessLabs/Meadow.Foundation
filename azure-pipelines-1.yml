@@ -32,3 +32,8 @@ steps:
     Contents: |
       Source\Meadow.Foundation.Core\bin\Release\Meadow.Foundation.0.13.2.nupkg
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: hello
