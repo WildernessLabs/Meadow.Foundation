@@ -38,4 +38,15 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: hello
+    artifactName: packages
+
+- task: NuGetCommand@2
+  displayName: 'nuget push'
+  inputs:
+    command: 'push'
+    feedsToUse: 'select'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'Meadow.Foundation'
+    versioningScheme: 'off'
+#    allowPackageConflicts: true
