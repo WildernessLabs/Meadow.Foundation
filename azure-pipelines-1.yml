@@ -29,5 +29,6 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    Contents: '**\*.nupkg'
+    Contents: |
+      Source\Meadow.Foundation.Core\bin\Release\Meadow.Foundation.0.13.2.nupkg
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
