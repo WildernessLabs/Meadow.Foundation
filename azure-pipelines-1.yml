@@ -47,6 +47,6 @@ steps:
     feedsToUse: 'select'
     packagesToPush: '$(Build.ArtifactStagingDirectory)\**\*.nupkg'
     nuGetFeedType: 'internal'
-    publishVstsFeed: 'Meadow.Foundation'
+    publishVstsFeed: 'Meadow'
     versioningScheme: 'off'
 #    allowPackageConflicts: true
