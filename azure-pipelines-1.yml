@@ -29,5 +29,5 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    contents: '**/*.nupkg'
-    targetFolder: '$(Build.ArtifactStagingDirectory)'
+    Contents: '**\*.nupkg'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
