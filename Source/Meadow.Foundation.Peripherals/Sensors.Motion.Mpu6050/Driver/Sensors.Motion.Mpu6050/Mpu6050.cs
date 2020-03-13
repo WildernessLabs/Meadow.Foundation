@@ -79,6 +79,8 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (bus == null) throw new ArgumentNullException(nameof(bus));
 
+            Device = bus;
+
             Initialize(address);
         }
 

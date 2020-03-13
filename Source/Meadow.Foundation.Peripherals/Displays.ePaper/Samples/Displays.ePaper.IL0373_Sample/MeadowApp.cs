@@ -21,12 +21,12 @@ namespace Displays.ePaper.IL0373_Sample
 
             Console.WriteLine("Create display driver instance");
             display = new Il0373(device: Device, spiBus: spiBus,
-                chipSelectPin: Device.Pins.D02,
-                dcPin: Device.Pins.D01,
-                resetPin: Device.Pins.D00,
-                busyPin: Device.Pins.D03,
-                width: 102,
-                height: 212);
+                chipSelectPin: Device.Pins.D14,
+                dcPin: Device.Pins.D13,
+                resetPin: Device.Pins.D15,
+                busyPin: Device.Pins.D12,
+                width: 176,
+                height: 264);
 
             var graphics = new GraphicsLibrary(display);
 
