@@ -18,6 +18,8 @@ steps:
 
 - task: NuGetCommand@2
   inputs:
+    feedsToUse: 'select' 
+    vstsFeed: 'Meadow'
     restoreSolution: '$(solution)'
 
 - task: VSBuild@1
