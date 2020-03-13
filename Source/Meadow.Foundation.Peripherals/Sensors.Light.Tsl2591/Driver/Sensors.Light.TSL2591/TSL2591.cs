@@ -66,6 +66,7 @@ namespace Meadow.Foundation.Sensors.Light
 
         public TSL2591(II2cBus bus)
         {
+            Device = bus;
             Initialize((byte)Addresses.Default);
         }
 
@@ -95,6 +96,8 @@ namespace Meadow.Foundation.Sensors.Light
                 default:
                     throw new ArgumentOutOfRangeException("TSL2591 device supports only address 0x29");
             }
+
+            Address = address;
         }
 
         public void StartSampling(TimeSpan samplePeriod)
