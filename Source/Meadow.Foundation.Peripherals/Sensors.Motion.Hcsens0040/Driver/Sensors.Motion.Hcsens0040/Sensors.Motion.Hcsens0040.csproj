@@ -14,6 +14,6 @@
     <Description>Driver for HCSENS0040 microwave motion sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.13.2" />
+    <PackageReference Include="Meadow.Foundation" Version="0.14.0-beta*" />
   </ItemGroup>
 </Project>
