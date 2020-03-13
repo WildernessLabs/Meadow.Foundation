@@ -1,22 +1,22 @@
-# # Meadow.Foundation pipeline
-# # Reference: https://aka.ms/yaml
+# Meadow.Foundation pipeline
+# Reference: https://aka.ms/yaml
 
-# trigger:
-# - master
+trigger:
+- master
 
-# pool: "Default"
+pool: "Default"
 
-# steps:
-# - task: ShellScript@2
-#   inputs:
-#     scriptPath: build.sh
-# - task: CopyFiles@2
-#   inputs:
-#     contents: |
-#      source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.dll
-#      source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.pdb
-#     targetFolder: '$(Build.ArtifactStagingDirectory)'
-# - task: PublishBuildArtifacts@1
-#   inputs:
-#     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-#     artifactName: Meadow.Foundation
+steps:
+- task: ShellScript@2
+  inputs:
+    scriptPath: build.sh
+- task: CopyFiles@2
+  inputs:
+    contents: |
+     source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.dll
+     source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.pdb
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: Meadow.Foundation
