@@ -16,6 +16,11 @@ do
 
     for package in $refs
     do
+        # skip if this is not a Meadow package reference
+        if [[ $package != Meadow* ]]; then
+            continue
+        fi
+        
         # get the number of slashes to calculate the dir depth
         cnt=$(tr -dc '/' <<< $proj | awk '{ print length; }')
 
