@@ -6,49 +6,68 @@
 trigger:
 - pipelinedev
 
-pool: 'Hosted VS2017'
-
 variables:
   solution: '**/Meadow.Foundation.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  internalFeedName: 'Meadow'
+  preReleasePackageBranch: 'refs/heads/pipelinedev'
+pool:
+  vmImage: windows-2019
 
-steps:
-- task: NuGetToolInstaller@1
+stages:
+- stage: Build
+  jobs:
+    - job: Build_Solution
+      steps:
+        - task: NuGetToolInstaller@1
+        - task: NuGetCommand@2
+          condition: or(eq(variables['build.sourceBranch'], $(preReleasePackageBranch)), eq(variables['build.targetBranch'], $(preReleasePackageBranch)))
+          inputs:
+            feedsToUse: 'select' 
+            vstsFeed: $(internalFeedName)
+            restoreSolution: '$(solution)'
+        - task: NuGetCommand@2
+          condition: and(ne(variables['build.sourceBranch'], $(preReleasePackageBranch)), ne(variables['build.targetBranch'], $(preReleasePackageBranch)))
+          inputs:
+            feedsToUse: 'select' 
+            restoreSolution: '$(solution)'
+        - task: VSBuild@1
+          inputs:
+            solution: '$(solution)'
+            platform: '$(buildPlatform)'
+            configuration: '$(buildConfiguration)'
+#            msbuildArgs: /property:langversion=latest
+    - job: Package_Artifacts
+      steps:
+      - task: CopyFiles@2
+        inputs:
+          Contents: '**\*.nupkg'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)'
+          flattenFolders: true
+          cleanTargetFolder: true
+          overWrite: true
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          artifactName: packages
+- stage: Deploy_Staging
+  dependsOn: Build
+  condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], $(preReleasePackageBranch)))
+  jobs:
+  - job: Publish_Nugets
+    steps:
+      - task: NuGetCommand@2
+        displayName: 'nuget push'
+        inputs:
+          command: 'push'
+          feedsToUse: 'select'
+          packagesToPush: '$(Build.ArtifactStagingDirectory)\**\*-*.nupkg'
+          nuGetFeedType: 'internal'
+          publishVstsFeed: $(internalFeedName)
+          versioningScheme: 'off'
+          allowPackageConflicts: true
 
-- task: NuGetCommand@2
-  inputs:
-    feedsToUse: 'select' 
-    vstsFeed: 'Meadow'
-    restoreSolution: '$(solution)'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: /property:langversion=latest
 
-- task: CopyFiles@2
-  inputs:
-    Contents: '**\*.nupkg'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    flattenFolders: true
-    cleanTargetFolder: true
-    overWrite: true
 
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: packages
-
-- task: NuGetCommand@2
-  displayName: 'nuget push'
-  inputs:
-    command: 'push'
-    feedsToUse: 'select'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)\**\*-*.nupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: 'Meadow'
-    versioningScheme: 'off'
-#    allowPackageConflicts: true
