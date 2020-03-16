@@ -22,13 +22,13 @@ stages:
       steps:
         - task: NuGetToolInstaller@1
         - task: NuGetCommand@2
-          condition: or(eq(variables['build.sourceBranch'], $(preReleasePackageBranch)), eq(variables['build.targetBranch'], $(preReleasePackageBranch)))
+          condition: or(eq(variables['build.sourceBranch'], '$(preReleasePackageBranch)'), eq(variables['build.targetBranch'], '$(preReleasePackageBranch)'))
           inputs:
             feedsToUse: 'select' 
             vstsFeed: $(internalFeedName)
             restoreSolution: '$(solution)'
         - task: NuGetCommand@2
-          condition: and(ne(variables['build.sourceBranch'], $(preReleasePackageBranch)), ne(variables['build.targetBranch'], $(preReleasePackageBranch)))
+          condition: and(ne(variables['build.sourceBranch'], '$(preReleasePackageBranch)'), ne(variables['build.targetBranch'], '$(preReleasePackageBranch)'))
           inputs:
             feedsToUse: 'select' 
             restoreSolution: '$(solution)'
@@ -53,7 +53,7 @@ stages:
           artifactName: packages
 - stage: Deploy_Staging
   dependsOn: Build
-  condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], $(preReleasePackageBranch)))
+  condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], '$(preReleasePackageBranch)'))
   jobs:
   - job: Publish_Nugets
     steps:
