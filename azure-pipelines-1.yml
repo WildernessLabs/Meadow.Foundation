@@ -38,21 +38,18 @@ stages:
             platform: '$(buildPlatform)'
             configuration: '$(buildConfiguration)'
 #            msbuildArgs: /property:langversion=latest
-    - job: Package_Artifacts
-      dependsOn: Build_Solution
-      condition: succeeded('Build_Solution')
-      steps:
-      - task: CopyFiles@2
-        inputs:
-          Contents: '**\*.nupkg'
-          TargetFolder: '$(Build.ArtifactStagingDirectory)'
-          flattenFolders: true
-          cleanTargetFolder: true
-          overWrite: true
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          artifactName: packages
+        - task: CopyFiles@2
+          inputs:
+            Contents: '**\*.nupkg'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)'
+            flattenFolders: true
+            cleanTargetFolder: true
+            overWrite: true
+        - task: PublishBuildArtifacts@1
+          inputs:
+            pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            artifactName: packages
+      
 - stage: Deploy_Staging
   dependsOn: Build
   condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']))
