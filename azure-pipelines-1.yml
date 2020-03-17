@@ -49,33 +49,29 @@ stages:
           inputs:
             pathtoPublish: '$(Build.ArtifactStagingDirectory)'
             artifactName: packages
-        - task: NuGetCommand@2
-          displayName: 'nuget push'
-          inputs:
-            command: 'push'
-            feedsToUse: 'select'
-            packagesToPush: '$(Build.ArtifactStagingDirectory)\**\*-*.nupkg'
-            nuGetFeedType: 'internal'
-            publishVstsFeed: $(internalFeedName)
-            versioningScheme: 'off'
-            allowPackageConflicts: true
 
-# - stage: Deploy_Staging
-#   dependsOn: Build
-#   condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']))
-#   jobs:
-#   - job: Publish_Nugets
-#     steps:
-#       - task: NuGetCommand@2
-#         displayName: 'nuget push'
-#         inputs:
-#           command: 'push'
-#           feedsToUse: 'select'
-#           packagesToPush: '$(Build.ArtifactStagingDirectory)\**\*-*.nupkg'
-#           nuGetFeedType: 'internal'
-#           publishVstsFeed: $(internalFeedName)
-#           versioningScheme: 'off'
-#           allowPackageConflicts: true
+- stage: Deploy_Staging
+  dependsOn: Build
+  condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']))
+  jobs:
+  - job: Publish_Nugets
+    steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'packages'
+          downloadPath: '$(System.ArtifactsDirectory)'
+      - task: NuGetCommand@2
+        displayName: 'nuget push'
+        inputs:
+          command: 'push'
+          feedsToUse: 'select'
+          packagesToPush: '$(System.ArtifactsDirectory)\**\*-*.nupkg'
+          nuGetFeedType: 'internal'
+          publishVstsFeed: $(internalFeedName)
+          versioningScheme: 'off'
+          allowPackageConflicts: true
 
 
 
