@@ -25,13 +25,13 @@ stages:
       steps:
         - task: NuGetToolInstaller@1
         - task: NuGetCommand@2
-          condition: or(eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']), eq(variables['System.PullRequest.TargetBranch'], variables['preReleasePackageBranch']))
+          condition: or(eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']), eq(join('refs/heads/', variables['System.PullRequest.TargetBranch']), variables['preReleasePackageBranch']))
           inputs:
             feedsToUse: 'select' 
             vstsFeed: $(internalFeedName)
             restoreSolution: '$(solution)'
         - task: NuGetCommand@2
-          condition: and(ne(variables['build.sourceBranch'], variables['preReleasePackageBranch']), ne(variables['System.PullRequest.TargetBranch'], variables['preReleasePackageBranch']))
+          condition: and(ne(variables['build.sourceBranch'], variables['preReleasePackageBranch']), ne(join('refs/heads/', variables['System.PullRequest.TargetBranch']), variables['preReleasePackageBranch']))
           inputs:
             feedsToUse: 'select' 
             restoreSolution: '$(solution)'
