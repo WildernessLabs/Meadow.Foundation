@@ -6,8 +6,8 @@
 trigger:
 - pipelinedev
 
-pr:
-- pipelinedev
+# pr:
+# - pipelinedev
 
 variables:
   solution: '**/Meadow.Foundation.sln'
