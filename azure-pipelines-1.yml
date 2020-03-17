@@ -6,6 +6,9 @@
 trigger:
 - pipelinedev
 
+pr:
+- pipelinedev
+
 variables:
   solution: '**/Meadow.Foundation.sln'
   buildPlatform: 'Any CPU'
