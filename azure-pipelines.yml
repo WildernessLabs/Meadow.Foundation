@@ -3,20 +3,91 @@
 
 trigger:
 - master
+- develop
 
-pool: "Default"
+variables:
+  solution: '**/Meadow.Foundation.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  internalFeedName: 'Meadow'
+  preReleasePackageBranch: 'refs/heads/develop'
 
-steps:
-- task: ShellScript@2
-  inputs:
-    scriptPath: build.sh
-- task: CopyFiles@2
-  inputs:
-    contents: |
-     source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.dll
-     source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.pdb
-    targetFolder: '$(Build.ArtifactStagingDirectory)'
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: Meadow.Foundation
+pool:
+  vmImage: windows-2019
+
+stages:
+- stage: Build
+  jobs:
+    - job: Build_Solution
+      steps:
+        - task: NuGetToolInstaller@1
+        - task: NuGetCommand@2
+          condition: or(eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']), endsWith(variables['preReleasePackageBranch'], variables['System.PullRequest.TargetBranch']))
+          inputs:
+            feedsToUse: 'select' 
+            vstsFeed: $(internalFeedName)
+            restoreSolution: '$(solution)'
+        - task: NuGetCommand@2
+          condition: and(ne(variables['build.sourceBranch'], variables['preReleasePackageBranch']), not(endsWith(variables['preReleasePackageBranch'], variables['System.PullRequest.TargetBranch'])))
+          inputs:
+            feedsToUse: 'select' 
+            restoreSolution: '$(solution)'
+        - task: VSBuild@1
+          inputs:
+            solution: '$(solution)'
+            platform: '$(buildPlatform)'
+            configuration: '$(buildConfiguration)'
+        - task: CopyFiles@2
+          inputs:
+            Contents: '**\*.nupkg'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)'
+            flattenFolders: true
+            cleanTargetFolder: true
+            overWrite: true
+        - task: PublishBuildArtifacts@1
+          inputs:
+            pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            artifactName: packages
+
+- stage: Publish
+  dependsOn: Build
+  condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']))
+  jobs:
+  - job: Publish_Beta_Nugets
+    steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'packages'
+          downloadPath: '$(System.ArtifactsDirectory)'
+      - task: NuGetCommand@2
+        displayName: 'nuget push'
+        inputs:
+          command: 'push'
+          feedsToUse: 'select'
+          packagesToPush: '$(System.ArtifactsDirectory)\**\*-*.nupkg'
+          nuGetFeedType: 'internal'
+          publishVstsFeed: $(internalFeedName)
+          versioningScheme: 'off'
+          allowPackageConflicts: true
+
+# trigger:
+# - master
+
+# pool: "Default"
+
+# steps:
+# - task: ShellScript@2
+#   inputs:
+#     scriptPath: build.sh
+# - task: CopyFiles@2
+#   inputs:
+#     contents: |
+#      source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.dll
+#      source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.pdb
+#     targetFolder: '$(Build.ArtifactStagingDirectory)'
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#     artifactName: Meadow.Foundation
