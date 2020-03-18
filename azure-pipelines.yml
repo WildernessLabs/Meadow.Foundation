@@ -11,6 +11,7 @@ variables:
   buildConfiguration: 'Release'
   internalFeedName: 'Meadow'
   preReleasePackageBranch: 'refs/heads/develop'
+  meadowNugetServiceConnectionName: 'Meadow_Nuget'
 
 pool:
   vmImage: windows-2019
@@ -66,28 +67,32 @@ stages:
         inputs:
           command: 'push'
           feedsToUse: 'select'
-          packagesToPush: '$(System.ArtifactsDirectory)\**\*-*.nupkg'
+          packagesToPush: '$(System.ArtifactsDirectory)\**\*-*.nupkg' # only publish prerelease packages denoted by '-' in version
           nuGetFeedType: 'internal'
           publishVstsFeed: $(internalFeedName)
           versioningScheme: 'off'
           allowPackageConflicts: true
 
-# trigger:
-# - master
-
-# pool: "Default"
-
-# steps:
-# - task: ShellScript@2
-#   inputs:
-#     scriptPath: build.sh
-# - task: CopyFiles@2
-#   inputs:
-#     contents: |
-#      source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.dll
-#      source/Meadow.Foundation/bin/Debug/net472/Meadow.Foundation.pdb
-#     targetFolder: '$(Build.ArtifactStagingDirectory)'
-# - task: PublishBuildArtifacts@1
-#   inputs:
-#     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-#     artifactName: Meadow.Foundation
+# - stage: Publish
+#   dependsOn: Build
+#   condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+#   jobs:
+#   - job: Publish_Nugets
+#     steps:
+#       - task: DownloadBuildArtifacts@0
+#         inputs:
+#           buildType: 'current'
+#           downloadType: 'single'
+#           artifactName: 'packages'
+#           downloadPath: '$(System.ArtifactsDirectory)'
+#       - task: NuGetAuthenticate@0
+#         inputs:
+#           nuGetServiceConnections: '$(meadowNugetServiceConnectionName)'
+#       - task: NuGetCommand@2
+#         displayName: 'nuget push'
+#         inputs:
+#           command: 'push'
+#           packagesToPush: '$(System.ArtifactsDirectory)\**\*.nupkg'
+#           nuGetFeedType: 'external'
+#           versioningScheme: 'off'
+#           allowPackageConflicts: true
