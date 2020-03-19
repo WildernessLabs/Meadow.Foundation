@@ -50,7 +50,7 @@ stages:
             pathtoPublish: '$(Build.ArtifactStagingDirectory)'
             artifactName: packages
 
-- stage: Publish
+- stage: Publish_Staging
   dependsOn: Build
   condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']))
   jobs:
@@ -73,7 +73,7 @@ stages:
           versioningScheme: 'off'
           allowPackageConflicts: true
 
-- stage: Publish
+- stage: Publish_Prod
   dependsOn: Build
   condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], 'refs/heads/master'))
   jobs:
