@@ -85,4 +85,5 @@ stages:
           downloadType: 'single'
           artifactName: 'packages'
           downloadPath: '$(System.ArtifactsDirectory)'
+      - task: NuGetToolInstaller@1
       - script: nuget push -ApiKey $(meadowNugetApiKey) -Source https://api.nuget.org/v3/index.json $(System.ArtifactsDirectory)\**\*.nupkg
