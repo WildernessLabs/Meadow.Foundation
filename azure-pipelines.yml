@@ -73,26 +73,26 @@ stages:
           versioningScheme: 'off'
           allowPackageConflicts: true
 
-# - stage: Publish
-#   dependsOn: Build
-#   condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], 'refs/heads/master'))
-#   jobs:
-#   - job: Publish_Nugets
-#     steps:
-#       - task: DownloadBuildArtifacts@0
-#         inputs:
-#           buildType: 'current'
-#           downloadType: 'single'
-#           artifactName: 'packages'
-#           downloadPath: '$(System.ArtifactsDirectory)'
-#       - task: NuGetAuthenticate@0
-#         inputs:
-#           nuGetServiceConnections: '$(meadowNugetServiceConnectionName)'
-#       - task: NuGetCommand@2
-#         displayName: 'nuget push'
-#         inputs:
-#           command: 'push'
-#           packagesToPush: '$(System.ArtifactsDirectory)\**\*.nupkg'
-#           nuGetFeedType: 'external'
-#           versioningScheme: 'off'
-#           allowPackageConflicts: true
+- stage: Publish
+  dependsOn: Build
+  condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+  jobs:
+  - job: Publish_Nugets
+    steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'packages'
+          downloadPath: '$(System.ArtifactsDirectory)'
+      - task: NuGetAuthenticate@0
+        inputs:
+          nuGetServiceConnections: '$(meadowNugetServiceConnectionName)'
+      - task: NuGetCommand@2
+        displayName: 'nuget push'
+        inputs:
+          command: 'push'
+          packagesToPush: '$(System.ArtifactsDirectory)\**\*.nupkg'
+          nuGetFeedType: 'external'
+          versioningScheme: 'off'
+          allowPackageConflicts: true
