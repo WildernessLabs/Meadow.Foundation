@@ -85,14 +85,4 @@ stages:
           downloadType: 'single'
           artifactName: 'packages'
           downloadPath: '$(System.ArtifactsDirectory)'
-      - task: NuGetAuthenticate@0
-        inputs:
-          nuGetServiceConnections: '$(meadowNugetServiceConnectionName)'
-      - task: NuGetCommand@2
-        displayName: 'nuget push'
-        inputs:
-          command: 'push'
-          packagesToPush: '$(System.ArtifactsDirectory)\**\*.nupkg'
-          nuGetFeedType: 'external'
-          versioningScheme: 'off'
-          allowPackageConflicts: true
+      - script: nuget push -ApiKey $(meadowNugetApiKey) -Source "https://api.nuget.org/v3/index.json" $(System.ArtifactsDirectory)\**\*.nupkg
