@@ -48,6 +48,10 @@ namespace Meadow.Foundation.Displays
         /// internal buffer used to write to registers for all devices.
         /// </summary>
         private readonly byte[] _writeBuffer;
+        private readonly byte[] _readBuffer;
+
+        private readonly SpiBus spi;
+        private readonly IDigitalOutputPort chipSelectPort;
 
         /// <summary>
         /// A Buffer that contains the values of the digits registers per device
@@ -117,12 +121,16 @@ namespace Meadow.Foundation.Displays
 
         public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceCount = 1, Max7219Type maxMode = Max7219Type.Display)
         {
+            spi = (SpiBus)spiBus;
+            chipSelectPort = csPort;
+
             max7219 = new SpiPeripheral(spiBus, csPort);
 
             DeviceCount = deviceCount;
 
             _buffer = new byte[DeviceCount, NumDigits];
             _writeBuffer = new byte[2 * DeviceCount];
+            _readBuffer = new byte[2 * DeviceCount];
 
             Initialize(maxMode);
         }
@@ -274,7 +282,8 @@ namespace Meadow.Foundation.Displays
                     _writeBuffer[i++] = (byte)((int)Register.Digit0 + digit);
                     _writeBuffer[i++] = buffer[deviceId, digit];
                 }
-                max7219.WriteBytes(_writeBuffer);
+                //max7219.WriteBytes(_writeBuffer);
+                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, _writeBuffer, _readBuffer);
             }
         }
 
