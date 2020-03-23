@@ -2,14 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Light;
 
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
     /// High Accuracy Ambient Light Sensor 
     /// </summary>
-    public class VEML7700 : IDisposable
+    public class Veml7700 : IDisposable
     {
         /// <summary>
         ///     Valid addresses for the sensor.
@@ -56,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Light
 
         public LightSensor DataSource { get; set; } = LightSensor.Ambient;
 
-        public VEML7700(II2cBus bus)
+        public Veml7700(II2cBus bus)
         {
             Device = bus;
             Initialize((byte)Addresses.Default);
