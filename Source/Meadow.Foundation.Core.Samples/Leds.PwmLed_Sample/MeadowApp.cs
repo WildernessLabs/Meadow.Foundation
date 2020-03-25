@@ -18,17 +18,17 @@ namespace Leds.PwmLed_Sample
             pwmLeds = new List<PwmLed>
             {
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D02), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D03), TypicalForwardVoltage.Green),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D04), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D03), TypicalForwardVoltage.Red),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D04), TypicalForwardVoltage.Red),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D05), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D06), TypicalForwardVoltage.Green),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D07), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D06), TypicalForwardVoltage.Red),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D07), TypicalForwardVoltage.Red),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D08), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D09), TypicalForwardVoltage.Green),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D10), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D09), TypicalForwardVoltage.Red),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D10), TypicalForwardVoltage.Red),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D11), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D12), TypicalForwardVoltage.Green),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D13), TypicalForwardVoltage.Blue)
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D12), TypicalForwardVoltage.Red),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D13), TypicalForwardVoltage.Red)
             };
 
             TestPwmLeds();
