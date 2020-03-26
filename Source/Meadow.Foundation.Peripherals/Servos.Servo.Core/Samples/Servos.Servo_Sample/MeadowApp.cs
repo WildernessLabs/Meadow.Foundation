@@ -24,38 +24,34 @@ namespace Servos.Servo_Sample
         {
             Console.WriteLine("TestServo...");
 
-            int angle = 0;
-
-
-
             while (true)
             {
-                //for (int i = 0; i < servo.Config.MaximumAngle; i++)
-                //{
-                //    servo.RotateTo(i);
-                //    Console.WriteLine($"Rotating to {i}");
-                //    Thread.Sleep(100);
-                //}
-                //Thread.Sleep(2000);
-                //for (int i = 180; i > servo.Config.MinimumAngle; i--)
-                //{
-                //    servo.RotateTo(i);
-                //    Console.WriteLine($"Rotating to {i}");
-                //    Thread.Sleep(100);
-                //}
-                //Thread.Sleep(2000);
+                for (int i = 0; i <= servo.Config.MaximumAngle; i++)
+                {
+                    servo.RotateTo(i);
+                    Console.WriteLine($"Rotating to {i}");
+                    Thread.Sleep(40);
+                }
+                Thread.Sleep(2000);
+                for (int i = 180; i >= servo.Config.MinimumAngle; i--)
+                {
+                    servo.RotateTo(i);
+                    Console.WriteLine($"Rotating to {i}");
+                    Thread.Sleep(40);
+                }
+                Thread.Sleep(2000);
 
-                if (servo.Angle <= servo.Config.MinimumAngle)
-                {
-                    Console.WriteLine($"Rotating to {servo.Config.MaximumAngle}");
-                    servo.RotateTo(servo.Config.MaximumAngle);
-                }
-                else
-                {
-                    Console.WriteLine($"Rotating to {servo.Config.MinimumAngle}");
-                    servo.RotateTo(servo.Config.MinimumAngle);
-                }
-                Thread.Sleep(4000);
+                //if (servo.Angle <= servo.Config.MinimumAngle)
+                //{
+                //    Console.WriteLine($"Rotating to {servo.Config.MaximumAngle}");
+                //    servo.RotateTo(servo.Config.MaximumAngle);
+                //}
+                //else
+                //{
+                //    Console.WriteLine($"Rotating to {servo.Config.MinimumAngle}");
+                //    servo.RotateTo(servo.Config.MinimumAngle);
+                //}
+                //Thread.Sleep(4000);
             }
         }
     }
