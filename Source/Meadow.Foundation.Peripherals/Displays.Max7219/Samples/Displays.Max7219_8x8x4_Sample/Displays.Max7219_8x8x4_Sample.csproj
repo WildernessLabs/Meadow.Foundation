@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Exe</OutputType>

@@ -8,12 +8,12 @@ namespace Sensors.Light.Veml7700_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        VEML7700 _veml;
+        Veml7700 _veml;
 
         public MeadowApp()
         {
             var bus = Device.CreateI2cBus();
-            using (_veml = new VEML7700(bus))
+            using (_veml = new Veml7700(bus))
             {
 
                 _veml.ChangeThreshold = 10;

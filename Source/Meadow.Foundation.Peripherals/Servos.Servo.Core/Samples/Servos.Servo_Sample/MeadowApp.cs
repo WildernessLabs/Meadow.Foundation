@@ -13,8 +13,9 @@ namespace Servos.Servo_Sample
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
-
-            servo = new Servo(Device.CreatePwmPort(Device.Pins.D05), NamedServoConfigs.Ideal180Servo);
+            
+            servo = new Servo(Device.CreatePwmPort(Device.Pins.D04), NamedServoConfigs.SG90);
+            servo.RotateTo(0);
 
             TestServo();
         }
@@ -25,17 +26,32 @@ namespace Servos.Servo_Sample
 
             while (true)
             {
-                if (servo.Angle <= servo.Config.MinimumAngle)
+                for (int i = 0; i <= servo.Config.MaximumAngle; i++)
                 {
-                    Console.WriteLine($"Rotating to {servo.Config.MaximumAngle}");
-                    servo.RotateTo(servo.Config.MaximumAngle);
+                    servo.RotateTo(i);
+                    Console.WriteLine($"Rotating to {i}");
+                    Thread.Sleep(40);
                 }
-                else
+                Thread.Sleep(2000);
+                for (int i = 180; i >= servo.Config.MinimumAngle; i--)
                 {
-                    Console.WriteLine($"Rotating to {servo.Config.MinimumAngle}");
-                    servo.RotateTo(servo.Config.MinimumAngle);
+                    servo.RotateTo(i);
+                    Console.WriteLine($"Rotating to {i}");
+                    Thread.Sleep(40);
                 }
-                Thread.Sleep(4000);
+                Thread.Sleep(2000);
+
+                //if (servo.Angle <= servo.Config.MinimumAngle)
+                //{
+                //    Console.WriteLine($"Rotating to {servo.Config.MaximumAngle}");
+                //    servo.RotateTo(servo.Config.MaximumAngle);
+                //}
+                //else
+                //{
+                //    Console.WriteLine($"Rotating to {servo.Config.MinimumAngle}");
+                //    servo.RotateTo(servo.Config.MinimumAngle);
+                //}
+                //Thread.Sleep(4000);
             }
         }
     }
