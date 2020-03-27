@@ -1,5 +1,3 @@
-using System;
-
 namespace Meadow.Foundation.Servos
 {
     public static class NamedServoConfigs
@@ -8,6 +6,7 @@ namespace Meadow.Foundation.Servos
         /// Represents an ideal 180º servo that has a minimum pulse of 1ms and a max of 2ms.
         /// </summary>
         public static ServoConfig Ideal180Servo = new ServoConfig();
+        
         /// <summary>
         /// Represents an ideal 270º servo that has a minimum pulse of 1ms and a max of 2ms.
         /// </summary>
@@ -38,5 +37,10 @@ namespace Meadow.Foundation.Servos
         /// Represents the JX HV 180 degree servo models. Angle: 0-180, Pulse: 500 - 2,500
         /// </summary>0
         public static ServoConfig JXHV180 = new ServoConfig(minimumPulseDuration: 500, maximumPulseDuration: 2500, maximumAngle: 180);
+
+        /// <summary>
+        /// Represents the SG90 180 degree servo models. Angle: 0-180, Pulse: 500 - 2,200
+        /// </summary>0
+        public static ServoConfig SG90 = new ServoConfig(minimumAngle: 0, maximumAngle: 180, minimumPulseDuration: 450, maximumPulseDuration: 2100, frequency: 300);
     }
 }

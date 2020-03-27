@@ -13,8 +13,7 @@ namespace Meadow.Foundation.Servos
         public ServoConfig Config
         {
             get { return _config; }
-        }
-        protected ServoConfig _config = null;
+        } protected ServoConfig _config = null;
 
         /// <summary>
         /// Returns the current angle. Returns -1 if the angle is unknown.
@@ -31,12 +30,11 @@ namespace Meadow.Foundation.Servos
         public ServoBase(IPwmPort pwm, ServoConfig config)
         {
             _config = config;
-            // OLD
-            //_pwm = new PWM(pin, config.Frequency, 0, false);
-            // NEW
-			_pwm = pwm;
-			_pwm.Frequency = config.Frequency;
-			_pwm.DutyCycle = 0;
+
+            _pwm = pwm;
+            _pwm.Frequency = config.Frequency;
+            _pwm.DutyCycle = 0;
+            _pwm.Start();
         }
 
         /// <summary>
@@ -53,7 +51,7 @@ namespace Meadow.Foundation.Servos
             // calculate the appropriate pulse duration for the angle
             float pulseDuration = CalculatePulseDuration(angle);
             //Console.WriteLine("Pulse Duration: " + pulseDuration.ToString());
-            
+
             // send our pulse to the servo to make it move
             SendCommandPulse(pulseDuration);
 
@@ -91,7 +89,6 @@ namespace Meadow.Foundation.Servos
         {
             //Console.WriteLine("Sending Command Pulse");
             _pwm.DutyCycle = CalculateDutyCycle(pulseDuration);
-            _pwm.Start(); // servo expects to run continuously
         }
     }
 }
