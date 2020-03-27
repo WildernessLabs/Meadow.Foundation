@@ -15,6 +15,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.DataLoggers" Version="0.5.4" />
+    <PackageReference Include="Meadow.Foundation.DataLoggers" Version="0.*" />
   </ItemGroup>
 </Project>
