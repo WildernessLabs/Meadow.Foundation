@@ -9,11 +9,11 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Motion, Parallax, PIR</PackageTags>    
-    <Version>0.8.5</Version>
+    <Version>0.8.6</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for Parallax PIR motion sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.13.2" />
+    <PackageReference Include="Meadow.Foundation" Version="0.*" />
   </ItemGroup>
 </Project>
