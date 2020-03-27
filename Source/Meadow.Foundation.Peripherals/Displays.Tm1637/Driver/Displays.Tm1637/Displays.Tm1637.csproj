@@ -9,11 +9,11 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, TM1637</PackageTags>    
-    <Version>0.1.3</Version>
+    <Version>0.1.4</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for TM1637 display</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.13.2" />
+    <PackageReference Include="Meadow.Foundation" Version="0.*" />
   </ItemGroup>
 </Project>
