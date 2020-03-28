@@ -194,6 +194,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new NotImplementedException();
         }
 
+        public void SetClock(DateTime dateTime)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }
