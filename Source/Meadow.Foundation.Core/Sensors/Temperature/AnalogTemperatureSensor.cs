@@ -299,9 +299,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="voltage"></param>
         /// <returns></returns>
         protected float VoltageToTemperature(float voltage)
-        {  
-            var yAdjusted = voltage * 1000 - _yIntercept;
-            return yAdjusted * _millivoltsPerDegreeCentigrade * 10;
+        {
+            var yAdjusted = voltage * 1000;
+            return (yAdjusted - _yIntercept) * 1000 / _millivoltsPerDegreeCentigrade;
         }
 
         #endregion Methods
