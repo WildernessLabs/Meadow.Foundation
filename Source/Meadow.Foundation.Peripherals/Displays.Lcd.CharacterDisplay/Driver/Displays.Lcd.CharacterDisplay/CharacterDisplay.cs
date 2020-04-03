@@ -18,6 +18,9 @@ namespace Meadow.Foundation.Displays.Lcd
         private byte LCD_LINE_3 = 0x94; // # LCD RAM address for the 3rd line
         private byte LCD_LINE_4 = 0xD4; // # LCD RAM address for the 4th line
 
+        private byte cursorLine = 0;
+        private byte cursorColumn = 0;
+
         private const byte LCD_SETDDRAMADDR = 0x80;
         private const byte LCD_SETCGRAMADDR = 0x40;
 
@@ -156,8 +159,13 @@ namespace Meadow.Foundation.Displays.Lcd
             SetLineAddress(lineNumber);
 
             // Instead of clearing the line first, pad it with empty space on the end
-            var paddedString = text.PadRight(DisplayConfig.Width, ' ');
-            var bytes = System.Text.Encoding.UTF8.GetBytes(paddedString);
+            var screenText = text.PadRight(DisplayConfig.Width, ' ');
+            if (screenText.Length > DisplayConfig.Width)
+            {
+                screenText = screenText.Substring(0, DisplayConfig.Width);            
+            }
+
+            var bytes = System.Text.Encoding.UTF8.GetBytes(screenText);
             foreach (var b in bytes)
             {
                 SendByte(b, LCD_DATA);
@@ -166,7 +174,14 @@ namespace Meadow.Foundation.Displays.Lcd
 
         public void Write(string text)
         {
-            var bytes = System.Text.Encoding.UTF8.GetBytes(text);
+            string screentText = text;
+
+            if(screentText.Length + (int)cursorColumn > DisplayConfig.Width)
+            {
+                screentText = screentText.Substring(0, DisplayConfig.Width - cursorColumn);
+            }
+
+            var bytes = System.Text.Encoding.UTF8.GetBytes(screentText);
             foreach (var b in bytes)
             {
                 SendByte(b, LCD_DATA);
@@ -175,6 +190,14 @@ namespace Meadow.Foundation.Displays.Lcd
 
         public void SetCursorPosition(byte column, byte line)
         {
+            if(column >= DisplayConfig.Width || line >= DisplayConfig.Height)
+            {
+                throw new Exception($"CharacterDisplay: cursor out of bounds {column}, {line}");
+            }
+
+            cursorColumn = column;
+            cursorLine = line;
+
             byte lineAddress = GetLineAddress(line);
             var address = column + lineAddress;
             SendByte(((byte)(LCD_SETDDRAMADDR | address)), LCD_INSTRUCTION);
