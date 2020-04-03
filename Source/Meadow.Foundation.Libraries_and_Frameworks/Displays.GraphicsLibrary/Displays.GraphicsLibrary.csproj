@@ -9,7 +9,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Display, Graphics</PackageTags>    
-    <Version>0.9.4</Version>
+    <Version>0.9.5</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Graphics Library</Description>
   </PropertyGroup>

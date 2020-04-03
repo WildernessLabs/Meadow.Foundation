@@ -264,7 +264,7 @@ namespace Meadow.Foundation.Graphics
                 length *= -1;
             }
 
-            for (var x = x0; (x - x0) < length; x++)
+            for (var x = x0; (x - x0) <= length; x++)
             {
                 DrawPixel(x, y0, colored);
             }
@@ -291,7 +291,7 @@ namespace Meadow.Foundation.Graphics
                 length *= -1;
             }
 
-            for (var x = x0; (x - x0) < length; x++)
+            for (var x = x0; (x - x0) <= length; x++)
             {
                 DrawPixel(x, y0);
             }
