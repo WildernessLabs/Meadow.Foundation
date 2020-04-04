@@ -47,12 +47,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Pressure
         /// </summary>
-        public float Pressure => Conditions.Pressure;
+        public float Pressure => Conditions.Pressure.Value;
 
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature;
+        public float Temperature => Conditions.Temperature.Value;
 
         /// <summary>
         /// The AtmosphericConditions from the last reading.
