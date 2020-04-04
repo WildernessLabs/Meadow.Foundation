@@ -51,6 +51,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             /// <summary>
             ///     Sample reading as specified in the product data sheet.
+            ///     Measured in degrees Centigrade.
             /// </summary>
             public int SampleReading { get; protected set; } = 25;
 
@@ -164,7 +165,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
         /// <param name="sensorType">Type of sensor attached to the analog port.</param>
-        /// <param name="calibration">Calibration for the analog temperature sensor.</param>
+        /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
         public AnalogTemperature(
             IIODevice device,
             IPin analogPin,
@@ -203,7 +204,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                     _millivoltsPerDegreeCentigrade = 20;
                     break;
                 case KnownSensorType.Custom:
-                    _yIntercept = calibration.MillivoltsAtSampleReading - (calibration.SampleReading * calibration.MillivoltsAtSampleReading);
+                    _yIntercept = calibration.MillivoltsAtSampleReading - (calibration.SampleReading * calibration.MillivoltsPerDegreeCentigrade);
                     _millivoltsPerDegreeCentigrade = calibration.MillivoltsPerDegreeCentigrade;
                     break;
                 default:
@@ -299,9 +300,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="voltage"></param>
         /// <returns></returns>
         protected float VoltageToTemperature(float voltage)
-        {  
-            var yAdjusted = voltage * 1000 - _yIntercept;
-            return yAdjusted * _millivoltsPerDegreeCentigrade * 10;
+        {
+            var yAdjusted = voltage * 1000;
+            return (yAdjusted - _yIntercept) * 1000 / _millivoltsPerDegreeCentigrade;
         }
 
         #endregion Methods
