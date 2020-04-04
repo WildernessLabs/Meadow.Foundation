@@ -35,9 +35,9 @@ namespace Sensors.Atmospheric.BME280_Sample
                 },
                 e => {
                     return (
-                        (Math.Abs(e.Delta.Temperature) > 1)
+                        (Math.Abs(e.Delta.Temperature.Value) > 1)
                         &&
-                        (Math.Abs(e.Delta.Pressure) > 5)
+                        (Math.Abs(e.Delta.Pressure.Value) > 5)
                         );
                 }
                 ));
