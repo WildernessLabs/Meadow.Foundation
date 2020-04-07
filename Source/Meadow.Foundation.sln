@@ -626,6 +626,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Veml7700", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Veml7700_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Veml7700\Samples\Sensors.Light.Veml7700_Sample\Sensors.Light.Veml7700_Sample.csproj", "{02CE4043-C061-4551-B3F2-E17E6C889814}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Max7219_8x8x4x2_Sample", "Meadow.Foundation.Peripherals\Displays.Max7219\Samples\Displays.Max7219_8x8x4x2_Sample\Displays.Max7219_8x8x4x2_Sample.csproj", "{6B7D5CB4-30B3-49BF-B815-C43FECBC6291}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1344,6 +1346,10 @@ Global
 		{02CE4043-C061-4551-B3F2-E17E6C889814}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02CE4043-C061-4551-B3F2-E17E6C889814}.Release|Any CPU.Build.0 = Release|Any CPU
 		{02CE4043-C061-4551-B3F2-E17E6C889814}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{6B7D5CB4-30B3-49BF-B815-C43FECBC6291}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B7D5CB4-30B3-49BF-B815-C43FECBC6291}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B7D5CB4-30B3-49BF-B815-C43FECBC6291}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B7D5CB4-30B3-49BF-B815-C43FECBC6291}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1654,6 +1660,7 @@ Global
 		{085AE7C1-E8BB-4564-8473-392EBBB835B3} = {A7FC5090-631A-4580-8E00-06A658482C23}
 		{6035BA5E-4E7E-40FD-8509-70C86798CA56} = {A7FC5090-631A-4580-8E00-06A658482C23}
 		{02CE4043-C061-4551-B3F2-E17E6C889814} = {085AE7C1-E8BB-4564-8473-392EBBB835B3}
+		{6B7D5CB4-30B3-49BF-B815-C43FECBC6291} = {8AA8CB22-1E97-463D-863F-484236E1C24C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
