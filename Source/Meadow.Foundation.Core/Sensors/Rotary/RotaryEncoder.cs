@@ -51,7 +51,8 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="bPhasePin"></param>
         public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
             this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 200, 50),
-                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 200, 50)) { }
+                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 200, 50))
+        { }
 
         /// <summary>
         /// Instantiate a new RotaryEncoder on the specified ports
@@ -63,13 +64,95 @@ namespace Meadow.Foundation.Sensors.Rotary
             APhasePort = aPhasePort;
             BPhasePort = bPhasePort;
 
-            APhasePort.Changed += PhasePinChanged;
-            BPhasePort.Changed += PhasePinChanged;
+            APhasePort.Changed += PhaseAPinChanged;
+            BPhasePort.Changed += PhaseBPinChanged;
         }
 
         #endregion
 
         #region Methods
+
+        private readonly object _lock = new object();
+        protected bool _aTriggered = false;
+
+        private void resetFlags()
+        {
+            _processing = false;
+            _aTriggered = false;
+        }
+
+        private void PhaseAPinChanged(object sender, DigitalInputPortEventArgs e)
+        {
+            //Console.WriteLine((!_processing ? "1st result: " : "2nd result: ") + "A{" + (APhasePin.Read() ? "1" : "0") + "}, " + "B{" + (BPhasePin.Read() ? "1" : "0") + "}");
+
+            // the first time through (not processing) store the result in array slot 0.
+            // second time through (is processing) store the result in array slot 1.
+            _results[0].APhase = e.Value;
+            _results[0].BPhase = BPhasePort.State;
+
+            // if this is the second result that we're reading, we should now have 
+            // enough information to know which way it's turning, so process the
+            // gray code
+            lock (_lock)
+            {
+                if (_processing)
+                {
+                    if (_aTriggered)
+                    {
+                        //This is an invalid event because a-triggers can't toggle the processing flag
+                        // However, this can be the start of a new triggering event! 
+                        // Don't change _processing or _aTriggered because if we are down this path it either means it is invalid or that b will soon trigger
+                    }
+                    else //Means b triggered first
+                    {
+                        OnRaiseRotationEvent(RotationDirection.CounterClockwise);
+                        resetFlags(); // After successful flag!
+                    }
+                }
+                else
+                {
+                    // toggle our processing flag
+                    _processing = !_processing;
+                }
+                _aTriggered = true;
+            }
+        }
+
+        private void PhaseBPinChanged(object sender, DigitalInputPortEventArgs e)
+        {
+            //Console.WriteLine((!_processing ? "1st result: " : "2nd result: ") + "A{" + (APhasePin.Read() ? "1" : "0") + "}, " + "B{" + (BPhasePin.Read() ? "1" : "0") + "}");
+
+            // the first time through (not processing) store the result in array slot 0.
+            // second time through (is processing) store the result in array slot 1.
+            _results[1].APhase = APhasePort.State;
+            _results[1].BPhase = e.Value;
+            // if this is the second result that we're reading, we should now have 
+            // enough information to know which way it's turning, so process the
+            // gray code
+            lock (_lock)
+            {
+                if (_processing)
+                {
+                    if (_aTriggered) //a triggered first
+                    {
+                        OnRaiseRotationEvent(RotationDirection.Clockwise);
+                        resetFlags(); // after successful flag!
+                    }
+                    else
+                    {
+                        //This is an invalid path because if we are processing it means it is the second event fired. reset flags and return
+                        // leave processing flag alone because if a now triggers it is a valid sequence
+                    }
+                    //ProcessRotationResults();
+                }
+                else
+                {
+                    // toggle our processing flag - only toggle selectively to catch misfiring events
+                    _processing = !_processing;
+                }
+                _aTriggered = false;
+            }
+        }
 
         private void PhasePinChanged(object sender, DigitalInputPortEventArgs e)
         {
@@ -98,11 +181,11 @@ namespace Meadow.Foundation.Sensors.Rotary
         protected void ProcessRotationResults()
         {
             // if there hasn't been any change, then it's a garbage reading. so toss it out.
-            if (_results[0].APhase == _results[1].APhase && 
-                _results[0].BPhase == _results[1].BPhase) 
+            if (_results[0].APhase == _results[1].APhase &&
+                _results[0].BPhase == _results[1].BPhase)
                 //Console.WriteLine("Garbage");
                 return;
-            
+
             // start by reading the a phase pin. if it's High
             if (_results[0].APhase)
             {
