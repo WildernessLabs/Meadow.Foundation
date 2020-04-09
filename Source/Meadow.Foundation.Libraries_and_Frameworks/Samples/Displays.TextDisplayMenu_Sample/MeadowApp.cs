@@ -3,6 +3,9 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
+using Meadow.Foundation.Displays.TextDisplayMenu;
+using Meadow.Foundation.Displays.Tft;
+using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
 
 namespace MeadowApp
@@ -11,10 +14,14 @@ namespace MeadowApp
     {
         RgbPwmLed onboardLed;
 
+        Menu menu;
+        St7789 display;
+        GraphicsLibrary graphics;
+        
+
         public MeadowApp()
         {
             Initialize();
-            CycleColors(1000);
         }
 
         void Initialize()
@@ -27,42 +34,6 @@ namespace MeadowApp
                 bluePwmPin: Device.Pins.OnboardLedBlue,
                 3.3f, 3.3f, 3.3f,
                 Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
-        }
-
-        void CycleColors(int duration)
-        {
-            Console.WriteLine("Cycle colors...");
-
-            while (true)
-            {
-                ShowColorPulse(Color.Blue, duration);
-                ShowColorPulse(Color.Cyan, duration);
-                ShowColorPulse(Color.Green, duration);
-                ShowColorPulse(Color.GreenYellow, duration);
-                ShowColorPulse(Color.Yellow, duration);
-                ShowColorPulse(Color.Orange, duration);
-                ShowColorPulse(Color.OrangeRed, duration);
-                ShowColorPulse(Color.Red, duration);
-                ShowColorPulse(Color.MediumVioletRed, duration);
-                ShowColorPulse(Color.Purple, duration);
-                ShowColorPulse(Color.Magenta, duration);
-                ShowColorPulse(Color.Pink, duration);
-            }
-        }
-
-        void ShowColorPulse(Color color, int duration = 1000)
-        {
-            onboardLed.StartPulse(color, (uint)(duration / 2));
-            Thread.Sleep(duration);
-            onboardLed.Stop();
-        }
-
-        void ShowColor(Color color, int duration = 1000)
-        {
-            Console.WriteLine($"Color: {color}");
-            onboardLed.SetColor(color);
-            Thread.Sleep(duration);
-            onboardLed.Stop();
         }
     }
 }
