@@ -1,4 +1,6 @@
-﻿using Meadow.Hardware;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Rotary;
 
 namespace Meadow.Foundation.Sensors.Rotary
@@ -35,9 +37,20 @@ namespace Meadow.Foundation.Sensors.Rotary
         protected bool _processing = false;
 
         /// <summary>
-        /// Two sets of gray code results to determine direction of rotation 
+        /// Lock object to ensure events aren't overriding eachothers information
         /// </summary>
-        protected TwoBitGrayCode[] _results = new TwoBitGrayCode[2];
+        private readonly object _lock = new object();
+
+        /// <summary>
+        /// Signals that the aPhase has triggered an event
+        /// </summary>
+        protected bool _aTriggered = false;
+
+
+        /// <summary>
+        /// Two sets of gray code results to determine direction of rotation. Note that this is no longer used in the seperate event logic
+        /// </summary>
+        protected TwoBitGrayCode[] _results = new TwoBitGrayCode[2]; //no longer needed
 
         #endregion
 
@@ -50,8 +63,8 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
         public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
-            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 200, 50),
-                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 200, 50))
+            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 10, 50), //Signifcantly reduced debounce as this was causing reading issues if RotaryEncoder was turned quickly.
+                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 10, 50))
         { }
 
         /// <summary>
@@ -72,27 +85,20 @@ namespace Meadow.Foundation.Sensors.Rotary
 
         #region Methods
 
-        private readonly object _lock = new object();
-        protected bool _aTriggered = false;
-
-        private void resetFlags()
+         private void resetFlags()
         {
             _processing = false;
             _aTriggered = false;
         }
 
+        /// <summary>
+        /// This event monitors the bPhase pin. It will raise an event on rotation if it is the second event fired (_processing = true) and bPhase triggered first (CounterClockwise rotation)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PhaseAPinChanged(object sender, DigitalInputPortEventArgs e)
         {
-            //Console.WriteLine((!_processing ? "1st result: " : "2nd result: ") + "A{" + (APhasePin.Read() ? "1" : "0") + "}, " + "B{" + (BPhasePin.Read() ? "1" : "0") + "}");
-
-            // the first time through (not processing) store the result in array slot 0.
-            // second time through (is processing) store the result in array slot 1.
-            _results[0].APhase = e.Value;
-            _results[0].BPhase = BPhasePort.State;
-
-            // if this is the second result that we're reading, we should now have 
-            // enough information to know which way it's turning, so process the
-            // gray code
+            // Lock the thread so protected variables are not modified while process
             lock (_lock)
             {
                 if (_processing)
@@ -116,19 +122,23 @@ namespace Meadow.Foundation.Sensors.Rotary
                 }
                 _aTriggered = true;
             }
+
+
+            // to address issues where the flags have been reversed for whatever reason after time reset the flags
+            new Task(() =>
+            {
+                Thread.Sleep(50); //all events should be within 50 ms of each other. This may cause issue if people are turning at super human speed
+                resetFlags();
+            }).Start();
         }
 
+        /// <summary>
+        /// This event monitors the bPhase pin. It will raise an event on rotation if it is the second event fired (_processing = true) and aPhase triggered first (clockwise rotation)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PhaseBPinChanged(object sender, DigitalInputPortEventArgs e)
         {
-            //Console.WriteLine((!_processing ? "1st result: " : "2nd result: ") + "A{" + (APhasePin.Read() ? "1" : "0") + "}, " + "B{" + (BPhasePin.Read() ? "1" : "0") + "}");
-
-            // the first time through (not processing) store the result in array slot 0.
-            // second time through (is processing) store the result in array slot 1.
-            _results[1].APhase = APhasePort.State;
-            _results[1].BPhase = e.Value;
-            // if this is the second result that we're reading, we should now have 
-            // enough information to know which way it's turning, so process the
-            // gray code
             lock (_lock)
             {
                 if (_processing)
@@ -152,6 +162,7 @@ namespace Meadow.Foundation.Sensors.Rotary
                 }
                 _aTriggered = false;
             }
+
         }
 
         private void PhasePinChanged(object sender, DigitalInputPortEventArgs e)
