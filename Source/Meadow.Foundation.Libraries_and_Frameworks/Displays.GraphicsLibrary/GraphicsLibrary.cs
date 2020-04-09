@@ -1,4 +1,5 @@
 ﻿using Meadow.Foundation.Displays;
+using Meadow.Peripherals.Displays;
 using System;
 
 namespace Meadow.Foundation.Graphics
@@ -6,7 +7,7 @@ namespace Meadow.Foundation.Graphics
     /// <summary>
     ///     Provide high level graphics functions
     /// </summary>
-    public class GraphicsLibrary
+    public class GraphicsLibrary : ITextDisplay
     {
         #region Member variables / fields
 
@@ -60,6 +61,8 @@ namespace Meadow.Foundation.Graphics
         /// Return the width of the display after accounting for the rotation.
         /// </summary>
         public uint Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? _display.Width : _display.Height;
+
+        public TextDisplayConfig DisplayConfig => throw new NotImplementedException();
 
         #region Constructors
 
@@ -909,6 +912,51 @@ namespace Meadow.Foundation.Graphics
                 default:
                     return y;
             }
+        }
+
+        public void Write(string text)
+        {
+            if (CurrentFont == null)
+            {
+                throw new Exception("GraphicsLibrary.Write requires CurrentFont to be set");
+            }
+            DrawText(CurrentFont.Width * CursorColumn, CurrentFont.Height * CursorLine, text);
+        }
+
+        public void WriteLine(string text, byte lineNumber)
+        {
+            if(CurrentFont == null)
+            {
+                throw new Exception("GraphicsLibrary.WriteLine requires CurrentFont to be set");
+            }
+            DrawText(0, lineNumber * CurrentFont.Height, text);
+        }
+
+        public void Clear()
+        {
+            Clear(true);
+        }
+
+        public void ClearLine(byte lineNumber)
+        {
+            DrawRectangle(0, CurrentFont.Height * lineNumber, (int)Width, CurrentFont.Height, true, true);
+        }
+
+        public void SetBrightness(float brightness = 0.75F)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte CursorColumn { get; private set; } = 0;
+        public byte CursorLine { get; private set; } = 0;
+        public void SetCursorPosition(byte column, byte line)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveCustomCharacter(byte[] characterMap, byte address)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Display
