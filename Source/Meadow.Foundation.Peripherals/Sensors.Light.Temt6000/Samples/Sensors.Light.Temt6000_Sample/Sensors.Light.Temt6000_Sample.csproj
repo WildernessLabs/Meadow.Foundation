@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Sensors.Light.Temt6000" Version="0.1.1" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Sensors.Light.Temt6000\Driver\Sensors.Light.Temt6000\Sensors.Light.Temt6000.csproj" />
   </ItemGroup>
 </Project>
