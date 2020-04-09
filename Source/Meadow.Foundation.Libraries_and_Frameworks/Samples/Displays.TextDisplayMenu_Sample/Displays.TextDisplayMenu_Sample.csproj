@@ -5,7 +5,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.14.1" />
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Displays.TextDisplayMenu\Displays.TextDisplayMenu.csproj" />

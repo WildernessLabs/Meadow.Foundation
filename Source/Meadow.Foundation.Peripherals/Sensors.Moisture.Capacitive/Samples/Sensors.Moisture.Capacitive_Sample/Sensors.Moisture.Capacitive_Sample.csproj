@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Sensors.Moisture.Capacitive" Version="0.5.4" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Sensors.Moisture.Capacitive\Driver\Sensors.Moisture.Capacitive\Sensors.Moisture.Capacitive.csproj" />
   </ItemGroup>
 </Project>

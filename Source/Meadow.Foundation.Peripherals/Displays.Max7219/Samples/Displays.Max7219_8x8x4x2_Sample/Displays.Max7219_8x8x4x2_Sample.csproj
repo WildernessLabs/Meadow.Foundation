@@ -5,8 +5,8 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.14.1" />
-    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.9.5" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Driver\Displays.Max7219\Displays.Max7219.csproj" />
