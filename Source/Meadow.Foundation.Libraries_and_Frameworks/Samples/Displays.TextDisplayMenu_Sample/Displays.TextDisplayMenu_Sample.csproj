@@ -1,0 +1,14 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.14.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Displays.TextDisplayMenu\Displays.TextDisplayMenu.csproj" />
+    <ProjectReference Include="..\..\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
+  </ItemGroup>
+</Project>
