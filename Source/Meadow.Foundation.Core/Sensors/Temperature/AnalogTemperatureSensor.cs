@@ -225,8 +225,8 @@ namespace Meadow.Foundation.Sensors.Temperature
                         RaiseEventsAndNotify
                         (
                             new AtmosphericConditionChangeResult(
-                                new AtmosphericConditions(newTemp, 0, 0),
-                                new AtmosphericConditions(oldTemp, 0, 0)
+                                new AtmosphericConditions(newTemp, null, null),
+                                new AtmosphericConditions(oldTemp, null, null)
                             )
                         );
                     }
@@ -254,7 +254,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             // convert and save to our temp property for later retreival
             Temperature = VoltageToTemperature(voltage);
             // return
-            return new AtmosphericConditions(Temperature, 0, 0);
+            return new AtmosphericConditions(Temperature, null, null);
             //return Temperature;
         }
 

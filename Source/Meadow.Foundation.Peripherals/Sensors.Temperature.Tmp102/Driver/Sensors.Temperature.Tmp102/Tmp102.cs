@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature;
+        public float Temperature => Conditions.Temperature.Value;
 
         /// <summary>
         /// The AtmosphericConditions from the last reading.

@@ -211,18 +211,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature;
+        public float Temperature => Conditions.Temperature.Value;
 
         /// <summary>
         /// The pressure, in hectopascals (hPa), from the last reading. 1 hPa
         /// is equal to one millibar, or 1/10th of a kilopascal (kPa)/centibar.
         /// </summary>
-        public float Pressure => Conditions.Pressure;
+        public float Pressure => Conditions.Pressure.Value;
 
         /// <summary>
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
-        public float Humidity => Conditions.Humidity;
+        public float Humidity => Conditions.Humidity.Value;
 
         #endregion Properties
 
