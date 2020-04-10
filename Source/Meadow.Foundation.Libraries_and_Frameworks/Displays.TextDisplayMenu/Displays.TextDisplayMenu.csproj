@@ -8,4 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SimpleJson" Version="0.0.1" />
+  </ItemGroup>
 </Project>

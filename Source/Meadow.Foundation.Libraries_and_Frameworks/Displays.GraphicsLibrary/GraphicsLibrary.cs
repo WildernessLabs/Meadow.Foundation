@@ -20,7 +20,21 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         ///     Current font used for displaying text on the display.
         /// </summary>
-        public FontBase CurrentFont { get; set; }
+        public FontBase CurrentFont
+        {
+            get => currentFont;
+            set
+            {
+                currentFont = value;
+                if(currentFont == null) { return; }
+                DisplayConfig = new TextDisplayConfig()
+                {
+                    Width = (ushort)((int)this.Width / currentFont.Width),
+                    Height = (ushort)((int)this.Height / CurrentFont.Height)
+                };
+            }
+        }
+        FontBase currentFont;
 
         /// <summary>
         /// Current rotation used for drawing pixels to the display
@@ -62,7 +76,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public uint Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? _display.Width : _display.Height;
 
-        public TextDisplayConfig DisplayConfig => throw new NotImplementedException();
+        public TextDisplayConfig DisplayConfig { get; private set; }
 
         #region Constructors
 
@@ -921,6 +935,7 @@ namespace Meadow.Foundation.Graphics
                 throw new Exception("GraphicsLibrary.Write requires CurrentFont to be set");
             }
             DrawText(CurrentFont.Width * CursorColumn, CurrentFont.Height * CursorLine, text);
+            Show();
         }
 
         public void WriteLine(string text, byte lineNumber)
@@ -930,6 +945,7 @@ namespace Meadow.Foundation.Graphics
                 throw new Exception("GraphicsLibrary.WriteLine requires CurrentFont to be set");
             }
             DrawText(0, lineNumber * CurrentFont.Height, text);
+            Show();
         }
 
         public void Clear()
@@ -942,21 +958,17 @@ namespace Meadow.Foundation.Graphics
             DrawRectangle(0, CurrentFont.Height * lineNumber, (int)Width, CurrentFont.Height, true, true);
         }
 
-        public void SetBrightness(float brightness = 0.75F)
-        {
-            throw new NotImplementedException();
-        }
-
         public byte CursorColumn { get; private set; } = 0;
         public byte CursorLine { get; private set; } = 0;
         public void SetCursorPosition(byte column, byte line)
         {
-            throw new NotImplementedException();
+            CursorColumn = column;
+            CursorLine = line;
         }
 
         public void SaveCustomCharacter(byte[] characterMap, byte address)
         {
-            throw new NotImplementedException();
+          //  throw new NotImplementedException();
         }
 
         #endregion Display

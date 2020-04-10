@@ -55,8 +55,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         private MenuPage ParseMenuData(byte[] menuResource)
         {
             var menuJson = new string(System.Text.Encoding.UTF8.GetChars(menuResource));
-            //Port: TODO var menuData = Json.NETMF.JsonSerializer.DeserializeString(menuJson) as Hashtable;
-            Hashtable menuData = null;
+            var menuData = SimpleJson.JsonSerializer.DeserializeString(menuJson) as Hashtable; //from nuget package
+
+
+        //    Hashtable menuData = null;
 
             if (menuData["menu"] == null)
             {
@@ -106,7 +108,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             }
             _buttonSelect.Clicked += HandleEncoderClick;
 
-            UpdatedCurrentMenuPage();
+            UpdateCurrentMenuPage();
             RenderCurrentMenuPage();
         }
 
@@ -152,7 +154,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         protected void RenderCurrentMenuPage()
         {
-            if (!IsEnabled) return;
+            if (!IsEnabled) { return; } 
 
             // clear the display
             _display.Clear();
@@ -219,7 +221,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         /// <summary>
         /// Updates the _currentMenuPage based on the current navigation depth
         /// </summary>
-        protected void UpdatedCurrentMenuPage()
+        protected void UpdateCurrentMenuPage()
         {
             if (_navigatedDepth == 0) _currentMenuPage = _rootMenuPage;
             else
