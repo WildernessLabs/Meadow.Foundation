@@ -67,7 +67,7 @@ namespace MeadowApp
             display = new GraphicsLibrary(ssd1309)
             {
                 CurrentFont = new Font8x12(),
-                Rotation = GraphicsLibrary.RotationType._270Degrees
+             //   Rotation = GraphicsLibrary.RotationType._270Degrees
             };
 
             Console.WriteLine("Load menu data...");

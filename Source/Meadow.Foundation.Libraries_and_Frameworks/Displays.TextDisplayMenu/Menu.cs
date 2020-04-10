@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections;
-using Meadow.Foundation.Displays;
-using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Foundation.Displays.TextDisplayMenu.InputTypes;
-using Meadow.Foundation.Sensors.Buttons;
-using System.Diagnostics;
 using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Sensors.Rotary;
 using Meadow.Peripherals.Sensors.Buttons;
@@ -55,7 +51,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         private MenuPage ParseMenuData(byte[] menuResource)
         {
             var menuJson = new string(System.Text.Encoding.UTF8.GetChars(menuResource));
-            var menuData = SimpleJson.JsonSerializer.DeserializeString(menuJson) as Hashtable; //from nuget package
+            var menuData = SimpleJsonSerializer.JsonSerializer.DeserializeString(menuJson) as Hashtable; //from nuget package
 
 
         //    Hashtable menuData = null;
