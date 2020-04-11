@@ -54,18 +54,42 @@ namespace Leds.RgbPwmLed_Sample
 
                 foreach (var rgbPwmLed in rgbPwmLeds)
                 {
-                    // SetColor
                     rgbPwmLed.SetColor(Color.Red);
                     Console.WriteLine("Red");
                     Thread.Sleep(1000);
 
                     rgbPwmLed.SetColor(Color.Green);
                     Console.WriteLine("Green");
-                    Thread.Sleep(1000);                    
+                    Thread.Sleep(1000);
 
                     rgbPwmLed.SetColor(Color.Blue);
                     Console.WriteLine("Blue");
-                    Thread.Sleep(1000);                    
+                    Thread.Sleep(1000);
+
+                    // Brightness
+                    for (int i = 0; i < 10; i++)
+                    {
+                        rgbPwmLed.SetColor(Color.Red, i * 0.1f);
+                        Console.WriteLine($"Red brightness: {i * 0.1f}");
+                        Thread.Sleep(500);
+                    }
+                    rgbPwmLed.Stop();
+
+                    for (int i = 0; i < 10; i++)
+                    {
+                        rgbPwmLed.SetColor(Color.Green, i * 0.1f);
+                        Console.WriteLine($"Green brightness: {i * 0.1f}");
+                        Thread.Sleep(500);
+                    }
+                    rgbPwmLed.Stop();
+
+                    for (int i = 0; i < 10; i++)
+                    {
+                        rgbPwmLed.SetColor(Color.Blue, i * 0.1f);
+                        Console.WriteLine($"Blue brightness: {i * 0.1f}");
+                        Thread.Sleep(500);
+                    }
+                    rgbPwmLed.Stop();
 
                     // Blink
                     rgbPwmLed.StartBlink(Color.Red, 500, 500, 0.65f, 0.25f);
