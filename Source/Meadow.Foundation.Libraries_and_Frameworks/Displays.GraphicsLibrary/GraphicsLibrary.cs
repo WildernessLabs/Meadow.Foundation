@@ -518,9 +518,9 @@ namespace Meadow.Foundation.Graphics
         /// <param name="radius">Radius of the circle.</param>
         /// <param name="colored">Show the circle when true.</param>
         /// <param name="filled">Draw a filled circle?</param>
-        public void DrawCircle(int centerX, int centerY, int radius, bool colored = true, bool filled = false)
+        public void DrawCircle(int centerX, int centerY, int radius, bool colored = true, bool filled = false, bool centerBetweenPixels = false)
         {
-            DrawCircle(centerX, centerY, radius, (colored ? Color.White : Color.Black), filled);
+            DrawCircle(centerX, centerY, radius, (colored ? Color.White : Color.Black), filled, centerBetweenPixels);
         }
 
         /// <summary>
@@ -539,13 +539,13 @@ namespace Meadow.Foundation.Graphics
         /// <param name="radius">Radius of the circle.</param>
         /// <param name="color">The color of the circle.</param>
         /// <param name="filled">Draw a filled circle?</param>
-        public void DrawCircle(int centerX, int centerY, int radius, Color color, bool filled = false)
+        public void DrawCircle(int centerX, int centerY, int radius, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
             _display.SetPenColor(color);
 
             if (filled)
             {
-                DrawCircleFilled(centerX, centerY, radius);
+                DrawCircleFilled(centerX, centerY, radius, centerBetweenPixels);
             }
             else
             {
@@ -553,27 +553,33 @@ namespace Meadow.Foundation.Graphics
 
                 for (int i = 0; i < Stroke; i++)
                 {
-                    DrawCircleOutline(centerX, centerY, radius - offset + i);
+                    DrawCircleOutline(centerX, centerY, radius - offset + i, centerBetweenPixels);
                 }
             }
         }
 
-        private void DrawCircleOutline(int centerX, int centerY, int radius)
+        private void DrawCircleOutline(int centerX, int centerY, int radius, bool centerBetweenPixels)
         {
-            var d = (5 - (radius * 4)) / 4;
+            //I prefer the look of the original Bresenham’s decision param calculation
+            var d = 3 - 2 * radius; // (5 - (radius * 4)) / 4;
             var x = 0;
             var y = radius;
 
+            int offset = centerBetweenPixels ? 1 : 0;
+
             while (x <= y)
             {
-                DrawPixel(centerX + x, centerY + y);
-                DrawPixel(centerX + y, centerY + x);
-                DrawPixel(centerX - y, centerY + x);
-                DrawPixel(centerX - x, centerY + y);
+                DrawPixel(centerX + x - offset, centerY + y - offset);
+                DrawPixel(centerX + y - offset, centerY + x - offset);
+
+                DrawPixel(centerX - y, centerY + x - offset);
+                DrawPixel(centerX - x, centerY + y - offset);
+
                 DrawPixel(centerX - x, centerY - y);
                 DrawPixel(centerX - y, centerY - x);
-                DrawPixel(centerX + x, centerY - y);
-                DrawPixel(centerX + y, centerY - x);
+
+                DrawPixel(centerX + x - offset, centerY - y);
+                DrawPixel(centerX + y - offset, centerY - x);
 
                 if (d < 0)
                 {
@@ -588,17 +594,20 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        private void DrawCircleFilled(int centerX, int centerY, int radius)
-        { 
-            var d = (5 - (radius * 4)) / 4;
+        private void DrawCircleFilled(int centerX, int centerY, int radius, bool centerBetweenPixels)
+        {
+            var d = 3 - 2 * radius;
             var x = 0;
             var y = radius;
+
+            int offset = centerBetweenPixels ? 1 : 0;
+
             while (x <= y)
             {
-                DrawLine(centerX + x, centerY + y, centerX - x, centerY + y);
-                DrawLine(centerX + x, centerY - y, centerX - x, centerY - y);
-                DrawLine(centerX - y, centerY + x, centerX + y, centerY + x);
-                DrawLine(centerX - y, centerY - x, centerX + y, centerY - x);
+                DrawLine(centerX + x - offset, centerY + y - offset, centerX - x, centerY + y - offset);
+                DrawLine(centerX + x - offset, centerY - y, centerX - x, centerY - y);
+                DrawLine(centerX - y, centerY + x - offset, centerX + y - offset, centerY + x - offset);
+                DrawLine(centerX - y, centerY - x, centerX + y - offset, centerY - x);
 
                 if (d < 0)
                 {
