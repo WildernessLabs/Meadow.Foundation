@@ -1,0 +1,16 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+    <RootNamespace>ICs.IOExpanders</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.14.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PCA9685">
+      <HintPath>..\..\Driver\ICs.IOExpanders.PCA9685\bin\Debug\net472\PCA9685.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
