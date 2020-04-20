@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // thread safety
             lock (_lock)
             {
-                if (IsSampling) return;
+                if (IsSampling) { return; }
 
                 // state muh-cheen
                 IsSampling = true;
@@ -157,7 +157,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             lock (_lock)
             {
-                if (!IsSampling) return;
+                if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
 
