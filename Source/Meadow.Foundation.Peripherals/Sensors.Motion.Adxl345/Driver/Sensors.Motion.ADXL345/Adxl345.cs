@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Foundation.Helpers;
-using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
 
@@ -142,12 +141,6 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     an interrupt has been generated.
         /// </remarks>
         public float Z => Conditions.ZAcceleration.Value;
-
-        /// <summary>
-        ///     Power supply voltage applied to the sensor.  This will be set (in the constructor)
-        ///     to 3.3V by default.
-        /// </summary>
-        public float SupplyVoltage { get; set; }
 
         public AccelerationConditions Conditions { get; protected set; } = new AccelerationConditions();
 
