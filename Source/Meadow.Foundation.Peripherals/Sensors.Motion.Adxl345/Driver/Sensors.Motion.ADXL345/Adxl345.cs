@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Foundation.Helpers;
 using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Motion;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -10,7 +12,8 @@ namespace Meadow.Foundation.Sensors.Motion
     /// <summary>
     ///     Driver for the ADXL345 3-axis digital accelerometer capable of measuring
     /// </summary>
-    public class Adxl345
+    public class Adxl345 : FilterableObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
+        IAccelerometer
     {
         #region Constants
 
@@ -29,25 +32,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         private readonly II2cPeripheral _adxl345;
 
-        /// <summary>
-        ///     How often should this sensor be read?
-        /// </summary>
-        private readonly ushort _updateInterval;
-
-        /// <summary>
-        ///     Last X acceleration reading from the sensor.
-        /// </summary>
-        private double _lastX = 0;
-
-        /// <summary>
-        ///     Last Y reading from the sensor.
-        /// </summary>
-        private double _lastY = 0;
-        
-        /// <summary>
-        ///     Last Z reading from the sensor.
-        /// </summary>
-        private double _lastZ = 0;
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
 
         #endregion Member variables / fields
 
@@ -136,7 +123,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public short X { get; private set; }
+        public float X => Conditions.XAcceleration.Value;
 
         /// <summary>
         ///     Acceleration along the Y-axis.
@@ -145,7 +132,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public short Y { get; private set; }
+        public float Y => Conditions.YAcceleration.Value;
 
         /// <summary>
         ///     Acceleration along the Z-axis.
@@ -154,7 +141,22 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public short Z { get; private set; }
+        public float Z => Conditions.ZAcceleration.Value;
+
+        /// <summary>
+        ///     Power supply voltage applied to the sensor.  This will be set (in the constructor)
+        ///     to 3.3V by default.
+        /// </summary>
+        public float SupplyVoltage { get; set; }
+
+        public AccelerationConditions Conditions { get; protected set; } = new AccelerationConditions();
+
+        /// <summary>
+        /// Gets a value indicating whether the analog input port is currently
+        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
+        /// </summary>
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
 
         /// <summary>
         ///     Values stored in this register are automatically added to the X reading.
@@ -192,23 +194,12 @@ namespace Meadow.Foundation.Sensors.Motion
             set { _adxl345.WriteRegister(Registers.OffsetZ, (byte) value); }
         }
 
-        /// <summary>
-        ///     Any changes in the acceleration that are greater than the acceleration
-        ///     threshold will cause an event to be raised when the instance is
-        ///     set to update automatically.
-        /// </summary>
-        public double AccelerationChangeNotificationThreshold { get; set; } = 0.1F;
-
         #endregion Properties
-        
+
         #region Events and delegates
 
-        /// <summary>
-        ///     Event to be raised when the acceleration is greater than
-        ///     +/- AccelerationChangeNotificationThreshold.
-        /// </summary>
-        public event SensorVectorEventHandler AccelerationChanged = delegate { };
-        
+        public event EventHandler<AccelerationConditionChangeResult> Updated;
+
         #endregion Events and delegates
 
         #region Constructors
@@ -223,23 +214,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
-        /// <param name="updateInterval">How frequently this sensor should be updated.</param>
-        /// <param name="accelerationChangeNotificationThreshold">Notification threshold, changes greater than +/- this value will generate and interrupt.</param>
-        public Adxl345(II2cBus i2cBus, byte address = 0x53, ushort updateInterval = 100, 
-                       double accelerationChangeNotificationThreshold = 5.0F)
+        public Adxl345(II2cBus i2cBus, byte address = 0x53)
         {
             if ((address != 0x1d) && (address != 0x53))
             {
                 throw new ArgumentOutOfRangeException(nameof(address), "ADXL345 address can only be 0x1d or 0x53.");
             }
-            if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
-            {
-                throw new ArgumentOutOfRangeException(nameof(updateInterval),
-                    "Update interval should be 0 or greater than " + MinimumPollingPeriod);    
-            }
-            
-            _updateInterval = updateInterval;
-            AccelerationChangeNotificationThreshold = accelerationChangeNotificationThreshold;
 
             _adxl345 = new I2cPeripheral(i2cBus, address);
 
@@ -249,34 +229,92 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 throw new Exception("Invalid device ID.");
             }
-            if (updateInterval > 0)
-            {
-                StartUpdating();
-            }
-            else
-            {
-                Update();
-            }
         }
 
         #endregion Constructors
 
         #region Methods
 
-        /// <summary>
-        ///     Start the update process.
-        /// </summary>
-        private void StartUpdating()
+        ///// <summary>
+        ///// Convenience method to get the current temperature. For frequent reads, use
+        ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        ///// </summary>
+        public Task<AccelerationConditions> Read()
         {
-            Thread t = new Thread(() =>
+            Update();
+
+            return Task.FromResult(Conditions);
+        }
+
+        ///// <summary>
+        ///// Starts continuously sampling the sensor.
+        /////
+        ///// This method also starts raising `Changed` events and IObservable
+        ///// subscribers getting notified.
+        ///// </summary>
+        public void StartUpdating(int standbyDuration = 1000)
+        {
+            // thread safety
+            lock (_lock)
             {
-                while (true)
-                {
-                    Update();
-                    Thread.Sleep(_updateInterval);
-                }
-            });
-            t.Start();
+                if (IsSampling) { return; }
+
+                // state muh-cheen
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                AccelerationConditions oldConditions;
+                AccelerationConditionChangeResult result;
+                Task.Factory.StartNew(async () => {
+                    while (true)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            // do task clean up here
+                            _observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Conditions;
+
+                        // read
+                        Update();
+
+                        // build a new result with the old and new conditions
+                        result = new AccelerationConditionChangeResult(oldConditions, Conditions);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        protected void RaiseChangedAndNotify(AccelerationConditionChangeResult changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+        ///// <summary>
+        ///// Stops sampling the temperature.
+        ///// </summary>
+        public void StopUpdating()
+        {
+            lock (_lock)
+            {
+                if (!IsSampling) { return; }
+
+                SamplingTokenSource?.Cancel();
+
+                // state muh-cheen
+                IsSampling = false;
+            }
         }
 
         /// <summary>
@@ -388,23 +426,9 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Update()
         {
             var data = _adxl345.ReadRegisters(Registers.X0, 6);
-            X = (short) (data[0] + (data[1] << 8));
-            Y = (short) (data[2] + (data[3] << 8));
-            Z = (short) (data[4] + (data[5] << 8));
-
-            if ((_updateInterval != 0) && 
-                ((Math.Abs(X - _lastX) > AccelerationChangeNotificationThreshold) ||
-                 (Math.Abs(Y - _lastY) > AccelerationChangeNotificationThreshold) ||
-                 (Math.Abs(Z - _lastZ) > AccelerationChangeNotificationThreshold)))
-            {
-                Vector lastNotifiedReading = new Vector(_lastX, _lastY, _lastZ);
-                Vector currentReading = new Vector(X, Y, Z);
-                _lastX = X;
-                _lastY = Y;
-                _lastZ = Z;
-
-                AccelerationChanged?.Invoke(this, new SensorVectorEventArgs(lastNotifiedReading, currentReading));
-            }
+            Conditions.XAcceleration = (short) (data[0] + (data[1] << 8));
+            Conditions.YAcceleration = (short) (data[2] + (data[3] << 8));
+            Conditions.ZAcceleration = (short) (data[4] + (data[5] << 8));
         }
 
         /// <summary>

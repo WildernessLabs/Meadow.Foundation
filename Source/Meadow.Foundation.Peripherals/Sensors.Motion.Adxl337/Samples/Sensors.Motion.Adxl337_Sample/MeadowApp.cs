@@ -23,18 +23,11 @@ namespace MeadowApp
             sensor.Updated += Sensor_Updated;
 
             sensor.StartUpdating(500);
-
-
         }
 
         private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Motion.AccelerationConditionChangeResult e)
         {
             Console.WriteLine($"X: {e.New.XAcceleration}, Y: {e.New.YAcceleration}, Z: {e.New.ZAcceleration}");
-        }
-
-        private void Sensor_AccelerationChanged(object sender, Meadow.Foundation.Sensors.SensorVectorEventArgs e)
-        {
-
         }
     }
 }
