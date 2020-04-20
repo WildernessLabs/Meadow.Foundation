@@ -5,6 +5,8 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Motion.Adxl335\Sensors.Motion.Adxl335.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Motion.Adxl335\Sensors.Motion.Adxl335.csproj">
+      <ReferenceSourceTarget>ProjectReference</ReferenceSourceTarget>
+    </ProjectReference>
   </ItemGroup>
 </Project>
