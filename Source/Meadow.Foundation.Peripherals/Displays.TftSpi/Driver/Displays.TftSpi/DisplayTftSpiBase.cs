@@ -1,6 +1,7 @@
 using Meadow.Hardware;
 using System;
 using System.Threading;
+using System.Xml.Serialization;
 
 namespace Meadow.Foundation.Displays.Tft
 {
@@ -262,7 +263,47 @@ namespace Meadow.Foundation.Displays.Tft
 
             dataCommandPort.State = (Data);
             spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive, len);
+
             yMax = 0;
+        }
+
+
+        byte[] lineBufferSend;
+        byte[] lineBufferReceive;
+        public void Show(uint x0, uint y0, uint x1, uint y1)
+        {
+            if(x1 <= x0 || y1 <= y0)
+            {   //could throw an exception
+                return;
+            }
+
+            SetAddressWindow(x0, y0, x1, y1);
+
+            var len = x1 - x0;
+
+            if(lineBufferSend == null || lineBufferSend.Length < len)
+            {
+                lineBufferSend = new byte[Math.Max(len, width)];
+                lineBufferReceive = new byte[Math.Max(len, width)];
+            }
+
+            dataCommandPort.State = (Data);
+
+            uint sourceIndex;
+            for (uint y = y0; y < y1; y++)
+            {
+                sourceIndex = y * width + x0 * 2;//*2 because it's 16 bpp ... will be interesting for other bpp
+                Array.Copy(spiBuffer, sourceIndex, lineBufferSend, 0, len);
+            }
+
+
+            
+            spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive, len);
+
+            yMax = 0;
+
+
+
         }
 
         private ushort Get16BitColorFromRGB(byte red, byte green, byte blue)
