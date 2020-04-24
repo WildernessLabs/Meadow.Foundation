@@ -1,7 +1,6 @@
 using Meadow.Hardware;
 using System;
 using System.Threading;
-using System.Xml.Serialization;
 
 namespace Meadow.Foundation.Displays.Tft
 {
@@ -43,7 +42,7 @@ namespace Meadow.Foundation.Displays.Tft
 
         protected uint width;
         protected uint height;
-        protected uint yMax;
+        protected uint xMin, xMax, yMin, yMax;
 
         protected const bool Data = true;
         protected const bool Command = false;
@@ -244,6 +243,9 @@ namespace Meadow.Foundation.Displays.Tft
             spiBuffer[index] = (byte)(color >> 8);
             spiBuffer[++index] = (byte)(color);
 
+            xMin = (uint)Math.Min(xMin, x);
+            xMax = (uint)Math.Max(xMax, x);
+            yMin = (uint)Math.Min(yMin, y);
             yMax = (uint)Math.Max(yMax, y);
         }
 
@@ -254,16 +256,25 @@ namespace Meadow.Foundation.Displays.Tft
         {
             // spiDisplay.WriteBytes(spiBuffer);
 
-            if (yMax == 0)
+            if (xMax == 0 || yMax == 0)
                 return;
+
+            if(xMin > 0 || yMin > 0)
+            {
+                Show(xMin, yMin, xMax, yMax);
+                return;
+            }
 
             SetAddressWindow(0, 0, Width - 1, yMax);
 
             int len = (int)((yMax + 1) * Width * 2);
 
-            dataCommandPort.State = (Data);
+            dataCommandPort.State = Data;
             spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive, len);
 
+            xMin = width;
+            yMin = height;
+            xMax = 0;
             yMax = 0;
         }
 
@@ -277,33 +288,31 @@ namespace Meadow.Foundation.Displays.Tft
                 return;
             }
 
+            if (lineBufferSend == null)
+            {
+                lineBufferSend = new byte[width * sizeof(ushort)];
+                lineBufferReceive = new byte[width * sizeof(ushort)];
+            }
+
             SetAddressWindow(x0, y0, x1, y1);
 
-            var len = x1 - x0;
+            var len = (x1 - x0 + 1) * sizeof(ushort);
 
-            if(lineBufferSend == null || lineBufferSend.Length < len)
-            {
-                lineBufferSend = new byte[Math.Max(len, width)];
-                lineBufferReceive = new byte[Math.Max(len, width)];
-            }
-
-            dataCommandPort.State = (Data);
+            dataCommandPort.State = Data;
 
             uint sourceIndex;
-            for (uint y = y0; y < y1; y++)
+            for (uint y = y0; y <= y1; y++)
             {
-                sourceIndex = y * width + x0 * 2;//*2 because it's 16 bpp ... will be interesting for other bpp
+                sourceIndex = ((y * width) + x0) * sizeof(ushort);
                 Array.Copy(spiBuffer, sourceIndex, lineBufferSend, 0, len);
+
+                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, lineBufferSend, lineBufferReceive, (int)len);
             }
 
-
-            
-            spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive, len);
-
+            xMin = width;
+            yMin = height;
+            xMax = 0;
             yMax = 0;
-
-
-
         }
 
         private ushort Get16BitColorFromRGB(byte red, byte green, byte blue)
@@ -410,6 +419,9 @@ namespace Meadow.Foundation.Displays.Tft
                 spiBuffer[index++] = low;
             }
 
+            xMin = 0;
+            yMin = 0;
+            xMax = Width - 1;
             yMax = Height - 1;
         }
 
