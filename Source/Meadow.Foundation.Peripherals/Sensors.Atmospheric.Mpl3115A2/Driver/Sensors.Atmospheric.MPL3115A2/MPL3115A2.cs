@@ -33,13 +33,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature;
+        public float Temperature => Conditions.Temperature.Value;
 
         /// <summary>
         /// The pressure, in hectopascals (hPa), from the last reading. 1 hPa
         /// is equal to one millibar, or 1/10th of a kilopascal (kPa)/centibar.
         /// </summary>
-        public float Pressure => Conditions.Pressure;
+        public float Pressure => Conditions.Pressure.Value;
 
         /// <summary>
         ///     Check if the part is in standby mode or change the standby mode.

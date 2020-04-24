@@ -192,22 +192,18 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Sets the current color of the LED.
         /// </summary>
-        /// <param name="ledColor"></param>
-        public void SetColor(Color ledColor)
+        /// <param name="color"></param>
+        /// <param name="brightness"></param>
+        public void SetColor(Color color, float brightness = 1)
         {
-            Color = ledColor;
-
+            Color = color;
             //IsEnabled = false;
-            var red   = (float)(Color.R * maxRedDutyCycle);
-            var green = (float)(Color.G * maxGreenDutyCycle);
-            var blue  = (float)(Color.B * maxBlueDutyCycle);
 
             // set the color based on the RGB values
-            RedPwm.DutyCycle = (float)(Color.R * maxRedDutyCycle);
-            GreenPwm.DutyCycle = (float)(Color.G * maxGreenDutyCycle);
-            BluePwm.DutyCycle = (float)(Color.B * maxBlueDutyCycle);
+            RedPwm.DutyCycle = (float)(Color.R * maxRedDutyCycle * brightness);
+            GreenPwm.DutyCycle = (float)(Color.G * maxGreenDutyCycle * brightness);
+            BluePwm.DutyCycle = (float)(Color.B * maxBlueDutyCycle * brightness);
 
-            
             IsEnabled = true;
         }
 
@@ -329,19 +325,6 @@ namespace Meadow.Foundation.Leds
                 //await Task.Delay(80);
                 await Task.Delay(intervalTime);
             }
-        }
-        protected void SetColor(Color color, float brightness)
-        {
-            //IsEnabled = false;
-            var red   = (float)(Color.R * maxRedDutyCycle);
-            var green = (float)(Color.G * maxGreenDutyCycle);
-            var blue  = (float)(Color.B * maxBlueDutyCycle);
-
-            RedPwm.DutyCycle = (float)(color.R * brightness);
-            GreenPwm.DutyCycle = (float)(color.G * brightness);
-            BluePwm.DutyCycle = (float)(color.B * brightness);
-
-            IsEnabled = true;
         }
     }
 }

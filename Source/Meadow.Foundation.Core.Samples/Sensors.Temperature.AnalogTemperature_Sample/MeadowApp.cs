@@ -30,7 +30,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
                     Console.WriteLine($"Temp changed by a degree; new: {h.New.Temperature}, old: {h.Old.Temperature}");
                 },
                 e => {
-                    return (Math.Abs(e.Delta.Temperature) > 1);
+                    return (Math.Abs(e.Delta.Temperature.Value) > 1);
                 }
                 ));
 

@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Motors.Stepper.Uln2003" Version="0.1.2" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Motors.Stepper.Uln2003\Driver\Motors.Stepper.Uln2003\Motors.Stepper.Uln2003.csproj" />
   </ItemGroup>
 </Project>

@@ -40,12 +40,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature;
+        public float Temperature => Conditions.Temperature.Value;
 
         /// <summary>
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
-        public float Humidity => Conditions.Humidity;
+        public float Humidity => Conditions.Humidity.Value;
 
         /// <summary>
         ///     Serial number of the device.
@@ -121,7 +121,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         #endregion Enums
 
-        #region Contstructors
+        #region Constructors
 		
         /// <summary>
         ///     Default constructor (private to prevent the user from calling this).
@@ -152,35 +152,41 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //
             //  Get the device ID.
             //
-            var part1 = si7021.WriteRead(new[]
-            {
-                READ_ID_PART1,
-                READ_ID_PART2
-            }, 8);
-            var part2 = si7021.WriteRead(new[]
-            {
-                READ_2ND_ID_PART1,
-                READ_2ND_ID_PART2
-            }, 6);
             SerialNumber = 0;
-            for (var index = 0; index < 4; index++) {
+
+            Span<byte> tx = stackalloc byte[2];
+            Span<byte> rx = stackalloc byte[8];
+            Span<byte> rx2 = stackalloc byte[6];
+            tx[0] = READ_ID_PART1;
+            tx[1] = READ_ID_PART2;
+            si7021.WriteRead(tx, rx);
+
+            for (var index = 0; index < 4; index++)
+            {
                 SerialNumber <<= 8;
-                SerialNumber += part1[index * 2];
-            }
-            SerialNumber <<= 8;
-            SerialNumber += part2[0];
-            SerialNumber <<= 8;
-            SerialNumber += part2[1];
-            SerialNumber <<= 8;
-            SerialNumber += part2[3];
-            SerialNumber <<= 8;
-            SerialNumber += part2[4];
-            if ((part2[0] == 0) || (part2[0] == 0xff)) {
-                SensorType = DeviceType.EngineeringSample;
-            } else {
-                SensorType = (DeviceType)part2[0];
+                SerialNumber += rx[index * 2];
             }
 
+            tx[0] = READ_2ND_ID_PART1;
+            tx[1] = READ_2ND_ID_PART2;
+            si7021.WriteRead(tx, rx2);
+
+            SerialNumber <<= 8;
+            SerialNumber += rx2[0];
+            SerialNumber <<= 8;
+            SerialNumber += rx2[1];
+            SerialNumber <<= 8;
+            SerialNumber += rx2[3];
+            SerialNumber <<= 8;
+            SerialNumber += rx2[4];
+            if ((rx2[0] == 0) || (rx2[0] == 0xff))
+            {
+                SensorType = DeviceType.EngineeringSample;
+            }
+            else
+            {
+                SensorType = (DeviceType)rx2[0];
+            }
 
             SetResolution(SensorResolution.TEMP11_HUM11);
         }
@@ -209,7 +215,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 si7021.WriteByte(HUMDITY_MEASURE_NOHOLD);
                 //
                 //  Maximum conversion time is 12ms (page 5 of the datasheet).
-                //
+                //  
                 Thread.Sleep(25);
                 var data = si7021.ReadBytes(3);
                 var humidityReading = (ushort)((data[0] << 8) + data[1]);

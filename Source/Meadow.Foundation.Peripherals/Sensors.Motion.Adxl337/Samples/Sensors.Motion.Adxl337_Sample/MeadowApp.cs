@@ -18,14 +18,16 @@ namespace MeadowApp
         {
             Console.WriteLine("Initialize...");
 
-            sensor = new Adxl337(Device, Device.Pins.A01, Device.Pins.A02, Device.Pins.A03, 500);
+            sensor = new Adxl337(Device, Device.Pins.A00, Device.Pins.A01, Device.Pins.A02);
 
-            sensor.AccelerationChanged += Sensor_AccelerationChanged;
+            sensor.Updated += Sensor_Updated;
+
+            sensor.StartUpdating(500);
         }
 
-        private void Sensor_AccelerationChanged(object sender, Meadow.Foundation.Sensors.SensorVectorEventArgs e)
+        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Motion.AccelerationConditionChangeResult e)
         {
-            Console.WriteLine($"X: {e.CurrentValue.X}, Y: {e.CurrentValue.Y}, Z: {e.CurrentValue.Z}");
+            Console.WriteLine($"X: {e.New.XAcceleration}, Y: {e.New.YAcceleration}, Z: {e.New.ZAcceleration}");
         }
     }
 }

@@ -50,7 +50,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature;
+        public float Temperature => Conditions.Temperature.Value;
 
         // internal thread lock
         private object _lock = new object();

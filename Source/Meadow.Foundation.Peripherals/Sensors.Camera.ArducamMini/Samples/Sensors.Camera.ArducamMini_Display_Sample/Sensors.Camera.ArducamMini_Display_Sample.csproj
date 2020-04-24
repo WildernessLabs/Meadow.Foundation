@@ -6,6 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation.Sensors.Motion.ArducamMini" Version="0.1.0" />
-    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="0.7.4" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TFTSPI\Displays.TftSpi.csproj" />
   </ItemGroup>
 </Project>

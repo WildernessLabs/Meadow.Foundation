@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Audio.Radio.Tea5767" Version="0.6.4" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Audio.Radio.Tea5767\Driver\Audio.Radio.TEA5767\Audio.Radio.Tea5767.csproj" />
   </ItemGroup>
 </Project>

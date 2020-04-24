@@ -1,4 +1,5 @@
 ﻿using Meadow.Foundation.Displays;
+using Meadow.Peripherals.Displays;
 using System;
 
 namespace Meadow.Foundation.Graphics
@@ -6,7 +7,7 @@ namespace Meadow.Foundation.Graphics
     /// <summary>
     ///     Provide high level graphics functions
     /// </summary>
-    public class GraphicsLibrary
+    public class GraphicsLibrary : ITextDisplay
     {
         #region Member variables / fields
 
@@ -19,7 +20,21 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         ///     Current font used for displaying text on the display.
         /// </summary>
-        public FontBase CurrentFont { get; set; }
+        public FontBase CurrentFont
+        {
+            get => currentFont;
+            set
+            {
+                currentFont = value;
+                if(currentFont == null) { return; }
+                DisplayConfig = new TextDisplayConfig()
+                {
+                    Width = (ushort)((int)this.Width / currentFont.Width),
+                    Height = (ushort)((int)this.Height / CurrentFont.Height)
+                };
+            }
+        }
+        FontBase currentFont;
 
         /// <summary>
         /// Current rotation used for drawing pixels to the display
@@ -60,6 +75,8 @@ namespace Meadow.Foundation.Graphics
         /// Return the width of the display after accounting for the rotation.
         /// </summary>
         public uint Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? _display.Width : _display.Height;
+
+        public TextDisplayConfig DisplayConfig { get; private set; }
 
         #region Constructors
 
@@ -501,9 +518,9 @@ namespace Meadow.Foundation.Graphics
         /// <param name="radius">Radius of the circle.</param>
         /// <param name="colored">Show the circle when true.</param>
         /// <param name="filled">Draw a filled circle?</param>
-        public void DrawCircle(int centerX, int centerY, int radius, bool colored = true, bool filled = false)
+        public void DrawCircle(int centerX, int centerY, int radius, bool colored = true, bool filled = false, bool centerBetweenPixels = false)
         {
-            DrawCircle(centerX, centerY, radius, (colored ? Color.White : Color.Black), filled);
+            DrawCircle(centerX, centerY, radius, (colored ? Color.White : Color.Black), filled, centerBetweenPixels);
         }
 
         /// <summary>
@@ -522,13 +539,13 @@ namespace Meadow.Foundation.Graphics
         /// <param name="radius">Radius of the circle.</param>
         /// <param name="color">The color of the circle.</param>
         /// <param name="filled">Draw a filled circle?</param>
-        public void DrawCircle(int centerX, int centerY, int radius, Color color, bool filled = false)
+        public void DrawCircle(int centerX, int centerY, int radius, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
             _display.SetPenColor(color);
 
             if (filled)
             {
-                DrawCircleFilled(centerX, centerY, radius);
+                DrawCircleFilled(centerX, centerY, radius, centerBetweenPixels);
             }
             else
             {
@@ -536,27 +553,33 @@ namespace Meadow.Foundation.Graphics
 
                 for (int i = 0; i < Stroke; i++)
                 {
-                    DrawCircleOutline(centerX, centerY, radius - offset + i);
+                    DrawCircleOutline(centerX, centerY, radius - offset + i, centerBetweenPixels);
                 }
             }
         }
 
-        private void DrawCircleOutline(int centerX, int centerY, int radius)
+        private void DrawCircleOutline(int centerX, int centerY, int radius, bool centerBetweenPixels)
         {
-            var d = (5 - (radius * 4)) / 4;
+            //I prefer the look of the original Bresenham’s decision param calculation
+            var d = 3 - 2 * radius; // (5 - (radius * 4)) / 4;
             var x = 0;
             var y = radius;
 
+            int offset = centerBetweenPixels ? 1 : 0;
+
             while (x <= y)
             {
-                DrawPixel(centerX + x, centerY + y);
-                DrawPixel(centerX + y, centerY + x);
-                DrawPixel(centerX - y, centerY + x);
-                DrawPixel(centerX - x, centerY + y);
+                DrawPixel(centerX + x - offset, centerY + y - offset);
+                DrawPixel(centerX + y - offset, centerY + x - offset);
+
+                DrawPixel(centerX - y, centerY + x - offset);
+                DrawPixel(centerX - x, centerY + y - offset);
+
                 DrawPixel(centerX - x, centerY - y);
                 DrawPixel(centerX - y, centerY - x);
-                DrawPixel(centerX + x, centerY - y);
-                DrawPixel(centerX + y, centerY - x);
+
+                DrawPixel(centerX + x - offset, centerY - y);
+                DrawPixel(centerX + y - offset, centerY - x);
 
                 if (d < 0)
                 {
@@ -571,17 +594,20 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        private void DrawCircleFilled(int centerX, int centerY, int radius)
-        { 
-            var d = (5 - (radius * 4)) / 4;
+        private void DrawCircleFilled(int centerX, int centerY, int radius, bool centerBetweenPixels)
+        {
+            var d = 3 - 2 * radius;
             var x = 0;
             var y = radius;
+
+            int offset = centerBetweenPixels ? 1 : 0;
+
             while (x <= y)
             {
-                DrawLine(centerX + x, centerY + y, centerX - x, centerY + y);
-                DrawLine(centerX + x, centerY - y, centerX - x, centerY - y);
-                DrawLine(centerX - y, centerY + x, centerX + y, centerY + x);
-                DrawLine(centerX - y, centerY - x, centerX + y, centerY - x);
+                DrawLine(centerX + x - offset, centerY + y - offset, centerX - x, centerY + y - offset);
+                DrawLine(centerX + x - offset, centerY - y, centerX - x, centerY - y);
+                DrawLine(centerX - y, centerY + x - offset, centerX + y - offset, centerY + x - offset);
+                DrawLine(centerX - y, centerY - x, centerX + y - offset, centerY - x);
 
                 if (d < 0)
                 {
@@ -909,6 +935,49 @@ namespace Meadow.Foundation.Graphics
                 default:
                     return y;
             }
+        }
+
+        public void Write(string text)
+        {
+            if (CurrentFont == null)
+            {
+                throw new Exception("GraphicsLibrary.Write requires CurrentFont to be set");
+            }
+            DrawText(CurrentFont.Width * CursorColumn, CurrentFont.Height * CursorLine, text);
+            Show();
+        }
+
+        public void WriteLine(string text, byte lineNumber)
+        {
+            if(CurrentFont == null)
+            {
+                throw new Exception("GraphicsLibrary.WriteLine requires CurrentFont to be set");
+            }
+            DrawText(0, lineNumber * CurrentFont.Height, text);
+            Show();
+        }
+
+        public void Clear()
+        {
+            Clear(true);
+        }
+
+        public void ClearLine(byte lineNumber)
+        {
+            DrawRectangle(0, CurrentFont.Height * lineNumber, (int)Width, CurrentFont.Height, true, true);
+        }
+
+        public byte CursorColumn { get; private set; } = 0;
+        public byte CursorLine { get; private set; } = 0;
+        public void SetCursorPosition(byte column, byte line)
+        {
+            CursorColumn = column;
+            CursorLine = line;
+        }
+
+        public void SaveCustomCharacter(byte[] characterMap, byte address)
+        {
+          //  throw new NotImplementedException();
         }
 
         #endregion Display

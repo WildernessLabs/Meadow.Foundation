@@ -5,7 +5,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Sensors.Motion.Mpu6050" Version="0.5.5" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Sensors.Motion.Mpu6050\Driver\Sensors.Motion.Mpu6050\Sensors.Motion.Mpu6050.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Driver\Sensors.Motion.Mpu6050\Sensors.Motion.Mpu6050.csproj" />

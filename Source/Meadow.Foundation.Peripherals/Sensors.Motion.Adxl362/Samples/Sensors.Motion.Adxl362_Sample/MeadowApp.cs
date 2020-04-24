@@ -14,12 +14,13 @@ namespace MeadowApp
         {
             Initialize();
 
-            while (true)
-            {
-                sensor.Update();
-                Console.WriteLine("X: " + sensor.X + ", Y: " + sensor.Y + ", Z: " + sensor.Z);
-                Thread.Sleep(1000);
-            }
+            sensor.Updated += Sensor_Updated;
+            sensor.Start();
+        }
+
+        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Motion.AccelerationConditionChangeResult e)
+        {
+            Console.WriteLine($"X: {e.New.XAcceleration}, Y: {e.New.YAcceleration}, Z: {e.New.ZAcceleration}");
         }
 
         void Initialize()

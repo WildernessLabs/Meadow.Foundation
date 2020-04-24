@@ -31,12 +31,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature;
+        public float Temperature => Conditions.Temperature.Value;
 
         /// <summary>
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
-        public float Humidity => Conditions.Humidity;
+        public float Humidity => Conditions.Humidity.Value;
 
         /// <summary>
         /// The AtmosphericConditions from the last reading.
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // thread safety
             lock (_lock)
             {
-                if (IsSampling) return;
+                if (IsSampling) { return; }
 
                 // state muh-cheen
                 IsSampling = true;
@@ -157,7 +157,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             lock (_lock)
             {
-                if (!IsSampling) return;
+                if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
 
