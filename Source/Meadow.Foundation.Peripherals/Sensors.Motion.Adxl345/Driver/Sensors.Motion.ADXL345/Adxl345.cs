@@ -122,7 +122,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public float X => Conditions.XAcceleration.Value;
+        public float XAcceleration => Conditions.XAcceleration.Value;
 
         /// <summary>
         ///     Acceleration along the Y-axis.
@@ -131,7 +131,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public float Y => Conditions.YAcceleration.Value;
+        public float YAcceleration => Conditions.YAcceleration.Value;
 
         /// <summary>
         ///     Acceleration along the Z-axis.
@@ -140,7 +140,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public float Z => Conditions.ZAcceleration.Value;
+        public float ZAcceleration => Conditions.ZAcceleration.Value;
 
         public AccelerationConditions Conditions { get; protected set; } = new AccelerationConditions();
 
