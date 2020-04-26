@@ -198,6 +198,12 @@ namespace Meadow.Foundation.Displays.Tft
             SetPixel(x, y, (colored ? (ushort)(0xFFFF) : (ushort)0));
         }
 
+        /// <summary>
+        ///     Draw a single pixel 
+        /// </summary>
+        /// <param name="x">x location </param>
+        /// <param name="y">y location</param>
+        /// <param name="color">16bpp 5/6/5 ushort value for pixel color</param>
         public void DrawPixel(int x, int y, ushort color)
         {
             SetPixel(x, y, color);
@@ -281,6 +287,9 @@ namespace Meadow.Foundation.Displays.Tft
 
         byte[] lineBufferSend;
         byte[] lineBufferReceive;
+        /// <summary>
+        ///     Draw the display buffer to screen from x0,y0 to x1,y1
+        /// </summary>
         public void Show(uint x0, uint y0, uint x1, uint y1)
         {
             if(x1 <= x0 || y1 <= y0)
