@@ -231,8 +231,6 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <param name="count">Number of steps to rotate</param>
         public void Step(int count)
         {
-            Console.WriteLine($"Taking {count} steps");
-
             lock (_syncRoot)
             {
                 _directionPort.State = Direction == RotationDirection.Clockwise;
