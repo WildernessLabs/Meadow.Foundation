@@ -8,6 +8,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
+    /// <remarks><b>Work in progress.  This driver is not yet functional.</b></remarks>
     public class Nau7802 : FilterableObservableBase<FloatChangeResult, float>,  IDisposable
     {
         /// <summary>

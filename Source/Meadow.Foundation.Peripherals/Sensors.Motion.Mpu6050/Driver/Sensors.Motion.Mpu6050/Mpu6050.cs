@@ -1,11 +1,13 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Motion;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class Mpu6050 : IDisposable
+    public class Mpu6050 : FilterableObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
+        IAccelerometer, IDisposable
     {
         /// <summary>
         ///     Valid addresses for the sensor.
@@ -35,44 +37,82 @@ namespace Meadow.Foundation.Sensors.Motion
             GyroZ = 0x47
         }
 
-        public delegate void ValueChangedHandler(float previousValue, float newValue);
+        public event EventHandler<AccelerationConditionChangeResult> Updated;
 
-        public event ValueChangedHandler GyroXChanged;
-        public event ValueChangedHandler GyroYChanged;
-        public event ValueChangedHandler GyroZChanged;
-        public event ValueChangedHandler AccelerationXChanged;
-        public event ValueChangedHandler AccelerationYChanged;
-        public event ValueChangedHandler AccelerationZChanged;
-        public event ValueChangedHandler TemperatureChanged;
+        /// <summary>
+        ///     Acceleration along the X-axis.
+        /// </summary>
+        /// <remarks>
+        ///     This property will only contain valid data after a call to Read or after
+        ///     an interrupt has been generated.
+        /// </remarks>
+        public float AccelerationX
+        {
+            get
+            {
+                if (IsSampling) { return Conditions.XAcceleration.Value; }
+                else { return ReadRegisterInt16(Register.AccelerometerX) * (1 << AccelerometerScale) / AccelScaleBase; }
+            }
+        }
+
+        /// <summary>
+        ///     Acceleration along the Y-axis.
+        /// </summary>
+        /// <remarks>
+        ///     This property will only contain valid data after a call to Read or after
+        ///     an interrupt has been generated.
+        /// </remarks>
+        public float AccelerationY
+        {
+            get
+            {
+                if (IsSampling) { return Conditions.YAcceleration.Value; }
+                else { return ReadRegisterInt16(Register.AccelerometerY) * (1 << AccelerometerScale) / AccelScaleBase; }
+            }
+        }
+
+        /// <summary>
+        ///     Acceleration along the Z-axis.
+        /// </summary>
+        /// <remarks>
+        ///     This property will only contain valid data after a call to Read or after
+        ///     an interrupt has been generated.
+        /// </remarks>
+        public float AccelerationZ
+        {
+            get
+            {
+                if (IsSampling) { return Conditions.ZAcceleration.Value; }
+                else { return ReadRegisterInt16(Register.AccelerometerZ) * (1 << AccelerometerScale) / AccelScaleBase; }
+            }
+        }
+
+        public AccelerationConditions Conditions { get; protected set; } = new AccelerationConditions();
+
+        /// <summary>
+        /// Gets a value indicating whether the analog input port is currently
+        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
+        /// </summary>
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
 
         private const float GyroScaleBase = 131f;
         private const float AccelScaleBase = 16384f;
 
-        private float _gx;
-        private float _gy;
-        private float _gz;
-        private float _ax;
-        private float _ay;
-        private float _az;
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
         private float _temp;
-        private float? _lastGx;
-        private float? _lastGy;
-        private float? _lastGz;
-        private float? _lastAx;
-        private float? _lastAy;
-        private float? _lastAz;
+ 
         private float? _lastTemp;
-        private TimeSpan _samplePeriod;
 
         private int GyroScale { get; set; }
         private int AccelerometerScale { get; set; }
-        private object SyncRoot { get; } = new object();
         private II2cBus Device { get; set; }
-        private CancellationTokenSource SamplingTokenSource { get; set; }
 
         public float GyroChangeThreshold { get; set; }
         public float AccelerationChangeThreshold { get; set; }
-        public bool IsSampling { get; private set; }
         public byte Address { get; private set; }
 
         public Mpu6050(II2cBus bus, byte address = 0x68)
@@ -93,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (disposing)
             {
-                StopSampling();
+                StopUpdating();
             }
         }
 
@@ -105,52 +145,73 @@ namespace Meadow.Foundation.Sensors.Motion
             Dispose(true);
         }
 
-        public void StartSampling(TimeSpan samplePeriod)
+        ///// <summary>
+        ///// Starts continuously sampling the sensor.
+        /////
+        ///// This method also starts raising `Changed` events and IObservable
+        ///// subscribers getting notified.
+        ///// </summary>
+        public void StartUpdating(int standbyDuration = 1000)
         {
-            lock (SyncRoot)
+            // thread safety
+            lock (_lock)
             {
-                // allow subsequent calls to StartSampling to just change the sample period
-                _samplePeriod = samplePeriod;
+                if (IsSampling) { return; }
 
-                if (IsSampling)
-                {
-                    return;
-                }
+                // state muh-cheen
+                IsSampling = true;
 
                 SamplingTokenSource = new CancellationTokenSource();
-                var ct = SamplingTokenSource.Token;
+                CancellationToken ct = SamplingTokenSource.Token;
 
-                Task.Factory.StartNew(async () =>
-                {
-                    IsSampling = true;
-
+                AccelerationConditions oldConditions;
+                AccelerationConditionChangeResult result;
+                Task.Factory.StartNew(async () => {
                     while (true)
                     {
-                        // check for stop
                         if (ct.IsCancellationRequested)
                         {
-                            IsSampling = false;
+                            // do task clean up here
+                            _observers.ForEach(x => x.OnCompleted());
                             break;
                         }
+                        // capture history
+                        oldConditions = Conditions;
 
-                        // do reads
-                        Refresh();
+                        // read
+                        Update();
 
-                        await Task.Delay(_samplePeriod);
+                        // build a new result with the old and new conditions
+                        result = new AccelerationConditionChangeResult(oldConditions, Conditions);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
                     }
-
-                    IsSampling = false;
-                });
+                }, SamplingTokenSource.Token);
             }
         }
 
-        public void StopSampling()
+        protected void RaiseChangedAndNotify(AccelerationConditionChangeResult changeResult)
         {
-            lock (SyncRoot)
-            {
-                if (!IsSampling) return;
+            Updated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
 
-                SamplingTokenSource.Cancel();
+        ///// <summary>
+        ///// Stops sampling the temperature.
+        ///// </summary>
+        public void StopUpdating()
+        {
+            lock (_lock)
+            {
+                if (!IsSampling) { return; }
+
+                SamplingTokenSource?.Cancel();
+
+                // state muh-cheen
                 IsSampling = false;
             }
         }
@@ -173,206 +234,47 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Accelerometer X measurement, in g
-        /// </summary>
-        public float AccelerationX
-        {
-            get
-            {
-                if (IsSampling)
-                {
-                    return _ax;
-                }
-                return ReadRegisterInt16(Register.AccelerometerX) * (1 << AccelerometerScale) / AccelScaleBase;
-            }
-            private set
-            {
-                _ax = value;
-
-                if (!_lastAx.HasValue)
-                {
-                    AccelerationXChanged?.Invoke(0, _ax);
-                    _lastAx = _ax;
-                }
-                else
-                {
-                    var delta = Math.Abs(_ax - _lastAx.Value);
-                    if (delta > AccelerationChangeThreshold)
-                    {
-                        AccelerationXChanged?.Invoke(_lastAx.Value, _ax);
-                        _lastAx = _ax;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Accelerometer Y measurement, in g
-        /// </summary>
-        public float AccelerationY
-        {
-            get
-            {
-                if (IsSampling)
-                {
-                    return _ay;
-                }
-                return ReadRegisterInt16(Register.AccelerometerY) * (1 << AccelerometerScale) / AccelScaleBase;
-            }
-            private set
-            {
-                _ay = value;
-
-                if (!_lastAy.HasValue)
-                {
-                    AccelerationYChanged?.Invoke(0, _ay);
-                    _lastAy = _ay;
-                }
-                else
-                {
-                    var delta = Math.Abs(_ay - _lastAy.Value);
-                    if (delta > AccelerationChangeThreshold)
-                    {
-                        AccelerationYChanged?.Invoke(_lastAy.Value, _ay);
-                        _lastAy = _ay;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Accelerometer Z measurement, in g
-        /// </summary>
-        public float AccelerationZ
-        {
-            get
-            {
-                if (IsSampling)
-                {
-                    return _az;
-                }
-                return ReadRegisterInt16(Register.AccelerometerZ) * (1 << AccelerometerScale) / AccelScaleBase;
-            }
-            private set
-            {
-                _az = value;
-
-                if (!_lastAz.HasValue)
-                {
-                    AccelerationZChanged?.Invoke(0, _az);
-                    _lastAz = _az;
-                }
-                else
-                {
-                    var delta = Math.Abs(_az - _lastAz.Value);
-                    if (delta > AccelerationChangeThreshold)
-                    {
-                        AccelerationZChanged?.Invoke(_lastAz.Value, _az);
-                        _lastAz = _az;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Gyroscope X measurement, in degrees per second
         /// </summary>
-        public float GyroX
+        public float XGyroscopicAcceleration
         {
             get
             {
                 if (IsSampling)
                 {
-                    return _gx;
+                    return Conditions.XGyroscopicAcceleration.Value;
                 }
                 return ReadRegisterInt16(Register.GyroX) * (1 << GyroScale) / GyroScaleBase;
-            }
-            private set
-            {
-                _gx = value;
-
-                if (!_lastGx.HasValue)
-                {
-                    GyroXChanged?.Invoke(0, _gx);
-                    _lastGx = _gx;
-                }
-                else
-                {
-                    var delta = Math.Abs(_gx - _lastGx.Value);
-                    if (delta > GyroChangeThreshold)
-                    {
-                        GyroXChanged?.Invoke(_lastGx.Value, _gx);
-                        _lastGx = _gx;
-                    }
-                }
             }
         }
 
         /// <summary>
         /// Gyroscope Y measurement, in degrees per second
         /// </summary>
-        public float GyroY
+        public float YGyroscopicAcceleration
         {
             get
             {
                 if (IsSampling)
                 {
-                    return _gy;
+                    return Conditions.YGyroscopicAcceleration.Value;
                 }
                 return ReadRegisterInt16(Register.GyroY) * (1 << GyroScale) / GyroScaleBase;
-            }
-            private set
-            {
-                _gy = value;
-
-                if (!_lastGy.HasValue)
-                {
-                    GyroYChanged?.Invoke(0, _gy);
-                    _lastGy = _gy;
-                }
-                else
-                {
-                    var delta = Math.Abs(_gy - _lastGy.Value);
-                    if (delta > GyroChangeThreshold)
-                    {
-                        GyroYChanged?.Invoke(_lastGy.Value, _gy);
-                        _lastGy = _gy;
-                    }
-                }
             }
         }
 
         /// <summary>
         /// Gyroscope Z measurement, in degrees per second
         /// </summary>
-        public float GyroZ
+        public float ZGyroscopicAcceleration
         {
             get
             {
                 if (IsSampling)
                 {
-                    return _gz;
+                    return Conditions.ZGyroscopicAcceleration.Value;
                 }
                 return ReadRegisterInt16(Register.GyroZ) * (1 << GyroScale) / GyroScaleBase;
-            }
-            private set
-            {
-                _gz = value;
-
-                if (!_lastGz.HasValue)
-                {
-                    GyroZChanged?.Invoke(0, _gz);
-                    _lastGz = _gz;
-                }
-                else
-                {
-                    var delta = Math.Abs(_gz - _lastGz.Value);
-                    if (delta > GyroChangeThreshold)
-                    {
-                        GyroZChanged?.Invoke(_lastGz.Value, _gz);
-                        _lastGz = _gz;
-                    }
-                }
             }
         }
 
@@ -388,25 +290,6 @@ namespace Meadow.Foundation.Sensors.Motion
                     return _temp;
                 }
                 return ReadRegisterInt16(Register.Temperature) * (1 << GyroScale) / GyroScaleBase;
-            }
-            private set
-            {
-                _temp = value;
-
-                if (!_lastTemp.HasValue)
-                {
-                    TemperatureChanged?.Invoke(0, _temp);
-                    _lastTemp = _temp;
-                }
-                else
-                {
-                    var delta = Math.Abs(_temp - _lastTemp.Value);
-                    if (delta > GyroChangeThreshold)
-                    {
-                        TemperatureChanged?.Invoke(_lastTemp.Value, _temp);
-                        _lastTemp = _temp;
-                    }
-                }
             }
         }
 
@@ -440,22 +323,22 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        private void Refresh()
+        private void Update()
         {
-            lock (SyncRoot)
+            lock (_lock)
             {
                 // we'll just read 14 bytes (7 registers), starting at 0x3b
                 var data = Device.WriteReadData(Address, 14, (byte)Register.AccelerometerX);
 
                 var a_scale = (1 << AccelerometerScale) / AccelScaleBase;
                 var g_scale = (1 << GyroScale) / GyroScaleBase;
-                AccelerationX = ScaleAndOffset(data, 0, a_scale);
-                AccelerationY = ScaleAndOffset(data, 2, a_scale);
-                AccelerationZ = ScaleAndOffset(data, 4, a_scale);
-                TemperatureC = ScaleAndOffset(data, 6, 1 / 340f, 36.53f);
-                GyroX = ScaleAndOffset(data, 8, g_scale);
-                GyroY = ScaleAndOffset(data, 10, g_scale);
-                GyroZ = ScaleAndOffset(data, 12, g_scale);
+                Conditions.XAcceleration = ScaleAndOffset(data, 0, a_scale);
+                Conditions.YAcceleration = ScaleAndOffset(data, 2, a_scale);
+                Conditions.ZAcceleration = ScaleAndOffset(data, 4, a_scale);
+                _temp = ScaleAndOffset(data, 6, 1 / 340f, 36.53f);
+                Conditions.XGyroscopicAcceleration = ScaleAndOffset(data, 8, g_scale);
+                Conditions.YGyroscopicAcceleration = ScaleAndOffset(data, 10, g_scale);
+                Conditions.ZGyroscopicAcceleration = ScaleAndOffset(data, 12, g_scale);
             }
         }
 

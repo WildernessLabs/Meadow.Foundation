@@ -1,0 +1,17 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>ServoWing</AssemblyName>
+    <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.14.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation.Servo" Version="0.8.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ICs.IOExpanders.PCA9685\Driver\ICs.IOExpanders.PCA9685\ICs.IOExpanders.Pca9685.csproj" />
+  </ItemGroup>
+</Project>

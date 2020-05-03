@@ -4,7 +4,7 @@ using System;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    ///     Create a new Parallax PIR object.
+    ///     Create a new Hscens0040 object.
     /// </summary>
     public class Hcsens0040
     {

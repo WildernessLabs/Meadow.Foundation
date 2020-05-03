@@ -219,7 +219,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Clear the display.
         /// </summary>
-        public void Clear()
+        public void ClearLines()
         {
             byte[] buffer = { ExtendedCommandCharacter, 0x01 };
             Send(buffer);

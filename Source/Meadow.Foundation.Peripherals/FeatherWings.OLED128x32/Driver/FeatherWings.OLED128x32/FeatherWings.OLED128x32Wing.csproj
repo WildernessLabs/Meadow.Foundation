@@ -1,0 +1,12 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>OLED128x32</AssemblyName>
+    <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj" />
+  </ItemGroup>
+</Project>

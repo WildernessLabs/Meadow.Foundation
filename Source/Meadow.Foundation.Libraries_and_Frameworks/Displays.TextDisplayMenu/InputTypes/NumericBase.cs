@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 
             _numberParts = new int[_scale > 0 ? 2 : 1];
             _itemID = itemID;
-            _display.Clear();
+            _display.ClearLines();
             _display.WriteLine("Enter " + itemID, 0);
             _display.SetCursorPosition(0, 1);
 
