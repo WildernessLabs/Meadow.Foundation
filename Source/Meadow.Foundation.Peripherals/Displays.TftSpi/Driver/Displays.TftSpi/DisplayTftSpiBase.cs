@@ -292,7 +292,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// </summary>
         public void Show(uint x0, uint y0, uint x1, uint y1)
         {
-            if(x1 <= x0 || y1 <= y0)
+            if(x1 < x0 || y1 < y0)
             {   //could throw an exception
                 return;
             }
