@@ -19,9 +19,6 @@ namespace Meadow.Foundation.Sensors.Light
             Default = Address0
         }
 
-        private PU_CTRL_BITS _currentPU_CTRL;
-        private int _tareValue;
-
         private enum Register : byte
         {
             PU_CTRL = 0x00,
@@ -126,10 +123,13 @@ namespace Meadow.Foundation.Sensors.Light
 
         private II2cBus Device { get; }
         private object SyncRoot { get; } = new object();
+        private decimal _gramsPerAdcUnit = 0;
+        private PU_CTRL_BITS _currentPU_CTRL;
+        private int _tareValue;
 
-        public float Load { get; private set; }
         public byte Address { get; private set; }
-        
+        public WeightUnits CurrentUnits { get; set; }
+
         public Nau7802(II2cBus bus)
         {
             Device = bus;
@@ -263,7 +263,7 @@ namespace Meadow.Foundation.Sensors.Light
             WriteRegister(Register.OTP_B1, 0x30); // turn off CLK_CHP
             EnableCh2DecouplingCap();
 
-            Calibrate();
+            CalibrateAdc();
 
             // No conversion will take place until the R0x00 bit 4 “CS” is set Logic = 1 
             _currentPU_CTRL |= PU_CTRL_BITS.CS;
@@ -315,7 +315,7 @@ namespace Meadow.Foundation.Sensors.Light
             WriteRegister(Register.CTRL2, ctrl2);
         }
 
-        private void Calibrate()
+        private void CalibrateAdc()
         {
             var ctrl2 = ReadRegister(Register.CTRL2);
             ctrl2 |= (byte)((byte)1 << 7);
@@ -338,10 +338,41 @@ namespace Meadow.Foundation.Sensors.Light
 
         }
 
-        public int GetWeight()
+        public int CalculateCalibrationFactor()
         {
+            // do a few reads, then return the difference between tare (zero) and this value.
+            var reads = 5;
+            var sum = 0;
+
+            for(int i = 0; i < reads; i++)
+            {
+                sum += DoConversion();
+                Thread.Sleep(200);
+            }
+
+            return sum / reads;
+        }
+
+        public void SetCalibrationFactor(int factor, Weight knownValue)
+        {
+            _gramsPerAdcUnit = knownValue.ConvertTo(WeightUnits.Grams) / (decimal)factor;
+        }
+
+        public Weight GetWeight()
+        {
+            if(_gramsPerAdcUnit == 0)
+            {
+                throw new Exception("Calibration factor has not been set");
+            }
+
+            // get an ADC conversion
             var c = DoConversion();
-            return c - _tareValue;
+            // subtract the tare
+            var adc = c - _tareValue;
+            // convert to grams
+            var grams = adc * _gramsPerAdcUnit;
+            // convert to desired units
+            return new Weight(grams, WeightUnits.Grams);
         }
 
         private int DoConversion()
@@ -359,7 +390,7 @@ namespace Meadow.Foundation.Sensors.Light
 
             if(!IsConversionComplete())
             {
-                Console.WriteLine("Conversion not complete");
+                Console.WriteLine("ADC is busy");
                 return 0;
             }
 
