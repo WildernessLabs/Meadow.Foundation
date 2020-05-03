@@ -6,9 +6,7 @@
     <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.Ssd1306" Version="0.12.3" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj" />
   </ItemGroup>
 </Project>
