@@ -36,13 +36,11 @@ namespace Sensors.LoadCell.Nau7802_Sample
                     _loadSensor.SetCalibrationFactor(CalibrationFactor, new Weight(CalibrationWeight, CalibrationWeightUnits));
                     _loadSensor.Tare();
 
-                    _loadSensor.CurrentUnits = WeightUnits.Grams; // TODO: set this to your desired output units
-
                     // start reading
                     while (true)
                     {
                         var c = _loadSensor.GetWeight();
-                        Console.WriteLine($"Conversion returned {c} {_loadSensor.CurrentUnits}");
+                        Console.WriteLine($"Conversion returned {c.StandardValue} {c.StandardUnits}");
                         Thread.Sleep(1000);
                     }
                 }

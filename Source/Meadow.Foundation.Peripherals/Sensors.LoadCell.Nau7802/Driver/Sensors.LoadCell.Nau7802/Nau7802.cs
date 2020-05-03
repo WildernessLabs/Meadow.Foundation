@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Light
     public class Nau7802 : FilterableObservableBase<FloatChangeResult, float>,  IDisposable
     {
         /// <summary>
-        ///     Valid addresses for the sensor.
+        /// Valid addresses for the sensor.
         /// </summary>
         public enum Addresses : byte
         {
@@ -127,9 +127,15 @@ namespace Meadow.Foundation.Sensors.Light
         private PU_CTRL_BITS _currentPU_CTRL;
         private int _tareValue;
 
+        /// <summary>
+        /// The peripheral's address on the I2C Bus
+        /// </summary>
         public byte Address { get; private set; }
-        public WeightUnits CurrentUnits { get; set; }
 
+        /// <summary>
+        /// Creates an instance of the NAU7802 Driver class
+        /// </summary>
+        /// <param name="bus"></param>
         public Nau7802(II2cBus bus)
         {
             Device = bus;
@@ -215,6 +221,9 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
+        /// <summary>
+        /// Tares the sensor, effectively setting the current weight reading to relative zero. 
+        /// </summary>
         public void Tare()
         {
             while(!IsConversionComplete())
@@ -338,6 +347,10 @@ namespace Meadow.Foundation.Sensors.Light
 
         }
 
+        /// <summary>
+        /// Calculates the calibration factor of the load cell.  Call this method with a known weight on the sensor, and then use the returned value in a call to <see cref="SetCalibrationFactor(int, Weight)"/> before using the sensor.
+        /// </summary>
+        /// <returns></returns>
         public int CalculateCalibrationFactor()
         {
             // do a few reads, then return the difference between tare (zero) and this value.
@@ -353,11 +366,20 @@ namespace Meadow.Foundation.Sensors.Light
             return sum / reads;
         }
 
+        /// <summary>
+        /// Sets the sensor's calibration factor based on a factor calculated with a know weight by calling <see cref="CalculateCalibrationFactor"/>.
+        /// </summary>
+        /// <param name="factor"></param>
+        /// <param name="knownValue"></param>
         public void SetCalibrationFactor(int factor, Weight knownValue)
         {
             _gramsPerAdcUnit = knownValue.ConvertTo(WeightUnits.Grams) / (decimal)factor;
         }
 
+        /// <summary>
+        /// Gets the current sensor weight
+        /// </summary>
+        /// <returns></returns>
         public Weight GetWeight()
         {
             if(_gramsPerAdcUnit == 0)
