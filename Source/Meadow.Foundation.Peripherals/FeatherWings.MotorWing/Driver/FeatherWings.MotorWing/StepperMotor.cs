@@ -40,7 +40,7 @@ namespace Meadow.Foundation.FeatherWings
         /// <param name="steps">The number of steps per revolution</param>
         /// <param name="num">The Stepper motor port</param>
         /// <param name="pca9685">The PCS968 diver object</param>
-        public StepperMotor(int steps, int num, PCA9685 pca9685) : base(pca9685)
+        public StepperMotor(int steps, int num, Pca9685 pca9685) : base(pca9685)
         {
 
             if (num == 0) 

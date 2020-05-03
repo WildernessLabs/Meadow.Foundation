@@ -121,7 +121,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 _buttonNext.Clicked -= HandleButtonNext;
             }
             _buttonSelect.Clicked -= HandleEncoderClick;
-            _display.Clear();
+            _display.ClearLines();
         }
 
         protected MenuPage CreateMenuPage(ArrayList nodes, bool addBack)
@@ -153,7 +153,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             if (!IsEnabled) { return; } 
 
             // clear the display
-            _display.Clear();
+            _display.ClearLines();
 
             // if there are no items to render, get out.
             if (_currentMenuPage.MenuItems.Count <= 0) return;

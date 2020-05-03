@@ -12,7 +12,7 @@ namespace ICs.IOExpanders.PCA9685_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         II2cBus _i2CBus;
-        PCA9685 _pca9685;
+        Pca9685 _pca9685;
 
         public MeadowApp()
         {
@@ -25,7 +25,7 @@ namespace ICs.IOExpanders.PCA9685_Sample
             Console.WriteLine("Initialize hardware...");
             _i2CBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
 
-            _pca9685 = new PCA9685(_i2CBus, 0x40, 50);
+            _pca9685 = new Pca9685(_i2CBus, 0x40, 50);
             _pca9685.Initialize();
         }
 

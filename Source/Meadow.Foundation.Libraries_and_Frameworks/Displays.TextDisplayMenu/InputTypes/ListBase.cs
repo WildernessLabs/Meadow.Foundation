@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
                 throw new InvalidOperationException("Init() must be called before getting input.");
             }
 
-            _display.Clear();
+            _display.ClearLines();
             _display.WriteLine("Select", 0);
             _display.SetCursorPosition(0, 1);
 

@@ -12,7 +12,7 @@ namespace Meadow.Foundation.FeatherWings
     public class ServoWing 
     {
         readonly short _ports;
-        PCA9685 _pca9685;
+        Pca9685 _pca9685;
         
         public ServoWing(II2cBus i2cBus, byte address = 0x40, int frequency = 50, short ports = 8)
         {
@@ -22,7 +22,7 @@ namespace Meadow.Foundation.FeatherWings
             }
 
             _ports = ports;
-            _pca9685 = new PCA9685(i2cBus, address, frequency);
+            _pca9685 = new Pca9685(i2cBus, address, frequency);
         }
 
         public void Initialize()

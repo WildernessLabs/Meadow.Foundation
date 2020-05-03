@@ -18,7 +18,7 @@ namespace Meadow.Foundation.FeatherWings
         readonly byte _in2;
 
 
-        public DCMotor(short num, PCA9685 pca9685) : base(pca9685)
+        public DCMotor(short num, Pca9685 pca9685) : base(pca9685)
         {
 
             if (num < 0 || num > 3)

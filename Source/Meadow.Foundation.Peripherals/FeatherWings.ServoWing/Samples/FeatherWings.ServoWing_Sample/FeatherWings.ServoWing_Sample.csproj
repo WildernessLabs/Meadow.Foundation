@@ -10,8 +10,6 @@
     <PackageReference Include="Meadow.Foundation.Servo" Version="0.8.6" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ServoWing">
-      <HintPath>..\..\Driver\FeatherWings.ServoWing\bin\Debug\net472\ServoWing.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\Driver\FeatherWings.ServoWing\FeatherWings.ServoWing.csproj" />
   </ItemGroup>
 </Project>

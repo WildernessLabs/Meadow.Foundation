@@ -5,11 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="MotorWing">
-      <HintPath>..\..\Driver\FeatherWings.MotorWing\bin\Debug\net472\MotorWing.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\Driver\FeatherWings.MotorWing\FeatherWings.MotorWing.csproj" />
   </ItemGroup>
 </Project>

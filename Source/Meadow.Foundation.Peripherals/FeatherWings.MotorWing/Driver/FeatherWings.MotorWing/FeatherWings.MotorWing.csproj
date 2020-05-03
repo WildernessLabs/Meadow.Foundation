@@ -6,11 +6,7 @@
     <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="PCA9685">
-      <HintPath>..\..\..\ICs.IOExpanders.PCA9685\Driver\ICs.IOExpanders.PCA9685\bin\Debug\net472\PCA9685.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\ICs.IOExpanders.PCA9685\Driver\ICs.IOExpanders.PCA9685\ICs.IOExpanders.Pca9685.csproj" />
   </ItemGroup>
 </Project>

@@ -15,7 +15,7 @@ namespace MeadowApp
             Initialize();
 
             Console.WriteLine("Clear");
-            display.Clear();
+            display.ClearLines();
 
             Console.WriteLine("Set brightness");
             display.SetBrightness(0.5f);

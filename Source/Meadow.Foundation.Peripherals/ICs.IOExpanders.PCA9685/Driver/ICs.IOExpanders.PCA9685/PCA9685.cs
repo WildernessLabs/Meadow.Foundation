@@ -9,7 +9,7 @@ namespace Meadow.Foundation.ICs
     /// Represents PCA9685 IC
     /// </summary>
     /// <remarks>All PWM channels run at the same Frequency</remarks>
-    public class PCA9685
+    public class Pca9685
     {
         private readonly II2cBus _i2cBus;
         private readonly byte _address;
@@ -43,7 +43,7 @@ namespace Meadow.Foundation.ICs
         public II2cBus i2CBus { get => _i2cBus; }
         public byte Address { get => _address; }
 
-        public PCA9685(II2cBus i2cBus, byte address, int frequency = 100)
+        public Pca9685(II2cBus i2cBus, byte address, int frequency = 100)
         {
             _i2cBus = i2cBus;
             _address = address;

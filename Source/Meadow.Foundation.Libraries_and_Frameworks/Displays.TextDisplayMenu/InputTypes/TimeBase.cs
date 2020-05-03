@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 
             _timeParts = new int[_timeMode == TimeMode.HH_MM_SS ? 3 : 2];
             _itemID = itemID;
-            _display.Clear();
+            _display.ClearLines();
             _display.WriteLine("Enter " + this.TimeModeDisplay, 0);
             _display.SetCursorPosition(0, 1);
 

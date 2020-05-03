@@ -9,7 +9,7 @@ namespace Meadow.Foundation.FeatherWings
     /// </summary>
     public class MotorWing
     {
-        PCA9685 _pca9685;
+        Pca9685 _pca9685;
 
         /// <summary>
         /// 
@@ -24,7 +24,7 @@ namespace Meadow.Foundation.FeatherWings
                 throw new ArgumentNullException("i2cBus");
             }
 
-            _pca9685 = new PCA9685(i2cBus, address,frequency);
+            _pca9685 = new Pca9685(i2cBus, address,frequency);
 
         }
 
