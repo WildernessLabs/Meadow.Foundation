@@ -1,0 +1,17 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+    <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.14.1" />
+    <PackageReference Include="Meadow.Foundation.Displays.Ssd1306" Version="0.12.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="OLED128x32">
+      <HintPath>..\..\Driver\FeatherWings.OLED128x32\bin\Debug\net472\OLED128x32.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
