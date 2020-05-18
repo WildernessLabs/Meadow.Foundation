@@ -11,7 +11,7 @@ namespace ICs.IOExpanders
     /// Represents the IS31FL3731 IC.
     /// The IS31FL3731 is a compact LED driver for 144 single LEDs
     /// </summary>
-    /// <remarks>Base on https://github.com/adafruit/Adafruit_IS31FL3731 </remarks>
+    /// <remarks>Based on https://github.com/adafruit/Adafruit_IS31FL3731 </remarks>
     public class IS31FL3731
     {
         protected const byte RegConfig = 0x00;
