@@ -4,7 +4,4 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Driver\FeatherWings.MiniTft\FeatherWings.MiniTft.csproj" />
-  </ItemGroup>
 </Project>

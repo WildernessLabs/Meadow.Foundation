@@ -957,9 +957,9 @@ namespace Meadow.Foundation.Graphics
             Show();
         }
 
-        public void Clear()
+        public void ClearLines()
         {
-            Clear(true);
+            Clear(true); //for now
         }
 
         public void ClearLine(byte lineNumber)

@@ -1,6 +1,8 @@
 ﻿using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Motion;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
@@ -9,7 +11,8 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     Driver for the ADXL335 triple axis accelerometer.
     ///     +/- 3g
     /// </summary>
-    public class Adxl335
+    public class Adxl335 : FilterableObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
+        IAccelerometer
     {
         #region Constants
 
@@ -18,9 +21,9 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     sensor is being configured to generate interrupts.
         /// </summary>
         public const ushort MinimumPollingPeriod = 100;
-        
+
         #endregion Constants
-        
+
         #region Member variables / fields
 
         /// <summary>
@@ -41,27 +44,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Voltage that represents 0g.  This is the supply voltage / 2.
         /// </summary>
-        private double _zeroGVoltage;
-
-        /// <summary>
-        ///     How often should this sensor be read?
-        /// </summary>
-        private readonly ushort _updateInterval = 100;
-
-        /// <summary>
-        ///     Last X acceleration reading from the sensor.
-        /// </summary>
-        private double _lastX;
-
-        /// <summary>
-        ///     Last Y reading from the sensor.
-        /// </summary>
-        private double _lastY;
-        
-        /// <summary>
-        ///     Last Z reading from the sensor.
-        /// </summary>
-        private double _lastZ;
+        private float _zeroGVoltage => SupplyVoltage / 2f;
 
         #endregion Member variables / fields
 
@@ -74,7 +57,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public double X { get; private set; }
+        public float XAcceleration => Conditions.XAcceleration.Value;
 
         /// <summary>
         ///     Acceleration along the Y-axis.
@@ -83,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public double Y { get; private set; }
+        public float YAcceleration => Conditions.YAcceleration.Value;
 
         /// <summary>
         ///     Acceleration along the Z-axis.
@@ -92,56 +75,48 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public double Z { get; private set; }
+        public float ZAcceleration => Conditions.ZAcceleration.Value;
 
         /// <summary>
         ///     Volts per G for the X axis.
         /// </summary>
-        public double XVoltsPerG { get; set; }
+        public float XVoltsPerG { get; set; }
 
         /// <summary>
         ///     Volts per G for the X axis.
         /// </summary>
-        public double YVoltsPerG { get; set; }
+        public float YVoltsPerG { get; set; }
 
         /// <summary>
         ///     Volts per G for the X axis.
         /// </summary>
-        public double ZVoltsPerG { get; set; }
+        public float ZVoltsPerG { get; set; }
 
         /// <summary>
         ///     Power supply voltage applied to the sensor.  This will be set (in the constructor)
         ///     to 3.3V by default.
         /// </summary>
-        private double _supplyVoltage;
+        public float SupplyVoltage { get; set; }
 
-        public double SupplyVoltage
-        {
-            get => _supplyVoltage; 
-            set
-            {
-                _supplyVoltage = value;
-                _zeroGVoltage = value / 2;
-            }
-        }
-        
+        public AccelerationConditions Conditions { get; protected set; } = new AccelerationConditions();
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
         /// <summary>
-        ///     Any changes in the acceleration that are greater than the acceleration
-        ///     threshold will cause an event to be raised when the instance is
-        ///     set to update automatically.
+        /// Gets a value indicating whether the analog input port is currently
+        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
         /// </summary>
-        public double AccelerationChangeNotificationThreshold { get; set; } = 0.1F;
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
 
         #endregion Properties
-        
+
         #region Events and delegates
 
-        /// <summary>
-        ///     Event to be raised when the acceleration is greater than
-        ///     +/- AccelerationChangeNotificationThreshold.
-        /// </summary>
-        public event SensorVectorEventHandler AccelerationChanged = delegate { };
-        
+        public event EventHandler<AccelerationConditionChangeResult> Updated;
+
         #endregion Events and delegates
 
         #region Constructors
@@ -156,54 +131,106 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Create a new ADXL335 sensor object.
         /// </summary>
-        /// <param name="x">Analog pin connected to the X axis output from the ADXL335 sensor.</param>
-        /// <param name="y">Analog pin connected to the Y axis output from the ADXL335 sensor.</param>
-        /// <param name="z">Analog pin connected to the Z axis output from the ADXL335 sensor.</param>
-        /// <param name="updateInterval">Update interval for the sensor, set to 0 to put the sensor in polling mode.</param>
-        /// <<param name="accelerationChangeNotificationThreshold">Acceleration change threshold.</param>
-        public Adxl335(IIODevice device, IPin x, IPin y, IPin z, ushort updateInterval = 100,
-                       double accelerationChangeNotificationThreshold = 0.1F)
+        /// <param name="xPin">Analog pin connected to the X axis output from the ADXL335 sensor.</param>
+        /// <param name="yPin">Analog pin connected to the Y axis output from the ADXL335 sensor.</param>
+        /// <param name="zPin">Analog pin connected to the Z axis output from the ADXL335 sensor.</param>
+        public Adxl335(IIODevice device, IPin xPin, IPin yPin, IPin zPin)
         {
-            if ((updateInterval != 0) && (updateInterval < MinimumPollingPeriod))
-            {
-                throw new ArgumentOutOfRangeException(nameof(updateInterval),
-                    "Update interval should be 0 or greater than " + MinimumPollingPeriod);    
-            }
-
-            _xPort = device.CreateAnalogInputPort(x);
-            _yPort = device.CreateAnalogInputPort(y);
-            _zPort = device.CreateAnalogInputPort(z);
+            _xPort = device.CreateAnalogInputPort(xPin);
+            _yPort = device.CreateAnalogInputPort(yPin);
+            _zPort = device.CreateAnalogInputPort(zPin);
             //
             //  Now set the default calibration data.
             //
-            XVoltsPerG = 0.325;
-            YVoltsPerG = 0.325;
-            ZVoltsPerG = 0.550;
-            SupplyVoltage = 3.3;
-
-            if (updateInterval > 0)
-            {
-                var t = StartUpdating();
-            }
-            else
-            {
-                Update().RunSynchronously();
-            }
+            XVoltsPerG = 0.325f;
+            YVoltsPerG = 0.325f;
+            ZVoltsPerG = 0.550f;
+            SupplyVoltage = 3.3f;
         }
 
         #endregion Constructors
 
         #region Methods
 
-        /// <summary>
-        ///     Start the update process.
-        /// </summary>
-        private async Task StartUpdating()
+        ///// <summary>
+        ///// Convenience method to get the current temperature. For frequent reads, use
+        ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        ///// </summary>
+        public async Task<AccelerationConditions> Read()
         {
-            while (true)
+            await Update();
+
+            return Conditions;
+        }
+
+        ///// <summary>
+        ///// Starts continuously sampling the sensor.
+        /////
+        ///// This method also starts raising `Changed` events and IObservable
+        ///// subscribers getting notified.
+        ///// </summary>
+        public void StartUpdating(int standbyDuration = 1000)
+        {
+            // thread safety
+            lock (_lock)
             {
-                await Update();
-                await Task.Delay(_updateInterval);
+                if (IsSampling) { return; }
+
+                // state muh-cheen
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                AccelerationConditions oldConditions;
+                AccelerationConditionChangeResult result;
+                Task.Factory.StartNew(async () => {
+                    while (true)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            // do task clean up here
+                            _observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Conditions;
+
+                        // read
+                        await Update();
+
+                        // build a new result with the old and new conditions
+                        result = new AccelerationConditionChangeResult(oldConditions, Conditions);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        protected void RaiseChangedAndNotify(AccelerationConditionChangeResult changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+        ///// <summary>
+        ///// Stops sampling the temperature.
+        ///// </summary>
+        public void StopUpdating()
+        {
+            lock (_lock)
+            {
+                if (!IsSampling) { return; }
+
+                SamplingTokenSource?.Cancel();
+
+                // state muh-cheen
+                IsSampling = false;
             }
         }
 
@@ -212,20 +239,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public async Task Update()
         {
-            X = (await _xPort.Read() - _zeroGVoltage) / XVoltsPerG;
-            Y = (await _yPort.Read() - _zeroGVoltage) / YVoltsPerG;
-            Z = (await _zPort.Read() - _zeroGVoltage) / ZVoltsPerG;
-
-            if (_updateInterval == 0 ||
-                ((Math.Abs(X - _lastX) > AccelerationChangeNotificationThreshold) ||
-                (Math.Abs(Y - _lastY) > AccelerationChangeNotificationThreshold) ||
-                (Math.Abs(Z - _lastZ) > AccelerationChangeNotificationThreshold)))
-            {
-                var lastNotifiedReading = new Vector(_lastX, _lastY, _lastZ);
-                var currentReading = new Vector(_lastX = X, _lastY = Y, _lastZ = Z);
-
-                AccelerationChanged?.Invoke(this, new SensorVectorEventArgs(lastNotifiedReading, currentReading));
-            }
+            Conditions.XAcceleration = (await _xPort.Read() - _zeroGVoltage) / XVoltsPerG;
+            Conditions.YAcceleration = (await _yPort.Read() - _zeroGVoltage) / YVoltsPerG;
+            Conditions.ZAcceleration = (await _zPort.Read() - _zeroGVoltage) / ZVoltsPerG;
         }
 
         /// <summary>
@@ -234,7 +250,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Vector object containing the raw sensor data from the analog pins.</returns>
         public async Task<Vector> GetRawSensorData()
         {
-             return new Vector(await _xPort.Read(), await _yPort.Read(), await _zPort.Read());
+            return new Vector(await _xPort.Read(), await _yPort.Read(), await _zPort.Read());
         }
 
         #endregion Methods

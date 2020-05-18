@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="inputPin"></param>
         /// <param name="resistor"></param>
         /// <param name="debounceDuration"></param>
-        public PushButton(IIODevice device, IPin inputPin, ResistorMode resistor, int debounceDuration = 20)
+        public PushButton(IIODevice device, IPin inputPin, ResistorMode resistor = ResistorMode.Disabled, int debounceDuration = 20)
         {
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
             DigitalIn = device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistor, debounceDuration);
@@ -119,7 +119,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="interruptPort"></param>
         /// <param name="resistor"></param>
         /// <param name="debounceDuration"></param>
-        public PushButton(IDigitalInputPort interruptPort, ResistorMode resistor, int debounceDuration = 20)
+        public PushButton(IDigitalInputPort interruptPort, ResistorMode resistor = ResistorMode.Disabled, int debounceDuration = 20)
         {
             DigitalIn = interruptPort;
             DigitalIn.Resistor = resistor;

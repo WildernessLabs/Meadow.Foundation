@@ -33,24 +33,40 @@ namespace Displays.Tft.Ili9341_Sample
 
             while (true)
             {
+                //   PartialUpdate();
+
+                //   Thread.Sleep(3000);
+
+                graphics.Clear();
 
                 CharacterTest();
 
-                Thread.Sleep(30000);
+                Thread.Sleep(3000);
 
                 DrawMeadowLogo();
 
-                Thread.Sleep(30000);
+                Thread.Sleep(3000);
 
                 FontTest();
 
-                Thread.Sleep(30000);
+                Thread.Sleep(3000);
 
                 TestDisplay();
+            }
+        }
 
-                Thread.Sleep(30000);
+        void PartialUpdate()
+        {
+            graphics.Clear(true);
+            graphics.DrawRectangle(0, 0, 240, 320, Color.Teal, true);
+            //   graphics.Show(0, 0, 240, 10);
 
-                TestDisplay();
+            for(uint x = 0; x < 200; x += 20)
+            {
+                for (uint y = 0; y < 300; y+= 20)
+                {
+                    display.Show(x, y, x + 20, y + 20);
+                }
             }
         }
 
