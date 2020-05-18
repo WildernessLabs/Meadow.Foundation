@@ -1,0 +1,13 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>IS31FL3731</AssemblyName>
+    <RootNamespace>ICs.IOExpanders</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.*" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+</Project>
