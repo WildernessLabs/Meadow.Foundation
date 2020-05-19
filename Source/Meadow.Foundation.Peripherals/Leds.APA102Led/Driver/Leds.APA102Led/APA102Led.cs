@@ -179,7 +179,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Turn off all the Leds
         /// </summary>
-        public virtual void Clear()
+        public virtual void Clear(bool autoWrite = false)
         {
             byte[] off = {0, 0, 0};
 
@@ -187,6 +187,9 @@ namespace Meadow.Foundation.Leds
             {
                 SetLed(i, off);
             }
+
+            if (!AutoWrite && autoWrite)
+                Show();
         }
 
         /// <summary>

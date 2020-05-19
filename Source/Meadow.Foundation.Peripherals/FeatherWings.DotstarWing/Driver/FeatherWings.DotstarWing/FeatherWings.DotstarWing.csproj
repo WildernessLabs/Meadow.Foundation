@@ -1,0 +1,14 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>DotstarWing</AssemblyName>
+    <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Leds.APA102Led\Driver\Leds.APA102Led\Leds.APA102Led.csproj" />
+  </ItemGroup>
+</Project>
