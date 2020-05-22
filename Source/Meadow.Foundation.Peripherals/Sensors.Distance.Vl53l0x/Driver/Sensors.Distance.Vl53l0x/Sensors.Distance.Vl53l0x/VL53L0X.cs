@@ -84,21 +84,37 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         public UnitType Units { get; set; }
+        public bool IsShutdown
+        {
+            get
+            {
+                if (_shutdownPin != null)
+                    return !_shutdownPin.State;
+                else
+                    return false;
+            }
+        }
 
         readonly II2cPeripheral _i2cPeripheral;
+        readonly IDigitalOutputPort _shutdownPin;
         readonly byte _adddress;
         byte _stopVariable;
-        byte configControl;
-        float signalRateLimit;
+        byte _configControl;
+        float _signalRateLimit;
 
-        
+
+        public VL53L0X(II2cBus i2cBus, byte address = 0x29, UnitType units = UnitType.mm) : this (i2cBus,null,address,units)
+        {
+        }
+
         /// <param name="i2cBus">I2C bus</param>
         /// <param name="address">VL53L0X address</param>
         /// <param name="units">Unit of measure</param>
-        public VL53L0X(II2cBus i2cBus, byte address = 0x29, UnitType units = UnitType.mm)
+        public VL53L0X(II2cBus i2cBus, IDigitalOutputPort shutdownPin, byte address = 0x29,  UnitType units = UnitType.mm)
         {
             _adddress = address;
             _i2cPeripheral = new I2cPeripheral(i2cBus, _adddress);
+            _shutdownPin = shutdownPin;
             Units = units;
         }
 
@@ -107,6 +123,9 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public void Initialize()
         {
+            if (IsShutdown)
+                Shutdown(false);
+
             if (Read(0xC0) != 0xEE || Read(0xC1) != 0xAA || Read(0xC2) != 0x10)
             {
                 throw new Exception("Failed to find expected ID register values");
@@ -123,8 +142,8 @@ namespace Meadow.Foundation.Sensors.Distance
             _i2cPeripheral.WriteRegister(0xFF, 0x00);
             _i2cPeripheral.WriteRegister(0x80, 0x00);
 
-            configControl = ((byte)(Read(MsrcConfigControl) | 0x12));
-            signalRateLimit = 0.25f;
+            _configControl = ((byte)(Read(MsrcConfigControl) | 0x12));
+            _signalRateLimit = 0.25f;
 
             _i2cPeripheral.WriteRegister(SystemSequenceConfig, 0xFF);
             var spadInfo = GetSpadInfo();
@@ -251,9 +270,12 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Returns the current distance/range
         /// </summary>
-        /// <returns>The distance in the specified Units. Default mm</returns>
+        /// <returns>The distance in the specified Units. Default mm. Returns -1 if the shutdown pin is used and is off</returns>
         public virtual float Range()
         {
+            if (IsShutdown)
+                return -1;
+
             var dist = GetRange();
 
             if (Units == UnitType.inches)
@@ -270,8 +292,32 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="newAddress"></param>
         public virtual void SetAddress(byte newAddress)
         {
+            if (IsShutdown)
+                return;
+
             byte address = (byte)(newAddress & 0x7F);
             _i2cPeripheral.WriteRegister(I2CSlaveDeviceAddress, address);
+        }
+
+        /// <summary>
+        /// Set the Shutdown state of the device
+        /// </summary>
+        /// <param name="state">true = off/shutdown. false = on</param>
+        public virtual void Shutdown(bool state)
+        {
+            if (_shutdownPin == null)
+                return;
+
+            _shutdownPin.State = !state;
+            Thread.Sleep(2);
+            if (state == false)
+            {
+                Initialize();
+                Thread.Sleep(2);
+            }
+
+            
+
         }
 
         protected virtual Tuple<int, bool> GetSpadInfo()
@@ -372,7 +418,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 tCount++;
                 if (tCount > 100)
                 {
-                    throw new Exception("Range Start Timeout");
+                    throw new Exception("VL53L0X Range Start Timeout");
                 }
             }
 
@@ -383,12 +429,13 @@ namespace Meadow.Foundation.Sensors.Distance
                 tCount++;
                 if (tCount > 100)
                 {
-                    throw new Exception("Interrupt Status Timeout");
+                    throw new Exception("VL53L0X Interrupt Status Timeout");
                 }
             }
 
             var range_mm = Read16(ResultRangeStatus + 10);
             _i2cPeripheral.WriteRegister(GpioHvMuxActiveHigh, 0x01);
+
             return range_mm;
         }
     }
