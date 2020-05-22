@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Distance;
 using System;
 using System.Threading;
 
@@ -9,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// Represents the VL53L0X distance sensor
     /// </summary>
     /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_VL53L0X/blob/master/adafruit_vl53l0x.py </remarks>
-    public class VL53L0X
+    public class VL53L0X : IRangeFinder
     {
         #region const
 
@@ -95,6 +96,18 @@ namespace Meadow.Foundation.Sensors.Distance
             }
         }
 
+        public float CurrentDistance { get; private set; } = -1;
+
+        /// <summary>
+        /// Minimum valid distance in mm.
+        /// </summary>
+        public float MinimumDistance => 30;
+
+        /// <summary>
+        /// Maximum valid distance in mm (CurrentDistance returns -1 if above).
+        /// </summary>
+        public float MaximumDistance => 2000;
+
         readonly II2cPeripheral _i2cPeripheral;
         readonly IDigitalOutputPort _shutdownPin;
         readonly byte _adddress;
@@ -102,6 +115,7 @@ namespace Meadow.Foundation.Sensors.Distance
         byte _configControl;
         float _signalRateLimit;
 
+        public event EventHandler<DistanceEventArgs> DistanceDetected;
 
         public VL53L0X(II2cBus i2cBus, byte address = 0x29, UnitType units = UnitType.mm) : this (i2cBus,null,address,units)
         {
@@ -278,12 +292,16 @@ namespace Meadow.Foundation.Sensors.Distance
 
             var dist = GetRange();
 
-            if (Units == UnitType.inches)
-                return dist * 0.0393701f;
+            if (dist > MaximumDistance)
+                CurrentDistance = -1;
+            else if (Units == UnitType.inches)
+                CurrentDistance =  dist * 0.0393701f;
             else if (Units == UnitType.cm)
-                return dist / 10;
+                CurrentDistance = dist / 10;
             else
-                return dist;
+                CurrentDistance = dist;
+
+            return CurrentDistance;
         }
 
         /// <summary>
