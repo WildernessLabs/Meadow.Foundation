@@ -86,12 +86,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="pin">The pin number to create the port on.</param>
         /// <param name="initialState">Whether the pin is initially high or low.</param>
         /// <returns></returns>
-        public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState)
+        public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState, OutputType outputType)
         {
             if (IsValidPin(pin))
             {
                 // create the convenience class
-                return new DigitalOutputPort(this, pin, initialState);
+                return new DigitalOutputPort(this, pin, initialState, outputType);
             }
 
             throw new Exception("Pin is out of range");
@@ -134,12 +134,24 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return Pins.AllPins.Contains(pin);
         }
 
-        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled, int debounceDuration = 0, int glitchFilterCycleCount = 0)
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin, 
+            InterruptMode interruptMode = InterruptMode.None, 
+            ResistorMode resistorMode = ResistorMode.Disabled, 
+            double debounceDuration = 0,
+            double glitchFilterCycleCount = 0)
         {
             throw new NotImplementedException();
         }
 
-        public IBiDirectionalPort CreateBiDirectionalPort(IPin pin, bool initialState = false, bool glitchFilter = false, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled, PortDirectionType initialDirection = PortDirectionType.Input)
+        public IBiDirectionalPort CreateBiDirectionalPort(IPin pin,
+            bool initialState = false,
+            InterruptMode interruptMode = InterruptMode.None,
+            ResistorMode resistorMode = ResistorMode.Disabled,
+            PortDirectionType initialDirection = PortDirectionType.Input,
+            double debounceDuration = 0.0,    // 0 - 1000 msec in .1 increments
+            double glitchDuration = 0.0,      // 0 - 1000 msec in .1 increments
+            OutputType outputType = OutputType.PushPull
+            )
         {
             throw new NotImplementedException();
         }

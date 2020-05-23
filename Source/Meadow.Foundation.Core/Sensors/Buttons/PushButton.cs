@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         public TimeSpan DebounceDuration
         {
-            get => (DigitalIn != null) ? new TimeSpan(0, 0, 0, 0, DigitalIn.DebounceDuration) : TimeSpan.MinValue;
+            get => (DigitalIn != null) ? new TimeSpan(0, 0, 0, 0, (int)DigitalIn.DebounceDuration) : TimeSpan.MinValue;
             set
             {
                 DigitalIn.DebounceDuration = (int)value.TotalMilliseconds;

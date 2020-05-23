@@ -1036,11 +1036,11 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (activeLow)
             {
-                return (InterruptMode.LevelLow);
+                return (InterruptMode.EdgeFalling);
             }
             else
             {
-                return(InterruptMode.LevelHigh);
+                return(InterruptMode.EdgeRising);
             }
         }
 

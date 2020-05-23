@@ -22,8 +22,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public DigitalOutputPort(
                 x74595 x74595,
                 IPin pin,
-                bool initialState = false)
-                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], initialState)
+                bool initialState, 
+                OutputType outputType)
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], initialState, outputType)
             {
 
                 _x74595 = x74595;

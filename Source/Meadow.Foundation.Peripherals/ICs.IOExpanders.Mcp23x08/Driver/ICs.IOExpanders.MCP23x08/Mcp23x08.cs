@@ -39,6 +39,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public DeviceCapabilities Capabilities => throw new NotImplementedException();
 
+
+        
+
         protected Mcp23x08()
         { }
 
@@ -178,7 +181,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="initialState">Whether the pin is initially high or low.</param>
         /// <returns></returns>
         public IDigitalOutputPort CreateDigitalOutputPort(
-            IPin pin, bool initialState = false)
+            IPin pin, bool initialState = false, OutputType outputType = OutputType.OpenDrain)
         {
             if (IsValidPin(pin))
             {
@@ -196,8 +199,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             IPin pin,
             InterruptMode interruptMode = InterruptMode.None,
             ResistorMode resistorMode = ResistorMode.Disabled,
-            int debounceDuration = 0,
-            int glitchFilterCycleCount = 0)
+            double debounceDuration = 0,
+            double glitchFilterCycleCount = 0)
         {
             if (IsValidPin(pin))
             {
@@ -265,7 +268,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     _mcpDevice.WriteRegister(RegisterAddresses.InterruptOnChangeRegister, gpinten);
 
                     // Set the default value for the pin for interrupts.
-                    var interruptValue = interruptMode == InterruptMode.EdgeFalling || interruptMode == InterruptMode.LevelLow;
+                    var interruptValue = interruptMode == InterruptMode.EdgeFalling;
                     byte defVal = _mcpDevice.ReadRegister(RegisterAddresses.DefaultComparisonValueRegister);
                     defVal = BitHelpers.SetBit(defVal, (byte)pin.Key, interruptValue);
                     _mcpDevice.WriteRegister(RegisterAddresses.DefaultComparisonValueRegister, defVal);
@@ -401,7 +404,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         // .NET 4.7.2 runtime. After the latest Mono rebase we'll be able to
         // move it to Core 3.
 
-        public IBiDirectionalPort CreateBiDirectionalPort(IPin pin, bool initialState = false, bool glitchFilter = false, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled, PortDirectionType initialDirection = PortDirectionType.Input)
+        public IBiDirectionalPort CreateBiDirectionalPort(IPin pin,
+            bool initialState = false,
+            InterruptMode interruptMode = InterruptMode.None,
+            ResistorMode resistorMode = ResistorMode.Disabled,
+            PortDirectionType initialDirection = PortDirectionType.Input,
+            double debounceDuration = 0.0,    // 0 - 1000 msec in .1 increments
+            double glitchDuration = 0.0,      // 0 - 1000 msec in .1 increments
+            OutputType outputType = OutputType.PushPull)
         {
             throw new NotImplementedException();
         }

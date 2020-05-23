@@ -19,8 +19,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public DigitalOutputPort(
                 Mcp23x08 mcpController,
                 IPin pin,
-                bool initialState = false)
-                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], initialState)
+                bool initialState = false,
+                OutputType outputType = OutputType.OpenDrain)
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], initialState, outputType)
             {
                 _mcp = mcpController;
             }
