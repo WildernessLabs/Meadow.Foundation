@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// The minimum duration for a long press.
         /// </summary>
-        public TimeSpan LongPressThreshold { get; set; } = new TimeSpan(0, 0, 0, 0, 500);
+        public TimeSpan LongPressThreshold { get; set; } = TimeSpan.Zero;
 
         /// <summary>
         /// Returns digital input port.
@@ -154,11 +154,17 @@ namespace Meadow.Foundation.Sensors.Buttons
                 _buttonPressStart = DateTime.MaxValue;
 
                 // if it's a long press, raise our long press event
-                if (pressDuration > LongPressThreshold) this.RaiseLongPress();
+                if (LongPressThreshold > TimeSpan.Zero && pressDuration > LongPressThreshold)
+                {
+                    this.RaiseLongPress();
+                }
+                else
+                {
+                    this.RaiseClicked();
+                }
 
                 // raise the other events
                 this.RaisePressEnded();
-                this.RaiseClicked();
             }
         }
 
