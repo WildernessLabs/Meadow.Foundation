@@ -203,7 +203,7 @@ namespace Meadow.Foundation.Displays.Lcd
             SendByte(((byte)(LCD_SETDDRAMADDR | address)), LCD_INSTRUCTION);
         }
 
-        public void Clear()
+        public void ClearLines()
         {
             SendByte(0x01, LCD_INSTRUCTION);
             SetCursorPosition(1, 0);

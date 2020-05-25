@@ -26,15 +26,20 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
             // start updating continuously
             si7021.StartUpdating();
+
+            si7021.Updated += (s,e) => ShowConditions();
         }
 
         protected async Task ReadConditions()
         {
             var conditions = await si7021.Read();
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {conditions.Temperature}°C");
-            Console.WriteLine($"  Pressure: {conditions.Pressure}hPa");
-            Console.WriteLine($"  Relative Humidity: {conditions.Humidity}%");
+            ShowConditions();
+        }
+
+        protected void ShowConditions()
+        {
+            Console.WriteLine($"  T: {si7021.Conditions.Temperature:F1}C    RH: {si7021.Conditions.Humidity:F1}%");
         }
     }
 }

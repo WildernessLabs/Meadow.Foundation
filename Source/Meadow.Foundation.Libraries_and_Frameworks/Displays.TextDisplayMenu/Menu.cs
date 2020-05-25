@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections;
-using Meadow.Foundation.Displays;
-using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Foundation.Displays.TextDisplayMenu.InputTypes;
-using Meadow.Foundation.Sensors.Buttons;
-using System.Diagnostics;
 using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Sensors.Rotary;
 using Meadow.Peripherals.Sensors.Buttons;
@@ -55,8 +51,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         private MenuPage ParseMenuData(byte[] menuResource)
         {
             var menuJson = new string(System.Text.Encoding.UTF8.GetChars(menuResource));
-            //Port: TODO var menuData = Json.NETMF.JsonSerializer.DeserializeString(menuJson) as Hashtable;
-            Hashtable menuData = null;
+            var menuData = SimpleJsonSerializer.JsonSerializer.DeserializeString(menuJson) as Hashtable; //from nuget package
+
+
+        //    Hashtable menuData = null;
 
             if (menuData["menu"] == null)
             {
@@ -106,7 +104,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             }
             _buttonSelect.Clicked += HandleEncoderClick;
 
-            UpdatedCurrentMenuPage();
+            UpdateCurrentMenuPage();
             RenderCurrentMenuPage();
         }
 
@@ -123,7 +121,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 _buttonNext.Clicked -= HandleButtonNext;
             }
             _buttonSelect.Clicked -= HandleEncoderClick;
-            _display.Clear();
+            _display.ClearLines();
         }
 
         protected MenuPage CreateMenuPage(ArrayList nodes, bool addBack)
@@ -152,10 +150,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         protected void RenderCurrentMenuPage()
         {
-            if (!IsEnabled) return;
+            if (!IsEnabled) { return; } 
 
             // clear the display
-            _display.Clear();
+            _display.ClearLines();
 
             // if there are no items to render, get out.
             if (_currentMenuPage.MenuItems.Count <= 0) return;
@@ -219,7 +217,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         /// <summary>
         /// Updates the _currentMenuPage based on the current navigation depth
         /// </summary>
-        protected void UpdatedCurrentMenuPage()
+        protected void UpdateCurrentMenuPage()
         {
             if (_navigatedDepth == 0) _currentMenuPage = _rootMenuPage;
             else

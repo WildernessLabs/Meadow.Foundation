@@ -25,7 +25,9 @@ namespace Meadow.Foundation.Displays
         /// Number of cascaded devices
         /// </summary>
         /// <value></value>
-        public int DeviceCount { get; private set; }
+        public int DeviceCount => DeviceRows * DeviceColumns;
+        public int DeviceRows { get; private set; }
+        public int DeviceColumns { get; private set; }
 
         /// <summary>
         /// Gets the total number of digits (cascaded devices * num digits)
@@ -34,9 +36,9 @@ namespace Meadow.Foundation.Displays
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Width => 8;
+        public override uint Width => (uint)(8 * DeviceColumns);
 
-        public override uint Height => (uint)(8 * DeviceCount);
+        public override uint Height => (uint)(8 * DeviceRows);
 
         #endregion Properties
 
@@ -120,13 +122,20 @@ namespace Meadow.Foundation.Displays
         private Max7219() { }
 
         public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceCount = 1, Max7219Type maxMode = Max7219Type.Display)
+            :this(spiBus, csPort, 8, 1, maxMode)
+        {
+
+        }
+
+        public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceRows, int deviceColumns, Max7219Type maxMode = Max7219Type.Display)
         {
             spi = (SpiBus)spiBus;
             chipSelectPort = csPort;
 
             max7219 = new SpiPeripheral(spiBus, csPort);
 
-            DeviceCount = deviceCount;
+            DeviceRows = deviceRows;
+            DeviceColumns = deviceColumns;
 
             _buffer = new byte[DeviceCount, NumDigits];
             _writeBuffer = new byte[2 * DeviceCount];
@@ -139,9 +148,13 @@ namespace Meadow.Foundation.Displays
         /// Creates a Max7219 Device given a <see paramref="spiBus" /> to communicate over and the
         /// number of devices that are cascaded.
         /// </summary>
+        public Max7219(IIODevice device, ISpiBus spiBus, IPin csPin, int deviceRows = 1, int deviceColumns = 1, Max7219Type maxMode = Max7219Type.Display)
+            : this(spiBus, device.CreateDigitalOutputPort(csPin), deviceRows, deviceColumns, maxMode)
+        { }
+
         public Max7219(IIODevice device, ISpiBus spiBus, IPin csPin, int deviceCount = 1, Max7219Type maxMode = Max7219Type.Display)
-            : this(spiBus, device.CreateDigitalOutputPort(csPin), deviceCount, maxMode)
-        { }   
+            : this(spiBus, device.CreateDigitalOutputPort(csPin), deviceCount, 1, maxMode)
+        { }
 
         #endregion Constructors
 
@@ -351,8 +364,16 @@ namespace Meadow.Foundation.Displays
 
         public override void DrawPixel(int x, int y, bool colored)
         {
-            var index = x;
-            var display = y / 8;//   DeviceCount - y / 8 - 1;
+            var index = x % 8;
+
+            var display = y / 8 + (x / 8) * DeviceRows;
+
+
+            if(display > DeviceCount)
+            {
+                Console.WriteLine($"Display out of range {x}, {y}");
+                return;
+            }
 
             if (colored)
             {

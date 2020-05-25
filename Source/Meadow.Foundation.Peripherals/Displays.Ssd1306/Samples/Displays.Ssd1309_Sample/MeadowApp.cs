@@ -25,7 +25,11 @@ namespace Displays.Ssd1309_Sample
 
             Console.WriteLine("Create Graphics Library");
             TestDisplayGraphicsAPI();
-            Thread.Sleep(10000);
+            Thread.Sleep(5000);
+
+            Console.WriteLine("Test circles");
+            TestCircles();
+            Thread.Sleep(5000);
 
             Grid();
 
@@ -63,15 +67,15 @@ namespace Displays.Ssd1309_Sample
             );
         }
 
-        void Clock()
+        void TestCircles()
         {
-            for (int i = 0; i < 10000; i++)
-            {
-
-
-
-
-            }
+            graphics.Clear();
+            // graphics.DrawCircle(20, 20, 1); 
+            graphics.DrawCircle(20, 20, 2); 
+            graphics.DrawCircle(20, 20, 5); 
+            graphics.DrawCircle(20, 20, 8); 
+            graphics.DrawCircle(20, 20, 12); 
+            graphics.Show();
         }
 
         void Grid()

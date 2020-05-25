@@ -5,7 +5,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.Displays.ePaper" Version="0.*" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.ePaper\Driver\Displays.ePaper\Displays.ePaper.csproj" />
   </ItemGroup>
 </Project>

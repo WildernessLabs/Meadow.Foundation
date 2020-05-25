@@ -16,11 +16,9 @@ namespace Sensors.Motion.mpu5060_Sample
 
             mpu = new Mpu6050(Device.CreateI2cBus(), 0x69);
 
-            mpu.AccelerationXChanged += OnRotated;
-            mpu.AccelerationYChanged += OnRotated;
-            mpu.AccelerationZChanged += OnRotated;
             mpu.AccelerationChangeThreshold = 0.05f;
-            mpu.StartSampling(TimeSpan.FromMilliseconds(500));
+            mpu.Updated += Mpu_Updated;
+            mpu.StartUpdating(500);
 
             while (true)
             {
@@ -29,9 +27,9 @@ namespace Sensors.Motion.mpu5060_Sample
             }
         }
 
-        void OnRotated(float before, float after)
+        private void Mpu_Updated(object sender, Meadow.Peripherals.Sensors.Motion.AccelerationConditionChangeResult e)
         {
-            Console.WriteLine($"Acc: ({mpu.AccelerationX}, {mpu.AccelerationY}, {mpu.AccelerationZ})");
+            Console.WriteLine($"X: {e.New.XAcceleration}, Y: {e.New.YAcceleration}, Z: {e.New.ZAcceleration}");
         }
     }
 }
