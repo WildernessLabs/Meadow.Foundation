@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Displays;
 using Meadow.Foundation.FeatherWings;
-using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
-using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 
 namespace FeatherWings.OLED128x32_Sample

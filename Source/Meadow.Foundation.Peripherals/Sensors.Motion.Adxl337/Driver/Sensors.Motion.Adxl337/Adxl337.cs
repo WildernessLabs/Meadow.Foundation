@@ -194,7 +194,7 @@ namespace Meadow.Foundation.Sensors.Motion
                             break;
                         }
                         // capture history
-                        oldConditions = Conditions;
+                        oldConditions = AccelerationConditions.From(Conditions);
 
                         // read
                         await Update();
