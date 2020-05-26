@@ -7,10 +7,10 @@ using System.Threading;
 namespace Meadow.Foundation.Sensors.Distance
 {
     /// <summary>
-    /// Represents the VL53L0X distance sensor
+    /// Represents the Vl53l0x distance sensor
     /// </summary>
     /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_VL53L0X/blob/master/adafruit_vl53l0x.py </remarks>
-    public class VL53L0X : IRangeFinder
+    public class Vl53l0x : IRangeFinder
     {
         #region const
 
@@ -90,9 +90,13 @@ namespace Meadow.Foundation.Sensors.Distance
             get
             {
                 if (_shutdownPin != null)
+                {
                     return !_shutdownPin.State;
+                }
                 else
+                {
                     return false;
+                }
             }
         }
 
@@ -117,14 +121,14 @@ namespace Meadow.Foundation.Sensors.Distance
 
         public event EventHandler<DistanceEventArgs> DistanceDetected;
 
-        public VL53L0X(II2cBus i2cBus, byte address = 0x29, UnitType units = UnitType.mm) : this (i2cBus,null,address,units)
+        public Vl53l0x(II2cBus i2cBus, byte address = 0x29, UnitType units = UnitType.mm) : this (i2cBus,null,address,units)
         {
         }
 
         /// <param name="i2cBus">I2C bus</param>
         /// <param name="address">VL53L0X address</param>
         /// <param name="units">Unit of measure</param>
-        public VL53L0X(II2cBus i2cBus, IDigitalOutputPort shutdownPin, byte address = 0x29,  UnitType units = UnitType.mm)
+        public Vl53l0x(II2cBus i2cBus, IDigitalOutputPort shutdownPin, byte address = 0x29,  UnitType units = UnitType.mm)
         {
             _adddress = address;
             _i2cPeripheral = new I2cPeripheral(i2cBus, _adddress);
@@ -175,14 +179,18 @@ namespace Meadow.Foundation.Sensors.Distance
 
             var first_spad_to_enable = (spad_is_aperture) ? 12 : 0;
             var spads_enabled = 0;
+            
             for (int i = 0; i < 48; i++)
             {
                 if (i < first_spad_to_enable || spads_enabled == spad_count)
+                {
                     ref_spad_map[1 + (i / 8)] &= (byte)~(1 << (i % 8));
+                }
                 else if ((ref_spad_map[1 + (i / 8)] >> (byte)((i % 8)) & 0x1) > 0)
+                {
                     spads_enabled += 1;
-
-            }
+                }
+                            }
 
             _i2cPeripheral.WriteRegister(0xFF, 0x01);
             _i2cPeripheral.WriteRegister(0x00, 0x00);
@@ -265,7 +273,6 @@ namespace Meadow.Foundation.Sensors.Distance
             _i2cPeripheral.WriteRegister(0xFF, 0x00);
             _i2cPeripheral.WriteRegister(0x80, 0x00);
 
-
             _i2cPeripheral.WriteRegister(SystemInterruptConfigGpio, 0x04);
             var gpio_hv_mux_active_high = Read(GpioHvMuxActiveHigh);
             _i2cPeripheral.WriteRegister(GpioHvMuxActiveHigh, (byte)(gpio_hv_mux_active_high & ~0x10));
@@ -333,9 +340,6 @@ namespace Meadow.Foundation.Sensors.Distance
                 Initialize();
                 Thread.Sleep(2);
             }
-
-            
-
         }
 
         protected virtual Tuple<int, bool> GetSpadInfo()
@@ -376,7 +380,6 @@ namespace Meadow.Foundation.Sensors.Distance
             var t = (byte)(Read(0x83) & ~0x04);
             _i2cPeripheral.WriteRegister(0xFF, t);
 
-
             _i2cPeripheral.WriteRegister(0xFF, 0x01);
             _i2cPeripheral.WriteRegister(0x00, 0x01);
             _i2cPeripheral.WriteRegister(0xFF, 0x00);
@@ -400,19 +403,16 @@ namespace Meadow.Foundation.Sensors.Distance
 
             _i2cPeripheral.WriteRegister(GpioHvMuxActiveHigh, 0x01);
             _i2cPeripheral.WriteRegister(RangeStart, 0x00);
-
         }
 
         protected virtual byte Read(byte address)
         {
             var result = _i2cPeripheral.ReadRegister(address);
             return result;
-
         }
 
         protected virtual int Read16(byte address)
         {
-
             var result = _i2cPeripheral.ReadRegisters(address, 2);
 
             return (result[0] << 8) | result[1];

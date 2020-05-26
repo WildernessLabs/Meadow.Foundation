@@ -11,7 +11,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        VL53L0X _vL53L0X;
+        Vl53l0x vL53L0X;
 
         public MeadowApp()
         {
@@ -20,15 +20,14 @@ namespace Sensors.Distance.Vl53l0x_Sample
 
             //InitializeWithShutdownPin();
             //RunWithShutdownPin();
-
         }
 
         void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
-            _vL53L0X = new VL53L0X(i2cBus);
-            _vL53L0X.Initialize();
+            vL53L0X = new Vl53l0x(i2cBus);
+            vL53L0X.Initialize();
         }
 
         void InitializeWithShutdownPin()
@@ -36,31 +35,31 @@ namespace Sensors.Distance.Vl53l0x_Sample
             Console.WriteLine("Initialize hardware...");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
             var pin = Device.CreateDigitalOutputPort(Device.Pins.D05, true);
-            _vL53L0X = new VL53L0X(i2cBus, pin);
-            _vL53L0X.Initialize();
+            vL53L0X = new Vl53l0x(i2cBus, pin);
+            vL53L0X.Initialize();
         }
 
         void Run()
         {
             Console.WriteLine("Run...");
 
-            var range = _vL53L0X.Range();
+            var range = vL53L0X.Range();
             Console.WriteLine($"{range} mm");
             
             Thread.Sleep(500);
 
-            _vL53L0X.Units = VL53L0X.UnitType.inches;
-            range = _vL53L0X.Range();
+            vL53L0X.Units = Vl53l0x.UnitType.inches;
+            range = vL53L0X.Range();
             Console.WriteLine($"{range} inches");
 
             Thread.Sleep(500);
 
-            _vL53L0X.Units = VL53L0X.UnitType.mm;
+            vL53L0X.Units = Vl53l0x.UnitType.mm;
 
             for (int i = 0; i < 75; i++)
             {
                 Thread.Sleep(200);
-                range = _vL53L0X.Range();
+                range = vL53L0X.Range();
                 Console.WriteLine($"{range} mm");
             }
 
@@ -71,32 +70,31 @@ namespace Sensors.Distance.Vl53l0x_Sample
         {
             Console.WriteLine("Run...");
 
-            var range = _vL53L0X.Range();
+            var range = vL53L0X.Range();
             Console.WriteLine($"{range} mm");
 
             Thread.Sleep(500);
 
-            _vL53L0X.Shutdown(true);
+            vL53L0X.Shutdown(true);
 
             //Range will return -1 since the device is off
-            range = _vL53L0X.Range();
-            Console.WriteLine($"{range} mm. IsShutdown { _vL53L0X.IsShutdown }");
+            range = vL53L0X.Range();
+            Console.WriteLine($"{range} mm. IsShutdown { vL53L0X.IsShutdown }");
 
             //Turn device back on
-            _vL53L0X.Shutdown(false);
+            vL53L0X.Shutdown(false);
 
-            range = _vL53L0X.Range();
-            Console.WriteLine($"{range} mm. IsShutdown { _vL53L0X.IsShutdown }");
+            range = vL53L0X.Range();
+            Console.WriteLine($"{range} mm. IsShutdown { vL53L0X.IsShutdown }");
 
             for (int i = 0; i < 75; i++)
             {
                 Thread.Sleep(200);
-                range = _vL53L0X.Range();
+                range = vL53L0X.Range();
                 Console.WriteLine($"{range} mm");
             }
 
             Console.WriteLine("done...");
         }
-
     }
 }
