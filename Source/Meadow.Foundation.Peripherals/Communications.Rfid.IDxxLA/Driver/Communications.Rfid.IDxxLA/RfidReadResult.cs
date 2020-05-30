@@ -1,9 +1,4 @@
-﻿// RfidReadResult.cs
-// Author: Ben Edwards
-// Licensed under MIT
-// --------------------------------------------------------------------------------------------------------------------
-
-using System;
+﻿using System;
 
 namespace Meadow.Foundation.Communications.Rfid
 {

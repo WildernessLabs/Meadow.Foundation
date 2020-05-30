@@ -1,9 +1,4 @@
-﻿// RfidValidationStatus.cs
-// Author: Ben Edwards
-// Licensed under MIT
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace Meadow.Foundation.Communications.Rfid
+﻿namespace Meadow.Foundation.Communications.Rfid
 {
     public enum RfidValidationStatus
     {
