@@ -95,29 +95,33 @@ namespace Meadow.Foundation.Sensors.GPS
         /// <param name="line">GPS text for processing.</param>
         private void GpsOnLineReceived(object sender, string line)
         {
-            Console.WriteLine($"GpsOnLineR - {line}");
-
-            if (line.Length > 0)
+            if(string.IsNullOrWhiteSpace(line))
             {
-                var checksumLocation = line.LastIndexOf('*');
-                if (checksumLocation > 0)
+                Console.WriteLine("GpsOnLineR - no data");
+                return;
+            }
+
+           // Console.WriteLine($"GpsOnLineR - {line}");
+
+            var checksumLocation = line.LastIndexOf('*');
+            if (checksumLocation > 0)
+            {
+                var checksumDigits = line.Substring(checksumLocation + 1);
+                var actualData = line.Substring(0, checksumLocation);
+                if (DebugInformation.Hexadecimal(Checksum.XOR(actualData.Substring(1))) == ("0x" + checksumDigits))
                 {
-                    var checksumDigits = line.Substring(checksumLocation + 1);
-                    var actualData = line.Substring(0, checksumLocation);
-                    if (DebugInformation.Hexadecimal(Checksum.XOR(actualData.Substring(1))) == ("0x" + checksumDigits))
+                    var elements = actualData.Split(',');
+                    if (elements.Length > 0)
                     {
-                        var elements = actualData.Split(',');
-                        if (elements.Length > 0)
+                        var decoder = (NMEADecoder) decoders[elements[0]];
+                        if (decoder != null)
                         {
-                            var decoder = (NMEADecoder) decoders[elements[0]];
-                            if (decoder != null)
-                            {
-                                decoder.Process(elements);
-                            }
+                            decoder.Process(elements);
                         }
                     }
                 }
             }
+            
         }
 
         #endregion Interrupts

@@ -10,82 +10,72 @@ namespace BasicSensors.GPS.NMEA_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        SerialPort sp;
-        byte[] data = new byte[4096];
+        ISerialPort port;
+        byte[] data = new byte[512];
 
         public MeadowApp()
         {
-             GpsLoopTest();
-            // LoopBackTest();
-
-            //  SimpleTest();
-
-            //  EventTest();
-           // TestNMEA();
-        }
-
-        void GpsLoopTest()
-        {
-            var port = Device.CreateSerialPort(Device.SerialPortNames.Com4, 9600);
-            Console.WriteLine("\tCreated");
+            //COM4 - Pins D00 & D01 on the Meadow F7
+           /* port = Device.CreateSerialPort(Device.SerialPortNames.Com4, 9600);
+            Console.WriteLine("Serial port created");
             port.Open();
+            Console.WriteLine("Serial port opened");*/
 
-            var buffer = new byte[1024];
-
-            string msg = string.Empty;
-
-            while (true)
-            {
-                var len = port.Read(buffer, 0, buffer.Length);
-
-                msg = Encoding.ASCII.GetString(buffer, 0, len);
-
-               // for (var index = 0; index < len; index++)
-              //  {
-              //      msg += (char)buffer[index];
-              //  }
-
-                Console.WriteLine($"Read {len} bytes: {BitConverter.ToString(buffer, 0, len)}");
-                Console.WriteLine(msg);
-
-                Thread.Sleep(1000);
-            }
-
+            //LoopBackTest();
+            //SerialReadTest();
+            //EventTest();
+            TestNMEA();
         }
 
+        //simple loopback test - bridge pins D01 & D01 for COM4 on the Meadow F7
         void LoopBackTest()
         {
-            var port = Device.CreateSerialPort(Device.SerialPortNames.Com4, 9600);
-            Console.WriteLine("\tCreated");
-            port.Open();
-
-            var buffer = new byte[1024];
-
             while (true)
             {
                 Console.WriteLine("Writing data...");
-                var written = port.Write(Encoding.ASCII.GetBytes("Hello Meadow!"));
+                var written = port.Write(Encoding.ASCII.GetBytes("Hello Meadow!"));//max write is 255 bytes in B3.11
+
                 Console.WriteLine($"Wrote {written} bytes");
-                var read = port.Read(buffer, 0, buffer.Length);
-                Console.WriteLine($"Read {read} bytes: {BitConverter.ToString(buffer, 0, read)}");
+                var read = port.Read(data, 0, data.Length);
+                Console.WriteLine($"Read {read} bytes: {BitConverter.ToString(data, 0, read)}");
 
                 Thread.Sleep(2000);
             }
         }
+        void SerialReadTest()
+        {
+            string msg = string.Empty;
+
+            while (true)
+            {
+                var len = port.Read(data, 0, data.Length);
+
+             //   msg = Encoding.ASCII.GetString(data, 0, len);
+
+             /*   for (var index = 0; index < len; index++)
+                {
+                    msg += (char)buffer[index];
+                }*/
+
+                Console.WriteLine($"Read {len} bytes: {BitConverter.ToString(data, 0, len)}");
+
+             //   Console.WriteLine(msg);
+
+                Thread.Sleep(100);
+            }
+        }
 
         void EventTest()
-        { 
-          /*  sp = new SerialPort("ttyS1", 9600, Parity.None, 8, StopBits.One);
-            sp.Open();
+        {
+            port = Device.CreateSerialPort(Device.SerialPortNames.Com4, 9600);
+            port.Open();
 
-            sp.DataReceived += Sp_DataReceived;
-
-            Thread.Sleep(-1);  */
+            port.DataReceived += Sp_DataReceived;
         }
 
         private void Sp_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            var len = sp.Read(data, 0, sp.BytesToRead);
+            var len = port.Read(data, 0, data.Length);
 
             Console.WriteLine($"Read {len} bytes");
             Console.WriteLine($"Data: {BitConverter.ToString(data, 0, len)}");
@@ -93,7 +83,7 @@ namespace BasicSensors.GPS.NMEA_Sample
 
         void TestNMEA()
         { 
-            var gps = new NMEA(Device, Device.SerialPortNames.Com1, 9600, Parity.None, 8, StopBits.One);
+            var gps = new NMEA(Device, Device.SerialPortNames.Com4, 9600, Parity.None, 8, StopBits.One);
                 
             var ggaDecoder = new GGADecoder();
             ggaDecoder.OnPositionReceived += GgaDecoder_OnPositionReceived;

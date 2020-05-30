@@ -94,11 +94,11 @@ namespace Meadow.Foundation.Communications
         /// </summary>
         public void Open()
         {
-            Console.WriteLine("SerialTextFile: Open");
+            //Console.WriteLine("SerialTextFile: Open");
 
             if (!serialPort.IsOpen)
             {
-                Console.WriteLine("SerialTextFile: _serialPort.Open");
+                //Console.WriteLine("SerialTextFile: _serialPort.Open");
                 serialPort.Open();
             }
         }
@@ -127,7 +127,7 @@ namespace Meadow.Foundation.Communications
         /// </summary>
         private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            Console.WriteLine("SerialTextFile: SerialPortDataReceived");
+            //Console.WriteLine("SerialTextFile: SerialPortDataReceived");
 
             if (e.EventType == SerialDataType.Chars)
             {
@@ -135,7 +135,7 @@ namespace Meadow.Foundation.Communications
                 {
                     int amount = ((SerialPort) sender).Read(staticBuffer, 0, MAXIMUM_BUFFER_SIZE);
 
-                    Console.WriteLine($"Data amount: {amount}");
+                    //Console.WriteLine($"Data amount: {amount}");
 
                     if (amount > 0)
                     {
@@ -146,9 +146,9 @@ namespace Meadow.Foundation.Communications
                     }
                     var eolMarkerPosition = buffer.IndexOf(LINE_END);
 
-                    Console.WriteLine($"eol: {eolMarkerPosition}");
+                   // Console.WriteLine($"eol: {eolMarkerPosition}");
 
-                    Console.WriteLine($"Buffer: {buffer}");
+                   // Console.WriteLine($"Buffer: {buffer}");
 
                     while (eolMarkerPosition >= 0)
                     {
@@ -156,16 +156,7 @@ namespace Meadow.Foundation.Communications
                         buffer = buffer.Substring(eolMarkerPosition + 2);
                         eolMarkerPosition = buffer.IndexOf(LINE_END);
 
-                        Console.WriteLine($"Line: {line}");
-
-                        if(OnLineReceived != null)
-                        {
-                            Console.WriteLine("fire OnLineReceived");
-                        }
-                        else
-                        {
-                            Console.WriteLine("null sir");
-                        }
+                       // Console.WriteLine($"Line: {line}");
 
                         OnLineReceived?.Invoke(this, line);
                     }
@@ -174,6 +165,5 @@ namespace Meadow.Foundation.Communications
         }
 
         #endregion Interrupt handlers
-
     }
 }
