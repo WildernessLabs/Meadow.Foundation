@@ -678,7 +678,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.Vl53l0x_Sa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Communications.Rfid.IDxxLA", "Communications.Rfid.IDxxLA", "{0C05F31F-FB0F-4CFB-8CCC-665565434936}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communications.Rfid.IDxxLA", "Meadow.Foundation.Peripherals\Communications.Rfid.IDxxLA\Driver\Meadow.Foundation.Communications.Rfid.IDxxLA\Communications.Rfid.IDxxLA.csproj", "{C1971D1B-1A53-4FDA-8977-0A8477487F95}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communications.Rfid.IDxxLA", "Meadow.Foundation.Peripherals\Communications.Rfid.IDxxLA\Driver\Communications.Rfid.IDxxLA\Communications.Rfid.IDxxLA.csproj", "{C1971D1B-1A53-4FDA-8977-0A8477487F95}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{713F4271-0407-4AE0-B982-DE22A0D0857E}"
 EndProject
