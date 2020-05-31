@@ -2,52 +2,55 @@
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.FeatherWings;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace FeatherWings.OLED128x32_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        II2cBus _i2cBus;
         OLED128x32Wing oledWing;
+        GraphicsLibrary graphics;
 
         public MeadowApp()
         {
             Initialize();
-            Run();
+            UpdateDisplay("OLED Wing");
         }
 
         void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
-            _i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
+            var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
 
-            oledWing = new OLED128x32Wing(_i2cBus, Device, Device.Pins.D11, Device.Pins.D10, Device.Pins.D09);
+            oledWing = new OLED128x32Wing(i2cBus, Device, Device.Pins.D11, Device.Pins.D10, Device.Pins.D09);
 
-            oledWing.OnA += (sender, e) =>
+            graphics = new GraphicsLibrary(oledWing.Display);
+            graphics.CurrentFont = new Font12x16();
+
+            oledWing.ButtonA.Clicked += (sender, e) =>
             {
                 Console.WriteLine("A");
-                oledWing.WriteLines("Button A");
+                UpdateDisplay("A pressed");
             };
 
-            oledWing.OnB += (sender, e) => 
+            oledWing.ButtonB.Clicked += (sender, e) => 
             {
                 Console.WriteLine("B");
-                oledWing.WriteLines("", "Button B");
+                UpdateDisplay("B pressed");
             };
 
-            oledWing.OnC += (sender, e) => {
+            oledWing.ButtonC.Clicked += (sender, e) => {
                 Console.WriteLine("C");
-                oledWing.WriteLines("", "", "Button C");
+                UpdateDisplay("C pressed");
             };
         }
 
-        void Run()
+        void UpdateDisplay(string message)
         {
-            oledWing.WriteLines("     Hello", "----------------", "    Meadow!", "----------------");
-
-            while (true) { }
+            graphics.Clear();
+            graphics.DrawText(0, 8, message);
+            graphics.Show();
         }
-
     }
 }
