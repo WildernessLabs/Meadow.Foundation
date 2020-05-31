@@ -1,5 +1,4 @@
 ﻿using System;
-using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Buttons;
 
@@ -36,11 +35,11 @@ namespace Meadow.Foundation.FeatherWings
         public JoyWing(IDigitalInputPort portX, IDigitalInputPort portY, IDigitalInputPort portA, IDigitalInputPort portB,
             IDigitalInputPort portSelect, IDigitalInputPort portJoyHorizontal, IDigitalInputPort portJoyVertical)
         {
-            ButtonA = new PushButton(portA);
+          /*  ButtonA = new PushButton(portA);
             ButtonB = new PushButton(portB);
             ButtonX = new PushButton(portX);
             ButtonY = new PushButton(portY);
-            ButtonSelect = new PushButton(portSelect);
+            ButtonSelect = new PushButton(portSelect);*/
 
             ButtonA.PressEnded += (s, e) => OnA?.Invoke(s, e);
             ButtonB.PressEnded += (s, e) => OnB?.Invoke(s, e);
