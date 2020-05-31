@@ -78,11 +78,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
         public Sht31D(II2cBus i2cBus, byte address = 0x44)
         {
-            if ((address != 0x44) && (address != 0x45))
-            {
-                throw new ArgumentOutOfRangeException(nameof(address), "Address should be 0x44 or 0x45");
-            }
-
             sht31d = new I2cPeripheral(i2cBus, address);
         }
 
