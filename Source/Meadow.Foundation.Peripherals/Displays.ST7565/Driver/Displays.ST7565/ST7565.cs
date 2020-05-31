@@ -322,7 +322,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of the bitmap in bytes.</param>
         /// <param name="bitmap">Bitmap to transfer</param>
         /// <param name="bitmapMode">How should the bitmap be transferred to the display?</param>
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
         {
             if ((width * height) != bitmap.Length)
             {
@@ -344,7 +344,7 @@ namespace Meadow.Foundation.Displays
         }
 
         //needs dithering code
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
         {
             DrawBitmap(x, y, width, height, bitmap, BitmapMode.And);
         }
