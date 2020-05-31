@@ -3,14 +3,14 @@
     /// <summary>
     ///     Decode RMC - Recommended Minimum Specific GPS messages.
     /// </summary>
-    public class RMCDecoder : NMEADecoder
+    public class RMCDecoder : INMEADecoder
     {
         #region NMEADecoder methods & properties
 
         /// <summary>
         ///     Prefix for the GGA decoder.
         /// </summary>
-        public override string Prefix
+        public string Prefix
         {
             get { return "$GPRMC"; }
         }
@@ -18,7 +18,7 @@
         /// <summary>
         ///     Friendly name for the GGA messages.
         /// </summary>
-        public override string Name
+        public string Name
         {
             get { return "Global Postioning System Fix Data"; }
         }
@@ -27,7 +27,7 @@
         ///     Process the data from a GGA message.
         /// </summary>
         /// <param name="data">String array of the message components for a CGA message.</param>
-        public override void Process(string[] data)
+        public void Process(string[] data)
         {
             if (OnPositionCourseAndTimeReceived != null)
             {

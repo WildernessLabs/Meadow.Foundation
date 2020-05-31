@@ -628,7 +628,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Max7219_8x8x4x2_Sa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TextDisplayMenu_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Displays.TextDisplayMenu_Sample\Displays.TextDisplayMenu_Sample.csproj", "{2AF8B38A-15C4-43DB-A503-0035C4C218CE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.GPS.NMEA_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Sensors.GPS.NMEA_Sample\Sensors.GPS.NMEA_Sample.csproj", "{627FB649-F387-4309-8A84-75F0C383FE71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.GPS.Serial_NMEA_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Sensors.GPS.NMEA_Sample\Sensors.GPS.Serial_NMEA_Sample.csproj", "{627FB649-F387-4309-8A84-75F0C383FE71}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{BCA36A71-A55D-4908-BF75-9AB1EB15D439}"
 EndProject
@@ -683,6 +683,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{713F4271-0407-4AE0-B982-DE22A0D0857E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communications.Rfid.IDxxLA_Sample", "Meadow.Foundation.Peripherals\Communications.Rfid.IDxxLA\Samples\Communications.Rfid.IDxxLA_Sample\Communications.Rfid.IDxxLA_Sample.csproj", "{0E2B435B-960A-43C2-B2AC-9907F4DDBE75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.GPS.NMEA_SSD1309_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Sensors.GPS.NMEA_SSD1309_Sample\Sensors.GPS.NMEA_SSD1309_Sample.csproj", "{432EC0B4-9694-4BEB-814E-64F94618EBBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatherWindws.OLED128x32_TinyPong_Sample", "FeatherWindws.OLED128x32_TinyPong_Sample\FeatherWindws.OLED128x32_TinyPong_Sample.csproj", "{F6204364-4AF0-46A2-8D86-35E4B95D9C14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1496,6 +1499,18 @@ Global
 		{0E2B435B-960A-43C2-B2AC-9907F4DDBE75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E2B435B-960A-43C2-B2AC-9907F4DDBE75}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0E2B435B-960A-43C2-B2AC-9907F4DDBE75}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{432EC0B4-9694-4BEB-814E-64F94618EBBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{432EC0B4-9694-4BEB-814E-64F94618EBBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{432EC0B4-9694-4BEB-814E-64F94618EBBE}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{432EC0B4-9694-4BEB-814E-64F94618EBBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{432EC0B4-9694-4BEB-814E-64F94618EBBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{432EC0B4-9694-4BEB-814E-64F94618EBBE}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F6204364-4AF0-46A2-8D86-35E4B95D9C14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6204364-4AF0-46A2-8D86-35E4B95D9C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6204364-4AF0-46A2-8D86-35E4B95D9C14}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F6204364-4AF0-46A2-8D86-35E4B95D9C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6204364-4AF0-46A2-8D86-35E4B95D9C14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6204364-4AF0-46A2-8D86-35E4B95D9C14}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1834,6 +1849,8 @@ Global
 		{C1971D1B-1A53-4FDA-8977-0A8477487F95} = {0C05F31F-FB0F-4CFB-8CCC-665565434936}
 		{713F4271-0407-4AE0-B982-DE22A0D0857E} = {0C05F31F-FB0F-4CFB-8CCC-665565434936}
 		{0E2B435B-960A-43C2-B2AC-9907F4DDBE75} = {713F4271-0407-4AE0-B982-DE22A0D0857E}
+		{432EC0B4-9694-4BEB-814E-64F94618EBBE} = {F0E1BC04-A17B-4604-9EC9-51AFE3A1942D}
+		{F6204364-4AF0-46A2-8D86-35E4B95D9C14} = {800E8B51-6E13-4C45-B96B-077428AB0D04}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

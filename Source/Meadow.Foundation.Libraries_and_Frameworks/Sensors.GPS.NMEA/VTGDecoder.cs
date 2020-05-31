@@ -3,7 +3,7 @@
     /// <summary>
     ///     Provice a mechanism for dealing with VTG messages from a GPS receiver.
     /// </summary>
-    public class VTGDecoder : NMEADecoder
+    public class VTGDecoder : INMEADecoder
     {
         #region Delegates and events
 
@@ -26,7 +26,7 @@
         /// <summary>
         ///     Prefix for the VTG decoder.
         /// </summary>
-        public override string Prefix
+        public string Prefix
         {
             get { return "$GPVTG"; }
         }
@@ -34,7 +34,7 @@
         /// <summary>
         ///     Friendly name for the VTG messages.
         /// </summary>
-        public override string Name
+        public string Name
         {
             get { return "Velocity made good"; }
         }
@@ -43,7 +43,7 @@
         ///     Process the data from a VTG message.
         /// </summary>
         /// <param name="data">String array of the message components for a VTG message.</param>
-        public override void Process(string[] data)
+        public void Process(string[] data)
         {
             if (OnCourseAndVelocityReceived != null)
             {
