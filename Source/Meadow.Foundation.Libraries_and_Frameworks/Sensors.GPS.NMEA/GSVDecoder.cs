@@ -10,7 +10,7 @@
     ///     This class brings all of the messages together in a single message for the
     ///     consumer.
     /// </remarks>
-    public class GSVDecoder : NMEADecoder
+    public class GSVDecoder : INMEADecoder
     {
         #region Member variables / fields
 
@@ -62,7 +62,7 @@
         ///     The lines of text from the GPS start with text such as $GPGGA, $GPGLL, $GPGSA etc.  The prefix
         ///     is the start of the line (i.e. $GPCGA).
         /// </remarks>
-        public override string Prefix
+        public string Prefix
         {
             get { return"$GPGSV"; }
         }
@@ -70,7 +70,7 @@
         /// <summary>
         ///     Get the friendly (human readable) name for the decoder.
         /// </summary>
-        public override string Name
+        public string Name
         {
             get { return"Satellites in view"; }
         }
@@ -79,7 +79,7 @@
         ///     Process the message from the GPS.
         /// </summary>
         /// <param name="data">String array of the elements of the message.</param>
-        public override void Process(string[] data)
+        public void Process(string[] data)
         {
             if (OnSatellitesInViewReceived != null)
             {

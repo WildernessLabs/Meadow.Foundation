@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing.Text;
+using System.Threading;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Communications
@@ -13,7 +15,7 @@ namespace Meadow.Foundation.Communications
         /// <summary>
         ///     Default buffer size for the incoming data from the serial port.
         /// </summary>
-        private const int MAXIMUM_BUFFER_SIZE = 256;
+        private const int MAXIMUM_BUFFER_SIZE = 512;
 
         #endregion Constants
 
@@ -85,6 +87,30 @@ namespace Meadow.Foundation.Communications
             serialPort.DataReceived += SerialPortDataReceived;
         }
 
+        /// <summary>
+        ///     Create a new SerialTextFile and attach the instance to the specfied serial port.
+        /// </summary>
+        /// <param name="serialPort">Serial port object.</param>
+        /// <param name="endOfLine">Text indicating the end of a line of text.</param>
+        public SerialTextFile(ISerialPort serialPort, string endOfLine, bool useSerialEvents = true)
+        {
+            this.serialPort = serialPort;
+            LINE_END = endOfLine;
+
+            if(useSerialEvents)
+            {
+                serialPort.DataReceived += SerialPortDataReceived;
+            }
+            else
+            {
+                while (true)
+                {
+                    ReadDataFromSerialPort();
+                    Thread.Sleep(200);
+                }
+            }
+        }
+
         #endregion Constructors
 
         #region Methods
@@ -115,7 +141,7 @@ namespace Meadow.Foundation.Communications
             {
                 serialPort.Close();
             }
-            buffer = "";
+            buffer = string.Empty;
         }
 
         #endregion Methods
@@ -127,39 +153,38 @@ namespace Meadow.Foundation.Communications
         /// </summary>
         private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            //Console.WriteLine("SerialTextFile: SerialPortDataReceived");
-
             if (e.EventType == SerialDataType.Chars)
             {
-                lock (buffer)
+                ReadDataFromSerialPort();
+            }
+        }
+        
+        private void ReadDataFromSerialPort()
+        { 
+            lock (buffer)
+            {
+                int amount = serialPort.Read(staticBuffer, 0, MAXIMUM_BUFFER_SIZE);
+
+                Console.WriteLine($"Data amount: {amount}");
+
+                if (amount > 0)
                 {
-                    int amount = ((SerialPort) sender).Read(staticBuffer, 0, MAXIMUM_BUFFER_SIZE);
-
-                    //Console.WriteLine($"Data amount: {amount}");
-
-                    if (amount > 0)
+                    for (var index = 0; index < amount; index++)
                     {
-                        for (var index = 0; index < amount; index++)
-                        {
-                            buffer += (char) staticBuffer[index];
-                        }
+                        buffer += (char) staticBuffer[index];
                     }
-                    var eolMarkerPosition = buffer.IndexOf(LINE_END);
+                }
+                var eolMarkerPosition = buffer.IndexOf(LINE_END);
 
-                   // Console.WriteLine($"eol: {eolMarkerPosition}");
+                while (eolMarkerPosition >= 0)
+                {
+                    var line = buffer.Substring(0, eolMarkerPosition);
+                    buffer = buffer.Substring(eolMarkerPosition + 2);
+                    eolMarkerPosition = buffer.IndexOf(LINE_END);
 
-                   // Console.WriteLine($"Buffer: {buffer}");
+                    // Console.WriteLine($"Line: {line}");
 
-                    while (eolMarkerPosition >= 0)
-                    {
-                        var line = buffer.Substring(0, eolMarkerPosition);
-                        buffer = buffer.Substring(eolMarkerPosition + 2);
-                        eolMarkerPosition = buffer.IndexOf(LINE_END);
-
-                       // Console.WriteLine($"Line: {line}");
-
-                        OnLineReceived?.Invoke(this, line);
-                    }
+                    OnLineReceived?.Invoke(this, line);
                 }
             }
         }

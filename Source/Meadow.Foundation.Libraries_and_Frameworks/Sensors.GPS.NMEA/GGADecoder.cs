@@ -3,7 +3,7 @@
     /// <summary>
     ///     Decoder for GGA messages.
     /// </summary>
-    public class GGADecoder : NMEADecoder
+    public class GGADecoder : INMEADecoder
     {
         #region Delegates and events.
 
@@ -26,7 +26,7 @@
         /// <summary>
         ///     Prefix for the GGA decoder.
         /// </summary>
-        public override string Prefix
+        public string Prefix
         {
             get { return "$GPGGA"; }
         }
@@ -34,7 +34,7 @@
         /// <summary>
         ///     Friendly name for the GGA messages.
         /// </summary>
-        public override string Name
+        public string Name
         {
             get { return "Global Postioning System Fix Data"; }
         }
@@ -43,7 +43,7 @@
         ///     Process the data from a GGA message.
         /// </summary>
         /// <param name="data">String array of the message components for a CGA message.</param>
-        public override void Process(string[] data)
+        public void Process(string[] data)
         {
             if (OnPositionReceived != null)
             {
