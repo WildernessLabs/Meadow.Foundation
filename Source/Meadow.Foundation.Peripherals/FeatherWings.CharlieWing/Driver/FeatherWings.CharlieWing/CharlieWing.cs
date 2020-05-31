@@ -2,11 +2,6 @@
 using Meadow.Foundation.Displays;
 using Meadow.Hardware;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.FeatherWings
 {
@@ -15,14 +10,13 @@ namespace Meadow.Foundation.FeatherWings
     /// </summary>
     public class CharlieWing : DisplayBase
     {
-        Color _pen;
+        Color pen;
         public enum I2cAddress : byte
         {
             Adddress0x74 = 0x74,
             Adddress0x77 = 0x77
         }
         
-
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
         public override uint Width => 15;
@@ -33,25 +27,25 @@ namespace Meadow.Foundation.FeatherWings
 
         public byte Brightness { get; set; }
 
-        protected readonly IS31FL3731 _iS31FL3731;
+        protected readonly IS31FL3731 iS31FL3731;
 
         public CharlieWing(II2cBus i2cBus, I2cAddress address = I2cAddress.Adddress0x74)
         {
             Brightness = 255;
-            _pen = Color.White;
-            _iS31FL3731 = new IS31FL3731(i2cBus, (byte)address);
-            _iS31FL3731.Initialize();
+            pen = Color.White;
+            iS31FL3731 = new IS31FL3731(i2cBus, (byte)address);
+            iS31FL3731.Initialize();
 
             for (byte i = 0; i <= 7; i++)
             {
-                _iS31FL3731.SetLedState(i, true);
-                _iS31FL3731.Clear(i);
+                iS31FL3731.SetLedState(i, true);
+                iS31FL3731.Clear(i);
             }
         }
 
         public override void Clear(bool updateDisplay = false)
         {
-            _iS31FL3731.Clear(Frame);
+            iS31FL3731.Clear(Frame);
         }
 
         public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
@@ -71,8 +65,6 @@ namespace Meadow.Foundation.FeatherWings
 
         public virtual void DrawPixel(int x, int y, Color color, byte brightness)
         {
-            int temp;
-
             if (x > 7)
             {
                 x = 15 - x;
@@ -84,47 +76,51 @@ namespace Meadow.Foundation.FeatherWings
             }
 
             //Swap
-            temp = x;
+            var temp = x;
             x = y;
             y = temp;
 
             if (color == Color.Black)
-                _iS31FL3731.SetLedPwm(Frame, (byte)(x + y * 16), 0);
+            {
+                iS31FL3731.SetLedPwm(Frame, (byte)(x + y * 16), 0);
+            }
             else
-                _iS31FL3731.SetLedPwm(Frame, (byte)(x + y * 16), brightness);
+            {
+                iS31FL3731.SetLedPwm(Frame, (byte)(x + y * 16), brightness);
+            }
         }
 
         public override void DrawPixel(int x, int y, bool colored)
         {
             if(colored)
-                DrawPixel(x, y, _pen);
+                DrawPixel(x, y, pen);
             else
                 DrawPixel(x, y, Color.Black);
         }
 
         public override void DrawPixel(int x, int y)
         {
-            DrawPixel(x, y, _pen);
+            DrawPixel(x, y, pen);
         }
 
         public virtual void DrawPixel(int x, int y, byte brightness)
         {
-            DrawPixel(x, y, _pen, brightness);
+            DrawPixel(x, y, pen, brightness);
         }
 
         public override void SetPenColor(Color pen)
         {
-            _pen = pen;
+            this.pen = pen;
         }
 
         public override void Show()
         {
-            _iS31FL3731.DisplayFrame(Frame);
+            iS31FL3731.DisplayFrame(Frame);
         }
 
         public virtual void Show(byte frame)
         {
-            _iS31FL3731.DisplayFrame(frame);
+            iS31FL3731.DisplayFrame(frame);
         }
     }
 }

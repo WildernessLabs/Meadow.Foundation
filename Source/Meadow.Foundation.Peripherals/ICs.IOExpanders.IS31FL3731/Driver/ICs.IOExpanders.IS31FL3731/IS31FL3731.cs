@@ -124,8 +124,7 @@ namespace ICs.IOExpanders
         /// <param name="period">the blink duration</param>
         public virtual void SetBlinkMode(bool enabled, byte period)
         {
-            if (period > 7)
-                period = 7;
+            period = Math.Min(period, (byte)7);
 
             if (enabled)
             {
@@ -153,7 +152,9 @@ namespace ICs.IOExpanders
         public virtual void Clear(byte frame)
         {
             if (frame < 0 || frame > 7)
+            {
                 throw new ArgumentOutOfRangeException(nameof(frame), $"{nameof(frame)} # has to be between 0 and 7");
+            }
 
             for (byte i = 0; i <= 144; i++)
             {
@@ -175,16 +176,18 @@ namespace ICs.IOExpanders
         /// Set the PWM value for the specified LED
         /// </summary>
         /// <param name="frame">Frame number. 0-7</param>
-        /// <param name="lednum">The LED number. 0-144</param>
-        /// <param name="pwm">The pwm value 0-255</param>
-        public virtual void SetLedPwm(byte frame, byte lednum, byte pwm)
+        /// <param name="ledIndex">The LED number. 0-144</param>
+        /// <param name="brightness">The pwm value 0-255</param>
+        public virtual void SetLedPwm(byte frame, byte ledIndex, byte brightness)
         {
             if (frame < 0 || frame > 7)
+            {
                 throw new ArgumentOutOfRangeException(nameof(frame), $"{nameof(frame)} # has to be between 0 and 7");
+            }
 
-            if (lednum < 0 || lednum >= 144) return;
+            if (ledIndex < 0 || ledIndex >= 144) { return; }
 
-            WriteRegister(frame, (byte)(0x24 + lednum), pwm);
+            WriteRegister(frame, (byte)(0x24 + ledIndex), brightness);
         }
 
         /// <summary>
@@ -193,11 +196,10 @@ namespace ICs.IOExpanders
         /// <param name="frame">The frame number. 0-7</param>
         public virtual void DisplayFrame(byte frame)
         {
-            if (frame < 0) frame = 0;
-            if (frame > 7) frame = 7;
+            frame = Math.Max(frame, (byte)0);
+            frame = Math.Min(frame, (byte)7);
 
             WriteRegister(CommandFunctionReg, PictureFrameReg, frame);
-
         }
 
         /// <summary>
@@ -207,10 +209,11 @@ namespace ICs.IOExpanders
         public virtual void SetFrame(byte frame)
         {
             if (frame < 0 || frame > 7)
+            {
                 throw new ArgumentOutOfRangeException(nameof(frame), $"{nameof(frame)} must be between 1 and 8");
+            }
 
             Frame = frame;
-
         }
 
         /// <summary>
@@ -250,6 +253,5 @@ namespace ICs.IOExpanders
         {
             _i2cPeripheral.WriteRegister(CommandRegister, page);
         }
-
     }
 }
