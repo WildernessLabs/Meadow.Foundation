@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Meadow.Foundation.Communications.Rfid.Serial.Helpers;
+using Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers;
 using Meadow.Foundation.Helpers;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Communications.Rfid
+namespace Meadow.Foundation.Sensors.Radio.Rfid
 {
     /// <summary>
     /// RFID reader for ID-2LA, ID-12LA and ID-20LA serial readers.

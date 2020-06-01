@@ -1,7 +1,7 @@
 ﻿using System;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Communications.Rfid;
+using Meadow.Foundation.Sensors.Radio.Rfid;
 using Meadow.Foundation.Helpers;
 
 namespace Communications.Rfid.IDxxLA_Sample

@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Communications.Rfid.Serial.Helpers
+namespace Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers
 {
     /// <summary>
     /// Helper class to fake events for a serial port by using polling behind the scenes.

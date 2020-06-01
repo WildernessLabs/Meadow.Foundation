@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Meadow.Foundation.Communications.Rfid
+namespace Meadow.Foundation.Sensors.Radio.Rfid
 {
     public interface IRfidReader : IObservable<byte[]>, IDisposable
     {

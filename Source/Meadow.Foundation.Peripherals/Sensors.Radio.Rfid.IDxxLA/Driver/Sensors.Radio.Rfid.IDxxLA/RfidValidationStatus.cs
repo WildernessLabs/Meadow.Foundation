@@ -1,4 +1,4 @@
-﻿namespace Meadow.Foundation.Communications.Rfid
+﻿namespace Meadow.Foundation.Sensors.Radio.Rfid
 {
     public enum RfidValidationStatus
     {
