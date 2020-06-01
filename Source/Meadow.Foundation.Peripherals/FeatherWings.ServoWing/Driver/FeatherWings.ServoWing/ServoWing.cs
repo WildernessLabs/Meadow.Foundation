@@ -30,27 +30,27 @@ namespace Meadow.Foundation.FeatherWings
             pca9685.Initialize();
         }
 
-        public Servo GetServo(byte num, ServoConfig servoConfig)
+        public Servo GetServo(byte portIndex, ServoConfig servoConfig)
         {
-            if ((num < 0) || (num > ports))
+            if ((portIndex < 0) || (portIndex > ports))
             {
                 throw new ArgumentException($"Servo num must be between 1 and {ports}", "num");
             }
 
-            var pwm = pca9685.CreatePwmPort(num);
+            var pwm = pca9685.CreatePwmPort(portIndex);
             var servo = new Servo(pwm, servoConfig);
 
             return servo;
         }
 
-        public IContinuousRotationServo GetContinuousRotatioServo(byte num, ServoConfig servoConfig)
+        public IContinuousRotationServo GetContinuousRotatioServo(byte portIndex, ServoConfig servoConfig)
         {
-            if ((num < 0) || (num > ports))
+            if ((portIndex < 0) || (portIndex > ports))
             {
                 throw new ArgumentException($"Continuous Rotatio Servo num must be between 1 and {ports}", "num");
             }
 
-            var pwm = pca9685.CreatePwmPort(num);
+            var pwm = pca9685.CreatePwmPort(portIndex);
             var servo = new ContinuousRotationServo(pwm, servoConfig);
 
             return servo;

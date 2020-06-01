@@ -12,8 +12,7 @@ namespace FeatherWings.MotorWing_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        II2cBus _i2CBus;
-        MotorWing _motorWing;
+        MotorWing motorWing;
 
         public MeadowApp()
         {
@@ -24,21 +23,21 @@ namespace FeatherWings.MotorWing_Sample
         void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
-            _i2CBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
-            _motorWing = new MotorWing(_i2CBus, 0x61);
-            _motorWing.Initialize();
+            var i2CBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
+            motorWing = new MotorWing(i2CBus, 0x61);
+            motorWing.Initialize();
         }
 
         void Run()
         {
             //Get DC motor 1
-            var dcMotor1 = _motorWing.GetMotor(1);
+            var dcMotor1 = motorWing.GetMotor(1);
 
             //Get DC motor 2
-            var dcMotor2 = _motorWing.GetMotor(2);
+            var dcMotor2 = motorWing.GetMotor(2);
 
             //Get Stepper motor number 2
-            var stepper = _motorWing.GetStepper(2, 200);
+            var stepper = motorWing.GetStepper(2, 200);
 
             dcMotor1.Run(Commmand.FORWARD);
             dcMotor2.Run(Commmand.BACKWARD);
