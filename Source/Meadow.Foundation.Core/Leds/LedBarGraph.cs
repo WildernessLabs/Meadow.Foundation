@@ -113,7 +113,7 @@ namespace Meadow.Foundation.Leds
             float value = percentage * Count;
             
             if (_isPwm == false)
-                value += 0.5f;
+                value += (Count == 0 ? 0.5f : (0.5f / Count));
 
             for (int i = 1; i <= Count; i++)
             {
