@@ -319,11 +319,6 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
                 }
 
                 var (tag, status) = GetValidatedRfidTag(data);
-                if (status == RfidValidationStatus.Ok)
-                {
-                    LastRead = tag;
-                }
-
                 OnTagReadEvent(status, tag);
             }
         }
