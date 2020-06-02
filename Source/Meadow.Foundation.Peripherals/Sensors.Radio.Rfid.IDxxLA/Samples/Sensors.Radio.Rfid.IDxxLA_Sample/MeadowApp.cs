@@ -1,10 +1,8 @@
 ﻿using System;
-using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Radio.Rfid;
 using Meadow.Foundation.Helpers;
 
-namespace Communications.Rfid.IDxxLA_Sample
+namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
