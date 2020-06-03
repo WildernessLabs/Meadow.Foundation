@@ -32,25 +32,29 @@ namespace Meadow.Foundation.Sensors.Rotary
         #region Member variables / fields
 
         /// <summary>
-        /// Whether or not we're processing the gray code (encoding of rotational information)
+        /// Contains the previous offset used to find direction information
         /// </summary>
-        protected bool _processing = false;
+        private uint _prevOffset = 0;
 
         /// <summary>
-        /// Lock object to ensure events aren't overriding eachothers information
+        /// The rotary encoder has 2 inputs, called A and B. Because of its design
+        /// either A or B changes but not both on each notification when the encoder
+        /// is rotated. Because of this the direction to be determined. If A goes
+        /// High before B then we are rotating one direction if B goes high before A
+        /// we are rotating the other direction. For each change we must consider the
+        /// previous state of A and B and the current state of A and B. This can be
+        /// represented as 4-bit number.
+        ///  3 2 1 0
+        /// |old|new|
+        /// |A|B|A|B|
+        ///
+        /// Bits 0 and 1 represent the current state of A and B while bits 2 and 3
+        /// represent previous states of A and B. This 4-bit number yields 16 possible
+        /// combination, however, there are combination that for which not change is
+        /// represent. For example, the if bits 0-3 are all 0, this would mean that A
+        /// was Low and is Low, and that B was Low and is Low (nothing changed.)
         /// </summary>
-        private readonly object _lock = new object();
-
-        /// <summary>
-        /// Signals that the aPhase has triggered an event
-        /// </summary>
-        protected bool _aTriggered = false;
-
-
-        /// <summary>
-        /// Two sets of gray code results to determine direction of rotation. Note that this is no longer used in the seperate event logic
-        /// </summary>
-        protected TwoBitGrayCode[] _results = new TwoBitGrayCode[2]; //no longer needed
+        private readonly int[] RotEncLookup = { 0, -1, 1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, -1, 0 };
 
         #endregion
 
@@ -63,8 +67,8 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
         public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
-            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 10, 50), //Signifcantly reduced debounce as this was causing reading issues if RotaryEncoder was turned quickly.
-                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 10, 50))
+            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 0, .4),
+                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 0, .4))
         { }
 
         /// <summary>
@@ -85,139 +89,40 @@ namespace Meadow.Foundation.Sensors.Rotary
 
         #region Methods
 
-         private void resetFlags()
+        private void PhaseAPinChanged(object s, DigitalInputPortEventArgs e)
         {
-            _processing = false;
-            _aTriggered = false;
+            // Clear bit A bit
+            uint new2LsBits = _prevOffset & 0x02;   // Save bit 2 (B)
+            if (e.Value)
+                new2LsBits |= 0x01;                 // Set bit 1 (A)
+
+            FindDirection(new2LsBits);
         }
 
-        /// <summary>
-        /// This event monitors the bPhase pin. It will raise an event on rotation if it is the second event fired (_processing = true) and bPhase triggered first (CounterClockwise rotation)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void PhaseAPinChanged(object sender, DigitalInputPortEventArgs e)
+        private void PhaseBPinChanged(object s, DigitalInputPortEventArgs e)
         {
-            // Lock the thread so protected variables are not modified while process
-            lock (_lock)
-            {
-                if (_processing)
-                {
-                    if (_aTriggered)
-                    {
-                        //This is an invalid event because a-triggers can't toggle the processing flag
-                        // However, this can be the start of a new triggering event! 
-                        // Don't change _processing or _aTriggered because if we are down this path it either means it is invalid or that b will soon trigger
-                    }
-                    else //Means b triggered first
-                    {
-                        OnRaiseRotationEvent(RotationDirection.CounterClockwise);
-                        resetFlags(); // After successful flag!
-                    }
-                }
-                else
-                {
-                    // toggle our processing flag
-                    _processing = !_processing;
-                }
-                _aTriggered = true;
-            }
+            // Clear bit B bit
+            uint new2LsBits = _prevOffset & 0x01;   // Save bit 1 (A)
+            if (e.Value)
+                new2LsBits |= 0x02;                 // Set bit 2 (B)
 
-
-            // to address issues where the flags have been reversed for whatever reason after time reset the flags
-            new Task(() =>
-            {
-                Thread.Sleep(50); //all events should be within 50 ms of each other. This may cause issue if people are turning at super human speed
-                resetFlags();
-            }).Start();
+            FindDirection(new2LsBits);
         }
 
-        /// <summary>
-        /// This event monitors the bPhase pin. It will raise an event on rotation if it is the second event fired (_processing = true) and aPhase triggered first (clockwise rotation)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void PhaseBPinChanged(object sender, DigitalInputPortEventArgs e)
+        private void FindDirection(uint new2LsBits)
         {
-            lock (_lock)
-            {
-                if (_processing)
-                {
-                    if (_aTriggered) //a triggered first
-                    {
-                        OnRaiseRotationEvent(RotationDirection.Clockwise);
-                        resetFlags(); // after successful flag!
-                    }
-                    else
-                    {
-                        //This is an invalid path because if we are processing it means it is the second event fired. reset flags and return
-                        // leave processing flag alone because if a now triggers it is a valid sequence
-                    }
-                    //ProcessRotationResults();
-                }
-                else
-                {
-                    // toggle our processing flag - only toggle selectively to catch misfiring events
-                    _processing = !_processing;
-                }
-                _aTriggered = false;
-            }
+            _prevOffset <<= 2;          // Move previous A & B to bits 3 & 2
+            _prevOffset |= new2LsBits;  // Set the current A & B states in bits 0 & 1
+            _prevOffset &= 0x0000000f;  // Save only lowest 4 bits
 
-        }
+            int direction = RotEncLookup[_prevOffset];
+            if (direction == 0)
+                return;                 // nothing changed
 
-        private void PhasePinChanged(object sender, DigitalInputPortEventArgs e)
-        {
-            //Console.WriteLine((!_processing ? "1st result: " : "2nd result: ") + "A{" + (APhasePin.Read() ? "1" : "0") + "}, " + "B{" + (BPhasePin.Read() ? "1" : "0") + "}");
-
-            // the first time through (not processing) store the result in array slot 0.
-            // second time through (is processing) store the result in array slot 1.
-            _results[_processing ? 1 : 0].APhase = APhasePort.State;
-            _results[_processing ? 1 : 0].BPhase = BPhasePort.State;
-
-            // if this is the second result that we're reading, we should now have 
-            // enough information to know which way it's turning, so process the
-            // gray code
-            if (_processing)
-            {
-                ProcessRotationResults();
-            }
-
-            // toggle our processing flag
-            _processing = !_processing;
-        }
-
-        /// <summary>
-        /// Determines the direction of rotation when the PhasePinChanged event is triggered
-        /// </summary>
-        protected void ProcessRotationResults()
-        {
-            // if there hasn't been any change, then it's a garbage reading. so toss it out.
-            if (_results[0].APhase == _results[1].APhase &&
-                _results[0].BPhase == _results[1].BPhase)
-                //Console.WriteLine("Garbage");
-                return;
-
-            // start by reading the a phase pin. if it's High
-            if (_results[0].APhase)
-            {
-                // if b phase went down, then it spun counter-clockwise
-                OnRaiseRotationEvent(_results[1].BPhase ? RotationDirection.CounterClockwise : RotationDirection.Clockwise);
-            }
-            // if a phase is low
+            if (direction == 1)
+                Rotated?.Invoke(this, new RotaryTurnedEventArgs(RotationDirection.Clockwise));
             else
-            {
-                // if b phase went up, then it spun counter-clockwise
-                OnRaiseRotationEvent(_results[1].BPhase ? RotationDirection.CounterClockwise : RotationDirection.Clockwise);
-            }
-        }
-
-        /// <summary>
-        /// Invokes the RotaryTurnedEventHandler, passing the direction in the RotaryTurnedEventArgs
-        /// </summary>
-        /// <param name="direction"></param>
-        protected void OnRaiseRotationEvent(RotationDirection direction)
-        {
-            Rotated?.Invoke(this, new RotaryTurnedEventArgs(direction));
+                Rotated?.Invoke(this, new RotaryTurnedEventArgs(RotationDirection.CounterClockwise));
         }
 
         #endregion
