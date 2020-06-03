@@ -24,6 +24,7 @@ namespace Meadow.Foundation.Displays.Lcd
         private const byte LCD_SETDDRAMADDR = 0x80;
         private const byte LCD_SETCGRAMADDR = 0x40;
 
+        protected IPwmPort LCD_V0;
         protected IDigitalOutputPort LCD_E;
         protected IDigitalOutputPort LCD_RS;
         protected IDigitalOutputPort LCD_D4;
@@ -38,28 +39,34 @@ namespace Meadow.Foundation.Displays.Lcd
 
         public TextDisplayConfig DisplayConfig { get; protected set; }
 
-        public CharacterDisplay(IIODevice device, IPin pinRS, IPin pinE, IPin pinD4, IPin pinD5, IPin pinD6, IPin pinD7, 
+        private CharacterDisplay() { }
+
+        public CharacterDisplay(
+            IIODevice device, 
+            IPin pinRS, 
+            IPin pinE, 
+            IPin pinD4, 
+            IPin pinD5, 
+            IPin pinD6, 
+            IPin pinD7,
+            ushort rows = 4, ushort columns = 20) : 
+            this ( 
+                device.CreateDigitalOutputPort(pinRS), 
+                device.CreateDigitalOutputPort(pinE), 
+                device.CreateDigitalOutputPort(pinD4),
+                device.CreateDigitalOutputPort(pinD5),
+                device.CreateDigitalOutputPort(pinD6),
+                device.CreateDigitalOutputPort(pinD7),
+                rows, columns) { }
+
+        public CharacterDisplay(
+            IDigitalOutputPort portRS,
+            IDigitalOutputPort portE,
+            IDigitalOutputPort portD4,
+            IDigitalOutputPort portD5,
+            IDigitalOutputPort portD6,
+            IDigitalOutputPort portD7,
             ushort rows = 4, ushort columns = 20)
-        {
-            DisplayConfig = new TextDisplayConfig { Height = rows, Width = columns };
-
-            LCD_RS = device.CreateDigitalOutputPort(pinRS); 
-            LCD_E  = device.CreateDigitalOutputPort(pinE);
-            LCD_D4 = device.CreateDigitalOutputPort(pinD4);
-            LCD_D5 = device.CreateDigitalOutputPort(pinD5);
-            LCD_D6 = device.CreateDigitalOutputPort(pinD6);
-            LCD_D7 = device.CreateDigitalOutputPort(pinD7);
-
-            Initialize();
-        }
-
-        public CharacterDisplay(IDigitalOutputPort portRS,
-                        IDigitalOutputPort portE,
-                        IDigitalOutputPort portD4,
-                        IDigitalOutputPort portD5,
-                        IDigitalOutputPort portD6,
-                        IDigitalOutputPort portD7,
-                        ushort rows = 4, ushort columns = 20)
         {
             DisplayConfig = new TextDisplayConfig { Height = rows, Width = columns };
 
@@ -73,21 +80,51 @@ namespace Meadow.Foundation.Displays.Lcd
             Initialize();
         }
 
-    /*    public CharacterDisplay(MCP23008 mcp, ushort rows = 20, ushort columns = 4)
+        public CharacterDisplay(
+            IIODevice device,
+            IPin pinV0,
+            IPin pinRS,
+            IPin pinE,
+            IPin pinD4,
+            IPin pinD5,
+            IPin pinD6,
+            IPin pinD7,
+            ushort rows = 4, ushort columns = 20) :
+            this(
+                device.CreatePwmPort(pinV0, 100, 0.5f, true),
+                device.CreateDigitalOutputPort(pinRS),
+                device.CreateDigitalOutputPort(pinE),
+                device.CreateDigitalOutputPort(pinD4),
+                device.CreateDigitalOutputPort(pinD5),
+                device.CreateDigitalOutputPort(pinD6),
+                device.CreateDigitalOutputPort(pinD7),
+                rows, columns)
+        { }
+
+        public CharacterDisplay(
+            IPwmPort portV0,
+            IDigitalOutputPort portRS,
+            IDigitalOutputPort portE,
+            IDigitalOutputPort portD4,
+            IDigitalOutputPort portD5,
+            IDigitalOutputPort portD6,
+            IDigitalOutputPort portD7,
+            ushort rows = 4, ushort columns = 20)
         {
+            Console.WriteLine("Constructor with Contrast pin");
+
             DisplayConfig = new TextDisplayConfig { Height = rows, Width = columns };
 
-            LCD_RS = mcp.CreateOutputPort(1, false);
-            LCD_E =  mcp.CreateOutputPort(2, false);
-            LCD_D4 = mcp.CreateOutputPort(3, false);
-            LCD_D5 = mcp.CreateOutputPort(4, false);
-            LCD_D6 = mcp.CreateOutputPort(5, false);
-            LCD_D7 = mcp.CreateOutputPort(6, false);
+            LCD_V0 = portV0; LCD_V0.Start();
+            LCD_RS = portRS;
+            LCD_E = portE;
+            LCD_D4 = portD4;
+            LCD_D5 = portD5;
+            LCD_D6 = portD6;
+            LCD_D7 = portD7;
 
-            var lite = mcp.CreateOutputPort(7, true);
-
-            Initialize();
-        } */
+            Initialize();            
+        }
 
         private void Initialize()
         {
@@ -223,6 +260,17 @@ namespace Meadow.Foundation.Displays.Lcd
         public void SetBrightness(float brightness = 0.75F)
         {
             Console.WriteLine("Set brightness not enabled");
+        }
+
+        public void SetContrast(float contrast = 0.5f) 
+        {
+            if (contrast < 0 || contrast > 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(contrast), "err: contrast must be between 0 and 1, inclusive.");
+            }
+
+            Console.WriteLine($"Contrast: {contrast}");
+            LCD_V0.DutyCycle = contrast;
         }
 
         public void SaveCustomCharacter(byte[] characterMap, byte address)
