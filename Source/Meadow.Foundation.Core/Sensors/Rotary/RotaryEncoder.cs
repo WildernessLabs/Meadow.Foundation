@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <summary>
         /// Contains the previous offset used to find direction information
         /// </summary>
-        private uint _prevOffset = 0;
+        private uint _dynamicOffset = 0;
 
         /// <summary>
         /// The rotary encoder has 2 inputs, called A and B. Because of its design
@@ -67,8 +67,8 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
         public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
-            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 0, .4),
-                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 0, .4))
+            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 0, .5),
+                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 0, .5))
         { }
 
         /// <summary>
@@ -92,9 +92,9 @@ namespace Meadow.Foundation.Sensors.Rotary
         private void PhaseAPinChanged(object s, DigitalInputPortEventArgs e)
         {
             // Clear bit A bit
-            uint new2LsBits = _prevOffset & 0x02;   // Save bit 2 (B)
+            uint new2LsBits = _dynamicOffset & 0x02;    // Save bit 2 (B)
             if (e.Value)
-                new2LsBits |= 0x01;                 // Set bit 1 (A)
+                new2LsBits |= 0x01;                     // Set bit 1 (A)
 
             FindDirection(new2LsBits);
         }
@@ -102,20 +102,20 @@ namespace Meadow.Foundation.Sensors.Rotary
         private void PhaseBPinChanged(object s, DigitalInputPortEventArgs e)
         {
             // Clear bit B bit
-            uint new2LsBits = _prevOffset & 0x01;   // Save bit 1 (A)
+            uint new2LsBits = _dynamicOffset & 0x01;    // Save bit 1 (A)
             if (e.Value)
-                new2LsBits |= 0x02;                 // Set bit 2 (B)
+                new2LsBits |= 0x02;                     // Set bit 2 (B)
 
             FindDirection(new2LsBits);
         }
 
         private void FindDirection(uint new2LsBits)
         {
-            _prevOffset <<= 2;          // Move previous A & B to bits 3 & 2
-            _prevOffset |= new2LsBits;  // Set the current A & B states in bits 0 & 1
-            _prevOffset &= 0x0000000f;  // Save only lowest 4 bits
+            _dynamicOffset <<= 2;          // Move previous A & B to bits 2 & 3
+            _dynamicOffset |= new2LsBits;  // Set the current A & B states in bits 0 & 1
+            _dynamicOffset &= 0x0000000f;  // Save only lowest 4 bits
 
-            int direction = RotEncLookup[_prevOffset];
+            int direction = RotEncLookup[_dynamicOffset];
             if (direction == 0)
                 return;                 // nothing changed
 
