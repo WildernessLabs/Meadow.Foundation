@@ -65,9 +65,24 @@ namespace Meadow.Foundation.Leds
 
             for (int i = 0; i < pins.Length; i++)
             {
-                _pwmLeds[i] = null; //ToDo - needs device.CreatePwmPort()     
-                   // new PwmLed(device, pins[i], forwardVoltage);
+                _pwmLeds[i] = new PwmLed(device, pins[i], forwardVoltage);
             }
+
+            _isPwm = true;
+        }
+
+        /// <summary>
+        /// Create an LedBarGraph instance from an array of IDigitalOutputPort
+        /// </summary>
+        public LedBarGraph(IPwmPort[] ports, float forwardVoltage)
+        {
+            _pwmLeds = new PwmLed[ports.Length];
+
+            for (int i = 0; i < ports.Length; i++)
+            {
+                _pwmLeds[i] = new PwmLed(ports[i], forwardVoltage);
+            }
+
             _isPwm = true;
         }
 
