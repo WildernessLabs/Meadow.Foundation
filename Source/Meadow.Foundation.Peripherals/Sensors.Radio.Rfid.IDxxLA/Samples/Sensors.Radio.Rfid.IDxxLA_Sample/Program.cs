@@ -1,7 +1,6 @@
 ﻿using System.Threading;
-using Meadow;
 
-namespace Communications.Rfid.IDxxLA_Sample
+namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
 {
     internal class Program
     {
