@@ -1,19 +1,35 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using Meadow.Hardware;
+using System;
+using System.Threading;
 
 namespace Leds.LedBarGraph_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        protected LedBarGraph ledBarGraph;
+        LedBarGraph ledBarGraph;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
+
+            // Using an array of Pins 
+            IPin[] pins =
+            {
+                 Device.Pins.D02,
+                 Device.Pins.D03,
+                 Device.Pins.D04,
+                 Device.Pins.D05,
+                 Device.Pins.D06,
+                 Device.Pins.D07,
+                 Device.Pins.D08,
+                 Device.Pins.D09,
+                 Device.Pins.D10,
+                 Device.Pins.D11
+            };
+            ledBarGraph = new LedBarGraph(Device, pins);
 
             // Passing an array of DigitalOutputPorts
             //IDigitalOutputPort[] ports =
@@ -30,38 +46,6 @@ namespace Leds.LedBarGraph_Sample
             //Device.CreateDigitalOutputPort(Device.Pins.D14)
             //};
             //ledBarGraph = new LedBarGraph(ports);
-
-            // Using an array of IPwmPorts
-            //IPwmPort[] ports =
-            //{
-            //     Device.CreatePwmPort(Device.Pins.D02),
-            //     Device.CreatePwmPort(Device.Pins.D03),
-            //     Device.CreatePwmPort(Device.Pins.D04),
-            //     Device.CreatePwmPort(Device.Pins.D05),
-            //     Device.CreatePwmPort(Device.Pins.D06),
-            //     Device.CreatePwmPort(Device.Pins.D07),
-            //     Device.CreatePwmPort(Device.Pins.D08),
-            //     Device.CreatePwmPort(Device.Pins.D09),
-            //     Device.CreatePwmPort(Device.Pins.D10),
-            //     Device.CreatePwmPort(Device.Pins.D11)
-            //};
-            //ledBarGraph = new LedBarGraph(ports, 0.25f);
-
-            // Using an array of Pins that support PWM (D02 - D13)
-            IPin[] pins =
-            {
-                 Device.Pins.D02,
-                 Device.Pins.D03,
-                 Device.Pins.D04,
-                 Device.Pins.D05,
-                 Device.Pins.D06,
-                 Device.Pins.D07,
-                 Device.Pins.D08,
-                 Device.Pins.D09,
-                 Device.Pins.D10,
-                 Device.Pins.D11
-            };
-            ledBarGraph = new LedBarGraph(Device, pins, 0.25f);
 
             TestLedBarGraph();
         }

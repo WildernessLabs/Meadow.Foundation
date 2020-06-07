@@ -3,15 +3,12 @@ using System;
 
 namespace Meadow.Foundation.Leds
 {
-    /// <summary>
-    /// Represents an LED bar graph composed on multiple LEDs
-    /// </summary>
-    public class LedBarGraph
+    public class PwmLedBarGraph
     {
         /// <summary>
         /// The number of the LEDs in the bar graph
         /// </summary>
-        public int Count => _leds.Length;
+        public int Count => _pwmLeds.Length;
 
         /// <summary>
         /// A value between 0 and 1 that controls the number of LEDs that are activated
@@ -21,34 +18,33 @@ namespace Meadow.Foundation.Leds
             set => SetPercentage(value);
         }
 
-        protected Led[] _leds;
+        protected PwmLed[] _pwmLeds;
 
-        private LedBarGraph() { }
+        private PwmLedBarGraph() { }
 
         /// <summary>
-        /// Create an LedBarGraph instance from an array of IPins
+        /// Create an LedBarGraph instance from an array of IPwnPin and a forwardVoltage for all LEDs in the bar graph
         /// </summary>
-        public LedBarGraph(IIODevice device, IPin[] pins)
+        public PwmLedBarGraph(IIODevice device, IPin[] pins, float forwardVoltage)
         {
-            _leds = new Led[pins.Length];
+            _pwmLeds = new PwmLed[pins.Length];
 
             for (int i = 0; i < pins.Length; i++)
             {
-                _leds[i] = new Led(device, pins[i]);
+                _pwmLeds[i] = new PwmLed(device, pins[i], forwardVoltage);
             }
         }
 
         /// <summary>
         /// Create an LedBarGraph instance from an array of IDigitalOutputPort
         /// </summary>
-        public LedBarGraph(IDigitalOutputPort[] ports)
+        public PwmLedBarGraph(IPwmPort[] ports, float forwardVoltage)
         {
-            _leds = new Led[ports.Length];
+            _pwmLeds = new PwmLed[ports.Length];
 
             for (int i = 0; i < ports.Length; i++)
             {
-                _leds[i] = new Led(ports[i]);
-                //_leds[i].IsOn = false;
+                _pwmLeds[i] = new PwmLed(ports[i], forwardVoltage);
             }
         }
 
@@ -59,7 +55,17 @@ namespace Meadow.Foundation.Leds
         /// <param name="isOn"></param>
         public void SetLed(int index, bool isOn)
         {
-            _leds[index].IsOn = isOn;
+            _pwmLeds[index].IsOn = isOn;
+        }
+
+        /// <summary>
+        /// Set the brightness of an individual LED when using PWM
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="brightness"></param>
+        public void SetLedBrightness(int index, float brightness)
+        {
+            _pwmLeds[index].SetBrightness(brightness);
         }
 
         /// <summary>
@@ -72,14 +78,16 @@ namespace Meadow.Foundation.Leds
                 throw new ArgumentOutOfRangeException();
 
             float value = percentage * Count;
-            
-            value += 0.5f;
 
             for (int i = 1; i <= Count; i++)
             {
                 if (i <= value)
                 {
                     SetLed(i - 1, true);
+                }
+                else if (i <= value + 1)
+                {
+                    SetLedBrightness(i - 1, value + 1 - i);
                 }
                 else
                 {
