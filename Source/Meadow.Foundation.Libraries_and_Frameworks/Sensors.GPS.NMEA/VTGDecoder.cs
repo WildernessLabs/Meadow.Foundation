@@ -50,6 +50,7 @@ namespace Meadow.Foundation.Sensors.GPS
             if (OnCourseAndVelocityReceived != null)
             {
                 var course = new CourseOverGround();
+                //TODO: these converters are old school NetMF
                 course.TrueHeading = Converters.Double(data[1]);
                 course.MagneticHeading = Converters.Double(data[3]);
                 course.Knots = Converters.Double(data[5]);

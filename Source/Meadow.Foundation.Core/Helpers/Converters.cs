@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation
 {
-    //TODO: many of these are no longer needed because we have full .NET
+    //TODO: some of these are no longer needed because we have full .NET
     // consider mari-kondo'ing this.
 
     /// <summary>
