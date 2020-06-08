@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.Lcd;
+using System;
+using System.Threading;
 
 namespace Displays.Lcd.CharacterDisplay_Sample
 {
@@ -14,19 +14,34 @@ namespace Displays.Lcd.CharacterDisplay_Sample
         {
             Console.WriteLine("Initializing...");
 
+            //display = new CharacterDisplay
+            //(
+            //    device: Device,
+            //    pinV0: Device.Pins.D11,
+            //    pinRS: Device.Pins.D10,
+            //    pinE: Device.Pins.D09,
+            //    pinD4: Device.Pins.D08,
+            //    pinD5: Device.Pins.D07,
+            //    pinD6: Device.Pins.D06,
+            //    pinD7: Device.Pins.D05,
+            //    rows: 4, columns: 20    // Adjust dimensions to fit your display
+            //);
+
             display = new CharacterDisplay
             (
-                device: Device,
-                pinRS: Device.Pins.D15,
-                pinE: Device.Pins.D14,
-                pinD4: Device.Pins.D13,
-                pinD5: Device.Pins.D12,
-                pinD6: Device.Pins.D11,
-                pinD7: Device.Pins.D10,
-                rows: 2, columns: 16    // Adjust dimensions to fit your display
+                Device.CreatePwmPort(Device.Pins.D11, 100, 0.5f, true),
+                Device.CreateDigitalOutputPort(Device.Pins.D10),
+                Device.CreateDigitalOutputPort(Device.Pins.D09),
+                Device.CreateDigitalOutputPort(Device.Pins.D08),
+                Device.CreateDigitalOutputPort(Device.Pins.D07),
+                Device.CreateDigitalOutputPort(Device.Pins.D06),
+                Device.CreateDigitalOutputPort(Device.Pins.D05),
+                rows: 4, columns: 20    // Adjust dimensions to fit your display
             );
 
             TestCharacterDisplay();
+
+            Console.WriteLine("done");
         }
 
         void TestCharacterDisplay() 
@@ -38,6 +53,20 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 
             while (true)
             {
+                // Increasing Contrast
+                for (int i = 0; i <= 10; i++)
+                {
+                    display.SetContrast((float)(i / 10f));
+                    Thread.Sleep(250);
+                }
+
+                // Decreasing Contrast
+                for (int i = 10; i >= 0; i--)
+                {
+                    display.SetContrast((float)(i / 10f));
+                    Thread.Sleep(250);
+                }
+
                 display.WriteLine($"Count is : {count++}", 1);
                 Thread.Sleep(1000);
             }

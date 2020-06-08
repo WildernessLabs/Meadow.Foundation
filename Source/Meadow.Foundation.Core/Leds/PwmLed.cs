@@ -86,7 +86,7 @@ namespace Meadow.Foundation.Leds
             Port = pwmPort;
             Port.Inverted = this._inverted;
             Port.Frequency = 100;
-            Port.DutyCycle = _maximumPwmDuty;
+            Port.DutyCycle = 0;
             Port.Start();
         }
 

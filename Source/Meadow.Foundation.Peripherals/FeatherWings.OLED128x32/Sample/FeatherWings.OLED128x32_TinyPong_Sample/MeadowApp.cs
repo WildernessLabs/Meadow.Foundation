@@ -6,7 +6,7 @@ using Meadow.Foundation.FeatherWings;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
-namespace FeatherWindws.OLED128x32_TinyPong_Sample
+namespace FeatherWings.OLED128x32_TinyPong_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
