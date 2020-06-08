@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Sensors.GPS
+﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+
+namespace Meadow.Foundation.Sensors.GPS
 {
     /// <summary>
     ///     Process the Satellites in view messages from a GPS module.

@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Sensors.GPS
+﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+
+namespace Meadow.Foundation.Sensors.GPS
 {
     /// <summary>
     ///     Process GLL (Geographic position Latitude / Longitude) messages from a
@@ -13,7 +15,7 @@
         /// </summary>
         /// <param name="location">Location data to pass to the application.</param>
         /// <param name="sender">Reference to the object generating the event.</param>
-        public delegate void GeographicLatitudeLongitudeReceived(object sender, GPSLocation location);
+        public delegate void GeographicLatitudeLongitudeReceived(object sender, GnssPositionInfo location);
 
         /// <summary>
         ///     Event raised when valid GLL data is received.
@@ -53,9 +55,9 @@
                 //
                 if (data[6] == "A")
                 {
-                    var location = new GPSLocation();
-                    location.Latitude = NMEAHelpers.DegreesMinutesDecode(data[1], data[2]);
-                    location.Longitude = NMEAHelpers.DegreesMinutesDecode(data[3], data[4]);
+                    var location = new GnssPositionInfo(); //new GPSLocation();
+                    location.Position.Latitude = NMEAHelpers.DegreesMinutesDecode(data[1], data[2]);
+                    location.Position.Longitude = NMEAHelpers.DegreesMinutesDecode(data[3], data[4]);
                     location.ReadingTime = NMEAHelpers.TimeOfReading(null, data[5]);
                     OnGeographicLatitudeLongitudeReceived(this, location);
                 }

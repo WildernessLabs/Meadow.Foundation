@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Sensors.GPS
+﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+
+namespace Meadow.Foundation.Sensors.GPS
 {
     /// <summary>
     ///     Decoder for GGA messages.
@@ -12,7 +14,7 @@
         /// </summary>
         /// <param name="location">Location data received.</param>
         /// <param name="sender">Reference to the object generating the event.</param>
-        public delegate void PositionReceived(object sender, GPSLocation location);
+        public delegate void PositionReceived(object sender, GnssPositionInfo location);
 
         /// <summary>
         ///     Position update received event.
@@ -57,14 +59,17 @@
                 }
                 if (invalidFieldCount == 0)
                 {
-                    var location = new GPSLocation();
+                    var location = new GnssPositionInfo();
                     location.ReadingTime = NMEAHelpers.TimeOfReading(null, data[1]);
-                    location.Latitude = NMEAHelpers.DegreesMinutesDecode(data[2], data[3]);
-                    location.Longitude = NMEAHelpers.DegreesMinutesDecode(data[4], data[5]);
+                    location.Position.Latitude = NMEAHelpers.DegreesMinutesDecode(data[2], data[3]);
+                    location.Position.Longitude = NMEAHelpers.DegreesMinutesDecode(data[4], data[5]);
+                    // TODO: now that we have full .NET, we should use the proper
+                    // tryParse or Parse methods or whatever
+                    // also, C# 8 null stuff
                     location.FixQuality = (FixType) Converters.Integer(data[6]);
                     location.NumberOfSatellites = Converters.Integer(data[7]);
                     location.HorizontalDilutionOfPrecision = Converters.Double(data[8]);
-                    location.Altitude = Converters.Double(data[9]);
+                    location.Position.Altitude = decimal.Parse(data[9]);
                     OnPositionReceived(this, location);
                 }
             }

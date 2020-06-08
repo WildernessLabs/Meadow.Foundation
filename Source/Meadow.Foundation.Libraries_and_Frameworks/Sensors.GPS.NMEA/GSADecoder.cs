@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Sensors.GPS
+﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+
+namespace Meadow.Foundation.Sensors.GPS
 {
     public class GSADecoder : INMEADecoder
     {
@@ -57,7 +59,7 @@
                         satellites.SatelliteSelection = ActiveSatelliteSelection.Unknown;
                         break;
                 }
-                satellites.Demensions = (DimensionalFixType) int.Parse(data[2]);
+                satellites.Dimensions = (DimensionalFixType) int.Parse(data[2]);
                 var satelliteCount = 0;
                 for (var index = 3; index < 15; index++)
                 {

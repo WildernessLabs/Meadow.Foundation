@@ -1,4 +1,5 @@
 ﻿using System;
+using Meadow.Peripherals.Sensors.Location;
 
 namespace Meadow.Foundation.Sensors.GPS
 {
@@ -61,31 +62,31 @@ namespace Meadow.Foundation.Sensors.GPS
         /// <param name="direction">Direction of the reading, one of N, S, E, W.</param>
         /// <exception cref="ArgumentException">Throw if the location string cannot be decoded.</exception>
         /// <returns>DMPosition in degrees and minutes.</returns>
-        public static DegreeMinutePosition DegreesMinutesDecode(string location, string direction)
+        public static DegreesMinutesSecondsPosition DegreesMinutesDecode(string location, string direction)
         {
-            double loc = 0;
-            var position = new DegreeMinutePosition();
+            decimal loc = 0;
+            var position = new DegreesMinutesSecondsPosition();
 
-            if (double.TryParse(location, out loc))
+            if (decimal.TryParse(location, out loc))
             {
                 position.Degrees = (int) (loc / 100);
                 position.Minutes = loc - (position.Degrees * 100);
                 switch (direction.ToLower())
                 {
                     case "n":
-                        position.Direction = DirectionIndicator.North;
+                        position.Direction = CardinalDirection.North;
                         break;
                     case "s":
-                        position.Direction = DirectionIndicator.South;
+                        position.Direction = CardinalDirection.South;
                         break;
                     case "e":
-                        position.Direction = DirectionIndicator.East;
+                        position.Direction = CardinalDirection.East;
                         break;
                     case "w":
-                        position.Direction = DirectionIndicator.West;
+                        position.Direction = CardinalDirection.West;
                         break;
                     default:
-                        position.Direction = DirectionIndicator.Unknown;
+                        position.Direction = CardinalDirection.Unknown;
                         break;
                 }
             }

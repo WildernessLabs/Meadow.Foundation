@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Sensors.GPS
+﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+
+namespace Meadow.Foundation.Sensors.GPS
 {
     /// <summary>
     ///     Provice a mechanism for dealing with VTG messages from a GPS receiver.
@@ -51,7 +53,7 @@
                 course.TrueHeading = Converters.Double(data[1]);
                 course.MagneticHeading = Converters.Double(data[3]);
                 course.Knots = Converters.Double(data[5]);
-                course.KPH = Converters.Double(data[7]);
+                course.Kph = Converters.Double(data[7]);
                 OnCourseAndVelocityReceived(this, course);
             }
         }
