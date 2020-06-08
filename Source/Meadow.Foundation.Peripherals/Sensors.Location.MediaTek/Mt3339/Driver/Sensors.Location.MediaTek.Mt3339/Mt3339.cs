@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location;
+using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Sensors.Location.MediaTek
 {
@@ -19,11 +20,12 @@ namespace Sensors.Location.MediaTek
         {
             this.serialPort.Open();
 
+            
         }
 
-        public async Task<LocationInfo> Read()
+        public async Task<GnssPositionInfo> Read()
         {
-            var loc = new LocationInfo();
+            var loc = new GnssPositionInfo();
             return loc;
         }
 
