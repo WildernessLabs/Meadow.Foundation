@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FeatherWindws.OLED128x32_TinyPong_Sample
+namespace FeatherWings.OLED128x32_TinyPong_Sample
 {
 
     public class PongGame

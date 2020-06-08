@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Meadow.Foundation.Peripherals\FeatherWings.OLED128x32\Driver\FeatherWings.OLED128x32\FeatherWings.OLED128x32Wing.csproj" />
+    <ProjectReference Include="..\..\Driver\FeatherWings.OLED128x32\FeatherWings.OLED128x32Wing.csproj" />
   </ItemGroup>
 </Project>

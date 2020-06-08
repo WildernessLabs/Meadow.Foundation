@@ -682,7 +682,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{713F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.GPS.NMEA_SSD1309_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Sensors.GPS.NMEA_SSD1309_Sample\Sensors.GPS.NMEA_SSD1309_Sample.csproj", "{432EC0B4-9694-4BEB-814E-64F94618EBBE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWindws.OLED128x32_TinyPong_Sample", "FeatherWindws.OLED128x32_TinyPong_Sample\FeatherWindws.OLED128x32_TinyPong_Sample.csproj", "{F6204364-4AF0-46A2-8D86-35E4B95D9C14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.OLED128x32_TinyPong_Sample", "Meadow.Foundation.Peripherals\FeatherWings.OLED128x32\Sample\FeatherWings.OLED128x32_TinyPong_Sample\FeatherWings.OLED128x32_TinyPong_Sample.csproj", "{F6204364-4AF0-46A2-8D86-35E4B95D9C14}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Radio.Rfid.IDxxLA", "Meadow.Foundation.Peripherals\Sensors.Radio.Rfid.IDxxLA\Driver\Sensors.Radio.Rfid.IDxxLA\Sensors.Radio.Rfid.IDxxLA.csproj", "{DBBF44F1-CC53-475D-A73D-ECCE5D7394C0}"
 EndProject
@@ -714,7 +714,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.LedMatrix8x16_
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TftSpi.St7735_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.St7735_Sample\Displays.TftSpi.St7735_Sample.csproj", "{7E466C3D-9630-4F98-BABC-43F23716B434}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.PwmLedBarGraph_Sample", "Meadow.Foundation.Core.Samples\Leds.PwmLedBarGraph_Sample\Leds.PwmLedBarGraph_Sample.csproj", "{3AC2D665-8360-4367-9606-F633CA743C9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leds.PwmLedBarGraph_Sample", "Meadow.Foundation.Core.Samples\Leds.PwmLedBarGraph_Sample\Leds.PwmLedBarGraph_Sample.csproj", "{3AC2D665-8360-4367-9606-F633CA743C9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
