@@ -15,10 +15,9 @@
     <RootNamespace>Sensors.Location.MediaTek</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
+    <None Remove="Meadow.Peripherals.Sensors.Location.LocationInfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Meadow.Peripherals.Sensors.Location.LocationInfo" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location;
 using Meadow.Peripherals.Sensors.Location.Gnss;
+using Meadow.Foundation.Communications;
 
 namespace Sensors.Location.MediaTek
 {
@@ -14,13 +15,22 @@ namespace Sensors.Location.MediaTek
         {
             this.serialPort = serialPort;
             this.serialPort.BaudRate = baud;
+            Init();
         }
 
         protected void Init()
         {
-            this.serialPort.Open();
+            Console.WriteLine("initializing serial port");
+            serialPort.Open();
+            Console.WriteLine("serial port opened.");
+        }
 
-            
+        public void StartDumpingReadings()
+        {
+            var serialTextFile = new SerialTextFile(serialPort, "\r\n");
+            serialTextFile.OnLineReceived += (s, line) => {
+                Console.WriteLine(line);
+            };
         }
 
         public async Task<GnssPositionInfo> Read()

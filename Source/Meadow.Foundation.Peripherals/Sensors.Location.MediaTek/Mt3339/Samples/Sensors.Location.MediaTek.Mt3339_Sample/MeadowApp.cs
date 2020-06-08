@@ -15,7 +15,13 @@ namespace MeadowApp
 
         public MeadowApp()
         {
+            Console.WriteLine("App Start");
+
             Initialize();
+
+            Console.WriteLine("Post Init");
+
+            gps.StartDumpingReadings();
         }
 
         void Initialize()
