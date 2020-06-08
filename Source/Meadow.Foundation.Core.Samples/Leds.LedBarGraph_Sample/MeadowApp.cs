@@ -18,16 +18,16 @@ namespace Leds.LedBarGraph_Sample
             // Using an array of Pins 
             IPin[] pins =
             {
-                 Device.Pins.D02,
-                 Device.Pins.D03,
-                 Device.Pins.D04,
                  Device.Pins.D05,
                  Device.Pins.D06,
                  Device.Pins.D07,
                  Device.Pins.D08,
                  Device.Pins.D09,
                  Device.Pins.D10,
-                 Device.Pins.D11
+                 Device.Pins.D11,
+                 Device.Pins.D12,
+                 Device.Pins.D13,
+                 Device.Pins.D14
             };
             ledBarGraph = new LedBarGraph(Device, pins);
 
@@ -93,6 +93,13 @@ namespace Leds.LedBarGraph_Sample
                     ledBarGraph.Percentage = Math.Max(0.0f, percentage); ;
                     Thread.Sleep(100);
                 }
+
+                Thread.Sleep(1000);
+
+                Console.WriteLine("Blinking for 3 seconds...");
+                ledBarGraph.StartBlink();
+                Thread.Sleep(3000);
+                ledBarGraph.Stop();
 
                 Thread.Sleep(1000);
             }
