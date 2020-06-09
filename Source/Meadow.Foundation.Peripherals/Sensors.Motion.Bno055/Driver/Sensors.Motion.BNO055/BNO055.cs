@@ -1429,22 +1429,22 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Sensor readings from the last time the BNO055 was polled.
         /// </summary>
-        private byte[] _sensorReadings;
+        private byte[] sensorReadings;
 
         /// <summary>
         ///     Current accelerometer units.
         /// </summary>
-	    private Units _accelerometerUnits;
+	    private Units accelerometerUnits;
 
         /// <summary>
         ///     Units to use for the gyroscope.
         /// </summary>
-	    private Units _gyroscopeUnits;
+	    private Units gyroscopeUnits;
 
         /// <summary>
         ///     Units used for measuring angles.
         /// </summary>
-	    private Units _orientationUnits;
+	    private Units orientationUnits;
 
 		#endregion Member variables / fields
 
@@ -1567,7 +1567,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            if (_sensorReadings == null)
+	            if (sensorReadings == null)
 	            {
 	                throw new InvalidOperationException("Read() must be called before the sensor readings are available.");
 	            }
@@ -1579,7 +1579,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	                throw new Exception("Accelerometer is not currently enabled.");
 	            }
 	            double divisor = 1.0;
-	            if (_accelerometerUnits == Units.MetersPerSecond)
+	            if (accelerometerUnits == Units.MetersPerSecond)
 	            {
 	                divisor = 100.0;
 	            }
@@ -1594,7 +1594,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            if (_sensorReadings == null)
+	            if (sensorReadings == null)
 	            {
 	                throw new InvalidOperationException("Read() must be called before the sensor readings are available.");
 	            }
@@ -1616,7 +1616,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            if (_sensorReadings == null)
+	            if (sensorReadings == null)
 	            {
 	                throw new InvalidOperationException("Read() must be called before the sensor readings are available.");
 	            }
@@ -1628,7 +1628,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	                throw new Exception("Gyroscope is not currently enabled.");
 	            }
 	            double divisor = 16.0;
-	            if (_gyroscopeUnits == Units.Radians)
+	            if (gyroscopeUnits == Units.Radians)
 	            {
 	                divisor = 900.0;
 	            }
@@ -1643,7 +1643,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            if (_sensorReadings == null)
+	            if (sensorReadings == null)
 	            {
 	                throw new InvalidOperationException("Read() must be called before the sensor readings are available.");
 	            }
@@ -1652,7 +1652,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	                throw new InvalidOperationException("Euler angles are only available in fusion mode.");
 	            }
 	            double divisor = 16.0;
-	            if (_orientationUnits == Units.Radians)
+	            if (orientationUnits == Units.Radians)
 	            {
 	                divisor = 900.0;
 	            }
@@ -1667,7 +1667,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
             get
             {
-                if (_sensorReadings == null)
+                if (sensorReadings == null)
                 {
                     throw new InvalidOperationException("Read() must be called before the sensor readings are available.");
                 }
@@ -1676,10 +1676,10 @@ namespace Meadow.Foundation.Sensors.Motion
                     throw new InvalidOperationException("Quaterionorientation is only available in fusion mode.");
                 }
                 int start = Registers.QuaternionDataWLSB - Registers.StartOfSensorData;
-                short w = (short) ((_sensorReadings[start + 1] << 8) | _sensorReadings[start]);
-                short x = (short) ((_sensorReadings[start + 3] << 8) | _sensorReadings[start + 2]);
-                short y = (short) ((_sensorReadings[start + 5] << 8) | _sensorReadings[start + 4]);
-                short z = (short) ((_sensorReadings[start + 5] << 8) | _sensorReadings[start + 4]);
+                short w = (short) ((sensorReadings[start + 1] << 8) | sensorReadings[start]);
+                short x = (short) ((sensorReadings[start + 3] << 8) | sensorReadings[start + 2]);
+                short y = (short) ((sensorReadings[start + 5] << 8) | sensorReadings[start + 4]);
+                short z = (short) ((sensorReadings[start + 5] << 8) | sensorReadings[start + 4]);
                 double factor = 1.0 / (1 << 14);
                 return new Quaternion(w * factor, x * factor, y * factor, z * factor);
             }
@@ -1692,7 +1692,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            if (_sensorReadings == null)
+	            if (sensorReadings == null)
 	            {
 	                throw new InvalidOperationException("Read() must be called before the sensor readings are available.");
 	            }
@@ -1701,7 +1701,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	                throw new InvalidOperationException("Linear accelration vectors are only available in fusion mode.");
 	            }
 	            double divisor = 1.0;
-	            if (_accelerometerUnits == Units.MetersPerSecond)
+	            if (accelerometerUnits == Units.MetersPerSecond)
 	            {
 	                divisor = 100.0;
 	            }
@@ -1716,7 +1716,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            if (_sensorReadings == null)
+	            if (sensorReadings == null)
 	            {
 	                throw new InvalidOperationException("Read() must be called before the sensor readings are available.");
 	            }
@@ -1725,7 +1725,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	                throw new InvalidOperationException("Linear acceleration vectors are only available in fusion mode.");
 	            }
 	            double divisor = 1.0;
-	            if (_accelerometerUnits == Units.MetersPerSecond)
+	            if (accelerometerUnits == Units.MetersPerSecond)
 	            {
 	                divisor = 100.0;
 	            }
@@ -1808,20 +1808,15 @@ namespace Meadow.Foundation.Sensors.Motion
 		/// <param name="i2cBus">I2C bus (default = 400 KHz).</param>
 		public Bno055(II2cBus i2cBus, byte address = 0x28)
 		{
-            if ((address != 0x28) && (address != 0x29))
-            {
-                throw new ArgumentOutOfRangeException("address", "Address should be 0x28 or 0x29.");
-            }
-
-            bno055 = new I2cPeripheral(i2cBus, address);
+             bno055 = new I2cPeripheral(i2cBus, address);
 
             if (bno055.ReadRegister(Registers.ChipID) != 0xa0)
             {
                 throw new Exception("Sensor ID should be 0xa0.");
             }
-		    _accelerometerUnits = Units.MetersPerSecond;
-		    _gyroscopeUnits = Units.Degrees;
-		    _orientationUnits = Units.Degrees;
+		    accelerometerUnits = Units.MetersPerSecond;
+		    gyroscopeUnits = Units.Degrees;
+		    orientationUnits = Units.Degrees;
 		}
 
 		#endregion Constructors
@@ -1839,7 +1834,7 @@ namespace Meadow.Foundation.Sensors.Motion
 		/// </remarks>
 		public void Read()
 		{
-		    _sensorReadings = bno055.ReadRegisters(Registers.AccelerometerXLSB,
+		    sensorReadings = bno055.ReadRegisters(Registers.AccelerometerXLSB,
 		                                            (ushort) (Registers.GravityVectorZMSB - Registers.AccelerometerXLSB));
 		}
 
@@ -1851,9 +1846,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>New Vector object containing the specified data.</returns>
 	    private Vector ConvertReadingsToVector(int start, double divisor)
 	    {
-	        var x = (short) ((_sensorReadings[start + 1] << 8) | _sensorReadings[start]);
-	        var y = (short) ((_sensorReadings[start + 3] << 8) | _sensorReadings[start + 2]);
-	        var z = (short) ((_sensorReadings[start + 5] << 8) | _sensorReadings[start + 4]);
+	        var x = (short) ((sensorReadings[start + 1] << 8) | sensorReadings[start]);
+	        var y = (short) ((sensorReadings[start + 3] << 8) | sensorReadings[start + 2]);
+	        var z = (short) ((sensorReadings[start + 5] << 8) | sensorReadings[start + 4]);
 	        return new Vector(x / divisor, y / divisor, z / divisor);
 	    }
 
@@ -1865,9 +1860,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>EulerAngles object containing the orientation informaiton.</returns>
 	    private EulerAngles ConvertReadingToEulerAngles(int start, double divisor)
 	    {
-	        var x = (short) ((_sensorReadings[start + 1] << 8) | _sensorReadings[start]);
-	        var y = (short) ((_sensorReadings[start + 3] << 8) | _sensorReadings[start + 2]);
-	        var z = (short) ((_sensorReadings[start + 5] << 8) | _sensorReadings[start + 4]);
+	        var x = (short) ((sensorReadings[start + 1] << 8) | sensorReadings[start]);
+	        var y = (short) ((sensorReadings[start + 3] << 8) | sensorReadings[start + 2]);
+	        var z = (short) ((sensorReadings[start + 5] << 8) | sensorReadings[start + 4]);
             return new EulerAngles(x / divisor, y / divisor, z / divisor);
 	    }
 

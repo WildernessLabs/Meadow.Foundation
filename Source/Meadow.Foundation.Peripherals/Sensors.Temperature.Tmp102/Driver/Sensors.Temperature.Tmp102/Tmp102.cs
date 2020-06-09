@@ -164,7 +164,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                             break;
                         }
                         // capture history
-                        oldConditions = Conditions;
+                        oldConditions = AtmosphericConditions.From(Conditions);
 
                         // read
                         Update(); //syncrhnous for this driver 

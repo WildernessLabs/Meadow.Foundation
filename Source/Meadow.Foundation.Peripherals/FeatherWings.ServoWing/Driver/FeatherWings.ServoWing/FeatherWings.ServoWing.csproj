@@ -6,9 +6,6 @@
     <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.14.1" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Meadow.Foundation.Servo" Version="0.8.6" />
   </ItemGroup>
   <ItemGroup>

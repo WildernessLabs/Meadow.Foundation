@@ -4,7 +4,7 @@
     ///     Process GLL (Geographic position Latitude / Longitude) messages from a
     ///     GPS receiver.
     /// </summary>
-    public class GLLDecoder : NMEADecoder
+    public class GLLDecoder : INMEADecoder
     {
         #region Delegates and events
 
@@ -27,7 +27,7 @@
         /// <summary>
         ///     Prefix for the GLL (Geographic position Latitude / Longitude) decoder.
         /// </summary>
-        public override string Prefix
+        public string Prefix
         {
             get { return "$GPGLL"; }
         }
@@ -35,7 +35,7 @@
         /// <summary>
         ///     Friendly name for the GLL messages.
         /// </summary>
-        public override string Name
+        public string Name
         {
             get { return"GLL - Global Postioning System Fix Data"; }
         }
@@ -44,7 +44,7 @@
         ///     Process the data from a GLL message.
         /// </summary>
         /// <param name="data">String array of the message components for a GLL message.</param>
-        public override void Process(string[] data)
+        public void Process(string[] data)
         {
             if (OnGeographicLatitudeLongitudeReceived != null)
             {

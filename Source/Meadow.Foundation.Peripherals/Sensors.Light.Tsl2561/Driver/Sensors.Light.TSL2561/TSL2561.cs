@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Light;
 
 namespace Meadow.Foundation.Sensors.Light
 {
@@ -128,7 +127,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         ///     Update interval in milliseconds
         /// </summary>
-        private readonly ushort _updateInterval = 100;
+        private readonly ushort updateInterval = 100;
 
         #endregion Member variables / fields.
 
@@ -158,7 +157,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns>Sensor data.</returns>
         public ushort[] SensorReading
         {
-            get { return _tsl2561.ReadUShorts(Registers.Data0, 2, ByteOrder.LittleEndian); }
+            get { return tsl2561.ReadUShorts(Registers.Data0, 2, ByteOrder.LittleEndian); }
         }
 
         /// <summary>
@@ -170,7 +169,7 @@ namespace Meadow.Foundation.Sensors.Light
             set
             {
                 _lightLevel = value;
-                if ((_updateInterval > 0) && (Math.Abs(_lastNotifiedLux - value) >= LightLevelChangeNotificationThreshold))
+                if ((updateInterval > 0) && (Math.Abs(_lastNotifiedLux - value) >= LightLevelChangeNotificationThreshold))
                 {
                     LightLevelChanged(this, value);
                     _lastNotifiedLux = value;
@@ -190,7 +189,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </remarks>
         public byte ID
         {
-            get { return _tsl2561.ReadRegister(Registers.ID); }
+            get { return tsl2561.ReadRegister(Registers.ID); }
         }
 
         /// <summary>
@@ -206,12 +205,12 @@ namespace Meadow.Foundation.Sensors.Light
         {
             get
             {
-                var data = (byte) (_tsl2561.ReadRegister(Registers.Timing) & 0x10);
+                var data = (byte) (tsl2561.ReadRegister(Registers.Timing) & 0x10);
                 return data == 0 ? Gain.Low : Gain.High;
             }
             set
             {
-                var data = _tsl2561.ReadRegister(Registers.Timing);
+                var data = tsl2561.ReadRegister(Registers.Timing);
                 if (value == Gain.Low)
                 {
                     data &= 0xef; // Set bit 4 to 0.
@@ -220,7 +219,7 @@ namespace Meadow.Foundation.Sensors.Light
                 {
                     data |= 0x10; // Set bit 4 to 1.
                 }
-                _tsl2561.WriteRegister(Registers.Timing, data);
+                tsl2561.WriteRegister(Registers.Timing, data);
             }
         }
 
@@ -231,13 +230,13 @@ namespace Meadow.Foundation.Sensors.Light
         {
             get
             {
-                var timing = _tsl2561.ReadRegister(Registers.Timing);
+                var timing = tsl2561.ReadRegister(Registers.Timing);
                 timing &= 0x03;
                 return (IntegrationTiming) timing;
             }
             set
             {
-                var timing = (sbyte) _tsl2561.ReadRegister(Registers.Timing);
+                var timing = (sbyte) tsl2561.ReadRegister(Registers.Timing);
                 if (SensorGain == Gain.High)
                 {
                     timing |= 0x10;
@@ -248,7 +247,7 @@ namespace Meadow.Foundation.Sensors.Light
                 }
                 timing &= ~ 0x03;
                 timing |= (sbyte) ((sbyte) value & 0x03);
-                _tsl2561.WriteRegister(Registers.Timing, (byte) timing);
+                tsl2561.WriteRegister(Registers.Timing, (byte) timing);
             }
         }
 
@@ -262,10 +261,10 @@ namespace Meadow.Foundation.Sensors.Light
         /// </remarks>
         public ushort ThresholdLow
         {
-            get { return _tsl2561.ReadUShort(Registers.ThresholdLow, ByteOrder.LittleEndian); }
+            get { return tsl2561.ReadUShort(Registers.ThresholdLow, ByteOrder.LittleEndian); }
             set
             {
-                _tsl2561.WriteUShort((byte) (Registers.ThresholdLow + WordModeBit), value, ByteOrder.LittleEndian);
+                tsl2561.WriteUShort((byte) (Registers.ThresholdLow + WordModeBit), value, ByteOrder.LittleEndian);
             }
         }
 
@@ -279,10 +278,10 @@ namespace Meadow.Foundation.Sensors.Light
         /// </remarks>
         public ushort ThresholdHigh
         {
-            get { return _tsl2561.ReadUShort(Registers.ThresholdHigh, ByteOrder.LittleEndian); }
+            get { return tsl2561.ReadUShort(Registers.ThresholdHigh, ByteOrder.LittleEndian); }
             set
             {
-                _tsl2561.WriteUShort((byte) (Registers.ThresholdHigh + WordModeBit), value, ByteOrder.LittleEndian);
+                tsl2561.WriteUShort((byte) (Registers.ThresholdHigh + WordModeBit), value, ByteOrder.LittleEndian);
             }
         }
 
@@ -298,7 +297,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <remarks>
         ///     In this case the actual object will always be an I2SBus object.
         /// </remarks>
-        private readonly II2cPeripheral _tsl2561;
+        private readonly II2cPeripheral tsl2561;
 
         #endregion Properties
 
@@ -356,20 +355,16 @@ namespace Meadow.Foundation.Sensors.Light
         public Tsl2561(II2cBus i2cBus, byte address = (byte) Addresses.Default, ushort updateInterval = MinimumPollingPeriod,
             float lightLevelChangeNotificationThreshold = 10.0F)
         {
-            if ((address != (byte) Addresses.Address0) && (address != (byte) Addresses.Default) &&
-                (address != (byte) Addresses.Address1))
-            {
-                throw new ArgumentOutOfRangeException(nameof(address), "Address should be 0x29, 0x39 or 0x49.");
-            }
             if (lightLevelChangeNotificationThreshold < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(lightLevelChangeNotificationThreshold), "Light level threshold change values should be >= 0");
             }
+
             LightLevelChangeNotificationThreshold = lightLevelChangeNotificationThreshold;
-            _updateInterval = updateInterval;
+            this.updateInterval = updateInterval;
 
             var device = new I2cPeripheral(i2cBus, address);
-            _tsl2561 = device;
+            tsl2561 = device;
             //
             //  Wait for the sensor to prepare the first reading (402ms after power on).
             //
@@ -397,7 +392,7 @@ namespace Meadow.Foundation.Sensors.Light
                 while (true)
                 {
                     Update();
-                    Thread.Sleep(_updateInterval);
+                    Thread.Sleep(updateInterval);
                 }
             });
             t.Start();
@@ -485,7 +480,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </remarks>
         public void TurnOff()
         {
-            _tsl2561.WriteRegister(Registers.Control, 0x00);
+            tsl2561.WriteRegister(Registers.Control, 0x00);
         }
 
         /// <summary>
@@ -496,7 +491,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </remarks>
         public void TurnOn()
         {
-            _tsl2561.WriteRegister(Registers.Control, 0x03);
+            tsl2561.WriteRegister(Registers.Control, 0x03);
         }
 
         /// <summary>
@@ -509,7 +504,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </remarks>
         public void ClearInterrupt()
         {
-            _tsl2561.WriteByte(ClearInterruptBit);
+            tsl2561.WriteByte(ClearInterruptBit);
             if (_interruptPin != null)
             {
                 //Port: TODO - check if needed          _interruptPin.ClearInterrupt();
@@ -521,11 +516,11 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public void ManualStart()
         {
-            var timing = _tsl2561.ReadRegister(Registers.Timing);
+            var timing = tsl2561.ReadRegister(Registers.Timing);
             timing |= 0x03;
-            _tsl2561.WriteRegister(Registers.Timing, timing);
+            tsl2561.WriteRegister(Registers.Timing, timing);
             timing |= 0xf7; //  ~0x08;
-            _tsl2561.WriteRegister(Registers.Timing, timing);
+            tsl2561.WriteRegister(Registers.Timing, timing);
         }
 
         /// <summary>
@@ -533,9 +528,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public void ManualStop()
         {
-            var timing = _tsl2561.ReadRegister(Registers.Timing);
+            var timing = tsl2561.ReadRegister(Registers.Timing);
             timing &= 0xf7; //  ~0x08;
-            _tsl2561.WriteRegister(Registers.Timing, timing);
+            tsl2561.WriteRegister(Registers.Timing, timing);
         }
 
         /// <summary>
@@ -592,7 +587,7 @@ namespace Meadow.Foundation.Sensors.Light
             //  Clear the interrupt bit before we turn them on.
             //
             ClearInterrupt();
-            _tsl2561.WriteRegister(Registers.InterruptControl, registerValue);
+            tsl2561.WriteRegister(Registers.InterruptControl, registerValue);
         }
 
 

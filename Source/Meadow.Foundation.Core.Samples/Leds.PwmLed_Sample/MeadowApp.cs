@@ -17,18 +17,18 @@ namespace Leds.PwmLed_Sample
 
             pwmLeds = new List<PwmLed>
             {
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D02), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D03), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D04), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D05), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D06), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D07), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D08), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D09), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D10), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D11), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D12), TypicalForwardVoltage.Red),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D13), TypicalForwardVoltage.Red)
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D02), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D03), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D04), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D05), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D06), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D07), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D08), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D09), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D10), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D11), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D12), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D13), TypicalForwardVoltage.Blue)
             };
 
             TestPwmLeds();
@@ -44,7 +44,7 @@ namespace Leds.PwmLed_Sample
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.IsOn = true;
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                     pwmLed.IsOn = false;
                 }
 
@@ -52,7 +52,7 @@ namespace Leds.PwmLed_Sample
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartBlink();
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
                     pwmLed.Stop();
                 }
 
@@ -60,7 +60,7 @@ namespace Leds.PwmLed_Sample
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartPulse();
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
                     pwmLed.Stop();
                 }
 
@@ -68,13 +68,13 @@ namespace Leds.PwmLed_Sample
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.SetBrightness(0.25f);
-                    Thread.Sleep(500);
+                    Thread.Sleep(250);
                     pwmLed.SetBrightness(0.5f);
-                    Thread.Sleep(500);
+                    Thread.Sleep(250);
                     pwmLed.SetBrightness(0.75f);
-                    Thread.Sleep(500);
+                    Thread.Sleep(250);
                     pwmLed.SetBrightness(1.0f);
-                    Thread.Sleep(500);
+                    Thread.Sleep(250);
                     pwmLed.Stop();
                 }
             }

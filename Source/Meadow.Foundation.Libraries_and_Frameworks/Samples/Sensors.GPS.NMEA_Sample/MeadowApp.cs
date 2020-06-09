@@ -5,118 +5,103 @@ using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Foundation.Sensors.GPS;
 using System.Text;
+using Meadow.Foundation.Communications;
 
 namespace BasicSensors.GPS.NMEA_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        SerialPort sp;
-        byte[] data = new byte[4096];
+        ISerialPort port;
+        byte[] data = new byte[512];
 
         public MeadowApp()
         {
-             GpsLoopTest();
-            // LoopBackTest();
-
-            //  SimpleTest();
-
-            //  EventTest();
-           // TestNMEA();
-        }
-
-        void GpsLoopTest()
-        {
-            var port = Device.CreateSerialPort(Device.SerialPortNames.Com4, 9600);
-            Console.WriteLine("\tCreated");
+            //COM4 - Pins D00 & D01 on the Meadow F7
+            port = Device.CreateSerialPort(Device.SerialPortNames.Com4, 9600);
+            Console.WriteLine("Serial port created");
             port.Open();
+            Console.WriteLine("Serial port opened");
 
-            var buffer = new byte[1024];
-
-            string msg = string.Empty;
-
-            while (true)
-            {
-                var len = port.Read(buffer, 0, buffer.Length);
-
-                msg = Encoding.ASCII.GetString(buffer, 0, len);
-
-               // for (var index = 0; index < len; index++)
-              //  {
-              //      msg += (char)buffer[index];
-              //  }
-
-                Console.WriteLine($"Read {len} bytes: {BitConverter.ToString(buffer, 0, len)}");
-                Console.WriteLine(msg);
-
-                Thread.Sleep(1000);
-            }
-
+            //LoopBackTest();
+            //SerialReadTest();
+            //EventTest();
+            TestNMEA();
         }
 
+        //simple loopback test - bridge pins D01 & D01 for COM4 on the Meadow F7
         void LoopBackTest()
         {
-            var port = Device.CreateSerialPort(Device.SerialPortNames.Com4, 9600);
-            Console.WriteLine("\tCreated");
-            port.Open();
-
-            var buffer = new byte[1024];
-
             while (true)
             {
                 Console.WriteLine("Writing data...");
-                var written = port.Write(Encoding.ASCII.GetBytes("Hello Meadow!"));
+                var written = port.Write(Encoding.ASCII.GetBytes("Hello Meadow!"));//max write is 255 bytes in B3.11
+
                 Console.WriteLine($"Wrote {written} bytes");
-                var read = port.Read(buffer, 0, buffer.Length);
-                Console.WriteLine($"Read {read} bytes: {BitConverter.ToString(buffer, 0, read)}");
+                var read = port.Read(data, 0, data.Length);
+                Console.WriteLine($"Read {read} bytes: {BitConverter.ToString(data, 0, read)}");
 
                 Thread.Sleep(2000);
             }
         }
+        void SerialReadTest()
+        {
+            string msg = string.Empty;
+
+            while (true)
+            {
+                var len = port.Read(data, 0, data.Length);
+
+                Console.WriteLine($"Read {len} bytes: {BitConverter.ToString(data, 0, len)}");
+
+             //   Console.WriteLine(msg);
+
+                Thread.Sleep(100);
+            }
+        }
 
         void EventTest()
-        { 
-          /*  sp = new SerialPort("ttyS1", 9600, Parity.None, 8, StopBits.One);
-            sp.Open();
-
-            sp.DataReceived += Sp_DataReceived;
-
-            Thread.Sleep(-1);  */
+        {
+            port.DataReceived += Sp_DataReceived;
         }
 
         private void Sp_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            var len = sp.Read(data, 0, sp.BytesToRead);
+            var len = port.Read(data, 0, data.Length);
 
             Console.WriteLine($"Read {len} bytes");
             Console.WriteLine($"Data: {BitConverter.ToString(data, 0, len)}");
-       }
-
-        void TestNMEA()
-        { 
-            var gps = new NMEA(Device, Device.SerialPortNames.Com1, 9600, Parity.None, 8, StopBits.One);
+        }
                 
+        void TestNMEA()
+        {
+            Console.WriteLine("Create NMEA");
+            var nmea = new NMEAMessageDecoder();
+
+            Console.WriteLine("Add decoders");
             var ggaDecoder = new GGADecoder();
             ggaDecoder.OnPositionReceived += GgaDecoder_OnPositionReceived;
-            gps.AddDecoder(ggaDecoder);
-            //
+            nmea.AddDecoder(ggaDecoder);
+            
             var gllDecoder = new GLLDecoder();
             gllDecoder.OnGeographicLatitudeLongitudeReceived += GllDecoder_OnGeographicLatitudeLongitudeReceived;
-            gps.AddDecoder(gllDecoder);
-            //
+            nmea.AddDecoder(gllDecoder);
+      
             var gsaDecoder = new GSADecoder();
             gsaDecoder.OnActiveSatellitesReceived += GsaDecoder_OnActiveSatelitesReceived;
-            gps.AddDecoder(gsaDecoder);
-            //
+            nmea.AddDecoder(gsaDecoder);
+        
             var rmcDecoder = new RMCDecoder();
             rmcDecoder.OnPositionCourseAndTimeReceived += RmcDecoder_OnPositionCourseAndTimeReceived;
-            gps.AddDecoder(rmcDecoder);
-            //
+            nmea.AddDecoder(rmcDecoder);
+        
             var vtgDecoder = new VTGDecoder();
             vtgDecoder.OnCourseAndVelocityReceived += VtgDecoder_OnCourseAndVelocityReceived;
-            gps.AddDecoder(vtgDecoder); 
-            //
-            gps.Open();
-            Thread.Sleep(Timeout.Infinite); 
+            nmea.AddDecoder(vtgDecoder);
+
+            Console.WriteLine("Create STF");
+            var serialTextFile = new SerialTextFile(port, "\r\n");
+
+            serialTextFile.OnLineReceived += (s, line) => nmea.SetNmeaMessage(line);
         }
 
         private static string DecodeDMPostion(DegreeMinutePosition dmp)
@@ -150,7 +135,7 @@ namespace BasicSensors.GPS.NMEA_Sample
             Console.WriteLine("Magnetic heading: " + courseAndVelocity.MagneticHeading.ToString("f2"));
             Console.WriteLine("Knots: " + courseAndVelocity.Knots.ToString("f2"));
             Console.WriteLine("KPH: " + courseAndVelocity.KPH.ToString("f2"));
-            Console.WriteLine("*********************************************\n");
+            Console.WriteLine("*********************************************");
         }
 
         private static void RmcDecoder_OnPositionCourseAndTimeReceived(object sender,
@@ -162,7 +147,7 @@ namespace BasicSensors.GPS.NMEA_Sample
             Console.WriteLine("Longitude: " + DecodeDMPostion(positionCourseAndTime.Longitude));
             Console.WriteLine("Speed: " + positionCourseAndTime.Speed.ToString("f2"));
             Console.WriteLine("Course: " + positionCourseAndTime.Course.ToString("f2"));
-            Console.WriteLine("*********************************************\n");
+            Console.WriteLine("*********************************************");
         }
 
         private static void GsaDecoder_OnActiveSatelitesReceived(object sender, ActiveSatellites activeSatellites)
@@ -172,7 +157,7 @@ namespace BasicSensors.GPS.NMEA_Sample
             Console.WriteLine("Dilution of precision: " + activeSatellites.DilutionOfPrecision.ToString("f2"));
             Console.WriteLine("HDOP: " + activeSatellites.HorizontalDilutionOfPrecision.ToString("f2"));
             Console.WriteLine("VDOP: " + activeSatellites.VerticalDilutionOfPrecision.ToString("f2"));
-            Console.WriteLine("*********************************************\n");
+            Console.WriteLine("*********************************************");
         }
 
         private static void GllDecoder_OnGeographicLatitudeLongitudeReceived(object sender, GPSLocation location)
@@ -181,7 +166,7 @@ namespace BasicSensors.GPS.NMEA_Sample
             Console.WriteLine("Time of reading: " + location.ReadingTime);
             Console.WriteLine("Latitude: " + DecodeDMPostion(location.Latitude));
             Console.WriteLine("Longitude: " + DecodeDMPostion(location.Longitude));
-            Console.WriteLine("*********************************************\n");
+            Console.WriteLine("*********************************************");
         }
 
         private static void GgaDecoder_OnPositionReceived(object sender, GPSLocation location)
@@ -194,7 +179,7 @@ namespace BasicSensors.GPS.NMEA_Sample
             Console.WriteLine("Number of satellites: " + location.NumberOfSatellites);
             Console.WriteLine("Fix quality: " + location.FixQuality);
             Console.WriteLine("HDOP: " + location.HorizontalDilutionOfPrecision.ToString("f2"));
-            Console.WriteLine("*********************************************\n");
+            Console.WriteLine("*********************************************");
         }
     }
 }

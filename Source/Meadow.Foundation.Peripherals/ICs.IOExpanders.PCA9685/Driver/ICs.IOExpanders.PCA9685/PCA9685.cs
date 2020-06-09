@@ -2,7 +2,6 @@
 using System;
 using System.Threading;
 
-
 namespace Meadow.Foundation.ICs
 {
     /// <summary>
@@ -11,10 +10,8 @@ namespace Meadow.Foundation.ICs
     /// <remarks>All PWM channels run at the same Frequency</remarks>
     public class Pca9685
     {
-        private readonly II2cBus _i2cBus;
-        private readonly byte _address;
-        private readonly II2cPeripheral _i2cPeripheral;
-        private readonly int _frequency;
+        private readonly II2cPeripheral i2cPeripheral;
+        private readonly int frequency;
 
         //# Registers/etc.
         protected const byte Mode1 = 0x00;
@@ -33,22 +30,22 @@ namespace Meadow.Foundation.ICs
         protected const byte AllLedOffH = 0xFD;
 
         //# Bits
-        protected const byte _Restart = 0x80;
-        protected const byte Sleep = 0x10;
-        protected const byte AllCall = 0x01;
-        protected const byte Invrt = 0x10;
-        protected const byte OutDrv = 0x04;
-        protected const byte Mode1AI = 0x21;
+        protected const byte restart = 0x80;
+        protected const byte sleep = 0x10;
+        protected const byte allCall = 0x01;
+        protected const byte invert = 0x10;
+        protected const byte outDrv = 0x04;
+        protected const byte mode1AI = 0x21;
 
-        public II2cBus i2CBus { get => _i2cBus; }
-        public byte Address { get => _address; }
+        public II2cBus i2CBus { get; protected set; }
+        public byte Address { get; protected set; }
 
         public Pca9685(II2cBus i2cBus, byte address, int frequency = 100)
         {
-            _i2cBus = i2cBus;
-            _address = address;
-            _i2cPeripheral = new I2cPeripheral(_i2cBus, _address);
-            _frequency = frequency;
+            this.i2CBus = i2cBus;
+            Address = address;
+            i2cPeripheral = new I2cPeripheral(i2CBus, Address);
+            this.frequency = frequency;
         }
 
         /// <summary>
@@ -56,16 +53,17 @@ namespace Meadow.Foundation.ICs
         /// </summary>
         public virtual void Initialize()
         {
-            _i2cBus.WriteData(_address, Mode1, 0X00);
-            _i2cBus.WriteData(_address, Mode1);
+            i2CBus.WriteData(Address, Mode1, 0X00);
+            i2CBus.WriteData(Address, Mode1);
 
             Thread.Sleep(5);
 
-            SetFrequency(_frequency);
+            SetFrequency(frequency);
 
             for (byte i = 0; i < 16; i++)
+            {
                 SetPwm(i, 0, 0);
-
+            }
         }
 
         /// <summary>
@@ -81,7 +79,7 @@ namespace Meadow.Foundation.ICs
                 throw new ArgumentException("Value must be between 0 and 15", "portNumber");
             }
 
-            var pwmPort = new PwmPortPCA9685(_i2cBus, _address, Led0OnL, _frequency, portNumber, dutyCycle);
+            var pwmPort = new PwmPortPCA9685(i2CBus, Address, Led0OnL, frequency, portNumber, dutyCycle);
 
             return pwmPort;
         }
@@ -137,12 +135,12 @@ namespace Meadow.Foundation.ICs
 
         protected virtual void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
         {
-            _i2cBus.WriteData(_address, register, ledXOnL, ledXOnH, ledXOffL, ledXOffH);
+            i2CBus.WriteData(Address, register, ledXOnL, ledXOnH, ledXOffL, ledXOffH);
         }
 
         protected virtual void Write(byte register, byte value)
         {
-            _i2cPeripheral.WriteRegister(register, value);
+            i2cPeripheral.WriteRegister(register, value);
         }
 
         protected virtual void SetFrequency(int frequency)
@@ -153,18 +151,15 @@ namespace Meadow.Foundation.ICs
             prescaleval -= 1.0;
 
             double prescale = Math.Floor(prescaleval + 0.5);
-            byte oldmode = _i2cPeripheral.ReadRegister(Mode1);
+            byte oldmode = i2cPeripheral.ReadRegister(Mode1);
             byte newmode = (byte)((oldmode & 0x7F) | 0x10);         //   # sleep
-
 
             Write(Mode1, newmode);//       # go to sleep
             Write(PreScale, (byte)((int)(Math.Floor(prescale))));
             Write(Mode1, oldmode);
 
             Thread.Sleep(5);
-            Write(Mode1, (byte)(oldmode | 0x80 | Mode1AI));
-
+            Write(Mode1, (byte)(oldmode | 0x80 | mode1AI));
         }
-
     }
 }

@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             break;
                         }
                         // capture history
-                        oldConditions = Conditions;
+                        oldConditions = AtmosphericConditions.From(Conditions);
 
                         // read
                         await Update();

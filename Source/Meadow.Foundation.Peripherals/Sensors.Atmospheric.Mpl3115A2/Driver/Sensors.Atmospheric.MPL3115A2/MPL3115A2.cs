@@ -185,7 +185,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             break;
                         }
                         // capture history
-                        oldConditions = Conditions;
+                        oldConditions = AtmosphericConditions.From(Conditions);
 
                         Thread.Sleep(50);
                         Console.WriteLine("Read");

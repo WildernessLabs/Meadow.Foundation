@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
         {
             if ((width * height) != bitmap.Length)
             {
@@ -115,7 +115,7 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
         {
             if ((width * height) != bitmap.Length)
             {

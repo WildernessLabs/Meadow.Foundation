@@ -89,7 +89,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             //   SetIsAwake(true);
             //   SetDisplayOn(true);
-            //    SetBlinkRate(BlinkRate.Off);
+            //   SetBlinkRate(BlinkRate.Off);
 
             _I2cPeripheral.WriteByte(0x21);
 
@@ -143,11 +143,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public void ToggleLed(byte ledIndex, bool ledOn)
         {
             if (ledIndex > 127)
+            {
                 throw new IndexOutOfRangeException("LED Index must be between 0 and 127");
-
+            }
 
             var index = ledIndex / 8;
-
 
             if (ledOn)
             {

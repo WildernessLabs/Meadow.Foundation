@@ -395,7 +395,7 @@ namespace Meadow.Foundation.Displays
             currentPen = pen;
         }
 
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
         {
             if ((width * height) != bitmap.Length)
             {
@@ -416,7 +416,7 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
         {
             DrawBitmap(x, y, width, height, bitmap, BitmapMode.And);
         }
