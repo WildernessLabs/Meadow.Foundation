@@ -31,22 +31,13 @@ namespace ICs.IOExpanders
         protected const byte CommandRegister = 0xFD;
         protected const byte CommandFunctionReg = 0x0B;  //'page nine'
 
-        protected readonly II2cPeripheral _i2cPeripheral;
+        protected readonly II2cPeripheral i2cPeripheral;
 
-        private byte _frame;
-
-        public byte Frame 
-        { 
-            get => _frame; 
-            private set
-            {
-                _frame = value; 
-            } 
-        }
-
+        public byte Frame { get; private set; }
+       
         public IS31FL3731(II2cBus i2cBus, byte address)
         {
-            _i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cPeripheral = new I2cPeripheral(i2cBus, address);
             Frame = 0;
         }
 
@@ -68,7 +59,6 @@ namespace ICs.IOExpanders
 
             //disable blink mode
             WriteRegister(CommandFunctionReg, DisplayOptionRegister, 0x00);
-
         }
 
         /// <summary>
@@ -88,14 +78,20 @@ namespace ICs.IOExpanders
         public virtual void SetLedState(byte frame, bool on)
         {
             if (frame < 0 || frame > 7)
+            {
                 throw new ArgumentOutOfRangeException(nameof(frame), $"{nameof(frame)} # has to be between 0 and 7");
+            }
 
             for (byte i = 0x00; i <= 0x11; i++)
             {
-                if(on)
+                if (on)
+                {
                     WriteRegister(frame, i, 0xFF);
+                }
                 else
+                {
                     WriteRegister(frame, i, 0x00);
+                }
             }
         }
 
@@ -113,8 +109,7 @@ namespace ICs.IOExpanders
         {
             SelectPage(frame);
 
-            _i2cPeripheral.WriteRegister(reg, data);
-            
+            i2cPeripheral.WriteRegister(reg, data);
         }
 
         /// <summary>
@@ -251,7 +246,7 @@ namespace ICs.IOExpanders
         /// <param name="page">page/frame #</param>
         protected virtual void SelectPage(byte page)
         {
-            _i2cPeripheral.WriteRegister(CommandRegister, page);
+            i2cPeripheral.WriteRegister(CommandRegister, page);
         }
     }
 }
