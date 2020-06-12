@@ -11,17 +11,18 @@ namespace Meadow.Foundation.FeatherWings
     /// <remarks>All PWM channels run at the same Frequency</remarks>
     public class ServoWing 
     {
-        readonly short ports;
-        Pca9685 pca9685;
+        readonly short portCount;
+
+        protected Pca9685 pca9685;
         
-        public ServoWing(II2cBus i2cBus, byte address = 0x40, int frequency = 50, short ports = 8)
+        public ServoWing(II2cBus i2cBus, byte address = 0x40, int frequency = 50, short portCount = 8)
         {
-            if (ports != 8 && ports != 16)
+            if (portCount != 8 && portCount != 16)
             {
                 throw new ArgumentException("Channels need to be 8 or 16", "ports");
             }
 
-            this.ports = ports;
+            this.portCount = portCount;
             pca9685 = new Pca9685(i2cBus, address, frequency);
         }
 
@@ -32,9 +33,9 @@ namespace Meadow.Foundation.FeatherWings
 
         public Servo GetServo(byte portIndex, ServoConfig servoConfig)
         {
-            if ((portIndex < 0) || (portIndex > ports))
+            if ((portIndex < 0) || (portIndex > portCount))
             {
-                throw new ArgumentException($"Servo num must be between 1 and {ports}", "num");
+                throw new ArgumentException($"Servo num must be between 1 and {portCount}", "num");
             }
 
             var pwm = pca9685.CreatePwmPort(portIndex);
@@ -45,9 +46,9 @@ namespace Meadow.Foundation.FeatherWings
 
         public IContinuousRotationServo GetContinuousRotatioServo(byte portIndex, ServoConfig servoConfig)
         {
-            if ((portIndex < 0) || (portIndex > ports))
+            if ((portIndex < 0) || (portIndex > portCount))
             {
-                throw new ArgumentException($"Continuous Rotatio Servo num must be between 1 and {ports}", "num");
+                throw new ArgumentException($"Continuous Rotatio Servo num must be between 1 and {portCount}", "num");
             }
 
             var pwm = pca9685.CreatePwmPort(portIndex);
