@@ -49,7 +49,6 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
 
             // start updating continuously
             mpl3115A2.StartUpdating();
-
         }
 
         protected async Task ReadConditions()
