@@ -295,7 +295,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         {
             while (port.BytesToRead > 0)
             {
-                var data = port.ReadToToken(EndToken);
+                var data = port.ReadTo(new char[] { (char)EndToken });
                 if (data.Length == 0)
                 {
                     break;

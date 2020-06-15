@@ -10,6 +10,9 @@ namespace Meadow.Foundation.Sensors.Rotary
     /// </summary>
     public class RotaryEncoder : IRotaryEncoder
     {
+        private const int DefaultDebounceDuration = 0;
+        private const int DefaultGlitchFilterCycleCount = 0;
+
         #region Properties
 
         /// <summary>
@@ -67,8 +70,8 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
         public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
-            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 0, .5),
-                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 0, .5))
+            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, DefaultDebounceDuration, DefaultGlitchFilterCycleCount),
+                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, DefaultDebounceDuration, DefaultGlitchFilterCycleCount))
         { }
 
         /// <summary>
