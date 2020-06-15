@@ -108,7 +108,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// <param name="height">Height of the bitmap in bytes.</param>
         /// <param name="bitmap">Bitmap to display.</param>
         /// <param name="bitmapMode">How should the bitmap be transferred to the display?</param>
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
         {
             if ((width * height) != bitmap.Length)
             {
@@ -142,7 +142,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// <param name="height">Height of the bitmap in bytes.</param>
         /// <param name="bitmap">Bitmap to display.</param>
         /// <param name="color">The color of the bitmap.</param>
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
         {
             if ((width * height) != bitmap.Length)
             {
@@ -292,7 +292,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// </summary>
         public void Show(uint x0, uint y0, uint x1, uint y1)
         {
-            if(x1 <= x0 || y1 <= y0)
+            if(x1 < x0 || y1 < y0)
             {   //could throw an exception
                 return;
             }

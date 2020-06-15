@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.GPS
 {
-    public class GSADecoder : NMEADecoder
+    public class GSADecoder : INMEADecoder
     {
         #region Delegates and events
 
@@ -23,7 +23,7 @@
         /// <summary>
         ///     Prefix for the GSA decoder.
         /// </summary>
-        public override string Prefix
+        public string Prefix
         {
             get { return "$GPGSA"; }
         }
@@ -31,7 +31,7 @@
         /// <summary>
         ///     Friendly name for the GSA messages.
         /// </summary>
-        public override string Name
+        public string Name
         {
             get { return "GSA - DOP and number of active satellites."; }
         }
@@ -40,7 +40,7 @@
         ///     Process the data from a GSA message.
         /// </summary>
         /// <param name="data">String array of the message components for a GSA message.</param>
-        public override void Process(string[] data)
+        public void Process(string[] data)
         {
             if (OnActiveSatellitesReceived != null)
             {

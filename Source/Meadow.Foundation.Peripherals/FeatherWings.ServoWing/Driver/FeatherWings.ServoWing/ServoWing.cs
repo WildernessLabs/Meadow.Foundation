@@ -11,49 +11,50 @@ namespace Meadow.Foundation.FeatherWings
     /// <remarks>All PWM channels run at the same Frequency</remarks>
     public class ServoWing 
     {
-        readonly short _ports;
-        Pca9685 _pca9685;
+        readonly short portCount;
+
+        protected Pca9685 pca9685;
         
-        public ServoWing(II2cBus i2cBus, byte address = 0x40, int frequency = 50, short ports = 8)
+        public ServoWing(II2cBus i2cBus, byte address = 0x40, int frequency = 50, short portCount = 8)
         {
-            if (ports != 8 && ports != 16)
+            if (portCount != 8 && portCount != 16)
             {
                 throw new ArgumentException("Channels need to be 8 or 16", "ports");
             }
 
-            _ports = ports;
-            _pca9685 = new Pca9685(i2cBus, address, frequency);
+            this.portCount = portCount;
+            pca9685 = new Pca9685(i2cBus, address, frequency);
         }
 
         public void Initialize()
         {
-            _pca9685.Initialize();
+            pca9685.Initialize();
         }
 
-
-        public Servo GetServo(byte num, ServoConfig servoConfig)
+        public Servo GetServo(byte portIndex, ServoConfig servoConfig)
         {
-            if ((num < 0) || (num > _ports))
-                throw new ArgumentException($"Servo num must be between 1 and {_ports}", "num");
+            if ((portIndex < 0) || (portIndex > portCount))
+            {
+                throw new ArgumentException($"Servo num must be between 1 and {portCount}", "num");
+            }
 
-
-            IPwmPort pwm = _pca9685.CreatePwmPort(num);
-            Servo servo = new Servo(pwm, servoConfig);
+            var pwm = pca9685.CreatePwmPort(portIndex);
+            var servo = new Servo(pwm, servoConfig);
 
             return servo;
         }
 
-        public IContinuousRotationServo GetContinuousRotatioServo(byte num, ServoConfig servoConfig)
+        public IContinuousRotationServo GetContinuousRotatioServo(byte portIndex, ServoConfig servoConfig)
         {
-            if ((num < 0) || (num > _ports))
-                throw new ArgumentException($"Continuous Rotatio Servo num must be between 1 and {_ports}", "num");
+            if ((portIndex < 0) || (portIndex > portCount))
+            {
+                throw new ArgumentException($"Continuous Rotatio Servo num must be between 1 and {portCount}", "num");
+            }
 
-
-            IPwmPort pwm = _pca9685.CreatePwmPort(num);
-            ContinuousRotationServo servo = new ContinuousRotationServo(pwm, servoConfig);
+            var pwm = pca9685.CreatePwmPort(portIndex);
+            var servo = new ContinuousRotationServo(pwm, servoConfig);
 
             return servo;
         }
-
     }
 }

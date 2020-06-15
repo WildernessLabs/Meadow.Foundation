@@ -9,7 +9,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public class DigitalInputPort : DigitalInputPortBase
         {
             Mcp23x08 _mcp;
-            private int _debounceDuration;
+
             private readonly IPin _pin;
             private DateTime _lastChangeTime;
             private bool _lastState;
@@ -23,8 +23,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             public override ResistorMode Resistor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-            public override int DebounceDuration { get => _debounceDuration; set => _debounceDuration = value; }
-            public override int GlitchFilterCycleCount { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public override double DebounceDuration { get; set; } //Todo not currently used
+
+            public override double GlitchDuration { get; set; } //Todo not currently used
 
             public DigitalInputPort(
                 Mcp23x08 mcpController,
@@ -57,13 +58,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         switch (InterruptMode)
                         {
                             case InterruptMode.EdgeFalling:
-                            case InterruptMode.LevelLow:
                                 if (currentState)
                                     RaiseChangedAndNotify(
                                         new DigitalInputPortEventArgs(false, now, _lastChangeTime));
                                 break;
                             case InterruptMode.EdgeRising:
-                            case InterruptMode.LevelHigh:
                                 if (currentState)
                                     RaiseChangedAndNotify(
                                         new DigitalInputPortEventArgs(true, now, _lastChangeTime));

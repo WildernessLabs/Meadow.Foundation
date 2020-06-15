@@ -17,7 +17,7 @@ namespace Sensors.Switches.DipSwitch_Sample
 
             IDigitalInputPort[] ports =
             {
-                Device.CreateDigitalInputPort(Device.Pins.D06, InterruptMode.LevelHigh, ResistorMode.PullDown),
+                Device.CreateDigitalInputPort(Device.Pins.D06, InterruptMode.EdgeRising, ResistorMode.PullDown),
          //       Device.CreateDigitalInputPort(Device.Pins.D07, InterruptMode.EdgeFalling, ResistorMode.PullDown),
          //       Device.CreateDigitalInputPort(Device.Pins.D08, InterruptMode.EdgeFalling, ResistorMode.PullDown),
          //       Device.CreateDigitalInputPort(Device.Pins.D09, InterruptMode.EdgeFalling, ResistorMode.PullDown),

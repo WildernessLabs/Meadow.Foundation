@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// The number of the LEDs in the bar graph
         /// </summary>
-        public int Count => _isPwm ? _pwmLeds.Length : _leds.Length;
+        public int Count => _leds.Length;
 
         /// <summary>
         /// A value between 0 and 1 that controls the number of LEDs that are activated
@@ -21,10 +21,9 @@ namespace Meadow.Foundation.Leds
             set => SetPercentage(value);
         }
 
-        protected PwmLed[] _pwmLeds;
         protected Led[] _leds;
 
-        protected bool _isPwm = false;
+        private LedBarGraph() { }
 
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPins
@@ -37,8 +36,6 @@ namespace Meadow.Foundation.Leds
             {
                 _leds[i] = new Led(device, pins[i]);
             }
-
-            _isPwm = false;
         }
 
         /// <summary>
@@ -52,23 +49,6 @@ namespace Meadow.Foundation.Leds
             {
                 _leds[i] = new Led(ports[i]);
             }
-
-            _isPwm = false;
-        }
-
-        /// <summary>
-        /// Create an LedBarGraph instance from an array of IPwnPin and a forwardVoltage for all LEDs in the bar graph
-        /// </summary>
-        public LedBarGraph(IIODevice device, IPin[] pins, float forwardVoltage)
-        {
-            _pwmLeds = new PwmLed[pins.Length];
-
-            for (int i = 0; i < pins.Length; i++)
-            {
-                _pwmLeds[i] = null; //ToDo - needs device.CreatePwmPort()     
-                   // new PwmLed(device, pins[i], forwardVoltage);
-            }
-            _isPwm = true;
         }
 
         /// <summary>
@@ -78,27 +58,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="isOn"></param>
         public void SetLed(int index, bool isOn)
         {
-            if(_isPwm)
-            {
-                _pwmLeds[index].SetBrightness(isOn ? 1 : 0);
-            }
-            else
-            {
-                _leds[index].IsOn = isOn;
-            }
-        }
-
-        /// <summary>
-        /// Set the brightness of an individual LED when using PWM
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="brightness"></param>
-        public void SetLedBrightness(int index, float brightness)
-        {
-            if (_isPwm == false)
-                throw new InvalidOperationException();
-
-            _pwmLeds[index].SetBrightness(brightness);
+            _leds[index].IsOn = isOn;
         }
 
         /// <summary>
@@ -112,8 +72,7 @@ namespace Meadow.Foundation.Leds
 
             float value = percentage * Count;
             
-            if (_isPwm == false)
-                value += 0.5f;
+            value += 0.5f;
 
             for (int i = 1; i <= Count; i++)
             {
@@ -121,15 +80,37 @@ namespace Meadow.Foundation.Leds
                 {
                     SetLed(i - 1, true);
                 }
-                else if (_isPwm && i <= value + 1)
-                {
-                    SetLedBrightness(i - 1, value + 1 - i);                    
-                }
                 else
                 {
                     SetLed(i - 1, false);
                 }
             }
         }
+
+        #region Public Methods
+        /// <summary>
+        /// Blink animation that turns the LED bar graph on and off based on the OnDuration and offDuration values in ms
+        /// </summary>
+        /// <param name="onDuration"></param>
+        /// <param name="offDuration"></param>
+        public void StartBlink(uint onDuration = 200, uint offDuration = 200)
+        {
+            foreach (var led in _leds)
+            {
+                led.StartBlink(onDuration, offDuration);
+            }
+        }
+
+        /// <summary>
+        /// Stops the LED bar graph when its blinking and/or turns it off.
+        /// </summary>
+        public void Stop()
+        {
+            foreach (var led in _leds)
+            {
+                led.Stop();
+            }
+        }
+        #endregion
     }
 }

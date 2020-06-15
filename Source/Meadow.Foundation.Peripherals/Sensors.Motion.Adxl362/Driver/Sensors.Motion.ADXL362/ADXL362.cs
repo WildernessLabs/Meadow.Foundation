@@ -856,7 +856,7 @@ namespace Meadow.Foundation.Sensors.Motion
                             break;
                         }
                         // capture history
-                        oldConditions = Conditions;
+                        oldConditions = AccelerationConditions.From(Conditions);
 
                         // read
                         Update();
@@ -1036,11 +1036,11 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (activeLow)
             {
-                return (InterruptMode.LevelLow);
+                return (InterruptMode.EdgeFalling);
             }
             else
             {
-                return(InterruptMode.LevelHigh);
+                return(InterruptMode.EdgeRising);
             }
         }
 

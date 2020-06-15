@@ -44,33 +44,33 @@ namespace Leds.Led_Sample
 
             while (true)
             {
-                Console.WriteLine("Turning on each led every 1 second");
+                Console.WriteLine("Turning on each led every 100ms");
                 foreach (var led in leds)
                 {
                     led.IsOn = true;
-                    Thread.Sleep(1000);
+                    Thread.Sleep(100);
                 }
 
-                Console.WriteLine("Turning off each led every 1 second");
+                Console.WriteLine("Turning off each led every 100ms");
                 foreach (var led in leds)
                 {
                     led.IsOn = false;
-                    Thread.Sleep(1000);
+                    Thread.Sleep(100);
                 }
 
-                Console.WriteLine("Turning on and off each led for 1 second");
+                Console.WriteLine("Turning on and off each led for 100ms");
                 foreach (var led in leds)
                 {
                     led.IsOn = true;
-                    Thread.Sleep(1000);
+                    Thread.Sleep(100);
                     led.IsOn = false;
                 }
 
-                Console.WriteLine("Blinking the LED for a bit.");
+                Console.WriteLine("Blinking the LEDs for a second each");
                 foreach (var led in leds)
                 {
                     led.StartBlink();
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
                     led.Stop();
                 }
             }

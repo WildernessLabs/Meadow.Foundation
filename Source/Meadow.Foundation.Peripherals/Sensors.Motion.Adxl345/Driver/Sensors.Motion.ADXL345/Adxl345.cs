@@ -29,10 +29,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Communication bus used to communicate with the sensor.
         /// </summary>
-        private readonly II2cPeripheral _adxl345;
+        private readonly II2cPeripheral adxl345;
 
         // internal thread lock
-        private object _lock = new object();
+        private object lockObject = new object();
         private CancellationTokenSource SamplingTokenSource;
 
         #endregion Member variables / fields
@@ -159,8 +159,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetX
         {
-            get { return (sbyte) _adxl345.ReadRegister(Registers.OffsetX); }
-            set { _adxl345.WriteRegister(Registers.OffsetX, (byte) value); }
+            get { return (sbyte) adxl345.ReadRegister(Registers.OffsetX); }
+            set { adxl345.WriteRegister(Registers.OffsetX, (byte) value); }
         }
 
         /// <summary>
@@ -171,8 +171,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetY
         {
-            get { return (sbyte) _adxl345.ReadRegister(Registers.OffsetY); }
-            set { _adxl345.WriteRegister(Registers.OffsetY, (byte) value); }
+            get { return (sbyte) adxl345.ReadRegister(Registers.OffsetY); }
+            set { adxl345.WriteRegister(Registers.OffsetY, (byte) value); }
         }
 
         /// <summary>
@@ -183,8 +183,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetZ
         {
-            get { return (sbyte) _adxl345.ReadRegister(Registers.OffsetZ); }
-            set { _adxl345.WriteRegister(Registers.OffsetZ, (byte) value); }
+            get { return (sbyte) adxl345.ReadRegister(Registers.OffsetZ); }
+            set { adxl345.WriteRegister(Registers.OffsetZ, (byte) value); }
         }
 
         #endregion Properties
@@ -209,14 +209,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="i2cBus">I2C bus</param>
         public Adxl345(II2cBus i2cBus, byte address = 0x53)
         {
-            if ((address != 0x1d) && (address != 0x53))
-            {
-                throw new ArgumentOutOfRangeException(nameof(address), "ADXL345 address can only be 0x1d or 0x53.");
-            }
+             adxl345 = new I2cPeripheral(i2cBus, address);
 
-            _adxl345 = new I2cPeripheral(i2cBus, address);
-
-            var deviceID = _adxl345.ReadRegister(Registers.DeviceID);
+            var deviceID = adxl345.ReadRegister(Registers.DeviceID);
 
             if (deviceID != 0xe5)
             {
@@ -248,7 +243,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
+            lock (lockObject)
             {
                 if (IsSampling) { return; }
 
@@ -270,7 +265,7 @@ namespace Meadow.Foundation.Sensors.Motion
                             break;
                         }
                         // capture history
-                        oldConditions = Conditions;
+                        oldConditions = AccelerationConditions.From(Conditions);
 
                         // read
                         Update();
@@ -299,7 +294,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
+            lock (lockObject)
             {
                 if (!IsSampling) { return; }
 
@@ -339,7 +334,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             data |= (byte) frequency;
 
-            _adxl345.WriteRegister(Registers.PowerControl, data);
+            adxl345.WriteRegister(Registers.PowerControl, data);
         }
 
         /// <summary>
@@ -381,7 +376,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             data |= (byte) range;
 
-            _adxl345.WriteRegister(Registers.DataFormat, data);
+            adxl345.WriteRegister(Registers.DataFormat, data);
         }
 
         /// <summary>
@@ -406,7 +401,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 data |= 0x10;
             }
 
-            _adxl345.WriteRegister(Registers.DataRate, data);
+            adxl345.WriteRegister(Registers.DataRate, data);
         }
 
         /// <summary>
@@ -418,7 +413,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public void Update()
         {
-            var data = _adxl345.ReadRegisters(Registers.X0, 6);
+            var data = adxl345.ReadRegisters(Registers.X0, 6);
             Conditions.XAcceleration = (short) (data[0] + (data[1] << 8));
             Conditions.YAcceleration = (short) (data[2] + (data[3] << 8));
             Conditions.ZAcceleration = (short) (data[4] + (data[5] << 8));
@@ -429,7 +424,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public void DisplayRegisters()
         {
-            var registers = _adxl345.ReadRegisters(Registers.TAPThreshold, 29);
+            var registers = adxl345.ReadRegisters(Registers.TAPThreshold, 29);
             DebugInformation.DisplayRegisters(Registers.TAPThreshold, registers);
         }
 

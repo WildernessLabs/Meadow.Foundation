@@ -15,11 +15,8 @@ namespace Meadow.Foundation.Displays.ePaper
 
         int xRefreshStart, yRefreshStart, xRefreshEnd, yRefreshEnd;
 
-        public override uint Width => _width;
-        public override uint Height => _height;
-
-        uint _width;
-        uint _height;
+        public override uint Width { get; }
+        public override uint Height { get; }
 
         private EpdBase()
         { }
@@ -27,8 +24,8 @@ namespace Meadow.Foundation.Displays.ePaper
         public EpdBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             uint width, uint height)
         {
-            _width = width;
-            _height = height;
+            Width = width;
+            Height = height;
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
@@ -39,7 +36,9 @@ namespace Meadow.Foundation.Displays.ePaper
             imageBuffer = new byte[Width * Height / 8];
 
             for (int i = 0; i < Width * Height / 8; i++)
+            {
                 imageBuffer[i] = 0xff;
+            }
 
             Initialize();
         }
@@ -59,8 +58,11 @@ namespace Meadow.Foundation.Displays.ePaper
         public void Clear(Color color, bool updateDisplay = false)
         {
             bool colored = false;
+            
             if (color.B > 0 || color.R > 0 || color.G > 0)
+            {
                 colored = true;
+            }
 
             Clear(colored, updateDisplay);
         }
@@ -76,7 +78,9 @@ namespace Meadow.Foundation.Displays.ePaper
             //   DisplayFrame();
 
             for (int i = 0; i < imageBuffer.Length; i++)
+            {
                 imageBuffer[i] = colored ? (byte)0 : (byte)255;
+            }
 
             if (updateDisplay)
             {
@@ -95,7 +99,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="height">Height of the bitmap in bytes.</param>
         /// <param name="bitmap">Bitmap to display.</param>
         /// <param name="bitmapMode">How should the bitmap be transferred to the display?</param>
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
         {
             if ((width * height) != bitmap.Length)
             {
@@ -129,7 +133,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="height">Height of the bitmap in bytes.</param>
         /// <param name="bitmap">Bitmap to display.</param>
         /// <param name="color">The color of the bitmap (not used on ePaper displays).</param>
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
         {
             if ((width * height) != bitmap.Length)
             {
@@ -145,8 +149,10 @@ namespace Meadow.Foundation.Displays.ePaper
 
                     for (var pixel = 0; pixel < 8; pixel++)
                     {
-                        if((b & mask) > 0)
+                        if ((b & mask) > 0)
+                        {
                             DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, color);
+                        }
                         mask <<= 1;
                     }
                 }
@@ -191,7 +197,9 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             bool colored = false;
             if (color.B > 0 || color.G > 0 || color.R > 0)
+            {
                 colored = true;
+            }
 
             DrawPixel(x, y, colored);
         }
@@ -208,7 +216,9 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             bool colored = false;
             if (r > 0 || g > 0 || b > 0)
+            {
                 colored = true;
+            }
 
             DrawPixel(x, y, colored);
         }
@@ -219,9 +229,13 @@ namespace Meadow.Foundation.Displays.ePaper
         public void Refresh()
         {
             if (xRefreshStart == -1)
+            {
                 SetFrameMemory(imageBuffer);
+            }
             else
+            {
                 SetFrameMemory(imageBuffer, xRefreshStart, yRefreshStart, xRefreshEnd - xRefreshStart, yRefreshEnd - yRefreshStart);
+            }
 
             DisplayFrame();
 
@@ -252,18 +266,26 @@ namespace Meadow.Foundation.Displays.ePaper
                 return;
             }
 
-              /* x point must be the multiple of 8 or the last 3 bits will be ignored */
+            /* x point must be the multiple of 8 or the last 3 bits will be ignored */
             x &= 0xF8;
             image_width &= 0xF8;
             if (x + image_width >= Width)
+            {
                 x_end = (int)Width - 1;
+            }
             else
+            {
                 x_end = x + image_width - 1;
+            }
 
             if (y + image_height >= Height)
+            {
                 y_end = (int)Height - 1;
+            }
             else
+            {
                 y_end = y + image_height - 1;
+            }
 
             SetMemoryArea(x, y, x_end, y_end);
             SetMemoryPointer(x, y);

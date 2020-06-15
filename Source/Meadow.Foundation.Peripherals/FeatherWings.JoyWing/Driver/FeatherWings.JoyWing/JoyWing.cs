@@ -1,5 +1,4 @@
 ﻿using System;
-using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Buttons;
 
@@ -22,13 +21,13 @@ namespace Meadow.Foundation.FeatherWings
 
         public JoyWing(IIODevice device, IPin pinX, IPin pinY, IPin pinA, IPin pinB, IPin pinSelect,
             IPin pinJoyHorizontal, IPin pinJoyVertical) :
-            this(device.CreateDigitalInputPort(pinX, InterruptMode.LevelHigh),
-                device.CreateDigitalInputPort(pinY, InterruptMode.LevelHigh),
-                device.CreateDigitalInputPort(pinA, InterruptMode.LevelHigh),
-                device.CreateDigitalInputPort(pinB, InterruptMode.LevelHigh),
-                device.CreateDigitalInputPort(pinSelect, InterruptMode.LevelHigh),
-                device.CreateDigitalInputPort(pinJoyHorizontal, InterruptMode.LevelHigh),
-                device.CreateDigitalInputPort(pinJoyVertical, InterruptMode.LevelHigh))
+            this(device.CreateDigitalInputPort(pinX, InterruptMode.EdgeRising),
+                device.CreateDigitalInputPort(pinY, InterruptMode.EdgeRising),
+                device.CreateDigitalInputPort(pinA, InterruptMode.EdgeRising),
+                device.CreateDigitalInputPort(pinB, InterruptMode.EdgeRising),
+                device.CreateDigitalInputPort(pinSelect, InterruptMode.EdgeRising),
+                device.CreateDigitalInputPort(pinJoyHorizontal, InterruptMode.EdgeRising),
+                device.CreateDigitalInputPort(pinJoyVertical, InterruptMode.EdgeRising))
         {
 
         }
@@ -36,11 +35,11 @@ namespace Meadow.Foundation.FeatherWings
         public JoyWing(IDigitalInputPort portX, IDigitalInputPort portY, IDigitalInputPort portA, IDigitalInputPort portB,
             IDigitalInputPort portSelect, IDigitalInputPort portJoyHorizontal, IDigitalInputPort portJoyVertical)
         {
-            ButtonA = new PushButton(portA);
+          /*  ButtonA = new PushButton(portA);
             ButtonB = new PushButton(portB);
             ButtonX = new PushButton(portX);
             ButtonY = new PushButton(portY);
-            ButtonSelect = new PushButton(portSelect);
+            ButtonSelect = new PushButton(portSelect);*/
 
             ButtonA.PressEnded += (s, e) => OnA?.Invoke(s, e);
             ButtonB.PressEnded += (s, e) => OnB?.Invoke(s, e);
