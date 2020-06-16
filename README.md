@@ -2,6 +2,8 @@
 
 Meadow.Foundation greatly simplifies the task of building connected things with Meadow, by providing a unified driver and library framework that includes drivers and abstractions for common peripherals such as sensors, displays, motors, and more. Additionally, it includes utility functions and helpers for common tasks when building connected things.
 
+[![Build Status](https://dev.azure.com/WildernessLabs/Meadow/_apis/build/status/WildernessLabs.Meadow.Foundation?branchName=develop)](https://dev.azure.com/WildernessLabs/Meadow/_build/latest?definitionId=6&branchName=develop)
+
 # Documentation
 
 You can read more Meadow.Foundation and how to get started in our [beta developer site](http://beta-developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
@@ -71,5 +73,3 @@ To trigger a new build:
 - in the `Package` tab, increment either the MAJOR or MINOR `Package version`.  
 
 The CI job will pick up the changes, pack, and push the Nuget package.
-
-[![Build Status](http://jenkins.wildernesslabs.co/buildStatus/icon?job=Meadow.Foundation)](http://jenkins.wildernesslabs.co/job/Meadow.Foundation)
