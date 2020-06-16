@@ -7,6 +7,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Radio.Rfid
 {
+    //TODO: update to new serial stuff
     /// <summary>
     /// RFID reader for ID-2LA, ID-12LA and ID-20LA serial readers.
     /// </summary>
@@ -295,7 +296,10 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         {
             while (port.BytesToRead > 0)
             {
-                var data = port.ReadToToken(EndToken);
+                throw new Exception("Need to update this to new serial stuff");
+
+                //TODO: UPDATE UPDATE
+                var data = new byte[0];// port.ReadToToken(EndToken);
                 if (data.Length == 0)
                 {
                     break;
