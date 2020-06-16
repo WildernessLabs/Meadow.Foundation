@@ -630,8 +630,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TextDisplayMenu_Sa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.GPS.Serial_NMEA_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Sensors.GPS.NMEA_Sample\Sensors.GPS.Serial_NMEA_Sample.csproj", "{627FB649-F387-4309-8A84-75F0C383FE71}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{BCA36A71-A55D-4908-BF75-9AB1EB15D439}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.Pca9685", "ICs.IOExpanders.Pca9685", "{2912CE2F-D76A-4F4B-8E11-CA622E6389E6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Pca9685", "Meadow.Foundation.Peripherals\ICs.IOExpanders.PCA9685\Driver\ICs.IOExpanders.PCA9685\ICs.IOExpanders.Pca9685.csproj", "{081252D3-4986-4559-81B2-F39F9E0C50B1}"
@@ -1442,10 +1440,6 @@ Global
 		{627FB649-F387-4309-8A84-75F0C383FE71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{627FB649-F387-4309-8A84-75F0C383FE71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{627FB649-F387-4309-8A84-75F0C383FE71}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCA36A71-A55D-4908-BF75-9AB1EB15D439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCA36A71-A55D-4908-BF75-9AB1EB15D439}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCA36A71-A55D-4908-BF75-9AB1EB15D439}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCA36A71-A55D-4908-BF75-9AB1EB15D439}.Release|Any CPU.Build.0 = Release|Any CPU
 		{081252D3-4986-4559-81B2-F39F9E0C50B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{081252D3-4986-4559-81B2-F39F9E0C50B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{081252D3-4986-4559-81B2-F39F9E0C50B1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
