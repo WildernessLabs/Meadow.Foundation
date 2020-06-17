@@ -14,6 +14,6 @@
     <Description>Meadow drivers for ePaper display controllers (currently suppports: IL0373, IL0376F, IL0398, IL3897, IL91874, ILI91874v3, SSD1608)</Description>  
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.16.0-beta01" />
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@ trigger:
 - develop
 
 variables:
-  solution: '**/Meadow.Foundation.sln'
+  solution: '**/Meadow.Foundation.Drivers.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   internalFeedName: 'Meadow'
@@ -22,17 +22,19 @@ stages:
     - job: Build_Solution
       steps:
         - task: NuGetToolInstaller@1
+          inputs:
+            versionSpec: 5.5.1
         # if develop branch, add a nuget source for the internal feed
-        # - task: NuGetCommand@2
-        #   displayName: Use_Beta_Nugets
-        #   condition: or(eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']), endsWith(variables['preReleasePackageBranch'], variables['System.PullRequest.TargetBranch']))
-        #   inputs:
-        #     feedsToUse: 'select' 
-        #     vstsFeed: $(internalFeedName)
-        #     restoreSolution: '$(solution)'
+        - task: NuGetCommand@2
+          displayName: Use_Beta_Nugets
+          condition: or(eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']), endsWith(variables['preReleasePackageBranch'], variables['System.PullRequest.TargetBranch']))
+          inputs:
+            feedsToUse: 'select' 
+            vstsFeed: $(internalFeedName)
+            restoreSolution: '$(solution)'
         - task: NuGetCommand@2
           displayName: Use_Nugets
-          # condition: and(ne(variables['build.sourceBranch'], variables['preReleasePackageBranch']), not(endsWith(variables['preReleasePackageBranch'], variables['System.PullRequest.TargetBranch'])))
+          condition: and(ne(variables['build.sourceBranch'], variables['preReleasePackageBranch']), not(endsWith(variables['preReleasePackageBranch'], variables['System.PullRequest.TargetBranch'])))
           inputs:
             feedsToUse: 'select' 
             restoreSolution: '$(solution)'

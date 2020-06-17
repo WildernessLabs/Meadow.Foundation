@@ -14,7 +14,7 @@
     <Description>Driver for AdaFruit 8x16 Matrix LED Featherwing using the HT16K33 driver</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\ICs.IOExpanders.HT16K33\Driver\ICs.IOExpanders.HT16K33\ICs.IOExpanders.HT16K33.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.16.0-beta01" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ht16K33" Version="0.6.6" />
   </ItemGroup>
 </Project>

@@ -9,13 +9,13 @@
    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
    <PackageTags>Meadow, Meadow.Foundation</PackageTags>
-   <Version>0.15.0</Version>
+   <Version>0.16.0-beta01</Version>
    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
    <RootNamespace>Meadow.Foundation</RootNamespace>
    <IncludeSymbols>true</IncludeSymbols>
    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
  </PropertyGroup>
  <ItemGroup>
-   <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
+   <PackageReference Include="Meadow" Version="0.14.0-beta01" />
  </ItemGroup>
 </Project>

@@ -13,6 +13,6 @@
     <Description>Driver for Hmc5883 digital compass</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.16.0-beta01" />
   </ItemGroup>
 </Project>

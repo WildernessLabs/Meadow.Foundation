@@ -14,7 +14,7 @@
     <Description>Driver for AdaFruit CharlieWing Matrix LED Featherwing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\ICs.IOExpanders.IS31FL3731\Driver\ICs.IOExpanders.IS31FL3731\ICs.IOExpanders.IS31FL3731.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.16.0-beta01" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.IS31FL3731" Version="0.1.0-beta01" />
   </ItemGroup>
 </Project>

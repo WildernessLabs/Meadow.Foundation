@@ -6,7 +6,7 @@
     <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.16.0-beta01" />
     <ProjectReference Include="..\..\..\ICs.IOExpanders.PCA9685\Driver\ICs.IOExpanders.PCA9685\ICs.IOExpanders.Pca9685.csproj" />
   </ItemGroup>
 </Project>
