@@ -171,6 +171,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servos.Servo.Core", "Meadow
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transceivers.SX127x", "Meadow.Foundation.Peripherals\Transceivers.SX127x\Driver\Transceivers.SX127x\Transceivers.SX127x.csproj", "{5FE89255-8C66-4B1F-91F2-97760270039D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.CharlieWing", "Meadow.Foundation.Peripherals\FeatherWings.CharlieWing\Driver\FeatherWings.CharlieWing\FeatherWings.CharlieWing.csproj", "{B50E433F-A299-461C-91A5-2CE42D436CAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -669,6 +671,12 @@ Global
 		{5FE89255-8C66-4B1F-91F2-97760270039D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FE89255-8C66-4B1F-91F2-97760270039D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5FE89255-8C66-4B1F-91F2-97760270039D}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B50E433F-A299-461C-91A5-2CE42D436CAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B50E433F-A299-461C-91A5-2CE42D436CAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B50E433F-A299-461C-91A5-2CE42D436CAF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{B50E433F-A299-461C-91A5-2CE42D436CAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B50E433F-A299-461C-91A5-2CE42D436CAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B50E433F-A299-461C-91A5-2CE42D436CAF}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -755,6 +763,7 @@ Global
 		{73214806-A8AE-420D-BB58-7DC0463EE347} = {F98D60C6-D84A-4860-987F-0D7B52B724C9}
 		{A4AAE899-DBA6-4B17-8068-6B12133E87B0} = {F98D60C6-D84A-4860-987F-0D7B52B724C9}
 		{5FE89255-8C66-4B1F-91F2-97760270039D} = {F98D60C6-D84A-4860-987F-0D7B52B724C9}
+		{B50E433F-A299-461C-91A5-2CE42D436CAF} = {F98D60C6-D84A-4860-987F-0D7B52B724C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {35AC5857-F73D-4DDF-874D-8380325F20A9}
