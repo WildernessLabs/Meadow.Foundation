@@ -1,32 +1,27 @@
-﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+﻿using System;
+using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.GPS
 {
     /// <summary>
-    ///     Provice a mechanism for dealing with VTG messages from a GPS receiver.
+    /// Parses VTG (Velocity Made Good) messages from a GPS/GNSS receiver.
     /// </summary>
-    public class VTGDecoder : INMEADecoder
+    public class VTGDecoder : INmeaParser
     {
-        #region Delegates and events
-
         /// <summary>
-        ///     Delegate for the Course and Velocity events.
+        /// Delegate for the Course and Velocity events.
         /// </summary>
         /// <param name="courseAndVelocity"></param>
         /// <param name="sender">Reference to the object generating the event.</param>
         public delegate void CourseAndVelocityReceived(object sender, CourseOverGround courseAndVelocity);
 
         /// <summary>
-        ///     Event to be raised when a course and velocity message is received and decoded.
+        /// Event to be raised when a course and velocity message is received and decoded.
         /// </summary>
-        public event CourseAndVelocityReceived OnCourseAndVelocityReceived;
-
-        #endregion Delegates and events
-
-        #region NMEADecoder methods & properties
+        public event CourseAndVelocityReceived OnCourseAndVelocityReceived = delegate { };
 
         /// <summary>
-        ///     Prefix for the VTG decoder.
+        /// Prefix for the VTG decoder.
         /// </summary>
         public string Prefix
         {
@@ -34,7 +29,7 @@ namespace Meadow.Foundation.Sensors.GPS
         }
 
         /// <summary>
-        ///     Friendly name for the VTG messages.
+        /// Friendly name for the VTG messages.
         /// </summary>
         public string Name
         {
@@ -42,23 +37,34 @@ namespace Meadow.Foundation.Sensors.GPS
         }
 
         /// <summary>
-        ///     Process the data from a VTG message.
+        /// Process the data from a VTG message.
         /// </summary>
-        /// <param name="data">String array of the message components for a VTG message.</param>
-        public void Process(string[] data)
+        /// <param name="sentence">String array of the message components for a VTG message.</param>
+        public void Process(NmeaSentence sentence)
         {
-            if (OnCourseAndVelocityReceived != null)
-            {
-                var course = new CourseOverGround();
-                //TODO: these converters are old school NetMF
-                course.TrueHeading = Converters.Double(data[1]);
-                course.MagneticHeading = Converters.Double(data[3]);
-                course.Knots = Converters.Double(data[5]);
-                course.Kph = Converters.Double(data[7]);
-                OnCourseAndVelocityReceived(this, course);
+            //Console.WriteLine($"VTGDecoder.Process");
+
+            var course = new CourseOverGround();
+            decimal trueHeading;
+            if (decimal.TryParse(sentence.DataElements[0], out trueHeading)) {
+                course.TrueHeading = trueHeading;
             }
+            decimal magneticHeading;
+            if (decimal.TryParse(sentence.DataElements[2], out magneticHeading)) {
+                course.MagneticHeading = magneticHeading;
+            }
+            decimal knots;
+            if (decimal.TryParse(sentence.DataElements[4], out knots)) {
+                course.Knots = knots;
+            }
+            decimal kph;
+            if (decimal.TryParse(sentence.DataElements[6], out kph)) {
+                course.Kph = kph;
+            }
+            //Console.WriteLine($"VTG process finished: trueHeading:{course.TrueHeading}, magneticHeading:{course.MagneticHeading}, knots:{course.Knots}, kph:{course.Kph}");
+            OnCourseAndVelocityReceived(this, course);
         }
 
-        #endregion NMEADecoder methods & properties 
+        
     }
 }

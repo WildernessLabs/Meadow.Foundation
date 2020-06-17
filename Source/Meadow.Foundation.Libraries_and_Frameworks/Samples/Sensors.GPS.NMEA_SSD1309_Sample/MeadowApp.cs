@@ -15,7 +15,7 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         SerialTextFile serialTextFile;
-        NMEAMessageDecoder nmea;
+        NmeaSentenceParser nmea;
         ISerialPort port;
         byte[] data = new byte[512];
 
@@ -43,7 +43,7 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
             Console.WriteLine("Serial port created");
             port.Open();
 
-            nmea = new NMEAMessageDecoder();
+            nmea = new NmeaSentenceParser();
             var ggaDecoder = new GGADecoder();
             ggaDecoder.OnPositionReceived += GgaDecoder_OnPositionReceived;
             nmea.AddDecoder(ggaDecoder);
@@ -54,7 +54,7 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
 
         private void SerialTextFile_OnLineReceived(object sender, string line)
         {
-            nmea.SetNmeaMessage(line);
+            nmea.ParseNmeaMessage(line);
         }
 
         private void GgaDecoder_OnPositionReceived(object sender, GPSLocation location)

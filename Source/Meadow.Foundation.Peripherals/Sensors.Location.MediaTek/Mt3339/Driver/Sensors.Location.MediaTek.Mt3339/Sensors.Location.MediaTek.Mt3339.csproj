@@ -19,5 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Sensors.GPS.NMEA\Sensors.GPS.NMEA.csproj" />
   </ItemGroup>
 </Project>

@@ -31,8 +31,7 @@ namespace BasicSensors.GPS.NMEA_Sample
         //simple loopback test - bridge pins D01 & D01 for COM4 on the Meadow F7
         void LoopBackTest()
         {
-            while (true)
-            {
+            while (true) {
                 Console.WriteLine("Writing data...");
                 var written = port.Write(Encoding.ASCII.GetBytes("Hello Meadow!"));//max write is 255 bytes in B3.11
 
@@ -47,13 +46,12 @@ namespace BasicSensors.GPS.NMEA_Sample
         {
             string msg = string.Empty;
 
-            while (true)
-            {
+            while (true) {
                 var len = port.Read(data, 0, data.Length);
 
                 Console.WriteLine($"Read {len} bytes: {BitConverter.ToString(data, 0, len)}");
 
-             //   Console.WriteLine(msg);
+                //   Console.WriteLine(msg);
 
                 Thread.Sleep(100);
             }
@@ -71,29 +69,29 @@ namespace BasicSensors.GPS.NMEA_Sample
             Console.WriteLine($"Read {len} bytes");
             Console.WriteLine($"Data: {BitConverter.ToString(data, 0, len)}");
         }
-                
+
         void TestNMEA()
         {
             Console.WriteLine("Create NMEA");
-            var nmea = new NMEAMessageDecoder();
+            var nmea = new NmeaSentenceParser();
 
             Console.WriteLine("Add decoders");
             var ggaDecoder = new GGADecoder();
             ggaDecoder.OnPositionReceived += GgaDecoder_OnPositionReceived;
             nmea.AddDecoder(ggaDecoder);
-            
+
             var gllDecoder = new GLLDecoder();
             gllDecoder.OnGeographicLatitudeLongitudeReceived += GllDecoder_OnGeographicLatitudeLongitudeReceived;
             nmea.AddDecoder(gllDecoder);
-      
+
             var gsaDecoder = new GSADecoder();
             gsaDecoder.OnActiveSatellitesReceived += GsaDecoder_OnActiveSatelitesReceived;
             nmea.AddDecoder(gsaDecoder);
-        
+
             var rmcDecoder = new RMCDecoder();
             rmcDecoder.OnPositionCourseAndTimeReceived += RmcDecoder_OnPositionCourseAndTimeReceived;
             nmea.AddDecoder(rmcDecoder);
-        
+
             var vtgDecoder = new VTGDecoder();
             vtgDecoder.OnCourseAndVelocityReceived += VtgDecoder_OnCourseAndVelocityReceived;
             nmea.AddDecoder(vtgDecoder);
@@ -101,14 +99,13 @@ namespace BasicSensors.GPS.NMEA_Sample
             Console.WriteLine("Create STF");
             var serialTextFile = new SerialTextFile(port, "\r\n");
 
-            serialTextFile.OnLineReceived += (s, line) => nmea.SetNmeaMessage(line);
+            serialTextFile.OnLineReceived += (s, line) => nmea.ParseNmeaMessage(line);
         }
 
         private static string DecodeDMPostion(DegreeMinutePosition dmp)
         {
             var position = dmp.Degrees.ToString("f2") + "d " + dmp.Minutes.ToString("f2") + "m ";
-            switch (dmp.Direction)
-            {
+            switch (dmp.Direction) {
                 case DirectionIndicator.East:
                     position += "E";
                     break;

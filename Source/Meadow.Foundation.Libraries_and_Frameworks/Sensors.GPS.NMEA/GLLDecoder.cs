@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Sensors.GPS
     ///     Process GLL (Geographic position Latitude / Longitude) messages from a
     ///     GPS receiver.
     /// </summary>
-    public class GLLDecoder : INMEADecoder
+    public class GLLDecoder : INmeaParser
     {
         #region Delegates and events
 
@@ -46,19 +46,19 @@ namespace Meadow.Foundation.Sensors.GPS
         ///     Process the data from a GLL message.
         /// </summary>
         /// <param name="data">String array of the message components for a GLL message.</param>
-        public void Process(string[] data)
+        public void Process(NmeaSentence sentence)
         {
             if (OnGeographicLatitudeLongitudeReceived != null)
             {
                 //
                 //  Status is stored in element 7 (position 6), A = valid, V = not valid.
                 //
-                if (data[6] == "A")
+                if (sentence.DataElements[5] == "A")
                 {
                     var location = new GnssPositionInfo(); //new GPSLocation();
-                    location.Position.Latitude = NMEAHelpers.DegreesMinutesDecode(data[1], data[2]);
-                    location.Position.Longitude = NMEAHelpers.DegreesMinutesDecode(data[3], data[4]);
-                    location.ReadingTime = NMEAHelpers.TimeOfReading(null, data[5]);
+                    location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[0], sentence.DataElements[1]);
+                    location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
+                    location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[4]);
                     OnGeographicLatitudeLongitudeReceived(this, location);
                 }
             }

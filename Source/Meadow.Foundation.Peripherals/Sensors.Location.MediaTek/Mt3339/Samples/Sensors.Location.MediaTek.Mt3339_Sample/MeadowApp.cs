@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Threading;
+using System.Text;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Leds;
+using Meadow.Foundation.Sensors.GPS;
 using Meadow.Hardware;
 using Sensors.Location.MediaTek;
 
@@ -21,14 +20,21 @@ namespace MeadowApp
 
             Console.WriteLine("Post Init");
 
-            gps.StartDumpingReadings();
+            gps.StartUpdataing();
         }
 
         void Initialize()
         {
-            ISerialPort serial = Device.CreateSerialPort(Device.SerialPortNames.Com4, 9600);
+            // TODO: need to make an overload that takes a device and a serial
+            // port name, so that we can ensure these things are configured
+            // correctly
+            SerialMessagePort serial = Device.CreateSerialMessagePort(
+                Device.SerialPortNames.Com4,
+                suffixDelimiter: Encoding.ASCII.GetBytes("\n"),
+                preserveDelimiter: true,
+                9600
+                );
             gps = new Mt3339(serial);
         }
-
     }
 }

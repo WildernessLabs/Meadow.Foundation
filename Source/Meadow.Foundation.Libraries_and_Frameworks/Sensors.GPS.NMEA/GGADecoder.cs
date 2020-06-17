@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.GPS
     /// <summary>
     ///     Decoder for GGA messages.
     /// </summary>
-    public class GGADecoder : INMEADecoder
+    public class GGADecoder : INmeaParser
     {
         #region Delegates and events.
 
@@ -28,16 +28,14 @@ namespace Meadow.Foundation.Sensors.GPS
         /// <summary>
         ///     Prefix for the GGA decoder.
         /// </summary>
-        public string Prefix
-        {
+        public string Prefix {
             get { return "$GPGGA"; }
         }
 
         /// <summary>
         ///     Friendly name for the GGA messages.
         /// </summary>
-        public string Name
-        {
+        public string Name {
             get { return "Global Postioning System Fix Data"; }
         }
 
@@ -45,33 +43,35 @@ namespace Meadow.Foundation.Sensors.GPS
         ///     Process the data from a GGA message.
         /// </summary>
         /// <param name="data">String array of the message components for a CGA message.</param>
-        public void Process(string[] data)
+        public void Process(NmeaSentence sentence)
         {
-            if (OnPositionReceived != null)
-            {
-                var invalidFieldCount = 0;
-                for (var index = 1; index <= 9; index++)
-                {
-                    if ((data[index] == null) || (data[index] == ""))
-                    {
-                        invalidFieldCount++;
+            if (OnPositionReceived != null) {
+                // make sure all fields are present
+                for (var index = 0; index <= 8; index++) {
+                    if (string.IsNullOrEmpty(sentence.DataElements[index])) {
+                        return;
                     }
                 }
-                if (invalidFieldCount == 0)
-                {
-                    var location = new GnssPositionInfo();
-                    location.ReadingTime = NMEAHelpers.TimeOfReading(null, data[1]);
-                    location.Position.Latitude = NMEAHelpers.DegreesMinutesDecode(data[2], data[3]);
-                    location.Position.Longitude = NMEAHelpers.DegreesMinutesDecode(data[4], data[5]);
-                    // TODO: now that we have full .NET, we should use the proper
-                    // tryParse or Parse methods or whatever
-                    // also, C# 8 null stuff
-                    location.FixQuality = (FixType) Converters.Integer(data[6]);
-                    location.NumberOfSatellites = Converters.Integer(data[7]);
-                    location.HorizontalDilutionOfPrecision = Converters.Double(data[8]);
-                    location.Position.Altitude = decimal.Parse(data[9]);
-                    OnPositionReceived(this, location);
+
+                var location = new GnssPositionInfo();
+                location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[0]);
+                location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[1], sentence.DataElements[2]);
+                location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[3], sentence.DataElements[4]);
+                location.FixQuality = (FixType)Converters.Integer(sentence.DataElements[5]);
+
+                int numberOfSatellites;
+                if (int.TryParse(sentence.DataElements[6], out numberOfSatellites)) {
+                    location.NumberOfSatellites = numberOfSatellites;
                 }
+                decimal horizontalDilutionOfPrecision;
+                if (decimal.TryParse(sentence.DataElements[7], out horizontalDilutionOfPrecision)) {
+                    location.HorizontalDilutionOfPrecision = horizontalDilutionOfPrecision;
+                }
+                decimal altitude;
+                if (decimal.TryParse(sentence.DataElements[8], out altitude)) {
+                    location.Position.Altitude = altitude;
+                }
+                OnPositionReceived(this, location);
             }
         }
 

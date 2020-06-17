@@ -1,11 +1,10 @@
-﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+﻿using System;
+using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.GPS
 {
-    public class GSADecoder : INMEADecoder
+    public class GSADecoder : INmeaParser
     {
-        #region Delegates and events
-
         /// <summary>
         ///     Delegate for the GSA data received event.
         /// </summary>
@@ -16,25 +15,19 @@ namespace Meadow.Foundation.Sensors.GPS
         /// <summary>
         ///     Event raised when valid GSA data is received.
         /// </summary>
-        public event ActiveSatellitesReceived OnActiveSatellitesReceived;
-
-        #endregion Delegates and events
-
-        #region INMEADecoder methods & properties
+        public event ActiveSatellitesReceived OnActiveSatellitesReceived = delegate { };
 
         /// <summary>
         ///     Prefix for the GSA decoder.
         /// </summary>
-        public string Prefix
-        {
+        public string Prefix {
             get { return "$GPGSA"; }
         }
 
         /// <summary>
         ///     Friendly name for the GSA messages.
         /// </summary>
-        public string Name
-        {
+        public string Name {
             get { return "GSA - DOP and number of active satellites."; }
         }
 
@@ -42,56 +35,63 @@ namespace Meadow.Foundation.Sensors.GPS
         ///     Process the data from a GSA message.
         /// </summary>
         /// <param name="data">String array of the message components for a GSA message.</param>
-        public void Process(string[] data)
+        public void Process(NmeaSentence sentence)
         {
-            if (OnActiveSatellitesReceived != null)
-            {
-                var satellites = new ActiveSatellites();
-                switch (data[1].ToLower())
-                {
-                    case "a":
-                        satellites.SatelliteSelection = ActiveSatelliteSelection.Automatic;
-                        break;
-                    case "m":
-                        satellites.SatelliteSelection = ActiveSatelliteSelection.Manual;
-                        break;
-                    default:
-                        satellites.SatelliteSelection = ActiveSatelliteSelection.Unknown;
-                        break;
-                }
-                satellites.Dimensions = (DimensionalFixType) int.Parse(data[2]);
-                var satelliteCount = 0;
-                for (var index = 3; index < 15; index++)
-                {
-                    if ((data[index] != null) && (data[index] != ""))
-                    {
-                        satelliteCount++;
-                    }
-                }
-                if (satelliteCount > 0)
-                {
-                    satellites.SatellitesUsedForFix = new string[satelliteCount];
-                    var currentSatellite = 0;
-                    for (var index = 3; index < 15; index++)
-                    {
-                        if ((data[index] != null) && (data[index] != ""))
-                        {
-                            satellites.SatellitesUsedForFix[currentSatellite] = data[index];
-                            currentSatellite++;
-                        }
-                    }
-                }
-                else
-                {
-                    satellites.SatellitesUsedForFix = null;
-                }
-                satellites.DilutionOfPrecision = double.Parse(data[15]);
-                satellites.HorizontalDilutionOfPrecision = double.Parse(data[16]);
-                satellites.VerticalDilutionOfPrecision = double.Parse(data[17]);
-                OnActiveSatellitesReceived(this, satellites);
-            }
-        }
+            Console.WriteLine($"GSADecoder.Process");
 
-        #endregion NMEADecoder methods & properties
+            var satellites = new ActiveSatellites();
+            switch (sentence.DataElements[0].ToLower()) {
+                case "a":
+                    satellites.SatelliteSelection = ActiveSatelliteSelection.Automatic;
+                    break;
+                case "m":
+                    satellites.SatelliteSelection = ActiveSatelliteSelection.Manual;
+                    break;
+                default:
+                    satellites.SatelliteSelection = ActiveSatelliteSelection.Unknown;
+                    break;
+            }
+
+            int dimensionalFixType;
+            if (int.TryParse(sentence.DataElements[1], out dimensionalFixType)) {
+                satellites.Dimensions = (DimensionalFixType)dimensionalFixType;
+            }
+
+            var satelliteCount = 0;
+            for (var index = 2; index < 14; index++) {
+                if (!string.IsNullOrEmpty(sentence.DataElements[index])) {
+                    satelliteCount++;
+                }
+            }
+            if (satelliteCount > 0) {
+                satellites.SatellitesUsedForFix = new string[satelliteCount];
+                var currentSatellite = 0;
+                for (var index = 2; index < 14; index++) {
+                    if (!string.IsNullOrEmpty(sentence.DataElements[index])) {
+                        satellites.SatellitesUsedForFix[currentSatellite] = sentence.DataElements[index];
+                        currentSatellite++;
+                    }
+                }
+            } else {
+                satellites.SatellitesUsedForFix = null;
+            }
+            decimal dilutionOfPrecision;
+            if (decimal.TryParse(sentence.DataElements[14], out dilutionOfPrecision)) {
+                satellites.DilutionOfPrecision = dilutionOfPrecision;
+            }
+            decimal horizontalDilutionOfPrecision;
+            if (decimal.TryParse(sentence.DataElements[15], out horizontalDilutionOfPrecision)) {
+                satellites.HorizontalDilutionOfPrecision = horizontalDilutionOfPrecision;
+            }
+            decimal verticalDilutionOfPrecision;
+            if (decimal.TryParse(sentence.DataElements[16], out verticalDilutionOfPrecision)) {
+                satellites.VerticalDilutionOfPrecision = verticalDilutionOfPrecision;
+            }
+
+            Console.WriteLine($"GSADecoder.Process complete; satelliteCount:{satelliteCount}");
+
+
+            OnActiveSatellitesReceived(this, satellites);
+        }
     }
 }
