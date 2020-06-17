@@ -14,7 +14,7 @@
     <Description>Driver for ST7565 display</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.9.6" />
+    <PackageReference Include="Meadow.Foundation" Version="0.16.0-beta01" />
   </ItemGroup>
 </Project>

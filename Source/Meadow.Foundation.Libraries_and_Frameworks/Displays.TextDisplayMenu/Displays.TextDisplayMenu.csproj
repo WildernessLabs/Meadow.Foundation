@@ -14,7 +14,7 @@
     <Description>Interactive text menu for Meadow</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.16.0-beta01" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SimpleJsonSerializer" Version="0.0.1" />
