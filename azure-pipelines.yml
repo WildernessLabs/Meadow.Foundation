@@ -6,7 +6,7 @@ trigger:
 - develop
 
 variables:
-  solution: '**/Meadow.Foundation.sln'
+  solution: '**/Meadow.Foundation.Drivers.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   internalFeedName: 'Meadow'
