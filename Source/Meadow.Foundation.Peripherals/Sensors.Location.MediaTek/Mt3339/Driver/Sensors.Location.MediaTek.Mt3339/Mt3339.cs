@@ -45,41 +45,81 @@ namespace Sensors.Location.MediaTek
             Console.WriteLine("Create NMEA");
             nmeaParser = new NmeaSentenceParser();
 
-            Console.WriteLine("Add decoders");
+            Console.WriteLine("Add parsers");
+
+            // GGA
             var ggaParser = new GgaParser();
             nmeaParser.AddParser(ggaParser);
-
             ggaParser.OnPositionReceived += (object sender, GnssPositionInfo location) => {
                 Console.WriteLine($"location.Valid:{location.Valid}");
                 Console.WriteLine($"location.NumberOfSatellites:{location.NumberOfSatellites}");
                 Console.WriteLine($"location.Position.Latittude:{location.Position.Latitude}");
+
+                Console.WriteLine("Location information received.");
+                Console.WriteLine($"Time of reading: {location.TimeOfReading}");
+                Console.WriteLine($"Valid: {location.Valid}");
+                Console.WriteLine($"Latitude: {location.Position.Latitude}");
+                Console.WriteLine($"Longitude: {location.Position.Longitude}");
+                Console.WriteLine($"Altitude: {location.Position.Altitude:f2}");
+                Console.WriteLine($"Number of satellites: {location.NumberOfSatellites}");
+                Console.WriteLine($"Fix quality: {location.FixQuality}");
+                Console.WriteLine($"HDOP: {location.HorizontalDilutionOfPrecision:f2}");
+                Console.WriteLine("*********************************************");
             };
 
+            // GLL
             var gllParser = new GllParser();
-            //gllParser.OnGeographicLatitudeLongitudeReceived += GllParser_OnGeographicLatitudeLongitudeReceived;
             nmeaParser.AddParser(gllParser);
+            gllParser.OnGeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) => {
+                Console.WriteLine("GLL information received.");
+                Console.WriteLine($"Time of reading: {location.TimeOfReading}");
+                Console.WriteLine($"Latitude: {location.Position.Latitude}");
+                Console.WriteLine($"Longitude: {location.Position.Longitude}");
+                Console.WriteLine("*********************************************");
+            };
 
+            // GSA
             var gsaParser = new GsaParser();
-            //gsaParser.OnActiveSatellitesReceived += GsaParser_OnActiveSatelitesReceived;
             nmeaParser.AddParser(gsaParser);
-
+            gsaParser.OnActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) => {
+                Console.WriteLine("Satellite (GSA) information received.");
+                Console.WriteLine($"Number of satellites involved in fix: {activeSatellites.SatellitesUsedForFix?.Length}");
+                Console.WriteLine($"Dilution of precision: {activeSatellites.DilutionOfPrecision:f2}");
+                Console.WriteLine($"HDOP: {activeSatellites.HorizontalDilutionOfPrecision:f2}");
+                Console.WriteLine($"VDOP: {activeSatellites.VerticalDilutionOfPrecision:f2}");
+                Console.WriteLine("*********************************************");
+            };
 
             // RMC (recommended minimum)
             var rmcParser = new RmcParser();
             nmeaParser.AddParser(rmcParser);
             rmcParser.OnPositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
-                Console.WriteLine($"RMC message decoded; time:{positionCourseAndTime.TimeOfReading}UTC, valid:{positionCourseAndTime.Valid}");
-                if (positionCourseAndTime.Valid) {
-                    Console.WriteLine($"lat:{positionCourseAndTime.Position.Latitude}, long: {positionCourseAndTime.Position.Longitude}");
-                }
-                Console.WriteLine("I wish a muthafucka would.");
+                //Console.WriteLine($"RMC message decoded; time:{positionCourseAndTime.TimeOfReading}UTC, valid:{positionCourseAndTime.Valid}");
+                //if (positionCourseAndTime.Valid) {
+                //    Console.WriteLine($"lat:{positionCourseAndTime.Position.Latitude}, long: {positionCourseAndTime.Position.Longitude}");
+                //}
+                //Console.WriteLine("I wish a muthafucka would.");
+
+                Console.WriteLine("Recommended Minimum sentence \"C\" (RMC) received.");
+                Console.WriteLine($"Time of reading: {positionCourseAndTime.TimeOfReading}");
+                Console.WriteLine($"Latitude: {positionCourseAndTime.Position.Latitude}");
+                Console.WriteLine($"Longitude: {positionCourseAndTime.Position.Longitude}");
+                Console.WriteLine($"Speed: {positionCourseAndTime.SpeedInKnots:f2}");
+                Console.WriteLine($"Course: {positionCourseAndTime.CourseHeading:f2}");
+                Console.WriteLine("*********************************************");
+
             };
 
             // VTG (course made good)
             var vtgParser = new VtgParser();
             nmeaParser.AddParser(vtgParser);
             vtgParser.OnCourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) => {
-                Console.WriteLine($"VTG process finished: trueHeading:{courseAndVelocity.TrueHeading}, magneticHeading:{courseAndVelocity.MagneticHeading}, knots:{courseAndVelocity.Knots}, kph:{courseAndVelocity.Kph}");
+                Console.WriteLine("Course made good (VTG) received.");
+                Console.WriteLine($"True heading: {courseAndVelocity.TrueHeading:f2}");
+                Console.WriteLine($"Magnetic heading: {courseAndVelocity.MagneticHeading:f2}");
+                Console.WriteLine($"Knots: {courseAndVelocity.Knots:f2}");
+                Console.WriteLine($"KPH: {courseAndVelocity.Kph:f2}");
+                Console.WriteLine("*********************************************");
             };
 
         }
@@ -96,40 +136,5 @@ namespace Sensors.Location.MediaTek
             nmeaParser.ParseNmeaMessage(msg);
 
         }
-
-        //private async void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        //{
-        //    byte[] bytes = await serialPort.ReadTo(new char[] { '\n' }, false);
-        //    var msg = Encoding.ASCII.GetString(bytes);
-        //    //Console.WriteLine(msg);
-
-        //    this.NmeaSentenceArrived(this, new NmeaEventArgs() { NmeaSentence = msg });
-        //}
-
-        public void StartDumpingReadings()
-        {
-            //var serialTextFile = new SerialTextFile(serialPort, "\r\n");
-            //serialTextFile.OnLineReceived += (s, line) => {
-            //    Console.WriteLine(line);
-            //};
-
-
-
-            //serialPort.ReadToToken('\n');
-        }
-
-        //public async Task<GnssPositionInfo> Read()
-        //{
-        //    var loc = new GnssPositionInfo();
-        //    return loc;
-        //}
-
-        //public async Task<> StartUpdating()
-        //{
-        //}
-
-        //public void StopUpdating()
-        //{
-        //}
     }
 }
