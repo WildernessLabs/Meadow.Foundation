@@ -95,5 +95,58 @@ namespace Meadow.Foundation.Leds
                 }
             }
         }
+
+        /// <summary>
+        /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
+        /// </summary>
+        /// <param name="onDuration">On duration.</param>
+        /// <param name="offDuration">Off duration.</param>
+        /// <param name="highBrightness">High brigtness.</param>
+        /// <param name="lowBrightness">Low brightness.</param>
+        public void StartBlink(uint onDuration = 200, uint offDuration = 200, float highBrightness = 1, float lowBrightness = 0)
+        {
+            foreach (var pwmLed in _pwmLeds)
+            {
+                pwmLed.StartBlink(onDuration, offDuration, highBrightness, lowBrightness);
+            }
+        }
+
+        /// <summary>
+        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
+        /// <param name="pulseDuration">Pulse duration.</param>
+        /// <param name="highBrightness">High brigtness.</param>
+        /// <param name="lowBrightness">Low brightness.</param>
+        /// </summary>
+        public void StartPulse(int pulseDuration = 1000, float highBrightness = 1, float lowBrightness = 0.25F)
+        {
+            if (highBrightness > 1 || highBrightness <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "highBrightness must be > 0 and <= 1");
+            }
+            if (lowBrightness >= 1 || lowBrightness < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
+            }
+            if (lowBrightness >= highBrightness)
+            {
+                throw new Exception("lowBrightness must be less than highbrightness");
+            }
+
+            foreach (var pwmLed in _pwmLeds)
+            {
+                pwmLed.StartPulse(pulseDuration, highBrightness, lowBrightness);
+            }
+        }
+
+        /// <summary>
+        /// Stops any running animations.
+        /// </summary>
+        public void Stop()
+        {
+            foreach (var pwmLed in _pwmLeds)
+            {
+                pwmLed.Stop();
+            }
+        }
     }
 }

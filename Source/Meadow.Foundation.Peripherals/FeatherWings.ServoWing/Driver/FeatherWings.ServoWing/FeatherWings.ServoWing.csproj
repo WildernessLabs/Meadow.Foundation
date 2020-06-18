@@ -6,9 +6,7 @@
     <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Servo" Version="0.8.6" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\ICs.IOExpanders.PCA9685\Driver\ICs.IOExpanders.PCA9685\ICs.IOExpanders.Pca9685.csproj" />
+    <ProjectReference Include="..\..\..\Servos.Servo.Core\Driver\Servos.Servo.Core\Servos.Servo.Core.csproj" />
   </ItemGroup>
 </Project>

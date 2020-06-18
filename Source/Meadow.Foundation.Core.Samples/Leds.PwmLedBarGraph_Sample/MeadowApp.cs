@@ -95,6 +95,27 @@ namespace Leds.PwmLedBarGraph_Sample
                 }
 
                 Thread.Sleep(1000);
+
+                Console.WriteLine("Bar blinking on and off...");
+                pwmLedBarGraph.StartBlink();
+                Thread.Sleep(3000);
+                pwmLedBarGraph.Stop();
+
+                Thread.Sleep(1000);
+
+                Console.WriteLine("Bar blinking with high and low brightness...");
+                pwmLedBarGraph.StartBlink(500, 500, 1f, 0.25f);
+                Thread.Sleep(3000);
+                pwmLedBarGraph.Stop();
+
+                Thread.Sleep(1000);
+
+                Console.WriteLine("Bar pulsing...");
+                pwmLedBarGraph.StartPulse();
+                Thread.Sleep(3000);
+                pwmLedBarGraph.Stop();
+
+                Thread.Sleep(1000);
             }
         }
     }

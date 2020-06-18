@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using System.Threading;
 
-namespace FeatherWindws.OLED128x32_TinyPong_Sample
+namespace FeatherWings.OLED128x32_TinyPong_Sample
 {
     class Program
     {

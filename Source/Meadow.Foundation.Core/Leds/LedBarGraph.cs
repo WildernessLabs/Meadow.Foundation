@@ -48,7 +48,6 @@ namespace Meadow.Foundation.Leds
             for (int i = 0; i < ports.Length; i++)
             {
                 _leds[i] = new Led(ports[i]);
-                //_leds[i].IsOn = false;
             }
         }
 
@@ -87,5 +86,31 @@ namespace Meadow.Foundation.Leds
                 }
             }
         }
+
+        #region Public Methods
+        /// <summary>
+        /// Blink animation that turns the LED bar graph on and off based on the OnDuration and offDuration values in ms
+        /// </summary>
+        /// <param name="onDuration"></param>
+        /// <param name="offDuration"></param>
+        public void StartBlink(uint onDuration = 200, uint offDuration = 200)
+        {
+            foreach (var led in _leds)
+            {
+                led.StartBlink(onDuration, offDuration);
+            }
+        }
+
+        /// <summary>
+        /// Stops the LED bar graph when its blinking and/or turns it off.
+        /// </summary>
+        public void Stop()
+        {
+            foreach (var led in _leds)
+            {
+                led.Stop();
+            }
+        }
+        #endregion
     }
 }
