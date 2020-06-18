@@ -1,12 +1,12 @@
 ﻿using System;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.GPS
+namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
     /// Parses VTG (Velocity Made Good) messages from a GPS/GNSS receiver.
     /// </summary>
-    public class VTGDecoder : INmeaParser
+    public class VtgParser : INmeaParser
     {
         /// <summary>
         /// Delegate for the Course and Velocity events.

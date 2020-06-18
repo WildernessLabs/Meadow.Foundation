@@ -1,11 +1,11 @@
 ﻿using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.GPS
+namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
-    ///     Decoder for GGA messages.
+    /// Decoder for GGA messages.
     /// </summary>
-    public class GGADecoder : INmeaParser
+    public class GgaParser : INmeaParser
     {
         #region Delegates and events.
 

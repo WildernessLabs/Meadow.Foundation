@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using Meadow.Foundation.Sensors.GPS;
+using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
@@ -46,30 +46,28 @@ namespace Sensors.Location.MediaTek
             nmeaParser = new NmeaSentenceParser();
 
             Console.WriteLine("Add decoders");
-            var ggaDecoder = new GGADecoder();
-            nmeaParser.AddDecoder(ggaDecoder);
+            var ggaParser = new GgaParser();
+            nmeaParser.AddParser(ggaParser);
 
-            ggaDecoder.OnPositionReceived += (object sender, GnssPositionInfo location) => {
+            ggaParser.OnPositionReceived += (object sender, GnssPositionInfo location) => {
                 Console.WriteLine($"location.Valid:{location.Valid}");
                 Console.WriteLine($"location.NumberOfSatellites:{location.NumberOfSatellites}");
                 Console.WriteLine($"location.Position.Latittude:{location.Position.Latitude}");
             };
 
+            var gllParser = new GllParser();
+            //gllParser.OnGeographicLatitudeLongitudeReceived += GllParser_OnGeographicLatitudeLongitudeReceived;
+            nmeaParser.AddParser(gllParser);
 
-
-            var gllDecoder = new GLLDecoder();
-            //gllDecoder.OnGeographicLatitudeLongitudeReceived += GllDecoder_OnGeographicLatitudeLongitudeReceived;
-            nmeaParser.AddDecoder(gllDecoder);
-
-            var gsaDecoder = new GSADecoder();
-            //gsaDecoder.OnActiveSatellitesReceived += GsaDecoder_OnActiveSatelitesReceived;
-            nmeaParser.AddDecoder(gsaDecoder);
+            var gsaParser = new GsaParser();
+            //gsaParser.OnActiveSatellitesReceived += GsaParser_OnActiveSatelitesReceived;
+            nmeaParser.AddParser(gsaParser);
 
 
             // RMC (recommended minimum)
-            var rmcDecoder = new RMCDecoder();
-            nmeaParser.AddDecoder(rmcDecoder);
-            rmcDecoder.OnPositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
+            var rmcParser = new RmcParser();
+            nmeaParser.AddParser(rmcParser);
+            rmcParser.OnPositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
                 Console.WriteLine($"RMC message decoded; time:{positionCourseAndTime.TimeOfReading}UTC, valid:{positionCourseAndTime.Valid}");
                 if (positionCourseAndTime.Valid) {
                     Console.WriteLine($"lat:{positionCourseAndTime.Position.Latitude}, long: {positionCourseAndTime.Position.Longitude}");
@@ -78,9 +76,9 @@ namespace Sensors.Location.MediaTek
             };
 
             // VTG (course made good)
-            var vtgDecoder = new VTGDecoder();
-            nmeaParser.AddDecoder(vtgDecoder);
-            vtgDecoder.OnCourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) => {
+            var vtgParser = new VtgParser();
+            nmeaParser.AddParser(vtgParser);
+            vtgParser.OnCourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) => {
                 Console.WriteLine($"VTG process finished: trueHeading:{courseAndVelocity.TrueHeading}, magneticHeading:{courseAndVelocity.MagneticHeading}, knots:{courseAndVelocity.Knots}, kph:{courseAndVelocity.Kph}");
             };
 

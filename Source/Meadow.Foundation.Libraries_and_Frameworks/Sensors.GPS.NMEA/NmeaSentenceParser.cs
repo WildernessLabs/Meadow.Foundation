@@ -3,7 +3,7 @@ using System.Collections;
 using Meadow.Utilities;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.GPS
+namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
 
     /// <summary>
@@ -12,9 +12,9 @@ namespace Meadow.Foundation.Sensors.GPS
     public class NmeaSentenceParser
     {
         /// <summary>
-        /// NMEA decoders available to the GPS.
+        /// NMEA parsers available to the GPS.
         /// </summary>
-        private readonly Hashtable decoders = new Hashtable();
+        private readonly Hashtable parsers = new Hashtable();
 
         public bool DebugMode { get; set; } = false;
 
@@ -27,15 +27,15 @@ namespace Meadow.Foundation.Sensors.GPS
         }
 
         /// <summary>
-        ///     Add a new NMEA decoder to the GPS.
+        /// Add a new NMEA parser to the GPS.
         /// </summary>
-        /// <param name="decoder">NMEA decoder.</param>
-        public void AddDecoder(INmeaParser decoder)
+        /// <param name="parser">NMEA parser.</param>
+        public void AddParser(INmeaParser parser)
         {
-            if (decoders.Contains(decoder.Prefix)) {
-                throw new Exception(decoder.Prefix + " already registered.");
+            if (parsers.Contains(parser.Prefix)) {
+                throw new Exception(parser.Prefix + " already registered.");
             }
-            decoders.Add(decoder.Prefix, decoder);
+            parsers.Add(parser.Prefix, parser);
         }
 
         /// <summary>
@@ -60,12 +60,12 @@ namespace Meadow.Foundation.Sensors.GPS
 
             Console.WriteLine($"Sentence parsed: {sentence.ToString()}");
 
-            var decoder = (INmeaParser)decoders[sentence.Prefix];
-            if (decoder != null) {
-                if (DebugMode) { Console.WriteLine($"Found appropriate decoder:{decoder.Prefix}"); }
-                decoder.Process(sentence);
+            var parser = (INmeaParser)parsers[sentence.Prefix];
+            if (parser != null) {
+                if (DebugMode) { Console.WriteLine($"Found appropriate parser:{parser.Prefix}"); }
+                parser.Process(sentence);
             } else {
-                if (DebugMode) { Console.WriteLine($"Could not find appropriate decoder for {sentence.Prefix}"); }
+                if (DebugMode) { Console.WriteLine($"Could not find appropriate parser for {sentence.Prefix}"); }
             }
         }
     }

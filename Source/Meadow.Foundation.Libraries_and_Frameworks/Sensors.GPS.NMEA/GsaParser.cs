@@ -1,9 +1,9 @@
 ﻿using System;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.GPS
+namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
-    public class GSADecoder : INmeaParser
+    public class GsaParser : INmeaParser
     {
         /// <summary>
         ///     Delegate for the GSA data received event.

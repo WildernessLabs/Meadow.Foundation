@@ -153,7 +153,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Light.Alspt19315C",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{212F665B-A91A-4DEA-B0CB-E8BA195D8137}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.GPS.NMEA", "Meadow.Foundation.Libraries_and_Frameworks\Sensors.GPS.NMEA\Sensors.GPS.NMEA.csproj", "{00F72BD3-06BB-46D3-888E-2EE3B0B14449}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Location.Gnss.NmeaParsing", "Meadow.Foundation.Libraries_and_Frameworks\Sensors.GPS.NMEA\Sensors.Location.Gnss.NmeaParsing.csproj", "{00F72BD3-06BB-46D3-888E-2EE3B0B14449}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Distance.Gp2D12", "Sensors.Distance.Gp2D12", "{8C198F16-DD20-46E5-8D34-1AD95DFC438A}"
 EndProject
@@ -722,9 +722,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{F5BE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Location.MediaTek.Mt3339_Sample", "Meadow.Foundation.Peripherals\Sensors.Location.MediaTek\Mt3339\Samples\Sensors.Location.MediaTek.Mt3339_Sample\Sensors.Location.MediaTek.Mt3339_Sample.csproj", "{1372483D-0BE9-4A52-9BDC-75A15120279F}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Temperature.Tmp102_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Samples\Sensors.Temperature.Tmp102_Sample\Sensors.Temperature.Tmp102_Sample.csproj", "{37B9CA32-B439-4B54-848D-BAA316997813}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Location.MediaTek.Mt3339", "Meadow.Foundation.Peripherals\Sensors.Location.MediaTek\Mt3339\Driver\Sensors.Location.MediaTek.Mt3339\Sensors.Location.MediaTek.Mt3339.csproj", "{F0970BBA-CC73-4639-BC29-96A571D7BA36}"
+EndProject
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Temperature.Tmp102_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Samples\Sensors.Temperature.Tmp102_Sample\Sensors.Temperature.Tmp102_Sample.csproj", "{E3F5D846-AF2F-4E48-A14D-F142BE68BBD1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Location.Gnss.NmeaParsing_Tests", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Sensors.Location.Gnss.NmeaParsing_Tests\Sensors.Location.Gnss.NmeaParsing_Tests.csproj", "{34B18E69-4DF2-475F-A27C-961AD4C49E91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1600,14 +1602,18 @@ Global
 		{1372483D-0BE9-4A52-9BDC-75A15120279F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1372483D-0BE9-4A52-9BDC-75A15120279F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1372483D-0BE9-4A52-9BDC-75A15120279F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37B9CA32-B439-4B54-848D-BAA316997813}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37B9CA32-B439-4B54-848D-BAA316997813}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37B9CA32-B439-4B54-848D-BAA316997813}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37B9CA32-B439-4B54-848D-BAA316997813}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F0970BBA-CC73-4639-BC29-96A571D7BA36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F0970BBA-CC73-4639-BC29-96A571D7BA36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0970BBA-CC73-4639-BC29-96A571D7BA36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0970BBA-CC73-4639-BC29-96A571D7BA36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3F5D846-AF2F-4E48-A14D-F142BE68BBD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3F5D846-AF2F-4E48-A14D-F142BE68BBD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3F5D846-AF2F-4E48-A14D-F142BE68BBD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3F5D846-AF2F-4E48-A14D-F142BE68BBD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34B18E69-4DF2-475F-A27C-961AD4C49E91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34B18E69-4DF2-475F-A27C-961AD4C49E91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34B18E69-4DF2-475F-A27C-961AD4C49E91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34B18E69-4DF2-475F-A27C-961AD4C49E91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1965,8 +1971,9 @@ Global
 		{D5ADAD08-4EBD-4354-B0A1-E4FFF17E2962} = {F07E7336-995C-465C-9F5F-BC19FE7BD5F5}
 		{F5BE2CAF-E124-40A4-8C07-A2023C959B84} = {D5ADAD08-4EBD-4354-B0A1-E4FFF17E2962}
 		{1372483D-0BE9-4A52-9BDC-75A15120279F} = {F5BE2CAF-E124-40A4-8C07-A2023C959B84}
-		{37B9CA32-B439-4B54-848D-BAA316997813} = {D5471726-76C5-46DD-9931-6328C6A3D375}
 		{F0970BBA-CC73-4639-BC29-96A571D7BA36} = {D5ADAD08-4EBD-4354-B0A1-E4FFF17E2962}
+		{E3F5D846-AF2F-4E48-A14D-F142BE68BBD1} = {D5471726-76C5-46DD-9931-6328C6A3D375}
+		{34B18E69-4DF2-475F-A27C-961AD4C49E91} = {F0E1BC04-A17B-4604-9EC9-51AFE3A1942D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

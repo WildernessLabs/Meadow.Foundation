@@ -1,6 +1,6 @@
 ﻿using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.GPS
+namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
     /// Base class for NMEADecoder classes.

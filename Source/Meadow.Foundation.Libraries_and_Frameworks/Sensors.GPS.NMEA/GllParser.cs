@@ -1,12 +1,12 @@
 ﻿using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.GPS
+namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
     ///     Process GLL (Geographic position Latitude / Longitude) messages from a
     ///     GPS receiver.
     /// </summary>
-    public class GLLDecoder : INmeaParser
+    public class GllParser : INmeaParser
     {
         #region Delegates and events
 

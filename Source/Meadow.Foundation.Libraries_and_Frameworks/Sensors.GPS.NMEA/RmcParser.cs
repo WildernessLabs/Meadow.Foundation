@@ -2,12 +2,12 @@
 using Meadow.Peripherals.Sensors.Location;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.GPS
+namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
     /// Decode RMC - Recommended Minimum Specific GPS messages.
     /// </summary>
-    public class RMCDecoder : INmeaParser
+    public class RmcParser : INmeaParser
     {
         /// <summary>
         /// Prefix for the RMBC decoder.

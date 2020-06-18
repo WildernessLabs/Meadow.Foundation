@@ -1,6 +1,6 @@
 ﻿using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.GPS
+namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
     ///     Process the Satellites in view messages from a GPS module.
@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.GPS
     ///     This class brings all of the messages together in a single message for the
     ///     consumer.
     /// </remarks>
-    public class GSVDecoder : INmeaParser
+    public class GsvParser : INmeaParser
     {
         #region Member variables / fields
 

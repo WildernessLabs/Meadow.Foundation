@@ -2,7 +2,6 @@
 using System.Text;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.GPS;
 using Meadow.Hardware;
 using Sensors.Location.MediaTek;
 

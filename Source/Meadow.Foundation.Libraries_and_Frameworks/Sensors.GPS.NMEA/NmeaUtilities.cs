@@ -1,7 +1,7 @@
 ﻿using System;
 using Meadow.Peripherals.Sensors.Location;
 
-namespace Meadow.Foundation.Sensors.GPS
+namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
     ///     Provide common functionality for the decode classes.
