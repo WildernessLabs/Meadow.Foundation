@@ -726,6 +726,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Location.Gnss.NmeaP
 EndProject
 Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Temperature.Tmp102_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Samples\Sensors.Temperature.Tmp102_Sample\Sensors.Temperature.Tmp102_Sample.csproj", "{B8F8C9F2-E6BD-4DFA-B472-C80D265AC5DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialGPS_Listener", "Meadow.Foundation.Libraries_and_Frameworks\Samples\SerialGPS_Listener\SerialGPS_Listener.csproj", "{002F277C-3950-4E1C-A2BB-32D9F7D2B413}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1608,6 +1610,10 @@ Global
 		{B8F8C9F2-E6BD-4DFA-B472-C80D265AC5DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8F8C9F2-E6BD-4DFA-B472-C80D265AC5DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8F8C9F2-E6BD-4DFA-B472-C80D265AC5DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{002F277C-3950-4E1C-A2BB-32D9F7D2B413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{002F277C-3950-4E1C-A2BB-32D9F7D2B413}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{002F277C-3950-4E1C-A2BB-32D9F7D2B413}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{002F277C-3950-4E1C-A2BB-32D9F7D2B413}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1967,6 +1973,7 @@ Global
 		{F0970BBA-CC73-4639-BC29-96A571D7BA36} = {D5ADAD08-4EBD-4354-B0A1-E4FFF17E2962}
 		{34B18E69-4DF2-475F-A27C-961AD4C49E91} = {F0E1BC04-A17B-4604-9EC9-51AFE3A1942D}
 		{B8F8C9F2-E6BD-4DFA-B472-C80D265AC5DA} = {D5471726-76C5-46DD-9931-6328C6A3D375}
+		{002F277C-3950-4E1C-A2BB-32D9F7D2B413} = {F0E1BC04-A17B-4604-9EC9-51AFE3A1942D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
