@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers;
 using Meadow.Foundation.Helpers;
 using Meadow.Hardware;
+using Meadow.Utilities;
 
 namespace Meadow.Foundation.Sensors.Radio.Rfid
 {
@@ -247,7 +248,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
             var tag = AsciiHexByteArrayToBytes(tagSlice);
             var checkSum = AsciiHexByteArrayToBytes(checksumSlice)[0];
 
-            return Checksum.XOR(tag) == checkSum
+            return ChecksumCalculator.XOR(tag) == checkSum
                 ? (tag, status: RfidValidationStatus.Ok)
                 : (tag, status: RfidValidationStatus.ChecksumFailed);
         }
@@ -295,7 +296,9 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         {
             while (port.BytesToRead > 0)
             {
-                var data = port.ReadToToken(EndToken);
+                // TODO: update to new API!!
+                //var data = port.ReadToToken(EndToken);
+                var data = new byte[0];
                 if (data.Length == 0)
                 {
                     break;
