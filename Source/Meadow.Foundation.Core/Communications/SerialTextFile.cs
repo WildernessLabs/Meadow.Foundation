@@ -165,7 +165,7 @@ namespace Meadow.Foundation.Communications
             {
                 int amount = serialPort.Read(staticBuffer, 0, MAXIMUM_BUFFER_SIZE);
 
-                Console.WriteLine($"Data amount: {amount}");
+                //Console.WriteLine($"Data amount: {amount}");
 
                 if (amount > 0)
                 {

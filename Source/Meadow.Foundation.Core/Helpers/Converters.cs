@@ -2,6 +2,9 @@
 
 namespace Meadow.Foundation
 {
+    //TODO: some of these are no longer needed because we have full .NET
+    // consider mari-kondo'ing this.
+
     /// <summary>
     ///     Provide a mechanism to convert from on type (typically string) to
     ///     another .NET type.

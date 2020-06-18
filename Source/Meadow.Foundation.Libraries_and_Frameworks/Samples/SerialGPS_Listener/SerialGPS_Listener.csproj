@@ -5,7 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\Sensors.GPS.NMEA\Sensors.GPS.NMEA.csproj" />
+    <ProjectReference Include="..\..\Sensors.GPS.NMEA\Sensors.Location.Gnss.NmeaParsing.csproj" />
   </ItemGroup>
 </Project>
