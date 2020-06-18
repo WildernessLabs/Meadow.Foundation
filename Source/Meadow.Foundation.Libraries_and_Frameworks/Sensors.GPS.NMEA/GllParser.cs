@@ -3,13 +3,11 @@
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
-    ///     Process GLL (Geographic position Latitude / Longitude) messages from a
-    ///     GPS receiver.
+    /// Process GLL (Geographic position Latitude / Longitude) messages from a
+    /// GPS receiver.
     /// </summary>
     public class GllParser : INmeaParser
     {
-        #region Delegates and events
-
         /// <summary>
         ///     Delegate for the GLL data received event.
         /// </summary>
@@ -21,10 +19,6 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         ///     Event raised when valid GLL data is received.
         /// </summary>
         public event GeographicLatitudeLongitudeReceived OnGeographicLatitudeLongitudeReceived;
-
-        #endregion Delegates and events
-
-        #region NMEADecoder methods & properties
 
         /// <summary>
         ///     Prefix for the GLL (Geographic position Latitude / Longitude) decoder.
@@ -53,9 +47,9 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                 //
                 //  Status is stored in element 7 (position 6), A = valid, V = not valid.
                 //
-                if (sentence.DataElements[5] == "A")
+                if (sentence.DataElements[5].ToLower() == "a")
                 {
-                    var location = new GnssPositionInfo(); //new GPSLocation();
+                    var location = new GnssPositionInfo();
                     location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[0], sentence.DataElements[1]);
                     location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
                     location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[4]);
@@ -63,7 +57,5 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                 }
             }
         }
-
-        #endregion NMEADecoder methods & properties
     }
 }

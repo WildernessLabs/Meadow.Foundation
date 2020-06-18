@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// <param name="data">String array of the message components for a GSA message.</param>
         public void Process(NmeaSentence sentence)
         {
-            Console.WriteLine($"GSADecoder.Process");
+            //Console.WriteLine($"GSADecoder.Process");
 
             var satellites = new ActiveSatellites();
             switch (sentence.DataElements[0].ToLower()) {
@@ -88,7 +88,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                 satellites.VerticalDilutionOfPrecision = verticalDilutionOfPrecision;
             }
 
-            Console.WriteLine($"GSADecoder.Process complete; satelliteCount:{satelliteCount}");
+            //Console.WriteLine($"GSADecoder.Process complete; satelliteCount:{satelliteCount}");
 
 
             OnActiveSatellitesReceived(this, satellites);

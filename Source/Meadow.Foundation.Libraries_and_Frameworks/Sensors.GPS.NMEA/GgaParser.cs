@@ -7,8 +7,6 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// </summary>
     public class GgaParser : INmeaParser
     {
-        #region Delegates and events.
-
         /// <summary>
         ///     Delegate for the position update received event.
         /// </summary>
@@ -20,10 +18,6 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         ///     Position update received event.
         /// </summary>
         public event PositionReceived OnPositionReceived;
-
-        #endregion Delegates and events.
-
-        #region NMEADecoder methods & properties
 
         /// <summary>
         ///     Prefix for the GGA decoder.
@@ -74,7 +68,5 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                 OnPositionReceived(this, location);
             }
         }
-
-        #endregion NMEADecoder methods & properties
     }
 }

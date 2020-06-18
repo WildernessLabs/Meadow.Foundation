@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                 return;
             }
 
-            Console.WriteLine($"Sentence parsed: {sentence.ToString()}");
+            //Console.WriteLine($"Sentence parsed: {sentence.ToString()}");
 
             var parser = (INmeaParser)parsers[sentence.Prefix];
             if (parser != null) {

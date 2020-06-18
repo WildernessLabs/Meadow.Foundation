@@ -79,7 +79,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                         break;
                 }
             } else {
-                Console.WriteLine($"Could not parse DegreesMinutes; location:'{location}', direction:'{direction}'");
+                //Console.WriteLine($"Could not parse DegreesMinutes; location:'{location}', direction:'{direction}'");
                 return null;
             }
             return position;
