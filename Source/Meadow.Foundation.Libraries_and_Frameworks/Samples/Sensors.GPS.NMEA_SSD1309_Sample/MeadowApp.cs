@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Communications;
@@ -13,7 +14,7 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
     {
         SerialTextFile serialTextFile;
         NmeaSentenceParser nmea;
-        ISerialPort port;
+        SerialMessagePort port;
         byte[] data = new byte[512];
 
         Ssd1309 display;
@@ -36,23 +37,26 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
             Console.WriteLine("Graphics library created");
 
             //COM4 - Pins D00 & D01 on the Meadow F7
-            port = Device.CreateSerialPort(Device.SerialPortNames.Com4, 9600);
+            port = Device.CreateSerialMessagePort(
+                Device.SerialPortNames.Com4,
+                suffixDelimiter: Encoding.ASCII.GetBytes("\n"),
+                preserveDelimiter: true,
+                9600);
             Console.WriteLine("Serial port created");
-            port.Open();
+
+            port.MessageReceived += (object sender, SerialMessageEventArgs e) => {
+                nmea.ParseNmeaMessage(e.GetMessageString(Encoding.ASCII));
+            };
 
             nmea = new NmeaSentenceParser();
             var ggaParser = new GgaParser();
             ggaParser.OnPositionReceived += GgaParser_OnPositionReceived;
             nmea.AddParser(ggaParser);
 
-            serialTextFile = new SerialTextFile(port, "\r\n");
-            serialTextFile.OnLineReceived += SerialTextFile_OnLineReceived;
+            // open serial
+            port.Open();
         }
 
-        private void SerialTextFile_OnLineReceived(object sender, string line)
-        {
-            nmea.ParseNmeaMessage(line);
-        }
 
         private void GgaParser_OnPositionReceived(object sender, Meadow.Peripherals.Sensors.Location.Gnss.GnssPositionInfo location)
         {
