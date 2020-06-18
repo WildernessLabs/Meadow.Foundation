@@ -7,6 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj" />
     <ProjectReference Include="..\..\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
-    <ProjectReference Include="..\..\Sensors.GPS.NMEA\Sensors.GPS.NMEA.csproj" />
+    <ProjectReference Include="..\..\Sensors.GPS.NMEA\Sensors.Location.Gnss.NmeaParsing.csproj" />
   </ItemGroup>
 </Project>
