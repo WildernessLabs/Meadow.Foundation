@@ -39,7 +39,7 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
             //COM4 - Pins D00 & D01 on the Meadow F7
             port = Device.CreateSerialMessagePort(
                 Device.SerialPortNames.Com4,
-                suffixDelimiter: Encoding.ASCII.GetBytes("\n"),
+                suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                 preserveDelimiter: true,
                 9600);
             Console.WriteLine("Serial port created");
