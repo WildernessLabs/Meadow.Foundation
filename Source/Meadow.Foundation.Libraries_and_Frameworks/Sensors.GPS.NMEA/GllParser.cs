@@ -1,4 +1,5 @@
-﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+﻿using System;
+using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
@@ -9,19 +10,12 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     public class GllParser : INmeaParser
     {
         /// <summary>
-        ///     Delegate for the GLL data received event.
+        /// Event raised when valid GLL data is received.
         /// </summary>
-        /// <param name="location">Location data to pass to the application.</param>
-        /// <param name="sender">Reference to the object generating the event.</param>
-        public delegate void GeographicLatitudeLongitudeReceived(object sender, GnssPositionInfo location);
+        public event EventHandler<GnssPositionInfo> GeographicLatitudeLongitudeReceived = delegate { };
 
         /// <summary>
-        ///     Event raised when valid GLL data is received.
-        /// </summary>
-        public event GeographicLatitudeLongitudeReceived OnGeographicLatitudeLongitudeReceived;
-
-        /// <summary>
-        ///     Prefix for the GLL (Geographic position Latitude / Longitude) decoder.
+        /// Prefix for the GLL (Geographic position Latitude / Longitude) decoder.
         /// </summary>
         public string Prefix
         {
@@ -29,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         }
 
         /// <summary>
-        ///     Friendly name for the GLL messages.
+        /// Friendly name for the GLL messages.
         /// </summary>
         public string Name
         {
@@ -37,24 +31,21 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         }
 
         /// <summary>
-        ///     Process the data from a GLL message.
+        /// Process the data from a GLL message.
         /// </summary>
         /// <param name="data">String array of the message components for a GLL message.</param>
         public void Process(NmeaSentence sentence)
         {
-            if (OnGeographicLatitudeLongitudeReceived != null)
+            //
+            //  Status is stored in element 7 (position 6), A = valid, V = not valid.
+            //
+            if (sentence.DataElements[5].ToLower() == "a")
             {
-                //
-                //  Status is stored in element 7 (position 6), A = valid, V = not valid.
-                //
-                if (sentence.DataElements[5].ToLower() == "a")
-                {
-                    var location = new GnssPositionInfo();
-                    location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[0], sentence.DataElements[1]);
-                    location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
-                    location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[4]);
-                    OnGeographicLatitudeLongitudeReceived(this, location);
-                }
+                var location = new GnssPositionInfo();
+                location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[0], sentence.DataElements[1]);
+                location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
+                location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[4]);
+                GeographicLatitudeLongitudeReceived(this, location);
             }
         }
     }

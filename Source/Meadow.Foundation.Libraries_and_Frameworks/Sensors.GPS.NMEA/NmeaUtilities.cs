@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using Meadow.Peripherals.Sensors.Location;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing

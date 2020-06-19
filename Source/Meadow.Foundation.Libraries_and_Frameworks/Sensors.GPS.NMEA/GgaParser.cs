@@ -1,4 +1,5 @@
-﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+﻿using System;
+using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
@@ -8,38 +9,31 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     public class GgaParser : INmeaParser
     {
         /// <summary>
-        ///     Delegate for the position update received event.
+        /// Position update received event.
         /// </summary>
-        /// <param name="location">Location data received.</param>
-        /// <param name="sender">Reference to the object generating the event.</param>
-        public delegate void PositionReceived(object sender, GnssPositionInfo location);
+        public event EventHandler<GnssPositionInfo> PositionReceived = delegate { };
 
         /// <summary>
-        ///     Position update received event.
-        /// </summary>
-        public event PositionReceived OnPositionReceived;
-
-        /// <summary>
-        ///     Prefix for the GGA decoder.
+        /// Prefix for the GGA decoder.
         /// </summary>
         public string Prefix {
             get { return "$GPGGA"; }
         }
 
         /// <summary>
-        ///     Friendly name for the GGA messages.
+        /// Friendly name for the GGA messages.
         /// </summary>
         public string Name {
             get { return "Global Postioning System Fix Data"; }
         }
 
         /// <summary>
-        ///     Process the data from a GGA message.
+        /// Process the data from a GGA message.
         /// </summary>
         /// <param name="data">String array of the message components for a CGA message.</param>
         public void Process(NmeaSentence sentence)
         {
-            if (OnPositionReceived != null) {
+            if (PositionReceived != null) {
                 // make sure all fields are present
                 for (var index = 0; index <= 8; index++) {
                     if (string.IsNullOrEmpty(sentence.DataElements[index])) {
@@ -65,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                 if (decimal.TryParse(sentence.DataElements[8], out altitude)) {
                     location.Position.Altitude = altitude;
                 }
-                OnPositionReceived(this, location);
+                PositionReceived(this, location);
             }
         }
     }
