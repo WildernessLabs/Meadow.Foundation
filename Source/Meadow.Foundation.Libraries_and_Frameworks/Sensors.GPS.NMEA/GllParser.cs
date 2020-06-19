@@ -1,4 +1,5 @@
-﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+﻿using System;
+using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
@@ -6,19 +7,19 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// Process GLL (Geographic position Latitude / Longitude) messages from a
     /// GPS receiver.
     /// </summary>
-    public class GllParser : INmeaParser
+    public class GllParser : INmeaParser/*<GnssPositionInfo>*/
     {
-        /// <summary>
-        ///     Delegate for the GLL data received event.
-        /// </summary>
-        /// <param name="location">Location data to pass to the application.</param>
-        /// <param name="sender">Reference to the object generating the event.</param>
-        public delegate void GeographicLatitudeLongitudeReceived(object sender, GnssPositionInfo location);
+        ///// <summary>
+        /////     Delegate for the GLL data received event.
+        ///// </summary>
+        ///// <param name="location">Location data to pass to the application.</param>
+        ///// <param name="sender">Reference to the object generating the event.</param>
+        //public delegate void GeographicLatitudeLongitudeReceived(object sender, GnssPositionInfo location);
 
         /// <summary>
         ///     Event raised when valid GLL data is received.
         /// </summary>
-        public event GeographicLatitudeLongitudeReceived OnGeographicLatitudeLongitudeReceived;
+        public event EventHandler<GnssPositionInfo> GeographicLatitudeLongitudeReceived;
 
         /// <summary>
         ///     Prefix for the GLL (Geographic position Latitude / Longitude) decoder.
@@ -42,7 +43,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// <param name="data">String array of the message components for a GLL message.</param>
         public void Process(NmeaSentence sentence)
         {
-            if (OnGeographicLatitudeLongitudeReceived != null)
+            if (GeographicLatitudeLongitudeReceived != null)
             {
                 //
                 //  Status is stored in element 7 (position 6), A = valid, V = not valid.
@@ -53,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                     location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[0], sentence.DataElements[1]);
                     location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
                     location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[4]);
-                    OnGeographicLatitudeLongitudeReceived(this, location);
+                    GeographicLatitudeLongitudeReceived(this, location);
                 }
             }
         }

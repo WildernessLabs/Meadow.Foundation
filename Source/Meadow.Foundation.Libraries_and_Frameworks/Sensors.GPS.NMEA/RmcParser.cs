@@ -7,8 +7,20 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// <summary>
     /// Decode RMC - Recommended Minimum Specific GPS messages.
     /// </summary>
-    public class RmcParser : INmeaParser
+    public class RmcParser : INmeaParser/*<GnssPositionInfo>*/
     {
+        ///// <summary>
+        /////     Delegate for the position update received event.
+        ///// </summary>
+        ///// <param name="positionCourseAndTime">Position, course and time information.</param>
+        ///// <param name="sender">Reference to the object generating the event.</param>
+        //public delegate void PositionCourseAndTimeReceived(object sender, GnssPositionInfo positionCourseAndTime);
+
+        /// <summary>
+        /// Position update received event.
+        /// </summary>
+        public event EventHandler<GnssPositionInfo> PositionCourseAndTimeReceived = delegate { };
+
         /// <summary>
         /// Prefix for the RMBC decoder.
         /// </summary>
@@ -66,20 +78,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                 }
             //}
             //Console.WriteLine($"RMC Message Parsed, raising event");
-            OnPositionCourseAndTimeReceived(this, position);
+            PositionCourseAndTimeReceived(this, position);
         }
-
-        /// <summary>
-        ///     Delegate for the position update received event.
-        /// </summary>
-        /// <param name="positionCourseAndTime">Position, course and time information.</param>
-        /// <param name="sender">Reference to the object generating the event.</param>
-        public delegate void PositionCourseAndTimeReceived(object sender, GnssPositionInfo positionCourseAndTime);
-
-        /// <summary>
-        /// Position update received event.
-        /// </summary>
-        public event PositionCourseAndTimeReceived OnPositionCourseAndTimeReceived = delegate { };
 
     }
 }

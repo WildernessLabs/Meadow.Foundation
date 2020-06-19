@@ -1,12 +1,14 @@
-﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+﻿using System;
+using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
     /// Base class for NMEADecoder classes.
     /// </summary>
-    public interface INmeaParser
+    public interface INmeaParser//<G> where G : IGnssResult
     {
+
         /// <summary>
         /// Prefix for the decoder (text that occurs at the start of a GPS message
         /// including the $ symbol - $GPGSA etc.).
@@ -24,5 +26,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// </summary>
         /// <param name="elements">String array of the elements of the message.</param>
         void Process(NmeaSentence sentence);
+
+
     }
 }

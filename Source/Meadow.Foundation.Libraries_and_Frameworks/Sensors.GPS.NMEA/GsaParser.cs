@@ -3,19 +3,19 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
-    public class GsaParser : INmeaParser
+    public class GsaParser : INmeaParser/*<ActiveSatellites>*/
     {
-        /// <summary>
-        ///     Delegate for the GSA data received event.
-        /// </summary>
-        /// <param name="activeSatellites">Active satellites.</param>
-        /// <param name="sender">Reference to the object generating the event.</param>
-        public delegate void ActiveSatellitesReceived(object sender, ActiveSatellites activeSatellites);
+        ///// <summary>
+        /////     Delegate for the GSA data received event.
+        ///// </summary>
+        ///// <param name="activeSatellites">Active satellites.</param>
+        ///// <param name="sender">Reference to the object generating the event.</param>
+        //public delegate void ActiveSatellitesReceived(object sender, ActiveSatellites activeSatellites);
 
         /// <summary>
         ///     Event raised when valid GSA data is received.
         /// </summary>
-        public event ActiveSatellitesReceived OnActiveSatellitesReceived = delegate { };
+        public event EventHandler<ActiveSatellites> ActiveSatellitesReceived = delegate { };
 
         /// <summary>
         ///     Prefix for the GSA decoder.
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
             //Console.WriteLine($"GSADecoder.Process complete; satelliteCount:{satelliteCount}");
 
 
-            OnActiveSatellitesReceived(this, satellites);
+            ActiveSatellitesReceived(this, satellites);
         }
     }
 }
