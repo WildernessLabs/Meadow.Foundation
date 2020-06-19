@@ -3,36 +3,29 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
-    public class GsaParser : INmeaParser/*<ActiveSatellites>*/
+    public class GsaParser : INmeaParser
     {
-        ///// <summary>
-        /////     Delegate for the GSA data received event.
-        ///// </summary>
-        ///// <param name="activeSatellites">Active satellites.</param>
-        ///// <param name="sender">Reference to the object generating the event.</param>
-        //public delegate void ActiveSatellitesReceived(object sender, ActiveSatellites activeSatellites);
-
         /// <summary>
-        ///     Event raised when valid GSA data is received.
+        /// Event raised when valid GSA data is received.
         /// </summary>
         public event EventHandler<ActiveSatellites> ActiveSatellitesReceived = delegate { };
 
         /// <summary>
-        ///     Prefix for the GSA decoder.
+        /// Prefix for the GSA decoder.
         /// </summary>
         public string Prefix {
             get { return "$GPGSA"; }
         }
 
         /// <summary>
-        ///     Friendly name for the GSA messages.
+        /// Friendly name for the GSA messages.
         /// </summary>
         public string Name {
             get { return "GSA - DOP and number of active satellites."; }
         }
 
         /// <summary>
-        ///     Process the data from a GSA message.
+        /// Process the data from a GSA message.
         /// </summary>
         /// <param name="data">String array of the message components for a GSA message.</param>
         public void Process(NmeaSentence sentence)
@@ -87,10 +80,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
             if (decimal.TryParse(sentence.DataElements[16], out verticalDilutionOfPrecision)) {
                 satellites.VerticalDilutionOfPrecision = verticalDilutionOfPrecision;
             }
-
             //Console.WriteLine($"GSADecoder.Process complete; satelliteCount:{satelliteCount}");
-
-
             ActiveSatellitesReceived(this, satellites);
         }
     }

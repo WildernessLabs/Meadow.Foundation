@@ -7,15 +7,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// <summary>
     /// Decode RMC - Recommended Minimum Specific GPS messages.
     /// </summary>
-    public class RmcParser : INmeaParser/*<GnssPositionInfo>*/
+    public class RmcParser : INmeaParser
     {
-        ///// <summary>
-        /////     Delegate for the position update received event.
-        ///// </summary>
-        ///// <param name="positionCourseAndTime">Position, course and time information.</param>
-        ///// <param name="sender">Reference to the object generating the event.</param>
-        //public delegate void PositionCourseAndTimeReceived(object sender, GnssPositionInfo positionCourseAndTime);
-
         /// <summary>
         /// Position update received event.
         /// </summary>

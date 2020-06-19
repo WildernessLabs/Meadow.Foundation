@@ -14,61 +14,54 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// This class brings all of the messages together in a single message for the
     /// consumer.
     /// </remarks>
-    public class GsvParser : INmeaParser/*<Satellites>*/
+    public class GsvParser : INmeaParser
     {
-        ///// <summary>
-        /////     Delegate for the GSV data received event.
-        ///// </summary>
-        ///// <param name="activeSatellites">Active satellites.</param>
-        ///// <param name="sender">Reference to the object generating the event.</param>
-        //public delegate void SatellitesInViewReceived(object sender, Satellite[] satellites);
-
         /// <summary>
-        ///     Event raised when valid GSV data is received.
+        /// Event raised when valid GSV data is received.
         /// </summary>
         public event EventHandler<List<Satellite>> SatellitesInViewReceived = delegate { };
 
         /// <summary>
-        ///     Current sentence being processed, 0 indicates nothing being processed.
+        /// Current sentence being processed, 0 indicates nothing being processed.
         /// </summary>
         private int _currentSentence;
 
         /// <summary>
-        ///     Total number of sentences expected in the sequence, -1 indicates nothing
-        ///     is being processed at the moment.
+        /// Total number of sentences expected in the sequence, -1 indicates nothing
+        /// is being processed at the moment.
         /// </summary>
         private int _totalSentences = -1;
 
         /// <summary>
-        ///     List of satellites.
+        /// List of satellites.
         /// </summary>
         protected List<Satellite> _satelliteList;// = new Satellites();
 
         /// <summary>
-        ///     Next entry in the _satelliteList to receive satellite data.
+        /// Next entry in the _satelliteList to receive satellite data.
         /// </summary>
         private int _nextSatelliteEntry;
 
         /// <summary>
-        ///     Get the prefix for the decoder.
+        /// Get the prefix for the decoder.
         /// </summary>
         /// <remarks>
-        ///     The lines of text from the GPS start with text such as $GPGGA, $GPGLL, $GPGSA etc.  The prefix
-        ///     is the start of the line (i.e. $GPCGA).
+        /// The lines of text from the GPS start with text such as $GPGGA, $GPGLL, $GPGSA etc.  The prefix
+        /// is the start of the line (i.e. $GPCGA).
         /// </remarks>
         public string Prefix {
             get { return "$GPGSV"; }
         }
 
         /// <summary>
-        ///     Get the friendly (human readable) name for the decoder.
+        /// Get the friendly (human readable) name for the decoder.
         /// </summary>
         public string Name {
             get { return "Satellites in view"; }
         }
 
         /// <summary>
-        ///     Process the message from the GPS.
+        /// Process the message from the GPS.
         /// </summary>
         /// <param name="data">String array of the elements of the message.</param>
         /// https://gpsd.gitlab.io/gpsd/NMEA.html#_gsv_satellites_in_view

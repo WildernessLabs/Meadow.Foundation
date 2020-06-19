@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
 using Meadow.Hardware;
@@ -50,7 +51,7 @@ namespace Sensors.Location.MediaTek
             // GGA
             var ggaParser = new GgaParser();
             nmeaParser.RegisterParser(ggaParser);
-            ggaParser.OnPositionReceived += (object sender, GnssPositionInfo location) => {
+            ggaParser.PositionReceived += (object sender, GnssPositionInfo location) => {
                 Console.WriteLine($"location.Valid:{location.Valid}");
                 Console.WriteLine($"location.NumberOfSatellites:{location.NumberOfSatellites}");
                 Console.WriteLine($"location.Position.Latittude:{location.Position.Latitude}");
@@ -70,7 +71,7 @@ namespace Sensors.Location.MediaTek
             // GLL
             var gllParser = new GllParser();
             nmeaParser.RegisterParser(gllParser);
-            gllParser..GGeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) => {
+            gllParser.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) => {
                 Console.WriteLine("GLL information received.");
                 Console.WriteLine($"Time of reading: {location.TimeOfReading}");
                 Console.WriteLine($"Latitude: {location.Position.Latitude}");
@@ -81,7 +82,7 @@ namespace Sensors.Location.MediaTek
             // GSA
             var gsaParser = new GsaParser();
             nmeaParser.RegisterParser(gsaParser);
-            gsaParser..AActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) => {
+            gsaParser.ActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) => {
                 Console.WriteLine("Satellite (GSA) information received.");
                 Console.WriteLine($"Number of satellites involved in fix: {activeSatellites.SatellitesUsedForFix?.Length}");
                 Console.WriteLine($"Dilution of precision: {activeSatellites.DilutionOfPrecision:f2}");
@@ -93,7 +94,7 @@ namespace Sensors.Location.MediaTek
             // RMC (recommended minimum)
             var rmcParser = new RmcParser();
             nmeaParser.RegisterParser(rmcParser);
-            rmcParser..PPositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
+            rmcParser.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
                 //Console.WriteLine($"RMC message decoded; time:{positionCourseAndTime.TimeOfReading}UTC, valid:{positionCourseAndTime.Valid}");
                 //if (positionCourseAndTime.Valid) {
                 //    Console.WriteLine($"lat:{positionCourseAndTime.Position.Latitude}, long: {positionCourseAndTime.Position.Longitude}");
@@ -113,12 +114,27 @@ namespace Sensors.Location.MediaTek
             // VTG (course made good)
             var vtgParser = new VtgParser();
             nmeaParser.RegisterParser(vtgParser);
-            vtgParser..CCourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) => {
+            vtgParser.CourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) => {
                 Console.WriteLine("Course made good (VTG) received.");
                 Console.WriteLine($"True heading: {courseAndVelocity.TrueHeading:f2}");
                 Console.WriteLine($"Magnetic heading: {courseAndVelocity.MagneticHeading:f2}");
                 Console.WriteLine($"Knots: {courseAndVelocity.Knots:f2}");
                 Console.WriteLine($"KPH: {courseAndVelocity.Kph:f2}");
+                Console.WriteLine("*********************************************");
+            };
+
+            // GSV (satellites in view)
+            var gsvParser = new GsvParser();
+            nmeaParser.RegisterParser(gsvParser);
+            gsvParser.SatellitesInViewReceived += (object sender, List<Satellite> satellites) => {
+                Console.WriteLine($"Satellites in view (GSA) received, count: {satellites.Count}");
+                foreach (var sat in satellites) {
+                    Console.WriteLine("---------------");
+                    Console.WriteLine($"ID: {sat.ID}");
+                    Console.WriteLine($"Azimuth: {sat.Azimuth}");
+                    Console.WriteLine($"Elevation: {sat.Elevation}");
+                    Console.WriteLine($"Signal to Noise Ratio: {sat.SignalTolNoiseRatio}");
+                }
                 Console.WriteLine("*********************************************");
             };
 

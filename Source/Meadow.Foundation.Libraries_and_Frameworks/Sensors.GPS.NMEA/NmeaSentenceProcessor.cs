@@ -5,6 +5,7 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
+    // NOTE: Excellent NMEA specification info here: https://gpsd.gitlab.io/gpsd/NMEA.html
 
     /// <summary>
     /// An engine that processes NMEA GPS/GNSS sentences by calling the appropriate

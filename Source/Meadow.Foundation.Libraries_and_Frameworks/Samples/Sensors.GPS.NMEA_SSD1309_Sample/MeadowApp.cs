@@ -50,7 +50,7 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
 
             nmea = new NmeaSentenceProcessor();
             var ggaParser = new GgaParser();
-            ggaParser.OnPositionReceived += GgaParser_OnPositionReceived;
+            ggaParser.PositionReceived += GgaParser_OnPositionReceived;
             nmea.RegisterParser(ggaParser);
 
             // open serial

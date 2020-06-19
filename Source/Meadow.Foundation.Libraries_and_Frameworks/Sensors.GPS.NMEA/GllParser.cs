@@ -7,22 +7,15 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// Process GLL (Geographic position Latitude / Longitude) messages from a
     /// GPS receiver.
     /// </summary>
-    public class GllParser : INmeaParser/*<GnssPositionInfo>*/
+    public class GllParser : INmeaParser
     {
-        ///// <summary>
-        /////     Delegate for the GLL data received event.
-        ///// </summary>
-        ///// <param name="location">Location data to pass to the application.</param>
-        ///// <param name="sender">Reference to the object generating the event.</param>
-        //public delegate void GeographicLatitudeLongitudeReceived(object sender, GnssPositionInfo location);
-
         /// <summary>
-        ///     Event raised when valid GLL data is received.
+        /// Event raised when valid GLL data is received.
         /// </summary>
         public event EventHandler<GnssPositionInfo> GeographicLatitudeLongitudeReceived;
 
         /// <summary>
-        ///     Prefix for the GLL (Geographic position Latitude / Longitude) decoder.
+        /// Prefix for the GLL (Geographic position Latitude / Longitude) decoder.
         /// </summary>
         public string Prefix
         {
@@ -30,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         }
 
         /// <summary>
-        ///     Friendly name for the GLL messages.
+        /// Friendly name for the GLL messages.
         /// </summary>
         public string Name
         {
@@ -38,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         }
 
         /// <summary>
-        ///     Process the data from a GLL message.
+        /// Process the data from a GLL message.
         /// </summary>
         /// <param name="data">String array of the message components for a GLL message.</param>
         public void Process(NmeaSentence sentence)
