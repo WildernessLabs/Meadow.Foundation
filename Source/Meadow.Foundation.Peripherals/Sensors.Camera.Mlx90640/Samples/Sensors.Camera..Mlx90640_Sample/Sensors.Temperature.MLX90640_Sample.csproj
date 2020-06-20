@@ -5,9 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.15.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Temperature.MLX90640\Sensors.Temperature.MLX90640.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Camera.Mlx90640\Sensors.Camera.Mlx90640.csproj" />
   </ItemGroup>
 </Project>

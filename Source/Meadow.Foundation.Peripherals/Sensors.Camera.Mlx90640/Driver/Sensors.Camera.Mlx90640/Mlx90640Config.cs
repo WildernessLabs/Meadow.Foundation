@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Meadow.Foundation.Sensors.Temperature
+namespace Meadow.Foundation.Sensors.Camera
 {
-    public class MLX90640Config
+    public class Mlx90640Config
     {
         public short KVdd { get; internal set; }
         public short Vdd25 { get; internal set; }

@@ -2,16 +2,17 @@
 using Meadow.Hardware;
 using System.Threading;
 
-namespace Meadow.Foundation.Sensors.Temperature
+namespace Meadow.Foundation.Sensors.Camera
 {
     /// <summary>
+    /// *** Driver is untested but should be fully working ***
     /// Represents the MLX90640 32x24 IR array.
     /// The MLX90640 is a fully calibrated 32x24 pixels thermal IR array.
     /// </summary>
     /// <remarks>
     /// Based on https://github.com/adafruit/Adafruit_MLX90640 and https://github.com/melexis/mlx90640-library/tree/master/functions
     /// </remarks>
-    public class MLX90640
+    public class Mlx90640
     {
         public enum Mode
         {
@@ -47,20 +48,20 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         public string SerialNumber { get; private set; }
-        public float Emissivity { get => _emissivity; 
+        public float Emissivity { get => emissivity; 
             set
             {
                 if (value > 1)
-                    _emissivity = 1;
+                    emissivity = 1;
                 else if (value < 0.01)
-                    _emissivity = 0.01f;
+                    emissivity = 0.01f;
                 else
-                    _emissivity = value;
+                    emissivity = value;
             } 
         }
         public float ReflectedTemperature { get; set; }
         public Units MeasurementUnit { get; set; }
-        public MLX90640Config Config { get; private set; }
+        public Mlx90640Config Config { get; private set; }
 
 
         const short MaxBufferSize = 32;
@@ -70,15 +71,15 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         readonly II2cPeripheral i2CPeripheral;
 
-        float _emissivity;
+        float emissivity;
 
-        public MLX90640(II2cBus i2cBus, byte address = 0x33, Units measurementUnit = Units.Celsius, float emissivity = 0.95f)
+        public Mlx90640(II2cBus i2cBus, byte address = 0x33, Units measurementUnit = Units.Celsius, float emissivity = 0.95f)
         {
             i2CPeripheral = new I2cPeripheral(i2cBus, address);
             Emissivity = emissivity;
             MeasurementUnit = measurementUnit;
             ReflectedTemperature = 23.15f;
-            Config = new MLX90640Config();
+            Config = new Mlx90640Config();
         }
 
         /// <summary>
@@ -278,7 +279,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             return true;
         }
 
-        void CalculateTo(ushort[] frameData, MLX90640Config mlx90640, float emissivity, float tr, ref float[] result)
+        void CalculateTo(ushort[] frameData, Mlx90640Config mlx90640, float emissivity, float tr, ref float[] result)
         {
             float vdd;
             float ta;
@@ -411,7 +412,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             }
         }
 
-        float GetTa(ushort[] frameData, MLX90640Config mlx90640)
+        float GetTa(ushort[] frameData, Mlx90640Config mlx90640)
         {
             float ptat;
             float ptatArt;
@@ -437,7 +438,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             return ta;
         }
 
-        float GetVdd(ushort[] frameData, MLX90640Config mlx90640)
+        float GetVdd(ushort[] frameData, Mlx90640Config mlx90640)
         {
             float vdd;
             float resolutionCorrection;
