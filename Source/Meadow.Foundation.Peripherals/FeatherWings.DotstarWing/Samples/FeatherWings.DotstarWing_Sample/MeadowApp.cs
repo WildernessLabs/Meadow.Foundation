@@ -6,15 +6,14 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.FeatherWings;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
 using Meadow.Hardware;
 
 namespace FeatherWings.DotstarWing_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        DotstarWing _dotStarWing;
-        GraphicsLibrary _graphics;
+        DotstarWing dotStarWing;
+        GraphicsLibrary graphics;
 
         public MeadowApp()
         {
@@ -33,35 +32,34 @@ namespace FeatherWings.DotstarWing_Sample
             ISpiBus spiBus = Device.CreateSpiBus();
             IDigitalOutputPort spiPeriphChipSelect = Device.CreateDigitalOutputPort(Device.Pins.D04);
             
-            _dotStarWing = new DotstarWing(spiBus, spiPeriphChipSelect);
+            dotStarWing = new DotstarWing(spiBus, spiPeriphChipSelect);
             
-            _graphics = new GraphicsLibrary(_dotStarWing);
-            _graphics.CurrentFont = new Font4x8();
+            graphics = new GraphicsLibrary(dotStarWing);
+            graphics.CurrentFont = new Font4x8();
             
-            _dotStarWing.SetPenColor(Color.Blue);
-            _dotStarWing.Brightness = 0.1f;
+            dotStarWing.SetPenColor(Color.Blue);
+            dotStarWing.Brightness = 0.1f;
         }
 
         void DrawPixels()
         {
             Console.WriteLine("DrawPixels...");
-            _dotStarWing.Clear(true);
+            dotStarWing.Clear(true);
             Thread.Sleep(1000);
 
-            _dotStarWing.DrawPixel(0, 0, Color.Red);
-            _dotStarWing.DrawPixel(11, 0, Color.White);
-            _dotStarWing.DrawPixel(0, 5, Color.Blue);
-            _dotStarWing.DrawPixel(11, 5, Color.Green);
+            dotStarWing.DrawPixel(0, 0, Color.Red);
+            dotStarWing.DrawPixel(11, 0, Color.White);
+            dotStarWing.DrawPixel(0, 5, Color.Blue);
+            dotStarWing.DrawPixel(11, 5, Color.Green);
 
-            _dotStarWing.Show();
-
+            dotStarWing.Show();
         }
 
         void GoThroughEachPixel()
         {
             Thread.Sleep(2000);
             Console.WriteLine("Go Through Each Pixel...");
-            _dotStarWing.Clear(true);
+            dotStarWing.Clear(true);
 
             List<Color> colors = new List<Color>();
             colors.Add(Color.Red);
@@ -72,18 +70,17 @@ namespace FeatherWings.DotstarWing_Sample
             colors.Add(Color.Purple);
             Random random = new Random();
 
-            for (int y = 0; y< _dotStarWing.Height; y++)
+            for (int y = 0; y< dotStarWing.Height; y++)
             {
-                for(int x = 0; x < _dotStarWing.Width; x++)
+                for(int x = 0; x < dotStarWing.Width; x++)
                 {
                     int rnd = random.Next(0, colors.Count);
-                    _dotStarWing.Clear();
-                    _dotStarWing.DrawPixel(x, y, colors[rnd]);
-                    _dotStarWing.Show();
+                    dotStarWing.Clear();
+                    dotStarWing.DrawPixel(x, y, colors[rnd]);
+                    dotStarWing.Show();
                     Thread.Sleep(75);
                 }
             }
-
         }
 
         void ScrollText()
@@ -91,7 +88,7 @@ namespace FeatherWings.DotstarWing_Sample
             Thread.Sleep(2000);
             Console.WriteLine("ScrollText...");
 
-            _dotStarWing.Clear();
+            dotStarWing.Clear();
 
             string text = "MEADOW";
             List<Color> colors = new List<Color>();
@@ -104,26 +101,26 @@ namespace FeatherWings.DotstarWing_Sample
 
             int x = 0;
             int colorIndex = 0;
-            int scollWidth = (int)(-1 * (_dotStarWing.Width + _graphics.CurrentFont.Width + 8));
-            int resetWidth = (int)(_dotStarWing.Width + 2);
+            int scollWidth = (int)(-1 * (dotStarWing.Width + graphics.CurrentFont.Width + 8));
+            int resetWidth = (int)(dotStarWing.Width + 2);
 
             while (true)
             {
-                _graphics.Clear();
+                graphics.Clear();
                 int offset = 0;
                 colorIndex = 0;
 
                 foreach (var chr in text)
                 {
-                    _graphics.DrawText(x + offset, 0, chr.ToString(), colors[colorIndex]);
-                    offset += _graphics.CurrentFont.Width;
+                    graphics.DrawText(x + offset, 0, chr.ToString(), colors[colorIndex]);
+                    offset += graphics.CurrentFont.Width;
                     colorIndex++;
 
                     if (colorIndex >= colors.Count)
                         colorIndex = 0;
                 }
 
-                _graphics.Show();
+                graphics.Show();
 
                 x--;
 

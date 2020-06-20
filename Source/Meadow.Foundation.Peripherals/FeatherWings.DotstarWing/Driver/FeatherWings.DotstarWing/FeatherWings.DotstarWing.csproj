@@ -6,9 +6,6 @@
     <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Leds.APA102Led\Driver\Leds.APA102Led\Leds.APA102Led.csproj" />
+    <ProjectReference Include="..\..\..\Leds.Apa102\Driver\Leds.Apa102\Leds.Apa102.csproj" />
   </ItemGroup>
 </Project>

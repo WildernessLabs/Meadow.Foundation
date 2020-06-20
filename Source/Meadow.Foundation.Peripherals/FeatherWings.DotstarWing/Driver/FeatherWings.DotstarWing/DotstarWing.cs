@@ -1,24 +1,26 @@
 ﻿using Meadow.Foundation.Displays;
 using Meadow.Foundation.Leds;
 using Meadow.Hardware;
-using static Meadow.Foundation.Leds.APA102Led;
+using static Meadow.Foundation.Leds.Apa102;
 
 namespace Meadow.Foundation.FeatherWings
 {
     /// <summary>
+    /// **** Untested but should be fully functional ****
     /// Represents Adafruit's Dotstar feather wing 12x6
     /// </summary>
     public class DotstarWing : DisplayBase
     {
-
-        Color _penColor;
-        APA102Led _ledMatrix;
+        Color penColor;
+        Apa102 ledMatrix;
 
         public float Brightness
         {
-            get => _ledMatrix.Brightness;
-            set => _ledMatrix.Brightness = value;  
+            get => ledMatrix.Brightness;
+            set => ledMatrix.Brightness = value;  
         }
+
+        private DotstarWing() { }
 
         public DotstarWing(ISpiBus spiBus, IDigitalOutputPort chipSelect) : this(spiBus,chipSelect,72)
         {
@@ -26,8 +28,8 @@ namespace Meadow.Foundation.FeatherWings
 
         public DotstarWing(ISpiBus spiBus, IDigitalOutputPort chipSelect, uint numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
         {
-            _penColor = Color.White;
-            _ledMatrix = new APA102Led(spiBus, chipSelect, numberOfLeds, pixelOrder, autoWrite);
+            penColor = Color.White;
+            ledMatrix = new Apa102(spiBus, chipSelect, numberOfLeds, pixelOrder, autoWrite);
         }
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format12bppRgb444;
@@ -38,30 +40,7 @@ namespace Meadow.Foundation.FeatherWings
 
         public override void Clear(bool updateDisplay = false)
         {
-            _ledMatrix.Clear(updateDisplay);
-        }
-
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
-        {
-
-            for (var ordinate = 0; ordinate < height; ordinate++)
-            {
-                for (var abscissa = 0; abscissa < width; abscissa++)
-                {
-                    var b = bitmap[(ordinate * width) + abscissa];
-                    byte mask = 0x01;
-                    for (var pixel = 0; pixel < 8; pixel++)
-                    {
-                        DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, (b & mask) > 0);
-                        mask <<= 1;
-                    }
-                }
-            }
-        }
-
-        public override void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
-        {
-            DrawBitmap(x, y, width, height, bitmap, BitmapMode.And);
+            ledMatrix.Clear(updateDisplay);
         }
 
         public override void DrawPixel(int x, int y, Color color)
@@ -76,30 +55,36 @@ namespace Meadow.Foundation.FeatherWings
             uint pixelOffset = (major * majorScale) + minor;
 
             if (pixelOffset >= 0 && pixelOffset < Height * Width)
-                _ledMatrix.SetLed(pixelOffset, color);
-        }
+            {
+                ledMatrix.SetLed(pixelOffset, color);
+            }
+        } 
 
         public override void DrawPixel(int x, int y, bool colored)
         {
             if (colored)
-                DrawPixel(x, y, _penColor);
+            {
+                DrawPixel(x, y, penColor);
+            }
             else
+            {
                 DrawPixel(x, y, Color.Black);
+            }
         }
 
         public override void DrawPixel(int x, int y)
         {
-            DrawPixel(x, y, _penColor);
+            DrawPixel(x, y, penColor);
         }
 
         public override void SetPenColor(Color pen)
         {
-            _penColor = pen;
+            penColor = pen;
         }
 
         public override void Show()
         {
-            _ledMatrix.Show();
+            ledMatrix.Show();
         }
     }
 }

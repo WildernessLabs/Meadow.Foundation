@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using System;
-using System.Security.Policy;
 
 namespace Meadow.Foundation.Leds
 {

@@ -752,6 +752,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.Apa102", "Meadow.Found
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.Apa102_Sample", "Meadow.Foundation.Peripherals\Leds.Apa102\Samples\Leds.Apa102_Sample\Leds.Apa102_Sample.csproj", "{5172C617-0E49-40FD-8579-1DC41AF03EE1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings.DotstarWing", "FeatherWings.DotstarWing", "{A361382C-32DB-4245-A4F9-6D2250952A93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatherWings.DotstarWing", "Meadow.Foundation.Peripherals\FeatherWings.DotstarWing\Driver\FeatherWings.DotstarWing\FeatherWings.DotstarWing.csproj", "{FBDE60E4-7440-414E-BAFF-4C135E7DD1E5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D3A8235E-79B9-43B4-ACDE-2C1B4A3289B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatherWings.DotstarWing_Sample", "Meadow.Foundation.Peripherals\FeatherWings.DotstarWing\Samples\FeatherWings.DotstarWing_Sample\FeatherWings.DotstarWing_Sample.csproj", "{5546B788-CF42-4FF2-B73E-0654184568CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1662,6 +1670,14 @@ Global
 		{5172C617-0E49-40FD-8579-1DC41AF03EE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5172C617-0E49-40FD-8579-1DC41AF03EE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5172C617-0E49-40FD-8579-1DC41AF03EE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBDE60E4-7440-414E-BAFF-4C135E7DD1E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBDE60E4-7440-414E-BAFF-4C135E7DD1E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBDE60E4-7440-414E-BAFF-4C135E7DD1E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBDE60E4-7440-414E-BAFF-4C135E7DD1E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5546B788-CF42-4FF2-B73E-0654184568CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5546B788-CF42-4FF2-B73E-0654184568CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5546B788-CF42-4FF2-B73E-0654184568CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5546B788-CF42-4FF2-B73E-0654184568CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2034,6 +2050,10 @@ Global
 		{CAC3EB01-B0FB-4B42-AA55-F23B4EC38DBA} = {78EABAC3-0248-4802-9C01-5A00E84B85C5}
 		{04BDA601-8A0A-4B19-A2E0-D69F87E20B9E} = {78EABAC3-0248-4802-9C01-5A00E84B85C5}
 		{5172C617-0E49-40FD-8579-1DC41AF03EE1} = {CAC3EB01-B0FB-4B42-AA55-F23B4EC38DBA}
+		{A361382C-32DB-4245-A4F9-6D2250952A93} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{FBDE60E4-7440-414E-BAFF-4C135E7DD1E5} = {A361382C-32DB-4245-A4F9-6D2250952A93}
+		{D3A8235E-79B9-43B4-ACDE-2C1B4A3289B9} = {A361382C-32DB-4245-A4F9-6D2250952A93}
+		{5546B788-CF42-4FF2-B73E-0654184568CA} = {D3A8235E-79B9-43B4-ACDE-2C1B4A3289B9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
