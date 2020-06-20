@@ -24,9 +24,6 @@ namespace MeadowApp
 
         void Initialize()
         {
-            // TODO: need to make an overload that takes a device and a serial
-            // port name, so that we can ensure these things are configured
-            // correctly
             SerialMessagePort serial = Device.CreateSerialMessagePort(
                 Device.SerialPortNames.Com4,
                 suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
