@@ -14,6 +14,12 @@ namespace Sensors.Location.MediaTek
 
     public class Mt3339
     {
+        public int BaudRate
+        {
+            get => serialPort.BaudRate;
+            set => serialPort.BaudRate = value;
+        }
+
         SerialMessagePort serialPort;
         NmeaSentenceProcessor nmeaParser;
 
@@ -22,15 +28,31 @@ namespace Sensors.Location.MediaTek
         public Mt3339(SerialMessagePort serialPort, int baud = 9600)
         {
             this.serialPort = serialPort;
-            // TODO: re-expose this.
-            //this.serialPort.BaudRate = baud;
+            
+            BaudRate = baud;
             Init();
-
         }
+        
+        public Mt3339(
+            IIODevice device,
+            SerialPortName serialPortName,
+            byte[] suffixDelimiter,
+            bool preserveDelimiter,
+            int baud = 9600,
+            int dataBits = 8,
+            Parity partity = Parity.None,
+            StopBits stopBits = StopBits.One,
+            int readBufferSize = 4096) :
+            this(device.CreateSerialMessagePort(
+                serialPortName,
+                suffixDelimiter,
+                preserveDelimiter,
+                baud, dataBits, partity, stopBits, readBufferSize), baud)
+        { } 
 
         protected void Init()
         {
-            this.serialPort.MessageReceived += SerialPort_MessageReceived;
+            serialPort.MessageReceived += SerialPort_MessageReceived;
             InitParsers();
         }
 
@@ -108,7 +130,6 @@ namespace Sensors.Location.MediaTek
                 Console.WriteLine($"Speed: {positionCourseAndTime.SpeedInKnots:f2}");
                 Console.WriteLine($"Course: {positionCourseAndTime.CourseHeading:f2}");
                 Console.WriteLine("*********************************************");
-
             };
 
             // VTG (course made good)
@@ -137,7 +158,6 @@ namespace Sensors.Location.MediaTek
                 }
                 Console.WriteLine("*********************************************");
             };
-
         }
 
         private void SerialPort_MessageReceived(object sender, SerialMessageEventArgs e)
@@ -149,8 +169,7 @@ namespace Sensors.Location.MediaTek
             Console.WriteLine($"msg:{msg}");
 
             Console.WriteLine($"Sending off to the parser");
-            nmeaParser.ParseNmeaMessage(msg);
-
+            nmeaParser?.ParseNmeaMessage(msg);
         }
     }
 }

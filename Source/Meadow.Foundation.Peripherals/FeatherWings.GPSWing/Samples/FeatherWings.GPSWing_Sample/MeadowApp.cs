@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Text;
+using FeatherWings.GPSWing;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Hardware;
-using Sensors.Location.MediaTek;
 
 namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Mt3339 gps;
+        GPSWing gps;
 
         public MeadowApp()
         {
@@ -30,7 +30,7 @@ namespace MeadowApp
                 preserveDelimiter: true,
                 baudRate: 9600);
 
-            gps = new Mt3339(serial);
+            gps = new GPSWing(serial);
         }
     }
 }

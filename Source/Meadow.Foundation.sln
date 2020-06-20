@@ -676,7 +676,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Radio.Rfid.IDxxLA",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{713F4271-0407-4AE0-B982-DE22A0D0857E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.GPS.NMEA_SSD1309_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Sensors.GPS.NMEA_SSD1309_Sample\Sensors.GPS.NMEA_SSD1309_Sample.csproj", "{432EC0B4-9694-4BEB-814E-64F94618EBBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Location.Gnss.Nmea_SSD1309_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Sensors.GPS.NMEA_SSD1309_Sample\Sensors.Location.Gnss.Nmea_SSD1309_Sample.csproj", "{432EC0B4-9694-4BEB-814E-64F94618EBBE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.OLED128x32_TinyPong_Sample", "Meadow.Foundation.Peripherals\FeatherWings.OLED128x32\Sample\FeatherWings.OLED128x32_TinyPong_Sample\FeatherWings.OLED128x32_TinyPong_Sample.csproj", "{F6204364-4AF0-46A2-8D86-35E4B95D9C14}"
 EndProject
@@ -724,9 +724,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Location.MediaTek.M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Location.Gnss.NmeaParsing_Tests", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Sensors.Location.Gnss.NmeaParsing_Tests\Sensors.Location.Gnss.NmeaParsing_Tests.csproj", "{34B18E69-4DF2-475F-A27C-961AD4C49E91}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Temperature.Tmp102_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Samples\Sensors.Temperature.Tmp102_Sample\Sensors.Temperature.Tmp102_Sample.csproj", "{B8F8C9F2-E6BD-4DFA-B472-C80D265AC5DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Temperature.Tmp102_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Samples\Sensors.Temperature.Tmp102_Sample\Sensors.Temperature.Tmp102_Sample.csproj", "{B8F8C9F2-E6BD-4DFA-B472-C80D265AC5DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialGPS_Listener", "Meadow.Foundation.Libraries_and_Frameworks\Samples\SerialGPS_Listener\SerialGPS_Listener.csproj", "{002F277C-3950-4E1C-A2BB-32D9F7D2B413}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings.GPSWing", "FeatherWings.GPSWing", "{5A2A60C7-58CC-401D-81C9-90C02C582121}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{F5C426C9-EFE2-4A20-9548-2879604C5AE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatherWings.GPSWing_Sample", "Meadow.Foundation.Peripherals\FeatherWings.GPSWing\Samples\FeatherWings.GPSWing_Sample\FeatherWings.GPSWing_Sample.csproj", "{8E4113C2-CB8F-40EE-8495-515BC6B69BB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatherWings.GPSWing", "Meadow.Foundation.Peripherals\FeatherWings.GPSWing\Driver\FeatherWings.GPSWing\FeatherWings.GPSWing.csproj", "{F9D2AF4B-58EB-4401-8047-D21A2DE9C3A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1614,6 +1622,14 @@ Global
 		{002F277C-3950-4E1C-A2BB-32D9F7D2B413}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{002F277C-3950-4E1C-A2BB-32D9F7D2B413}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{002F277C-3950-4E1C-A2BB-32D9F7D2B413}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E4113C2-CB8F-40EE-8495-515BC6B69BB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E4113C2-CB8F-40EE-8495-515BC6B69BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E4113C2-CB8F-40EE-8495-515BC6B69BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E4113C2-CB8F-40EE-8495-515BC6B69BB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9D2AF4B-58EB-4401-8047-D21A2DE9C3A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9D2AF4B-58EB-4401-8047-D21A2DE9C3A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9D2AF4B-58EB-4401-8047-D21A2DE9C3A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9D2AF4B-58EB-4401-8047-D21A2DE9C3A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1974,6 +1990,10 @@ Global
 		{34B18E69-4DF2-475F-A27C-961AD4C49E91} = {F0E1BC04-A17B-4604-9EC9-51AFE3A1942D}
 		{B8F8C9F2-E6BD-4DFA-B472-C80D265AC5DA} = {D5471726-76C5-46DD-9931-6328C6A3D375}
 		{002F277C-3950-4E1C-A2BB-32D9F7D2B413} = {F0E1BC04-A17B-4604-9EC9-51AFE3A1942D}
+		{5A2A60C7-58CC-401D-81C9-90C02C582121} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{F5C426C9-EFE2-4A20-9548-2879604C5AE4} = {5A2A60C7-58CC-401D-81C9-90C02C582121}
+		{8E4113C2-CB8F-40EE-8495-515BC6B69BB1} = {F5C426C9-EFE2-4A20-9548-2879604C5AE4}
+		{F9D2AF4B-58EB-4401-8047-D21A2DE9C3A6} = {5A2A60C7-58CC-401D-81C9-90C02C582121}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

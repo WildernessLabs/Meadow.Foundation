@@ -470,5 +470,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             throw new NotImplementedException();
         }
+
+        public SerialMessagePort CreateSerialMessagePort(SerialPortName portName, byte[] suffixDelimiter, bool preserveDelimiter, int baudRate, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, int readBufferSize = 4096)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
