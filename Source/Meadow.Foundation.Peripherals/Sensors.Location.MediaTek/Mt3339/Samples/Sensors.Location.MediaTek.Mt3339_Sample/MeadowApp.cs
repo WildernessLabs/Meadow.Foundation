@@ -31,8 +31,8 @@ namespace MeadowApp
                 Device.SerialPortNames.Com4,
                 suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                 preserveDelimiter: true,
-                9600
-                );
+                baudRate: 9600);
+
             gps = new Mt3339(serial);
         }
     }
