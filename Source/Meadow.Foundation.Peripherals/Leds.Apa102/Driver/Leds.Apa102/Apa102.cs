@@ -5,11 +5,13 @@ using System.Security.Policy;
 namespace Meadow.Foundation.Leds
 {
     /// <summary>
+	/// **** Driver is untested but should be fully working ****
     /// Represents APA102/Dotstar Led(s).
     /// </summary>
     /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_DotStar/blob/master/adafruit_dotstar.py </remarks>
-    public class APA102Led
+    public class Apa102
     {
+        //ToDo this could probably move into Meadow.Foundation.Core
         public enum PixelOrder
         {
             RGB,
@@ -20,7 +22,7 @@ namespace Meadow.Foundation.Leds
             BGR
         }
 
-        protected ISpiPeripheral _spiPeriph;
+        protected ISpiPeripheral spiPeripheral;
 
         const short StartHeaderSize = 4;
         const byte LedStart = 0b11100000;
@@ -32,84 +34,89 @@ namespace Meadow.Foundation.Leds
         static readonly byte[] BRG = { 2, 0, 1 };
         static readonly byte[] BGR = { 2, 1, 0 };
 
-        readonly uint _numberOfLeds;
-        readonly uint _endHeaderSize;
-        readonly byte[] _buffer;
-        readonly uint _endHeaderIndex;
-        readonly byte[] _pixelOrder;
-        public uint NumberOfLeds => _numberOfLeds;
+        readonly uint numberOfLeds;
+        readonly uint endHeaderSize;
+        readonly byte[] buffer;
+        readonly uint endHeaderIndex;
+        readonly byte[] pixelOrder;
+        public uint NumberOfLeds => numberOfLeds;
 
         public float Brightness 
         { 
-            get => _brightness;
+            get => brightness;
             set 
             {
                 if (value < 0)
-                    _brightness = 0;
+                    brightness = 0;
                 else if (value > 1f)
-                    _brightness = 1f;
+                    brightness = 1f;
                 else
-                    _brightness = value;
+                    brightness = value;
             } 
         }
 
         public bool AutoWrite { get; set; }
 
-        float _brightness;
+        float brightness;
 
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelect">THe SPI chip select pin. Not used but need for creating the  SPI Peripheral</param>
         /// <param name="numberOfLeds">The number of APA102 LEDs to control</param>
         /// <param name="pixelOrder">Set the pixel order on the LEDs - different strips implement this differently</param>
         /// <param name="autoWrite">Transmit any LED changes right away</param>
-        public APA102Led(ISpiBus spiBus, IDigitalOutputPort chipSelect, uint numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
+        public Apa102(ISpiBus spiBus, IDigitalOutputPort chipSelect, uint numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
         {
 
-            _spiPeriph = new SpiPeripheral(spiBus, chipSelect);
-            _numberOfLeds = numberOfLeds;
-            _endHeaderSize = _numberOfLeds / 16;
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelect);
+            this.numberOfLeds = numberOfLeds;
+            endHeaderSize = this.numberOfLeds / 16;
             Brightness = 1.0f;
             AutoWrite = autoWrite;
 
-            if (_numberOfLeds % 16 != 0)
-                _endHeaderSize += 1;
+            if (this.numberOfLeds % 16 != 0)
+            {
+                endHeaderSize += 1;
+            }
 
-            _buffer = new byte[_numberOfLeds * 4 + StartHeaderSize + _endHeaderSize];
-            _endHeaderIndex = (uint)(_buffer.Length - _endHeaderSize);
+            buffer = new byte[this.numberOfLeds * 4 + StartHeaderSize + endHeaderSize];
+            endHeaderIndex = (uint)(buffer.Length - endHeaderSize);
 
             switch (pixelOrder)
             {
                 case PixelOrder.RGB:
-                    this._pixelOrder = RGB;
+                    this.pixelOrder = RGB;
                     break;
                 case PixelOrder.RBG:
-                    this._pixelOrder = RBG;
+                    this.pixelOrder = RBG;
                     break;
                 case PixelOrder.GRB:
-                    this._pixelOrder = GRB;
+                    this.pixelOrder = GRB;
                     break;
                 case PixelOrder.GBR:
-                    this._pixelOrder = GBR;
+                    this.pixelOrder = GBR;
                     break;
                 case PixelOrder.BRG:
-                    this._pixelOrder = BRG;
+                    this.pixelOrder = BRG;
                     break;
                 case PixelOrder.BGR:
-                    this._pixelOrder = BGR;
+                    this.pixelOrder = BGR;
                     break;
             }
 
             for (int i = 0; i < StartHeaderSize; i++)
-                _buffer[i] = 0x00;
+            {
+                buffer[i] = 0x00;
+            }
 
+            for (int i = StartHeaderSize; i < endHeaderIndex; i += 4)
+            {
+                buffer[i] = 0xFF;
+            }
 
-            for (int i = StartHeaderSize; i < _endHeaderIndex; i += 4)
-                _buffer[i] = 0xFF;
-
-            for (uint i = _endHeaderIndex; i < _buffer.Length; i++)
-                _buffer[i] = 0xFF;
-
-
+            for (uint i = endHeaderIndex; i < buffer.Length; i++)
+            {
+                buffer[i] = 0xFF;
+            }
         }
 
         /// <summary>
@@ -152,11 +159,15 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
         public virtual void SetLed(uint index, byte[] rgb, float brightness = 1f)
         {
-            if (index > _numberOfLeds)
+            if (index > numberOfLeds)
+            {
                 throw new ArgumentOutOfRangeException("Index must be less than the number of leds specified");
+            }
 
             if (brightness < 0 || brightness > 1f)
+            {
                 throw new ArgumentOutOfRangeException("brightness must be between 0.0 and 1.0");
+            }
 
             var offset = index * 4 + StartHeaderSize;
             //var rgb = value;
@@ -167,13 +178,15 @@ namespace Meadow.Foundation.Leds
             //rgb[2] = value[2];
 
             brightnessByte = (byte)(32 - (32 - (int)(brightness * 31)) & 0b00011111);
-            _buffer[offset] = (byte)(brightnessByte | LedStart);
-            _buffer[offset + 1] = rgb[_pixelOrder[0]];
-            _buffer[offset + 2] = rgb[_pixelOrder[1]];
-            _buffer[offset + 3] = rgb[_pixelOrder[2]];
+            buffer[offset] = (byte)(brightnessByte | LedStart);
+            buffer[offset + 1] = rgb[pixelOrder[0]];
+            buffer[offset + 2] = rgb[pixelOrder[1]];
+            buffer[offset + 3] = rgb[pixelOrder[2]];
 
             if (AutoWrite)
+            {
                 Show();
+            }
         }
 
         /// <summary>
@@ -189,7 +202,9 @@ namespace Meadow.Foundation.Leds
             }
 
             if (!AutoWrite && autoWrite)
+            {
                 Show();
+            }
         }
 
         /// <summary>
@@ -197,8 +212,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public virtual void Show()
         {
-            _spiPeriph.WriteBytes(_buffer);
+            spiPeripheral.WriteBytes(buffer);
         }
-
     }
 }

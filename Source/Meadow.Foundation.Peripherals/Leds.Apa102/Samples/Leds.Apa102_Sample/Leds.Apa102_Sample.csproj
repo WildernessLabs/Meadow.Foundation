@@ -5,9 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Leds.APA102Led\Leds.APA102Led.csproj" />
+    <ProjectReference Include="..\..\Driver\Leds.Apa102\Leds.Apa102.csproj" />
   </ItemGroup>
 </Project>

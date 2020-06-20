@@ -10,7 +10,7 @@ namespace Leds.APA102_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        APA102Led _apa102Led;
+        Apa102 apa102;
 
         public MeadowApp()
         {
@@ -25,31 +25,31 @@ namespace Leds.APA102_Sample
 
             //Not used but is need to create the SPI Peripheral
             IDigitalOutputPort spiPeriphChipSelect = Device.CreateDigitalOutputPort(Device.Pins.D04);
-            _apa102Led = new APA102Led(spiBus, spiPeriphChipSelect, 10, APA102Led.PixelOrder.BGR);
+            apa102 = new Apa102(spiBus, spiPeriphChipSelect, 10, Apa102.PixelOrder.BGR);
         }
 
         void Run()
         {
             Console.WriteLine("Run...");
-            _apa102Led.Clear();
-            _apa102Led.Show();
+            apa102.Clear();
+            apa102.Show();
 
             Thread.Sleep(2000);
-            _apa102Led.SetLed(0, Color.Red, 0.5f);
-            _apa102Led.SetLed(1, Color.White);
-            _apa102Led.SetLed(2, Color.Blue);
+            apa102.SetLed(0, Color.Red, 0.5f);
+            apa102.SetLed(1, Color.White);
+            apa102.SetLed(2, Color.Blue);
 
             Thread.Sleep(2000);
-            _apa102Led.Show();
+            apa102.Show();
 
             Thread.Sleep(2000);
-            _apa102Led.AutoWrite = true;
-            _apa102Led.SetLed(0, Color.Green);
-            _apa102Led.SetLed(1, Color.Yellow);
-            _apa102Led.SetLed(2, Color.Pink);
+            apa102.AutoWrite = true;
+            apa102.SetLed(0, Color.Green);
+            apa102.SetLed(1, Color.Yellow);
+            apa102.SetLed(2, Color.Pink);
 
             Thread.Sleep(5000);
-            _apa102Led.Clear();
+            apa102.Clear();
 
         }
     }
