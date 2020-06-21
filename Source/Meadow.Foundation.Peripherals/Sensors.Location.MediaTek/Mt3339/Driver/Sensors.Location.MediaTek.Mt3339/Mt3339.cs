@@ -20,12 +20,12 @@ namespace Sensors.Location.MediaTek
             set => serialPort.BaudRate = value;
         }
 
-        SerialMessagePort serialPort;
+        ISerialMessagePort serialPort;
         NmeaSentenceProcessor nmeaParser;
 
         public event EventHandler<NmeaEventArgs> NmeaSentenceArrived = delegate { };
 
-        public Mt3339(SerialMessagePort serialPort, int baud = 9600)
+        public Mt3339(ISerialMessagePort serialPort, int baud = 9600)
         {
             this.serialPort = serialPort;
             
@@ -160,7 +160,7 @@ namespace Sensors.Location.MediaTek
             };
         }
 
-        private void SerialPort_MessageReceived(object sender, SerialMessageEventArgs e)
+        private void SerialPort_MessageReceived(object sender, SerialMessageData e)
         {
             Console.WriteLine("Message arrived.");
 

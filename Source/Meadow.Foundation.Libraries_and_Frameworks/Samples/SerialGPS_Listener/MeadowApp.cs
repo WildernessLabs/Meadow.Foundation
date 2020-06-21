@@ -15,7 +15,7 @@ namespace MeadowApp
     /// </summary>
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        SerialMessagePort serialPort;
+        ISerialMessagePort serialPort;
         NmeaSentenceProcessor nmeaParser;
 
         public MeadowApp()
@@ -43,7 +43,7 @@ namespace MeadowApp
             serialPort.Open();
         }
 
-        private void SerialPort_MessageReceived(object sender, SerialMessageEventArgs e)
+        private void SerialPort_MessageReceived(object sender, SerialMessageData e)
         {
             Console.WriteLine("Message received.");
             Console.WriteLine($"[{e.GetMessageString(Encoding.ASCII)}]");

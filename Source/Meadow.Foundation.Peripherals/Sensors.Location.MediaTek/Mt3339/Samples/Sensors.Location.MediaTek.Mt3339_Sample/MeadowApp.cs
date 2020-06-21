@@ -24,7 +24,7 @@ namespace MeadowApp
 
         void Initialize()
         {
-            SerialMessagePort serial = Device.CreateSerialMessagePort(
+            ISerialMessagePort serial = Device.CreateSerialMessagePort(
                 Device.SerialPortNames.Com4,
                 suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                 preserveDelimiter: true,

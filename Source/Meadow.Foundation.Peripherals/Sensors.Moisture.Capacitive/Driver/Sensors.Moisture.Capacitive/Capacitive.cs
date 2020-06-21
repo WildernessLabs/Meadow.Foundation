@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         #region Member Variables / fields
 
         // internal thread lock
-        private object _lock = new object();        
+        private object _lock = new object();
 
         #endregion
 
@@ -70,8 +70,9 @@ namespace Meadow.Foundation.Sensors.Moisture
             IIODevice device,
             IPin analogPin,
             float minimumVoltageCalibration = 0f,
-            float maximumVoltageCalibration = 3.3f) : 
-            this(device.CreateAnalogInputPort(analogPin), minimumVoltageCalibration, maximumVoltageCalibration) { }
+            float maximumVoltageCalibration = 3.3f) :
+            this(device.CreateAnalogInputPort(analogPin), minimumVoltageCalibration, maximumVoltageCalibration)
+        { }
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort.
@@ -162,10 +163,9 @@ namespace Meadow.Foundation.Sensors.Moisture
             base.NotifyObservers(changeResult);
         }
 
-        protected float VoltageToMoisture(float voltage) 
+        protected float VoltageToMoisture(float voltage)
         {
-            if (MinimumVoltageCalibration > MaximumVoltageCalibration)
-            {
+            if (MinimumVoltageCalibration > MaximumVoltageCalibration) {
                 return 1f - Map(voltage, MaximumVoltageCalibration, MinimumVoltageCalibration, 0f, 1.0f);
             }
 

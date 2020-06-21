@@ -186,8 +186,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             //
             if (calibration == null) { calibration = new Calibration(); }
 
-            switch (sensorType)
-            {
+            switch (sensorType) {
                 case KnownSensorType.TMP35:
                 case KnownSensorType.LM35:
                 case KnownSensorType.LM45:
@@ -283,7 +282,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Stops sampling the temperature.
         /// </summary>
-        public void StopUpdating() {
+        public void StopUpdating()
+        {
             AnalogInputPort.StopSampling();
         }
 

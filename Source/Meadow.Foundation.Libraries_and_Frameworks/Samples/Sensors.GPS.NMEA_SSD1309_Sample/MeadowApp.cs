@@ -12,9 +12,9 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        SerialTextFile serialTextFile;
+        //SerialTextFile serialTextFile;
         NmeaSentenceProcessor nmea;
-        SerialMessagePort port;
+        ISerialMessagePort port;
         byte[] data = new byte[512];
 
         Ssd1309 display;
@@ -44,7 +44,7 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
                 9600);
             Console.WriteLine("Serial port created");
 
-            port.MessageReceived += (object sender, SerialMessageEventArgs e) => {
+            port.MessageReceived += (object sender, SerialMessageData e) => {
                 nmea.ParseNmeaMessage(e.GetMessageString(Encoding.ASCII));
             };
 
