@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Buttons
             {
                 bool currentState = DigitalIn?.Resistor == ResistorMode.PullDown ? true : false;
 
-                return (_state == currentState) ? true : false;
+                return (state == currentState) ? true : false;
             }
         }
 
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Returns the current raw state of the switch.
         /// </summary>
-        protected bool _state => (DigitalIn != null) ? !DigitalIn.State : false;
+        protected bool state => (DigitalIn != null) ? !DigitalIn.State : false;
 
         /// <summary>
         /// Minimum DateTime value when the button was pushed
@@ -83,7 +83,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Maximum DateTime value when the button was just pushed
         /// </summary>
-        protected DateTime _buttonPressStart = DateTime.MaxValue;
+        protected DateTime buttonPressStart = DateTime.MaxValue;
 
         /// <summary>
         /// Circuit Termination Type (CommonGround, High or Floating)
@@ -141,17 +141,17 @@ namespace Meadow.Foundation.Sensors.Buttons
             if (State)
             {
                 // save our press start time (for long press event)
-                _buttonPressStart = DateTime.Now;
+                buttonPressStart = DateTime.Now;
                 // raise our event in an inheritance friendly way
                 this.RaisePressStarted();
             }
             else if (State == false)
             {
                 // calculate the press duration
-                TimeSpan pressDuration = DateTime.Now - _buttonPressStart;
+                TimeSpan pressDuration = DateTime.Now - buttonPressStart;
 
                 // reset press start time
-                _buttonPressStart = DateTime.MaxValue;
+                buttonPressStart = DateTime.MaxValue;
 
                 // if it's a long press, raise our long press event
                 if (LongPressThreshold > TimeSpan.Zero && pressDuration > LongPressThreshold)

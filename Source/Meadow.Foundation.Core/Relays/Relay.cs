@@ -22,16 +22,16 @@ namespace Meadow.Foundation.Relays
         /// Whether or not the relay is on. Setting this property will turn it on or off.
         /// </summary>
         public bool IsOn {
-            get => _isOn; 
+            get => isOn; 
             set
             {
                 // if turning on,
-                _isOn = value;
-                DigitalOut.State = _isOn ? _onValue : !_onValue;
+                isOn = value;
+                DigitalOut.State = isOn ? onValue : !onValue;
                 
             }
-        } protected bool _isOn = false;
-        protected bool _onValue = true;
+        } protected bool isOn = false;
+        protected bool onValue = true;
 
         /// <summary>
         /// Creates a new Relay on an IDigitalOutputPort.
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Relays
         {
             // if it's normally closed, we have to invert the "on" value
             Type = type;
-            _onValue = (Type == RelayType.NormallyClosed) ? false : true;
+            onValue = (Type == RelayType.NormallyClosed) ? false : true;
 
             DigitalOut = port;
         }

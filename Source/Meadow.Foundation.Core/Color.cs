@@ -26,38 +26,38 @@ namespace Meadow.Foundation
 
         public double A
         {
-            get { return _a; }
-        } readonly double _a;
+            get { return a; }
+        } readonly double a;
 
         public double R
         {
-            get { return _r; }
-        } readonly double _r;
+            get { return r; }
+        } readonly double r;
 
         public double G
         {
-            get { return _g; }
-        } readonly double _g;
+            get { return g; }
+        } readonly double g;
         
         public double B
         {
-            get { return _b; }
-        } readonly double _b;
+            get { return b; }
+        } readonly double b;
         
         public double Hue
         {
-            get { return _hue; }
-        } readonly double _hue;
+            get { return hue; }
+        } readonly double hue;
         
         public double Saturation
         {
-            get { return _saturation; }
-        } readonly double _saturation;
+            get { return saturation; }
+        } readonly double saturation;
         
         public double Brightness
         {
-            get { return _brightness; }
-        } readonly double _brightness;
+            get { return brightness; }
+        } readonly double brightness;
 
         public Color(double r, double g, double b, double a) : this(r, g, b, a, Mode.Rgb)
         {
@@ -70,22 +70,22 @@ namespace Meadow.Foundation
             {
                 default:
                 case Mode.Default:
-                    _r = _g = _b = _a = -1;
-                    _hue = _saturation = _brightness = -1;
+                    r = g = b = a = -1;
+                    hue = saturation = brightness = -1;
                     break;
                 case Mode.Rgb:
-                    _r = w.Clamp(0, 1);
-                    _g = (double)x.Clamp(0, 1);
-                    _b = (double)y.Clamp(0, 1);
-                    _a = (double)z.Clamp(0, 1);
-                    ConvertToHsb(_r, _g, _b, mode, out _hue, out _saturation, out _brightness);
+                    r = w.Clamp(0, 1);
+                    g = (double)x.Clamp(0, 1);
+                    b = (double)y.Clamp(0, 1);
+                    a = (double)z.Clamp(0, 1);
+                    ConvertToHsb(r, g, b, mode, out hue, out saturation, out brightness);
                     break;
                 case Mode.Hsb:
-                    _hue = (double)w.Clamp(0, 1);
-                    _saturation = (double)x.Clamp(0, 1);
-                    _brightness = (double)y.Clamp(0, 1);
-                    _a = (double)z.Clamp(0, 1);
-                    ConvertToRgb(_hue, _saturation, _brightness, mode, out _r, out _g, out _b);
+                    hue = (double)w.Clamp(0, 1);
+                    saturation = (double)x.Clamp(0, 1);
+                    brightness = (double)y.Clamp(0, 1);
+                    a = (double)z.Clamp(0, 1);
+                    ConvertToRgb(hue, saturation, brightness, mode, out r, out g, out b);
                     break;
             }
         }
@@ -106,9 +106,9 @@ namespace Meadow.Foundation
                 case Mode.Default:
                     throw new InvalidOperationException("Invalid on Color.Default");
                 case Mode.Rgb:
-                    return new Color(_r, _g, _b, _a * alpha, Mode.Rgb);
+                    return new Color(r, g, b, a * alpha, Mode.Rgb);
                 case Mode.Hsb:
-                    return new Color(_hue, _saturation, _brightness, _a * alpha, Mode.Hsb);
+                    return new Color(hue, saturation, brightness, a * alpha, Mode.Hsb);
             }
         }
 
@@ -117,28 +117,28 @@ namespace Meadow.Foundation
             if (_mode == Mode.Default)
                 throw new InvalidOperationException("Invalid on Color.Default");
 
-            return new Color(_hue, _saturation, _brightness + delta, _a, Mode.Hsb);
+            return new Color(hue, saturation, brightness + delta, a, Mode.Hsb);
         }
 
         public Color WithHue(double hue)
         {
             if (_mode == Mode.Default)
                 throw new InvalidOperationException("Invalid on Color.Default");
-            return new Color(hue, _saturation, _brightness, _a, Mode.Hsb);
+            return new Color(hue, saturation, brightness, a, Mode.Hsb);
         }
 
         public Color WithSaturation(double saturation)
         {
             if (_mode == Mode.Default)
                 throw new InvalidOperationException("Invalid on Color.Default");
-            return new Color(_hue, saturation, _brightness, _a, Mode.Hsb);
+            return new Color(hue, saturation, brightness, a, Mode.Hsb);
         }
 
         public Color WithBrightness(double brightness)
         {
             if (_mode == Mode.Default)
                 throw new InvalidOperationException("Invalid on Color.Default");
-            return new Color(_hue, _saturation, brightness, _a, Mode.Hsb);
+            return new Color(hue, saturation, brightness, a, Mode.Hsb);
         }
 
         static void ConvertToRgb(double hue, double saturation, double brightness, Mode mode, out double r, out double g, out double b)
@@ -249,10 +249,10 @@ namespace Meadow.Foundation
         {
             unchecked
             {
-                int hashcode = _r.GetHashCode();
-                hashcode = (hashcode * 397) ^ _g.GetHashCode();
-                hashcode = (hashcode * 397) ^ _b.GetHashCode();
-                hashcode = (hashcode * 397) ^ _a.GetHashCode();
+                int hashcode = r.GetHashCode();
+                hashcode = (hashcode * 397) ^ g.GetHashCode();
+                hashcode = (hashcode * 397) ^ b.GetHashCode();
+                hashcode = (hashcode * 397) ^ a.GetHashCode();
                 return hashcode;
             }
         }
@@ -273,8 +273,8 @@ namespace Meadow.Foundation
             if (color1._mode == Mode.Default || color2._mode == Mode.Default)
                 return false;
             if (color1._mode == Mode.Hsb && color2._mode == Mode.Hsb)
-                return color1._hue == color2._hue && color1._saturation == color2._saturation && color1._brightness == color2._brightness && color1._a == color2._a;
-            return color1._r == color2._r && color1._g == color2._g && color1._b == color2._b && color1._a == color2._a;
+                return color1.hue == color2.hue && color1.saturation == color2.saturation && color1.brightness == color2.brightness && color1.a == color2.a;
+            return color1.r == color2.r && color1.g == color2.g && color1.b == color2.b && color1.a == color2.a;
         }
 
         public override string ToString()
