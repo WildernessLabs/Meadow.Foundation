@@ -660,9 +660,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{800E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.OLED128x32Wing_Sample", "Meadow.Foundation.Peripherals\FeatherWings.OLED128x32\Sample\FeatherWings.OLED128x32_Sample\FeatherWings.OLED128x32Wing_Sample.csproj", "{521D5D37-D316-44A7-81C0-E0F4C20D1977}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.I2cSpiAnalogTemperature_Sample", "Meadow.Foundation.Core.Samples\Tests.I2cSpiAnalogTemperature_Sample\Tests.I2cSpiAnalogTemperature_Sample.csproj", "{FF9113E8-18A0-479E-9624-DA63954222AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.I2cSpiAnalogTemperature_Sample", "Meadow.Foundation.Core.Samples\Tests.I2cSpiAnalogTemperature_Sample\Tests.I2cSpiAnalogTemperature_Sample.csproj", "{FF9113E8-18A0-479E-9624-DA63954222AB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.HallEffect_Sample", "Meadow.Foundation.Core.Samples\Sensors.HallEffect_Sample\Sensors.HallEffect_Sample.csproj", "{F4FD40F9-B7F2-4A89-8647-7D3CDDF95289}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.HallEffect_Sample", "Meadow.Foundation.Core.Samples\Sensors.HallEffect_Sample\Sensors.HallEffect_Sample.csproj", "{F4FD40F9-B7F2-4A89-8647-7D3CDDF95289}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Distance.Vl53l0x", "Sensors.Distance.Vl53l0x", "{D1DD2BC2-1100-4037-A571-FF8545CFCBAD}"
 EndProject
@@ -759,6 +759,22 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D3A8235E-79B9-43B4-ACDE-2C1B4A3289B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatherWings.DotstarWing_Sample", "Meadow.Foundation.Peripherals\FeatherWings.DotstarWing\Samples\FeatherWings.DotstarWing_Sample\FeatherWings.DotstarWing_Sample.csproj", "{5546B788-CF42-4FF2-B73E-0654184568CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Motors.Stepper.A4988", "Motors.Stepper.A4988", "{2F106C24-1825-4C6F-8581-0B8ED871CD80}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B7DF35D6-7124-40D5-A219-82894CD0ACD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motors.Stepper.A4988", "Meadow.Foundation.Peripherals\Motors.Stepper.A4988\Driver\Motors.Stepper.A4988\Motors.Stepper.A4988.csproj", "{3BA971E2-D89E-41B8-9C29-89F256B7E873}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motors.Stepper.A4988_Sample", "Meadow.Foundation.Peripherals\Motors.Stepper.A4988\Samples\Motors.Stepper.A4988_Sample\Motors.Stepper.A4988_Sample.csproj", "{A3935804-D2A7-4195-AF7D-A62A858E7D39}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.LoadCell.Nau7802", "Sensors.LoadCell.Nau7802", "{AA8BDD23-315D-4784-93D2-12E7EB577675}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{481EEB00-F764-4ACB-B9EC-0611C6750CCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.LoadCell.Nau7802", "Meadow.Foundation.Peripherals\Sensors.LoadCell.Nau7802\Driver\Sensors.LoadCell.Nau7802\Sensors.LoadCell.Nau7802.csproj", "{79ECD15A-DAF9-45E3-9A2D-30D24EE7F18A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.LoadCell.Nau7802_Sample", "Meadow.Foundation.Peripherals\Sensors.LoadCell.Nau7802\Samples\Sensors.LoadCell.Nau7802_Sample\Sensors.LoadCell.Nau7802_Sample.csproj", "{E1829984-508F-4BED-A11D-E43624064DFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1678,6 +1694,22 @@ Global
 		{5546B788-CF42-4FF2-B73E-0654184568CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5546B788-CF42-4FF2-B73E-0654184568CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5546B788-CF42-4FF2-B73E-0654184568CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BA971E2-D89E-41B8-9C29-89F256B7E873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BA971E2-D89E-41B8-9C29-89F256B7E873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BA971E2-D89E-41B8-9C29-89F256B7E873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BA971E2-D89E-41B8-9C29-89F256B7E873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3935804-D2A7-4195-AF7D-A62A858E7D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3935804-D2A7-4195-AF7D-A62A858E7D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3935804-D2A7-4195-AF7D-A62A858E7D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3935804-D2A7-4195-AF7D-A62A858E7D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79ECD15A-DAF9-45E3-9A2D-30D24EE7F18A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79ECD15A-DAF9-45E3-9A2D-30D24EE7F18A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79ECD15A-DAF9-45E3-9A2D-30D24EE7F18A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79ECD15A-DAF9-45E3-9A2D-30D24EE7F18A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1829984-508F-4BED-A11D-E43624064DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1829984-508F-4BED-A11D-E43624064DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1829984-508F-4BED-A11D-E43624064DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1829984-508F-4BED-A11D-E43624064DFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2054,6 +2086,14 @@ Global
 		{FBDE60E4-7440-414E-BAFF-4C135E7DD1E5} = {A361382C-32DB-4245-A4F9-6D2250952A93}
 		{D3A8235E-79B9-43B4-ACDE-2C1B4A3289B9} = {A361382C-32DB-4245-A4F9-6D2250952A93}
 		{5546B788-CF42-4FF2-B73E-0654184568CA} = {D3A8235E-79B9-43B4-ACDE-2C1B4A3289B9}
+		{2F106C24-1825-4C6F-8581-0B8ED871CD80} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{B7DF35D6-7124-40D5-A219-82894CD0ACD3} = {2F106C24-1825-4C6F-8581-0B8ED871CD80}
+		{3BA971E2-D89E-41B8-9C29-89F256B7E873} = {2F106C24-1825-4C6F-8581-0B8ED871CD80}
+		{A3935804-D2A7-4195-AF7D-A62A858E7D39} = {B7DF35D6-7124-40D5-A219-82894CD0ACD3}
+		{AA8BDD23-315D-4784-93D2-12E7EB577675} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{481EEB00-F764-4ACB-B9EC-0611C6750CCB} = {AA8BDD23-315D-4784-93D2-12E7EB577675}
+		{79ECD15A-DAF9-45E3-9A2D-30D24EE7F18A} = {AA8BDD23-315D-4784-93D2-12E7EB577675}
+		{E1829984-508F-4BED-A11D-E43624064DFD} = {481EEB00-F764-4ACB-B9EC-0611C6750CCB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
