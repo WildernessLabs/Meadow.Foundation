@@ -1,5 +1,4 @@
-﻿using System;
-namespace Meadow.Foundation.Leds
+﻿namespace Meadow.Foundation.Leds
 {
     public partial class RgbLed
     {
@@ -15,6 +14,5 @@ namespace Meadow.Foundation.Leds
             Black,
             count
         }
-
     }
 }

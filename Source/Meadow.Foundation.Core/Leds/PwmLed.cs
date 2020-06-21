@@ -11,9 +11,9 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class PwmLed : IPwmLed
     {
-        protected Thread _animationThread;
-        protected float _maximumPwmDuty = 1;
-        protected bool _running;
+        protected Thread animationThread;
+        protected float maximumPwmDuty = 1;
+        protected bool running;
 
         /// <summary>
         /// Gets the brightness of the LED, controlled by a PWM signal, and limited by the 
@@ -29,13 +29,13 @@ namespace Meadow.Foundation.Leds
             get => _isOn;
             set 
             {
-                Port.DutyCycle = value ? _maximumPwmDuty : 0;
+                Port.DutyCycle = value ? maximumPwmDuty : 0;
                 _isOn = value;
             }
         }
         protected bool _isOn;
 
-        protected bool _inverted;
+        protected bool inverted;
 
         ///// <summary>
         ///// Gets the PwmPort
@@ -79,12 +79,12 @@ namespace Meadow.Foundation.Leds
             
             ForwardVoltage = forwardVoltage;
 
-            this._inverted = (terminationType == CircuitTerminationType.High);
+            inverted = (terminationType == CircuitTerminationType.High);
 
-            _maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
+            maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
 
             Port = pwmPort;
-            Port.Inverted = this._inverted;
+            Port.Inverted = inverted;
             Port.Frequency = 100;
             Port.DutyCycle = 0;
             Port.Start();
@@ -103,7 +103,7 @@ namespace Meadow.Foundation.Leds
 
             Brightness = brightness;
 
-            Port.DutyCycle = _maximumPwmDuty * Brightness;
+            Port.DutyCycle = maximumPwmDuty * Brightness;
 
             if (!Port.State)
             {
@@ -135,10 +135,10 @@ namespace Meadow.Foundation.Leds
 
             // stop any existing animations
             Stop();
-            _running = true;
+            running = true;
 
-            _animationThread = new Thread(() => {
-                while (_running)
+            animationThread = new Thread(() => {
+                while (running)
                 {
                     this.SetBrightness(highBrightness);
                     Thread.Sleep((int)onDuration);
@@ -146,7 +146,7 @@ namespace Meadow.Foundation.Leds
                     Thread.Sleep((int)offDuration);
                 }
             });
-            _animationThread.Start();
+            animationThread.Start();
         }
 
         /// <summary>
@@ -169,9 +169,9 @@ namespace Meadow.Foundation.Leds
 
             // stop any existing animations
             Stop();
-            _running = true;
+            running = true;
 
-            _animationThread = new Thread(() => 
+            animationThread = new Thread(() => 
             {
                 // pulse the LED by taking the brightness from low to high and back again.
                 float brightness = lowBrightness;
@@ -191,7 +191,7 @@ namespace Meadow.Foundation.Leds
 
                 // TODO BUGBUG: we lose ~40-60ms to the processing in each loop, so the timing actually drifts.
                 // pulse takes longer than it should.
-                while (_running)
+                while (running)
                 {
                     // are we brightening or dimming?
                     if (brightness <= lowBrightness) {
@@ -215,7 +215,7 @@ namespace Meadow.Foundation.Leds
                     Thread.Sleep(intervalTime / 2);
                 }
             });
-            _animationThread.Start();
+            animationThread.Start();
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Stop()
         {
-            _running = false;
+            running = false;
             SetBrightness(0);
         }
     }

@@ -95,7 +95,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public Color Color { get; private set; } = Color.Black;
 
-        protected Task _animationTask = null;
+        protected Task animationTask = null;
         protected CancellationTokenSource cancellationTokenSource = null;
 
         /// <summary>
@@ -240,12 +240,12 @@ namespace Meadow.Foundation.Leds
 
             Stop();
 
-            _animationTask = new Task(async () =>
+            animationTask = new Task(async () =>
             {
                 cancellationTokenSource = new CancellationTokenSource();
                 await StartBlinkAsync(color, onDuration, offDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
             });
-            _animationTask.Start();
+            animationTask.Start();
         }
         protected async Task StartBlinkAsync(Color color, uint onDuration, uint offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
@@ -284,12 +284,12 @@ namespace Meadow.Foundation.Leds
 
             Stop();
 
-            _animationTask = new Task(async () =>
+            animationTask = new Task(async () =>
             {
                 cancellationTokenSource = new CancellationTokenSource();
                 await StartPulseAsync(color, pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
             });
-            _animationTask.Start();
+            animationTask.Start();
         }
         protected async Task StartPulseAsync(Color color, uint pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {

@@ -8,8 +8,8 @@ namespace Meadow.Foundation.Leds
 {
     public partial class RgbLed : IRgbLed
     {
-        protected Task _animationTask = null;
-        protected CancellationTokenSource _cancellationTokenSource = null;
+        protected Task animationTask = null;
+        protected CancellationTokenSource cancellationTokenSource = null;
 
         public Colors Color { get; protected set; }
 
@@ -46,17 +46,17 @@ namespace Meadow.Foundation.Leds
             BluePort = bluePort;
             Common = commonType;
 
-            _cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource = new CancellationTokenSource();
         }
 
         public void Stop()
         {
-            _cancellationTokenSource.Cancel();
+            cancellationTokenSource.Cancel();
         }
 
         public void TurnOff()
         {
-            _cancellationTokenSource.Cancel();
+            cancellationTokenSource.Cancel();
             SetColor(Colors.Black);
         }
 
@@ -116,17 +116,17 @@ namespace Meadow.Foundation.Leds
 
         public void StartBlink(Colors color, uint onDuration = 200, uint offDuration = 200)
         {
-            if (!_cancellationTokenSource.Token.IsCancellationRequested)
-                _cancellationTokenSource.Cancel();
+            if (!cancellationTokenSource.Token.IsCancellationRequested)
+                cancellationTokenSource.Cancel();
 
             SetColor(Colors.Black);
 
-            _animationTask = new Task(async () =>
+            animationTask = new Task(async () =>
             {
-                _cancellationTokenSource = new CancellationTokenSource();
-                await StartBlinkAsync(color, onDuration, offDuration, _cancellationTokenSource.Token);
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartBlinkAsync(color, onDuration, offDuration, cancellationTokenSource.Token);
             });
-            _animationTask.Start();
+            animationTask.Start();
         }
 
         protected async Task StartBlinkAsync(Colors color, uint onDuration, uint offDuration, CancellationToken cancellationToken)

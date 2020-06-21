@@ -24,42 +24,42 @@ namespace Meadow.Foundation.Generators
         public TimeScale TimeScale { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public float DutyCycle {
-            get => _dutyCycle;
+            get => dutyCycle;
             set {
-                _dutyCycle = value;
-                _onTimeMilliseconds = CalculateOnTimeMillis();
-                _offTimeMilliseconds = CalculateOffTimeMillis();
+                dutyCycle = value;
+                onTimeMilliseconds = CalculateOnTimeMillis();
+                offTimeMilliseconds = CalculateOffTimeMillis();
                 //Console.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
-        } protected float _dutyCycle;
+        } protected float dutyCycle;
 
         public float Frequency {
-            get => _frequency;
+            get => frequency;
             set {
                 if (Frequency <= 0) {
                     throw new Exception("Frequency must be > 0.");
                 }
-                _frequency = value;
-                _onTimeMilliseconds = CalculateOnTimeMillis();
-                _offTimeMilliseconds = CalculateOffTimeMillis();
+                frequency = value;
+                onTimeMilliseconds = CalculateOnTimeMillis();
+                offTimeMilliseconds = CalculateOffTimeMillis();
                 //Console.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
         }
 
         public IPwmChannelInfo Channel {get; protected set;}
 
-        public bool State => this._running;
+        public bool State => this.running;
 
         public IPin Pin => Port.Pin;
 
         IDigitalChannelInfo IPort<IDigitalChannelInfo>.Channel => throw new NotImplementedException();
 
-        protected float _frequency = 1.0f; // in the case it doesn't get set before dutycycle, initialize to 1
+        protected float frequency = 1.0f; // in the case it doesn't get set before dutycycle, initialize to 1
 
-        protected Thread _th = null;
-        protected int _onTimeMilliseconds = 0;
-        protected int _offTimeMilliseconds = 0;
-        protected bool _running = false;
+        protected Thread th = null;
+        protected int onTimeMilliseconds = 0;
+        protected int offTimeMilliseconds = 0;
+        protected bool running = false;
 
         ///// <summary>
         ///// Instantiate a SoftPwm object that can perform PWM using digital pins
@@ -93,20 +93,20 @@ namespace Meadow.Foundation.Generators
         /// </summary>
         public void Start()
         {
-            _running = true;
+            running = true;
 
             // create a new thread that actually writes the pwm to the output port
-            _th = new Thread(() => 
+            th = new Thread(() => 
             { 
-                while (_running)
+                while (running)
                 {
                     Port.State = true;
-                    Thread.Sleep(_onTimeMilliseconds);
+                    Thread.Sleep(onTimeMilliseconds);
                     Port.State = false;
-                    Thread.Sleep(_offTimeMilliseconds);
+                    Thread.Sleep(offTimeMilliseconds);
                 }
             });
-            _th.Start();
+            th.Start();
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Meadow.Foundation.Generators
         public void Stop()
         {
             // setting this will wrap up the thread
-            _running = false;
+            running = false;
 
             // need to make sure the port is off, otherwise it can get
             // stuck in an ON state.

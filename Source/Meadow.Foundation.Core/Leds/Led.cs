@@ -22,19 +22,19 @@ namespace Meadow.Foundation.Leds
 		/// <value><c>true</c> if is on; otherwise, <c>false</c>.</value>
 		public bool IsOn
 		{
-			get { return _isOn; }
+			get { return isOn; }
 			set
 			{
-				_isOn = value;
-				Port.State = _isOn;
+				isOn = value;
+				Port.State = isOn;
 			}
 		}
 		#endregion
 
 		#region Fields
-		protected bool _isOn = false;
-		protected Task _animationTask = null;
-		protected bool _running = false;
+		protected bool isOn = false;
+		protected Task animationTask = null;
+		protected bool isRunning = false;
 		#endregion
 
 		#region Constructor(s)
@@ -64,12 +64,12 @@ namespace Meadow.Foundation.Leds
 		/// <param name="offDuration"></param>
 		public void StartBlink(uint onDuration = 200, uint offDuration = 200)
 		{
-			_running = true;
+			isRunning = true;
 
             //TODO: Make this cancellable via Cancellation token
-            _animationTask = new Task(async () => 
+            animationTask = new Task(async () => 
             {
-                while (_running)
+                while (isRunning)
                 {
                     IsOn = true;
                     await Task.Delay((int)onDuration);
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Leds
                     await Task.Delay((int)offDuration);
                 }
             });
-            _animationTask.Start();
+            animationTask.Start();
         }
 
 		/// <summary>
@@ -85,8 +85,8 @@ namespace Meadow.Foundation.Leds
 		/// </summary>
 		public void Stop()
 		{
-			_running = false;
-			_isOn = false;
+			isRunning = false;
+			isOn = false;
 		}
 		#endregion
 	}
