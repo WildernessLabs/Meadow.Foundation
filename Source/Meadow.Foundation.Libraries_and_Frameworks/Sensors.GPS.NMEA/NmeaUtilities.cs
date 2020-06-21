@@ -6,7 +6,7 @@ using Meadow.Peripherals.Sensors.Location;
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
-    ///     Provide common functionality for the decode classes.
+    /// Provide common functionality for the decode classes.
     /// </summary>
     public class NmeaUtilities
     {
@@ -49,7 +49,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         }
 
         /// <summary>
-        ///     Decode the degrees / minutes location and return a DMPosition.
+        /// Decode the degrees / minutes location and return a DMPosition.
         /// </summary>
         /// <param name="location">Location in the format dddmm.mmmm or ddmm.mmmm</param>
         /// <param name="direction">Direction of the reading, one of N, S, E, W.</param>

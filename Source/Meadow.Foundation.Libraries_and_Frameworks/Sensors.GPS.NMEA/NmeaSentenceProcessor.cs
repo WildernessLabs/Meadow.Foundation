@@ -5,8 +5,6 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
-    // NOTE: Excellent NMEA specification info here: https://gpsd.gitlab.io/gpsd/NMEA.html
-
     /// <summary>
     /// An engine that processes NMEA GPS/GNSS sentences by calling the appropriate
     /// parser and handing them off. Note that it's designed to be asynchronous
@@ -18,8 +16,13 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// and pass the NMEA sentence string,
     /// e.g. "$GPRMC,000049.799,V,,,,,0.00,0.00,060180,,,N*48".
     ///
-    /// Each `INmeaParser` parser has 
+    /// Each `INmeaParser` parser has its own event(s) that can then be subscribed
+    /// to, in order to get the resulting information.
     /// </summary>
+    /// <remarks>
+    /// If you'd like to add additional parsers, an excellent reference on NMEA
+    /// sentences can found [here](https://gpsd.gitlab.io/gpsd/NMEA.html).
+    /// </remarks>
     public class NmeaSentenceProcessor
     {
         /// <summary>
@@ -27,7 +30,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// </summary>
         private readonly Dictionary<string, INmeaParser/*<IGnssResult>*/> parsers = new Dictionary<string, INmeaParser/*<IGnssResult>*/>();
 
-        public bool DebugMode { get; set; } = true;
+        public bool DebugMode { get; set; } = false;
 
         /// <summary>
         /// Default constructor for a NMEA GPS object, this is private to prevent the user from
@@ -51,10 +54,10 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         }
 
         /// <summary>
-        ///     GPS message ready for processing.
+        /// GPS message ready for processing.
         /// </summary>
         /// <remarks>
-        ///     Unknown message types will be discarded.
+        /// Unknown message types will be discarded.
         /// </remarks>
         /// <param name="line">GPS text for processing.</param>
         public void ParseNmeaMessage(string line)

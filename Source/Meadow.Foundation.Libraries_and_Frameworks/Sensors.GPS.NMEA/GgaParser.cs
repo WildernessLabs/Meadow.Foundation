@@ -3,6 +3,7 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
+    // TODO: Should this be a struct with fields?
     /// <summary>
     /// Decoder for GGA messages.
     /// </summary>
