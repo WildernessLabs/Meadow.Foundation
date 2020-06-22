@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// from the Bosch BME280 sensor.
     /// </remarks>
     public class Bme280 :
-        FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         #region Constants
@@ -331,7 +331,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // Modes.Sleep to save power. Need to figure out what the stanby
             // duration threshold is for that. i'm guessing 5 seconds might be a
             // good value.
-            
+
 
             // thread safety
             lock (_lock) {
@@ -412,13 +412,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //
             _bme280.WriteRegister(Bme280Comms.Register.Measurement, 0x00);
 
-            var data = (byte) ((((byte) configuration.Standby << 5) & 0xe0) | (((byte)configuration.Filter << 2) & 0x1c));
+            var data = (byte)((((byte)configuration.Standby << 5) & 0xe0) | (((byte)configuration.Filter << 2) & 0x1c));
             _bme280.WriteRegister(Bme280Comms.Register.Configuration, data);
-            data = (byte) ((byte)configuration.HumidityOverSampling & 0x07);
+            data = (byte)((byte)configuration.HumidityOverSampling & 0x07);
             _bme280.WriteRegister(Bme280Comms.Register.Humidity, data);
-            data = (byte) ((( (byte)configuration.TemperatureOverSampling << 5) & 0xe0) |
-                           (( (byte)configuration.PressureOversampling << 2) & 0x1c) |
-                           ( (byte)configuration.Mode & 0x03));
+            data = (byte)((((byte)configuration.TemperatureOverSampling << 5) & 0xe0) |
+                           (((byte)configuration.PressureOversampling << 2) & 0x1c) |
+                           ((byte)configuration.Mode & 0x03));
             _bme280.WriteRegister(Bme280Comms.Register.Measurement, data);
         }
 
@@ -452,26 +452,26 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             var humidityData1 = _bme280.ReadRegisters(0xa1, 1);
             var humidityData2To6 = _bme280.ReadRegisters(0xe1, 7);
 
-            _compensationData.T1 = (ushort) (temperatureAndPressureData[0] + (temperatureAndPressureData[1] << 8));
-            _compensationData.T2 = (short) (temperatureAndPressureData[2] + (temperatureAndPressureData[3] << 8));
-            _compensationData.T3 = (short) (temperatureAndPressureData[4] + (temperatureAndPressureData[5] << 8));
+            _compensationData.T1 = (ushort)(temperatureAndPressureData[0] + (temperatureAndPressureData[1] << 8));
+            _compensationData.T2 = (short)(temperatureAndPressureData[2] + (temperatureAndPressureData[3] << 8));
+            _compensationData.T3 = (short)(temperatureAndPressureData[4] + (temperatureAndPressureData[5] << 8));
             //
-            _compensationData.P1 = (ushort) (temperatureAndPressureData[6] + (temperatureAndPressureData[7] << 8));
-            _compensationData.P2 = (short) (temperatureAndPressureData[8] + (temperatureAndPressureData[9] << 8));
-            _compensationData.P3 = (short) (temperatureAndPressureData[10] + (temperatureAndPressureData[11] << 8));
-            _compensationData.P4 = (short) (temperatureAndPressureData[12] + (temperatureAndPressureData[13] << 8));
-            _compensationData.P5 = (short) (temperatureAndPressureData[14] + (temperatureAndPressureData[15] << 8));
-            _compensationData.P6 = (short) (temperatureAndPressureData[16] + (temperatureAndPressureData[17] << 8));
-            _compensationData.P7 = (short) (temperatureAndPressureData[18] + (temperatureAndPressureData[19] << 8));
-            _compensationData.P8 = (short) (temperatureAndPressureData[20] + (temperatureAndPressureData[21] << 8));
-            _compensationData.P9 = (short) (temperatureAndPressureData[22] + (temperatureAndPressureData[23] << 8));
+            _compensationData.P1 = (ushort)(temperatureAndPressureData[6] + (temperatureAndPressureData[7] << 8));
+            _compensationData.P2 = (short)(temperatureAndPressureData[8] + (temperatureAndPressureData[9] << 8));
+            _compensationData.P3 = (short)(temperatureAndPressureData[10] + (temperatureAndPressureData[11] << 8));
+            _compensationData.P4 = (short)(temperatureAndPressureData[12] + (temperatureAndPressureData[13] << 8));
+            _compensationData.P5 = (short)(temperatureAndPressureData[14] + (temperatureAndPressureData[15] << 8));
+            _compensationData.P6 = (short)(temperatureAndPressureData[16] + (temperatureAndPressureData[17] << 8));
+            _compensationData.P7 = (short)(temperatureAndPressureData[18] + (temperatureAndPressureData[19] << 8));
+            _compensationData.P8 = (short)(temperatureAndPressureData[20] + (temperatureAndPressureData[21] << 8));
+            _compensationData.P9 = (short)(temperatureAndPressureData[22] + (temperatureAndPressureData[23] << 8));
             //
             _compensationData.H1 = humidityData1[0];
-            _compensationData.H2 = (short) (humidityData2To6[0] + (humidityData2To6[1] << 8));
+            _compensationData.H2 = (short)(humidityData2To6[0] + (humidityData2To6[1] << 8));
             _compensationData.H3 = humidityData2To6[2];
-            _compensationData.H4 = (short) ((humidityData2To6[3] << 4) + (humidityData2To6[4] & 0xf));
-            _compensationData.H5 = (short) (((humidityData2To6[4] & 0xf) >> 4) + (humidityData2To6[5] << 4));
-            _compensationData.H6 = (sbyte) humidityData2To6[6];
+            _compensationData.H4 = (short)((humidityData2To6[3] << 4) + (humidityData2To6[4] & 0xf));
+            _compensationData.H5 = (short)(((humidityData2To6[4] & 0xf) >> 4) + (humidityData2To6[5] << 4));
+            _compensationData.H6 = (sbyte)humidityData2To6[6];
         }
 
 

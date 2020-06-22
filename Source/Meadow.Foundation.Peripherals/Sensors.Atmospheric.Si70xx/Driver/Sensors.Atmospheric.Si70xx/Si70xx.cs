@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// temperature and humidity sensors.
     /// </summary>
     public class Si70xx :
-        FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
         #region Events and delegates
@@ -29,10 +29,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
-		
+
         public int DEFAULT_SPEED => 400;
-		
-		/// <summary>
+
+        /// <summary>
         /// The AtmosphericConditions from the last reading.
         /// </summary>
         public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #endregion Properties
 
         #region Member variables / fields
-		
+
         /// <summary>
         ///     SI7021 is an I2C device.
         /// </summary>
@@ -122,7 +122,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #endregion Enums
 
         #region Constructors
-		
+
         /// <summary>
         ///     Default constructor (private to prevent the user from calling this).
         /// </summary>
@@ -136,19 +136,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Si70xx(II2cBus i2cBus, byte address = 0x40)
         {
             si7021 = new I2cPeripheral(i2cBus, address);
-			
+
             Initialize();
         }
-		
-		#endregion Constructors
+
+        #endregion Constructors
 
         #region Methods
 
         protected void Initialize()
         {
             si7021.WriteByte(SOFT_RESET);
-					 			
-			Thread.Sleep(100);
+
+            Thread.Sleep(100);
             //
             //  Get the device ID.
             //
@@ -161,8 +161,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             tx[1] = READ_ID_PART2;
             si7021.WriteRead(tx, rx);
 
-            for (var index = 0; index < 4; index++)
-            {
+            for (var index = 0; index < 4; index++) {
                 SerialNumber <<= 8;
                 SerialNumber += rx[index * 2];
             }
@@ -179,12 +178,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             SerialNumber += rx2[3];
             SerialNumber <<= 8;
             SerialNumber += rx2[4];
-            if ((rx2[0] == 0) || (rx2[0] == 0xff))
-            {
+            if ((rx2[0] == 0) || (rx2[0] == 0xff)) {
                 SensorType = DeviceType.EngineeringSample;
-            }
-            else
-            {
+            } else {
                 SensorType = (DeviceType)rx2[0];
             }
 
@@ -234,8 +230,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 return conditions;
             });
         }
-		
-		/// <summary>
+
+        /// <summary>
         ///     Reset the sensor and take a fresh reading.
         /// </summary>
         public void Reset()
@@ -247,8 +243,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (IsSampling) return;
 
                 // state muh-cheen
@@ -261,11 +256,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 AtmosphericConditionChangeResult result;
 
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
+                    while (true) {
                         // cleanup
-                        if (ct.IsCancellationRequested)
-                        {
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -300,8 +293,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) return;
 
                 SamplingTokenSource?.Cancel();
@@ -310,9 +302,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 IsSampling = false;
             }
         }
-		
-		/// <summary>
-		/// Turn the heater on or off.
+
+        /// <summary>
+        /// Turn the heater on or off.
         /// </summary>
         /// <param name="onOrOff">Heater status, true = turn heater on, false = turn heater off.</param>
         public void Heater(bool onOrOff)
@@ -320,14 +312,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             var register = si7021.ReadRegister(READ_USER_REGISTER);
             register &= 0xfd;
 
-            if (onOrOff) 
-			{
+            if (onOrOff) {
                 register |= 0x02;
             }
             si7021.WriteRegister(WRITE_USER_REGISTER, register);
         }
-		
-		//Set sensor resolution
+
+        //Set sensor resolution
         /*******************************************************************************************/
         //Sets the sensor resolution to one of four levels
         //Page 12:
@@ -339,10 +330,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         void SetResolution(SensorResolution resolution)
         {
             byte userData = si7021.ReadRegister(READ_USER_REGISTER); //Go get the current register state
-                                                                         //userRegister &= 0b01111110; //Turn off the resolution bits
-                                                                         //resolution &= 0b10000001; //Turn off all other bits but resolution bits
-                                                                         //userRegister |= resolution; //Mask in the requested resolution bits
-            var res = (byte)resolution;                                         
+                                                                     //userRegister &= 0b01111110; //Turn off the resolution bits
+                                                                     //resolution &= 0b10000001; //Turn off all other bits but resolution bits
+                                                                     //userRegister |= resolution; //Mask in the requested resolution bits
+            var res = (byte)resolution;
 
             userData &= 0x73; //Turn off the resolution bits
             res &= 0x81; //Turn off all other bits but resolution bits

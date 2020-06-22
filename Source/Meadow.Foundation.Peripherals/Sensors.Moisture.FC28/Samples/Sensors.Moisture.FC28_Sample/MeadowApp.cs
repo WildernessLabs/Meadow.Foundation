@@ -29,7 +29,7 @@ namespace Sensors.Moisture.FC28_Sample
         {
             Console.WriteLine("TestFC28Updating...");
 
-            fc28.Subscribe(new FilterableObserver<FloatChangeResult, float>(
+            fc28.Subscribe(new FilterableChangeObserver<FloatChangeResult, float>(
                 h => {
                     Console.WriteLine($"Moisture values: {Math.Truncate(h.New)}, old: {Math.Truncate(h.Old)}, delta: {h.DeltaPercent}");
                 },

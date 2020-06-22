@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP102 Temperature sensor object.
     /// </summary>    
     public class Tmp102 :
-        FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor
     {
         #region Enums
@@ -53,18 +53,13 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         ///     Get / set the resolution of the sensor.
         /// </summary>
-        public Resolution SensorResolution
-        {
+        public Resolution SensorResolution {
             get { return _sensorResolution; }
-            set
-            {
+            set {
                 var configuration = tmp102.ReadRegisters(0x01, 2);
-                if (value == Resolution.Resolution12Bits)
-                {
+                if (value == Resolution.Resolution12Bits) {
                     configuration[1] &= 0xef;
-                }
-                else
-                {
+                } else {
                     configuration[1] |= 0x10;
                 }
                 tmp102.WriteRegisters(0x01, configuration);
@@ -142,8 +137,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (IsSampling) return;
 
                 // state muh-cheen
@@ -155,10 +149,8 @@ namespace Meadow.Foundation.Sensors.Temperature
                 AtmosphericConditions oldConditions;
                 AtmosphericConditionChangeResult result;
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
+                    while (true) {
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -193,8 +185,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) return;
 
                 SamplingTokenSource?.Cancel();
@@ -212,15 +203,12 @@ namespace Meadow.Foundation.Sensors.Temperature
             var temperatureData = tmp102.ReadRegisters(0x00, 2);
 
             var sensorReading = 0;
-            if (SensorResolution == Resolution.Resolution12Bits)
-            {
+            if (SensorResolution == Resolution.Resolution12Bits) {
                 sensorReading = (temperatureData[0] << 4) | (temperatureData[1] >> 4);
-            }
-            else
-            {
+            } else {
                 sensorReading = (temperatureData[0] << 5) | (temperatureData[1] >> 3);
             }
-            Conditions.Temperature = (float) (sensorReading * 0.0625);
+            Conditions.Temperature = (float)(sensorReading * 0.0625);
         }
 
         #endregion Methods

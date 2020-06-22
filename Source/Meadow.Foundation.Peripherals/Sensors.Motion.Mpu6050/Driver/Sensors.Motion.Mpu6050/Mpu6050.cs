@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class Mpu6050 : FilterableObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
+    public class Mpu6050 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
         IAccelerometer, IDisposable
     {
         /// <summary>
@@ -46,12 +46,9 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public float AccelerationX
-        {
-            get
-            {
-                if (IsSampling) { return Conditions.XAcceleration.Value; }
-                else { return ReadRegisterInt16(Register.AccelerometerX) * (1 << AccelerometerScale) / AccelScaleBase; }
+        public float AccelerationX {
+            get {
+                if (IsSampling) { return Conditions.XAcceleration.Value; } else { return ReadRegisterInt16(Register.AccelerometerX) * (1 << AccelerometerScale) / AccelScaleBase; }
             }
         }
 
@@ -62,12 +59,9 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public float AccelerationY
-        {
-            get
-            {
-                if (IsSampling) { return Conditions.YAcceleration.Value; }
-                else { return ReadRegisterInt16(Register.AccelerometerY) * (1 << AccelerometerScale) / AccelScaleBase; }
+        public float AccelerationY {
+            get {
+                if (IsSampling) { return Conditions.YAcceleration.Value; } else { return ReadRegisterInt16(Register.AccelerometerY) * (1 << AccelerometerScale) / AccelScaleBase; }
             }
         }
 
@@ -78,12 +72,9 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     This property will only contain valid data after a call to Read or after
         ///     an interrupt has been generated.
         /// </remarks>
-        public float AccelerationZ
-        {
-            get
-            {
-                if (IsSampling) { return Conditions.ZAcceleration.Value; }
-                else { return ReadRegisterInt16(Register.AccelerometerZ) * (1 << AccelerometerScale) / AccelScaleBase; }
+        public float AccelerationZ {
+            get {
+                if (IsSampling) { return Conditions.ZAcceleration.Value; } else { return ReadRegisterInt16(Register.AccelerometerZ) * (1 << AccelerometerScale) / AccelScaleBase; }
             }
         }
 
@@ -104,7 +95,7 @@ namespace Meadow.Foundation.Sensors.Motion
         private CancellationTokenSource SamplingTokenSource;
 
         private float _temp;
- 
+
         private float? _lastTemp;
 
         private int GyroScale { get; set; }
@@ -131,8 +122,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
-            {
+            if (disposing) {
                 StopUpdating();
             }
         }
@@ -154,8 +144,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (IsSampling) { return; }
 
                 // state muh-cheen
@@ -167,10 +156,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 AccelerationConditions oldConditions;
                 AccelerationConditionChangeResult result;
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
+                    while (true) {
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -205,8 +192,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
@@ -218,8 +204,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         private void Initialize(byte address)
         {
-            switch (address)
-            {
+            switch (address) {
                 case 0x68:
                 case 0x69:
                     // valid;
@@ -236,12 +221,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Gyroscope X measurement, in degrees per second
         /// </summary>
-        public float XGyroscopicAcceleration
-        {
-            get
-            {
-                if (IsSampling)
-                {
+        public float XGyroscopicAcceleration {
+            get {
+                if (IsSampling) {
                     return Conditions.XGyroscopicAcceleration.Value;
                 }
                 return ReadRegisterInt16(Register.GyroX) * (1 << GyroScale) / GyroScaleBase;
@@ -251,12 +233,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Gyroscope Y measurement, in degrees per second
         /// </summary>
-        public float YGyroscopicAcceleration
-        {
-            get
-            {
-                if (IsSampling)
-                {
+        public float YGyroscopicAcceleration {
+            get {
+                if (IsSampling) {
                     return Conditions.YGyroscopicAcceleration.Value;
                 }
                 return ReadRegisterInt16(Register.GyroY) * (1 << GyroScale) / GyroScaleBase;
@@ -266,12 +245,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Gyroscope Z measurement, in degrees per second
         /// </summary>
-        public float ZGyroscopicAcceleration
-        {
-            get
-            {
-                if (IsSampling)
-                {
+        public float ZGyroscopicAcceleration {
+            get {
+                if (IsSampling) {
                     return Conditions.ZGyroscopicAcceleration.Value;
                 }
                 return ReadRegisterInt16(Register.GyroZ) * (1 << GyroScale) / GyroScaleBase;
@@ -281,12 +257,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Temperature of sensor
         /// </summary>
-        public float TemperatureC
-        {
-            get
-            {
-                if (IsSampling)
-                {
+        public float TemperatureC {
+            get {
+                if (IsSampling) {
                     return _temp;
                 }
                 return ReadRegisterInt16(Register.Temperature) * (1 << GyroScale) / GyroScaleBase;
@@ -317,16 +290,14 @@ namespace Meadow.Foundation.Sensors.Motion
         private short ReadRegisterInt16(byte register)
         {
             var data = Device.WriteReadData(Address, 2, register);
-            unchecked
-            {
+            unchecked {
                 return (short)(data[0] << 8 | data[1]); ;
             }
         }
 
         private void Update()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 // we'll just read 14 bytes (7 registers), starting at 0x3b
                 var data = Device.WriteReadData(Address, 14, (byte)Register.AccelerometerX);
 
@@ -345,8 +316,7 @@ namespace Meadow.Foundation.Sensors.Motion
         private float ScaleAndOffset(Span<byte> data, int index, float scale, float offset = 0)
         {
             // convert to a signed number
-            unchecked
-            {
+            unchecked {
                 var s = (short)(data[index] << 8 | data[index + 1]);
                 return (s * scale) + offset;
             }

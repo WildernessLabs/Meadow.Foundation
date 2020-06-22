@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// 2-axis analog joystick
     /// </summary>
     public class AnalogJoystick
-        : FilterableObservableBase<JoystickPositionChangeResult, JoystickPosition>
+        : FilterableChangeObservableBase<JoystickPositionChangeResult, JoystickPosition>
     {
         /// <summary>
         /// Raised when the value of the reading changes.
@@ -84,7 +84,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
             HorizontalInputPort.Subscribe
             (
-                new FilterableObserver<FloatChangeResult, float>(
+                new FilterableChangeObserver<FloatChangeResult, float>(
                     h => {
                         HorizontalValue = h.New;
                         if ((Math.Abs(h.Old - Calibration.HorizontalCenter) < Calibration.DeadZone) &&
@@ -109,7 +109,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
             VerticalInputPort.Subscribe
             (
-                new FilterableObserver<FloatChangeResult, float>(
+                new FilterableChangeObserver<FloatChangeResult, float>(
                     v => {
                         VerticalValue = v.New;
                         if ((Math.Abs(v.Old - Calibration.VerticalCenter) < Calibration.DeadZone) &&

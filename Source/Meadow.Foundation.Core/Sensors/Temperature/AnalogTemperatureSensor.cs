@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20
     /// </remarks>
     public class AnalogTemperature
-        : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         ITemperatureSensor
     {
         /// <summary>
@@ -216,7 +216,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             // pattern through the sensor driver
             AnalogInputPort.Subscribe
             (
-                new FilterableObserver<FloatChangeResult, float>(
+                new FilterableChangeObserver<FloatChangeResult, float>(
                     h => {
                         var newTemp = VoltageToTemperature(h.New);
                         var oldTemp = VoltageToTemperature(h.Old);

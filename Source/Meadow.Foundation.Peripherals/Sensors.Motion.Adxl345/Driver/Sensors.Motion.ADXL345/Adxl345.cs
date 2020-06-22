@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// <summary>
     ///     Driver for the ADXL345 3-axis digital accelerometer capable of measuring
     /// </summary>
-    public class Adxl345 : FilterableObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
+    public class Adxl345 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
         IAccelerometer
     {
         #region Constants
@@ -21,9 +21,9 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     sensor is being configured to generate interrupts.
         /// </summary>
         public const ushort MinimumPollingPeriod = 100;
-        
+
         #endregion Constants
-        
+
         #region Member variables / fields
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         ///     See page 26 of the data sheet.
         /// </remarks>
-        public enum  Frequency : byte
+        public enum Frequency : byte
         {
             EightHz = 0x00,
             FourHz = 0x01,
@@ -157,10 +157,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
-        public sbyte OffsetX
-        {
-            get { return (sbyte) adxl345.ReadRegister(Registers.OffsetX); }
-            set { adxl345.WriteRegister(Registers.OffsetX, (byte) value); }
+        public sbyte OffsetX {
+            get { return (sbyte)adxl345.ReadRegister(Registers.OffsetX); }
+            set { adxl345.WriteRegister(Registers.OffsetX, (byte)value); }
         }
 
         /// <summary>
@@ -169,10 +168,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
-        public sbyte OffsetY
-        {
-            get { return (sbyte) adxl345.ReadRegister(Registers.OffsetY); }
-            set { adxl345.WriteRegister(Registers.OffsetY, (byte) value); }
+        public sbyte OffsetY {
+            get { return (sbyte)adxl345.ReadRegister(Registers.OffsetY); }
+            set { adxl345.WriteRegister(Registers.OffsetY, (byte)value); }
         }
 
         /// <summary>
@@ -181,10 +179,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
-        public sbyte OffsetZ
-        {
-            get { return (sbyte) adxl345.ReadRegister(Registers.OffsetZ); }
-            set { adxl345.WriteRegister(Registers.OffsetZ, (byte) value); }
+        public sbyte OffsetZ {
+            get { return (sbyte)adxl345.ReadRegister(Registers.OffsetZ); }
+            set { adxl345.WriteRegister(Registers.OffsetZ, (byte)value); }
         }
 
         #endregion Properties
@@ -209,12 +206,11 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="i2cBus">I2C bus</param>
         public Adxl345(II2cBus i2cBus, byte address = 0x53)
         {
-             adxl345 = new I2cPeripheral(i2cBus, address);
+            adxl345 = new I2cPeripheral(i2cBus, address);
 
             var deviceID = adxl345.ReadRegister(Registers.DeviceID);
 
-            if (deviceID != 0xe5)
-            {
+            if (deviceID != 0xe5) {
                 throw new Exception("Invalid device ID.");
             }
         }
@@ -243,8 +239,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (lockObject)
-            {
+            lock (lockObject) {
                 if (IsSampling) { return; }
 
                 // state muh-cheen
@@ -256,10 +251,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 AccelerationConditions oldConditions;
                 AccelerationConditionChangeResult result;
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
+                    while (true) {
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -294,8 +287,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// </summary>
         public void StopUpdating()
         {
-            lock (lockObject)
-            {
+            lock (lockObject) {
                 if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
@@ -316,23 +308,19 @@ namespace Meadow.Foundation.Sensors.Motion
         public void SetPowerState(bool linkActivityAndInactivity, bool autoASleep, bool measuring, bool sleep, Frequency frequency)
         {
             byte data = 0;
-            if (linkActivityAndInactivity)
-            {
+            if (linkActivityAndInactivity) {
                 data |= 0x20;
             }
-            if (autoASleep)
-            {
+            if (autoASleep) {
                 data |= 0x10;
             }
-            if (measuring)
-            {
+            if (measuring) {
                 data |= 0x08;
             }
-            if (sleep)
-            {
+            if (sleep) {
                 data |= 0x40;
             }
-            data |= (byte) frequency;
+            data |= (byte)frequency;
 
             adxl345.WriteRegister(Registers.PowerControl, data);
         }
@@ -358,23 +346,19 @@ namespace Meadow.Foundation.Sensors.Motion
         public void SetDataFormat(bool selfTest, bool spiMode, bool fullResolution, bool justification, Range range)
         {
             byte data = 0;
-            if (selfTest)
-            {
+            if (selfTest) {
                 data |= 0x80;
             }
-            if (spiMode)
-            {
+            if (spiMode) {
                 data |= 0x40;
             }
-            if (fullResolution)
-            {
+            if (fullResolution) {
                 data |= 0x04;
             }
-            if (justification)
-            {
+            if (justification) {
                 data |= 0x02;
             }
-            data |= (byte) range;
+            data |= (byte)range;
 
             adxl345.WriteRegister(Registers.DataFormat, data);
         }
@@ -389,15 +373,13 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </param>
         public void SetDataRate(byte dataRate, bool lowPower)
         {
-            if (dataRate > 0xff)
-            {
+            if (dataRate > 0xff) {
                 throw new ArgumentOutOfRangeException(nameof(dataRate), "Data rate should be in the range 0-15 inclusive");
             }
 
             var data = dataRate;
 
-            if (lowPower)
-            {
+            if (lowPower) {
                 data |= 0x10;
             }
 
@@ -414,9 +396,9 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Update()
         {
             var data = adxl345.ReadRegisters(Registers.X0, 6);
-            Conditions.XAcceleration = (short) (data[0] + (data[1] << 8));
-            Conditions.YAcceleration = (short) (data[2] + (data[3] << 8));
-            Conditions.ZAcceleration = (short) (data[4] + (data[5] << 8));
+            Conditions.XAcceleration = (short)(data[0] + (data[1] << 8));
+            Conditions.YAcceleration = (short)(data[2] + (data[3] << 8));
+            Conditions.ZAcceleration = (short)(data[4] + (data[5] << 8));
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Provide a mechanism for reading the Temperature and Humidity from
     /// a HIH6130 temperature and Humidity sensor.
     /// </summary>
-    public class Hih6130 : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+    public class Hih6130 : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
         #region Member variables / fields
@@ -96,8 +96,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (IsSampling) return;
 
                 // state muh-cheen
@@ -110,11 +109,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 AtmosphericConditionChangeResult result;
 
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
+                    while (true) {
                         // cleanup
-                        if (ct.IsCancellationRequested)
-                        {
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -149,8 +146,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) return;
 
                 SamplingTokenSource?.Cancel();
@@ -180,14 +176,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //  Byte 2: T13 T12 T11 T10 T9  T8  T7 T6
             //  Byte 4: T5  T4  T3  T2  T1  T0  XX XX
             //
-            if ((data[0] & 0xc0) != 0)
-            {
+            if ((data[0] & 0xc0) != 0) {
                 throw new Exception("Status indicates readings are invalid.");
             }
             var reading = ((data[0] << 8) | data[1]) & 0x3fff;
-            Conditions.Humidity = ((float) reading / 16383) * 100;
+            Conditions.Humidity = ((float)reading / 16383) * 100;
             reading = ((data[2] << 8) | data[3]) >> 2;
-            Conditions.Temperature = (((float) reading / 16383) * 165) - 40;
+            Conditions.Temperature = (((float)reading / 16383) * 165) - 40;
         }
 
         #endregion Methods

@@ -8,7 +8,7 @@ using Meadow.Peripherals.Sensors.Temperature;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public class Mpl115a2 :
-        FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IBarometricPressureSensor
     {
         #region Structures
@@ -125,10 +125,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //  compensation data can be found on pages 5 and 6 of the datasheet.
             //
             var data = mpl115a2.ReadRegisters(Registers.A0MSB, 8);
-            var a0 = (short) (ushort) ((data[0] << 8) | data[1]);
-            var b1 = (short) (ushort) ((data[2] << 8) | data[3]);
-            var b2 = (short) (ushort) ((data[4] << 8) | data[5]);
-            var c12 = (short) (ushort) (((data[6] << 8) | data[7]) >> 2);
+            var a0 = (short)(ushort)((data[0] << 8) | data[1]);
+            var b1 = (short)(ushort)((data[2] << 8) | data[3]);
+            var b2 = (short)(ushort)((data[4] << 8) | data[5]);
+            var c12 = (short)(ushort)(((data[6] << 8) | data[7]) >> 2);
             //
             //  Convert the raw compensation coefficients from the sensor into the
             //  doubleing point equivalents to speed up the calculations when readings
@@ -137,7 +137,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //  Datasheet, section 3.1
             //  a0 is signed with 12 integer bits followed by 3 fractional bits so divide by 2^3 (8)
             //
-            coefficients.A0 = (double) a0 / 8;
+            coefficients.A0 = (double)a0 / 8;
             //
             //  b1 is 2 integer bits followed by 7 fractional bits.  The lower bits are all 0
             //  so the format is:
@@ -145,11 +145,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //
             //  So we need to divide by 2^13 (8192)
             //
-            coefficients.B1 = (double) b1 / 8192;
+            coefficients.B1 = (double)b1 / 8192;
             //
             //  b2 is signed integer (1 bit) followed by 14 fractional bits so divide by 2^14 (16384).
             //
-            coefficients.B2 = (double) b2 / 16384;
+            coefficients.B2 = (double)b2 / 16384;
             //
             //  c12 is signed with no integer bits but padded with 9 zeroes:
             //      sign 0.000 000 000 f12...f0
@@ -157,7 +157,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //  So we need to divide by 2^22 (4,194,304) - 13 doubleing point bits 
             //  plus 9 leading zeroes.
             //
-            coefficients.C12 = (double) c12 / 4194304;
+            coefficients.C12 = (double)c12 / 4194304;
         }
 
         #endregion Constructors
@@ -178,8 +178,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (IsSampling) return;
 
                 // state muh-cheen
@@ -191,10 +190,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 AtmosphericConditions oldConditions;
                 AtmosphericConditionChangeResult result;
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
+                    while (true) {
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -229,8 +226,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) return;
 
                 SamplingTokenSource?.Cancel();
@@ -258,9 +254,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //  Extract the sensor data, note that this is a 10-bit reading so move
             //  the data right 6 bits (see section 3.1 of the datasheet).
             //
-            var pressure = (ushort) (((data[0] << 8) + data[1]) >> 6);
-            var temperature = (ushort) (((data[2] << 8) + data[3]) >> 6);
-            Conditions.Temperature = (float) ((temperature - 498.0) / -5.35) + 25;
+            var pressure = (ushort)(((data[0] << 8) + data[1]) >> 6);
+            var temperature = (ushort)(((data[2] << 8) + data[3]) >> 6);
+            Conditions.Temperature = (float)((temperature - 498.0) / -5.35) + 25;
             //
             //  Now use the calculations in section 3.2 to determine the
             //  current pressure reading.
@@ -268,7 +264,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             const double PRESSURE_CONSTANT = 65.0 / 1023.0;
             var compensatedPressure = coefficients.A0 + ((coefficients.B1 + (coefficients.C12 * temperature))
                                                           * pressure) + (coefficients.B2 * temperature);
-            Conditions.Pressure = (float) (PRESSURE_CONSTANT * compensatedPressure) + 50;
+            Conditions.Pressure = (float)(PRESSURE_CONSTANT * compensatedPressure) + 50;
         }
 
         #endregion Methods

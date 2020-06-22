@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <remarks>
     /// Readings from the sensor are made in Single-shot mode.
     /// </remarks>
-    public class Sht31D : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+    public class Sht31D : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
         #region Member variables / fields
@@ -99,8 +99,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (IsSampling) { return; }
 
                 // state muh-cheen
@@ -112,10 +111,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 AtmosphericConditions oldConditions;
                 AtmosphericConditionChangeResult result;
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
+                    while (true) {
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -150,8 +147,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
@@ -167,8 +163,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void Update()
         {
             var data = sht31d.WriteRead(new byte[] { 0x2c, 0x06 }, 6);
-            Conditions.Humidity = (100 * (float) ((data[3] << 8) + data[4])) / 65535;
-            Conditions.Temperature = ((175 * (float) ((data[0] << 8) + data[1])) / 65535) - 45;
+            Conditions.Humidity = (100 * (float)((data[3] << 8) + data[4])) / 65535;
+            Conditions.Temperature = ((175 * (float)((data[0] << 8) + data[1])) / 65535) - 45;
         }
 
         #endregion

@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// Capacitive Soil Moisture Sensor
     /// </summary>
-    public class Capacitive : FilterableObservableBase<FloatChangeResult, float>, IMoistureSensor
+    public class Capacitive : FilterableChangeObservableBase<FloatChangeResult, float>, IMoistureSensor
     {
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Moisture
             // this is where the magic is: this allows us to extend the IObservable
             // pattern through the sensor driver
             AnalogInputPort.Subscribe(
-                new FilterableObserver<FloatChangeResult, float>(
+                new FilterableChangeObserver<FloatChangeResult, float>(
                     h => {
                         var newMoisture = VoltageToMoisture(h.New);
                         var oldMoisture = VoltageToMoisture(h.Old);

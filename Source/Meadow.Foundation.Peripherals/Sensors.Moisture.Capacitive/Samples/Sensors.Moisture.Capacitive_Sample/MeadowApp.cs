@@ -28,7 +28,7 @@ namespace Sensors.Moisture.Capacitive_Sample
         {
             Console.WriteLine("TestCapacitiveUpdating...");
 
-            capacitive.Subscribe(new FilterableObserver<FloatChangeResult, float>(
+            capacitive.Subscribe(new FilterableChangeObserver<FloatChangeResult, float>(
                 h => {
                     Console.WriteLine($"Moisture values: {Math.Truncate(h.New)}, old: {Math.Truncate(h.Old)}, delta: {h.DeltaPercent}");
                 },

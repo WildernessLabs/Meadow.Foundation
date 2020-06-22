@@ -25,7 +25,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree.
-            analogTemperature.Subscribe(new FilterableObserver<AtmosphericConditionChangeResult, AtmosphericConditions>(
+            analogTemperature.Subscribe(new FilterableChangeObserver<AtmosphericConditionChangeResult, AtmosphericConditions>(
                 h => {
                     Console.WriteLine($"Temp changed by a degree; new: {h.New.Temperature}, old: {h.Old.Temperature}");
                 },

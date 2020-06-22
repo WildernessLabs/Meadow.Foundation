@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     ///     Driver for the MPL3115A2 pressure and humidity sensor.
     /// </summary>
     public class Mpl3115a2 :
-        FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor
     {
         /// <summary>
@@ -48,17 +48,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Changes the SBYB bit in Control register 1 to put the device to sleep
         ///     or to allow measurements to be made.
         /// </remarks>
-        public bool Standby
-        {
+        public bool Standby {
             get => (mpl3115a2.ReadRegister(Registers.Control1) & 0x01) > 0;
-            set
-            {
+            set {
                 var status = mpl3115a2.ReadRegister(Registers.Control1);
-                if(value)
-                {
+                if (value) {
                     status &= (byte)~ControlRegisterBits.Active;
-                } else
-                {
+                } else {
                     status |= ControlRegisterBits.Active;
                 }
                 mpl3115a2.WriteRegister(Registers.Control1, status);
@@ -68,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Get the status register from the sensor.
         /// </summary>
-        public byte Status => mpl3115a2.ReadRegister(Registers.Status); 
+        public byte Status => mpl3115a2.ReadRegister(Registers.Status);
 
         /// <summary>
         /// </summary>
@@ -95,8 +91,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             mpl3115a2 = new I2cPeripheral(i2cBus, address);
 
-            if (mpl3115a2.ReadRegister(Registers.WhoAmI) != 0xc4)
-            {
+            if (mpl3115a2.ReadRegister(Registers.WhoAmI) != 0xc4) {
                 throw new Exception("Unexpected device ID, expected 0xc4");
             }
             mpl3115a2.WriteRegister(Registers.Control1,
@@ -129,8 +124,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected async Task<AtmosphericConditions> ReadSensor()
         {
-            return await Task.Run(() =>
-            {
+            return await Task.Run(() => {
                 AtmosphericConditions conditions = new AtmosphericConditions();
                 //
                 //  Force the sensor to make a reading by setting the OST bit in Control
@@ -140,8 +134,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //
                 //  Pause until both temperature and pressure readings are available.
                 //            
-                while ((Status & 0x06) != 0x06)
-                {
+                while ((Status & 0x06) != 0x06) {
                     Thread.Sleep(5);
                 }
 
@@ -157,8 +150,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (IsSampling) { return; }
 
                 // state muh-cheen
@@ -170,13 +162,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 AtmosphericConditions oldConditions;
                 AtmosphericConditionChangeResult result;
 
-                Task.Run(async ()=> 
-                {
-                    while (true)
-                    {
+                Task.Run(async () => {
+                    while (true) {
                         // cleanup
-                        if (ct.IsCancellationRequested)
-                        {   // do task clean up here
+                        if (ct.IsCancellationRequested) {   // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
                         }
@@ -210,8 +199,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();

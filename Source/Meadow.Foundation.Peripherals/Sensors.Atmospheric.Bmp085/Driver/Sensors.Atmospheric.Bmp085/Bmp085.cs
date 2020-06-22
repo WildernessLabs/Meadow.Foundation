@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Bosch BMP085 digital pressure and temperature sensor.
     /// </summary>
-    public class Bmp085 : FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+    public class Bmp085 : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, IBarometricPressureSensor, ITemperatureSensor
     {
         #region Member variables / fields
@@ -63,7 +63,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-                /// <summary>
+        /// <summary>
         /// Gets a value indicating whether the analog input port is currently
         /// sampling the ADC. Call StartSampling() to spin up the sampling process.
         /// </summary>
@@ -129,8 +129,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (IsSampling) return;
 
                 // state muh-cheen
@@ -142,10 +141,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 AtmosphericConditions oldConditions;
                 AtmosphericConditionChangeResult result;
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
+                    while (true) {
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -180,8 +177,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) return;
 
                 SamplingTokenSource?.Cancel();
@@ -215,8 +211,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             x2 = _ac2 * b6 >> 11;
             x3 = x1 + x2;
 
-            switch (oversamplingSetting)
-            {
+            switch (oversamplingSetting) {
                 case 0:
                     b3 = ((_ac1 * 4 + x3) + 2) >> 2;
                     break;
@@ -266,7 +261,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private long ReadUncompensatedPressure()
         {
             // write register address
-            bmp085.WriteBytes(new byte[] { 0xF4, (byte)(0x34 + (oversamplingSetting << 6))});
+            bmp085.WriteBytes(new byte[] { 0xF4, (byte)(0x34 + (oversamplingSetting << 6)) });
 
             // insert pressure waittime using oversampling setting as index.
             Thread.Sleep(pressureWaitTime[oversamplingSetting]);
@@ -303,9 +298,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             data = bmp085.ReadRegisters(address, 2);
 
             return (short)((data[0] << 8) | data[1]);
-        } 
+        }
 
-        
+
 
         public void Dispose()
         {

@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP102 Temperature sensor object.
     /// </summary>    
     public class Lm75 :
-        FilterableObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor
     {
         #region Enums
@@ -105,8 +105,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (IsSampling) return;
 
                 // state muh-cheen
@@ -118,10 +117,8 @@ namespace Meadow.Foundation.Sensors.Temperature
                 AtmosphericConditions oldConditions;
                 AtmosphericConditionChangeResult result;
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
+                    while (true) {
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -156,8 +153,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) return;
 
                 SamplingTokenSource?.Cancel();
@@ -179,13 +175,10 @@ namespace Meadow.Foundation.Sensors.Temperature
             // Details in Datasheet P10
             double temp = 0;
             ushort raw = (ushort)((data[0] << 3) | (data[1] >> 5));
-            if ((data[0] & 0x80) == 0)
-            {
+            if ((data[0] & 0x80) == 0) {
                 // temperature >= 0
                 temp = raw * 0.125;
-            }
-            else
-            {
+            } else {
                 raw |= 0xF800;
                 raw = (ushort)(~raw + 1);
 

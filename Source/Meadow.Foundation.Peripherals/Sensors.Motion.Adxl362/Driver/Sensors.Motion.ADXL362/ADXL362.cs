@@ -8,7 +8,7 @@ using Meadow.Peripherals.Sensors.Motion;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class Adxl362 : FilterableObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
+    public class Adxl362 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
         IAccelerometer
     {
         #region Member variables / fields
@@ -45,12 +45,12 @@ namespace Meadow.Foundation.Sensors.Motion
             ///     Write to one or more registers.
             /// </summary>
             public const byte WriteRegister = 0x0a;
-            
+
             /// <summary>
             ///     Read the contents of one or more registers.
             /// </summary>
             public const byte Readegister = 0x0b;
-            
+
             /// <summary>
             ///     Read the FIFO buffer.
             /// </summary>
@@ -601,99 +601,83 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Indicate of data is ready to be read.
         /// </summary>
-        public bool DataReady
-        {
-            get
-            {
+        public bool DataReady {
+            get {
                 var status = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.DeviceID }, 1);
                 return (status[0] & StatusBitsMask.DataReady) != 0;
             }
         }
-        
+
         /// <summary>
         ///     Indicate if there is any data in the FIFO buffer.
         /// </summary>
-        public bool FIFOReady
-        {
-            get
-            {
+        public bool FIFOReady {
+            get {
                 var status = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.DeviceID }, 1);
                 return (status[0] & StatusBitsMask.FIFOReady) != 0;
             }
         }
-        
+
         /// <summary>
         ///     Indicate if there are at least the desired number
         ///     of samples in the FIFO buffer.
         /// </summary>
-        public bool FIFOWatermark
-        {
-            get
-            {
+        public bool FIFOWatermark {
+            get {
                 var status = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.DeviceID }, 1);
                 return (status[0] & StatusBitsMask.FIFOWatermark) != 0;
             }
         }
-        
+
         /// <summary>
         ///     Indicate if the FIFO buffer has overrun (newly generated data
         ///     is overwriting data already stored in the FIFO buffer.
         /// </summary>
-        public bool FIFOOverrun
-        {
-            get
-            {
+        public bool FIFOOverrun {
+            get {
                 var status = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.DeviceID }, 1);
                 return (status[0] & StatusBitsMask.FIFOOverRun) != 0;
             }
         }
-        
+
         /// <summary>
         ///     Indicate if any activity has been detected over the
         ///     specified threshold.
         /// </summary>
-        public bool ActivityDetected
-        {
-            get
-            {
+        public bool ActivityDetected {
+            get {
                 var status = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.DeviceID }, 1);
                 return (status[0] & StatusBitsMask.ActivityDetected) != 0;
             }
         }
-        
+
         /// <summary>
         ///     Indicate if the sensor has detected inactivity or a
         ///     free fall condition.
         /// </summary>
-        public bool InactivityDetected
-        {
-            get
-            {
+        public bool InactivityDetected {
+            get {
                 var status = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.DeviceID }, 1);
                 return (status[0] & StatusBitsMask.InactivityDetected) != 0;
             }
         }
-        
+
         /// <summary>
         ///     Indicate if the sensor is awake or inactive.
         /// </summary>
-        public bool Awake
-        {
-            get
-            {
+        public bool Awake {
+            get {
                 var status = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.DeviceID }, 1);
                 return (status[0] & StatusBitsMask.Awake) != 0;
             }
         }
-        
+
         /// <summary>
         ///     Read the device ID, MEMS ID, Part ID and silicon revision ID and
         ///     encode the value in a 32-bit integer.
         /// </summary>
-        public int DeviceID
-        {
-            get
-            {
+        public int DeviceID {
+            get {
                 var deviceID = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.DeviceID }, 6);
                 int result = deviceID[0];
                 result |= deviceID[1] << 8;
@@ -706,24 +690,20 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Read the status register.
         /// </summary>
-        public byte Status
-        {
-            get
-            { 
+        public byte Status {
+            get {
                 var result = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.Status }, 1);
                 return result[0];
             }
         }
-        
+
         /// <summary>
         ///     Sensor temperature.
         /// </summary>
-        public double Temperature
-        {
-            get
-            {
+        public double Temperature {
+            get {
                 var result = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.TemperatureLSB }, 2);
-                short temperature = (short) ((result[1] << 8) + result[0]);
+                short temperature = (short)((result[1] << 8) + result[0]);
                 return (temperature);
             }
         }
@@ -731,16 +711,13 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Activity / Inactivity control register (see page 29 of the data sheet).
         /// </summary>
-        public byte ActivityInactivityControl
-        {
-            get
-            {
-                var registers = _adxl362.WriteRead(new byte[] {Command.Readegister, Registers.ActivityInactivityControl}, 1);
+        public byte ActivityInactivityControl {
+            get {
+                var registers = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.ActivityInactivityControl }, 1);
                 return (registers[0]);
             }
-            set
-            {
-                _adxl362.WriteBytes(new byte[] { Command.WriteRegister, value});
+            set {
+                _adxl362.WriteBytes(new byte[] { Command.WriteRegister, value });
             }
         }
 
@@ -749,13 +726,10 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     the device into self test mode, setting this to false will turn off the
         ///     self test.
         /// </summary>
-        public bool SelfTest
-        {
-            set
-            {
+        public bool SelfTest {
+            set {
                 byte selfTest = 0;
-                if (value)
-                {
+                if (value) {
                     selfTest = 1;
                 }
                 _adxl362.WriteBytes(new byte[] { Command.WriteRegister, selfTest });
@@ -765,15 +739,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///      Get / set the filter control register (see page 33 of the data sheet).   
         /// </summary>
-        public byte FilterControl
-        {
-            get
-            {
-                var register = _adxl362.WriteRead(new byte[] {Command.Readegister, Registers.FilterControl}, 1);
+        public byte FilterControl {
+            get {
+                var register = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.FilterControl }, 1);
                 return (register[0]);
             }
-            set
-            {
+            set {
                 _adxl362.WriteBytes(new byte[] { Command.WriteRegister, value });
             }
         }
@@ -821,7 +792,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Task<AccelerationConditions> Read()
         {
             Update();
-           
+
             return Task.FromResult(Conditions);
         }
 
@@ -834,8 +805,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (IsSampling) { return; }
 
                 // state muh-cheen
@@ -847,10 +817,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 AccelerationConditions oldConditions;
                 AccelerationConditionChangeResult result;
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
+                    while (true) {
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -885,8 +853,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
@@ -919,7 +886,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Stop()
         {
             var powerControl = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.PowerControl, 0x02 }, 1);
-            byte power = (byte) ((powerControl[0] & (~PowerControlMask.Measure)) & 0xff);
+            byte power = (byte)((powerControl[0] & (~PowerControlMask.Measure)) & 0xff);
             _adxl362.WriteBytes(new byte[] { Command.WriteRegister, Registers.PowerControl, power });
         }
 
@@ -930,9 +897,9 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Update()
         {
             var sensorReading = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.XAxisLSB }, 8);
-            Conditions.XAcceleration = (short) ((sensorReading[3] << 8) | sensorReading[2]);
-            Conditions.YAcceleration = (short) ((sensorReading[5] << 8) | sensorReading[4]);
-            Conditions.ZAcceleration = (short) ((sensorReading[7] << 8) | sensorReading[6]);
+            Conditions.XAcceleration = (short)((sensorReading[3] << 8) | sensorReading[2]);
+            Conditions.YAcceleration = (short)((sensorReading[5] << 8) | sensorReading[4]);
+            Conditions.ZAcceleration = (short)((sensorReading[7] << 8) | sensorReading[6]);
         }
 
         /// <summary>
@@ -955,8 +922,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="numberOfSamples">Number of consecutive samples that must exceed the threshold</param>
         public void ConfigureActivityThreshold(ushort threshold, byte numberOfSamples)
         {
-            if ((threshold & 0xf800) != 0)
-            {
+            if ((threshold & 0xf800) != 0) {
                 throw new ArgumentOutOfRangeException(nameof(threshold), "Activity threshold should be in the range 0-0x7ff");
             }
             //
@@ -965,8 +931,8 @@ namespace Meadow.Foundation.Sensors.Motion
             var data = new byte[5];
             data[0] = Command.WriteRegister;
             data[1] = Registers.ActivityThresholdLSB;
-            data[2] = (byte) (threshold & 0xff);
-            data[3] = (byte) ((threshold >> 8) & 0xff);
+            data[2] = (byte)(threshold & 0xff);
+            data[3] = (byte)((threshold >> 8) & 0xff);
             data[4] = numberOfSamples;
             _adxl362.WriteBytes(data);
         }
@@ -991,8 +957,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="numberOfSamples">Number of consecutive samples that must exceed the threshold</param>
         public void ConfigureInactivityThreshold(ushort threshold, ushort numberOfSamples)
         {
-            if ((threshold & 0xf8) != 0)
-            {
+            if ((threshold & 0xf8) != 0) {
                 throw new ArgumentOutOfRangeException(nameof(threshold), "Inactivity threshold should be in the range 0-0x7ff");
             }
             //
@@ -1001,10 +966,10 @@ namespace Meadow.Foundation.Sensors.Motion
             var data = new byte[5];
             data[0] = Command.WriteRegister;
             data[1] = Registers.InactivityCountLSB;
-            data[2] = (byte) (threshold & 0xff);
-            data[3] = (byte) ((threshold >> 8) & 0xff);
-            data[4] = (byte) (numberOfSamples & 0xff);
-            data[5] = (byte) ((threshold >> 8) & 0xff);
+            data[2] = (byte)(threshold & 0xff);
+            data[3] = (byte)((threshold >> 8) & 0xff);
+            data[4] = (byte)(numberOfSamples & 0xff);
+            data[5] = (byte)((threshold >> 8) & 0xff);
             _adxl362.WriteBytes(data);
         }
 
@@ -1016,12 +981,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Resistor mode mapping based upon the active low state.</returns>
         private ResistorMode MapResistorMode(bool activeLow)
         {
-            if (activeLow)
-            {
+            if (activeLow) {
                 return (ResistorMode.PullUp);
-            }
-            else
-            {
+            } else {
                 return (ResistorMode.PullDown);
             }
         }
@@ -1034,13 +996,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Interrupt mode mapping based upon the active low state.</returns>
         private InterruptMode MapInterruptMode(bool activeLow)
         {
-            if (activeLow)
-            {
+            if (activeLow) {
                 return (InterruptMode.EdgeFalling);
-            }
-            else
-            {
-                return(InterruptMode.EdgeRising);
+            } else {
+                return (InterruptMode.EdgeRising);
             }
         }
 
@@ -1063,23 +1022,17 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             _adxl362.WriteBytes(new byte[] { Command.WriteRegister, interruptMap1, interruptMap2 });
 
-            if (interruptPin1 != null)
-            {
+            if (interruptPin1 != null) {
                 _digitalInputPort1 = device.CreateDigitalInputPort(interruptPin1, InterruptMode.EdgeRising, MapResistorMode((interruptMap1 & 0xf0) > 0));
                 _digitalInputPort1.Changed += InterruptChanged;
-            }
-            else
-            {
+            } else {
                 _digitalInputPort1 = null;
             }
 
-            if (interruptPin2 != null)
-            {
+            if (interruptPin2 != null) {
                 _digitalInputPort2 = device.CreateDigitalInputPort(interruptPin2, InterruptMode.EdgeRising, MapResistorMode((interruptMap2 & 0xf0) > 0));
                 _digitalInputPort2.Changed += InterruptChanged;
-            }
-            else
-            {
+            } else {
                 _digitalInputPort2 = null;
             }
         }
@@ -1090,9 +1043,8 @@ namespace Meadow.Foundation.Sensors.Motion
         private void InterruptChanged(object sender, DigitalInputPortEventArgs e)
         {
             var status = Status;
-            if ((status & StatusBitsMask.ActivityDetected) != 0)
-            {
-               // AccelerationChanged(this, new SensorVectorEventArgs(lastNotifiedReading, currentReading));
+            if ((status & StatusBitsMask.ActivityDetected) != 0) {
+                // AccelerationChanged(this, new SensorVectorEventArgs(lastNotifiedReading, currentReading));
             }
         }
 
@@ -1108,7 +1060,7 @@ namespace Meadow.Foundation.Sensors.Motion
             DebugInformation.DisplayRegisters(0x00, idRegisters);
             command[1] = Registers.XAxis8Bits;
             var amount = Registers.SelfTest - Registers.XAxis8Bits + 1;
-            registers = _adxl362.WriteRead(command, (ushort) (amount + 2));
+            registers = _adxl362.WriteRead(command, (ushort)(amount + 2));
             var dataRegisters = new byte[amount];
             Array.Copy(registers, 2, dataRegisters, 0, amount);
             DebugInformation.DisplayRegisters(Registers.XAxis8Bits, dataRegisters);

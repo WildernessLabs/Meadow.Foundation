@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     Driver for the ADXL337 triple axis accelerometer.
     ///     +/- 5g
     /// </summary>
-    public class Adxl337 : FilterableObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
+    public class Adxl337 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
         IAccelerometer
     {
         #region Constants
@@ -172,8 +172,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (IsSampling) { return; }
 
                 // state muh-cheen
@@ -185,10 +184,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 AccelerationConditions oldConditions;
                 AccelerationConditionChangeResult result;
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
+                    while (true) {
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -223,8 +220,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();

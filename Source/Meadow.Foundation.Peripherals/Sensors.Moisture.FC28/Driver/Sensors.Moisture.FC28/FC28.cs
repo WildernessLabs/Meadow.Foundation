@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor    
     /// </summary>
-    public class Fc28 : FilterableObservableBase<FloatChangeResult, float>, IMoistureSensor
+    public class Fc28 : FilterableChangeObservableBase<FloatChangeResult, float>, IMoistureSensor
     {
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
@@ -69,12 +69,13 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
         public Fc28(
-            IIODevice device, 
-            IPin analogPin, 
-            IPin digitalPin, 
-            float minimumVoltageCalibration = 0f, 
-            float maximumVoltageCalibration = 3.3f) : 
-            this (device.CreateAnalogInputPort(analogPin), device.CreateDigitalOutputPort(digitalPin), minimumVoltageCalibration, maximumVoltageCalibration) { }
+            IIODevice device,
+            IPin analogPin,
+            IPin digitalPin,
+            float minimumVoltageCalibration = 0f,
+            float maximumVoltageCalibration = 3.3f) :
+            this(device.CreateAnalogInputPort(analogPin), device.CreateDigitalOutputPort(digitalPin), minimumVoltageCalibration, maximumVoltageCalibration)
+        { }
 
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin and digital pin.
@@ -82,12 +83,12 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
         public Fc28(
-            IAnalogInputPort analogPort, 
-            IDigitalOutputPort digitalPort, 
-            float minimumVoltageCalibration = 0f, 
+            IAnalogInputPort analogPort,
+            IDigitalOutputPort digitalPort,
+            float minimumVoltageCalibration = 0f,
             float maximumVoltageCalibration = 3.3f)
         {
-            AnalogInputPort  = analogPort;
+            AnalogInputPort = analogPort;
             DigitalPort = digitalPort;
             MinimumVoltageCalibration = minimumVoltageCalibration;
             MaximumVoltageCalibration = maximumVoltageCalibration;
@@ -137,9 +138,8 @@ namespace Meadow.Foundation.Sensors.Moisture
             int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock)
-            {
-                if (IsSampling) 
+            lock (_lock) {
+                if (IsSampling)
                     return;
                 IsSampling = true;
 
@@ -149,15 +149,13 @@ namespace Meadow.Foundation.Sensors.Moisture
                 float oldConditions;
                 FloatChangeResult result;
                 Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
+                    while (true) {
                         // TODO: someone please review; is this the correct
                         // place to do this?
                         // check for cancel (doing this here instead of 
                         // while(!ct.IsCancellationRequested), so we can perform 
                         // cleanup
-                        if (ct.IsCancellationRequested)
-                        {                            
+                        if (ct.IsCancellationRequested) {
                             // do task clean up here
                             _observers.ForEach(x => x.OnCompleted());
                             break;
@@ -167,7 +165,7 @@ namespace Meadow.Foundation.Sensors.Moisture
 
                         // read                        
                         Moisture = Read(sampleCount, sampleIntervalDuration).Result;
-                        
+
                         // build a new result with the old and new conditions
                         result = new FloatChangeResult(oldConditions, Moisture);
 
@@ -186,13 +184,11 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!IsSampling) return;
 
-                if (SamplingTokenSource != null)
-                {
-                    SamplingTokenSource.Cancel();                    
+                if (SamplingTokenSource != null) {
+                    SamplingTokenSource.Cancel();
                 }
 
                 IsSampling = false;
@@ -207,8 +203,7 @@ namespace Meadow.Foundation.Sensors.Moisture
 
         protected float VoltageToMoisture(float voltage)
         {
-            if (MinimumVoltageCalibration > MaximumVoltageCalibration)
-            {
+            if (MinimumVoltageCalibration > MaximumVoltageCalibration) {
                 return 1f - Map(voltage, MaximumVoltageCalibration, MinimumVoltageCalibration, 0f, 1.0f);
             }
 
