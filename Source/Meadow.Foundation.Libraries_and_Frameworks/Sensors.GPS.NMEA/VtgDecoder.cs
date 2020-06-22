@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// <summary>
     /// Parses VTG (Velocity Made Good) messages from a GPS/GNSS receiver.
     /// </summary>
-    public class VtgParser : INmeaParser
+    public class VtgDecoder : INmeaDecoder
     {
         /// <summary>
         /// Event to be raised when a course and velocity message is received and decoded.

@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// <summary>
     /// Decoder for GGA messages.
     /// </summary>
-    public class GgaParser : INmeaParser
+    public class GgaDecoder : INmeaDecoder
     {
         /// <summary>
         /// Position update received event.

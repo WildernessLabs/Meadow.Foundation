@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// Process GLL (Geographic position Latitude / Longitude) messages from a
     /// GPS receiver.
     /// </summary>
-    public class GllParser : INmeaParser
+    public class GllDecoder : INmeaDecoder
     {
         /// <summary>
         /// Event raised when valid GLL data is received.

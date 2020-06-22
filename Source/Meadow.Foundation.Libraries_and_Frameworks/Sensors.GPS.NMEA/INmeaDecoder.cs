@@ -4,9 +4,9 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
-    /// Base class for NMEADecoder classes.
+    /// Base class for NMEA sentence decoder classes.
     /// </summary>
-    public interface INmeaParser
+    public interface INmeaDecoder
     {
         /// <summary>
         /// Prefix for the decoder (text that occurs at the start of a GPS message

@@ -3,7 +3,7 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
-    public class GsaParser : INmeaParser
+    public class GsaDecoder : INmeaDecoder
     {
         /// <summary>
         /// Event raised when valid GSA data is received.

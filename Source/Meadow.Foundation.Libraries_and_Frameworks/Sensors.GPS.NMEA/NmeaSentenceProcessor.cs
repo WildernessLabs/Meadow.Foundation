@@ -7,28 +7,28 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     /// <summary>
     /// An engine that processes NMEA GPS/GNSS sentences by calling the appropriate
-    /// parser and handing them off. Note that it's designed to be asynchronous
+    /// decoder and handing them off. Note that it's designed to be asynchronous
     /// because certain messages (like $GPGSV/Satellites in View) need to be
     /// processed together in order to make sense.
     ///
-    /// To use, call `RegisterParser` for each NMEA sentence parser that you
-    /// want to use, passing an `INmeaParser`, and then call `ParseNmeaMessage`,
+    /// To use, call `RegisterDecoder` for each NMEA sentence decoder that you
+    /// want to use, passing an `INmeaDecoder`, and then call `ParseNmeaMessage`,
     /// and pass the NMEA sentence string,
     /// e.g. "$GPRMC,000049.799,V,,,,,0.00,0.00,060180,,,N*48".
     ///
-    /// Each `INmeaParser` parser has its own event(s) that can then be subscribed
+    /// Each `INmeaDecoder` decoder has its own event(s) that can then be subscribed
     /// to, in order to get the resulting information.
     /// </summary>
     /// <remarks>
-    /// If you'd like to add additional parsers, an excellent reference on NMEA
+    /// If you'd like to add additional decoders, an excellent reference on NMEA
     /// sentences can found [here](https://gpsd.gitlab.io/gpsd/NMEA.html).
     /// </remarks>
     public class NmeaSentenceProcessor
     {
         /// <summary>
-        /// NMEA parsers available to the GPS.
+        /// NMEA decoders available to the GPS.
         /// </summary>
-        private readonly Dictionary<string, INmeaParser/*<IGnssResult>*/> parsers = new Dictionary<string, INmeaParser/*<IGnssResult>*/>();
+        private readonly Dictionary<string, INmeaDecoder/*<IGnssResult>*/> decoders = new Dictionary<string, INmeaDecoder/*<IGnssResult>*/>();
 
         public bool DebugMode { get; set; } = false;
 
@@ -41,16 +41,16 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         }
 
         /// <summary>
-        /// Add a new NMEA parser to the GPS.
+        /// Add a new NMEA decoder to the GPS.
         /// </summary>
-        /// <param name="parser">NMEA parser.</param>
-        public void RegisterParser(INmeaParser/*<IGnssResult>*/ parser)
+        /// <param name="decoder">NMEA decoder.</param>
+        public void RegisterDecoder(INmeaDecoder/*<IGnssResult>*/ decoder)
         {
-            Console.WriteLine($"Registering parser: {parser.Prefix}");
-            if (parsers.ContainsKey(parser.Prefix)) {
-                throw new Exception(parser.Prefix + " already registered.");
+            Console.WriteLine($"Registering decoder: {decoder.Prefix}");
+            if (decoders.ContainsKey(decoder.Prefix)) {
+                throw new Exception(decoder.Prefix + " already registered.");
             }
-            parsers.Add(parser.Prefix, parser);
+            decoders.Add(decoder.Prefix, decoder);
         }
 
         /// <summary>
@@ -60,9 +60,9 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// Unknown message types will be discarded.
         /// </remarks>
         /// <param name="line">GPS text for processing.</param>
-        public void ParseNmeaMessage(string line)
+        public void ProcessNmeaMessage(string line)
         {
-            if (DebugMode) { Console.WriteLine("NmeaSentenceParser.ParseNmeaMessage"); }
+            if (DebugMode) { Console.WriteLine("NmeaSentenceProcessor.ProcessNmeaMessage"); }
 
             // create a NmeaSentence from the sentence string
             NmeaSentence sentence;
@@ -75,15 +75,15 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 
             //Console.WriteLine($"Sentence parsed: {sentence.ToString()}");
 
-            INmeaParser parser;
-            if (parsers.ContainsKey(sentence.Prefix)) {
-                parser = parsers[sentence.Prefix];
-                if (parser != null) {
-                    if (DebugMode) { Console.WriteLine($"Found appropriate parser:{parser.Prefix}"); }
-                    parser.Process(sentence);
+            INmeaDecoder decoder;
+            if (decoders.ContainsKey(sentence.Prefix)) {
+                decoder = decoders[sentence.Prefix];
+                if (decoder != null) {
+                    if (DebugMode) { Console.WriteLine($"Found appropriate decoder:{decoder.Prefix}"); }
+                    decoder.Process(sentence);
                 }
             } else {
-                if (DebugMode) { Console.WriteLine($"Could not find appropriate parser for {sentence.Prefix}"); }
+                if (DebugMode) { Console.WriteLine($"Could not find appropriate decoder for {sentence.Prefix}"); }
             }
         }
     }

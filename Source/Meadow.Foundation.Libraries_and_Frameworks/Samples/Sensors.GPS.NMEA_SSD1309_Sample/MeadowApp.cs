@@ -45,13 +45,13 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
             Console.WriteLine("Serial port created");
 
             port.MessageReceived += (object sender, SerialMessageData e) => {
-                nmea.ParseNmeaMessage(e.GetMessageString(Encoding.ASCII));
+                nmea.ProcessNmeaMessage(e.GetMessageString(Encoding.ASCII));
             };
 
             nmea = new NmeaSentenceProcessor();
-            var ggaParser = new GgaParser();
+            var ggaParser = new GgaDecoder();
             ggaParser.PositionReceived += GgaParser_OnPositionReceived;
-            nmea.RegisterParser(ggaParser);
+            nmea.RegisterDecoder(ggaParser);
 
             // open serial
             port.Open();

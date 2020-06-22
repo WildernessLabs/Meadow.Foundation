@@ -14,25 +14,24 @@ namespace Sensors.Location.MediaTek
 
     public class Mt3339
     {
-        public int BaudRate
-        {
+        public int BaudRate {
             get => serialPort.BaudRate;
             set => serialPort.BaudRate = value;
         }
 
         ISerialMessagePort serialPort;
-        NmeaSentenceProcessor nmeaParser;
+        NmeaSentenceProcessor nmeaProcessor;
 
         public event EventHandler<NmeaEventArgs> NmeaSentenceArrived = delegate { };
 
         public Mt3339(ISerialMessagePort serialPort, int baud = 9600)
         {
             this.serialPort = serialPort;
-            
+
             BaudRate = baud;
             Init();
         }
-        
+
         public Mt3339(
             IIODevice device,
             SerialPortName serialPortName,
@@ -48,12 +47,12 @@ namespace Sensors.Location.MediaTek
                 suffixDelimiter,
                 preserveDelimiter,
                 baud, dataBits, partity, stopBits, readBufferSize), baud)
-        { } 
+        { }
 
         protected void Init()
         {
             serialPort.MessageReceived += SerialPort_MessageReceived;
-            InitParsers();
+            InitDecoders();
         }
 
         public void StartUpdataing()
@@ -63,18 +62,18 @@ namespace Sensors.Location.MediaTek
             Console.WriteLine("serial port opened.");
         }
 
-        protected void InitParsers()
+        protected void InitDecoders()
         {
             Console.WriteLine("Create NMEA");
-            nmeaParser = new NmeaSentenceProcessor();
+            nmeaProcessor = new NmeaSentenceProcessor();
 
-            Console.WriteLine("Add parsers");
+            Console.WriteLine("Add decoders");
 
             // GGA
-            var ggaParser = new GgaParser();
+            var ggaDecoder = new GgaDecoder();
             Console.WriteLine("Created GGA");
-            nmeaParser.RegisterParser(ggaParser);
-            ggaParser.PositionReceived += (object sender, GnssPositionInfo location) => {
+            nmeaProcessor.RegisterDecoder(ggaDecoder);
+            ggaDecoder.PositionReceived += (object sender, GnssPositionInfo location) => {
                 Console.WriteLine("Location information received.");
                 Console.WriteLine($"Talker ID: {location.TalkerID}, talker name: {location.TalkerSystemName}");
                 Console.WriteLine($"Time of reading: {location.TimeOfReading}");
@@ -89,9 +88,9 @@ namespace Sensors.Location.MediaTek
             };
 
             // GLL
-            var gllParser = new GllParser();
-            nmeaParser.RegisterParser(gllParser);
-            gllParser.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) => {
+            var gllDecoder = new GllDecoder();
+            nmeaProcessor.RegisterDecoder(gllDecoder);
+            gllDecoder.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) => {
                 Console.WriteLine("GLL information received.");
                 Console.WriteLine($"Talker ID: {location.TalkerID}, talker name: {location.TalkerSystemName}");
                 Console.WriteLine($"Time of reading: {location.TimeOfReading}");
@@ -101,9 +100,9 @@ namespace Sensors.Location.MediaTek
             };
 
             // GSA
-            var gsaParser = new GsaParser();
-            nmeaParser.RegisterParser(gsaParser);
-            gsaParser.ActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) => {
+            var gsaDecoder = new GsaDecoder();
+            nmeaProcessor.RegisterDecoder(gsaDecoder);
+            gsaDecoder.ActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) => {
                 Console.WriteLine("Satellite (GSA) information received.");
                 Console.WriteLine($"Talker ID: {activeSatellites.TalkerID}, talker name: {activeSatellites.TalkerSystemName}");
                 Console.WriteLine($"Number of satellites involved in fix: {activeSatellites.SatellitesUsedForFix?.Length}");
@@ -114,9 +113,9 @@ namespace Sensors.Location.MediaTek
             };
 
             // RMC (recommended minimum)
-            var rmcParser = new RmcParser();
-            nmeaParser.RegisterParser(rmcParser);
-            rmcParser.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
+            var rmcDecoder = new RmcDecoder();
+            nmeaProcessor.RegisterDecoder(rmcDecoder);
+            rmcDecoder.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
                 Console.WriteLine("Recommended Minimum sentence \"C\" (RMC) received.");
                 Console.WriteLine($"Talker ID: {positionCourseAndTime.TalkerID}, talker name: {positionCourseAndTime.TalkerSystemName}");
                 Console.WriteLine($"Time of reading: {positionCourseAndTime.TimeOfReading}");
@@ -129,9 +128,9 @@ namespace Sensors.Location.MediaTek
             };
 
             // VTG (course made good)
-            var vtgParser = new VtgParser();
-            nmeaParser.RegisterParser(vtgParser);
-            vtgParser.CourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) => {
+            var vtgDecoder = new VtgDecoder();
+            nmeaProcessor.RegisterDecoder(vtgDecoder);
+            vtgDecoder.CourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) => {
                 Console.WriteLine("Course made good (VTG) received.");
                 Console.WriteLine($"Talker ID: {courseAndVelocity.TalkerID}, talker name: {courseAndVelocity.TalkerSystemName}");
                 Console.WriteLine($"True heading: {courseAndVelocity.TrueHeading:f2}");
@@ -142,9 +141,9 @@ namespace Sensors.Location.MediaTek
             };
 
             // GSV (satellites in view)
-            var gsvParser = new GsvParser();
-            nmeaParser.RegisterParser(gsvParser);
-            gsvParser.SatellitesInViewReceived += (object sender, SatellitesInView satellites) => {
+            var gsvDecoder = new GsvDecoder();
+            nmeaProcessor.RegisterDecoder(gsvDecoder);
+            gsvDecoder.SatellitesInViewReceived += (object sender, SatellitesInView satellites) => {
                 Console.WriteLine($"Satellites in view (GSA) received, count: {satellites.Satellites.Length}");
                 Console.WriteLine($"Talker ID: {satellites.TalkerID}, talker name: {satellites.TalkerSystemName}");
                 foreach (var sat in satellites.Satellites) {
@@ -168,7 +167,7 @@ namespace Sensors.Location.MediaTek
             Console.WriteLine($"msg:{msg}");
 
             Console.WriteLine($"Sending off to the parser");
-            nmeaParser?.ParseNmeaMessage(msg);
+            nmeaProcessor?.ProcessNmeaMessage(msg);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// This class brings all of the messages together in a single message for the
     /// consumer.
     /// </remarks>
-    public class GsvParser : INmeaParser
+    public class GsvDecoder : INmeaDecoder
     {
         // Note this is commented out so we don't pay the (trivial) price of the if() check. :)
         //protected bool DebugMode { get; set; } = false;
