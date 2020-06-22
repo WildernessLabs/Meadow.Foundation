@@ -4,6 +4,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Sound
 {
+    //WIP
    public class Ky038
     {
         protected IAnalogInputPort analogPort;
