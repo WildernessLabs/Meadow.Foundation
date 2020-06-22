@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// Prefix for the RMBC decoder.
         /// </summary>
         public string Prefix {
-            get { return "$GPRMC"; }
+            get { return "RMC"; }
         }
 
         /// <summary>
@@ -35,6 +35,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         public void Process(NmeaSentence sentence)
         {
             var position = new GnssPositionInfo();
+
+            position.TalkerID = sentence.TalkerID;
 
             position.TimeOfReading = NmeaUtilities.TimeOfReading(sentence.DataElements[8], sentence.DataElements[0]);
             //Console.WriteLine($"Time of Reading:{position.TimeOfReading}UTC");

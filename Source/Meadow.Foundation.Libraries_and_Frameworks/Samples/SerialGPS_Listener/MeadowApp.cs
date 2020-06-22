@@ -59,13 +59,11 @@ namespace MeadowApp
 
             // GGA
             var ggaParser = new GgaParser();
-            nmeaParser.RegisterParser(/*wtf C#*/ggaParser);
+            Console.WriteLine("Created GGA");
+            nmeaParser.RegisterParser(ggaParser);
             ggaParser.PositionReceived += (object sender, GnssPositionInfo location) => {
-                Console.WriteLine($"location.Valid:{location.Valid}");
-                Console.WriteLine($"location.NumberOfSatellites:{location.NumberOfSatellites}");
-                Console.WriteLine($"location.Position.Latittude:{location.Position.Latitude}");
-
                 Console.WriteLine("Location information received.");
+                Console.WriteLine($"Talker ID: {location.TalkerID}, talker name: {location.TalkerSystemName}");
                 Console.WriteLine($"Time of reading: {location.TimeOfReading}");
                 Console.WriteLine($"Valid: {location.Valid}");
                 Console.WriteLine($"Latitude: {location.Position.Latitude}");
@@ -82,6 +80,7 @@ namespace MeadowApp
             nmeaParser.RegisterParser(gllParser);
             gllParser.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) => {
                 Console.WriteLine("GLL information received.");
+                Console.WriteLine($"Talker ID: {location.TalkerID}, talker name: {location.TalkerSystemName}");
                 Console.WriteLine($"Time of reading: {location.TimeOfReading}");
                 Console.WriteLine($"Latitude: {location.Position.Latitude}");
                 Console.WriteLine($"Longitude: {location.Position.Longitude}");
@@ -93,6 +92,7 @@ namespace MeadowApp
             nmeaParser.RegisterParser(gsaParser);
             gsaParser.ActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) => {
                 Console.WriteLine("Satellite (GSA) information received.");
+                Console.WriteLine($"Talker ID: {activeSatellites.TalkerID}, talker name: {activeSatellites.TalkerSystemName}");
                 Console.WriteLine($"Number of satellites involved in fix: {activeSatellites.SatellitesUsedForFix?.Length}");
                 Console.WriteLine($"Dilution of precision: {activeSatellites.DilutionOfPrecision:f2}");
                 Console.WriteLine($"HDOP: {activeSatellites.HorizontalDilutionOfPrecision:f2}");
@@ -104,13 +104,8 @@ namespace MeadowApp
             var rmcParser = new RmcParser();
             nmeaParser.RegisterParser(rmcParser);
             rmcParser.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
-                //Console.WriteLine($"RMC message decoded; time:{positionCourseAndTime.TimeOfReading}UTC, valid:{positionCourseAndTime.Valid}");
-                //if (positionCourseAndTime.Valid) {
-                //    Console.WriteLine($"lat:{positionCourseAndTime.Position.Latitude}, long: {positionCourseAndTime.Position.Longitude}");
-                //}
-                //Console.WriteLine("I wish a muthafucka would.");
-
                 Console.WriteLine("Recommended Minimum sentence \"C\" (RMC) received.");
+                Console.WriteLine($"Talker ID: {positionCourseAndTime.TalkerID}, talker name: {positionCourseAndTime.TalkerSystemName}");
                 Console.WriteLine($"Time of reading: {positionCourseAndTime.TimeOfReading}");
                 Console.WriteLine($"Latitude: {positionCourseAndTime.Position.Latitude}");
                 Console.WriteLine($"Longitude: {positionCourseAndTime.Position.Longitude}");
@@ -125,6 +120,7 @@ namespace MeadowApp
             nmeaParser.RegisterParser(vtgParser);
             vtgParser.CourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) => {
                 Console.WriteLine("Course made good (VTG) received.");
+                Console.WriteLine($"Talker ID: {courseAndVelocity.TalkerID}, talker name: {courseAndVelocity.TalkerSystemName}");
                 Console.WriteLine($"True heading: {courseAndVelocity.TrueHeading:f2}");
                 Console.WriteLine($"Magnetic heading: {courseAndVelocity.MagneticHeading:f2}");
                 Console.WriteLine($"Knots: {courseAndVelocity.Knots:f2}");
@@ -135,9 +131,10 @@ namespace MeadowApp
             // GSV (satellites in view)
             var gsvParser = new GsvParser();
             nmeaParser.RegisterParser(gsvParser);
-            gsvParser.SatellitesInViewReceived += (object sender, List<Satellite> satellites) => {
-                Console.WriteLine($"Satellites in view (GSA) received, count: {satellites.Count}");
-                foreach (var sat in satellites) {
+            gsvParser.SatellitesInViewReceived += (object sender, SatellitesInView satellites) => {
+                Console.WriteLine($"Satellites in view (GSA) received, count: {satellites.Satellites.Length}");
+                Console.WriteLine($"Talker ID: {satellites.TalkerID}, talker name: {satellites.TalkerSystemName}");
+                foreach (var sat in satellites.Satellites) {
                     Console.WriteLine("---------------");
                     Console.WriteLine($"ID: {sat.ID}");
                     Console.WriteLine($"Azimuth: {sat.Azimuth}");
@@ -147,7 +144,6 @@ namespace MeadowApp
                 Console.WriteLine("*********************************************");
             };
 
-            Console.WriteLine("Parsers configured.");
         }
 
 

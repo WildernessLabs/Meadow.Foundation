@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// Prefix for the GSA decoder.
         /// </summary>
         public string Prefix {
-            get { return "$GPGSA"; }
+            get { return "GSA"; }
         }
 
         /// <summary>
@@ -33,6 +33,9 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
             //Console.WriteLine($"GSADecoder.Process");
 
             var satellites = new ActiveSatellites();
+
+            satellites.TalkerID = sentence.TalkerID;
+
             switch (sentence.DataElements[0].ToLower()) {
                 case "a":
                     satellites.SatelliteSelection = ActiveSatelliteSelection.Automatic;

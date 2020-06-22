@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// Prefix for the GGA decoder.
         /// </summary>
         public string Prefix {
-            get { return "$GPGGA"; }
+            get { return "GGA"; }
         }
 
         /// <summary>
@@ -34,34 +34,36 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// <param name="data">String array of the message components for a CGA message.</param>
         public void Process(NmeaSentence sentence)
         {
-            if (PositionReceived != null) {
-                // make sure all fields are present
-                for (var index = 0; index <= 8; index++) {
-                    if (string.IsNullOrEmpty(sentence.DataElements[index])) {
-                        return;
-                    }
+            // make sure all fields are present
+            for (var index = 0; index <= 7; index++) {
+                if (string.IsNullOrEmpty(sentence.DataElements[index])) {
+                    //Console.WriteLine("Not all elements present");
+                    // TODO: should we throw an exception and have callers wrap in a try/catch?
+                    // problem today is that it just quietly returns
+                    return;
                 }
-
-                var location = new GnssPositionInfo();
-                location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[0]);
-                location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[1], sentence.DataElements[2]);
-                location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[3], sentence.DataElements[4]);
-                location.FixQuality = (FixType)Converters.Integer(sentence.DataElements[5]);
-
-                int numberOfSatellites;
-                if (int.TryParse(sentence.DataElements[6], out numberOfSatellites)) {
-                    location.NumberOfSatellites = numberOfSatellites;
-                }
-                decimal horizontalDilutionOfPrecision;
-                if (decimal.TryParse(sentence.DataElements[7], out horizontalDilutionOfPrecision)) {
-                    location.HorizontalDilutionOfPrecision = horizontalDilutionOfPrecision;
-                }
-                decimal altitude;
-                if (decimal.TryParse(sentence.DataElements[8], out altitude)) {
-                    location.Position.Altitude = altitude;
-                }
-                PositionReceived(this, location);
             }
+
+            var location = new GnssPositionInfo();
+            location.TalkerID = sentence.TalkerID;
+            location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[0]);
+            location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[1], sentence.DataElements[2]);
+            location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[3], sentence.DataElements[4]);
+            location.FixQuality = (FixType)Converters.Integer(sentence.DataElements[5]);
+
+            int numberOfSatellites;
+            if (int.TryParse(sentence.DataElements[6], out numberOfSatellites)) {
+                location.NumberOfSatellites = numberOfSatellites;
+            }
+            decimal horizontalDilutionOfPrecision;
+            if (decimal.TryParse(sentence.DataElements[7], out horizontalDilutionOfPrecision)) {
+                location.HorizontalDilutionOfPrecision = horizontalDilutionOfPrecision;
+            }
+            decimal altitude;
+            if (decimal.TryParse(sentence.DataElements[8], out altitude)) {
+                location.Position.Altitude = altitude;
+            }
+            PositionReceived(this, location);
         }
     }
 }

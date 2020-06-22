@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// </summary>
         public string Prefix
         {
-            get { return "$GPVTG"; }
+            get { return "VTG"; }
         }
 
         /// <summary>
@@ -38,6 +38,9 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
             //Console.WriteLine($"VTGDecoder.Process");
 
             var course = new CourseOverGround();
+
+            course.TalkerID = sentence.TalkerID;
+
             decimal trueHeading;
             if (decimal.TryParse(sentence.DataElements[0], out trueHeading)) {
                 course.TrueHeading = trueHeading;
