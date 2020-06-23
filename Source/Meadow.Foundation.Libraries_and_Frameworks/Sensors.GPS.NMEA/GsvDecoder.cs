@@ -57,14 +57,14 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// is the start of the line (i.e. $GPCGA).
         /// </remarks>
         public string Prefix {
-            get { return "GSV"; }
+            get => "GSV";
         }
 
         /// <summary>
         /// Get the friendly (human readable) name for the decoder.
         /// </summary>
         public string Name {
-            get { return "Satellites in view"; }
+            get => "Satellites in view";
         }
 
         /// <summary>

@@ -14,14 +14,14 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// Prefix for the GSA decoder.
         /// </summary>
         public string Prefix {
-            get { return "GSA"; }
+            get => "GSA";
         }
 
         /// <summary>
         /// Friendly name for the GSA messages.
         /// </summary>
         public string Name {
-            get { return "GSA - DOP and number of active satellites."; }
+            get => "GSA - DOP and number of active satellites.";
         }
 
         /// <summary>
