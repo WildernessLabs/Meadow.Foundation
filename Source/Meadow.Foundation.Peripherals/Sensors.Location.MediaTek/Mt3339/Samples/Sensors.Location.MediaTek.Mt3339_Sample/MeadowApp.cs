@@ -24,13 +24,7 @@ namespace MeadowApp
 
         void Initialize()
         {
-            ISerialMessagePort serial = Device.CreateSerialMessagePort(
-                Device.SerialPortNames.Com4,
-                suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
-                preserveDelimiter: true,
-                baudRate: 9600);
-
-            gps = new Mt3339(serial);
+            gps = new Mt3339(Device, Device.SerialPortNames.Com4);
         }
     }
 }

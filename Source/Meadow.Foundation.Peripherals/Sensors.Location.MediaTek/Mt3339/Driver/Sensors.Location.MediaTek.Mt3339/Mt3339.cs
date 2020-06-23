@@ -14,64 +14,74 @@ namespace Sensors.Location.MediaTek
 
     public class Mt3339
     {
-        public int BaudRate {
-            get => serialPort.BaudRate;
-            set => serialPort.BaudRate = value;
-        }
+        //public int BaudRate {
+        //    get => serialPort.BaudRate;
+        //    set => serialPort.BaudRate = value;
+        //}
 
         ISerialMessagePort serialPort;
         NmeaSentenceProcessor nmeaProcessor;
 
         public event EventHandler<NmeaEventArgs> NmeaSentenceArrived = delegate { };
 
-        public Mt3339(ISerialMessagePort serialPort, int baud = 9600)
+        // TODO: if we want to make this public then we're going to have to add
+        // a bunch of checks around baud rate, 8n1, etc.
+        protected Mt3339(ISerialMessagePort serialPort)
         {
             this.serialPort = serialPort;
 
-            BaudRate = baud;
+            this.serialPort.MessageReceived += SerialPort_MessageReceived;
+
             Init();
         }
 
-        public Mt3339(
-            IIODevice device,
-            SerialPortName serialPortName,
-            byte[] suffixDelimiter,
-            bool preserveDelimiter,
-            int baud = 9600,
-            int dataBits = 8,
-            Parity partity = Parity.None,
-            StopBits stopBits = StopBits.One,
-            int readBufferSize = 4096) :
+        public Mt3339( IIODevice device, SerialPortName serialPortName) :
             this(device.CreateSerialMessagePort(
-                serialPortName,
-                suffixDelimiter,
-                preserveDelimiter,
-                baud, dataBits, partity, stopBits, readBufferSize), baud)
+                serialPortName, suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
+                preserveDelimiter: true, baudRate:9600, dataBits: 8,
+                parity: Parity.None, stopBits: StopBits.One, readBufferSize: 512))
         { }
 
         protected void Init()
         {
             serialPort.MessageReceived += SerialPort_MessageReceived;
             InitDecoders();
+
+            Console.WriteLine("initializing serial port");
+            serialPort.Open();
+            Console.WriteLine("serial port opened.");
+
+            // setup commands
+
+            // turn on all data
+            Console.WriteLine("Turning on all data");
+            this.serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_SET_NMEA_OUTPUT_ALLDATA));
+
+            Console.WriteLine("Finish Mt3339 initialization.");
+
         }
 
         public void StartUpdataing()
         {
-            Console.WriteLine("initializing serial port");
-            serialPort.Open();
-            Console.WriteLine("serial port opened.");
+            // start allowing events to raise
         }
 
         protected void InitDecoders()
         {
             Console.WriteLine("Create NMEA");
             nmeaProcessor = new NmeaSentenceProcessor();
+            //nmeaProcessor.DebugMode = true;
 
             Console.WriteLine("Add decoders");
 
+            var mtkDecoder = new MtkDecoder();
+            nmeaProcessor.RegisterDecoder(mtkDecoder);
+            mtkDecoder.MessageReceived += (object sender, string e) => {
+
+            };
+
             // GGA
             var ggaDecoder = new GgaDecoder();
-            Console.WriteLine("Created GGA");
             nmeaProcessor.RegisterDecoder(ggaDecoder);
             ggaDecoder.PositionReceived += (object sender, GnssPositionInfo location) => {
                 Console.WriteLine("Location information received.");
