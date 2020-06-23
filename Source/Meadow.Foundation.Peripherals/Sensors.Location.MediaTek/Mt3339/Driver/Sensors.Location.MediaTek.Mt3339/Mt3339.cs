@@ -22,7 +22,15 @@ namespace Sensors.Location.MediaTek
         ISerialMessagePort serialPort;
         NmeaSentenceProcessor nmeaProcessor;
 
-        public event EventHandler<NmeaEventArgs> NmeaSentenceArrived = delegate { };
+        //public event EventHandler<NmeaEventArgs> NmeaSentenceArrived = delegate { };
+
+        public event EventHandler<GnssPositionInfo> GgaReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> GllReceived = delegate { };
+        public event EventHandler<ActiveSatellites> GsaReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> RmcReceived = delegate { };
+        public event EventHandler<CourseOverGround> VtgReceived = delegate { };
+        public event EventHandler<SatellitesInView> GsvReceived = delegate { };
+
 
         // TODO: if we want to make this public then we're going to have to add
         // a bunch of checks around baud rate, 8n1, etc.
@@ -46,12 +54,16 @@ namespace Sensors.Location.MediaTek
         {
             serialPort.MessageReceived += SerialPort_MessageReceived;
             InitDecoders();
+            Console.WriteLine("Finish Mt3339 initialization.");
+        }
 
-            Console.WriteLine("initializing serial port");
+        public void StartUpdataing()
+        {
+            // open the serial connection
             serialPort.Open();
             Console.WriteLine("serial port opened.");
 
-            // setup commands
+            //==== setup commands
 
             // get release and version
             Console.WriteLine("Asking for release and version.");
@@ -64,14 +76,6 @@ namespace Sensors.Location.MediaTek
             // turn on all data
             Console.WriteLine("Turning on all data");
             this.serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_SET_NMEA_OUTPUT_ALLDATA));
-
-            Console.WriteLine("Finish Mt3339 initialization.");
-
-        }
-
-        public void StartUpdataing()
-        {
-            // start allowing events to raise
         }
 
         protected void InitDecoders()
@@ -86,55 +90,42 @@ namespace Sensors.Location.MediaTek
             Console.WriteLine("Created GGA");
             nmeaProcessor.RegisterDecoder(ggaDecoder);
             ggaDecoder.PositionReceived += (object sender, GnssPositionInfo location) => {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine(location);
-                Console.WriteLine("*********************************************");
+                this.GgaReceived(this, location);
             };
 
             // GLL
             var gllDecoder = new GllDecoder();
             nmeaProcessor.RegisterDecoder(gllDecoder);
             gllDecoder.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) => {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine(location);
-                Console.WriteLine("*********************************************");
+                this.GllReceived(this, location);
             };
 
             // GSA
             var gsaDecoder = new GsaDecoder();
             nmeaProcessor.RegisterDecoder(gsaDecoder);
             gsaDecoder.ActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) => {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine(activeSatellites);
-                Console.WriteLine("*********************************************");
+                this.GsaReceived(this, activeSatellites);
             };
 
             // RMC (recommended minimum)
             var rmcDecoder = new RmcDecoder();
             nmeaProcessor.RegisterDecoder(rmcDecoder);
             rmcDecoder.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine(positionCourseAndTime);
-                Console.WriteLine("*********************************************");
-
+                this.RmcReceived(this, positionCourseAndTime);
             };
 
             // VTG (course made good)
             var vtgDecoder = new VtgDecoder();
             nmeaProcessor.RegisterDecoder(vtgDecoder);
             vtgDecoder.CourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) => {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine($"{courseAndVelocity}");
-                Console.WriteLine("*********************************************");
+                this.VtgReceived(this, courseAndVelocity);
             };
 
             // GSV (satellites in view)
             var gsvDecoder = new GsvDecoder();
             nmeaProcessor.RegisterDecoder(gsvDecoder);
             gsvDecoder.SatellitesInViewReceived += (object sender, SatellitesInView satellites) => {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine($"{satellites}");
-                Console.WriteLine("*********************************************");
+                this.GsvReceived(this, satellites);
             };
 
         }
@@ -145,7 +136,6 @@ namespace Sensors.Location.MediaTek
 
             Console.WriteLine($"Message arrived:{msg}");
 
-            //Console.WriteLine($"Sending off to the parser");
             nmeaProcessor?.ProcessNmeaMessage(msg);
         }
     }
