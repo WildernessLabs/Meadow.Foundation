@@ -5,7 +5,7 @@ using Meadow.Hardware;
 namespace Meadow.Foundation.Displays.Led
 {
     /// <summary>
-    /// Seven Segment Display
+    /// Four Digit Seven Segment Display
     /// </summary>
     public class FourDigitSevenSegment
     {
@@ -14,12 +14,9 @@ namespace Meadow.Foundation.Displays.Led
 
         #region Member variables / fields
 
-        private readonly IDigitalOutputPort _digit1;
-        private readonly IDigitalOutputPort _digit2;
-        private readonly IDigitalOutputPort _digit3;
-        private readonly IDigitalOutputPort _digit4;
+        protected readonly IDigitalOutputPort[] digits;
 
-        SevenSegment[] sevenSegment;
+        protected SevenSegment[] sevenSegments;
 
         #endregion
 
@@ -83,15 +80,16 @@ namespace Meadow.Foundation.Displays.Led
             IDigitalOutputPort portG, IDigitalOutputPort portDecimal, 
             bool isCommonCathode)
         {
-            _digit1 = portDigit1;
-            _digit2 = portDigit2;
-            _digit3 = portDigit3;
-            _digit4 = portDigit4;
+            digits = new IDigitalOutputPort[4];
+            digits[0] = portDigit4;
+            digits[1] = portDigit3;
+            digits[2] = portDigit2;
+            digits[3] = portDigit1;
 
-            sevenSegment = new SevenSegment[4];
+            sevenSegments = new SevenSegment[4];
             for(int i=0; i < 4; i++) 
             {
-                sevenSegment[i] = new SevenSegment(portA, portB, portC, portD, portE, portF, portG, portDecimal, isCommonCathode);
+                sevenSegments[i] = new SevenSegment(portA, portB, portC, portD, portE, portF, portG, portDecimal, isCommonCathode);
             }
 
             cancellationTokenSource = new CancellationTokenSource();
@@ -129,27 +127,10 @@ namespace Meadow.Foundation.Displays.Led
 
                 for (int i = 0; i < 4; i++)
                 {
-                    sevenSegment[i].SetDisplay(character[i], showDecimal);
+                    sevenSegments[i].SetDisplay(character[i], showDecimal);
 
-                    switch (i)
-                    {
-                        case 0:
-                            _digit4.State = false;
-                            _digit4.State = true;
-                            break;
-                        case 1:
-                            _digit3.State = false;
-                            _digit3.State = true;
-                            break;
-                        case 2:
-                            _digit2.State = false;
-                            _digit2.State = true;
-                            break;
-                        case 3:
-                            _digit1.State = false;
-                            _digit1.State = true;
-                            break;
-                    }
+                    digits[i].State = false;
+                    digits[i].State = true;
                 }
 
                 await Task.Delay(7);
