@@ -178,13 +178,11 @@ namespace Sensors.Location.MediaTek
 
         private void SerialPort_MessageReceived(object sender, SerialMessageData e)
         {
-            Console.WriteLine("Message arrived.");
-
             string msg = (e.GetMessageString(Encoding.ASCII));
 
-            Console.WriteLine($"msg:{msg}");
+            Console.WriteLine($"Message arrived:{msg}");
 
-            Console.WriteLine($"Sending off to the parser");
+            //Console.WriteLine($"Sending off to the parser");
             nmeaProcessor?.ProcessNmeaMessage(msg);
         }
     }
