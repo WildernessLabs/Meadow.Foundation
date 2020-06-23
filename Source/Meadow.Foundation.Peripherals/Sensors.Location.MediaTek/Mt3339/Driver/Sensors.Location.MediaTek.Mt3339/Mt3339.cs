@@ -53,6 +53,14 @@ namespace Sensors.Location.MediaTek
 
             // setup commands
 
+            // get release and version
+            Console.WriteLine("Asking for release and version.");
+            this.serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_Q_RELEASE));
+
+            // get atntenna info
+            Console.WriteLine("Start output antenna info");
+            this.serialPort.Write(Encoding.ASCII.GetBytes(Commands.PGCMD_ANTENNA));
+
             // turn on all data
             Console.WriteLine("Turning on all data");
             this.serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_SET_NMEA_OUTPUT_ALLDATA));
