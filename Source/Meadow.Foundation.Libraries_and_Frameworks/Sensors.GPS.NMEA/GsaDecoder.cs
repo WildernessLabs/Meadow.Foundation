@@ -5,6 +5,9 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
 {
     public class GsaDecoder : INmeaDecoder
     {
+        // Note this is commented out so we don't pay the (trivial) price of the if() check. :)
+        //protected bool DebugMode { get; set; } = false;
+
         /// <summary>
         /// Event raised when valid GSA data is received.
         /// </summary>
@@ -30,7 +33,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// <param name="data">String array of the message components for a GSA message.</param>
         public void Process(NmeaSentence sentence)
         {
-            //Console.WriteLine($"GSADecoder.Process");
+            //if (DebugMode) { Console.WriteLine($"GSADecoder.Process"); }
 
             var satellites = new ActiveSatellites();
 
@@ -48,10 +51,13 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                     break;
             }
 
+            //if (DebugMode) { Console.WriteLine($"satellite seletion:{satellites.SatelliteSelection}"); };
+
             int dimensionalFixType;
             if (int.TryParse(sentence.DataElements[1], out dimensionalFixType)) {
                 satellites.Dimensions = (DimensionalFixType)dimensionalFixType;
             }
+            //if (DebugMode) { Console.WriteLine($"dimensional fix type:{satellites.Dimensions}"); };
 
             var satelliteCount = 0;
             for (var index = 2; index < 14; index++) {
