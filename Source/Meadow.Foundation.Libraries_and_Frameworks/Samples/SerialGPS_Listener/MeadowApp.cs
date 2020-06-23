@@ -46,7 +46,7 @@ namespace MeadowApp
         private void SerialPort_MessageReceived(object sender, SerialMessageData e)
         {
             Console.WriteLine("Message received.");
-            Console.WriteLine($"[{e.GetMessageString(Encoding.ASCII)}]");
+            Console.WriteLine($"{e.GetMessageString(Encoding.ASCII)}");
             nmeaProcessor.ProcessNmeaMessage(e.GetMessageString(Encoding.ASCII));
         }
 
