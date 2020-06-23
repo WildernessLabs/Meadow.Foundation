@@ -85,6 +85,14 @@ namespace Sensors.Location.MediaTek
 
             Console.WriteLine("Add decoders");
 
+            // MTK
+            var mtkDecoder = new MtkDecoder();
+            Console.WriteLine("Created MTK");
+            nmeaProcessor.RegisterDecoder(mtkDecoder);
+            mtkDecoder.MessageReceived += (object sender, string message) => {
+                Console.WriteLine($"MTK Message:{message}");
+            };
+
             // GGA
             var ggaDecoder = new GgaDecoder();
             Console.WriteLine("Created GGA");
