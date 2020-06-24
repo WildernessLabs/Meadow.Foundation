@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Data;
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Leds;
+using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
 
 namespace ICs.IOExpanders.IS31FL3731_Sample

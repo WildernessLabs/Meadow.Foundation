@@ -29,9 +29,8 @@ namespace MeadowApp
         {
             serialPort = Device.CreateSerialMessagePort(
                 Device.SerialPortNames.Com4,
-                suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
-                preserveDelimiter: true,
-                9600);
+                suffixDelimiter: Encoding.UTF8.GetBytes("\r\n"),
+                preserveDelimiter: true);
             serialPort.MessageReceived += SerialPort_MessageReceived;
 
             InitDecoders();
@@ -46,8 +45,9 @@ namespace MeadowApp
         private void SerialPort_MessageReceived(object sender, SerialMessageData e)
         {
             Console.WriteLine("Message received.");
-            Console.WriteLine($"{e.GetMessageString(Encoding.ASCII)}");
-            nmeaProcessor.ProcessNmeaMessage(e.GetMessageString(Encoding.ASCII));
+            
+            Console.WriteLine($"{e.GetMessageString(Encoding.UTF8)}");
+            nmeaProcessor.ProcessNmeaMessage(e.GetMessageString(Encoding.UTF8));
         }
 
         protected void InitDecoders()
