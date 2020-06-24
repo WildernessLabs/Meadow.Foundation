@@ -18,14 +18,14 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// Prefix for the RMBC decoder.
         /// </summary>
         public string Prefix {
-            get { return "RMC"; }
+            get => "RMC";
         }
 
         /// <summary>
         /// Friendly name for the RMC messages.
         /// </summary>
         public string Name {
-            get { return "Recommended Minimum"; }
+            get => "Recommended Minimum";
         }
 
         /// <summary>

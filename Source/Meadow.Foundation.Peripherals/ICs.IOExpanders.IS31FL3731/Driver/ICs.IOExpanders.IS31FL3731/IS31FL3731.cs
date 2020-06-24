@@ -1,11 +1,9 @@
-﻿
-
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System;
 using System.Security.Policy;
 using System.Threading;
 
-namespace ICs.IOExpanders
+namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Represents the IS31FL3731 IC.

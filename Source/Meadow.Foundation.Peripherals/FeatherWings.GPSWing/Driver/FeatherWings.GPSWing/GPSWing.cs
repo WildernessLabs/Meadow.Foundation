@@ -1,7 +1,7 @@
 ﻿using Meadow.Hardware;
 using Sensors.Location.MediaTek;
 
-namespace FeatherWings.GPSWing
+namespace Meadow.Foundation.FeatherWings
 {
     public class GPSWing : Mt3339
     {

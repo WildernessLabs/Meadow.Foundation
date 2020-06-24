@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// </summary>
         public string Prefix
         {
-            get { return "GLL"; }
+            get => "GLL";
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// </summary>
         public string Name
         {
-            get { return"GLL - Global Postioning System Fix Data"; }
+            get => "GLL - Global Postioning System Fix Data";
         }
 
         /// <summary>

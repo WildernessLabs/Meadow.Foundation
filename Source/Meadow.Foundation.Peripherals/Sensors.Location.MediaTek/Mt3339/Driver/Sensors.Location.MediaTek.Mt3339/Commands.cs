@@ -22,8 +22,8 @@ namespace Sensors.Location.MediaTek
 
         //==== Modes
         // TODO: these are just ordinal flags, should be able to build up a command
-        // based on the ordinal that each of these gets turned on. also need
-        // to send a checksum at the end. checksum: http://www.hhhh.org/wiml/proj/nmeaxor.html
+        // based on the ordinal that each of these gets turned on and use our
+        // NmeaSentence class, which will automatically do the checksum and such
 
         /// <summary>
         /// GPGLL only

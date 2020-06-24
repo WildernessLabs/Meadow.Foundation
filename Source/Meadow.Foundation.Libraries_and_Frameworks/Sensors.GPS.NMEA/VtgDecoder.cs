@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// </summary>
         public string Prefix
         {
-            get { return "VTG"; }
+            get => "VTG";
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// </summary>
         public string Name
         {
-            get { return "Velocity made good"; }
+            get => "Velocity made good";
         }
 
         /// <summary>
