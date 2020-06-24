@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text;
-using FeatherWings.GPSWing;
 using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation.FeatherWings;
 using Meadow.Hardware;
 
 namespace MeadowApp

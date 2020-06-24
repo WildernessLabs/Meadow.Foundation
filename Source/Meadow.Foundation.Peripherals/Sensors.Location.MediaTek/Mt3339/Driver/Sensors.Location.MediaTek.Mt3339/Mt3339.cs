@@ -43,11 +43,10 @@ namespace Sensors.Location.MediaTek
             Init();
         }
 
-        public Mt3339( IIODevice device, SerialPortName serialPortName) :
-            this(device.CreateSerialMessagePort(
+        public Mt3339( IIODevice device, SerialPortName serialPortName)
+            : this(device.CreateSerialMessagePort(
                 serialPortName, suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
-                preserveDelimiter: true, baudRate:9600, dataBits: 8,
-                parity: Parity.None, stopBits: StopBits.One, readBufferSize: 512))
+                preserveDelimiter: true, readBufferSize: 512))
         { }
 
         protected void Init()

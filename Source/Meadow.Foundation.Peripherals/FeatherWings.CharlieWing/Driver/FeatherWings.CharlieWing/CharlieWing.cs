@@ -1,7 +1,7 @@
-﻿using ICs.IOExpanders;
+﻿using System;
 using Meadow.Foundation.Displays;
+using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
-using System;
 
 namespace Meadow.Foundation.FeatherWings
 {
