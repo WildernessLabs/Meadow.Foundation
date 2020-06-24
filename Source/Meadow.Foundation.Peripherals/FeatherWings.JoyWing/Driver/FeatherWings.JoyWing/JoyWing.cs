@@ -4,7 +4,9 @@ using Meadow.Peripherals.Sensors.Buttons;
 
 namespace Meadow.Foundation.FeatherWings
 {
-    //This driver is not complete
+    /// <summary>
+    /// This driver is not complete
+    /// </summary>
     public class JoyWing
     {
         public event EventHandler OnA;
