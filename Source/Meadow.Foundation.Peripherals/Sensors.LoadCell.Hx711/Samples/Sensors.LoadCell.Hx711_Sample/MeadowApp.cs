@@ -9,7 +9,7 @@ namespace Sensors.LoadCell.Hx711_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        private Hx711 _loadSensor;
+        private Hx711 loadSensor;
 
         public int CalibrationFactor { get; set; } = 9834945 - 8458935; // TODO: change this based on your scale (using the method provided below)
         public decimal CalibrationWeight { get; set; } = 3030; // TODO: enter the known-weight (in units below) you used in calibration
@@ -18,11 +18,11 @@ namespace Sensors.LoadCell.Hx711_Sample
         public MeadowApp()
         {
             Console.WriteLine($"Creating Sensor...");
-            using (_loadSensor = new Hx711(Device, Device.Pins.D04, Device.Pins.D03))
+            using (loadSensor = new Hx711(Device, Device.Pins.D04, Device.Pins.D03))
             {
                 if (CalibrationFactor == 0)
                 {
-                    GetAndDisplayCalibrationUnits(_loadSensor);
+                    GetAndDisplayCalibrationUnits(loadSensor);
                 }
                 else
                 {
@@ -30,13 +30,13 @@ namespace Sensors.LoadCell.Hx711_Sample
                     Thread.Sleep(500);
 
                     // Set the current load to be zero
-                    _loadSensor.SetCalibrationFactor(CalibrationFactor, new Weight(CalibrationWeight, CalibrationWeightUnits));
-                    _loadSensor.Tare();
+                    loadSensor.SetCalibrationFactor(CalibrationFactor, new Weight(CalibrationWeight, CalibrationWeightUnits));
+                    loadSensor.Tare();
 
                     // start reading
                     while (true)
                     {
-                        var c = _loadSensor.GetWeight();
+                        var c = loadSensor.GetWeight();
                         Console.WriteLine($"Conversion returned {c.StandardValue:0.0} {c.StandardUnits}");
                         Thread.Sleep(1000);
                     }
