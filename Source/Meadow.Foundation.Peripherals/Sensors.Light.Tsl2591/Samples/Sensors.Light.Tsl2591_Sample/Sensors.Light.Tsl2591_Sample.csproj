@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Light.TSL2591\Sensors.Light.TSL2591.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Light.TSL2591\Sensors.Light.Tsl2591.csproj" />
   </ItemGroup>
 </Project>

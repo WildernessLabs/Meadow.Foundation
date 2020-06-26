@@ -8,17 +8,17 @@ namespace Sensors.Light.Tsl2591_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        TSL2591 _tsl;
+        Tsl2591 tsl;
 
         public MeadowApp()
         {
             var bus = Device.CreateI2cBus();
-            _tsl = new TSL2591(bus);
+            tsl = new Tsl2591(bus);
 
-            _tsl.PowerOn();
-            _tsl.ChangeThreshold = 10;
-            _tsl.Channel0Changed += OnLightChange;
-            _tsl.StartSampling(TimeSpan.FromSeconds(1));
+            tsl.PowerOn();
+            tsl.ChangeThreshold = 10;
+            tsl.Channel0Changed += OnLightChange;
+            tsl.StartSampling(TimeSpan.FromSeconds(1));
 
             while (true)
             {
@@ -28,7 +28,7 @@ namespace Sensors.Light.Tsl2591_Sample
 
         void OnLightChange(int before, int after)
         {
-            Console.WriteLine($"Light: 0:{_tsl.Channel0}");
+            Console.WriteLine($"Light: 0:{tsl.Channel0}");
         }
     }
 }

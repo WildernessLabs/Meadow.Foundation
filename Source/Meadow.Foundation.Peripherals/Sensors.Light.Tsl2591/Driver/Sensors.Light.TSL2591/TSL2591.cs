@@ -2,14 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Light;
 
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
     ///     Driver for the TSL2591 light-to-digital converter.
     /// </summary>
-    public class TSL2591 : IDisposable
+    public class Tsl2591 : IDisposable
     {
         /// <summary>
         ///     Valid addresses for the sensor.
@@ -55,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Light
         private int? _lastCh1;
         private TimeSpan _samplePeriod;
 
-        private II2cBus Device { get; set; }
+        private II2cBus i2cBus { get; set; }
         private object SyncRoot { get; } = new object();
         private CancellationTokenSource SamplingTokenSource { get; set; }
 
@@ -64,10 +63,10 @@ namespace Meadow.Foundation.Sensors.Light
         public bool IsSampling { get; private set; }
         public byte Address { get; private set; }
 
-        public TSL2591(II2cBus bus)
+        public Tsl2591(II2cBus bus, byte address = (byte)Addresses.Default)
         {
-            Device = bus;
-            Initialize((byte)Addresses.Default);
+            i2cBus = bus;
+            Address = address;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -84,20 +83,6 @@ namespace Meadow.Foundation.Sensors.Light
         public void Dispose()
         {
             Dispose(true);
-        }
-
-        private void Initialize(byte address)
-        {
-            switch (address)
-            {
-                case 0x29:
-                    // valid;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("TSL2591 device supports only address 0x29");
-            }
-
-            Address = address;
         }
 
         public void StartSampling(TimeSpan samplePeriod)
@@ -252,7 +237,7 @@ namespace Meadow.Foundation.Sensors.Light
         {
             lock (SyncRoot)
             {
-                Device.WriteData(Address, 2, (byte)register, value);
+                i2cBus.WriteData(Address, 2, (byte)register, value);
             }
         }
 
@@ -260,7 +245,7 @@ namespace Meadow.Foundation.Sensors.Light
         {
             lock (SyncRoot)
             {
-                var data = Device.WriteReadData(Address, 1, (byte)register);
+                var data = i2cBus.WriteReadData(Address, 1, (byte)register);
 
                 return data[0];
             }
@@ -270,7 +255,7 @@ namespace Meadow.Foundation.Sensors.Light
         {
             lock (SyncRoot)
             {
-                var data = Device.WriteReadData(Address, 2, (byte)register);
+                var data = i2cBus.WriteReadData(Address, 2, (byte)register);
 
                 unchecked
                 {
