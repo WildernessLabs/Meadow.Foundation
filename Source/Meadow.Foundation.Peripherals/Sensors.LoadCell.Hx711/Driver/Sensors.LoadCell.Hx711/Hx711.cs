@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Sensors.Light
+namespace Meadow.Foundation.Sensors.LoadCell
 {
     /// <summary>
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
