@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 
@@ -10,7 +11,7 @@ namespace Meadow.Foundation.Displays.Led
     public class FourDigitSevenSegment
     {
         protected Task animationThread = null;
-        protected CancellationTokenSource cancellationTokenSource = null;
+        protected CancellationTokenSource cts = null;
 
         #region Member variables / fields
 
@@ -92,7 +93,7 @@ namespace Meadow.Foundation.Displays.Led
                 sevenSegments[i] = new SevenSegment(portA, portB, portC, portD, portE, portF, portG, portDecimal, isCommonCathode);
             }
 
-            cancellationTokenSource = new CancellationTokenSource();
+            cts = new CancellationTokenSource();
         }
 
         #endregion
@@ -106,24 +107,24 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="showDecimal"></param>
         public void SetDisplay(char[] character, bool showDecimal = false)
         {
-            if (!cancellationTokenSource.Token.IsCancellationRequested)
-                cancellationTokenSource.Cancel();
-
-            cancellationTokenSource = new CancellationTokenSource();
-
-            animationThread = new Task(async () =>
+            if (!cts.Token.IsCancellationRequested)
             {
-                await Display(character, showDecimal, cancellationTokenSource.Token);
-            }, cancellationTokenSource.Token);
-            animationThread.Start();
+                cts.Cancel();
+            }
+
+            cts = new CancellationTokenSource();
+
+            Task.Run(async ()=> await StartDisplayLoop(character, showDecimal, cts.Token));
         }
 
-        protected async Task Display(char[] character, bool showDecimal, CancellationToken cancellationToken) 
+        protected async Task StartDisplayLoop(char[] character, bool showDecimal, CancellationToken cancellationToken) 
         {
             while (true)
             {
                 if (cancellationToken.IsCancellationRequested)
+                { 
                     break;
+                }
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -133,13 +134,13 @@ namespace Meadow.Foundation.Displays.Led
                     digits[i].State = true;
                 }
 
-                await Task.Delay(7);
+                await Task.Delay(10);
             }
         }
 
         public void Stop()
         {
-            cancellationTokenSource.Cancel();
+            cts.Cancel();
         }
 
         #endregion
