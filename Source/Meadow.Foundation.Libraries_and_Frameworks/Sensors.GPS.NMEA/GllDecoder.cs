@@ -22,6 +22,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
             get => "GLL";
         }
 
+        //public bool DebugMode { get; set; } = true;
+
         /// <summary>
         /// Friendly name for the GLL messages.
         /// </summary>
@@ -39,15 +41,13 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
             //
             //  Status is stored in element 7 (position 6), A = valid, V = not valid.
             //
-            if (sentence.DataElements[5].ToLower() == "a")
-            {
-                var location = new GnssPositionInfo();
-                location.TalkerID = sentence.TalkerID;
-                location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[0], sentence.DataElements[1]);
-                location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
-                location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[4]);
-                GeographicLatitudeLongitudeReceived(this, location);
-            }
+            var location = new GnssPositionInfo();
+            location.TalkerID = sentence.TalkerID;
+            location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[0], sentence.DataElements[1]);
+            location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
+            location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[4]);
+            location.Valid = (sentence.DataElements[5].ToLower() == "a");
+            GeographicLatitudeLongitudeReceived(this, location);
         }
     }
 }
