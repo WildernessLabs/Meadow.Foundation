@@ -113,8 +113,6 @@ namespace Meadow.Foundation.Displays
 
         #region Constructors
 
-        private Tm1637() { }
-
         /// <summary>
         /// Initialize a TM1637
         /// </summary>

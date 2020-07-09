@@ -175,8 +175,6 @@ namespace Meadow.Foundation.Leds
             ResetPwms();
         }
 
-        private RgbPwmLed() { }
-
         /// <summary>
         /// Resets all PWM ports
         /// </summary>

@@ -121,11 +121,6 @@ namespace Meadow.Foundation.Displays
         #region Constructors
 
         /// <summary>
-        ///     Default constructor is private to prevent it being used.
-        /// </summary>
-        private St7565() { }
-
-        /// <summary>
         ///     Create a new ST7565 object using the default parameters for
         /// </summary>
         public St7565(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,

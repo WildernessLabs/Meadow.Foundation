@@ -23,7 +23,6 @@ namespace Sensors.Distance
         #endregion Member variables / fields
 
         #region Constructors
-        private Gp2D12() { }
 
         public Gp2D12(IIODevice device, IPin analogInputPin)
         {

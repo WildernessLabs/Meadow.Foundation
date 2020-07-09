@@ -77,12 +77,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #region Constructors
 
         /// <summary>
-        ///     Default constructor (private to prevent it being called).
-        /// </summary>
-        private Mpl3115a2()
-        { }
-
-        /// <summary>
         ///     Create a new MPL3115A2 object with the default address and speed settings.
         /// </summary>
         /// <param name="address">Address of the sensor (default = 0x60).</param>

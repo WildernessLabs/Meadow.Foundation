@@ -31,13 +31,6 @@ namespace Meadow.Foundation.ICs.EEPROM
         #region Constructors
 
         /// <summary>
-        ///     Default constructor is private to prevent the developer from calling it.
-        /// </summary>
-        private At24Cxx()
-        {
-        }
-
-        /// <summary>
         ///     Create a new AT24Cxx object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the At24Cxx (default = 0x50).</param>

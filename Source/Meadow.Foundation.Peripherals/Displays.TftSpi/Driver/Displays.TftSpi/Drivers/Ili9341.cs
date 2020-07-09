@@ -5,8 +5,6 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class Ili9341 : DisplayTftSpiBase
     {
-        private Ili9341() { }
-
         public Ili9341(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
         {

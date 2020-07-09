@@ -42,11 +42,6 @@ namespace Meadow.Foundation.Sensors.Switches
         #region Constructors
 
         /// <summary>
-        /// Default constructor is private to prevent it being called.
-        /// </summary>
-        private SpstSwitch() { }
-
-        /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
         /// </summary>
         /// <param name="device"></param>

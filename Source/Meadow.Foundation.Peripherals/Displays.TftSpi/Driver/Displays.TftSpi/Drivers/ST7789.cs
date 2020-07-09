@@ -9,8 +9,6 @@ namespace Meadow.Foundation.Displays.Tft
         private byte xOffset;
         private byte yOffset;
 
-        private St7789() { }
-
         public St7789(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
         {

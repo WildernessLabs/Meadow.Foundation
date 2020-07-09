@@ -33,28 +33,26 @@ namespace Meadow.Foundation.Sensors.Camera
 
         public bool MotionDetectionEnabled
         {
-            get { return _vc0706.GetMotionDetectionStatus(); }
-            set { _vc0706.SetMotionDetection(value); }
+            get { return vc0706.GetMotionDetectionStatus(); }
+            set { vc0706.SetMotionDetection(value); }
         }
 
         public bool IsMotionDetected
         {
-            get { return _vc0706.IsMotionDetected(); }
+            get { return vc0706.IsMotionDetected(); }
         }
 
         #endregion
 
         private ISerialPort serialPort;
 
-        private Vc0706Core _vc0706;
+        private Vc0706Core vc0706;
 
         public Vc0706(IIODevice device, SerialPortName serialPortName, int baudRate)
         {
             serialPort = device.CreateSerialPort(serialPortName, baudRate);
 
-            _vc0706 = new Vc0706Core();
-
-            
+            vc0706 = new Vc0706Core();
         }
 
         void Initialize(string comPort, ComPortSpeed baudRate = ComPortSpeed.Baud38400, ImageSize imageSize = ImageSize.Res640x480)
@@ -64,12 +62,12 @@ namespace Meadow.Foundation.Sensors.Camera
             DetectBaudRate(comPort);
             SetPortSpeed(baudRate);
 
-            _vc0706.Initialize(serialPort);
+            vc0706.Initialize(serialPort);
         }
 
         public void TakePicture(string path)
         {
-            _vc0706.TakePicture(path);
+            vc0706.TakePicture(path);
         }
 
         protected void DetectBaudRate(string port)
@@ -82,7 +80,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
                 try
                 {
-                    _vc0706.SetComPort(serialPort);
+                    vc0706.SetComPort(serialPort);
                     GetImageSize();
 
                     Console.WriteLine("BaudRate detected: " + rate.ToString());
@@ -111,7 +109,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
         protected void SetPortSpeed(ComPortSpeed speed)
         {
-            _vc0706.SetPortSpeed((short)speed);
+            vc0706.SetPortSpeed((short)speed);
 
             var comPortName = serialPort.PortName;
             switch (speed)
@@ -137,47 +135,47 @@ namespace Meadow.Foundation.Sensors.Camera
 
         public void SetTVOutput(bool enabled)
         {
-            _vc0706.TvOutput(enabled);
+            vc0706.TvOutput(enabled);
         }
 
         public string GetVersion()
         {
-            return _vc0706.GetVersion();
+            return vc0706.GetVersion();
         }
 
         public int GetCompression()
         {
-            return _vc0706.GetCompression();
+            return vc0706.GetCompression();
         }
 
         public bool GetMotionDetectionCommStatus()
         {
-            return _vc0706.GetMotionDetectionStatus();
+            return vc0706.GetMotionDetectionStatus();
         }
 
         public ColorControl GetColorStatus()
         {
-            return (ColorControl)_vc0706.GetColorStatus();
+            return (ColorControl)vc0706.GetColorStatus();
         }
 
         public void SetColorStatus(ColorControl colorControl)
         {
-            _vc0706.SetColorControl((byte)colorControl);
+            vc0706.SetColorControl((byte)colorControl);
         }
 
         public ImageSize GetImageSize()
         {
-            return (ImageSize)_vc0706.GetImageSize();
+            return (ImageSize)vc0706.GetImageSize();
         }
 
         public void SetImageSize(ImageSize imageSize)
         {
-            _vc0706.SetImageSize((byte)imageSize);
+            vc0706.SetImageSize((byte)imageSize);
         }
 
         public bool IsMotionDetectionEnabled()
         {
-            return _vc0706.GetMotionDetectionStatus();
+            return vc0706.GetMotionDetectionStatus();
         }
 
         void CloseComPort()

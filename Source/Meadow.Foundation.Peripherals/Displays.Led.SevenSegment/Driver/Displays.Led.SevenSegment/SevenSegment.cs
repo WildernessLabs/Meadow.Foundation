@@ -75,11 +75,6 @@ namespace Meadow.Foundation.Displays.Led
         #region Constructor
 
         /// <summary>
-        /// Default constructor is private to prevent it being called.
-        /// </summary>
-        private SevenSegment() { }
-
-        /// <summary>
         /// Creates a SevenSegment connected to the especified IPins to a IODevice
         /// </summary>
         /// <param name="device"></param>

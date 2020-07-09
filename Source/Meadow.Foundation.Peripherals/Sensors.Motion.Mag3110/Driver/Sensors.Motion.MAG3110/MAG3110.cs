@@ -178,13 +178,6 @@ namespace Meadow.Foundation.Sensors.Motion
         #region Constructors
 
         /// <summary>
-        ///     Default constructor is private to prevent the developer from calling it.
-        /// </summary>
-        private Mag3110()
-        {
-        }
-
-        /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component.
         /// </summary>
         /// <param name="device">IO Device.</param>

@@ -122,13 +122,6 @@ namespace Meadow.Foundation.Sensors.Motion
         #region Constructors
 
         /// <summary>
-        ///     Make the default constructor private so that the developer cannot access it.
-        /// </summary>
-        private Adxl377()
-        {
-        }
-
-        /// <summary>
         ///     Create a new ADXL337 sensor object.
         /// </summary>
         /// <param name="xPin">Analog pin connected to the X axis output from the ADXL335 sensor.</param>

@@ -40,11 +40,6 @@ namespace Meadow.Foundation.Sensors.Motion
         #region Constructors
 
         /// <summary>
-        /// Default constructor is private to prevent it being called.
-        /// </summary>
-        private ParallaxPir() { }
-
-        /// <summary>
         /// Create a new Parallax PIR object connected to an input pin and IO Device.
         /// </summary>
         /// <param name="device"></param>

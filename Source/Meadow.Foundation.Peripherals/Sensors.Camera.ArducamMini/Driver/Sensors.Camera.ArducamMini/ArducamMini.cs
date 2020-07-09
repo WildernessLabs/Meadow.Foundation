@@ -50,8 +50,6 @@ namespace Meadow.Foundation.Sensors.Camera
 
         #region Constructors 
 
-        private ArducamMini() { }
-
         public ArducamMini(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus, byte address = 0x30)
         {
             i2cDevice = new I2cPeripheral(i2cBus, address);

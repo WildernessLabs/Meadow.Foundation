@@ -20,8 +20,6 @@ namespace Meadow.Foundation.Leds
 
         protected PwmLed[] pwmLeds;
 
-        private PwmLedBarGraph() { }
-
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPwnPin and a forwardVoltage for all LEDs in the bar graph
         /// </summary>

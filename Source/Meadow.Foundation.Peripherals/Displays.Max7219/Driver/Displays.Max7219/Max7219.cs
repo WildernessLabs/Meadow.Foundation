@@ -119,12 +119,9 @@ namespace Meadow.Foundation.Displays
 
         #region Constructors
 
-        private Max7219() { }
-
         public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceCount = 1, Max7219Type maxMode = Max7219Type.Display)
             :this(spiBus, csPort, 8, 1, maxMode)
         {
-
         }
 
         public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceRows, int deviceColumns, Max7219Type maxMode = Max7219Type.Display)

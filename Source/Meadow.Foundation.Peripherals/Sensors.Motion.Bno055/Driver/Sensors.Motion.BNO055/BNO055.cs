@@ -1794,13 +1794,6 @@ namespace Meadow.Foundation.Sensors.Motion
 
         #region Constructors
 
-        /// <summary>
-		///     Default constructor is private to prevent the developer from calling it.
-		/// </summary>
-		private Bno055()
-		{
-		}
-
 		/// <summary>
 		///     Create a new BNO055 object using the default parameters for the component.
 		/// </summary>

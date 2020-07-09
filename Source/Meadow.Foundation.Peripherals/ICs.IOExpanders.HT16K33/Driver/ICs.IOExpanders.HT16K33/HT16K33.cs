@@ -63,13 +63,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         #endregion Member variables / fields
 
-
         #region Constructors
-
-        /// <summary>
-        ///     Default HT16K33 constructor is private to prevent it from being used.
-        /// </summary>
-        private Ht16K33() { }
 
         /// <summary>
         ///     Create a new HT16K33 object using the default parameters

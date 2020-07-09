@@ -124,11 +124,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #region Constructors
 
         /// <summary>
-        ///     Default constructor (private to prevent the user from calling this).
-        /// </summary>
-        private Si70xx() { }
-
-        /// <summary>
         ///     Create a new SI7021 temperature and humidity sensor.
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40).</param>

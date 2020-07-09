@@ -37,11 +37,6 @@ namespace Meadow.Foundation.Sensors.Switches
         #region Constructors
 
         /// <summary>
-        /// Default constructor is private to prevent it being called.
-        /// </summary>
-        private DipSwitch() { }
-
-        /// <summary>
         /// Creates a new DipSwitch connected to the specified switchPins, with the InterruptMode and ResisterMode specified by the type parameters.
         /// </summary>
         /// <param name="device"></param>

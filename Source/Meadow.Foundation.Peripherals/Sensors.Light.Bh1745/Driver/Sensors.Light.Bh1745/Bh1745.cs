@@ -321,11 +321,6 @@ namespace Meadow.Foundation.Sensors.Light
         #region Constructors
 
         /// <summary>
-        ///     Default constructor (private to prevent it being used)
-        /// </summary>
-        private Bh1745() {}
-
-        /// <summary>
         ///     Create a new BH17545 color sensor object
         /// </summary>
         public Bh1745(II2cBus i2cBus, byte address = 0x38)

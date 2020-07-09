@@ -59,11 +59,6 @@ namespace Meadow.Foundation.Sensors.Moisture
         #region Constructors
 
         /// <summary>
-        /// Default constructor is private to prevent it being called.
-        /// </summary>
-        private Fc28() { }
-
-        /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device.
         /// </summary>
         /// <param name="analogPort"></param>

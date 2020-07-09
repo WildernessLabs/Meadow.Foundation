@@ -62,13 +62,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #region Constructors
 
         /// <summary>
-        ///     Default constructor is private to prevent the developer from calling it.
-        /// </summary>
-        private Hih6130()
-        {
-        }
-
-        /// <summary>
         ///     Create a new HIH6130 object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the HIH6130 (default = 0x27).</param>

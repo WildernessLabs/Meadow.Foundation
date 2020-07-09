@@ -99,13 +99,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         #region Constructors
 
         /// <summary>
-        ///     Default constructor (private to prevent it being called).
-        /// </summary>
-        private Tmp102()
-        {
-        }
-
-        /// <summary>
         ///     Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>

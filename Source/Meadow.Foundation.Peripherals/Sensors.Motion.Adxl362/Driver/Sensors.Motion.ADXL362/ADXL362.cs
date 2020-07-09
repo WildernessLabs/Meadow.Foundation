@@ -760,13 +760,6 @@ namespace Meadow.Foundation.Sensors.Motion
         #region Constructors
 
         /// <summary>
-        ///     Default constructor is private to prevent it being used.
-        /// </summary>
-        private Adxl362()
-        {
-        }
-
-        /// <summary>
         ///     Create a new ADXL362 object using the specified SPI module.
         /// </summary>
         /// <param name="spiBus">Spi Bus object</param>

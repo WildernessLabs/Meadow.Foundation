@@ -39,8 +39,6 @@ namespace Meadow.Foundation.Displays.Lcd
 
         public TextDisplayConfig DisplayConfig { get; protected set; }
 
-        private CharacterDisplay() { }
-
         public CharacterDisplay(
             IIODevice device, 
             IPin pinRS, 

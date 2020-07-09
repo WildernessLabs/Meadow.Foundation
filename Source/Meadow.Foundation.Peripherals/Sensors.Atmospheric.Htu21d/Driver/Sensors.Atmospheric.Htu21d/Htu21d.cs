@@ -104,11 +104,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #region Contstructors
 		
         /// <summary>
-        ///     Default constructor (private to prevent the user from calling this).
-        /// </summary>
-        private Htu21d() { }
-
-        /// <summary>
         ///     Create a new Htu21d temperature and humidity sensor.
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40).</param>

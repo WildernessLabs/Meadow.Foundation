@@ -10,8 +10,6 @@ namespace Meadow.Foundation.Displays.Tft
         private byte _xOffset;
         private byte _yOffset;
 
-        private St7735() { }
-
         public St7735(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height,
             DisplayType displayType = DisplayType.ST7735R) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)

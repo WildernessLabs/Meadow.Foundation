@@ -221,13 +221,6 @@ namespace Meadow.Foundation.Sensors.Motion
         #region Constructors
 
         /// <summary>
-        ///     Make the default constructor private so that it cannot be used.
-        /// </summary>
-        private Apds9960()
-        {
-        }
-
-        /// <summary>
         ///     Create a new instance of the APDS9960 communicating over the I2C interface.
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>

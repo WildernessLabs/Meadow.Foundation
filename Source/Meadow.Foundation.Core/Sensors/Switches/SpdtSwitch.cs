@@ -39,11 +39,6 @@ namespace Meadow.Foundation.Sensors.Switches
         #region Constructors
 
         /// <summary>
-        /// Default constructor is private to prevent it being called.
-        /// </summary>
-        private SpdtSwitch() { }
-
-        /// <summary>
         /// Instantiates a new SpdtSwitch object with the center pin connected to the specified digital pin, one pin connected to common/ground and one pin connected to high/3.3V.
         /// </summary>
         /// <param name="device"></param>

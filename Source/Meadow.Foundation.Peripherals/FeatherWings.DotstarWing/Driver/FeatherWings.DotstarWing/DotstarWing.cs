@@ -20,8 +20,6 @@ namespace Meadow.Foundation.FeatherWings
             set => ledMatrix.Brightness = value;  
         }
 
-        private DotstarWing() { }
-
         public DotstarWing(ISpiBus spiBus, IDigitalOutputPort chipSelect) : this(spiBus,chipSelect,72)
         {
         }

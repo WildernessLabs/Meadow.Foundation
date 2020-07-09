@@ -95,11 +95,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         #region Constructors
 
         /// <summary>
-        /// Default constructor is private to prevent it being called.
-        /// </summary>
-        private PushButton() { }
-
-        /// <summary>
         /// Creates PushButto a digital input port connected on a IIOdevice, especifying Interrupt Mode, Circuit Type and optionally Debounce filter duration.
         /// </summary>
         /// <param name="device"></param>

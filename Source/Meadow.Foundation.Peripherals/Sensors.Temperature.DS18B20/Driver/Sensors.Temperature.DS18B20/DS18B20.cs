@@ -307,13 +307,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         #region Constructor(s)
 
         /// <summary>
-        ///     Default constructor is private to prevent it from being called.
-        /// </summary>
-        private DS18B20()
-        {
-        }
-
-        /// <summary>
         ///     Create a new DS18B20 temperature sensor object with the specified configuration.
         /// </summary>
         /// <param name="oneWirePin">GPIO pin the DS18B20 is connected to.</param>

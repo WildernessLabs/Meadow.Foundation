@@ -25,13 +25,6 @@ namespace Meadow.Foundation.Sensors.Light
         #region Constructors
 
         /// <summary>
-        ///     Default constructor (private to prevent it being used).
-        /// </summary>
-        private Temt6000()
-        {
-        }
-
-        /// <summary>
         ///     Create a new light sensor object using a static reference voltage.
         /// </summary>
         /// <param name="pin">AnalogChannel connected to the sensor.</param>

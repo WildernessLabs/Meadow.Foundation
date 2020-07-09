@@ -53,11 +53,6 @@ namespace Meadow.Foundation.Sensors.Distance
         #region Constructors
 
         /// <summary>
-        /// Default constructor is private to prevent it being called.
-        /// </summary>
-        private Hysrf05() { }
-
-        /// <summary>
         /// Create a new HYSRF05 object with a IO Device
         /// HSSRF05 must be running the default 4/5 pin mode
         /// 3 pin mode is not supported on Meadow

@@ -113,13 +113,6 @@ namespace Meadow.Foundation.Displays
         #region Constructors
 
         /// <summary>
-        ///     Make the default constructor private to prevent it being called.
-        /// </summary>
-        private SerialLcd()
-        {
-        }
-
-        /// <summary>
         ///     Create a new SerialLcd object.
         /// </summary>
         /// <param name="config">TextDisplayConfig object defining the Lcd dimension (null will default to 16x2).</param>

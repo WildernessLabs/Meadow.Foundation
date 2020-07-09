@@ -5,8 +5,6 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class Ssd1351 : DisplayTftSpiBase
     {
-        private Ssd1351() { }
-
         public Ssd1351(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
         {

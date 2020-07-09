@@ -57,11 +57,6 @@ namespace Meadow.Foundation.Sensors.Moisture
         #region Constructors
 
         /// <summary>
-        /// Default constructor is private to prevent it being called.
-        /// </summary>
-        private Capacitive() { }
-
-        /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the specified analog pin and a IO device.
         /// </summary>
         /// <param name="device"></param>

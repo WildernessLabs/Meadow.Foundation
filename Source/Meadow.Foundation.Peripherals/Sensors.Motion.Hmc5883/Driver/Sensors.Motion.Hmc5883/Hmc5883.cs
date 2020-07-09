@@ -1,7 +1,6 @@
 ﻿using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
 using System;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -206,8 +205,6 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Status DeviceStatus => GetStatus();
 
-
-
         #endregion Properties
 
         #region Events and delegates
@@ -221,12 +218,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         #region Constructors
 
-        /// <summary>
-        ///     Make the default constructor private so that the developer cannot access it.
-        /// </summary>
-        protected Hmc5883()
-        {
-        }
+        protected Hmc5883() { }
 
         public Hmc5883(II2cBus i2cBus, byte address = 0x1E,
             Gain gain = Gain.Gain1090,

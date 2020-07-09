@@ -333,16 +333,6 @@ namespace Meadow.Foundation.Sensors.Light
         #region Constructor(s)
 
         /// <summary>
-        ///     Default constructor.
-        /// </summary>
-        /// <remarks>
-        ///     Default constructor is private to force the setting of the I2C parameters.
-        /// </remarks>
-        private Tsl2561()
-        {
-        }
-
-        /// <summary>
         ///     Create a new instance of the TSL2561 class with the specified I2C address.
         /// </summary>
         /// <remarks>

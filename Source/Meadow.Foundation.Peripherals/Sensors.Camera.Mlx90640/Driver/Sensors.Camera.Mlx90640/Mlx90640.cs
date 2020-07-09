@@ -63,7 +63,6 @@ namespace Meadow.Foundation.Sensors.Camera
         public Units MeasurementUnit { get; set; }
         public Mlx90640Config Config { get; private set; }
 
-
         const short MaxBufferSize = 32;
         const float ScaleAlpha = 0.000001f;
         const byte OpenAirTaShift = 8;

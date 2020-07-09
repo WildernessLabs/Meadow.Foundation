@@ -107,13 +107,6 @@ namespace Meadow.Foundation.Sensors.Light
         #region Constructors
 
         /// <summary>
-        ///     Default constructor (private to prevent it being used).
-        /// </summary>
-        private Bh1750()
-        {
-        }
-
-        /// <summary>
         ///     Create a new BH1750 light sensor object using a static reference voltage.
         /// </summary>
         public Bh1750(II2cBus i2cBus, byte address, MeasuringModes measuringMode = MeasuringModes.ContinuouslyHighResolutionMode, double lightTransmittance = 1)

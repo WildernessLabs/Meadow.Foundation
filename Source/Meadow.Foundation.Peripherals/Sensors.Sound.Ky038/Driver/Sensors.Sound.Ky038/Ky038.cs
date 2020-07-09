@@ -10,12 +10,9 @@ namespace Meadow.Foundation.Sensors.Sound
         protected IAnalogInputPort analogPort;
         protected IDigitalInputPort digitalInputPort;
 
-        private Ky038 () { }
-
         public Ky038(IIODevice device, IPin A0, IPin D0) : 
             this (device.CreateAnalogInputPort(A0), device.CreateDigitalInputPort(D0))
         {
-            
         }
 
         public Ky038(IAnalogInputPort analogPort, IDigitalInputPort digitalInputPort)

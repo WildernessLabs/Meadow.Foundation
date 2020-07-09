@@ -140,11 +140,6 @@ namespace Meadow.Foundation.Sensors.Light
         #region Constructors
 
         /// <summary>
-        ///     Default constructor (private to prevent this being called).
-        /// </summary>
-        private Si1145() { }
-
-        /// <summary>
         ///     Create a new SI1145 sensor object.
         /// </summary>
         /// <param name="address">Address of the chip on the I2C bus (default to 0x60).</param>

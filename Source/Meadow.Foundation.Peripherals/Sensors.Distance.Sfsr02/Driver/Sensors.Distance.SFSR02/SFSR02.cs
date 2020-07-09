@@ -45,11 +45,6 @@ namespace Meadow.Foundation.Sensors.Distance
         #region Constructors
 
         /// <summary>
-        /// Default constructor is private to prevent it being called.
-        /// </summary>
-        private Sfsr02() { }
-
-        /// <summary>
         /// Create a new SFSR02 object with an IO Device
         /// </summary>
         /// <param name="triggerEchoPin"></param>

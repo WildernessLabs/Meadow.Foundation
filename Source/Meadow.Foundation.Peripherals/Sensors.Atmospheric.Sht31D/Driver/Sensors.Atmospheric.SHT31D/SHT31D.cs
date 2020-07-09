@@ -65,13 +65,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #region Constructors
 
         /// <summary>
-        ///     Default constructor (made private to prevent it being called).
-        /// </summary>
-        private Sht31D()
-        {
-        }
-
-        /// <summary>
         ///     Create a new SHT31D object.
         /// </summary>
         /// <param name="address">Sensor address (should be 0x44 or 0x45).</param>

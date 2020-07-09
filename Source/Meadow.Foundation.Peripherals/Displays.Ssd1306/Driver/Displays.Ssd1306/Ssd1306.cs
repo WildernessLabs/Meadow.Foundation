@@ -216,11 +216,6 @@ namespace Meadow.Foundation.Displays
         #region Constructors
 
         /// <summary>
-        ///     Default constructor is private to prevent it being used.
-        /// </summary>
-        private Ssd1306() { }
-
-        /// <summary>
         ///     Create a new SSD1306 object using the default parameters for
         /// </summary>
         /// <remarks>

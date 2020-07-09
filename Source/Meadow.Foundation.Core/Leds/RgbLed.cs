@@ -21,8 +21,6 @@ namespace Meadow.Foundation.Leds
 
         public CommonType Common { get; protected set; }
 
-        private RgbLed () { }
-
         public RgbLed(
             IIODevice device, 
             IPin redPin, 

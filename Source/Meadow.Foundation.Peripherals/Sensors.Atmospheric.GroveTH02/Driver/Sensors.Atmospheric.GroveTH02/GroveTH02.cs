@@ -149,13 +149,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #region Constructors
 
         /// <summary>
-        ///     Default constructor is private to prevent the developer from calling it.
-        /// </summary>
-        private GroveTh02()
-        {
-        }
-
-        /// <summary>
         ///     Create a new GroveTH02 object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the Grove TH02 (default = 0x4-).</param>

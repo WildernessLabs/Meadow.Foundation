@@ -62,11 +62,6 @@ namespace Meadow.Foundation.Audio.Radio
         #region Constructors
 
         /// <summary>
-        ///     Default constructor is private to prevent it being used.
-        /// </summary>
-        private Tea5767() { }
-
-        /// <summary>
         ///     Create a new TEA5767 object using the default parameters
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display.</param>

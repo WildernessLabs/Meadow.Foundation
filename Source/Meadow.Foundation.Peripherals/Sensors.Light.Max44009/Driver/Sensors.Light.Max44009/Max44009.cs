@@ -15,9 +15,6 @@ namespace Meadow.Foundation.Sensors.Light
 
         private static II2cPeripheral i2cPeripheral;
 
-
-        private Max44009() { }
-
         public Max44009(II2cBus i2cBus, byte address = 0x4a)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);

@@ -32,8 +32,6 @@ namespace Meadow.Foundation.Sensors.Environmental
 
         #region Constructors
 
-        private Ags01Db() { }
-
         public Ags01Db(II2cBus i2cBus, byte address = 0x11)
         {
             sensor = new I2cPeripheral(i2cBus, address);

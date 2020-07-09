@@ -90,11 +90,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         #region Contructors
 
         /// <summary>
-        ///     Default constructor is private to prevent the developer from calling it.
-        /// </summary>
-        private DhtBase() { }
-
-        /// <summary>
         /// Create a DHT sensor through I2C (Only DHT12)
         /// </summary>
         /// <param name="i2cDevice">The I2C device used for communication.</param>

@@ -10,14 +10,14 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         ///     Analog port connected to the sensor.
         /// </summary>
-        private readonly IAnalogInputPort _sensor;
+        private readonly IAnalogInputPort sensor;
 
         /// <summary>
         ///     Voltage being output by the sensor.
         /// </summary>
         public Task<float> GetVoltage()
         {
-            return _sensor.Read();
+            return sensor.Read();
         }
 
         #endregion Member variables / fields
@@ -25,19 +25,12 @@ namespace Meadow.Foundation.Sensors.Light
         #region Constructors
 
         /// <summary>
-        ///     Default constructor (private to prevent it being used).
-        /// </summary>
-        private Alspt19315C()
-        {
-        }
-
-        /// <summary>
         ///     Create a new light sensor object using a static reference voltage.
         /// </summary>
         /// <param name="pin">AnalogChannel connected to the sensor.</param>
         public Alspt19315C(IIODevice device, IPin pin)
         {
-            _sensor = device.CreateAnalogInputPort(pin);
+            sensor = device.CreateAnalogInputPort(pin);
         }
 
         #endregion Constructors

@@ -23,8 +23,6 @@ namespace Meadow.Foundation.Leds
 
         protected Led[] leds;
 
-        private LedBarGraph() { }
-
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPins
         /// </summary>

@@ -53,11 +53,6 @@ namespace Meadow.Foundation.Sensors.Distance
         #region Constructors
 
         /// <summary>
-        /// Default constructor is private to prevent it being called.
-        /// </summary>
-        private Hcsr04() { }
-
-        /// <summary>
         /// Create a new HCSR04 object with an IO Device
         /// </summary>
         /// <param name="triggerPin"></param>
