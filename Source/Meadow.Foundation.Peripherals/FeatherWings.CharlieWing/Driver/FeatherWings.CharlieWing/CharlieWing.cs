@@ -48,16 +48,6 @@ namespace Meadow.Foundation.FeatherWings
             iS31FL3731.Clear(Frame);
         }
 
-        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color, Brightness);

@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Graphics
     {
         #region Member variables / fields
 
-        private readonly DisplayBase _display;
+        private readonly DisplayBase display;
 
         #endregion Member variables / fields
 
@@ -69,12 +69,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Return the height of the display after accounting for the rotation.
         /// </summary>
-        public uint Height =>  Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? _display.Height : _display.Width;
+        public uint Height =>  Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Height : display.Width;
 
         /// <summary>
         /// Return the width of the display after accounting for the rotation.
         /// </summary>
-        public uint Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? _display.Width : _display.Height;
+        public uint Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Width : display.Height;
 
         public TextDisplayConfig DisplayConfig { get; private set; }
 
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="display"></param>
         public GraphicsLibrary(DisplayBase display)
         {
-            _display = display;
+            this.display = display;
             CurrentFont = null;
         }
 
@@ -104,7 +104,7 @@ namespace Meadow.Foundation.Graphics
             {
                 return;
             }
-            _display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y));
+            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y));
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Meadow.Foundation.Graphics
             {
                 return;
             }
-            _display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), colored);
+            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), colored);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Graphics
             {
                 return;
             }
-            _display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), color);
+            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), color);
         }
 
         private bool IsPixelInBounds(int x, int y)
@@ -181,7 +181,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawLine(int x0, int y0, int x1, int y1, Color color)
         {
-            _display.SetPenColor(color);
+            display.SetPenColor(color);
 
             if(Stroke == 1)
             {
@@ -296,7 +296,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawHorizontalLine(int x0, int y0, int length, Color color)
         {
-            _display.SetPenColor(color);
+            display.SetPenColor(color);
             DrawHorizontalLine(x0, y0, length);
 
         }
@@ -344,7 +344,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawVerticalLine(int x0, int y0, int length, Color color)
         {
-            _display.SetPenColor(color);
+            display.SetPenColor(color);
 
             DrawVerticalLine(x0, y0, length);
         }
@@ -541,7 +541,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Draw a filled circle?</param>
         public void DrawCircle(int centerX, int centerY, int radius, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
-            _display.SetPenColor(color);
+            display.SetPenColor(color);
 
             if (filled)
             {
@@ -813,7 +813,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public void Show()
         {
-            _display.Show();
+            display.Show();
         }
 
         /// <summary>
@@ -822,7 +822,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="updateDisplay">Update the display immediately when true.</param>
         public void Clear(bool updateDisplay = false)
         {
-            _display.Clear(updateDisplay);
+            display.Clear(updateDisplay);
         }
 
         /// <summary>
@@ -900,7 +900,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the bitmap.</param>
         public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
-            _display.SetPenColor(color);
+            display.SetPenColor(color);
 
             DrawBitmap(x, y, width, height, bitmap, DisplayBase.BitmapMode.Copy, scaleFactor);
         }
@@ -910,9 +910,9 @@ namespace Meadow.Foundation.Graphics
             switch(Rotation)
             {
                 case RotationType._90Degrees:
-                    return (int)_display.Width - y - 1;
+                    return (int)display.Width - y - 1;
                 case RotationType._180Degrees:
-                    return (int)_display.Width - x - 1;
+                    return (int)display.Width - x - 1;
                 case RotationType._270Degrees:
                     return (int)y;
                 case RotationType.Default:
@@ -928,9 +928,9 @@ namespace Meadow.Foundation.Graphics
                 case RotationType._90Degrees:
                     return x; 
                 case RotationType._180Degrees:
-                    return (int)_display.Height - y - 1;
+                    return (int)display.Height - y - 1;
                 case RotationType._270Degrees:
-                    return (int)_display.Height - x - 1;
+                    return (int)display.Height - x - 1;
                 case RotationType.Default:
                 default:
                     return y;
