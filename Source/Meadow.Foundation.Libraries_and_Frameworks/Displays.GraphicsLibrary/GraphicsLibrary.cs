@@ -697,7 +697,7 @@ namespace Meadow.Foundation.Graphics
 
             byte[] bitMap = GetBytesForTextBitmap(text);
 
-            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height, CurrentFont.Height, bitMap, DisplayBase.BitmapMode.And, scaleFactor);
+            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, DisplayBase.BitmapMode.And, scaleFactor);
         }
 
         /// <summary>
@@ -714,18 +714,18 @@ namespace Meadow.Foundation.Graphics
                 throw new Exception("CurrentFont must be set before calling DrawText.");
             }
 
-            byte[] bitMap = GetBytesForTextBitmap(text);
+            byte[] bitmap = GetBytesForTextBitmap(text);
             
-            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height, CurrentFont.Height, bitMap, color, scaleFactor);
+            DrawBitmap(x, y, bitmap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitmap, color, scaleFactor);
         }
 
         private byte[] GetBytesForTextBitmap(string text)
         {
-            byte[] bitMap;
+            byte[] bitmap;
 
             if (CurrentFont.Width == 8) //just copy bytes
             {
-                bitMap = new byte[text.Length * CurrentFont.Height * CurrentFont.Width / 8];
+                bitmap = new byte[text.Length * CurrentFont.Height * CurrentFont.Width / 8];
 
                 byte[] characterMap;
 
@@ -736,14 +736,14 @@ namespace Meadow.Foundation.Graphics
                     //copy data for 1 character at a time going top to bottom
                     for (int segment = 0; segment < CurrentFont.Height; segment++)
                     {
-                        bitMap[i + (segment * text.Length)] = characterMap[segment];
+                        bitmap[i + (segment * text.Length)] = characterMap[segment];
                     }
                 }
             }
             else if (CurrentFont.Width == 12)
             {
                 var len = (text.Length + text.Length % 2) * 3 / 2;
-                bitMap = new byte[len * CurrentFont.Height];
+                bitmap = new byte[len * CurrentFont.Height];
 
                 byte[] charMap1, charMap2;
                 int index = 0;
@@ -758,14 +758,14 @@ namespace Meadow.Foundation.Graphics
                     for (int j = 0; j < CurrentFont.Height; j += 2)
                     {
                         //first row - spans 3 bytes (for 2 chars)
-                        bitMap[index + (j + 0) * len + 0] = charMap1[cIndex]; //good
-                        bitMap[index + (j + 0) * len + 1] = (byte)((charMap1[cIndex + 1] & 0x0F) | (charMap2[cIndex] << 4)); //bad?
-                        bitMap[index + (j + 0) * len + 2] = (byte)((charMap2[cIndex] >> 4) | (charMap2[cIndex + 1] << 4)); //good
+                        bitmap[index + (j + 0) * len + 0] = charMap1[cIndex]; //good
+                        bitmap[index + (j + 0) * len + 1] = (byte)((charMap1[cIndex + 1] & 0x0F) | (charMap2[cIndex] << 4)); //bad?
+                        bitmap[index + (j + 0) * len + 2] = (byte)((charMap2[cIndex] >> 4) | (charMap2[cIndex + 1] << 4)); //good
 
                         //2nd row
-                        bitMap[index + (j + 1) * len + 0] = (byte)((charMap1[cIndex + 1] >> 4) | charMap1[cIndex + 2] << 4); //good
-                        bitMap[index + (j + 1) * len + 1] = (byte)((charMap1[cIndex + 2] >> 4) | charMap2[cIndex + 1] & 0xF0); //bad?
-                        bitMap[index + (j + 1) * len + 2] = (byte)((charMap2[cIndex + 2])); //good
+                        bitmap[index + (j + 1) * len + 0] = (byte)((charMap1[cIndex + 1] >> 4) | charMap1[cIndex + 2] << 4); //good
+                        bitmap[index + (j + 1) * len + 1] = (byte)((charMap1[cIndex + 2] >> 4) | charMap2[cIndex + 1] & 0xF0); //bad?
+                        bitmap[index + (j + 1) * len + 2] = (byte)((charMap2[cIndex + 2])); //good
 
                         cIndex += 3;
                     }
@@ -775,7 +775,7 @@ namespace Meadow.Foundation.Graphics
             else if (CurrentFont.Width == 4)
             {
                 var len = (text.Length + text.Length % 2) / 2;
-                bitMap = new byte[len * CurrentFont.Height];
+                bitmap = new byte[len * CurrentFont.Height];
                 byte[] charMap1, charMap2;
 
                 for (int i = 0; i < len; i++)
@@ -786,8 +786,8 @@ namespace Meadow.Foundation.Graphics
 
                     for (int j = 0; j < charMap1.Length; j++)
                     {
-                        bitMap[i + (j * 2 + 0) * len] = (byte)((charMap1[j] & 0x0F) | (charMap2[j] << 4));
-                        bitMap[i + (j * 2 + 1) * len] = (byte)((charMap1[j] >> 4) | (charMap2[j] & 0xF0));
+                        bitmap[i + (j * 2 + 0) * len] = (byte)((charMap1[j] & 0x0F) | (charMap2[j] << 4));
+                        bitmap[i + (j * 2 + 1) * len] = (byte)((charMap1[j] >> 4) | (charMap2[j] & 0xF0));
                     }
                 }
             }
@@ -795,7 +795,7 @@ namespace Meadow.Foundation.Graphics
             {
                 throw new Exception("Font width must be 4, 6, 8, or 12");
             }
-            return bitMap;
+            return bitmap;
         }
 
         byte SetBit(byte value, int position, bool high)
@@ -832,12 +832,14 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="x">Abscissa of the top left corner of the bitmap.</param>
         /// <param name="y">Ordinate of the top left corner of the bitmap.</param>
-        /// <param name="width">Width of the bitmap in bytes.</param>
-        /// <param name="height">Height of the bitmap in bytes.</param>
+        /// <param name="width">Width of the bitmap in pixels.</param>
+        /// <param name="height">Height of the bitmap in pixels.</param>
         /// <param name="bitmap">Bitmap to display.</param>
         /// <param name="bitmapMode">How should the bitmap be transferred to the display?</param>
         public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, DisplayBase.BitmapMode bitmapMode, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
+            width /= 8;
+
             if ((width * height) != bitmap.Length)
             {
                 throw new ArgumentException("Width and height do not match the bitmap size.");
@@ -894,8 +896,8 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="x">Abscissa of the top left corner of the bitmap.</param>
         /// <param name="y">Ordinate of the top left corner of the bitmap.</param>
-        /// <param name="width">Width of the bitmap in bytes.</param>
-        /// <param name="height">Height of the bitmap in bytes.</param>
+        /// <param name="width">Width of the bitmap in pixels.</param>
+        /// <param name="height">Height of the bitmap in pixels.</param>
         /// <param name="bitmap">Bitmap to display.</param>
         /// <param name="color">The color of the bitmap.</param>
         public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color, ScaleFactor scaleFactor = ScaleFactor.X1)
