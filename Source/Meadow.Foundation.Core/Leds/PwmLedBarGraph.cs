@@ -3,8 +3,13 @@ using System;
 
 namespace Meadow.Foundation.Leds
 {
+    /// <summary>
+    /// Represents an LED bar graph composed on multiple PWM LEDs
+    /// </summary>
     public class PwmLedBarGraph
     {
+        protected PwmLed[] pwmLeds;
+
         /// <summary>
         /// The number of the LEDs in the bar graph
         /// </summary>
@@ -17,8 +22,6 @@ namespace Meadow.Foundation.Leds
         {
             set => SetPercentage(value);
         }
-
-        protected PwmLed[] pwmLeds;
 
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPwnPin and a forwardVoltage for all LEDs in the bar graph
@@ -69,8 +72,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Set the percentage of LEDs that are on starting from index 0
         /// </summary>
-        /// <param name="percentage"></param>
-        void SetPercentage(float percentage) //assume 0 - 1
+        /// <param name="percentage">Percentage (Range from 0 - 1)</param>
+        void SetPercentage(float percentage)
         {
             if (percentage < 0 || percentage > 1)
             {
@@ -117,7 +120,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness">High brigtness.</param>
         /// <param name="lowBrightness">Low brightness.</param>
         /// </summary>
-        public void StartPulse(int pulseDuration = 1000, float highBrightness = 1, float lowBrightness = 0.25F)
+        public void StartPulse(int pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {
