@@ -15,9 +15,12 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class RgbPwmLed
     {
-        readonly float MAX_FORWARD_VOLTAGE = 3.3f;
         readonly int DEFAULT_FREQUENCY = 200; //hz
+        readonly float MAX_FORWARD_VOLTAGE = 3.3f;
         readonly float DEFAULT_DUTY_CYCLE = 0f;
+
+        protected Task animationTask = null;
+        protected CancellationTokenSource cancellationTokenSource = null;
 
         protected double maxRedDutyCycle = 1;
         protected double maxGreenDutyCycle = 1;
@@ -59,10 +62,9 @@ namespace Meadow.Foundation.Leds
         protected bool isEnabled = false;
 
         /// <summary>
-        /// Is the LED using a common cathode
+        /// The color the LED has been set to.
         /// </summary>
-        //public bool IsCommonCathode { get; protected set; }
-        public CommonType Common { get; protected set; }
+        public Color Color { get; private set; } = Color.White;
 
         /// <summary>
         /// Get the red LED port
@@ -78,6 +80,11 @@ namespace Meadow.Foundation.Leds
         public IPwmPort GreenPwm { get; protected set; }
 
         /// <summary>
+        /// Gets the common type
+        /// </summary>        
+        public CommonType Common { get; protected set; }
+
+        /// <summary>
         /// Get the red LED forward voltage
         /// </summary>
         public float RedForwardVoltage { get; protected set; }
@@ -88,15 +95,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Get the blue LED forward voltage
         /// </summary>
-        public float BlueForwardVoltage { get; protected set; }
-
-        /// <summary>
-        /// The color the LED has been set to.
-        /// </summary>
-        public Color Color { get; private set; } = Color.Black;
-
-        protected Task animationTask = null;
-        protected CancellationTokenSource cancellationTokenSource = null;
+        public float BlueForwardVoltage { get; protected set; }        
 
         /// <summary>
         /// Instantiates a RgbPwmLed object with the especified IO device, connected
@@ -182,7 +181,7 @@ namespace Meadow.Foundation.Leds
         {
             RedPwm.Frequency = GreenPwm.Frequency = BluePwm.Frequency = DEFAULT_FREQUENCY;
             RedPwm.DutyCycle = GreenPwm.DutyCycle = BluePwm.DutyCycle = DEFAULT_DUTY_CYCLE;
-            // invertthe PWM signal if it common anode
+            // invert the PWM signal if it common anode
             RedPwm.Inverted = GreenPwm.Inverted = BluePwm.Inverted
                 = (this.Common == CommonType.CommonAnode);
         }
@@ -269,11 +268,17 @@ namespace Meadow.Foundation.Leds
         public void StartPulse(Color color, uint pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
+            }
             if (lowBrightness >= 1 || lowBrightness < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
+            }
             if (lowBrightness >= highBrightness)
+            {
                 throw new Exception("offBrightness must be less than onBrightness");
+            }
 
             Color = color;
 
