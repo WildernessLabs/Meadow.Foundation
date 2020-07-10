@@ -17,18 +17,16 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Get the color the LED has been set to.
         /// </summary>
-        public Colors Color { get; protected set; }
+        public Colors Color { get; protected set; } = Colors.White;
 
         /// <summary>
         /// Get the red LED port
         /// </summary>
         public IDigitalOutputPort RedPort { get; set; }
-
         /// <summary>
         /// Get the green LED port
         /// </summary>
         public IDigitalOutputPort GreenPort { get; set; }
-
         /// <summary>
         /// Get the blue LED port
         /// </summary>
@@ -101,8 +99,6 @@ namespace Meadow.Foundation.Leds
             Common = commonType;
 
             cancellationTokenSource = new CancellationTokenSource();
-
-            Color = Colors.White;
         }
 
         /// <summary>
