@@ -16,9 +16,7 @@ namespace Displays.Ssd1309_3DCube_Sample
         GraphicsLibrary graphics;
         Ssd1309 display;
 
-        RgbPwmLed onboardLed;
-
-        PushButton btnUp, btnDown, btnLeft, btnRight;
+     //   PushButton btnUp, btnDown, btnLeft, btnRight;
 
         IDigitalInterruptPort portLeft;
         IDigitalInterruptPort portUp;
@@ -100,16 +98,9 @@ namespace Displays.Ssd1309_3DCube_Sample
         {
             Console.WriteLine("Initialize hardware...");
 
-            onboardLed = new RgbPwmLed(device: Device,
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                3.3f, 3.3f, 3.3f,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode); 
-
             Console.WriteLine("Create Display with SPI...");
 
-            var config = new Meadow.Hardware.SpiClockConfiguration(6000, Meadow.Hardware.SpiClockConfiguration.Mode.Mode0);
+            var config = new Meadow.Hardware.SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode0);
 
             var bus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 

@@ -453,10 +453,10 @@ namespace Meadow.Foundation.Graphics
             if (y0 == y2)
             { // Handle awkward all-on-same-line case as its own thing
                 int x = x0, len = x0;
-                if (x1 < x) x = x1;
-                else if (x1 > len) len = x1;
-                if (x2 < x) x = x2;
-                else if (x2 > len) len = x2;
+                if (x1 < x) { x = x1; }
+                else if (x1 > len) { len = x1; }
+                if (x2 < x) { x = x2; }
+                else if (x2 > len) { len = x2; }
                 DrawHorizontalLine(x, y0, len - x + 1, color);
                 return;
             }

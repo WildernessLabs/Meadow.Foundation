@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Audio.Radio
 
         #endregion Member variables / fields
 
-        static readonly byte TEA5767_ADDRESS = 0x60;
+        const byte TEA5767_ADDRESS = 0x60;
         static byte FIRST_DATA = 0;
         static byte SECOND_DATA = 1;
         static byte THIRD_DATA = 2;
@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Audio.Radio
         ///     Create a new TEA5767 object using the default parameters
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public Tea5767(II2cBus i2cBus, byte address = 0x60)
+        public Tea5767(II2cBus i2cBus, byte address = TEA5767_ADDRESS)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 

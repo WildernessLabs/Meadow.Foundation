@@ -20,8 +20,6 @@ namespace MeadowApp
         int[,] cubeWireframe = new int[12, 3];
         int[,] cubeVertices;
 
-        int fd = 0; //0=orthographic
-
         public MeadowApp()
         {
             int cubeSize = 5;

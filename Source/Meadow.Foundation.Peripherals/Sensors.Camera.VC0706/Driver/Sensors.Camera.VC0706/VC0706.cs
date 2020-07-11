@@ -86,7 +86,7 @@ namespace Meadow.Foundation.Sensors.Camera
                     Console.WriteLine("BaudRate detected: " + rate.ToString());
                     return;
                 }
-                catch (Exception e)
+                catch //(Exception e)
                 {
 
                 }
