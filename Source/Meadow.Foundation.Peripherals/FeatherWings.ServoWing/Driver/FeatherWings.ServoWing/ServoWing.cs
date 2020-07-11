@@ -1,4 +1,4 @@
-﻿using Meadow.Foundation.ICs;
+﻿using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Servos;
 using Meadow.Hardware;
 using System;

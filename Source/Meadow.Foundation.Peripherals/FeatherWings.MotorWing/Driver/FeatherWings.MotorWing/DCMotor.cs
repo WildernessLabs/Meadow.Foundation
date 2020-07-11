@@ -1,4 +1,5 @@
 ﻿using Meadow.Foundation.ICs;
+using Meadow.Foundation.ICs.IOExpanders;
 using System;
 
 

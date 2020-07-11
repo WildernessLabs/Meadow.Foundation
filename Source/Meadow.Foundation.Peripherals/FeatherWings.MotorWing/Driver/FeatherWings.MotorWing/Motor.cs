@@ -1,4 +1,4 @@
-﻿using Meadow.Foundation.ICs;
+﻿using Meadow.Foundation.ICs.IOExpanders;
 
 namespace Meadow.Foundation.FeatherWings
 {
