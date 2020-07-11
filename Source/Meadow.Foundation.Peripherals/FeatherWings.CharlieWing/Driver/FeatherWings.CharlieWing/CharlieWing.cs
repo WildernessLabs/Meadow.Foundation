@@ -27,13 +27,13 @@ namespace Meadow.Foundation.FeatherWings
 
         public byte Brightness { get; set; }
 
-        protected readonly IS31FL3731 iS31FL3731;
+        protected readonly Is31fl3731 iS31FL3731;
 
         public CharlieWing(II2cBus i2cBus, I2cAddress address = I2cAddress.Adddress0x74)
         {
             Brightness = 255;
             pen = Color.White;
-            iS31FL3731 = new IS31FL3731(i2cBus, (byte)address);
+            iS31FL3731 = new Is31fl3731(i2cBus, (byte)address);
             iS31FL3731.Initialize();
 
             for (byte i = 0; i <= 7; i++)
