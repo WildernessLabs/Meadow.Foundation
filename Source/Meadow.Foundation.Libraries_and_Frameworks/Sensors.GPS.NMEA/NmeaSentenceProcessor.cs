@@ -18,7 +18,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// e.g. "$GPRMC,000049.799,V,,,,,0.00,0.00,060180,,,N*48".
     ///
     /// Each `INmeaDecoder` decoder has its own event(s) that can then be subscribed
-    /// to, in order to get the resulting information.    /// If you'd like to add additional decoders, an excellent reference on NMEA
+    /// to, in order to get the resulting information.
+    /// If you'd like to add additional decoders, an excellent reference on NMEA
     /// sentences can found [here](https://gpsd.gitlab.io/gpsd/NMEA.html).
     /// </remarks>
     public class NmeaSentenceProcessor
@@ -31,8 +32,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         public bool DebugMode { get; set; } = false;
 
         /// <summary>
-        /// Default constructor for a NMEA GPS object, this is private to prevent the user from
-        /// using it.
+        /// Creates a new instance of the NmeaSentenceProcessor. 
         /// </summary>
         public NmeaSentenceProcessor()
         {
