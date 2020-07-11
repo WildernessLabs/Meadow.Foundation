@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
-using Meadow.Foundation.Sensors.Light;
+using Meadow.Foundation.Sensors.LoadCell;
 using System;
 using System.Threading;
 

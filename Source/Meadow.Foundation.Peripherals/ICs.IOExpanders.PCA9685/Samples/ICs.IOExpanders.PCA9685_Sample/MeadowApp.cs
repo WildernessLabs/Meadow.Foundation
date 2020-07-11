@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.ICs;
-using Meadow.Foundation.Leds;
+using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
+using System;
 
 namespace ICs.IOExpanders.PCA9685_Sample
 {
