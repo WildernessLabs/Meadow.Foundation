@@ -40,22 +40,13 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Turns on LED with current color or turns it off
         /// </summary>
-        public bool IsOn 
+        public bool IsOn
         {
             get => isOn;
-            set 
+            set
             {
+                SetColor(value? Color : Colors.Black);
                 isOn = value;
-
-                if (isOn)
-                {
-                    SetColor(Color);
-                }
-                else
-                {
-                    cancellationTokenSource.Cancel();
-                    SetColor(Colors.Black);
-                }
             }
         }
         protected bool isOn;
@@ -107,6 +98,7 @@ namespace Meadow.Foundation.Leds
         public void Stop()
         {
             cancellationTokenSource.Cancel();
+            IsOn = false;
         }
 
         /// <summary>
@@ -115,7 +107,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="color"></param>
         public void SetColor(Colors color)
         {
-            color = Color;
+            Color = color;
 
             bool onState = (Common == CommonType.CommonCathode);
 

@@ -27,39 +27,18 @@ namespace Meadow.Foundation.Leds
         protected double maxBlueDutyCycle = 1;
 
         /// <summary>
-        /// Enables / disables the LED but toggling the PWM
-        ///
-        /// TODO: What's the use case for enabling? maybe this
-        /// should just be State, which would return whether or
-        /// not it's running.
+        /// Turns on LED with current color or turns it off
         /// </summary>
-        public bool IsEnabled
+        public bool IsOn
         {
-            get => isEnabled;
+            get => isOn;
             set
-            {
-                if (value)
-                {
-                    if (BluePwm != null) {
-                        if (!BluePwm.State) { BluePwm.Start(); }
-                    }
-                    if (GreenPwm != null) {
-                        if (!GreenPwm.State) { GreenPwm.Start(); }
-                    }
-                    if (RedPwm != null) {
-                        if (!RedPwm.State) { RedPwm.Start(); }
-                    }
-                }
-                else
-                {
-                    BluePwm?.Stop();
-                    RedPwm?.Stop();
-                    GreenPwm?.Stop();
-                }
-                isEnabled = value;
+            {                
+                SetColor(Color, value? 1 : 0);
+                isOn = value;
             }
         }
-        protected bool isEnabled = false;
+        protected bool isOn;
 
         /// <summary>
         /// The color the LED has been set to.
@@ -158,7 +137,7 @@ namespace Meadow.Foundation.Leds
             }
             BlueForwardVoltage = blueLedForwardVoltage;
 
-            this.Common = commonType;
+            Common = commonType;
 
             // calculate and set maximum PWM duty cycles
             maxRedDutyCycle = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
@@ -184,6 +163,8 @@ namespace Meadow.Foundation.Leds
             // invert the PWM signal if it common anode
             RedPwm.Inverted = GreenPwm.Inverted = BluePwm.Inverted
                 = (this.Common == CommonType.CommonAnode);
+
+            RedPwm.Start(); GreenPwm.Start(); BluePwm.Start();
         }
 
         /// <summary>
@@ -194,14 +175,11 @@ namespace Meadow.Foundation.Leds
         public void SetColor(Color color, float brightness = 1)
         {
             Color = color;
-            //IsEnabled = false;
 
             // set the color based on the RGB values
             RedPwm.DutyCycle = (float)(Color.R * maxRedDutyCycle * brightness);
             GreenPwm.DutyCycle = (float)(Color.G * maxGreenDutyCycle * brightness);
             BluePwm.DutyCycle = (float)(Color.B * maxBlueDutyCycle * brightness);
-
-            IsEnabled = true;
         }
 
         /// <summary>
@@ -210,7 +188,7 @@ namespace Meadow.Foundation.Leds
         public void Stop()
         {
             cancellationTokenSource.Cancel();
-            IsEnabled = false;
+            IsOn = false;
         }
 
         /// <summary>

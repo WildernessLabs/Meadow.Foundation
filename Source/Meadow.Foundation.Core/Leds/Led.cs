@@ -49,6 +49,8 @@ namespace Meadow.Foundation.Leds
 		public Led(IDigitalOutputPort port)
 		{
 			Port = port;
+
+			cancellationTokenSource = new CancellationTokenSource();
 		}
 
 		/// <summary>
@@ -57,6 +59,7 @@ namespace Meadow.Foundation.Leds
 		public void Stop()
 		{
 			cancellationTokenSource.Cancel();
+			IsOn = false;
 		}
 
 		/// <summary>

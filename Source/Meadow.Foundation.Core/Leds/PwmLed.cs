@@ -89,6 +89,8 @@ namespace Meadow.Foundation.Leds
             Port.Frequency = 100;
             Port.DutyCycle = 0;
             Port.Start();
+
+            cancellationTokenSource = new CancellationTokenSource();
         }
 
         /// <summary>
@@ -222,6 +224,7 @@ namespace Meadow.Foundation.Leds
         public void Stop()
         {
             cancellationTokenSource.Cancel();
+            IsOn = false;
         }
     }
 }

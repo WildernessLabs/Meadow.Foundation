@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness">High brigtness.</param>
         /// <param name="lowBrightness">Low brightness.</param>
         /// </summary>
-        public void StartPulse(int pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void StartPulse(uint pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {
