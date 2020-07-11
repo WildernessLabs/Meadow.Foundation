@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Gets the PwmPort
         /// </summary>
-        public IPwmPort Port { get; set; }
+        public IPwmPort Port { get; protected set; }
 
         /// <summary>
         /// Gets the forward voltage value

@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// The color the LED has been set to.
         /// </summary>
-        public Color Color { get; private set; } = Color.White;
+        public Color Color { get; protected set; } = Color.White;
 
         /// <summary>
         /// Get the red LED port

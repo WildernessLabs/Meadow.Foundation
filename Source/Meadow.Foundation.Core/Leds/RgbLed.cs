@@ -22,15 +22,15 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Get the red LED port
         /// </summary>
-        public IDigitalOutputPort RedPort { get; set; }
+        public IDigitalOutputPort RedPort { get; protected set; }
         /// <summary>
         /// Get the green LED port
         /// </summary>
-        public IDigitalOutputPort GreenPort { get; set; }
+        public IDigitalOutputPort GreenPort { get; protected set; }
         /// <summary>
         /// Get the blue LED port
         /// </summary>
-        public IDigitalOutputPort BluePort { get; set; }
+        public IDigitalOutputPort BluePort { get; protected set; }
 
         /// <summary>
         /// Is the LED using a common cathode
