@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace Meadow.Foundation.ICs
+namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Represents PCA9685 IC

@@ -1,7 +1,7 @@
 ﻿using Meadow.Hardware;
 using System;
 
-namespace Meadow.Foundation.ICs
+namespace Meadow.Foundation.ICs.IOExpanders
 {
     public class PwmPortPCA9685 : IPwmPort
     {
