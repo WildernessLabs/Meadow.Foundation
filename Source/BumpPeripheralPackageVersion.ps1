@@ -13,7 +13,7 @@ ForEach($dir in $dirs) {
         
         # bump peripheral version
         $ogVersion = $xml.SelectSingleNode("//Project/PropertyGroup/Version").InnerText
-        if($ogVersion -ne $null){
+        if($ogVersion -ne $null -And $ogVersion -NotLike "*-beta*"){
             $ogVersion = [version]$ogVersion;
             $newVersion = "{0}.{1}.{2}" -f $ogVersion.Major, $ogVersion.Minor, ($ogVersion.Build+1)
 
