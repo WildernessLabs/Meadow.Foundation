@@ -10,17 +10,15 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
     /// decoder and handing them off. Note that it's designed to be asynchronous
     /// because certain messages (like $GPGSV/Satellites in View) need to be
     /// processed together in order to make sense.
-    ///
+    /// </summary>
+    /// <remarks>
     /// To use, call `RegisterDecoder` for each NMEA sentence decoder that you
     /// want to use, passing an `INmeaDecoder`, and then call `ParseNmeaMessage`,
     /// and pass the NMEA sentence string,
     /// e.g. "$GPRMC,000049.799,V,,,,,0.00,0.00,060180,,,N*48".
     ///
     /// Each `INmeaDecoder` decoder has its own event(s) that can then be subscribed
-    /// to, in order to get the resulting information.
-    /// </summary>
-    /// <remarks>
-    /// If you'd like to add additional decoders, an excellent reference on NMEA
+    /// to, in order to get the resulting information.    /// If you'd like to add additional decoders, an excellent reference on NMEA
     /// sentences can found [here](https://gpsd.gitlab.io/gpsd/NMEA.html).
     /// </remarks>
     public class NmeaSentenceProcessor
