@@ -8,6 +8,8 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class LedBarGraph
     {
+        protected Led[] leds;
+
         /// <summary>
         /// The number of the LEDs in the bar graph
         /// </summary>
@@ -20,8 +22,6 @@ namespace Meadow.Foundation.Leds
         {
             set => SetPercentage(value);
         }
-
-        protected Led[] leds;
 
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPins
@@ -62,8 +62,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Set the percentage of LEDs that are on starting from index 0
         /// </summary>
-        /// <param name="percentage"></param>
-        void SetPercentage(float percentage) //assume 0 - 1
+        /// <param name="percentage">Percentage (Range from 0 - 1)</param>
+        void SetPercentage(float percentage)
         {
             if (percentage < 0 || percentage > 1)
             {
@@ -87,7 +87,6 @@ namespace Meadow.Foundation.Leds
             }
         }
 
-        #region Public Methods
         /// <summary>
         /// Blink animation that turns the LED bar graph on and off based on the OnDuration and offDuration values in ms
         /// </summary>
@@ -111,6 +110,5 @@ namespace Meadow.Foundation.Leds
                 led.Stop();
             }
         }
-        #endregion
     }
 }
