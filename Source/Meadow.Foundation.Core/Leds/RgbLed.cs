@@ -11,8 +11,8 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public partial class RgbLed : IRgbLed
     {
-        protected Task animationTask = null;
-        protected CancellationTokenSource cancellationTokenSource = null;
+        protected Task animationTask;
+        protected CancellationTokenSource cancellationTokenSource;
 
         /// <summary>
         /// Get the color the LED has been set to.
@@ -88,8 +88,6 @@ namespace Meadow.Foundation.Leds
             GreenPort = greenPort;
             BluePort = bluePort;
             Common = commonType;
-
-            cancellationTokenSource = new CancellationTokenSource();
         }
 
         /// <summary>
@@ -97,7 +95,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Stop()
         {
-            cancellationTokenSource.Cancel();
+            cancellationTokenSource?.Cancel();
             IsOn = false;
         }
 
@@ -164,10 +162,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="offDuration"></param>
         public void StartBlink(Colors color, uint onDuration = 200, uint offDuration = 200)
         {
-            if (!cancellationTokenSource.Token.IsCancellationRequested)
-                cancellationTokenSource.Cancel();
-
-            SetColor(Colors.Black);
+            Stop();
 
             animationTask = new Task(async () =>
             {
@@ -176,12 +171,15 @@ namespace Meadow.Foundation.Leds
             });
             animationTask.Start();
         }
+        
         protected async Task StartBlinkAsync(Colors color, uint onDuration, uint offDuration, CancellationToken cancellationToken)
         {
             while (true)
             {
                 if (cancellationToken.IsCancellationRequested)
+                {
                     break;
+                }
 
                 SetColor(color);
                 await Task.Delay((int)onDuration);

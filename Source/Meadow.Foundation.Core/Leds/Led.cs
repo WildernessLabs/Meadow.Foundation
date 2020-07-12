@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Leds
 {
-	/// <summary>
-	/// Represents a simple LED
-	/// </summary>
-	public class Led : ILed
+    /// <summary>
+    /// Represents a simple LED
+    /// </summary>
+    public class Led : ILed
 	{
-		protected Task animationTask = null;
-		protected CancellationTokenSource cancellationTokenSource = null;
+		protected Task animationTask;
+		protected CancellationTokenSource cancellationTokenSource;
 
 		/// <summary>
 		/// Gets the port that is driving the LED
@@ -49,8 +49,6 @@ namespace Meadow.Foundation.Leds
 		public Led(IDigitalOutputPort port)
 		{
 			Port = port;
-
-			cancellationTokenSource = new CancellationTokenSource();
 		}
 
 		/// <summary>
@@ -58,7 +56,7 @@ namespace Meadow.Foundation.Leds
 		/// </summary>
 		public void Stop()
 		{
-			cancellationTokenSource.Cancel();
+			cancellationTokenSource?.Cancel();
 			IsOn = false;
 		}
 
@@ -69,8 +67,7 @@ namespace Meadow.Foundation.Leds
 		/// <param name="offDuration"></param>
 		public void StartBlink(uint onDuration = 200, uint offDuration = 200)
 		{
-			if (!cancellationTokenSource.Token.IsCancellationRequested)
-				cancellationTokenSource.Cancel();
+			Stop();
 
 			animationTask = new Task(async () =>
 			{
@@ -79,12 +76,15 @@ namespace Meadow.Foundation.Leds
 			});
 			animationTask.Start();
 		}
+		
 		protected async Task StartBlinkAsync(uint onDuration, uint offDuration, CancellationToken cancellationToken)
 		{
 			while (true)
 			{
 				if (cancellationToken.IsCancellationRequested)
+				{
 					break;
+				}
 
 				IsOn = true;
 				await Task.Delay((int)onDuration);

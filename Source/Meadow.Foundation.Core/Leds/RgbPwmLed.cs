@@ -144,8 +144,6 @@ namespace Meadow.Foundation.Leds
             maxGreenDutyCycle = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
             maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);            
 
-            cancellationTokenSource = new CancellationTokenSource();
-
             RedPwm = redPwm;
             GreenPwm = greenPwm;
             BluePwm = bluePwm;
@@ -162,7 +160,7 @@ namespace Meadow.Foundation.Leds
             RedPwm.DutyCycle = GreenPwm.DutyCycle = BluePwm.DutyCycle = DEFAULT_DUTY_CYCLE;
             // invert the PWM signal if it common anode
             RedPwm.Inverted = GreenPwm.Inverted = BluePwm.Inverted
-                = (this.Common == CommonType.CommonAnode);
+                = (Common == CommonType.CommonAnode);
 
             RedPwm.Start(); GreenPwm.Start(); BluePwm.Start();
         }
@@ -176,7 +174,6 @@ namespace Meadow.Foundation.Leds
         {
             Color = color;
 
-            // set the color based on the RGB values
             RedPwm.DutyCycle = (float)(Color.R * maxRedDutyCycle * brightness);
             GreenPwm.DutyCycle = (float)(Color.G * maxGreenDutyCycle * brightness);
             BluePwm.DutyCycle = (float)(Color.B * maxBlueDutyCycle * brightness);
@@ -187,7 +184,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Stop()
         {
-            cancellationTokenSource.Cancel();
+            cancellationTokenSource?.Cancel();
             IsOn = false;
         }
 
@@ -202,16 +199,19 @@ namespace Meadow.Foundation.Leds
         public void StartBlink(Color color, uint onDuration = 200, uint offDuration = 200, float highBrightness = 1f, float lowBrightness = 0f)
         {
             if (highBrightness > 1 || highBrightness <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
+            }
             if (lowBrightness >= 1 || lowBrightness < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
+            }
             if (lowBrightness >= highBrightness)
+            {
                 throw new Exception("offBrightness must be less than onBrightness");
+            }
 
             Color = color;
-
-            if (!cancellationTokenSource.Token.IsCancellationRequested)
-                cancellationTokenSource.Cancel();
 
             Stop();
 
@@ -222,12 +222,15 @@ namespace Meadow.Foundation.Leds
             });
             animationTask.Start();
         }
+        
         protected async Task StartBlinkAsync(Color color, uint onDuration, uint offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             while (true)
             {
                 if (cancellationToken.IsCancellationRequested)
+                {
                     break;
+                }
 
                 SetColor(color, highBrightness);
                 await Task.Delay((int)onDuration);
@@ -260,9 +263,6 @@ namespace Meadow.Foundation.Leds
 
             Color = color;
 
-            if (!cancellationTokenSource.Token.IsCancellationRequested)
-                cancellationTokenSource.Cancel();
-
             Stop();
 
             animationTask = new Task(async () =>
@@ -272,6 +272,7 @@ namespace Meadow.Foundation.Leds
             });
             animationTask.Start();
         }
+        
         protected async Task StartPulseAsync(Color color, uint pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;
@@ -285,20 +286,30 @@ namespace Meadow.Foundation.Leds
             while (true)
             {
                 if (cancellationToken.IsCancellationRequested)
+                {
                     break;
+                }
 
                 if (brightness <= lowBrightness)
+                {
                     ascending = true;
+                }
                 else if (Math.Abs(brightness - highBrightness) < 0.001)
+                {
                     ascending = false;
+                }
 
                 brightness += (ascending) ? changeUp : changeDown;
 
                 if (brightness < 0)
+                {
                     brightness = 0;
+                }
                 else
                 if (brightness > 1)
+                {
                     brightness = 1;
+                }
 
                 SetColor(color, brightness);
 

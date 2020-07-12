@@ -12,8 +12,8 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class PwmLed : IPwmLed
     {
-        protected Task animationTask = null;
-        protected CancellationTokenSource cancellationTokenSource = null;
+        protected Task animationTask;
+        protected CancellationTokenSource cancellationTokenSource;
 
         protected float maximumPwmDuty = 1;
         protected bool inverted;
@@ -89,8 +89,6 @@ namespace Meadow.Foundation.Leds
             Port.Frequency = 100;
             Port.DutyCycle = 0;
             Port.Start();
-
-            cancellationTokenSource = new CancellationTokenSource();
         }
 
         /// <summary>
@@ -120,14 +118,17 @@ namespace Meadow.Foundation.Leds
         public void StartBlink(uint onDuration = 200, uint offDuration = 200, float highBrightness = 1f, float lowBrightness = 0f)
         {
             if (highBrightness > 1 || highBrightness <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
+            }
             if (lowBrightness >= 1 || lowBrightness < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
+            }
             if (lowBrightness >= highBrightness)
+            {
                 throw new Exception("offBrightness must be less than onBrightness");
-
-            if (!cancellationTokenSource.Token.IsCancellationRequested)
-                cancellationTokenSource.Cancel();
+            }
 
             Stop();
 
@@ -138,12 +139,15 @@ namespace Meadow.Foundation.Leds
             });
             animationTask.Start();
         }
+        
         protected async Task StartBlinkAsync(uint onDuration, uint offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             while (true)
             {
                 if (cancellationToken.IsCancellationRequested)
+                {
                     break;
+                }
 
                 SetBrightness(highBrightness);
                 await Task.Delay((int)onDuration);
@@ -170,9 +174,6 @@ namespace Meadow.Foundation.Leds
                 throw new Exception("lowBrightness must be less than highbrightness");
             }
 
-            if (!cancellationTokenSource.Token.IsCancellationRequested)
-                cancellationTokenSource.Cancel();
-
             Stop();
 
             animationTask = new Task(async () =>
@@ -182,6 +183,7 @@ namespace Meadow.Foundation.Leds
             });
             animationTask.Start();
         }
+        
         protected async Task StartPulseAsync(uint pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;
@@ -195,20 +197,30 @@ namespace Meadow.Foundation.Leds
             while (true)
             {
                 if (cancellationToken.IsCancellationRequested)
+                {
                     break;
+                }
 
                 if (brightness <= lowBrightness)
+                {
                     ascending = true;
+                }
                 else if (Math.Abs(brightness - highBrightness) < 0.001)
+                {
                     ascending = false;
+                }
 
                 brightness += (ascending) ? changeUp : changeDown;
 
                 if (brightness < 0)
+                {
                     brightness = 0;
+                }
                 else
                 if (brightness > 1)
+                {
                     brightness = 1;
+                }
 
                 SetBrightness(brightness);
 
@@ -223,7 +235,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Stop()
         {
-            cancellationTokenSource.Cancel();
+            cancellationTokenSource?.Cancel();
             IsOn = false;
         }
     }
