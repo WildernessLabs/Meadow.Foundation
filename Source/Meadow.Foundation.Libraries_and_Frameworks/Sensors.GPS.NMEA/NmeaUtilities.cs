@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
         /// <param name="date">Date the reading was taken (this can be null)</param>
         /// <param name="time">String containing the time of the reading in the format hhmmss.sss</param>
         /// <returns>DateTime object containing the time.</returns>
-        public static DateTime TimeOfReading(string date, string time)
+        public static DateTime? TimeOfReading(string date, string time)
         {
             var day = 1;
             var month = 1;
@@ -28,7 +28,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                     month = (int)((d - (day * 10000)) / 100);
                     year = 2000 + ((int)d - (day * 10000) - (month * 100));
                 } else {
-                    throw new ArgumentException("Unable to decode the date");
+                    //throw new ArgumentException("Unable to decode the date");
+                    return null;
                 }
             }
             //
@@ -43,7 +44,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
                 second = (int)(t - (hour * 10000) - (minute * 100));
                 milliseconds = (int)(t - (int)t) * 100;
             } else {
-                throw new ArgumentException("Unable to decode the time");
+                //throw new ArgumentException("Unable to decode the time");
+                return null;
             }
             return new DateTime(year, month, day, hour, minute, second, milliseconds);
         }
