@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\ICs.IOExpanders.IS31FL3731\ICs.IOExpanders.IS31FL3731.csproj" />
+    <ProjectReference Include="..\..\Driver\ICs.IOExpanders.IS31FL3731\ICs.IOExpanders.Is31fl3731.csproj" />
   </ItemGroup>
 </Project>
