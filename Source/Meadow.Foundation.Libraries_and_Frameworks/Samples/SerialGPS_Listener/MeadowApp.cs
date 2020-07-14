@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation;
+using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
@@ -17,6 +21,8 @@ namespace MeadowApp
     {
         ISerialMessagePort serialPort;
         NmeaSentenceProcessor nmeaProcessor;
+        Stopwatch uptime;
+        RgbPwmLed heartbeatLed;
 
         public MeadowApp()
         {
@@ -27,6 +33,9 @@ namespace MeadowApp
 
         void Initialize()
         {
+            uptime = new Stopwatch();
+            uptime.Start();
+
             serialPort = Device.CreateSerialMessagePort(
                 Device.SerialPortNames.Com4,
                 suffixDelimiter: Encoding.UTF8.GetBytes("\r\n"),
@@ -34,11 +43,17 @@ namespace MeadowApp
             serialPort.MessageReceived += SerialPort_MessageReceived;
 
             InitDecoders();
+
+            heartbeatLed = new RgbPwmLed(
+                Device, Device.Pins.OnboardLedRed, Device.Pins.OnboardLedGreen,
+                Device.Pins.OnboardLedBlue,
+                commonType: Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
         }
 
         void Start()
         {
             Console.WriteLine("Starting.");
+            HeartBeat();
             serialPort.Open();
         }
 
@@ -54,6 +69,8 @@ namespace MeadowApp
         {
             Console.WriteLine("Create NMEA");
             nmeaProcessor = new NmeaSentenceProcessor();
+            // verbose output
+            nmeaProcessor.DebugMode = true;
 
             Console.WriteLine("Add decoders");
 
@@ -115,6 +132,16 @@ namespace MeadowApp
 
         }
 
-
+        void HeartBeat() {
+            new Thread(() => {
+                while (true) {
+                    Console.WriteLine($"Uptime: {uptime.Elapsed}");
+                    heartbeatLed.SetColor(Color.FromHex("#23abe3"));
+                    Thread.Sleep(500);
+                    heartbeatLed.IsOn = false;
+                    Thread.Sleep(10000); //10 seconds
+                }
+            }).Start();
+        }
     }
 }
