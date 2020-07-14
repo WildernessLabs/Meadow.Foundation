@@ -82,10 +82,10 @@ namespace Meadow.Foundation.Displays.Led
             bool isCommonCathode)
         {
             digits = new IDigitalOutputPort[4];
-            digits[0] = portDigit4;
-            digits[1] = portDigit3;
-            digits[2] = portDigit2;
-            digits[3] = portDigit1;
+            digits[0] = portDigit1;
+            digits[1] = portDigit2;
+            digits[2] = portDigit3;
+            digits[3] = portDigit4;
 
             sevenSegments = new SevenSegment[4];
             for(int i=0; i < 4; i++) 
@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Displays.Led
                     digits[i].State = true;
                 }
 
-                await Task.Delay(10);
+                await Task.Delay(7);
             }
         }
 

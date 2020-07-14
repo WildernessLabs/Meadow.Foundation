@@ -16,22 +16,29 @@ namespace Displays.Led.SevenSegment_Sample
 
             sevenSegment = new FourDigitSevenSegment
             (
-                portDigit1: Device.CreateDigitalOutputPort(Device.Pins.D01),
-                portDigit2: Device.CreateDigitalOutputPort(Device.Pins.D02),
-                portDigit3: Device.CreateDigitalOutputPort(Device.Pins.D03),
-                portDigit4: Device.CreateDigitalOutputPort(Device.Pins.D04),
-                portA: Device.CreateDigitalOutputPort(Device.Pins.D09),
-                portB: Device.CreateDigitalOutputPort(Device.Pins.D10),
-                portC: Device.CreateDigitalOutputPort(Device.Pins.D11),
-                portD: Device.CreateDigitalOutputPort(Device.Pins.D12),
-                portE: Device.CreateDigitalOutputPort(Device.Pins.D13),
-                portF: Device.CreateDigitalOutputPort(Device.Pins.D14),
-                portG: Device.CreateDigitalOutputPort(Device.Pins.D15),
-                portDecimal: Device.CreateDigitalOutputPort(Device.Pins.D08),
+                portDigit1: Device.CreateDigitalOutputPort(Device.Pins.D00),
+                portDigit2: Device.CreateDigitalOutputPort(Device.Pins.D03),
+                portDigit3: Device.CreateDigitalOutputPort(Device.Pins.D04),
+                portDigit4: Device.CreateDigitalOutputPort(Device.Pins.D06),
+                portA: Device.CreateDigitalOutputPort(Device.Pins.D01),
+                portB: Device.CreateDigitalOutputPort(Device.Pins.D05),
+                portC: Device.CreateDigitalOutputPort(Device.Pins.D08),
+                portD: Device.CreateDigitalOutputPort(Device.Pins.D10),
+                portE: Device.CreateDigitalOutputPort(Device.Pins.D11),
+                portF: Device.CreateDigitalOutputPort(Device.Pins.D02),
+                portG: Device.CreateDigitalOutputPort(Device.Pins.D07),
+                portDecimal: Device.CreateDigitalOutputPort(Device.Pins.D09),
                 isCommonCathode: true
             );
 
-            Test();
+            int number = 0;
+            while (true)
+            {
+                string stringNumber = number.ToString("D4");
+                sevenSegment.SetDisplay(stringNumber.ToCharArray());
+                Thread.Sleep(1000);
+                number++;
+            }
         }
 
         protected void Test() 
@@ -40,9 +47,11 @@ namespace Displays.Led.SevenSegment_Sample
 
             int number = 0;
 
+            //sevenSegment.SetDisplay("1337".ToCharArray());
+
             while (true)
             {
-                string stringNumber = number.ToString("D4");                
+                string stringNumber = number.ToString("D4");
                 sevenSegment.SetDisplay(stringNumber.ToCharArray());
                 Thread.Sleep(1000);
                 number++;
