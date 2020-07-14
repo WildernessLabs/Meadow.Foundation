@@ -7,10 +7,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Represents the IS31FL3731 IC.
-    /// The IS31FL3731 is a compact LED driver for 144 single LEDs
+    /// The Is31fl3731 is a compact LED driver for 144 single LEDs
     /// </summary>
     /// <remarks>Based on https://github.com/adafruit/Adafruit_IS31FL3731 </remarks>
-    public class IS31FL3731
+    public class Is31fl3731
     {
         protected const byte RegConfig = 0x00;
         protected const byte RegConfigPictureMode = 0x00;
@@ -33,7 +33,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public byte Frame { get; private set; }
        
-        public IS31FL3731(II2cBus i2cBus, byte address)
+        public Is31fl3731(II2cBus i2cBus, byte address)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
             Frame = 0;

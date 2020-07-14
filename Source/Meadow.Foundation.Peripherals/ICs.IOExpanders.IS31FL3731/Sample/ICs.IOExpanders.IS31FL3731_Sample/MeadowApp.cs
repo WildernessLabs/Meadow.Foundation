@@ -10,7 +10,7 @@ namespace ICs.IOExpanders.IS31FL3731_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         II2cBus _i2cBus;
-        IS31FL3731 _iS31FL3731;
+        Is31fl3731 _iS31FL3731;
         public MeadowApp()
         {
             Initialize();
@@ -35,7 +35,7 @@ namespace ICs.IOExpanders.IS31FL3731_Sample
             Console.WriteLine("Initialize hardware...");
             
             _i2cBus= Device.CreateI2cBus();
-            _iS31FL3731 = new IS31FL3731(_i2cBus, 0x74);
+            _iS31FL3731 = new Is31fl3731(_i2cBus, 0x74);
             
             _iS31FL3731.Initialize();
 

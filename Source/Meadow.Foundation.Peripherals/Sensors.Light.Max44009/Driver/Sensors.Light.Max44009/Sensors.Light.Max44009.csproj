@@ -3,7 +3,15 @@
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Max44009</AssemblyName>
-    <Version>0.1.3</Version>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.Light.Max44009</PackageId>
+    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation, Max44009, Light</PackageTags>
+    <Version>0.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Driver for Max44009 light sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
