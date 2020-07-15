@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
@@ -8,9 +8,9 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Htu21d</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, Atmospheric, Htu21d</PackageTags>    
+    <PackageTags>Meadow.Foundation, Atmospheric, Htu21d</PackageTags>
     <Version>0.1.6</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for HTU21D atmospheric sensor</Description>
   </PropertyGroup>
   <ItemGroup>

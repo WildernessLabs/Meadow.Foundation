@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Max44009, Light</PackageTags>
     <Version>0.1.0</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for Max44009 light sensor</Description>
   </PropertyGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
@@ -8,9 +8,9 @@
     <PackageId>Meadow.Foundation.Displays.Tm1637</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, TM1637</PackageTags>    
+    <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, TM1637</PackageTags>
     <Version>0.1.4</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for TM1637 display</Description>
   </PropertyGroup>
   <ItemGroup>

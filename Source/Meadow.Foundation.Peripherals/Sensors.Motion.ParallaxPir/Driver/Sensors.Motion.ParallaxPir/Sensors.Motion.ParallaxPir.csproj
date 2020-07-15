@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
@@ -8,9 +8,9 @@
     <PackageId>Meadow.Foundation.Sensors.Motion.ParallaxPir</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow, Meadow.Foundation, Motion, Parallax, PIR</PackageTags>    
+    <PackageTags>Meadow, Meadow.Foundation, Motion, Parallax, PIR</PackageTags>
     <Version>0.8.6</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for Parallax PIR motion sensor</Description>
   </PropertyGroup>
   <ItemGroup>

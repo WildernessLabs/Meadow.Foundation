@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
@@ -8,7 +8,7 @@
     <PackageId>Meadow.Foundation.Sensors.Sound.Ky038</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, KY-038, Sound, KY038</PackageTags>   
+    <PackageTags>Meadow.Foundation, KY-038, Sound, KY038</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for KY-038 sound sensor breakout board</Description>

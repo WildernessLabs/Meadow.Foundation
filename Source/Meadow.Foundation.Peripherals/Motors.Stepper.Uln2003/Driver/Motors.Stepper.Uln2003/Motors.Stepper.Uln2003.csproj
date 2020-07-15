@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
@@ -8,9 +8,9 @@
     <PackageId>Meadow.Foundation.Motors.Stepper.Uln2003</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow, Meadow.Foundation, Motor, Stepper</PackageTags>    
+    <PackageTags>Meadow, Meadow.Foundation, Motor, Stepper</PackageTags>
     <Version>0.1.4</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for Uln2003 as a stepper motor controller</Description>
   </PropertyGroup>
   <ItemGroup>

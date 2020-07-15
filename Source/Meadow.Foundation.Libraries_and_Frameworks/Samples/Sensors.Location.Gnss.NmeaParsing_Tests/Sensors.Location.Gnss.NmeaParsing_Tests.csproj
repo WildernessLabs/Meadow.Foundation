@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Sensors.GPS.NMEA\Sensors.Location.Gnss.NmeaParsing.csproj" />
-    <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
+    <PackageReference Include="Meadow" Version="0.15.0" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>
