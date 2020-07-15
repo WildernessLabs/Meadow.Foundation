@@ -9,7 +9,7 @@ variables:
   solution: '**/Meadow.Foundation.Drivers.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  internalFeedName: 'Meadow'
+  internalFeedName: 'Meadow02'
   preReleasePackageBranch: 'refs/heads/staging'
   meadowNugetServiceConnectionName: 'Meadow_Nuget'
 
