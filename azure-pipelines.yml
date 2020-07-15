@@ -2,59 +2,49 @@
 # Reference: https://aka.ms/yaml
 
 trigger:
-- master
-- staging
+  - master
+  - staging
 
 variables:
-  solution: '**/Meadow.Foundation.Drivers.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-  internalFeedName: 'Meadow02'
-  preReleasePackageBranch: 'refs/heads/staging'
-  meadowNugetServiceConnectionName: 'Meadow_Nuget'
+  solution: "**/Meadow.Foundation.Drivers.sln"
+  buildPlatform: "Any CPU"
+  buildConfiguration: "Release"
+  internalFeedName: "Meadow02"
+  preReleasePackageBranch: "refs/heads/staging"
+  meadowNugetServiceConnectionName: "Meadow_Nuget"
 
 pool:
   vmImage: windows-2019
 
 stages:
-- stage: Build
-  jobs:
-    - job: Build_Solution
-      steps:
-        - task: NuGetToolInstaller@1
-          inputs:
-            versionSpec: 5.5.1
-        # if develop branch, add a nuget source for the internal feed
-        - task: NuGetCommand@2
-          displayName: Use_Beta_Nugets
-          condition: or(eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']), endsWith(variables['preReleasePackageBranch'], variables['System.PullRequest.TargetBranch']))
-          inputs:
-            feedsToUse: 'select' 
-            vstsFeed: $(internalFeedName)
-            restoreSolution: '$(solution)'
-        - task: NuGetCommand@2
-          displayName: Use_Nugets
-          condition: and(ne(variables['build.sourceBranch'], variables['preReleasePackageBranch']), not(endsWith(variables['preReleasePackageBranch'], variables['System.PullRequest.TargetBranch'])))
-          inputs:
-            feedsToUse: 'select' 
-            restoreSolution: '$(solution)'
-        - task: VSBuild@1
-          inputs:
-            solution: '$(solution)'
-            platform: '$(buildPlatform)'
-            configuration: '$(buildConfiguration)'
-        - task: CopyFiles@2
-          inputs:
-            Contents: '**\*.nupkg'
-            TargetFolder: '$(Build.ArtifactStagingDirectory)'
-            flattenFolders: true
-            cleanTargetFolder: true
-            overWrite: true
-        - task: PublishBuildArtifacts@1
-          inputs:
-            pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-            artifactName: packages
-
+  - stage: Build
+    jobs:
+      - job: Build_Solution
+        steps:
+          - task: NuGetToolInstaller@1
+            inputs:
+              versionSpec: 5.5.1
+          - task: NuGetCommand@2
+            displayName: Use_Nugets
+            inputs:
+              feedsToUse: "select"
+              restoreSolution: "$(solution)"
+          - task: VSBuild@1
+            inputs:
+              solution: "$(solution)"
+              platform: "$(buildPlatform)"
+              configuration: "$(buildConfiguration)"
+          - task: CopyFiles@2
+            inputs:
+              Contents: '**\*.nupkg'
+              TargetFolder: "$(Build.ArtifactStagingDirectory)"
+              flattenFolders: true
+              cleanTargetFolder: true
+              overWrite: true
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              artifactName: packages
 # - stage: Publish_Staging
 #   dependsOn: Build
 #   condition: and(succeeded('Build'), eq(variables['build.sourceBranch'], variables['preReleasePackageBranch']))
