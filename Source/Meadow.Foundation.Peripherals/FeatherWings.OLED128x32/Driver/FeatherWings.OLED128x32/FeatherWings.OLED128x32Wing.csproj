@@ -14,7 +14,7 @@
     <Description>Driver for AdaFruit OLED 128x32 Featherwing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.17.0" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
     <ProjectReference Include="..\..\..\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj" />
   </ItemGroup>

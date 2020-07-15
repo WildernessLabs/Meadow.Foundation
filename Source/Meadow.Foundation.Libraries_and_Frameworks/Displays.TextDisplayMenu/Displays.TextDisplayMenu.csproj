@@ -9,12 +9,12 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Display, Text, Menu</PackageTags>
-    <Version>0.1.0</Version>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>0.1.4</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Interactive text menu for Meadow</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.17.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SimpleJsonSerializer" Version="0.0.1" />
