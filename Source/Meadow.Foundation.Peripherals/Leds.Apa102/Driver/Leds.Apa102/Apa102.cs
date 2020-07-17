@@ -4,7 +4,6 @@ using System;
 namespace Meadow.Foundation.Leds
 {
     /// <summary>
-	/// **** Driver is untested but should be fully working ****
     /// Represents APA102/Dotstar Led(s).
     /// </summary>
     /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_DotStar/blob/master/adafruit_dotstar.py </remarks>

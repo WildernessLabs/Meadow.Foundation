@@ -6,7 +6,6 @@ using static Meadow.Foundation.Leds.Apa102;
 namespace Meadow.Foundation.FeatherWings
 {
     /// <summary>
-    /// **** Untested but should be fully functional ****
     /// Represents Adafruit's Dotstar feather wing 12x6
     /// </summary>
     public class DotstarWing : DisplayBase
