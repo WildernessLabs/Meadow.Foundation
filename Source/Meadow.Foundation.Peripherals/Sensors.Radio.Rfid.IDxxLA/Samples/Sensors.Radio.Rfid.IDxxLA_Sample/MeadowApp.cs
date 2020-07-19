@@ -6,29 +6,28 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        private readonly IRfidReader _rfidReader;
+        private readonly IRfidReader rfidReader;
 
         public MeadowApp()
         {
             Console.WriteLine("Initialize hardware...");
 
-            _rfidReader = new IDxxLA(Device, Device.SerialPortNames.Com1);
+            rfidReader = new IDxxLA(Device, Device.SerialPortNames.Com1);
 
             // subscribe to event
-            _rfidReader.RfidRead += RfidReaderOnTagRead;
+            rfidReader.RfidRead += RfidReaderOnTagRead;
 
             // subscribe to IObservable
-            _rfidReader.Subscribe(new RfidObserver());
+            rfidReader.Subscribe(new RfidObserver());
 
-            _rfidReader.StartReading();
+            rfidReader.StartReading();
 
             Console.WriteLine("Ready...");
         }
 
         private void RfidReaderOnTagRead(object sender, RfidReadResult e)
         {
-            if (e.Status == RfidValidationStatus.Ok)
-            {
+            if (e.Status == RfidValidationStatus.Ok) {
                 Console.WriteLine($"From event - Tag value is {DebugInformation.Hexadecimal(e.RfidTag)}");
                 return;
             }
