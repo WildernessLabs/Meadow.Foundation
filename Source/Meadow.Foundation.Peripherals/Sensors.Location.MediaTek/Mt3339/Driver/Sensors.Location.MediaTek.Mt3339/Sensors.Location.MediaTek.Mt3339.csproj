@@ -18,7 +18,7 @@
     <None Remove="Meadow.Peripherals.Sensors.Location.LocationInfo" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.17.0" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing" Version="0.1.7" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Sensors.GPS.NMEA\Sensors.Location.Gnss.NmeaParsing.csproj" />
   </ItemGroup>
 </Project>

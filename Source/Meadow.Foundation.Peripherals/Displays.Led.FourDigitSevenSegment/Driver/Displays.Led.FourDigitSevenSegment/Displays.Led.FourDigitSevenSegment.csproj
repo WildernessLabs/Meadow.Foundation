@@ -14,7 +14,7 @@
     <Description>Driver for four digit seven segment displays</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.15.2" />
-    <PackageReference Include="Meadow.Foundation.Displays.Led.SevenSegment" Version="0.8.7" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Led.SevenSegment\Driver\Displays.Led.SevenSegment\Displays.Led.SevenSegment.csproj" />
   </ItemGroup>
 </Project>
