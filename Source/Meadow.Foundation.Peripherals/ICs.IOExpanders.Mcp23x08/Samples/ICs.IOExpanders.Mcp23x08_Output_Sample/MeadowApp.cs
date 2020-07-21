@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Hardware;
@@ -10,7 +9,7 @@ namespace ICs.IOExpanders.Mcp23x08_Output_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Mcp23x08 _mcp;
+        IMcp23x08 _mcp;
 
         public MeadowApp()
         {
@@ -31,7 +30,7 @@ namespace ICs.IOExpanders.Mcp23x08_Output_Sample
                     InterruptMode.EdgeRising);
             // create a new mcp with all the address pins pulled low for
             // an address of 0x20/32
-            _mcp = new Mcp23x08(Device.CreateI2cBus(), false, false, false, interruptPort);
+            _mcp = new Mcp23x08(Device.CreateI2cBus(), interruptPort, false, false, false);
         }
 
         void TestDigitalOutputPorts(int loopCount)
@@ -78,7 +77,7 @@ namespace ICs.IOExpanders.Mcp23x08_Output_Sample
             for (int l = 0; l < loopCount; l++) {
 
                 for (int i = 0; i < 8; i++) {
-                    _mcp.WriteToPorts(mask);
+                    _mcp.WritePort(mask);
                     mask = (byte)(1 << i);
                     Thread.Sleep(5);
                 }

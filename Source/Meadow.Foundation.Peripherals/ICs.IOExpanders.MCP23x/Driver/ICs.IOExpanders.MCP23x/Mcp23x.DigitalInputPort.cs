@@ -4,55 +4,75 @@ using Meadow.Utilities;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp23x08
+    public abstract partial class Mcp23x
     {
         public class DigitalInputPort : DigitalInputPortBase
         {
-            Mcp23x08 _mcp;
-
-            private readonly IPin _pin;
+            private readonly Mcp23x _mcp;
+            private readonly int _port;
+            private readonly byte _pinKey;
             private DateTime _lastChangeTime;
             private bool _lastState;
 
-            public override bool State
+            public override bool State => _mcp.ReadPin(_port, _pinKey);
+
+            public override ResistorMode Resistor
             {
-                get
+                get => ResistorMode.Disabled;
+                set
                 {
-                    return _mcp.ReadPort(this.Pin);
+                    if (value != ResistorMode.Disabled)
+                    {
+                        throw new NotImplementedException();
+                    }
                 }
             }
 
-            public override ResistorMode Resistor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
             public override double DebounceDuration { get; set; } //Todo not currently used
 
             public override double GlitchDuration { get; set; } //Todo not currently used
 
-            public DigitalInputPort(
-                Mcp23x08 mcpController,
+            internal DigitalInputPort(
+                Mcp23x mcpController,
                 IPin pin,
-                InterruptMode interruptMode = InterruptMode.None)
+                int port,
+                InterruptMode interruptMode)
                 : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], interruptMode)
             {
                 _mcp = mcpController;
-                _pin = pin;
+                _port = port;
+                _pinKey = (byte) pin.Key;
+
+                // verify mcp, pin and port are valid
+                // allows us to use private methods on _mcp
+                if (_port < 0 || _port >= _mcp.Ports.Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(port));
+                }
+
+                if (!_mcp.Ports[_port].AllPins.Contains(Pin))
+                {
+                    throw new ArgumentException("Pin does not belong to mcp controller.");
+                }
+
                 if (interruptMode != InterruptMode.None)
                 {
-                    _mcp.InputChanged += PinChanged;
+                    _mcp.Ports[_port].InputChanged += PinChanged;
                 }
             }
 
-            internal void PinChanged(object sender, IOExpanderInputChangedEventArgs e)
+            private void PinChanged(object sender, IOExpanderPortInputChangedEventArgs e)
             {
                 try
                 {
                     var now = DateTime.UtcNow;
-                    var isInterrupt = BitHelpers.GetBitValue(e.InterruptPins, (byte)_pin.Key);
+                    var isInterrupt = BitHelpers.GetBitValue(e.InterruptPins, (byte)Pin.Key);
                     if (!isInterrupt)
                     {
                         return;
                     }
 
-                    var currentState = BitHelpers.GetBitValue(e.InputState, (byte)_pin.Key);
+                    var currentState = BitHelpers.GetBitValue(e.InterruptValues, (byte)Pin.Key);
                     if (currentState != _lastState)
                     {
                         switch (InterruptMode)

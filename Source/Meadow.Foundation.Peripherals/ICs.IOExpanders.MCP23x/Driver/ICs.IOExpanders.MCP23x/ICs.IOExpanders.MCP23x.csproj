@@ -2,13 +2,13 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Mcp23x08</AssemblyName>
+    <AssemblyName>Mcp23x</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.ICs.IOExpanders.Mcp23x08</PackageId>
+    <PackageId>Meadow.Foundation.ICs.IOExpanders.Mcp23x</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, IOExpanders, Mcp23x08</PackageTags>
+    <PackageTags>Meadow.Foundation, IOExpanders</PackageTags>
     <Version>0.1.7</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for Mcp23x08</Description>
@@ -16,6 +16,5 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\ICs.IOExpanders.MCP23x\Driver\ICs.IOExpanders.MCP23x\ICs.IOExpanders.MCP23x.csproj" />
   </ItemGroup>
 </Project>

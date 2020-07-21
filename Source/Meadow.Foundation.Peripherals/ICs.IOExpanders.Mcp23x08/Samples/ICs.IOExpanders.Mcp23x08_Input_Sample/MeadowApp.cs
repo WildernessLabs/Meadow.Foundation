@@ -12,7 +12,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Mcp23x08 _mcp;
+        IMcp23x08 _mcp;
 
         public MeadowApp()
         {
@@ -37,13 +37,13 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
                     InterruptMode.EdgeRising);
             // create a new mcp with all the address pins pulled low for
             // an address of 0x20/32
-            _mcp = new Mcp23x08(Device.CreateI2cBus(), false, false, false, interruptPort);
+            _mcp = new Mcp23x08(Device.CreateI2cBus(), interruptPort, false, false, false);
         }
 
         void TestBulkPinReads(int loopCount)
         {
             for (int l = 0; l < loopCount; l++) {
-                byte mask = _mcp.ReadFromPorts();
+                byte mask = _mcp.ReadPort();
                 var bits = new BitArray(new byte[] { mask });
                 StringBuilder bitsString = new StringBuilder();
                 foreach (var bit in bits) {
