@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     SSD1306 SPI display
         /// </summary>
-        protected ISpiPeripheral spiDisplay;
+        protected ISpiPeripheral spiPeripheral;
         protected SpiBus spi;
 
         protected IDigitalOutputPort dataCommandPort;
@@ -88,7 +88,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     SSD1306 I2C display
         /// </summary>
-        private readonly II2cPeripheral i2cPeriferal;
+        private readonly II2cPeripheral i2cPeripheral;
 
         /// <summary>
         ///     Width of the display in pixels.
@@ -233,7 +233,7 @@ namespace Meadow.Foundation.Displays
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false);
 
             spi = (SpiBus)spiBus;
-            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
             connectionType = ConnectionType.SPI;
 
@@ -255,7 +255,7 @@ namespace Meadow.Foundation.Displays
         {
             _displayType = displayType;
 
-            i2cPeriferal = new I2cPeripheral(i2cBus, address);
+            i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
             connectionType = ConnectionType.I2C;
 
@@ -317,11 +317,11 @@ namespace Meadow.Foundation.Displays
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                spiDisplay.WriteByte(command);
+                spiPeripheral.WriteByte(command);
             }
             else
             {
-                i2cPeriferal.WriteBytes(new byte[] { 0x00, command });
+                i2cPeripheral.WriteBytes(new byte[] { 0x00, command });
             }
         }
 
@@ -338,11 +338,11 @@ namespace Meadow.Foundation.Displays
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                spiDisplay.WriteBytes(commands);
+                spiPeripheral.WriteBytes(commands);
             }
             else
             {
-                i2cPeriferal.WriteBytes(data);
+                i2cPeripheral.WriteBytes(data);
             }
         }
 
@@ -370,7 +370,7 @@ namespace Meadow.Foundation.Displays
                 {
                     Array.Copy(buffer, index, data, 1, PAGE_SIZE);
                     SendCommand(0x40);
-                    i2cPeriferal.WriteBytes(data);
+                    i2cPeripheral.WriteBytes(data);
                 }
             }
         }
