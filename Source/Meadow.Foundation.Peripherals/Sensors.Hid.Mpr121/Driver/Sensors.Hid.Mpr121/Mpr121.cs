@@ -74,8 +74,6 @@ namespace Meadow.Foundation.Hid
 
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
-            timer = new Timer(RefreshChannelStatus, this, Timeout.Infinite, Timeout.Infinite);
-
             channelStatus = new Dictionary<Channels, bool>();
 
             foreach (Channels channel in Enum.GetValues(typeof(Channels)))
@@ -86,6 +84,8 @@ namespace Meadow.Foundation.Hid
             configuration = configuration ?? GetDefaultConfiguration();
 
             InitializeController(configuration);
+
+            timer = new Timer(RefreshChannelStatus, this, refreshPeriod, refreshPeriod);
         }
 
         #endregion Constructors

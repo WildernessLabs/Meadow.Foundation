@@ -25,7 +25,20 @@ namespace Sensors.Distance.Mpr121_Sample
 
         private void Sensor_ChannelStatusesChanged(object sender, ChannelStatusChangedEventArgs e)
         {
-            Console.WriteLine("Touched");
+            string pads = string.Empty;
+
+            for(int i = 0; i < e.ChannelStatus.Count; i++)
+            {
+                if(e.ChannelStatus[(Mpr121.Channels)i] == true)
+                {
+                    pads += i + ", ";
+                }
+            }
+
+            if (string.IsNullOrEmpty(pads))
+                Console.WriteLine("none");
+            else
+                Console.WriteLine(pads + "touched");
         }
     }
 }
