@@ -75,14 +75,14 @@ namespace Sensors.Distance.Vl53l0x_Sample
 
             Thread.Sleep(500);
 
-            vL53L0X.Shutdown(true);
+            vL53L0X.ShutDown(true);
 
             //Range will return -1 since the device is off
             range = vL53L0X.Range();
             Console.WriteLine($"{range} mm. IsShutdown { vL53L0X.IsShutdown }");
 
             //Turn device back on
-            vL53L0X.Shutdown(false);
+            vL53L0X.ShutDown(false);
 
             range = vL53L0X.Range();
             Console.WriteLine($"{range} mm. IsShutdown { vL53L0X.IsShutdown }");
