@@ -41,13 +41,13 @@ namespace Sensors.Distance.Vl53l0x_Sample
         {
             Console.WriteLine("Run...");
 
-            var range = await vL53L0X.Range();
+            var range = await vL53L0X.Read();
             Console.WriteLine($"{range} mm");
             
             Thread.Sleep(500);
 
             vL53L0X.Units = Vl53l0x.UnitType.inches;
-            range = await vL53L0X.Range();
+            range = await vL53L0X.Read();
             Console.WriteLine($"{range} inches");
 
             Thread.Sleep(500);
@@ -57,7 +57,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
             for (int i = 0; i < 75; i++)
             {
                 Thread.Sleep(200);
-                range = await vL53L0X.Range();
+                range = await vL53L0X.Read();
                 Console.WriteLine($"{range} mm");
             }
 
@@ -68,7 +68,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
         {
             Console.WriteLine("Run...");
 
-            var range = vL53L0X.Range();
+            var range = vL53L0X.Read();
             Console.WriteLine($"{range} mm");
 
             Thread.Sleep(500);
@@ -76,19 +76,19 @@ namespace Sensors.Distance.Vl53l0x_Sample
             await vL53L0X.ShutDown(true);
 
             //Range will return -1 since the device is off
-            range = vL53L0X.Range();
+            range = vL53L0X.Read();
             Console.WriteLine($"{range} mm. IsShutdown { vL53L0X.IsShutdown }");
 
             //Turn device back on
             await vL53L0X.ShutDown(false);
 
-            range = vL53L0X.Range();
+            range = vL53L0X.Read();
             Console.WriteLine($"{range} mm. IsShutdown { vL53L0X.IsShutdown }");
 
             for (int i = 0; i < 75; i++)
             {
                 Thread.Sleep(200);
-                range = vL53L0X.Range();
+                range = vL53L0X.Read();
                 Console.WriteLine($"{range} mm");
             }
 
