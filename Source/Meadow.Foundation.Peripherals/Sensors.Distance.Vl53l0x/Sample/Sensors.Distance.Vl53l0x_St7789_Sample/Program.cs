@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using System.Threading;
 
-namespace Sensors.Distance.Vl53l0x_Sample
+namespace Sensors.Distance.Vl53l0x_St7789_Sample
 {
     class Program
     {

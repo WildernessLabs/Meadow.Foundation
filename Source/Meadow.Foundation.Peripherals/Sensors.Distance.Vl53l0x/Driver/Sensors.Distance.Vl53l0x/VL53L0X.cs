@@ -9,7 +9,6 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// Represents the Vl53l0x distance sensor
     /// </summary>
-    /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_VL53L0X/blob/master/adafruit_vl53l0x.py </remarks>
     public class Vl53l0x : FilterableChangeObservableBase<DistanceConditionChangeResult, DistanceConditions>, IRangeFinder
     {
         #region const
@@ -131,7 +130,6 @@ namespace Meadow.Foundation.Sensors.Distance
        
         byte stopVariable;
 
-        public event EventHandler<DistanceEventArgs> DistanceDetected;
         public event EventHandler<DistanceConditionChangeResult> Updated;
 
         public Vl53l0x(IIODevice device, II2cBus i2cBus, byte address = DefaultI2cAddress, UnitType units = UnitType.mm) : 
@@ -145,11 +143,14 @@ namespace Meadow.Foundation.Sensors.Distance
         public Vl53l0x(IIODevice device, II2cBus i2cBus, IPin shutdownPin, byte address = DefaultI2cAddress,  UnitType units = UnitType.mm)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
+
             if(shutdownPin != null)
             {
                 device.CreateDigitalOutputPort(shutdownPin, true);
             }
             Units = units;
+
+            Initialize();
         }
 
         ///// <summary>
@@ -245,11 +246,11 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Initializes the VL53L0X
         /// </summary>
-        public void Initialize()
+        protected async Task Initialize()
         {
             if (IsShutdown)
             {
-                ShutDown(false);
+                await ShutDown(false);
             }
 
             if (Read(0xC0) != 0xEE || Read(0xC1) != 0xAA || Read(0xC2) != 0x10)
@@ -298,7 +299,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 {
                     spads_enabled += 1;
                 }
-                            }
+            }
 
             i2cPeripheral.WriteRegister(0xFF, 0x01);
             i2cPeripheral.WriteRegister(0x00, 0x00);
@@ -505,7 +506,7 @@ namespace Meadow.Foundation.Sensors.Distance
             return new Tuple<int, bool>(count, is_aperture);
         }
 
-        protected async Task PerformSingleRefCalibration(byte vhvInitByte)
+        protected void PerformSingleRefCalibration(byte vhvInitByte)
         {
             i2cPeripheral.WriteRegister(RangeStart, (byte)(0x01 | vhvInitByte & 0xFF));
 
@@ -513,7 +514,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
             while ((byte)(Read(ResultInterruptStatus) & 0x07) == 0)
             {
-                await Task.Delay(5).ConfigureAwait(false);
+                Thread.Sleep(5);
                 tCount++;
                 if (tCount > 100)
                 {
