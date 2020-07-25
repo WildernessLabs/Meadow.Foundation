@@ -36,9 +36,13 @@ namespace Sensors.Distance.Mpr121_Sample
             }
 
             if (string.IsNullOrEmpty(pads))
+            {
                 Console.WriteLine("none");
+            }
             else
+            {
                 Console.WriteLine(pads + "touched");
+            }
         }
     }
 }
