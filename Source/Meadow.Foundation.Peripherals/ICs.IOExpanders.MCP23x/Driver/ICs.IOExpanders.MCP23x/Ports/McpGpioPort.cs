@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Meadow.Hardware;
 
+[assembly: InternalsVisibleTo("ICs.IOExpenders.MCP23x.UnitTests")]
 namespace Meadow.Foundation.ICs.IOExpanders.Ports
 {
     public class McpGpioPort : IPinDefinitions
     {
         public McpGpioPort(string namePrefix = "GP")
         {
+            if (namePrefix == null)
+            {
+                throw new ArgumentNullException(nameof(namePrefix));
+            }
+
             IPin CreatePin(byte i)
             {
                 var name = $"{namePrefix}{i}";
@@ -68,6 +75,11 @@ namespace Meadow.Foundation.ICs.IOExpanders.Ports
         /// <param name="e"></param>
         internal void InvokeInputChanged(IOExpanderPortInputChangedEventArgs e)
         {
+            if (e == null)
+            {
+                throw new ArgumentNullException(nameof(e));
+            }
+
             InputChanged?.Invoke(this, e);
         }
     }

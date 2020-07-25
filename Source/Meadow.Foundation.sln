@@ -806,6 +806,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.MCP23x17", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.MCP23x17", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23x17\Driver\ICs.IOExpanders.MCP23x17\ICs.IOExpanders.MCP23x17.csproj", "{393C6A16-3B61-4B3F-8C50-E56A4606A7DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpenders.MCP23x.UnitTests", "Meadow.Foundation.Peripherals\ICs.IOExpanders.MCP23x\Driver\ICs.IOExpenders.MCP23x.UnitTests\ICs.IOExpenders.MCP23x.UnitTests.csproj", "{894BE38A-89A1-41B3-AC45-1A5F156A531C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1784,6 +1786,10 @@ Global
 		{393C6A16-3B61-4B3F-8C50-E56A4606A7DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{393C6A16-3B61-4B3F-8C50-E56A4606A7DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{393C6A16-3B61-4B3F-8C50-E56A4606A7DD}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{894BE38A-89A1-41B3-AC45-1A5F156A531C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{894BE38A-89A1-41B3-AC45-1A5F156A531C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{894BE38A-89A1-41B3-AC45-1A5F156A531C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{894BE38A-89A1-41B3-AC45-1A5F156A531C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2184,6 +2190,7 @@ Global
 		{AD3EF37C-75C7-4821-B39D-36719CF43FD3} = {E59CBB91-20C1-48D5-BEC7-B2D92AC3D2FC}
 		{E8716732-E4DF-4B12-9F8C-0DF8643DFE87} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{393C6A16-3B61-4B3F-8C50-E56A4606A7DD} = {E8716732-E4DF-4B12-9F8C-0DF8643DFE87}
+		{894BE38A-89A1-41B3-AC45-1A5F156A531C} = {E59CBB91-20C1-48D5-BEC7-B2D92AC3D2FC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
