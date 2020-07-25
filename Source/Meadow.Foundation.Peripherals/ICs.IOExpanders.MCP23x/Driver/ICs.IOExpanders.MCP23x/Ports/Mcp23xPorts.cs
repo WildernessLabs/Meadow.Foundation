@@ -2,10 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Meadow.Foundation.ICs.IOExpanders.Ports;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.ICs.IOExpanders
+namespace Meadow.Foundation.ICs.IOExpanders.Ports
 {
     public class Mcp23xPorts : IMcpGpioPorts
     {
@@ -13,13 +12,28 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public Mcp23xPorts(params McpGpioPort[] ports)
         {
+            if (ports == null)
+            {
+                throw new ArgumentNullException(nameof(ports));
+            }
+
+            if (ports.Length == 0)
+            {
+                throw new ArgumentException("Value cannot be an empty collection.", nameof(ports));
+            }
+
+            if (ports.Any(p => p == null))
+            {
+                throw new ArgumentNullException(nameof(ports));
+            }
+
             _ports = ports;
             AllPins = _ports.Length == 1 ? _ports[0].AllPins : _ports.SelectMany(p => p.AllPins).ToArray();
         }
 
         public IList<IPin> AllPins { get; }
 
-        public int Count => AllPins.Count;
+        public int Count => _ports.Length;
 
         public McpGpioPort this[int index] => _ports[index];
 
@@ -30,6 +44,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public int GetPortIndex(McpGpioPort port)
         {
+            if (port == null)
+            {
+                throw new ArgumentNullException(nameof(port));
+            }
+
             var index = Array.IndexOf(_ports, port);
             if (index < 0)
             {
@@ -41,6 +60,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public int GetPortIndexOfPin(IPin pin)
         {
+            if (pin == null)
+            {
+                throw new ArgumentNullException(nameof(pin));
+            }
+
             for (var i = 0; i < Count; i++)
             {
                 if (this[i].AllPins.Contains(pin))
@@ -54,6 +78,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public McpGpioPort GetPortOfPin(IPin pin)
         {
+            if (pin == null)
+            {
+                throw new ArgumentNullException(nameof(pin));
+            }
+
             return this[GetPortIndexOfPin(pin)];
         }
 
