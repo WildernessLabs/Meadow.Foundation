@@ -89,7 +89,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public Mcp23PortRegister GetNextRegister(byte currentAddress, int port, BankConfiguration bank)
         {
-            return GetMap(port, bank).GetRegisterAtAddress(currentAddress);
+            return GetMap(port, bank).GetNextRegister(currentAddress);
         }
 
         public Mcp23PortRegister GetRegisterAtAddress(byte address, int port, BankConfiguration bank)

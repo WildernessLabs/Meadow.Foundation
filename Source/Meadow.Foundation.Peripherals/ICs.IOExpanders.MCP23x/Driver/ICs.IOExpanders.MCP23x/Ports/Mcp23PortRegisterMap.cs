@@ -9,24 +9,47 @@ namespace Meadow.Foundation.ICs.IOExpanders.Ports
         /// <see cref="Mcp23PortRegister" />
         private const int RegisterSize = 12;
 
+        // The index of this array maps to Mcp23PortRegister
         private readonly byte[] _mappingArray;
 
+        /// <summary>
+        /// Helper struct to map register types to addresses.
+        /// </summary>
+        /// <param name="mapping"></param>
+        /// <remarks>
+        /// Known limitation: If not all registers are provided, any register not provided will specify their address as 0x00.
+        /// </remarks>
         public Mcp23PortRegisterMap(IEnumerable<(byte address, Mcp23PortRegister register)> mapping)
         {
-            _mappingArray = new byte[RegisterSize];
-
-            var hasInvalid = false;
-            foreach (var (address, register) in mapping)
+            if (mapping == null)
             {
-                _mappingArray[(int) register] = address;
-                hasInvalid = hasInvalid || register == Mcp23PortRegister.Invalid;
+                throw new ArgumentNullException(nameof(mapping));
             }
 
+            _mappingArray = new byte[RegisterSize];
+
+            foreach (var (address, register) in mapping)
+            {
+                // Skip invalid, all addresses are invalid unless specified otherwise
+                if (register == Mcp23PortRegister.Invalid)
+                {
+                    continue;
+                }
+
+                if (_mappingArray[(int) register] > 0)
+                {
+                    throw new ArgumentException(
+                        $"The same register '{register}' cannot be mapped to multiple addresses.",
+                        nameof(mapping));
+                }
+
+                _mappingArray[(int) register] = address;
+            }
         }
 
         public byte GetAddress(Mcp23PortRegister register)
         {
-            if (register == Mcp23PortRegister.Invalid)
+            if (register == Mcp23PortRegister.Invalid || (int) register < 0 || (int) register > RegisterSize - 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(register), register, "Must be valid register");
             }
@@ -39,7 +62,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Ports
             // _mappingArray[0] maps to Mcp23PortRegister.Invalid which should never be checked.
             for (var i = 1; i < _mappingArray.Length; i++)
             {
-                if (_mappingArray[0] == address)
+                if (_mappingArray[i] == address)
                 {
                     return (Mcp23PortRegister) i;
                 }
