@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using Meadow.Foundation.ICs.IOExpanders.Ports;
-using Meadow.Foundation.ICs.IOExpanders.UnitTests.Helpers;
 using Xunit;
 
 namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
@@ -82,21 +80,15 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
         public void InvokeInputChangedFiresValidEvent()
         {
             var port = new McpGpioPort();
-            var eventMonitor = new EventMonitor<IOExpanderPortInputChangedEventArgs>();
             var eventArgs = new IOExpanderPortInputChangedEventArgs(0x10, 0x20);
 
-            port.InputChanged += eventMonitor.GetHandler();
-            eventMonitor.AddExpectation((sender, e) => Assert.Same(port, sender));
-            eventMonitor.AddExpectation((sender, e) => Assert.NotNull(e));
-            eventMonitor.AddExpectation((sender, e) => Assert.Same(eventArgs, e));
+            var raised = Assert.Raises<IOExpanderPortInputChangedEventArgs>(
+                handler => port.InputChanged += handler,
+                handler => port.InputChanged -= handler,
+                () => port.InvokeInputChanged(eventArgs));
 
-            port.InvokeInputChanged(eventArgs);
-
-            Assert.Single(eventMonitor.Invocations);
-
-            port.InvokeInputChanged(eventArgs);
-
-            Assert.Equal(2, eventMonitor.Invocations.Count());
+            Assert.Same(port, raised.Sender);
+            Assert.Equal(eventArgs, raised.Arguments);
         }
 
         [Fact]
