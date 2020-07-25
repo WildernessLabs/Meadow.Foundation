@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Sensors.Distance
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
             if(shutdownPin != null)
             {
-                device.CreateDigitalOutputPort(shutdownPin);
+                device.CreateDigitalOutputPort(shutdownPin, true);
             }
             Units = units;
         }
