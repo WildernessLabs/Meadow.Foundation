@@ -8,7 +8,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        CharacterDisplay display;
+        GpioCharacterDisplay display;
 
         public MeadowApp()
         {
@@ -27,7 +27,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
             //    rows: 4, columns: 20    // Adjust dimensions to fit your display
             //);
 
-            display = new CharacterDisplay
+            display = new GpioCharacterDisplay
             (
                 Device.CreatePwmPort(Device.Pins.D11, 100, 0.5f, true),
                 Device.CreateDigitalOutputPort(Device.Pins.D10),
