@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Hid;
 
-namespace MeadowApp
+namespace Sensors.Distance.Mpr121_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {

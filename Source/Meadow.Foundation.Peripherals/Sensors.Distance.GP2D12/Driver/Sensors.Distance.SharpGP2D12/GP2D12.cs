@@ -13,12 +13,15 @@ namespace Sensors.Distance
         IAnalogInputPort analogInputPort;
 
         public event EventHandler<DistanceEventArgs> DistanceDetected;
+        public event EventHandler<DistanceConditionChangeResult> Updated;
 
         public float CurrentDistance { get; private set; } = -1;
 
         public float MinimumDistance => 0.098f;
 
         public float MaximumDistance => 0.79f;
+
+        public DistanceConditions Conditions => throw new NotImplementedException();
 
         #endregion Member variables / fields
 
@@ -50,6 +53,11 @@ namespace Sensors.Distance
             CurrentDistance = Math.Min(CurrentDistance, MaximumDistance);
 
             return CurrentDistance;
+        }
+
+        public IDisposable Subscribe(IObserver<DistanceConditionChangeResult> observer)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Methods

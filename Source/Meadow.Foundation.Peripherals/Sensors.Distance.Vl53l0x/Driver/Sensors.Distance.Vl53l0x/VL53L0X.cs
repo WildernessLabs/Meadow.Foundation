@@ -114,12 +114,15 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public float MaximumDistance => 2000;
 
+        public DistanceConditions Conditions => throw new NotImplementedException();
+
         readonly II2cPeripheral i2cPeripheral;
         readonly IDigitalOutputPort shutdownPort;
        
         byte stopVariable;
 
         public event EventHandler<DistanceEventArgs> DistanceDetected;
+        public event EventHandler<DistanceConditionChangeResult> Updated;
 
         public Vl53l0x(IIODevice device, II2cBus i2cBus, byte address = DefaultI2cAddress, UnitType units = UnitType.mm) : 
             this (device, i2cBus, null, address, units)
@@ -476,6 +479,11 @@ namespace Meadow.Foundation.Sensors.Distance
             i2cPeripheral.WriteRegister(GpioHvMuxActiveHigh, 0x01);
 
             return range_mm;
+        }
+
+        public IDisposable Subscribe(IObserver<DistanceConditionChangeResult> observer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

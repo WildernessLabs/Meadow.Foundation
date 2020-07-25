@@ -27,10 +27,13 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public float MaximumDistance => 400;
 
+        public DistanceConditions Conditions => throw new NotImplementedException();
+
         /// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
         public event EventHandler<DistanceEventArgs> DistanceDetected = delegate { };
+        public event EventHandler<DistanceConditionChangeResult> Updated;
 
         #endregion
 
@@ -122,6 +125,11 @@ namespace Meadow.Foundation.Sensors.Distance
         //       CurrentDistance = -1;
 
             DistanceDetected?.Invoke(this, new DistanceEventArgs(CurrentDistance));
+        }
+
+        public IDisposable Subscribe(IObserver<DistanceConditionChangeResult> observer)
+        {
+            throw new NotImplementedException();
         }
     }
 }
