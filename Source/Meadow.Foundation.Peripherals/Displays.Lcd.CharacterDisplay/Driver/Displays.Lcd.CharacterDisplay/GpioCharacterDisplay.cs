@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Displays.Lcd
             IPin pinD5,
             IPin pinD6,
             IPin pinD7,
-            ushort rows = 4, ushort columns = 20) :
+            byte rows = 4, byte columns = 20) :
             this(
                 device.CreateDigitalOutputPort(pinRS),
                 device.CreateDigitalOutputPort(pinE),
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Displays.Lcd
             IDigitalOutputPort portD5,
             IDigitalOutputPort portD6,
             IDigitalOutputPort portD7,
-            ushort rows = 4, ushort columns = 20)
+            byte rows = 4, byte columns = 20)
         {
             DisplayConfig = new TextDisplayConfig { Height = rows, Width = columns };
 
@@ -82,7 +82,7 @@ namespace Meadow.Foundation.Displays.Lcd
             IPin pinD5,
             IPin pinD6,
             IPin pinD7,
-            ushort rows = 4, ushort columns = 20) :
+            byte rows = 4, byte columns = 20) :
             this(
                 device.CreatePwmPort(pinV0, 100, 0.5f, true),
                 device.CreateDigitalOutputPort(pinRS),
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Displays.Lcd
             IDigitalOutputPort portD5,
             IDigitalOutputPort portD6,
             IDigitalOutputPort portD7,
-            ushort rows = 4, ushort columns = 20)
+            byte rows = 4, byte columns = 20)
         {
             Console.WriteLine("Constructor with Contrast pin");
 

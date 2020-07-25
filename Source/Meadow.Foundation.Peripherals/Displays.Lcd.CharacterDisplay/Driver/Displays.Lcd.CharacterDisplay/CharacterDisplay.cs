@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Displays.Lcd
             IPin pinD5,
             IPin pinD6,
             IPin pinD7,
-            ushort rows = 4, ushort columns = 20)
+            byte rows = 4, byte columns = 20)
         {
             characterDisplay = new GpioCharacterDisplay(device, pinRS, pinE, pinD4, pinD5, pinD6, pinD7, rows, columns);
         }
@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Displays.Lcd
             IDigitalOutputPort portD5,
             IDigitalOutputPort portD6,
             IDigitalOutputPort portD7,
-            ushort rows = 4, ushort columns = 20)
+            byte rows = 4, byte columns = 20)
         {
             characterDisplay = new GpioCharacterDisplay(portRS, portE, portD4, portD5, portD6, portD7, rows, columns);
         }
@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Displays.Lcd
             IPin pinD5,
             IPin pinD6,
             IPin pinD7,
-            ushort rows = 4, ushort columns = 20)
+            byte rows = 4, byte columns = 20)
         {
             characterDisplay = new GpioCharacterDisplay(device, pinV0, pinRS, pinE, pinD4, pinD5, pinD6, pinD7, rows, columns);
         }
@@ -56,9 +56,14 @@ namespace Meadow.Foundation.Displays.Lcd
             IDigitalOutputPort portD5,
             IDigitalOutputPort portD6,
             IDigitalOutputPort portD7,
-            ushort rows = 4, ushort columns = 20)
+            byte rows = 4, byte columns = 20)
         {
             characterDisplay = new GpioCharacterDisplay(portV0, portRS, portE, portD4, portD5, portD6, portD7, rows, columns);
+        }
+
+        public CharacterDisplay(II2cBus i2cBus, byte address = I2cCharacterDisplay.DefaultI2cAddress, byte rows = 4, byte columns = 20)
+        {
+            characterDisplay = new I2cCharacterDisplay(i2cBus, address, rows, columns);
         }
 
         public void ClearLine(byte lineNumber)
