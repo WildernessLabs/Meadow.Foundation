@@ -8,7 +8,7 @@ using Meadow.Utilities;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public abstract partial class Mcp23x : IIODevice, IMcp23x
+    public abstract class Mcp23x : IIODevice, IMcp23x
     {
         // Use this lock whenever accessing GPPU, IOCON, IODIR, GPINTEN
         protected readonly object ConfigurationLock = new object();
@@ -127,8 +127,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Initialize();
         }
 
+        /// <inheritdoc />
         public IMcpGpioPorts Ports { get; }
 
+        /// <inheritdoc cref="IMcp23x.ConfigureInputPort" />
         public void ConfigureInputPort(
             IPin pin,
             bool enablePullUp = false,
@@ -189,6 +191,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        /// <inheritdoc cref="IMcp23x.CreateDigitalInputPort" />
         public IDigitalInputPort CreateDigitalInputPort(
             IPin pin,
             InterruptMode interruptMode = InterruptMode.None,
@@ -207,7 +210,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             var enablePullUp = resistorMode == ResistorMode.PullUp;
             ConfigureInputPort(pin, enablePullUp, interruptMode);
-            var inputPort = new DigitalInputPort(this, pin, port, interruptMode);
+            var inputPort = new McpDigitalInputPort(this, pin, port, interruptMode);
 
             // TODO: Determine if this is needed
             // _inputPorts.Add(pin, port);
@@ -215,6 +218,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return inputPort;
         }
 
+        /// <inheritdoc cref="IMcp23x.CreateDigitalOutputPort" />
         public IDigitalOutputPort CreateDigitalOutputPort(
             IPin pin,
             bool initialState = false,
@@ -227,16 +231,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SetPortDirection(port, (byte) pin.Key, PortDirectionType.Output);
 
             // create the convenience class
-            return new DigitalOutputPort(this, pin, port, initialState, outputType);
+            return new McpDigitalOutputPort(this, pin, port, initialState, outputType);
         }
 
 
-        /// <summary>
-        /// Gets the value of a particular pin. If the pin is currently configured
-        /// as an output, this will change the configuration.
-        /// </summary>
-        /// <param name="pin"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public bool ReadPin(IPin pin)
         {
             // Will throw if pin is not valid for this device.
@@ -244,6 +243,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return ReadPin(port, (byte) pin.Key);
         }
 
+        /// <inheritdoc />
+        public void ResetPin(IPin pin)
+        {
+            // Will throw if pin is not valid for this device.
+            var port = Ports.GetPortIndexOfPin(pin);
+            ResetPin(port, (byte) pin.Key);
+        }
+
+        /// <inheritdoc />
         public void SetPortDirection(IPin pin, PortDirectionType direction)
         {
             // Will throw if pin is not valid for this device.
@@ -252,6 +260,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SetPortDirection(port, (byte) pin.Key, direction);
         }
 
+        /// <inheritdoc />
         public void WritePin(IPin pin, bool value)
         {
             // Will throw if pin is not valid for this device.
@@ -389,7 +398,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             return Ports.AllPins.Contains(pin);
         }
-        
+
         /// <summary>
         /// Change the configuration of IOCON.Bank
         /// </summary>
@@ -503,11 +512,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return BitHelpers.GetBitValue(GpioState[port], pinKey);
         }
 
-        /// <summary>
-        /// Sets the pin back to an input
-        /// </summary>
-        /// <param name="pin"></param>
-        /// <param name="pinKey"></param>
         private void ResetPin(int port, byte pinKey)
         {
             SetPortDirection(port, pinKey, PortDirectionType.Input);
@@ -816,7 +820,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         #endregion
 
         #region Unsupported Implementations
-
 
         /// <summary>
         /// Not implemented, do not use.

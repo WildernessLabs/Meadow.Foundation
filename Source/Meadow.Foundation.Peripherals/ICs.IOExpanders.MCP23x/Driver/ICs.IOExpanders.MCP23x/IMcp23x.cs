@@ -41,6 +41,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         bool ReadPin(IPin pin);
 
         /// <summary>
+        /// Reset a pin to it's initial input state.
+        /// </summary>
+        /// <param name="pin"></param>
+        void ResetPin(IPin pin);
+
+        /// <summary>
         /// Sets the direction of a particular port.
         /// </summary>
         /// <param name="pin"></param>
