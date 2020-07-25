@@ -85,6 +85,11 @@ namespace Meadow.Foundation.Hid
 
             InitializeController(configuration);
 
+            if(refreshPeriod < 1)
+            {
+                refreshPeriod = Timeout.Infinite;
+            }
+            
             timer = new Timer(RefreshChannelStatus, this, refreshPeriod, refreshPeriod);
         }
 
