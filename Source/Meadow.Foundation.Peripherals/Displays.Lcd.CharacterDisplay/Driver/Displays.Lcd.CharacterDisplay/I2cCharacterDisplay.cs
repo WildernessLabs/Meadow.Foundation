@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using System;
+using System.Configuration;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays.Lcd
@@ -9,10 +10,12 @@ namespace Meadow.Foundation.Displays.Lcd
     {
         protected II2cPeripheral i2cPeripheral;
 
-      //  byte displayFunction;
-        byte displayControl;
-        byte displayMode;
-        byte backlightValue;
+        private byte displayControl;
+        private byte displayMode;
+        private byte backlightValue;
+
+        private byte cursorLine = 0;
+        private byte cursorColumn = 0;
 
         public const byte DefaultI2cAddress = 0x27;
 
@@ -153,14 +156,20 @@ namespace Meadow.Foundation.Displays.Lcd
 
         public void ClearLine(byte lineNumber)
         {
-            throw new System.NotImplementedException();
+            SetCursorPosition(0, lineNumber);
+            for (int i = 0; i < DisplayConfig.Width; i++)
+            {
+                Write(" ");
+            }
+            SetCursorPosition(0, lineNumber);
         }
 
         public void ClearLines()
         {
             // clear display, set cursor position to zero
             Command(LCD_CLEARDISPLAY);
-            Thread.Sleep(2); 
+            Thread.Sleep(2);
+            SetCursorPosition(0, 0);
         }
 
         public void SetCursorPosition(byte column, byte line)
@@ -172,48 +181,34 @@ namespace Meadow.Foundation.Displays.Lcd
                 line = (byte)(DisplayConfig.Height - 1);    
             }
             Command((byte)(LCD_SETDDRAMADDR | (column + rowOffsets[line])));
+
+            cursorLine = line;
+            cursorColumn = column;
         }
 
-
-        byte cursorColumn = 0;
         public void Write(string text)
         {
             string screentText = text;
 
-         /*   if (screentText.Length + (int)cursorColumn > DisplayConfig.Width)
+            if (screentText.Length + cursorColumn > DisplayConfig.Width)
             {
                 screentText = screentText.Substring(0, DisplayConfig.Width - cursorColumn);
-            } */
+            }
+            cursorColumn += (byte)screentText.Length;
 
             var bytes = System.Text.Encoding.UTF8.GetBytes(screentText);
 
-            Console.WriteLine($"Length: {bytes.Length}");
-
             foreach (var b in bytes)
             {
-                //didn't work
-                //i2cPeripheral.WriteByte(b);
-                //Send(b, 0);
-                //ExpanderWrite(b);
-
-                //Write4Bits(b);//somewhat works
-                //Thread.Sleep(1);
-
                 Send(b, 1);
-             //   Thread.Sleep(100);
-
-
-
-
-                //SendByte(b, LCD_DATA);
-
-                //this.write(c, this.displayPorts.CHR);
             }
         }
 
         public void WriteLine(string text, byte lineNumber)
         {
-            throw new System.NotImplementedException();
+            SetCursorPosition(0, lineNumber);
+            var screenText = text.PadRight(DisplayConfig.Width, ' ');
+            Write(screenText);
         }
 
         // Turn the display on/off (quickly)

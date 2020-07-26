@@ -14,48 +14,9 @@ namespace Displays.Lcd.CharacterDisplay_Sample
         public MeadowApp()
         {
             //InitGpio();
-          //  InitI2c();
+            InitI2c();
 
-            Console.WriteLine("Test character display");
-
-            I2cCharacterDisplay iDisplay = new I2cCharacterDisplay(Device.CreateI2cBus(I2cBusSpeed.Standard),
-                I2cCharacterDisplay.DefaultI2cAddress,
-                2, 16);
-
-            //display off
-            Console.WriteLine("Display off");
-            iDisplay.DisplayOff();
-            Thread.Sleep(100);
-
-            //display on
-            Console.WriteLine("Display on");
-            iDisplay.DisplayOn();
-            Thread.Sleep(100);
-
-            Console.WriteLine("Cursor on");
-            iDisplay.CursorOn();
-
-            Console.WriteLine("Blick on");
-            iDisplay.BlinkOn();
-
-            for(byte i = 0; i < 10; i++)
-            {
-                iDisplay.SetCursorPosition(i, 0);
-                Thread.Sleep(100);
-            }
-
-            iDisplay.Write("Hello");
-
-            Thread.Sleep(4000);
-
-            int count = 0;
-            while(true)
-            {
-                iDisplay.SetCursorPosition(0, 0);
-                iDisplay.Write($"{count++}");
-            }
-
-            //    TestCharacterDisplay();
+            TestCharacterDisplay();
 
             Console.WriteLine("Test complete");
         }
@@ -90,28 +51,36 @@ namespace Displays.Lcd.CharacterDisplay_Sample
         {
             Console.WriteLine("TestCharacterDisplay...");
 
-            int count = 0;
-            display.Write("CharDisplay");
+            display.WriteLine("Hello", 0);
 
-        /*    while (true)
+            display.WriteLine("Display", 1);
+
+            Thread.Sleep(1000);
+            display.WriteLine("Will delete in", 0);
+
+            int count = 5;
+            while(count > 0)
             {
-                // Increasing Contrast
-                for (int i = 0; i <= 10; i++)
-                {
-                    display.SetContrast((float)(i / 10f));
-                    Thread.Sleep(250);
-                }
+                display.WriteLine($"{count--}", 1);
+                Thread.Sleep(500);
+            }
 
-                // Decreasing Contrast
-                for (int i = 10; i >= 0; i--)
-                {
-                    display.SetContrast((float)(i / 10f));
-                    Thread.Sleep(250);
-                }
+            display.ClearLines();
+            Thread.Sleep(2000);
 
-                display.WriteLine($"Count is : {count++}", 1);
-                Thread.Sleep(1000);
-            } */
+            display.WriteLine("Cursor test", 0);
+
+            for (int i = 0; i < display.DisplayConfig.Width; i++)
+            {
+                display.SetCursorPosition((byte)i, 1);
+                display.Write("*");
+                Thread.Sleep(100);
+                display.SetCursorPosition((byte)i, 1);
+                display.Write(" ");
+            }
+
+            display.ClearLines();
+            display.WriteLine("Complete!", 0);
         }
     }
 }

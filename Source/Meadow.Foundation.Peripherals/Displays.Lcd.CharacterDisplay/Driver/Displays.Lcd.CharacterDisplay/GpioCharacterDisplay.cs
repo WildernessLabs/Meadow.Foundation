@@ -206,7 +206,7 @@ namespace Meadow.Foundation.Displays.Lcd
         {
             string screentText = text;
 
-            if (screentText.Length + (int)cursorColumn > DisplayConfig.Width)
+            if (screentText.Length + cursorColumn > DisplayConfig.Width)
             {
                 screentText = screentText.Substring(0, DisplayConfig.Width - cursorColumn);
             }
