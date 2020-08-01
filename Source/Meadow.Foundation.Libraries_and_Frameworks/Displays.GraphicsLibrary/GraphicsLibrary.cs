@@ -558,6 +558,54 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        public void DrawCircleQuadrant(int centerX, int centerY, int quadrant, int radius, Color color, bool centerBetweenPixels)
+        {
+            if(quadrant < 0 || quadrant > 3) { throw new ArgumentOutOfRangeException("DrawCircleQuadrant: quadrant must be between 0 & 3 inclusive");  }
+
+            display.SetPenColor(color);
+
+            var d = 3 - 2 * radius; // (5 - (radius * 4)) / 4;
+            var x = 0;
+            var y = radius;
+
+            int offset = centerBetweenPixels ? 1 : 0;
+
+            while (x <= y)
+            {
+                switch(quadrant)
+                {
+                    case 0:
+                        DrawPixel(centerX + x - offset, centerY + y - offset);
+                        DrawPixel(centerX + y - offset, centerY + x - offset);
+                        break;
+                    case 1:
+                        DrawPixel(centerX - y, centerY + x - offset);
+                        DrawPixel(centerX - x, centerY + y - offset);
+                        break;
+                    case 2:
+                        DrawPixel(centerX - x, centerY - y);
+                        DrawPixel(centerX - y, centerY - x);
+                        break;
+                    case 3:
+                        DrawPixel(centerX + x - offset, centerY - y);
+                        DrawPixel(centerX + y - offset, centerY - x);
+                        break;
+                }
+
+                if (d < 0)
+                {
+                    d += (2 * x) + 1;
+                }
+                else
+                {
+                    d += (2 * (x - y)) + 1;
+                    y--;
+                }
+                x++;
+            }
+        }
+
+
         private void DrawCircleOutline(int centerX, int centerY, int radius, bool centerBetweenPixels)
         {
             //I prefer the look of the original Bresenham’s decision param calculation
