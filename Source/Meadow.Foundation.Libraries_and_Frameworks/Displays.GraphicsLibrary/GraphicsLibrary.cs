@@ -558,12 +558,71 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        public void DrawCircleQuadrant(int centerX, int centerY, int quadrant, int radius, Color color, bool centerBetweenPixels)
+        public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
-            if(quadrant < 0 || quadrant > 3) { throw new ArgumentOutOfRangeException("DrawCircleQuadrant: quadrant must be between 0 & 3 inclusive");  }
+            if (quadrant < 0 || quadrant > 3) { throw new ArgumentOutOfRangeException("DrawCircleQuadrant: quadrant must be between 0 & 3 inclusive"); }
 
             display.SetPenColor(color);
 
+            if (filled)
+            {
+                DrawCircleQuadrantFilled(centerX, centerY, radius, quadrant, centerBetweenPixels);
+            }
+            else
+            {
+                int offset = Stroke / 2;
+
+                for (int i = 0; i < Stroke; i++)
+                {
+                    DrawCircleQuadrantOutline(centerX, centerY, radius - offset + i, quadrant, centerBetweenPixels);
+                }
+            }
+        }
+
+        private void DrawCircleQuadrantFilled(int centerX, int centerY, int radius, int quadrant, bool centerBetweenPixels = false)
+        {
+            var d = 3 - 2 * radius;
+            var x = 0;
+            var y = radius;
+
+            int offset = centerBetweenPixels ? 1 : 0;
+
+            while (x <= y)
+            {
+                switch (quadrant)
+                {
+                    case 0:
+                        DrawLine(centerX + x - offset, centerY + y - offset, centerX - offset, centerY + y - offset);
+                        DrawLine(centerX + y - offset, centerY + x - offset, centerX - offset, centerY + x - offset);
+                        break;
+                    case 1:
+                        DrawLine(centerX - y, centerY + x - offset, centerX, centerY + x - offset);
+                        DrawLine(centerX - x, centerY + y - offset, centerX, centerY + y - offset);
+                        break;
+                    case 2:
+                        DrawLine(centerX - x, centerY - y, centerX, centerY - y);
+                        DrawLine(centerX - y, centerY - x, centerX, centerY - x);
+                        break;
+                    case 3:
+                        DrawLine(centerX + x - offset, centerY - y, centerX - offset, centerY - y);
+                        DrawLine(centerX + y - offset, centerY - x, centerX - offset, centerY - x);
+                        break;
+                }
+                if (d < 0)
+                {
+                    d += (2 * x) + 1;
+                }
+                else
+                {
+                    d += (2 * (x - y)) + 1;
+                    y--;
+                }
+                x++;
+            }
+        }
+
+        private void DrawCircleQuadrantOutline(int centerX, int centerY, int radius, int quadrant, bool centerBetweenPixels = false)
+        {
             var d = 3 - 2 * radius; // (5 - (radius * 4)) / 4;
             var x = 0;
             var y = radius;

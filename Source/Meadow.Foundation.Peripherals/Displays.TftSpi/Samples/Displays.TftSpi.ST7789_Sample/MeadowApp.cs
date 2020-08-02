@@ -22,6 +22,9 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
+                QuadrantTest();
+                Thread.Sleep(5000);
+
                 StrokeTest();
                 Thread.Sleep(5000);
 
@@ -57,6 +60,18 @@ namespace Displays.Tft.ST7789_Sample
             Console.WriteLine("Create graphics lib");
 
             graphics = new GraphicsLibrary(display);
+        }
+
+        void QuadrantTest()
+        {
+            graphics.Clear();
+
+            graphics.DrawCircleQuadrant(120, 120, 110, 0, Color.Yellow, true);
+            graphics.DrawCircleQuadrant(120, 120, 110, 1, Color.Blue, true);
+            graphics.DrawCircleQuadrant(120, 120, 110, 2, Color.Cyan, true);
+            graphics.DrawCircleQuadrant(120, 120, 110, 3, Color.LawnGreen, true);
+
+            graphics.Show();
         }
 
         void CircleTest()
