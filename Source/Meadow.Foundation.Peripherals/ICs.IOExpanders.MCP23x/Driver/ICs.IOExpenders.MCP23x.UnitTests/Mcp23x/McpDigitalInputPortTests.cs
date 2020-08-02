@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x
 {
-    public class DigitalInputPortTests
+    public class McpDigitalInputPortTests
     {
         private static McpDigitalInputPort CreateInputPort(
             Mock<IMcp23x> mcpMock = null,
@@ -138,7 +138,6 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x
         public void ConstructorThrowsIfPinIsFromDifferentController()
         {
             var ports = new Mcp23xPorts(new McpGpioPort(), new McpGpioPort());
-            var portIndex = 0;
             var pin = new McpGpioPort().GP1;
 
             Assert.Throws<ArgumentException>(() => CreateInputPort(ports: ports, pin: pin));

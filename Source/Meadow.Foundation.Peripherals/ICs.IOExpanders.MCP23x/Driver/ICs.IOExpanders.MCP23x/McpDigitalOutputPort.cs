@@ -12,24 +12,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
         internal McpDigitalOutputPort(
             IMcp23x mcpController,
             IPin pin,
-            int port,
             bool initialState = false,
             OutputType outputType = OutputType.OpenDrain)
             : base(pin, (IDigitalChannelInfo) pin.SupportedChannels[0], initialState, outputType)
         {
             _mcp = mcpController;
-
-            // verify mcp, pin and port are valid
-            // allows us to use private methods on _mcp
-            if (port < 0 || port >= _mcp.Ports.Count)
-            {
-                throw new ArgumentOutOfRangeException(nameof(port));
-            }
-
-            if (!_mcp.Ports[port].AllPins.Contains(Pin))
+            if (!_mcp.Ports.AllPins.Contains(Pin))
             {
                 throw new ArgumentException("Pin does not belong to mcp controller.");
             }
+
+            _mcp.WritePin(Pin, initialState);
         }
 
         public override bool State
@@ -48,7 +41,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             // TODO: we should consider moving this logic to the finalizer
             // but the problem with that is that we don't know when it'll be called

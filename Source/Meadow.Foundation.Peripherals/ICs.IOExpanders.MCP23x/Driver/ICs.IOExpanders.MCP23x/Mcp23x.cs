@@ -231,7 +231,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SetPortDirection(port, (byte) pin.Key, PortDirectionType.Output);
 
             // create the convenience class
-            return new McpDigitalOutputPort(this, pin, port, initialState, outputType);
+            return new McpDigitalOutputPort(this, pin, initialState, outputType);
         }
 
 
