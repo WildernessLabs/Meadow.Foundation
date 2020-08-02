@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public class Mcp23x08 : Mcp23x, IMcp23x08
     {
         /// <inheritdoc />
-        public McpGpioPort Pins => Ports[0];
+        public IMcpGpioPort Pins => Ports[0];
 
         /// <inheritdoc />
         public byte ReadPort()

@@ -200,7 +200,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             double glitchDuration = 0)
         {
             // Will throw if pin is not valid for this device.
-            var port = Ports.GetPortIndexOfPin(pin);
+            Ports.GetPortIndexOfPin(pin);
 
             if (resistorMode == ResistorMode.PullDown)
             {
@@ -210,7 +210,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             var enablePullUp = resistorMode == ResistorMode.PullUp;
             ConfigureInputPort(pin, enablePullUp, interruptMode);
-            var inputPort = new McpDigitalInputPort(this, pin, port, interruptMode);
+            var inputPort = new McpDigitalInputPort(this, pin, interruptMode);
 
             // TODO: Determine if this is needed
             // _inputPorts.Add(pin, port);

@@ -7,12 +7,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The list of pins available on the Port A of the MCP23x17.
         /// </summary>
-        McpGpioPort PortAPins { get; }
+        IMcpGpioPort PortAPins { get; }
 
         /// <summary>
         /// The list of pins available on the Port B of the MCP23x17.
         /// </summary>
-        McpGpioPort PortBPins { get; }
+        IMcpGpioPort PortBPins { get; }
 
         /// <summary>
         /// Reads a byte value from all pins on all ports.
@@ -33,7 +33,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="port"></param>
         /// <returns>A little-endian byte mask of the pin values.</returns>
-        byte ReadPort(McpGpioPort port);
+        byte ReadPort(IMcpGpioPort port);
 
         /// <summary>
         /// Reads a byte value from all of the pins on the specified port.
@@ -76,7 +76,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="port"></param>
         /// <param name="mask"></param>
-        void WritePort(McpGpioPort port, byte mask);
+        void WritePort(IMcpGpioPort port, byte mask);
 
         /// <summary>
         /// Outputs a byte value across all pins of the specified port by writing directly

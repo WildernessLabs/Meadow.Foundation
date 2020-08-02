@@ -20,14 +20,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public int Count => AllPins.Count;
 
-        public McpGpioPort this[int index] => _ports[index];
+        public IMcpGpioPort this[int index] => _ports[index];
 
-        public IEnumerator<McpGpioPort> GetEnumerator()
+        public IEnumerator<IMcpGpioPort> GetEnumerator()
         {
             return (IEnumerator<McpGpioPort>)_ports.GetEnumerator();
         }
 
-        public int GetPortIndex(McpGpioPort port)
+        public int GetPortIndex(IMcpGpioPort port)
         {
             if (port == this)
             {
@@ -50,7 +50,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new ArgumentException("Pin is not from this port set", nameof(pin));
         }
 
-        public McpGpioPort GetPortOfPin(IPin pin)
+        public IMcpGpioPort GetPortOfPin(IPin pin)
         {
             return this[GetPortIndexOfPin(pin)];
         }

@@ -4,10 +4,14 @@ using System.Runtime.CompilerServices;
 using Meadow.Hardware;
 
 [assembly: InternalsVisibleTo("ICs.IOExpenders.MCP23x.UnitTests")]
+
 namespace Meadow.Foundation.ICs.IOExpanders.Ports
 {
-    public class McpGpioPort : IPinDefinitions
+    public class McpGpioPort : IMcpGpioPort
     {
+        /// <inheritdoc />
+        public event EventHandler<IOExpanderPortInputChangedEventArgs> InputChanged = delegate { };
+
         public McpGpioPort(string namePrefix = "GP")
         {
             if (namePrefix == null)
@@ -60,20 +64,9 @@ namespace Meadow.Foundation.ICs.IOExpanders.Ports
 
         public IList<IPin> AllPins { get; }
 
-        /// <summary>
-        /// Raised when the value of a pin configured for input changes. Use in
-        /// conjunction with parallel port reads via ReadFromPorts(). When using
-        /// individual `DigitalInputPort` objects, each one will have their own
-        /// `Changed` event
-        /// </summary>
-        // TODO: make a custom event args that has the pin that triggered
-        public event EventHandler<IOExpanderPortInputChangedEventArgs> InputChanged = delegate { };
 
-        /// <summary>
-        /// Invoke the input changed event. Called from <see cref="Mcp23x"/>.
-        /// </summary>
-        /// <param name="e"></param>
-        internal void InvokeInputChanged(IOExpanderPortInputChangedEventArgs e)
+        /// <inheritdoc />
+        public void InvokeInputChanged(IOExpanderPortInputChangedEventArgs e)
         {
             if (e == null)
             {

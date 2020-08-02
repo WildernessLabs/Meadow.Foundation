@@ -7,7 +7,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The list of pins available on the Mcp23x08
         /// </summary>
-        McpGpioPort Pins { get; }
+        IMcpGpioPort Pins { get; }
 
         /// <summary>
         /// Reads a byte value from all of the pins. little-endian; the least

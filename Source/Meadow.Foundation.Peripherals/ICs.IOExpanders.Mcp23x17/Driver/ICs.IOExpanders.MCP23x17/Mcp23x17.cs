@@ -12,10 +12,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public class Mcp23x17 : Mcp23x, IMcp23x17
     {
         /// <inheritdoc />
-        public McpGpioPort PortAPins => Ports[0];
+        public IMcpGpioPort PortAPins => Ports[0];
 
         /// <inheritdoc />
-        public McpGpioPort PortBPins => Ports[1];
+        public IMcpGpioPort PortBPins => Ports[1];
 
         /// <inheritdoc />
         public (byte portA, byte portB) ReadAllPorts()
@@ -39,7 +39,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <inheritdoc />
-        public byte ReadPort(McpGpioPort port)
+        public byte ReadPort(IMcpGpioPort port)
         {
             // throws if port is not a member of Ports
             var portIndex = Ports.GetPortIndex(port);
@@ -98,7 +98,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <inheritdoc />
-        public void WritePort(McpGpioPort port, byte mask)
+        public void WritePort(IMcpGpioPort port, byte mask)
         {
             // throws if port is not a member of Ports
             var portIndex = Ports.GetPortIndex(port);
