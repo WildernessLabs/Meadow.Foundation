@@ -22,6 +22,9 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
+                RoundRectTest();
+                Thread.Sleep(5000);
+
                 QuadrantTest();
                 Thread.Sleep(5000);
 
@@ -60,6 +63,17 @@ namespace Displays.Tft.ST7789_Sample
             Console.WriteLine("Create graphics lib");
 
             graphics = new GraphicsLibrary(display);
+        }
+
+        void RoundRectTest()
+        {
+            graphics.Clear();
+
+            graphics.DrawRoundedRectangle(10, 10, 200, 200, 20, Color.Red, false);
+
+            graphics.DrawRoundedRectangle(40, 40, 100, 100, 20, Color.Blue, true);
+
+            graphics.Show();
         }
 
         void QuadrantTest()

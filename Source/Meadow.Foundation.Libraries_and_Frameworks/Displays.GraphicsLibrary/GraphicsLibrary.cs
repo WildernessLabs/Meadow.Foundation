@@ -1,6 +1,7 @@
 ﻿using Meadow.Foundation.Displays;
 using Meadow.Peripherals.Displays;
 using System;
+using System.Xml.Linq;
 
 namespace Meadow.Foundation.Graphics
 {
@@ -558,6 +559,11 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, bool colored = true, bool filled = false, bool centerBetweenPixels = false)
+        {
+            DrawCircleQuadrant(centerX, centerY, radius, quadrant, (colored ? Color.White : Color.Black), filled, centerBetweenPixels);
+        }
+
         public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
             if (quadrant < 0 || quadrant > 3) { throw new ArgumentOutOfRangeException("DrawCircleQuadrant: quadrant must be between 0 & 3 inclusive"); }
@@ -591,19 +597,19 @@ namespace Meadow.Foundation.Graphics
             {
                 switch (quadrant)
                 {
-                    case 0:
+                    case 3:
                         DrawLine(centerX + x - offset, centerY + y - offset, centerX - offset, centerY + y - offset);
                         DrawLine(centerX + y - offset, centerY + x - offset, centerX - offset, centerY + x - offset);
                         break;
-                    case 1:
+                    case 2:
                         DrawLine(centerX - y, centerY + x - offset, centerX, centerY + x - offset);
                         DrawLine(centerX - x, centerY + y - offset, centerX, centerY + y - offset);
                         break;
-                    case 2:
+                    case 1:
                         DrawLine(centerX - x, centerY - y, centerX, centerY - y);
                         DrawLine(centerX - y, centerY - x, centerX, centerY - x);
                         break;
-                    case 3:
+                    case 0:
                         DrawLine(centerX + x - offset, centerY - y, centerX - offset, centerY - y);
                         DrawLine(centerX + y - offset, centerY - x, centerX - offset, centerY - x);
                         break;
@@ -633,19 +639,19 @@ namespace Meadow.Foundation.Graphics
             {
                 switch(quadrant)
                 {
-                    case 0:
+                    case 3:
                         DrawPixel(centerX + x - offset, centerY + y - offset);
                         DrawPixel(centerX + y - offset, centerY + x - offset);
                         break;
-                    case 1:
+                    case 2:
                         DrawPixel(centerX - y, centerY + x - offset);
                         DrawPixel(centerX - x, centerY + y - offset);
                         break;
-                    case 2:
+                    case 1:
                         DrawPixel(centerX - x, centerY - y);
                         DrawPixel(centerX - y, centerY - x);
                         break;
-                    case 3:
+                    case 0:
                         DrawPixel(centerX + x - offset, centerY - y);
                         DrawPixel(centerX + y - offset, centerY - x);
                         break;
@@ -663,7 +669,6 @@ namespace Meadow.Foundation.Graphics
                 x++;
             }
         }
-
 
         private void DrawCircleOutline(int centerX, int centerY, int radius, bool centerBetweenPixels)
         {
@@ -786,6 +791,47 @@ namespace Meadow.Foundation.Graphics
                 DrawLine(xLeft + width, yTop, xLeft + width, yTop + height, color);
                 DrawLine(xLeft + width, yTop + height, xLeft, yTop + height, color);
                 DrawLine(xLeft, yTop, xLeft, yTop + height, color);
+            }
+        }
+
+        public void DrawRoundedRectangle(int xLeft, int yTop, int width, int height, int cornerRadius, Color color, bool filled = false)
+        {
+            if(cornerRadius < 0) { throw new ArgumentOutOfRangeException("Radius must be positive"); }
+
+            if(cornerRadius == 0)
+            {
+                DrawRectangle(xLeft, yTop, width, height, color, filled);
+                return;
+            }
+
+            display.SetPenColor(color);
+
+            if (filled)
+            {
+                DrawCircleQuadrant(xLeft + width - cornerRadius - 1, yTop + cornerRadius, cornerRadius, 0, color, true);
+                DrawCircleQuadrant(xLeft + cornerRadius, yTop + cornerRadius, cornerRadius, 1, color, true);
+
+                DrawCircleQuadrant(xLeft + cornerRadius, yTop + height - cornerRadius - 1, cornerRadius, 2, color, true);
+                DrawCircleQuadrant(xLeft + width - cornerRadius - 1, yTop + height - cornerRadius - 1, cornerRadius, 3, color, true);
+
+                DrawRectangle(xLeft, yTop + cornerRadius, width, height - 2 * cornerRadius, color, filled);
+                DrawRectangle(xLeft + cornerRadius, yTop, width - 2 * cornerRadius, height, color, filled);
+            }
+            else
+            {
+                //corners
+                DrawCircleQuadrant(xLeft + width - cornerRadius - 1, yTop + cornerRadius, cornerRadius, 0, color, false);
+                DrawCircleQuadrant(xLeft + cornerRadius, yTop + cornerRadius, cornerRadius, 1, color, false);
+
+                DrawCircleQuadrant(xLeft + cornerRadius, yTop + height - cornerRadius - 1, cornerRadius, 2, color, false);
+                DrawCircleQuadrant(xLeft + width - cornerRadius - 1, yTop + height - cornerRadius - 1, cornerRadius, 3, color, false);
+
+                //lines
+                DrawLine(xLeft + cornerRadius, yTop, xLeft + width - cornerRadius, yTop);
+                DrawLine(xLeft + cornerRadius, yTop + height, xLeft + width - cornerRadius, yTop + height);
+              //  DrawLine(xLeft + cornerRadius, yTop, xLeft + width - cornerRadius, yTop);
+              //  DrawLine(xLeft + cornerRadius, yTop + height, xLeft + width - cornerRadius, yTop + height);
+
             }
         }
 
