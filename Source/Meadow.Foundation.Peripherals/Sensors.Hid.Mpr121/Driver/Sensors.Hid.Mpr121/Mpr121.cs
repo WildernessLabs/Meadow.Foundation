@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using static Meadow.Foundation.Hid.Mpr121;
+using static Meadow.Foundation.Sensors.Hid.Mpr121;
 
-namespace Meadow.Foundation.Hid
+namespace Meadow.Foundation.Sensors.Hid
 {
     public partial class Mpr121
     {

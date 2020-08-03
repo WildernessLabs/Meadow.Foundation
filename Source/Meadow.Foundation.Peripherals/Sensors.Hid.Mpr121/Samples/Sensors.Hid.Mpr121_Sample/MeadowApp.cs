@@ -1,7 +1,7 @@
 ﻿using System;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Hid;
+using Meadow.Foundation.Sensors.Hid;
 
 namespace Sensors.Distance.Mpr121_Sample
 {

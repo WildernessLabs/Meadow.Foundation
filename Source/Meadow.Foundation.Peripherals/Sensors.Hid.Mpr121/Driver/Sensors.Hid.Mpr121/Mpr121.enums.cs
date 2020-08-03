@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Meadow.Foundation.Hid
+namespace Meadow.Foundation.Sensors.Hid
 {
     public partial class Mpr121
     {

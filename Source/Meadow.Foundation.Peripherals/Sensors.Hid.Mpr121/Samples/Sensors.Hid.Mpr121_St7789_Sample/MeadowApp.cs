@@ -3,7 +3,7 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Hid;
+using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
 
 namespace Sensors.Distance.Mpr121_Sample
