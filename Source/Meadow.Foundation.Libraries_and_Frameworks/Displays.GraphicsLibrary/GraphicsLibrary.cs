@@ -167,6 +167,20 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        ///     Draw a line using polar coordinates
+        /// </summary>
+        /// <remarks>
+        /// <param name="x">Abscissa of the starting point of the line</param>
+        /// <param name="y">Ordinate of the starting point of the line</param>
+        /// <param name="radius">Lenth of line.</param>
+        /// <param name="angle">Angle in radians</param>
+        /// <param name="colored">Turn the pixel on (true) or off (false).</param>
+        public void DrawLine(int x, int y, int radius, float angle, bool colored)
+        {
+            DrawLine(x, y, radius, angle, (colored ? Color.White : Color.Black));
+        }
+
+        /// <summary>
         ///     Draw a line using Bresenhams line drawing algorithm.
         /// </summary>
         /// <remarks>
@@ -213,6 +227,15 @@ namespace Meadow.Foundation.Graphics
         private bool IsTallerThanWide(int x0, int y0, int x1, int y1)
         {
             return Math.Abs(x0 - x1) < Math.Abs(y0 - y1);
+        }
+
+        //angle in radians 
+        public void DrawLine(int x, int y, int radius, float angle, Color color)
+        {
+            int x2 = (int)(radius * MathF.Cos(angle)) + x;
+            int y2 = y - (int)(radius * MathF.Sin(angle));
+
+            DrawLine(x, y, x2, y2, color);
         }
 
         private void DrawLine(int x0, int y0, int x1, int y1)
@@ -827,11 +850,11 @@ namespace Meadow.Foundation.Graphics
                 DrawCircleQuadrant(xLeft + width - cornerRadius - 1, yTop + height - cornerRadius - 1, cornerRadius, 3, color, false);
 
                 //lines
-                DrawLine(xLeft + cornerRadius, yTop, xLeft + width - cornerRadius, yTop);
+                DrawLine(xLeft + cornerRadius, yTop - 1, xLeft + width - cornerRadius, yTop - 1);
                 DrawLine(xLeft + cornerRadius, yTop + height, xLeft + width - cornerRadius, yTop + height);
-              //  DrawLine(xLeft + cornerRadius, yTop, xLeft + width - cornerRadius, yTop);
-              //  DrawLine(xLeft + cornerRadius, yTop + height, xLeft + width - cornerRadius, yTop + height);
 
+                DrawLine(xLeft, yTop + cornerRadius, xLeft, yTop + height - cornerRadius);
+                DrawLine(xLeft + width - 1, yTop + cornerRadius, xLeft + width - 1, yTop + height - cornerRadius);
             }
         }
 

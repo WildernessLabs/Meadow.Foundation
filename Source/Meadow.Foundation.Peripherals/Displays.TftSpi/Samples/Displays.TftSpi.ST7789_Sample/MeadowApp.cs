@@ -22,6 +22,9 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
+                PolarLineTest();
+                Thread.Sleep(5000);
+
                 RoundRectTest();
                 Thread.Sleep(5000);
 
@@ -65,13 +68,30 @@ namespace Displays.Tft.ST7789_Sample
             graphics = new GraphicsLibrary(display);
         }
 
+        void PolarLineTest()
+        {
+            graphics.Clear();
+            graphics.Stroke = 1;
+
+            for (int i = 0; i < 270; i+= 12)
+            {
+                graphics.DrawLine(120, 120, 80, (float)(i * Math.PI / 180), Color.White);
+            }
+
+            graphics.Show();
+        }
+
         void RoundRectTest()
         {
             graphics.Clear();
 
-            graphics.DrawRoundedRectangle(10, 10, 200, 200, 20, Color.Red, false);
+            graphics.Stroke = 1;
 
-            graphics.DrawRoundedRectangle(40, 40, 100, 100, 20, Color.Blue, true);
+            graphics.DrawRoundedRectangle(10, 10, 200, 200, 20, Color.Orange, false);
+
+            graphics.DrawRoundedRectangle(40, 40, 100, 60, 20, Color.Blue, true);
+
+            graphics.DrawRoundedRectangle(100, 70, 60, 60, 20, Color.LawnGreen, true);
 
             graphics.Show();
         }
