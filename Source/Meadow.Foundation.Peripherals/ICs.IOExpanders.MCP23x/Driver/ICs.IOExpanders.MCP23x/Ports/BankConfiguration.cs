@@ -11,9 +11,9 @@
     public enum BankConfiguration : byte
     {
         /// <summary>
-        /// The A/B registers are paired. For example (for the MCP23x17), IODIRA is mapped to address 00h and IODIRB is mapped to
+        /// The A/B registers are paired. For example (for the MCP23x17), IODIRA is mapped to address 0x00 and IODIRB is mapped to
         /// the next address
-        /// (address 01h).
+        /// (address 0x01).
         /// </summary>
         /// <remarks>
         /// Paired is ideal when you expect to read all GPIO ports at once and will result in faster reads.
@@ -23,7 +23,7 @@
 
         /// <summary>
         /// The registers associated with each port are segregated. (For the MCP23x17), registers associated with PORTA are mapped
-        /// from address 00h - 0Ah and registers associated with PORTB are mapped from 10h - 1Ah
+        /// from address 0x00 - 0x0A and registers associated with PORTB are mapped from 0x10 - 0x1A
         /// </summary>
         /// <remarks>
         /// Segregated is ideal for reading inputs from single GPIO ports and will result in faster reads in this case.
