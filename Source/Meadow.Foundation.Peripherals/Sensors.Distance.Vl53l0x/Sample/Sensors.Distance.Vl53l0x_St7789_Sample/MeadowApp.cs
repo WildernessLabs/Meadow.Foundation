@@ -28,7 +28,7 @@ namespace Sensors.Distance.Vl53l0x_St7789_Sample
 
             Console.WriteLine("Create Spi bus");
 
-            var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode3);
+            var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode3);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             Console.WriteLine("Create display driver instance");
@@ -65,10 +65,9 @@ namespace Sensors.Distance.Vl53l0x_St7789_Sample
 
             Console.WriteLine($"{e.New.Distance.Value}mm");
 
-            graphics.DrawRectangle(0, 0, 100, 13, Color.Black, true);
-            graphics.DrawText(0, 0, $"{e.New.Distance.Value}mm", Color.White);
+            graphics.DrawRectangle(0, 0, 135, 33, Color.Black, true);
+            graphics.DrawText(0, 0, $"{e.New.Distance.Value}mm", Color.White, GraphicsLibrary.ScaleFactor.X2);
             graphics.Show();
-
         }
     }
 }

@@ -812,6 +812,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Mpr121_Sample",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Mpr121_St7789_Sample", "Meadow.Foundation.Peripherals\Sensors.Hid.Mpr121\Samples\Sensors.Hid.Mpr121_St7789_Sample\Sensors.Hid.Mpr121_St7789_Sample.csproj", "{FF40FFCF-285F-4CE2-950F-E4C4042DCE6D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.Vl53l0x_Radar_Sample", "Meadow.Foundation.Peripherals\Sensors.Distance.Vl53l0x\Sample\Sensors.Distance.Vl53l0x_Radar_Sample\Sensors.Distance.Vl53l0x_Radar_Sample.csproj", "{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1804,6 +1806,10 @@ Global
 		{FF40FFCF-285F-4CE2-950F-E4C4042DCE6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF40FFCF-285F-4CE2-950F-E4C4042DCE6D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FF40FFCF-285F-4CE2-950F-E4C4042DCE6D}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2206,6 +2212,7 @@ Global
 		{A7EF3C95-3DEF-4A14-9E64-29E30CE0BB3F} = {89C8FCEF-B6F5-4B9D-9010-F224262BD28A}
 		{FF019156-8C03-4D25-9D83-ED668F501321} = {B12E28B5-B206-43CC-8597-E0D013EB3889}
 		{FF40FFCF-285F-4CE2-950F-E4C4042DCE6D} = {B12E28B5-B206-43CC-8597-E0D013EB3889}
+		{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A} = {89C8FCEF-B6F5-4B9D-9010-F224262BD28A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
