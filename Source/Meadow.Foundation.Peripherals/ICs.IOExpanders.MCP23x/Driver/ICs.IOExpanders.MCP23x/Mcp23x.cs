@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Meadow.Foundation.ICs.IOExpanders.Device;
 using Meadow.Foundation.ICs.IOExpanders.Ports;
@@ -54,7 +53,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected readonly byte[] OlatState;
 
         /// <summary>
-        /// Use this lock whenever reading/writing _bank
+        /// Use this lock whenever reading/writing BankConfiguration
         /// </summary>
         private readonly object _bankLock = new object();
 
@@ -71,15 +70,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Current state of the configuration register (IOCON)
         /// </summary>
-        protected byte IoconState;
+        protected byte IoconState { get; private set; }
 
         /// <summary>
         /// The currently configured bank mode.
         /// </summary>
         /// <remarks>
-        /// Use <see cref="SetBankConfigurationInternal" /> to change this value.
+        /// Use <see cref="SetBankConfiguration" /> to change this value.
         /// </remarks>
-        private BankConfiguration _bank;
+        protected BankConfiguration BankConfiguration { get; private set; }
 
         /// <inheritdoc />
         public event EventHandler<IOExpanderMultiPortInputChangedEventArgs> InputChanged = delegate { };
@@ -107,7 +106,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             if (!ports.Any() || ports.Any(p => p == null))
             {
-                throw new ArgumentNullException(nameof(ports), "Ports cannot be null");
+                throw new ArgumentNullException(nameof(ports), "Ports cannot be null or empty.");
             }
 
             if (interrupts.Any(i => i == null))
@@ -129,10 +128,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     interrupts.Count,
                     "There can only be 0, 1 or N interrupts, where N is the number of GPIO Ports.");
             }
-
-
-            // Bank is initialized at 0 for all devices that support it.
-            _bank = BankConfiguration.Paired;
 
             // initialize all state tracking arrays with a length equal to the number of ports
             byte[] InitState(byte initialValue)
@@ -159,10 +154,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // This has no effect on MCP23x08 devices which only have one GPIO port.
             MirroredInterrupts = interrupts.Count == 1;
 
-            // TODO: more interrupt stuff to solve
-            // at a minimum, we need to doc in constructor
-            // what we expect from an interrupt port.
-            //this._interruptPort.InterruptMode = InterruptMode.EdgeRising;
             if (MirroredInterrupts)
             {
                 interrupts[0].Changed += HandleChangedInterrupts;
@@ -443,6 +434,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     // Do not modify as interrupts in this class are handled with the assumption that IOCON.Intpol is 1.
                     const bool interruptPolarity = true;
 
+                    BankConfiguration = bank;
                     IoconState = BitHelpers.SetBit(IoconState, 0x07, (byte)bank);
                     IoconState = BitHelpers.SetBit(IoconState, 0x06, mirror);
                     IoconState = BitHelpers.SetBit(IoconState, 0x05, sequentialOperation);
@@ -474,7 +466,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// When creating this instance an educated guess is made to set the optimal configuration
         /// based on how many interrupt ports were provided.
         /// </remarks>
-        protected void SetBankConfigurationInternal(BankConfiguration bank)
+        protected void SetBankConfiguration(BankConfiguration bank)
         {
             lock (ConfigurationLock)
             {
@@ -486,7 +478,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                     // All ports share the same IOCON, so just call port 0.
                     WriteRegister(Mcp23PortRegister.IOConfigurationRegister, 0, IoconState);
-                    _bank = bank;
+                    BankConfiguration = bank;
                 }
             }
         }
@@ -652,7 +644,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <returns>An array of bytes, one byte for each port, ordered by port.</returns>
         protected byte[] ReadFromAllPorts(Mcp23PortRegister register)
         {
-            return ReadRegisters(Enumerable.Range(0, Ports.Count).Select(port => (register, port)).ToArray());
+            if (Ports.Count == 1)
+            {
+                return new[] {ReadRegister(register, 0)};
+            }
+
+            var addresses = new (Mcp23PortRegister register, int port)[Ports.Count];
+            for (var i = 0; i < addresses.Length; i++)
+            {
+                addresses[i] = (register, port: i);
+            }
+
+            return ReadRegisters(addresses);
         }
 
         /// <summary>
@@ -682,20 +685,23 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // build the result array size
             for (var i = 0; i < Ports.Count; i++)
             {
-                result[1] = new byte[registers.Length];
+                result[i] = new byte[registers.Length];
             }
 
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
-                switch (_bank)
+                switch (BankConfiguration)
                 {
                     // In paired mode, sort the addresses by register then port
                     case BankConfiguration.Paired:
                         {
-                            var addresses = Enumerable.Range(0, registers.Length * Ports.Count)
-                                .Select(i => (register: registers[i / Ports.Count], port: i % Ports.Count))
-                                .ToArray();
+                            var addresses = new (Mcp23PortRegister register, int port)[registers.Length * Ports.Count];
+                            for (var i = 0; i < addresses.Length; i++)
+                            {
+                                addresses[i] = (register: registers[i / Ports.Count], port: i % Ports.Count);
+                            }
+
                             var read = ReadRegisters(addresses);
                             for (var i = 0; i < read.Length; i++)
                             {
@@ -706,9 +712,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     // In segregated mode, sort the addresses by port then register
                     case BankConfiguration.Segregated:
                         {
-                            var addresses = Enumerable.Range(0, registers.Length * Ports.Count)
-                                .Select(i => (register: registers[i % registers.Length], port: i / registers.Length))
-                                .ToArray();
+                            var addresses = new (Mcp23PortRegister register, int port)[registers.Length * Ports.Count];
+                            for (var i = 0; i < addresses.Length; i++)
+                            {
+                                addresses[i] = (register: registers[i % registers.Length], port: i / registers.Length);
+                            }
+
                             var read = ReadRegisters(addresses);
                             for (var i = 0; i < read.Length; i++)
                             {
@@ -717,7 +726,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         }
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(_bank));
+                        throw new ArgumentOutOfRangeException(nameof(BankConfiguration));
                 }
             }
 
@@ -735,7 +744,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
-                return _mcpDevice.ReadRegister(_registerMap.GetAddress(register, port, _bank));
+                return _mcpDevice.ReadRegister(_registerMap.GetAddress(register, port, BankConfiguration));
             }
         }
 
@@ -759,7 +768,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
-                // TODO: a lot ot unit testing
                 byte dataStartAddress = 0x00;
                 ushort dataStartIndex = 0;
                 for (ushort i = 0; i < addresses.Length; i++)
@@ -769,7 +777,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         throw new ArgumentOutOfRangeException(nameof(addresses), $"Port {addresses[i].port} is out of range");
                     }
 
-                    var nextAddress = _registerMap.GetAddress(addresses[i].register, addresses[i].port, _bank);
+                    var nextAddress = _registerMap.GetAddress(addresses[i].register, addresses[i].port, BankConfiguration);
                     if (i == 0)
                     {
                         dataStartAddress = nextAddress;
@@ -821,12 +829,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
-                // TODO: a lot ot unit testing
                 byte dataStartAddress = 0x00;
                 ushort dataStartIndex = 0;
                 for (ushort i = 0; i < registers.Length; i++)
                 {
-                    var nextAddress = _registerMap.GetAddress(registers[i], port, _bank);
+                    var nextAddress = _registerMap.GetAddress(registers[i], port, BankConfiguration);
                     if (i == 0)
                     {
                         dataStartAddress = nextAddress;
@@ -863,7 +870,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
-                _mcpDevice.WriteRegister(_registerMap.GetAddress(register, port, _bank), value);
+                _mcpDevice.WriteRegister(_registerMap.GetAddress(register, port, BankConfiguration), value);
             }
         }
 
@@ -879,12 +886,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
-                // TODO: a lot ot unit testing
                 byte dataStartAddress = 0x00;
                 ushort dataStartIndex = 0;
                 for (ushort i = 0; i < writeOps.Length; i++)
                 {
-                    var nextAddress = _registerMap.GetAddress(writeOps[i].register, writeOps[i].port, _bank);
+                    var nextAddress = _registerMap.GetAddress(writeOps[i].register, writeOps[i].port, BankConfiguration);
                     if (i == 0)
                     {
                         dataStartAddress = nextAddress;
@@ -932,7 +938,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 ushort dataStartIndex = 0;
                 for (ushort i = 0; i < writeOps.Length; i++)
                 {
-                    var nextAddress = _registerMap.GetAddress(writeOps[i].register, port, _bank);
+                    var nextAddress = _registerMap.GetAddress(writeOps[i].register, port, BankConfiguration);
                     if (i == 0)
                     {
                         dataStartAddress = nextAddress;
@@ -968,7 +974,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="value">The value to write</param>
         protected void WriteToAllPorts(Mcp23PortRegister register, byte value)
         {
-            WriteRegisters(Enumerable.Range(0, Ports.Count).Select(port => (register, port, value)).ToArray());
+            if (Ports.Count == 1)
+            {
+                WriteRegister(register, 0, value);
+                return;
+            }
+
+            var writeOps = new (Mcp23PortRegister register, int port, byte value)[Ports.Count];
+            for (var i = 0; i < writeOps.Length; i++)
+            {
+                writeOps[i] = (register, port: i, value);
+            }
+            WriteRegisters(writeOps);
         }
 
         /// <summary>
@@ -985,27 +1002,29 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
-                switch (_bank)
+                switch (BankConfiguration)
                 {
                     // In paired mode, sort the addresses by register then port
                     case BankConfiguration.Paired:
                         {
-                            var addresses = Enumerable.Range(0, writeOps.Length * Ports.Count)
-                                .Select(
-                                    i => (writeOps[i / Ports.Count].register, port: i % Ports.Count,
-                                        writeOps[i / Ports.Count].value))
-                                .ToArray();
+                            var addresses = new (Mcp23PortRegister register, int port, byte value)[writeOps.Length * Ports.Count];
+                            for (var i = 0; i < addresses.Length; i++)
+                            {
+                                addresses[i] = (writeOps[i / Ports.Count].register, port: i % Ports.Count,
+                                    writeOps[i / Ports.Count].value);
+                            }
                             WriteRegisters(addresses);
                             return;
                         }
                     // In segregated mode, sort the addresses by port then register
                     case BankConfiguration.Segregated:
                         {
-                            var addresses = Enumerable.Range(0, writeOps.Length * Ports.Count)
-                                .Select(
-                                    i => (writeOps[i % writeOps.Length].register, port: i / writeOps.Length,
-                                        writeOps[i % writeOps.Length].value))
-                                .ToArray();
+                            var addresses = new (Mcp23PortRegister register, int port, byte value)[writeOps.Length * Ports.Count];
+                            for (var i = 0; i < addresses.Length; i++)
+                            {
+                                addresses[i] = (writeOps[i % writeOps.Length].register, port: i / writeOps.Length,
+                                writeOps[i % writeOps.Length].value);
+                            }
                             WriteRegisters(addresses);
                             return;
                         }

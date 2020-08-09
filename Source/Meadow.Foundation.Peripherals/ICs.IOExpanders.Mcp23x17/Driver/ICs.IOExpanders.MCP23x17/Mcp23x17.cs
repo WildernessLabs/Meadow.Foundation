@@ -70,10 +70,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <inheritdoc />
-        public void SetBankConfiguration(BankConfiguration bank)
-        {
-            SetBankConfigurationInternal(bank);
-        }
+        public new void SetBankConfiguration(BankConfiguration bank) => base.SetBankConfiguration(bank);
 
         /// <inheritdoc />
         public void WriteAllPorts(byte portAMask, byte portBMask)
