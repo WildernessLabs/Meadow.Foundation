@@ -18,6 +18,8 @@ namespace MeadowApp
         Vl53l0x sensor;
         Servo servo;
 
+        float[] radarData = new float[180];
+
         public MeadowApp()
         {
             Initialize();
@@ -51,7 +53,7 @@ namespace MeadowApp
             Console.WriteLine("Create time of flight sensor");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
             sensor = new Vl53l0x(Device, i2cBus);
-            sensor.StartUpdating(100);
+            sensor.StartUpdating(200);
 
             Console.WriteLine("Create servo");
         }
@@ -60,6 +62,7 @@ namespace MeadowApp
         {
             int angle = 0;
             int increment = 2;
+            int x, y = 0;
 
             while (true)
             {
@@ -68,20 +71,42 @@ namespace MeadowApp
                 DrawRadar();
 
                 graphics.DrawLine(120, 120, 105, (float)(angle * Math.PI / 180), Color.Yellow);
-                angle += increment;
+                
                 if(angle >= 180) { increment = -2; }
                 if(angle <= 0) { increment = 2; }
 
+                angle += increment;
+
                 graphics.DrawText(0, 0, $"{180 - angle}°", Color.Yellow);
 
-                if (sensor?.Conditions?.Distance != null)
+                if (sensor?.Conditions?.Distance != null && sensor?.Conditions?.Distance.Value >= 0)
                 {
-                    graphics.DrawText(160, 0, $"{sensor.Conditions.Distance.Value}mm");
+                    graphics.DrawText(170, 0, $"{sensor.Conditions.Distance.Value}mm", Color.Yellow);
+                    radarData[angle] = sensor.Conditions.Distance.Value / 2;
+                }
+                else
+                {
+                    Console.WriteLine("no data");
+                    radarData[angle] = 0;
+                } 
+
+                for(int i = 0; i < 180; i++)
+                {
+                 /*   if(radarData[i] <= 0)
+                    {
+                        continue;
+                    } */ 
+
+                 //   radarData[i] = 90;
+
+                    x = 120 + (int)(radarData[i] * MathF.Cos(i * MathF.PI / 180f));
+                    y = 120 - (int)(radarData[i] * MathF.Sin(i * MathF.PI / 180f));
+                    graphics.DrawPixel(x, y, Color.Yellow);
                 }
 
                 graphics.Show();
 
-                Thread.Sleep(50);
+                Thread.Sleep(100);
             }
         }
 
