@@ -39,7 +39,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Ports
 
         public IEnumerator<IMcpGpioPort> GetEnumerator()
         {
-            return (IEnumerator<IMcpGpioPort>) _ports.GetEnumerator();
+            return ((IEnumerable<IMcpGpioPort>)_ports).GetEnumerator();
         }
 
         public int GetPortIndex(IMcpGpioPort port)

@@ -22,7 +22,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
 
         [Theory]
         [MemberData(nameof(MemberData))]
-        public void AllPortsInConstructorAreAccessible(McpGpioPort[] ports)
+        public void AllPortsInConstructorAreAccessible(IMcpGpioPort[] ports)
         {
             var portCollection = new Mcp23xPorts(ports);
 
@@ -36,7 +36,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
 
         [Theory]
         [MemberData(nameof(MemberData))]
-        public void AllPinsContainsAllPinsFromAllPorts(McpGpioPort[] ports)
+        public void AllPinsContainsAllPinsFromAllPorts(IMcpGpioPort[] ports)
         {
             var portCollection = new Mcp23xPorts(ports);
 
@@ -45,7 +45,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
 
         [Theory]
         [MemberData(nameof(MemberData))]
-        public void GetPortIndexReturnsCorrectIndex(McpGpioPort[] ports)
+        public void GetPortIndexReturnsCorrectIndex(IMcpGpioPort[] ports)
         {
             var portCollection = new Mcp23xPorts(ports);
 
@@ -57,7 +57,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
 
         [Theory]
         [MemberData(nameof(MemberData))]
-        public void GetPortIndexOfPinReturnsCorrectIndex(McpGpioPort[] ports)
+        public void GetPortIndexOfPinReturnsCorrectIndex(IMcpGpioPort[] ports)
         {
             var portCollection = new Mcp23xPorts(ports);
 
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
 
         [Theory]
         [MemberData(nameof(MemberData))]
-        public void GetPortOfPinReturnsCorrectIndex(McpGpioPort[] ports)
+        public void GetPortOfPinReturnsCorrectIndex(IMcpGpioPort[] ports)
         {
             var portCollection = new Mcp23xPorts(ports);
 
@@ -88,7 +88,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
 
         [Theory]
         [MemberData(nameof(MemberData))]
-        public void GetPortIndexThrowsIfPortIsNull(McpGpioPort[] ports)
+        public void GetPortIndexThrowsIfPortIsNull(IMcpGpioPort[] ports)
         {
             var portCollection = new Mcp23xPorts(ports);
 
@@ -97,7 +97,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
 
         [Theory]
         [MemberData(nameof(MemberData))]
-        public void GetPortIndexOfPinThrowsIfPinIsNull(McpGpioPort[] ports)
+        public void GetPortIndexOfPinThrowsIfPinIsNull(IMcpGpioPort[] ports)
         {
             var portCollection = new Mcp23xPorts(ports);
 
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
 
         [Theory]
         [MemberData(nameof(MemberData))]
-        public void GetPortOfPinThrowsIfPinIsNull(McpGpioPort[] ports)
+        public void GetPortOfPinThrowsIfPinIsNull(IMcpGpioPort[] ports)
         {
             var portCollection = new Mcp23xPorts(ports);
 
@@ -116,7 +116,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
 
         [Theory]
         [MemberData(nameof(MemberData))]
-        public void GetPortIndexThrowsIfPortIsUnknown(McpGpioPort[] ports)
+        public void GetPortIndexThrowsIfPortIsUnknown(IMcpGpioPort[] ports)
         {
             var portCollection = new Mcp23xPorts(ports);
             var unknownPort = new McpGpioPort("Unknown");
@@ -126,7 +126,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
 
         [Theory]
         [MemberData(nameof(MemberData))]
-        public void GetPortIndexOfPinThrowsIfPinIsUnknown(McpGpioPort[] ports)
+        public void GetPortIndexOfPinThrowsIfPinIsUnknown(IMcpGpioPort[] ports)
         {
             var portCollection = new Mcp23xPorts(ports);
             var unknownPin = new McpGpioPort("Unknown").GP0;
@@ -136,7 +136,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
 
         [Theory]
         [MemberData(nameof(MemberData))]
-        public void GetPortOfPinThrowsIfPinIsUnknown(McpGpioPort[] ports)
+        public void GetPortOfPinThrowsIfPinIsUnknown(IMcpGpioPort[] ports)
         {
             var portCollection = new Mcp23xPorts(ports);
             var unknownPin = new McpGpioPort("Unknown").GP0;
@@ -144,17 +144,28 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x.Ports
             Assert.Throws<ArgumentException>(() => portCollection.GetPortOfPin(unknownPin));
         }
 
+        [Theory]
+        [MemberData(nameof(MemberData))]
+        public void GetEnumeratorReturnsEnumerator(IMcpGpioPort[] ports)
+        {
+            var portCollection = new Mcp23xPorts(ports);
+
+            Assert.NotNull(portCollection.GetEnumerator());
+            Assert.True(portCollection.Any());
+        }
+
         [Fact]
         public void ConstructorThrowsIfAnyPortsAreNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new Mcp23xPorts(new McpGpioPort[] { null }));
+            Assert.Throws<ArgumentNullException>(() => new Mcp23xPorts(new IMcpGpioPort[] { null }));
         }
 
         [Fact]
         public void ConstructorThrowsIfPortsIsEmpty()
         {
+            var emptyPorts = new IMcpGpioPort[0];
             Assert.Throws<ArgumentException>(() => new Mcp23xPorts());
-            Assert.Throws<ArgumentException>(() => new Mcp23xPorts());
+            Assert.Throws<ArgumentException>(() => new Mcp23xPorts(emptyPorts));
         }
 
 

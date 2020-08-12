@@ -141,7 +141,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             IMcpDeviceComms mcpDeviceComms,
             IList<IDigitalInputPort> interrupts) : base(
             mcpDeviceComms,
-            new Mcp23xPorts(new McpGpioPort("GPA"), new McpGpioPort("GPB")),
+            new Mcp23x08Ports(), 
             Mcp23x08RegisterMap.Instance,
             interrupts)
         {

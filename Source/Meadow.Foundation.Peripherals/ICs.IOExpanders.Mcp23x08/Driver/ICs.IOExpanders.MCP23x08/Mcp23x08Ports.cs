@@ -8,11 +8,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public class Mcp23x08Ports : McpGpioPort, IMcpGpioPorts
     {
-        private readonly McpGpioPort[] _ports;
+        private readonly IMcpGpioPort[] _ports;
 
         internal Mcp23x08Ports()
         {
-            _ports = new McpGpioPort[]
+            _ports = new IMcpGpioPort[]
             {
                 this
             };
@@ -24,7 +24,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public IEnumerator<IMcpGpioPort> GetEnumerator()
         {
-            return (IEnumerator<McpGpioPort>)_ports.GetEnumerator();
+            return ((IEnumerable<IMcpGpioPort>)_ports).GetEnumerator();
         }
 
         public int GetPortIndex(IMcpGpioPort port)
