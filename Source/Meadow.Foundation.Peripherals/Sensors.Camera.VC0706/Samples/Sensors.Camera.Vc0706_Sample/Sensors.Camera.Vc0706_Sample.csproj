@@ -5,7 +5,12 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="SimpleJpegDecoder" Version="0.1.1" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
+    <ProjectReference Include="..\..\..\Displays.TftSpi\Driver\Displays.TftSpi\Displays.TftSpi.csproj" />
     <ProjectReference Include="..\..\Driver\Sensors.Camera.VC0706\Sensors.Camera.VC0706.csproj" />
   </ItemGroup>
 </Project>

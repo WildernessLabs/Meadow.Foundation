@@ -48,7 +48,7 @@ namespace Meadow.Foundation.Sensors.Camera
         static byte CAMERABUFFSIZE = 100;
         static byte CAMERADELAY = 10;
 
-        ISerialMessagePort serialPort;
+        ISerialPort serialPort;
 
         byte serialNum;
         byte[] camerabuff = new byte[CAMERABUFFSIZE + 1];
@@ -59,14 +59,13 @@ namespace Meadow.Foundation.Sensors.Camera
 
         public Vc0706(IIODevice device, SerialPortName portName, int baud)
         {
-            // serialPort = device.CreateSerialPort(portName, baud);
-          //  device.CreateSerialPort()
-            serialPort = device.CreateSerialMessagePort(
+             serialPort = device.CreateSerialPort(portName, baud);
+            /*serialPort = device.CreateSerialMessagePort(
                         portName: portName, 
                         suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                         baudRate: baud,
                         preserveDelimiter: true, 
-                        readBufferSize: 512);
+                        readBufferSize: 512);*/
             serialPort.Open();
 
             switch(baud)
@@ -96,7 +95,7 @@ namespace Meadow.Foundation.Sensors.Camera
             return RunCommand(VC0706_RESET, args, 1, 5);
         }
 
-        bool IsMotionDetected()
+        public bool IsMotionDetected()
         {
             if (ReadResponse(4) != 4)
             {
@@ -135,7 +134,7 @@ namespace Meadow.Foundation.Sensors.Camera
             return RunCommand(VC0706_COMM_MOTION_CTRL, args, (byte)args.Length, 5);
         }
 
-        bool GetMotionDetect()
+        public bool GetMotionDetect()
         {
             byte[] args = { 0x0 };
 
@@ -163,7 +162,7 @@ namespace Meadow.Foundation.Sensors.Camera
             return RunCommand(VC0706_WRITE_DATA, args, (byte)args.Length, 5);
         }
 
-        byte GetDownsize()
+        public byte GetDownsize()
         {
             byte[] args = { 0x0 };
             if (RunCommand(VC0706_DOWNSIZE_STATUS, args, 1, 6) == false)
@@ -253,17 +252,6 @@ namespace Meadow.Foundation.Sensors.Camera
             return true;
             //return (char*)camerabuff; // return it!
         }
-        void setBaud115200()
-        {
-            byte[] args = { 0x03, 0x01, 0x0D, 0xA6 };
-
-            SendCommand(VC0706_SET_PORT, args, (byte)args.Length);
-            // get reply
-            if (ReadResponse(CAMERABUFFSIZE) == 0)
-            { return; }
-            camerabuff[bufferLen] = 0; // end it!
-            //return (char*)camerabuff; // return it!
-        }
 
         void SetOnScreenDisplay(byte x, byte y, string str)
         {
@@ -307,14 +295,14 @@ namespace Meadow.Foundation.Sensors.Camera
             return RunCommand(VC0706_WRITE_DATA, args, (byte)args.Length, 5);
         }
 
-        byte GetCompression()
+        public byte GetCompression()
         {
             byte[] args = { 0x4, 0x1, 0x1, 0x12, 0x04 };
             RunCommand(VC0706_READ_DATA, args, (byte)args.Length, 6);
             PrintBuffer();
             return camerabuff[5];
         }
-        bool SetPanTiltZoom(ushort wz, ushort hz, ushort pan,
+        public bool SetPanTiltZoom(ushort wz, ushort hz, ushort pan,
                                         ushort tilt)
         {
             byte[] args = {0x08, 
@@ -326,7 +314,7 @@ namespace Meadow.Foundation.Sensors.Camera
             return (!RunCommand(VC0706_SET_ZOOM, args, (byte)args.Length, 5));
         }
 
-        Tuple<ushort, ushort, ushort, ushort, ushort, ushort> GetPanTiltZoom()
+        public Tuple<ushort, ushort, ushort, ushort, ushort, ushort> GetPanTiltZoom()
         {
             byte[] args = { 0x0 };
 
@@ -409,12 +397,12 @@ namespace Meadow.Foundation.Sensors.Camera
             return len;
         }
 
-        byte BytesAvailable()
+        public byte BytesAvailable()
         { 
             return bufferLen; 
         }
 
-        byte[] ReadPicture(byte n)
+        public byte[] ReadPicture(byte n)
         {
             byte[] args = {0x0C,
                     0x0,
@@ -472,9 +460,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
         void SendCommand(byte cmd, byte[] args = null, byte argn = 0)
         {
-            serialPort.Write(new byte[] { 0x56 });
-            serialPort.Write(new byte[] { serialNum });
-            serialPort.Write(new byte[] { cmd });
+            serialPort.Write(new byte[] { 0x56, serialNum, cmd });
 
             for (byte i = 0; i < argn; i++)
             {
@@ -502,7 +488,7 @@ namespace Meadow.Foundation.Sensors.Camera
                 counter = 0;
                 // there's a byte!
                 camerabuff[bufferLen++] = (byte)serialPort.ReadByte(); // hwSerial->read();
-                Console.WriteLine($"{avail}: A byte! {camerabuff[bufferLen - 1]}");
+                //Console.WriteLine($"{avail}: A byte! {camerabuff[bufferLen - 1]}");
             }
             return bufferLen;
         }
