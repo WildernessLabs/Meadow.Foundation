@@ -806,13 +806,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B12E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Mpr121", "Meadow.Foundation.Peripherals\Sensors.Hid.Mpr121\Driver\Sensors.Hid.Mpr121\Sensors.Hid.Mpr121.csproj", "{F51A3BAF-4318-4274-AFDF-8B68C0CFA07D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.Vl53l0x_St7789_Sample", "Meadow.Foundation.Peripherals\Sensors.Distance.Vl53l0x\Sample\Sensors.Distance.Vl53l0x_St7789_Sample\Sensors.Distance.Vl53l0x_St7789_Sample.csproj", "{A7EF3C95-3DEF-4A14-9E64-29E30CE0BB3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.Vl53l0x_St7789_Sample", "Meadow.Foundation.Peripherals\Sensors.Distance.Vl53l0x\Sample\Sensors.Distance.Vl53l0x_St7789_Sample\Sensors.Distance.Vl53l0x_St7789_Sample.csproj", "{A7EF3C95-3DEF-4A14-9E64-29E30CE0BB3F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Mpr121_Sample", "Meadow.Foundation.Peripherals\Sensors.Hid.Mpr121\Samples\Sensors.Hid.Mpr121_Sample\Sensors.Hid.Mpr121_Sample.csproj", "{FF019156-8C03-4D25-9D83-ED668F501321}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Mpr121_St7789_Sample", "Meadow.Foundation.Peripherals\Sensors.Hid.Mpr121\Samples\Sensors.Hid.Mpr121_St7789_Sample\Sensors.Hid.Mpr121_St7789_Sample.csproj", "{FF40FFCF-285F-4CE2-950F-E4C4042DCE6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Distance.Vl53l0x_Radar_Sample", "Meadow.Foundation.Peripherals\Sensors.Distance.Vl53l0x\Sample\Sensors.Distance.Vl53l0x_Radar_Sample\Sensors.Distance.Vl53l0x_Radar_Sample.csproj", "{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.Vl53l0x_Radar_Sample", "Meadow.Foundation.Peripherals\Sensors.Distance.Vl53l0x\Sample\Sensors.Distance.Vl53l0x_Radar_Sample\Sensors.Distance.Vl53l0x_Radar_Sample.csproj", "{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{184472CA-143C-4628-BA38-E901C7863E7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Camera.Vc0706_Sample", "Meadow.Foundation.Peripherals\Sensors.Camera.VC0706\Samples\Sensors.Camera.Vc0706_Sample\Sensors.Camera.Vc0706_Sample.csproj", "{A73E7975-989F-4416-B531-C3CC4D25D175}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1810,6 +1814,12 @@ Global
 		{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A73E7975-989F-4416-B531-C3CC4D25D175}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A73E7975-989F-4416-B531-C3CC4D25D175}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A73E7975-989F-4416-B531-C3CC4D25D175}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A73E7975-989F-4416-B531-C3CC4D25D175}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A73E7975-989F-4416-B531-C3CC4D25D175}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A73E7975-989F-4416-B531-C3CC4D25D175}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2213,6 +2223,8 @@ Global
 		{FF019156-8C03-4D25-9D83-ED668F501321} = {B12E28B5-B206-43CC-8597-E0D013EB3889}
 		{FF40FFCF-285F-4CE2-950F-E4C4042DCE6D} = {B12E28B5-B206-43CC-8597-E0D013EB3889}
 		{8018FDAE-AB60-4B93-9E0C-6BFE78D5155A} = {89C8FCEF-B6F5-4B9D-9010-F224262BD28A}
+		{184472CA-143C-4628-BA38-E901C7863E7C} = {8749617F-D55A-4C44-815A-FD55FFDA3891}
+		{A73E7975-989F-4416-B531-C3CC4D25D175} = {184472CA-143C-4628-BA38-E901C7863E7C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
