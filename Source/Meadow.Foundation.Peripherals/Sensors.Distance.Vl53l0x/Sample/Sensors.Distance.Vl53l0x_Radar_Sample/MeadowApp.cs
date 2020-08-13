@@ -18,7 +18,7 @@ namespace MeadowApp
         Vl53l0x sensor;
         Servo servo;
 
-        float[] radarData = new float[180];
+        float[] radarData = new float[181];
 
         public MeadowApp()
         {
@@ -60,8 +60,8 @@ namespace MeadowApp
 
         void Draw()
         {
-            int angle = 0;
-            int increment = 2;
+            int angle = 160;
+            int increment = 4;
             int x, y = 0;
 
             while (true)
@@ -72,8 +72,8 @@ namespace MeadowApp
 
                 graphics.DrawLine(120, 120, 105, (float)(angle * Math.PI / 180), Color.Yellow);
                 
-                if(angle >= 180) { increment = -2; }
-                if(angle <= 0) { increment = 2; }
+                if(angle >= 180) { increment = -4; }
+                if(angle <= 0) { increment = 4; }
 
                 angle += increment;
 
@@ -92,16 +92,10 @@ namespace MeadowApp
 
                 for(int i = 0; i < 180; i++)
                 {
-                 /*   if(radarData[i] <= 0)
-                    {
-                        continue;
-                    } */ 
-
-                 //   radarData[i] = 90;
-
                     x = 120 + (int)(radarData[i] * MathF.Cos(i * MathF.PI / 180f));
                     y = 120 - (int)(radarData[i] * MathF.Sin(i * MathF.PI / 180f));
-                    graphics.DrawPixel(x, y, Color.Yellow);
+                    //graphics.DrawPixel(x, y, Color.Yellow);
+                    graphics.DrawCircle(x, y, 2,Color.Yellow, true);
                 }
 
                 graphics.Show();

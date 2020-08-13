@@ -105,7 +105,7 @@ namespace Meadow.Foundation.Displays.Led
         /// </summary>
         /// <param name="character"></param>
         /// <param name="showDecimal"></param>
-        public void SetDisplay(char[] character, bool showDecimal = false)
+        public void SetDisplay(char[] character, int decimalLocation = -1)
         {
             if (!cts.Token.IsCancellationRequested)
             {
@@ -114,10 +114,10 @@ namespace Meadow.Foundation.Displays.Led
 
             cts = new CancellationTokenSource();
 
-            Task.Run(async ()=> await StartDisplayLoop(character, showDecimal, cts.Token));
+            Task.Run(async ()=> await StartDisplayLoop(character, decimalLocation, cts.Token));
         }
 
-        protected async Task StartDisplayLoop(char[] character, bool showDecimal, CancellationToken cancellationToken) 
+        protected async Task StartDisplayLoop(char[] character, int decimalLocation, CancellationToken cancellationToken) 
         {
             while (true)
             {
@@ -128,7 +128,7 @@ namespace Meadow.Foundation.Displays.Led
 
                 for (int i = 0; i < 4; i++)
                 {
-                    sevenSegments[i].SetDisplay(character[i], showDecimal);
+                    sevenSegments[i].SetDisplay(character[i], decimalLocation == i);
 
                     digits[i].State = false;
                     digits[i].State = true;
