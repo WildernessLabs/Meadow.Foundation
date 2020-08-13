@@ -56,7 +56,7 @@ namespace Sensors.Location.MediaTek
             Console.WriteLine("Finish Mt3339 initialization.");
         }
 
-        public void StartUpdataing()
+        public void StartUpdating()
         {
             // open the serial connection
             serialPort.Open();
