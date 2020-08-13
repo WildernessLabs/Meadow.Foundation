@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Displays.ePaper
         {
         }
 
-        protected override bool IsBlackInverted => false;
+        protected override bool IsBlackInverted => true;
 
         protected override bool IsColorInverted => true;
 
