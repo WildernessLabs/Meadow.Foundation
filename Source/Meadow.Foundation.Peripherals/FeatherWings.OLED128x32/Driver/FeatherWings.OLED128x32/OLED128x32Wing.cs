@@ -10,8 +10,6 @@ namespace Meadow.Foundation.FeatherWings
     /// </summary>
     public class OLED128x32Wing
     {
-        readonly II2cBus i2cBus;
-
         public Ssd1306 Display { get; protected set; }
 
         public IButton ButtonA { get; protected set; }
@@ -28,16 +26,11 @@ namespace Meadow.Foundation.FeatherWings
 
         public OLED128x32Wing(II2cBus i2cBus, IDigitalInputPort portA, IDigitalInputPort portB, IDigitalInputPort portC)
         {
-            this.i2cBus = i2cBus;
-            Display = new Ssd1306(this.i2cBus, 0x3C, Ssd1306.DisplayType.OLED128x32);
+            Display = new Ssd1306(i2cBus, 0x3C, Ssd1306.DisplayType.OLED128x32);
 
-            //Bug? Resistor Mode is being set properly from the above constructor but unless it is set again it doesn't work.
-            portA.Resistor = portA.Resistor;
-            portC.Resistor = portC.Resistor;
-
-            ButtonA = new PushButton(portA);
-            ButtonB = new PushButton(portB);
-            ButtonC = new PushButton(portC);
+            ButtonA = new PushButton(portA, ResistorMode.PullUp);
+            ButtonB = new PushButton(portB); // has physical resistor
+            ButtonC = new PushButton(portC, ResistorMode.PullUp);
         }
     }
 }
