@@ -7,43 +7,61 @@ namespace Meadow.Foundation.Sensors.Camera
 {
     public class Vc0706
     {
-        static byte VC0706_RESET = 0x26;
-        static byte VC0706_GEN_VERSION = 0x11;
-        static byte VC0706_SET_PORT = 0x24;
-        static byte VC0706_READ_FBUF = 0x32;
-        static byte VC0706_GET_FBUF_LEN = 0x34;
-        static byte VC0706_FBUF_CTRL = 0x36;
-        static byte VC0706_DOWNSIZE_CTRL = 0x54;
-        static byte VC0706_DOWNSIZE_STATUS = 0x55;
-        static byte VC0706_READ_DATA = 0x30;
-        static byte VC0706_WRITE_DATA = 0x31;
-        static byte VC0706_COMM_MOTION_CTRL = 0x37;
-        static byte VC0706_COMM_MOTION_STATUS = 0x38;
-        static byte VC0706_COMM_MOTION_DETECTED = 0x39;
-        static byte VC0706_MOTION_CTRL = 0x42;
-        static byte VC0706_MOTION_STATUS = 0x43;
-        static byte VC0706_TVOUT_CTRL = 0x44;
-        static byte VC0706_OSD_ADD_CHAR = 0x45;
+        static byte RESET = 0x26;
+        static byte GEN_VERSION = 0x11;
+        static byte SET_PORT = 0x24;
+        static byte READ_FBUF = 0x32;
+        static byte GET_FBUF_LEN = 0x34;
+        static byte FBUF_CTRL = 0x36;
+        static byte DOWNSIZE_CTRL = 0x54;
+        static byte DOWNSIZE_STATUS = 0x55;
+        static byte READ_DATA = 0x30;
+        static byte WRITE_DATA = 0x31;
+        static byte COMM_MOTION_CTRL = 0x37;
+        static byte COMM_MOTION_STATUS = 0x38;
+        static byte COMM_MOTION_DETECTED = 0x39;
+        static byte COLOR_CTRL = 0x3C;
+        static byte COLOR_STATUS = 0x3D;
+        static byte MOTION_CTRL = 0x42;
+        static byte MOTION_STATUS = 0x43;
+        static byte TVOUT_CTRL = 0x44;
+        static byte OSD_ADD_CHAR = 0x45;
+        
 
-        static byte VC0706_STOPCURRENTFRAME = 0x0;
-        static byte VC0706_STOPNEXTFRAME = 0x1;
-        static byte VC0706_RESUMEFRAME = 0x3;
-        static byte VC0706_STEPFRAME = 0x2;
+        static byte STOPCURRENTFRAME = 0x0;
+        static byte STOPNEXTFRAME = 0x1;
+        static byte RESUMEFRAME = 0x3;
+        static byte STEPFRAME = 0x2;
 
         public enum ImageSize : byte
         {
-            VC0706_640x480 = 0x00,
-            VC0706_320x240 = 0x11,
-            VC0706_160x120 = 0x22,
+            _640x480 = 0x00,
+            _320x240 = 0x11,
+            _160x120 = 0x22,
             Unknown,
         }
 
-        static byte VC0706_MOTIONCONTROL = 0x0;
-        static byte VC0706_UARTMOTION = 0x01;
-        static byte VC0706_ACTIVATEMOTION = 0x01;
+        public enum Baud : byte
+        {
+            _9600,
+            _19200,
+            _38400,
+            _57600
+        }
 
-        static byte VC0706_SET_ZOOM = 0x52;
-        static byte VC0706_GET_ZOOM = 0x53;
+        public enum ColorMode : byte
+        {
+            Automatic,
+            Color,
+            BlackWhite,
+        }
+
+        static byte MOTIONCONTROL = 0x0;
+        static byte UARTMOTION = 0x01;
+        static byte ACTIVATEMOTION = 0x01;
+
+        static byte SET_ZOOM = 0x52;
+        static byte GET_ZOOM = 0x53;
 
         static byte CAMERABUFFSIZE = 100;
         static byte CAMERADELAY = 10;
@@ -92,7 +110,7 @@ namespace Meadow.Foundation.Sensors.Camera
         {
             byte[] args = { 0x0 };
 
-            return RunCommand(VC0706_RESET, args, 1, 5);
+            return RunCommand(RESET, args, 1, 5);
         }
 
         public bool IsMotionDetected()
@@ -101,7 +119,7 @@ namespace Meadow.Foundation.Sensors.Camera
             {
                 return false;
             }
-            if (!VerifyResponse(VC0706_COMM_MOTION_DETECTED))
+            if (!VerifyResponse(COMM_MOTION_DETECTED))
             {
                 return false;
             }
@@ -109,36 +127,36 @@ namespace Meadow.Foundation.Sensors.Camera
             return true;
         }
 
-        bool SetMotionStatus(byte x, byte d1, byte d2)
+        public bool SetMotionStatus(byte x, byte d1, byte d2)
         {
             byte[] args = { 0x03, x, d1, d2 };
 
-            return RunCommand(VC0706_MOTION_CTRL, args, (byte)args.Length, 5);
+            return RunCommand(MOTION_CTRL, args, (byte)args.Length, 5);
         }
 
-        bool GetMotionStatus(byte x)
+        public bool GetMotionStatus(byte x)
         {
             byte[] args = { 0x01, x };
 
-            return RunCommand(VC0706_MOTION_STATUS, args, (byte)args.Length, 5);
+            return RunCommand(MOTION_STATUS, args, (byte)args.Length, 5);
         }
 
-        bool SetMotionDetect(bool flag)
+        public bool SetMotionDetect(bool flag)
         {
-            if (!SetMotionStatus(VC0706_MOTIONCONTROL, VC0706_UARTMOTION,
-                                 VC0706_ACTIVATEMOTION))
+            if (!SetMotionStatus(MOTIONCONTROL, UARTMOTION,
+                                 ACTIVATEMOTION))
                 return false;
 
             byte[] args = { 0x01, (byte)((flag == true)?1:0) };
 
-            return RunCommand(VC0706_COMM_MOTION_CTRL, args, (byte)args.Length, 5);
+            return RunCommand(COMM_MOTION_CTRL, args, (byte)args.Length, 5);
         }
 
         public bool GetMotionDetect()
         {
             byte[] args = { 0x0 };
 
-            if (!RunCommand(VC0706_COMM_MOTION_STATUS, args, 1, 6))
+            if (!RunCommand(COMM_MOTION_STATUS, args, 1, 6))
                 return false;
 
             return camerabuff[5] != 0;
@@ -147,7 +165,7 @@ namespace Meadow.Foundation.Sensors.Camera
         public ImageSize GetImageSize()
         {
             byte[] args = { 0x4, 0x4, 0x1, 0x00, 0x19 };
-            if (!RunCommand(VC0706_READ_DATA, args, (byte)args.Length, 6))
+            if (!RunCommand(READ_DATA, args, (byte)args.Length, 6))
             { 
                 return ImageSize.Unknown; 
             }
@@ -159,13 +177,15 @@ namespace Meadow.Foundation.Sensors.Camera
         {
             byte[] args = { 0x05, 0x04, 0x01, 0x00, 0x19, (byte)imageSize };
 
-            return RunCommand(VC0706_WRITE_DATA, args, (byte)args.Length, 5);
+            var ret = RunCommand(WRITE_DATA, args, (byte)args.Length, 5);
+            Reset();
+            return ret;
         }
 
         public byte GetDownsize()
         {
             byte[] args = { 0x0 };
-            if (RunCommand(VC0706_DOWNSIZE_STATUS, args, 1, 6) == false)
+            if (RunCommand(DOWNSIZE_STATUS, args, 1, 6) == false)
             {
                 return 0;//ToDo was -1 in Arduino code - validate
             }
@@ -177,128 +197,121 @@ namespace Meadow.Foundation.Sensors.Camera
         {
             byte[] args = { 0x01, newsize };
 
-            return RunCommand(VC0706_DOWNSIZE_CTRL, args, 2, 5);
+            return RunCommand(DOWNSIZE_CTRL, args, 2, 5);
         }
         public string GetVersion()
         {
-            /*    byte[] args = { 0x01 };
+            SendCommand(GEN_VERSION, new byte[]{ 0x01 }, 1);
+            // get reply
+            if (ReadResponse(CAMERABUFFSIZE) == 0)
+            { return string.Empty; }
 
-                SendCommand(VC0706_GEN_VERSION, args, 1);
-                // get reply
-                if (!ReadResponse(CAMERABUFFSIZE))
-                { return 0; }
-                camerabuff[bufferLen] = 0; // end it!
-                return (char*)camerabuff; // return it!*/
+            camerabuff[bufferLen] = 0; 
 
-            return string.Empty;
+            var versionData = new byte[14];
+            Array.Copy(camerabuff, 5, versionData, 0, 11);
+            versionData[12] = versionData[13] = 0;
+
+            return new string(new UTF8Encoding().GetChars(versionData));
+        }
+
+        bool SetBaud(Baud baud)
+        {
+            byte[] args;
+            switch (baud)
+            {
+                case Baud._57600:
+                    args = new byte[] { 0x03, 0x01, 0x1C, 0x1C };
+                    break;
+                case Baud._38400:
+                    args = new byte[] { 0x03, 0x01, 0x2A, 0xF2 };
+                    break;
+                case Baud._19200:
+                    args = new byte[]{ 0x03, 0x01, 0x56, 0xE4 };
+                    break;
+                case Baud._9600:
+                default:
+                    args = new byte[] { 0x03, 0x01, 0xAE, 0xC8 };
+                    break;
+            }
+
+            SendCommand(SET_PORT, args, (byte)args.Length);
+            // get reply
+            if (ReadResponse(CAMERABUFFSIZE) == 0)
+            {
+                return false;
+            }
+
+            camerabuff[bufferLen] = 0; // end it!
+            return true;
         }
 
         bool SetBaud9600()
         {
-            byte[] args = { 0x03, 0x01, 0xAE, 0xC8 };
-
-            SendCommand(VC0706_SET_PORT, args, (byte)args.Length);
-            // get reply
-            if (ReadResponse(CAMERABUFFSIZE) == 0)
-            {
-                return false; 
-            }
-
-            camerabuff[bufferLen] = 0; // end it!
-                                       //  return (char*)camerabuff; // return it!
-            return true;
+            return SetBaud(Baud._9600);
         }
 
         bool SetBaud19200()
         {
-            byte[] args = { 0x03, 0x01, 0x56, 0xE4 };
-
-            SendCommand(VC0706_SET_PORT, args, (byte)args.Length);
-            // get reply
-            if (ReadResponse(CAMERABUFFSIZE) == 0)
-            { 
-                return false; 
-            }
-
-            camerabuff[bufferLen] = 0; // end it!
-            return true;
+            return SetBaud(Baud._19200);
         }
 
         bool SetBaud38400()
         {
-            byte[] args = { 0x03, 0x01, 0x2A, 0xF2 };
-
-            SendCommand(VC0706_SET_PORT, args, (byte)args.Length);
-            // get reply
-            if (ReadResponse(CAMERABUFFSIZE) == 0)
-            { 
-                return false; 
-            }
-            camerabuff[bufferLen] = 0; // end it!
-            return true;
+            return SetBaud(Baud._38400);
         }
 
         public bool SetBaud57600()
         {
-            byte[] args = { 0x03, 0x01, 0x1C, 0x1C };
-
-            SendCommand(VC0706_SET_PORT, args, (byte)args.Length);
-            // get reply
-            if (ReadResponse(CAMERABUFFSIZE) == 0)
-            {
-                return false; 
-            }
-            camerabuff[bufferLen] = 0; // end it!
-            return true;
-            //return (char*)camerabuff; // return it!
+            return SetBaud(Baud._57600);
         }
 
-        void SetOnScreenDisplay(byte x, byte y, string str)
+        public void SetOnScreenDisplay(byte x, byte y, string message)
         {
-            throw new NotImplementedException();
-        /*    if (strlen(str) > 14)
+            if (message.Length > 14)
             {
-                str[13] = 0;
+                message = message.Substring(0, 14);
             }
 
-            byte args[17] = {strlen(str), strlen(str) - 1,
-                      (y & 0xF) | ((x & 0x3) << 4)};
+            var args = new byte[17];
+            args[0] = (byte)message.Length;
+            args[1] = (byte)(message.Length - 1);
+            args[2] = (byte)((y & 0xF) | ((x & 0x3) << 4));
 
-            for (byte i = 0; i < strlen(str); i++)
+            for (byte i = 0; i < message.Length; i++)
             {
-                char c = str[i];
+                char c = message[i];
+
                 if ((c >= '0') && (c <= '9'))
                 {
-                    str[i] -= '0';
+                    args[3 + i] = (byte)(c - '0');
                 }
                 else if ((c >= 'A') && (c <= 'Z'))
                 {
-                    str[i] -= 'A';
-                    str[i] += 10;
+                    args[3 + i] = (byte)(c - 'A');
+                    args[3 + i] += 10;
                 }
                 else if ((c >= 'a') && (c <= 'z'))
                 {
-                    str[i] -= 'a';
-                    str[i] += 36;
+                    args[3 + i] = (byte)(c - 'a');
+                    args[3 + i] += 36;
                 }
-
-                args[3 + i] = str[i];
             }
 
-            RunCommand(VC0706_OSD_ADD_CHAR, args, strlen(str) + 3, 5);
-            printBuff();*/
+            RunCommand(OSD_ADD_CHAR, args, (byte)args.Length, 5);
+           // printBuff();
         }
 
         public bool SetCompression(byte c)
         {
             byte[] args = { 0x5, 0x1, 0x1, 0x12, 0x04, c };
-            return RunCommand(VC0706_WRITE_DATA, args, (byte)args.Length, 5);
+            return RunCommand(WRITE_DATA, args, (byte)args.Length, 5);
         }
 
         public byte GetCompression()
         {
             byte[] args = { 0x4, 0x1, 0x1, 0x12, 0x04 };
-            RunCommand(VC0706_READ_DATA, args, (byte)args.Length, 6);
+            RunCommand(READ_DATA, args, (byte)args.Length, 6);
             PrintBuffer();
             return camerabuff[5];
         }
@@ -311,14 +324,14 @@ namespace Meadow.Foundation.Sensors.Camera
                             (byte)(pan >> 8), (byte)pan,     
                             (byte)(tilt >> 8), (byte)tilt};
 
-            return (!RunCommand(VC0706_SET_ZOOM, args, (byte)args.Length, 5));
+            return (!RunCommand(SET_ZOOM, args, (byte)args.Length, 5));
         }
 
         public Tuple<ushort, ushort, ushort, ushort, ushort, ushort> GetPanTiltZoom()
         {
             byte[] args = { 0x0 };
 
-            if (!RunCommand(VC0706_GET_ZOOM, args, (byte)args.Length, 16))
+            if (!RunCommand(GET_ZOOM, args, (byte)args.Length, 16))
             { return null; }
 
             PrintBuffer();
@@ -353,36 +366,47 @@ namespace Meadow.Foundation.Sensors.Camera
         public bool TakePicture()
         {
             frameptr = 0;
-            return CameraFrameBuffCtrl(VC0706_STOPCURRENTFRAME);
+            return CameraFrameBuffCtrl(STOPCURRENTFRAME);
         }
 
         public bool ResumeVideo()
         {
-            return CameraFrameBuffCtrl(VC0706_RESUMEFRAME);
+            return CameraFrameBuffCtrl(RESUMEFRAME);
         }
 
         public bool TvOn()
         {
             byte[] args = { 0x1, 0x1 };
-            return RunCommand(VC0706_TVOUT_CTRL, args, (byte)args.Length, 5);
+            return RunCommand(TVOUT_CTRL, args, (byte)args.Length, 5);
         }
 
         public bool TvOff()
         {
             byte[] args = { 0x1, 0x0 };
-            return RunCommand(VC0706_TVOUT_CTRL, args, (byte)args.Length, 5);
+            return RunCommand(TVOUT_CTRL, args, (byte)args.Length, 5);
+        }
+
+        public ColorMode GetColorMode()
+        {
+            RunCommand(COLOR_STATUS, new byte[] { 0x1 }, 1, 8);
+            return (ColorMode)camerabuff[7];
+        }
+
+        public void SetColorMode(ColorMode colorControl)
+        {
+            RunCommand(COLOR_CTRL, new byte[] { 0x1, (byte)colorControl }, 2, 5);
         }
 
         bool CameraFrameBuffCtrl(byte command)
         {
             byte[] args = { 0x1, command };
-            return RunCommand(VC0706_FBUF_CTRL, args, (byte)args.Length, 5);
+            return RunCommand(FBUF_CTRL, args, (byte)args.Length, 5);
         }
 
         public uint GetFrameLength()
         {
             byte[] args = { 0x01, 0x00 };
-            if (!RunCommand(VC0706_GET_FBUF_LEN, args, (byte)args.Length, 9))
+            if (!RunCommand(GET_FBUF_LEN, args, (byte)args.Length, 9))
                 return 0;
 
             uint len;
@@ -418,7 +442,7 @@ namespace Meadow.Foundation.Sensors.Camera
                     (byte)(CAMERADELAY >> 8),
                     (byte)(CAMERADELAY & 0xFF)};
 
-            if (!RunCommand(VC0706_READ_FBUF, args, (byte)args.Length, 5, false))
+            if (!RunCommand(READ_FBUF, args, (byte)args.Length, 5, false))
             { 
                 return new byte[0]; 
             }
@@ -439,8 +463,7 @@ namespace Meadow.Foundation.Sensors.Camera
                         byte argn,
                         byte resplen, 
                         bool flushflag = true)
-        {
-            // flush out anything in the buffer?
+        {   // flush out anything in the buffer?
             if (flushflag)
             {
                 ReadResponse(100, 10);

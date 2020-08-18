@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
@@ -72,17 +73,25 @@ namespace Sensors.Camera.Vc0706_Sample
         void CameraTest()
         {
             Console.WriteLine("Set image size");
-            camera.SetImageSize(Vc0706.ImageSize.VC0706_320x240);
+            camera.SetImageSize(Vc0706.ImageSize._320x240);
 
             Console.WriteLine($"Image size is {camera.GetImageSize()}");
 
-            /* Console.WriteLine("Set TV off");
-             camera.TvOff();
-             Thread.Sleep(2000);
-             Console.WriteLine("Set TV on");
-             camera.TvOn();*/
-
+            Console.WriteLine("Set TV off");
             camera.TvOff();
+            Thread.Sleep(2000);
+            Console.WriteLine("Set TV on");
+            camera.TvOn();
+
+            Thread.Sleep(2000);
+
+            Console.WriteLine(camera.GetVersion());
+
+            Thread.Sleep(2000);
+
+            camera.SetOnScreenDisplay(10, 10, "Hi");
+
+            Thread.Sleep(2000);
 
             Console.WriteLine("Take picture");
             camera.TakePicture();
