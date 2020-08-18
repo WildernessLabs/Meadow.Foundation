@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
+using System.Runtime.InteropServices;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
@@ -72,7 +72,7 @@ namespace Sensors.Camera.Vc0706_Sample
         void CameraTest()
         {
             Console.WriteLine("Set image size");
-            camera.SetImageSize(Vc0706.ImageSize.VC0706_160x120);
+            camera.SetImageSize(Vc0706.ImageSize.VC0706_320x240);
 
             Console.WriteLine($"Image size is {camera.GetImageSize()}");
 
@@ -97,6 +97,8 @@ namespace Sensors.Camera.Vc0706_Sample
 
             using (var stream = new MemoryStream())
             {
+                Console.WriteLine($"Decode jpeg - this operation may take serveral seconds");
+
                 while (frameLen > 0)
                 {
                     bytesToRead = (byte)Math.Min(32, frameLen);
@@ -106,13 +108,17 @@ namespace Sensors.Camera.Vc0706_Sample
                     stream.Write(buffer, 0, bytesToRead);
                     frameLen -= bytesToRead;
                 }
-                decoder.DecodeJpeg(stream.ToArray());
+                jpg = decoder.DecodeJpeg(stream.ToArray());
             }
 
-            //   Console.WriteLine($"Jpeg data length: {jpegData.Length}");
-            jpg = decoder.GetImageData();
-            Console.WriteLine($"Jpeg decoded is {jpg.Length} bytes");
-            Console.WriteLine($"Image size {decoder.ImageSize}");
+            Console.WriteLine($"Jpeg data length: {jpg.Length}");
+
+            for(int i = 0; i < 30; i++)
+            {
+                Console.WriteLine($"{i}:{jpg[i]}");
+            }
+
+            Console.WriteLine($"Jpeg decoded is {decoder.ImageSize} bytes");
             Console.WriteLine($"Width {decoder.Width}");
             Console.WriteLine($"Height {decoder.Height}");
             Console.WriteLine($"IsColor {decoder.IsColor}");
@@ -121,7 +127,8 @@ namespace Sensors.Camera.Vc0706_Sample
             graphics.DrawRectangle(0, 0, 240, 320, Color.White, true);
 
             int x = 0;
-            int y = (320 - decoder.Height) / 2;
+            int y = 0;
+            //int y = (320 - image.Height) / 2;
             byte r, g, b;
 
             for (int i = 0; i < jpg.Length; i += 3)
@@ -130,7 +137,7 @@ namespace Sensors.Camera.Vc0706_Sample
                 g = jpg[i + 1];
                 b = jpg[i + 2];
 
-                display.DrawPixel(x, y, r, g, b);
+                display.DrawPixel(y, x, r, g, b);
 
                 x++;
 
