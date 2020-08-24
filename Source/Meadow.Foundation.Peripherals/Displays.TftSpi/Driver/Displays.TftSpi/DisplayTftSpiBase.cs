@@ -6,7 +6,6 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public abstract class DisplayTftSpiBase : DisplayBase, IDisposable
     {
-        #region Enums
         protected enum LcdCommand
         {
             CASET = 0x2A,
@@ -21,8 +20,6 @@ namespace Meadow.Foundation.Displays.Tft
             Rotate_180,
             Rotate_270,
         }
-
-        #endregion
 
         //these displays typically support 12, 16 & 18 bit but the current driver only supports 16
         public override DisplayColorMode ColorMode => DisplayColorMode.Format16bppRgb565;
@@ -171,7 +168,7 @@ namespace Meadow.Foundation.Displays.Tft
         private void SetPixel(int x, int y, ushort color)
         {
             if (x < 0 || y < 0 || x >= width || y >= height)
-                return;
+            { return; }
 
             var index = ((y * width) + x) * sizeof(ushort);
 
@@ -192,7 +189,7 @@ namespace Meadow.Foundation.Displays.Tft
             // spiDisplay.WriteBytes(spiBuffer);
 
             if (xMax == 0 || yMax == 0)
-                return;
+            { return; }
 
             if(xMin > 0 || yMin > 0)
             {
@@ -212,7 +209,6 @@ namespace Meadow.Foundation.Displays.Tft
             xMax = 0;
             yMax = 0;
         }
-
 
         byte[] lineBufferSend;
         byte[] lineBufferReceive;

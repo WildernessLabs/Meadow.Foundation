@@ -1,7 +1,6 @@
 ﻿using Meadow.Foundation.Displays;
 using Meadow.Peripherals.Displays;
 using System;
-using System.Xml.Linq;
 
 namespace Meadow.Foundation.Graphics
 {
@@ -10,13 +9,7 @@ namespace Meadow.Foundation.Graphics
     /// </summary>
     public class GraphicsLibrary : ITextDisplay
     {
-        #region Member variables / fields
-
         private readonly DisplayBase display;
-
-        #endregion Member variables / fields
-
-        #region Properties
 
         /// <summary>
         ///     Current font used for displaying text on the display.
@@ -30,8 +23,8 @@ namespace Meadow.Foundation.Graphics
                 if(currentFont == null) { return; }
                 DisplayConfig = new TextDisplayConfig()
                 {
-                    Width = (ushort)((int)this.Width / currentFont.Width),
-                    Height = (ushort)((int)this.Height / CurrentFont.Height)
+                    Width = (ushort)(Width / currentFont.Width),
+                    Height = (ushort)(Height / CurrentFont.Height)
                 };
             }
         }
@@ -46,8 +39,6 @@ namespace Meadow.Foundation.Graphics
         /// Stroke / line thickness when drawing lines or shape outlines
         /// </summary>
         public int Stroke { get; set; } = 1;
-
-        #endregion Properties
 
         /// <summary>
         /// Display rotation 
@@ -79,8 +70,6 @@ namespace Meadow.Foundation.Graphics
 
         public TextDisplayConfig DisplayConfig { get; private set; }
 
-        #region Constructors
-
         /// <summary>
         /// </summary>
         /// <param name="display"></param>
@@ -89,10 +78,6 @@ namespace Meadow.Foundation.Graphics
             this.display = display;
             CurrentFont = null;
         }
-
-        #endregion Constructors
-
-        #region Methods
 
         /// <summary>
         ///     Draw a single pixel using the pen color
@@ -980,10 +965,6 @@ namespace Meadow.Foundation.Graphics
             return high ? (value |= compare) : (byte)(value & ~compare);
         }
 
-        #endregion Methods
-
-        #region Display
-
         /// <summary>
         ///     Show the changes on the display.
         /// </summary>
@@ -1157,7 +1138,5 @@ namespace Meadow.Foundation.Graphics
         {
           //  throw new NotImplementedException();
         }
-
-        #endregion Display
     }
 }
