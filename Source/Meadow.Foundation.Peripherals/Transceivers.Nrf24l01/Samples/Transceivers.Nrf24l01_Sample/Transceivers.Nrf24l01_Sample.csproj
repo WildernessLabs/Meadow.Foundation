@@ -6,5 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Transceivers.SX127x\Driver\Transceivers.SX127x\Transceivers.SX127x.csproj" />
+    <ProjectReference Include="..\..\Driver\Transceivers.Nrf24l01\Transceivers.Nrf24l01.csproj" />
   </ItemGroup>
 </Project>

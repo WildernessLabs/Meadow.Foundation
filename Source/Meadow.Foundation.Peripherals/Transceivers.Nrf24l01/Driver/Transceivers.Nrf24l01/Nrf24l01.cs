@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -122,7 +123,7 @@ namespace Meadow.Foundation.Transceivers
 
         public enum DataRate : byte
         {
-            RF24_1MBPS = 0,
+            RF24_1MBPS,
             RF24_2MBPS,
             RF24_250KBPS
         }
@@ -135,7 +136,22 @@ namespace Meadow.Foundation.Transceivers
             RF24_CRC_16
         }
 
+        public enum PipeEnabled : byte
+        { 
+            ERX_P0,
+            ERX_P1,
+            ERX_P2,
+            ERX_P3,
+            ERX_P4,
+            ERX_P5,
+        }
+        protected PipeEnabled pipeEnabled;
+
+
+
         protected ISpiBus spiBus;
+
+        protected ISpiPeripheral rf24;
 
         protected IDigitalOutputPort chipEnablePort;
 
@@ -146,6 +162,18 @@ namespace Meadow.Foundation.Transceivers
         protected bool IsInitialized;
 
         protected byte[] Address;
+
+        int csDelay;
+
+        bool dynamic_payloads_enabled;
+
+        bool ack_payloads_enabled;
+
+        byte config_reg, addr_width, payload_size = 32;
+
+        byte[] address = new byte[6];
+
+        byte[] pipe0_reading_address = new byte[5];
 
         public Nrf24l01(
             IIODevice device, 
@@ -166,7 +194,10 @@ namespace Meadow.Foundation.Transceivers
             IDigitalOutputPort chipSelectPort, 
             IDigitalInterruptPort interruptPort)
         {
+            pipe0_reading_address[0] = 0;
+
             this.spiBus = spiBus;
+            this.rf24 = new SpiPeripheral(spiBus, chipSelectPort);
 
             this.chipEnablePort = chipEnablePort;
 
@@ -174,860 +205,933 @@ namespace Meadow.Foundation.Transceivers
 
             this.interruptPort = interruptPort;
 
-            // Module reset time
-            Thread.Sleep(100);
+            chipEnablePort.State = false;
+            chipSelectPort.State = true;
 
-            IsInitialized = true;
+            Thread.Sleep(5);
 
-            // Set reasonable default values
-            Address = Encoding.UTF8.GetBytes("NRF1");
-            dataRate = DataRate.RF24_2MBPS;
-            //IsDynamicPayload = true;
-            //IsAutoAcknowledge = true;
+            SetRetries(5, 15);
 
-            //FlushReceiveBuffer();
-            //FlushTransferBuffer();
-            //ClearIrqMasks();
-            //SetRetries(5, 60);
+            SetDataRate(DataRate.RF24_1MBPS);
+
+            ToggleFeatures();
+            rf24.WriteRegister(FEATURE, 0);
+            rf24.WriteRegister(DYNPD, 0);
+            dynamic_payloads_enabled = false;
+            ack_payloads_enabled = false;
+
+            rf24.WriteRegister(NRF_STATUS, (byte) (RX_DR | TX_DS | MAX_RT));
+
+            SetChannel(76);
+
+            FlushRx();
+            FlushTx();
+
+            rf24.WriteRegister(NRF_CONFIG, (byte)(EN_CRC | CRCO));
+            config_reg = rf24.ReadRegister(NRF_CONFIG);
+
+            PowerUp();
+
+            //bool result = config_reg == (byte)(EN_CRC | CRCO | PWR_UP) ? true : false;
+
+            Console.WriteLine($"Expected: {(byte)(EN_CRC | CRCO | PWR_UP)} Result: {config_reg}");
         }
 
-        //        void csn(int mode)
+        void SetRetries(byte delay, byte count)
+        {
+            rf24.WriteRegister(SETUP_RETR, (byte)((delay & 0xf) << ARD | (count & 0xf) << ARC));
+        }
+
+        void SetDataRate(DataRate speed)
+        {
+            byte setup = rf24.ReadRegister(RF_SETUP); // read_register(RF_SETUP);
+
+            switch (speed)
+            {
+                case DataRate.RF24_1MBPS:
+                    setup &= (byte)~(1 << RF_DR_LOW);  // 0
+                    setup &= (byte)~(1 << RF_DR_HIGH); // 0
+                    break;
+
+                case DataRate.RF24_2MBPS:
+                    setup &= (byte)~(1 << RF_DR_LOW);  // 0
+                    setup |= (byte)(1 << RF_DR_HIGH);  // 1
+                    break;
+
+                case DataRate.RF24_250KBPS:
+                    setup |= (byte)(1 << RF_DR_LOW);    // 1
+                    setup &= (byte)~(1 << RF_DR_HIGH);  // 0
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException("DataRate", speed, "An invalid DataRate was specified");
+            }
+
+            rf24.WriteRegister(RF_SETUP, setup);
+        }
+
+        void ToggleFeatures()
+        {
+            rf24.WriteByte(ACTIVATE);
+            rf24.WriteByte(0x73);
+        }
+
+        public void SetChannel(byte channel)
+        {
+            const byte max_channel = 125;
+            rf24.WriteRegister(RF_CH, Math.Min(channel, max_channel));
+        }
+
+        public byte GetChannel()
+        {
+            return rf24.ReadRegister(RF_CH);
+        }
+
+        void FlushRx()
+        {
+            rf24.WriteByte(FLUSH_RX);
+        }
+
+        void FlushTx()
+        {
+            rf24.WriteByte(FLUSH_TX);
+        }
+
+        void PowerDown()
+        {
+            chipEnablePort.State = false;
+
+            var regValue = rf24.ReadRegister(NRF_CONFIG);
+            rf24.WriteRegister(NRF_CONFIG, (byte)(regValue | (0u << PWR_UP)));
+
+            Thread.Sleep(5);
+        }
+
+        void PowerUp()
+        {
+            var regValue = rf24.ReadRegister(NRF_CONFIG);
+            rf24.WriteRegister(NRF_CONFIG, (byte)(regValue | (1u << PWR_UP)));
+
+            Thread.Sleep(5);
+        }
+
+        // TODO: Finish this
+        public void OpenReadingPipe(byte child, byte[] address)
+        {
+            if (child == 0)
+            {
+                this.address = address.ToArray();
+            }
+
+            if (child <= 5)
+            {
+                if (child < 2)
+                {
+                    rf24.WriteRegisters(RX_ADDR_P0, address);
+                }
+                else
+                {
+
+                }
+
+                rf24.WriteRegister(RX_PW_P0, payload_size);
+
+                byte rxaddr = rf24.ReadRegister(EN_RXADDR);
+                rf24.WriteRegister(EN_RXADDR, (byte)(rxaddr | RX_PW_P0));
+            }
+        }
+
+        public void SetPALevel(byte level, byte lnaEnable = 1)
+        {
+            byte setup = (byte)(rf24.ReadRegister(RF_SETUP) & 0xF8);
+
+            if (level > 3)
+            {
+                level = (byte)(((byte)PowerAmplifierLevel.RF24_PA_MAX << (byte)1) & (byte)lnaEnable);
+            }
+            else
+            {
+                level = (byte)((level << (byte)1) & (byte)lnaEnable);
+            }
+
+            rf24.WriteRegister(RF_SETUP, (byte)(setup |= level));
+        }
+
+        public void StartListening()
+        {
+            config_reg |= PRIM_RX;
+            rf24.WriteRegister(NRF_CONFIG, config_reg);
+            rf24.WriteRegister(NRF_STATUS, (byte)(RX_DR | TX_DS | MAX_RT));
+
+            //    if (pipe0_reading_address[0] > 0)
+            //    {
+            rf24.WriteRegisters(RX_ADDR_P0, pipe0_reading_address);
+            Console.WriteLine(Encoding.UTF8.GetString(pipe0_reading_address));
+            //        write_register(RX_ADDR_P0, pipe0_reading_address, addr_width);
+            //    }
+            //    else
+            //    {
+            //        closeReadingPipe(0);
+            //    }
+
+            if (ack_payloads_enabled)
+            {
+                FlushTx();
+            }
+        }
+
+        public bool available()
+        {
+            return available(null);
+        }
+
+        bool available(byte[] pipe_num)
+        {
+            byte r = (byte)(rf24.ReadRegister(FIFO_STATUS) & RX_EMPTY);
+
+            Console.WriteLine(r);
+
+            //if (!(read_register(FIFO_STATUS) & _BV(RX_EMPTY)))            
+            if (r > 0)
+            {
+                // If the caller wants the pipe number, include that
+                //if (pipe_num)
+                //{
+                //    byte status = get_status();
+                //    *pipe_num = (status >> RX_P_NO) & 0x07;
+                //}
+                return true;
+            }
+
+            return false;
+        }
+
+        //void csn(bool mode)
+        //{
+        //    digitalWrite(csn_pin, mode);
+        //    delayMicroseconds(csDelay);
+        //}
+
+        //void ce(bool level)
+        //{
+        //    //Allow for 3-pin use on ATTiny
+        //    if (chipEnablePort.State != chipSelectPort.State)
+        //    {
+        //        chipEnablePort.State = level;
+        //    }
+        //}
+
+        //void beginTransaction()
+        //{
+        //    chipSelectPort.State = false;
+        //}
+
+        //void endTransaction()
+        //{
+        //    chipSelectPort.State = true;
+        //}
+
+        //byte read_register(byte reg, byte buf, byte len)
+        //{
+        //    byte status;
+
+        //    beginTransaction();
+        //    status = _SPI.transfer(R_REGISTER | (REGISTER_MASK & reg));
+        //    while (len--)
+        //    {
+        //        *buf++ = _SPI.transfer(0xff);
+        //    }
+        //    endTransaction();
+
+        //    return status;
+        //}
+
+        //byte read_register(byte reg)
+        //{
+        //    byte result;
+
+        //    beginTransaction();
+        //    _SPI.transfer(R_REGISTER | (REGISTER_MASK & reg));
+        //    result = _SPI.transfer(0xff);
+        //    endTransaction();
+
+        //    return result;
+        //}
+
+        //byte write_register(byte reg, byte buf, byte len)
+        //{
+        //    byte status;
+
+        //        beginTransaction();
+        //        status = _SPI.transfer(W_REGISTER | (REGISTER_MASK & reg));
+        //    while (len--) 
+        //    {
+        //        _SPI.transfer(* buf++);
+        //    }
+        //    endTransaction();
+
+        //    return status;
+        //}
+
+        //byte write_register(byte reg, byte value)
+        //{
+        //    byte status;
+
+        //    beginTransaction();
+        //    status = _SPI.transfer(W_REGISTER | (REGISTER_MASK & reg));
+        //    _SPI.transfer(value);
+        //    endTransaction();
+
+        //    return status;
+        //}
+
+        //byte write_payload(byte buf, byte data_len, byte writeType)
+        //{
+        //    byte status;
+        //    const byte current = reinterpret_cast <const byte*> (buf);
+
+        //    data_len = rf24_min(data_len, payload_size);
+        //    byte blank_len = dynamic_payloads_enabled ? 0 : payload_size - data_len;
+
+        //    beginTransaction();
+        //    status = _SPI.transfer(writeType);
+        //    while (data_len--)
+        //    {
+        //        _SPI.transfer(*current++);
+        //    }
+        //    while (blank_len--)
+        //    {
+        //        _SPI.transfer(0);
+        //    }
+        //    endTransaction();
+
+        //    return status;
+        //}
+
+        //byte read_payload(byte buf, byte data_len)
+        //{
+        //    byte status;
+        //    byte current = reinterpret_cast<byte*>(buf);
+
+        //    if (data_len > payload_size)
+        //    {
+        //        data_len = payload_size;
+        //    }
+        //    byte blank_len = dynamic_payloads_enabled ? 0 : payload_size - data_len;
+
+        //    beginTransaction();
+        //    status = _SPI.transfer(R_RX_PAYLOAD);
+        //    while (data_len--)
+        //    {
+        //        *current++ = _SPI.transfer(0xFF);
+        //    }
+        //    while (blank_len--)
+        //    {
+        //        _SPI.transfer(0xff);
+        //    }
+        //    endTransaction();
+
+        //    return status;
+        //}
+
+        //byte spiTrans(byte cmd)
+        //{
+        //    byte status;
+
+        //    beginTransaction();
+        //    status = _SPI.transfer(cmd);
+        //    endTransaction();
+
+        //    return status;
+        //}
+
+        //byte get_status()
+        //{
+        //    return spiTrans(RF24_NOP);
+        //}
+
+        //RF24(uint16_t _cepin, uint16_t _cspin, uint _spi_speed)
+        //        :ce_pin(_cepin), csn_pin(_cspin),spi_speed(_spi_speed), payload_size(32), dynamic_payloads_enabled(false), addr_width(5),
+        //         csDelay(5)//,pipe0_reading_address(0)
+        //{
+        //    pipe0_reading_address[0] = 0;
+        //    if (spi_speed <= 35000)
+        //    { //Handle old BCM2835 speed constants, default to RF24_SPI_SPEED
+        //        spi_speed = RF24_SPI_SPEED;
+        //    }
+        //}        
+
+        //void setPayloadSize(byte size)
+        //{
+        //    payload_size = rf24_min(size, 32);
+        //}
+
+        //byte getPayloadSize()
+        //{
+        //    return payload_size;
+        //}       
+
+        //bool isChipConnected()
+        //{
+        //    byte setup = read_register(SETUP_AW);
+        //    if (setup >= 1 && setup <= 3)
+        //    {
+        //        return true;
+        //    }
+
+        //    return false;
+        //}
+
+        //static const byte child_pipe_enable[]
+        //PROGMEM = {ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_P4, ERX_P5};
+
+        //void stopListening()
+        //{
+        //    ce(LOW);
+
+        //    delayMicroseconds(txDelay);
+
+        //    if (read_register(FEATURE) & _BV(EN_ACK_PAY))
+        //    {
+        //        delayMicroseconds(txDelay); //200
+        //        flush_tx();
+        //    }
+        //    //flush_rx();
+        //    config_reg &= ~_BV(PRIM_RX);
+        //    write_register(NRF_CONFIG, (read_register(NRF_CONFIG)) & ~_BV(PRIM_RX));
+
+        //    write_register(EN_RXADDR, read_register(EN_RXADDR) | _BV(pgm_read_byte(&child_pipe_enable[0]))); // Enable RX on pipe0
+
+        //    //delayMicroseconds(100);
+        //}        
+
+        ////Similar to the previous write, clears the interrupt flags
+        //bool write(byte buf, byte len, bool multicast)
+        //{
+        //    //Start Writing
+        //    startFastWrite(buf, len, multicast);
+
+        //    while (!(get_status() & (_BV(TX_DS) | _BV(MAX_RT)))) { }
+
+        //    ce(LOW);
+
+        //    byte status = write_register(NRF_STATUS, _BV(RX_DR) | _BV(TX_DS) | _BV(MAX_RT));
+
+        //    //Max retries exceeded
+        //    if (status & _BV(MAX_RT))
+        //    {
+        //        flush_tx(); //Only going to be 1 packet int the FIFO at a time using this method, so just flush
+        //        return 0;
+        //    }
+        //    //TX OK 1 or 0
+        //    return 1;
+        //}
+
+        //bool write(byte buf, byte len)
+        //{
+        //    return write(buf, len, 0);
+        //}
+
+        ////For general use, the interrupt flags are not important to clear
+        //bool writeBlocking(byte buf, byte len, uint timeout)
+        //{
+        //    //Block until the FIFO is NOT full.
+        //    //Keep track of the MAX retries and set auto-retry if seeing failures
+        //    //This way the FIFO will fill up and allow blocking until packets go through
+        //    //The radio will auto-clear everything in the FIFO as long as CE remains high
+
+        //    uint timer = millis();                              //Get the time that the payload transmission started
+
+        //    while ((get_status()
+        //            & (_BV(TX_FULL))))
+        //    {          //Blocking only if FIFO is full. This will loop and block until TX is successful or timeout
+
+        //        if (get_status() & _BV(MAX_RT))
+        //        {                      //If MAX Retries have been reached
+        //            reUseTX();                                          //Set re-transmit and clear the MAX_RT interrupt flag
+        //            if (millis() - timer > timeout)
+        //            {
+        //                return 0;
+        //            }          //If this payload has exceeded the user-defined timeout, exit and return 0
+        //        }
+        //    }
+
+        //    //Start Writing
+        //    startFastWrite(buf, len, 0);                                  //Write the payload if a buffer is clear
+
+        //    return 1;                                                  //Return 1 to indicate successful transmission
+        //}
+
+        //void reUseTX()
+        //{
+        //    write_register(NRF_STATUS, _BV(MAX_RT));              //Clear max retry flag
+        //    spiTrans(REUSE_TX_PL);
+        //    ce(LOW);                                          //Re-Transfer packet
+        //    ce(HIGH);
+        //}
+
+        //bool writeFast(byte buf, byte len, bool multicast)
+        //{
+        //    //Block until the FIFO is NOT full.
+        //    //Keep track of the MAX retries and set auto-retry if seeing failures
+        //    //Return 0 so the user can control the retrys and set a timer or failure counter if required
+        //    //The radio will auto-clear everything in the FIFO as long as CE remains high
+
+        //    //Blocking only if FIFO is full. This will loop and block until TX is successful or fail
+        //    while ((get_status() & (_BV(TX_FULL))))
+        //    {
+        //        if (get_status() & _BV(MAX_RT))
         //        {
-        //            // Minimum ideal SPI bus speed is 2x data rate
-        //            // If we assume 2Mbs data rate and 16Mhz clock, a
-        //            // divider of 4 is the minimum we want.
-        //            // CLK:BUS 8Mhz:2Mhz, 16Mhz:4Mhz, or 20Mhz:5Mhz
-        //# ifdef ARDUINO
-        //            SPI.setBitOrder(MSBFIRST);
-        //            SPI.setDataMode(SPI_MODE0);
-        //            SPI.setClockDivider(SPI_CLOCK_DIV4);
+        //            return 0; //Return 0. The previous payload has been retransmitted
+        //            // From the user perspective, if you get a 0, just keep trying to send the same payload
+        //        }
+        //    }
+        //    //Start Writing
+        //    startFastWrite(buf, len, multicast);
+
+        //    return 1;
+        //}
+
+        //bool writeFast(byte buf, byte len)
+        //{
+        //    return writeFast(buf, len, 0);
+        //}
+
+        ////Per the documentation, we want to set PTX Mode when not listening. Then all we do is write data and set CE high
+        ////In this mode, if we can keep the FIFO buffers loaded, packets will transmit immediately (no 130us delay)
+        ////Otherwise we enter Standby-II mode, which is still faster than standby mode
+        ////Also, we remove the need to keep writing the config register over and over and delaying for 150 us each time if sending a stream of data
+
+        //void startFastWrite(byte buf, byte len, const bool multicast, bool startTx)
+        //{ //TMRh20
+        //    //write_payload( buf,len);
+        //    write_payload(buf, len, multicast ? W_TX_PAYLOAD_NO_ACK : W_TX_PAYLOAD);
+        //    if (startTx)
+        //    {
+        //        ce(HIGH);
+        //    }
+        //}
+
+        ////Added the original startWrite back in so users can still use interrupts, ack payloads, etc
+        ////Allows the library to pass all tests
+        //void startWrite(byte buf, byte len, const bool multicast)
+        //{
+        //    // Send the payload
+
+        //    //write_payload( buf, len );
+        //    write_payload(buf, len, multicast ? W_TX_PAYLOAD_NO_ACK : W_TX_PAYLOAD);
+        //    ce(HIGH);
+        //#if !defined(F_CPU) || F_CPU > 20000000
+        //    delayMicroseconds(10);
         //#endif
-        //            digitalWrite(csn_pin, mode);
-        //        }
+        //    ce(LOW);
+        //}
 
-        //        void ce(int level)
+        //bool rxFifoFull()
+        //{
+        //    return read_register(FIFO_STATUS) & _BV(RX_FULL);
+        //}
+
+        //bool txStandBy()
+        //{
+        //    while (!(read_register(FIFO_STATUS) & _BV(TX_EMPTY)))
+        //    {
+        //        if (get_status() & _BV(MAX_RT))
         //        {
-        //            digitalWrite(ce_pin, level);
-        //        }
-
-        //        byte read_register(byte reg, byte buf, byte len)
-        //        {
-        //            byte status;
-
-        //            csn(LOW);
-        //            status = SPI.transfer(R_REGISTER | (REGISTER_MASK & reg));
-        //            while (len--)
-        //                *buf++ = SPI.transfer(0xff);
-
-        //            csn(HIGH);
-
-        //            return status;
-        //        }
-
-        //        byte read_register(byte reg)
-        //        {
-        //            csn(LOW);
-        //            SPI.transfer(R_REGISTER | (REGISTER_MASK & reg));
-        //            byte result = SPI.transfer(0xff);
-
-        //            csn(HIGH);
-        //            return result;
-        //        }
-
-        //        byte write_register(byte reg, byte buf, byte len)
-        //        {
-        //            byte status;
-
-        //            csn(LOW);
-        //            status = SPI.transfer(W_REGISTER | (REGISTER_MASK & reg ) );
-
-        //            while (len--)
-        //            {
-        //                SPI.transfer(buf++);
-        //            }
-
-        //            csn(HIGH);
-
-        //            return status;
-        //        }
-
-        //        byte write_register(byte reg, byte value)
-        //        {
-        //            byte status;
-
-        //            csn(LOW);
-        //            status = SPI.transfer(W_REGISTER | (REGISTER_MASK & reg));
-        //            SPI.transfer(value);
-        //            csn(HIGH);
-
-        //            return status;
-        //        }
-
-        //        byte write_payload(byte buf, byte len)
-        //        {
-        //            byte status;
-
-        //            const byte current = reinterpret_cast <const byte*> (buf);
-
-        //            byte data_len = min(len, payload_size);
-        //            byte blank_len = dynamic_payloads_enabled ? 0 : payload_size - data_len;
-
-        //            //printf("[Writing %u bytes %u blanks]",data_len,blank_len);
-
-        //            csn(LOW);
-        //            status = SPI.transfer(W_TX_PAYLOAD);
-        //            while (data_len--)
-        //                SPI.transfer(*current++);
-        //            while (blank_len--)
-        //                SPI.transfer(0);
-        //            csn(HIGH);
-
-        //            return status;
-        //        }
-
-        //        byte read_payload(void* buf, byte len)
-        //        {
-        //            byte status;
-        //            byte* current = reinterpret_cast<byte*>(buf);
-
-        //            byte data_len = min(len, payload_size);
-        //            byte blank_len = dynamic_payloads_enabled ? 0 : payload_size - data_len;
-
-        //            //printf("[Reading %u bytes %u blanks]",data_len,blank_len);
-
-        //            csn(LOW);
-        //            status = SPI.transfer(R_RX_PAYLOAD);
-        //            while (data_len--)
-        //                *current++ = SPI.transfer(0xff);
-        //            while (blank_len--)
-        //                SPI.transfer(0xff);
-        //            csn(HIGH);
-
-        //            return status;
-        //        }
-
-        //        byte flush_rx()
-        //        {
-        //            byte status;
-
-        //            csn(LOW);
-        //            status = SPI.transfer(FLUSH_RX);
-        //            csn(HIGH);
-
-        //            return status;
-        //        }
-
-        //        byte flush_tx()
-        //        {
-        //            byte status;
-
-        //            csn(LOW);
-        //            status = SPI.transfer(FLUSH_TX);
-        //            csn(HIGH);
-
-        //            return status;
-        //        }
-
-        //        byte get_status()
-        //        {
-        //            byte status;
-
-        //            csn(LOW);
-        //            status = SPI.transfer(NOP);
-        //            csn(HIGH);
-
-        //            return status;
-        //        }
-
-        //        void print_status(byte status)
-        //        {
-        //            printf_P(PSTR("STATUS\t\t = 0x%02x RX_DR=%x TX_DS=%x MAX_RT=%x RX_P_NO=%x TX_FULL=%x\r\n"),
-        //                     status,
-        //                     (status & _BV(RX_DR)) ? 1 : 0,
-        //                     (status & _BV(TX_DS)) ? 1 : 0,
-        //                     (status & _BV(MAX_RT)) ? 1 : 0,
-        //                     ((status >> RX_P_NO) & B111),
-        //                     (status & _BV(TX_FULL)) ? 1 : 0
-        //                    );
-        //        }
-
-        //        void print_observe_tx(byte value)
-        //        {
-        //            printf_P(PSTR("OBSERVE_TX=%02x: POLS_CNT=%x ARC_CNT=%x\r\n"),
-        //                     value,
-        //                     (value >> PLOS_CNT) & B1111,
-        //                     (value >> ARC_CNT) & B1111
-        //                    );
-        //        }
-
-        //        void print_byte_register(const char* name, byte reg, byte qty)
-        //        {
-        //            char extra_tab = strlen_P(name) < 8 ? '\t' : 0;
-        //            printf_P(PSTR(PRIPSTR"\t%c ="), name, extra_tab);
-        //            while (qty--)
-        //                printf_P(PSTR(" 0x%02x"), read_register(reg++));
-        //            printf_P(PSTR("\r\n"));
-        //        }
-
-        //        void print_address_register(const char* name, byte reg, byte qty)
-        //        {
-        //            char extra_tab = strlen_P(name) < 8 ? '\t' : 0;
-        //            printf_P(PSTR(PRIPSTR"\t%c ="), name, extra_tab);
-
-        //            while (qty--)
-        //            {
-        //                byte buffer[5];
-        //                read_register(reg++, buffer, sizeof buffer);
-
-        //                printf_P(PSTR(" 0x"));
-        //                byte* bufptr = buffer + sizeof buffer;
-        //                while (--bufptr >= buffer)
-        //                    printf_P(PSTR("%02x"), *bufptr);
-        //            }
-
-        //            printf_P(PSTR("\r\n"));
-        //        }
-
-        //        RF24(byte _cepin, byte _cspin):
-        //            ce_pin(_cepin), csn_pin(_cspin), wide_band(true), p_variant(false), 
-        //            payload_size(32), ack_payload_available(false), dynamic_payloads_enabled(false),
-        //            pipe0_reading_address(0)
-        //        {
-        //        }
-
-        //        void setChannel(byte channel)
-        //        {
-        //            // TODO: This method could take advantage of the 'wide_band' calculation
-        //            // done in setChannel() to require certain channel spacing.
-
-        //            const byte max_channel = 127;
-        //            write_register(RF_CH, min(channel, max_channel));
-        //        }
-
-        //        void setPayloadSize(byte size)
-        //        {
-        //            const byte max_payload_size = 32;
-        //            payload_size = min(size, max_payload_size);
-        //        }
-
-        //        byte getPayloadSize()
-        //        {
-        //            return payload_size;
-        //        }
-
-        //        void printDetails()
-        //        {
-        //            print_status(get_status());
-
-        //            print_address_register(PSTR("RX_ADDR_P0-1"), RX_ADDR_P0, 2);
-        //            print_byte_register(PSTR("RX_ADDR_P2-5"), RX_ADDR_P2, 4);
-        //            print_address_register(PSTR("TX_ADDR"), TX_ADDR);
-
-        //            print_byte_register(PSTR("RX_PW_P0-6"), RX_PW_P0, 6);
-        //            print_byte_register(PSTR("EN_AA"), EN_AA);
-        //            print_byte_register(PSTR("EN_RXADDR"), EN_RXADDR);
-        //            print_byte_register(PSTR("RF_CH"), RF_CH);
-        //            print_byte_register(PSTR("RF_SETUP"), RF_SETUP);
-        //            print_byte_register(PSTR("CONFIG"), CONFIG);
-        //            print_byte_register(PSTR("DYNPD/FEATURE"), DYNPD, 2);
-
-        //            printf_P(PSTR("Data Rate\t = %S\r\n"), pgm_read_word(&rf24_datarate_e_str_P[getDataRate()]));
-        //            printf_P(PSTR("Model\t\t = %S\r\n"), pgm_read_word(&rf24_model_e_str_P[isPVariant()]));
-        //            printf_P(PSTR("CRC Length\t = %S\r\n"), pgm_read_word(&rf24_crclength_e_str_P[getCRCLength()]));
-        //            printf_P(PSTR("PA Power\t = %S\r\n"), pgm_read_word(&rf24_pa_dbm_e_str_P[getPALevel()]));
-        //        }
-
-        //        void begin()
-        //        {
-        //            // Initialize pins
-        //            pinMode(ce_pin, OUTPUT);
-        //            pinMode(csn_pin, OUTPUT);
-
-        //            // Initialize SPI bus
-        //            SPI.begin();
-
+        //            write_register(NRF_STATUS, _BV(MAX_RT));
         //            ce(LOW);
-        //            csn(HIGH);
-
-        //            // Must allow the radio time to settle else configuration bits will not necessarily stick.
-        //            // This is actually only required following power up but some settling time also appears to
-        //            // be required after resets too. For full coverage, we'll always assume the worst.
-        //            // Enabling 16b CRC is by far the most obvious case if the wrong timing is used - or skipped.
-        //            // Technically we require 4.5ms + 14us as a worst case. We'll just call it 5ms for good measure.
-        //            // WARNING: Delay is based on P-variant whereby non-P *may* require different timing.
-        //            delay(5);
-
-        //            // Set 1500uS (minimum for 32B payload in ESB@250KBPS) timeouts, to make testing a little easier
-        //            // WARNING: If this is ever lowered, either 250KBS mode with AA is broken or maximum packet
-        //            // sizes must never be used. See documentation for a more complete explanation.
-        //            write_register(SETUP_RETR, (B0100 << ARD) | (B1111 << ARC));
-
-        //            // Restore our default PA level
-        //            setPALevel(RF24_PA_MAX);
-
-        //            // Determine if this is a p or non-p RF24 module and then
-        //            // reset our data rate back to default value. This works
-        //            // because a non-P variant won't allow the data rate to
-        //            // be set to 250Kbps.
-        //            if (setDataRate(RF24_250KBPS))
-        //            {
-        //                p_variant = true;
-        //            }
-
-        //            // Then set the data rate to the slowest (and most reliable) speed supported by all
-        //            // hardware.
-        //            setDataRate(RF24_1MBPS);
-
-        //            // Initialize CRC and request 2-byte (16bit) CRC
-        //            setCRCLength(RF24_CRC_16);
-
-        //            // Disable dynamic payloads, to match dynamic_payloads_enabled setting
-        //            write_register(DYNPD, 0);
-
-        //            // Reset current status
-        //            // Notice reset and flush is the last thing we do
-        //            write_register(STATUS, _BV(RX_DR) | _BV(TX_DS) | _BV(MAX_RT));
-
-        //            // Set up default configuration.  Callers can always change it later.
-        //            // This channel should be universally safe and not bleed over into adjacent
-        //            // spectrum.
-        //            setChannel(76);
-
-        //            // Flush buffers
-        //            flush_rx();
-        //            flush_tx();
+        //            flush_tx();    //Non blocking, flush the data
+        //            return 0;
         //        }
+        //    }
 
-        //        void startListening()
+        //    ce(LOW);               //Set STANDBY-I mode
+        //    return 1;
+        //}
+
+        //bool txStandBy(uint timeout, bool startTx)
+        //{
+        //    if (startTx)
+        //    {
+        //        stopListening();
+        //        ce(HIGH);
+        //    }
+        //    uint start = millis();
+
+        //    while (!(read_register(FIFO_STATUS) & _BV(TX_EMPTY)))
+        //    {
+        //        if (get_status() & _BV(MAX_RT))
         //        {
-        //            write_register(CONFIG, read_register(CONFIG) | _BV(PWR_UP) | _BV(PRIM_RX));
-        //            write_register(STATUS, _BV(RX_DR) | _BV(TX_DS) | _BV(MAX_RT));
-
-        //            // Restore the pipe0 adddress, if exists
-        //            if (pipe0_reading_address)
-        //                write_register(RX_ADDR_P0, reinterpret_cast <const byte*> (&pipe0_reading_address), 5);
-
-        //            // Flush buffers
-        //            flush_rx();
-        //            flush_tx();
-
-        //            // Go!
+        //            write_register(NRF_STATUS, _BV(MAX_RT));
+        //            ce(LOW); // Set re-transmit
         //            ce(HIGH);
-
-        //            // wait for the radio to come up (130us actually only needed)
-        //            delayMicroseconds(130);
-        //        }
-
-        //        void stopListening()
-        //        {
-        //            ce(LOW);
-        //            flush_tx();
-        //            flush_rx();
-        //        }
-
-        //        void powerDown()
-        //        {
-        //            write_register(CONFIG, read_register(CONFIG) & ~_BV(PWR_UP));
-        //        }
-
-        //        void powerUp()
-        //        {
-        //            write_register(CONFIG, read_register(CONFIG) | _BV(PWR_UP));
-        //        }
-
-        //        bool write( const void* buf, byte len)
-        //        {
-        //            bool result = false;
-
-        //            // Begin the write
-        //            startWrite(buf, len);
-
-        //            // ------------
-        //            // At this point we could return from a non-blocking write, and then call
-        //            // the rest after an interrupt
-
-        //            // Instead, we are going to block here until we get TX_DS (transmission completed and ack'd)
-        //            // or MAX_RT (maximum retries, transmission failed).  Also, we'll timeout in case the radio
-        //            // is flaky and we get neither.
-
-        //            // IN the end, the send should be blocking.  It comes back in 60ms worst case, or much faster
-        //            // if I tighted up the retry logic.  (Default settings will be 1500us.
-        //            // Monitor the send
-        //            byte observe_tx;
-        //            byte status;
-        //            uint32_t sent_at = millis();
-        //            const uint32_t timeout = 500; //ms to wait for timeout
-        //            do
+        //            if (millis() - start >= timeout)
         //            {
-        //                status = read_register(OBSERVE_TX, &observe_tx, 1);
-        //                IF_SERIAL_DEBUG(Serial.print(observe_tx, HEX));
+        //                ce(LOW);
+        //                flush_tx();
+        //                return 0;
         //            }
-        //            while (!(status & (_BV(TX_DS) | _BV(MAX_RT))) && (millis() - sent_at < timeout));
-
-        //            // The part above is what you could recreate with your own interrupt handler,
-        //            // and then call this when you got an interrupt
-        //            // ------------
-
-        //            // Call this when you get an interrupt
-        //            // The status tells us three things
-        //            // * The send was successful (TX_DS)
-        //            // * The send failed, too many retries (MAX_RT)
-        //            // * There is an ack packet waiting (RX_DR)
-        //            bool tx_ok, tx_fail;
-        //            whatHappened(tx_ok, tx_fail, ack_payload_available);
-
-        //            //printf("%u%u%u\r\n",tx_ok,tx_fail,ack_payload_available);
-
-        //            result = tx_ok;
-        //            IF_SERIAL_DEBUG(Serial.print(result ? "...OK." : "...Failed"));
-
-        //            // Handle the ack packet
-        //            if (ack_payload_available)
-        //            {
-        //                ack_payload_length = getDynamicPayloadSize();
-        //                IF_SERIAL_DEBUG(Serial.print("[AckPacket]/"));
-        //                IF_SERIAL_DEBUG(Serial.println(ack_payload_length, DEC));
-        //            }
-
-        //            // Yay, we are done.
-
-        //            // Power down
-        //            powerDown();
-
-        //            // Flush buffers (Is this a relic of past experimentation, and not needed anymore??)
-        //            flush_tx();
-
-        //            return result;
         //        }
+        //    }
 
-        //        void startWrite( const void* buf, byte len)
-        //        {
-        //            // Transmitter power-up
-        //            write_register(CONFIG, (read_register(CONFIG) | _BV(PWR_UP)) & ~_BV(PRIM_RX));
-        //            delayMicroseconds(150);
+        //    ce(LOW);  //Set STANDBY-I mode
+        //    return 1;
+        //}
 
-        //            // Send the payload
-        //            write_payload(buf, len);
+        //void maskIRQ(bool tx, bool fail, bool rx)
+        //{
+        //    /* clear the interrupt flags */
+        //    config_reg &= ~(1 << MASK_MAX_RT | 1 << MASK_TX_DS | 1 << MASK_RX_DR);
+        //    /* set the specified interrupt flags */
+        //    config_reg |= fail << MASK_MAX_RT | tx << MASK_TX_DS | rx << MASK_RX_DR;
+        //    write_register(NRF_CONFIG, config_reg);
+        //}
 
-        //            // Allons!
-        //            ce(HIGH);
-        //            delayMicroseconds(15);
-        //            ce(LOW);
-        //        }
+        //byte getDynamicPayloadSize()
+        //{
+        //    byte result = 0;
 
-        //        byte getDynamicPayloadSize()
-        //        {
-        //            byte result = 0;
+        //    beginTransaction();
+        //    _SPI.transfer(R_RX_PL_WID);
+        //    result = _SPI.transfer(0xff);
+        //    endTransaction();
 
-        //            csn(LOW);
-        //            SPI.transfer(R_RX_PL_WID);
-        //            result = SPI.transfer(0xff);
-        //            csn(HIGH);
-
-        //            return result;
-        //        }
-
-        //        bool available()
-        //        {
-        //            return available(NULL);
-        //        }
-
-        //        bool available(byte pipe_num)
-        //        {
-        //            byte status = get_status();
-
-        //            // Too noisy, enable if you really want lots o data!!
-        //            //IF_SERIAL_DEBUG(print_status(status));
-
-        //            bool result = (status & _BV(RX_DR));
-
-        //            if (result)
-        //            {
-        //                // If the caller wants the pipe number, include that
-        //                if (pipe_num)
-        //                    *pipe_num = (status >> RX_P_NO) & B111;
-
-        //                // Clear the status bit
-
-        //                // ??? Should this REALLY be cleared now?  Or wait until we
-        //                // actually READ the payload?
-
-        //                write_register(STATUS, _BV(RX_DR));
-
-        //                // Handle ack payload receipt
-        //                if (status & _BV(TX_DS))
-        //                {
-        //                    write_register(STATUS, _BV(TX_DS));
-        //                }
-        //            }
-
-        //            return result;
-        //        }
-
-        //        bool read(void* buf, byte len)
-        //        {
-        //            // Fetch the payload
-        //            read_payload(buf, len);
-
-        //            // was this the last of the data available?
-        //            return read_register(FIFO_STATUS) & _BV(RX_EMPTY);
-        //        }
-
-        //        void whatHappened(bool& tx_ok, bool& tx_fail, bool& rx_ready)
-        //        {
-        //            // Read the status & reset the status in one easy call
-        //            // Or is that such a good idea?
-        //            byte status = write_register(STATUS, _BV(RX_DR) | _BV(TX_DS) | _BV(MAX_RT));
-
-        //            // Report to the user what happened
-        //            tx_ok = status & _BV(TX_DS);
-        //            tx_fail = status & _BV(MAX_RT);
-        //            rx_ready = status & _BV(RX_DR);
-        //        }
-
-        //        void openWritingPipe(uint64_t value)
-        //        {
-        //            // Note that AVR 8-bit uC's store this LSB first, and the NRF24L01(+)
-        //            // expects it LSB first too, so we're good.
-
-        //            write_register(RX_ADDR_P0, reinterpret_cast<byte*>(&value), 5);
-        //            write_register(TX_ADDR, reinterpret_cast<byte*>(&value), 5);
-
-        //            const byte max_payload_size = 32;
-        //            write_register(RX_PW_P0, min(payload_size, max_payload_size));
-        //        }
-
-        //    enum AdressSlot : byte
+        //    if (result > 32)
         //    {
-        //        RX_ADDR_P0, RX_ADDR_P1, RX_ADDR_P2, RX_ADDR_P3, RX_ADDR_P4, RX_ADDR_P5
-        //    };
+        //        flush_rx();
+        //        delay(2);
+        //        return 0;
+        //    }
 
-        //    enum PayloadSize : byte
+        //    return result;
+        //}
+
+        //void read(void* buf, byte len)
+        //{
+        //    // Fetch the payload
+        //    read_payload(buf, len);
+
+        //    //Clear the two possible interrupt flags with one command
+        //    write_register(NRF_STATUS, _BV(RX_DR) | _BV(MAX_RT) | _BV(TX_DS));
+        //}
+
+        //void whatHappened(bool& tx_ok, bool& tx_fail, bool& rx_ready)
+        //{
+        //    // Read the status & reset the status in one easy call
+        //    // Or is that such a good idea?
+        //    byte status = write_register(NRF_STATUS, _BV(RX_DR) | _BV(TX_DS) | _BV(MAX_RT));
+
+        //    // Report to the user what happened
+        //    tx_ok = status & _BV(TX_DS);
+        //    tx_fail = status & _BV(MAX_RT);
+        //    rx_ready = status & _BV(RX_DR);
+        //}
+
+        //void openWritingPipe(uint64_t value)
+        //{
+        //    // Note that AVR 8-bit uC's store this LSB first, and the NRF24L01(+)
+        //    // expects it LSB first too, so we're good.
+
+        //    write_register(RX_ADDR_P0, reinterpret_cast<byte*>(&value), addr_width);
+        //    write_register(TX_ADDR, reinterpret_cast<byte*>(&value), addr_width);
+
+        //    //const byte max_payload_size = 32;
+        //    //write_register(RX_PW_P0,rf24_min(payload_size,max_payload_size));
+        //    write_register(RX_PW_P0, payload_size);
+        //}
+
+        //void openWritingPipe(const byte* address)
+        //{
+        //    // Note that AVR 8-bit uC's store this LSB first, and the NRF24L01(+)
+        //    // expects it LSB first too, so we're good.
+        //    write_register(RX_ADDR_P0, address, addr_width);
+        //    write_register(TX_ADDR, address, addr_width);
+
+        //    //const byte max_payload_size = 32;
+        //    //write_register(RX_PW_P0,rf24_min(payload_size,max_payload_size));
+        //    write_register(RX_PW_P0, payload_size);
+        //}
+
+        //static const byte child_pipe[]
+        //PROGMEM = {RX_ADDR_P0, RX_ADDR_P1, RX_ADDR_P2, RX_ADDR_P3, RX_ADDR_P4, RX_ADDR_P5};
+        //static const byte child_payload_size[]
+        //PROGMEM = {RX_PW_P0, RX_PW_P1, RX_PW_P2, RX_PW_P3, RX_PW_P4, RX_PW_P5};
+
+        //void openReadingPipe(byte child, uint64_t address)
+        //{
+        //    // If this is pipe 0, cache the address.  This is needed because
+        //    // openWritingPipe() will overwrite the pipe 0 address, so
+        //    // startListening() will have to restore it.
+        //    if (child == 0)
         //    {
-        //        RX_PW_P0, RX_PW_P1, RX_PW_P2, RX_PW_P3, RX_PW_P4, RX_PW_P5
-        //    };
+        //        memcpy(pipe0_reading_address, &address, addr_width);
+        //    }
 
-        //    enum EnablePipe : byte
+        //    if (child <= 5)
         //    {
-        //        ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_P4, ERX_P5
-        //    };
-
-        //    void openReadingPipe(byte child, uint64_t address)
-        //    {
-        //        // If this is pipe 0, cache the address.  This is needed because
-        //        // openWritingPipe() will overwrite the pipe 0 address, so
-        //        // startListening() will have to restore it.
-        //        if (child == 0)
-        //            pipe0_reading_address = address;
-
-        //        if (child <= 6)
+        //        // For pipes 2-5, only write the LSB
+        //        if (child < 2)
         //        {
-        //            // For pipes 2-5, only write the LSB
-        //            if (child < 2)
-        //                write_register(pgm_read_byte(&child_pipe[child]), reinterpret_cast <const byte*> (&address), 5);
+        //            write_register(pgm_read_byte(&child_pipe[child]), reinterpret_cast <const byte*> (&address), addr_width);
+        //        }
         //        else
-        //                write_register(pgm_read_byte(&child_pipe[child]), reinterpret_cast <const byte*> (&address), 1);
-
-        //            write_register(pgm_read_byte(&child_payload_size[child]), payload_size);
-
-        //            // Note it would be more efficient to set all of the bits for all open
-        //            // pipes at once.  However, I thought it would make the calling code
-        //            // more simple to do it this way.
-        //            write_register(EN_RXADDR, read_register(EN_RXADDR) | _BV(pgm_read_byte(&child_pipe_enable[child])));
-        //        }
-        //    }
-
-        //    void toggle_features()
-        //    {
-        //        csn(LOW);
-        //        SPI.transfer(ACTIVATE);
-        //        SPI.transfer(0x73);
-        //        csn(HIGH);
-        //    }
-
-        //    void enableDynamicPayloads()
-        //    {
-        //        // Enable dynamic payload throughout the system
-        //        write_register(FEATURE, read_register(FEATURE) | _BV(EN_DPL));
-
-        //        // If it didn't work, the features are not enabled
-        //        if (!read_register(FEATURE))
         //        {
-        //            // So enable them and try again
-        //            toggle_features();
-        //            write_register(FEATURE, read_register(FEATURE) | _BV(EN_DPL));
+        //            write_register(pgm_read_byte(&child_pipe[child]), reinterpret_cast <const byte*> (&address), 1);
         //        }
 
-        //        IF_SERIAL_DEBUG(printf("FEATURE=%i\r\n", read_register(FEATURE)));
+        //        write_register(pgm_read_byte(&child_payload_size[child]), payload_size);
 
-        //        // Enable dynamic payload on all pipes
-        //        //
-        //        // Not sure the use case of only having dynamic payload on certain
-        //        // pipes, so the library does not support it.
-        //        write_register(DYNPD, read_register(DYNPD) | _BV(DPL_P5) | _BV(DPL_P4) | _BV(DPL_P3) | _BV(DPL_P2) | _BV(DPL_P1) | _BV(DPL_P0));
-
-        //        dynamic_payloads_enabled = true;
+        //        // Note it would be more efficient to set all of the bits for all open
+        //        // pipes at once.  However, I thought it would make the calling code
+        //        // more simple to do it this way.
+        //        write_register(EN_RXADDR, read_register(EN_RXADDR) | _BV(pgm_read_byte(&child_pipe_enable[child])));
         //    }
+        //}
 
-        //    void enableAckPayload()
+        //void setAddressWidth(byte a_width)
+        //{
+        //    if (a_width -= 2)
         //    {
-        //        //
-        //        // enable ack payload and dynamic payload features
-        //        //
-
-        //        write_register(FEATURE, read_register(FEATURE) | _BV(EN_ACK_PAY) | _BV(EN_DPL));
-
-        //        // If it didn't work, the features are not enabled
-        //        if (!read_register(FEATURE))
-        //        {
-        //            // So enable them and try again
-        //            toggle_features();
-        //            write_register(FEATURE, read_register(FEATURE) | _BV(EN_ACK_PAY) | _BV(EN_DPL));
-        //        }
-
-        //        IF_SERIAL_DEBUG(printf("FEATURE=%i\r\n", read_register(FEATURE)));
-
-        //        //
-        //        // Enable dynamic payload on pipes 0 & 1
-        //        //
-
-        //        write_register(DYNPD, read_register(DYNPD) | _BV(DPL_P1) | _BV(DPL_P0));
+        //        write_register(SETUP_AW, a_width % 4);
+        //        addr_width = (a_width % 4) + 2;
         //    }
-
-        //    void writeAckPayload(byte pipe, const void* buf, byte len)
+        //    else
         //    {
-        //        const byte* current = reinterpret_cast <const byte*> (buf);
-
-        //        csn(LOW);
-        //        SPI.transfer(W_ACK_PAYLOAD | (pipe & B111));
-        //        const byte max_payload_size = 32;
-        //        byte data_len = min(len, max_payload_size);
-        //        while (data_len--)
-        //            SPI.transfer(*current++);
-
-        //        csn(HIGH);
+        //        write_register(SETUP_AW, 0);
+        //        addr_width = 2;
         //    }
+        //}
 
-        //    bool isAckPayloadAvailable()
+        //void closeReadingPipe(byte pipe)
+        //{
+        //    write_register(EN_RXADDR, read_register(EN_RXADDR) & ~_BV(pgm_read_byte(&child_pipe_enable[pipe])));
+        //}
+
+        //void enableDynamicPayloads()
+        //{
+        //    // Enable dynamic payload throughout the system
+
+        //    //toggle_features();
+        //    write_register(FEATURE, read_register(FEATURE) | _BV(EN_DPL));
+
+        //    // Enable dynamic payload on all pipes
+        //    //
+        //    // Not sure the use case of only having dynamic payload on certain
+        //    // pipes, so the library does not support it.
+        //    write_register(DYNPD, read_register(DYNPD) | _BV(DPL_P5) | _BV(DPL_P4) | _BV(DPL_P3) | _BV(DPL_P2) | _BV(DPL_P1) | _BV(DPL_P0));
+
+        //    dynamic_payloads_enabled = true;
+        //}
+
+        //void disableDynamicPayloads()
+        //{
+        //    // Disables dynamic payload throughout the system.  Also disables Ack Payloads
+
+        //    //toggle_features();
+        //    write_register(FEATURE, 0);
+
+        //    // Disable dynamic payload on all pipes
+        //    //
+        //    // Not sure the use case of only having dynamic payload on certain
+        //    // pipes, so the library does not support it.
+        //    write_register(DYNPD, 0);
+
+        //    dynamic_payloads_enabled = false;
+        //    ack_payloads_enabled = false;
+        //}
+
+        //void enableAckPayload()
+        //{
+        //    //
+        //    // enable ack payload and dynamic payload features
+        //    //
+
+        //    //toggle_features();
+        //    write_register(FEATURE, read_register(FEATURE) | _BV(EN_ACK_PAY) | _BV(EN_DPL));
+
+        //    //
+        //    // Enable dynamic payload on pipes 0 & 1
+        //    //
+        //    write_register(DYNPD, read_register(DYNPD) | _BV(DPL_P1) | _BV(DPL_P0));
+        //    dynamic_payloads_enabled = true;
+        //    ack_payloads_enabled = true;
+        //}
+
+        //void enableDynamicAck()
+        //{
+        //    //
+        //    // enable dynamic ack features
+        //    //
+        //    //toggle_features();
+        //    write_register(FEATURE, read_register(FEATURE) | _BV(EN_DYN_ACK));
+        //}
+
+        //void writeAckPayload(byte pipe, byte buf, byte len)
+        //{
+        //    const byte* current = reinterpret_cast <const byte*> (buf);
+
+        //    byte data_len = rf24_min(len, 32);
+
+        //    beginTransaction();
+        //    _SPI.transfer(W_ACK_PAYLOAD | (pipe & 0x07));
+
+        //    while (data_len--)
         //    {
-        //        bool result = ack_payload_available;
-        //        ack_payload_available = false;
-        //        return result;
+        //        _SPI.transfer(*current++);
         //    }
+        //    endTransaction();
+        //}
 
-        //    bool isPVariant()
+        //bool isAckPayloadAvailable()
+        //{
+        //    return available(NULL);
+        //}
+
+        //bool isPVariant()
+        //{
+        //    rf24_datarate_e dR = getDataRate();
+        //    bool result = setDataRate(RF24_250KBPS);
+        //    setDataRate(dR);
+        //    return result;
+        //}
+
+        //void setAutoAck(bool enable)
+        //{
+        //    if (enable)
         //    {
-        //        return p_variant;
+        //        write_register(EN_AA, 0x3F);
         //    }
-
-        //    void setAutoAck(bool enable)
+        //    else
         //    {
+        //        write_register(EN_AA, 0);
+        //    }
+        //}
+
+        //void setAutoAck(byte pipe, bool enable)
+        //{
+        //    if (pipe <= 6)
+        //    {
+        //        byte en_aa = read_register(EN_AA);
         //        if (enable)
-        //            write_register(EN_AA, B111111);
-        //        else
-        //            write_register(EN_AA, 0);
-        //    }
-
-        //    void setAutoAck(byte pipe, bool enable)
-        //    {
-        //        if (pipe <= 6)
         //        {
-        //            byte en_aa = read_register(EN_AA);
-        //            if (enable)
-        //            {
-        //                en_aa |= _BV(pipe);
-        //            }
-        //            else
-        //            {
-        //                en_aa &= ~_BV(pipe);
-        //            }
-        //            write_register(EN_AA, en_aa);
-        //        }
-        //    }
-
-        //    bool testCarrier()
-        //    {
-        //        return (read_register(CD) & 1);
-        //    }
-
-        //    bool testRPD()
-        //    {
-        //        return (read_register(RPD) & 1);
-        //    }
-
-        //    void setPALevel(rf24_pa_dbm_e level)
-        //    {
-        //        byte setup = read_register(RF_SETUP);
-        //        setup &= ~(_BV(RF_PWR_LOW) | _BV(RF_PWR_HIGH));
-
-        //        // switch uses RAM (evil!)
-        //        if (level == RF24_PA_MAX)
-        //        {
-        //            setup |= (_BV(RF_PWR_LOW) | _BV(RF_PWR_HIGH));
-        //        }
-        //        else if (level == RF24_PA_HIGH)
-        //        {
-        //            setup |= _BV(RF_PWR_HIGH);
-        //        }
-        //        else if (level == RF24_PA_LOW)
-        //        {
-        //            setup |= _BV(RF_PWR_LOW);
-        //        }
-        //        else if (level == RF24_PA_MIN)
-        //        {
-        //            // nothing
-        //        }
-        //        else if (level == RF24_PA_ERROR)
-        //        {
-        //            // On error, go to maximum PA
-        //            setup |= (_BV(RF_PWR_LOW) | _BV(RF_PWR_HIGH));
-        //        }
-
-        //        write_register(RF_SETUP, setup);
-        //    }
-
-        //    Nrf24l01.PowerAmplifierLevel getPALevel()
-        //    {
-        //        rf24_pa_dbm_e result = RF24_PA_ERROR;
-        //        byte power = read_register(RF_SETUP) & (_BV(RF_PWR_LOW) | _BV(RF_PWR_HIGH));
-
-        //        // switch uses RAM (evil!)
-        //        if (power == (_BV(RF_PWR_LOW) | _BV(RF_PWR_HIGH)))
-        //        {
-        //            result = RF24_PA_MAX;
-        //        }
-        //        else if (power == _BV(RF_PWR_HIGH))
-        //        {
-        //            result = RF24_PA_HIGH;
-        //        }
-        //        else if (power == _BV(RF_PWR_LOW))
-        //        {
-        //            result = RF24_PA_LOW;
+        //            en_aa |= _BV(pipe);
         //        }
         //        else
         //        {
-        //            result = RF24_PA_MIN;
+        //            en_aa &= ~_BV(pipe);
         //        }
+        //        write_register(EN_AA, en_aa);
+        //    }
+        //}
 
-        //        return result;
+        //bool testCarrier()
+        //{
+        //    return (read_register(CD) & 1);
+        //}
+
+        //bool testRPD()
+        //{
+        //    return (read_register(RPD) & 1);
+        //}
+
+        //byte getPALevel()
+        //{
+        //    return (read_register(RF_SETUP) & (_BV(RF_PWR_LOW) | _BV(RF_PWR_HIGH))) >> 1;
+        //}
+
+        //byte getARC()
+        //{
+        //    return read_register(OBSERVE_TX) & 0x0F;
+        //}
+
+        //rf24_datarate_e getDataRate()
+        //{
+        //    rf24_datarate_e result;
+        //    byte dr = read_register(RF_SETUP) & (_BV(RF_DR_LOW) | _BV(RF_DR_HIGH));
+
+        //    // switch uses RAM (evil!)
+        //    // Order matters in our case below
+        //    if (dr == _BV(RF_DR_LOW))
+        //    {
+        //        // '10' = 250KBPS
+        //        result = RF24_250KBPS;
+        //    }
+        //    else if (dr == _BV(RF_DR_HIGH))
+        //    {
+        //        // '01' = 2MBPS
+        //        result = RF24_2MBPS;
+        //    }
+        //    else
+        //    {
+        //        // '00' = 1MBPS
+        //        result = RF24_1MBPS;
+        //    }
+        //    return result;
+        //}
+
+        //void setCRCLength(rf24_crclength_e length)
+        //{
+        //    config_reg &= ~(_BV(CRCO) | _BV(EN_CRC));
+
+        //    // switch uses RAM (evil!)
+        //    if (length == RF24_CRC_DISABLED)
+        //    {
+        //        // Do nothing, we turned it off above.
+        //    }
+        //    else if (length == RF24_CRC_8)
+        //    {
+        //        config_reg |= _BV(EN_CRC);
+        //    }
+        //    else
+        //    {
+        //        config_reg |= _BV(EN_CRC);
+        //        config_reg |= _BV(CRCO);
         //    }
 
-        //    bool setDataRate(rf24_datarate_e speed)
-        //    {
-        //        bool result = false;
-        //        byte setup = read_register(RF_SETUP);
+        //    write_register(NRF_CONFIG, config_reg);
+        //}
 
-        //        // HIGH and LOW '00' is 1Mbs - our default
-        //        wide_band = false;
-        //        setup &= ~(_BV(RF_DR_LOW) | _BV(RF_DR_HIGH));
-        //        if (speed == RF24_250KBPS)
+        //rf24_crclength_e getCRCLength()
+        //{
+        //    rf24_crclength_e result = RF24_CRC_DISABLED;
+        //    byte AA = read_register(EN_AA);
+        //    config_reg = read_register(NRF_CONFIG);
+
+        //    if (config_reg & _BV(EN_CRC) || AA)
+        //    {
+        //        if (config_reg & _BV(CRCO))
         //        {
-        //            // Must set the RF_DR_LOW to 1; RF_DR_HIGH (used to be RF_DR) is already 0
-        //            // Making it '10'.
-        //            wide_band = false;
-        //            setup |= _BV(RF_DR_LOW);
+        //            result = RF24_CRC_16;
         //        }
         //        else
         //        {
-        //            // Set 2Mbs, RF_DR (RF_DR_HIGH) is set 1
-        //            // Making it '01'
-        //            if (speed == RF24_2MBPS)
-        //            {
-        //                wide_band = true;
-        //                setup |= _BV(RF_DR_HIGH);
-        //            }
-        //            else
-        //            {
-        //                // 1Mbs
-        //                wide_band = false;
-        //            }
+        //            result = RF24_CRC_8;
         //        }
-        //        write_register(RF_SETUP, setup);
-
-        //        // Verify our result
-        //        if (read_register(RF_SETUP) == setup)
-        //        {
-        //            result = true;
-        //        }
-        //        else
-        //        {
-        //            wide_band = false;
-        //        }
-
-        //        return result;
         //    }
 
-        //    Nrf24l01.DataRate getDataRate(void )
-        //    {
-        //        rf24_datarate_e result;
-        //        byte dr = read_register(RF_SETUP) & (_BV(RF_DR_LOW) | _BV(RF_DR_HIGH));
+        //    return result;
+        //}
 
-        //        // switch uses RAM (evil!)
-        //        // Order matters in our case below
-        //        if (dr == _BV(RF_DR_LOW))
-        //        {
-        //            // '10' = 250KBPS
-        //            result = RF24_250KBPS;
-        //        }
-        //        else if (dr == _BV(RF_DR_HIGH))
-        //        {
-        //            // '01' = 2MBPS
-        //            result = RF24_2MBPS;
-        //        }
-        //        else
-        //        {
-        //            // '00' = 1MBPS
-        //            result = RF24_1MBPS;
-        //        }
-        //        return result;
-        //    }
+        //void disableCRC()
+        //{
+        //    config_reg &= ~_BV(EN_CRC);
+        //    write_register(NRF_CONFIG, config_reg);
+        //}        
 
-        //    void setCRCLength(rf24_crclength_e length)
-        //    {
-        //        byte config = read_register(CONFIG) & ~(_BV(CRCO) | _BV(EN_CRC));
+        //void startConstCarrier(rf24_pa_dbm_e level, byte channel)
+        //{
+        //    write_register(RF_SETUP, (read_register(RF_SETUP)) | _BV(CONT_WAVE));
+        //    write_register(RF_SETUP, (read_register(RF_SETUP)) | _BV(PLL_LOCK));
+        //    setPALevel(level);
+        //    setChannel(channel);
+        //    ce(HIGH);
+        //}
 
-        //        // switch uses RAM (evil!)
-        //        if (length == RF24_CRC_DISABLED)
-        //        {
-        //            // Do nothing, we turned it off above. 
-        //        }
-        //        else if (length == RF24_CRC_8)
-        //        {
-        //            config |= _BV(EN_CRC);
-        //        }
-        //        else
-        //        {
-        //            config |= _BV(EN_CRC);
-        //            config |= _BV(CRCO);
-        //        }
-        //        write_register(CONFIG, config);
-        //    }
-
-        //    rf24_crclength_e getCRCLength()
-        //    {
-        //        rf24_crclength_e result = RF24_CRC_DISABLED;
-        //        byte config = read_register(CONFIG) & (_BV(CRCO) | _BV(EN_CRC));
-
-        //        if (config & _BV(EN_CRC))
-        //        {
-        //            if (config & _BV(CRCO))
-        //                result = RF24_CRC_16;
-        //            else
-        //                result = RF24_CRC_8;
-        //        }
-
-        //        return result;
-        //    }
-
-        //    void disableCRC(void )
-        //    {
-        //        byte disable = read_register(CONFIG) & ~_BV(EN_CRC);
-        //        write_register(CONFIG, disable);
-        //    }
-
-        //    void setRetries(byte delay, byte count)
-        //    {
-        //        write_register(SETUP_RETR, (delay & 0xf) << ARD | (count & 0xf) << ARC);
-        //    }    
+        //void stopConstCarrier()
+        //{
+        //    write_register(RF_SETUP, (read_register(RF_SETUP)) & ~_BV(CONT_WAVE));
+        //    write_register(RF_SETUP, (read_register(RF_SETUP)) & ~_BV(PLL_LOCK));
+        //    ce(LOW);
+        //}
     }
 }

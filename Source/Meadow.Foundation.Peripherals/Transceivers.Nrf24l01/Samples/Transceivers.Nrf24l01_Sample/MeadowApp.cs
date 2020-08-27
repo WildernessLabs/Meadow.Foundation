@@ -1,68 +1,49 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Leds;
+using Meadow.Foundation.Transceivers;
+using Meadow.Hardware;
+using System;
+using System.Threading;
 
 namespace Transceivers.Nrf24l01_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        RgbPwmLed onboardLed;
+        RgbLed led;
+        Nrf24l01 Radio;
+        byte[] address = new byte[6] { 0, 0, 0, 0, 0, 1 };
 
         public MeadowApp()
         {
-            Initialize();
-            CycleColors(1000);
-        }
+            led = new RgbLed(Device, Device.Pins.OnboardLedRed, Device.Pins.OnboardLedGreen, Device.Pins.OnboardLedBlue);
+            led.SetColor(RgbLed.Colors.Red);
 
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
+            var config = new SpiClockConfiguration(10000000, SpiClockConfiguration.Mode.Mode0);
+            ISpiBus spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-            onboardLed = new RgbPwmLed(device: Device,
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                3.3f, 3.3f, 3.3f,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
-        }
+            Radio = new Nrf24l01(
+                    device: Device,
+                    spiBus: spiBus,
+                    chipEnablePin: Device.Pins.D11,
+                    chipSelectLine: Device.Pins.D10,
+                    interruptPin: Device.Pins.D09);
+            Radio.OpenReadingPipe(0, address);
+            Radio.SetPALevel(0);
+            Radio.StartListening();
 
-        void CycleColors(int duration)
-        {
-            Console.WriteLine("Cycle colors...");
+            led.SetColor(RgbLed.Colors.Green);
 
             while (true)
             {
-                ShowColorPulse(Color.Blue, duration);
-                ShowColorPulse(Color.Cyan, duration);
-                ShowColorPulse(Color.Green, duration);
-                ShowColorPulse(Color.GreenYellow, duration);
-                ShowColorPulse(Color.Yellow, duration);
-                ShowColorPulse(Color.Orange, duration);
-                ShowColorPulse(Color.OrangeRed, duration);
-                ShowColorPulse(Color.Red, duration);
-                ShowColorPulse(Color.MediumVioletRed, duration);
-                ShowColorPulse(Color.Purple, duration);
-                ShowColorPulse(Color.Magenta, duration);
-                ShowColorPulse(Color.Pink, duration);
-            }
+                if (Radio.available())
+                {
+                    Console.WriteLine("Hey");
+                }
+
+                Thread.Sleep(500);
+            }            
         }
 
-        void ShowColorPulse(Color color, int duration = 1000)
-        {
-            onboardLed.StartPulse(color, (uint)(duration / 2));
-            Thread.Sleep(duration);
-            onboardLed.Stop();
-        }
-
-        void ShowColor(Color color, int duration = 1000)
-        {
-            Console.WriteLine($"Color: {color}");
-            onboardLed.SetColor(color);
-            Thread.Sleep(duration);
-            onboardLed.Stop();
-        }
     }
 }
