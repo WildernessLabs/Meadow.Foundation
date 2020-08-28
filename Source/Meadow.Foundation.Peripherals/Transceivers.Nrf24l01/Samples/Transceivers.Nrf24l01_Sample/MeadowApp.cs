@@ -11,7 +11,7 @@ namespace Transceivers.Nrf24l01_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         RgbLed led;
-        Nrf24l01 Radio;
+        Nrf24l01 radio;
         byte[] address = new byte[6] { 0, 0, 0, 0, 0, 1 };
 
         public MeadowApp()
@@ -22,27 +22,27 @@ namespace Transceivers.Nrf24l01_Sample
             var config = new SpiClockConfiguration(10000000, SpiClockConfiguration.Mode.Mode0);
             ISpiBus spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-            Radio = new Nrf24l01(
+            radio = new Nrf24l01(
                     device: Device,
                     spiBus: spiBus,
                     chipEnablePin: Device.Pins.D11,
                     chipSelectLine: Device.Pins.D10,
                     interruptPin: Device.Pins.D09);
-            Radio.OpenReadingPipe(0, address);
-            Radio.SetPALevel(0);
-            Radio.StartListening();
+            radio.OpenReadingPipe(0, address);
+            radio.SetPALevel(0);
+            radio.StartListening();
 
             led.SetColor(RgbLed.Colors.Green);
 
             while (true)
             {
-                if (Radio.available())
+                if (radio.IsAvailable())
                 {
                     Console.WriteLine("Hey");
                 }
 
                 Thread.Sleep(500);
-            }            
+            }           
         }
 
     }

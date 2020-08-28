@@ -147,15 +147,11 @@ namespace Meadow.Foundation.Transceivers
         }
         protected PipeEnabled pipeEnabled;
 
-
-
         protected ISpiBus spiBus;
 
         protected ISpiPeripheral rf24;
 
         protected IDigitalOutputPort chipEnablePort;
-
-        protected IDigitalOutputPort chipSelectPort;
 
         protected IDigitalInterruptPort interruptPort;
 
@@ -189,24 +185,25 @@ namespace Meadow.Foundation.Transceivers
         { }
 
         public Nrf24l01(
-            ISpiBus spiBus, 
-            IDigitalOutputPort chipEnablePort, 
-            IDigitalOutputPort chipSelectPort, 
+            ISpiBus spiBus,
+            IDigitalOutputPort chipEnablePort,
+            IDigitalOutputPort chipSelectPort,
             IDigitalInterruptPort interruptPort)
         {
             pipe0_reading_address[0] = 0;
 
             this.spiBus = spiBus;
-            this.rf24 = new SpiPeripheral(spiBus, chipSelectPort);
+            rf24 = new SpiPeripheral(spiBus, chipSelectPort);
 
             this.chipEnablePort = chipEnablePort;
-
-            this.chipSelectPort = chipSelectPort;
-
             this.interruptPort = interruptPort;
 
+            Initialize();
+        }
+
+        void Initialize()
+        {
             chipEnablePort.State = false;
-            chipSelectPort.State = true;
 
             Thread.Sleep(5);
 
@@ -215,36 +212,40 @@ namespace Meadow.Foundation.Transceivers
             SetDataRate(DataRate.RF24_1MBPS);
 
             ToggleFeatures();
-            rf24.WriteRegister(FEATURE, 0);
-            rf24.WriteRegister(DYNPD, 0);
+            WriteRegister(FEATURE, 0);
+            WriteRegister(DYNPD, 0);
             dynamic_payloads_enabled = false;
             ack_payloads_enabled = false;
 
-            rf24.WriteRegister(NRF_STATUS, (byte) (RX_DR | TX_DS | MAX_RT));
+            WriteRegister(NRF_STATUS, (byte) (1 << RX_DR | 1 << TX_DS | 1 << MAX_RT));
 
             SetChannel(76);
 
             FlushRx();
             FlushTx();
 
-            rf24.WriteRegister(NRF_CONFIG, (byte)(EN_CRC | CRCO));
             config_reg = rf24.ReadRegister(NRF_CONFIG);
+            Console.WriteLine($"Result: {config_reg}");
+
+            WriteRegister(NRF_CONFIG, (byte)(1 << EN_CRC | 1 << CRCO));
 
             PowerUp();
 
+            config_reg = ReadRegister(NRF_CONFIG);
+
             //bool result = config_reg == (byte)(EN_CRC | CRCO | PWR_UP) ? true : false;
 
-            Console.WriteLine($"Expected: {(byte)(EN_CRC | CRCO | PWR_UP)} Result: {config_reg}");
+            Console.WriteLine($"Expected: {(byte)(1 << EN_CRC | 1 << CRCO | 1 << PWR_UP)} Result: {config_reg}");
         }
 
         void SetRetries(byte delay, byte count)
         {
-            rf24.WriteRegister(SETUP_RETR, (byte)((delay & 0xf) << ARD | (count & 0xf) << ARC));
+            WriteRegister(SETUP_RETR, (byte)((delay & 0xf) << ARD | (count & 0xf) << ARC));
         }
 
         void SetDataRate(DataRate speed)
         {
-            byte setup = rf24.ReadRegister(RF_SETUP); // read_register(RF_SETUP);
+            byte setup = ReadRegister(RF_SETUP);
 
             switch (speed)
             {
@@ -267,7 +268,7 @@ namespace Meadow.Foundation.Transceivers
                     throw new ArgumentOutOfRangeException("DataRate", speed, "An invalid DataRate was specified");
             }
 
-            rf24.WriteRegister(RF_SETUP, setup);
+            WriteRegister(RF_SETUP, setup);
         }
 
         void ToggleFeatures()
@@ -279,12 +280,12 @@ namespace Meadow.Foundation.Transceivers
         public void SetChannel(byte channel)
         {
             const byte max_channel = 125;
-            rf24.WriteRegister(RF_CH, Math.Min(channel, max_channel));
+            WriteRegister(RF_CH, Math.Min(channel, max_channel));
         }
 
         public byte GetChannel()
         {
-            return rf24.ReadRegister(RF_CH);
+            return ReadRegister(RF_CH);
         }
 
         void FlushRx()
@@ -302,7 +303,7 @@ namespace Meadow.Foundation.Transceivers
             chipEnablePort.State = false;
 
             var regValue = rf24.ReadRegister(NRF_CONFIG);
-            rf24.WriteRegister(NRF_CONFIG, (byte)(regValue | (0u << PWR_UP)));
+            WriteRegister(NRF_CONFIG, (byte)(regValue | (0u << PWR_UP)));
 
             Thread.Sleep(5);
         }
@@ -310,7 +311,7 @@ namespace Meadow.Foundation.Transceivers
         void PowerUp()
         {
             var regValue = rf24.ReadRegister(NRF_CONFIG);
-            rf24.WriteRegister(NRF_CONFIG, (byte)(regValue | (1u << PWR_UP)));
+            WriteRegister(NRF_CONFIG, (byte)(regValue | (1u << PWR_UP)));
 
             Thread.Sleep(5);
         }
@@ -327,17 +328,17 @@ namespace Meadow.Foundation.Transceivers
             {
                 if (child < 2)
                 {
-                    rf24.WriteRegisters(RX_ADDR_P0, address);
+                    WriteRegisters(RX_ADDR_P0, address);
                 }
                 else
                 {
 
                 }
 
-                rf24.WriteRegister(RX_PW_P0, payload_size);
+                WriteRegister(RX_PW_P0, payload_size);
 
                 byte rxaddr = rf24.ReadRegister(EN_RXADDR);
-                rf24.WriteRegister(EN_RXADDR, (byte)(rxaddr | RX_PW_P0));
+                WriteRegister(EN_RXADDR, (byte)(rxaddr | RX_PW_P0));
             }
         }
 
@@ -354,18 +355,33 @@ namespace Meadow.Foundation.Transceivers
                 level = (byte)((level << (byte)1) & (byte)lnaEnable);
             }
 
-            rf24.WriteRegister(RF_SETUP, (byte)(setup |= level));
+            WriteRegister(RF_SETUP, (byte)(setup |= level));
+        }
+
+        void WriteRegisters(byte address, byte[] data)
+        {
+            rf24.WriteRegisters((byte)(W_REGISTER | (REGISTER_MASK & address)), data);
+        }
+
+        void WriteRegister(byte address, byte value)
+        {
+            rf24.WriteRegister((byte)(W_REGISTER | (REGISTER_MASK & address)), value);
+        }
+
+        byte ReadRegister(byte address)
+        {
+            return rf24.ReadRegister((byte)(R_REGISTER | (REGISTER_MASK & address)));
         }
 
         public void StartListening()
         {
             config_reg |= PRIM_RX;
-            rf24.WriteRegister(NRF_CONFIG, config_reg);
-            rf24.WriteRegister(NRF_STATUS, (byte)(RX_DR | TX_DS | MAX_RT));
+            WriteRegister(NRF_CONFIG, config_reg);
+            WriteRegister(NRF_STATUS, (byte)(RX_DR | TX_DS | MAX_RT));
 
             //    if (pipe0_reading_address[0] > 0)
             //    {
-            rf24.WriteRegisters(RX_ADDR_P0, pipe0_reading_address);
+            WriteRegisters(RX_ADDR_P0, pipe0_reading_address);
             Console.WriteLine(Encoding.UTF8.GetString(pipe0_reading_address));
             //        write_register(RX_ADDR_P0, pipe0_reading_address, addr_width);
             //    }
@@ -380,16 +396,16 @@ namespace Meadow.Foundation.Transceivers
             }
         }
 
-        public bool available()
+        public bool IsAvailable()
         {
-            return available(null);
+            return IsAvailable(null);
         }
 
-        bool available(byte[] pipe_num)
+        bool IsAvailable(byte[] pipe_num)
         {
             byte r = (byte)(rf24.ReadRegister(FIFO_STATUS) & RX_EMPTY);
 
-            Console.WriteLine(r);
+         //   Console.WriteLine(r);
 
             //if (!(read_register(FIFO_STATUS) & _BV(RX_EMPTY)))            
             if (r > 0)
