@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using System;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 
@@ -319,43 +320,60 @@ namespace Meadow.Foundation.Transceivers
         // TODO: Finish this
         public void OpenReadingPipe(byte child, byte[] address)
         {
-            if (child == 0)
+            if(child > 5)
             {
-                this.address = address.ToArray();
+                throw new ArgumentOutOfRangeException("OpenReadingPipe child must be between 0 & 5 inclusive");
             }
 
-            if (child <= 5)
+            Array.Copy(address, pipe0_reading_address, address.Length);
+
+            switch (child)
             {
-                if (child < 2)
-                {
+                case 0:
                     WriteRegisters(RX_ADDR_P0, address);
-                }
-                else
-                {
-
-                }
-
-                WriteRegister(RX_PW_P0, payload_size);
-
-                byte rxaddr = rf24.ReadRegister(EN_RXADDR);
-                WriteRegister(EN_RXADDR, (byte)(rxaddr | RX_PW_P0));
+                    WriteRegister(RX_PW_P0, payload_size);
+                    break;
+                case 1:
+                    WriteRegisters(RX_ADDR_P1, address);
+                    WriteRegister(RX_PW_P1, payload_size);
+                    break;
+                case 2:
+                    WriteRegisters(RX_ADDR_P2, address);
+                    WriteRegister(RX_PW_P2, payload_size);
+                    break;
+                case 3:
+                    WriteRegisters(RX_ADDR_P3, address);
+                    WriteRegister(RX_PW_P3, payload_size);
+                    break;
+                case 4:
+                    WriteRegisters(RX_ADDR_P4, address);
+                    WriteRegister(RX_PW_P4, payload_size);
+                    break;
+                case 5:
+                    WriteRegisters(RX_ADDR_P5, address);
+                    WriteRegister(RX_PW_P5, payload_size);
+                    break;
             }
+
+            //ToDo make less suck
+            byte rxaddr = ReadRegister(EN_RXADDR);
+            WriteRegister(EN_RXADDR, (byte)(rxaddr | 1 << RX_PW_P0));
         }
 
         public void SetPALevel(byte level, byte lnaEnable = 1)
         {
-            byte setup = (byte)(rf24.ReadRegister(RF_SETUP) & 0xF8);
+            byte setup = (byte)(ReadRegister(RF_SETUP) & 0xF8);
 
             if (level > 3)
             {
-                level = (byte)(((byte)PowerAmplifierLevel.RF24_PA_MAX << (byte)1) & (byte)lnaEnable);
+                level = (byte)(((byte)PowerAmplifierLevel.RF24_PA_MAX << 1) + lnaEnable);
             }
             else
             {
-                level = (byte)((level << (byte)1) & (byte)lnaEnable);
+                level = (byte)((level << 1) + lnaEnable);
             }
 
-            WriteRegister(RF_SETUP, (byte)(setup |= level));
+            WriteRegister(RF_SETUP, setup |= level);
         }
 
         void WriteRegisters(byte address, byte[] data)
@@ -377,7 +395,7 @@ namespace Meadow.Foundation.Transceivers
         {
             config_reg |= PRIM_RX;
             WriteRegister(NRF_CONFIG, config_reg);
-            WriteRegister(NRF_STATUS, (byte)(RX_DR | TX_DS | MAX_RT));
+            WriteRegister(NRF_STATUS, (byte)(1 << RX_DR | 1 << TX_DS | 1 << MAX_RT));
 
             //    if (pipe0_reading_address[0] > 0)
             //    {
@@ -403,13 +421,18 @@ namespace Meadow.Foundation.Transceivers
 
         bool IsAvailable(byte[] pipe_num)
         {
-            byte r = (byte)(rf24.ReadRegister(FIFO_STATUS) & RX_EMPTY);
+            byte r = (byte)(ReadRegister(FIFO_STATUS) & 1 << RX_EMPTY);
 
-         //   Console.WriteLine(r);
+            Console.WriteLine(r);
 
             //if (!(read_register(FIFO_STATUS) & _BV(RX_EMPTY)))            
-            if (r > 0)
+            if (r == 0)
             {
+                if(pipe_num != null)
+                {
+
+                }
+
                 // If the caller wants the pipe number, include that
                 //if (pipe_num)
                 //{

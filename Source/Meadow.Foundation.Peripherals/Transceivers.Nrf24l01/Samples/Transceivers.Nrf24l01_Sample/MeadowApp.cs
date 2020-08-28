@@ -12,7 +12,7 @@ namespace Transceivers.Nrf24l01_Sample
     {
         RgbLed led;
         Nrf24l01 radio;
-        byte[] address = new byte[6] { 0, 0, 0, 0, 0, 1 };
+        byte[] address = new byte[5] { 0, 0, 0, 0, 1 };
 
         public MeadowApp()
         {
