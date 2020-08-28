@@ -122,11 +122,6 @@ namespace Sensors.Camera.Vc0706_Sample
 
             Console.WriteLine($"Jpeg data length: {jpg.Length}");
 
-            for(int i = 0; i < 30; i++)
-            {
-                Console.WriteLine($"{i}:{jpg[i]}");
-            }
-
             Console.WriteLine($"Jpeg decoded is {decoder.ImageSize} bytes");
             Console.WriteLine($"Width {decoder.Width}");
             Console.WriteLine($"Height {decoder.Height}");
