@@ -4,6 +4,7 @@ using Meadow.Foundation.Leds;
 using Meadow.Foundation.Transceivers;
 using Meadow.Hardware;
 using System;
+using System.Text;
 using System.Threading;
 
 namespace Transceivers.Nrf24l01_Sample
@@ -12,7 +13,7 @@ namespace Transceivers.Nrf24l01_Sample
     {
         RgbLed led;
         Nrf24l01 radio;
-        byte[] address = new byte[5] { 0, 0, 0, 0, 1 };
+        byte[] address = new byte[5] { 5, 4, 3, 2, 1 };
 
         public MeadowApp()
         {
@@ -25,25 +26,41 @@ namespace Transceivers.Nrf24l01_Sample
             radio = new Nrf24l01(
                     device: Device,
                     spiBus: spiBus,
-                    chipEnablePin: Device.Pins.D11,
-                    chipSelectLine: Device.Pins.D10,
-                    interruptPin: Device.Pins.D09);
+                    chipEnablePin: Device.Pins.D13,
+                    chipSelectLine: Device.Pins.D12,
+                    interruptPin: Device.Pins.D00);
+
+            // TRANSMITER CODE
+            //radio.SetChannel(76);
+            //radio.OpenWritingPipe(address);
+            //radio.SetPALevel(0);
+            //radio.StopListening();
+
+            // RECEIVER CODE
+            radio.SetChannel(76);
             radio.OpenReadingPipe(0, address);
             radio.SetPALevel(0);
             radio.StartListening();
 
             led.SetColor(RgbLed.Colors.Green);
 
+            byte[] text = new byte[32];
+
             while (true)
             {
+                // TRANSMITER CODE
+                //string helloWorld = "Hello World";
+                //radio.Write(Encoding.Unicode.GetBytes(helloWorld), (byte)(helloWorld.Length));
+                //Console.WriteLine($"Sending: {helloWorld} \n");
+                //Thread.Sleep(1000);
+
+                // RECEIVER CODE
                 if (radio.IsAvailable())
                 {
-                    Console.WriteLine("Hey");
-                }
-
-                Thread.Sleep(500);
+                    Console.WriteLine("Yo!");
+                    //radio.Read(text, (byte) text.Length);
+                }                
             }           
         }
-
     }
 }

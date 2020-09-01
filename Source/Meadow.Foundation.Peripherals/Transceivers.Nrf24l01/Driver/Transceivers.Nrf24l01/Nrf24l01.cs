@@ -160,7 +160,7 @@ namespace Meadow.Foundation.Transceivers
 
         protected byte[] Address;
 
-        int csDelay;
+        int csDelay, txDelay;
 
         bool dynamic_payloads_enabled;
 
@@ -226,7 +226,6 @@ namespace Meadow.Foundation.Transceivers
             FlushTx();
 
             config_reg = rf24.ReadRegister(NRF_CONFIG);
-            Console.WriteLine($"Result: {config_reg}");
 
             WriteRegister(NRF_CONFIG, (byte)(1 << EN_CRC | 1 << CRCO));
 
@@ -234,9 +233,7 @@ namespace Meadow.Foundation.Transceivers
 
             config_reg = ReadRegister(NRF_CONFIG);
 
-            //bool result = config_reg == (byte)(EN_CRC | CRCO | PWR_UP) ? true : false;
-
-            Console.WriteLine($"Expected: {(byte)(1 << EN_CRC | 1 << CRCO | 1 << PWR_UP)} Result: {config_reg}");
+            Console.WriteLine($"Initialize - Expected: {(byte)(1 << EN_CRC | 1 << CRCO | 1 << PWR_UP)} Result: {config_reg}");
         }
 
         void SetRetries(byte delay, byte count)
@@ -246,6 +243,8 @@ namespace Meadow.Foundation.Transceivers
 
         void SetDataRate(DataRate speed)
         {
+            txDelay = 85;
+
             byte setup = ReadRegister(RF_SETUP);
 
             switch (speed)
@@ -281,7 +280,8 @@ namespace Meadow.Foundation.Transceivers
         public void SetChannel(byte channel)
         {
             const byte max_channel = 125;
-            WriteRegister(RF_CH, Math.Min(channel, max_channel));
+            WriteRegister(RF_CH, Math.Min(channel, max_channel));            
+            Console.WriteLine($"SetChannel - RF_CH: {ReadRegister(RF_CH)}");
         }
 
         public byte GetChannel()
@@ -357,7 +357,8 @@ namespace Meadow.Foundation.Transceivers
 
             //ToDo make less suck
             byte rxaddr = ReadRegister(EN_RXADDR);
-            WriteRegister(EN_RXADDR, (byte)(rxaddr | 1 << RX_PW_P0));
+            WriteRegister(EN_RXADDR, (byte)(rxaddr | 1 << ERX_P0));
+            Console.WriteLine($"OpenReadingPipe - EN_RXADDR: {ReadRegister(EN_RXADDR)}");
         }
 
         public void SetPALevel(byte level, byte lnaEnable = 1)
@@ -373,7 +374,10 @@ namespace Meadow.Foundation.Transceivers
                 level = (byte)((level << 1) + lnaEnable);
             }
 
-            WriteRegister(RF_SETUP, setup |= level);
+            byte value = setup |= level;            
+
+            WriteRegister(RF_SETUP, value);
+            Console.WriteLine($"SetPALevel - RF_SETUP: {ReadRegister(RF_SETUP)}");
         }
 
         void WriteRegisters(byte address, byte[] data)
@@ -393,14 +397,18 @@ namespace Meadow.Foundation.Transceivers
 
         public void StartListening()
         {
-            config_reg |= PRIM_RX;
+            config_reg |= (byte) (1 << PRIM_RX);
             WriteRegister(NRF_CONFIG, config_reg);
             WriteRegister(NRF_STATUS, (byte)(1 << RX_DR | 1 << TX_DS | 1 << MAX_RT));
 
             //    if (pipe0_reading_address[0] > 0)
             //    {
+
+            foreach (byte s in pipe0_reading_address)
+                Console.Write($"{s} ");
+            Console.WriteLine();
+
             WriteRegisters(RX_ADDR_P0, pipe0_reading_address);
-            Console.WriteLine(Encoding.UTF8.GetString(pipe0_reading_address));
             //        write_register(RX_ADDR_P0, pipe0_reading_address, addr_width);
             //    }
             //    else
@@ -412,6 +420,10 @@ namespace Meadow.Foundation.Transceivers
             {
                 FlushTx();
             }
+
+            Console.WriteLine($"StartListening - NRF_CONFIG: {ReadRegister(NRF_CONFIG)}");
+            Console.WriteLine($"StartListening - NRF_STATUS: {ReadRegister(NRF_STATUS)}");
+            Console.WriteLine($"StartListening - RX_ADDR_P0: {ReadRegister(RX_ADDR_P0)}");
         }
 
         public bool IsAvailable()
@@ -421,11 +433,8 @@ namespace Meadow.Foundation.Transceivers
 
         bool IsAvailable(byte[] pipe_num)
         {
-            byte r = (byte)(ReadRegister(FIFO_STATUS) & 1 << RX_EMPTY);
+            byte r = (byte)(ReadRegister(FIFO_STATUS) & (1 << RX_EMPTY));
 
-            Console.WriteLine(r);
-
-            //if (!(read_register(FIFO_STATUS) & _BV(RX_EMPTY)))            
             if (r == 0)
             {
                 if(pipe_num != null)
@@ -439,10 +448,141 @@ namespace Meadow.Foundation.Transceivers
                 //    byte status = get_status();
                 //    *pipe_num = (status >> RX_P_NO) & 0x07;
                 //}
+
+                Console.WriteLine("true");
                 return true;
             }
 
             return false;
+        }
+
+        public void Read(byte[] buf, byte len)
+        {
+            // Fetch the payload
+            ReadPayload(buf, len);
+
+            //Clear the two possible interrupt flags with one command
+            WriteRegister(NRF_STATUS, (byte) (1 << RX_DR | 1 << MAX_RT | 1 << TX_DS));
+        }
+
+        byte ReadPayload(byte[] buf, byte data_len)
+        {
+            byte status;
+            byte[] current = buf.ToArray();
+
+            if (data_len > payload_size)
+            {
+                data_len = payload_size;
+            }
+
+            byte blank_len = 0;
+            if (!dynamic_payloads_enabled)
+            {
+                blank_len = (byte)(payload_size - data_len);
+            }
+
+            //byte blank_len = dynamic_payloads_enabled ? 0 : (byte)(payload_size - data_len);
+            
+            status = rf24.ReadRegister(R_RX_PAYLOAD);
+            //while (data_len>0)
+            //{
+            //    *current++ = _SPI.transfer(0xFF);
+            //}
+
+            //while (blank_len--)
+            //{
+            //    _SPI.transfer(0xff);
+            //}
+
+            Console.WriteLine($"Status: {status}");
+            
+            return status;
+        }
+
+        public void OpenWritingPipe(byte[] address)
+        {
+            WriteRegisters(RX_ADDR_P0, address);
+            WriteRegisters(TX_ADDR, address);
+
+            WriteRegister(RX_PW_P0, payload_size);
+        }
+
+        public void StopListening()
+        {
+            Thread.Sleep(5);
+
+            byte value = (byte)(ReadRegister(FEATURE) & (1 << EN_ACK_PAY));
+
+            if (value > 0) 
+            {
+                Thread.Sleep(5);
+                FlushTx();
+            }
+
+            config_reg &= (byte)(~(1 << PRIM_RX));
+            WriteRegister(NRF_CONFIG, (byte)(ReadRegister(NRF_CONFIG) & ~(1 << PRIM_RX)));
+            WriteRegister(EN_RXADDR, (byte)(ReadRegister(EN_RXADDR) | 1 << ERX_P0));            
+        }
+
+        public bool Write(byte[] buf, byte len)
+        {
+            return Write(buf, len, false);
+        }
+
+        bool Write(byte[] buf, byte len, bool multicast)
+        {
+            StartFastWrite(buf, len, multicast, true);
+
+            byte getStatus = GetStatus();
+            byte x = (byte)(1 << TX_DS | 1 << MAX_RT);
+
+            Console.WriteLine($"Write - status: {getStatus} Something: {x}");
+
+            //while (!(get_status() & (_BV(TX_DS) | _BV(MAX_RT)))) { }
+
+            //ce(LOW);
+
+            WriteRegister(NRF_STATUS, (byte)(1 << RX_DR | 1 << TX_DS | 1 << MAX_RT));
+            byte status = ReadRegister(NRF_STATUS);
+
+            Console.WriteLine($"Write - status: {status} Something: {(byte)(1 << MAX_RT)}");
+
+            byte r = (byte)(status & (byte)(1 << MAX_RT));
+            if (r == 0)
+            {
+                FlushTx(); //Only going to be 1 packet int the FIFO at a time using this method, so just flush
+                return false;
+            }
+            
+            return true;
+        }        
+
+        void StartFastWrite(byte[] buf, byte len, bool multicast, bool startTx)
+        { 
+            WritePayload(buf, len, multicast? W_TX_PAYLOAD_NO_ACK : W_TX_PAYLOAD);
+            if (startTx) 
+            {
+                //ce(HIGH);
+            }
+        }
+
+        void WritePayload(byte[] buf, byte data_len, byte writeType)
+        { 
+            byte[] current = buf.ToArray();
+
+            data_len = Math.Min(data_len, payload_size);
+
+            byte blank_len = 0;
+            if (dynamic_payloads_enabled)
+                blank_len = (byte)(payload_size - data_len);
+
+            rf24.WriteByte(writeType);
+            rf24.WriteBytes(current);
+        }
+
+        byte GetStatus()
+        {
+            return rf24.ReadRegister(RF24_NOP);
         }
 
         //void csn(bool mode)
@@ -470,136 +610,6 @@ namespace Meadow.Foundation.Transceivers
         //    chipSelectPort.State = true;
         //}
 
-        //byte read_register(byte reg, byte buf, byte len)
-        //{
-        //    byte status;
-
-        //    beginTransaction();
-        //    status = _SPI.transfer(R_REGISTER | (REGISTER_MASK & reg));
-        //    while (len--)
-        //    {
-        //        *buf++ = _SPI.transfer(0xff);
-        //    }
-        //    endTransaction();
-
-        //    return status;
-        //}
-
-        //byte read_register(byte reg)
-        //{
-        //    byte result;
-
-        //    beginTransaction();
-        //    _SPI.transfer(R_REGISTER | (REGISTER_MASK & reg));
-        //    result = _SPI.transfer(0xff);
-        //    endTransaction();
-
-        //    return result;
-        //}
-
-        //byte write_register(byte reg, byte buf, byte len)
-        //{
-        //    byte status;
-
-        //        beginTransaction();
-        //        status = _SPI.transfer(W_REGISTER | (REGISTER_MASK & reg));
-        //    while (len--) 
-        //    {
-        //        _SPI.transfer(* buf++);
-        //    }
-        //    endTransaction();
-
-        //    return status;
-        //}
-
-        //byte write_register(byte reg, byte value)
-        //{
-        //    byte status;
-
-        //    beginTransaction();
-        //    status = _SPI.transfer(W_REGISTER | (REGISTER_MASK & reg));
-        //    _SPI.transfer(value);
-        //    endTransaction();
-
-        //    return status;
-        //}
-
-        //byte write_payload(byte buf, byte data_len, byte writeType)
-        //{
-        //    byte status;
-        //    const byte current = reinterpret_cast <const byte*> (buf);
-
-        //    data_len = rf24_min(data_len, payload_size);
-        //    byte blank_len = dynamic_payloads_enabled ? 0 : payload_size - data_len;
-
-        //    beginTransaction();
-        //    status = _SPI.transfer(writeType);
-        //    while (data_len--)
-        //    {
-        //        _SPI.transfer(*current++);
-        //    }
-        //    while (blank_len--)
-        //    {
-        //        _SPI.transfer(0);
-        //    }
-        //    endTransaction();
-
-        //    return status;
-        //}
-
-        //byte read_payload(byte buf, byte data_len)
-        //{
-        //    byte status;
-        //    byte current = reinterpret_cast<byte*>(buf);
-
-        //    if (data_len > payload_size)
-        //    {
-        //        data_len = payload_size;
-        //    }
-        //    byte blank_len = dynamic_payloads_enabled ? 0 : payload_size - data_len;
-
-        //    beginTransaction();
-        //    status = _SPI.transfer(R_RX_PAYLOAD);
-        //    while (data_len--)
-        //    {
-        //        *current++ = _SPI.transfer(0xFF);
-        //    }
-        //    while (blank_len--)
-        //    {
-        //        _SPI.transfer(0xff);
-        //    }
-        //    endTransaction();
-
-        //    return status;
-        //}
-
-        //byte spiTrans(byte cmd)
-        //{
-        //    byte status;
-
-        //    beginTransaction();
-        //    status = _SPI.transfer(cmd);
-        //    endTransaction();
-
-        //    return status;
-        //}
-
-        //byte get_status()
-        //{
-        //    return spiTrans(RF24_NOP);
-        //}
-
-        //RF24(uint16_t _cepin, uint16_t _cspin, uint _spi_speed)
-        //        :ce_pin(_cepin), csn_pin(_cspin),spi_speed(_spi_speed), payload_size(32), dynamic_payloads_enabled(false), addr_width(5),
-        //         csDelay(5)//,pipe0_reading_address(0)
-        //{
-        //    pipe0_reading_address[0] = 0;
-        //    if (spi_speed <= 35000)
-        //    { //Handle old BCM2835 speed constants, default to RF24_SPI_SPEED
-        //        spi_speed = RF24_SPI_SPEED;
-        //    }
-        //}        
-
         //void setPayloadSize(byte size)
         //{
         //    payload_size = rf24_min(size, 32);
@@ -622,54 +632,7 @@ namespace Meadow.Foundation.Transceivers
         //}
 
         //static const byte child_pipe_enable[]
-        //PROGMEM = {ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_P4, ERX_P5};
-
-        //void stopListening()
-        //{
-        //    ce(LOW);
-
-        //    delayMicroseconds(txDelay);
-
-        //    if (read_register(FEATURE) & _BV(EN_ACK_PAY))
-        //    {
-        //        delayMicroseconds(txDelay); //200
-        //        flush_tx();
-        //    }
-        //    //flush_rx();
-        //    config_reg &= ~_BV(PRIM_RX);
-        //    write_register(NRF_CONFIG, (read_register(NRF_CONFIG)) & ~_BV(PRIM_RX));
-
-        //    write_register(EN_RXADDR, read_register(EN_RXADDR) | _BV(pgm_read_byte(&child_pipe_enable[0]))); // Enable RX on pipe0
-
-        //    //delayMicroseconds(100);
-        //}        
-
-        ////Similar to the previous write, clears the interrupt flags
-        //bool write(byte buf, byte len, bool multicast)
-        //{
-        //    //Start Writing
-        //    startFastWrite(buf, len, multicast);
-
-        //    while (!(get_status() & (_BV(TX_DS) | _BV(MAX_RT)))) { }
-
-        //    ce(LOW);
-
-        //    byte status = write_register(NRF_STATUS, _BV(RX_DR) | _BV(TX_DS) | _BV(MAX_RT));
-
-        //    //Max retries exceeded
-        //    if (status & _BV(MAX_RT))
-        //    {
-        //        flush_tx(); //Only going to be 1 packet int the FIFO at a time using this method, so just flush
-        //        return 0;
-        //    }
-        //    //TX OK 1 or 0
-        //    return 1;
-        //}
-
-        //bool write(byte buf, byte len)
-        //{
-        //    return write(buf, len, 0);
-        //}
+        //PROGMEM = {ERX_P0, ERX_P1, ERX_P2, ERX_P3, ERX_P4, ERX_P5};           
 
         ////For general use, the interrupt flags are not important to clear
         //bool writeBlocking(byte buf, byte len, uint timeout)
@@ -845,14 +808,7 @@ namespace Meadow.Foundation.Transceivers
         //    return result;
         //}
 
-        //void read(void* buf, byte len)
-        //{
-        //    // Fetch the payload
-        //    read_payload(buf, len);
 
-        //    //Clear the two possible interrupt flags with one command
-        //    write_register(NRF_STATUS, _BV(RX_DR) | _BV(MAX_RT) | _BV(TX_DS));
-        //}
 
         //void whatHappened(bool& tx_ok, bool& tx_fail, bool& rx_ready)
         //{
@@ -877,19 +833,7 @@ namespace Meadow.Foundation.Transceivers
         //    //const byte max_payload_size = 32;
         //    //write_register(RX_PW_P0,rf24_min(payload_size,max_payload_size));
         //    write_register(RX_PW_P0, payload_size);
-        //}
-
-        //void openWritingPipe(const byte* address)
-        //{
-        //    // Note that AVR 8-bit uC's store this LSB first, and the NRF24L01(+)
-        //    // expects it LSB first too, so we're good.
-        //    write_register(RX_ADDR_P0, address, addr_width);
-        //    write_register(TX_ADDR, address, addr_width);
-
-        //    //const byte max_payload_size = 32;
-        //    //write_register(RX_PW_P0,rf24_min(payload_size,max_payload_size));
-        //    write_register(RX_PW_P0, payload_size);
-        //}
+        //}        
 
         //static const byte child_pipe[]
         //PROGMEM = {RX_ADDR_P0, RX_ADDR_P1, RX_ADDR_P2, RX_ADDR_P3, RX_ADDR_P4, RX_ADDR_P5};
