@@ -317,7 +317,6 @@ namespace Meadow.Foundation.Transceivers
             Thread.Sleep(5);
         }
 
-        // TODO: Finish this
         public void OpenReadingPipe(byte child, byte[] address)
         {
             if(child > 5)
@@ -358,7 +357,36 @@ namespace Meadow.Foundation.Transceivers
             //ToDo make less suck
             byte rxaddr = ReadRegister(EN_RXADDR);
             WriteRegister(EN_RXADDR, (byte)(rxaddr | 1 << ERX_P0));
-            Console.WriteLine($"OpenReadingPipe - EN_RXADDR: {ReadRegister(EN_RXADDR)}");
+        }
+
+        public void CloseReadingPipe(byte child) 
+        {
+            var enrxaddr = ReadRegister(EN_RXADDR);
+
+            byte childPipe = 0;
+            switch (child)
+            {
+                case 0:
+                    childPipe = (byte)(1 << ERX_P0);
+                    break;
+                case 1:
+                    childPipe = (byte)(1 << ERX_P1);
+                    break;
+                case 2:
+                    childPipe = (byte)(1 << ERX_P2);
+                    break;
+                case 3:
+                    childPipe = (byte)(1 << ERX_P3);
+                    break;
+                case 4:
+                    childPipe = (byte)(1 << ERX_P4);
+                    break;
+                case 5:
+                    childPipe = (byte)(1 << ERX_P5);
+                    break;
+            }
+
+            WriteRegister(EN_RXADDR, (byte)(enrxaddr & ~childPipe));
         }
 
         public void SetPALevel(byte level, byte lnaEnable = 1)
@@ -403,31 +431,19 @@ namespace Meadow.Foundation.Transceivers
 
             chipEnablePort.State = true;
 
-            //    if (pipe0_reading_address[0] > 0)
-            //    {
-
-            //foreach (byte s in pipe0_reading_address)
-            //    Console.Write($"{s} ");
-
-            Console.Write($"StartListening - address {Encoding.UTF8.GetString(pipe0_reading_address, 0, pipe0_reading_address.Length)}");
-            Console.WriteLine();
-
-            WriteRegisters(RX_ADDR_P0, pipe0_reading_address);
-            //        write_register(RX_ADDR_P0, pipe0_reading_address, addr_width);
-            //    }
-            //    else
-            //    {
-            //        closeReadingPipe(0);
-            //    }
+            if (pipe0_reading_address[0] > 0)
+            {
+                WriteRegisters(RX_ADDR_P0, pipe0_reading_address);            
+            }
+            else
+            {
+                CloseReadingPipe(0);
+            }
 
             if (ack_payloads_enabled)
             {
                 FlushTx();
             }
-
-            Console.WriteLine($"StartListening - NRF_CONFIG: {ReadRegister(NRF_CONFIG)}");
-            Console.WriteLine($"StartListening - NRF_STATUS: {ReadRegister(NRF_STATUS)}");
-            Console.WriteLine($"StartListening - RX_ADDR_P0: {ReadRegister(RX_ADDR_P0)}");
         }
 
         public bool IsAvailable()
@@ -437,21 +453,13 @@ namespace Meadow.Foundation.Transceivers
 
         bool IsAvailable(byte[] pipe_num)
         {
-            byte r = (byte)(ReadRegister(FIFO_STATUS) & (1 << RX_EMPTY));
-
-            if (r == 0)
+            if ((byte)(ReadRegister(FIFO_STATUS) & (1 << RX_EMPTY)) == 0)
             {
                 if(pipe_num != null)
                 {
-
+                    byte status = GetStatus();
+                    //    *pipe_num = (status >> RX_P_NO) & 0x07;
                 }
-
-                // If the caller wants the pipe number, include that
-                //if (pipe_num)
-                //{
-                //    byte status = get_status();
-                //    *pipe_num = (status >> RX_P_NO) & 0x07;
-                //}
 
                 return true;
             }
@@ -461,12 +469,8 @@ namespace Meadow.Foundation.Transceivers
 
         public void Read(byte[] buf, byte len)
         {
-            // Fetch the payload
             ReadPayload(buf, len);
-
-            //Clear the two possible interrupt flags with one command
             WriteRegister(NRF_STATUS, (byte) (1 << RX_DR | 1 << MAX_RT | 1 << TX_DS));
-            Console.WriteLine($"Read - NRF_STATUS: {ReadRegister(NRF_STATUS)}");
         }
 
         byte ReadPayload(byte[] buf, byte data_len)
@@ -609,31 +613,6 @@ namespace Meadow.Foundation.Transceivers
         {
             return rf24.ReadRegister(RF24_NOP);
         }
-
-        //void csn(bool mode)
-        //{
-        //    digitalWrite(csn_pin, mode);
-        //    delayMicroseconds(csDelay);
-        //}
-
-        //void ce(bool level)
-        //{
-        //    //Allow for 3-pin use on ATTiny
-        //    if (chipEnablePort.State != chipSelectPort.State)
-        //    {
-        //        chipEnablePort.State = level;
-        //    }
-        //}
-
-        //void beginTransaction()
-        //{
-        //    chipSelectPort.State = false;
-        //}
-
-        //void endTransaction()
-        //{
-        //    chipSelectPort.State = true;
-        //}
 
         //void setPayloadSize(byte size)
         //{

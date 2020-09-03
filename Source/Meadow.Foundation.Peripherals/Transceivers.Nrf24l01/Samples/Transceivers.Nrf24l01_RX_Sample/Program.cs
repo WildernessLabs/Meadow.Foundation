@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using System.Threading;
 
-namespace Transceivers.Nrf24l01_Sample
+namespace Transceivers.Nrf24l01_RX_Sample
 {
     class Program
     {

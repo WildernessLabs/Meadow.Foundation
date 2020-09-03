@@ -3,11 +3,10 @@ using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Transceivers;
 using Meadow.Hardware;
-using System;
 using System.Text;
 using System.Threading;
 
-namespace Transceivers.Nrf24l01_Sample
+namespace Transceivers.Nrf24l01_RX_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
@@ -24,11 +23,11 @@ namespace Transceivers.Nrf24l01_Sample
             ISpiBus spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             radio = new Nrf24l01(
-                    device: Device,
-                    spiBus: spiBus,
-                    chipEnablePin: Device.Pins.D13,
-                    chipSelectLine: Device.Pins.D12,
-                    interruptPin: Device.Pins.D00);
+                device: Device,
+                spiBus: spiBus,
+                chipEnablePin: Device.Pins.D13,
+                chipSelectLine: Device.Pins.D12,
+                interruptPin: Device.Pins.D00);
 
             radio.SetChannel(76);
             radio.OpenReadingPipe(0, Encoding.UTF8.GetBytes(address));
@@ -41,21 +40,12 @@ namespace Transceivers.Nrf24l01_Sample
 
             while (true)
             {
-                // TRANSMITER CODE
-                //string helloWorld = "Hello World";
-                //radio.Write(Encoding.Unicode.GetBytes(helloWorld), (byte)(helloWorld.Length));
-                //Console.WriteLine($"Sending: {helloWorld} \n");
-                //Thread.Sleep(1000);
-
-                // RECEIVER CODE
                 if (radio.IsAvailable())
                 {
-                    //Console.WriteLine("Yo!");
                     radio.Read(text, (byte) text.Length);
-                }
-                Console.WriteLine();
 
-                Thread.Sleep(10000);
+                    Thread.Sleep(1000);
+                }
             }           
         }
     }
