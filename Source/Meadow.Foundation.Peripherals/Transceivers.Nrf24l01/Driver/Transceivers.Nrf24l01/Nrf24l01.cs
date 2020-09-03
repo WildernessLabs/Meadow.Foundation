@@ -401,11 +401,15 @@ namespace Meadow.Foundation.Transceivers
             WriteRegister(NRF_CONFIG, config_reg);
             WriteRegister(NRF_STATUS, (byte)(1 << RX_DR | 1 << TX_DS | 1 << MAX_RT));
 
+            chipEnablePort.State = true;
+
             //    if (pipe0_reading_address[0] > 0)
             //    {
 
-            foreach (byte s in pipe0_reading_address)
-                Console.Write($"{s} ");
+            //foreach (byte s in pipe0_reading_address)
+            //    Console.Write($"{s} ");
+
+            Console.Write($"StartListening - address {Encoding.UTF8.GetString(pipe0_reading_address, 0, pipe0_reading_address.Length)}");
             Console.WriteLine();
 
             WriteRegisters(RX_ADDR_P0, pipe0_reading_address);
@@ -449,7 +453,6 @@ namespace Meadow.Foundation.Transceivers
                 //    *pipe_num = (status >> RX_P_NO) & 0x07;
                 //}
 
-                Console.WriteLine("true");
                 return true;
             }
 
@@ -463,6 +466,7 @@ namespace Meadow.Foundation.Transceivers
 
             //Clear the two possible interrupt flags with one command
             WriteRegister(NRF_STATUS, (byte) (1 << RX_DR | 1 << MAX_RT | 1 << TX_DS));
+            Console.WriteLine($"Read - NRF_STATUS: {ReadRegister(NRF_STATUS)}");
         }
 
         byte ReadPayload(byte[] buf, byte data_len)
@@ -480,21 +484,42 @@ namespace Meadow.Foundation.Transceivers
             {
                 blank_len = (byte)(payload_size - data_len);
             }
-
-            //byte blank_len = dynamic_payloads_enabled ? 0 : (byte)(payload_size - data_len);
             
+            Console.WriteLine($"ReadPayload - data_len: {data_len}");
+            Console.WriteLine($"ReadPayload - blank_len: {blank_len}");
+
             status = rf24.ReadRegister(R_RX_PAYLOAD);
-            //while (data_len>0)
-            //{
-            //    *current++ = _SPI.transfer(0xFF);
-            //}
 
-            //while (blank_len--)
-            //{
-            //    _SPI.transfer(0xff);
-            //}
+            Console.Write($"ReadPayload - payload:");
 
-            Console.WriteLine($"Status: {status}");
+            var values = rf24.ReadRegisters(R_RX_PAYLOAD, data_len);
+            for (int i = 0; i < data_len; i++)
+            {
+                if (values[i] == 0)
+                {
+                    current[i] = 32;
+                    Console.Write(current[i]);
+                }
+                else
+                {
+                    current[i] = values[i];
+                    Console.Write(current[i]);
+                }
+            }
+
+            Console.WriteLine("");
+
+            Console.WriteLine($"ReadPayload - data: {Encoding.UTF8.GetString(current, 0, current.Length).Trim()}");
+
+            Console.WriteLine("");
+
+            while (blank_len>0)
+            {
+                rf24.WriteRead(new Byte[] { 0xff }, 1);
+                blank_len--;
+            }
+
+            Console.WriteLine($"ReadPayload - status: {status}");
             
             return status;
         }

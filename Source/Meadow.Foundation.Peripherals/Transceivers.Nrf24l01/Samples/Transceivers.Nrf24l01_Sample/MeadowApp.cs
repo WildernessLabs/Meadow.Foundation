@@ -13,7 +13,7 @@ namespace Transceivers.Nrf24l01_Sample
     {
         RgbLed led;
         Nrf24l01 radio;
-        byte[] address = new byte[5] { 5, 4, 3, 2, 1 };
+        string address = "00001";
 
         public MeadowApp()
         {
@@ -30,15 +30,8 @@ namespace Transceivers.Nrf24l01_Sample
                     chipSelectLine: Device.Pins.D12,
                     interruptPin: Device.Pins.D00);
 
-            // TRANSMITER CODE
-            //radio.SetChannel(76);
-            //radio.OpenWritingPipe(address);
-            //radio.SetPALevel(0);
-            //radio.StopListening();
-
-            // RECEIVER CODE
             radio.SetChannel(76);
-            radio.OpenReadingPipe(0, address);
+            radio.OpenReadingPipe(0, Encoding.UTF8.GetBytes(address));
             radio.SetPALevel(0);
             radio.StartListening();
 
@@ -57,9 +50,12 @@ namespace Transceivers.Nrf24l01_Sample
                 // RECEIVER CODE
                 if (radio.IsAvailable())
                 {
-                    Console.WriteLine("Yo!");
-                    //radio.Read(text, (byte) text.Length);
-                }                
+                    //Console.WriteLine("Yo!");
+                    radio.Read(text, (byte) text.Length);
+                }
+                Console.WriteLine();
+
+                Thread.Sleep(10000);
             }           
         }
     }
