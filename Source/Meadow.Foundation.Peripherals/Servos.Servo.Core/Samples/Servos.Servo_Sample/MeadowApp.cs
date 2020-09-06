@@ -13,8 +13,10 @@ namespace Servos.Servo_Sample
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
-            
+
+            //servo = new Servo(Device, Device.Pins.D04, NamedServoConfigs.SG90);
             servo = new Servo(Device.CreatePwmPort(Device.Pins.D04), NamedServoConfigs.SG90);
+
             servo.RotateTo(0);
 
             TestServo();
