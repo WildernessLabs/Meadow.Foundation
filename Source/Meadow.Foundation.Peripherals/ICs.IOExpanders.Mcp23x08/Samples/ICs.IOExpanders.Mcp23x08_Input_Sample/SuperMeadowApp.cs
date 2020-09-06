@@ -23,9 +23,8 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
         {
             Console.WriteLine("Initialize hardware...");
 
-            var inte = Device.CreateDigitalInputPort(Device.Pins.D02, InterruptMode.EdgeFalling);
-            inte.Changed += (sender, args) => Console.WriteLine($"Interrupt is {args.Value}");
-
+            var inte = Device.CreateDigitalInputPort(Device.Pins.D02, InterruptMode.EdgeBoth);
+            Mcp23Logger.LogToConsole();
             i2cMcp = new Mcp23x08(
                 Device.CreateI2cBus(I2cBusSpeed.Fast),
                 inte,
@@ -61,7 +60,6 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 
                 button.Changed += (sender, args) =>
                 {
-                    Console.WriteLine("Click!");
                     led.IsOn = !args.Value;
                 };
             }
@@ -102,20 +100,9 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 
             Console.WriteLine("done.");
 
-            ReadInterrupt(inte);
             //CycleLeds();
             //ReadButtons();
 
-        }
-
-        private void ReadInterrupt(IDigitalInputPort interrupt)
-        {
-            while (true)
-            {
-                Console.WriteLine($"INTE {interrupt.State}");
-
-                Thread.Sleep(1000);
-            }
         }
 
         private void ReadButtons()

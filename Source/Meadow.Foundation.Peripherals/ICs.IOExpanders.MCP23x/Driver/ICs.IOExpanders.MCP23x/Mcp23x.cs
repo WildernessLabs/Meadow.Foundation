@@ -58,6 +58,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private readonly object _bankLock = new object();
 
         /// <summary>
+        /// The currently configured interrupt mode
+        /// </summary>
+        private readonly InterruptMode _interruptMode;
+        
+        /// <summary>
         /// The communication interface to the McpDevice
         /// </summary>
         private readonly IMcpDeviceComms _mcpDevice;
@@ -101,11 +106,28 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new ArgumentNullException(nameof(interrupts), "Interrupts cannot be null.");
             }
 
-            if (interrupts.Any(i => i.InterruptMode != InterruptMode.EdgeFalling))
+            if (interrupts.Any())
             {
-                throw new ArgumentException(
-                    "Interrupt ports must use an interrupt mode of EdgeFalling",
-                    nameof(interrupts));
+                var interruptMode = interrupts[0].InterruptMode;
+                if (interruptMode == InterruptMode.None)
+                {
+                    throw new ArgumentException(
+                        "Interrupt ports must use an InterruptMode",
+                        nameof(interrupts));
+                }
+
+                if (interrupts.Any(i => i.InterruptMode != interruptMode))
+                {
+                    throw new ArgumentException(
+                        "Interrupt ports must all use the same interrupt mode.",
+                        nameof(interrupts));
+                }
+
+                _interruptMode = interruptMode;
+            }
+            else
+            {
+                _interruptMode = InterruptMode.None;
             }
 
             if (interrupts.Count > 1 && interrupts.Count != ports.Count)
@@ -147,7 +169,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // map interrupts
             if (MirroredInterrupts)
             {
-                Console.WriteLine("Bulk interrupt assigned");
                 interrupts[0].Changed += HandleChangedInterrupts;
             }
             else
@@ -161,10 +182,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                     void CurryChangedInterruptForPort(object sender, DigitalInputPortEventArgs e)
                     {
-                        HandleChangedInterruptForPort(port);
+                        HandleChangedInterruptForPort(port, e);
                     }
 
-                    Console.WriteLine($"Port {port} interrupt assigned");
                     interrupt.Changed += CurryChangedInterruptForPort;
                 }
             }
@@ -201,7 +221,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             if (resistorMode == ResistorMode.PullDown)
             {
-                Console.WriteLine("Pull-down resistor mode is not supported.");
                 throw new Exception("Pull-down resistor mode is not supported.");
             }
 
@@ -211,7 +230,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             var port = Ports.GetPortIndexOfPin(pin);
             var pinKey = (byte) pin.Key;
 
-            Console.WriteLine($"Pinkey {pinKey}");
+            McpLogger.DebugOut.WriteLine($"Configuring input for port: {port}, pin: {pinKey}");
 
             // set the port direction
             SetPortDirection(port, pinKey, PortDirectionType.Input);
@@ -222,10 +241,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 if (BitHelpers.GetBitValue(GppuState[port], pinKey) != enablePullUp)
                 {
-                    Console.WriteLine($"Gppu {enablePullUp}");
                     GppuState[port] = BitHelpers.SetBit(GppuState[port], pinKey, enablePullUp);
                     WriteRegister(Mcp23PortRegister.PullupResistorConfigurationRegister, port, GppuState[port]);
                 }
+                McpLogger.DebugOut.WriteLine($"gppu    {Convert.ToString(GppuState[port], 2).PadLeft(8, '0')}");
 
                 if (interruptMode == InterruptMode.None)
                 {
@@ -247,20 +266,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 var defVal = existingValues[1];
                 defVal = BitHelpers.SetBit(defVal, pinKey, interruptValue);
 
-                //// Set the input polarity of the pin. Basically if its normally high, we want to flip the polarity.
-                //var pol = ReadRegister(Mcp23PortRegister.InputPolarityRegister, port);
-                //pol = BitHelpers.SetBit(pol, pinKey, !interruptValue);
-                //WriteRegister(Mcp23PortRegister.InputPolarityRegister, port, pol);
-
                 // interrupt control register; whether or not the change is based 
                 // on default comparison value, or if a change from previous.
                 var interruptControl = interruptMode != InterruptMode.EdgeBoth;
                 var intCon = existingValues[2];
                 intCon = BitHelpers.SetBit(intCon, pinKey, interruptControl);
 
-                Console.WriteLine($"gpinten {gpinten}");
-                Console.WriteLine($"defVal {defVal}");
-                Console.WriteLine($"intCon {intCon}");
+                McpLogger.DebugOut.WriteLine($"gpinten {Convert.ToString(gpinten, 2).PadLeft(8, '0')}");
+                McpLogger.DebugOut.WriteLine($"defVal  {Convert.ToString(defVal, 2).PadLeft(8, '0')}");
+                McpLogger.DebugOut.WriteLine($"intCon  {Convert.ToString(intCon, 2).PadLeft(8, '0')}");
                 WriteRegisters(
                     port, 
                     (Mcp23PortRegister.InterruptOnChangeRegister, gpinten),
@@ -434,8 +448,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     // 1 = Active-high.
                     // 0 = Active-low.
                     // Set to 0.
-                    // Do not modify as interrupts in this class are handled with the assumption that IOCON.Intpol is 0.
-                    const bool interruptPolarity = false;
+                    // Supports any interrupt type, but given the choice default to Active-low.
+                    var interruptPolarity = _interruptMode == InterruptMode.EdgeRising;
 
                     BankConfiguration = bank;
                     IoconState = BitHelpers.SetBit(IoconState, 0x07, (byte) bank == 0x01);
@@ -506,8 +520,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Interrupt event handler for a specific port
         /// </summary>
         /// <param name="port">Index of the GPIO port that has been interrupted</param>
-        private void HandleChangedInterruptForPort(int port)
+        private void HandleChangedInterruptForPort(int port, DigitalInputPortEventArgs e)
         {
+            // if interrupt mode is both, we only trigger on EdgeFalling (Active-low)
+            if (_interruptMode == InterruptMode.EdgeBoth && e.Value == true)
+            {
+                return;
+            }
+
             try
             {
                 // Important: Reading from GPIO and not INTCAP
@@ -543,7 +563,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                McpLogger.ErrorOut.WriteLine(ex.ToString());
             }
         }
 
@@ -555,7 +575,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="e">The event</param>
         private void HandleChangedInterrupts(object sender, DigitalInputPortEventArgs e)
         {
-            Console.WriteLine("Interrupt triggered!");
+            // if interrupt mode is both, we only trigger on EdgeFalling (Active-low)
+            if (_interruptMode == InterruptMode.EdgeBoth && e.Value == true)
+            {
+                return;
+            }
+
             try
             {
                 // Important: Reading from GPIO and not INTCAP
@@ -578,7 +603,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     var intFlag = portReads[i][0];
                     var intValue = portReads[i][1];
-                    Console.WriteLine($"Flags: {Convert.ToString(intFlag, 2).PadLeft(8, '0')} Values: {Convert.ToString(intValue, 2).PadLeft(8, '0')}");
 
                     intFlags[i] = intFlag;
                     intValues[i] = intValue;
@@ -596,13 +620,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     return;
                 }
 
-                Console.WriteLine("Mulit-port invoke");
                 InputChanged?.Invoke(this, new IOExpanderMultiPortInputChangedEventArgs(intFlags, intValues));
-                Console.WriteLine("Invoke done");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                McpLogger.ErrorOut.WriteLine(ex.ToString());
             }
         }
 
@@ -909,7 +931,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="value">The value to write</param>
         protected void WriteRegister(Mcp23PortRegister register, int port, byte value)
         {
-            Console.WriteLine($"({register}, {port}, {Convert.ToString(value, 2).PadLeft(8, '0')})");
+            //Mcp23Logger.DebugOut.WriteLine($"({register}, {port}, {Convert.ToString(value, 2).PadLeft(8, '0')})");
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
@@ -926,7 +948,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </remarks>
         protected void WriteRegisters(params (Mcp23PortRegister register, int port, byte value)[] writeOps)
         {
-            Console.WriteLine(string.Join("\n    ", writeOps.Select(x => $"({x.register}, {x.port}, {Convert.ToString(x.value, 2).PadLeft(8, '0')})")));
+            //Mcp23Logger.DebugOut.WriteLine(string.Join("\n    ", writeOps.Select(x => $"({x.register}, {x.port}, {Convert.ToString(x.value, 2).PadLeft(8, '0')})")));
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
@@ -976,7 +998,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </remarks>
         protected void WriteRegisters(int port, params (Mcp23PortRegister register, byte value)[] writeOps)
         {
-            Console.WriteLine($"port {port}, " + string.Join("\n    ", writeOps.Select(x => $"({x.register}, {port}, {Convert.ToString(x.value, 2).PadLeft(8, '0')})")));
+            //Mcp23Logger.DebugOut.WriteLine($"port {port}, " + string.Join("\n    ", writeOps.Select(x => $"({x.register}, {port}, {Convert.ToString(x.value, 2).PadLeft(8, '0')})")));
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {

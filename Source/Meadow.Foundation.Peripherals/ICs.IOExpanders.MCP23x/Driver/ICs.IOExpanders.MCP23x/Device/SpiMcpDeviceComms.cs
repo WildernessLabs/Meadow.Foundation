@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Meadow.Hardware;
 using Meadow.Utilities;
 
@@ -8,7 +9,6 @@ namespace Meadow.Foundation.ICs.IOExpanders.Device
     {
         // 10 MHz
         private const long MaximumSpeed = 10_000L;
-        private readonly bool _enableLog = true;
 
         private readonly byte _readAddress;
         private readonly byte _writeAddress;
@@ -26,8 +26,8 @@ namespace Meadow.Foundation.ICs.IOExpanders.Device
             _readAddress = BitHelpers.SetBit((byte) (peripheralAddress << 1), 0x00, false);
             _writeAddress = BitHelpers.SetBit((byte) (peripheralAddress << 1), 0x00, true);
 
-            Console.WriteLine($"read  {Convert.ToString(_readAddress, 2)}");
-            Console.WriteLine($"write {Convert.ToString(_writeAddress, 2)}");
+            McpLogger.DebugOut.WriteLine($"SPI Write address:  {Convert.ToString(_readAddress, 2)}");
+            McpLogger.DebugOut.WriteLine($"SPI Read address: {Convert.ToString(_writeAddress, 2)}");
             _peripheral = new SpiPeripheral(bus, chipSelect);
         }
 
@@ -73,40 +73,40 @@ namespace Meadow.Foundation.ICs.IOExpanders.Device
 
         void LogRead(byte[] addresses, byte[] results)
         {
-            if (!_enableLog)
+            if (McpLogger.DebugOut == TextWriter.Null)
             {
                 return;
             }
 
-            Console.Write("Read:  ");
+            McpLogger.DebugOut.Write("SPI Read:  ");
             foreach (var address in addresses)
             {
-                Console.Write(Convert.ToString(address, 2).PadLeft(8, '0') + ' ');
+                McpLogger.DebugOut.Write(Convert.ToString(address, 2).PadLeft(8, '0') + ' ');
             }
 
-            Console.Write("| ");
+            McpLogger.DebugOut.Write("| ");
 
             foreach (var result in results)
             {
-                Console.Write(Convert.ToString(result, 2).PadLeft(8, '0') + ' ');
+                McpLogger.DebugOut.Write(Convert.ToString(result, 2).PadLeft(8, '0') + ' ');
             }
 
-            Console.Write("\n");
+            McpLogger.DebugOut.Write("\n");
         }
         void LogWrite(byte[] addresses)
         {
-            if (!_enableLog)
+            if (McpLogger.DebugOut == TextWriter.Null)
             {
                 return;
             }
 
-            Console.Write("Write: ");
+            McpLogger.DebugOut.Write("Write: ");
             foreach (var address in addresses)
             {
-                Console.Write(Convert.ToString(address, 2).PadLeft(8, '0') + ' ');
+                McpLogger.DebugOut.Write(Convert.ToString(address, 2).PadLeft(8, '0') + ' ');
             }
 
-            Console.Write("\n");
+            McpLogger.DebugOut.Write("\n");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Hardware;
@@ -9,79 +10,25 @@ namespace ICs.IOExpanders.Mcp23x08_Output_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        IMcp23x08 _mcp;
 
         public MeadowApp()
         {
-            ConfigurePeripherals();
+            var inte = Device.CreateDigitalInputPort(Device.Pins.D04, InterruptMode.EdgeRising);
+            inte.Changed += (sender, args) => Console.WriteLine($"Interrupt changed to {args.Value}");
 
-            while (true) {
-                TestBulkPinWrites(20);
-                TestDigitalOutputPorts(2);
-            }
-
+            Console.WriteLine("Ready.");
+            //ReadInterrupt(inte);
         }
 
-        public void ConfigurePeripherals()
+        private void ReadInterrupt(IDigitalInputPort interrupt)
         {
-            IDigitalInputPort interruptPort =
-                Device.CreateDigitalInputPort(
-                    Device.Pins.D00,
-                    InterruptMode.EdgeRising);
-            // create a new mcp with all the address pins pulled low for
-            // an address of 0x20/32
-            _mcp = new Mcp23x08(Device.CreateI2cBus(), interruptPort, false, false, false);
-        }
+            while (true)
+            {
+                Console.WriteLine($"INTE {interrupt.State}");
 
-        void TestDigitalOutputPorts(int loopCount)
-        {
-            var out00 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP0);
-            var out01 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP1);
-            var out02 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP2);
-            var out03 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP3);
-            var out04 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP4);
-            var out05 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP5);
-            var out06 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP6);
-            var out07 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP7);
-
-            var outs = new List<IDigitalOutputPort>() {
-                out00, out01, out02, out03, out04, out05, out06, out07
-            };
-
-            foreach (var outie in outs) {
-                outie.State = true;
-            }
-
-            for(int l = 0; l < loopCount; l++) {
-                // loop through all the outputs
-                for (int i = 0; i < outs.Count; i++) {
-                    // turn them all off
-                    foreach (var outie in outs) { outie.State = false; }
-
-                    // turn on just one
-                    outs[i].State = true;
-                    Thread.Sleep(250);
-                }
-            }
-
-            // cleanup
-            for (int i = 0; i < outs.Count; i++) {
-                outs[i].Dispose();
+                Thread.Sleep(1000);
             }
         }
 
-        void TestBulkPinWrites(int loopCount)
-        {
-            byte mask = 0x0;
-
-            for (int l = 0; l < loopCount; l++) {
-
-                for (int i = 0; i < 8; i++) {
-                    _mcp.WritePort(mask);
-                    mask = (byte)(1 << i);
-                    Thread.Sleep(5);
-                }
-            }
-        }
     }
 }

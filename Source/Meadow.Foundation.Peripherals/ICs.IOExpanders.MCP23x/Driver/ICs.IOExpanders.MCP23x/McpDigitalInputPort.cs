@@ -64,17 +64,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private void PinChanged(object sender, IOExpanderPortInputChangedEventArgs e)
         {
-            Console.WriteLine($"Pin {Pin.Key} changed!");
             var now = DateTime.UtcNow;
             var isInterrupt = BitHelpers.GetBitValue(e.InterruptPins, (byte)Pin.Key);
-            if (!isInterrupt)
-            {
-                Console.WriteLine("Not interrupt :(");
-                return;
-            }
-
             var currentState = BitHelpers.GetBitValue(e.InterruptValues, (byte)Pin.Key);
-            if (currentState != _lastState)
+
+            if (isInterrupt || currentState != _lastState)
             {
                 switch (InterruptMode)
                 {

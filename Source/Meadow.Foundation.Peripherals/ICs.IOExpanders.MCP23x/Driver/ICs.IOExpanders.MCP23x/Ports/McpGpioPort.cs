@@ -68,14 +68,12 @@ namespace Meadow.Foundation.ICs.IOExpanders.Ports
         /// <inheritdoc />
         public void InvokeInputChanged(IOExpanderPortInputChangedEventArgs e)
         {
-            Console.WriteLine("Port interrupt invoke");
             if (e == null)
             {
                 throw new ArgumentNullException(nameof(e));
             }
 
             InputChanged?.Invoke(this, e);
-            Console.WriteLine("Invoke done");
         }
     }
 }
