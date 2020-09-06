@@ -189,7 +189,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x
                 handler => digitalInputPort.Changed -= handler,
                 () => port.InvokeInputChanged(
                     new IOExpanderPortInputChangedEventArgs(
-                        BitHelpers.SetBit(0x00, (byte) pin.Key, true),
+                        0x00,
                         0xFF)));
 
             var raisedFalse = Assert.Raises<DigitalInputPortEventArgs>(
@@ -207,7 +207,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x
                 handler => digitalInputPort.Changed -= handler,
                 () => port.InvokeInputChanged(
                     new IOExpanderPortInputChangedEventArgs(
-                        BitHelpers.SetBit(0x00, (byte) pin.Key, true),
+                        0x00,
                         0x00)));
         }
 
