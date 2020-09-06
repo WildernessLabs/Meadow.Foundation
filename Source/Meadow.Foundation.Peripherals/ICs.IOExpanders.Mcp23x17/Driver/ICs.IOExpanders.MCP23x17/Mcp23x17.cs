@@ -70,7 +70,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <inheritdoc />
-        public new void SetBankConfiguration(BankConfiguration bank) => base.SetBankConfiguration(bank);
+        public new void SetBankConfiguration(BankConfiguration bank)
+        {
+            base.SetBankConfiguration(bank);
+        }
 
         /// <inheritdoc />
         public void WriteAllPorts(byte portAMask, byte portBMask)
@@ -208,14 +211,43 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public Mcp23x17(
             ISpiBus spiBus,
-            IDigitalOutputPort chipSelect) : this(new SpiMcpDeviceComms(spiBus, chipSelect), new IDigitalInputPort[0])
+            IDigitalOutputPort chipSelect,
+            bool pinA0,
+            bool pinA1,
+            bool pinA2) : this(
+            new SpiMcpDeviceComms(spiBus, chipSelect, McpAddressTable.GetAddressFromPins(pinA0, pinA1, pinA2)),
+            new IDigitalInputPort[0])
         {
         }
 
         public Mcp23x17(
             ISpiBus spiBus,
             IDigitalOutputPort chipSelect,
-            IDigitalInputPort interruptPort) : this(new SpiMcpDeviceComms(spiBus, chipSelect), new[] { interruptPort })
+            IDigitalInputPort interruptPort,
+            bool pinA0,
+            bool pinA1,
+            bool pinA2) : this(
+            new SpiMcpDeviceComms(spiBus, chipSelect, McpAddressTable.GetAddressFromPins(pinA0, pinA1, pinA2)),
+            new[] { interruptPort })
+        {
+        }
+
+        public Mcp23x17(
+            ISpiBus spiBus,
+            IDigitalOutputPort chipSelect,
+            byte address = McpAddressTable.DefaultDeviceAddress) : this(
+            new SpiMcpDeviceComms(spiBus, chipSelect, address),
+            new IDigitalInputPort[0])
+        {
+        }
+
+        public Mcp23x17(
+            ISpiBus spiBus,
+            IDigitalOutputPort chipSelect,
+            IDigitalInputPort interruptPort,
+            byte address = McpAddressTable.DefaultDeviceAddress) : this(
+            new SpiMcpDeviceComms(spiBus, chipSelect, address),
+            new[] { interruptPort })
         {
         }
 
