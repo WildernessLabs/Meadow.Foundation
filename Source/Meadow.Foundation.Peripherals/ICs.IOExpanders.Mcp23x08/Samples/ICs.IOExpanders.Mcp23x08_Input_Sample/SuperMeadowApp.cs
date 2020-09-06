@@ -24,7 +24,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
             Console.WriteLine("Initialize hardware...");
 
             var inte = Device.CreateDigitalInputPort(Device.Pins.D02, InterruptMode.EdgeBoth);
-            Mcp23Logger.LogToConsole();
+            McpLogger.LogToConsole();
             i2cMcp = new Mcp23x08(
                 Device.CreateI2cBus(I2cBusSpeed.Fast),
                 inte,
