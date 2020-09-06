@@ -33,16 +33,31 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public byte GetAddress(Mcp23PortRegister register, int port, BankConfiguration bank)
         {
+            if (port != 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(port));
+            }
+            
             return _portMap.GetAddress(register);
         }
 
         public Mcp23PortRegister GetNextRegister(byte currentAddress, int port, BankConfiguration bank)
         {
+            if (port != 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(port));
+            }
+
             return _portMap.GetRegisterAtAddress(currentAddress);
         }
 
         public Mcp23PortRegister GetRegisterAtAddress(byte address, int port, BankConfiguration bank)
         {
+            if (port != 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(port));
+            }
+
             return _portMap.GetRegisterAtAddress(address);
         }
     }

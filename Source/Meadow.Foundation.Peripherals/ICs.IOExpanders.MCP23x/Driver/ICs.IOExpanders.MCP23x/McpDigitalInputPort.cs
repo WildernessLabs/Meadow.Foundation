@@ -31,9 +31,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 _port.InputChanged += PinChanged;
             }
+
+            _lastState = State;
         }
 
-        public override bool State => _mcp.ReadPin(Pin);
+        public sealed override bool State => _mcp.ReadPin(Pin);
 
         public override ResistorMode Resistor
         {
@@ -62,10 +64,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private void PinChanged(object sender, IOExpanderPortInputChangedEventArgs e)
         {
+            Console.WriteLine($"Pin {Pin.Key} changed!");
             var now = DateTime.UtcNow;
             var isInterrupt = BitHelpers.GetBitValue(e.InterruptPins, (byte)Pin.Key);
             if (!isInterrupt)
             {
+                Console.WriteLine("Not interrupt :(");
                 return;
             }
 

@@ -67,19 +67,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         private readonly IMcp23RegisterMap _registerMap;
 
-        /// <summary>
-        /// Current state of the configuration register (IOCON)
-        /// </summary>
-        protected byte IoconState { get; private set; }
-
-        /// <summary>
-        /// The currently configured bank mode.
-        /// </summary>
-        /// <remarks>
-        /// Use <see cref="SetBankConfiguration" /> to change this value.
-        /// </remarks>
-        protected BankConfiguration BankConfiguration { get; private set; }
-
         /// <inheritdoc />
         public event EventHandler<IOExpanderMultiPortInputChangedEventArgs> InputChanged = delegate { };
 
@@ -114,10 +101,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new ArgumentNullException(nameof(interrupts), "Interrupts cannot be null.");
             }
 
-            if (interrupts.Any(i => i.InterruptMode != InterruptMode.EdgeRising))
+            if (interrupts.Any(i => i.InterruptMode != InterruptMode.EdgeFalling))
             {
                 throw new ArgumentException(
-                    "Interrupt ports must use an interrupt mode of EdgeRising",
+                    "Interrupt ports must use an interrupt mode of EdgeFalling",
                     nameof(interrupts));
             }
 
@@ -154,8 +141,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // This has no effect on MCP23x08 devices which only have one GPIO port.
             MirroredInterrupts = interrupts.Count == 1;
 
+            // Handle init
+            Initialize();
+
+            // map interrupts
             if (MirroredInterrupts)
             {
+                Console.WriteLine("Bulk interrupt assigned");
                 interrupts[0].Changed += HandleChangedInterrupts;
             }
             else
@@ -172,13 +164,24 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         HandleChangedInterruptForPort(port);
                     }
 
+                    Console.WriteLine($"Port {port} interrupt assigned");
                     interrupt.Changed += CurryChangedInterruptForPort;
                 }
             }
-
-            // Handle init
-            Initialize();
         }
+
+        /// <summary>
+        /// Current state of the configuration register (IOCON)
+        /// </summary>
+        protected byte IoconState { get; private set; }
+
+        /// <summary>
+        /// The currently configured bank mode.
+        /// </summary>
+        /// <remarks>
+        /// Use <see cref="SetBankConfiguration" /> to change this value.
+        /// </remarks>
+        protected BankConfiguration BankConfiguration { get; private set; }
 
         /// <inheritdoc />
         public IMcpGpioPorts Ports { get; }
@@ -206,7 +209,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             // Will throw if pin is not valid for this device.
             var port = Ports.GetPortIndexOfPin(pin);
-            var pinKey = (byte)pin.Key;
+            var pinKey = (byte) pin.Key;
+
+            Console.WriteLine($"Pinkey {pinKey}");
 
             // set the port direction
             SetPortDirection(port, pinKey, PortDirectionType.Input);
@@ -217,6 +222,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 if (BitHelpers.GetBitValue(GppuState[port], pinKey) != enablePullUp)
                 {
+                    Console.WriteLine($"Gppu {enablePullUp}");
                     GppuState[port] = BitHelpers.SetBit(GppuState[port], pinKey, enablePullUp);
                     WriteRegister(Mcp23PortRegister.PullupResistorConfigurationRegister, port, GppuState[port]);
                 }
@@ -226,29 +232,40 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     return;
                 }
 
+                var existingValues = ReadRegisters(
+                    port,
+                    Mcp23PortRegister.InterruptOnChangeRegister,
+                    Mcp23PortRegister.DefaultComparisonValueRegister,
+                    Mcp23PortRegister.InterruptControlRegister);
+
                 // interrupt on change (whether or not we want to raise an interrupt on the interrupt pin on change)
-                var gpinten = ReadRegister(Mcp23PortRegister.InterruptOnChangeRegister, port);
+                var gpinten = existingValues[0];
                 gpinten = BitHelpers.SetBit(gpinten, pinKey, true);
-                WriteRegister(Mcp23PortRegister.InterruptOnChangeRegister, port, gpinten);
 
                 // Set the default value for the pin for interrupts.
                 var interruptValue = interruptMode == InterruptMode.EdgeFalling;
-                var defVal = ReadRegister(Mcp23PortRegister.DefaultComparisonValueRegister, port);
+                var defVal = existingValues[1];
                 defVal = BitHelpers.SetBit(defVal, pinKey, interruptValue);
-                WriteRegister(Mcp23PortRegister.DefaultComparisonValueRegister, port, defVal);
 
-                // Set the input polarity of the pin. Basically if its normally high, we want to flip the polarity.
-                var pol = ReadRegister(Mcp23PortRegister.InputPolarityRegister, port);
-                pol = BitHelpers.SetBit(pol, pinKey, !interruptValue);
-                WriteRegister(Mcp23PortRegister.InputPolarityRegister, port, pol);
+                //// Set the input polarity of the pin. Basically if its normally high, we want to flip the polarity.
+                //var pol = ReadRegister(Mcp23PortRegister.InputPolarityRegister, port);
+                //pol = BitHelpers.SetBit(pol, pinKey, !interruptValue);
+                //WriteRegister(Mcp23PortRegister.InputPolarityRegister, port, pol);
 
                 // interrupt control register; whether or not the change is based 
-                // on default comparison value, or if a change from previous. We 
-                // want to raise on change, so we set it to 0, always.
+                // on default comparison value, or if a change from previous.
                 var interruptControl = interruptMode != InterruptMode.EdgeBoth;
-                var intCon = ReadRegister(Mcp23PortRegister.InterruptControlRegister, port);
+                var intCon = existingValues[2];
                 intCon = BitHelpers.SetBit(intCon, pinKey, interruptControl);
-                WriteRegister(Mcp23PortRegister.InterruptControlRegister, port, intCon);
+
+                Console.WriteLine($"gpinten {gpinten}");
+                Console.WriteLine($"defVal {defVal}");
+                Console.WriteLine($"intCon {intCon}");
+                WriteRegisters(
+                    port, 
+                    (Mcp23PortRegister.InterruptOnChangeRegister, gpinten),
+                    (Mcp23PortRegister.DefaultComparisonValueRegister, defVal),
+                    (Mcp23PortRegister.InterruptControlRegister, intCon));
             }
         }
 
@@ -264,13 +281,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Ports.GetPortIndexOfPin(pin);
 
             ConfigureInputPort(pin, interruptMode, resistorMode);
-            var inputPort = new McpDigitalInputPort(this, pin, interruptMode);
-
-            // TODO: Determine if this is needed
-            // _inputPorts.Add(pin, port);
-
-            inputPort.DebounceDuration = debounceDuration;
-            inputPort.GlitchDuration = glitchDuration;
+            var inputPort = new McpDigitalInputPort(this, pin, interruptMode)
+            {
+                DebounceDuration = debounceDuration,
+                GlitchDuration = glitchDuration
+            };
 
             return inputPort;
         }
@@ -285,7 +300,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             var port = Ports.GetPortIndexOfPin(pin);
 
             // setup the port internally for output
-            SetPortDirection(port, (byte)pin.Key, PortDirectionType.Output);
+            SetPortDirection(port, (byte) pin.Key, PortDirectionType.Output);
 
             // create the convenience class
             return new McpDigitalOutputPort(this, pin, initialState, outputType);
@@ -297,7 +312,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             // Will throw if pin is not valid for this device.
             var port = Ports.GetPortIndexOfPin(pin);
-            return ReadPin(port, (byte)pin.Key);
+            return ReadPin(port, (byte) pin.Key);
         }
 
         /// <inheritdoc />
@@ -305,7 +320,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             // Will throw if pin is not valid for this device.
             var port = Ports.GetPortIndexOfPin(pin);
-            ResetPin(port, (byte)pin.Key);
+            ResetPin(port, (byte) pin.Key);
         }
 
         /// <inheritdoc />
@@ -314,7 +329,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // Will throw if pin is not valid for this device.
             var port = Ports.GetPortIndexOfPin(pin);
 
-            SetPortDirection(port, (byte)pin.Key, direction);
+            SetPortDirection(port, (byte) pin.Key, direction);
         }
 
         /// <inheritdoc />
@@ -322,7 +337,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             // Will throw if pin is not valid for this device.
             var port = Ports.GetPortIndexOfPin(pin);
-            WritePin(port, (byte)pin.Key, value);
+            WritePin(port, (byte) pin.Key, value);
         }
 
         /// <summary>
@@ -334,20 +349,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </remarks>
         protected void Initialize()
         {
-            // flush all settings to expected defaults
-            // WARNING: this will not work if IOCON.BANK was set to 1 prior to calling Initialize().
-            WriteToAllPorts(
-                (Mcp23PortRegister.IODirectionRegister, 0xFF),
-                (Mcp23PortRegister.InputPolarityRegister, 0x00),
-                (Mcp23PortRegister.InterruptOnChangeRegister, 0x00),
-                (Mcp23PortRegister.DefaultComparisonValueRegister, 0x00),
-                (Mcp23PortRegister.InterruptControlRegister, 0x00),
-                (Mcp23PortRegister.IOConfigurationRegister, 0x00),
-                (Mcp23PortRegister.PullupResistorConfigurationRegister, 0x00),
-                //(Mcp23PortRegister.InterruptFlagRegister, 0x00), // readonly
-                //(Mcp23PortRegister.InterruptCaptureRegister, 0x00), // readonly
-                (Mcp23PortRegister.GPIORegister, 0x00));
-
             lock (ConfigurationLock)
             {
                 lock (_bankLock)
@@ -430,12 +431,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     // IOCON.Intpol. The Interrupt Polarity sets the polarity of the
                     // INT pin. This bit is functional only when the ODR bit is
                     // cleared, configuring the INT pin as active push-pull.
-                    // Set to 1.
-                    // Do not modify as interrupts in this class are handled with the assumption that IOCON.Intpol is 1.
-                    const bool interruptPolarity = true;
+                    // 1 = Active-high.
+                    // 0 = Active-low.
+                    // Set to 0.
+                    // Do not modify as interrupts in this class are handled with the assumption that IOCON.Intpol is 0.
+                    const bool interruptPolarity = false;
 
                     BankConfiguration = bank;
-                    IoconState = BitHelpers.SetBit(IoconState, 0x07, (byte)bank);
+                    IoconState = BitHelpers.SetBit(IoconState, 0x07, (byte) bank == 0x01);
                     IoconState = BitHelpers.SetBit(IoconState, 0x06, mirror);
                     IoconState = BitHelpers.SetBit(IoconState, 0x05, sequentialOperation);
                     IoconState = BitHelpers.SetBit(IoconState, 0x04, slewRate);
@@ -447,6 +450,22 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     WriteRegister(Mcp23PortRegister.IOConfigurationRegister, 0, IoconState);
                 }
             }
+
+            // flush all settings to expected defaults
+            WriteToAllPorts(
+                (Mcp23PortRegister.IODirectionRegister, 0xFF),
+                (Mcp23PortRegister.InputPolarityRegister, 0x00),
+                (Mcp23PortRegister.InterruptOnChangeRegister, 0x00),
+                (Mcp23PortRegister.DefaultComparisonValueRegister, 0x00),
+                (Mcp23PortRegister.InterruptControlRegister, 0x00),
+                (Mcp23PortRegister.IOConfigurationRegister, 0x00),
+                (Mcp23PortRegister.PullupResistorConfigurationRegister, 0x00),
+                //(Mcp23PortRegister.InterruptFlagRegister, 0x00), // readonly
+                //(Mcp23PortRegister.InterruptCaptureRegister, 0x00), // readonly
+                (Mcp23PortRegister.GPIORegister, 0x00));
+
+            // finally, read the input. this will clear any unprocessed interrupts
+            ReadFromAllPorts(Mcp23PortRegister.InterruptFlagRegister, Mcp23PortRegister.GPIORegister);
         }
 
         /// <summary>
@@ -474,7 +493,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     // just to be safe
                     IoconState = ReadRegister(Mcp23PortRegister.IOConfigurationRegister, 0);
-                    IoconState = BitHelpers.SetBit(IoconState, 0x07, (byte)bank);
+                    IoconState = BitHelpers.SetBit(IoconState, 0x07, (byte) bank);
 
                     // All ports share the same IOCON, so just call port 0.
                     WriteRegister(Mcp23PortRegister.IOConfigurationRegister, 0, IoconState);
@@ -491,10 +510,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             try
             {
+                // Important: Reading from GPIO and not INTCAP
+                // INTCAP captures all values of the port at the time that the interrupt was triggered
+                // This means it will not update if a different pin changes state before we get to read INTCAP
+                // For this reason, we read from GPIO
+                // To summarise the tradeoff:
+                // GPIO - Get the latest values of all pins, possibly missing the value that initially triggered the interrupt
+                // INTCAP - Always get the value that triggered the interrupt, but possibly miss all value changes between interrupt and read
                 var portRead = ReadRegisters(
                     port,
                     Mcp23PortRegister.InterruptFlagRegister,
-                    Mcp23PortRegister.InterruptCaptureRegister);
+                    Mcp23PortRegister.GPIORegister);
 
                 var intFlag = portRead[0];
                 var intValue = portRead[1];
@@ -529,8 +555,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="e">The event</param>
         private void HandleChangedInterrupts(object sender, DigitalInputPortEventArgs e)
         {
+            Console.WriteLine("Interrupt triggered!");
             try
             {
+                // Important: Reading from GPIO and not INTCAP
+                // INTCAP captures all values of the port at the time that the interrupt was triggered
+                // This means it will not update if a different pin changes state before we get to read INTCAP
+                // For this reason, we read from GPIO
+                // To summarise the tradeoff:
+                // GPIO - Get the latest values of all pins, possibly missing the value that initially triggered the interrupt
+                // INTCAP - Always get the value that triggered the interrupt, but possibly miss all value changes between interrupt and read
                 var portReads = ReadFromAllPorts(
                     Mcp23PortRegister.InterruptFlagRegister,
                     Mcp23PortRegister.InterruptCaptureRegister);
@@ -544,6 +578,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     var intFlag = portReads[i][0];
                     var intValue = portReads[i][1];
+                    Console.WriteLine($"Flags: {Convert.ToString(intFlag, 2).PadLeft(8, '0')} Values: {Convert.ToString(intValue, 2).PadLeft(8, '0')}");
 
                     intFlags[i] = intFlag;
                     intValues[i] = intValue;
@@ -561,7 +596,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     return;
                 }
 
+                Console.WriteLine("Mulit-port invoke");
                 InputChanged?.Invoke(this, new IOExpanderMultiPortInputChangedEventArgs(intFlags, intValues));
+                Console.WriteLine("Invoke done");
             }
             catch (Exception ex)
             {
@@ -614,7 +651,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             lock (ConfigurationLock)
             {
                 // set the IODIR bit and write the setting
-                IodirState[port] = BitHelpers.SetBit(IodirState[port], pinKey, (byte)direction);
+                IodirState[port] = BitHelpers.SetBit(IodirState[port], pinKey, (byte) direction);
                 WriteRegister(Mcp23PortRegister.IODirectionRegister, port, IodirState[port]);
             }
         }
@@ -646,7 +683,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (Ports.Count == 1)
             {
-                return new[] {ReadRegister(register, 0)};
+                return new[] { ReadRegister(register, 0) };
             }
 
             var addresses = new (Mcp23PortRegister register, int port)[Ports.Count];
@@ -695,35 +732,35 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     // In paired mode, sort the addresses by register then port
                     case BankConfiguration.Paired:
+                    {
+                        var addresses = new (Mcp23PortRegister register, int port)[registers.Length * Ports.Count];
+                        for (var i = 0; i < addresses.Length; i++)
                         {
-                            var addresses = new (Mcp23PortRegister register, int port)[registers.Length * Ports.Count];
-                            for (var i = 0; i < addresses.Length; i++)
-                            {
-                                addresses[i] = (register: registers[i / Ports.Count], port: i % Ports.Count);
-                            }
-
-                            var read = ReadRegisters(addresses);
-                            for (var i = 0; i < read.Length; i++)
-                            {
-                                result[i % Ports.Count][i / Ports.Count] = read[i];
-                            }
+                            addresses[i] = (register: registers[i / Ports.Count], port: i % Ports.Count);
                         }
+
+                        var read = ReadRegisters(addresses);
+                        for (var i = 0; i < read.Length; i++)
+                        {
+                            result[i % Ports.Count][i / Ports.Count] = read[i];
+                        }
+                    }
                         break;
                     // In segregated mode, sort the addresses by port then register
                     case BankConfiguration.Segregated:
+                    {
+                        var addresses = new (Mcp23PortRegister register, int port)[registers.Length * Ports.Count];
+                        for (var i = 0; i < addresses.Length; i++)
                         {
-                            var addresses = new (Mcp23PortRegister register, int port)[registers.Length * Ports.Count];
-                            for (var i = 0; i < addresses.Length; i++)
-                            {
-                                addresses[i] = (register: registers[i % registers.Length], port: i / registers.Length);
-                            }
-
-                            var read = ReadRegisters(addresses);
-                            for (var i = 0; i < read.Length; i++)
-                            {
-                                result[i / registers.Length][i % registers.Length] = read[i];
-                            }
+                            addresses[i] = (register: registers[i % registers.Length], port: i / registers.Length);
                         }
+
+                        var read = ReadRegisters(addresses);
+                        for (var i = 0; i < read.Length; i++)
+                        {
+                            result[i / registers.Length][i % registers.Length] = read[i];
+                        }
+                    }
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(BankConfiguration));
@@ -774,10 +811,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     if (addresses[i].port < 0 || addresses[i].port >= Ports.Count)
                     {
-                        throw new ArgumentOutOfRangeException(nameof(addresses), $"Port {addresses[i].port} is out of range");
+                        throw new ArgumentOutOfRangeException(
+                            nameof(addresses),
+                            $"Port {addresses[i].port} is out of range");
                     }
 
-                    var nextAddress = _registerMap.GetAddress(addresses[i].register, addresses[i].port, BankConfiguration);
+                    var nextAddress = _registerMap.GetAddress(
+                        addresses[i].register,
+                        addresses[i].port,
+                        BankConfiguration);
                     if (i == 0)
                     {
                         dataStartAddress = nextAddress;
@@ -789,14 +831,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         continue;
                     }
 
-                    _mcpDevice.ReadRegisters(dataStartAddress, (ushort)(i - dataStartIndex))
+                    _mcpDevice.ReadRegisters(dataStartAddress, (ushort) (i - dataStartIndex))
                         .CopyTo(result, dataStartIndex);
 
                     dataStartAddress = nextAddress;
                     dataStartIndex = i;
                 }
 
-                _mcpDevice.ReadRegisters(dataStartAddress, (ushort)(addresses.Length - dataStartIndex))
+                _mcpDevice.ReadRegisters(dataStartAddress, (ushort) (addresses.Length - dataStartIndex))
                     .CopyTo(result, dataStartIndex);
             }
 
@@ -845,14 +887,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         continue;
                     }
 
-                    _mcpDevice.ReadRegisters(dataStartAddress, (ushort)(i - dataStartIndex))
+                    _mcpDevice.ReadRegisters(dataStartAddress, (ushort) (i - dataStartIndex))
                         .CopyTo(result, dataStartIndex);
 
                     dataStartAddress = nextAddress;
                     dataStartIndex = i;
                 }
 
-                _mcpDevice.ReadRegisters(dataStartAddress, (ushort)(registers.Length - dataStartIndex))
+                _mcpDevice.ReadRegisters(dataStartAddress, (ushort) (registers.Length - dataStartIndex))
                     .CopyTo(result, dataStartIndex);
             }
 
@@ -867,6 +909,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="value">The value to write</param>
         protected void WriteRegister(Mcp23PortRegister register, int port, byte value)
         {
+            Console.WriteLine($"({register}, {port}, {Convert.ToString(value, 2).PadLeft(8, '0')})");
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
@@ -883,6 +926,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </remarks>
         protected void WriteRegisters(params (Mcp23PortRegister register, int port, byte value)[] writeOps)
         {
+            Console.WriteLine(string.Join("\n    ", writeOps.Select(x => $"({x.register}, {x.port}, {Convert.ToString(x.value, 2).PadLeft(8, '0')})")));
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
@@ -890,7 +934,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 ushort dataStartIndex = 0;
                 for (ushort i = 0; i < writeOps.Length; i++)
                 {
-                    var nextAddress = _registerMap.GetAddress(writeOps[i].register, writeOps[i].port, BankConfiguration);
+                    var nextAddress = _registerMap.GetAddress(
+                        writeOps[i].register,
+                        writeOps[i].port,
+                        BankConfiguration);
                     if (i == 0)
                     {
                         dataStartAddress = nextAddress;
@@ -927,9 +974,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <remarks>
         /// Attempts to optimize calls by writing multiple registers at once wherever possible.
         /// </remarks>
-
         protected void WriteRegisters(int port, params (Mcp23PortRegister register, byte value)[] writeOps)
         {
+            Console.WriteLine($"port {port}, " + string.Join("\n    ", writeOps.Select(x => $"({x.register}, {port}, {Convert.ToString(x.value, 2).PadLeft(8, '0')})")));
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
@@ -985,6 +1032,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 writeOps[i] = (register, port: i, value);
             }
+
             WriteRegisters(writeOps);
         }
 
@@ -1006,28 +1054,32 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     // In paired mode, sort the addresses by register then port
                     case BankConfiguration.Paired:
+                    {
+                        var addresses =
+                            new (Mcp23PortRegister register, int port, byte value)[writeOps.Length * Ports.Count];
+                        for (var i = 0; i < addresses.Length; i++)
                         {
-                            var addresses = new (Mcp23PortRegister register, int port, byte value)[writeOps.Length * Ports.Count];
-                            for (var i = 0; i < addresses.Length; i++)
-                            {
-                                addresses[i] = (writeOps[i / Ports.Count].register, port: i % Ports.Count,
-                                    writeOps[i / Ports.Count].value);
-                            }
-                            WriteRegisters(addresses);
-                            return;
+                            addresses[i] = (writeOps[i / Ports.Count].register, port: i % Ports.Count,
+                                writeOps[i / Ports.Count].value);
                         }
+
+                        WriteRegisters(addresses);
+                        return;
+                    }
                     // In segregated mode, sort the addresses by port then register
                     case BankConfiguration.Segregated:
+                    {
+                        var addresses =
+                            new (Mcp23PortRegister register, int port, byte value)[writeOps.Length * Ports.Count];
+                        for (var i = 0; i < addresses.Length; i++)
                         {
-                            var addresses = new (Mcp23PortRegister register, int port, byte value)[writeOps.Length * Ports.Count];
-                            for (var i = 0; i < addresses.Length; i++)
-                            {
-                                addresses[i] = (writeOps[i % writeOps.Length].register, port: i / writeOps.Length,
+                            addresses[i] = (writeOps[i % writeOps.Length].register, port: i / writeOps.Length,
                                 writeOps[i % writeOps.Length].value);
-                            }
-                            WriteRegisters(addresses);
-                            return;
                         }
+
+                        WriteRegisters(addresses);
+                        return;
+                    }
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

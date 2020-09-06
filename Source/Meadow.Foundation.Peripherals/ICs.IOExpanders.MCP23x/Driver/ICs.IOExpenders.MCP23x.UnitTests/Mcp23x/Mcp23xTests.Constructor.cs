@@ -29,9 +29,9 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x
 
         [Theory]
         [InlineData(InterruptMode.EdgeBoth)]
-        [InlineData(InterruptMode.EdgeFalling)]
+        [InlineData(InterruptMode.EdgeRising)]
         [InlineData(InterruptMode.None)]
-        public void ConstructorThrowsWhenInterruptsAreNotEdgeRising(InterruptMode mode)
+        public void ConstructorThrowsWhenInterruptsAreNotEdgeFalling(InterruptMode mode)
         {
             var deviceCommsMock = new Mock<IMcpDeviceComms>();
             var portsMock = new Mock<IMcpGpioPorts>();
@@ -60,7 +60,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x
             var portsMock = new Mock<IMcpGpioPorts>();
             var registerMapMock = new Mock<IMcp23RegisterMap>();
             var interruptMock = new Mock<IDigitalInputPort>();
-            interruptMock.SetupGet(m => m.InterruptMode).Returns(InterruptMode.EdgeRising);
+            interruptMock.SetupGet(m => m.InterruptMode).Returns(InterruptMode.EdgeFalling);
             var interrupts = new List<IDigitalInputPort> { interruptMock.Object, interruptMock.Object, interruptMock.Object };
             var portsImpl = new List<IMcpGpioPort> { new McpGpioPort(), new McpGpioPort() };
             portsMock.Setup(m => m.GetEnumerator()).Returns(portsImpl.GetEnumerator());

@@ -18,7 +18,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             };
         }
 
-        public int Count => AllPins.Count;
+        public int Count => 1;
 
         public IMcpGpioPort this[int index] => _ports[index];
 

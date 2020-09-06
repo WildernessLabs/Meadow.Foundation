@@ -62,7 +62,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x
                 },
                 registerMapMockOverride: RegisterMapMockRegisterCloseOverride);
 
-
+            mcp23x.DeviceCommsMock.Invocations.Clear();
 
             var result = mcp23x.ReadRegisters((Mcp23PortRegister.GPIORegister, 1),
                 (Mcp23PortRegister.IODirectionRegister, 1), (Mcp23PortRegister.InterruptControlRegister, 1),
@@ -90,7 +90,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x
                 },
                 registerMapMockOverride: RegisterMapMockRegisterCloseOverride);
 
-
+            mcp23x.DeviceCommsMock.Invocations.Clear();
 
             var result = mcp23x.ReadRegisters(1, Mcp23PortRegister.GPIORegister, Mcp23PortRegister.IODirectionRegister,
                 Mcp23PortRegister.InterruptControlRegister, Mcp23PortRegister.InputPolarityRegister);
@@ -116,6 +116,8 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x
                             Enumerable.Range(0, length).Select(i => (byte)(address + i)).ToArray());
                 },
                 registerMapMockOverride: RegisterMapMockRegisterCloseOverride);
+
+            mcp23x.DeviceCommsMock.Invocations.Clear();
 
             var result = mcp23x.ReadRegisters((Mcp23PortRegister.GPIORegister, 1),
                 (Mcp23PortRegister.IODirectionRegister, 1), (Mcp23PortRegister.InterruptControlRegister, 2),
@@ -143,6 +145,8 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Mcp23x
                             Enumerable.Range(0, length).Select(i => (byte)(address + i)).ToArray());
                 },
                 registerMapMockOverride: RegisterMapMockRegisterCloseOverride);
+
+            mcp23x.DeviceCommsMock.Invocations.Clear();
 
             var result = mcp23x.ReadRegisters(1, Mcp23PortRegister.GPIORegister, Mcp23PortRegister.IODirectionRegister, Mcp23PortRegister.IODirectionRegister, Mcp23PortRegister.InterruptControlRegister,Mcp23PortRegister.InputPolarityRegister);
 

@@ -57,7 +57,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.UnitTests.Helpers
             for (var i = 0; i < interruptCount; i++)
             {
                 var interruptMock = new Mock<IDigitalInputPort>();
-                interruptMock.SetupGet(m => m.InterruptMode).Returns(InterruptMode.EdgeRising);
+                interruptMock.SetupGet(m => m.InterruptMode).Returns(InterruptMode.EdgeFalling);
                 interrupts.Add(interruptMock);
             }
 
