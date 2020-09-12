@@ -130,15 +130,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         #region Constructors
 
-        /// <summary>
-        /// Instantiates an Mcp23008 on the specified I2C bus using the appropriate
-        /// peripheral address based on the pin settings. Use this method if you
-        /// don't want to calculate the address.
-        /// </summary>
-        /// <param name="i2cBus"></param>
-        /// <param name="pinA0">Whether or not Address0 pin is pulled high.</param>
-        /// <param name="pinA1">Whether or not Address1 pin is pulled high.</param>
-        /// <param name="pinA2">Whether or not Address2 pin is pulled high.</param>
         public Mcp23x17(
             II2cBus i2cBus,
             bool pinA0,
@@ -146,25 +137,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             bool pinA2)
             : this(i2cBus, McpAddressTable.GetAddressFromPins(pinA0, pinA1, pinA2))
         {
-            // nothing goes here
         }
 
-        /// <summary>
-        /// Instantiates an Mcp23008 on the specified I2C bus using the appropriate
-        /// peripheral address based on the pin settings. Use this method if you
-        /// don't want to calculate the address.
-        /// </summary>
-        /// <param name="i2cBus"></param>
-        /// <param name="pinA0">Whether or not Address0 pin is pulled high.</param>
-        /// <param name="pinA1">Whether or not Address1 pin is pulled high.</param>
-        /// <param name="pinA2">Whether or not Address2 pin is pulled high.</param>
-        /// <param name="interruptPort">
-        /// Optional IDigitalInputPort used to support
-        /// interrupts. The MCP will notify a single port for an interrupt on
-        /// any input configured pin. The driver takes care of looking up which
-        /// pin the interrupt occurred on, and will raise it on that port, if a port
-        /// is used.
-        /// </param>
         public Mcp23x17(
             II2cBus i2cBus,
             IDigitalInputPort interruptPort,
@@ -173,15 +147,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
             bool pinA2)
             : this(i2cBus, interruptPort, McpAddressTable.GetAddressFromPins(pinA0, pinA1, pinA2))
         {
-            // nothing goes here
+        }
+        public Mcp23x17(
+            II2cBus i2cBus,
+            IDigitalInputPort interruptPortA,
+            IDigitalInputPort interruptPortB,
+            bool pinA0,
+            bool pinA1,
+            bool pinA2)
+            : this(i2cBus, interruptPortA, interruptPortB, McpAddressTable.GetAddressFromPins(pinA0, pinA1, pinA2))
+        {
         }
 
-        /// <summary>
-        /// Instantiates an Mcp23008 on the specified I2C bus, with the specified
-        /// peripheral address.
-        /// </summary>
-        /// <param name="i2cBus"></param>
-        /// <param name="address"></param>
         public Mcp23x17(
             II2cBus i2cBus,
             byte address = McpAddressTable.DefaultDeviceAddress) :
@@ -192,12 +169,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
         }
 
-        /// <summary>
-        /// Instantiates an Mcp23008 on the specified I2C bus, with the specified
-        /// peripheral address.
-        /// </summary>
-        /// <param name="i2cBus"></param>
-        /// <param name="address"></param>
         public Mcp23x17(
             II2cBus i2cBus,
             IDigitalInputPort interruptPort,
@@ -210,6 +181,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         public Mcp23x17(
+            II2cBus i2cBus,
+            IDigitalInputPort interruptPortA,
+            IDigitalInputPort interruptPortB,
+            byte address = McpAddressTable.DefaultDeviceAddress) :
+            // use the internal constructor that takes an IMcpDeviceComms
+            this(
+                new I2cMcpDeviceComms(i2cBus, address),
+                new[] { interruptPortA, interruptPortB })
+        {
+        }
+
+        public Mcp23x17(
             ISpiBus spiBus,
             IDigitalOutputPort chipSelect,
             bool pinA0,
@@ -235,6 +218,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public Mcp23x17(
             ISpiBus spiBus,
             IDigitalOutputPort chipSelect,
+            IDigitalInputPort interruptPortA,
+            IDigitalInputPort interruptPortB,
+            bool pinA0,
+            bool pinA1,
+            bool pinA2) : this(
+            new SpiMcpDeviceComms(spiBus, chipSelect, McpAddressTable.GetAddressFromPins(pinA0, pinA1, pinA2)),
+            new[] { interruptPortA, interruptPortB })
+        {
+        }
+
+        public Mcp23x17(
+            ISpiBus spiBus,
+            IDigitalOutputPort chipSelect,
             byte address = McpAddressTable.DefaultDeviceAddress) : this(
             new SpiMcpDeviceComms(spiBus, chipSelect, address),
             new IDigitalInputPort[0])
@@ -248,6 +244,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
             byte address = McpAddressTable.DefaultDeviceAddress) : this(
             new SpiMcpDeviceComms(spiBus, chipSelect, address),
             new[] { interruptPort })
+        {
+        }
+
+
+        public Mcp23x17(
+            ISpiBus spiBus,
+            IDigitalOutputPort chipSelect,
+            IDigitalInputPort interruptPortA,
+            IDigitalInputPort interruptPortB,
+            byte address = McpAddressTable.DefaultDeviceAddress) : this(
+            new SpiMcpDeviceComms(spiBus, chipSelect, address),
+            new[] { interruptPortA, interruptPortB })
         {
         }
 
