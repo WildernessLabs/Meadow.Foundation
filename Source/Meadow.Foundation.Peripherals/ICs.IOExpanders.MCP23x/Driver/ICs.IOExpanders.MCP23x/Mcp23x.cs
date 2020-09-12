@@ -251,33 +251,53 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     return;
                 }
 
-                var existingValues = ReadRegisters(
-                    port,
-                    Mcp23PortRegister.InterruptOnChangeRegister,
-                    Mcp23PortRegister.DefaultComparisonValueRegister,
-                    Mcp23PortRegister.InterruptControlRegister);
+                // *** Don't use DEFVAL as it is unreliable ***
 
-                // interrupt on change (whether or not we want to raise an interrupt on the interrupt pin on change)
-                var gpinten = existingValues[0];
+                //var existingValues = ReadRegisters(
+                //    port,
+                //    Mcp23PortRegister.InterruptOnChangeRegister,
+                //    Mcp23PortRegister.DefaultComparisonValueRegister,
+                //    Mcp23PortRegister.InterruptControlRegister);
+
+                //// interrupt on change (whether or not we want to raise an interrupt on the interrupt pin on change)
+                //var gpinten = existingValues[0];
+                //gpinten = BitHelpers.SetBit(gpinten, pinKey, true);
+
+                //// Set the default value for the pin for interrupts.
+                //var interruptValue = interruptMode == InterruptMode.EdgeFalling;
+                //var defVal = existingValues[1];
+                //defVal = BitHelpers.SetBit(defVal, pinKey, interruptValue);
+
+                //// interrupt control register; whether or not the change is based 
+                //// on default comparison value, or if a change from previous.
+                //var interruptControl = interruptMode != InterruptMode.EdgeBoth;
+                //var intCon = existingValues[2];
+                //intCon = BitHelpers.SetBit(intCon, pinKey, interruptControl);
+
+                //McpLogger.DebugOut.WriteLine($"gpinten {Convert.ToString(gpinten, 2).PadLeft(8, '0')}");
+                //McpLogger.DebugOut.WriteLine($"defVal  {Convert.ToString(defVal, 2).PadLeft(8, '0')}");
+                //McpLogger.DebugOut.WriteLine($"intCon  {Convert.ToString(intCon, 2).PadLeft(8, '0')}");
+                //WriteRegisters(
+                //    port, 
+                //    (Mcp23PortRegister.InterruptOnChangeRegister, gpinten),
+                //    (Mcp23PortRegister.DefaultComparisonValueRegister, defVal),
+                //    (Mcp23PortRegister.InterruptControlRegister, intCon));
+
+
+                // Just make sure GPINTEN and INTCON is set correctly, the McpDigitalInputPort will handle the change
+
+                var gpinten = ReadRegister(Mcp23PortRegister.InterruptOnChangeRegister, port);
                 gpinten = BitHelpers.SetBit(gpinten, pinKey, true);
 
-                // Set the default value for the pin for interrupts.
-                var interruptValue = interruptMode == InterruptMode.EdgeFalling;
-                var defVal = existingValues[1];
-                defVal = BitHelpers.SetBit(defVal, pinKey, interruptValue);
+                var intCon = ReadRegister(Mcp23PortRegister.InterruptControlRegister, port);
+                intCon = BitHelpers.SetBit(intCon, pinKey, false);
 
-                // interrupt control register; whether or not the change is based 
-                // on default comparison value, or if a change from previous.
-                var interruptControl = interruptMode != InterruptMode.EdgeBoth;
-                var intCon = existingValues[2];
-                intCon = BitHelpers.SetBit(intCon, pinKey, interruptControl);
                 McpLogger.DebugOut.WriteLine($"gpinten {port} {Convert.ToString(gpinten, 2).PadLeft(8, '0')}");
                 McpLogger.DebugOut.WriteLine($"intCon  {port} {Convert.ToString(intCon, 2).PadLeft(8, '0')}");
 
                 WriteRegisters(
-                    port, 
+                    port,
                     (Mcp23PortRegister.InterruptOnChangeRegister, gpinten),
-                    (Mcp23PortRegister.DefaultComparisonValueRegister, defVal),
                     (Mcp23PortRegister.InterruptControlRegister, intCon));
             }
         }
@@ -592,12 +612,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 // INTCAP - Always get the value that triggered the interrupt, but possibly miss all value changes between interrupt and read
                 var portReads = ReadFromAllPorts(
                     Mcp23PortRegister.InterruptFlagRegister,
-                    Mcp23PortRegister.InterruptCaptureRegister);
+                    Mcp23PortRegister.GPIORegister);
 
                 // fire per-port events
-                var anyInterrupts = false;
                 var intFlags = new byte[Ports.Count];
                 var intValues = new byte[Ports.Count];
+
+                // were there any interrupts at all (if not then skip
+                var anyInterrupts = portReads.Any(b => b[0] > 0);
+                if (!anyInterrupts)
+                {
+                    return;
+                }
 
                 for (var i = 0; i < Ports.Count; i++)
                 {
@@ -607,17 +633,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     intFlags[i] = intFlag;
                     intValues[i] = intValue;
 
-                    // were there any interrupts for this port?
-                    if (intFlag > 0x00)
-                    {
-                        anyInterrupts = true;
-                        Ports[i].InvokeInputChanged(new IOExpanderPortInputChangedEventArgs(intFlag, intValue));
-                    }
-                }
-
-                if (!anyInterrupts)
-                {
-                    return;
+                    Ports[i].InvokeInputChanged(new IOExpanderPortInputChangedEventArgs(intFlag, intValue));
                 }
 
                 InputChanged?.Invoke(this, new IOExpanderMultiPortInputChangedEventArgs(intFlags, intValues));
