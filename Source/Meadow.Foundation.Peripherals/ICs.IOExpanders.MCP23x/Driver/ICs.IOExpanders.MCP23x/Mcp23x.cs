@@ -244,7 +244,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     GppuState[port] = BitHelpers.SetBit(GppuState[port], pinKey, enablePullUp);
                     WriteRegister(Mcp23PortRegister.PullupResistorConfigurationRegister, port, GppuState[port]);
                 }
-                McpLogger.DebugOut.WriteLine($"gppu    {Convert.ToString(GppuState[port], 2).PadLeft(8, '0')}");
+                McpLogger.DebugOut.WriteLine($"gppu    {port} {Convert.ToString(GppuState[port], 2).PadLeft(8, '0')}");
 
                 if (interruptMode == InterruptMode.None)
                 {
@@ -271,10 +271,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 var interruptControl = interruptMode != InterruptMode.EdgeBoth;
                 var intCon = existingValues[2];
                 intCon = BitHelpers.SetBit(intCon, pinKey, interruptControl);
+                McpLogger.DebugOut.WriteLine($"gpinten {port} {Convert.ToString(gpinten, 2).PadLeft(8, '0')}");
+                McpLogger.DebugOut.WriteLine($"intCon  {port} {Convert.ToString(intCon, 2).PadLeft(8, '0')}");
 
-                McpLogger.DebugOut.WriteLine($"gpinten {Convert.ToString(gpinten, 2).PadLeft(8, '0')}");
-                McpLogger.DebugOut.WriteLine($"defVal  {Convert.ToString(defVal, 2).PadLeft(8, '0')}");
-                McpLogger.DebugOut.WriteLine($"intCon  {Convert.ToString(intCon, 2).PadLeft(8, '0')}");
                 WriteRegisters(
                     port, 
                     (Mcp23PortRegister.InterruptOnChangeRegister, gpinten),
@@ -461,6 +460,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     IoconState = BitHelpers.SetBit(IoconState, 0x01, interruptPolarity);
 
                     // All ports share the same IOCON, so just call port 0.
+                    McpLogger.DebugOut.WriteLine($"Writing configuration: {Convert.ToString(IoconState, 2).PadLeft(8, '0')}");
                     WriteRegister(Mcp23PortRegister.IOConfigurationRegister, 0, IoconState);
                 }
             }
@@ -931,7 +931,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="value">The value to write</param>
         protected void WriteRegister(Mcp23PortRegister register, int port, byte value)
         {
-            //Mcp23Logger.DebugOut.WriteLine($"({register}, {port}, {Convert.ToString(value, 2).PadLeft(8, '0')})");
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
@@ -948,7 +947,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </remarks>
         protected void WriteRegisters(params (Mcp23PortRegister register, int port, byte value)[] writeOps)
         {
-            //Mcp23Logger.DebugOut.WriteLine(string.Join("\n    ", writeOps.Select(x => $"({x.register}, {x.port}, {Convert.ToString(x.value, 2).PadLeft(8, '0')})")));
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {
@@ -998,7 +996,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </remarks>
         protected void WriteRegisters(int port, params (Mcp23PortRegister register, byte value)[] writeOps)
         {
-            //Mcp23Logger.DebugOut.WriteLine($"port {port}, " + string.Join("\n    ", writeOps.Select(x => $"({x.register}, {port}, {Convert.ToString(x.value, 2).PadLeft(8, '0')})")));
             // lock on bank, so it doesn't get changed while we are querying.
             lock (_bankLock)
             {

@@ -26,8 +26,8 @@ namespace Meadow.Foundation.ICs.IOExpanders.Device
             _readAddress = BitHelpers.SetBit((byte) (peripheralAddress << 1), 0x00, false);
             _writeAddress = BitHelpers.SetBit((byte) (peripheralAddress << 1), 0x00, true);
 
-            McpLogger.DebugOut.WriteLine($"SPI Write address:  {Convert.ToString(_readAddress, 2)}");
-            McpLogger.DebugOut.WriteLine($"SPI Read address: {Convert.ToString(_writeAddress, 2)}");
+            McpLogger.DebugOut.WriteLine($"SPI Write address:  {Convert.ToString(_readAddress, 2).PadLeft(8, '0')}");
+            McpLogger.DebugOut.WriteLine($"SPI Read address: {Convert.ToString(_writeAddress, 2).PadLeft(8, '0')}");
             _peripheral = new SpiPeripheral(bus, chipSelect);
         }
 
@@ -100,7 +100,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Device
                 return;
             }
 
-            McpLogger.DebugOut.Write("Write: ");
+            McpLogger.DebugOut.Write("SPI Write: ");
             foreach (var address in addresses)
             {
                 McpLogger.DebugOut.Write(Convert.ToString(address, 2).PadLeft(8, '0') + ' ');
