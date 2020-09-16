@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// The number of the LEDs in the bar graph
         /// </summary>
-        public uint Count => (uint)pwmLeds.Length;
+        public int Count => pwmLeds.Length;
 
         /// <summary>
         /// A value between 0 and 1 that controls the number of LEDs that are activated

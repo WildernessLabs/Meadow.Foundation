@@ -18,16 +18,16 @@ namespace Leds.LedBarGraph_Sample
             // Using an array of Pins 
             IPin[] pins =
             {
-                 Device.Pins.D05,
-                 Device.Pins.D06,
-                 Device.Pins.D07,
-                 Device.Pins.D08,
-                 Device.Pins.D09,
-                 Device.Pins.D10,
                  Device.Pins.D11,
-                 Device.Pins.D12,
-                 Device.Pins.D13,
-                 Device.Pins.D14
+                 Device.Pins.D10,
+                 Device.Pins.D09,
+                 Device.Pins.D08,
+                 Device.Pins.D07,
+                 Device.Pins.D06,
+                 Device.Pins.D05,
+                 Device.Pins.D04,
+                 Device.Pins.D03,
+                 Device.Pins.D02
             };
             ledBarGraph = new LedBarGraph(Device, pins);
 
@@ -54,14 +54,14 @@ namespace Leds.LedBarGraph_Sample
         {
             Console.WriteLine("TestLedBarGraph...");
 
-            float percentage = 0;
+            decimal percentage = 0;
 
             while (true)
             {
                 Console.WriteLine("Turning them on using SetLed...");
                 for (int i = 0; i < ledBarGraph.Count; i++)
                 {
-                    ledBarGraph.SetLed(i, true);
+                    ledBarGraph.SetLed((uint) i, true);
                     Thread.Sleep(300);
                 }
 
@@ -70,28 +70,30 @@ namespace Leds.LedBarGraph_Sample
                 Console.WriteLine("Turning them off using SetLed...");
                 for (int i = ledBarGraph.Count - 1; i >= 0; i--)
                 {
-                    ledBarGraph.SetLed(i, false);
+                    ledBarGraph.SetLed((uint) i, false);
                     Thread.Sleep(300);
                 }
 
                 Thread.Sleep(1000);
 
                 Console.WriteLine("Turning them on using Percentage...");
-                while (percentage <= 1)
+                while (percentage < 1)
                 {
-                    percentage += 0.10f;
-                    ledBarGraph.Percentage = Math.Min(1.0f, percentage);
-                    Thread.Sleep(100);
+                    percentage += 0.10m;
+                    Console.WriteLine($"{percentage}");
+                    ledBarGraph.Percentage = (float) Math.Min(1.0m, percentage);                    
+                    Thread.Sleep(500);
                 }
 
                 Thread.Sleep(1000);
 
                 Console.WriteLine("Turning them off using Percentage...");
-                while (percentage >= 0)
+                while (percentage > 0)
                 {
-                    percentage -= 0.10f;
-                    ledBarGraph.Percentage = Math.Max(0.0f, percentage); ;
-                    Thread.Sleep(100);
+                    percentage -= 0.10m;
+                    Console.WriteLine($"{percentage}");
+                    ledBarGraph.Percentage = (float) Math.Max(0.0m, percentage);                    
+                    Thread.Sleep(500);
                 }
 
                 Thread.Sleep(1000);
