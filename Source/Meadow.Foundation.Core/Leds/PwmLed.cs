@@ -154,6 +154,8 @@ namespace Meadow.Foundation.Leds
                 SetBrightness(lowBrightness);
                 await Task.Delay((int)offDuration);
             }
+
+            Port.DutyCycle = IsOn ? maximumPwmDuty : 0;
         }
 
         /// <summary>
@@ -238,7 +240,5 @@ namespace Meadow.Foundation.Leds
             cancellationTokenSource?.Cancel();
             IsOn = false;
         }
-
-   
     }
 }

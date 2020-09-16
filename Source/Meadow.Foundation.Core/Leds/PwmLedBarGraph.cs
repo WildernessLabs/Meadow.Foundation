@@ -13,14 +13,16 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// The number of the LEDs in the bar graph
         /// </summary>
-        public int Count => pwmLeds.Length;
+        public uint Count => (uint)pwmLeds.Length;
 
         /// <summary>
         /// A value between 0 and 1 that controls the number of LEDs that are activated
         /// </summary>
+        float percentage;
         public float Percentage
         {
-            set => SetPercentage(value);
+            get => percentage;
+            set => SetPercentage(percentage = value);
         }
 
         /// <summary>
@@ -50,26 +52,6 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Set the LED state
-        /// </summary>
-        /// <param name="index">index of the LED</param>
-        /// <param name="isOn"></param>
-        public void SetLed(int index, bool isOn)
-        {
-            pwmLeds[index].IsOn = isOn;
-        }
-
-        /// <summary>
-        /// Set the brightness of an individual LED when using PWM
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="brightness"></param>
-        public void SetLedBrightness(int index, float brightness)
-        {
-            pwmLeds[index].SetBrightness(brightness);
-        }
-
-        /// <summary>
         /// Set the percentage of LEDs that are on starting from index 0
         /// </summary>
         /// <param name="percentage">Percentage (Range from 0 - 1)</param>
@@ -82,7 +64,7 @@ namespace Meadow.Foundation.Leds
 
             float value = percentage * Count;
 
-            for (int i = 1; i <= Count; i++)
+            for (uint i = 1; i <= Count; i++)
             {
                 if (i <= value)
                 {
@@ -97,6 +79,85 @@ namespace Meadow.Foundation.Leds
                     SetLed(i - 1, false);
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns the index of the last LED turned on
+        /// </summary>
+        /// <returns></returns>
+        public uint GetTopLedForPercentage()
+        {
+            return (uint)Math.Max(0, percentage * Count - 1);
+        }
+
+        /// <summary>
+        /// Set the LED state
+        /// </summary>
+        /// <param name="index">index of the LED</param>
+        /// <param name="isOn"></param>
+        public void SetLed(uint index, bool isOn)
+        {
+            if (index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            pwmLeds[index].Stop();
+            pwmLeds[index].IsOn = isOn;
+        }
+
+        /// <summary>
+        /// Set the brightness of an individual LED when using PWM
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="brightness"></param>
+        public void SetLedBrightness(uint index, float brightness)
+        {
+            if (index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            pwmLeds[index].Stop();
+            pwmLeds[index].IsOn = false;
+            pwmLeds[index].SetBrightness(brightness);
+        }
+
+        /// <summary>
+        /// Starts a blink animation on an individual LED
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="onDuration"></param>
+        /// <param name="offDuration"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        public void SetLedBlink(uint index, uint onDuration = 200, uint offDuration = 200, float highBrightness = 1, float lowBrightness = 0) 
+        {
+            if (index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            pwmLeds[index].Stop();
+            pwmLeds[index].IsOn = false;
+            pwmLeds[index].StartBlink(onDuration, offDuration, highBrightness, lowBrightness);
+        }
+
+        /// <summary>
+        /// Starts a pulse animation on an individual LED
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="pulseDuration"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        public void SetLedPulse(uint index, uint pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F) 
+        {
+            if (index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            pwmLeds[index].StartPulse(pulseDuration, highBrightness, lowBrightness);
         }
 
         /// <summary>
