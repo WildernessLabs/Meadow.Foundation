@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Meadow.Hardware;
 using Meadow.Utilities;
 
@@ -222,6 +223,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         public ISerialMessagePort CreateSerialMessagePort(SerialPortName portName, byte[] prefixDelimiter, bool preserveDelimiter, int messageLength, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, int readBufferSize = 512)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetSynchronizationContext(SynchronizationContext context)
         {
             throw new NotImplementedException();
         }
