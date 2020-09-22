@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, FeatherWing, ServoWing, servo, servo motor</PackageTags>
     <Version>0.1.4</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for AdaFruit ServoWing Featherwing</Description>
   </PropertyGroup>
   <ItemGroup>
