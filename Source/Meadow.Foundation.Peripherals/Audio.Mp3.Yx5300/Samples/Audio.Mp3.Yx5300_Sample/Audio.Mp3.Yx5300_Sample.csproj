@@ -1,0 +1,14 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.*" />
+    <PackageReference Include="WildernessLabs.Meadow.Assemblies" Version="0.4.0.5-alpha" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Driver\Audio.Mp3.Yx5300\Audio.Mp3.Yx5300.csproj" />
+  </ItemGroup>
+</Project>
