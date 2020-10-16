@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
@@ -16,19 +16,32 @@ namespace MeadowApp
 
         public MeadowApp()
         {
-
             Initialize();
 
             onboardLed.SetColor(Color.Yellow);
-            //    CycleColors(1000);
 
-            mp3Player.SendCommand((byte)Yx5300.Commands.SetVolume, 0, 10);
+            Mp3Test();
+        }
 
+        async Task Mp3Test()
+        {
             onboardLed.SetColor(Color.Green);
 
-            mp3Player.SendCommand((byte)Yx5300.Commands.Play, 0, 0);
-            var response = mp3Player.ReadResponse();
-            Console.WriteLine($"{BitConverter.ToString(response)}");
+            mp3Player.SetVolume(15);
+
+            var status = await mp3Player.GetStatus();
+            Console.WriteLine($"Status: {status}");
+
+            var count = await mp3Player.GetNumberOfTracksInFolder(0);
+            Console.WriteLine($"Count: {count}");
+
+            mp3Player.Play();
+            await Task.Delay(5000);
+
+            status = await mp3Player.GetStatus();
+            Console.WriteLine($"Status: {status}");
+
+            mp3Player.Next();
 
             onboardLed.SetColor(Color.Blue);
         }
@@ -45,42 +58,6 @@ namespace MeadowApp
                 Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
 
             mp3Player = new Yx5300(Device, Device.SerialPortNames.Com4);
-        }
-
-        void CycleColors(int duration)
-        {
-            Console.WriteLine("Cycle colors...");
-
-            while (true)
-            {
-                ShowColorPulse(Color.Blue, duration);
-                ShowColorPulse(Color.Cyan, duration);
-                ShowColorPulse(Color.Green, duration);
-                ShowColorPulse(Color.GreenYellow, duration);
-                ShowColorPulse(Color.Yellow, duration);
-                ShowColorPulse(Color.Orange, duration);
-                ShowColorPulse(Color.OrangeRed, duration);
-                ShowColorPulse(Color.Red, duration);
-                ShowColorPulse(Color.MediumVioletRed, duration);
-                ShowColorPulse(Color.Purple, duration);
-                ShowColorPulse(Color.Magenta, duration);
-                ShowColorPulse(Color.Pink, duration);
-            }
-        }
-
-        void ShowColorPulse(Color color, int duration = 1000)
-        {
-            onboardLed.StartPulse(color, (uint)(duration / 2));
-            Thread.Sleep(duration);
-            onboardLed.Stop();
-        }
-
-        void ShowColor(Color color, int duration = 1000)
-        {
-            Console.WriteLine($"Color: {color}");
-            onboardLed.SetColor(color);
-            Thread.Sleep(duration);
-            onboardLed.Stop();
         }
     }
 }

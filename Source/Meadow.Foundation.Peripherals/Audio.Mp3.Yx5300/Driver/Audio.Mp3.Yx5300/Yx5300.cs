@@ -1,22 +1,10 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Hardware;
-using static Meadow.Foundation.Audio.Mp3.Yx5300;
 
 namespace Meadow.Foundation.Audio.Mp3
 {
-    public class Yx5300Response
-    {
-        public Responses Response { get; private set; }
-        public int Value { get; private set; }
-
-        public void ParseResponse(byte[] data)
-        {
-
-
-        }
-    }
-
     public class Yx5300
     {
         public enum PlayStatus
@@ -27,7 +15,7 @@ namespace Meadow.Foundation.Audio.Mp3
             Unknown,
         }
 
-        public enum Responses
+        enum Responses
         {
             SDCardInserted = 0x3A,
             PlayComplete = 0x3D,
@@ -41,7 +29,7 @@ namespace Meadow.Foundation.Audio.Mp3
             FolderCount = 0x4F,
         }
 
-        public enum Commands
+        enum Commands
         {
             Next = 0x01,
             Previous = 0x02,
@@ -62,7 +50,7 @@ namespace Meadow.Foundation.Audio.Mp3
             Shuffle = 0x18, //might not work
             PlayWithVolume = 0x22,
    
-            CurrentFilePlaying = 0x4C,
+            GetCurrentFile = 0x4C,
             GetStatus = 0x42,
             GetVolume = 0x43,
             GetNumberOfTracksInFolder = 0x4E,
@@ -82,7 +70,7 @@ namespace Meadow.Foundation.Audio.Mp3
 
             Thread.Sleep(100);
 
-            SendCommand((byte)Commands.SelectDevice, 0, 2);
+            SendCommand(Commands.SelectDevice, 0, 2);
 
             Thread.Sleep(500);
         }
@@ -92,15 +80,80 @@ namespace Meadow.Foundation.Audio.Mp3
                 serialPortName))
         { }
 
+        public void Reset()
+        {
+            SendCommand(Commands.Reset);
+        }
+
+        public void Sleep()
+        {
+            SendCommand(Commands.Sleep);
+        }
+
+        public void WakeUp()
+        {
+            SendCommand(Commands.Wake);
+        }
+
         public void SetVolume(byte volume)
         {
-            if(volume > 30) { volume = 30; }
-            SendCommand((byte)Commands.SetVolume, 0, volume);
+            if (volume > 30) { volume = 30; }
+            SendCommand(Commands.SetVolume, 0, volume);
+        }
+
+        public void VolumeUp()
+        {
+            SendCommand(Commands.VolumeUp);
+        }
+
+        public void VolumeDown()
+        {
+            SendCommand(Commands.VolumeDown);
+        }
+
+        public async Task<byte> GetVolume()
+        {
+            return (await SendCommandAndReadResponse(Commands.GetVolume)).Item2;
+        }
+
+        public async Task<byte> GetIndexOfCurrentFile()
+        {
+            return (await SendCommandAndReadResponse(Commands.GetCurrentFile)).Item2;
+        }
+
+        public async Task<byte> GetNumberOfFolders()
+        {
+            return (await SendCommandAndReadResponse(Commands.GetNumberOfFolders)).Item2;
+        }
+
+        public async Task<byte> GetNumberOfTracksInFolder(byte folderIndex)
+        {
+            return (await SendCommandAndReadResponse(Commands.GetNumberOfTracksInFolder, 0, folderIndex)).Item2;
+        }
+
+        public async Task<PlayStatus> GetStatus()
+        {
+            return (PlayStatus)(await SendCommandAndReadResponse(Commands.GetStatus)).Item2;
         }
 
         public void Play()
         {
             SendCommand(Commands.Play);
+        }
+
+        public void Play(byte songIndex)
+        {
+            SendCommand(Commands.PlayIndex, 0, songIndex);
+        }
+
+        public void Next()
+        {
+            SendCommand(Commands.Next);
+        }
+
+        public void Previous()
+        {
+            SendCommand(Commands.Previous);
         }
 
         public void Pause()
@@ -113,15 +166,42 @@ namespace Meadow.Foundation.Audio.Mp3
             SendCommand(Commands.Stop);
         }
 
-        public void SendCommand(Commands command)
+        private async Task<Tuple<Responses, byte>> SendCommandAndReadResponse(Commands command, byte data1 = 0, byte data2 = 0)
         {
-            SendCommand((byte)command, 0, 0);
+            SendCommand(command, data1, data2);
+
+            var response = ReadResponse();
+
+            var data = ParseResponse(response);
+
+            if(data.Item1 == Responses.DataReceived)
+            {
+                switch(command)
+                {
+                    case Commands.GetCurrentFile:
+                    case Commands.GetNumberOfFolders:
+                    case Commands.GetNumberOfTracksInFolder:
+                    case Commands.GetStatus:
+                    case Commands.GetTotalTracks:
+                    case Commands.GetVolume:
+                        {
+                            await Task.Delay(500);
+                            response = ReadResponse();
+                            if(response.Length > 0)
+                            {
+                                data = ParseResponse(response);
+                            }
+                               
+                        }
+                        break;
+                }
+            }
+            return data;
         }
 
-        public void SendCommand(byte command, byte data1, byte data2)
+        private void SendCommand(Commands command, byte data1 = 0, byte data2 = 0)
         {
-            byte[] sendBuffer = new byte[8]; // { 0 }; // Buffer for Send commands.
-            String mp3send = string.Empty;
+            byte[] sendBuffer = new byte[8];
 
             Thread.Sleep(20);
 
@@ -129,21 +209,19 @@ namespace Meadow.Foundation.Audio.Mp3
             sendBuffer[0] = 0x7E;    // Start byte
             sendBuffer[1] = 0xFF;    // Version
             sendBuffer[2] = 0x06;    // Command length not including Start and End byte.
-            sendBuffer[3] = command; // Command
+            sendBuffer[3] = (byte)command; // Command
             sendBuffer[4] = 0x01;    // Feedback 0x00 NO, 0x01 YES
             sendBuffer[5] = data2;    // DATA1 datah
             sendBuffer[6] = data2;    // DATA2 datal
             sendBuffer[7] = 0xEF;    // End byte
 
             serialPort.Write(sendBuffer);
-
-            Console.WriteLine($"SendBuffer: {BitConverter.ToString(sendBuffer)}");
         }
 
-        public byte[] ReadResponse()
+        private byte[] ReadResponse()
         {
-            byte[] response = new byte[15];
-            byte value = 0;
+            byte[] response = new byte[12];
+            byte value;
             int index = 0;
 
             do
@@ -166,6 +244,11 @@ namespace Meadow.Foundation.Audio.Mp3
             while (value != 0xEF);
 
             return response;
+        }
+
+        Tuple<Responses, byte> ParseResponse(byte[] data)
+        {
+            return new Tuple<Responses, byte>((Responses)(data[3]), data[6]);
         }
     }
 }
