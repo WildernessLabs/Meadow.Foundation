@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Foundation.Core", "Meadow.Foundation.Core\Meadow.Foundation.Core.csproj", "{CEBD7F9A-4645-4A29-8A97-7889E241896F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation.Core", "Meadow.Foundation.Core\Meadow.Foundation.Core.csproj", "{CEBD7F9A-4645-4A29-8A97-7889E241896F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meadow.Foundation.Core.Samples", "Meadow.Foundation.Core.Samples", "{7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}"
 EndProject
@@ -851,6 +851,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{CF493B2A-679A-44E9-ABB7-B9CD9AF44450}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Mp3.Yx5300_Sample", "Meadow.Foundation.Peripherals\Audio.Mp3.Yx5300\Samples\Audio.Mp3.Yx5300_Sample\Audio.Mp3.Yx5300_Sample.csproj", "{A447201E-D3E7-47C0-8E87-A919A272FCB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Environmental.AnalogWaterLevel_Sample", "Meadow.Foundation.Core.Samples\Sensors.Environmental.AnalogWaterLevel_Sample\Sensors.Environmental.AnalogWaterLevel_Sample.csproj", "{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1900,6 +1902,10 @@ Global
 		{A447201E-D3E7-47C0-8E87-A919A272FCB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A447201E-D3E7-47C0-8E87-A919A272FCB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A447201E-D3E7-47C0-8E87-A919A272FCB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2322,6 +2328,7 @@ Global
 		{D0B2BD03-8C10-46FE-85A4-2CF0FD34632B} = {36D998D7-9685-497E-8B92-2FD429D27B99}
 		{CF493B2A-679A-44E9-ABB7-B9CD9AF44450} = {36D998D7-9685-497E-8B92-2FD429D27B99}
 		{A447201E-D3E7-47C0-8E87-A919A272FCB1} = {CF493B2A-679A-44E9-ABB7-B9CD9AF44450}
+		{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
