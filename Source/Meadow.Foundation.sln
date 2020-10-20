@@ -854,6 +854,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Mp3.Yx5300_Sample", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Environmental.AnalogWaterLevel_Sample", "Meadow.Foundation.Core.Samples\Sensors.Environmental.AnalogWaterLevel_Sample\Sensors.Environmental.AnalogWaterLevel_Sample.csproj", "{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Bme680", "Sensors.Atmospheric.Bme680", "{10C3DA72-29FA-4BF7-B2D5-EABF25879E92}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{01926B24-03D6-4ACC-ABB7-FF90E5861557}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bme680", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme680\Driver\Sensors.Atmospheric.BME680\Sensors.Atmospheric.Bme680.csproj", "{12449481-3CDD-446F-8968-5816E65F62F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bme680_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme680\Samples\Sensors.Atmospheric.BME680_Sample\Sensors.Atmospheric.Bme680_Sample.csproj", "{0C1F063F-1C44-450D-90FC-A9A95AA03B97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1906,6 +1914,14 @@ Global
 		{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12449481-3CDD-446F-8968-5816E65F62F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12449481-3CDD-446F-8968-5816E65F62F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12449481-3CDD-446F-8968-5816E65F62F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12449481-3CDD-446F-8968-5816E65F62F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C1F063F-1C44-450D-90FC-A9A95AA03B97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C1F063F-1C44-450D-90FC-A9A95AA03B97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C1F063F-1C44-450D-90FC-A9A95AA03B97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C1F063F-1C44-450D-90FC-A9A95AA03B97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2329,6 +2345,11 @@ Global
 		{CF493B2A-679A-44E9-ABB7-B9CD9AF44450} = {36D998D7-9685-497E-8B92-2FD429D27B99}
 		{A447201E-D3E7-47C0-8E87-A919A272FCB1} = {CF493B2A-679A-44E9-ABB7-B9CD9AF44450}
 		{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
+		{BCD11918-91FF-4776-8E33-51447CFE93B7} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{10C3DA72-29FA-4BF7-B2D5-EABF25879E92} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{01926B24-03D6-4ACC-ABB7-FF90E5861557} = {10C3DA72-29FA-4BF7-B2D5-EABF25879E92}
+		{12449481-3CDD-446F-8968-5816E65F62F6} = {10C3DA72-29FA-4BF7-B2D5-EABF25879E92}
+		{0C1F063F-1C44-450D-90FC-A9A95AA03B97} = {01926B24-03D6-4ACC-ABB7-FF90E5861557}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

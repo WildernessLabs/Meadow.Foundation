@@ -2,9 +2,9 @@
 using Meadow.Hardware;
 using Meadow.Utilities;
 
-namespace Sensors.Atmospheric.Bme680
+namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    public class Bme680 : I2cPeripheral
+    public partial class Bme680 : I2cPeripheral
     {
         private SensorSettings _settings;
         private readonly object _lock;

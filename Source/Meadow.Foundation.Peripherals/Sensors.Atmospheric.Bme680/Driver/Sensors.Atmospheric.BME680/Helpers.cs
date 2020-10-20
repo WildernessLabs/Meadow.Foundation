@@ -3,7 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 
-namespace Sensors.Atmospheric.Bme680
+namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public static class Helpers
     {
