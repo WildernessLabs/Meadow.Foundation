@@ -6,8 +6,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 {
     public class MenuItem : IMenuItem
     {
-        public MenuPage SubMenu
-        { get; set; } = new MenuPage();
+        public MenuPage SubMenu { get; set; } = new MenuPage();
 
         public string Text { get; set; } = string.Empty;
 

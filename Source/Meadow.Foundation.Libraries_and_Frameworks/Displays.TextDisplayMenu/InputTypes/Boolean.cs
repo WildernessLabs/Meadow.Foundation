@@ -1,5 +1,3 @@
-using System;
-
 namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {
     public class Boolean : ListBase

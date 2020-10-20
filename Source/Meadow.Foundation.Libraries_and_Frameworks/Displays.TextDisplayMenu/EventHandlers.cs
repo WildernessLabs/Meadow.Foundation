@@ -4,37 +4,37 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 {
     public class MenuSelectedEventArgs : EventArgs
     {
-        private string _command;
+        private string command;
         public MenuSelectedEventArgs(string command)
         {
-            _command = command;
+            this.command = command;
         }
 
         public string Command
         {
-            get { return _command; }
+            get { return command; }
         }
     }
     public delegate void MenuSelectedHandler(object sender, MenuSelectedEventArgs e);
 
     public class ValueChangedEventArgs : EventArgs
     {
-        private string _id;
-        private object _value;
+        private string id;
+        private object value;
         public ValueChangedEventArgs(string id, object value)
         {
-            _id = id;
-            _value = value;
+            this.id = id;
+            this.value = value;
         }
 
         public string ItemID
         {
-            get { return _id; }
+            get { return id; }
         }
 
         public object Value
         {
-            get { return _value; }
+            get { return value; }
         }
     }
     public delegate void ValueChangedHandler(object sender, ValueChangedEventArgs e);
