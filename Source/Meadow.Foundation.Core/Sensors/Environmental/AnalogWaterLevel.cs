@@ -16,16 +16,16 @@ namespace Meadow.Foundation.Sensors.Environmental
         ///     Calibration class for new sensor types.  This allows new sensors
         ///     to be used with this class.
         /// </summary>
-        /// <remarks>
-        ///     The default settings for this object are correct for the TMP35.
-        /// </remarks>
         public class Calibration
         {
+
+            public float VoltsAtZero { get; protected set; } = 1f;
+
             /// <summary>
             ///     Linear change in the sensor output (in millivolts) per 1 mm
             ///     change in temperature.
             /// </summary>
-            public int MillivoltsPerMillimeter { get; protected set; } = 1;
+            public float VoltsPerCentimeter { get; protected set; } = 0.25f;
 
             /// <summary>
             ///     Default constructor. Create a new Calibration object with default values
@@ -38,30 +38,17 @@ namespace Meadow.Foundation.Sensors.Environmental
             /// <summary>
             ///     Create a new Calibration object using the specified values.
             /// </summary>
-            /// <param name="sampleReading">Sample reading from the data sheet.</param>
-            /// <param name="millivoltsAtSampleReading">Millivolts output at the sample reading (from the data sheet).</param>
             /// <param name="millivoltsPerMillimeter">Millivolt change per degree centigrade (from the data sheet).</param>
-            public Calibration(int millivoltsPerMillimeter)
+            public Calibration(float voltsPerCentimeter, float voltsAtZeo)
             {
-                MillivoltsPerMillimeter = millivoltsPerMillimeter;
+                VoltsPerCentimeter = voltsPerCentimeter;
+                VoltsAtZero = voltsAtZeo;
             }
         }
 
         public IAnalogInputPort AnalogInputPort { get; protected set; }
 
-        /// <summary>
-        ///     Millivolts per degree centigrade for the sensor attached to the analog port.
-        /// </summary>
-        /// <remarks>
-        ///     This will be the gradient of the line y = mx + c.
-        /// </remarks>
-        private readonly int millivoltsPerCentimeter;
-
-        /// <summary>
-        ///     Analog port that the temperature sensor is attached to.
-        /// </summary>
-        /// <value>Analog port connected to the temperature sensor.</value>
-        private IAnalogInputPort AnalogPort { get; set; }
+        public Calibration LevelCalibration { get; protected set; }
 
         public float WaterLevel { get; protected set; }
 
@@ -94,23 +81,21 @@ namespace Meadow.Foundation.Sensors.Environmental
             //
             //  If the calibration object is null use the defaults for TMP35.
             //
-            if (calibration == null) { calibration = new Calibration(); }
+            LevelCalibration = calibration;
+            if (LevelCalibration == null) { LevelCalibration = new Calibration(); }
 
             // wire up our observable
-            // have to convert from voltage to temp units for our consumers
-            // this is where the magic is: this allows us to extend the IObservable
-            // pattern through the sensor driver
             AnalogInputPort.Subscribe
             (
                 new FilterableChangeObserver<FloatChangeResult, float>(
                     h => {
                         var newWaterLevel = VoltageToWaterLevel(h.New);
-                        var oldTemp = VoltageToWaterLevel(h.Old);
+                        var oldWaterLevel = VoltageToWaterLevel(h.Old);
                         WaterLevel = newWaterLevel; // save state
 
                         RaiseEventsAndNotify
                         (
-                            new FloatChangeResult(newWaterLevel,oldTemp)
+                            new FloatChangeResult(newWaterLevel, oldWaterLevel)
                         );
                     }
                 )
@@ -130,8 +115,10 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             // read the voltage
             float voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
+
             // convert and save to our temp property for later retreival
             WaterLevel = VoltageToWaterLevel(voltage);
+
             // return
             return WaterLevel;
         }
@@ -180,7 +167,11 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns></returns>
         protected float VoltageToWaterLevel(float voltage)
         {
-            return voltage * millivoltsPerCentimeter;
+            if(voltage <= LevelCalibration.VoltsAtZero)
+            {
+                return 0;
+            }
+            return (voltage - LevelCalibration.VoltsAtZero) / LevelCalibration.VoltsPerCentimeter;
         }
     }
 }
