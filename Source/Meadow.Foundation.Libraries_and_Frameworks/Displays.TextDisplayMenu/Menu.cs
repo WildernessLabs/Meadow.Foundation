@@ -2,8 +2,6 @@
 using System.Collections;
 using Meadow.Foundation.Displays.TextDisplayMenu.InputTypes;
 using Meadow.Peripherals.Displays;
-using Meadow.Peripherals.Sensors.Rotary;
-using Meadow.Peripherals.Sensors.Buttons;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu
 {
@@ -11,41 +9,26 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
     {
         const string INPUT_TYPES_NAMESPACE = "Meadow.Foundation.Displays.TextDisplayMenu.InputTypes.";
         protected ITextDisplay display;
-        protected IButton buttonPrevious;
-        protected IButton buttonNext;
-        protected IButton buttonSelect;
-        protected IRotaryEncoder encoder;
 
         protected int navigatedDepth;
         protected MenuPage rootMenuPage;
         protected MenuPage currentMenuPage;
         protected int topDisplayLine;
 
-        private Stack _menuLevel = null;
+        private Stack menuLevel = null;
         private bool isEditMode = false;
-        private bool _showBackOnRoot = false;
+        private bool showBackOnRoot = false;
 
         public event MenuSelectedHandler Selected = delegate { };
         public event ValueChangedHandler ValueChanged = delegate { };
         public event EventHandler Exited = delegate { };
 
         public bool IsEnabled { get; protected set; } = false;
-        
-        public Menu(ITextDisplay display, IRotaryEncoderWithButton encoder, byte[] menuResource, bool showBackOnRoot = false)
-        {
-            _showBackOnRoot = showBackOnRoot;
-            Init(display, encoder, null, null, encoder, ParseMenuData(menuResource));
-        }
 
-        public Menu(ITextDisplay display, IRotaryEncoder encoder, IButton buttonSelect, byte[] menuResource, bool showBackOnRoot = false)
+        public Menu(ITextDisplay display, byte[] menuResource, bool showBackOnRoot = false)
         {
-            _showBackOnRoot = showBackOnRoot;
-            Init(display, encoder, null, null, buttonSelect, ParseMenuData(menuResource));
-        }
-        public Menu(ITextDisplay display, IButton buttonNext, IButton buttonPrevious, IButton buttonSelect, byte[] menuResource, bool showBackOnRoot = false)
-        {
-            _showBackOnRoot = showBackOnRoot;
-            Init(display, null, buttonNext, buttonPrevious, buttonSelect, ParseMenuData(menuResource));
+            this.showBackOnRoot = showBackOnRoot;
+            Init(display, ParseMenuData(menuResource));
         }
 
         private MenuPage ParseMenuData(byte[] menuResource)
@@ -53,74 +36,39 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             var menuJson = new string(System.Text.Encoding.UTF8.GetChars(menuResource));
             var menuData = SimpleJsonSerializer.JsonSerializer.DeserializeString(menuJson) as Hashtable; //from nuget package
 
-
-        //    Hashtable menuData = null;
-
             if (menuData["menu"] == null)
             {
                 throw new ArgumentException("JSON root must contain a 'menu' item");
             }
-            return CreateMenuPage((ArrayList)menuData["menu"], _showBackOnRoot);
+            return CreateMenuPage((ArrayList)menuData["menu"], showBackOnRoot);
         }
 
-        private void Init(ITextDisplay display, IRotaryEncoder encoder, IButton buttonNext, IButton buttonPrevious, IButton buttonSelect, MenuPage menuTree)
+        private void Init(ITextDisplay display, MenuPage menuTree)
         {
-            if (encoder != null)
-            {
-                this.encoder = encoder;
-            }
-            else if (buttonNext != null && buttonPrevious != null)
-            {
-                this.buttonPrevious = buttonPrevious;
-                this.buttonNext = buttonNext;
-            }
-            else
-            {
-                throw new ArgumentNullException("Must have either a Rotary Encoder or Next/Previous buttons");
-            }
-
             this.display = display;
-            this.buttonSelect = buttonSelect;
+
             rootMenuPage = menuTree;
-            _menuLevel = new Stack();
+            menuLevel = new Stack();
 
             // Save our custom characters
-            this.display.SaveCustomCharacter(TextCharacters.RightArrow.CharMap, TextCharacters.RightArrow.MemorySlot);
-            this.display.SaveCustomCharacter(TextCharacters.RightArrowSelected.CharMap, TextCharacters.RightArrow.MemorySlot);
-            this.display.SaveCustomCharacter(TextCharacters.BoxSelected.CharMap, TextCharacters.BoxSelected.MemorySlot);
+            // ToDo
+            display.SaveCustomCharacter(TextCharacters.RightArrow.CharMap, TextCharacters.RightArrow.MemorySlot);
+            display.SaveCustomCharacter(TextCharacters.RightArrowSelected.CharMap, TextCharacters.RightArrow.MemorySlot);
+            display.SaveCustomCharacter(TextCharacters.BoxSelected.CharMap, TextCharacters.BoxSelected.MemorySlot);
         }
 
         public void Enable()
         {
-            this.IsEnabled = true;
-            if (encoder != null)
-            {
-                encoder.Rotated += HandlEncoderRotation;
-            }
-            else if (buttonNext != null && buttonPrevious != null)
-            {
-                buttonPrevious.Clicked += HandleButtonPrevious;
-                buttonNext.Clicked += HandleButtonNext;
-            }
-            buttonSelect.Clicked += HandleEncoderClick;
+            IsEnabled = true;
 
             UpdateCurrentMenuPage();
-            RenderCurrentMenuPage();
+            RenderCurrentPage();
         }
 
         public void Disable()
         {
             this.IsEnabled = false;
-            if (encoder != null)
-            {
-                encoder.Rotated -= HandlEncoderRotation;
-            }
-            else if (buttonNext != null && buttonPrevious != null)
-            {
-                buttonPrevious.Clicked -= HandleButtonPrevious;
-                buttonNext.Clicked -= HandleButtonNext;
-            }
-            buttonSelect.Clicked -= HandleEncoderClick;
+
             display.ClearLines();
         }
 
@@ -148,15 +96,18 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             return menuPage;
         }
 
-        protected void RenderCurrentMenuPage()
+        protected void RenderCurrentPage()
         {
-            if (!IsEnabled) { return; } 
+            if (!IsEnabled) { return; }
 
+            Console.WriteLine("ClearLines");
             // clear the display
             display.ClearLines();
 
+            Console.WriteLine($"Count: {currentMenuPage.MenuItems.Count}");
+
             // if there are no items to render, get out.
-            if (currentMenuPage.MenuItems.Count <= 0) return;
+            if (currentMenuPage.MenuItems.Count <= 0) { return; }
 
             // if the scroll position is above the display area, move the display "window"
             if (currentMenuPage.ScrollPosition < topDisplayLine)
@@ -190,7 +141,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         protected string GetItemText(IMenuItem item, bool isSelected)
         {
-            string itemText = string.Empty;
+            string itemText;
             string displayText = item.Text;
             if (InputHelpers.Contains(displayText, "{value}") && item.Value != null)
             {
@@ -219,7 +170,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         /// </summary>
         protected void UpdateCurrentMenuPage()
         {
-            if (navigatedDepth == 0) currentMenuPage = rootMenuPage;
+            if (navigatedDepth == 0) { currentMenuPage = rootMenuPage; }
             else
             {
                 MenuPage page = rootMenuPage;
@@ -231,49 +182,52 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             }
         }
 
-        public bool MoveNext()
+        public bool OnNext()
         {
             // if outside of valid range return false
-            if (currentMenuPage.ScrollPosition >= currentMenuPage.MenuItems.Count - 1) return false;
+            if (currentMenuPage.ScrollPosition >= currentMenuPage.MenuItems.Count - 1)
+            {
+                return false;
+            }
 
             // increment scroll position
             currentMenuPage.ScrollPosition++;
 
             // re-render menu
-            RenderCurrentMenuPage();
+            RenderCurrentPage();
 
             return true;
         }
 
-        public bool MovePrevious()
+        public bool OnPrevious()
         {
             // if outside of valid range return false
-            if (currentMenuPage.ScrollPosition <= 0) return false;
+            if (currentMenuPage.ScrollPosition <= 0) { return false; }
 
             // increment scroll position
             currentMenuPage.ScrollPosition--;
 
             // re-render menu
-            RenderCurrentMenuPage();
+            RenderCurrentPage();
 
             return true;
         }
 
-        public bool SelectCurrentItem()
+        public bool OnSelect()
         {
-            if(currentMenuPage.ScrollPosition==0 && _menuLevel.Count == 0 && _showBackOnRoot)
+            if (currentMenuPage.ScrollPosition == 0 && menuLevel.Count == 0 && showBackOnRoot)
             {
-                this.Disable();
+                Disable();
                 Exited(this, new EventArgs());
                 return true;
             }
 
             // if currently on a subpage and user selects back, pop back to parent page.
-            if (currentMenuPage.ScrollPosition == 0 && _menuLevel.Count > 0)
+            if (currentMenuPage.ScrollPosition == 0 && menuLevel.Count > 0)
             {
-                MenuPage parent = _menuLevel.Pop() as MenuPage;
+                MenuPage parent = menuLevel.Pop() as MenuPage;
                 currentMenuPage = parent;
-                RenderCurrentMenuPage();
+                RenderCurrentPage();
                 return true;
             }
 
@@ -283,9 +237,9 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             // go to the submenu if children are present
             if (child.SubMenu.MenuItems.Count > 0)
             {
-                _menuLevel.Push(currentMenuPage);
+                menuLevel.Push(currentMenuPage);
                 currentMenuPage = child.SubMenu;
-                RenderCurrentMenuPage();
+                RenderCurrentPage();
                 return true;
             }
             // if there is a command, notify the subscribers 
@@ -297,30 +251,19 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             // if there is a type, then let the type handle the input
             else if (child.Type != string.Empty)
             {
-                // preserve current menu state and remove handlers
-                if (encoder != null)
-                {
-                    encoder.Rotated -= HandlEncoderRotation;
-                }
-                else
-                {
-                    buttonPrevious.Clicked -= HandleButtonPrevious;
-                    buttonNext.Clicked -= HandleButtonNext;
-                }
-                buttonSelect.Clicked -= HandleEncoderClick;
-
-                _menuLevel.Push(currentMenuPage);
+                menuLevel.Push(currentMenuPage);
                 isEditMode = true;
 
                 // create the new input type
                 var type = Type.GetType(INPUT_TYPES_NAMESPACE + child.Type);
+
                 if (type == null)
                 {
                     throw new ArgumentException(child.Type + " was not found");
                 }
 
                 var constructor = type.GetConstructor(new Type[] { });
-                IMenuInputItem inputItem = constructor.Invoke(new object[] { }) as IMenuInputItem;
+                var inputItem = constructor.Invoke(new object[] { }) as IMenuInputItem;
 
                 // setup callback
                 inputItem.ValueChanged += delegate (object sender, ValueChangedEventArgs e)
@@ -329,35 +272,16 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                     child.Value = e.Value;
                     ValueChanged(this, new ValueChangedEventArgs(e.ItemID, e.Value));
 
-                    // setup handlers again
-                    if(encoder != null)
-                    {
-                        encoder.Rotated += HandlEncoderRotation;
-                    }
-                    else
-                    {
-                        buttonPrevious.Clicked += HandleButtonPrevious;
-                        buttonNext.Clicked += HandleButtonNext;
-                    }
-                    buttonSelect.Clicked += HandleEncoderClick;
-
                     // reload the parent menu
-                    MenuPage parent = _menuLevel.Pop() as MenuPage;
+                    var parent = menuLevel.Pop() as MenuPage;
                     currentMenuPage = parent;
-                    RenderCurrentMenuPage();
+                    RenderCurrentPage();
                     isEditMode = false;
                 };
 
                 // initialize input mode and get new value
-                if(encoder != null)
-                {
-                    inputItem.Init(display, encoder, buttonSelect);
-                }
-                else
-                {
-                    inputItem.Init(display, buttonNext, buttonPrevious, buttonSelect);
-                }
-                
+                inputItem.Init(display);
+
                 inputItem.GetInput(child.ItemID, child.Value);
                 return true;
             }
@@ -376,13 +300,13 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public void UpdateItemValue(Hashtable values)
         {
-            foreach(DictionaryEntry item in values)
+            foreach (DictionaryEntry item in values)
             {
                 UpdateMenuItemValue(item.Key.ToString(), item.Value);
             }
             if (!isEditMode)
             {
-                RenderCurrentMenuPage();
+                RenderCurrentPage();
             }
         }
 
@@ -424,45 +348,6 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             {
                 return null;
             }
-        }
-
-        private void HandleEncoderClick(object sender, EventArgs e)
-        {
-            SelectCurrentItem();
-        }
-
-        private void HandlEncoderRotation(object sender, RotaryTurnedEventArgs e)
-        {
-            bool moved;
-
-            if (e.Direction == RotationDirection.Clockwise)
-            {
-                moved = MoveNext();
-            }
-            else
-            {
-                moved = MovePrevious();
-            }
-
-            if (!moved)
-            {
-                Console.WriteLine("end of items");
-            }
-        }
-
-        private void HandleButtonPrevious(object sender, EventArgs e)
-        {
-            MovePrevious();
-        }
-
-        private void HandleButtonNext(object sender, EventArgs e)
-        {
-            MoveNext();
-        }
-
-        public byte Max(byte a, byte b)
-        {
-            return (a > b) ? a : b;
         }
     }
 }

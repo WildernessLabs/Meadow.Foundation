@@ -4,9 +4,9 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
     {
         public Boolean()
         {
-            _choices = new string[2];
-            _choices[0] = "True";
-            _choices[1] = "False";
+            choices = new string[2];
+            choices[0] = "True";
+            choices[1] = "False";
         }
     }
 }

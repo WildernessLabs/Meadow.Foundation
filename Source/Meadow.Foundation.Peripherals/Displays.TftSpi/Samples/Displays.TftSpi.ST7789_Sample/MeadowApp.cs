@@ -63,6 +63,8 @@ namespace Displays.Tft.ST7789_Sample
                 resetPin: Device.Pins.D00,
                 width: 240, height: 240);
 
+
+
             Console.WriteLine("Create graphics lib");
 
             graphics = new GraphicsLibrary(display);

@@ -21,5 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interfaces\" />
+    <Folder Include="BaseClasses\" />
   </ItemGroup>
 </Project>

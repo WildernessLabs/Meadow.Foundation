@@ -1,4 +1,3 @@
-using Meadow.Peripherals.Sensors.Rotary;
 using System;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
@@ -27,7 +26,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
                     if (i > 0) value += ":";
                     value += InputHelpers.PadLeft(_timeParts[i].ToString(), '0', 2);
                 }
-                return InputHelpers.PadLeft(value, ' ', _display.DisplayConfig.Width);
+                return InputHelpers.PadLeft(value, ' ', display.DisplayConfig.Width);
             }
         }
 
@@ -62,44 +61,22 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
         /// <param name="currentValue">current value of the menu item</param>
         public override void GetInput(string itemID, object currentValue)
         {
-            if (!_isInit)
+            if (!isInitialized)
             {
                 throw new InvalidOperationException("Init() must be called before getting input.");
             }
 
             _timeParts = new int[_timeMode == TimeMode.HH_MM_SS ? 3 : 2];
-            _itemID = itemID;
-            _display.ClearLines();
-            _display.WriteLine("Enter " + this.TimeModeDisplay, 0);
-            _display.SetCursorPosition(0, 1);
+            base.itemID = itemID;
+            display.ClearLines();
+            display.WriteLine("Enter " + this.TimeModeDisplay, 0);
+            display.SetCursorPosition(0, 1);
 
-            RegisterHandlers();
             ParseValue(currentValue);
-            RewriteInputLine(TimeDisplay);
+            UpdateInputLine(TimeDisplay);
         }
 
-        protected override void HandlePrevious(object sender, EventArgs e)
-        {
-            DoPrevious();
-        }
-
-        protected override void HandleNext(object sender, EventArgs e)
-        {
-            DoNext();
-        }
-
-        protected override void HandleRotated(object sender, RotaryTurnedEventArgs e)
-        {
-            if (e.Direction == RotationDirection.Clockwise)
-            {
-                DoNext();
-            }
-            else
-            {
-                DoPrevious();
-            }
-        }
-        private void DoNext()
+        protected override void Next()
         {
             int max = 0;
 
@@ -115,18 +92,18 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             }
 
             if (_timeParts[_pos] < max) _timeParts[_pos]++;
-            RewriteInputLine(TimeDisplay);
+            UpdateInputLine(TimeDisplay);
         }
 
 
-        private void DoPrevious()
+        protected override void Previous()
         {
             int min = 0;
             if (_timeParts[_pos] > min) _timeParts[_pos]--;
-            RewriteInputLine(TimeDisplay);
+            UpdateInputLine(TimeDisplay);
         }
 
-        protected override void HandleClicked(object sender, EventArgs e)
+        protected override void Select()
         {
             if (_pos < _timeParts.Length - 1)
             {
@@ -134,8 +111,6 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             }
             else
             {
-                UnregisterHandlers();
-
                 TimeSpan timeSpan;
 
                 switch (_timeMode)
@@ -151,7 +126,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
                         break;
                     default: throw new ArgumentException();
                 }
-                ValueChanged(this, new ValueChangedEventArgs(_itemID, timeSpan));
+                ValueChanged(this, new ValueChangedEventArgs(itemID, timeSpan));
             }
         }
 

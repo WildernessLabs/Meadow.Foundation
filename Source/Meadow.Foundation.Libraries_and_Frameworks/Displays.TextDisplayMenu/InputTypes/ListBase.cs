@@ -1,14 +1,11 @@
 using System;
-using Meadow.Peripherals.Sensors.Rotary;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {
     public abstract class ListBase : InputBase
     {
-        protected string[] _choices;
-        protected int _selectedIndex = 0;
-        private int _rotatedIndex = 0;
-
+        protected string[] choices;
+        protected int selectedIndex = 0;
 
         public override event ValueChangedHandler ValueChanged;
 
@@ -16,79 +13,57 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
         {
             get
             {
-                return InputHelpers.PadLeft(_choices[_selectedIndex], ' ', _display.DisplayConfig.Width);
+                return InputHelpers.PadLeft(choices[selectedIndex], ' ', display.DisplayConfig.Width);
             }
         }
 
         public override void GetInput(string itemID, object currentValue)
         {
-            if (!_isInit)
+            if (!isInitialized)
             {
                 throw new InvalidOperationException("Init() must be called before getting input.");
             }
 
-            _display.ClearLines();
-            _display.WriteLine("Select", 0);
-            _display.SetCursorPosition(0, 1);
+            display.ClearLines();
+            display.WriteLine("Select", 0);
+            display.SetCursorPosition(0, 1);
 
-            RegisterHandlers();
             ParseValue(currentValue);
-            RewriteInputLine(OutputDisplay);
+            UpdateInputLine(OutputDisplay);
         }
 
-        protected override void HandlePrevious(object sender, EventArgs e)
+        protected override void Next()
         {
-            DoPrevious();
-        }
-
-        protected override void HandleNext(object sender, EventArgs e)
-        {
-            DoNext();
-        }
-
-        protected override void HandleClicked(object sender, EventArgs e)
-        {
-            UnregisterHandlers();
-            ValueChanged(this, new ValueChangedEventArgs(_itemID, _choices[_selectedIndex]));
-        }
-
-        protected override void HandleRotated(object sender, RotaryTurnedEventArgs e)
-        {
-            if (e.Direction == RotationDirection.Clockwise)
+            if(selectedIndex < choices.Length - 1)
             {
-                DoNext();
-            }
-            else
-            {
-                DoPrevious();
+                selectedIndex++;
+                UpdateInputLine(OutputDisplay);
             }
         }
 
-        private void DoNext()
+        protected override void Select()
         {
-            _rotatedIndex++;
-            _selectedIndex = _rotatedIndex % _choices.Length;
-            if (_selectedIndex < 0) _selectedIndex *= -1;
-            RewriteInputLine(OutputDisplay);
+            ValueChanged(this, new ValueChangedEventArgs(itemID, choices[selectedIndex]));
         }
-       
-        private void DoPrevious()
+
+        protected override void Previous()
         {
-            _rotatedIndex--;
-            _selectedIndex = _rotatedIndex % _choices.Length;
-            if (_selectedIndex < 0) _selectedIndex *= -1;
-            RewriteInputLine(OutputDisplay);
+            if(selectedIndex > 0)
+            {
+                selectedIndex--;
+                UpdateInputLine(OutputDisplay);
+            }
         }
 
         protected override void ParseValue(object value)
         {
             if (value == null || value.ToString() == string.Empty) return;
 
-            for (int i=0;i< _choices.Length; i++)
+            for (int i=0;i< choices.Length; i++)
             {
-                if(_choices[i] == value.ToString())
+                if(choices[i] == value.ToString())
                 {
-                    _selectedIndex = i;
+                    selectedIndex = i;
                     break;
                 }
             }
