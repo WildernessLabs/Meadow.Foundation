@@ -9,12 +9,12 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, FeatherWing, Led, matrix, HT16K33</PackageTags>
-    <Version>0.1.8</Version>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>0.1.12</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for AdaFruit 8x16 Matrix LED Featherwing using the HT16K33 driver</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\ICs.IOExpanders.HT16K33\Driver\ICs.IOExpanders.HT16K33\ICs.IOExpanders.HT16K33.csproj" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ht16K33" Version="0.6.18" />
   </ItemGroup>
 </Project>
