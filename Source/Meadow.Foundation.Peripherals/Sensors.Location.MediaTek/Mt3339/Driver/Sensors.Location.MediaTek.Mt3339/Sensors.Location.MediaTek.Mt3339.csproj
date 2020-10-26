@@ -9,8 +9,8 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Mt3339, GPS, Adafruit Ultimate GPS, GNSS</PackageTags>
-    <Version>0.1.4</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.9</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for MediaTek MT3339 GNSS chip. Also for AdaFruit Ultimate GPS breakouts.</Description>
     <RootNamespace>Sensors.Location.MediaTek</RootNamespace>
   </PropertyGroup>
@@ -18,7 +18,7 @@
     <None Remove="Meadow.Peripherals.Sensors.Location.LocationInfo" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
     <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Sensors.GPS.NMEA\Sensors.Location.Gnss.NmeaParsing.csproj" />
   </ItemGroup>
 </Project>
