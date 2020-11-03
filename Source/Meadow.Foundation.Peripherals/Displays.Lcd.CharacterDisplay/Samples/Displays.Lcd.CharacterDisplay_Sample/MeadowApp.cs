@@ -14,6 +14,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
         public MeadowApp()
         {
             //InitGpio();
+            //InitGpioWithPWM();
             InitI2c();
 
             TestCharacterDisplay();
@@ -21,29 +22,73 @@ namespace Displays.Lcd.CharacterDisplay_Sample
             Console.WriteLine("Test complete");
         }
 
-        void InitI2c()
+        void InitGpio() 
         {
-            Console.WriteLine("Initializing I2C...");
+            Console.WriteLine("InitGpio...");
 
-            display = new CharacterDisplay(Device.CreateI2cBus(I2cBusSpeed.Standard), 
-                I2cCharacterDisplay.DefaultI2cAddress,
-                2, 16);
-        }
-
-        void InitGpio()
-        { 
-            Console.WriteLine("Initializing GPIO...");
+            //display = new CharacterDisplay
+            //(
+            //    portRS: Device.CreateDigitalOutputPort(Device.Pins.D10),
+            //    portE: Device.CreateDigitalOutputPort(Device.Pins.D09),
+            //    portD4: Device.CreateDigitalOutputPort(Device.Pins.D08),
+            //    portD5: Device.CreateDigitalOutputPort(Device.Pins.D07),
+            //    portD6: Device.CreateDigitalOutputPort(Device.Pins.D06),
+            //    portD7: Device.CreateDigitalOutputPort(Device.Pins.D05),
+            //    rows: 4, columns: 20
+            //);
 
             display = new CharacterDisplay
             (
-                Device.CreatePwmPort(Device.Pins.D11, 100, 0.5f, true),
-                Device.CreateDigitalOutputPort(Device.Pins.D10),
-                Device.CreateDigitalOutputPort(Device.Pins.D09),
-                Device.CreateDigitalOutputPort(Device.Pins.D08),
-                Device.CreateDigitalOutputPort(Device.Pins.D07),
-                Device.CreateDigitalOutputPort(Device.Pins.D06),
-                Device.CreateDigitalOutputPort(Device.Pins.D05),
-                rows: 4, columns: 20    // Adjust dimensions to fit your display
+                device: Device,
+                pinRS: Device.Pins.D10,
+                pinE: Device.Pins.D09,
+                pinD4: Device.Pins.D08,
+                pinD5: Device.Pins.D07,
+                pinD6: Device.Pins.D06,
+                pinD7: Device.Pins.D05,
+                rows: 4, columns: 20
+            );
+        }
+
+        void InitGpioWithPWM()
+        {
+            Console.WriteLine("InitGpioWithPWM...");
+
+            //display = new CharacterDisplay
+            //(
+            //    portV0: Device.CreatePwmPort(Device.Pins.D11, 100, 0.5f, true),
+            //    portRS: Device.CreateDigitalOutputPort(Device.Pins.D10),
+            //    portE:  Device.CreateDigitalOutputPort(Device.Pins.D09),
+            //    portD4: Device.CreateDigitalOutputPort(Device.Pins.D08),
+            //    portD5: Device.CreateDigitalOutputPort(Device.Pins.D07),
+            //    portD6: Device.CreateDigitalOutputPort(Device.Pins.D06),
+            //    portD7: Device.CreateDigitalOutputPort(Device.Pins.D05),
+            //    rows: 4, columns: 20    // Adjust dimensions to fit your display
+            //);
+
+            display = new CharacterDisplay
+            (
+                device: Device,
+                pinV0: Device.Pins.D11,
+                pinRS: Device.Pins.D10,
+                pinE:  Device.Pins.D09,
+                pinD4: Device.Pins.D08,
+                pinD5: Device.Pins.D07,
+                pinD6: Device.Pins.D06,
+                pinD7: Device.Pins.D05,
+                rows: 4, columns: 20
+            );
+        }
+
+        void InitI2c()
+        {
+            Console.WriteLine("InitI2c...");
+
+            display = new CharacterDisplay
+            (
+                i2cBus: Device.CreateI2cBus(I2cBusSpeed.Standard),
+                address: I2cCharacterDisplay.DefaultI2cAddress,
+                rows: 4, columns: 20
             );
         }
 
