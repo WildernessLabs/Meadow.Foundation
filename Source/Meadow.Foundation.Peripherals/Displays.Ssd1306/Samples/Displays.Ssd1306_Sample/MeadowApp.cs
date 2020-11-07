@@ -17,12 +17,61 @@ namespace Displays.Ssd1306_Sample
             //CreateSpiDisplay();
             CreateI2CDisplay();
 
-            Console.WriteLine("Test display API");
+            Console.WriteLine("Fill display");
+            for(int x = 0; x < display.Width; x++)
+            {
+                for(int y = 0; y < display.Height; y++)
+                {
+                    display.DrawPixel(x, y, true);
+
+                }
+            }
+            display.Show();
+            Thread.Sleep(3000);
+
+         /*   Console.WriteLine("Test display API");
             TestRawDisplayAPI();
-            Thread.Sleep(1000);
+            Thread.Sleep(3000); */
+           
 
             Console.WriteLine("Create Graphics Library");
             TestDisplayGraphicsAPI();
+            Thread.Sleep(3000);
+
+            Console.WriteLine("Check offsets");
+
+            graphics.Clear();
+            //  graphics.DrawRectangle(28, 24, 72, 40, true, false);
+            graphics.DrawRectangle(0, 0, 72, 40, true, false);
+            graphics.Show();
+
+            Thread.Sleep(5000);
+
+            for (int x = 0; x < display.Width; x++)
+            {
+               
+                Console.WriteLine($"X: {x}");
+                graphics.Clear();
+
+                graphics.DrawLine(x, 0, x, (int)display.Height - 1, true);
+
+                graphics.Show();
+
+                Thread.Sleep(300);
+            }
+
+            for (int y = 0; y < display.Height; y++)
+            {
+                Console.WriteLine($"Y: {y}");
+                graphics.Clear();
+
+                graphics.DrawLine(0, y, (int)display.Width - 1, y, true);
+
+                graphics.Show();
+
+                Thread.Sleep(300);
+            }
+
             Thread.Sleep(Timeout.Infinite);
         }
 
@@ -49,7 +98,7 @@ namespace Displays.Ssd1306_Sample
             (
                 i2cBus: Device.CreateI2cBus(), 
                 address: 60, 
-                displayType: Ssd1306.DisplayType.OLED128x64
+                displayType: Ssd1306.DisplayType.OLED72x40
             );
         }
 
@@ -73,7 +122,7 @@ namespace Displays.Ssd1306_Sample
 
             graphics.Clear();
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(0, 0, "Meadow F7");
+            graphics.DrawText(0, 0, "Meadow F7", Meadow.Foundation.Color.White);
             graphics.DrawRectangle(5, 14, 30, 10, true);
 
             graphics.Show();

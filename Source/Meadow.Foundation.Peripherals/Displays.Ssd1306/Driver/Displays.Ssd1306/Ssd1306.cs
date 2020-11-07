@@ -54,6 +54,10 @@ namespace Meadow.Foundation.Displays
             ///     96x16 pixel display.
             /// </summary>
             OLED96x16,
+            /// <summary>
+            ///     70x40 pixel display.
+            /// </summary>
+            OLED72x40,
         }
 
         public enum ConnectionType
@@ -100,6 +104,16 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         private uint height;
 
+        /// <summary>
+        ///     X offset for non-standard displays.
+        /// </summary>
+        private uint xOffset = 0;
+
+        /// <summary>
+        ///     X offset for non-standard displays.
+        /// </summary>
+        private uint yOffset = 0;
+
         private Color currentPen;
 
         /// <summary>
@@ -122,6 +136,7 @@ namespace Meadow.Foundation.Displays
             0xae, 0xd5, 0x80, 0xa8, 0x3f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
             0xda, 0x12, 0x81, 0xcf, 0xd9, 0xf1, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
         };
+
         /// <summary>
         ///     Sequence of bytes that should be sent to a 128x32 OLED display to setup the device.
         /// </summary>
@@ -130,6 +145,16 @@ namespace Meadow.Foundation.Displays
             0xae, 0xd5, 0x80, 0xa8, 0x1f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
             0xda, 0x02, 0x81, 0x8f, 0xd9, 0x1f, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
         };
+
+        /// <summary>
+        ///     Sequence of bytes that should be sent to a 72x40 OLED display to setup the device.
+        /// </summary>
+        private readonly byte[] oled72x40SetupSequence =
+        {
+            0xae, 0xd5, 0x80, 0xa8, 0x27, 0xd3, 0x00, 0xad, 0x30, 0x40, 0x8d, 0x14, 0x20, 0x00, 0xa1, 0xc8,
+            0xda, 0x12, 0x81, 0xcf, 0xd9, 0xf1, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
+        };
+
         /// <summary>
         ///     Sequence of bytes that should be sent to a 96x16 OLED display to setup the device.
         /// </summary>
@@ -154,7 +179,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Backing variable for the InvertDisplay property.
         /// </summary>
-        private bool _invertDisplay;
+        private bool invertDisplay;
 
         /// <summary>
         ///     Invert the entire display (true) or return to normal mode (false).
@@ -164,10 +189,10 @@ namespace Meadow.Foundation.Displays
         /// </remarks>
         public bool InvertDisplay
         {
-            get { return _invertDisplay; }
+            get => invertDisplay; 
             set
             {
-                _invertDisplay = value;
+                invertDisplay = value;
                 SendCommand((byte)(value ? 0xa7 : 0xa6));
             }
         }
@@ -175,19 +200,19 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Backing variable for the Contrast property.
         /// </summary>
-        private byte _contrast;
+        private byte contrast;
 
         /// <summary>
         ///     Get / Set the contrast of the display.
         /// </summary>
         public byte Contrast
         {
-            get { return _contrast; }
+            get => contrast; 
 
             set
             {
-                _contrast = value;
-                SendCommands(new byte[] { 0x81, _contrast });
+                contrast = value;
+                SendCommands(new byte[] { 0x81, contrast });
             }
         }
 
@@ -196,20 +221,20 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public bool Sleep
         {
-            get => _sleep;
+            get => sleep;
             set
             {
-                _sleep = value;
-                SendCommand((byte)(_sleep ? 0xae : 0xaf));
+                sleep = value;
+                SendCommand((byte)(sleep ? 0xae : 0xaf));
             }
         }
 
         /// <summary>
         ///     Backing variable for the Sleep property.
         /// </summary>
-        private bool _sleep;
+        private bool sleep;
 
-        private DisplayType _displayType;
+        private DisplayType displayType;
 
         #endregion Properties
 
@@ -253,7 +278,7 @@ namespace Meadow.Foundation.Displays
         public Ssd1306(II2cBus i2cBus, 
             byte address = 0x3c, DisplayType displayType = DisplayType.OLED128x64)
         {
-            _displayType = displayType;
+            this.displayType = displayType;
 
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
@@ -267,10 +292,21 @@ namespace Meadow.Foundation.Displays
             switch (displayType)
             {
                 case DisplayType.OLED128x64:
-                case DisplayType.OLED64x48:
                     width = 128;
                     height = 64;
                     SendCommands(oled128x64SetupSequence);
+                    break;
+                case DisplayType.OLED64x48:
+                    width = 128;
+                    height = 64;
+                    xOffset = 32;
+                    yOffset = 16;
+                    SendCommands(oled128x64SetupSequence);
+                    break;
+                case DisplayType.OLED72x40:
+                    width = 72;
+                    height = 40;
+                    SendCommands(oled72x40SetupSequence);
                     break;
                 case DisplayType.OLED128x32:
                     width = 128;
@@ -284,7 +320,11 @@ namespace Meadow.Foundation.Displays
                     break;
             }
 
-            buffer = new byte[width * height / 8];
+            //align buffer to PAGE_SIZE
+            uint bufferSize = width * height / 8;
+            bufferSize += bufferSize % 16;
+
+            buffer = new byte[bufferSize];
 
             if(connectionType == ConnectionType.SPI)
             {
@@ -368,6 +408,8 @@ namespace Meadow.Foundation.Displays
             {
                 for (ushort index = 0; index < buffer.Length; index += PAGE_SIZE)
                 {
+                    if(buffer.Length - index < PAGE_SIZE) { break; }
+
                     Array.Copy(buffer, index, data, 1, PAGE_SIZE);
                     SendCommand(0x40);
                     i2cPeripheral.WriteBytes(data);
@@ -428,11 +470,14 @@ namespace Meadow.Foundation.Displays
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
         public override void DrawPixel(int x, int y, bool colored)
         {
-            if(_displayType == DisplayType.OLED64x48)
-            {
-                DrawPixel64x48(x, y, colored);
-                return;
-            }
+            /*  if(_displayType == DisplayType.OLED64x48)
+              {
+                  DrawPixel64x48(x, y, colored);
+                  return;
+              } */
+
+            x += (int)xOffset;
+            y += (int)yOffset;
 
             if ((x >= width) || (y >= height))
             {

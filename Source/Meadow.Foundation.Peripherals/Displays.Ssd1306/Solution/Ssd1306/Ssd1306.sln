@@ -1,0 +1,41 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1306", "..\..\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj", "{1A9B5845-4B4A-4C0B-A320-B85371C16172}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1306_Sample", "..\..\Samples\Displays.Ssd1306_Sample\Displays.Ssd1306_Sample.csproj", "{F0B6EC60-CE82-48BF-AEE6-CF708671D452}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation.Core", "..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj", "{B3E732C0-0B70-42BF-AAA1-AA934463A8E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Core", "..\..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{4EB8941D-0364-4E80-A2EA-7C86DD6ADEA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.GraphicsLibrary", "..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj", "{18344F8A-FFB3-404D-AECD-15A75E47DFCF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A9B5845-4B4A-4C0B-A320-B85371C16172}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A9B5845-4B4A-4C0B-A320-B85371C16172}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A9B5845-4B4A-4C0B-A320-B85371C16172}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A9B5845-4B4A-4C0B-A320-B85371C16172}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0B6EC60-CE82-48BF-AEE6-CF708671D452}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0B6EC60-CE82-48BF-AEE6-CF708671D452}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0B6EC60-CE82-48BF-AEE6-CF708671D452}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0B6EC60-CE82-48BF-AEE6-CF708671D452}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3E732C0-0B70-42BF-AAA1-AA934463A8E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3E732C0-0B70-42BF-AAA1-AA934463A8E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3E732C0-0B70-42BF-AAA1-AA934463A8E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3E732C0-0B70-42BF-AAA1-AA934463A8E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EB8941D-0364-4E80-A2EA-7C86DD6ADEA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EB8941D-0364-4E80-A2EA-7C86DD6ADEA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EB8941D-0364-4E80-A2EA-7C86DD6ADEA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EB8941D-0364-4E80-A2EA-7C86DD6ADEA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18344F8A-FFB3-404D-AECD-15A75E47DFCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18344F8A-FFB3-404D-AECD-15A75E47DFCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18344F8A-FFB3-404D-AECD-15A75E47DFCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18344F8A-FFB3-404D-AECD-15A75E47DFCF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
