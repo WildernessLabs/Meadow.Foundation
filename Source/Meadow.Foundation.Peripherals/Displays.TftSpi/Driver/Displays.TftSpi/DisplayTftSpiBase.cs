@@ -10,7 +10,8 @@ namespace Meadow.Foundation.Displays.Tft
         {
             CASET = 0x2A,
             RASET = 0x2B,
-            RAMWR = 0x2C
+            RAMWR = 0x2C,
+            RADRD = 0x2E
         };
 
         public enum Rotation
