@@ -23,11 +23,12 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public enum DisplayColorMode
         {
-            Format1bpp, //1306 and single color ePaper
-            Format2bpp, //for 2 color ePaper
+            Format1bpp, //single color 
+            Format2bpp, //for 2 color ePaper or 4 color gray scale
+            Format4bpp, //for 16 color gray scale
             Format8bppMonochome,
             Format12bppRgb444, //TFT in 12 bit mode
-            Format16bppRgb555, //not used
+            Format16bppRgb555, //not currently used
             Format16bppRgb565, //TFT in 16 bit mode
             Format18bppRgb666, //TFT in 18 bit mode
             Format24bppRgb888  //not currently used
