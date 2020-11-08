@@ -58,19 +58,19 @@ namespace Meadow.Foundation.Displays.Tft
             SendData(0x0C);
             SendData(0x00);
 
-            SendCommand(TFT_MADCTL);
+            SendCommand(MADCTL);
             SendData(0x0A);
 
             SendCommand(0x3A);
             SendData(0x55);
 
-            SendCommand(TFT_CASET);
+            SendCommand((byte)LcdCommand.CASET);
             SendData(0x00);
             SendData(0x00);
             SendData(0x01);
             SendData(0x3F);
 
-            SendCommand(TFT_PASET);
+            SendCommand((byte)LcdCommand.RASET);
             SendData(0x00);
             SendData(0x00);
             SendData(0x01);
@@ -103,26 +103,25 @@ namespace Meadow.Foundation.Displays.Tft
 
         public void SetRotation(Rotation rotation)
         {
-            SendCommand(TFT_MADCTL);
+            SendCommand(MADCTL);
 
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(TFT_MAD_SS | TFT_MAD_BGR);
+                    SendData(MADCTL_SS | MADCTL_BGR);
                     break;
                 case Rotation.Rotate_90:
-                    SendData(TFT_MAD_MV | TFT_MAD_BGR);
+                    SendData(MADCTL_MV | MADCTL_BGR);
                     break;
                 case Rotation.Rotate_180:
-                    SendData(TFT_MAD_BGR | TFT_MAD_GS);
+                    SendData(MADCTL_BGR | MADCTL_GS);
                     break;
                 case Rotation.Rotate_270:
-                    SendData(TFT_MAD_MV | TFT_MAD_BGR | TFT_MAD_SS | TFT_MAD_GS);
+                    SendData(MADCTL_MV | MADCTL_BGR | MADCTL_SS | MADCTL_GS);
                     break;
             }
         }
 
-        const byte TFT_NOP = 0x00;
         const byte TFT_SWRST = 0x01;
         const byte TFT_SLPIN = 0x10;
         const byte TFT_SLPOUT = 0x11;
@@ -130,20 +129,5 @@ namespace Meadow.Foundation.Displays.Tft
         const byte TFT_INVON = 0x21;
         const byte TFT_DISPOFF = 0x28;
         const byte TFT_DISPON = 0x29;
-        const byte TFT_CASET = 0x2A;
-        const byte TFT_PASET = 0x2B;
-        const byte TFT_RAMWR = 0x2C;
-        const byte TFT_RAMRD = 0x2E;
-        const byte TFT_MADCTL = 0x36;
-        const byte TFT_MAD_MY = 0x80;
-        const byte TFT_MAD_MX = 0x40;
-        const byte TFT_MAD_MV = 0x20;
-        const byte TFT_MAD_ML = 0x10;
-        const byte TFT_MAD_RGB = 0x00;
-        const byte TFT_MAD_BGR = 0x08;
-        const byte TFT_MAD_MH = 0x04;
-        const byte TFT_MAD_SS = 0x02;
-        const byte TFT_MAD_GS = 0x01;
-
     }
 }

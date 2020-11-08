@@ -271,16 +271,16 @@ namespace Meadow.Foundation.Displays.Tft
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(GC9A01_MADCTL_MX | GC9A01_MADCTL_MY | GC9A01_MADCTL_BGR);
+                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
                     break;
                 case Rotation.Rotate_90:
-                    SendData(GC9A01_MADCTL_MY | GC9A01_MADCTL_MV | GC9A01_MADCTL_BGR);
+                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
                     break;
                 case Rotation.Rotate_180:
-                    SendData(GC9A01_MADCTL_BGR);
+                    SendData(MADCTL_BGR);
                     break;
                 case Rotation.Rotate_270:
-                    SendData(GC9A01_MADCTL_MX | GC9A01_MADCTL_MV | GC9A01_MADCTL_BGR);
+                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
                     break;
             }
         }
@@ -289,7 +289,6 @@ namespace Meadow.Foundation.Displays.Tft
         const byte GC9A01_SLPIN_DELAY = 120;  ///< delay ms wait for sleep in finish
         const byte GC9A01_SLPOUT_DELAY = 120; ///< delay ms wait for sleep out finish
 
-        const byte GC9A01_NOP = 0x00;
         const byte GC9A01_SWRESET = 0x01;
         const byte GC9A01_RDDID = 0x04;
         const byte GC9A01_RDDST = 0x09;
@@ -307,13 +306,6 @@ namespace Meadow.Foundation.Displays.Tft
         const byte GC9A01_PTLAR = 0x30;
         const byte GC9A01_COLMOD = 0x3A;
         const byte GC9A01_MADCTL = 0x36;
-
-        const byte GC9A01_MADCTL_MY = 0x80;
-        const byte GC9A01_MADCTL_MX = 0x40;
-        const byte GC9A01_MADCTL_MV = 0x20;
-        const byte GC9A01_MADCTL_ML = 0x10;
-        const byte GC9A01_MADCTL_RGB = 0x00;
-        const byte GC9A01_MADCTL_BGR = 0X08;
 
         const byte GC9A01_RDID1 = 0xDA;
         const byte GC9A01_RDID2 = 0xDB;

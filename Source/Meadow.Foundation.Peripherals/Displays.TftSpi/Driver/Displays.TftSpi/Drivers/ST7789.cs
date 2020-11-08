@@ -47,11 +47,11 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(MADCTL);
             SendData(0x00); //some variants use 0x08
 
-            SendCommand(CASET);
+            SendCommand((byte)LcdCommand.CASET);
 
             SendData(new byte[] { 0, 0, 0, (byte)Width });
 
-            SendCommand(RASET);
+            SendCommand((byte)LcdCommand.RASET);
             SendData(new byte[] { 0, 0, (byte)(Height >> 8), (byte)(Height & 0xFF) });
 
             SendCommand(INVON); //inversion on
@@ -75,21 +75,21 @@ namespace Meadow.Foundation.Displays.Tft
             x1 += xOffset;
             y1 += yOffset;
 
-            SendCommand(CASET);  // column addr set
+            SendCommand((byte)LcdCommand.CASET);  // column addr set
             dataCommandPort.State = Data;
             Write((byte)(x0 >> 8));
             Write((byte)(x0 & 0xff));   // XSTART 
             Write((byte)(x1 >> 8));
             Write((byte)(x1 & 0xff));   // XEND
 
-            SendCommand(RASET);  // row addr set
+            SendCommand((byte)LcdCommand.RASET);  // row addr set
             dataCommandPort.State = Data;
             Write((byte)(y0 >> 8));
             Write((byte)(y0 & 0xff));    // YSTART
             Write((byte)(y1 >> 8));
             Write((byte)(y1 & 0xff));    // YEND
 
-            SendCommand(RAMWR);  // write to RAM
+            SendCommand((byte)LcdCommand.RAMWR);  // write to RAM
         }
 
         public void SetRotation(Rotation rotation)
@@ -128,18 +128,8 @@ namespace Meadow.Foundation.Displays.Tft
         static byte INVON = 0x21;
         //static byte DISPOFF     = 0x28;
         static byte DISPON = 0x29;
-        static byte CASET = 0x2A;
-        static byte RASET = 0x2B;
-        static byte RAMWR = 0x2C;
-        //static byte RAMRD       = 0x2E;
         //static byte PTLAR       = 0x30;
         static byte COLMOD = 0x3A;
-        static byte MADCTL = 0x36;
-        static byte MADCTL_MY = 0x80;
-        static byte MADCTL_MX = 0x40;
-        static byte MADCTL_MV = 0x20;
-        //static byte MADCTL_ML   = 0x10;
-        static byte MADCTL_RGB = 0x00;
         //static byte RDID1       = 0xDA;
         //static byte RDID2       = 0xDB;
         //static byte RDID3       = 0xDC;

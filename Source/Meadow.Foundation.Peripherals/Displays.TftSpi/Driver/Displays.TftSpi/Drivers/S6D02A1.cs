@@ -90,21 +90,21 @@ namespace Meadow.Foundation.Displays.Tft
 
         public void SetRotation(Rotation rotation)
         {
-            SendCommand(GC9A01_MADCTL);
+            SendCommand(MADCTL);
 
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(GC9A01_MADCTL_MX | GC9A01_MADCTL_MY | GC9A01_MADCTL_BGR);
+                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
                     break;
                 case Rotation.Rotate_90:
-                    SendData(GC9A01_MADCTL_MY | GC9A01_MADCTL_MV | GC9A01_MADCTL_BGR);
+                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
                     break;
                 case Rotation.Rotate_180:
-                    SendData(GC9A01_MADCTL_BGR);
+                    SendData(MADCTL_BGR);
                     break;
                 case Rotation.Rotate_270:
-                    SendData(GC9A01_MADCTL_MX | GC9A01_MADCTL_MV | GC9A01_MADCTL_BGR);
+                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
                     break;
             }
         }

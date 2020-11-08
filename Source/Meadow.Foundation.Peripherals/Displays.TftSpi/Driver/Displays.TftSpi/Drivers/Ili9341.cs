@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(ILI9341_PWCTR2, new byte[] { 0x10 });
             SendCommand(ILI9341_VMCTR1, new byte[] { 0x3e, 0x28 });
             SendCommand(ILI9341_VMCTR2, new byte[] { 0x86 });
-            SendCommand(ILI9341_MADCTL, new byte[] { (byte)(ILI9341_MADCTL_MX | ILI9341_MADCTL_BGR) }); //13
+            SendCommand(MADCTL, new byte[] { (byte)(MADCTL_MX | MADCTL_BGR) }); //13
             SendCommand(ILI9341_PIXFMT, new byte[] { 0x55 });
             SendCommand(ILI9341_FRMCTR1, new byte[] { 0x00, 0x18 });
             SendCommand(ILI9341_DFUNCTR, new byte[] { 0x08, 0x82, 0x27 });
@@ -95,13 +95,8 @@ namespace Meadow.Foundation.Displays.Tft
         static byte ILI9341_GAMMASET = 0x26;
         //static byte ILI9341_DISPOFF    = 0x28;
         static byte ILI9341_DISPON = 0x29;
-        //static byte ILI9341_CASET      = 0x2A;
-        //static byte ILI9341_PASET      = 0x2B;
-        //static byte ILI9341_RAMWR      = 0x2C;
-        //static byte ILI9341_RAMRD      = 0x2E;
         //static byte ILI9341_PTLAR      = 0x30;
         //static byte ILI9341_VSCRDEF    = 0x33;
-        static byte ILI9341_MADCTL = 0x36;
         //static byte ILI9341_VSCRSADD   = 0x37;
         static byte ILI9341_PIXFMT = 0x3A;
 
@@ -121,13 +116,5 @@ namespace Meadow.Foundation.Displays.Tft
 
         static byte ILI9341_GMCTRP1 = 0xE0;
         static byte ILI9341_GMCTRN1 = 0xE1;
-
-        static byte ILI9341_MADCTL_MX = 0x40;
-        //static byte ILI9341_MADCTL_MY  = 0x80;
-        //static byte ILI9341_MADCTL_MV  = 0x20;
-        //static byte ILI9341_MADCTL_ML  = 0x10;
-        //static byte ILI9341_MADCTL_RGB = 0x00;
-        static byte ILI9341_MADCTL_BGR = 0x08;
-        //static byte ILI9341_MADCTL_MH  = 0x04;
     }
 }

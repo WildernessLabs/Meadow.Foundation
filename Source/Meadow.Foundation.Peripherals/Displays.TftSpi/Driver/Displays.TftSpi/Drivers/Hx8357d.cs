@@ -103,7 +103,7 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(HX8357_COLMOD);
             SendData(0x55);  // 16 bit
 
-            SendCommand(HX8357_MADCTL);
+            SendCommand(MADCTL);
             SendData(0xC0);
 
             SendCommand(HX8357_TEON);  // TE off
@@ -141,31 +141,24 @@ namespace Meadow.Foundation.Displays.Tft
 
         public void SetRotation(Rotation rotation)
         {
-            SendCommand(HX8357_MADCTL);
+            SendCommand(MADCTL);
 
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(HX8357_MADCTL_MX | HX8357_MADCTL_MY | HX8357_MADCTL_RGB);
+                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
                     break;
                 case Rotation.Rotate_90:
-                    SendData(HX8357_MADCTL_MY | HX8357_MADCTL_MV | HX8357_MADCTL_RGB);
+                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
                     break;
                 case Rotation.Rotate_180:
-                    SendData(HX8357_MADCTL_RGB);
+                    SendData(MADCTL_RGB);
                     break;
                 case Rotation.Rotate_270:
-                    SendData(HX8357_MADCTL_MX | HX8357_MADCTL_MV | HX8357_MADCTL_RGB);
+                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
                     break;
             }
         }
-
-        const byte HX8357_MADCTL_MY = 0x80;
-        const byte HX8357_MADCTL_MX = 0x40;
-        const byte HX8357_MADCTL_MV = 0x20;
-        const byte HX8357_MADCTL_ML = 0x10;
-        const byte HX8357_MADCTL_RGB = 0x00;
-        const byte HX8357_MADCTL_BGR = 0X08;
 
         const byte HX8357_NOP = 0x00;
         const byte HX8357_SWRESET = 0x01;
@@ -188,7 +181,6 @@ namespace Meadow.Foundation.Displays.Tft
 
         const byte HX8357_TEON = 0x35;
         const byte HX8357_TEARLINE = 0x44;
-        const byte HX8357_MADCTL = 0x36;
         const byte HX8357_COLMOD = 0x3A;
 
         const byte HX8357_SETOSC = 0xB0;

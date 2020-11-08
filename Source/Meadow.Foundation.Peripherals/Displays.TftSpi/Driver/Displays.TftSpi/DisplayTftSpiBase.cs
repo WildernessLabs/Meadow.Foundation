@@ -6,6 +6,18 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public abstract class DisplayTftSpiBase : DisplayBase, IDisposable
     {
+        protected const byte NO_OP = 0x0;
+        protected const byte MADCTL = 0x36;
+        protected const byte MADCTL_MY = 0x80;
+        protected const byte MADCTL_MX = 0x40;
+        protected const byte MADCTL_MV = 0x20;
+        protected const byte MADCTL_ML = 0x10;
+        protected const byte MADCTL_RGB = 0x00;
+        protected const byte MADCTL_BGR = 0X08;
+        protected const byte MADCTL_MH = 0x04;
+        protected const byte MADCTL_SS = 0x02;
+        protected const byte MADCTL_GS = 0x01;
+
         protected enum LcdCommand
         {
             CASET = 0x2A,
