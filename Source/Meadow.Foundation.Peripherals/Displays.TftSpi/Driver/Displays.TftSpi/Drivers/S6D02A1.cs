@@ -88,6 +88,27 @@ namespace Meadow.Foundation.Displays.Tft
             Write((byte)LcdCommand.RAMWR);  // write to RAM */
         }
 
+        public void SetRotation(Rotation rotation)
+        {
+            SendCommand(GC9A01_MADCTL);
+
+            switch (rotation)
+            {
+                case Rotation.Normal:
+                    SendData(GC9A01_MADCTL_MX | GC9A01_MADCTL_MY | GC9A01_MADCTL_BGR);
+                    break;
+                case Rotation.Rotate_90:
+                    SendData(GC9A01_MADCTL_MY | GC9A01_MADCTL_MV | GC9A01_MADCTL_BGR);
+                    break;
+                case Rotation.Rotate_180:
+                    SendData(GC9A01_MADCTL_BGR);
+                    break;
+                case Rotation.Rotate_270:
+                    SendData(GC9A01_MADCTL_MX | GC9A01_MADCTL_MV | GC9A01_MADCTL_BGR);
+                    break;
+            }
+        }
+
         void SendCommand(byte command, byte[] data)
         {
             dataCommandPort.State = (Command);
