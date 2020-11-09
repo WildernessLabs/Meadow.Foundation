@@ -4,19 +4,19 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {
     public abstract class NumericBase : InputBase
     {
-        byte scale = 0;
+        readonly byte scale = 0;
         int[] numberParts;
         
-        int _pos = 0;
-        int _max = 0;
-        int _min = 0;
+        int position = 0;
+        int max = 0;
+        int min = 0;
 
         public override event ValueChangedHandler ValueChanged;
 
         public NumericBase(int min, int max, byte scale)
         {
-            _max = max;
-            _min = min;
+            this.max = max;
+            this.min = min;
             this.scale = scale;
         }
 
@@ -57,14 +57,14 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
         public override bool OnNext()
         {
             Console.WriteLine("Next");
-            if (_pos == 0)
+            if (position == 0)
             {
-                if (numberParts[_pos] < _max) { numberParts[_pos]++; }
-                else { numberParts[_pos + 1] = 0; }
+                if (numberParts[position] < max) { numberParts[position]++; }
+                else { numberParts[position + 1] = 0; }
             }
             else
             {
-                if (numberParts[_pos - 1] != _max && numberParts[_pos] < (InputHelpers.Exp(10, scale) - 1)) { numberParts[_pos]++; }
+                if (numberParts[position - 1] != max && numberParts[position] < (InputHelpers.Exp(10, scale) - 1)) { numberParts[position]++; }
             }
             UpdateInputLine(NumericDisplay);
 
@@ -74,13 +74,13 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
         public override bool OnPrevious()
         {
             Console.WriteLine("Previous");
-            if (_pos == 0)
+            if (position == 0)
             {
-                if (numberParts[_pos] > _min) { numberParts[_pos]--; }
+                if (numberParts[position] > min) { numberParts[position]--; }
             }
             else
             {
-                if (numberParts[_pos] > 0) { numberParts[_pos]--; }
+                if (numberParts[position] > 0) { numberParts[position]--; }
             }
             UpdateInputLine(NumericDisplay);
 
@@ -89,9 +89,9 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 
         public override bool OnSelect()
         {
-            if (_pos < numberParts.Length - 1)
+            if (position < numberParts.Length - 1)
             {
-                _pos++;
+                position++;
             }
             else
             {

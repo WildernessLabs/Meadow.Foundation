@@ -108,8 +108,6 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             // clear the display
             display.ClearLines();
 
-            Console.WriteLine($"Count: {currentMenuPage.MenuItems.Count}");
-
             // if there are no items to render, get out.
             if (currentMenuPage.MenuItems.Count <= 0) { return; }
 
@@ -125,7 +123,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 topDisplayLine = currentMenuPage.ScrollPosition - display.DisplayConfig.Height + 1;
             }
 
-            Console.WriteLine("Scroll: " + currentMenuPage.ScrollPosition.ToString() + ", start: " + topDisplayLine.ToString() + ", end: " + (topDisplayLine + display.DisplayConfig.Height - 1).ToString());
+            //Console.WriteLine("Scroll: " + currentMenuPage.ScrollPosition.ToString() + ", start: " + topDisplayLine.ToString() + ", end: " + (topDisplayLine + display.DisplayConfig.Height - 1).ToString());
 
             byte lineNumber = 0;
 
@@ -157,7 +155,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 // calculate any neccessary padding to put selector on far right
                 int paddingLength = (display.DisplayConfig.Width - 1 - displayText.Length);
                 string padding = string.Empty;
-                if (paddingLength > 0) padding = new string(' ', paddingLength);
+                if (paddingLength > 0) { padding = new string(' ', paddingLength); }
                 //
                 itemText = displayText.Substring(0, (displayText.Length >= display.DisplayConfig.Width - 1) ? display.DisplayConfig.Width - 1 : displayText.Length) + padding + TextCharacters.BoxSelected.ToChar();
             }
@@ -188,7 +186,6 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public bool OnNext()
         {
-            Console.WriteLine("Menu: OnNext");
             if(currentInputItem != null)
             {
                 currentInputItem.OnNext();
@@ -205,7 +202,6 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public bool OnPrevious()
         {
-            Console.WriteLine("Menu: OnPrevious");
             if (currentInputItem != null)
             {
                 currentInputItem.OnPrevious();
@@ -247,7 +243,6 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public bool OnSelect()
         {
-            Console.WriteLine("Menu: OnSelect");
             if (currentInputItem != null)
             {
                 currentInputItem.OnSelect();
@@ -312,7 +307,6 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 // setup callback
                 currentInputItem.ValueChanged += delegate (object sender, ValueChangedEventArgs e)
                 {
-                    Console.WriteLine($"Input item callback {e.Value}, {child.Value}");
                     // set the value and notify the eager listeners
                     child.Value = e.Value;
                     ValueChanged(this, new ValueChangedEventArgs(e.ItemID, e.Value));

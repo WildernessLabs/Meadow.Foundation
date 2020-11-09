@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-
-
 namespace Meadow.Foundation.Displays.TextDisplayMenu
 {
     public class MenuItem : IMenuItem
