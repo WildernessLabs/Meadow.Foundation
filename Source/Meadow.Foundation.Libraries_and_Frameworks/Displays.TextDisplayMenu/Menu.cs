@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Meadow.Foundation.Displays.TextDisplayMenu.InputTypes;
 using Meadow.Peripherals.Displays;
 
@@ -13,9 +14,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         protected int navigatedDepth;
         protected MenuPage rootMenuPage;
         protected MenuPage currentMenuPage;
+        protected IMenuInputItem currentInputItem; //also effectively a "page"
         protected int topDisplayLine;
 
-        private Stack menuLevel = null;
+        private Stack<IPage> pageStack = null;
         private bool isEditMode = false;
         private bool showBackOnRoot = false;
 
@@ -48,7 +50,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             this.display = display;
 
             rootMenuPage = menuTree;
-            menuLevel = new Stack();
+            pageStack = new Stack<IPage>();
 
             // Save our custom characters
             // ToDo
@@ -67,7 +69,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public void Disable()
         {
-            this.IsEnabled = false;
+            IsEnabled = false;
 
             display.ClearLines();
         }
@@ -98,9 +100,11 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         protected void RenderCurrentPage()
         {
-            if (!IsEnabled) { return; }
+            if (!IsEnabled) {
+                Console.WriteLine("Render not enabled");
+                return;
+            }
 
-            Console.WriteLine("ClearLines");
             // clear the display
             display.ClearLines();
 
@@ -184,48 +188,87 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public bool OnNext()
         {
-            // if outside of valid range return false
-            if (currentMenuPage.ScrollPosition >= currentMenuPage.MenuItems.Count - 1)
+            Console.WriteLine("Menu: OnNext");
+            if(currentInputItem != null)
             {
-                return false;
+                currentInputItem.OnNext();
             }
-
-            // increment scroll position
-            currentMenuPage.ScrollPosition++;
-
-            // re-render menu
-            RenderCurrentPage();
+            else
+            {
+                currentMenuPage.OnNext();
+                // re-render menu
+                RenderCurrentPage();
+            }
 
             return true;
         }
 
         public bool OnPrevious()
         {
-            // if outside of valid range return false
-            if (currentMenuPage.ScrollPosition <= 0) { return false; }
-
-            // increment scroll position
-            currentMenuPage.ScrollPosition--;
-
-            // re-render menu
-            RenderCurrentPage();
+            Console.WriteLine("Menu: OnPrevious");
+            if (currentInputItem != null)
+            {
+                currentInputItem.OnPrevious();
+            }
+            else
+            {
+                currentMenuPage.OnPrevious();
+                // re-render menu
+                RenderCurrentPage();
+            }
 
             return true;
         }
 
-        public bool OnSelect()
+        public bool OnBack()
         {
-            if (currentMenuPage.ScrollPosition == 0 && menuLevel.Count == 0 && showBackOnRoot)
+            if (currentInputItem != null)
+            {
+                currentInputItem.OnSelect();
+                return true;
+            }
+            else if (pageStack.Count == 0)
             {
                 Disable();
                 Exited(this, new EventArgs());
                 return true;
             }
-
             // if currently on a subpage and user selects back, pop back to parent page.
-            if (currentMenuPage.ScrollPosition == 0 && menuLevel.Count > 0)
+            else if (pageStack.Count > 0)
             {
-                MenuPage parent = menuLevel.Pop() as MenuPage;
+                MenuPage parent = pageStack.Pop() as MenuPage;
+                currentMenuPage = parent;
+                RenderCurrentPage();
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool OnSelect()
+        {
+            Console.WriteLine("Menu: OnSelect");
+            if (currentInputItem != null)
+            {
+                currentInputItem.OnSelect();
+                return true;
+            }
+            else
+            {
+                currentMenuPage.OnSelect();
+            }
+
+            if (currentMenuPage.ScrollPosition == 0 && pageStack.Count == 0 && showBackOnRoot)
+            {
+                Disable();
+                Exited(this, new EventArgs());
+                return true;
+            }
+            
+            // if currently on a subpage and user selects back, pop back to parent page.
+            if (currentMenuPage.ScrollPosition == 0 && pageStack.Count > 0)
+            {
+                MenuPage parent = pageStack.Pop() as MenuPage;
                 currentMenuPage = parent;
                 RenderCurrentPage();
                 return true;
@@ -237,7 +280,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             // go to the submenu if children are present
             if (child.SubMenu.MenuItems.Count > 0)
             {
-                menuLevel.Push(currentMenuPage);
+                pageStack.Push(currentMenuPage);
                 currentMenuPage = child.SubMenu;
                 RenderCurrentPage();
                 return true;
@@ -251,7 +294,8 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             // if there is a type, then let the type handle the input
             else if (child.Type != string.Empty)
             {
-                menuLevel.Push(currentMenuPage);
+                pageStack.Push(currentMenuPage);
+                
                 isEditMode = true;
 
                 // create the new input type
@@ -263,26 +307,28 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 }
 
                 var constructor = type.GetConstructor(new Type[] { });
-                var inputItem = constructor.Invoke(new object[] { }) as IMenuInputItem;
+                currentInputItem = constructor.Invoke(new object[] { }) as IMenuInputItem;
 
                 // setup callback
-                inputItem.ValueChanged += delegate (object sender, ValueChangedEventArgs e)
+                currentInputItem.ValueChanged += delegate (object sender, ValueChangedEventArgs e)
                 {
+                    Console.WriteLine($"Input item callback {e.Value}, {child.Value}");
                     // set the value and notify the eager listeners
                     child.Value = e.Value;
                     ValueChanged(this, new ValueChangedEventArgs(e.ItemID, e.Value));
 
                     // reload the parent menu
-                    var parent = menuLevel.Pop() as MenuPage;
+                    var parent = pageStack.Pop() as MenuPage;
                     currentMenuPage = parent;
+                    currentInputItem = null;
                     RenderCurrentPage();
                     isEditMode = false;
                 };
 
                 // initialize input mode and get new value
-                inputItem.Init(display);
+                currentInputItem.Init(display);
 
-                inputItem.GetInput(child.ItemID, child.Value);
+                currentInputItem.GetInput(child.ItemID, child.Value);
                 return true;
             }
             else

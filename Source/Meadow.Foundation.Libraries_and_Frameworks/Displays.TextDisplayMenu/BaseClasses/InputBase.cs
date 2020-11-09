@@ -22,12 +22,12 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 
         protected void UpdateInputLine(string text)
         {
-            display.Write(text);
-            display.SetCursorPosition(0, 1);
+            display.ClearLine(1);
+            display.WriteLine(text, 1);
         }
 
-        protected abstract void Previous();
-        protected abstract void Next();
-        protected abstract void Select();
+        public abstract bool OnPrevious();
+        public abstract bool OnNext();
+        public abstract bool OnSelect();
     }
 }

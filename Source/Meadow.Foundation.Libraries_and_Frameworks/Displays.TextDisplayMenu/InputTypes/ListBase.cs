@@ -32,34 +32,37 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             UpdateInputLine(OutputDisplay);
         }
 
-        protected override void Next()
+        public override bool OnNext()
         {
             if(selectedIndex < choices.Length - 1)
             {
                 selectedIndex++;
                 UpdateInputLine(OutputDisplay);
             }
+            return true;
         }
 
-        protected override void Select()
+        public override bool OnSelect()
         {
             ValueChanged(this, new ValueChangedEventArgs(itemID, choices[selectedIndex]));
+            return true;
         }
 
-        protected override void Previous()
+        public override bool OnPrevious()
         {
             if(selectedIndex > 0)
             {
                 selectedIndex--;
                 UpdateInputLine(OutputDisplay);
             }
+            return true;
         }
 
         protected override void ParseValue(object value)
         {
             if (value == null || value.ToString() == string.Empty) return;
 
-            for (int i=0;i< choices.Length; i++)
+            for (int i = 0; i< choices.Length; i++)
             {
                 if(choices[i] == value.ToString())
                 {

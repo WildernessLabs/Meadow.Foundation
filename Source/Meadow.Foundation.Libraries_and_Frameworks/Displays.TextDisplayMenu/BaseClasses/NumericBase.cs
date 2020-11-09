@@ -54,8 +54,9 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             UpdateInputLine(NumericDisplay);
         }
 
-        protected override void Next()
+        public override bool OnNext()
         {
+            Console.WriteLine("Next");
             if (_pos == 0)
             {
                 if (numberParts[_pos] < _max) { numberParts[_pos]++; }
@@ -66,10 +67,13 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
                 if (numberParts[_pos - 1] != _max && numberParts[_pos] < (InputHelpers.Exp(10, scale) - 1)) { numberParts[_pos]++; }
             }
             UpdateInputLine(NumericDisplay);
+
+            return true;
         }
 
-        protected override void Previous()
+        public override bool OnPrevious()
         {
+            Console.WriteLine("Previous");
             if (_pos == 0)
             {
                 if (numberParts[_pos] > _min) { numberParts[_pos]--; }
@@ -79,9 +83,11 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
                 if (numberParts[_pos] > 0) { numberParts[_pos]--; }
             }
             UpdateInputLine(NumericDisplay);
+
+            return true;
         }
 
-        protected override void Select()
+        public override bool OnSelect()
         {
             if (_pos < numberParts.Length - 1)
             {
@@ -91,6 +97,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             {
                 ValueChanged(this, new ValueChangedEventArgs(itemID, scale == 0 ? numberParts[0] : double.Parse(NumericDisplay)));
             }
+            return true;
         }
 
         protected override void ParseValue(object value)

@@ -4,16 +4,16 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {
     public abstract class TimeBase : InputBase
     {
-        int[] _timeParts;
+        int[] timeParts;
         byte _pos = 0;
 
-        protected TimeMode _timeMode;
+        protected TimeMode timeMode;
 
         public override event ValueChangedHandler ValueChanged;
 
         public TimeBase(TimeMode timeMode)
         {
-            _timeMode = timeMode;
+            this.timeMode = timeMode;
         }
 
         string TimeDisplay
@@ -21,10 +21,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             get
             {
                 string value = string.Empty;
-                for (int i = 0; i < _timeParts.Length; i++)
+                for (int i = 0; i < timeParts.Length; i++)
                 {
-                    if (i > 0) value += ":";
-                    value += InputHelpers.PadLeft(_timeParts[i].ToString(), '0', 2);
+                    if (i > 0) { value += ":"; }
+                    value += InputHelpers.PadLeft(timeParts[i].ToString(), '0', 2);
                 }
                 return InputHelpers.PadLeft(value, ' ', display.DisplayConfig.Width);
             }
@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
         {
             get
             {
-                switch (_timeMode)
+                switch (timeMode)
                 {
                     case TimeMode.HH_MM_SS: return "hh:mm:ss";
                     case TimeMode.HH_MM: return "hh:mm";
@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
                 throw new InvalidOperationException("Init() must be called before getting input.");
             }
 
-            _timeParts = new int[_timeMode == TimeMode.HH_MM_SS ? 3 : 2];
+            timeParts = new int[timeMode == TimeMode.HH_MM_SS ? 3 : 2];
             base.itemID = itemID;
             display.ClearLines();
             display.WriteLine("Enter " + this.TimeModeDisplay, 0);
@@ -76,36 +76,40 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             UpdateInputLine(TimeDisplay);
         }
 
-        protected override void Next()
+        public override bool OnNext()
         {
             int max = 0;
 
             if (_pos == 0)
             {
-                if (_timeMode == TimeMode.HH_MM_SS) max = 23;
-                if (_timeMode == TimeMode.HH_MM) max = 23;
-                if (_timeMode == TimeMode.MM_SS) max = 59;
+                if (timeMode == TimeMode.HH_MM_SS) max = 23;
+                if (timeMode == TimeMode.HH_MM) max = 23;
+                if (timeMode == TimeMode.MM_SS) max = 59;
             }
             else
             {
                 max = 59;
             }
 
-            if (_timeParts[_pos] < max) _timeParts[_pos]++;
+            if (timeParts[_pos] < max) timeParts[_pos]++;
             UpdateInputLine(TimeDisplay);
+
+            return true;
         }
 
 
-        protected override void Previous()
+        public override bool OnPrevious()
         {
             int min = 0;
-            if (_timeParts[_pos] > min) _timeParts[_pos]--;
+            if (timeParts[_pos] > min) timeParts[_pos]--;
             UpdateInputLine(TimeDisplay);
+
+            return true;
         }
 
-        protected override void Select()
+        public override bool OnSelect()
         {
-            if (_pos < _timeParts.Length - 1)
+            if (_pos < timeParts.Length - 1)
             {
                 _pos++;
             }
@@ -113,21 +117,23 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             {
                 TimeSpan timeSpan;
 
-                switch (_timeMode)
+                switch (timeMode)
                 {
                     case TimeMode.HH_MM_SS:
-                        timeSpan = new TimeSpan(_timeParts[0], _timeParts[1], _timeParts[2]);
+                        timeSpan = new TimeSpan(timeParts[0], timeParts[1], timeParts[2]);
                         break;
                     case TimeMode.HH_MM:
-                        timeSpan = new TimeSpan(_timeParts[0], _timeParts[1], 0);
+                        timeSpan = new TimeSpan(timeParts[0], timeParts[1], 0);
                         break;
                     case TimeMode.MM_SS:
-                        timeSpan = new TimeSpan(0, _timeParts[0], _timeParts[1]);
+                        timeSpan = new TimeSpan(0, timeParts[0], timeParts[1]);
                         break;
                     default: throw new ArgumentException();
                 }
                 ValueChanged(this, new ValueChangedEventArgs(itemID, timeSpan));
             }
+
+            return true;
         }
 
         protected override void ParseValue(object value)
@@ -137,20 +143,20 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             if(value is TimeSpan)
             {
                 TimeSpan ts = (TimeSpan)value;
-                switch (_timeMode)
+                switch (timeMode)
                 {
                     case TimeMode.HH_MM_SS:
-                        _timeParts[0] = ts.Hours;
-                        _timeParts[1] = ts.Minutes;
-                        _timeParts[2] = ts.Seconds;
+                        timeParts[0] = ts.Hours;
+                        timeParts[1] = ts.Minutes;
+                        timeParts[2] = ts.Seconds;
                         break;
                     case TimeMode.HH_MM:
-                        _timeParts[0] = ts.Hours;
-                        _timeParts[1] = ts.Minutes;
+                        timeParts[0] = ts.Hours;
+                        timeParts[1] = ts.Minutes;
                         break;
                     case TimeMode.MM_SS:
-                        _timeParts[0] = ts.Minutes;
-                        _timeParts[1] = ts.Seconds;
+                        timeParts[0] = ts.Minutes;
+                        timeParts[1] = ts.Seconds;
                         break;
                     default: throw new ArgumentException();
                 }
@@ -163,7 +169,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 
                 for (int i = 0; i < parts.Length; i++)
                 {
-                    _timeParts[i] = int.Parse(parts[i]);
+                    timeParts[i] = int.Parse(parts[i]);
                 }
             }
         }

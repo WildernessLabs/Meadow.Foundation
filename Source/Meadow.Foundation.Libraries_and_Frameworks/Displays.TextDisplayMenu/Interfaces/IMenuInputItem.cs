@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu
 {
-    public interface IMenuInputItem
+    public interface IMenuInputItem : IPage
     {
         void Init(ITextDisplay display);
 

@@ -1102,7 +1102,7 @@ namespace Meadow.Foundation.Graphics
             {
                 throw new Exception("GraphicsLibrary.Write requires CurrentFont to be set");
             }
-            DrawText(CurrentFont.Width * CursorColumn, CurrentFont.Height * CursorLine, text);
+            DrawText(CurrentFont.Width * CursorColumn, CurrentFont.Height * CursorLine, text, Color.White);
             Show();
         }
 
@@ -1112,7 +1112,7 @@ namespace Meadow.Foundation.Graphics
             {
                 throw new Exception("GraphicsLibrary.WriteLine requires CurrentFont to be set");
             }
-            DrawText(0, lineNumber * CurrentFont.Height, text);
+            DrawText(0, lineNumber * CurrentFont.Height, text, Color.White);
             Show();
         }
 
@@ -1123,7 +1123,7 @@ namespace Meadow.Foundation.Graphics
 
         public void ClearLine(byte lineNumber)
         {
-            DrawRectangle(0, CurrentFont.Height * lineNumber, (int)Width, CurrentFont.Height, true, true);
+            DrawRectangle(0, CurrentFont.Height * lineNumber, (int)Width, CurrentFont.Height, false, true);
         }
 
         public byte CursorColumn { get; private set; } = 0;
