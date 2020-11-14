@@ -4,6 +4,7 @@ using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Temperature;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,12 @@ namespace Tests.I2cSpiAnalogTemperature_Sample
         public MeadowApp()
         {
             Console.WriteLine("Start...");
+            var rgbLed = new RgbLed(
+                Device,
+                Device.Pins.OnboardLedRed,
+                Device.Pins.OnboardLedGreen,
+                Device.Pins.OnboardLedBlue);
+            rgbLed.SetColor(RgbLed.Colors.Red);
 
             Console.Write("Initializing I2C...");
             displayI2C = new Ssd1306(Device.CreateI2cBus(), 60, Ssd1306.DisplayType.OLED128x32);
@@ -59,9 +66,11 @@ namespace Tests.I2cSpiAnalogTemperature_Sample
                 new AnalogTemperature(Device, Device.Pins.A01, AnalogTemperature.KnownSensorType.LM35),
                 new AnalogTemperature(Device, Device.Pins.A02, AnalogTemperature.KnownSensorType.LM35),
                 new AnalogTemperature(Device, Device.Pins.A03, AnalogTemperature.KnownSensorType.LM35),
-                //new AnalogTemperature(Device, Device.Pins.A04, AnalogTemperature.KnownSensorType.LM35), borked
+                new AnalogTemperature(Device, Device.Pins.A04, AnalogTemperature.KnownSensorType.LM35), 
                 new AnalogTemperature(Device, Device.Pins.A05, AnalogTemperature.KnownSensorType.LM35),
             };
+
+            rgbLed.SetColor(RgbLed.Colors.Green);
 
             TestTemperatures();
         }
