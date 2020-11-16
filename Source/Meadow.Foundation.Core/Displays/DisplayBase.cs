@@ -82,7 +82,14 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public abstract void DrawPixel(int x, int y); 
+        public abstract void DrawPixel(int x, int y);
+
+        /// <summary>
+        /// Invert the color of a single pixel
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public abstract void InvertPixel(int x, int y);
 
         /// <summary>
         /// Set the pen color
