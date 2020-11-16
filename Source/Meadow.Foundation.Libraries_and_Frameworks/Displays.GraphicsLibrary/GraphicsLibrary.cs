@@ -107,6 +107,17 @@ namespace Meadow.Foundation.Graphics
             display.InvertPixel(GetXForRotation(x, y), GetYForRotation(x, y));
         }
 
+        public void InvertRectangle(int xLeft, int yTop, int width, int height)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    InvertPixel(x + xLeft, y + yTop);
+                }
+            }
+        }
+
         /// <summary>
         ///     Draw a single pixel 
         /// </summary>

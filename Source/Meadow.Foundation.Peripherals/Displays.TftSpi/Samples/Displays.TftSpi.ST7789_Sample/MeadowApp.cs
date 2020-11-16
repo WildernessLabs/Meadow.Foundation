@@ -22,6 +22,8 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
+                InvertTest();
+
                 PolarLineTest();
                 Thread.Sleep(5000);
 
@@ -63,11 +65,44 @@ namespace Displays.Tft.ST7789_Sample
                 resetPin: Device.Pins.D00,
                 width: 240, height: 240);
 
-
-
             Console.WriteLine("Create graphics lib");
 
             graphics = new GraphicsLibrary(display);
+        }
+
+        void InvertTest()
+        {
+            graphics.CurrentFont = new Font12x16();
+            graphics.Clear();
+
+            string msg = "Cursor test";
+            string msg2 = "$123.456";
+
+            graphics.DrawText(0, 1, msg, Color.AliceBlue);
+            graphics.DrawRectangle(0, 16, 12 * msg2.Length, 16, Color.DarkSlateBlue, true);
+            graphics.DrawText(0, 16, msg2, Color.GreenYellow);
+
+            for (int i = 0; i < 4; i++)
+            {
+                for(int j = 0; j < 6; j++)
+                {
+                    graphics.InvertRectangle(i * 12, 0, 12, 16);
+          
+                    graphics.Show();
+                    Thread.Sleep(50);
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 6; j++)
+                {
+                    graphics.InvertRectangle(i * 12, 16, 12, 16);
+
+                    graphics.Show();
+                    Thread.Sleep(50);
+                }
+            }
         }
 
         void PolarLineTest()

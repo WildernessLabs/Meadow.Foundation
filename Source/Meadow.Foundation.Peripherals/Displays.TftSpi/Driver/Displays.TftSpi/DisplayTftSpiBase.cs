@@ -181,7 +181,7 @@ namespace Meadow.Foundation.Displays.Tft
             //get current color
             var index = ((y * width) + x) * sizeof(ushort);
 
-            ushort color = (ushort)(spiBuffer[index] << 8 + spiBuffer[++index]);
+            ushort color = (ushort)(spiBuffer[index] << 8| spiBuffer[++index]);
 
             //split into R,G,B & invert
             byte r = (byte)(0x1F - ((color >> 11) & 0x1F));
@@ -221,8 +221,6 @@ namespace Meadow.Foundation.Displays.Tft
         /// </summary>
         public override void Show()
         {
-            // spiDisplay.WriteBytes(spiBuffer);
-
             if (xMax == 0 || yMax == 0)
             { return; }
 
