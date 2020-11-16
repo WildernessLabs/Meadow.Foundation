@@ -94,6 +94,20 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        ///     Draw a single pixel using the pen color
+        /// </summary>
+        /// <param name="x">x location </param>
+        /// <param name="y">y location</param>
+        public void InvertPixel(int x, int y)
+        {
+            if (IsPixelInBounds(x, y) == false)
+            {
+                return;
+            }
+            display.InvertPixel(GetXForRotation(x, y), GetYForRotation(x, y));
+        }
+
+        /// <summary>
         ///     Draw a single pixel 
         /// </summary>
         /// <param name="x">x location </param>
