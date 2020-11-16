@@ -49,8 +49,8 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// internal buffer used to write to registers for all devices.
         /// </summary>
-        private readonly byte[] _writeBuffer;
-        private readonly byte[] _readBuffer;
+        private readonly byte[] writeBuffer;
+        private readonly byte[] readBuffer;
 
         private readonly SpiBus spi;
         private readonly IDigitalOutputPort chipSelectPort;
@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// A Buffer that contains the values of the digits registers per device
         /// </summary>
-        private readonly byte[,] _buffer;
+        private readonly byte[,] buffer;
 
         private Color currentPen;
 
@@ -134,9 +134,9 @@ namespace Meadow.Foundation.Displays
             DeviceRows = deviceRows;
             DeviceColumns = deviceColumns;
 
-            _buffer = new byte[DeviceCount, NumDigits];
-            _writeBuffer = new byte[2 * DeviceCount];
-            _readBuffer = new byte[2 * DeviceCount];
+            buffer = new byte[DeviceCount, NumDigits];
+            writeBuffer = new byte[2 * DeviceCount];
+            readBuffer = new byte[2 * DeviceCount];
 
             Initialize(maxMode);
         }
@@ -193,13 +193,13 @@ namespace Meadow.Foundation.Displays
             ValidatePosition(deviceId, digit);
             var data = (byte)((byte)character + (showDecimal ? DECIMAL : 0));
 
-            _buffer[deviceId, digit] = data;
+            buffer[deviceId, digit] = data;
         }
 
         public CharacterType GetCharacter(int digit, int deviceId = 0)
         {
             ValidatePosition(deviceId, digit);
-            return (CharacterType)_buffer[deviceId, digit];
+            return (CharacterType)buffer[deviceId, digit];
         }
 
         public void TestDisplay(int timeInMs = 1000)
@@ -225,10 +225,10 @@ namespace Meadow.Foundation.Displays
 
             for (byte deviceId = 0; deviceId < DeviceCount; deviceId++)
             {
-                _writeBuffer[i++] = (byte)register;
-                _writeBuffer[i++] = data;
+                writeBuffer[i++] = (byte)register;
+                writeBuffer[i++] = data;
             }
-            max7219.WriteBytes(_writeBuffer);
+            max7219.WriteBytes(writeBuffer);
         }
 
         /// <summary>
@@ -247,13 +247,13 @@ namespace Meadow.Foundation.Displays
         public void SetDigit(byte value, int digit, int deviceId = 0)
         {
             ValidatePosition(deviceId, digit);
-            _buffer[deviceId, digit] = value;
+            buffer[deviceId, digit] = value;
         }
 
         public byte GetDigit(int digit, int deviceId = 0)
         {
             ValidatePosition(deviceId, digit);
-            return _buffer[deviceId, digit];
+            return buffer[deviceId, digit];
         }
 
         private void ValidatePosition(int deviceId, int digit)
@@ -273,7 +273,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public override void Show()
         {
-            WriteBuffer(_buffer);
+            WriteBuffer(buffer);
         }
 
         /// <summary>
@@ -289,11 +289,11 @@ namespace Meadow.Foundation.Displays
 
                 for (var deviceId = DeviceCount - 1; deviceId >= 0; deviceId--)
                 {
-                    _writeBuffer[i++] = (byte)((int)Register.Digit0 + digit);
-                    _writeBuffer[i++] = buffer[deviceId, digit];
+                    writeBuffer[i++] = (byte)((int)Register.Digit0 + digit);
+                    writeBuffer[i++] = buffer[deviceId, digit];
                 }
                 //max7219.WriteBytes(_writeBuffer);
-                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, _writeBuffer, _readBuffer);
+                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, writeBuffer, readBuffer);
             }
         }
 
@@ -374,11 +374,11 @@ namespace Meadow.Foundation.Displays
 
             if (colored)
             {
-                _buffer[display, index] = (byte)(_buffer[display, index] | (byte)(1 << (y % 8)));
+                buffer[display, index] = (byte)(buffer[display, index] | (byte)(1 << (y % 8)));
             }
             else
             {
-                _buffer[display, index] = (byte)(_buffer[display, index] & ~(byte)(1 << (y % 8)));
+                buffer[display, index] = (byte)(buffer[display, index] & ~(byte)(1 << (y % 8)));
             }
         }
 
@@ -390,6 +390,22 @@ namespace Meadow.Foundation.Displays
         public override void SetPenColor(Color pen)
         {
             currentPen = pen;
+        }
+
+        public override void InvertPixel(int x, int y)
+        {
+            var index = x % 8;
+
+            var display = y / 8 + (x / 8) * DeviceRows;
+
+
+            if (display > DeviceCount)
+            {
+                Console.WriteLine($"Display out of range {x}, {y}");
+                return;
+            }
+
+            buffer[display, index] = (byte)(buffer[display, index] ^= (byte)(1 << y % 8));
         }
     }
 }
