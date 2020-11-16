@@ -38,6 +38,17 @@ namespace Displays.Ssd1306_Sample
             TestDisplayGraphicsAPI();
             Thread.Sleep(2000);
 
+            Console.WriteLine("Test Inversion");
+            for(int x = 0; x < 64; x++)
+            {
+                for(int y = 0; y < 12; y++)
+                {
+                    display.InvertPixel(x, y);
+                }
+            }
+            display.Show();
+            Thread.Sleep(3000);
+
             Console.WriteLine("Check offsets");
 
             graphics.Clear();
@@ -97,7 +108,7 @@ namespace Displays.Ssd1306_Sample
             (
                 i2cBus: Device.CreateI2cBus(), 
                 address: 60, 
-                displayType: Ssd1306.DisplayType.OLED72x40
+                displayType: Ssd1306.DisplayType.OLED128x32
             );
         }
 
