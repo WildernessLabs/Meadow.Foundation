@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.GraphicsLibrary", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TextDisplayMenu", "Displays.TextDisplayMenu.csproj", "{052CE158-8C2E-48B4-9E43-41161A0A1CAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonTestCore", "..\Samples\JsonTestCore\JsonTestCore.csproj", "{8E67865A-C503-46A9-9B1B-D78571FF7660}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TextDisplayMenu_Sample", "..\Samples\Displays.TextDisplayMenu_Sample\Displays.TextDisplayMenu_Sample.csproj", "{50E16E62-A7C7-4BC9-9568-AE7C073E1705}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Core", "..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{17FB9407-BD32-46A9-BB4C-C68C5060AAE9}"
@@ -34,10 +32,6 @@ Global
 		{052CE158-8C2E-48B4-9E43-41161A0A1CAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{052CE158-8C2E-48B4-9E43-41161A0A1CAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{052CE158-8C2E-48B4-9E43-41161A0A1CAE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8E67865A-C503-46A9-9B1B-D78571FF7660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E67865A-C503-46A9-9B1B-D78571FF7660}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E67865A-C503-46A9-9B1B-D78571FF7660}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E67865A-C503-46A9-9B1B-D78571FF7660}.Release|Any CPU.Build.0 = Release|Any CPU
 		{50E16E62-A7C7-4BC9-9568-AE7C073E1705}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{50E16E62-A7C7-4BC9-9568-AE7C073E1705}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50E16E62-A7C7-4BC9-9568-AE7C073E1705}.Release|Any CPU.ActiveCfg = Release|Any CPU
