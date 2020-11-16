@@ -500,6 +500,25 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        public override void InvertPixel(int x, int y)
+        {
+            x += (int)xOffset;
+            y += (int)yOffset;
+
+            if ((x >= width) || (y >= height))
+            {
+                if (!IgnoreOutOfBoundsPixels)
+                {
+                    throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
+                }
+                //  pixels to be thrown away if out of bounds of the display
+                return;
+            }
+            var index = (y / 8 * width) + x;
+
+            buffer[index] = (buffer[index] ^= (byte)(1 << y % 8));
+        }
+
         private void DrawPixel64x48(int x, int y, bool colored)
         {
             if ((x >= 64) || (y >= 48))
@@ -527,6 +546,8 @@ namespace Meadow.Foundation.Displays
                 buffer[index] = (byte)(buffer[index] & ~(byte)(1 << (y % 8)));
             }
         }
+
+ 
 
         /// <summary>
         ///     Start the display scrollling in the specified direction.
@@ -587,7 +608,7 @@ namespace Meadow.Foundation.Displays
         {
             SendCommand(0x2e);
         }
-        
+
         #endregion Methods
     }
 }
