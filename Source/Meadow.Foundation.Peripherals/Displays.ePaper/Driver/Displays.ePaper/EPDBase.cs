@@ -133,6 +133,16 @@ namespace Meadow.Foundation.Displays.ePaper
             DrawPixel(x, y, colored);
         }
 
+        public override void InvertPixel(int x, int y)
+        {
+            xRefreshStart = Math.Min(x, xRefreshStart);
+            xRefreshEnd = Math.Max(x, xRefreshEnd);
+            yRefreshStart = Math.Min(y, yRefreshStart);
+            yRefreshEnd = Math.Max(y, yRefreshEnd);
+
+            imageBuffer[(x + y * Width) / 8] ^= (byte)(0x80 >> (x % 8));
+        }
+
         /// <summary>
         ///     Draw a single pixel 
         /// </summary>

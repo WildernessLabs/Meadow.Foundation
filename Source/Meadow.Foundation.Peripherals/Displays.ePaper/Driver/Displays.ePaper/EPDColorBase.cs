@@ -100,7 +100,7 @@ namespace Meadow.Foundation.Displays.ePaper
         public override void DrawPixel(int x, int y, bool colored)
         {
             if (xRefreshStart == -1)
-                xRefreshStart = x;
+            { xRefreshStart = x; }
 
             xRefreshStart = Math.Min(x, xRefreshStart);
             xRefreshEnd = Math.Max(x, xRefreshEnd);
@@ -116,10 +116,27 @@ namespace Meadow.Foundation.Displays.ePaper
                 blackImageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
             }
 
-            if(IsColorInverted)
+            if (IsColorInverted)
+            {
                 colorImageBuffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
+            }
             else
+            {
                 colorImageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
+            }
+        }
+
+        public override void InvertPixel(int x, int y)
+        {
+            if (xRefreshStart == -1)
+            { xRefreshStart = x; }
+
+            xRefreshStart = Math.Min(x, xRefreshStart);
+            xRefreshEnd = Math.Max(x, xRefreshEnd);
+            yRefreshStart = Math.Min(y, yRefreshStart);
+            yRefreshEnd = Math.Max(y, yRefreshEnd);
+
+            blackImageBuffer[(x + y * Width) / 8] ^= (byte)~(0x80 >> (x % 8));
         }
 
         public void DrawColoredPixel(int x, int y, bool colored)
