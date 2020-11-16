@@ -27,7 +27,7 @@ namespace ICs.IOExpanders.HT16K33_Sample
 
             while (true)
             {
-                ht16k33.ToggleLed((byte)index, on);
+                ht16k33.SetLed((byte)index, on);
                 ht16k33.UpdateDisplay();
                 index++;
 
