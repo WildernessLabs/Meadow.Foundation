@@ -304,6 +304,22 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        public override void InvertPixel(int x, int y)
+        {
+            if ((x >= Width) || (y >= Height))
+            {
+                if (!IgnoreOutOfBoundsPixels)
+                {
+                    throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
+                }
+                //  pixels to be thrown away if out of bounds of the display
+                return;
+            }
+            var index = (y / 8 * Width) + x;
+
+            buffer[index] = (buffer[index] ^= (byte)(1 << y % 8));
+        }
+
         /// <summary>
         ///     Start the display scrollling in the specified direction.
         /// </summary>
