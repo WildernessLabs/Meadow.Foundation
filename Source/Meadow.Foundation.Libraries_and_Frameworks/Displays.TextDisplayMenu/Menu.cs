@@ -36,12 +36,13 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         private MenuPage ParseMenuData(byte[] menuResource)
         {
+
+            // var menuData = SimpleJsonSerializer.JsonSerializer.DeserializeString(menuJson) as Hashtable; //from nuget package
+
+            // var menuData = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(menuJson);
+            // var menuData = System.Text.Json.JsonSerializer.Deserialize<ArrayList>(menuJson);
+
             var menuJson = new string(System.Text.Encoding.UTF8.GetChars(menuResource));
-            //   var menuData = SimpleJsonSerializer.JsonSerializer.DeserializeString(menuJson) as Hashtable; //from nuget package
-
-            //var menuData = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(menuJson);
-           // var menuData = System.Text.Json.JsonSerializer.Deserialize<ArrayList>(menuJson);
-
             var menuData = JsonDocument.Parse(menuJson);
 
             JsonElement menuElement;
@@ -90,7 +91,6 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             {
                 menuPage.MenuItems.Add(new MenuItem("< Back"));
             }
-
            
             foreach(var node in menuElement.EnumerateArray())
             {
@@ -242,6 +242,8 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public bool OnNext()
         {
+            if(IsEnabled == false) { return false; }
+
             if(currentInputItem != null)
             {
                 currentInputItem.OnNext();
@@ -258,6 +260,8 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public bool OnPrevious()
         {
+            if (IsEnabled == false) { return false; }
+
             if (currentInputItem != null)
             {
                 currentInputItem.OnPrevious();
@@ -274,6 +278,8 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public bool OnBack()
         {
+            if (IsEnabled == false) { return false; }
+
             if (currentInputItem != null)
             {
                 currentInputItem.OnSelect();
@@ -385,6 +391,11 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             {
                 return false;
             }
+        }
+
+        public void Refresh()
+        {
+            RenderCurrentPage();
         }
 
         public void UpdateItemValue(string id, object value)

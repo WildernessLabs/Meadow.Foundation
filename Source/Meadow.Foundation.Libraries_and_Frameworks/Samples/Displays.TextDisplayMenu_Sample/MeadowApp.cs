@@ -51,16 +51,6 @@ namespace MeadowApp
 
             Console.WriteLine("Create Display with SPI...");
 
-            /*
-            var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode3);
-            var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
-
-            st7789 = new St7789(device: Device, spiBus: spiBus,
-                chipSelectPin: Device.Pins.D12,
-                dcPin: Device.Pins.D01,
-                resetPin: Device.Pins.D00,
-                width: 240, height: 240); */
-
             var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode0);
 
             var bus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
