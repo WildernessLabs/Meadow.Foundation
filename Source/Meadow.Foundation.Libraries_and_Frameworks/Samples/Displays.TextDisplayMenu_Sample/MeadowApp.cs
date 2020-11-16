@@ -1,11 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.TextDisplayMenu;
-using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
@@ -21,7 +19,7 @@ namespace MeadowApp
         RgbPwmLed onboardLed;
 
         Menu menu;
-        St7789 st7789;
+    //    St7789 st7789;
 
         Ssd1309 ssd1309;
         ITextDisplay display;
@@ -78,11 +76,17 @@ namespace MeadowApp
 
             Console.WriteLine("Create GraphicsLibrary...");
 
-            display = new GraphicsLibrary(ssd1309)
+            var gl = new GraphicsLibrary(ssd1309)
             {
                 CurrentFont = new Font8x12(),
              //   Rotation = GraphicsLibrary.RotationType._270Degrees
             };
+
+            gl.Clear();
+            gl.DrawRectangle(1, 1, 40, 40, true, true);
+            gl.Show();
+
+            display = gl as ITextDisplay;
 
             Console.WriteLine("Load menu data...");
 

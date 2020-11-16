@@ -17,10 +17,10 @@
     <ProjectReference Include="..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SimpleJsonSerializer" Version="0.0.1" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Interfaces\" />
     <Folder Include="BaseClasses\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
   </ItemGroup>
 </Project>

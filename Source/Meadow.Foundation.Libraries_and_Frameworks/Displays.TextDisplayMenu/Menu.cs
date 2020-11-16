@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.Json;
 using Meadow.Foundation.Displays.TextDisplayMenu.InputTypes;
 using Meadow.Peripherals.Displays;
 
@@ -36,13 +37,20 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         private MenuPage ParseMenuData(byte[] menuResource)
         {
             var menuJson = new string(System.Text.Encoding.UTF8.GetChars(menuResource));
-            var menuData = SimpleJsonSerializer.JsonSerializer.DeserializeString(menuJson) as Hashtable; //from nuget package
+            //   var menuData = SimpleJsonSerializer.JsonSerializer.DeserializeString(menuJson) as Hashtable; //from nuget package
 
-            if (menuData["menu"] == null)
+            //var menuData = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(menuJson);
+           // var menuData = System.Text.Json.JsonSerializer.Deserialize<ArrayList>(menuJson);
+
+            var menuData = JsonDocument.Parse(menuJson);
+
+            JsonElement menuElement;
+
+            if(menuData.RootElement.TryGetProperty("menu", out menuElement) == false)
             {
                 throw new ArgumentException("JSON root must contain a 'menu' item");
             }
-            return CreateMenuPage((ArrayList)menuData["menu"], showBackOnRoot);
+            return CreateMenuPage(menuElement, showBackOnRoot);
         }
 
         private void Init(ITextDisplay display, MenuPage menuTree)
@@ -74,6 +82,49 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             display.ClearLines();
         }
 
+        protected MenuPage CreateMenuPage(JsonElement menuElement, bool addBack)
+        {
+            MenuPage menuPage = new MenuPage();
+
+            if (addBack)
+            {
+                menuPage.MenuItems.Add(new MenuItem("< Back"));
+            }
+
+           
+            foreach(var node in menuElement.EnumerateArray())
+            {
+                string command = null, id = null, type = null, value = null;
+
+                JsonElement el;
+
+                if(node.TryGetProperty("id", out el)) {
+                    id = el.ToString();
+                }
+                if (node.TryGetProperty("command", out el)) {
+                    command = el.ToString();
+                }
+                if (node.TryGetProperty("type", out el)) {
+                    type = el.ToString();
+                }
+                if (node.TryGetProperty("value", out el)) {
+                    value = el.ToString();
+                }
+
+                var item = new MenuItem(node.GetProperty("text").ToString(),
+                    command, id, type, value);
+
+                if(node.TryGetProperty("sub", out el))
+                {
+                    item.SubMenu = CreateMenuPage(el, true);
+                }
+
+                menuPage.MenuItems.Add(item);
+            }
+
+            return menuPage;
+        }
+
         protected MenuPage CreateMenuPage(ArrayList nodes, bool addBack)
         {
             MenuPage menuPage = new MenuPage();
@@ -87,7 +138,12 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             {
                 foreach (Hashtable node in nodes)
                 {
-                    var item = new MenuItem(node["text"].ToString(), node["command"]?.ToString(), node["id"]?.ToString(), node["type"]?.ToString(), node["value"]?.ToString());
+                    var item = new MenuItem(node["text"].ToString(),
+                        node["command"]?.ToString(),
+                        node["id"]?.ToString(),
+                        node["type"]?.ToString(),
+                        node["value"]?.ToString());
+
                     if (node["sub"] != null)
                     {
                         item.SubMenu = CreateMenuPage((ArrayList)node["sub"], true);
