@@ -27,7 +27,7 @@ namespace Displays.Ssd1306_Sample
                 }
             }
             display.Show();
-            Thread.Sleep(3000);
+            Thread.Sleep(2000);
 
          /*   Console.WriteLine("Test display API");
             TestRawDisplayAPI();
@@ -36,16 +36,15 @@ namespace Displays.Ssd1306_Sample
 
             Console.WriteLine("Create Graphics Library");
             TestDisplayGraphicsAPI();
-            Thread.Sleep(3000);
+            Thread.Sleep(2000);
 
             Console.WriteLine("Check offsets");
 
             graphics.Clear();
-            //  graphics.DrawRectangle(28, 24, 72, 40, true, false);
-            graphics.DrawRectangle(0, 0, 72, 40, true, false);
+            graphics.DrawRectangle(0, 0, (int)display.Width, (int)display.Height, true, false);
             graphics.Show();
 
-            Thread.Sleep(5000);
+            Thread.Sleep(3000);
 
             for (int x = 0; x < display.Width; x++)
             {
@@ -57,7 +56,7 @@ namespace Displays.Ssd1306_Sample
 
                 graphics.Show();
 
-                Thread.Sleep(300);
+                Thread.Sleep(50);
             }
 
             for (int y = 0; y < display.Height; y++)
@@ -69,7 +68,7 @@ namespace Displays.Ssd1306_Sample
 
                 graphics.Show();
 
-                Thread.Sleep(300);
+                Thread.Sleep(50);
             }
 
             Thread.Sleep(Timeout.Infinite);
