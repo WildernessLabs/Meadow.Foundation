@@ -172,6 +172,28 @@ namespace Meadow.Foundation.Displays.Tft
             SetPixel(x, y, Get16BitColorFromRGB(r, g, b));
         }
 
+        public override void InvertPixel(int x, int y)
+        {
+
+            if (x < 0 || y < 0 || x >= width || y >= height)
+            { return; }
+
+            //get current color
+            var index = ((y * width) + x) * sizeof(ushort);
+
+            ushort color = (ushort)(spiBuffer[index] << 8 + spiBuffer[++index]);
+
+            //split into R,G,B & invert
+            byte r = (byte)(0x1F - ((color >> 11) & 0x1F));
+            byte g = (byte)(0x3F - ((color >> 5) & 0x3F));
+            byte b = (byte)(0x1F - (color) & 0x1F);
+
+            //get new color
+            color = (ushort)(r << 11 | g << 5 | b);
+
+            DrawPixel(x, y, color);
+        }
+
         /// <summary>
         ///     Draw a single pixel 
         /// </summary>
