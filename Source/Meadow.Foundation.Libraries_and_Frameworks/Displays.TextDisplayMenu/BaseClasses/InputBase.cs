@@ -1,4 +1,3 @@
-using System;
 using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
@@ -23,7 +22,8 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
         protected void UpdateInputLine(string text)
         {
             display.ClearLine(1);
-            display.WriteLine(text, 1);
+            display.WriteLine(text, 1, true);
+            display.Show();
         }
 
         public abstract bool OnPrevious();

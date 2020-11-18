@@ -204,7 +204,7 @@ namespace Meadow.Foundation.Displays.Lcd
             }
         }
 
-        public void WriteLine(string text, byte lineNumber)
+        public void WriteLine(string text, byte lineNumber, bool showCursor = false)
         {
             SetCursorPosition(0, lineNumber);
             var screenText = text.PadRight(DisplayConfig.Width, ' ');
@@ -310,6 +310,12 @@ namespace Meadow.Foundation.Displays.Lcd
         public bool IsBacklightOn()
         {
             return backlightValue == LCD_BACKLIGHT;
+        }
+
+        public void Show()
+        {
+            //can safely ignore
+            //required for ITextDisplayMenu
         }
     }
 }

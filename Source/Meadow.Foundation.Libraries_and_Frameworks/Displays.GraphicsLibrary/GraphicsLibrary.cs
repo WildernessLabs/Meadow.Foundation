@@ -1128,17 +1128,26 @@ namespace Meadow.Foundation.Graphics
                 throw new Exception("GraphicsLibrary.Write requires CurrentFont to be set");
             }
             DrawText(CurrentFont.Width * CursorColumn, CurrentFont.Height * CursorLine, text, Color.White);
-            Show();
         }
 
-        public void WriteLine(string text, byte lineNumber)
+        public void WriteLine(string text, byte lineNumber, bool showCursor = false)
         {
             if(CurrentFont == null)
             {
                 throw new Exception("GraphicsLibrary.WriteLine requires CurrentFont to be set");
             }
             DrawText(0, lineNumber * CurrentFont.Height, text, Color.White);
-            Show();
+
+            if(CursorLine == lineNumber && showCursor == true)
+            {
+                DrawCursor();
+            }
+        }
+
+        void DrawCursor()
+        {
+            InvertRectangle(CursorColumn * currentFont.Width, CursorLine * currentFont.Height,
+                currentFont.Width, currentFont.Height);
         }
 
         public void ClearLines()

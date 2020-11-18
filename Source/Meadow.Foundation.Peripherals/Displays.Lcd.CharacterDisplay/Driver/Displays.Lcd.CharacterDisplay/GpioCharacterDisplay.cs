@@ -104,8 +104,6 @@ namespace Meadow.Foundation.Displays.Lcd
             IDigitalOutputPort portD7,
             byte rows = 4, byte columns = 20)
         {
-            Console.WriteLine("Constructor with Contrast pin");
-
             DisplayConfig = new TextDisplayConfig { Height = rows, Width = columns };
 
             LCD_V0 = portV0; LCD_V0.Start();
@@ -184,7 +182,7 @@ namespace Meadow.Foundation.Displays.Lcd
             SendByte(GetLineAddress(line), LCD_INSTRUCTION);
         }
 
-        public void WriteLine(string text, byte lineNumber)
+        public void WriteLine(string text, byte lineNumber, bool showCursor = false)
         {
             SetLineAddress(lineNumber);
 
@@ -275,6 +273,12 @@ namespace Meadow.Foundation.Displays.Lcd
             {
                 SendByte(characterMap[i], LCD_DATA);
             }
+        }
+
+        public void Show()
+        {
+            //can safely ignore
+            //required for ITextDisplayMenu
         }
     }
 }

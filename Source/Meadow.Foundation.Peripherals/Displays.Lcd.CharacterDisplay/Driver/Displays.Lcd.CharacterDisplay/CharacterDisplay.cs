@@ -91,9 +91,14 @@ namespace Meadow.Foundation.Displays.Lcd
             characterDisplay?.Write(text);
         }
 
-        public void WriteLine(string text, byte lineNumber)
+        public void WriteLine(string text, byte lineNumber, bool showCursor = false)
         {
             characterDisplay?.WriteLine(text, lineNumber);
+        }
+
+        public void Show()
+        {
+            characterDisplay?.Show();
         }
     }
 }

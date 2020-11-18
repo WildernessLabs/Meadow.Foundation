@@ -345,7 +345,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="lineNumber">Line to write the text on (0-3).</param>
         /// <param name="text">Text to display.</param>
-        public void WriteLine(string text, byte lineNumber)
+        public void WriteLine(string text, byte lineNumber, bool showCursor = false)
         {
             string lineText = text;
             if (text.Length > DisplayConfig.Width)
@@ -458,6 +458,12 @@ namespace Meadow.Foundation.Displays
             // simpler, but not threadsafe way:
             //Send(new byte[] { ConfigurationCommandCharacter, (byte)(0x40 + (address * 8)) });
             //Send(characterMap);
+        }
+
+        public void Show()
+        {
+            //can safely ignore
+            //required for ITextDisplayMenu
         }
 
         #endregion Methods

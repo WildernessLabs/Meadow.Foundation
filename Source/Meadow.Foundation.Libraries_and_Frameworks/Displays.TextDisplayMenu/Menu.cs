@@ -81,6 +81,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             IsEnabled = false;
 
             display.ClearLines();
+            display.Show();
         }
 
         protected MenuPage CreateMenuPage(JsonElement menuElement, bool addBack)
@@ -195,6 +196,8 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                     lineNumber++;
                 }
             }
+
+            display.Show();
         }
 
         protected string GetItemText(IMenuItem item, bool isSelected)
@@ -212,8 +215,16 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 int paddingLength = (display.DisplayConfig.Width - 1 - displayText.Length);
                 string padding = string.Empty;
                 if (paddingLength > 0) { padding = new string(' ', paddingLength); }
-                //
-                itemText = displayText.Substring(0, (displayText.Length >= display.DisplayConfig.Width - 1) ? display.DisplayConfig.Width - 1 : displayText.Length) + padding + TextCharacters.BoxSelected.ToChar();
+
+                //quick hack for now
+                if (display is DisplayBase)
+                {
+                    itemText = displayText.Substring(0, (displayText.Length >= display.DisplayConfig.Width - 1) ? display.DisplayConfig.Width - 1 : displayText.Length) + padding + "*";
+                }
+                else //character display 
+                {
+                    itemText = displayText.Substring(0, (displayText.Length >= display.DisplayConfig.Width - 1) ? display.DisplayConfig.Width - 1 : displayText.Length) + padding + TextCharacters.BoxSelected.ToChar();
+                }
             }
             else
             {

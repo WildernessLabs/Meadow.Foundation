@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
     public abstract class TimeBase : InputBase
     {
         int[] timeParts;
-        byte _pos = 0;
+        byte position = 0;
 
         protected TimeMode timeMode;
 
@@ -80,18 +80,18 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
         {
             int max = 0;
 
-            if (_pos == 0)
+            if (position == 0)
             {
-                if (timeMode == TimeMode.HH_MM_SS) max = 23;
-                if (timeMode == TimeMode.HH_MM) max = 23;
-                if (timeMode == TimeMode.MM_SS) max = 59;
+                if (timeMode == TimeMode.HH_MM_SS) { max = 23; }
+                if (timeMode == TimeMode.HH_MM) { max = 23; }
+                if (timeMode == TimeMode.MM_SS) { max = 59; }
             }
             else
             {
                 max = 59;
             }
 
-            if (timeParts[_pos] < max) timeParts[_pos]++;
+            if (timeParts[position] < max) { timeParts[position]++; }
             UpdateInputLine(TimeDisplay);
 
             return true;
@@ -101,7 +101,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
         public override bool OnPrevious()
         {
             int min = 0;
-            if (timeParts[_pos] > min) timeParts[_pos]--;
+            if (timeParts[position] > min) timeParts[position]--;
             UpdateInputLine(TimeDisplay);
 
             return true;
@@ -109,9 +109,9 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 
         public override bool OnSelect()
         {
-            if (_pos < timeParts.Length - 1)
+            if (position < timeParts.Length - 1)
             {
-                _pos++;
+                position++;
             }
             else
             {
