@@ -5,11 +5,11 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="AdafruitMPRLSDriver">
       <HintPath>..\..\..\Driver\AdafruitMPRLS\bin\Debug\net472\AdafruitMPRLSDriver.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Driver\AdafruitMPRLS\Sensors.Atmospheric.AdafruitMPRLS.csproj" />
   </ItemGroup>
 </Project>
