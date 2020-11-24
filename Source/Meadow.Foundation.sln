@@ -870,6 +870,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Adafrui
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospherica.AdafruitMPRLS_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.AdafruitMPRLS\Samples\AdafruitMPRLSSensor_Sample\Sensors.Atmospherica.AdafruitMPRLS_Sample.csproj", "{137523F5-2239-4710-9F13-A2AE0E753515}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Light.Tcs3472x", "Sensors.Light.Tcs3472x", "{3AA645B9-E544-480F-9765-6634AC1A2786}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8A873839-2460-4008-9AAB-620E23E64058}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Tcs3472x", "Meadow.Foundation.Peripherals\Sensors.Light.Tcs3472x\Driver\Sensors.Light.Tcs3472x\Sensors.Light.Tcs3472x.csproj", "{0746ECEE-8215-4B60-91E8-549B03E736AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Tcs3472x_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Tcs3472x\Samples\Sensors.Light.Tcs3472x_Sample\Sensors.Light.Tcs3472x_Sample.csproj", "{528D18D2-F13A-493C-BE88-FB0B2FBFB93F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1938,6 +1946,14 @@ Global
 		{137523F5-2239-4710-9F13-A2AE0E753515}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{137523F5-2239-4710-9F13-A2AE0E753515}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{137523F5-2239-4710-9F13-A2AE0E753515}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0746ECEE-8215-4B60-91E8-549B03E736AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0746ECEE-8215-4B60-91E8-549B03E736AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0746ECEE-8215-4B60-91E8-549B03E736AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0746ECEE-8215-4B60-91E8-549B03E736AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{528D18D2-F13A-493C-BE88-FB0B2FBFB93F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{528D18D2-F13A-493C-BE88-FB0B2FBFB93F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{528D18D2-F13A-493C-BE88-FB0B2FBFB93F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{528D18D2-F13A-493C-BE88-FB0B2FBFB93F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2370,6 +2386,10 @@ Global
 		{4B15C7E3-990E-4427-A7A7-842410E30B86} = {203EF7C7-F76D-4004-9472-A7AAAA581C6E}
 		{BADF052D-108C-4E33-A96F-B4F8B42B8F5B} = {203EF7C7-F76D-4004-9472-A7AAAA581C6E}
 		{137523F5-2239-4710-9F13-A2AE0E753515} = {4B15C7E3-990E-4427-A7A7-842410E30B86}
+		{3AA645B9-E544-480F-9765-6634AC1A2786} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{8A873839-2460-4008-9AAB-620E23E64058} = {3AA645B9-E544-480F-9765-6634AC1A2786}
+		{0746ECEE-8215-4B60-91E8-549B03E736AA} = {3AA645B9-E544-480F-9765-6634AC1A2786}
+		{528D18D2-F13A-493C-BE88-FB0B2FBFB93F} = {8A873839-2460-4008-9AAB-620E23E64058}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
