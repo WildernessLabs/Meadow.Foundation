@@ -1,25 +1,59 @@
 ﻿using System;
-using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.DataLoggers
 {
+    /// <summary>
+    ///     AdafruitIO DaatLogger
+    /// </summary>
+    /// <remarks>
+    ///  The X-AIO-Key needs to be incuded in the header
+    ///  The data should be JSON ecoded as follows:
+    ///     {
+    ///         "value": "12",
+    ///         "created_at": "2017-12-27T13:20:00Z"
+    ///     }
+    /// </remarks>
+    /// <example>
+    ///     Single value to a feed in the default group
+    ///     POST http://io.adafruit.com/api/v2/{UserName}/feeds/{FeedKey}/data
+    ///     where FeedKey is the AdafruitIO key for the feed the data is to be added to.
+    /// </example>
+    /// <example>
+    ///     Single value to a feed in a named group
+    ///     POST http://io.adafruit.com/api/v2/{UserName}/feeds/{Group}.{FeedKey}/data
+    ///     where Group is an AdafruitIO group key and FeedKey is the key for the feed in that group. 
+    ///     
+    /// TODO: As of beta 4.0 HttpClient does not support SSL so you can not use https:
+
     public class AdafruitIO
     {
-        #region Properties
+        #region Properites
+
+        /// <summary>
+        ///     Adafruit account profile username.
+        ///     This name identifies the Adafruit IO user account that the feed belongs to.
+        /// </summary>
+        public string UserName { get; set; }
 
         /// <summary>
         ///     Get or set the AdafruitIO AIO key.  This key allows this class to identify itself 
         ///     with AdafruitIO and log data with the service.
         /// </summary>
-        public string WriteKey { get; set; }
+        public string IOKey { get; set; }
 
         /// <summary>
         ///     URI of the AdafruitIO api.
         /// </summary>
         public string URI { get; set; }
+
+        /// <summary>
+        ///     Adafruit feed group
+        ///     This identifies the Adafruit feed group that will accessed.
+        /// </summary>
+        public string Group { get; set; }
 
         #endregion Properties
 
@@ -28,11 +62,15 @@ namespace Meadow.Foundation.DataLoggers
         /// <summary>
         ///     Create a new AdafruitIO object.
         /// </summary>
-        /// <param name="writeKey">Write key.</param>
-        public AdafruitIO(string writeKey)
+        /// <param name="UserName">Adafruit username</param>
+        /// <param name="IOkey">Write key.</param>
+        /// 
+        public AdafruitIO(string UserName, string IOkey, string Group = null)
         {
-            WriteKey = writeKey;
-            URI = "https://io.adafruit.com/api/v2/";
+            this.Group = Group;
+            this.UserName = UserName;
+            this.IOKey = IOkey;
+            URI = "http://io.adafruit.com/api/v2/";     //2020-11-22 - https is not implemented in B4.0
         }
 
         #endregion Constructor(s)
@@ -40,93 +78,53 @@ namespace Meadow.Foundation.DataLoggers
         #region Methods
 
         /// <summary>
-        ///     Send a single value to AdafruitIO
-        /// </summary>
-        /// <param name="value">Value to send to AdafruitIO.</param>
-        public void PostValue(SensorReading value)
-        {
-            PostValues(new SensorReading[] { value });
-        }
-
-        /// <summary>
         ///     Post a series of values to AdafruitIO.
         /// </summary>
-        /// <param name="values">Array of values to send to AdafruitIO.</param>
-        public void PostValues(params SensorReading[] values)
+        /// <param name="Values">Array of values to send to AdafruitIO.</param>
+        public void PostValues(SensorReading[] Values)
         {
-            string data = "{ \"feeds\": [";
-            for (int index = 0; index < values.Length; index++)
+            foreach (var value in Values)
             {
-                if (index > 0)
-                {
-                    data += ",\n";
-                }
-                data += " { \"key\": \"" + values[index].Key + "\", \"value\": \"" + values[index].Value + "\" }";
+                PostValue(value);
             }
-            data += "],\n \"created_at\": \"" + values[0].CreatedAt.ToString("yyyy-MM-ddTHH:mm:ssZ") + "\"}";
-            PostData(data);
         }
 
         /// <summary>
-        ///     Post the specified data to AdafruitIO.
+        ///     Send a single value to AdafruitIO
         /// </summary>
-        /// <remarks>
-        ///     The data should be JSON ecoded as follows:
-        /// 
-        ///     {
-        ///         "feeds": [
-        ///             {
-        ///                 "key": "windspeed",
-        ///                 "value": "12"
-        ///             },
-        ///             {
-        ///                 "key": "winddirection",
-        ///                 "value": "20"
-        ///             }
-        ///         ],
-        ///         "created_at": "2017-12-27T13:20:00Z"
-        ///     }
-        /// </remarks>
-        /// <param name="data">Data to send.</param>
-        /// <returns>Record number for the reading(s) just added.</returns>
-        private int PostData(string data)
+        /// <param name="Value">Value to send to AdafruitIO.</param>
+        public async void PostValue(SensorReading Value)
         {
-            int retryCount = 0;
-            int result = 0;
-            while (retryCount < 3)
+            string apiUri = $"{URI}{UserName}/feeds/";
+            if (Group != null)
+                apiUri += $"{Group}.";
+            apiUri += $"{Value.Key}/data";
+
+            string dateString = Value.CreatedAt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");
+
+            string postBody = "{\"value\":\"" + Value.Value + "\",\"created_at\":\"" + dateString + "\"}";
+
+            using (HttpClient httpClient = new HttpClient())
             {
+                httpClient.Timeout = new TimeSpan(0, 5, 0);
+                httpClient.DefaultRequestHeaders.Add("X-AIO-Key", IOKey);
+                StringContent content = new StringContent(postBody, Encoding.UTF8, "application/json");
                 try
                 {
-                    var request = (HttpWebRequest)WebRequest.Create(URI);
-                    
-                    request.Headers.Add("X-XIO-KEY: " + WriteKey);
-                    request.Method = "POST";
-                    request.ContentType = "application/x-www-form-urlencoded";
-                    byte[] bytesToSend = UTF8Encoding.UTF8.GetBytes(data);
-                    request.ContentLength = bytesToSend.Length;
-
-                    using (var stream = request.GetRequestStream())
-                    {
-                        stream.Write(bytesToSend, 0, bytesToSend.Length);
-                    }
-
-                    var response = (HttpWebResponse) request.GetResponse();
-
-                    var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-                    result = int.Parse(responseString);
-                    retryCount = 4;
+                    HttpResponseMessage response = httpClient.PostAsync(apiUri, content).Result;
                 }
-                catch
+                catch (TaskCanceledException)
                 {
-                    retryCount++;
-                    if (retryCount == 3)
-                    {
-                        throw;
-                    }
-                    Thread.Sleep(1000);
+                    Console.WriteLine("Request timed out.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Request went sideways:\n - Source: {e.Source}" +
+                    $"\n - Type: {e.GetType()}" +
+                    $"\n - Message: {e.Message}\n - InnerException:\n{e.InnerException}" +
+                    $" - StackTrace:\n{e.StackTrace}");
                 }
             }
-            return (result);
         }
 
         #endregion Methods
