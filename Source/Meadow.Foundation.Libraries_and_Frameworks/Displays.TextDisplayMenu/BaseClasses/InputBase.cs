@@ -26,8 +26,8 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             display.Show();
         }
 
-        public abstract bool OnPrevious();
-        public abstract bool OnNext();
-        public abstract bool OnSelect();
+        public abstract bool Previous();
+        public abstract bool Next();
+        public abstract bool Select();
     }
 }

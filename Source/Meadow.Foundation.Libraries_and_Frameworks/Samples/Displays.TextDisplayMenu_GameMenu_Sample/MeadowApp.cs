@@ -35,11 +35,6 @@ namespace MeadowApp
             Initialize();
         }
 
-        void UpdateDisplay()
-        {
-
-        }
-
         void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
@@ -74,7 +69,7 @@ namespace MeadowApp
             };
 
             graphics.Clear();
-            graphics.DrawRectangle(1, 1, 40, 40, true, true);
+            graphics.DrawText(0, 0, "Loading Menu");
             graphics.Show();
 
             CreateMenu(graphics);
@@ -98,7 +93,7 @@ namespace MeadowApp
 
         private void Down_Clicked(object sender, EventArgs e)
         {
-            if (menu.IsEnabled) { menu.OnNext(); }
+            if (menu.IsEnabled) { menu.Next(); }
         }
 
         private void Right_Clicked(object sender, EventArgs e)
@@ -106,7 +101,7 @@ namespace MeadowApp
             Console.WriteLine("Right_Clicked");
             if (menu.IsEnabled)
             {
-                menu.OnSelect();
+                menu.Select();
             }
         }
 
@@ -123,12 +118,11 @@ namespace MeadowApp
         {
             if (menu.IsEnabled)
             {
-                menu.OnPrevious();
+                menu.Previous();
             }
         }
 
         bool playGame = false;
-        int x, y;
         async Task StartGame(string command)
         {
             Console.WriteLine($"******** {command}");
@@ -138,9 +132,9 @@ namespace MeadowApp
             int x = 0, y = 0;
             int xD = 1, yD = 1;
 
-            while(count < 150 && playGame == true)
+            await Task.Run(() =>
             {
-                await Task.Run(() =>
+                while (count < 150 && playGame == true)
                 {
                     graphics.Clear();
                     graphics.DrawText(0, 0, $"{command}:");
@@ -149,10 +143,8 @@ namespace MeadowApp
                     if (x == graphics.Width || x == 0) { xD *= -1; };
                     if (y == graphics.Height || y == 0) { yD *= -1; };
                     graphics.Show();
-                }).ConfigureAwait(false);
-
-            //    await Task.Delay(10).ConfigureAwait(false);
-            }
+                }
+            }).ConfigureAwait(false);
 
             EnableMenu();
         }

@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             UpdateInputLine(TimeDisplay);
         }
 
-        public override bool OnNext()
+        public override bool Next()
         {
             int max = 0;
 
@@ -98,7 +98,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
         }
 
 
-        public override bool OnPrevious()
+        public override bool Previous()
         {
             int min = 0;
             if (timeParts[position] > min) timeParts[position]--;
@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
-        public override bool OnSelect()
+        public override bool Select()
         {
             if (position < timeParts.Length - 1)
             {

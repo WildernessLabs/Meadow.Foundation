@@ -1,29 +1,41 @@
+using System.Text.Json.Serialization;
+
 namespace Meadow.Foundation.Displays.TextDisplayMenu
 {
-    public class MenuItem : IMenuItem
+    public class MenuItem
     {
-        public MenuPage SubMenu { get; set; } = new MenuPage();
+        [JsonPropertyName("sub")]
+        public MenuItem[] SubItems { get; set; }
 
-        public string Text { get; set; } = string.Empty;
+        [JsonPropertyName("text")]
+        public string Text { get; set; }
 
-        public string Command { get; set; } = string.Empty;
+        [JsonPropertyName("command")]
+        public string Command { get; set; }
 
-        public string Type { get; set; } = string.Empty;
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
 
-        public string ItemID { get; set; } = string.Empty;
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
 
+        [JsonPropertyName("value")]
         public object Value { get; set; }
 
-        public MenuItem(string displayText)
-        {
-            Text = displayText;
-        }
+        public bool HasSubItems => SubItems != null && SubItems.Length > 1;
 
-        public MenuItem(string displayText, string command, string id, string type, object value)
+        public bool IsEditable => Value != null;
+
+      //  [JsonConstructor]
+        public MenuItem(string text,
+            string command = null,
+            string id = null,
+            string type = null,
+            object value = null)
         {
-            Text = displayText;
+            Text = text;
             Command = command ?? string.Empty;
-            ItemID = id ?? string.Empty;
+            Id = id ?? string.Empty;
             Type = type ?? string.Empty;
             Value = value ?? null;
         }

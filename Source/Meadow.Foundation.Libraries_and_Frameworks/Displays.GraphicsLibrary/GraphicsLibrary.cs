@@ -1152,7 +1152,7 @@ namespace Meadow.Foundation.Graphics
 
         public void ClearLines()
         {
-            Clear(true); //for now
+            Clear(false); //for now
         }
 
         public void ClearLine(byte lineNumber)

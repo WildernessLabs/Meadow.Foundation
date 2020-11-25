@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             UpdateInputLine(OutputDisplay);
         }
 
-        public override bool OnNext()
+        public override bool Next()
         {
             if(selectedIndex < choices.Length - 1)
             {
@@ -42,13 +42,13 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
-        public override bool OnSelect()
+        public override bool Select()
         {
             ValueChanged(this, new ValueChangedEventArgs(itemID, choices[selectedIndex]));
             return true;
         }
 
-        public override bool OnPrevious()
+        public override bool Previous()
         {
             if(selectedIndex > 0)
             {

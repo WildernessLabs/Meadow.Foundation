@@ -28,37 +28,24 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public bool IsEnabled { get; protected set; } = false;
 
-        public Menu(ITextDisplay display, byte[] menuResource, bool showBackOnRoot = false)
+        public Menu(ITextDisplay display, byte[] menuJson, bool showBackOnRoot = false)
         {
             this.showBackOnRoot = showBackOnRoot;
-            Init(display, ParseMenuData(menuResource));
+            Init(display, CreateMenuPage(ParseMenuData(menuJson), showBackOnRoot));
         }
 
-        private MenuPage ParseMenuData(byte[] menuResource)
+        private MenuItem[] ParseMenuData(byte[] menuJson)
         {
-
-            // var menuData = SimpleJsonSerializer.JsonSerializer.DeserializeString(menuJson) as Hashtable; //from nuget package
-
-            // var menuData = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(menuJson);
-            // var menuData = System.Text.Json.JsonSerializer.Deserialize<ArrayList>(menuJson);
-
-            var menuJson = new string(System.Text.Encoding.UTF8.GetChars(menuResource));
-            var menuData = JsonDocument.Parse(menuJson);
-
-            JsonElement menuElement;
-
-            if(menuData.RootElement.TryGetProperty("menu", out menuElement) == false)
-            {
-                throw new ArgumentException("JSON root must contain a 'menu' item");
-            }
-            return CreateMenuPage(menuElement, showBackOnRoot);
+            return JsonSerializer.Deserialize<MenuItem[]>(menuJson);
         }
 
-        private void Init(ITextDisplay display, MenuPage menuTree)
+        private void Init(ITextDisplay display, MenuPage menuPage)
         {
+            //good here
             this.display = display;
 
-            rootMenuPage = menuTree;
+            rootMenuPage = menuPage;
+
             pageStack = new Stack<IPage>();
 
             // Save our custom characters
@@ -73,7 +60,8 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             IsEnabled = true;
 
             UpdateCurrentMenuPage();
-            RenderCurrentPage();
+
+            ShowCurrentPage();
         }
 
         public void Disable()
@@ -84,78 +72,24 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             display.Show();
         }
 
-        protected MenuPage CreateMenuPage(JsonElement menuElement, bool addBack)
+        protected MenuPage CreateMenuPage(MenuItem[] items, bool addBack)
         {
-            MenuPage menuPage = new MenuPage();
+            var menuPage = new MenuPage();
 
             if (addBack)
             {
                 menuPage.MenuItems.Add(new MenuItem("< Back"));
             }
-           
-            foreach(var node in menuElement.EnumerateArray())
+
+            foreach (var item in items)
             {
-                string command = null, id = null, type = null, value = null;
-
-                JsonElement el;
-
-                if(node.TryGetProperty("id", out el)) {
-                    id = el.ToString();
-                }
-                if (node.TryGetProperty("command", out el)) {
-                    command = el.ToString();
-                }
-                if (node.TryGetProperty("type", out el)) {
-                    type = el.ToString();
-                }
-                if (node.TryGetProperty("value", out el)) {
-                    value = el.ToString();
-                }
-
-                var item = new MenuItem(node.GetProperty("text").ToString(),
-                    command, id, type, value);
-
-                if(node.TryGetProperty("sub", out el))
-                {
-                    item.SubMenu = CreateMenuPage(el, true);
-                }
-
                 menuPage.MenuItems.Add(item);
-            }
+            } 
 
             return menuPage;
         }
 
-        protected MenuPage CreateMenuPage(ArrayList nodes, bool addBack)
-        {
-            MenuPage menuPage = new MenuPage();
-
-            if (addBack)
-            {
-                menuPage.MenuItems.Add(new MenuItem("< Back"));
-            }
-
-            if (nodes != null)
-            {
-                foreach (Hashtable node in nodes)
-                {
-                    var item = new MenuItem(node["text"].ToString(),
-                        node["command"]?.ToString(),
-                        node["id"]?.ToString(),
-                        node["type"]?.ToString(),
-                        node["value"]?.ToString());
-
-                    if (node["sub"] != null)
-                    {
-                        item.SubMenu = CreateMenuPage((ArrayList)node["sub"], true);
-                    }
-                    menuPage.MenuItems.Add(item);
-                }
-            }
-            return menuPage;
-        }
-
-        protected void RenderCurrentPage()
+        protected void ShowCurrentPage()
         {
             if (!IsEnabled) {
                 Console.WriteLine("Render not enabled");
@@ -180,15 +114,15 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 topDisplayLine = currentMenuPage.ScrollPosition - display.DisplayConfig.Height + 1;
             }
 
-            //Console.WriteLine("Scroll: " + currentMenuPage.ScrollPosition.ToString() + ", start: " + topDisplayLine.ToString() + ", end: " + (topDisplayLine + display.DisplayConfig.Height - 1).ToString());
-
             byte lineNumber = 0;
+
+            MenuItem item;
 
             for (int i = topDisplayLine; i <= (topDisplayLine + display.DisplayConfig.Height - 1); i++)
             {
                 if (i < currentMenuPage.MenuItems.Count)
                 {
-                    IMenuItem item = currentMenuPage.MenuItems[i] as IMenuItem;
+                    item = currentMenuPage.MenuItems[i];
 
                     // trim and add selection
                     string lineText = GetItemText(item, (i == currentMenuPage.ScrollPosition));
@@ -200,8 +134,14 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             display.Show();
         }
 
-        protected string GetItemText(IMenuItem item, bool isSelected)
+        protected string GetItemText(MenuItem item, bool isSelected)
         {
+            if(item == null)
+            {
+                Console.WriteLine("GetItemText: item is null");
+                return "no item";
+            }
+
             string itemText;
             string displayText = item.Text;
             if (InputHelpers.Contains(displayText, "{value}") && item.Value != null)
@@ -209,26 +149,16 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 displayText = InputHelpers.Replace(displayText, "{value}", item.Value.ToString());
             }
 
-            if (isSelected)
+            itemText = displayText.Substring(0, (displayText.Length >= display.DisplayConfig.Width - 1) ? display.DisplayConfig.Width - 1 : displayText.Length);
+
+            if (isSelected || item.HasSubItems)
             {
                 // calculate any neccessary padding to put selector on far right
                 int paddingLength = (display.DisplayConfig.Width - 1 - displayText.Length);
                 string padding = string.Empty;
                 if (paddingLength > 0) { padding = new string(' ', paddingLength); }
 
-                //quick hack for now
-                if (display is DisplayBase)
-                {
-                    itemText = displayText.Substring(0, (displayText.Length >= display.DisplayConfig.Width - 1) ? display.DisplayConfig.Width - 1 : displayText.Length) + padding + "*";
-                }
-                else //character display 
-                {
-                    itemText = displayText.Substring(0, (displayText.Length >= display.DisplayConfig.Width - 1) ? display.DisplayConfig.Width - 1 : displayText.Length) + padding + TextCharacters.BoxSelected.ToChar();
-                }
-            }
-            else
-            {
-                itemText = displayText.Substring(0, (displayText.Length >= display.DisplayConfig.Width) ? display.DisplayConfig.Width : displayText.Length);
+                itemText += padding + (isSelected?"*":">");
             }
 
             return itemText;
@@ -239,61 +169,62 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         /// </summary>
         protected void UpdateCurrentMenuPage()
         {
-            if (navigatedDepth == 0) { currentMenuPage = rootMenuPage; }
+            currentMenuPage = rootMenuPage;
+
+            /*if (navigatedDepth == 0) { currentMenuPage = rootMenuPage; }
             else
             {
                 MenuPage page = rootMenuPage;
-                for (int i = 0; i < navigatedDepth; i++)
-                {
-                    page = (page.MenuItems[page.ScrollPosition] as IMenuItem).SubMenu;
-                }
-                currentMenuPage = page;
-            }
-        }
+              //  for (int i = 0; i < navigatedDepth; i++)
+              //  {
+              //      page = (page.MenuItems[page.ScrollPosition] as IMenuItem).SubMenu;
+              //  }
+                currentMenuPage = page; */
+        } 
 
-        public bool OnNext()
+        public bool Next()
         {
             if(IsEnabled == false) { return false; }
 
             if(currentInputItem != null)
             {
-                currentInputItem.OnNext();
+                currentInputItem.Next();
             }
             else
             {
-                currentMenuPage.OnNext();
+                currentMenuPage.Next();
                 // re-render menu
-                RenderCurrentPage();
+                ShowCurrentPage();
             }
 
             return true;
         }
 
-        public bool OnPrevious()
+        public bool Previous()
         {
             if (IsEnabled == false) { return false; }
 
             if (currentInputItem != null)
             {
-                currentInputItem.OnPrevious();
+                currentInputItem.Previous();
             }
             else
             {
-                currentMenuPage.OnPrevious();
+                currentMenuPage.Previous();
                 // re-render menu
-                RenderCurrentPage();
+                ShowCurrentPage();
             }
 
             return true;
         }
 
-        public bool OnBack()
+        public bool Back()
         {
             if (IsEnabled == false) { return false; }
 
             if (currentInputItem != null)
             {
-                currentInputItem.OnSelect();
+                currentInputItem.Select();
                 return true;
             }
             else if (pageStack.Count == 0)
@@ -307,23 +238,23 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             {
                 MenuPage parent = pageStack.Pop() as MenuPage;
                 currentMenuPage = parent;
-                RenderCurrentPage();
+                ShowCurrentPage();
                 return true;
             }
 
             return false;
         }
 
-        public bool OnSelect()
+        public bool Select()
         {
             if (currentInputItem != null)
             {
-                currentInputItem.OnSelect();
+                currentInputItem.Select();
                 return true;
             }
             else
             {
-                currentMenuPage.OnSelect();
+                currentMenuPage.Select();
             }
 
             if (currentMenuPage.ScrollPosition == 0 && pageStack.Count == 0 && showBackOnRoot)
@@ -338,40 +269,41 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             {
                 MenuPage parent = pageStack.Pop() as MenuPage;
                 currentMenuPage = parent;
-                RenderCurrentPage();
+                ShowCurrentPage();
                 return true;
             }
 
             int pos = currentMenuPage.ScrollPosition;
-            MenuItem child = ((MenuItem)currentMenuPage.MenuItems[pos]);
+            MenuItem menuItem = currentMenuPage.MenuItems[pos];
 
             // go to the submenu if children are present
-            if (child.SubMenu.MenuItems.Count > 0)
+            if (menuItem.HasSubItems)
             {
                 pageStack.Push(currentMenuPage);
-                currentMenuPage = child.SubMenu;
-                RenderCurrentPage();
+                // currentMenuPage = child.SubMenu;
+                currentMenuPage = CreateMenuPage(menuItem.SubItems, true);
+                ShowCurrentPage();
                 return true;
             }
             // if there is a command, notify the subscribers 
-            else if (child.Command != string.Empty)
+            else if (menuItem.Command != string.Empty)
             {
-                Selected(this, new MenuSelectedEventArgs(child.Command));
+                Selected(this, new MenuSelectedEventArgs(menuItem.Command));
                 return true;
             }
             // if there is a type, then let the type handle the input
-            else if (child.Type != string.Empty)
+            else if (menuItem.Type != string.Empty)
             {
                 pageStack.Push(currentMenuPage);
                 
                 isEditMode = true;
 
                 // create the new input type
-                var type = Type.GetType(INPUT_TYPES_NAMESPACE + child.Type);
+                var type = Type.GetType(INPUT_TYPES_NAMESPACE + menuItem.Type);
 
                 if (type == null)
                 {
-                    throw new ArgumentException(child.Type + " was not found");
+                    throw new ArgumentException(menuItem.Type + " was not found");
                 }
 
                 var constructor = type.GetConstructor(new Type[] { });
@@ -381,21 +313,21 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 currentInputItem.ValueChanged += delegate (object sender, ValueChangedEventArgs e)
                 {
                     // set the value and notify the eager listeners
-                    child.Value = e.Value;
+                    menuItem.Value = e.Value;
                     ValueChanged(this, new ValueChangedEventArgs(e.ItemID, e.Value));
 
                     // reload the parent menu
                     var parent = pageStack.Pop() as MenuPage;
                     currentMenuPage = parent;
                     currentInputItem = null;
-                    RenderCurrentPage();
+                    ShowCurrentPage();
                     isEditMode = false;
                 };
 
                 // initialize input mode and get new value
                 currentInputItem.Init(display);
 
-                currentInputItem.GetInput(child.ItemID, child.Value);
+                currentInputItem.GetInput(menuItem.Id, menuItem.Value);
                 return true;
             }
             else
@@ -406,7 +338,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public void Refresh()
         {
-            RenderCurrentPage();
+            ShowCurrentPage();
         }
 
         public void UpdateItemValue(string id, object value)
@@ -424,7 +356,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             }
             if (!isEditMode)
             {
-                RenderCurrentPage();
+                ShowCurrentPage();
             }
         }
 
@@ -449,23 +381,19 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         private MenuItem FindNodeById(MenuItem menuItem, string id)
         {
-            if (menuItem.ItemID == id)
+            if (menuItem.Id == id)
             {
                 return menuItem;
             }
-            else if (menuItem.SubMenu.MenuItems.Count > 0)
+            else if (menuItem.SubItems.Length > 0)
             {
-                foreach (var subMenuItem in menuItem.SubMenu.MenuItems)
+                foreach (var subMenuItem in menuItem.SubItems)
                 {
                     var node = FindNodeById(subMenuItem as MenuItem, id);
                     if (node != null) return node;
                 }
-                return null;
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
     }
 }

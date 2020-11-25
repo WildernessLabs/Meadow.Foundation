@@ -2,8 +2,8 @@
 {
     public interface IPage
     {
-        bool OnNext();
-        bool OnPrevious();
-        bool OnSelect();
+        bool Next();
+        bool Previous();
+        bool Select();
     }
 }

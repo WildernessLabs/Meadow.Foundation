@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu
 {
@@ -18,9 +18,9 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         }
         protected int scrollPosition = 0;
 
-        public ArrayList MenuItems { get; set; } = new ArrayList();
+        public List<MenuItem> MenuItems { get; set; } = new List<MenuItem>();
 
-        public bool OnNext()
+        public bool Next()
         {
             // if outside of valid range return false
             if (scrollPosition >= MenuItems.Count - 1)
@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             return true;
         }
 
-        public bool OnPrevious()
+        public bool Previous()
         {
             // if outside of valid range return false
             if (scrollPosition <= 0) { return false; }
@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             return true;
         }
 
-        public bool OnSelect()
+        public bool Select()
         {   //gives us the ability to respond to select events
             return true;
         }

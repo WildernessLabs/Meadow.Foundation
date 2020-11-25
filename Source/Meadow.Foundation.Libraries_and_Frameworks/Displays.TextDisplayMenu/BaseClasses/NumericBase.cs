@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             UpdateInputLine(NumericDisplay);
         }
 
-        public override bool OnNext()
+        public override bool Next()
         {
             Console.WriteLine("Next");
             if (position == 0)
@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
-        public override bool OnPrevious()
+        public override bool Previous()
         {
             Console.WriteLine("Previous");
             if (position == 0)
@@ -87,7 +87,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
-        public override bool OnSelect()
+        public override bool Select()
         {
             if (position < numberParts.Length - 1)
             {

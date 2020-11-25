@@ -33,11 +33,6 @@ namespace MeadowApp
             Initialize();
         }
 
-        void UpdateDisplay()
-        {
-
-        }
-
         void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
@@ -69,11 +64,10 @@ namespace MeadowApp
             var gl = new GraphicsLibrary(ssd1309)
             {
                 CurrentFont = new Font8x12(),
-             //   Rotation = GraphicsLibrary.RotationType._270Degrees
             };
 
             gl.Clear();
-            gl.DrawRectangle(1, 1, 40, 40, true, true);
+            gl.DrawText(0, 0, "Loading Menu");
             gl.Show();
 
             display = gl as ITextDisplay;
@@ -91,13 +85,13 @@ namespace MeadowApp
             menu = new Menu(display, menuData, false);
 
             next = new PushButton(Device, Device.Pins.D10);
-            next.Clicked += (s, e) => { menu.OnNext(); };
+            next.Clicked += (s, e) => { menu.Next(); };
 
             select = new PushButton(Device, Device.Pins.D11);
-            select.Clicked += (s, e) => { menu.OnSelect(); };
+            select.Clicked += (s, e) => { menu.Select(); };
 
             previous = new PushButton(Device, Device.Pins.D12);
-            previous.Clicked += (s, e) => { menu.OnPrevious(); };
+            previous.Clicked += (s, e) => { menu.Previous(); };
 
             Console.WriteLine("Enable menu...");
 

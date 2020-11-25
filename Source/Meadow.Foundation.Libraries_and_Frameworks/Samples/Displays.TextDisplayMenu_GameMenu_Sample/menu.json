@@ -1,29 +1,27 @@
-{
-  "menu": [
-    {
-      "text": "Tetris",
-      "id": "tetris",
-      "command":  "startTetris"
-    },
-    {
-      "text": "Frogger",
-      "id": "frogger",
-      "command":  "startFrogger"
-    },
-    {
-      "text": "Pong",
-      "id": "pong",
-      "command": "startPong"
-    },
-    {
-      "text": "Snake",
-      "id": "snake",
-      "command":  "startSnake"
-    },
-    {
-      "text": "Span4",
-      "id": "span4",
-      "command": "startSpan4"
-    }
-  ]
-}
+[
+  {
+    "text": "Tetris",
+    "id": "tetris",
+    "command":  "startTetris"
+  },
+  {
+    "text": "Frogger",
+    "id": "frogger",
+    "command":  "startFrogger"
+  },
+  {
+    "text": "Pong",
+    "id": "pong",
+    "command": "startPong"
+  },
+  {
+    "text": "Snake",
+    "id": "snake",
+    "command":  "startSnake"
+  },
+  {
+    "text": "Span4",
+    "id": "span4",
+    "command": "startSpan4"
+  }
+]
