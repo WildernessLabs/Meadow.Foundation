@@ -58,6 +58,13 @@ namespace Meadow.Foundation.Graphics
             X3 = 3,
         }
 
+        public enum TextAlignment
+        {
+            Left,
+            Center,
+            Right
+        }
+
         /// <summary>
         /// Return the height of the display after accounting for the rotation.
         /// </summary>
@@ -874,7 +881,8 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">Abscissa of the location of the text.</param>
         /// <param name="y">Ordinate of the location of the text.</param>
         /// <param name="text">Text to display.</param>
-        public void DrawText(int x, int y, string text, ScaleFactor scaleFactor = ScaleFactor.X1)
+        public void DrawText(int x, int y, string text,
+            ScaleFactor scaleFactor = ScaleFactor.X1, TextAlignment alignment = TextAlignment.Left)
         {
             if (CurrentFont == null)
             {
@@ -882,6 +890,15 @@ namespace Meadow.Foundation.Graphics
             }
 
             byte[] bitMap = GetBytesForTextBitmap(text);
+
+            if(alignment == TextAlignment.Center)
+            {
+                x = x - text.Length * CurrentFont.Width / 2;
+            }
+            else if(alignment == TextAlignment.Right)
+            {
+                x = x - text.Length * CurrentFont.Width;
+            }
 
             DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, DisplayBase.BitmapMode.And, scaleFactor);
         }
@@ -893,7 +910,8 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">Ordinate of the location of the text.</param>
         /// <param name="text">Text to display.</param>
         /// <param name="color">Color of the text.</param>
-        public void DrawText(int x, int y, string text, Color color, ScaleFactor scaleFactor = ScaleFactor.X1)
+        public void DrawText(int x, int y, string text, Color color,
+            ScaleFactor scaleFactor = ScaleFactor.X1, TextAlignment alignment = TextAlignment.Left)
         {
             if (CurrentFont == null)
             {
