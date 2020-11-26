@@ -886,6 +886,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1327", "Meadow.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ssd1327_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd1327\Samples\Displays.Ssd1327_Sample\Ssd1327_Sample.csproj", "{7184A4D4-522B-4C3E-8AA0-8C7AAD34A984}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TextDisplayMenu_GameMenu_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Displays.TextDisplayMenu_GameMenu_Sample\Displays.TextDisplayMenu_GameMenu_Sample.csproj", "{A37CC79F-F704-4262-933E-E4C3E6FBEFB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1970,6 +1972,10 @@ Global
 		{7184A4D4-522B-4C3E-8AA0-8C7AAD34A984}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7184A4D4-522B-4C3E-8AA0-8C7AAD34A984}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7184A4D4-522B-4C3E-8AA0-8C7AAD34A984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A37CC79F-F704-4262-933E-E4C3E6FBEFB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A37CC79F-F704-4262-933E-E4C3E6FBEFB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A37CC79F-F704-4262-933E-E4C3E6FBEFB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A37CC79F-F704-4262-933E-E4C3E6FBEFB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2410,6 +2416,7 @@ Global
 		{9311C387-6BF3-40AD-8A12-8E2FF66B36CD} = {4F04D404-22A8-499F-B22D-6C85D327A5A9}
 		{A40738A5-9C8D-4E7C-ADB6-83E9741F958E} = {4F04D404-22A8-499F-B22D-6C85D327A5A9}
 		{7184A4D4-522B-4C3E-8AA0-8C7AAD34A984} = {9311C387-6BF3-40AD-8A12-8E2FF66B36CD}
+		{A37CC79F-F704-4262-933E-E4C3E6FBEFB0} = {F0E1BC04-A17B-4604-9EC9-51AFE3A1942D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
