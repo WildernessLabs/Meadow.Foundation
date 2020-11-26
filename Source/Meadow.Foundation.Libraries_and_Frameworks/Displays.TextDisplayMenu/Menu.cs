@@ -31,7 +31,13 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         public Menu(ITextDisplay display, byte[] menuJson, bool showBackOnRoot = false)
         {
             this.showBackOnRoot = showBackOnRoot;
-            Init(display, CreateMenuPage(ParseMenuData(menuJson), showBackOnRoot));
+            var items = ParseMenuData(menuJson);
+            Init(display, CreateMenuPage(items, showBackOnRoot));
+        }
+
+        public Menu(ITextDisplay display, MenuItem[] menuItems, bool showBackOnRoot = false)
+        {
+            Init(display, CreateMenuPage(menuItems, showBackOnRoot));
         }
 
         private MenuItem[] ParseMenuData(byte[] menuJson)
