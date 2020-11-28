@@ -35,7 +35,9 @@ namespace Meadow.Foundation.Displays.Tft
         }
 
         //these displays typically support 12, 16 & 18 bit but the current driver only supports 16
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format16bppRgb565;
+
+        public override DisplayColorMode ColorMode => ColorMode;
+        protected DisplayColorMode colorMode = DisplayColorMode.Format16bppRgb565;
         public override uint Width => width;
         public override uint Height => height;
 
@@ -45,8 +47,8 @@ namespace Meadow.Foundation.Displays.Tft
         protected SpiBus spi;
         protected ISpiPeripheral spiDisplay;
 
-        protected readonly byte[] spiBuffer;
-        protected readonly byte[] spiReceive;
+        protected byte[] spiBuffer;
+        protected byte[] spiReceive;
 
         protected ushort currentPen;
 
@@ -60,25 +62,51 @@ namespace Meadow.Foundation.Displays.Tft
         protected abstract void Initialize();
 
         internal DisplayTftSpiBase()
-        {
-        }
+        { }
 
         public DisplayTftSpiBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width, uint height)
+            uint width, uint height, DisplayColorMode mode = DisplayColorMode.Format16bppRgb565)
         {
             this.width = width;
             this.height = height;
 
             spi = (SpiBus)spiBus;
 
-            spiBuffer = new byte[this.width * this.height * sizeof(ushort)];
-            spiReceive = new byte[this.width * this.height * sizeof(ushort)];
-
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }
             if (chipSelectPin != null) { chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false); }
 
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
+        }
+
+        public bool IsColorModeSupported(DisplayColorMode mode)
+        {
+            if(mode == DisplayColorMode.Format12bppRgb444 || 
+                mode == DisplayColorMode.Format16bppRgb565)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void SetColorMode(DisplayColorMode mode)
+        {
+            if(IsColorModeSupported(mode) == false)
+            {
+                throw new ArgumentException($"Mode {mode} not supported");
+            }
+
+            if(mode == DisplayColorMode.Format16bppRgb565)
+            {
+                spiBuffer = new byte[width * height * sizeof(ushort)];
+                spiReceive = new byte[width * height * sizeof(ushort)];
+            }
+            else //Rgb444
+            {
+                spiBuffer = new byte[width * height * 3 / 2];
+                spiReceive = new byte[width * height * 3 / 2];
+            }
+            colorMode = mode;
         }
 
         protected abstract void SetAddressWindow(uint x0, uint y0, uint x1, uint y1);
@@ -217,6 +245,45 @@ namespace Meadow.Foundation.Displays.Tft
         }
 
         /// <summary>
+        ///     Draw a single pixel 
+        /// </summary>
+        /// <param name="x">x location </param>
+        /// <param name="y">y location</param>
+        /// <param name="color">12bpp (444) encoded color value</param>
+        private void SetPixel12bpp(int x, int y, ushort color)
+        {
+            if (x < 0 || y < 0 || x >= width || y >= height)
+            { return; }
+
+            int index;
+            //one of 2 possible write patterns 
+            if((x + y * Width) % 2 == 0)
+            {
+                //1st bit RRRRGGGG
+                //2nd bit BBBB
+                //index is (x + y * Width) * 3 / 2 -> which always works because it's an even pixel 
+                index = (int)((x + y * Width) * 3 / 2);
+                spiBuffer[index] = (byte)(color >> 4); //think this is correct - grab the r & g values
+                spiBuffer[++index] &= (byte)(color << 4);//shift the blue up
+            }
+            else 
+            {
+                //1st bit     RRRR
+                //2nd bit GGGGBBBB
+                //index is (x - 1 + y * Width) * 3 / 2 + 1 
+                index = (int)((x + y * Width) * 3 / 2) + 1;
+                spiBuffer[index] &= (byte)(color >> 8); //think this is correct - grab the r
+                spiBuffer[++index] = (byte)(color); //just the lower 8 bits
+            }
+
+            //will probably skip for now
+            xMin = (uint)Math.Min(xMin, x);
+            xMax = (uint)Math.Max(xMax, x);
+            yMin = (uint)Math.Min(yMin, y);
+            yMax = (uint)Math.Max(yMax, y);
+        }
+
+        /// <summary>
         ///     Draw the display buffer to screen
         /// </summary>
         public override void Show()
@@ -282,6 +349,15 @@ namespace Meadow.Foundation.Displays.Tft
             yMax = 0;
         }
 
+        private ushort Get12BitColorFromRGB(byte red, byte green, byte blue)
+        {
+            red >>= 4;
+            green >>= 4;
+            blue >>= 4;
+
+            return (ushort)(red << 8 | green << 4 | blue);
+        }
+
         private ushort Get16BitColorFromRGB(byte red, byte green, byte blue)
         {
             red >>= 3;
@@ -289,6 +365,15 @@ namespace Meadow.Foundation.Displays.Tft
             blue >>= 3;
 
             return (ushort)(red << 11 | green << 5 | blue);
+        }
+
+        private ushort Get12BitColorFromColor(Color color)
+        {
+            byte red = (byte)(color.R * 255.0);
+            byte green = (byte)(color.G * 255.0);
+            byte blue = (byte)(color.B * 255.0);
+
+            return Get12BitColorFromRGB(red, green, blue);
         }
 
         private ushort Get16BitColorFromColor(Color color)
@@ -391,23 +476,6 @@ namespace Meadow.Foundation.Displays.Tft
             xMax = Width - 1;
             yMax = Height - 1;
         }
-
-        /*
-         * from Netduino testing, can safely remove
-        public void ClearWithoutFullScreenBuffer(ushort color)
-        {
-            var buffer = new ushort[_width];
-
-            for (int x = 0; x < _width; x++)
-            {
-                buffer[x] = color;
-            }
-
-            for (int y = 0; y < _height; y++)
-            {
-                spiDisplay.WriteBytes(buffer);
-            }
-        }*/
 
         public void Dispose()
         {
