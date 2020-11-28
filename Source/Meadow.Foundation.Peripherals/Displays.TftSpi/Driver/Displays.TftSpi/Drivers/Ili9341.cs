@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(ILI9341_VMCTR1, new byte[] { 0x3e, 0x28 });
             SendCommand(ILI9341_VMCTR2, new byte[] { 0x86 });
             SendCommand(MADCTL, new byte[] { (byte)(MADCTL_MX | MADCTL_BGR) }); //13
-            SendCommand(ILI9341_PIXFMT, new byte[] { 0x55 });
+            SendCommand(ILI9341_PIXFMT, new byte[] { 0x55 }); //color mode - 16bpp 
             SendCommand(ILI9341_FRMCTR1, new byte[] { 0x00, 0x18 });
             SendCommand(ILI9341_DFUNCTR, new byte[] { 0x08, 0x82, 0x27 });
             SendCommand(0xF2, new byte[] { 0x00 });

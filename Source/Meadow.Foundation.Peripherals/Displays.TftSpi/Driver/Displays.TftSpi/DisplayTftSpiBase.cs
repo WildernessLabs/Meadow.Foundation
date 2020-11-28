@@ -77,6 +77,8 @@ namespace Meadow.Foundation.Displays.Tft
             if (chipSelectPin != null) { chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false); }
 
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
+
+            SetColorMode(mode);
         }
 
         public bool IsColorModeSupported(DisplayColorMode mode)
@@ -122,7 +124,7 @@ namespace Meadow.Foundation.Displays.Tft
 
         public void Clear(Color color, bool updateDisplay = false)
         {
-            Clear(Get16BitColorFromColor(color), updateDisplay);
+            Clear(GetUShortFromColor(color), updateDisplay);
         }
 
         protected void Clear(ushort color, bool updateDisplay = false)
@@ -141,7 +143,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// </summary>
         public override void SetPenColor(Color pen)
         {
-            currentPen = Get16BitColorFromColor(pen);
+            currentPen = GetUShortFromColor(pen);
         }
 
         /// <summary>
@@ -162,6 +164,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public override void DrawPixel(int x, int y, bool colored)
         {
+            //this works for now but it's a bit of a hack for 444
             SetPixel(x, y, (colored ? (ushort)(0xFFFF) : (ushort)0));
         }
 
@@ -170,7 +173,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
-        /// <param name="color">16bpp 5/6/5 ushort value for pixel color</param>
+        /// <param name="color">16bpp 5/6/5 or 4/4/4 ushort value for pixel color</param>
         public void DrawPixel(int x, int y, ushort color)
         {
             SetPixel(x, y, color);
@@ -184,7 +187,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// <param name="color">Color of pixel.</param>
         public override void DrawPixel(int x, int y, Color color)
         {
-            SetPixel(x, y, Get16BitColorFromColor(color));
+            SetPixel(x, y, GetUShortFromColor(color));
         }
 
         /// <summary>
@@ -197,7 +200,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// <param name="b">8 bit blue value</param>
         public void DrawPixel(int x, int y, byte r, byte g, byte b)
         {
-            SetPixel(x, y, Get16BitColorFromRGB(r, g, b));
+            SetPixel(x, y, GetColorFromRGB(r, g, b));
         }
 
         public override void InvertPixel(int x, int y)
@@ -228,7 +231,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
         /// <param name="color">16bpp (565) encoded color value</param>
-        private void SetPixel(int x, int y, ushort color)
+        private void SetPixel565(int x, int y, ushort color)
         {
             if (x < 0 || y < 0 || x >= width || y >= height)
             { return; }
@@ -244,13 +247,25 @@ namespace Meadow.Foundation.Displays.Tft
             yMax = (uint)Math.Max(yMax, y);
         }
 
+        private void SetPixel(int x, int y, ushort color)
+        {
+            if(colorMode == DisplayColorMode.Format16bppRgb565)
+            {
+                SetPixel565(x, y, color);
+            }
+            else
+            {
+                SetPixel444(x, y, color);
+            }
+        }
+
         /// <summary>
         ///     Draw a single pixel 
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
         /// <param name="color">12bpp (444) encoded color value</param>
-        private void SetPixel12bpp(int x, int y, ushort color)
+        private void SetPixel444(int x, int y, ushort color)
         {
             if (x < 0 || y < 0 || x >= width || y >= height)
             { return; }
@@ -261,18 +276,17 @@ namespace Meadow.Foundation.Displays.Tft
             {
                 //1st bit RRRRGGGG
                 //2nd bit BBBB
-                //index is (x + y * Width) * 3 / 2 -> which always works because it's an even pixel 
                 index = (int)((x + y * Width) * 3 / 2);
                 spiBuffer[index] = (byte)(color >> 4); //think this is correct - grab the r & g values
-                spiBuffer[++index] &= (byte)(color << 4);//shift the blue up
+                index++;
+                spiBuffer[index] = (byte)((spiBuffer[index] & 0xF0) | (color << 4));
             }
             else 
             {
                 //1st bit     RRRR
                 //2nd bit GGGGBBBB
-                //index is (x - 1 + y * Width) * 3 / 2 + 1 
-                index = (int)((x + y * Width) * 3 / 2) + 1;
-                spiBuffer[index] &= (byte)(color >> 8); //think this is correct - grab the r
+                index = (int)((x - 1 + y * Width) * 3 / 2) + 1;
+                spiBuffer[index] = (byte)((spiBuffer[index] & 0x0F) | (color >> 8));
                 spiBuffer[++index] = (byte)(color); //just the lower 8 bits
             }
 
@@ -299,7 +313,16 @@ namespace Meadow.Foundation.Displays.Tft
 
             SetAddressWindow(0, 0, Width - 1, yMax);
 
-            int len = (int)((yMax + 1) * Width * 2);
+            int len;
+            if (colorMode == DisplayColorMode.Format16bppRgb565)
+            { 
+                len = (int)((yMax + 1) * Width * 2);
+            }
+            else
+            {
+                len = (int)((yMax + 1) * Width * 3 / 2);
+            }
+
 
             dataCommandPort.State = Data;
             spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive, len);
@@ -367,23 +390,26 @@ namespace Meadow.Foundation.Displays.Tft
             return (ushort)(red << 11 | green << 5 | blue);
         }
 
-        private ushort Get12BitColorFromColor(Color color)
+        private ushort GetColorFromRGB(byte red, byte green, byte blue)
         {
-            byte red = (byte)(color.R * 255.0);
-            byte green = (byte)(color.G * 255.0);
-            byte blue = (byte)(color.B * 255.0);
-
-            return Get12BitColorFromRGB(red, green, blue);
+            if (colorMode == DisplayColorMode.Format16bppRgb565)
+            {
+                return Get16BitColorFromRGB(red, green, blue);
+            }
+            else
+            {
+                return Get12BitColorFromRGB(red, green, blue);
+            }
         }
 
-        private ushort Get16BitColorFromColor(Color color)
+        private ushort GetUShortFromColor(Color color)
         {
             //this seems heavy
             byte red = (byte)(color.R * 255.0);
             byte green = (byte)(color.G * 255.0);
             byte blue = (byte)(color.B * 255.0);
 
-            return Get16BitColorFromRGB(red, green, blue);
+            return GetColorFromRGB(red, green, blue);
         }
 
         protected void Write(byte value)
