@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
@@ -6,6 +7,7 @@ using Meadow.Foundation;
 using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
+using static Meadow.Foundation.Displays.DisplayBase;
 
 namespace Displays.Tft.ST7789_Sample
 {
@@ -20,24 +22,17 @@ namespace Displays.Tft.ST7789_Sample
 
             Initialize();
 
+         //   Benchmark();
+
             graphics.Clear();
-            /*
+            
             graphics.DrawRectangle(120, 0, 120, 220, Color.White, true);
             graphics.DrawRectangle(0, 0, 120, 20, Color.Red, true);
             graphics.DrawRectangle(0, 20, 120, 20, Color.Purple, true);
             graphics.DrawRectangle(0, 40, 120, 20, Color.Blue, true);
             graphics.DrawRectangle(0, 60, 120, 20, Color.Green, true);
             graphics.DrawRectangle(0, 80, 120, 20, Color.Yellow, true);
-            graphics.DrawRectangle(0, 120, 120, 20, Color.Orange, true); */
-
-            for (int i = 0; i < 240; i++)
-            {
-                for(int j = 0; j < 240; j++)
-                {
-                  //  if(i == 239 && j == 239) { break;  }
-                    graphics.DrawPixel(i, j, true);
-                }
-            }
+            graphics.DrawRectangle(0, 120, 120, 20, Color.Orange, true); 
 
             Console.WriteLine("Show");
 
@@ -75,6 +70,30 @@ namespace Displays.Tft.ST7789_Sample
             }
         }
 
+        void Benchmark()
+        {
+            display.SetPenColor(Color.BlueViolet);
+
+            var sw = new Stopwatch();
+            sw.Start();
+
+            for(int i = 0; i < 10; i++)
+            {
+                for(int x = 0; x < 240; x++)
+                {
+                    for (int y = 0; y < 240; y++)
+                    {
+                        display.DrawPixel(x, y);
+                    }
+                }
+                display.Show();
+            }
+
+            sw.Stop();
+
+            Console.WriteLine("Elapsed={0}", sw.Elapsed);
+        }
+
         void Initialize()
         {
             Console.WriteLine("Create Spi bus");
@@ -88,7 +107,7 @@ namespace Displays.Tft.ST7789_Sample
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                width: 240, height: 240);
+                width: 240, height: 240, displayColorMode: DisplayColorMode.Format12bppRgb444);
 
             Console.WriteLine("Create graphics lib");
 

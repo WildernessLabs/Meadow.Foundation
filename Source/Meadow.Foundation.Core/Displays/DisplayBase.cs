@@ -27,6 +27,7 @@ namespace Meadow.Foundation.Displays
             Format2bpp, //for 2 color ePaper or 4 color gray scale
             Format4bpp, //for 16 color gray scale
             Format8bppMonochome,
+            Format8bppRgb332, //Some TFT displays support this mode
             Format12bppRgb444, //TFT in 12 bit mode
             Format16bppRgb555, //not currently used
             Format16bppRgb565, //TFT in 16 bit mode

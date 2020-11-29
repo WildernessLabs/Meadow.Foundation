@@ -275,22 +275,22 @@ namespace Meadow.Foundation.Displays.Tft
 
             int index;
             //one of 2 possible write patterns 
-            if((x + y * Width) % 2 == 0)
+            if(x % 2 == 0)
             {
-                //1st bit RRRRGGGG
-                //2nd bit BBBB
+                //1st byte RRRRGGGG
+                //2nd byte BBBB
                 index = (int)((x + y * Width) * 3 / 2);
                 spiBuffer[index] = (byte)(color >> 4); //think this is correct - grab the r & g values
                 index++;
-                spiBuffer[index] = (byte)((spiBuffer[index] & 0xF0) | (color << 4));
+                spiBuffer[index] = (byte)((spiBuffer[index] & 0x0F) | (color << 4));
             }
             else 
             {
-                //1st bit     RRRR
-                //2nd bit GGGGBBBB
+                //1st byte     RRRR
+                //2nd byte GGGGBBBB
                 index = (int)((x - 1 + y * Width) * 3 / 2) + 1;
-                spiBuffer[index] = (byte)((spiBuffer[index] & 0x0F) | (color >> 8));
-                spiBuffer[++index] = (byte)(color); //just the lower 8 bits
+                spiBuffer[index] = (byte)((spiBuffer[index] & 0xF0) | (color >> 8));
+                spiBuffer[++index] = (byte)color; //just the lower 8 bits
             }
 
             //will probably skip for now
