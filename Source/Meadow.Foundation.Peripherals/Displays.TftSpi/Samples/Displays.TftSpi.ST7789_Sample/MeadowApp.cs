@@ -20,9 +20,34 @@ namespace Displays.Tft.ST7789_Sample
 
             Initialize();
 
+            graphics.Clear();
+            /*
+            graphics.DrawRectangle(120, 0, 120, 220, Color.White, true);
+            graphics.DrawRectangle(0, 0, 120, 20, Color.Red, true);
+            graphics.DrawRectangle(0, 20, 120, 20, Color.Purple, true);
+            graphics.DrawRectangle(0, 40, 120, 20, Color.Blue, true);
+            graphics.DrawRectangle(0, 60, 120, 20, Color.Green, true);
+            graphics.DrawRectangle(0, 80, 120, 20, Color.Yellow, true);
+            graphics.DrawRectangle(0, 120, 120, 20, Color.Orange, true); */
+
+            for (int i = 0; i < 240; i++)
+            {
+                for(int j = 0; j < 240; j++)
+                {
+                  //  if(i == 239 && j == 239) { break;  }
+                    graphics.DrawPixel(i, j, true);
+                }
+            }
+
+            Console.WriteLine("Show");
+
+            graphics.Show();
+
+            Thread.Sleep(2000);
+
             while (true)
             {
-                InvertTest();
+             //   InvertTest();
 
                 PolarLineTest();
                 Thread.Sleep(5000);
@@ -68,6 +93,8 @@ namespace Displays.Tft.ST7789_Sample
             Console.WriteLine("Create graphics lib");
 
             graphics = new GraphicsLibrary(display);
+
+            Console.WriteLine("Init complete");
         }
 
         void InvertTest()

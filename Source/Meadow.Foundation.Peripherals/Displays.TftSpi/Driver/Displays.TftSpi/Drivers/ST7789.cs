@@ -9,8 +9,11 @@ namespace Meadow.Foundation.Displays.Tft
         private byte xOffset;
         private byte yOffset;
 
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+
         public St7789(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+            uint width, uint height, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444) 
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
         }
@@ -33,15 +36,18 @@ namespace Meadow.Foundation.Displays.Tft
             {
                 xOffset = yOffset = 0;
             }
-
             
             SendCommand(SWRESET);
             DelayMs(150);
             SendCommand(SLPOUT);
             DelayMs(500);
 
-            SendCommand(COLMOD);
-            SendData(0x55); //16 bit color
+            SendCommand(COLOR_MODE);  // set color mode - 16 bit color (x55), 12 bit color (x53), 18 bit color (x56)
+            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+                SendData(0x55);  // 16-bit color RGB565
+            else
+                SendData(0x53); //12-bit color RGB444
+           
             DelayMs(10);
 
             SendCommand(MADCTL);
@@ -65,7 +71,6 @@ namespace Meadow.Foundation.Displays.Tft
 
             dataCommandPort.State = Data;
         }
-
 
         protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
         {
@@ -113,26 +118,10 @@ namespace Meadow.Foundation.Displays.Tft
             }
         }
 
-        static byte XSTART = 0;
-        static byte YSTART = 0;
-        //static byte DELAY       = 0x80;    // special signifier for command lists
-        //static byte NOP         = 0x00;
         static byte SWRESET = 0x01;
-        //static byte RDDID       = 0x04;
-        //static byte RDDST       = 0x09;
-        //static byte SLPIN       = 0x10;
         static byte SLPOUT = 0x11;
-        //static byte PTLON       = 0x12;
         static byte NORON = 0x13;
-        //static byte INVOFF      = 0x20;
         static byte INVON = 0x21;
-        //static byte DISPOFF     = 0x28;
         static byte DISPON = 0x29;
-        //static byte PTLAR       = 0x30;
-        static byte COLMOD = 0x3A;
-        //static byte RDID1       = 0xDA;
-        //static byte RDID2       = 0xDB;
-        //static byte RDID3       = 0xDC;
-        //static byte RDID4       = 0xDD;
     }
 }

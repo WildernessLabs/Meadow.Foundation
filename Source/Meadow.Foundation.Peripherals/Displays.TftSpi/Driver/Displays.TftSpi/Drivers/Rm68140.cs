@@ -5,8 +5,11 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class Rm68140 : DisplayTftSpiBase
     {
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+
         public Rm68140(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width = 320, uint height = 480) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+            uint width = 320, uint height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444) 
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
 
@@ -59,8 +62,11 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(MADCTL);
             SendData(0x0A);
 
-            SendCommand(0x3A);
-            SendData(0x55);
+            SendCommand(COLOR_MODE);
+            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+                SendData(0x55); //16 bit RGB565
+            else
+                SendData(0x53); //12 bit RGB444
 
             SendCommand((byte)LcdCommand.CASET);
             SendData(0x00);

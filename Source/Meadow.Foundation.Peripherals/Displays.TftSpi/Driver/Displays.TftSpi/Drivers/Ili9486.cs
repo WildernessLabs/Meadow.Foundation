@@ -5,8 +5,11 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class Ili9486 : DisplayTftSpiBase
     {
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+
         public Ili9486(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width = 320, uint height = 480) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+            uint width = 320, uint height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444) 
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
 
@@ -18,8 +21,11 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(0x11); // Sleep out, also SW reset
             Thread.Sleep(120);
 
-            SendCommand(0x3A);
-            SendData(0x55);
+            SendCommand(COLOR_MODE);
+            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+                SendData(0x55);
+            else
+                SendData(0x53);
 
             SendCommand(0xC2);
             SendData(0x44);

@@ -5,8 +5,11 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class Ssd1351 : DisplayTftSpiBase
     {
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
+
         public Ssd1351(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+            uint width, uint height)
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, DisplayColorMode.Format16bppRgb565)
         {
             Initialize();
         }
@@ -80,6 +83,15 @@ namespace Meadow.Foundation.Displays.Tft
             SetAddressWindow(0, 0, (width - 1), (height - 1));
 
             dataCommandPort.State = Data;
+        }
+
+        public override bool IsColorModeSupported(DisplayColorMode mode)
+        {
+            if (mode == DisplayColorMode.Format16bppRgb565)
+            {
+                return true;
+            }
+            return false;
         }
 
         //looks like this display only supports dimensions of 255 or less

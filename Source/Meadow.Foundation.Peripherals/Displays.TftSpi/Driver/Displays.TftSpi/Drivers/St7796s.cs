@@ -5,8 +5,11 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class St7796s : DisplayTftSpiBase
     {
-        public St7796s(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width = 320, uint height = 480) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+		public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+
+		public St7796s(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+            uint width = 320, uint height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+			: base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
 
@@ -32,8 +35,11 @@ namespace Meadow.Foundation.Displays.Tft
 			SendCommand(0x36); //Memory Data Access Control MX, MY, RGB mode                                    
 			SendData(0x48);    //X-Mirror, Top-Left to right-Buttom, RGB  
 
-			SendCommand(0x3A); //Interface Pixel Format                                    
-			SendData(0x55);    //Control interface color format set to 16
+			SendCommand(COLOR_MODE);  // set color mode
+			if (ColorMode == DisplayColorMode.Format16bppRgb565)
+				SendData(0x05);  // 16-bit color RGB565
+			else
+				SendData(0x03); //12-bit color RGB444
 
 
 			SendCommand(0xB4); //Column inversion 

@@ -5,8 +5,11 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class Hx8357d : DisplayTftSpiBase
     {
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+
         public Hx8357d(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width = 320, uint height = 480) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+            uint width = 320, uint height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
 
@@ -100,8 +103,12 @@ namespace Meadow.Foundation.Displays.Tft
             SendData(0x00);
             SendData(0x01);
 
-            SendCommand(HX8357_COLMOD);
-            SendData(0x55);  // 16 bit
+            SendCommand(COLOR_MODE);
+
+            if (ColorMode == DisplayColorMode.Format12bppRgb444)
+                SendData(0x53); //12 bit
+            else
+                SendData(0x55); // 16 bit
 
             SendCommand(MADCTL);
             SendData(0xC0);
@@ -181,7 +188,6 @@ namespace Meadow.Foundation.Displays.Tft
 
         const byte HX8357_TEON = 0x35;
         const byte HX8357_TEARLINE = 0x44;
-        const byte HX8357_COLMOD = 0x3A;
 
         const byte HX8357_SETOSC = 0xB0;
         const byte HX8357_SETPWR1 = 0xB1;

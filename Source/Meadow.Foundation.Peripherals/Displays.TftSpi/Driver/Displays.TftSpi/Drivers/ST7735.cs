@@ -7,12 +7,15 @@ namespace Meadow.Foundation.Displays.Tft
     {
         private DisplayType displayType;
 
-        private byte _xOffset;
-        private byte _yOffset;
+        private byte xOffset;
+        private byte yOffset;
+
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
 
         public St7735(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height,
-            DisplayType displayType = DisplayType.ST7735R) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+            DisplayType displayType = DisplayType.ST7735R, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             this.displayType = displayType;
 
@@ -30,7 +33,6 @@ namespace Meadow.Foundation.Displays.Tft
             ST7735B, //done
         }
 
-        const byte NOP = 0x0;
         const byte SWRESET = 0x01;
         const byte RDDID = 0x04;
         const byte RDDST = 0x09;
@@ -42,7 +44,6 @@ namespace Meadow.Foundation.Displays.Tft
         const byte INVON = 0x21;
         const byte DISPOFF = 0x28;
         const byte DISPON = 0x29;
-        const byte COLMOD = 0x3A;
         const byte FRMCTR1 = 0xB1;
         const byte FRMCTR2 = 0xB2;
         const byte FRMCTR3 = 0xB3;
@@ -77,7 +78,7 @@ namespace Meadow.Foundation.Displays.Tft
             resetPort.State = true;
             Thread.Sleep(50);
 
-            _xOffset = _yOffset = 0;
+            xOffset = yOffset = 0;
 
             if (displayType == DisplayType.ST7735B)
             {
@@ -162,8 +163,11 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(MADCTL);  // memory access control (directions)
             SendData(0xC8);  // row address/col address, bottom to top refresh
 
-            SendCommand(COLMOD);  // set color mode
-            SendData(0x05);  // 16-bit color
+            SendCommand(COLOR_MODE);  // set color mode
+            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+                SendData(0x05);  // 16-bit color RGB565
+            else
+                SendData(0x03); //12-bit color RGB444
         }
 
         private void Init7735B()
@@ -173,9 +177,11 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(SLPOUT);
             DelayMs(150);
 
-            SendCommand(COLMOD);  // set color mode
-            dataCommandPort.State = Data;
-            Write(0x05);  // 16-bit color
+            SendCommand(COLOR_MODE);  // set color mode
+            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+                SendData(0x05);  // 16-bit color RGB565
+            else
+                SendData(0x03); //12-bit color RGB444
 
             SendCommand(FRMCTR1);  // frame rate control - normal mode
             SendData(new byte[] { 0x00, 0x06, 0x03, 10 });// frame rate = fosc / (1 x 2 + 40) * (LINE + 2C + 2D)
@@ -248,8 +254,8 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand((byte)LcdCommand.CASET, new byte[] { 0x00, 0x02, 0x00, 0x7F + 0x02 });
             SendCommand((byte)LcdCommand.RASET, new byte[] { 0x00, 0x01, 0x00, 0x9F + 0x01 });
 
-            _xOffset = 1;
-            _yOffset = 2;
+            xOffset = 1;
+            yOffset = 2;
         }
 
         private void Init7735RRed()
@@ -263,8 +269,8 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand((byte)LcdCommand.CASET, new byte[] { 0x00, 0x00, 0x00, 0x7F });
             SendCommand((byte)LcdCommand.RASET, new byte[] { 0x00, 0x00, 0x00, 0x7F });
 
-            _xOffset = 2;
-            _yOffset = 1;
+            xOffset = 2;
+            yOffset = 1;
         }
 
         private void Init7735RGreen80x160()
@@ -272,8 +278,8 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand((byte)LcdCommand.CASET, new byte[] { 0x00, 0x00, 0x00, 0x7F });
             SendCommand((byte)LcdCommand.RASET, new byte[] { 0x00, 0x00, 0x00, 0x9F });
 
-            _xOffset = 26;
-            _yOffset = 1;
+            xOffset = 26;
+            yOffset = 1;
         }
 
         private void Init7735REnd()
@@ -300,11 +306,11 @@ namespace Meadow.Foundation.Displays.Tft
 
         protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
         {
-            x0 += _xOffset;
-            y0 += _yOffset;
+            x0 += xOffset;
+            y0 += yOffset;
 
-            x1 += _xOffset;
-            y1 += _yOffset;
+            x1 += xOffset;
+            y1 += yOffset;
 
             SendCommand((byte)LcdCommand.CASET);  // column addr set
             dataCommandPort.State = Data;

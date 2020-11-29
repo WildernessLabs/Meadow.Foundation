@@ -17,6 +17,7 @@ namespace Meadow.Foundation.Displays.Tft
         protected const byte MADCTL_MH = 0x04;
         protected const byte MADCTL_SS = 0x02;
         protected const byte MADCTL_GS = 0x01;
+        protected const byte COLOR_MODE = 0x3A;
 
         protected enum LcdCommand
         {
@@ -36,8 +37,10 @@ namespace Meadow.Foundation.Displays.Tft
 
         //these displays typically support 12, 16 & 18 bit but the current driver only supports 16
 
-        public override DisplayColorMode ColorMode => ColorMode;
-        protected DisplayColorMode colorMode = DisplayColorMode.Format16bppRgb565;
+        public override DisplayColorMode ColorMode => colorMode;
+        protected DisplayColorMode colorMode ;
+
+        public abstract DisplayColorMode DefautColorMode { get; }
         public override uint Width => width;
         public override uint Height => height;
 
@@ -81,7 +84,7 @@ namespace Meadow.Foundation.Displays.Tft
             SetColorMode(mode);
         }
 
-        public bool IsColorModeSupported(DisplayColorMode mode)
+        public virtual bool IsColorModeSupported(DisplayColorMode mode)
         {
             if(mode == DisplayColorMode.Format12bppRgb444 || 
                 mode == DisplayColorMode.Format16bppRgb565)

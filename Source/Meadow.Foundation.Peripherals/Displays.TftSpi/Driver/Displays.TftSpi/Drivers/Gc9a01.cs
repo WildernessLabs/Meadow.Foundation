@@ -5,8 +5,10 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class Gc9a01 : DisplayTftSpiBase
     {
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
+
         public Gc9a01(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, 240, 240)
+            base(device, spiBus, chipSelectPin, dcPin, resetPin, 240, 240, DisplayColorMode.Format16bppRgb565)
         {
             Initialize();
 
@@ -243,6 +245,15 @@ namespace Meadow.Foundation.Displays.Tft
             Thread.Sleep(GC9A01_SLPOUT_DELAY);
             SendCommand(GC9A01_DISPON);
             Thread.Sleep(20);
+        }
+
+        public override bool IsColorModeSupported(DisplayColorMode mode)
+        {
+            if (mode == DisplayColorMode.Format16bppRgb565)
+            {
+                return true;
+            }
+            return false;
         }
 
         protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)

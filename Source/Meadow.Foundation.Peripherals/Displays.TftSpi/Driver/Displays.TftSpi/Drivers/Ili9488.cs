@@ -5,8 +5,11 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class Ili9488 : DisplayTftSpiBase
     {
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+
         public Ili9488(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width = 320, uint height = 480) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+            uint width = 320, uint height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444) 
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
 
@@ -64,14 +67,11 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(MADCTL); // Memory Access Control
             SendData(0x48);          // MX, BGR
 
-            SendCommand(0x3A); // Pixel Interface Format
-            /*
-             * #if defined (TFT_PARALLEL_8_BIT)
-             //   SendData(0x55);  // 16 bit colour for parallel
-            #else
-            Not currently supported
-             */
-            SendData(0x66);  // 18 bit colour for SPI
+            SendCommand(COLOR_MODE); // Pixel Interface Format
+            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+                SendData(0x55);  // 16 bit colour for SPI
+            else
+                SendData(0x53); //12 bit RGB444
 
             SendCommand(0xB0); // Interface Mode Control
             SendData(0x00);

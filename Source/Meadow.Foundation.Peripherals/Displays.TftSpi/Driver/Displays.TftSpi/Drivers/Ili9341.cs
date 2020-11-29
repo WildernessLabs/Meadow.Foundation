@@ -5,8 +5,11 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class Ili9341 : DisplayTftSpiBase
     {
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+
         public Ili9341(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+            uint width, uint height, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
         }
@@ -33,7 +36,15 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(ILI9341_VMCTR1, new byte[] { 0x3e, 0x28 });
             SendCommand(ILI9341_VMCTR2, new byte[] { 0x86 });
             SendCommand(MADCTL, new byte[] { (byte)(MADCTL_MX | MADCTL_BGR) }); //13
-            SendCommand(ILI9341_PIXFMT, new byte[] { 0x55 }); //color mode - 16bpp 
+
+            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+            { 
+                SendCommand(COLOR_MODE, new byte[] { 0x55 }); //color mode - 16bpp  
+            }
+            else
+            {      
+                SendCommand(COLOR_MODE, new byte[] { 0x53 }); //color mode - 12bpp 
+            }
             SendCommand(ILI9341_FRMCTR1, new byte[] { 0x00, 0x18 });
             SendCommand(ILI9341_DFUNCTR, new byte[] { 0x08, 0x82, 0x27 });
             SendCommand(0xF2, new byte[] { 0x00 });
@@ -98,7 +109,6 @@ namespace Meadow.Foundation.Displays.Tft
         //static byte ILI9341_PTLAR      = 0x30;
         //static byte ILI9341_VSCRDEF    = 0x33;
         //static byte ILI9341_VSCRSADD   = 0x37;
-        static byte ILI9341_PIXFMT = 0x3A;
 
         static byte ILI9341_FRMCTR1 = 0xB1;
         //static byte ILI9341_FRMCTR2 = 0xB2;
