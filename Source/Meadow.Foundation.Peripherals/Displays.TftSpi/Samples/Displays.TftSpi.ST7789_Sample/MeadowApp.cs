@@ -22,7 +22,7 @@ namespace Displays.Tft.ST7789_Sample
 
             Initialize();
 
-         //   Benchmark();
+            Benchmark();
 
             graphics.Clear();
             
@@ -42,7 +42,7 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
-             //   InvertTest();
+                InvertTest();
 
                 PolarLineTest();
                 Thread.Sleep(5000);

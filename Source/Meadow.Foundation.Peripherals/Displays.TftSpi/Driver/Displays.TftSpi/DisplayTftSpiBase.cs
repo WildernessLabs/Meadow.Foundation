@@ -208,10 +208,22 @@ namespace Meadow.Foundation.Displays.Tft
 
         public override void InvertPixel(int x, int y)
         {
-
             if (x < 0 || y < 0 || x >= width || y >= height)
             { return; }
 
+            if(colorMode == DisplayColorMode.Format16bppRgb565)
+            {
+                InvertPixelRgb565(x, y);
+            }
+            else
+            {
+                InvertPixelRgb444(x, y);
+            }
+
+        }
+
+        void InvertPixelRgb565(int x, int y)
+        {
             //get current color
             var index = ((y * width) + x) * sizeof(ushort);
 
@@ -225,7 +237,38 @@ namespace Meadow.Foundation.Displays.Tft
             //get new color
             color = (ushort)(r << 11 | g << 5 | b);
 
-            DrawPixel(x, y, color);
+            SetPixel565(x, y, color);
+        }
+
+        public void InvertPixelRgb444(int x, int y)
+        {
+            byte r, g, b;
+            int index;
+            if(x % 2 == 0)
+            {
+                index = (int)((x + y * Width) * 3 / 2);
+
+                r = (byte)(spiBuffer[index] >> 4);
+                g = (byte)(spiBuffer[index] & 0x0F);
+                b = (byte)(spiBuffer[index + 1] >> 4);
+            }
+            else
+            {
+                index = (int)((x - 1 + y * Width) * 3 / 2) + 1;
+                r = (byte)(spiBuffer[index] & 0x0F);
+                g = (byte)(spiBuffer[index + 1] >> 4);
+                b = (byte)(spiBuffer[index + 1] & 0x0F);
+            }
+
+            r = (byte)(~r & 0x0F);
+            g = (byte)(~g & 0x0F);
+            b = (byte)(~b & 0x0F);
+
+
+            //get new color
+            var color = (ushort)(r << 8 | g << 4 | b);
+
+            SetPixel444(x, y, color);
         }
 
         /// <summary>
