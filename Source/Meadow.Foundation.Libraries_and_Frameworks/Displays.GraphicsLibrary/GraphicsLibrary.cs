@@ -93,10 +93,6 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">y location</param>
         public void DrawPixel(int x, int y)
         {
-            if (IsPixelInBounds(x, y) == false)
-            {
-                return;
-            }
             display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y));
         }
 
@@ -107,10 +103,6 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">y location</param>
         public void InvertPixel(int x, int y)
         {
-            if (IsPixelInBounds(x, y) == false)
-            {
-                return;
-            }
             display.InvertPixel(GetXForRotation(x, y), GetYForRotation(x, y));
         }
 
@@ -133,10 +125,6 @@ namespace Meadow.Foundation.Graphics
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public void DrawPixel (int x, int y, bool colored)
         {
-            if (IsPixelInBounds(x, y) == false)
-            {
-                return;
-            }
             display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), colored);
         }
 
@@ -148,10 +136,6 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">Color of pixel.</param>
         public void DrawPixel (int x, int y, Color color)
         {
-            if(IsPixelInBounds(x, y) == false)
-            {
-                return;
-            }
             display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), color);
         }
 
@@ -223,7 +207,7 @@ namespace Meadow.Foundation.Graphics
 
             if(IsTallerThanWide(x0, y0, x1, y1))
             {
-                int xOffset = Stroke / 2;
+                int xOffset = Stroke >> 1;
 
                 for(int i = 0; i < Stroke; i++)
                 {
@@ -232,7 +216,7 @@ namespace Meadow.Foundation.Graphics
             }
             else
             {
-                int yOffset = Stroke / 2;
+                int yOffset = Stroke >> 1;
 
                 for (int i = 0; i < Stroke; i++)
                 {
@@ -292,7 +276,7 @@ namespace Meadow.Foundation.Graphics
             }
             var dx = x1 - x0;
             var dy = Math.Abs(y1 - y0);
-            var error = dx / 2;
+            var error = dx >> 1;
             var ystep = y0 < y1 ? 1 : -1;
             var y = y0;
             for (var x = x0; x <= x1; x++)
@@ -590,7 +574,7 @@ namespace Meadow.Foundation.Graphics
             }
             else
             {
-                int offset = Stroke / 2;
+                int offset = Stroke >> 1;
 
                 for (int i = 0; i < Stroke; i++)
                 {
@@ -616,7 +600,7 @@ namespace Meadow.Foundation.Graphics
             }
             else
             {
-                int offset = Stroke / 2;
+                int offset = Stroke >> 1;
 
                 for (int i = 0; i < Stroke; i++)
                 {
@@ -893,7 +877,7 @@ namespace Meadow.Foundation.Graphics
 
             if(alignment == TextAlignment.Center)
             {
-                x = x - text.Length * CurrentFont.Width / 2;
+                x = x - text.Length * (CurrentFont.Width >> 1);
             }
             else if(alignment == TextAlignment.Right)
             {
@@ -929,7 +913,7 @@ namespace Meadow.Foundation.Graphics
 
             if (CurrentFont.Width == 8) //just copy bytes
             {
-                bitmap = new byte[text.Length * CurrentFont.Height * CurrentFont.Width / 8];
+                bitmap = new byte[text.Length * CurrentFont.Height * (CurrentFont.Width >> 3)];
 
                 byte[] characterMap;
 
@@ -946,7 +930,7 @@ namespace Meadow.Foundation.Graphics
             }
             else if (CurrentFont.Width == 12)
             {
-                var len = (text.Length + text.Length % 2) * 3 / 2;
+                var len = ((text.Length + text.Length % 2) * 3) >> 1;
                 bitmap = new byte[len * CurrentFont.Height];
 
                 byte[] charMap1, charMap2;
@@ -978,7 +962,7 @@ namespace Meadow.Foundation.Graphics
             }
             else if (CurrentFont.Width == 4)
             {
-                var len = (text.Length + text.Length % 2) / 2;
+                var len = (text.Length + text.Length % 2) >> 1;
                 bitmap = new byte[len * CurrentFont.Height];
                 byte[] charMap1, charMap2;
 

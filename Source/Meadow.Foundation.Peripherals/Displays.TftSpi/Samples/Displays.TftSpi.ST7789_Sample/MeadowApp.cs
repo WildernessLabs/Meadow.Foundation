@@ -98,7 +98,7 @@ namespace Displays.Tft.ST7789_Sample
         {
             Console.WriteLine("Create Spi bus");
 
-            var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode3);
+            var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode3);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             Console.WriteLine("Create display driver instance");
@@ -107,7 +107,7 @@ namespace Displays.Tft.ST7789_Sample
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                width: 240, height: 240, displayColorMode: DisplayColorMode.Format12bppRgb444);
+                width: 240, height: 240, displayColorMode: DisplayColorMode.Format16bppRgb565);
 
             Console.WriteLine("Create graphics lib");
 

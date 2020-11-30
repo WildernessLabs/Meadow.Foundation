@@ -279,23 +279,18 @@ namespace Meadow.Foundation.Displays.Tft
         /// <param name="color">16bpp (565) encoded color value</param>
         private void SetPixel565(int x, int y, ushort color)
         {
-            if (x < 0 || y < 0 || x >= width || y >= height)
-            { return; }
-
             var index = ((y * width) + x) * sizeof(ushort);
 
             spiBuffer[index] = (byte)(color >> 8);
             spiBuffer[++index] = (byte)(color);
-
-            xMin = (uint)Math.Min(xMin, x);
-            xMax = (uint)Math.Max(xMax, x);
-            yMin = (uint)Math.Min(yMin, y);
-            yMax = (uint)Math.Max(yMax, y);
         }
 
         private void SetPixel(int x, int y, ushort color)
         {
-            if(colorMode == DisplayColorMode.Format16bppRgb565)
+            if (x < 0 || y < 0 || x >= width || y >= height)
+            { return; }
+
+            if (colorMode == DisplayColorMode.Format16bppRgb565)
             {
                 SetPixel565(x, y, color);
             }
@@ -303,6 +298,12 @@ namespace Meadow.Foundation.Displays.Tft
             {
                 SetPixel444(x, y, color);
             }
+
+            //will probably skip for now
+            /*  xMin = (uint)Math.Min(xMin, x);
+              xMax = (uint)Math.Max(xMax, x);
+              yMin = (uint)Math.Min(yMin, y);
+              yMax = (uint)Math.Max(yMax, y);  */
         }
 
         /// <summary>
@@ -313,9 +314,6 @@ namespace Meadow.Foundation.Displays.Tft
         /// <param name="color">12bpp (444) encoded color value</param>
         private void SetPixel444(int x, int y, ushort color)
         {
-            if (x < 0 || y < 0 || x >= width || y >= height)
-            { return; }
-
             int index;
             //one of 2 possible write patterns 
             if(x % 2 == 0)
@@ -335,12 +333,6 @@ namespace Meadow.Foundation.Displays.Tft
                 spiBuffer[index] = (byte)((spiBuffer[index] & 0xF0) | (color >> 8));
                 spiBuffer[++index] = (byte)color; //just the lower 8 bits
             }
-
-            //will probably skip for now
-            xMin = (uint)Math.Min(xMin, x);
-            xMax = (uint)Math.Max(xMax, x);
-            yMin = (uint)Math.Min(yMin, y);
-            yMax = (uint)Math.Max(yMax, y);
         }
 
         /// <summary>

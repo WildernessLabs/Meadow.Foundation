@@ -8,8 +8,6 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class Ssd1306 : DisplayBase
     {
-        #region Enums
-
         /// <summary>
         ///     Allow the programmer to set the scroll direction.
         /// </summary>
@@ -66,9 +64,6 @@ namespace Meadow.Foundation.Displays
             I2C,
         }
 
-        #endregion Enums
-
-        #region Member variables / fields
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
@@ -107,12 +102,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     X offset for non-standard displays.
         /// </summary>
-        private uint xOffset = 0;
+        private int xOffset = 0;
 
         /// <summary>
         ///     X offset for non-standard displays.
         /// </summary>
-        private uint yOffset = 0;
+        private int yOffset = 0;
 
         private Color currentPen;
 
@@ -171,10 +166,6 @@ namespace Meadow.Foundation.Displays
             0xae, 0xd5, 0x80, 0xa8, 0x3f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
             0xda, 0x12, 0x81, 0xcf, 0xd9, 0xf1, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
         };
-
-        #endregion Member variables / fields
-
-        #region Properties
 
         /// <summary>
         ///     Backing variable for the InvertDisplay property.
@@ -235,10 +226,6 @@ namespace Meadow.Foundation.Displays
         private bool sleep;
 
         private DisplayType displayType;
-
-        #endregion Properties
-
-        #region Constructors
 
         /// <summary>
         ///     Create a new SSD1306 object using the default parameters for
@@ -343,10 +330,6 @@ namespace Meadow.Foundation.Displays
             Contrast = 0xff;
             StopScrolling();
         }
-
-        #endregion Constructors
-
-        #region Methods
 
         /// <summary>
         ///     Send a command to the display.
@@ -476,19 +459,19 @@ namespace Meadow.Foundation.Displays
                   return;
               } */
 
-            x += (int)xOffset;
-            y += (int)yOffset;
+            x += xOffset;
+            y += yOffset;
 
-            if ((x >= width) || (y >= height))
+            if (IgnoreOutOfBoundsPixels)
             {
-                if (!IgnoreOutOfBoundsPixels)
+                if ((x >= width) || (y >= height) || x < 0 || y < 0)
                 {
-                    throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
+                    //  pixels to be thrown away if out of bounds of the display
+                    return;
                 }
-                //  pixels to be thrown away if out of bounds of the display
-                return;
             }
-            var index = (y / 8 * width) + x;
+            
+            var index = (y >> 3) * width + x; //divide by 8
 
             if (colored)
             {
@@ -502,19 +485,17 @@ namespace Meadow.Foundation.Displays
 
         public override void InvertPixel(int x, int y)
         {
-            x += (int)xOffset;
-            y += (int)yOffset;
-
-            if ((x >= width) || (y >= height))
+            x += xOffset;
+            y += yOffset;
+        
+            if (IgnoreOutOfBoundsPixels)
             {
-                if (!IgnoreOutOfBoundsPixels)
+                if ((x >= width) || (y >= height))
                 {
-                    throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
+                    return;
                 }
-                //  pixels to be thrown away if out of bounds of the display
-                return;
             }
-            var index = (y / 8 * width) + x;
+            var index = (y >> 8) * width + x;
 
             buffer[index] = (buffer[index] ^= (byte)(1 << y % 8));
         }
@@ -546,8 +527,6 @@ namespace Meadow.Foundation.Displays
                 buffer[index] = (byte)(buffer[index] & ~(byte)(1 << (y % 8)));
             }
         }
-
- 
 
         /// <summary>
         ///     Start the display scrollling in the specified direction.
@@ -608,7 +587,5 @@ namespace Meadow.Foundation.Displays
         {
             SendCommand(0x2e);
         }
-
-        #endregion Methods
     }
 }
