@@ -169,40 +169,40 @@ namespace Meadow.Foundation.Displays.Tft
             }
         }
 
-        const byte HX8357_NOP = 0x00;
-        const byte HX8357_SWRESET = 0x01;
-        const byte HX8357_RDDID = 0x04;
-        const byte HX8357_RDDST = 0x09;
+        protected const byte HX8357_NOP = 0x00;
+        protected const byte HX8357_SWRESET = 0x01;
+        protected const byte HX8357_RDDID = 0x04;
+        protected const byte HX8357_RDDST = 0x09;
 
-        const byte HX8357_RDPOWMODE = 0x0A;
-        const byte HX8357_RDMADCTL = 0x0B;
-        const byte HX8357_RDCOLMOD = 0x0C;
-        const byte HX8357_RDDIM = 0x0D;
-        const byte HX8357_RDDSDR = 0x0F;
+        protected const byte HX8357_RDPOWMODE = 0x0A;
+        protected const byte HX8357_RDMADCTL = 0x0B;
+        protected const byte HX8357_RDCOLMOD = 0x0C;
+        protected const byte HX8357_RDDIM = 0x0D;
+        protected const byte HX8357_RDDSDR = 0x0F;
 
-        const byte HX8357_SLPIN = 0x10;
-        const byte HX8357_SLPOUT = 0x11;
+        protected const byte HX8357_SLPIN = 0x10;
+        protected const byte HX8357_SLPOUT = 0x11;
 
-        const byte HX8357_INVOFF = 0x20;
-        const byte HX8357_INVON = 0x21;
-        const byte HX8357_DISPOFF = 0x28;
-        const byte HX8357_DISPON = 0x29;
+        protected const byte HX8357_INVOFF = 0x20;
+        protected const byte HX8357_INVON = 0x21;
+        protected const byte HX8357_DISPOFF = 0x28;
+        protected const byte HX8357_DISPON = 0x29;
 
-        const byte HX8357_TEON = 0x35;
-        const byte HX8357_TEARLINE = 0x44;
+        protected const byte HX8357_TEON = 0x35;
+        protected const byte HX8357_TEARLINE = 0x44;
 
-        const byte HX8357_SETOSC = 0xB0;
-        const byte HX8357_SETPWR1 = 0xB1;
-        const byte HX8357_SETRGB = 0xB3;
-        const byte HX8357D_SETCOM = 0xB6;
+        protected const byte HX8357_SETOSC = 0xB0;
+        protected const byte HX8357_SETPWR1 = 0xB1;
+        protected const byte HX8357_SETRGB = 0xB3;
+        protected const byte HX8357D_SETCOM = 0xB6;
 
-        const byte HX8357D_SETCYC = 0xB4;
-        const byte HX8357D_SETC = 0xB9;
+        protected const byte HX8357D_SETCYC = 0xB4;
+        protected const byte HX8357D_SETC = 0xB9;
 
-        const byte HX8357D_SETSTBA = 0xC0;
+        protected const byte HX8357D_SETSTBA = 0xC0;
 
-        const byte HX8357_SETPANEL = 0xCC;
+        protected const byte HX8357_SETPANEL = 0xCC;
 
-        const byte HX8357D_SETGAMMA = 0xE0;
+        protected const byte HX8357D_SETGAMMA = 0xE0;
     }
 }
