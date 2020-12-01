@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation.Core", "Meadow.Foundation.Core\Meadow.Foundation.Core.csproj", "{CEBD7F9A-4645-4A29-8A97-7889E241896F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Foundation.Core", "Meadow.Foundation.Core\Meadow.Foundation.Core.csproj", "{CEBD7F9A-4645-4A29-8A97-7889E241896F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meadow.Foundation.Core.Samples", "Meadow.Foundation.Core.Samples", "{7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}"
 EndProject
@@ -834,59 +834,61 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8A94
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.Mb10x0_Sample", "Meadow.Foundation.Peripherals\Sensors.Distance.Mb10x0\Samples\Sensors.Distance.Mb10x0_Sample\Sensors.Distance.Mb10x0_Sample.csproj", "{B2148F91-9788-403C-ADB1-D6AB957CBEDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transceivers.Nrf24l01_TX_Sample", "Meadow.Foundation.Peripherals\Transceivers.Nrf24l01\Samples\Transceivers.Nrf24l01_TX_Sample\Transceivers.Nrf24l01_TX_Sample.csproj", "{359C1577-5A0B-4704-B2AF-CA506950C5DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transceivers.Nrf24l01_TX_Sample", "Meadow.Foundation.Peripherals\Transceivers.Nrf24l01\Samples\Transceivers.Nrf24l01_TX_Sample\Transceivers.Nrf24l01_TX_Sample.csproj", "{359C1577-5A0B-4704-B2AF-CA506950C5DF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Radio.Rfid.Rc522", "Sensors.Radio.Rfid.Rc522", "{1D19D28B-8617-4024-AF40-6A587AAD38E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Radio.Rfid.Rc522", "Meadow.Foundation.Peripherals\Sensors.Radio.Rfid.Rc522\Driver\Sensors.Radio.Rfid.Rc522\Sensors.Radio.Rfid.Rc522.csproj", "{9EA459C3-3C26-48CB-89C7-E52436195EC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Radio.Rfid.Rc522", "Meadow.Foundation.Peripherals\Sensors.Radio.Rfid.Rc522\Driver\Sensors.Radio.Rfid.Rc522\Sensors.Radio.Rfid.Rc522.csproj", "{9EA459C3-3C26-48CB-89C7-E52436195EC5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{0D0F7698-2243-4151-81B3-17AEDC188E82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Radio.Rfid.Rc522_Sample", "Meadow.Foundation.Peripherals\Sensors.Radio.Rfid.Rc522\Samples\Sensors.Radio.Rfid.Rc522_Sample\Sensors.Radio.Rfid.Rc522_Sample.csproj", "{CA0489A1-D860-4CBE-9D46-9664F7B41094}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Radio.Rfid.Rc522_Sample", "Meadow.Foundation.Peripherals\Sensors.Radio.Rfid.Rc522\Samples\Sensors.Radio.Rfid.Rc522_Sample\Sensors.Radio.Rfid.Rc522_Sample.csproj", "{CA0489A1-D860-4CBE-9D46-9664F7B41094}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Audio.Mp3.Yx5300", "Audio.Mp3.Yx5300", "{36D998D7-9685-497E-8B92-2FD429D27B99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Mp3.Yx5300", "Meadow.Foundation.Peripherals\Audio.Mp3.Yx5300\Driver\Audio.Mp3.Yx5300\Audio.Mp3.Yx5300.csproj", "{D0B2BD03-8C10-46FE-85A4-2CF0FD34632B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Audio.Mp3.Yx5300", "Meadow.Foundation.Peripherals\Audio.Mp3.Yx5300\Driver\Audio.Mp3.Yx5300\Audio.Mp3.Yx5300.csproj", "{D0B2BD03-8C10-46FE-85A4-2CF0FD34632B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{CF493B2A-679A-44E9-ABB7-B9CD9AF44450}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audio.Mp3.Yx5300_Sample", "Meadow.Foundation.Peripherals\Audio.Mp3.Yx5300\Samples\Audio.Mp3.Yx5300_Sample\Audio.Mp3.Yx5300_Sample.csproj", "{A447201E-D3E7-47C0-8E87-A919A272FCB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Audio.Mp3.Yx5300_Sample", "Meadow.Foundation.Peripherals\Audio.Mp3.Yx5300\Samples\Audio.Mp3.Yx5300_Sample\Audio.Mp3.Yx5300_Sample.csproj", "{A447201E-D3E7-47C0-8E87-A919A272FCB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Environmental.AnalogWaterLevel_Sample", "Meadow.Foundation.Core.Samples\Sensors.Environmental.AnalogWaterLevel_Sample\Sensors.Environmental.AnalogWaterLevel_Sample.csproj", "{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Environmental.AnalogWaterLevel_Sample", "Meadow.Foundation.Core.Samples\Sensors.Environmental.AnalogWaterLevel_Sample\Sensors.Environmental.AnalogWaterLevel_Sample.csproj", "{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Bme680", "Sensors.Atmospheric.Bme680", "{10C3DA72-29FA-4BF7-B2D5-EABF25879E92}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{01926B24-03D6-4ACC-ABB7-FF90E5861557}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bme680", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme680\Driver\Sensors.Atmospheric.BME680\Sensors.Atmospheric.Bme680.csproj", "{12449481-3CDD-446F-8968-5816E65F62F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Bme680", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme680\Driver\Sensors.Atmospheric.BME680\Sensors.Atmospheric.Bme680.csproj", "{12449481-3CDD-446F-8968-5816E65F62F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bme680_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme680\Samples\Sensors.Atmospheric.BME680_Sample\Sensors.Atmospheric.Bme680_Sample.csproj", "{0C1F063F-1C44-450D-90FC-A9A95AA03B97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Bme680_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme680\Samples\Sensors.Atmospheric.BME680_Sample\Sensors.Atmospheric.Bme680_Sample.csproj", "{0C1F063F-1C44-450D-90FC-A9A95AA03B97}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.AdafruitMPRLS", "Sensors.Atmospheric.AdafruitMPRLS", "{203EF7C7-F76D-4004-9472-A7AAAA581C6E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{4B15C7E3-990E-4427-A7A7-842410E30B86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.AdafruitMPRLS", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.AdafruitMPRLS\Driver\AdafruitMPRLS\Sensors.Atmospheric.AdafruitMPRLS.csproj", "{BADF052D-108C-4E33-A96F-B4F8B42B8F5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.AdafruitMPRLS", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.AdafruitMPRLS\Driver\AdafruitMPRLS\Sensors.Atmospheric.AdafruitMPRLS.csproj", "{BADF052D-108C-4E33-A96F-B4F8B42B8F5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospherica.AdafruitMPRLS_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.AdafruitMPRLS\Samples\AdafruitMPRLSSensor_Sample\Sensors.Atmospherica.AdafruitMPRLS_Sample.csproj", "{137523F5-2239-4710-9F13-A2AE0E753515}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospherica.AdafruitMPRLS_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.AdafruitMPRLS\Samples\AdafruitMPRLSSensor_Sample\Sensors.Atmospherica.AdafruitMPRLS_Sample.csproj", "{137523F5-2239-4710-9F13-A2AE0E753515}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Light.Tcs3472x", "Sensors.Light.Tcs3472x", "{3AA645B9-E544-480F-9765-6634AC1A2786}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8A873839-2460-4008-9AAB-620E23E64058}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Tcs3472x", "Meadow.Foundation.Peripherals\Sensors.Light.Tcs3472x\Driver\Sensors.Light.Tcs3472x\Sensors.Light.Tcs3472x.csproj", "{0746ECEE-8215-4B60-91E8-549B03E736AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Tcs3472x", "Meadow.Foundation.Peripherals\Sensors.Light.Tcs3472x\Driver\Sensors.Light.Tcs3472x\Sensors.Light.Tcs3472x.csproj", "{0746ECEE-8215-4B60-91E8-549B03E736AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.Tcs3472x_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Tcs3472x\Samples\Sensors.Light.Tcs3472x_Sample\Sensors.Light.Tcs3472x_Sample.csproj", "{528D18D2-F13A-493C-BE88-FB0B2FBFB93F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Tcs3472x_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Tcs3472x\Samples\Sensors.Light.Tcs3472x_Sample\Sensors.Light.Tcs3472x_Sample.csproj", "{528D18D2-F13A-493C-BE88-FB0B2FBFB93F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.Ssd1327", "Displays.Ssd1327", "{4F04D404-22A8-499F-B22D-6C85D327A5A9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{9311C387-6BF3-40AD-8A12-8E2FF66B36CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1327", "Meadow.Foundation.Peripherals\Displays.Ssd1327\Driver\Displays.Ssd1327\Displays.Ssd1327.csproj", "{A40738A5-9C8D-4E7C-ADB6-83E9741F958E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd1327", "Meadow.Foundation.Peripherals\Displays.Ssd1327\Driver\Displays.Ssd1327\Displays.Ssd1327.csproj", "{A40738A5-9C8D-4E7C-ADB6-83E9741F958E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ssd1327_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd1327\Samples\Displays.Ssd1327_Sample\Ssd1327_Sample.csproj", "{7184A4D4-522B-4C3E-8AA0-8C7AAD34A984}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ssd1327_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd1327\Samples\Displays.Ssd1327_Sample\Ssd1327_Sample.csproj", "{7184A4D4-522B-4C3E-8AA0-8C7AAD34A984}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TextDisplayMenu_GameMenu_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Displays.TextDisplayMenu_GameMenu_Sample\Displays.TextDisplayMenu_GameMenu_Sample.csproj", "{A37CC79F-F704-4262-933E-E4C3E6FBEFB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TextDisplayMenu_GameMenu_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Samples\Displays.TextDisplayMenu_GameMenu_Sample\Displays.TextDisplayMenu_GameMenu_Sample.csproj", "{A37CC79F-F704-4262-933E-E4C3E6FBEFB0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TftSpi.Hx8357d_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.Hx8357d_Sample\Displays.TftSpi.Hx8357d_Sample.csproj", "{CE340A6F-ED4E-4271-A89E-5F3A7EE3839C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1976,6 +1978,12 @@ Global
 		{A37CC79F-F704-4262-933E-E4C3E6FBEFB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A37CC79F-F704-4262-933E-E4C3E6FBEFB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A37CC79F-F704-4262-933E-E4C3E6FBEFB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE340A6F-ED4E-4271-A89E-5F3A7EE3839C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE340A6F-ED4E-4271-A89E-5F3A7EE3839C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE340A6F-ED4E-4271-A89E-5F3A7EE3839C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{CE340A6F-ED4E-4271-A89E-5F3A7EE3839C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE340A6F-ED4E-4271-A89E-5F3A7EE3839C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE340A6F-ED4E-4271-A89E-5F3A7EE3839C}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2399,7 +2407,6 @@ Global
 		{CF493B2A-679A-44E9-ABB7-B9CD9AF44450} = {36D998D7-9685-497E-8B92-2FD429D27B99}
 		{A447201E-D3E7-47C0-8E87-A919A272FCB1} = {CF493B2A-679A-44E9-ABB7-B9CD9AF44450}
 		{3675DB14-F8F3-4B65-BA66-0250F0CFC9A7} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
-		{BCD11918-91FF-4776-8E33-51447CFE93B7} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{10C3DA72-29FA-4BF7-B2D5-EABF25879E92} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{01926B24-03D6-4ACC-ABB7-FF90E5861557} = {10C3DA72-29FA-4BF7-B2D5-EABF25879E92}
 		{12449481-3CDD-446F-8968-5816E65F62F6} = {10C3DA72-29FA-4BF7-B2D5-EABF25879E92}
@@ -2417,6 +2424,7 @@ Global
 		{A40738A5-9C8D-4E7C-ADB6-83E9741F958E} = {4F04D404-22A8-499F-B22D-6C85D327A5A9}
 		{7184A4D4-522B-4C3E-8AA0-8C7AAD34A984} = {9311C387-6BF3-40AD-8A12-8E2FF66B36CD}
 		{A37CC79F-F704-4262-933E-E4C3E6FBEFB0} = {F0E1BC04-A17B-4604-9EC9-51AFE3A1942D}
+		{CE340A6F-ED4E-4271-A89E-5F3A7EE3839C} = {8FB70D12-1111-480B-B64C-B8EB65977F58}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

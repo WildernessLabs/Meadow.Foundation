@@ -18,18 +18,20 @@ namespace Meadow.Foundation.Displays.Tft
 
         protected override void Initialize()
         {
-            // setextc
+            SendCommand(HX8357_SWRESET);
+            Thread.Sleep(10);   
             SendCommand(HX8357D_SETC);
             SendData(0xFF);
             SendData(0x83);
             SendData(0x57);
+            SendData(0xFF);
             Thread.Sleep(300);
 
             // setRGB which also enables SDO
             SendCommand(HX8357_SETRGB);
             SendData(0x80);  //enable SDO pin!
                               //  SendData(0x00);  //disable SDO pin!
-            SendData(0x0);
+            SendData(0x00);
             SendData(0x06);
             SendData(0x06);
 
