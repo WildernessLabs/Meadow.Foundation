@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Displays.Tft
             Rotate_270,
         }
 
-        //these displays typically support 12, 16 & 18 bit but the current driver only supports 16
+        //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
         public override DisplayColorMode ColorMode => colorMode;
         protected DisplayColorMode colorMode ;

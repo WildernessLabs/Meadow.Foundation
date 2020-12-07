@@ -5,15 +5,20 @@ namespace Meadow.Foundation.Displays.Tft
 {
     public class Hx8357d : DisplayTftSpiBase
     {
-        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
 
         public Hx8357d(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width = 320, uint height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+            uint width = 320, uint height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format16bppRgb565)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
 
             SetRotation(Rotation.Normal);
+        }
+
+        public override bool IsColorModeSupported(DisplayColorMode mode)
+        {
+            return mode == DisplayColorMode.Format16bppRgb565;
         }
 
         protected override void Initialize()
@@ -30,7 +35,6 @@ namespace Meadow.Foundation.Displays.Tft
             // setRGB which also enables SDO
             SendCommand(HX8357_SETRGB);
             SendData(0x80);  //enable SDO pin!
-                              //  SendData(0x00);  //disable SDO pin!
             SendData(0x00);
             SendData(0x06);
             SendData(0x06);
@@ -106,11 +110,7 @@ namespace Meadow.Foundation.Displays.Tft
             SendData(0x01);
 
             SendCommand(COLOR_MODE);
-
-            if (ColorMode == DisplayColorMode.Format12bppRgb444)
-                SendData(0x53); //12 bit
-            else
-                SendData(0x55); // 16 bit
+            SendData(0x55); // 16 bit
 
             SendCommand(MADCTL);
             SendData(0xC0);

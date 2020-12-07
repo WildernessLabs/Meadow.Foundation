@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
@@ -7,7 +6,6 @@ using Meadow.Foundation;
 using Meadow.Foundation.Displays.Tft;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using static Meadow.Foundation.Displays.DisplayBase;
 
 namespace Displays.Tft.Hx8357d_Sample
 {
@@ -22,23 +20,18 @@ namespace Displays.Tft.Hx8357d_Sample
 
             Initialize();
 
-            Benchmark();
+            Console.WriteLine("Clear");
+            display.Clear();
+            display.Show();
 
+            Console.WriteLine("Small rect");
             graphics.Clear();
-            
-            graphics.DrawRectangle(120, 0, 120, 220, Color.White, true);
-            graphics.DrawRectangle(0, 0, 120, 20, Color.Red, true);
-            graphics.DrawRectangle(0, 20, 120, 20, Color.Purple, true);
-            graphics.DrawRectangle(0, 40, 120, 20, Color.Blue, true);
-            graphics.DrawRectangle(0, 60, 120, 20, Color.Green, true);
-            graphics.DrawRectangle(0, 80, 120, 20, Color.Yellow, true);
-            graphics.DrawRectangle(0, 120, 120, 20, Color.Orange, true); 
-
-            Console.WriteLine("Show");
-
+            graphics.DrawRectangle(0, 0, 30, 30, Color.Azure, true);
             graphics.Show();
+            Thread.Sleep(1000);
 
-            Thread.Sleep(2000);
+            OverviewScreen();
+            Thread.Sleep(5000);
 
             while (true)
             {
@@ -69,31 +62,6 @@ namespace Displays.Tft.Hx8357d_Sample
                 Thread.Sleep(5000);
             }
         }
-
-        void Benchmark()
-        {
-            display.SetPenColor(Color.BlueViolet);
-
-            var sw = new Stopwatch();
-            sw.Start();
-
-            for(int i = 0; i < 10; i++)
-            {
-                for(int x = 0; x < 240; x++)
-                {
-                    for (int y = 0; y < 240; y++)
-                    {
-                        display.DrawPixel(x, y);
-                    }
-                }
-                display.Show();
-            }
-
-            sw.Stop();
-
-            Console.WriteLine("Elapsed={0}", sw.Elapsed);
-        }
-
         void Initialize()
         {
             Console.WriteLine("Create Spi bus");
@@ -107,7 +75,7 @@ namespace Displays.Tft.Hx8357d_Sample
                 resetPin: Device.Pins.D00,
                 dcPin: Device.Pins.D01,
                 chipSelectPin: Device.Pins.D02,
-                width: 320, height: 480, displayColorMode: DisplayColorMode.Format16bppRgb565);
+                width: 320, height: 480);
 
             Console.WriteLine("Create graphics lib");
 
@@ -149,6 +117,34 @@ namespace Displays.Tft.Hx8357d_Sample
                     Thread.Sleep(50);
                 }
             }
+        }
+
+        void OverviewScreen()
+        {
+            Console.WriteLine("Show overview");
+
+            graphics.CurrentFont = new Font12x16();
+            graphics.Clear();
+            graphics.Stroke = 1;
+
+            graphics.DrawText(0, 0, "HX8357D controller", Color.White, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 30, "320x480 resolution", Color.LawnGreen, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 60, "12 or 16 bit color", Color.AliceBlue, GraphicsLibrary.ScaleFactor.X2);
+
+            for(int i = 0; i < 16; i++)
+            {
+                graphics.DrawRectangle( 90, i * 20, 20, 30, Color.FromRgb(i * 16, 0, 0));
+                graphics.DrawRectangle(120, i * 20, 20, 30, Color.FromRgb(i * 16, i * 16, 0));
+                graphics.DrawRectangle(150, i * 20, 20, 30, Color.FromRgb(0,  i * 16, 0));
+                graphics.DrawRectangle(180, i * 20, 20, 30, Color.FromRgb(0, i * 16, i * 16));
+                graphics.DrawRectangle(210, i * 20, 20, 30, Color.FromRgb(0, 0, i * 16));
+                graphics.DrawRectangle(240, i * 20, 20, 30, Color.FromRgb(i * 16, 0, i * 16));
+                graphics.DrawRectangle(270, i * 20, 20, 30, Color.FromRgb(i * 16, i * 16, i * 16));
+            }
+
+            graphics.Show();
+
+            Console.WriteLine("Show overview complete");
         }
 
         void PolarLineTest()
