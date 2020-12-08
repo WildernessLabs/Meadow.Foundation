@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Meadow.Hardware;
 using Meadow.Utilities;
@@ -489,6 +490,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public void SetSynchronizationContext(SynchronizationContext context)
         {
             throw new NotImplementedException();
+        }
+
+        public IPin GetPin(string pinName)
+        {
+            return Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);
         }
     }
 }
