@@ -1,7 +1,7 @@
 ﻿using Meadow.Foundation.Displays.ePaper;
 using Meadow.Hardware;
 
-namespace Displays.ePaper.Drivers
+namespace Meadow.Foundation.Displays.ePaper
 {
 
     /// <summary>
