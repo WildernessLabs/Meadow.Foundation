@@ -137,6 +137,26 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        public override void InvertPixel(int x, int y)
+        {
+            int index = GetBufferLocation(x, y);
+
+            byte color;
+
+            if ((x % 2) == 0)
+            {   //even pixel - shift to the significant nibble
+                color = (byte)((spiBuffer[index] & 0x0f) >> 4);
+            }
+            else
+            {   //odd pixel
+                color = (byte)((spiBuffer[index] & 0xf0));
+            }
+
+            color = (byte)((color = (byte)~color) & 0x0f);
+
+            DrawPixel(x, y, color);
+        }
+
         public override void SetPenColor(Color color)
         {
             currentPen = GetGrayScaleFromColor(color);
