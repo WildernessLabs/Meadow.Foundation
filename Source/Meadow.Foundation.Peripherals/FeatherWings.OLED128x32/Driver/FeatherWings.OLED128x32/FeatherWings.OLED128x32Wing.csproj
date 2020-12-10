@@ -9,12 +9,12 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, FeatherWing, OLED128x32, SSD1306</PackageTags>
-    <Version>0.1.4</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.12</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for AdaFruit OLED 128x32 Featherwing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.20.0" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj" />
   </ItemGroup>

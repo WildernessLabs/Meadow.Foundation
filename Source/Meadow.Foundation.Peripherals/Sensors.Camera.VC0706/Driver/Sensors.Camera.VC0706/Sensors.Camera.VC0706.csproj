@@ -9,10 +9,10 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, VC0706, Camera</PackageTags>
-    <Version>0.1.8</Version>
+    <Version>0.1.12</Version>
     <Description>Driver for VC0706 camera</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.20.0" />
   </ItemGroup>
 </Project>

@@ -9,11 +9,11 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Servo, Meadow.Foundation.Servo</PackageTags>
-    <Version>0.8.10</Version>
+    <Version>0.8.22</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Generic Servo</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.20.0" />
   </ItemGroup>
 </Project>

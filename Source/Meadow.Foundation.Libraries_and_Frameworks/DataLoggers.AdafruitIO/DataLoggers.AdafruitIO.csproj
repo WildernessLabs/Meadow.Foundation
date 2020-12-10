@@ -9,12 +9,12 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, DataLoggers, Adafruit IO</PackageTags>
-    <Version>0.5.8</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.5.16</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for the Adafruit IO data logging system</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.20.0" />
     <ProjectReference Include="..\..\Meadow.Foundation.Libraries_and_Frameworks\DataLoggers\DataLoggers.csproj" />
   </ItemGroup>
 </Project>

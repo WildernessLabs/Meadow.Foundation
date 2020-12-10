@@ -9,8 +9,8 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, GPSWing, GPS, Gnss</PackageTags>
-    <Version>0.1.4</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.12</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for AdaFruit GPSWing Featherwing</Description>
   </PropertyGroup>
   <ItemGroup>
