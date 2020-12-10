@@ -9,7 +9,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Display, Text, Menu</PackageTags>
-    <Version>0.1.4</Version>
+    <Version>0.1.16</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Interactive text menu for Meadow</Description>
   </PropertyGroup>
