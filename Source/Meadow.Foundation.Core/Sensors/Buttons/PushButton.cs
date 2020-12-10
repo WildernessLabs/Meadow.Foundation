@@ -128,19 +128,17 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         private void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
-            bool STATE_PRESSED = DigitalIn.Resistor == ResistorMode.PullDown ? true : false;
-            bool STATE_RELEASED = DigitalIn.Resistor == ResistorMode.PullDown ? false : true;
-            //bool STATE_PRESSED = _circuitType == CircuitTerminationType.High ? true : false;
-            //bool STATE_RELEASED = _circuitType == CircuitTerminationType.High ? false : true;
+            bool STATE_PRESSED = false;
+            bool STATE_RELEASED = true;
 
-            if (State)
+            if (State == STATE_PRESSED)
             {
                 // save our press start time (for long press event)
                 buttonPressStart = DateTime.Now;
                 // raise our event in an inheritance friendly way
-                this.RaisePressStarted();
+                RaisePressStarted();
             }
-            else if (State == false)
+            else if (State == STATE_RELEASED)
             {
                 // calculate the press duration
                 TimeSpan pressDuration = DateTime.Now - buttonPressStart;
@@ -151,15 +149,15 @@ namespace Meadow.Foundation.Sensors.Buttons
                 // if it's a long press, raise our long press event
                 if (LongPressThreshold > TimeSpan.Zero && pressDuration > LongPressThreshold)
                 {
-                    this.RaiseLongPress();
+                    RaiseLongPress();
                 }
                 else
                 {
-                    this.RaiseClicked();
+                    RaiseClicked();
                 }
 
                 // raise the other events
-                this.RaisePressEnded();
+                RaisePressEnded();
             }
         }
 
