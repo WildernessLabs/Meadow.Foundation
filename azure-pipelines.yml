@@ -23,7 +23,7 @@ stages:
         steps:
           - task: NuGetToolInstaller@1
             inputs:
-              versionSpec: 5.5.1
+              versionSpec: 5.8
           - task: NuGetCommand@2
             displayName: Use_Nugets
             inputs:
