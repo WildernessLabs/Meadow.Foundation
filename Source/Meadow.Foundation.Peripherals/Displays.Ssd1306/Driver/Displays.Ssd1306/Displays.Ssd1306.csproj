@@ -9,12 +9,12 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Displays, OLED</PackageTags>
-    <Version>0.12.15</Version>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>0.12.19</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for SSD1306 and SSD1309 OLED display</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation" Version="0.20.0" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
+    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.9.22" />
   </ItemGroup>
 </Project>

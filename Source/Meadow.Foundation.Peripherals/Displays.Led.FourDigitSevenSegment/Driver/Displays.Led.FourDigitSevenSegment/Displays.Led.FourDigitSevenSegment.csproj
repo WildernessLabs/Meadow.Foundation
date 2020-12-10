@@ -9,12 +9,12 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, SevenSegment, Display</PackageTags>
-    <Version>0.1.9</Version>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>0.1.13</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for four digit seven segment displays</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation" Version="0.20.0" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Led.SevenSegment\Driver\Displays.Led.SevenSegment\Displays.Led.SevenSegment.csproj" />
+    <PackageReference Include="Meadow.Foundation.Displays.Led.SevenSegment" Version="0.9.19" />
   </ItemGroup>
 </Project>
