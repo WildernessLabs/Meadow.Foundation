@@ -6,5 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd1327\Driver\Displays.SSD1327\Displays.Ssd1327.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics\µGraphics\Driver\Graphics.µGraphics\µGraphics.csproj" />
   </ItemGroup>
 </Project>
