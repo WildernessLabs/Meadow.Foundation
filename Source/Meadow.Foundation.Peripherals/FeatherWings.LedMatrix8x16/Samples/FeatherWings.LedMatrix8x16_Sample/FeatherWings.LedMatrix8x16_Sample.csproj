@@ -5,7 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
     <ProjectReference Include="..\..\Driver\FeatherWings.LedMatrix8x16\FeatherWings.LedMatrix8x16.csproj" />
   </ItemGroup>
 </Project>

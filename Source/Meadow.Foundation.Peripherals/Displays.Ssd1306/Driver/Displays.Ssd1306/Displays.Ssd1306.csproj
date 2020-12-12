@@ -15,6 +15,5 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
   </ItemGroup>
 </Project>
