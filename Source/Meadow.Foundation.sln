@@ -644,8 +644,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{800E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.OLED128x32Wing_Sample", "Meadow.Foundation.Peripherals\FeatherWings.OLED128x32\Sample\FeatherWings.OLED128x32_Sample\FeatherWings.OLED128x32Wing_Sample.csproj", "{521D5D37-D316-44A7-81C0-E0F4C20D1977}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.I2cSpiAnalogTemperature_Sample", "Meadow.Foundation.Core.Samples\Tests.I2cSpiAnalogTemperature_Sample\Tests.I2cSpiAnalogTemperature_Sample.csproj", "{FF9113E8-18A0-479E-9624-DA63954222AB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.HallEffect_Sample", "Meadow.Foundation.Core.Samples\Sensors.HallEffect_Sample\Sensors.HallEffect_Sample.csproj", "{F4FD40F9-B7F2-4A89-8647-7D3CDDF95289}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Distance.Vl53l0x", "Sensors.Distance.Vl53l0x", "{D1DD2BC2-1100-4037-A571-FF8545CFCBAD}"
@@ -926,7 +924,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{B90A76
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{E9BE2E5E-D4A3-484A-BBE8-DC6715B1E2C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextDisplayMenu", "Meadow.Foundation.Libraries_and_Frameworks\Graphics\TextDisplayMenu\Driver\Graphics.TextDisplayMenu\TextDisplayMenu.csproj", "{C962A8DB-8D12-4B36-B22B-9B938565ABF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextDisplayMenu", "Meadow.Foundation.Libraries_and_Frameworks\Graphics\TextDisplayMenu\Driver\Graphics.TextDisplayMenu\TextDisplayMenu.csproj", "{C962A8DB-8D12-4B36-B22B-9B938565ABF7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics.TextDisplayMenu_GameMenu_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Graphics\TextDisplayMenu\Samples\Graphics.TextDisplayMenu_GameMenu_Sample\Graphics.TextDisplayMenu_GameMenu_Sample.csproj", "{F52EFDBF-3467-4068-8BE1-E94643ADE23B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics.TextDisplayMenu_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Graphics\TextDisplayMenu\Samples\Graphics.TextDisplayMenu_Sample\Graphics.TextDisplayMenu_Sample.csproj", "{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1670,12 +1672,6 @@ Global
 		{521D5D37-D316-44A7-81C0-E0F4C20D1977}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{521D5D37-D316-44A7-81C0-E0F4C20D1977}.Release|Any CPU.Build.0 = Release|Any CPU
 		{521D5D37-D316-44A7-81C0-E0F4C20D1977}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{FF9113E8-18A0-479E-9624-DA63954222AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF9113E8-18A0-479E-9624-DA63954222AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF9113E8-18A0-479E-9624-DA63954222AB}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{FF9113E8-18A0-479E-9624-DA63954222AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF9113E8-18A0-479E-9624-DA63954222AB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FF9113E8-18A0-479E-9624-DA63954222AB}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{F4FD40F9-B7F2-4A89-8647-7D3CDDF95289}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4FD40F9-B7F2-4A89-8647-7D3CDDF95289}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4FD40F9-B7F2-4A89-8647-7D3CDDF95289}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -2024,6 +2020,18 @@ Global
 		{C962A8DB-8D12-4B36-B22B-9B938565ABF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C962A8DB-8D12-4B36-B22B-9B938565ABF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C962A8DB-8D12-4B36-B22B-9B938565ABF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F52EFDBF-3467-4068-8BE1-E94643ADE23B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F52EFDBF-3467-4068-8BE1-E94643ADE23B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F52EFDBF-3467-4068-8BE1-E94643ADE23B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F52EFDBF-3467-4068-8BE1-E94643ADE23B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F52EFDBF-3467-4068-8BE1-E94643ADE23B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F52EFDBF-3467-4068-8BE1-E94643ADE23B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2342,7 +2350,6 @@ Global
 		{BD3E4A3E-0A7B-4A13-B34E-16C584875840} = {3626B3BB-CC77-4A2F-90A8-5C23A3F304A7}
 		{800E8B51-6E13-4C45-B96B-077428AB0D04} = {3626B3BB-CC77-4A2F-90A8-5C23A3F304A7}
 		{521D5D37-D316-44A7-81C0-E0F4C20D1977} = {800E8B51-6E13-4C45-B96B-077428AB0D04}
-		{FF9113E8-18A0-479E-9624-DA63954222AB} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
 		{F4FD40F9-B7F2-4A89-8647-7D3CDDF95289} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
 		{D1DD2BC2-1100-4037-A571-FF8545CFCBAD} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{E7CE29D6-8640-4F81-A2E0-D65B31C4F6C1} = {D1DD2BC2-1100-4037-A571-FF8545CFCBAD}
@@ -2484,6 +2491,8 @@ Global
 		{B90A7629-57D3-49FC-B6EA-BB5F2E7F93C1} = {A363CC05-9B58-4231-9FB6-188F0FEF6AF0}
 		{E9BE2E5E-D4A3-484A-BBE8-DC6715B1E2C8} = {A363CC05-9B58-4231-9FB6-188F0FEF6AF0}
 		{C962A8DB-8D12-4B36-B22B-9B938565ABF7} = {B90A7629-57D3-49FC-B6EA-BB5F2E7F93C1}
+		{F52EFDBF-3467-4068-8BE1-E94643ADE23B} = {E9BE2E5E-D4A3-484A-BBE8-DC6715B1E2C8}
+		{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B} = {E9BE2E5E-D4A3-484A-BBE8-DC6715B1E2C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

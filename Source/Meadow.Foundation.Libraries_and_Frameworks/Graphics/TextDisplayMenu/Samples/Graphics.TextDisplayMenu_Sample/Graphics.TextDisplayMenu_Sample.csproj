@@ -5,13 +5,14 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="menu.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="menu.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj" />
+    <ProjectReference Include="..\..\Driver\Graphics.TextDisplayMenu\TextDisplayMenu.csproj" />
   </ItemGroup>
 </Project>
