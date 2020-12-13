@@ -340,35 +340,36 @@ namespace Meadow.Foundation.Displays.Tft
         /// </summary>
         public override void Show()
         {
-            if (xMax == 0 || yMax == 0)
-            { return; }
+            /*    if (xMax == 0 || yMax == 0)
+                { return; }
 
-            if(xMin > 0 || yMin > 0)
-            {
-                Show(xMin, yMin, xMax, yMax);
-                return;
-            }
+                if(xMin > 0 || yMin > 0)
+                {
+                    Show(xMin, yMin, xMax, yMax);
+                    return;
+                } */
 
-            SetAddressWindow(0, 0, Width - 1, yMax);
+            //  SetAddressWindow(0, 0, Width - 1, yMax);
+            SetAddressWindow(0, 0, Width - 1, Height);
 
             int len;
             if (colorMode == DisplayColorMode.Format16bppRgb565)
             { 
-                len = (int)((yMax + 1) * Width * 2);
+                len = (int)((Height + 1) * Width * 2);
             }
             else
             {
-                len = (int)((yMax + 1) * Width * 3 / 2);
+                len = (int)((Height + 1) * Width * 3 / 2);
             }
 
 
             dataCommandPort.State = Data;
             spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive, len);
 
-            xMin = width;
+          /*  xMin = width;
             yMin = height;
             xMax = 0;
-            yMax = 0;
+            yMax = 0; */
         }
 
         byte[] lineBufferSend;

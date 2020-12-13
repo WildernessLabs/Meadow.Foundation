@@ -22,9 +22,9 @@ namespace Displays.Tft.ST7789_Sample
 
             Initialize();
 
-            Benchmark();
+            //Benchmark();
 
-            graphics.Clear();
+            graphics.Clear(true);
             
             graphics.DrawRectangle(120, 0, 120, 220, Color.White, true);
             graphics.DrawRectangle(0, 0, 120, 20, Color.Red, true);
@@ -74,31 +74,35 @@ namespace Displays.Tft.ST7789_Sample
         {
             display.SetPenColor(Color.BlueViolet);
 
+            for (int x = 0; x < 240; x++)
+            {
+                for (int y = 0; y < 240; y++)
+                {
+                    display.DrawPixel(x, y);
+                }
+            }
+
             var sw = new Stopwatch();
             sw.Start();
 
             for(int i = 0; i < 10; i++)
             {
-                for(int x = 0; x < 240; x++)
-                {
-                    for (int y = 0; y < 240; y++)
-                    {
-                        display.DrawPixel(x, y);
-                    }
-                }
+                
                 display.Show();
             }
 
             sw.Stop();
 
             Console.WriteLine("Elapsed={0}", sw.Elapsed);
+
+            Thread.Sleep(1000);
         }
 
         void Initialize()
         {
             Console.WriteLine("Create Spi bus");
 
-            var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode3);
+            var config = new SpiClockConfiguration(24000, SpiClockConfiguration.Mode.Mode3);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             Console.WriteLine("Create display driver instance");
