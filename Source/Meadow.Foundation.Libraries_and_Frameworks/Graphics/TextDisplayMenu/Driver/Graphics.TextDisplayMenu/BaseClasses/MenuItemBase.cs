@@ -26,18 +26,19 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         public bool IsEditable => Value != null;
 
-      //  [JsonConstructor]
         public MenuItem(string text,
             string command = null,
             string id = null,
             string type = null,
-            object value = null)
+            object value = null,
+            MenuItem[] subItems = null)
         {
             Text = text;
             Command = command ?? string.Empty;
             Id = id ?? string.Empty;
             Type = type ?? string.Empty;
             Value = value ?? null;
+            SubItems = subItems ?? null;
         }
     }
 }
