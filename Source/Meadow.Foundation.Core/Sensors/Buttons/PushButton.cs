@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Buttons
     /// <summary>
     /// A simple push button. 
     /// </summary>
-    public class PushButton : IButton
+    public class PushButton : IButton, IDisposable
     {
         #region Properties
         /// <summary>
@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Buttons
             {
                 bool currentState = DigitalIn?.Resistor == ResistorMode.PullDown ? true : false;
 
-                return (state == currentState) ? true : false;
+                return (_state == currentState) ? true : false;
             }
         }
 
@@ -51,29 +51,81 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Raised when a press starts (the button is pushed down; circuit is closed).
         /// </summary>
-        public event EventHandler PressStarted = delegate { };
+        public event EventHandler PressStarted
+        {
+            add
+            {
+                if (DigitalIn.InterruptMode == InterruptMode.None)
+                {
+                    throw new Exception("PressStarted event requires InterruptMode to be != None");
+                }
+
+                _pressStartDelegate += value;
+            }
+            remove => _pressStartDelegate -= value;
+        }
 
         /// <summary>
         /// Raised when a press ends (the button is released; circuit is opened).
         /// </summary>
-        public event EventHandler PressEnded = delegate { };
+        public event EventHandler PressEnded
+        {
+            add
+            {
+                if (DigitalIn.InterruptMode != InterruptMode.EdgeBoth)
+                {
+                    throw new Exception("PressEnded event requires InterruptMode.EdgeBoth");
+                }
+
+                _pressEndDelegate += value;
+            }
+            remove => _pressEndDelegate -= value;
+        }
 
         /// <summary>
         /// Raised when the button circuit is re-opened after it has been closed (at the end of a �press�.
         /// </summary>
-        public event EventHandler Clicked = delegate { };
+        public event EventHandler Clicked
+        {
+            add
+            {
+                if (DigitalIn.InterruptMode != InterruptMode.EdgeBoth)
+                {
+                    throw new Exception("Clicked event requires InterruptMode.EdgeBoth");
+                }
+                _clickDelegate += value;
+            }
+            remove => _clickDelegate -= value;
+        }
 
         /// <summary>
         /// Raised when the button circuit is pressed for at least 500ms.
         /// </summary>
-        public event EventHandler LongPressClicked = delegate { };
+        public event EventHandler LongPressClicked
+        {
+            add
+            {
+                if (DigitalIn.InterruptMode != InterruptMode.EdgeBoth)
+                {
+                    throw new Exception("LongPressClicked event requires InterruptMode.EdgeBoth");
+                }
+                _longPressDelegate += value;
+            }
+            remove => _longPressDelegate -= value;
+        }
         #endregion
 
         #region Member variables / fields
+        private event EventHandler _clickDelegate = delegate { };
+        private event EventHandler _pressStartDelegate = delegate { };
+        private event EventHandler _pressEndDelegate = delegate { };
+        private event EventHandler _longPressDelegate = delegate { };
+        private bool _inputCreatedInternally = false;
+
         /// <summary>
         /// Returns the current raw state of the switch.
         /// </summary>
-        protected bool state => (DigitalIn != null) ? !DigitalIn.State : false;
+        protected bool _state => (DigitalIn != null) ? !DigitalIn.State : false;
 
         /// <summary>
         /// Minimum DateTime value when the button was pushed
@@ -83,7 +135,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Maximum DateTime value when the button was just pushed
         /// </summary>
-        protected DateTime buttonPressStart = DateTime.MaxValue;
+        protected DateTime _buttonPressStart = DateTime.MaxValue;
 
         /// <summary>
         /// Circuit Termination Type (CommonGround, High or Floating)
@@ -105,6 +157,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
             DigitalIn = device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistor, debounceDuration);
+            _inputCreatedInternally = true;
             DigitalIn.Changed += DigitalInChanged;
         }
 
@@ -126,40 +179,49 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         #region Methods
 
+        public void Dispose()
+        {
+            if(_inputCreatedInternally)
+            {
+                DigitalIn.Dispose();
+                DigitalIn = null;
+            }
+        }
+
         private void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
-            bool STATE_PRESSED = DigitalIn.Resistor == ResistorMode.PullDown ? true : false;
-            bool STATE_RELEASED = DigitalIn.Resistor == ResistorMode.PullDown ? false : true;
-            //bool STATE_PRESSED = _circuitType == CircuitTerminationType.High ? true : false;
-            //bool STATE_RELEASED = _circuitType == CircuitTerminationType.High ? false : true;
+            bool STATE_PRESSED = false;
+            bool STATE_RELEASED = true;
 
-            if (State)
+//            Console.WriteLine($"PB: InputChanged. State == {State}. e.Value: {e.Value}.  DI State: {DigitalIn.State}");
+
+            if (State == STATE_PRESSED)
             {
                 // save our press start time (for long press event)
-                buttonPressStart = DateTime.Now;
+                _buttonPressStart = DateTime.Now;
                 // raise our event in an inheritance friendly way
-                this.RaisePressStarted();
+                RaisePressStarted();
             }
-            else if (State == false)
+            else if (State == STATE_RELEASED)
             {
                 // calculate the press duration
-                TimeSpan pressDuration = DateTime.Now - buttonPressStart;
+                TimeSpan pressDuration = DateTime.Now - _buttonPressStart;
 
                 // reset press start time
-                buttonPressStart = DateTime.MaxValue;
+                _buttonPressStart = DateTime.MaxValue;
 
                 // if it's a long press, raise our long press event
                 if (LongPressThreshold > TimeSpan.Zero && pressDuration > LongPressThreshold)
                 {
-                    this.RaiseLongPress();
+                    RaiseLongPress();
                 }
                 else
                 {
-                    this.RaiseClicked();
+                    RaiseClicked();
                 }
 
                 // raise the other events
-                this.RaisePressEnded();
+                RaisePressEnded();
             }
         }
 
@@ -168,7 +230,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseClicked()
         {
-            this.Clicked(this, EventArgs.Empty);
+            _clickDelegate(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -177,7 +239,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected virtual void RaisePressStarted()
         {
             // raise the press started event
-            this.PressStarted(this, new EventArgs());
+            _pressStartDelegate(this, new EventArgs());
         }
 
         /// <summary>
@@ -185,7 +247,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressEnded()
         {
-            this.PressEnded(this, new EventArgs());
+            _pressEndDelegate(this, new EventArgs());
         }
 
         /// <summary>
@@ -193,7 +255,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseLongPress()
         {
-            this.LongPressClicked(this, new EventArgs());
+            _longPressDelegate(this, new EventArgs());
         }
 
         #endregion
