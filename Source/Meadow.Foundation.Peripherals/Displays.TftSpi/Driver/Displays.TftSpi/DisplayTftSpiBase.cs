@@ -536,10 +536,12 @@ namespace Meadow.Foundation.Displays.Tft
                 spiBuffer[index++] = low;
             }
 
+            /*
             xMin = 0;
             yMin = 0;
             xMax = Width - 1;
             yMax = Height - 1;
+            */
         }
 
         public void Dispose()

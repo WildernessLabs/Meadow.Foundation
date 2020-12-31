@@ -24,6 +24,10 @@ namespace Displays.Tft.ST7789_Sample
 
             //Benchmark();
 
+            display.ClearScreen(0xFF);
+            display.Show();
+            Thread.Sleep(1000);
+
             graphics.Clear(true);
             
             graphics.DrawRectangle(120, 0, 120, 220, Color.White, true);
