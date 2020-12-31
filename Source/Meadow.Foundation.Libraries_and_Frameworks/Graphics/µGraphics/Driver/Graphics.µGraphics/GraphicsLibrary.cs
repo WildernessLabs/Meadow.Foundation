@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Return the height of the display after accounting for the rotation.
         /// </summary>
-        public uint Height =>  Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Height : display.Width;
+        public uint Height => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Height : display.Width;
 
         /// <summary>
         /// Return the width of the display after accounting for the rotation.
@@ -99,20 +99,36 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         ///     Draw a single pixel using the pen color
         /// </summary>
-        /// <param name="x">x location </param>
+        /// <param name="index">pixel location in buffer</param>
+        public void DrawPixel(int index)
+        {   //need to move this to the display driver TODO
+            display.DrawPixel((int)(index % display.Width), (int)(index / display.Width));
+        }
+
+        /// <summary>
+        ///     Invert the color of the pixel at the given location
+        /// </summary>
+        /// <param name="x">x location</param>
         /// <param name="y">y location</param>
         public void InvertPixel(int x, int y)
         {
             display.InvertPixel(GetXForRotation(x, y), GetYForRotation(x, y));
         }
 
-        public void InvertRectangle(int xLeft, int yTop, int width, int height)
+        /// <summary>
+        ///     Invert all pixels within a rectangle 
+        /// </summary>
+        /// <param name="x">x start</param>
+        /// <param name="y">y start</param>
+        /// /// <param name="width">width of area to invert</param>
+        /// <param name="height">height of area to invert</param>
+        public void InvertRectangle(int x, int y, int width, int height)
         {
-            for (int x = 0; x < width; x++)
+            for (int i = 0; i < width; i++)
             {
-                for (int y = 0; y < height; y++)
+                for (int j = 0; j < height; j++)
                 {
-                    InvertPixel(x + xLeft, y + yTop);
+                    InvertPixel(i + x, j + y);
                 }
             }
         }
@@ -173,12 +189,12 @@ namespace Meadow.Foundation.Graphics
         /// <remarks>
         /// <param name="x">Abscissa of the starting point of the line</param>
         /// <param name="y">Ordinate of the starting point of the line</param>
-        /// <param name="radius">Lenth of line.</param>
+        /// <param name="length">Length of line.</param>
         /// <param name="angle">Angle in radians</param>
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public void DrawLine(int x, int y, int radius, float angle, bool colored)
+        public void DrawLine(int x, int y, int length, float angle, bool colored)
         {
-            DrawLine(x, y, radius, angle, (colored ? Color.White : Color.Black));
+            DrawLine(x, y, length, angle, (colored ? Color.White : Color.Black));
         }
 
         /// <summary>
@@ -230,13 +246,20 @@ namespace Meadow.Foundation.Graphics
             return Math.Abs(x0 - x1) < Math.Abs(y0 - y1);
         }
 
-        //angle in radians 
-        public void DrawLine(int x, int y, int radius, float angle, Color color)
+        /// <summary>
+        ///     Draw a line from a point to a position defined by a radius and an angle
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y">Ordinate of the starting point of the line</param>
+        /// <param name="length">length of line</param>
+        /// <param name="angle">angle to draw line in radians</param>
+        /// <param name="color">The color of the line</param>
+        public void DrawLine(int x, int y, int length, float angle, Color color)
         {
-            int x2 = (int)(radius * MathF.Cos(angle)) + x;
-            int y2 = y - (int)(radius * MathF.Sin(angle));
+            int x1 = (int)(length * MathF.Cos(angle)) + x;
+            int y1 = y - (int)(length * MathF.Sin(angle));
 
-            DrawLine(x, y, x2, y2, color);
+            DrawLine(x, y, x1, y1, color);
         }
 
         private void DrawLine(int x0, int y0, int x1, int y1)
@@ -256,23 +279,13 @@ namespace Meadow.Foundation.Graphics
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
             if (steep)
             {
-                int t;
-                t = x0; // swap x0 and y0
-                x0 = y0;
-                y0 = t;
-                t = x1; // swap x1 and y1
-                x1 = y1;
-                y1 = t;
+                swap(ref x0, ref y0);
+                swap(ref x1, ref y1);
             }
             if (x0 > x1)
             {
-                int t;
-                t = x0; // swap x0 and x1
-                x0 = x1;
-                x1 = t;
-                t = y0; // swap y0 and y1
-                y0 = y1;
-                y1 = t;
+                swap(ref x0, ref x1);
+                swap(ref y0, ref y1);
             }
             var dx = x1 - x0;
             var dy = Math.Abs(y1 - y0);
@@ -294,97 +307,106 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         ///     Draw a horizontal line.
         /// </summary>
-        /// <param name="x0">Abscissa of the starting point of the line.</param>
-        /// <param name="y0">Ordinate of the starting point of the line.</param>
+        /// <param name="x">Abscissa of the starting point of the line.</param>
+        /// <param name="y">Ordinate of the starting point of the line.</param>
         /// <param name="length">Length of the line to draw.</param>
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public void DrawHorizontalLine(int x0, int y0, int length, bool colored)
+        public void DrawHorizontalLine(int x, int y, int length, bool colored)
         {
-            if(length < 0)
-            {
-                x0 += length;
-                length *= -1;
-            }
-
-            for (var x = x0; (x - x0) <= length; x++)
-            {
-                DrawPixel(x, y0, colored);
-            }
+            DrawHorizontalLine(x, y, length, (colored ? Color.White : Color.Black));
         }
 
         /// <summary>
         ///     Draw a horizontal line.
         /// </summary>
-        /// <param name="x0">Abscissa of the starting point of the line.</param>
-        /// <param name="y0">Ordinate of the starting point of the line.</param>
+        /// <param name="x">Abscissa of the starting point of the line.</param>
+        /// <param name="y">Ordinate of the starting point of the line.</param>
         /// <param name="length">Length of the line to draw.</param>
         /// <param name="color">The color of the line.</param>
-        public void DrawHorizontalLine(int x0, int y0, int length, Color color)
+        public void DrawHorizontalLine(int x, int y, int length, Color color)
         {
             display.SetPenColor(color);
-            DrawHorizontalLine(x0, y0, length);
 
+            if (Stroke == 1)
+            {
+                DrawHorizontalLine(x, y, length);
+            }
+            else
+            {
+                int yOffset = Stroke >> 1;
+
+                for (int i = 0; i < Stroke; i++)
+                {
+                    DrawHorizontalLine(x, y - yOffset + i, length);
+                }
+            } 
         }
-        private void DrawHorizontalLine(int x0, int y0, int length)
+
+        private void DrawHorizontalLine(int x, int y, int length)
         {
             if (length < 0)
             {
-                x0 += length;
+                x += length;
                 length *= -1;
             }
 
-            for (var x = x0; (x - x0) <= length; x++)
+            for (var i = x; (i - x) <= length; i++)
             {
-                DrawPixel(x, y0);
+                DrawPixel(i, y);
             }
         }
 
         /// <summary>
         ///     Draw a vertical line.
         /// </summary>
-        /// <param name="x0">Abscissa of the starting point of the line.</param>
-        /// <param name="y0">Ordinate of the starting point of the line.</param>
+        /// <param name="x">Abscissa of the starting point of the line.</param>
+        /// <param name="y">Ordinate of the starting point of the line.</param>
         /// <param name="length">Length of the line to draw.</param>
         /// <param name="colored">Show the line when (true) or off (false).</param>
-        public void DrawVerticalLine(int x0, int y0, int length, bool colored)
+        public void DrawVerticalLine(int x, int y, int length, bool colored)
         {
-            if (length < 0)
-            {
-                y0 += length;
-                length *= -1;
-            }
-
-            for (var y = y0; (y - y0) < length; y++)
-            {
-                DrawPixel(x0, y, colored);
-            }
+            DrawVerticalLine(x, y, length, (colored ? Color.White : Color.Black));
         }
 
         /// <summary>
         ///     Draw a vertical line.
         /// </summary>
-        /// <param name="x0">Abscissa of the starting point of the line.</param>
-        /// <param name="y0">Ordinate of the starting point of the line.</param>
+        /// <param name="x">Abscissa of the starting point of the line.</param>
+        /// <param name="y">Ordinate of the starting point of the line.</param>
         /// <param name="length">Length of the line to draw.</param>
         /// <param name="color">The color of the line.</param>
-        public void DrawVerticalLine(int x0, int y0, int length, Color color)
+        public void DrawVerticalLine(int x, int y, int length, Color color)
         {
             display.SetPenColor(color);
 
-            DrawVerticalLine(x0, y0, length);
+            if (Stroke == 1)
+            {
+                DrawVerticalLine(x, y, length);
+            }
+            else
+            {
+                int xOffset = Stroke >> 1;
+
+                for (int i = 0; i < Stroke; i++)
+                {
+                    DrawVerticalLine(x - xOffset + i, y, length);
+                }
+            }
         }
 
-        private void DrawVerticalLine(int x0, int y0, int length)
+        private void DrawVerticalLine(int x, int y, int length)
         {
             if (length < 0)
             {
-                y0 += length;
+                y += length;
                 length *= -1;
+
+                Console.WriteLine($"NegH - x: {x}, y:{y}, length:{length}");
             }
 
-            for (var y = y0; (y - y0) < length; y++)
+            for (var i = y; (i - y) < length; i++)
             {
-                DrawPixel(x0, y);
+                DrawPixel(x, i);
             }
         }
 
@@ -439,7 +461,7 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        void Swap(ref int value1, ref int value2)
+        void swap(ref int value1, ref int value2)
         {
             int temp = value1;
             value1 = value2;
@@ -461,18 +483,18 @@ namespace Meadow.Foundation.Graphics
             // Sort coordinates by Y order (y2 >= y1 >= y0)
             if (y0 > y1)
             {
-                Swap(ref y0, ref y1);
-                Swap(ref x0, ref x1);
+                swap(ref y0, ref y1);
+                swap(ref x0, ref x1);
             }
             if (y1 > y2)
             {
-                Swap(ref y2, ref y1);
-                Swap(ref x2, ref x1);
+                swap(ref y2, ref y1);
+                swap(ref x2, ref x1);
             }
             if (y0 > y1)
             {
-                Swap(ref y0, ref y1);
-                Swap(ref x0, ref x1);
+                swap(ref y0, ref y1);
+                swap(ref x0, ref x1);
             }
 
             if (y0 == y2)
@@ -506,7 +528,7 @@ namespace Meadow.Foundation.Graphics
 
                 if (a > b)
                 {
-                    Swap(ref a, ref b);
+                    swap(ref a, ref b);
                 }
                 DrawHorizontalLine(a, y, b - a + 1, color);
             }
@@ -522,7 +544,7 @@ namespace Meadow.Foundation.Graphics
                 sa += dx12;
                 sb += dx02;
 
-                if (a > b) { Swap(ref a, ref b); }
+                if (a > b) { swap(ref a, ref b); }
                 DrawHorizontalLine(a, y, b - a + 1, color);
             }
         }
@@ -761,13 +783,13 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         ///     Draw a rectangle.
         /// </summary>
-        /// <param name="xLeft">Abscissa of the top left corner.</param>
-        /// <param name="yTop">Ordinate of the top left corner.</param>
+        /// <param name="x">Abscissa of the top left corner.</param>
+        /// <param name="y">Ordinate of the top left corner.</param>
         /// <param name="width">Width of the rectangle.</param>
         /// <param name="height">Height of the rectangle.</param>
         /// <param name="colored">Draw the pixel (true) or turn the pixel off (false).</param>
         /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default).</param>
-        public void DrawRectangle(int xLeft, int yTop, int width, int height, bool colored = true, bool filled = false)
+        public void DrawRectangle(int x, int y, int width, int height, bool colored = true, bool filled = false)
         {
             width--;
             height--;
@@ -776,28 +798,28 @@ namespace Meadow.Foundation.Graphics
             {
                 for (var i = 0; i <= height; i++)
                 {
-                    DrawLine(xLeft, yTop + i, xLeft + width, yTop + i, colored);
+                    DrawLine(x, y + i, x + width, y + i, colored);
                 }
             }
             else
             {
-                DrawLine(xLeft, yTop, xLeft + width, yTop, colored);
-                DrawLine(xLeft + width, yTop, xLeft + width, yTop + height, colored);
-                DrawLine(xLeft + width, yTop + height, xLeft, yTop + height, colored);
-                DrawLine(xLeft, yTop, xLeft, yTop + height, colored);
+                DrawLine(x, y, x + width, y, colored);
+                DrawLine(x + width, y, x + width, y + height, colored);
+                DrawLine(x + width, y + height, x, y + height, colored);
+                DrawLine(x, y, x, y + height, colored);
             }
         }
 
         /// <summary>
         ///     Draw a rectangle.
         /// </summary>
-        /// <param name="xLeft">Abscissa of the top left corner.</param>
-        /// <param name="yTop">Ordinate of the top left corner.</param>
+        /// <param name="x">Abscissa of the top left corner.</param>
+        /// <param name="y">Ordinate of the top left corner.</param>
         /// <param name="width">Width of the rectangle.</param>
         /// <param name="height">Height of the rectangle.</param>
         /// <param name="color">The color of the rectangle.</param>
         /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default).</param>
-        public void DrawRectangle(int xLeft, int yTop, int width, int height, Color color, bool filled = false)
+        public void DrawRectangle(int x, int y, int width, int height, Color color, bool filled = false)
         {
             width--;
             height--;
@@ -806,25 +828,35 @@ namespace Meadow.Foundation.Graphics
             {
                 for (var i = 0; i <= height; i++)
                 {
-                    DrawLine(xLeft, yTop + i, xLeft + width, yTop + i, color);
+                    DrawLine(x, y + i, x + width, y + i, color);
                 }
             }
             else
             {
-                DrawLine(xLeft, yTop, xLeft + width, yTop, color);
-                DrawLine(xLeft + width, yTop, xLeft + width, yTop + height, color);
-                DrawLine(xLeft + width, yTop + height, xLeft, yTop + height, color);
-                DrawLine(xLeft, yTop, xLeft, yTop + height, color);
+                DrawLine(x, y, x + width, y, color);
+                DrawLine(x + width, y, x + width, y + height, color);
+                DrawLine(x + width, y + height, x, y + height, color);
+                DrawLine(x, y, x, y + height, color);
             }
         }
 
-        public void DrawRoundedRectangle(int xLeft, int yTop, int width, int height, int cornerRadius, Color color, bool filled = false)
+        /// <summary>
+        ///     Draw a rounded rectangle.
+        /// </summary>
+        /// <param name="x">Abscissa of the top left corner.</param>
+        /// <param name="y">Ordinate of the top left corner.</param>
+        /// <param name="width">Width of the rectangle.</param>
+        /// <param name="height">Height of the rectangle.</param>
+        /// <param name="cornerRadius">Radius of the corners of the rectangle.</param>
+        /// <param name="color">The color of the rectangle.</param>
+        /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default).</param>
+        public void DrawRoundedRectangle(int x, int y, int width, int height, int cornerRadius, Color color, bool filled = false)
         {
             if(cornerRadius < 0) { throw new ArgumentOutOfRangeException("Radius must be positive"); }
 
             if(cornerRadius == 0)
             {
-                DrawRectangle(xLeft, yTop, width, height, color, filled);
+                DrawRectangle(x, y, width, height, color, filled);
                 return;
             }
 
@@ -832,30 +864,30 @@ namespace Meadow.Foundation.Graphics
 
             if (filled)
             {
-                DrawCircleQuadrant(xLeft + width - cornerRadius - 1, yTop + cornerRadius, cornerRadius, 0, color, true);
-                DrawCircleQuadrant(xLeft + cornerRadius, yTop + cornerRadius, cornerRadius, 1, color, true);
+                DrawCircleQuadrant(x + width - cornerRadius - 1, y + cornerRadius, cornerRadius, 0, color, true);
+                DrawCircleQuadrant(x + cornerRadius, y + cornerRadius, cornerRadius, 1, color, true);
 
-                DrawCircleQuadrant(xLeft + cornerRadius, yTop + height - cornerRadius - 1, cornerRadius, 2, color, true);
-                DrawCircleQuadrant(xLeft + width - cornerRadius - 1, yTop + height - cornerRadius - 1, cornerRadius, 3, color, true);
+                DrawCircleQuadrant(x + cornerRadius, y + height - cornerRadius - 1, cornerRadius, 2, color, true);
+                DrawCircleQuadrant(x + width - cornerRadius - 1, y + height - cornerRadius - 1, cornerRadius, 3, color, true);
 
-                DrawRectangle(xLeft, yTop + cornerRadius, width, height - 2 * cornerRadius, color, filled);
-                DrawRectangle(xLeft + cornerRadius, yTop, width - 2 * cornerRadius, height, color, filled);
+                DrawRectangle(x, y + cornerRadius, width, height - 2 * cornerRadius, color, filled);
+                DrawRectangle(x + cornerRadius, y, width - 2 * cornerRadius, height, color, filled);
             }
             else
             {
                 //corners
-                DrawCircleQuadrant(xLeft + width - cornerRadius - 1, yTop + cornerRadius, cornerRadius, 0, color, false);
-                DrawCircleQuadrant(xLeft + cornerRadius, yTop + cornerRadius, cornerRadius, 1, color, false);
+                DrawCircleQuadrant(x + width - cornerRadius - 1, y + cornerRadius, cornerRadius, 0, color, false);
+                DrawCircleQuadrant(x + cornerRadius, y + cornerRadius, cornerRadius, 1, color, false);
 
-                DrawCircleQuadrant(xLeft + cornerRadius, yTop + height - cornerRadius - 1, cornerRadius, 2, color, false);
-                DrawCircleQuadrant(xLeft + width - cornerRadius - 1, yTop + height - cornerRadius - 1, cornerRadius, 3, color, false);
+                DrawCircleQuadrant(x + cornerRadius, y + height - cornerRadius - 1, cornerRadius, 2, color, false);
+                DrawCircleQuadrant(x + width - cornerRadius - 1, y + height - cornerRadius - 1, cornerRadius, 3, color, false);
 
                 //lines
-                DrawLine(xLeft + cornerRadius, yTop - 1, xLeft + width - cornerRadius, yTop - 1);
-                DrawLine(xLeft + cornerRadius, yTop + height, xLeft + width - cornerRadius, yTop + height);
+                DrawLine(x + cornerRadius, y - 1, x + width - cornerRadius, y - 1);
+                DrawLine(x + cornerRadius, y + height, x + width - cornerRadius, y + height);
 
-                DrawLine(xLeft, yTop + cornerRadius, xLeft, yTop + height - cornerRadius);
-                DrawLine(xLeft + width - 1, yTop + cornerRadius, xLeft + width - 1, yTop + height - cornerRadius);
+                DrawLine(x, y + cornerRadius, x, y + height - cornerRadius);
+                DrawLine(x + width - 1, y + cornerRadius, x + width - 1, y + height - cornerRadius);
             }
         }
 
@@ -1010,6 +1042,18 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        ///     Clear the display to a color
+        /// </summary>
+        /// <param name="updateDisplay">Update the display immediately when true.</param>
+        /// <param name="color">Color to set display.</param>
+        public void Clear(Color color, bool updateDisplay = false)
+        {
+            DrawRectangle(0, 0, (int)Width, (int)Height, color);
+
+            if(updateDisplay) { Show(); }
+        }
+
+        /// <summary>
         ///     Display a 1-bit bitmap
         /// 
         ///     This method simply calls a similar method in the display hardware.
@@ -1042,15 +1086,6 @@ namespace Meadow.Foundation.Graphics
                     {
                         if ((b & mask) > 0)
                         {
-                            //not elegant but works for now
-                       /*     if(scaleFactor == ScaleFactor.X2)
-                            {
-                                //hard code for 2x for now
-                                DrawPixel(x + (8 * abscissa) * 2 + pixel * 2,     y + ordinate * 2);
-                                DrawPixel(x + (8 * abscissa) * 2 + pixel * 2 + 1, y + ordinate * 2);
-                                DrawPixel(x + (8 * abscissa) * 2 + pixel * 2,     y + ordinate * 2 + 1);
-                                DrawPixel(x + (8 * abscissa) * 2 + pixel * 2 + 1, y + ordinate * 2 + 1);
-                            } */
                             if (scaleFactor != ScaleFactor.X1)
                             {
                                 for (int i = 0; i < scale; i++)
@@ -1062,8 +1097,7 @@ namespace Meadow.Foundation.Graphics
                                 }
                             }
                             else
-                            {
-                                //1x
+                            {   //1x
                                 DrawPixel(x + (8 * abscissa) + pixel, y + ordinate);
                             }
                         }

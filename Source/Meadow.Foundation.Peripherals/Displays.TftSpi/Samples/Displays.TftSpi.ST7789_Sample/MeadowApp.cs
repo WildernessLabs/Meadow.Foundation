@@ -42,7 +42,7 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
-                InvertTest();
+                LineTest();
 
                 PolarLineTest();
                 Thread.Sleep(5000);
@@ -67,6 +67,8 @@ namespace Displays.Tft.ST7789_Sample
 
                 CircleTest();
                 Thread.Sleep(5000);
+
+                InvertTest();
             }
         }
 
@@ -155,10 +157,58 @@ namespace Displays.Tft.ST7789_Sample
             }
         }
 
+        void LineTest()
+        {
+            Console.WriteLine("Horizonal lines");
+
+            graphics.Clear();
+
+            for (int i = 1; i < 10; i++)
+            {
+                graphics.Stroke = i;
+                graphics.DrawHorizontalLine(5, 20 * i, (int)(display.Width - 10), Color.Red);
+            }
+            graphics.Show();
+            Thread.Sleep(1500);
+
+            graphics.Clear();
+            Console.WriteLine("Horizonal lines (negative)");
+            for (int i = 1; i < 10; i++)
+            {
+                graphics.Stroke = i;
+                graphics.DrawHorizontalLine((int)graphics.Width - 5, 20 * i, (int)(10 - graphics.Width), Color.Green);
+            }
+            graphics.Show();
+            Thread.Sleep(1500);
+            graphics.Clear();
+
+            Console.WriteLine("Vertical lines");
+
+            graphics.Clear();
+
+            for (int i = 1; i < 10; i++)
+            {
+                graphics.Stroke = i;
+                graphics.DrawVerticalLine(20 * i, 5, (int)(graphics.Height - 10), Color.Orange);
+            }
+            graphics.Show();
+            Thread.Sleep(1500);
+            graphics.Clear();
+
+            Console.WriteLine("Vertical lines (negative)");
+            for (int i = 1; i < 10; i++)
+            {
+                graphics.Stroke = i;
+                graphics.DrawVerticalLine(20 * i, (int)(display.Height - 5), (int)(10 - display.Width), Color.Blue);
+            }
+            graphics.Show();
+            Thread.Sleep(1500);
+        }
+
         void PolarLineTest()
         {
             graphics.Clear();
-            graphics.Stroke = 1;
+            graphics.Stroke = 3;
 
             for (int i = 0; i < 270; i+= 12)
             {
