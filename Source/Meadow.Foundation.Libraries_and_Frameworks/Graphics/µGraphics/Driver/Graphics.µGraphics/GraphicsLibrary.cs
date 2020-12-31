@@ -279,13 +279,13 @@ namespace Meadow.Foundation.Graphics
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
             if (steep)
             {
-                swap(ref x0, ref y0);
-                swap(ref x1, ref y1);
+                Swap(ref x0, ref y0);
+                Swap(ref x1, ref y1);
             }
             if (x0 > x1)
             {
-                swap(ref x0, ref x1);
-                swap(ref y0, ref y1);
+                Swap(ref x0, ref x1);
+                Swap(ref y0, ref y1);
             }
             var dx = x1 - x0;
             var dy = Math.Abs(y1 - y0);
@@ -461,7 +461,7 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        void swap(ref int value1, ref int value2)
+        void Swap(ref int value1, ref int value2)
         {
             int temp = value1;
             value1 = value2;
@@ -483,18 +483,18 @@ namespace Meadow.Foundation.Graphics
             // Sort coordinates by Y order (y2 >= y1 >= y0)
             if (y0 > y1)
             {
-                swap(ref y0, ref y1);
-                swap(ref x0, ref x1);
+                Swap(ref y0, ref y1);
+                Swap(ref x0, ref x1);
             }
             if (y1 > y2)
             {
-                swap(ref y2, ref y1);
-                swap(ref x2, ref x1);
+                Swap(ref y2, ref y1);
+                Swap(ref x2, ref x1);
             }
             if (y0 > y1)
             {
-                swap(ref y0, ref y1);
-                swap(ref x0, ref x1);
+                Swap(ref y0, ref y1);
+                Swap(ref x0, ref x1);
             }
 
             if (y0 == y2)
@@ -528,7 +528,7 @@ namespace Meadow.Foundation.Graphics
 
                 if (a > b)
                 {
-                    swap(ref a, ref b);
+                    Swap(ref a, ref b);
                 }
                 DrawHorizontalLine(a, y, b - a + 1, color);
             }
@@ -544,7 +544,7 @@ namespace Meadow.Foundation.Graphics
                 sa += dx12;
                 sb += dx02;
 
-                if (a > b) { swap(ref a, ref b); }
+                if (a > b) { Swap(ref a, ref b); }
                 DrawHorizontalLine(a, y, b - a + 1, color);
             }
         }
