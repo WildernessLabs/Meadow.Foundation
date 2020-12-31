@@ -44,12 +44,9 @@ namespace Meadow.Foundation.Leds
             get => brightness;
             set 
             {
-                if (value < 0)
-                    brightness = 0;
-                else if (value > 1f)
-                    brightness = 1f;
-                else
-                    brightness = value;
+                if (value < 0) { brightness = 0; }
+                else if (value > 1f) { brightness = 1f; }
+                else { brightness = value; }
             } 
         }
 
@@ -62,10 +59,9 @@ namespace Meadow.Foundation.Leds
         /// <param name="numberOfLeds">The number of APA102 LEDs to control</param>
         /// <param name="pixelOrder">Set the pixel order on the LEDs - different strips implement this differently</param>
         /// <param name="autoWrite">Transmit any LED changes right away</param>
-        public Apa102(ISpiBus spiBus, IDigitalOutputPort chipSelect, uint numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
+        public Apa102(ISpiBus spiBus, uint numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
         {
-
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelect);
+            spiPeripheral = new SpiPeripheral(spiBus, null);
             this.numberOfLeds = numberOfLeds;
             endHeaderSize = this.numberOfLeds / 16;
             Brightness = 1.0f;

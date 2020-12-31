@@ -23,15 +23,13 @@ namespace Leds.APA102_Sample
         void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
-            ISpiBus spiBus = Device.CreateSpiBus();
-
-            //Not used but is need to create the SPI Peripheral
-            IDigitalOutputPort spiPeriphChipSelect = Device.CreateDigitalOutputPort(Device.Pins.D04);
-            apa102 = new Apa102(spiBus, spiPeriphChipSelect, 150, Apa102.PixelOrder.BGR);
+            apa102 = new Apa102(Device.CreateSpiBus(), 150, Apa102.PixelOrder.BGR);
         }
 
         void Pulse(Color color)
         {
+            Console.WriteLine("Pulse");
+
             float brightness = 0.05f;
             bool forward = true;
 
@@ -57,8 +55,6 @@ namespace Leds.APA102_Sample
                 apa102.Show();
             }
         }
-
-
 
         void RunColors()
         {
