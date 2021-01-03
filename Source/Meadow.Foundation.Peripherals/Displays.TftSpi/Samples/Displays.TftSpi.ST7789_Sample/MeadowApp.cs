@@ -117,11 +117,12 @@ namespace Displays.Tft.ST7789_Sample
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                width: 240, height: 240, displayColorMode: DisplayColorMode.Format16bppRgb565);
+                width: 240, height: 320, displayColorMode: DisplayColorMode.Format16bppRgb565);
 
             Console.WriteLine("Create graphics lib");
 
             graphics = new GraphicsLibrary(display);
+            graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
 
             Console.WriteLine("Init complete");
         }
@@ -203,7 +204,7 @@ namespace Displays.Tft.ST7789_Sample
             for (int i = 1; i < 10; i++)
             {
                 graphics.Stroke = i;
-                graphics.DrawVerticalLine(20 * i, (int)(display.Height - 5), (int)(10 - display.Width), Color.Blue);
+                graphics.DrawVerticalLine(20 * i, (int)(graphics.Height - 5), (int)(10 - graphics.Width), Color.Blue);
             }
             graphics.Show();
             Thread.Sleep(1500);
@@ -332,7 +333,7 @@ namespace Displays.Tft.ST7789_Sample
             graphics.DrawLine(85, 125, 195, 235, Color.Silver);
 
             graphics.Stroke = 2;
-            graphics.DrawRectangle(2, 2, 236, 236, Color.DimGray, false);
+            graphics.DrawRectangle(2, 2, (int)(graphics.Width - 4), (int)(graphics.Height - 4), Color.DimGray, false);
 
             graphics.Show();
         }
@@ -353,6 +354,9 @@ namespace Displays.Tft.ST7789_Sample
 
             graphics.DrawText(0, 192, "3x!", Color.OrangeRed, GraphicsLibrary.ScaleFactor.X3);
 
+            graphics.DrawText(0, 240, "Meadow!", Color.Red, GraphicsLibrary.ScaleFactor.X2);
+
+            graphics.DrawText(0, 288, "B4.2", Color.Violet, GraphicsLibrary.ScaleFactor.X2);
 
             graphics.Show();
         }
