@@ -22,7 +22,7 @@ namespace Displays.Tft.ST7789_Sample
 
             Initialize();
 
-            //Benchmark();
+            Benchmark();
 
             display.ClearScreen(0xFF);
             display.Show();
@@ -99,7 +99,8 @@ namespace Displays.Tft.ST7789_Sample
 
             sw.Stop();
 
-            Console.WriteLine("Elapsed={0}", sw.Elapsed);
+            Console.WriteLine($"Elapsed: {sw.Elapsed}s");
+            Console.WriteLine($"fps: {10.0/sw.Elapsed.TotalSeconds}");
 
             Thread.Sleep(1000);
         }
@@ -117,12 +118,12 @@ namespace Displays.Tft.ST7789_Sample
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                width: 240, height: 240, displayColorMode: DisplayColorMode.Format16bppRgb565);
+                width: 240, height: 240, displayColorMode: DisplayColorMode.Format12bppRgb444);
 
             Console.WriteLine("Create graphics lib");
 
             graphics = new GraphicsLibrary(display);
-            graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
+            //graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
 
             Console.WriteLine("Init complete");
         }
