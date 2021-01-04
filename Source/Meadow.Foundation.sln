@@ -910,13 +910,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialGPS_Listener", "Meado
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graphics", "Graphics", "{8A4658E0-D827-4B4D-AA84-10F90F5390E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "µGraphics", "µGraphics", "{7EDC253C-2B62-4444-B406-CC4786B93C47}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MicroGraphics", "MicroGraphics", "{7EDC253C-2B62-4444-B406-CC4786B93C47}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{B9C34E27-85BD-457D-B2CF-CA289979ED6C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{0BB488AA-E23E-4697-BBD9-4A17B21BFCD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "µGraphics", "Meadow.Foundation.Libraries_and_Frameworks\Graphics\µGraphics\Driver\Graphics.µGraphics\µGraphics.csproj", "{13E39D67-ED46-4B2A-B66E-5B2415B5278C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroGraphics", "Meadow.Foundation.Libraries_and_Frameworks\Graphics\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj", "{13E39D67-ED46-4B2A-B66E-5B2415B5278C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TextDisplayMenu", "TextDisplayMenu", "{A363CC05-9B58-4231-9FB6-188F0FEF6AF0}"
 EndProject

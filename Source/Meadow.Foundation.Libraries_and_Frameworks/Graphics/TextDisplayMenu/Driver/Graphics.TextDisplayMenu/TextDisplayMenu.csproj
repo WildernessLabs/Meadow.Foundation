@@ -21,7 +21,7 @@
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\µGraphics\Driver\Graphics.µGraphics\µGraphics.csproj" />
+    <ProjectReference Include="..\..\..\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
     <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>
