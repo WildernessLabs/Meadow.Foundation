@@ -9,7 +9,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, DataLoggers</PackageTags>
-    <Version>0.5.20</Version>
+    <Version>0.5.24</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Data logger library</Description>
   </PropertyGroup>
