@@ -400,8 +400,6 @@ namespace Meadow.Foundation.Graphics
             {
                 y += length;
                 length *= -1;
-
-                Console.WriteLine($"NegH - x: {x}, y:{y}, length:{length}");
             }
 
             for (var i = y; (i - y) < length; i++)
