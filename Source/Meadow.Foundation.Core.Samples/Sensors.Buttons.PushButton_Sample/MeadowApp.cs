@@ -23,39 +23,35 @@ namespace Sensors.Buttons.PushButton_Sample
             // Important note: You can only use on Push Button per Group Set (GSXX)
             pushButtons = new List<PushButton> 
             {
-                new PushButton(Device, Device.Pins.A04, Meadow.Hardware.ResistorMode.PullUp),         // <- GS00
-                //new PushButton(Device, Device.Pins.D06, Meadow.Hardware.ResistorMode.PullUp),         // <- GS00
+                //new PushButton(Device, Device.Pins.A04, Meadow.Hardware.ResistorMode.PullUp),         // <- GS00
+                new PushButton(Device, Device.Pins.D06, Meadow.Hardware.ResistorMode.PullUp),         // <- GS00
 
-                new PushButton(Device, Device.Pins.A05, Meadow.Hardware.ResistorMode.PullUp),         // <- GS01
-                //new PushButton(Device, Device.Pins.D09, Meadow.Hardware.ResistorMode.PullUp),         // <- GS01
+                //new PushButton(Device, Device.Pins.A05, Meadow.Hardware.ResistorMode.PullUp),         // <- GS01
+                new PushButton(Device, Device.Pins.D09, Meadow.Hardware.ResistorMode.PullUp),         // <- GS01
 
-                new PushButton(Device, Device.Pins.A02, Meadow.Hardware.ResistorMode.PullUp),         // <- GS03
-                //new PushButton(Device, Device.Pins.D14, Meadow.Hardware.ResistorMode.PullUp),         // <- GS03
+                //new PushButton(Device, Device.Pins.A02, Meadow.Hardware.ResistorMode.PullUp),         // <- GS03
+                new PushButton(Device, Device.Pins.D14, Meadow.Hardware.ResistorMode.PullUp),         // <- GS03
                 //new PushButton(Device, Device.Pins.D15, Meadow.Hardware.ResistorMode.PullUp)          // <- GS03
 
                 new PushButton(Device, Device.Pins.A00, Meadow.Hardware.ResistorMode.PullUp),         // <- GS04
 
-                new PushButton(Device, Device.Pins.A01, Meadow.Hardware.ResistorMode.PullUp),         // <- GS05
-                //new PushButton(Device, Device.Pins.ESP_MOSI, Meadow.Hardware.ResistorMode.PullUp),    // <- GS05
+                //new PushButton(Device, Device.Pins.A01, Meadow.Hardware.ResistorMode.PullUp),         // <- GS05
+                new PushButton(Device, Device.Pins.MOSI, Meadow.Hardware.ResistorMode.PullUp),        // <- GS05
 
                 new PushButton(Device, Device.Pins.D02, Meadow.Hardware.ResistorMode.PullUp),         // <- GS06
                 //new PushButton(Device, Device.Pins.D08, Meadow.Hardware.ResistorMode.PullUp),         // <- GS06
 
-                new PushButton(Device, Device.Pins.A03, Meadow.Hardware.ResistorMode.PullUp),         // <- GS07
-                //new PushButton(Device, Device.Pins.D05, Meadow.Hardware.ResistorMode.PullUp),         // <- GS07
+                //new PushButton(Device, Device.Pins.A03, Meadow.Hardware.ResistorMode.PullUp),         // <- GS07
+                new PushButton(Device, Device.Pins.D05, Meadow.Hardware.ResistorMode.PullUp),         // <- GS07
                 //new PushButton(Device, Device.Pins.D07, Meadow.Hardware.ResistorMode.PullUp),         // <- GS07
 
                 new PushButton(Device, Device.Pins.D03, Meadow.Hardware.ResistorMode.PullUp),         // <- GS08
 
                 new PushButton(Device, Device.Pins.D00, Meadow.Hardware.ResistorMode.PullUp),         // <- GS09
                 //new PushButton(Device, Device.Pins.D04, Meadow.Hardware.ResistorMode.PullUp),         // <- GS09
-                //new PushButton(Device, Device.Pins.D11, Meadow.Hardware.ResistorMode.PullUp),         // <- GS09
-
-                new PushButton(Device, Device.Pins.D10, Meadow.Hardware.ResistorMode.PullUp),         // <- GS10
+                //new PushButton(Device, Device.Pins.D11, Meadow.Hardware.ResistorMode.PullUp),         // <- GS09               
                 
-                new PushButton(Device, Device.Pins.ESP_MISO, Meadow.Hardware.ResistorMode.PullUp),    // <- GS11
-
-                new PushButton(Device, Device.Pins.D01, Meadow.Hardware.ResistorMode.PullUp),         // <- GS13
+                new PushButton(Device, Device.Pins.MISO, Meadow.Hardware.ResistorMode.PullUp),        // <- GS11
                 
                 new PushButton(Device, Device.Pins.D12, Meadow.Hardware.ResistorMode.PullUp),         // <- GS14
 
