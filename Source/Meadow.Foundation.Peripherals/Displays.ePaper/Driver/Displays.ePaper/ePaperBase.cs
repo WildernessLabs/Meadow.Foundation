@@ -1,5 +1,4 @@
-﻿ using Meadow;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System;
 
 namespace Meadow.Foundation.Displays.ePaper
