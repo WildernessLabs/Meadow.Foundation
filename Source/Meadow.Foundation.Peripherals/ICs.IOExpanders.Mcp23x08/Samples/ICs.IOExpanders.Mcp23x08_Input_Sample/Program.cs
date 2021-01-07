@@ -9,7 +9,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
         public static void Main(string[] args)
         {
             // instantiate and run new meadow app
-            app = new MeadowApp();
+            app = new SuperMeadowApp();
 
             Thread.Sleep(Timeout.Infinite);
         }
