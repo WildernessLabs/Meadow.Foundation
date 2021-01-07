@@ -5,7 +5,7 @@ using System.Threading;
 namespace Meadow.Foundation.Displays.Tft
 {
     //Samsung S6D02A1 controller
-    public class S6D02A1 : DisplayTftSpiBase
+    public class S6D02A1 : TftSpiBase
     {
         public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
 

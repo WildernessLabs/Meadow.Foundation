@@ -9,7 +9,7 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        DisplayTftSpiBase display;
+        TftSpiBase display;
         ISpiBus spiBus;
 
         public MeadowApp()

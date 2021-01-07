@@ -3,7 +3,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.Tft
 {
-    public class Rm68140 : DisplayTftSpiBase
+    public class Rm68140 : TftSpiBase
     {
         public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
 

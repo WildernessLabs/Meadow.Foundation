@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.Tft
 {
-    public abstract class DisplayTftSpiBase : DisplayBase, IDisposable
+    public abstract class TftSpiBase : DisplayBase, IDisposable
     {
         protected const byte NO_OP = 0x0;
         protected const byte MADCTL = 0x36;
@@ -64,10 +64,10 @@ namespace Meadow.Foundation.Displays.Tft
 
         protected abstract void Initialize();
 
-        internal DisplayTftSpiBase()
+        internal TftSpiBase()
         { }
 
-        public DisplayTftSpiBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public TftSpiBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             uint width, uint height, DisplayColorMode mode = DisplayColorMode.Format16bppRgb565)
         {
             this.width = width;

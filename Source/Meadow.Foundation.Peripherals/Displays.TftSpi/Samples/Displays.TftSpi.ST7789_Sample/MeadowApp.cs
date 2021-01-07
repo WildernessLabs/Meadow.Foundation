@@ -14,7 +14,7 @@ namespace Displays.Tft.ST7789_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         GraphicsLibrary graphics;
-        DisplayTftSpiBase display;
+        TftSpiBase display;
 
         public MeadowApp()
         {

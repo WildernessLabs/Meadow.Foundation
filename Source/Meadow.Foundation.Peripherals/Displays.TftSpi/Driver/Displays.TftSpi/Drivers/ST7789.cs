@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.Tft
 {
-    public class St7789 : DisplayTftSpiBase
+    public class St7789 : TftSpiBase
     {
         private byte xOffset;
         private byte yOffset;

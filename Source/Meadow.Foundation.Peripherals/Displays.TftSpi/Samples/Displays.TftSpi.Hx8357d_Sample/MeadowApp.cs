@@ -12,7 +12,7 @@ namespace Displays.Tft.Hx8357d_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         GraphicsLibrary graphics;
-        DisplayTftSpiBase display;
+        TftSpiBase display;
 
         public MeadowApp()
         {

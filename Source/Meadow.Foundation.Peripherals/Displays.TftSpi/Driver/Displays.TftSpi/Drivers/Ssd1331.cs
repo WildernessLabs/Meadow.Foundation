@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.Tft
 {
-    public class Ssd1331 : DisplayTftSpiBase
+    public class Ssd1331 : TftSpiBase
     {
         //the SSD1331 also supports 8 bit RGB332 color but this isn't currently supported (but should be quick to add if anyone wants it
         public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
