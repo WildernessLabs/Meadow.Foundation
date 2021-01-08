@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Arducam, ArducamMini, Camera</PackageTags>
     <Version>0.1.25</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Driver for ArducamMini camera controller</Description>
   </PropertyGroup>
   <ItemGroup>
