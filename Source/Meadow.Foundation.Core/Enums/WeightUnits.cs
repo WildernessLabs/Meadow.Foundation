@@ -7,6 +7,7 @@
         Pounds,
         Ounces,
         Grains,
-        Carats
+        Carats,
+        Something
     }
 }
