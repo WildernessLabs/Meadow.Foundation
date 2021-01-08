@@ -1,17 +1,21 @@
 # Meadow.Foundation pipeline
 # Reference: https://aka.ms/yaml
 
+resources:
+  repositories:
+    - repository: MeadowCore
+      type: github
+      endpoint: WildernessLabs
+      name: WildernessLabs/Meadow.Core
+
 trigger:
-  - release
-  - staging
+  - ci_dev
 
 variables:
-  solution: "**/Meadow.Foundation.Drivers.sln"
+  solution: "**/Meadow.Foundation.sln"
   buildPlatform: "Any CPU"
   buildConfiguration: "Release"
   internalFeedName: "Meadow02"
-  preReleasePackageBranch: "refs/heads/staging"
-  meadowNugetServiceConnectionName: "Meadow_Nuget"
 
 pool:
   vmImage: windows-2019
@@ -21,6 +25,8 @@ stages:
     jobs:
       - job: Build_Solution
         steps:
+          - checkout: self
+          - checkout: MeadowCore
           - task: NuGetToolInstaller@1
             inputs:
               versionSpec: 5.8
@@ -28,7 +34,7 @@ stages:
             displayName: Use_Nugets
             inputs:
               feedsToUse: "select"
-              #vstsFeed: $(internalFeedName) #use internal feed
+              vstsFeed: $(internalFeedName) #use internal feed
               restoreSolution: "$(solution)"
           - task: VSBuild@1
             inputs:
