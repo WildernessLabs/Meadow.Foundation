@@ -15,16 +15,10 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class SerialLcd : ITextDisplay
     {
-        
-
         /// <summary>
         ///     Display configuration (width and height).
         /// </summary>
         public TextDisplayConfig DisplayConfig { get; private set; }
-
-        
-
-        
 
         /// <summary>
         ///     Describe the cursor style to be displayed.
@@ -79,10 +73,6 @@ namespace Meadow.Foundation.Displays
             Right
         }
 
-        
-
-        
-
         /// <summary>
         ///     Byte used to prefix the extended PCD display commands.
         /// </summary>
@@ -93,10 +83,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         private const byte ConfigurationCommandCharacter = 0x7c;
 
-        
-
-        
-
         /// <summary>
         ///     Comp port being used to communicate with the display.
         /// </summary>
@@ -106,10 +92,6 @@ namespace Meadow.Foundation.Displays
         ///     object for using lock() to do thread synch
         /// </summary>
         protected object _lock = new object();
-
-        
-
-        
 
         /// <summary>
         ///     Create a new SerialLcd object.
@@ -164,10 +146,6 @@ namespace Meadow.Foundation.Displays
             Send(new[] { ConfigurationCommandCharacter, characters, ConfigurationCommandCharacter, lines });
             Thread.Sleep(10);
         }
-
-        
-
-        
 
         /// <summary>
         ///     Write the buffer of data to the COM port (i.e. the display).
@@ -464,7 +442,5 @@ namespace Meadow.Foundation.Displays
             //can safely ignore
             //required for ITextDisplayMenu
         }
-
-        
     }
 }
