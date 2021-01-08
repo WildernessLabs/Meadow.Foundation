@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Power.Ina260.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Power.Ina260\Sensors.Power.Ina260.csproj" />
   </ItemGroup>
 </Project>

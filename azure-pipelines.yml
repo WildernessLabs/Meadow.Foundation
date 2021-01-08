@@ -2,7 +2,7 @@
 # Reference: https://aka.ms/yaml
 
 trigger:
-  - main
+  - release
   - staging
 
 variables:
