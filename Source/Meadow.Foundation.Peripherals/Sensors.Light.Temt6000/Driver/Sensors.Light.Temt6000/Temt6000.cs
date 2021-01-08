@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Light
 {
     public class Temt6000
     {
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     Analog port connected to the sensor.
@@ -20,9 +20,9 @@ namespace Meadow.Foundation.Sensors.Light
             return sensor.Read();
         }
 
-        #endregion Member variables / fields
+        
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new light sensor object using a static reference voltage.
@@ -33,6 +33,6 @@ namespace Meadow.Foundation.Sensors.Light
             sensor = device.CreateAnalogInputPort(pin);
         }
 
-        #endregion Constructors
+        
     }
 }

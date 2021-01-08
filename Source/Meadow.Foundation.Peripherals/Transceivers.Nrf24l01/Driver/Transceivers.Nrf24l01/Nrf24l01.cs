@@ -812,8 +812,6 @@ namespace Meadow.Foundation.Transceivers
         //    return result;
         //}
 
-
-
         //void whatHappened(bool& tx_ok, bool& tx_fail, bool& rx_ready)
         //{
         //    // Read the status & reset the status in one easy call

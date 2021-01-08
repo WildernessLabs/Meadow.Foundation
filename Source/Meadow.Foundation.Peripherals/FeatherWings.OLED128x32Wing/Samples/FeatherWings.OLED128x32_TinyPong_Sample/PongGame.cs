@@ -17,7 +17,6 @@ namespace FeatherWings.OLED128x32_TinyPong_Sample
         public int PaddleWidth => 3;
         public int PaddleHeight => 12;
 
-
         public int BallX { get; protected set; }
         public int BallY { get; protected set; }
         public int BallRadius  => 2;

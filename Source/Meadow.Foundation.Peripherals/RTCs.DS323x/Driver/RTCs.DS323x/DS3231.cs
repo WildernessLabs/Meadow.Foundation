@@ -7,7 +7,7 @@ namespace Meadow.Foundation.RTCs
     /// </summary>
     public class Ds3231 : Ds323x
     {
-        #region Constructors
+        
 
         /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component.
@@ -46,6 +46,6 @@ namespace Meadow.Foundation.RTCs
             }
         }
 
-        #endregion Constructors
+        
     }
 }

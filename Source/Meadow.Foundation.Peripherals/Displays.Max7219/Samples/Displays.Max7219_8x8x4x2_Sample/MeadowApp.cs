@@ -35,7 +35,6 @@ namespace MeadowApp
                  { -cubeSize,  cubeSize, -cubeSize},
             };
 
-
             Init();
 
             Show3dCube();
@@ -152,9 +151,6 @@ namespace MeadowApp
             graphics.DrawLine(cubeWireframe[2, 0], cubeWireframe[2, 1], cubeWireframe[6, 0], cubeWireframe[6, 1], true);
             graphics.DrawLine(cubeWireframe[3, 0], cubeWireframe[3, 1], cubeWireframe[7, 0], cubeWireframe[7, 1], true);
         }
-
-
-
 
     }
 }

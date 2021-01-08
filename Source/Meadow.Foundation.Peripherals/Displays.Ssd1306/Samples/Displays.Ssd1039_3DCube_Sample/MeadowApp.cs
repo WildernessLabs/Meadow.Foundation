@@ -45,7 +45,6 @@ namespace Displays.Ssd1309_3DCube_Sample
                  { -cubeSize,  cubeSize, -cubeSize},
             };
 
-
             /*  cube_vertex = new int[8, 3] {
                    { -20, -20, front_depth},
                    {  20, -20, front_depth},
@@ -168,7 +167,6 @@ namespace Displays.Ssd1309_3DCube_Sample
             graphics.DrawLine(cubeWireframe[2, 0], cubeWireframe[2, 1], cubeWireframe[6, 0], cubeWireframe[6, 1], true);
             graphics.DrawLine(cubeWireframe[3, 0], cubeWireframe[3, 1], cubeWireframe[7, 0], cubeWireframe[7, 1], true);
         }
-
 
         void ShowGrid()
         {

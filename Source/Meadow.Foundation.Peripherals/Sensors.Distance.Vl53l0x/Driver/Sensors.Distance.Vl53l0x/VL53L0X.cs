@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public class Vl53l0x : FilterableChangeObservableBase<DistanceConditionChangeResult, DistanceConditions>, IRangeFinder
     {
-        #region const
+        
 
         protected const byte RangeStart = 0x00;
         protected const byte SystemThreahHigh = 0x0C;
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Distance
         protected const int VcselPeriodPreRange = 0;
         protected const int VcselPeriodFinalRange = 1;
 
-        #endregion
+        
 
         public enum UnitType
         {

@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class Max7219 : DisplayBase
     {
-        #region Properties
+        
 
         /// <summary>
         /// MAX7219 Spi Clock Frequency
@@ -40,9 +40,9 @@ namespace Meadow.Foundation.Displays
 
         public override uint Height => (uint)(8 * DeviceRows);
 
-        #endregion Properties
+        
 
-        #region Member variables / fields
+        
 
         private ISpiPeripheral max7219;
 
@@ -64,9 +64,9 @@ namespace Meadow.Foundation.Displays
 
         private readonly byte DECIMAL = 0b10000000;
 
-        #endregion Member variables / fields
+        
 
-        #region Enums
+        
 
         public enum Max7219Type
         {
@@ -115,9 +115,9 @@ namespace Meadow.Foundation.Displays
             DisplayTest = 0x0F
         }
 
-        #endregion Enums
+        
 
-        #region Constructors
+        
 
         public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceCount = 1, Max7219Type maxMode = Max7219Type.Display)
             :this(spiBus, csPort, 8, 1, maxMode)
@@ -153,7 +153,7 @@ namespace Meadow.Foundation.Displays
             : this(spiBus, device.CreateDigitalOutputPort(csPin), deviceCount, 1, maxMode)
         { }
 
-        #endregion Constructors
+        
 
         /// <summary>
         /// Standard initialization routine.
@@ -365,7 +365,6 @@ namespace Meadow.Foundation.Displays
 
             var display = y / 8 + (x / 8) * DeviceRows;
 
-
             if(display > DeviceCount)
             {
                 Console.WriteLine($"Display out of range {x}, {y}");
@@ -397,7 +396,6 @@ namespace Meadow.Foundation.Displays
             var index = x % 8;
 
             var display = y / 8 + (x / 8) * DeviceRows;
-
 
             if (display > DeviceCount)
             {

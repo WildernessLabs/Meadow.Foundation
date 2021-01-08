@@ -7,8 +7,6 @@ Adafruit display notes: https://learn.adafruit.com/adafruit-eink-display-breakou
 
 Good displays: https://github.com/ZinggJM/GxEPD/blob/master/src/GxGDEW027C44/GxGDEW027C44.cpp
 
-
-
 ## Controllers
 IL0731*
 ### IL0373
@@ -16,7 +14,6 @@ IL0731*
 - 2.13" tri color 212x104
 - 2.13" BW 212x104
 - 2.9" BW 296x128
-
 
 IL0376F*
 IL0398 - 4.2" tri
@@ -44,5 +41,4 @@ EPD2i7 264x176 -> IL91874 ???
 EPD2i9b 296x128 -> ... could be IL0373?? CHECK
 
 EPD4i2b 400x300 -> IL0398 (nope)
-
 

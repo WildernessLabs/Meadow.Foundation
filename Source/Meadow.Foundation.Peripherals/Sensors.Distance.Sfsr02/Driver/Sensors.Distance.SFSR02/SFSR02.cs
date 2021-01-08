@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Distance
 {
     public class Sfsr02 : IRangeFinder
     {
-        #region Properties
+        
 
         /// <summary>
         /// Returns current distance detected in cm.
@@ -32,9 +32,9 @@ namespace Meadow.Foundation.Sensors.Distance
         public event EventHandler<DistanceEventArgs> DistanceDetected;
         public event EventHandler<DistanceConditionChangeResult> Updated;
 
-        #endregion
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         /// Trigger/Echo Pin
@@ -43,9 +43,9 @@ namespace Meadow.Foundation.Sensors.Distance
 
         protected long tickStart;
 
-        #endregion
+        
 
-        #region Constructors
+        
 
         /// <summary>
         /// Create a new SFSR02 object with an IO Device
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Distance
             this.triggerEchoPort.Changed += OnEchoPortChanged;
         }
 
-        #endregion
+        
 
         /// <summary>
         /// Sends a trigger signal

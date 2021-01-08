@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays.Led
     /// </summary>
     public class SevenSegment
     {
-        #region Enums
+        
         /// <summary>
         /// Valid Characters to display
         /// </summary>
@@ -34,9 +34,9 @@ namespace Meadow.Foundation.Displays.Led
             count
         }
 
-        #endregion
+        
 
-        #region Member variables / fields
+        
 
         private readonly IDigitalOutputPort _portA;
         private readonly IDigitalOutputPort _portB;
@@ -70,9 +70,9 @@ namespace Meadow.Foundation.Displays.Led
              {0, 0, 0, 0, 0, 0, 0}, //blank
         };
 
-        #endregion
+        
 
-        #region Constructor
+        
 
         /// <summary>
         /// Creates a SevenSegment connected to the especified IPins to a IODevice
@@ -135,9 +135,9 @@ namespace Meadow.Foundation.Displays.Led
             _isCommonCathode = isCommonCathode;
         }
 
-        #endregion
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Displays the especified character
@@ -190,6 +190,6 @@ namespace Meadow.Foundation.Displays.Led
             SetDisplay(charType, showDecimal);
         }
 
-        #endregion
+        
     }
 }

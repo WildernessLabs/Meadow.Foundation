@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor
     {
-        #region Enums
+        
 
         /// <summary>
         /// LM75 Registers
@@ -27,18 +27,18 @@ namespace Meadow.Foundation.Sensors.Temperature
             LM_TOS = 0x03
         }
 
-        #endregion Enums
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     LM75 sensor.
         /// </summary>
         private readonly II2cPeripheral lm75;
 
-        #endregion Member variables / fields
+        
 
-        #region Properties
+        
 
         public byte DEFAULT_ADDRESS => 0x48;
 
@@ -63,15 +63,15 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        #endregion Properties
+        
 
-        #region Events and delegates
+        
 
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
-        #endregion Events and delegates
+        
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new TMP102 object using the default configuration for the sensor.
@@ -82,9 +82,9 @@ namespace Meadow.Foundation.Sensors.Temperature
             lm75 = new I2cPeripheral(i2cBus, address);
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -184,6 +184,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             Conditions.Temperature = (float)Math.Round(temp, 1);
         }
 
-        #endregion Methods
+        
     }
 }

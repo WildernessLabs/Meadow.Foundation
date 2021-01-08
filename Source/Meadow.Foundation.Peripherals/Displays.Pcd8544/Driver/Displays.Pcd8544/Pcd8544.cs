@@ -70,7 +70,6 @@ namespace Meadow.Foundation.Displays
             Show();
         }
 
-
         /// <summary>
         ///     Clear the display
         /// </summary>

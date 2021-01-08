@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IBarometricPressureSensor
     {
-        #region Structures
+        
 
         /// <summary>
         ///     Device registers.
@@ -45,9 +45,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             public double C12;
         }
 
-        #endregion Structures
+        
 
-        #region Properties
+        
 
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
@@ -75,15 +75,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        #endregion Properties
+        
 
-        #region Events and delegates
+        
 
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
-        #endregion Events and delegates
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     SI7021 is an I2C device.
@@ -100,9 +100,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         private readonly ushort _updateInterval = 100;
 
-        #endregion Member variables / fields
+        
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new MPL115A2 temperature and humidity sensor object.
@@ -153,9 +153,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             coefficients.C12 = (double)c12 / 4194304;
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -260,6 +260,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Conditions.Pressure = (float)(PRESSURE_CONSTANT * compensatedPressure) + 50;
         }
 
-        #endregion Methods
+        
     }
 }

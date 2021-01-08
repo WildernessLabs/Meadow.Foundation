@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Motion
     public class Adxl345 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
         IAccelerometer
     {
-        #region Constants
+        
 
         /// <summary>
         ///     Minimum value that can be used for the update interval when the
@@ -22,9 +22,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public const ushort MinimumPollingPeriod = 100;
 
-        #endregion Constants
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     Communication bus used to communicate with the sensor.
@@ -35,9 +35,9 @@ namespace Meadow.Foundation.Sensors.Motion
         private object lockObject = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        #endregion Member variables / fields
+        
 
-        #region enums
+        
 
         /// <summary>
         ///     Possible values for the range (see DataFormat register).
@@ -67,9 +67,9 @@ namespace Meadow.Foundation.Sensors.Motion
             OneHz = 0x03,
         }
 
-        #endregion enums
+        
 
-        #region Classes / structures
+        
 
         /// <summary>
         ///     Control registers for the ADXL345 chip.
@@ -111,9 +111,9 @@ namespace Meadow.Foundation.Sensors.Motion
             public static readonly byte Z1 = 0x37;
         }
 
-        #endregion Classes / structures
+        
 
-        #region Properties
+        
 
         /// <summary>
         ///     Acceleration along the X-axis.
@@ -184,15 +184,15 @@ namespace Meadow.Foundation.Sensors.Motion
             set { adxl345.WriteRegister(Registers.OffsetZ, (byte)value); }
         }
 
-        #endregion Properties
+        
 
-        #region Events and delegates
+        
 
         public event EventHandler<AccelerationConditionChangeResult> Updated;
 
-        #endregion Events and delegates
+        
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new instance of the ADXL345 communicating over the I2C interface.
@@ -210,9 +210,9 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         ///// <summary>
         ///// Convenience method to get the current temperature. For frequent reads, use
@@ -405,6 +405,6 @@ namespace Meadow.Foundation.Sensors.Motion
             DebugInformation.DisplayRegisters(Registers.TAPThreshold, registers);
         }
 
-        #endregion Methods
+        
     }
 }

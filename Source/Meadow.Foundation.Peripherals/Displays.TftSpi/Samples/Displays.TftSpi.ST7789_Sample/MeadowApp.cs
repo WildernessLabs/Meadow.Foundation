@@ -400,7 +400,6 @@ namespace Displays.Tft.ST7789_Sample
 
             graphics.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
 
-
             graphics.Show();
 
             Console.WriteLine("Show complete");

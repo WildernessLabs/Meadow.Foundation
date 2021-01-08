@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public class Hcsr04 : IRangeFinder
     {
-        #region Properties
+        
 
         /// <summary>
         /// Returns current distance detected in cm.
@@ -35,9 +35,9 @@ namespace Meadow.Foundation.Sensors.Distance
         public event EventHandler<DistanceEventArgs> DistanceDetected = delegate { };
         public event EventHandler<DistanceConditionChangeResult> Updated;
 
-        #endregion
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         /// Trigger Pin.
@@ -51,9 +51,9 @@ namespace Meadow.Foundation.Sensors.Distance
 
         protected long tickStart;
 
-        #endregion
+        
 
-        #region Constructors
+        
 
         /// <summary>
         /// Create a new HCSR04 object with an IO Device
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Sensors.Distance
             this.echoPort.Changed += OnEchoPortChanged;
         }
 
-        #endregion
+        
 
         /// <summary>
         /// Sends a trigger signal

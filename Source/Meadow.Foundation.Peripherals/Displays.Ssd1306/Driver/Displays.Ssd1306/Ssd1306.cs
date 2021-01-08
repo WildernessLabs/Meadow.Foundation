@@ -64,7 +64,6 @@ namespace Meadow.Foundation.Displays
             I2C,
         }
 
-
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
         public override uint Width => width;

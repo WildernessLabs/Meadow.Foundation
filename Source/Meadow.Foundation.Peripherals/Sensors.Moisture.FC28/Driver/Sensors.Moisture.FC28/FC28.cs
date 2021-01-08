@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        #region Properties
+        
 
         /// <summary>
         /// Gets a value indicating whether the sensor is currently in a sampling
@@ -54,9 +54,9 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public float MaximumVoltageCalibration { get; set; }
 
-        #endregion
+        
 
-        #region Constructors
+        
 
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device.
@@ -89,9 +89,9 @@ namespace Meadow.Foundation.Sensors.Moisture
             MaximumVoltageCalibration = maximumVoltageCalibration;
         }
 
-        #endregion
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Convenience method to get the current soil moisture. For frequent reads, use
@@ -219,6 +219,6 @@ namespace Meadow.Foundation.Sensors.Moisture
             return (((toHigh - toLow) * (value - fromLow)) / (fromHigh - fromLow)) - toLow;
         }
 
-        #endregion
+        
     }
 }

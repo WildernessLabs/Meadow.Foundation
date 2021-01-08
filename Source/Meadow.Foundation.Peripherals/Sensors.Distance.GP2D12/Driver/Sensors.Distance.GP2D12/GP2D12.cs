@@ -8,7 +8,7 @@ namespace Sensors.Distance
 {
     public class Gp2D12 : IRangeFinder
     {
-        #region Member variables / fields
+        
 
         IAnalogInputPort analogInputPort;
 
@@ -23,9 +23,9 @@ namespace Sensors.Distance
 
         public DistanceConditions Conditions => throw new NotImplementedException();
 
-        #endregion Member variables / fields
+        
 
-        #region Constructors
+        
 
         public Gp2D12(IIODevice device, IPin analogInputPin)
         {
@@ -39,9 +39,9 @@ namespace Sensors.Distance
             DistanceDetected?.Invoke(this, new DistanceEventArgs(CurrentDistance));
         }
 
-        #endregion
+        
 
-        #region Methods
+        
 
         public async Task<float> ReadDistance()
         {
@@ -60,6 +60,6 @@ namespace Sensors.Distance
             throw new NotImplementedException();
         }
 
-        #endregion Methods
+        
     }
 }

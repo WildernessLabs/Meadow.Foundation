@@ -7,7 +7,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     //39 key input
     public class Ht16K33
     {
-        #region Enums
+        
         public enum BlinkRate : byte
         {
             Off = 0,
@@ -41,9 +41,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Maximum = 15,
         }
 
-        #endregion Enums
+        
 
-        #region Member variables / fields
+        
         /// <summary>
         ///     HT16K33 LED driver and key scan
         /// </summary>
@@ -61,9 +61,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         readonly byte HT16K33_DIM = 0xE0; // Set brightness / dimmer
         readonly byte HT16K33_DDAP = 0; //display address pointer
 
-        #endregion Member variables / fields
+        
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new HT16K33 object using the default parameters
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             InitHT16K33();
         }
 
-        #endregion Constructors
+        
 
         void InitHT16K33()
         {

@@ -73,7 +73,6 @@ namespace Meadow.Foundation.Sensors.Power
             Address = address;
         }
 
-
         public Ina260(II2cBus i2cBus, Addresses address)
             : this(i2cBus, (byte)address)
         {

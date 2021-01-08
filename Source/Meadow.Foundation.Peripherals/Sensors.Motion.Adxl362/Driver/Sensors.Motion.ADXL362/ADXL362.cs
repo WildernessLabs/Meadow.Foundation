@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Motion
     public class Adxl362 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
         IAccelerometer
     {
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     ADXL362 sensor object.
@@ -32,9 +32,9 @@ namespace Meadow.Foundation.Sensors.Motion
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        #endregion Member variables / fields
+        
 
-        #region Classes / structures
+        
 
         /// <summary>
         ///     Command byte (first byte in any communication).
@@ -558,9 +558,9 @@ namespace Meadow.Foundation.Sensors.Motion
             public const byte LoopMode = 0x30;
         }
 
-        #endregion Classes / structures
+        
 
-        #region Properties
+        
 
         /// <summary>
         ///     Acceleration along the X-axis.
@@ -749,15 +749,15 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        #endregion Properties
+        
 
-        #region Events and delegates
+        
 
         public event EventHandler<AccelerationConditionChangeResult> Updated;
 
-        #endregion Events and delegates
+        
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new ADXL362 object using the specified SPI module.
@@ -774,9 +774,9 @@ namespace Meadow.Foundation.Sensors.Motion
             Start();
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         ///// <summary>
         ///// Convenience method to get the current temperature. For frequent reads, use
@@ -1059,6 +1059,6 @@ namespace Meadow.Foundation.Sensors.Motion
             DebugInformation.DisplayRegisters(Registers.XAxis8Bits, dataRegisters);
         }
 
-        #endregion Methods
+        
     }
 }

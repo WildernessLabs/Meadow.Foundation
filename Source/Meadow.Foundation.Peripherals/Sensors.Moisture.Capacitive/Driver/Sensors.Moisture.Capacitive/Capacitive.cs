@@ -16,14 +16,14 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public event EventHandler<FloatChangeResult> Updated = delegate { };
 
-        #region Member Variables / fields
+        
 
         // internal thread lock
         private object _lock = new object();
 
-        #endregion
+        
 
-        #region Properties
+        
 
         /// <summary>
         /// Returns the analog input port
@@ -52,9 +52,9 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public float MaximumVoltageCalibration { get; set; }
 
-        #endregion
+        
 
-        #region Constructors
+        
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the specified analog pin and a IO device.
@@ -99,9 +99,9 @@ namespace Meadow.Foundation.Sensors.Moisture
                 );
         }
 
-        #endregion
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Convenience method to get the current soil moisture. For frequent reads, use
@@ -181,6 +181,6 @@ namespace Meadow.Foundation.Sensors.Moisture
             return (((toHigh - toLow) * (value - fromLow)) / (fromHigh - fromLow)) - toLow;
         }
 
-        #endregion
+        
     }
 }

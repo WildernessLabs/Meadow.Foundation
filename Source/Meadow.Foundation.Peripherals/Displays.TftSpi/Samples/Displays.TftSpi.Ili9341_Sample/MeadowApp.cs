@@ -180,7 +180,6 @@ namespace Displays.Tft.Ili9341_Sample
 
             Console.WriteLine("Draw");
 
-
             for (int i = 0; i < 30; i++)
             {
                 display.DrawPixel(i, 120 + i, true);

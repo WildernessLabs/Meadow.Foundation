@@ -57,7 +57,6 @@ namespace Sensors.Atmospheric.BME280_Sample
                 Console.WriteLine($"  Relative Humidity: {e.New.Humidity}%");
             };
 
-
             // just for funsies.
             Console.WriteLine($"ChipID: {bme280.GetChipID():X2}");
             //Thread.Sleep(1000);

@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public sealed class Tm1637
     {
-        #region Properties
+        
 
         /// <summary>
         /// Max segments for a TM1637 controller
@@ -74,18 +74,18 @@ namespace Meadow.Foundation.Displays
         }
         private byte _brightness;
 
-        #endregion Properties
+        
 
-        #region Member variables / fields
+        
 
         private readonly IDigitalOutputPort portClock;
         private readonly IBiDirectionalPort portData;
 
         private byte[] displayBuffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-        #endregion Member variables / fields
+        
 
-        #region Enums
+        
 
         /// <summary>
         /// Internal registers to be send to the TM1637
@@ -109,9 +109,9 @@ namespace Meadow.Foundation.Displays
             DisplayOff = 0b1000_0000,
         }
 
-        #endregion Enums
+        
 
-        #region Constructors
+        
 
         /// <summary>
         /// Initialize a TM1637
@@ -317,6 +317,6 @@ namespace Meadow.Foundation.Displays
             Show(clearDisplay);
         }
 
-        #endregion Methods
+        
     }
 }

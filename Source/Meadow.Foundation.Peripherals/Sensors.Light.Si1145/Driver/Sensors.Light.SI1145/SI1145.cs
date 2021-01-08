@@ -6,16 +6,16 @@ namespace Meadow.Foundation.Sensors.Light
 {
     public class Si1145
     {
-        #region Member variables and fields
+        
 
         /// <summary>
         ///     Command bus object used to communicate with the SI1145 sensor.
         /// </summary>
         private II2cPeripheral si1145;
 
-        #endregion Member variables and fields
+        
 
-        #region Fields / Member variables
+        
 
         /* COMMANDS*/
         readonly byte PARAM_QUERY = 0x80;
@@ -86,7 +86,6 @@ namespace Meadow.Foundation.Sensors.Light
         readonly byte PARAM_ADCMUX_SMALLIR = 0x00;
         readonly byte PARAM_ADCMUX_LARGEIR = 0x03;
 
-
         /* REGISTERS */
         readonly byte REG_PARTID = 0x00;
         readonly byte REG_REVID = 0x01;
@@ -134,10 +133,9 @@ namespace Meadow.Foundation.Sensors.Light
         readonly byte REG_PARAMRD = 0x2E;
         readonly byte REG_CHIPSTAT = 0x30;
 
+        
 
-        #endregion Fields / Member variables
-
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new SI1145 sensor object.
@@ -156,9 +154,9 @@ namespace Meadow.Foundation.Sensors.Light
             Initialize();
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         public double GetUltraViolet()
         {
@@ -227,7 +225,6 @@ namespace Meadow.Foundation.Sensors.Light
             // in high range mode
             WriteParam(PARAM_ALSIRADCMISC, PARAM_ALSIRADCMISC_RANGE);
 
-
             // fastest clocks, clock div 1
             WriteParam(PARAM_ALSVISADCGAIN, 0);
             // take 511 clocks to measure
@@ -281,6 +278,6 @@ namespace Meadow.Foundation.Sensors.Light
             Thread.Sleep(10);
         }
 
-        #endregion
+        
     }
 }

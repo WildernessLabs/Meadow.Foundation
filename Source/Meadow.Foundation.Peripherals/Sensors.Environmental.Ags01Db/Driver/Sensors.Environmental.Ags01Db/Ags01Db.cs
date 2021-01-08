@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// </summary>
     public class Ags01Db
     {
-        #region Constants
+        
 
         private const byte CRC_POLYNOMIAL = 0x31;
         private const byte CRC_INIT = 0xFF;
@@ -22,24 +22,24 @@ namespace Meadow.Foundation.Sensors.Environmental
         private const byte ASG_VERSION_MSB = 0x0A;
         private const byte ASG_VERSION_LSB = 0x01;
 
-        #endregion Constants
+        
 
-        #region Member variables / fields
+        
 
         private readonly II2cPeripheral sensor;
 
-        #endregion Member variables / fields
+        
 
-        #region Constructors
+        
 
         public Ags01Db(II2cBus i2cBus, byte address = 0x11)
         {
             sensor = new I2cPeripheral(i2cBus, address);
         }
 
-        #endregion
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Get ASG01DB VOC Gas Concentration
@@ -117,6 +117,6 @@ namespace Meadow.Foundation.Sensors.Environmental
             return (crc == crc8);
         }
 
-        #endregion
+        
     }
 }

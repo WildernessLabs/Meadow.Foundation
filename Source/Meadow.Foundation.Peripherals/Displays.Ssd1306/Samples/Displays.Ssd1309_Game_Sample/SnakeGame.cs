@@ -48,8 +48,6 @@ namespace Displays.Ssd1309_3DCube_Sample
 
         Random rand = new Random((int)DateTime.Now.Ticks);
 
-
-
         enum CellType : byte
         {
             Empty,

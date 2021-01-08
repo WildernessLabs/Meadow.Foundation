@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public class Hysrf05 : IRangeFinder
     {
-        #region Properties
+        
 
         /// <summary>
         /// Returns current distance detected in cm.
@@ -35,9 +35,9 @@ namespace Meadow.Foundation.Sensors.Distance
         public event EventHandler<DistanceEventArgs> DistanceDetected;
         public event EventHandler<DistanceConditionChangeResult> Updated;
 
-        #endregion
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         /// Trigger Pin.
@@ -51,9 +51,9 @@ namespace Meadow.Foundation.Sensors.Distance
 
         protected long tickStart;
 
-        #endregion
+        
 
-        #region Constructors
+        
 
         /// <summary>
         /// Create a new HYSRF05 object with a IO Device
@@ -81,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Distance
             this.echoPort.Changed += OnEchoPortChanged;
         }
 
-        #endregion
+        
 
         /// <summary>
         /// Sends a trigger signal

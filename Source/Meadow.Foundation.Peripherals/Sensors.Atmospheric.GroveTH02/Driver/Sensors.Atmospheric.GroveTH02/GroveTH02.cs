@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
-        #region Constants
+        
 
         /// <summary>
         ///     Start measurement bit in the configuration register.
@@ -41,9 +41,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public const ushort MinimumPollingPeriod = 200;
 
-        #endregion
+        
 
-        #region Class
+        
 
         /// <summary>
         ///     Register addresses in the Grove TH02 sensor.
@@ -76,9 +76,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             public const byte ID = 0x11;
         }
 
-        #endregion Class
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     GroveTH02 object.
@@ -90,9 +90,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         private readonly ushort _updateInterval = 100;
 
-        #endregion Member variables / fields
+        
 
-        #region Properties
+        
 
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
@@ -138,15 +138,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        #endregion
+        
 
-        #region Events and delegates
+        
 
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
-        #endregion Events and delegates
+        
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new GroveTH02 object using the default parameters for the component.
@@ -158,9 +158,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             groveTH02 = new I2cPeripheral(i2cBus, address);
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -275,6 +275,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Conditions.Temperature = (((float)temp) / 32) - 50;
         }
 
-        #endregion
+        
     }
 }
