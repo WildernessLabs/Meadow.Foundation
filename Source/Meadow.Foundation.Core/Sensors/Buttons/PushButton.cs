@@ -28,7 +28,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// The minimum duration for a long press.
         /// </summary>
-        public TimeSpan LongPressThreshold { get; set; } = TimeSpan.Zero;
+        public TimeSpan LongPressThreshold { get; set; } = new TimeSpan(0, 0, 1);
 
         /// <summary>
         /// Returns digital input port.
@@ -76,9 +76,9 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
-                if (DigitalIn.InterruptMode == InterruptMode.EdgeBoth)
+                if (DigitalIn.InterruptMode == InterruptMode.None)
                 {
-                    throw new Exception("Clicked event requires InterruptMode.EdgeBoth");
+                    throw new Exception("PressStarted event requires InterruptMode to be != None");
                 }
                 _clickDelegate += value;
             }
@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         private event EventHandler _pressStartDelegate = delegate { };
         private event EventHandler _pressEndDelegate = delegate { };
         private event EventHandler _longPressDelegate = delegate { };
-        private bool _inputCreatedInternally = false;
+        //private bool _inputCreatedInternally = false;
 
         /// <summary>
         /// Returns the current raw state of the switch.
@@ -127,7 +127,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Circuit Termination Type (CommonGround, High or Floating)
         /// </summary>
-        protected CircuitTerminationType _circuitType;
+        //protected CircuitTerminationType _circuitType;
 
         #endregion
 
@@ -138,22 +138,16 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         /// <param name="device"></param>
         /// <param name="inputPin"></param>
+        /// <param name="interruptMode"></param>
         /// <param name="resistor"></param>
         /// <param name="debounceDuration"></param>
-        public PushButton(IIODevice device, IPin inputPin, ResistorMode resistor = ResistorMode.Disabled, int debounceDuration = 20)
-        {
-            // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
-            DigitalIn = device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistor, debounceDuration);
-            _inputCreatedInternally = true;
-            DigitalIn.Changed += DigitalInChanged;
-        }
+        public PushButton(IIODevice device, IPin inputPin, InterruptMode interruptMode = InterruptMode.EdgeRising, ResistorMode resistor = ResistorMode.Disabled, int debounceDuration = 20) :
+            this (device.CreateDigitalInputPort(inputPin, interruptMode, resistor, debounceDuration)) { }
 
         /// <summary>
         /// Creates a PushButton on a digital input portespecifying Interrupt Mode, Circuit Type and optionally Debounce filter duration.
         /// </summary>
-        /// <param name="interruptPort"></param>
-        /// <param name="resistor"></param>
-        /// <param name="debounceDuration"></param>
+        /// <param name="interruptPort"></param>        
         public PushButton(IDigitalInputPort interruptPort)
         {
             DigitalIn = interruptPort;            
@@ -164,21 +158,12 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         #region Methods
 
-        public void Dispose()
-        {
-            if(_inputCreatedInternally)
-            {
-                DigitalIn.Dispose();
-                DigitalIn = null;
-            }
-        }
-
         private void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
             bool STATE_PRESSED = false;
             bool STATE_RELEASED = true;
 
-//            Console.WriteLine($"PB: InputChanged. State == {State}. e.Value: {e.Value}.  DI State: {DigitalIn.State}");
+            //Console.WriteLine($"PB: InputChanged. State == {State}. e.Value: {e.Value}.  DI State: {DigitalIn.State}");
 
             if (State == STATE_PRESSED)
             {
@@ -241,6 +226,15 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected virtual void RaiseLongPress()
         {
             _longPressDelegate(this, new EventArgs());
+        }
+
+        public void Dispose()
+        {
+            //if (_inputCreatedInternally)
+            //{
+                DigitalIn.Dispose();
+                DigitalIn = null;
+            //}
         }
 
         #endregion

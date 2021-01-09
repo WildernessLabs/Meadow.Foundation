@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         public RotaryEncoderWithButton(IIODevice device, IPin aPhasePin, IPin bPhasePin, IPin buttonPin, ResistorMode resistor = ResistorMode.PullDown, int debounceDuration = 20)
             : base(device, aPhasePin, bPhasePin)
         {
-            _button = new PushButton(device, buttonPin,resistor, debounceDuration);
+            _button = new PushButton(device, buttonPin, InterruptMode.EdgeBoth, resistor, debounceDuration);
 
             _button.Clicked += ButtonClicked;
             _button.PressEnded += ButtonPressEnded;
