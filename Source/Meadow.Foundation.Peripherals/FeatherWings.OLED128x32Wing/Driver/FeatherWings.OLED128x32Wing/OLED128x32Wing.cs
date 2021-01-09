@@ -28,9 +28,13 @@ namespace Meadow.Foundation.FeatherWings
         {
             Display = new Ssd1306(i2cBus, 0x3C, Ssd1306.DisplayType.OLED128x32);
 
-            ButtonA = new PushButton(portA, ResistorMode.PullUp);
+            portA.Resistor = ResistorMode.PullUp;           
+            ButtonA = new PushButton(portA);
+
             ButtonB = new PushButton(portB); // has physical resistor
-            ButtonC = new PushButton(portC, ResistorMode.PullUp);
+
+            portC.Resistor = ResistorMode.PullUp;
+            ButtonC = new PushButton(portC);
         }
     }
 }
