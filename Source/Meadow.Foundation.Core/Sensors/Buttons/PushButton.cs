@@ -9,20 +9,7 @@ namespace Meadow.Foundation.Sensors.Buttons
     /// </summary>
     public class PushButton : IButton, IDisposable
     {
-        #region Properties
-        /// <summary>
-        /// This duration controls the debounce filter. It also has the effect
-        /// of rate limiting clicks. Decrease this time to allow users to click
-        /// more quickly.
-        /// </summary>
-        public TimeSpan DebounceDuration
-        {
-            get => (DigitalIn != null) ? new TimeSpan(0, 0, 0, 0, (int)DigitalIn.DebounceDuration) : TimeSpan.MinValue;
-            set
-            {
-                DigitalIn.DebounceDuration = (int)value.TotalMilliseconds;
-            }
-        }
+        #region Properties        
 
         /// <summary>
         /// Returns the sanitized state of the switch. If the switch 
@@ -89,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
-                if (DigitalIn.InterruptMode != InterruptMode.EdgeBoth)
+                if (DigitalIn.InterruptMode == InterruptMode.EdgeBoth)
                 {
                     throw new Exception("Clicked event requires InterruptMode.EdgeBoth");
                 }
@@ -167,11 +154,9 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="interruptPort"></param>
         /// <param name="resistor"></param>
         /// <param name="debounceDuration"></param>
-        public PushButton(IDigitalInputPort interruptPort, ResistorMode resistor = ResistorMode.Disabled, int debounceDuration = 20)
+        public PushButton(IDigitalInputPort interruptPort)
         {
-            DigitalIn = interruptPort;
-            DigitalIn.Resistor = resistor;
-            DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
+            DigitalIn = interruptPort;            
             DigitalIn.Changed += DigitalInChanged;
         }
 
