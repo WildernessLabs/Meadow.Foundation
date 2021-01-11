@@ -13,17 +13,98 @@ namespace Sensors.Buttons.PushButton_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         RgbPwmLed led;
+        PushButton pushButton;
         List<PushButton> pushButtons;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            led = new RgbPwmLed(Device, Device.Pins.OnboardLedRed, Device.Pins.OnboardLedGreen, Device.Pins.OnboardLedBlue);
+            TestSinglePort();
+            //TestMultiplePorts();
+
+            Console.WriteLine("PushButton(s) ready!!!");
+        }
+
+        void TestSinglePort()
+        {
+            led = new RgbPwmLed(
+                Device,
+                Device.Pins.D12,
+                Device.Pins.D11,
+                Device.Pins.D10);
+            led.SetColor(Color.Red);
+
+            //var interruptPort = Device.CreateDigitalInputPort(
+            //    pin: Device.Pins.MOSI,
+            //    interruptMode: InterruptMode.EdgeRising,
+            //    resistorMode: ResistorMode.PullUp, 20);
+            //pushButton = new PushButton(interruptPort);
+            //pushButton = new PushButton(
+            //    device: Device,
+            //    inputPin: Device.Pins.MOSI,
+            //    interruptMode: InterruptMode.EdgeRising,
+            //    resistor: ResistorMode.PullUp);
+
+            //var interruptPort = Device.CreateDigitalInputPort(
+            //    pin: Device.Pins.D02,
+            //    interruptMode: InterruptMode.EdgeFalling,
+            //    resistorMode: ResistorMode.PullDown, 20);
+            //pushButton = new PushButton(interruptPort);
+            //pushButton = new PushButton(
+            //    device: Device,
+            //    inputPin: Device.Pins.D02,
+            //    interruptMode: InterruptMode.EdgeFalling,
+            //    resistor: ResistorMode.PullDown);
+
+            var interruptPort = Device.CreateDigitalInputPort(
+                pin: Device.Pins.D03,
+                interruptMode: InterruptMode.EdgeBoth,
+                resistorMode: ResistorMode.Disabled);
+            pushButton = new PushButton(interruptPort);
+            //pushButton = new PushButton(
+            //    device: Device,
+            //    inputPin: Device.Pins.D03,
+            //    interruptMode: InterruptMode.EdgeBoth,
+            //    resistor: ResistorMode.Disabled);
+
+            //var interruptPort = Device.CreateDigitalInputPort(
+            //    pin: Device.Pins.D04,
+            //    interruptMode: InterruptMode.EdgeRising, 
+            //    resistorMode: ResistorMode.Disabled);
+            //pushButton = new PushButton(interruptPort);
+            //pushButton = new PushButton(
+            //    device: Device,
+            //    inputPin: Device.Pins.D04,
+            //    resistor: ResistorMode.Disabled);
+
+            if (pushButton.DigitalIn.InterruptMode == InterruptMode.EdgeRising ||
+                pushButton.DigitalIn.InterruptMode == InterruptMode.EdgeFalling)
+            {
+                pushButton.Clicked += PushButtonClicked;
+            }
+
+            if (pushButton.DigitalIn.InterruptMode == InterruptMode.EdgeBoth)
+            {
+                pushButton.PressStarted += PushButtonPressStarted;
+                pushButton.PressEnded += PushButtonPressEnded;
+                pushButton.LongPressClicked += PushButtonLongPressClicked;
+            }
+
+            led.SetColor(Color.Green);
+        }
+
+        void TestMultiplePorts() 
+        {
+            led = new RgbPwmLed(
+                Device, 
+                Device.Pins.OnboardLedRed, 
+                Device.Pins.OnboardLedGreen, 
+                Device.Pins.OnboardLedBlue);
             led.SetColor(Color.Red);
 
             // Important note: You can only use on Push Button per Group Set (GSXX)
-            pushButtons = new List<PushButton> 
+            pushButtons = new List<PushButton>
             {
                 //new PushButton(Device, Device.Pins.A04, InterruptMode.EdgeRising, ResistorMode.PullUp),         // <- GS00
                 new PushButton(Device, Device.Pins.D06, InterruptMode.EdgeRising, ResistorMode.PullUp),         // <- GS00
@@ -60,19 +141,26 @@ namespace Sensors.Buttons.PushButton_Sample
                 new PushButton(Device, Device.Pins.D13, InterruptMode.EdgeRising, ResistorMode.PullUp),         // <- GS15
             };
 
-            for(int i = 0; i < pushButtons.Count; i++)
+            for (int i = 0; i < pushButtons.Count; i++)
             {
-                pushButtons[i].Clicked += PushbuttonClicked;
-                //pushButtons[i].PressStarted += PushbuttonPressStarted;
-                //pushButtons[i].PressEnded += PushbuttonPressEnded;
-                //pushButtons[i].LongPressClicked += PushButtonLongPressClicked;
+                if (pushButtons[i].DigitalIn.InterruptMode == InterruptMode.EdgeRising ||
+                    pushButtons[i].DigitalIn.InterruptMode == InterruptMode.EdgeFalling)
+                {
+                    pushButtons[i].Clicked += PushButtonClicked;
+                }
+
+                if (pushButtons[i].DigitalIn.InterruptMode == InterruptMode.EdgeBoth)
+                {
+                    pushButtons[i].PressStarted += PushButtonPressStarted;
+                    pushButtons[i].PressEnded += PushButtonPressEnded;
+                    pushButtons[i].LongPressClicked += PushButtonLongPressClicked;
+                }
             }
 
             led.SetColor(Color.Green);
-            Console.WriteLine("PushButton(s) ready!!!");
         }
 
-        void PushbuttonClicked(object sender, EventArgs e)
+        void PushButtonClicked(object sender, EventArgs e)
         {
             Console.WriteLine($"PushButton Clicked!");
             led.SetColor(Color.Magenta);
@@ -80,13 +168,13 @@ namespace Sensors.Buttons.PushButton_Sample
             led.SetColor(Color.Green);
         }
 
-        void PushbuttonPressStarted(object sender, EventArgs e)
+        void PushButtonPressStarted(object sender, EventArgs e)
         {
             Console.WriteLine($"PushButton PressStarted!");
             led.SetColor(Color.Red);
         }
 
-        void PushbuttonPressEnded(object sender, EventArgs e)
+        void PushButtonPressEnded(object sender, EventArgs e)
         {
             Console.WriteLine($"PushButton PressEnded!");
             led.SetColor(Color.Green);
