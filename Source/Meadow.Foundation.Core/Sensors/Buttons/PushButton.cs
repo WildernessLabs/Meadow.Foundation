@@ -139,8 +139,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="device"></param>
         /// <param name="inputPin"></param>
         /// <param name="resistor"></param>
-        /// <param name="debounceDuration"></param>
-        [Obsolete("[b4.4] Constructor Deprecated: Please use the newer constructor that passes an InterruptMode parameter instead.")]
+        /// <param name="debounceDuration"></param>        
         public PushButton(IIODevice device, IPin inputPin, ResistorMode resistor = ResistorMode.Disabled, int debounceDuration = 20)
         {
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
@@ -154,33 +153,11 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="interruptPort"></param>
         /// <param name="resistor"></param>
         /// <param name="debounceDuration"></param>
-        [Obsolete("[b4.4] Constructor Deprecated: Please use the newer constructor that passes an InterruptMode parameter instead.")]
         public PushButton(IDigitalInputPort interruptPort, ResistorMode resistor = ResistorMode.Disabled, int debounceDuration = 20)
         {
             DigitalIn = interruptPort;
             DigitalIn.Resistor = resistor;
             DigitalIn.DebounceDuration = debounceDuration;
-            DigitalIn.Changed += DigitalInChanged;
-        }
-
-        /// <summary>
-        /// Creates PushButto a digital input port connected on a IIOdevice, especifying Interrupt Mode, Circuit Type and optionally Debounce filter duration.
-        /// </summary>
-        /// <param name="device"></param>
-        /// <param name="inputPin"></param>
-        /// <param name="interruptMode"></param>
-        /// <param name="resistor"></param>
-        /// <param name="debounceDuration"></param>
-        public PushButton(IIODevice device, IPin inputPin, InterruptMode interruptMode = InterruptMode.EdgeRising, ResistorMode resistor = ResistorMode.Disabled, int debounceDuration = 20) :
-            this (device.CreateDigitalInputPort(inputPin, interruptMode, resistor, debounceDuration)) { }
-
-        /// <summary>
-        /// Creates a PushButton on a digital input port.
-        /// </summary>
-        /// <param name="interruptPort"></param>        
-        public PushButton(IDigitalInputPort interruptPort)
-        {
-            DigitalIn = interruptPort;            
             DigitalIn.Changed += DigitalInChanged;
         }
 
@@ -217,7 +194,10 @@ namespace Meadow.Foundation.Sensors.Buttons
                 }
                 else
                 {
-                    RaiseClicked();
+                    if (e.Value)
+                    {
+                        RaiseClicked();
+                    }
                 }
 
                 // raise the other events
