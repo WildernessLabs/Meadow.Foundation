@@ -4,7 +4,7 @@ using Meadow;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Distance;
 
-namespace Sensors.Distance
+namespace Meadow.Foundation.Sensors.Distance
 {
     public class Gp2D12 : IRangeFinder
     {
