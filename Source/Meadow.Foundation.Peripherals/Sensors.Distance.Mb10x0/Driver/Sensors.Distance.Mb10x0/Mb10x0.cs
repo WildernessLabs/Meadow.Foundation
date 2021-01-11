@@ -1,7 +1,7 @@
 ﻿using Meadow.Hardware;
 using System;
 
-namespace MeadowLibary
+namespace Meadow.Foundation.Sensors.Distance
 {
     public class Mb10x0
     {
