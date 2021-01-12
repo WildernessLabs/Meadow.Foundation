@@ -19,13 +19,13 @@ namespace Sensors.Buttons.PushButton_Sample
         {
             Console.WriteLine("Initializing...");
 
-            //TestSinglePort();
+            //TestAllResistorTypes();
             TestMultiplePorts();
 
             Console.WriteLine("PushButton(s) ready!!!");
         }
 
-        void TestSinglePort()
+        void TestAllResistorTypes()
         {
             led = new RgbPwmLed(
                 Device,
@@ -55,9 +55,9 @@ namespace Sensors.Buttons.PushButton_Sample
             foreach (var pushButton in pushButtons)
             {
                 pushButton.Clicked += PushButtonClicked;
-                //pushButton.PressStarted += PushButtonPressStarted;
-                //pushButton.PressEnded += PushButtonPressEnded;
-                //pushButton.LongPressClicked += PushButtonLongPressClicked;
+                pushButton.PressStarted += PushButtonPressStarted;
+                pushButton.PressEnded += PushButtonPressEnded;
+                pushButton.LongPressClicked += PushButtonLongPressClicked;
             }
 
             led.SetColor(Color.Green);
