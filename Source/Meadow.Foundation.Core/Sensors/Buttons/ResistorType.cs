@@ -6,8 +6,8 @@
     public enum ResistorType
     {
         InternalPullUp,
-        InternallPullDown,
+        InternalPullDown,
         ExternalPullUp,
-        ExternallPulldown
+        ExternalPulldown
     };
 }

@@ -173,13 +173,13 @@ namespace Meadow.Foundation.Sensors.Buttons
                 case ResistorType.InternalPullUp:
                     DigitalIn.Resistor = ResistorMode.PullUp;
                     break;
-                case ResistorType.InternallPullDown:
+                case ResistorType.InternalPullDown:
                     DigitalIn.Resistor = ResistorMode.PullDown;
                     break;
                 case ResistorType.ExternalPullUp:
                     DigitalIn.Resistor = ResistorMode.Disabled;
                     break;
-                case ResistorType.ExternallPulldown:
+                case ResistorType.ExternalPulldown:
                     DigitalIn.Resistor = ResistorMode.Disabled;
                     break;
             }
