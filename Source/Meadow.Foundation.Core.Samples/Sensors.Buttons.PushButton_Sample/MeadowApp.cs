@@ -114,9 +114,9 @@ namespace Sensors.Buttons.PushButton_Sample
             foreach (var pushButton in pushButtons)
             {
                 pushButton.Clicked += PushButtonClicked;
-                //pushButton.PressStarted += PushButtonPressStarted;
-                //pushButton.PressEnded += PushButtonPressEnded;
-                //pushButton.LongPressClicked += PushButtonLongPressClicked;
+                pushButton.PressStarted += PushButtonPressStarted;
+                pushButton.PressEnded += PushButtonPressEnded;
+                pushButton.LongPressClicked += PushButtonLongPressClicked;
             }
 
             led.SetColor(Color.Green);
@@ -125,8 +125,8 @@ namespace Sensors.Buttons.PushButton_Sample
         void PushButtonClicked(object sender, EventArgs e)
         {
             Console.WriteLine($"PushButton Clicked!");
-            led.SetColor(Color.Magenta);
-            Thread.Sleep(100);
+            led.SetColor(Color.Orange);
+            Thread.Sleep(500);
             led.SetColor(Color.Green);
         }
 
@@ -146,7 +146,7 @@ namespace Sensors.Buttons.PushButton_Sample
         {
             Console.WriteLine($"PushButton Clicked!");
             led.SetColor(Color.Blue);
-            Thread.Sleep(100);
+            Thread.Sleep(500);
             led.SetColor(Color.Green);
         }
     }
