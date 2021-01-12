@@ -4,6 +4,14 @@ using System;
 
 namespace Meadow.Foundation.Sensors.Buttons
 {
+    public enum ResistorType 
+    { 
+        InternalPullUp,
+        InternallPullDown,
+        ExternalPullUp,
+        ExternallPulldown
+    };
+
     /// <summary>
     /// A simple push button. 
     /// </summary>
@@ -21,7 +29,7 @@ namespace Meadow.Foundation.Sensors.Buttons
             {
                 bool currentState = DigitalIn?.Resistor == ResistorMode.PullDown ? true : false;
 
-                return (_state == currentState) ? true : false;
+                return (state == currentState) ? true : false;
             }
         }
 
@@ -42,14 +50,14 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
-                if (DigitalIn.InterruptMode == InterruptMode.None)
+                if (DigitalIn.InterruptMode != InterruptMode.EdgeBoth)
                 {
-                    throw new Exception("PressStarted event requires InterruptMode to be != None");
+                    throw new Exception("PressEnded event requires InterruptMode.EdgeBoth");
                 }
 
-                _pressStartDelegate += value;
+                pressStartDelegate += value;
             }
-            remove => _pressStartDelegate -= value;
+            remove => pressStartDelegate -= value;
         }
 
         /// <summary>
@@ -64,9 +72,9 @@ namespace Meadow.Foundation.Sensors.Buttons
                     throw new Exception("PressEnded event requires InterruptMode.EdgeBoth");
                 }
 
-                _pressEndDelegate += value;
+                pressEndDelegate += value;
             }
-            remove => _pressEndDelegate -= value;
+            remove => pressEndDelegate -= value;
         }
 
         /// <summary>
@@ -80,9 +88,9 @@ namespace Meadow.Foundation.Sensors.Buttons
                 {
                     throw new Exception("PressStarted event requires InterruptMode to be != None");
                 }
-                _clickDelegate += value;
+                clickDelegate += value;
             }
-            remove => _clickDelegate -= value;
+            remove => clickDelegate -= value;
         }
 
         /// <summary>
@@ -96,38 +104,37 @@ namespace Meadow.Foundation.Sensors.Buttons
                 {
                     throw new Exception("LongPressClicked event requires InterruptMode.EdgeBoth");
                 }
-                _longPressDelegate += value;
+                longPressDelegate += value;
             }
-            remove => _longPressDelegate -= value;
+            remove => longPressDelegate -= value;
         }
         #endregion
 
         #region Member variables / fields
-        private event EventHandler _clickDelegate = delegate { };
-        private event EventHandler _pressStartDelegate = delegate { };
-        private event EventHandler _pressEndDelegate = delegate { };
-        private event EventHandler _longPressDelegate = delegate { };
-        //private bool _inputCreatedInternally = false;
+        private event EventHandler clickDelegate = delegate { };
+        private event EventHandler pressStartDelegate = delegate { };
+        private event EventHandler pressEndDelegate = delegate { };
+        private event EventHandler longPressDelegate = delegate { };
 
         /// <summary>
         /// Returns the current raw state of the switch.
         /// </summary>
-        protected bool _state => (DigitalIn != null) ? !DigitalIn.State : false;
+        protected bool state => (DigitalIn != null) ? !DigitalIn.State : false;
 
         /// <summary>
         /// Minimum DateTime value when the button was pushed
         /// </summary>
-        protected DateTime _lastClicked = DateTime.MinValue;
+        protected DateTime lastClicked = DateTime.MinValue;
 
         /// <summary>
         /// Maximum DateTime value when the button was just pushed
         /// </summary>
-        protected DateTime _buttonPressStart = DateTime.MaxValue;
+        protected DateTime buttonPressStart = DateTime.MaxValue;
 
         /// <summary>
-        /// Circuit Termination Type (CommonGround, High or Floating)
+        /// Circuit Type
         /// </summary>
-        //protected CircuitTerminationType _circuitType;
+        protected ResistorType resistorType;
 
         #endregion
 
@@ -161,43 +168,75 @@ namespace Meadow.Foundation.Sensors.Buttons
             DigitalIn.Changed += DigitalInChanged;
         }
 
+        public PushButton(IIODevice device, IPin inputPin, ResistorType resistorType = ResistorType.ExternalPullUp) 
+            : this(device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, ResistorMode.Disabled, 50, 25), resistorType) { }
+
+        public PushButton(IDigitalInputPort interruptPort, ResistorType resistorType = ResistorType.ExternalPullUp)
+        {
+            this.resistorType = resistorType;
+            DigitalIn = interruptPort;
+
+            switch (resistorType)
+            {
+                case ResistorType.InternalPullUp:
+                    DigitalIn.Resistor = ResistorMode.PullUp;
+                    break;
+                case ResistorType.InternallPullDown:
+                    DigitalIn.Resistor = ResistorMode.PullDown;
+                    break;
+                case ResistorType.ExternalPullUp:
+                    DigitalIn.Resistor = ResistorMode.Disabled;
+                    break;
+                case ResistorType.ExternallPulldown:
+                    DigitalIn.Resistor = ResistorMode.Disabled;
+                    break;
+            }
+
+            if (DigitalIn.DebounceDuration == 0)
+            {
+                DigitalIn.DebounceDuration = 50;
+            }
+
+            if (DigitalIn.GlitchDuration == 0)
+            {
+                DigitalIn.GlitchDuration = 25;
+            }
+
+            DigitalIn.Changed += DigitalInChanged;
+        }
+
         #endregion
 
         #region Methods
 
-        private void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
+        void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
-            bool STATE_PRESSED = false;
-            bool STATE_RELEASED = true;
+            bool state = (resistorType == ResistorType.InternalPullUp || 
+                          resistorType == ResistorType.ExternalPullUp) ? !e.Value : e.Value;
 
             //Console.WriteLine($"PB: InputChanged. State == {State}. e.Value: {e.Value}.  DI State: {DigitalIn.State}");
 
-            if (State == STATE_PRESSED)
+            if (state)
             {
+                RaiseClicked();
+
                 // save our press start time (for long press event)
-                _buttonPressStart = DateTime.Now;
+                buttonPressStart = DateTime.Now;
                 // raise our event in an inheritance friendly way
                 RaisePressStarted();
             }
-            else if (State == STATE_RELEASED)
+            else 
             {
                 // calculate the press duration
-                TimeSpan pressDuration = DateTime.Now - _buttonPressStart;
+                TimeSpan pressDuration = DateTime.Now - buttonPressStart;
 
                 // reset press start time
-                _buttonPressStart = DateTime.MaxValue;
+                buttonPressStart = DateTime.MaxValue;
 
                 // if it's a long press, raise our long press event
                 if (LongPressThreshold > TimeSpan.Zero && pressDuration > LongPressThreshold)
                 {
                     RaiseLongPress();
-                }
-                else
-                {
-                    if (e.Value)
-                    {
-                        RaiseClicked();
-                    }
                 }
 
                 // raise the other events
@@ -210,7 +249,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseClicked()
         {
-            _clickDelegate(this, EventArgs.Empty);
+            clickDelegate(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -219,7 +258,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected virtual void RaisePressStarted()
         {
             // raise the press started event
-            _pressStartDelegate(this, new EventArgs());
+            pressStartDelegate(this, new EventArgs());
         }
 
         /// <summary>
@@ -227,7 +266,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressEnded()
         {
-            _pressEndDelegate(this, new EventArgs());
+            pressEndDelegate(this, new EventArgs());
         }
 
         /// <summary>
@@ -235,7 +274,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseLongPress()
         {
-            _longPressDelegate(this, new EventArgs());
+            longPressDelegate(this, new EventArgs());
         }
 
         public void Dispose()
