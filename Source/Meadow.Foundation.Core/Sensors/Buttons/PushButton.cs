@@ -4,20 +4,15 @@ using System;
 
 namespace Meadow.Foundation.Sensors.Buttons
 {
-    public enum ResistorType 
-    { 
-        InternalPullUp,
-        InternallPullDown,
-        ExternalPullUp,
-        ExternallPulldown
-    };
-
     /// <summary>
     /// A simple push button. 
     /// </summary>
     public class PushButton : IButton, IDisposable
     {
-        #region Properties        
+        event EventHandler clickDelegate = delegate { };
+        event EventHandler pressStartDelegate = delegate { };
+        event EventHandler pressEndDelegate = delegate { };
+        event EventHandler longPressDelegate = delegate { };
 
         /// <summary>
         /// Returns the sanitized state of the switch. If the switch 
@@ -108,13 +103,6 @@ namespace Meadow.Foundation.Sensors.Buttons
             }
             remove => longPressDelegate -= value;
         }
-        #endregion
-
-        #region Member variables / fields
-        private event EventHandler clickDelegate = delegate { };
-        private event EventHandler pressStartDelegate = delegate { };
-        private event EventHandler pressEndDelegate = delegate { };
-        private event EventHandler longPressDelegate = delegate { };
 
         /// <summary>
         /// Returns the current raw state of the switch.
@@ -122,23 +110,14 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected bool state => (DigitalIn != null) ? !DigitalIn.State : false;
 
         /// <summary>
-        /// Minimum DateTime value when the button was pushed
-        /// </summary>
-        protected DateTime lastClicked = DateTime.MinValue;
-
-        /// <summary>
         /// Maximum DateTime value when the button was just pushed
         /// </summary>
         protected DateTime buttonPressStart = DateTime.MaxValue;
 
         /// <summary>
-        /// Circuit Type
+        /// Resistor Type to indicate if 
         /// </summary>
         protected ResistorType resistorType;
-
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// Creates PushButto a digital input port connected on a IIOdevice, especifying Interrupt Mode, Circuit Type and optionally Debounce filter duration.
@@ -146,7 +125,8 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="device"></param>
         /// <param name="inputPin"></param>
         /// <param name="resistor"></param>
-        /// <param name="debounceDuration"></param>        
+        /// <param name="debounceDuration"></param>
+        [Obsolete("[4.X] Constructor Deprecated. Please a constructor that uses the ResistorType parameter.")]
         public PushButton(IIODevice device, IPin inputPin, ResistorMode resistor = ResistorMode.Disabled, int debounceDuration = 20)
         {
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
@@ -160,6 +140,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="interruptPort"></param>
         /// <param name="resistor"></param>
         /// <param name="debounceDuration"></param>
+        [Obsolete("[4.X] Constructor Deprecated. Please a constructor that uses the ResistorType parameter.")]
         public PushButton(IDigitalInputPort interruptPort, ResistorMode resistor = ResistorMode.Disabled, int debounceDuration = 20)
         {
             DigitalIn = interruptPort;
@@ -168,9 +149,20 @@ namespace Meadow.Foundation.Sensors.Buttons
             DigitalIn.Changed += DigitalInChanged;
         }
 
+        /// <summary>
+        /// Creates PushButton with a digital input pin connected on a IIOdevice, especifying if its using an Internal or External PullUp/PullDown resistor.
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="inputPin"></param>
+        /// <param name="resistorType"></param>
         public PushButton(IIODevice device, IPin inputPin, ResistorType resistorType = ResistorType.ExternalPullUp) 
             : this(device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, ResistorMode.Disabled, 50, 25), resistorType) { }
 
+        /// <summary>
+        /// Creates PushButton with a digital input port, especifying if its using an Internal or External PullUp/PullDown resistor.
+        /// </summary>
+        /// <param name="interruptPort"></param>
+        /// <param name="resistorType"></param>
         public PushButton(IDigitalInputPort interruptPort, ResistorType resistorType = ResistorType.ExternalPullUp)
         {
             this.resistorType = resistorType;
@@ -205,10 +197,6 @@ namespace Meadow.Foundation.Sensors.Buttons
             DigitalIn.Changed += DigitalInChanged;
         }
 
-        #endregion
-
-        #region Methods
-
         void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
         {
             bool state = (resistorType == ResistorType.InternalPullUp || 
@@ -239,8 +227,11 @@ namespace Meadow.Foundation.Sensors.Buttons
                     RaiseLongPress();
                 }
 
-                // raise the other events
-                RaisePressEnded();
+                if (pressDuration.TotalMilliseconds > 0)
+                {
+                    // raise the other events
+                    RaisePressEnded();
+                }
             }
         }
 
@@ -257,7 +248,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressStarted()
         {
-            // raise the press started event
             pressStartDelegate(this, new EventArgs());
         }
 
@@ -285,7 +275,5 @@ namespace Meadow.Foundation.Sensors.Buttons
                 DigitalIn = null;
             //}
         }
-
-        #endregion
     }
 }
