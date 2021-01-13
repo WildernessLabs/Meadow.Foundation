@@ -43,7 +43,6 @@ namespace MeadowApp
         const byte MF1_TRANSFER = 0xB0;     // save the data in the buffer
         const byte MF1_HALT = 0x50;      // Sleep
 
-
         //------------------ MFRC522 registers---------------
         //Page 0:Command and Status
         const byte Reserved00 = 0x00;

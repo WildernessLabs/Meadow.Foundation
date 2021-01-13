@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class St7565 : DisplayBase
     {
-        #region Enums
+        
 
         /// <summary>
         ///     Allow the programmer to set the scroll direction.
@@ -62,9 +62,9 @@ namespace Meadow.Foundation.Displays
             NoOperation = 0xE3
         }
 
-        #endregion Enums
+        
 
-        #region Member variables / fields
+        
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
@@ -91,9 +91,9 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         private byte[] buffer;
 
-        #endregion Member variables / fields
+        
 
-        #region Properties
+        
 
         /// <summary>
         ///     Invert the entire display (true) or return to normal mode (false).
@@ -116,9 +116,9 @@ namespace Meadow.Foundation.Displays
             SendCommand(DisplayCommand.AllPixelsOn);
         }
 
-        #endregion Properties
+        
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new ST7565 object using the default parameters for
@@ -171,9 +171,9 @@ namespace Meadow.Foundation.Displays
             SendCommand(DisplayCommand.AllPixelsOff);
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         public const uint ContrastHigh = 34;
         public const uint ContrastMedium = 24;
@@ -382,6 +382,6 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x2e);
         }
 
-        #endregion Methods
+        
     }
 }

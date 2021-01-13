@@ -264,7 +264,6 @@ namespace Meadow.Foundation.Displays.Tft
             g = (byte)(~g & 0x0F);
             b = (byte)(~b & 0x0F);
 
-
             //get new color
             var color = (ushort)(r << 8 | g << 4 | b);
 
@@ -361,7 +360,6 @@ namespace Meadow.Foundation.Displays.Tft
             {
                 len = (int)((Height + 1) * Width * 3 / 2);
             }
-
 
             dataCommandPort.State = Data;
             spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive, len);

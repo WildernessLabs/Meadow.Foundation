@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public abstract class DhtBase : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     DHT12 sensor object.
@@ -30,9 +30,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private int _lastMeasurement = 0;
 
-        #endregion Member variables / fields
+        
 
-        #region Properties
+        
 
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
@@ -61,33 +61,32 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public bool WasLastReadSuccessful { get; internal set; }
 
-
-        #region Enums
+        
         private enum BusType
         {
             I2C,
             OneWire,
         }
 
-        #endregion Enums
+        
 
-        #region Fields
+        
 
         // internal thread lock
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        #endregion Fields
+        
 
-        #endregion Properties
+        
 
-        #region Events and delegates
+        
 
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
-        #endregion Events and delegates
+        
 
-        #region Contructors
+        
 
         /// <summary>
         /// Create a DHT sensor through I2C (Only DHT12)
@@ -102,9 +101,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Thread.Sleep(1000);
         }
 
-        #endregion
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Start a reading
@@ -251,6 +250,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             return Task.CompletedTask;
         }
-        #endregion Methods
+        
     }
 }

@@ -73,7 +73,6 @@ namespace Meadow.Foundation.Displays.ePaper
         {
         }
 
-
         protected override void Initialize()
         {
             Reset();

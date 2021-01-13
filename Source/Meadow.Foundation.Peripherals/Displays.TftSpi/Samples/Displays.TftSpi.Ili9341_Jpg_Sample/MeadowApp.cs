@@ -229,7 +229,6 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
 
             Console.WriteLine("Draw");
 
-
             for (int i = 0; i < 30; i++)
             {
                 display.DrawPixel(i, 120 + i, true);

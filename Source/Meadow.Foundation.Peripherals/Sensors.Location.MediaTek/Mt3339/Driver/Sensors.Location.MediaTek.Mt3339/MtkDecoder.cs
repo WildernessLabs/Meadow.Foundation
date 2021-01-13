@@ -22,7 +22,6 @@ namespace Sensors.Location.MediaTek
             get => "MTK";
         }
 
-
         /// <summary>
         /// Process the data from a RMC
         /// </summary>

@@ -45,7 +45,6 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(CMD_SETREMAP);
             SendData(new byte[] { 0x70, 0x04 }); //change 2nd value to 0x04 for BGR
 
-
             SendCommand(CMD_DISPLAYOFFSET);
             if (Height == 96)
                 SendData(96);

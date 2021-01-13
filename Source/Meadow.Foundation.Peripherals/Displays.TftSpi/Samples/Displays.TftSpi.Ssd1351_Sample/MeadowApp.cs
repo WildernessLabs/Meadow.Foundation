@@ -62,7 +62,6 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
 
             graphicsLib.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
 
-
             Console.WriteLine("Show");
 
             graphicsLib.Show();

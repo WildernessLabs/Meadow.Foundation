@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Motors.Stepper
     /// <remarks>It is tested and developed using the 28BYJ-48 stepper motor and the ULN2003 driver board.</remarks>
     public class Uln2003
     {
-        #region Properties
+        
 
         /// <summary>
         /// Sets the motor speed to revolutions per minute.
@@ -44,9 +44,9 @@ namespace Meadow.Foundation.Motors.Stepper
             }
         }
 
-        #endregion Properties
+        
 
-        #region Enums
+        
 
         /// <summary>
         /// The 28BYJ-48 motor has 512 full engine rotations to rotate the drive shaft once.
@@ -63,9 +63,9 @@ namespace Meadow.Foundation.Motors.Stepper
             FullStepDualPhase
         }
 
-        #endregion Enums
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         /// Default delay in microseconds.
@@ -108,9 +108,9 @@ namespace Meadow.Foundation.Motors.Stepper
 
         DateTime startTime;
 
-        #endregion Member variables / fields
+        
 
-        #region Contructors
+        
 
         /// <summary>
         /// Initialize a Uln2003 class.
@@ -127,9 +127,9 @@ namespace Meadow.Foundation.Motors.Stepper
             outputPort4 = device.CreateDigitalOutputPort(pin4);
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         
         /// <summary>
@@ -193,6 +193,6 @@ namespace Meadow.Foundation.Motors.Stepper
             outputPort4.State = currentSwitchingSequence[3, engineStep - 1];
         }
 
-        #endregion Methods
+        
     }
 }

@@ -22,7 +22,7 @@ namespace Displays.Tft.ST7789_Sample
 
             Initialize();
 
-            Benchmark();
+           // Benchmark();
 
             display.ClearScreen(0xFF);
             display.Show();
@@ -65,6 +65,9 @@ namespace Displays.Tft.ST7789_Sample
 
                 FontScaleTest();
                 Thread.Sleep(5000);
+
+                FontAlignmentTest();
+                Thread.Sleep(5000);                   
 
                 ColorFontTest();
                 Thread.Sleep(5000);
@@ -126,6 +129,21 @@ namespace Displays.Tft.ST7789_Sample
             //graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
 
             Console.WriteLine("Init complete");
+        }
+
+        void FontAlignmentTest()
+        {
+            graphics.Clear();
+
+            graphics.DrawText(120, 0, "Left aligned", Color.Blue);
+            graphics.DrawText(120, 16, "Center aligned", Color.Green, GraphicsLibrary.ScaleFactor.X1, GraphicsLibrary.TextAlignment.Center);
+            graphics.DrawText(120, 32, "Right aligned", Color.Red, GraphicsLibrary.ScaleFactor.X1, GraphicsLibrary.TextAlignment.Right);
+
+            graphics.DrawText(120, 64, "Left aligned", Color.Blue, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(120, 96, "Center aligned", Color.Green, GraphicsLibrary.ScaleFactor.X2, GraphicsLibrary.TextAlignment.Center);
+            graphics.DrawText(120, 128, "Right aligned", Color.Red, GraphicsLibrary.ScaleFactor.X2, GraphicsLibrary.TextAlignment.Right);
+
+            graphics.Show();
         }
 
         void InvertTest()
@@ -399,7 +417,6 @@ namespace Displays.Tft.ST7789_Sample
             graphics.DrawText(indent, y += spacing, "Orange", Meadow.Foundation.Color.Orange);
 
             graphics.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
-
 
             graphics.Show();
 

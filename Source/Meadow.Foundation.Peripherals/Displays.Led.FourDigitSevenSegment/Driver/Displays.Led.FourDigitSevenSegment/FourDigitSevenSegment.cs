@@ -13,15 +13,15 @@ namespace Meadow.Foundation.Displays.Led
         protected Task animationThread = null;
         protected CancellationTokenSource cts = null;
 
-        #region Member variables / fields
+        
 
         protected readonly IDigitalOutputPort[] digits;
 
         protected SevenSegment[] sevenSegments;
 
-        #endregion
+        
 
-        #region Constructor
+        
 
         /// <summary>
         /// Creates a SevenSegment connected to the especified IPins to a IODevice
@@ -96,9 +96,9 @@ namespace Meadow.Foundation.Displays.Led
             cts = new CancellationTokenSource();
         }
 
-        #endregion
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Displays the especified valid character
@@ -143,6 +143,6 @@ namespace Meadow.Foundation.Displays.Led
             cts.Cancel();
         }
 
-        #endregion
+        
     }
 }

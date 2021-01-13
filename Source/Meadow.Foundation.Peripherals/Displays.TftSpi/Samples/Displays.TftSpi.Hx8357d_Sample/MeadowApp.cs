@@ -291,7 +291,6 @@ namespace Displays.Tft.Hx8357d_Sample
 
             graphics.DrawText(0, 192, "3x!", Color.OrangeRed, GraphicsLibrary.ScaleFactor.X3);
 
-
             graphics.Show();
         }
 
@@ -332,7 +331,6 @@ namespace Displays.Tft.Hx8357d_Sample
             graphics.DrawText(indent, y += spacing, "Orange", Meadow.Foundation.Color.Orange);
 
             graphics.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
-
 
             graphics.Show();
 

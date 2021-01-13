@@ -173,7 +173,6 @@ namespace Displays.Ssd1309_3DCube_Sample
 
         //    snakeGame.Direction = SnakeDirection.Up;
 
-
         }
 
         private void PortLeft_Changed(object sender, DigitalInputPortEventArgs e)

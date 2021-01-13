@@ -31,7 +31,6 @@ namespace Sensors.Location.MediaTek
         public event EventHandler<CourseOverGround> VtgReceived = delegate { };
         public event EventHandler<SatellitesInView> GsvReceived = delegate { };
 
-
         // TODO: if we want to make this public then we're going to have to add
         // a bunch of checks around baud rate, 8n1, etc.
         protected Mt3339(ISerialMessagePort serialPort)

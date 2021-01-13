@@ -6,7 +6,7 @@ namespace Meadow.Foundation.RTCs
 {
     public class Ds323x
     {
-        #region Classes / structures
+        
 
         /// <summary>
         ///     Register addresses in the sensor.
@@ -34,9 +34,9 @@ namespace Meadow.Foundation.RTCs
             public static readonly byte TemperatureLSB = 0x12;
         }
 
-        #endregion Classes / structures
+        
 
-        #region Constants
+        
 
         /// <summary>
         ///     Number of registers that hold the date and time information.
@@ -83,9 +83,9 @@ namespace Meadow.Foundation.RTCs
         /// </summary>
         private const byte ALARM2_INTERRUPT_OFF = 0xfd;
 
-        #endregion Constants
+        
 
-        #region Enums
+        
 
         /// <summary>
         ///     Possible values for the alarm that can be set or alarm that has been raised.
@@ -164,9 +164,9 @@ namespace Meadow.Foundation.RTCs
             WhenDayHoursMinutesMatch
         }
 
-        #endregion Enums
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     DS323x Real Time Clock object.
@@ -178,9 +178,9 @@ namespace Meadow.Foundation.RTCs
         /// </summary>
         protected IDigitalInputPort _interruptPort;
 
-        #endregion Member variables / fields
+        
 
-        #region Delegate and events
+        
 
         /// <summary>
         ///     Delegate for the alarm events.
@@ -197,9 +197,9 @@ namespace Meadow.Foundation.RTCs
         /// </summary>
         public event AlarmRaised OnAlarm2Raised;
 
-        #endregion Delegate and events
+        
 
-        #region Properties
+        
 
         /// <summary>
         ///     Get / Set the current date and time.
@@ -279,9 +279,9 @@ namespace Meadow.Foundation.RTCs
             }
         }
 
-        #endregion Properties
+        
 
-        #region Methods
+        
 
         /// <summary>
         ///     Alarm interrupt has been raised, work out which one and raise the necessary event.
@@ -560,6 +560,6 @@ namespace Meadow.Foundation.RTCs
             DebugInformation.DisplayRegisters(0, data);
         }
 
-        #endregion
+        
     }
 }

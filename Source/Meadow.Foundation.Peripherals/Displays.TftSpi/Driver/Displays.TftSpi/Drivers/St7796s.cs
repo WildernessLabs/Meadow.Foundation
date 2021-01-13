@@ -41,7 +41,6 @@ namespace Meadow.Foundation.Displays.Tft
 			else
 				SendData(0x03); //12-bit color RGB444
 
-
 			SendCommand(0xB4); //Column inversion 
 			SendData(0x01);    //1-dot inversion
 
@@ -49,7 +48,6 @@ namespace Meadow.Foundation.Displays.Tft
 			SendData(0x80);    //Bypass
 			SendData(0x02);    //Source Output Scan from S1 to S960, Gate Output scan from G1 to G480, scan cycle=2
 			SendData(0x3B);    //LCD Drive Line=8*(59+1)
-
 
 			SendCommand(0xE8); //Display Output Ctrl Adjust
 			SendData(0x40);

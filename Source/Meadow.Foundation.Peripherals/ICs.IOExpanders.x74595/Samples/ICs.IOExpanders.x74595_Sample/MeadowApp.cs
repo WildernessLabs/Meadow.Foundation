@@ -10,7 +10,6 @@ namespace MeadowApp
     {
         x74595 shiftRegister;
 
-
         public MeadowApp()
         {
             Initialize();

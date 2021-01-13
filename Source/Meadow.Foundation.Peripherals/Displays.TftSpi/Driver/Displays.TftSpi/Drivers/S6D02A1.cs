@@ -92,7 +92,6 @@ namespace Meadow.Foundation.Displays.Tft
             Write((byte)(y1 >> 8));
             Write((byte)(y1 & 0xff));    // YEND
 
-
             dataCommandPort.State = (Command);
             Write((byte)LcdCommand.RAMWR);  // write to RAM */
         }

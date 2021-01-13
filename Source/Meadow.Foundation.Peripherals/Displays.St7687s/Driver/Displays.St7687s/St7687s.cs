@@ -24,7 +24,6 @@ namespace Meadow.Foundation.Displays
         protected IDigitalOutputPort wrPort;
         protected IDigitalOutputPort rsPort;
 
-
         /*
          * GND 
          * VCC 3.3-5V
@@ -168,7 +167,6 @@ namespace Meadow.Foundation.Displays
             //digitalWrite(pin_cs, 0);
             dataCommandPort.State = false;
 
-
             //HC595_writeReg(&sHC595, cmd, 1);
 
            // digitalWrite(pin_wr, 0);
@@ -207,18 +205,15 @@ namespace Meadow.Foundation.Displays
             writeCmd(0x29);
         }
 
-
         void displayOFF()
         {
             writeCmd(0x28);
         }
 
-
         void displaySleepIN()
         {
             writeCmd(0x10);
         }
-
 
         void displaySleepOUT()
         {

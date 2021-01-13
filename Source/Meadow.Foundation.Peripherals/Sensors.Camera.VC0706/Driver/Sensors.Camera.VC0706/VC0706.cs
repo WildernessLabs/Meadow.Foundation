@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Camera
         byte bufferLen;
         ushort frameptr;
 
-        #region Constructors
+        
 
         public Vc0706(IIODevice device, SerialPortName portName, int baud)
         {
@@ -104,7 +104,7 @@ namespace Meadow.Foundation.Sensors.Camera
             }
         }
 
-        #endregion Constructors
+        
 
         bool Reset()
         {

@@ -41,7 +41,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public DeviceCapabilities Capabilities => throw new NotImplementedException();
 
-
         
 
         protected Mcp23x08()
@@ -131,7 +130,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptPins, currentStates));
         }
-
 
         /// <summary>
         /// Initializes the chip for use:
@@ -398,7 +396,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             this.SetPortDirection(pin, PortDirectionType.Input);
         }
-
 
         // TODO: all these can go away when we get interface implementation 
         // support from C# 8 into the Meadow.Core project. It won't work today,

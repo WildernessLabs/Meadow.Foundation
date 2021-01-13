@@ -88,7 +88,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
-
             public override void Dispose()
             {
 

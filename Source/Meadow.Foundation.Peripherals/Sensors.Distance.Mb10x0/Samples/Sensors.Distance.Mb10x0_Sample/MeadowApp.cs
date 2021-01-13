@@ -2,7 +2,7 @@
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using MeadowLibary;
+using Meadow.Foundation.Sensors.Distance;
 
 namespace Sensors.Distance.Mb10x0_Sample
 {
