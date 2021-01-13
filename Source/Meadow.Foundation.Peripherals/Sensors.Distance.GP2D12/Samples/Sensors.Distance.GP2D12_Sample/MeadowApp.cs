@@ -1,7 +1,7 @@
 ﻿using System;
 using Meadow;
 using Meadow.Devices;
-using Sensors.Distance;
+using Meadow.Foundation.Sensors.Distance;
 
 namespace MeadowApp
 {
