@@ -928,8 +928,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics.TextDisplayMenu_Ga
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics.TextDisplayMenu_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Graphics\TextDisplayMenu\Samples\Graphics.TextDisplayMenu_Sample\Graphics.TextDisplayMenu_Sample.csproj", "{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{648EDD29-D8BF-4691-9DF2-B36AA10E1062}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2028,12 +2026,6 @@ Global
 		{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{931C2E57-BF1B-4DEB-A001-AB1AE92BDA3B}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{648EDD29-D8BF-4691-9DF2-B36AA10E1062}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{648EDD29-D8BF-4691-9DF2-B36AA10E1062}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{648EDD29-D8BF-4691-9DF2-B36AA10E1062}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{648EDD29-D8BF-4691-9DF2-B36AA10E1062}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{648EDD29-D8BF-4691-9DF2-B36AA10E1062}.Release|Any CPU.Build.0 = Release|Any CPU
-		{648EDD29-D8BF-4691-9DF2-B36AA10E1062}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
