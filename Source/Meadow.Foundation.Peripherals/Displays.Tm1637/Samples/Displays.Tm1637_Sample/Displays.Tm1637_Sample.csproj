@@ -6,6 +6,5 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Tm1637\Driver\Displays.Tm1637\Displays.Tm1637.csproj" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
   </ItemGroup>
 </Project>
