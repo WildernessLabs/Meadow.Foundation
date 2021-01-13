@@ -184,16 +184,6 @@ namespace Meadow.Foundation.Sensors.Buttons
                     break;
             }
 
-            if (DigitalIn.DebounceDuration == 0)
-            {
-                DigitalIn.DebounceDuration = 50;
-            }
-
-            if (DigitalIn.GlitchDuration == 0)
-            {
-                DigitalIn.GlitchDuration = 25;
-            }
-
             DigitalIn.Changed += DigitalInChanged;
         }
 
