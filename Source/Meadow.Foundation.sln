@@ -43,11 +43,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Switches.SpstSwitch
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.AnalogTemperature_Sample", "Meadow.Foundation.Core.Samples\Sensors.Temperature.AnalogTemperature_Sample\Sensors.Temperature.AnalogTemperature_Sample.csproj", "{105C53A9-4421-4A54-BF09-533D54BABECC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Servos.Servo.Core", "Servos.Servo.Core", "{60387C6F-C7AC-4DB0-9411-2F8D9B3E4E13}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Servos.ServoCore", "Servos.ServoCore", "{60387C6F-C7AC-4DB0-9411-2F8D9B3E4E13}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servos.Servo.Core", "Meadow.Foundation.Peripherals\Servos.Servo.Core\Driver\Servos.Servo.Core\Servos.Servo.Core.csproj", "{FE5FE3E1-B418-4CAB-9E1C-2963A4AFACA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servos.ServoCore", "Meadow.Foundation.Peripherals\Servos.ServoCore\Driver\Servos.ServoCore\Servos.ServoCore.csproj", "{FE5FE3E1-B418-4CAB-9E1C-2963A4AFACA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servos.Servo_Sample", "Meadow.Foundation.Peripherals\Servos.Servo.Core\Samples\Servos.Servo_Sample\Servos.Servo_Sample.csproj", "{1BF50A9E-F6AE-4F17-B3C1-D5A2420A2DA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servos.ServoCore_Sample", "Meadow.Foundation.Peripherals\Servos.ServoCore\Samples\Servos.ServoCore_Sample\Servos.ServoCore_Sample.csproj", "{1BF50A9E-F6AE-4F17-B3C1-D5A2420A2DA3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Temperature.Tmp102", "Sensors.Temperature.Tmp102", "{92FF91F9-027A-47AC-8315-64547A80F54C}"
 EndProject
