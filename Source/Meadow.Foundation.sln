@@ -876,13 +876,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{F652
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLoggers", "Meadow.Foundation.Libraries_and_Frameworks\DataLoggers\DataLoggers.Core\Driver\DataLoggers.Core\DataLoggers.csproj", "{13B7E34A-1790-44BF-BDBD-9F98E417A07C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataLoggers.Adafruit.IO", "DataLoggers.Adafruit.IO", "{9E466827-2772-47B4-B64D-8ADB1C0DE70B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataLoggers.AdafruitIO", "DataLoggers.AdafruitIO", "{9E466827-2772-47B4-B64D-8ADB1C0DE70B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{1B14DD12-262C-407A-9CCD-09E03DFE08B5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{96F84895-3CA3-4EB8-8CCC-F51DE34B9D78}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLoggers.AdafruitIO", "Meadow.Foundation.Libraries_and_Frameworks\DataLoggers\DataLoggers.Adafruit.IO\Driver\DataLoggers.AdafruitIO\DataLoggers.AdafruitIO.csproj", "{7D66EEC3-76C4-4E57-8FB8-B80D323D6B03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLoggers.AdafruitIO", "Meadow.Foundation.Libraries_and_Frameworks\DataLoggers\DataLoggers.AdafruitIO\Driver\DataLoggers.AdafruitIO\DataLoggers.AdafruitIO.csproj", "{7D66EEC3-76C4-4E57-8FB8-B80D323D6B03}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataLoggers.ThingSpeak", "DataLoggers.ThingSpeak", "{A47BEE72-D1FA-4F02-96E1-84A70D7142B0}"
 EndProject
