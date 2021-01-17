@@ -5,8 +5,8 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj" />
     <ProjectReference Include="..\..\Driver\Location.Gnss.NmeaProcessor\Location.Gnss.NmeaParsing.csproj" />
     <ProjectReference Include="..\..\..\Graphics\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd130x\Driver\Displays.Ssd130x\Displays.Ssd130x.csproj" />
   </ItemGroup>
 </Project>
