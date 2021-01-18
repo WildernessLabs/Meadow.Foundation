@@ -1,19 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace MicroGraphics
+namespace Meadow.Foundation.Graphics
 {
-    public class Path
+    public class GraphicsPath
     {
         List<Point> points = new List<Point>();
 
-        public List<Point> Points => points;
+        public List<Point> Points => points; //can we do this via the indexer?
 
-        public Path()
+        public int PointCount => points.Count;
+
+        // Indexer declaration
+        public Point this[int index]
+        {
+            get => points[index];
+            set => points[index] = value;
+        }
+
+        public GraphicsPath()
         {
         }
 
-        public Path(Point[] points)
+        public GraphicsPath(Point[] points)
         {
             AddPoints(points);
         }
@@ -36,7 +46,7 @@ namespace MicroGraphics
             }
         }
 
-        public void AddPath(Path path)
+        public void AddPath(GraphicsPath path)
         {
             AddPoints(path.Points.ToArray());
         }

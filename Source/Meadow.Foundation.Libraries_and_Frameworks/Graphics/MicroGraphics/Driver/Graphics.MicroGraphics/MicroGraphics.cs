@@ -283,6 +283,26 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        public void DrawPath(GraphicsPath path, bool colored)
+        {
+            DrawPath(path, (colored ? Color.White : Color.Black));
+        }
+
+        public void DrawPath(GraphicsPath path, Color color)
+        {
+            display.SetPenColor(color);
+
+            DrawPath(path);
+        }
+
+        public void DrawPath(GraphicsPath path)
+        {
+            for(int i = 0; i < path.PointCount - 1; i++)
+            {
+                DrawLine(path[i].X, path[i].Y, path[i + 1].X, path[i + 1].Y);
+            }
+        }
+
         private bool IsTallerThanWide(int x0, int y0, int x1, int y1)
         {
             return Math.Abs(x0 - x1) < Math.Abs(y0 - y1);

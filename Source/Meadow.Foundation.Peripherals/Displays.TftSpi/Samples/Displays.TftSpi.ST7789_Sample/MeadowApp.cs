@@ -46,6 +46,9 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
+                PathTest();
+                Thread.Sleep(10000);
+
                 LineTest();
 
                 PolarLineTest();
@@ -129,6 +132,28 @@ namespace Displays.Tft.ST7789_Sample
             //graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
 
             Console.WriteLine("Init complete");
+        }
+
+        void PathTest()
+        {
+            var pathSin = new GraphicsPath();
+            var pathCos = new GraphicsPath();
+            var pathTan = new GraphicsPath();
+
+            for (int i = 0; i < 48; i++)
+            {
+                pathSin.AddPoint(i * 5, 120 + (int)(Math.Sin(i * 10 * Math.PI / 180) * 100));
+                pathCos.AddPoint(i * 5, 120 + (int)(Math.Cos(i * 10 * Math.PI / 180) * 100));
+            }
+
+            graphics.Clear();
+
+            graphics.DrawLine(0, 120, 240, 120, Color.White);
+            graphics.DrawPath(pathSin, Color.Cyan);
+            graphics.DrawPath(pathCos, Color.LawnGreen);
+           
+
+            graphics.Show();
         }
 
         void FontAlignmentTest()

@@ -1,4 +1,4 @@
-﻿namespace MicroGraphics
+﻿namespace Meadow.Foundation.Graphics
 {
     public struct Point
     {
