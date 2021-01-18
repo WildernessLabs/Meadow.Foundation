@@ -196,7 +196,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// <summary>
         ///     Draw a single pixel 
         /// </summary>
-        /// <param name="x">x location </param>
+        /// <param name="x">x location</param>
         /// <param name="y">y location</param>
         /// <param name="r">8 bit red value</param>
         /// <param name="g">8 bit green value</param>
@@ -206,6 +206,11 @@ namespace Meadow.Foundation.Displays.Tft
             SetPixel(x, y, GetColorFromRGB(r, g, b));
         }
 
+        /// <summary>
+        ///     Invert the color of a single pixel as represented in the display buffer
+        /// </summary>
+        /// <param name="x">x location</param>
+        /// <param name="y">y location</param>
         public override void InvertPixel(int x, int y)
         {
             if (x < 0 || y < 0 || x >= width || y >= height)
@@ -219,7 +224,6 @@ namespace Meadow.Foundation.Displays.Tft
             {
                 InvertPixelRgb444(x, y);
             }
-
         }
 
         void InvertPixelRgb565(int x, int y)
@@ -298,7 +302,7 @@ namespace Meadow.Foundation.Displays.Tft
                 SetPixel444(x, y, color);
             }
 
-            //will probably skip for now
+            //will skip for now for performance 
             /*  xMin = (uint)Math.Min(xMin, x);
               xMax = (uint)Math.Max(xMax, x);
               yMin = (uint)Math.Min(yMin, y);
