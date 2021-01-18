@@ -81,6 +81,30 @@
             return !left.Equals(right);
         }
 
+        // <summary>
+        /// Indicates whether this instance is equal to the specified object.
+        /// </summary>
+        /// <param name="obj">The object instance to compare to.</param>
+        /// <returns>True, if both instances are equal; false otherwise.</returns>
+        public override bool Equals(object obj)
+        {
+            if (obj is Point)
+            {
+                return Equals((Point)obj);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>A <see cref="System.Int32"/> that represents the hash code for this instance./></returns>
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() ^ Y.GetHashCode();
+        }
+
         public override string ToString()
         {
             return $"X: {X}, Y: {Y}";
