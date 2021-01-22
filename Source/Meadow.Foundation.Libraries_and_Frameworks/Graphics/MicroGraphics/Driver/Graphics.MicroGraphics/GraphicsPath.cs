@@ -1,66 +1,91 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Meadow.Foundation.Graphics
 {
+    internal enum VerbType //from Skia, could change
+    {
+        MoveTo,
+        LineTo,
+        QuadrantTo, //quarter circle
+    }
+
+    internal struct PathAction
+    {
+        public Point PathPoint { get; private set; }
+        public VerbType Verb { get; private set; }
+
+        public PathAction(Point pathPoint, VerbType verb)
+        {
+            PathPoint = pathPoint;
+            Verb = verb;
+        }
+    }
+
     public class GraphicsPath
     {
-        List<Point> points = new List<Point>();
+        
 
-        public List<Point> Points => points; //can we do this via the indexer?
+        public Point LastPoint => PathActions.LastOrDefault().PathPoint;
+        public int PointCount => PathActions.Count;
+        public Point[] Points;
+        public int VerbCount => PathActions.Count; //need to figure out if/when this wouldn't be equal to PointCount
 
-        public int PointCount => points.Count;
-
-        // Indexer declaration
-        public Point this[int index]
-        {
-            get => points[index];
-            set => points[index] = value;
-        }
+        internal List<PathAction> PathActions { get; private set; }
 
         public GraphicsPath()
         {
         }
 
-        public GraphicsPath(Point[] points)
+        public GraphicsPath(GraphicsPath path)
         {
-            AddPoints(points);
+            AddPath(path);
         }
 
-        public void AddPoint(int x, int y)
+        public void Reset()
         {
-            points.Add(new Point(x, y));
+            PathActions = new List<PathAction>();
         }
 
-        public void AddPoint(Point point)
+        public void MoveTo(int x, int y)
         {
-            points.Add(point);
+            PathActions.Add(new PathAction(new Point(x, y), VerbType.MoveTo));
         }
 
-        public void AddPoints(Point[] points)
+        public void MoveTo(Point point)
         {
-            foreach (var p in points)
-            {
-                this.points.Add(p);
-            }
+            PathActions.Add(new PathAction(point, VerbType.MoveTo));
+        }
+
+        public void LineTo(int x, int y)
+        {
+            PathActions.Add(new PathAction(new Point(x, y), VerbType.LineTo));
+        }
+
+        public void LineTo(Point point)
+        {
+            PathActions.Add(new PathAction(point, VerbType.LineTo));
         }
 
         public void AddPath(GraphicsPath path)
         {
-            AddPoints(path.Points.ToArray());
+            foreach(var action in path.PathActions)
+            {
+                PathActions.Add(action);
+            }
         }
 
         public void ClosePath()
         {
-            if(points.Count < 2)
+            if(PathActions.Count < 2)
             {
                 return;
             }
 
-            if(points[0] != points.Last())
+            //need to make this dynamic - i.e. from the last MoveTo
+            if(PathActions[0].PathPoint != PathActions.Last().PathPoint)
             {
-                points.Add(points[0]);
+                PathActions.Add(PathActions[0]);
             }
         }
     }

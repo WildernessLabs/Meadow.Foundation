@@ -290,16 +290,18 @@ namespace Meadow.Foundation.Graphics
 
         public void DrawPath(GraphicsPath path, Color color)
         {
-            display.SetPenColor(color);
-
-            DrawPath(path);
-        }
-
-        public void DrawPath(GraphicsPath path)
-        {
-            for(int i = 0; i < path.PointCount - 1; i++)
+            //simple for now 
+            for (int i = 0; i < path.PointCount - 1; i++)
             {
-                DrawLine(path[i].X, path[i].Y, path[i + 1].X, path[i + 1].Y);
+                if(path.PathActions[i].Verb == VerbType.MoveTo || i == 0)
+                {
+                    continue;
+                }
+
+                DrawLine(path.PathActions[i - 1].PathPoint.X,
+                    path.PathActions[i - i].PathPoint.Y,
+                    path.PathActions[i].PathPoint.X,
+                    path.PathActions[i].PathPoint.Y);
             }
         }
 

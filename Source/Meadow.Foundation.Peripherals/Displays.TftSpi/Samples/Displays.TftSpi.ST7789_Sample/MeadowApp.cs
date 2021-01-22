@@ -138,20 +138,19 @@ namespace Displays.Tft.ST7789_Sample
         {
             var pathSin = new GraphicsPath();
             var pathCos = new GraphicsPath();
-            var pathTan = new GraphicsPath();
 
             for (int i = 0; i < 48; i++)
             {
-                pathSin.AddPoint(i * 5, 120 + (int)(Math.Sin(i * 10 * Math.PI / 180) * 100));
-                pathCos.AddPoint(i * 5, 120 + (int)(Math.Cos(i * 10 * Math.PI / 180) * 100));
+                pathSin.LineTo(i * 5, 120 + (int)(Math.Sin(i * 10 * Math.PI / 180) * 100));
+                pathCos.LineTo(i * 5, 120 + (int)(Math.Cos(i * 10 * Math.PI / 180) * 100));
             }
 
             graphics.Clear();
 
+            graphics.Stroke = 3;
             graphics.DrawLine(0, 120, 240, 120, Color.White);
             graphics.DrawPath(pathSin, Color.Cyan);
             graphics.DrawPath(pathCos, Color.LawnGreen);
-           
 
             graphics.Show();
         }
