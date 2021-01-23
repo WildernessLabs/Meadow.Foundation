@@ -55,6 +55,34 @@ namespace Meadow.Foundation.Graphics
             PathActions.Add(new PathAction(point, VerbType.MoveTo));
         }
 
+        public void RMoveTo(int x, int y)
+        {
+            int count = PathActions.Count;
+
+            if(count > 0)
+            {
+                PathActions.Add(new PathAction(new Point(x, y) + PathActions[count - 1].PathPoint, VerbType.MoveTo);
+            }
+            else
+            {
+                MoveTo(x, y);
+            }
+        }
+
+        public void RMoveTo(Point point)
+        {
+            int count = PathActions.Count;
+
+            if (count > 0)
+            {
+                PathActions.Add(new PathAction(point + PathActions[count - 1].PathPoint, VerbType.MoveTo);
+            }
+            else
+            {
+                MoveTo(point);
+            }
+        }
+
         public void LineTo(int x, int y)
         {
             if(PathActions.Count == 0)
@@ -77,6 +105,34 @@ namespace Meadow.Foundation.Graphics
             PathActions.Add(new PathAction(point, VerbType.LineTo));
         }
 
+        public void RLineTo(int x, int y)
+        {
+            int count = PathActions.Count;
+
+            if (count > 0)
+            {
+                PathActions.Add(new PathAction(new Point(x, y) + PathActions[count - 1].PathPoint, VerbType.LineTo);
+            }
+            else
+            {
+                LineTo(x, y);
+            }
+        }
+
+        public void RLineTo(Point point)
+        {
+            int count = PathActions.Count;
+
+            if (count > 0)
+            {
+                PathActions.Add(new PathAction(point + PathActions[count - 1].PathPoint, VerbType.LineTo);
+            }
+            else
+            {
+                LineTo(point);
+            }
+        }
+
         public void AddPath(GraphicsPath path)
         {
             foreach(var action in path.PathActions)
@@ -85,7 +141,7 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        public void ClosePath()
+        public void Close()
         {
             if(PathActions.Count < 2)
             {
