@@ -141,6 +141,14 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        public void AddPathReverse(GraphicsPath path)
+        {
+            for(int i = path.PathActions.Count - 1; i > 0; i--)
+            {
+                PathActions.Add(path.PathActions[i]);
+            }
+        }
+
         public void Close()
         {
             if(PathActions.Count < 2)
