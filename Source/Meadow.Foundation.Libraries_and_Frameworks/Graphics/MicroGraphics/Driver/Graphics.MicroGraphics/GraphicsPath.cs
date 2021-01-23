@@ -24,14 +24,12 @@ namespace Meadow.Foundation.Graphics
 
     public class GraphicsPath
     {
-        
-
         public Point LastPoint => PathActions.LastOrDefault().PathPoint;
         public int PointCount => PathActions.Count;
         public Point[] Points;
         public int VerbCount => PathActions.Count; //need to figure out if/when this wouldn't be equal to PointCount
 
-        internal List<PathAction> PathActions { get; private set; }
+        internal List<PathAction> PathActions { get; private set; } = new List<PathAction>();
 
         public GraphicsPath()
         {
@@ -59,11 +57,23 @@ namespace Meadow.Foundation.Graphics
 
         public void LineTo(int x, int y)
         {
+            if(PathActions.Count == 0)
+            {
+                MoveTo(x, y);
+                return;
+            }
+
             PathActions.Add(new PathAction(new Point(x, y), VerbType.LineTo));
         }
 
         public void LineTo(Point point)
         {
+            if (PathActions.Count == 0)
+            {
+                MoveTo(point);
+                return;
+            }
+
             PathActions.Add(new PathAction(point, VerbType.LineTo));
         }
 

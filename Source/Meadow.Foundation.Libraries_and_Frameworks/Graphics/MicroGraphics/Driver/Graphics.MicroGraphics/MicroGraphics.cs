@@ -291,7 +291,7 @@ namespace Meadow.Foundation.Graphics
         public void DrawPath(GraphicsPath path, Color color)
         {
             //simple for now 
-            for (int i = 0; i < path.PointCount - 1; i++)
+            for (int i = 0; i < path.PointCount; i++)
             {
                 if(path.PathActions[i].Verb == VerbType.MoveTo || i == 0)
                 {
@@ -299,9 +299,10 @@ namespace Meadow.Foundation.Graphics
                 }
 
                 DrawLine(path.PathActions[i - 1].PathPoint.X,
-                    path.PathActions[i - i].PathPoint.Y,
-                    path.PathActions[i].PathPoint.X,
-                    path.PathActions[i].PathPoint.Y);
+                         path.PathActions[i - 1].PathPoint.Y,
+                         path.PathActions[i].PathPoint.X,
+                         path.PathActions[i].PathPoint.Y,
+                        color);
             }
         }
 
@@ -971,12 +972,10 @@ namespace Meadow.Foundation.Graphics
 
             if(alignment == TextAlignment.Center)
             {
-                Console.WriteLine("Center");
                 x = x - text.Length * ((int)scaleFactor * CurrentFont.Width >> 1);
             }
             else if(alignment == TextAlignment.Right)
             {
-                Console.WriteLine("Right");
                 x = x - text.Length * (int)scaleFactor * CurrentFont.Width;
             }
 
@@ -1000,12 +999,10 @@ namespace Meadow.Foundation.Graphics
 
             if (alignment == TextAlignment.Center)
             {
-                Console.WriteLine("Center");
                 x = x - text.Length * ((int)scaleFactor * CurrentFont.Width >> 1);
             }
             else if (alignment == TextAlignment.Right)
             {
-                Console.WriteLine("Right");
                 x = x - text.Length * (int)scaleFactor * CurrentFont.Width;
             }
 
