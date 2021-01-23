@@ -110,5 +110,72 @@ namespace Meadow.Foundation.Graphics
             Right = Math.Max(Right, rect.Right);
             Bottom = Math.Min(Bottom, rect.Bottom);
         }
+
+        public static Rect operator +(Rect rect, Rect amount)
+        {
+            return new Rect(rect.Left + amount.Left,
+                rect.Top + amount.Top,
+                rect.Right + amount.Right,
+                rect.Bottom + amount.Bottom);
+        }
+
+        public static Rect operator -(Rect rect, Rect amount)
+        {
+            return new Rect(rect.Left - amount.Left,
+                rect.Top - amount.Top,
+                rect.Right - amount.Right,
+                rect.Bottom - amount.Bottom);
+        }
+
+        /// <summary>
+        /// Compares two instances for equality.
+        /// </summary>
+        /// <param name="left">The first instance.</param>
+        /// <param name="right">The second instance.</param>
+        /// <returns>True, if left is equal to right; false otherwise.</returns>
+        public static bool operator ==(Rect left, Rect right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// Compares two instances for inequality.
+        /// </summary>
+        /// <param name="left">The first instance.</param>
+        /// <param name="right">The second instance.</param>
+        /// <returns>True, if left is not equal to right; false otherwise.</returns>
+        public static bool operator !=(Rect left, Rect right)
+        {
+            return !left.Equals(right);
+        }
+
+        // <summary>
+        /// Indicates whether this instance is equal to the specified object.
+        /// </summary>
+        /// <param name="obj">The object instance to compare to.</param>
+        /// <returns>True, if both instances are equal; false otherwise.</returns>
+        public override bool Equals(object obj)
+        {
+            if (obj is Rect)
+            {
+                return Equals((Rect)obj);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>A <see cref="System.Int32"/> that represents the hash code for this instance./></returns>
+        public override int GetHashCode()
+        {
+            return Left.GetHashCode() ^ Top.GetHashCode() ^ Right.GetHashCode() ^ Bottom.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"Left: {Left}, Top: {Top}, Right: {Right}, Bottom {Bottom}";
+        }
     }
 }
