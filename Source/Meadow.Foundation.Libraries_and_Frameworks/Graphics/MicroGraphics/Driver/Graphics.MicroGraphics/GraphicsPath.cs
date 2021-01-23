@@ -55,13 +55,13 @@ namespace Meadow.Foundation.Graphics
             PathActions.Add(new PathAction(point, VerbType.MoveTo));
         }
 
-        public void RMoveTo(int x, int y)
+        public void RelativeMoveTo(int x, int y)
         {
             int count = PathActions.Count;
 
             if(count > 0)
             {
-                PathActions.Add(new PathAction(new Point(x, y) + PathActions[count - 1].PathPoint, VerbType.MoveTo);
+                PathActions.Add(new PathAction(new Point(x, y) + PathActions[count - 1].PathPoint, VerbType.MoveTo));
             }
             else
             {
@@ -69,13 +69,13 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        public void RMoveTo(Point point)
+        public void RelativeMoveTo(Point point)
         {
             int count = PathActions.Count;
 
             if (count > 0)
             {
-                PathActions.Add(new PathAction(point + PathActions[count - 1].PathPoint, VerbType.MoveTo);
+                PathActions.Add(new PathAction(point + PathActions[count - 1].PathPoint, VerbType.MoveTo));
             }
             else
             {
@@ -105,13 +105,13 @@ namespace Meadow.Foundation.Graphics
             PathActions.Add(new PathAction(point, VerbType.LineTo));
         }
 
-        public void RLineTo(int x, int y)
+        public void RelativeLineTo(int x, int y)
         {
             int count = PathActions.Count;
 
             if (count > 0)
             {
-                PathActions.Add(new PathAction(new Point(x, y) + PathActions[count - 1].PathPoint, VerbType.LineTo);
+                PathActions.Add(new PathAction(new Point(x, y) + PathActions[count - 1].PathPoint, VerbType.LineTo));
             }
             else
             {
@@ -119,13 +119,13 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        public void RLineTo(Point point)
+        public void RelativeLineTo(Point point)
         {
             int count = PathActions.Count;
 
             if (count > 0)
             {
-                PathActions.Add(new PathAction(point + PathActions[count - 1].PathPoint, VerbType.LineTo);
+                PathActions.Add(new PathAction(point + PathActions[count - 1].PathPoint, VerbType.LineTo));
             }
             else
             {

@@ -1,16 +1,29 @@
-﻿namespace Meadow.Foundation.Graphics
+﻿using System;
+
+namespace Meadow.Foundation.Graphics
 {
     public struct Point
     {
+        public static Point Empty => new Point(0, 0);
+
         public int X { get; set; }
         public int Y { get; set; }
 
+        public double Length => Math.Sqrt(X * X + Y * Y);
+
         public bool IsEmpty => X == 0 && Y == 0;
+
+
 
         public Point (int x = 0, int y = 0)
         {
             X = x;
             Y = y;
+        }
+
+        public static Point From(Size size)
+        {
+            return new Point(size.Width, size.Height);
         }
 
         public void Offset(int x, int y)
