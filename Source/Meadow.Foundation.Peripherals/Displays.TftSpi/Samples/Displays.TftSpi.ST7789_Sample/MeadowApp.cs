@@ -46,6 +46,9 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
+                PathTest();
+                Thread.Sleep(100000);
+
                 LineTest();
 
                 PolarLineTest();
@@ -118,9 +121,9 @@ namespace Displays.Tft.ST7789_Sample
             Console.WriteLine("Create display driver instance");
 
             display = new St7789(device: Device, spiBus: spiBus,
-                chipSelectPin: Device.Pins.D02,
-                dcPin: Device.Pins.D01,
-                resetPin: Device.Pins.D00,
+                chipSelectPin: Device.Pins.D02,//D14,
+                dcPin: Device.Pins.D01,//D03,
+                resetPin: Device.Pins.D00, //D04,
                 width: 240, height: 240, displayColorMode: DisplayColorMode.Format12bppRgb444);
 
             Console.WriteLine("Create graphics lib");
@@ -129,6 +132,34 @@ namespace Displays.Tft.ST7789_Sample
             //graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
 
             Console.WriteLine("Init complete");
+        }
+
+        void PathTest()
+        {
+            var pathSin = new GraphicsPath();
+            var pathCos = new GraphicsPath();
+
+            for (int i = 0; i < 48; i++)
+            {
+                if(i == 0)
+                {
+                    pathSin.MoveTo(0, 120 + (int)(Math.Sin(i * 10 * Math.PI / 180) * 100));
+                    pathCos.MoveTo(0, 120 + (int)(Math.Cos(i * 10 * Math.PI / 180) * 100));
+                    continue;
+                }
+
+                pathSin.LineTo(i * 5, 120 + (int)(Math.Sin(i * 10 * Math.PI / 180) * 100));
+                pathCos.LineTo(i * 5, 120 + (int)(Math.Cos(i * 10 * Math.PI / 180) * 100));
+            }
+
+            graphics.Clear();
+
+            graphics.Stroke = 3;
+            graphics.DrawLine(0, 120, 240, 120, Color.White);
+            graphics.DrawPath(pathSin, Color.Cyan);
+            graphics.DrawPath(pathCos, Color.LawnGreen);
+
+            graphics.Show();
         }
 
         void FontAlignmentTest()
