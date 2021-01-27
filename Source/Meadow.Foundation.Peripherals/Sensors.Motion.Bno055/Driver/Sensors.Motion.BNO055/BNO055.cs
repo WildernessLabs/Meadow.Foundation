@@ -1739,7 +1739,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            return (((bno055.ReadRegister(Registers.CalibrationStatus) >> 6) & 0x03) != 0);
+	            return (((bno055.ReadRegister(Registers.CalibrationStatus) >> 6) & 0x03) == 3);
 	        }
 	    }
 
@@ -1750,7 +1750,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            return (((bno055.ReadRegister(Registers.CalibrationStatus) >> 2) & 0x03) != 0);
+	            return (((bno055.ReadRegister(Registers.CalibrationStatus) >> 2) & 0x03) == 3);
 	        }
 	    }
 
@@ -1761,7 +1761,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    {
 	        get
 	        {
-	            return (((bno055.ReadRegister(Registers.CalibrationStatus) >> 4) & 0x03) != 0);
+	            return (((bno055.ReadRegister(Registers.CalibrationStatus) >> 4) & 0x03) == 3);
 	        }
 	    }
 
@@ -1770,7 +1770,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	    /// </summary>
 	    public bool IsMagnetometerCalibrated
 	    {
-	        get { return ((bno055.ReadRegister(Registers.CalibrationStatus) & 0x03) != 0); }
+	        get { return ((bno055.ReadRegister(Registers.CalibrationStatus) & 0x03) == 3); }
 	    }
 
 	    /// <summary>
@@ -1788,7 +1788,6 @@ namespace Meadow.Foundation.Sensors.Motion
 	                    IsMagnetometerCalibrated);
 	        }
 	    }
-
         
 
         
@@ -1867,6 +1866,36 @@ namespace Meadow.Foundation.Sensors.Motion
             DebugInformation.DisplayRegisters(0x00, registers);
         }
 
-		
-	}
+
+        /// <summary>
+        ///     As Bno055 callibration might be value between 0 and 3 return exact calibration values
+        /// </summary>
+        /// <returns>Byte array with calibration values</returns>
+        public byte[] GetCalibrationValues()
+        {
+            byte callibration = bno055.ReadRegister(Registers.CalibrationStatus);
+            byte system = (byte)((callibration >> 6) & 3);
+            byte gyro = (byte)((callibration >> 4) & 3);
+            byte acc = (byte)((callibration >> 2) & 3);
+            byte mag = (byte)((callibration) & 3);
+            return new byte[] { system, gyro, acc, mag };
+        }
+
+        /// <summary>
+        ///     Read euler angles straight from registers
+        /// </summary>
+        /// <returns>Float array with euler angles</returns>
+        internal float[] ReadEulerAngles()
+        {
+            float divisor = orientationUnits == Units.Degrees ? 16f : 900f;
+            byte[] data = bno055.ReadRegisters(0x1a, 6);
+            float[] result = new float[]
+            {
+                (short)((data[1] << 8) | data[0])/divisor,
+                (short)((data[3] << 8) | data[2])/divisor,
+                (short)((data[5] << 8) | data[4])/divisor
+            };
+            return result;
+        }
+    }
 }
