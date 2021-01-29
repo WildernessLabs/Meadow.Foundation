@@ -6,6 +6,7 @@ using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Buttons;
+using Meadow.Hardware;
 
 namespace MeadowApp
 {
@@ -26,8 +27,15 @@ namespace MeadowApp
         {
             Console.WriteLine("Initialize hardware...");
 
+            // this causes unterrupts to fail, for some reason:
+            //IDigitalInputPort test = Device.CreateDigitalInputPort(Device.Pins.D07);
+            // this does not.
+            IDigitalOutputPort test = Device.CreateDigitalOutputPort(Device.Pins.D07);
+
+            Console.WriteLine("Made it here.");
+
             button1 = new PushButton(Device, Device.Pins.D12, Meadow.Hardware.ResistorMode.PullDown);
-            button2 = new PushButton(Device, Device.Pins.D13, Meadow.Hardware.ResistorMode.PullDown);
+            button2 =  new PushButton(Device, Device.Pins.D13, Meadow.Hardware.ResistorMode.PullDown);
 
             button1.PressStarted += Button1_PressStarted;
             button1.PressEnded += Button1_PressEnded;
@@ -35,22 +43,23 @@ namespace MeadowApp
             button2.PressEnded += Button2_PressEnded;
 
             motorDriver = new Tb67h420ftg(Device,
-                Device.Pins.D04, Device.Pins.D03, Device.Pins.D01,
-                Device.Pins.D05, Device.Pins.D06, Device.Pins.D00,
-                Device.Pins.D09, Device.Pins.D10);
+                inA1: Device.Pins.D04, inA2: Device.Pins.D03, pwmA: Device.Pins.D01,
+                inB1: Device.Pins.D05, inB2: Device.Pins.D06, pwmB: Device.Pins.D00,
+                fault1: Device.Pins.D02, fault2: Device.Pins.D07,
+                hbMode: Device.Pins.D09, tblkab: Device.Pins.D10);
 
             // 6V motors with a 12V input. this clamps them to 6V
             motorDriver.Motor1.MotorCalibrationMultiplier = 0.5f;
             motorDriver.Motor2.MotorCalibrationMultiplier = 0.5f;
 
-
+            Console.WriteLine("Initialization complete.");
         }
 
 
         private void Button1_PressStarted(object sender, EventArgs e)
         {
             Console.WriteLine("Motor 1 start.");
-            motorDriver.Motor1.Speed = 0.5f;
+            motorDriver.Motor1.Speed = 1f;
         }
         private void Button1_PressEnded(object sender, EventArgs e)
         {
