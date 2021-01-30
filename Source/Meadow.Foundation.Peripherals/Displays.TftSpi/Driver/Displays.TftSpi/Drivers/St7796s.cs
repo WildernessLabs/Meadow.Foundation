@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays.Tft
 		public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
 
 		public St7796s(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width = 320, uint height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+            int width = 320, int height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
 			: base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
@@ -118,7 +118,7 @@ namespace Meadow.Foundation.Displays.Tft
 			SendCommand(0x29); //Display on
 		}
 
-		protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
+		protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
 		{
 			SendCommand((byte)LcdCommand.CASET);  // column addr set
 			dataCommandPort.State = Data;

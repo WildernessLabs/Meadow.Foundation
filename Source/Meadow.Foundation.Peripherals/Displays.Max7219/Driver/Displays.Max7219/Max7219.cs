@@ -36,13 +36,9 @@ namespace Meadow.Foundation.Displays
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Width => (uint)(8 * DeviceColumns);
+        public override int Width => 8 * DeviceColumns;
 
-        public override uint Height => (uint)(8 * DeviceRows);
-
-        
-
-        
+        public override int Height => 8 * DeviceRows;
 
         private ISpiPeripheral max7219;
 

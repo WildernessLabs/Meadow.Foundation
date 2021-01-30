@@ -256,7 +256,7 @@ namespace Meadow.Foundation.Displays.Tft
             return false;
         }
 
-        protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
+        protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             SendCommand((byte)LcdCommand.CASET);  // column addr set
             dataCommandPort.State = Data;

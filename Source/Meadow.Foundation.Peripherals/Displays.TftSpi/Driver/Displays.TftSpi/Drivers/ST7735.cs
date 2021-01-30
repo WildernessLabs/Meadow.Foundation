@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Displays.Tft
         public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
 
         public St7735(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width, uint height,
+            int width, int height,
             DisplayType displayType = DisplayType.ST7735R, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
@@ -304,7 +304,7 @@ namespace Meadow.Foundation.Displays.Tft
             Thread.Sleep(10);
         }
 
-        protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
+        protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             x0 += xOffset;
             y0 += yOffset;

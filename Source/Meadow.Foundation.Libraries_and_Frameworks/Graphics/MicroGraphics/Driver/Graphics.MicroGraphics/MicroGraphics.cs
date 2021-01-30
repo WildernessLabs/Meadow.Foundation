@@ -76,12 +76,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Return the height of the display after accounting for the rotation.
         /// </summary>
-        public uint Height => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Height : display.Width;
+        public int Height => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Height : display.Width;
 
         /// <summary>
         /// Return the width of the display after accounting for the rotation.
         /// </summary>
-        public uint Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Width : display.Height;
+        public int Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Width : display.Height;
 
         public TextDisplayConfig DisplayConfig { get; private set; }
 

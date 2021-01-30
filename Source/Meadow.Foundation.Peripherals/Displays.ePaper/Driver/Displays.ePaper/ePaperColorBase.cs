@@ -18,20 +18,20 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected int xRefreshStart, yRefreshStart, xRefreshEnd, yRefreshEnd;
 
-        public override uint Width => _width;
-        public override uint Height => _height;
+        public override int Width => width;
+        public override int Height => height;
 
-        uint _width;
-        uint _height;
+        int width;
+        int height;
 
         private EpdColorBase()
         {  }
 
         public EpdColorBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
-            uint width, uint height)
+            int width, int height)
         {
-            _width = width;
-            _height = height;
+            this.width = width;
+            this.height = height;
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
