@@ -5,6 +5,23 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Motors
 {
+    /// <summary>
+    /// The TB67H420FTG is a brushed DC motor driver that has a dual H-Bridge
+    /// motor driver built in, along with over current protection (and notification).
+    ///
+    /// With the ability to drive up to `50V` at `9A`, it's a very powerful driver.
+    /// It can also be put into single H-Bridge mode in which two motors are driven
+    /// in synch, or one motor is driven with both outputs, allowing twice the power.
+    /// </summary>
+    /// <remarks>
+    /// Pololu makes a breakout of this chip to get you started: https://www.pololu.com/product/2999
+    /// 
+    /// If you're looking to integrate into your own circuit, you can find an
+    /// open source hardware design here: https://easyeda.com/bryan_6020/motordriver
+    ///
+    /// The driver can also drive a single stepper motor, though that driver is
+    /// still planned.
+    /// </remarks>
     public partial class Tb67h420ftg
     {
         protected IPwmPort inA1;
