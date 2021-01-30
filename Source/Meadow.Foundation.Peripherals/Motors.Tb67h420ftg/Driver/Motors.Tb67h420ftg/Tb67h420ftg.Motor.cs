@@ -8,6 +8,9 @@ namespace Meadow.Foundation.Motors
     {
         public class Motor : HBridgeMotor
         {
+            /// <summary>
+            /// Raised when the motors is over current.
+            /// </summary>
             public event EventHandler<MotorOvercurrentEventArgs> MotorOvercurrentFault = delegate { };
 
             protected Tb67h420ftg driver;
@@ -20,6 +23,8 @@ namespace Meadow.Foundation.Motors
             {
                 this.driver = driver;
                 this.fault = fault;
+
+                Init();
             }
 
             protected void Init() {
@@ -31,6 +36,9 @@ namespace Meadow.Foundation.Motors
                 }
             }
 
+            /// <summary>
+            /// Raises the MotorOvercurrentFault event.
+            /// </summary>
             protected void RaiseMotorOvercurrentFault()
             {
                 MotorOvercurrentEventArgs args = new MotorOvercurrentEventArgs();
