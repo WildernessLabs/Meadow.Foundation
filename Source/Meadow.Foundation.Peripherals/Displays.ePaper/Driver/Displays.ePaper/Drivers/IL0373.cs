@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays.ePaper
     public class Il0373 : EpdColorBase
     {
         public Il0373(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
-            uint width, uint height) :
+            int width, int height) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         {
         }

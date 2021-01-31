@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Distance.SharpGP2D12\Sensors.Distance.GP2D12.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Distance.GP2D12\Sensors.Distance.GP2D12.csproj" />
   </ItemGroup>
 </Project>

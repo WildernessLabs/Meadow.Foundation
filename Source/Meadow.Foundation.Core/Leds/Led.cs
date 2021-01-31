@@ -86,11 +86,13 @@ namespace Meadow.Foundation.Leds
 					break;
 				}
 
-				IsOn = true;
+				Port.State = true;
 				await Task.Delay((int)onDuration);
-				IsOn = false;
+				Port.State = false;
 				await Task.Delay((int)offDuration);
 			}
+
+			Port.State = IsOn;
 		}
 	}
 }

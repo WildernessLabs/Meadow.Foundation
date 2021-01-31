@@ -6,6 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Driver\FeatherWings.DotstarWing\FeatherWings.DotstarWing.csproj" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
   </ItemGroup>
 </Project>

@@ -13,15 +13,23 @@ namespace Sensors.Atmospheric.BME280_Sample
     {
         Bme280 bme280;
 
+        IDigitalOutputPort trigger;
+
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
+
+            // create a trigger for the LA
+            trigger = Device.CreateDigitalOutputPort(Device.Pins.D13);
+            Console.WriteLine("Trigger on D02");
+            trigger.State = true;
 
             // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus();
             bme280 = new Bme280 (
                 i2c,
-                Bme280.I2cAddress.Adddress0x77 //default
+                Bme280.I2cAddress.Adddress0x76 //default
+                //Bme280.I2cAddress.Adddress0x77 //default
             );
 
             // TODO: SPI version
@@ -48,7 +56,6 @@ namespace Sensors.Atmospheric.BME280_Sample
                 Console.WriteLine($"  Pressure: {e.New.Pressure}hPa");
                 Console.WriteLine($"  Relative Humidity: {e.New.Humidity}%");
             };
-
 
             // just for funsies.
             Console.WriteLine($"ChipID: {bme280.GetChipID():X2}");

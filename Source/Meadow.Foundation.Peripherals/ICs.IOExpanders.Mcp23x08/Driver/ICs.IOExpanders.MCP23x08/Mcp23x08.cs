@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Meadow.Hardware;
 using Meadow.Utilities;
 
@@ -38,7 +40,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected object _lock = new object();
 
         public DeviceCapabilities Capabilities => throw new NotImplementedException();
-
 
         
 
@@ -129,7 +130,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptPins, currentStates));
         }
-
 
         /// <summary>
         /// Initializes the chip for use:
@@ -397,7 +397,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             this.SetPortDirection(pin, PortDirectionType.Input);
         }
 
-
         // TODO: all these can go away when we get interface implementation 
         // support from C# 8 into the Meadow.Core project. It won't work today,
         // even though it's set to C# 8 because the project references the
@@ -483,6 +482,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public ISerialMessagePort CreateSerialMessagePort(SerialPortName portName, byte[] prefixDelimiter, bool preserveDelimiter, int messageLength, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, int readBufferSize = 512)
         {
             throw new NotImplementedException();
+        }
+
+        public void SetSynchronizationContext(SynchronizationContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IPin GetPin(string pinName)
+        {
+            return Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);
         }
     }
 }

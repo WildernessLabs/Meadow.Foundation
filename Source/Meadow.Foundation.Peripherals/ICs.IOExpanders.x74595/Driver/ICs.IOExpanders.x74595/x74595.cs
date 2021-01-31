@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Threading;
 using Meadow.Hardware;
 using Meadow.Utilities;
 
@@ -13,17 +15,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// </remarks>
     public partial class x74595 : IIODevice
     {
-        #region Properties
+        
 
         public PinDefinitions Pins { get; } = new PinDefinitions();
 
-        #endregion
+        
 
-        #region Constants
+        
 
-        #endregion
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     Number of chips required to implement this ShiftRegister.
@@ -39,9 +41,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public DeviceCapabilities Capabilities => throw new NotImplementedException();
 
-        #endregion Member variables / fields
+        
 
-        #region Constructor(s)
+        
 
         /// <summary>
         ///     Default constructor.
@@ -76,9 +78,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        #endregion
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Creates a new DigitalOutputPort using the specified pin and initial state.
@@ -156,7 +158,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new NotImplementedException();
         }
 
-
         //TODO: we know adding all these sucks. when we convert to .NET Core
         // we'll be able to add these to the IIODevice interface implementation
         // and they won't be necessary to put in like this.
@@ -226,6 +227,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new NotImplementedException();
         }
 
-        #endregion
+        public void SetSynchronizationContext(SynchronizationContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IPin GetPin(string pinName)
+        {
+            return Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);
+        }
+
+        
     }
 }

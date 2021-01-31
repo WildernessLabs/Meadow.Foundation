@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using System;
-using System.Security.Policy;
 using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -158,11 +157,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Set the PWM value for the specified LED
         /// </summary>
-        /// <param name="lednum">The LED number</param>
+        /// <param name="ledIndex">The LED number</param>
         /// <param name="pwm">The pwm value 0-255</param>
-        public virtual void SetLedPwm(byte lednum, byte pwm)
+        public virtual void SetLedPwm(byte ledIndex, byte pwm)
         {
-            SetLedPwm(Frame, lednum, pwm);
+            SetLedPwm(Frame, ledIndex, pwm);
         }
 
         /// <summary>

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Leds.Led_Sample
 {
@@ -13,7 +13,12 @@ namespace Leds.Led_Sample
 
         public MeadowApp()
         {
-            Console.WriteLine("Initializing...");
+            var onRgbLed = new RgbLed(
+                device: Device,
+                redPin: Device.Pins.OnboardLedRed,
+                greenPin: Device.Pins.OnboardLedGreen,
+                bluePin: Device.Pins.OnboardLedBlue);
+            onRgbLed.SetColor(RgbLed.Colors.Red);
 
             leds = new List<Led>
             {
@@ -34,6 +39,8 @@ namespace Leds.Led_Sample
                 new Led(Device.CreateDigitalOutputPort(Device.Pins.D14, false)),
                 new Led(Device.CreateDigitalOutputPort(Device.Pins.D15, false))
             };
+
+            onRgbLed.SetColor(RgbLed.Colors.Green);
 
             TestLeds();
         }

@@ -17,16 +17,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public class Sht31D : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     SH31D sensor communicates using I2C.
         /// </summary>
         private readonly II2cPeripheral sht31d;
 
-        #endregion Member variables / fields
+        
 
-        #region Properties
+        
 
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
@@ -54,15 +54,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        #endregion Properties
+        
 
-        #region Events and delegates
+        
 
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
-        #endregion Events and delegates
+        
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new SHT31D object.
@@ -74,9 +74,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             sht31d = new I2cPeripheral(i2cBus, address);
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -160,6 +160,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Conditions.Temperature = ((175 * (float)((data[0] << 8) + data[1])) / 65535) - 45;
         }
 
-        #endregion
+        
     }
 }

@@ -15,13 +15,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
-        #region Events and delegates
+        
 
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
-        #endregion Events and delegates
+        
 
-        #region Properties
+        
 
         /// <summary>
         /// Gets a value indicating whether the sensor is currently in a sampling
@@ -62,9 +62,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public byte FirmwareRevision { get; private set; }
 
-        #endregion Properties
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     SI7021 is an I2C device.
@@ -92,9 +92,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public const byte READ_2ND_ID_PART1 = 0xfc;
         public const byte READ_2ND_ID_PART2 = 0xc9;
 
-        #endregion Member variables /fields
+        
 
-        #region Enums
+        
 
         /// <summary>
         ///     Specific device type / model
@@ -119,9 +119,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             TEMP11_HUM11 = 0x81,
         }
 
-        #endregion Enums
+        
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new SI7021 temperature and humidity sensor.
@@ -135,9 +135,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Initialize();
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         protected void Initialize()
         {
@@ -182,9 +182,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             SetResolution(SensorResolution.TEMP11_HUM11);
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -339,6 +339,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             si7021.WriteBytes(new byte[] { userData }); //Write the new resolution bits
         }
 
-        #endregion Methods
+        
     }
 }

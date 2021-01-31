@@ -24,7 +24,6 @@ namespace MeadowApp
 
             sensor.StartUpdating(500);
 
-
         }
 
         private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Motion.AccelerationConditionChangeResult e)

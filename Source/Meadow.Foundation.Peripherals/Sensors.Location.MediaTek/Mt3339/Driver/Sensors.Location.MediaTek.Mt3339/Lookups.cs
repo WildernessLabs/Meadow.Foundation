@@ -57,6 +57,5 @@ namespace Sensors.Location.MediaTek
             KnownPacketTypes.Add("352", "PMTK_API_SET_STOP_QZSS");
         }
 
-
     }
 }

@@ -29,11 +29,18 @@ namespace Displays.TftSpi.St7735_Sample
 
             Console.WriteLine("Create display driver instance");
 
-            display = new St7735(device: Device, spiBus: spiBus,
+            
+            /*display = new St7735(device: Device, spiBus: spiBus,
                 chipSelectPin: Device.Pins.D10,
                 dcPin: Device.Pins.D09,
                 resetPin: Device.Pins.D05,
-                width: 160, height: 80, St7735.DisplayType.ST7735R_80x160);
+                width: 160, height: 80, St7735.DisplayType.ST7735R_80x160); */
+
+            display = new St7735(device: Device, spiBus: spiBus,
+              chipSelectPin: Device.Pins.D02,
+              dcPin: Device.Pins.D01,
+              resetPin: Device.Pins.D00,
+              width: 128, height: 160, St7735.DisplayType.ST7735R);
 
             Console.WriteLine("Create graphics lib");
 

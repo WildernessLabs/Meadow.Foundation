@@ -235,7 +235,6 @@ namespace Meadow.Foundation.Sensors.Camera
                 cmd[0] = (byte)(startAddress >> 8);
                 cmd[1] = (byte)(startAddress & 0x00FF);
 
-
                 Span<byte> writeBuffer = new Span<byte>(cmd);
                 Span<byte> tempBuf = new Span<byte>(new byte[toRead16 * 2]);
                 i2CPeripheral.WriteRead(writeBuffer, tempBuf);
@@ -420,7 +419,6 @@ namespace Meadow.Foundation.Sensors.Camera
 
             vdd = GetVdd(frameData, mlx90640);
 
-
             ptat = frameData[800];
             if (ptat > 32767)
                 ptat = ptat - 65536;
@@ -506,7 +504,6 @@ namespace Meadow.Foundation.Sensors.Camera
             float KtPTAT;
             ushort vPTAT25;
             float alphaPTAT;
-
 
             KvPTAT = (eeData[50] & 0xFC00) >> 10;
             if (KvPTAT > 31)
@@ -624,7 +621,6 @@ namespace Meadow.Foundation.Sensors.Camera
             float[] alphaTemp = new float[768];
             float temp;
 
-
             accRemScale = (byte)(eeData[32] & 0x000F);
             accColumnScale = (byte)((eeData[32] & 0x00F0) >> 4);
             accRowScale = (byte)((eeData[32] & 0x0F00) >> 8);
@@ -678,7 +674,6 @@ namespace Meadow.Foundation.Sensors.Camera
                 }
             }
 
-
             temp = alphaTemp[0];
             for (int i = 1; i < 768; i++)
             {
@@ -720,7 +715,6 @@ namespace Meadow.Foundation.Sensors.Camera
             byte occRowScale;
             byte occColumnScale;
             byte occRemScale;
-
 
             occRemScale = (byte)(eeData[16] & 0x000F);
             occColumnScale = (byte)((eeData[16] & 0x00F0) >> 4);
@@ -904,7 +898,6 @@ namespace Meadow.Foundation.Sensors.Camera
 
             kvScale = (byte)((eeData[56] & 0x0F00) >> 8);
 
-
             for (int i = 0; i < 24; i++)
             {
                 for (int j = 0; j < 32; j++)
@@ -1035,7 +1028,6 @@ namespace Meadow.Foundation.Sensors.Camera
         {
             ushort pixCnt = 0;
             int i;
-
 
             pixCnt = 0;
             while (pixCnt < 768)
@@ -1196,6 +1188,5 @@ namespace Meadow.Foundation.Sensors.Camera
         }
 
     }
-
 
 }

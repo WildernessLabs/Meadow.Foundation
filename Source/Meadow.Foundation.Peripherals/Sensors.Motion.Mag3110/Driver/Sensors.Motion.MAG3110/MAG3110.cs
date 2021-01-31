@@ -5,8 +5,6 @@ namespace Meadow.Foundation.Sensors.Motion
 {
     public class Mag3110
     {
-        #region Structures
-
         /// <summary>
         ///     Sensor readings to be passed back when an interrupt is generated.
         /// </summary>
@@ -42,10 +40,6 @@ namespace Meadow.Foundation.Sensors.Motion
             public static readonly byte Control2 = 0x11;
         }
 
-        #endregion Structures
-
-        #region Delegates and events
-
         /// <summary>
         ///     Delegate for the OnDataReceived event.
         /// </summary>
@@ -57,23 +51,15 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public event ReadingComplete OnReadingComplete;
 
-        #endregion Delegates and events
-
-        #region Member variables / fields
-
         /// <summary>
         ///     MAG3110 object.
         /// </summary>
-        private readonly II2cPeripheral _mag3110;
+        private readonly II2cPeripheral i2cPeripheral;
 
         /// <summary>
         ///     Interrupt port used to detect then end of a conversion.
         /// </summary>
-        private readonly IDigitalInputPort _digitalInputPort;
-
-        #endregion Member variables / fields
-
-        #region Properties
+        private readonly IDigitalInputPort interruptPort;
 
         /// <summary>
         ///     Reading from the X axis.
@@ -104,7 +90,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public sbyte Temperature
         {
-            get { return(sbyte) _mag3110.ReadRegister((byte) Registers.Temperature); }
+            get { return(sbyte) i2cPeripheral.ReadRegister((byte) Registers.Temperature); }
         }
 
         /// <summary>
@@ -114,12 +100,12 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             get
             {
-                var controlRegister = _mag3110.ReadRegister((byte) Registers.Control1);
+                var controlRegister = i2cPeripheral.ReadRegister((byte) Registers.Control1);
                 return (controlRegister & 0x03) == 0;
             }
             set
             {
-                var controlRegister = _mag3110.ReadRegister((byte) Registers.Control1);
+                var controlRegister = i2cPeripheral.ReadRegister((byte) Registers.Control1);
                 if (value)
                 {
                     controlRegister &= 0xfc; // ~0x03
@@ -128,7 +114,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     controlRegister |= 0x01;
                 }
-                _mag3110.WriteRegister((byte) Registers.Control1, controlRegister);
+                i2cPeripheral.WriteRegister((byte) Registers.Control1, controlRegister);
             }
         }
 
@@ -140,7 +126,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public bool DataReady
         {
-            get { return(_mag3110.ReadRegister((byte) Registers.DRStatus) & 0x08) > 0; }
+            get { return(i2cPeripheral.ReadRegister((byte) Registers.DRStatus) & 0x08) > 0; }
         }
 
         /// <summary>
@@ -159,7 +145,7 @@ namespace Meadow.Foundation.Sensors.Motion
             set
             {
                 Standby = true;
-                var cr2 = _mag3110.ReadRegister((byte) Registers.Control2);
+                var cr2 = i2cPeripheral.ReadRegister((byte) Registers.Control2);
                 if (value)
                 {
                     cr2 |= 0x80;
@@ -168,14 +154,10 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     cr2 &= 0x7f;
                 }
-                _mag3110.WriteRegister((byte) Registers.Control2, cr2);
+                i2cPeripheral.WriteRegister((byte) Registers.Control2, cr2);
                 _digitalInputsEnabled = value;
             }
         }
-
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component.
@@ -195,9 +177,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="i2cBus">I2C bus object - default = 400 KHz).</param>        
         public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = 0x0e)
         {
-            _mag3110 = new I2cPeripheral(i2cBus, address);
+            i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
-            var deviceID = _mag3110.ReadRegister((byte) Registers.WhoAmI);
+            var deviceID = i2cPeripheral.ReadRegister((byte) Registers.WhoAmI);
             if (deviceID != 0xc4)
             {
                 throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
@@ -205,15 +187,11 @@ namespace Meadow.Foundation.Sensors.Motion
  
             if (interruptPort != null)
             {
-                _digitalInputPort = interruptPort;
-                _digitalInputPort.Changed += DigitalInputPortChanged;
+                this.interruptPort = interruptPort;
+                this.interruptPort.Changed += DigitalInputPortChanged;
             }
             Reset();
         }
-
-        #endregion Constructors
-
-        #region Methods
 
         /// <summary>
         ///     Reset the sensor.
@@ -221,9 +199,9 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Reset()
         {
             Standby = true;
-            _mag3110.WriteRegister((byte) Registers.Control1, 0x00);
-            _mag3110.WriteRegister((byte) Registers.Control2, 0x80);
-            _mag3110.WriteRegisters((byte) Registers.XOffsetMSB, new byte[] { 0, 0, 0, 0, 0, 0 });
+            i2cPeripheral.WriteRegister((byte) Registers.Control1, 0x00);
+            i2cPeripheral.WriteRegister((byte) Registers.Control2, 0x80);
+            i2cPeripheral.WriteRegisters((byte) Registers.XOffsetMSB, new byte[] { 0, 0, 0, 0, 0, 0 });
         }
 
         /// <summary>
@@ -231,18 +209,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public void Read()
         {
-            var controlRegister = _mag3110.ReadRegister((byte) Registers.Control1);
+            var controlRegister = i2cPeripheral.ReadRegister((byte) Registers.Control1);
             controlRegister |= 0x02;
-            _mag3110.WriteRegister((byte) Registers.Control1, controlRegister);
-            var data = _mag3110.ReadRegisters((byte) Registers.XMSB, 6);
+            i2cPeripheral.WriteRegister((byte) Registers.Control1, controlRegister);
+            var data = i2cPeripheral.ReadRegisters((byte) Registers.XMSB, 6);
             X = (short) ((data[0] << 8) | data[1]);
             Y = (short) ((data[2] << 8) | data[3]);
             Z = (short) ((data[4] << 8) | data[5]);
         }
-
-        #endregion Methods
-
-        #region Event handlers
 
         /// <summary>
         ///     Interrupt from the MAG3110 conversion complete interrupt.
@@ -259,7 +233,5 @@ namespace Meadow.Foundation.Sensors.Motion
                 OnReadingComplete(readings);
             }
         }
-
-        #endregion Event handlers
     }
 }

@@ -9,7 +9,7 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        DisplayTftSpiBase display;
+        TftSpiBase display;
         ISpiBus spiBus;
 
         public MeadowApp()
@@ -61,7 +61,6 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
             graphicsLib.DrawText(indent, y += spacing, "Orange", Meadow.Foundation.Color.Orange);
 
             graphicsLib.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
-
 
             Console.WriteLine("Show");
 

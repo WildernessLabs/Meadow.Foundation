@@ -11,6 +11,7 @@ namespace Meadow.Foundation.FeatherWings
     public class CharlieWing : DisplayBase
     {
         Color pen;
+
         public enum I2cAddress : byte
         {
             Adddress0x74 = 0x74,
@@ -19,9 +20,9 @@ namespace Meadow.Foundation.FeatherWings
         
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Width => 15;
+        public override int Width => 15;
 
-        public override uint Height => 7;
+        public override int Height => 7;
 
         public byte Frame { get; set; }
 
@@ -50,7 +51,9 @@ namespace Meadow.Foundation.FeatherWings
 
         public override void DrawPixel(int x, int y, Color color)
         {
-            DrawPixel(x, y, color, Brightness);
+            byte brightness = (byte)(color.Brightness * 255.0);
+
+            DrawPixel(x, y, color, brightness);
         }
 
         public virtual void DrawPixel(int x, int y, Color color, byte brightness)
@@ -82,10 +85,14 @@ namespace Meadow.Foundation.FeatherWings
 
         public override void DrawPixel(int x, int y, bool colored)
         {
-            if(colored)
+            if (colored)
+            {
                 DrawPixel(x, y, pen);
+            }
             else
+            {
                 DrawPixel(x, y, Color.Black);
+            }
         }
 
         public override void DrawPixel(int x, int y)
@@ -96,6 +103,11 @@ namespace Meadow.Foundation.FeatherWings
         public virtual void DrawPixel(int x, int y, byte brightness)
         {
             DrawPixel(x, y, pen, brightness);
+        }
+
+        public override void InvertPixel(int x, int y)
+        {
+            throw new NotImplementedException();
         }
 
         public override void SetPenColor(Color pen)

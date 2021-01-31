@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 
     public class DS18B20 : ITemperatureSensor
     {
-        #region Enums
+        
 
         /// <summary>
         ///     Type of one wire buses allowed.
@@ -28,9 +28,9 @@ namespace Meadow.Foundation.Sensors.Temperature
             MultimpleDevices
         }
 
-        #endregion Enums
+        
 
-        #region Commands class
+        
 
         /// <summary>
         ///     Constants representing the various commands that can be issued to
@@ -114,9 +114,9 @@ namespace Meadow.Foundation.Sensors.Temperature
             public const byte CopyEEPROMToScratchPad = 0xb8;
         }
 
-        #endregion Command class
+        
 
-        #region ScratchPad class
+        
 
         /// <summary>
         ///     Class holding the constants defining the layout of the DS18B20 Scratch Pad.
@@ -178,9 +178,9 @@ namespace Meadow.Foundation.Sensors.Temperature
             public const byte CRC = 8;
         }
 
-        #endregion ScratchPad class
+        
 
-        #region Constants
+        
 
         /// <summary>
         ///     Minimum value that should be used for the polling frequency.
@@ -200,18 +200,18 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public const byte DeviceIDLength = 8;
 
-        #endregion Constants
+        
 
-        #region Member variables
+        
 
         /// <summary>
         ///     Update interval in milliseconds
         /// </summary>
         private ushort _updateInterval = 100;
 
-        #endregion Member variables
+        
 
-        #region Properties
+        
 
         /// <summary>
         ///     Instance of the DS18B20 temperature sensor
@@ -292,9 +292,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public UInt64 DeviceID { get; private set; }
 
-        #endregion Properties
+        
 
-        #region Events and delegates
+        
 
         /// <summary>
         ///     Event raised when the temperature change is greater than the 
@@ -302,9 +302,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public event SensorFloatEventHandler TemperatureChanged = delegate { };
 
-        #endregion Events and delegates
+        
 
-        #region Constructor(s)
+        
 
         /// <summary>
         ///     Create a new DS18B20 temperature sensor object with the specified configuration.
@@ -381,9 +381,9 @@ namespace Meadow.Foundation.Sensors.Temperature
             }
         }
 
-        #endregion Constructor(s)
+        
 
-        #region Methods
+        
 
         /// <summary>
         ///     Start the update process.
@@ -534,6 +534,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             throw new NotImplementedException();
         }
 
-        #endregion Methods
+        
     }
 } */

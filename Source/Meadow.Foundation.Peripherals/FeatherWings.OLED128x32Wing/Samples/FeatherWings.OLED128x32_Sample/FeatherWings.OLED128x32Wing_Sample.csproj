@@ -1,0 +1,12 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+    <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
+    <ProjectReference Include="..\..\Driver\FeatherWings.OLED128x32Wing\FeatherWings.OLED128x32Wing.csproj" />
+  </ItemGroup>
+</Project>

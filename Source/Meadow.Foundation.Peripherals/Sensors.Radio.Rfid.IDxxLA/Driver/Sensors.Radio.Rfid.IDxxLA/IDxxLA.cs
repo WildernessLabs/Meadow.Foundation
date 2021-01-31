@@ -93,7 +93,6 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
             SerialPort.Open();
         }
 
-
         /// <inheritdoc />
         public void StopReading()
         {
@@ -193,7 +192,6 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
             const int tagLength = 10;
             const int checksumStartByte = 11;
             const int checksumLength = 2;
-
 
             if (data.Length != validLength) {
                 Debug.WriteLine(

@@ -9,7 +9,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, IOExpanders, Mcp23x08</PackageTags>
-    <Version>0.1.7</Version>
+    <Version>0.1.27</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for Mcp23x08</Description>
   </PropertyGroup>

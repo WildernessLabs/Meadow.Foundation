@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public class Hcsr04 : IRangeFinder
     {
-        #region Properties
+        
 
         /// <summary>
         /// Returns current distance detected in cm.
@@ -27,14 +27,17 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public float MaximumDistance => 400;
 
+        public DistanceConditions Conditions => throw new NotImplementedException();
+
         /// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
         public event EventHandler<DistanceEventArgs> DistanceDetected = delegate { };
+        public event EventHandler<DistanceConditionChangeResult> Updated;
 
-        #endregion
+        
 
-        #region Member variables / fields
+        
 
         /// <summary>
         /// Trigger Pin.
@@ -48,9 +51,9 @@ namespace Meadow.Foundation.Sensors.Distance
 
         protected long tickStart;
 
-        #endregion
+        
 
-        #region Constructors
+        
 
         /// <summary>
         /// Create a new HCSR04 object with an IO Device
@@ -74,7 +77,7 @@ namespace Meadow.Foundation.Sensors.Distance
             this.echoPort.Changed += OnEchoPortChanged;
         }
 
-        #endregion
+        
 
         /// <summary>
         /// Sends a trigger signal
@@ -122,6 +125,11 @@ namespace Meadow.Foundation.Sensors.Distance
         //       CurrentDistance = -1;
 
             DistanceDetected?.Invoke(this, new DistanceEventArgs(CurrentDistance));
+        }
+
+        public IDisposable Subscribe(IObserver<DistanceConditionChangeResult> observer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="SimpleJpegDecoder" Version="0.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\Displays.TftSpi\Driver\Displays.TftSpi\Displays.TftSpi.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Camera.VC0706\Sensors.Camera.VC0706.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
+  </ItemGroup>
+</Project>

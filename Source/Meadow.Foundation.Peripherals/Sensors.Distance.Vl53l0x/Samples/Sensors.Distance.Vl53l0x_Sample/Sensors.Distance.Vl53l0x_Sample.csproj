@@ -1,0 +1,21 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Driver\Sensors.Distance.Vl53l0x\Sensors.Distance.Vl53l0x.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib">
+      <HintPath>..\..\..\..\..\..\..\..\Downloads\Meadow.OS_RC\bcl\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>..\..\..\..\..\..\..\..\Downloads\Meadow.OS_RC\bcl\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>..\..\..\..\..\..\..\..\Downloads\Meadow.OS_RC\bcl\System.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

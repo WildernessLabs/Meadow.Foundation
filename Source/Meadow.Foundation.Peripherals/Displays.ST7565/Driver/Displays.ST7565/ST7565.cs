@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class St7565 : DisplayBase
     {
-        #region Enums
+        
 
         /// <summary>
         ///     Allow the programmer to set the scroll direction.
@@ -62,15 +62,15 @@ namespace Meadow.Foundation.Displays
             NoOperation = 0xE3
         }
 
-        #endregion Enums
+        
 
-        #region Member variables / fields
+        
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Width { get; }
+        public override int Width { get; }
 
-        public override uint Height { get; }
+        public override int Height { get; }
 
         /// <summary>
         ///     SPI object
@@ -91,9 +91,9 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         private byte[] buffer;
 
-        #endregion Member variables / fields
+        
 
-        #region Properties
+        
 
         /// <summary>
         ///     Invert the entire display (true) or return to normal mode (false).
@@ -116,15 +116,15 @@ namespace Meadow.Foundation.Displays
             SendCommand(DisplayCommand.AllPixelsOn);
         }
 
-        #endregion Properties
+        
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new ST7565 object using the default parameters for
         /// </summary>
         public St7565(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width = 128, uint height = 64)
+            int width = 128, int height = 64)
         {
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             resetPort = device.CreateDigitalOutputPort(resetPin, false);
@@ -171,9 +171,9 @@ namespace Meadow.Foundation.Displays
             SendCommand(DisplayCommand.AllPixelsOff);
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         public const uint ContrastHigh = 34;
         public const uint ContrastMedium = 24;
@@ -304,6 +304,22 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        public override void InvertPixel(int x, int y)
+        {
+            if ((x >= Width) || (y >= Height))
+            {
+                if (!IgnoreOutOfBoundsPixels)
+                {
+                    throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
+                }
+                //  pixels to be thrown away if out of bounds of the display
+                return;
+            }
+            var index = (y / 8 * Width) + x;
+
+            buffer[index] = (buffer[index] ^= (byte)(1 << y % 8));
+        }
+
         /// <summary>
         ///     Start the display scrollling in the specified direction.
         /// </summary>
@@ -366,6 +382,6 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x2e);
         }
 
-        #endregion Methods
+        
     }
 }

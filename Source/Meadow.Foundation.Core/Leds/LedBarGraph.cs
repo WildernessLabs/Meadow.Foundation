@@ -18,9 +18,11 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// A value between 0 and 1 that controls the number of LEDs that are activated
         /// </summary>
+        float percentage;
         public float Percentage
         {
-            set => SetPercentage(value);
+            get => percentage;
+            set => SetPercentage(percentage = value);
         }
 
         /// <summary>
@@ -54,8 +56,14 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="index">index of the LED</param>
         /// <param name="isOn"></param>
-        public void SetLed(int index, bool isOn)
+        public void SetLed(uint index, bool isOn)
         {
+            if (index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            leds[index].Stop();
             leds[index].IsOn = isOn;
         }
 
@@ -74,7 +82,7 @@ namespace Meadow.Foundation.Leds
             
             value += 0.5f;
 
-            for (int i = 1; i <= Count; i++)
+            for (uint i = 1; i <= Count; i++)
             {
                 if (i <= value)
                 {
@@ -88,6 +96,15 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
+        /// Returns the index of the last LED turned on
+        /// </summary>
+        /// <returns></returns>
+        public uint GetTopLedForPercentage() 
+        {
+            return (uint) Math.Max(0, percentage * Count - 0.5);
+        }
+
+        /// <summary>
         /// Blink animation that turns the LED bar graph on and off based on the OnDuration and offDuration values in ms
         /// </summary>
         /// <param name="onDuration"></param>
@@ -98,6 +115,22 @@ namespace Meadow.Foundation.Leds
             {
                 led.StartBlink(onDuration, offDuration);
             }
+        }
+
+        /// <summary>
+        /// Starts a blink animation on an individual LED
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="onDuration"></param>
+        /// <param name="offDuration"></param>
+        public void SetLedBlink(uint index, uint onDuration = 200, uint offDuration = 200)
+        {
+            if (index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            leds[index].StartBlink(onDuration, offDuration);
         }
 
         /// <summary>

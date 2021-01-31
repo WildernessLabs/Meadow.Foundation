@@ -119,8 +119,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
             SamplePerSecond320 = 0b111,
         }
 
-
-
         private II2cBus Device { get; }
         private object SyncRoot { get; } = new object();
         private decimal gramsPerAdcUnit = 0;
@@ -280,7 +278,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
             // Enter the low power standby condition by setting PUA and PUD bits to 0, in R0x00 
             // Resume operation by setting PUA and PUD bits to 1, in R0x00.This sequence is the same for powering up from the standby condition, except that from standby all of the information in the configuration and calibration registers will be retained if the power supply is stable.Depending on conditions and the application, it may be desirable to perform calibration again to update the calibration registers for the best possible accuracy.
-
 
         }
 

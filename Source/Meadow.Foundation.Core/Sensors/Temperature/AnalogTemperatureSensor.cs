@@ -132,12 +132,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         #region Properties
 
         /// <summary>
-        ///     Analog port that the temperature sensor is attached to.
-        /// </summary>
-        /// <value>Analog port connected to the temperature sensor.</value>
-        private IAnalogInputPort AnalogPort { get; set; }
-
-        /// <summary>
         ///     Temperature in degrees centigrade.
         /// </summary>
         /// <remarks>
@@ -146,10 +140,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </remarks>
         public float Temperature { get; protected set; }
 
-        float ITemperatureSensor.Temperature => throw new NotImplementedException();
+        float ITemperatureSensor.Temperature => Temperature;
 
         #endregion Properties
-
 
         #region Constructor(s)
 

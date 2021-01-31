@@ -9,20 +9,7 @@ namespace Meadow.Foundation.Sensors.Buttons
     /// </summary>
     public class PushButton : IButton, IDisposable
     {
-        #region Properties
-        /// <summary>
-        /// This duration controls the debounce filter. It also has the effect
-        /// of rate limiting clicks. Decrease this time to allow users to click
-        /// more quickly.
-        /// </summary>
-        public TimeSpan DebounceDuration
-        {
-            get => (DigitalIn != null) ? new TimeSpan(0, 0, 0, 0, (int)DigitalIn.DebounceDuration) : TimeSpan.MinValue;
-            set
-            {
-                DigitalIn.DebounceDuration = (int)value.TotalMilliseconds;
-            }
-        }
+        #region Properties        
 
         /// <summary>
         /// Returns the sanitized state of the switch. If the switch 
@@ -41,7 +28,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// The minimum duration for a long press.
         /// </summary>
-        public TimeSpan LongPressThreshold { get; set; } = TimeSpan.Zero;
+        public TimeSpan LongPressThreshold { get; set; } = new TimeSpan(0, 0, 1);
 
         /// <summary>
         /// Returns digital input port.
@@ -120,7 +107,11 @@ namespace Meadow.Foundation.Sensors.Buttons
         private event EventHandler _pressStartDelegate = delegate { };
         private event EventHandler _pressEndDelegate = delegate { };
         private event EventHandler _longPressDelegate = delegate { };
+<<<<<<< HEAD
         private bool _inputCreatedInternally = false;
+=======
+        //private bool _inputCreatedInternally = false;
+>>>>>>> 7b45dd544a75da276b743800c4246d6778776dc3
 
         /// <summary>
         /// Returns the current raw state of the switch.
@@ -140,7 +131,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Circuit Termination Type (CommonGround, High or Floating)
         /// </summary>
-        protected CircuitTerminationType _circuitType;
+        //protected CircuitTerminationType _circuitType;
 
         #endregion
 
@@ -152,7 +143,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="device"></param>
         /// <param name="inputPin"></param>
         /// <param name="resistor"></param>
-        /// <param name="debounceDuration"></param>
+        /// <param name="debounceDuration"></param>        
         public PushButton(IIODevice device, IPin inputPin, ResistorMode resistor = ResistorMode.Disabled, int debounceDuration = 20)
         {
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
@@ -171,7 +162,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             DigitalIn = interruptPort;
             DigitalIn.Resistor = resistor;
-            DebounceDuration = new TimeSpan(0, 0, 0, 0, debounceDuration);
+            DigitalIn.DebounceDuration = debounceDuration;
             DigitalIn.Changed += DigitalInChanged;
         }
 
@@ -192,9 +183,15 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             bool STATE_PRESSED = false;
             bool STATE_RELEASED = true;
+<<<<<<< HEAD
 
 //            Console.WriteLine($"PB: InputChanged. State == {State}. e.Value: {e.Value}.  DI State: {DigitalIn.State}");
 
+=======
+
+            //Console.WriteLine($"PB: InputChanged. State == {State}. e.Value: {e.Value}.  DI State: {DigitalIn.State}");
+
+>>>>>>> 7b45dd544a75da276b743800c4246d6778776dc3
             if (State == STATE_PRESSED)
             {
                 // save our press start time (for long press event)
@@ -217,7 +214,14 @@ namespace Meadow.Foundation.Sensors.Buttons
                 }
                 else
                 {
+<<<<<<< HEAD
                     RaiseClicked();
+=======
+                    if (e.Value)
+                    {
+                        RaiseClicked();
+                    }
+>>>>>>> 7b45dd544a75da276b743800c4246d6778776dc3
                 }
 
                 // raise the other events
@@ -256,6 +260,18 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected virtual void RaiseLongPress()
         {
             _longPressDelegate(this, new EventArgs());
+<<<<<<< HEAD
+=======
+        }
+
+        public void Dispose()
+        {
+            //if (_inputCreatedInternally)
+            //{
+                DigitalIn.Dispose();
+                DigitalIn = null;
+            //}
+>>>>>>> 7b45dd544a75da276b743800c4246d6778776dc3
         }
 
         #endregion

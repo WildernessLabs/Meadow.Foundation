@@ -10,22 +10,15 @@ namespace Meadow.Foundation.Displays
     // * WriteMarquee (string text) // or similar
     // * SaveCustomCharacter (character)
 
-
     /// <summary>
     ///     Encapsulate the functionality required to control the Sparkfun serial Lcd display.
     /// </summary>
     public class SerialLcd : ITextDisplay
     {
-        #region Properties
-
         /// <summary>
         ///     Display configuration (width and height).
         /// </summary>
         public TextDisplayConfig DisplayConfig { get; private set; }
-
-        #endregion
-
-        #region Enums
 
         /// <summary>
         ///     Describe the cursor style to be displayed.
@@ -80,10 +73,6 @@ namespace Meadow.Foundation.Displays
             Right
         }
 
-        #endregion Enums
-
-        #region Constants
-
         /// <summary>
         ///     Byte used to prefix the extended PCD display commands.
         /// </summary>
@@ -94,10 +83,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         private const byte ConfigurationCommandCharacter = 0x7c;
 
-        #endregion Constants
-
-        #region Member variables / fields
-
         /// <summary>
         ///     Comp port being used to communicate with the display.
         /// </summary>
@@ -107,10 +92,6 @@ namespace Meadow.Foundation.Displays
         ///     object for using lock() to do thread synch
         /// </summary>
         protected object _lock = new object();
-
-        #endregion Member variable / fields
-
-        #region Constructors
 
         /// <summary>
         ///     Create a new SerialLcd object.
@@ -165,10 +146,6 @@ namespace Meadow.Foundation.Displays
             Send(new[] { ConfigurationCommandCharacter, characters, ConfigurationCommandCharacter, lines });
             Thread.Sleep(10);
         }
-
-        #endregion Constructors
-
-        #region Methods
 
         /// <summary>
         ///     Write the buffer of data to the COM port (i.e. the display).
@@ -345,7 +322,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="lineNumber">Line to write the text on (0-3).</param>
         /// <param name="text">Text to display.</param>
-        public void WriteLine(string text, byte lineNumber)
+        public void WriteLine(string text, byte lineNumber, bool showCursor = false)
         {
             string lineText = text;
             if (text.Length > DisplayConfig.Width)
@@ -460,6 +437,10 @@ namespace Meadow.Foundation.Displays
             //Send(characterMap);
         }
 
-        #endregion Methods
+        public void Show()
+        {
+            //can safely ignore
+            //required for ITextDisplayMenu
+        }
     }
 }

@@ -23,11 +23,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public enum DisplayColorMode
         {
-            Format1bpp, //1306 and single color ePaper
-            Format2bpp, //for 2 color ePaper
+            Format1bpp, //single color 
+            Format2bpp, //for 2 color ePaper or 4 color gray scale
+            Format4bpp, //for 16 color gray scale
             Format8bppMonochome,
+            Format8bppRgb332, //Some TFT displays support this mode
             Format12bppRgb444, //TFT in 12 bit mode
-            Format16bppRgb555, //not used
+            Format16bppRgb555, //not currently used
             Format16bppRgb565, //TFT in 16 bit mode
             Format18bppRgb666, //TFT in 18 bit mode
             Format24bppRgb888  //not currently used
@@ -41,12 +43,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Width of the display in pixels
         /// </summary>
-        public abstract uint Width { get; }
+        public abstract int Width { get; }
 
         /// <summary>
         /// Height of the display in pixels
         /// </summary>
-        public abstract uint Height { get; }
+        public abstract int Height { get; }
 
         /// <summary>
         /// Indicate of the hardware driver should ignore out of bounds pixels
@@ -81,7 +83,14 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public abstract void DrawPixel(int x, int y); 
+        public abstract void DrawPixel(int x, int y);
+
+        /// <summary>
+        /// Invert the color of a single pixel
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public abstract void InvertPixel(int x, int y);
 
         /// <summary>
         /// Set the pen color

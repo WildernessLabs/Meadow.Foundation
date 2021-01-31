@@ -1,0 +1,58 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.GraphicsLibrary", "..\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj", "{5284D96D-18AA-4AD9-B122-266D9F056435}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TextDisplayMenu", "Displays.TextDisplayMenu.csproj", "{052CE158-8C2E-48B4-9E43-41161A0A1CAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TextDisplayMenu_Sample", "..\Samples\Displays.TextDisplayMenu_Sample\Displays.TextDisplayMenu_Sample.csproj", "{50E16E62-A7C7-4BC9-9568-AE7C073E1705}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Core", "..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{17FB9407-BD32-46A9-BB4C-C68C5060AAE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.Ssd1306", "..\..\Meadow.Foundation.Peripherals\Displays.Ssd1306\Driver\Displays.Ssd1306\Displays.Ssd1306.csproj", "{C1ABEBA7-A0C8-4379-A66F-310E081B44C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation.Core", "..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj", "{EA6173B7-2DAA-4B87-B420-213D2B35A4B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1D46A214-B744-4197-B377-38C0372B25AE}"
+	ProjectSection(SolutionItems) = preProject
+		TextDisplayMenu.sln = TextDisplayMenu.sln
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Displays.TextDisplayMenu_GameMenu_Sample", "..\Samples\Displays.TextDisplayMenu_GameMenu_Sample\Displays.TextDisplayMenu_GameMenu_Sample.csproj", "{870D9CF7-8259-4497-865E-E337B28C7EFA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5284D96D-18AA-4AD9-B122-266D9F056435}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5284D96D-18AA-4AD9-B122-266D9F056435}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5284D96D-18AA-4AD9-B122-266D9F056435}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5284D96D-18AA-4AD9-B122-266D9F056435}.Release|Any CPU.Build.0 = Release|Any CPU
+		{052CE158-8C2E-48B4-9E43-41161A0A1CAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{052CE158-8C2E-48B4-9E43-41161A0A1CAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{052CE158-8C2E-48B4-9E43-41161A0A1CAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{052CE158-8C2E-48B4-9E43-41161A0A1CAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50E16E62-A7C7-4BC9-9568-AE7C073E1705}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50E16E62-A7C7-4BC9-9568-AE7C073E1705}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50E16E62-A7C7-4BC9-9568-AE7C073E1705}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50E16E62-A7C7-4BC9-9568-AE7C073E1705}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17FB9407-BD32-46A9-BB4C-C68C5060AAE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17FB9407-BD32-46A9-BB4C-C68C5060AAE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17FB9407-BD32-46A9-BB4C-C68C5060AAE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17FB9407-BD32-46A9-BB4C-C68C5060AAE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1ABEBA7-A0C8-4379-A66F-310E081B44C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1ABEBA7-A0C8-4379-A66F-310E081B44C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1ABEBA7-A0C8-4379-A66F-310E081B44C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1ABEBA7-A0C8-4379-A66F-310E081B44C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA6173B7-2DAA-4B87-B420-213D2B35A4B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA6173B7-2DAA-4B87-B420-213D2B35A4B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA6173B7-2DAA-4B87-B420-213D2B35A4B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA6173B7-2DAA-4B87-B420-213D2B35A4B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{870D9CF7-8259-4497-865E-E337B28C7EFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{870D9CF7-8259-4497-865E-E337B28C7EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{870D9CF7-8259-4497-865E-E337B28C7EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{870D9CF7-8259-4497-865E-E337B28C7EFA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

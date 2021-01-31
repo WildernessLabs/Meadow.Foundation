@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        #region Constructors
+        
 
         /// <summary>
         ///     Create a new MPL3115A2 object with the default address and speed settings.
@@ -98,9 +98,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                                             ConfigurationRegisterBits.EnableTemperatureEvent));
         }
 
-        #endregion
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -281,9 +281,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             mpl3115a2.WriteRegister(Registers.Control1, data);
         }
 
-        #endregion Methods
+        
 
-        #region Enums
+        
 
         /// <summary>
         ///     Status register bits.
@@ -298,9 +298,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             PressureOrTemperatureOverwrite = 0x80
         }
 
-        #endregion Enums
+        
 
-        #region Classes / structures
+        
 
         /// <summary>
         ///     Registers for non-FIFO mode.
@@ -452,7 +452,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             public static readonly byte EnableTemperatureEvent = 0x04;
         }
 
-        #endregion Classes / structures
+        
 
     }
 }

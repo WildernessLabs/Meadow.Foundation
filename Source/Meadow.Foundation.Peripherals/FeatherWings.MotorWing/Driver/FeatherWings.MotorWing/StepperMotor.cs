@@ -208,7 +208,6 @@ namespace Meadow.Foundation.FeatherWings
                     _currentstep--;
                 }
 
-
                 _currentstep += MICROSTEPS * 4;
                 _currentstep %= MICROSTEPS * 4;
                 ocra = ocrb = 0;

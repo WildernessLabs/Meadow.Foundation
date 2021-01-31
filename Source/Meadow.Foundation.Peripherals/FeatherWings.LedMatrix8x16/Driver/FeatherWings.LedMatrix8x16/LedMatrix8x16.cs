@@ -20,9 +20,9 @@ namespace Meadow.Foundation.FeatherWings
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Width => 8;
+        public override int Width => 8;
 
-        public override uint Height => 16;
+        public override int Height => 16;
 
         public override void Clear(bool updateDisplay = false)
         {
@@ -49,12 +49,26 @@ namespace Meadow.Foundation.FeatherWings
             {
                 y = (y - 8) * 2 + 1;
             }
-            ht16k33.ToggleLed((byte)(y * Width + x), colored);
+            ht16k33.SetLed((byte)(y * Width + x), colored);
         }
 
         public override void DrawPixel(int x, int y)
         {
             DrawPixel(x, y, pen == Color.Black ? false : true);
+        }
+
+        public override void InvertPixel(int x, int y)
+        {
+            if (y < 8)
+            {
+                y *= 2;
+            }
+            else
+            {
+                y = (y - 8) * 2 + 1;
+            }
+
+            ht16k33.ToggleLed((byte)(y * Width + x));
         }
 
         public override void SetPenColor(Color pen)

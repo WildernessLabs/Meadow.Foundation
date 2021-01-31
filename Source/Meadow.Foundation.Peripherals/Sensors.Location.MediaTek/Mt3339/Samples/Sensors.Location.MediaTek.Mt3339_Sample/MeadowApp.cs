@@ -20,7 +20,7 @@ namespace MeadowApp
 
             Console.WriteLine("Post Init");
 
-            gps.StartUpdataing();
+            gps.StartUpdating();
         }
 
         void Initialize()

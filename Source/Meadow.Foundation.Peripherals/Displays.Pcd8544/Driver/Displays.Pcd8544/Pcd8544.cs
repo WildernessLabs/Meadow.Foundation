@@ -9,9 +9,9 @@ namespace Meadow.Foundation.Displays
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Height => 48;
+        public override int Height => 48;
 
-        public override uint Width => 84;
+        public override int Width => 84;
 
         public bool InvertDisplay
         {
@@ -28,12 +28,12 @@ namespace Meadow.Foundation.Displays
         protected ISpiPeripheral spiDisplay;
         protected SpiBus spi;
 
-        protected byte[] spiBuffer;
+        protected byte[] displayBuffer;
         protected readonly byte[] spiReceive;
 
         public Pcd8544(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
-            spiBuffer = new byte[Width * Height / 8];
+            displayBuffer = new byte[Width * Height / 8];
             spiReceive = new byte[Width * Height / 8];
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, true);
@@ -70,7 +70,6 @@ namespace Meadow.Foundation.Displays
             Show();
         }
 
-
         /// <summary>
         ///     Clear the display
         /// </summary>
@@ -80,18 +79,17 @@ namespace Meadow.Foundation.Displays
         /// <param name="updateDisplay">If true, it will force a display update</param>
         public override void Clear(bool updateDisplay = false)
         {
-            spiBuffer = new byte[Width * Height / 8];
+            displayBuffer = new byte[Width * Height / 8];
 
-            for(int i = 0; i < spiBuffer.Length; i++)
+            for(int i = 0; i < displayBuffer.Length; i++)
             {
-                spiBuffer[i] = 0;
+                displayBuffer[i] = 0;
             }
 
             if(updateDisplay)
             {
                 Show();
             }
-  
         }
 
         public override void SetPenColor(Color pen)
@@ -118,7 +116,7 @@ namespace Meadow.Foundation.Displays
         public override void DrawPixel(int x, int y, bool colored)
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
-                return; // out of the range! return true to indicate failure.
+            { return; } // out of the range! return true to indicate failure.
 
             ushort index = (ushort)((x % 84) + (int)(y * 0.125) * 84);
 
@@ -126,12 +124,24 @@ namespace Meadow.Foundation.Displays
 
             if (colored)
             {
-                spiBuffer[index] |= bitMask;
+                displayBuffer[index] |= bitMask;
             }
             else
             {
-                spiBuffer[index] &= (byte)~bitMask;
+                displayBuffer[index] &= (byte)~bitMask;
             }
+        }
+
+        public override void InvertPixel(int x, int y)
+        {
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
+            { return; } // out of the range! return true to indicate failure.
+
+            ushort index = (ushort)((x % 84) + (int)(y * 0.125) * 84);
+
+            byte bitMask = (byte)(1 << (y % 8));
+
+            displayBuffer[index] = (displayBuffer[index] ^= bitMask);
         }
 
         /// <summary>
@@ -151,7 +161,7 @@ namespace Meadow.Foundation.Displays
         {
           //  spiDisplay.WriteBytes(spiBuffer);
 
-            spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive);
+            spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, displayBuffer, spiReceive);
         }
 
         private void Invert(bool inverse)

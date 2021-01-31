@@ -1,0 +1,19 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="menu.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="menu.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\Driver\Graphics.TextDisplayMenu\TextDisplayMenu.csproj" />
+    <ProjectReference Include="..\..\..\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd130x\Driver\Displays.Ssd130x\Displays.Ssd130x.csproj" />
+  </ItemGroup>
+</Project>

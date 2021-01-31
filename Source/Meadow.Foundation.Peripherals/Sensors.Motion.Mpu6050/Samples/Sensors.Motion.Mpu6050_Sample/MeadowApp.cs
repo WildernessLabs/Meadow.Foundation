@@ -14,6 +14,7 @@ namespace Sensors.Motion.mpu5060_Sample
         {
             Console.WriteLine("Initializing");
 
+            // Mpu5060 I2C address could be 0x68 or 0x69
             mpu = new Mpu6050(Device.CreateI2cBus(), 0x69);
 
             mpu.AccelerationChangeThreshold = 0.05f;

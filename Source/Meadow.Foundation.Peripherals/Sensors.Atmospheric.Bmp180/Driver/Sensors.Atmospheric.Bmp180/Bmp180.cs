@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public class Bmp180 : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, IBarometricPressureSensor, ITemperatureSensor
     {
-        #region Member variables / fields
+        
 
         /// <summary>
         ///     SH31D sensor communicates using I2C.
@@ -40,9 +40,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private short _mc;
         private short _md;
 
-        #endregion Member variables / fields
+        
 
-        #region Properties
+        
 
         /// <summary>
         /// Pressure
@@ -72,9 +72,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         public static int DEFAULT_SPEED => 40000; // BMP085 clock rate
 
-        #endregion Properties
+        
 
-        #region Enums
+        
 
         public enum DeviceMode
         {
@@ -84,15 +84,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             UltraHighResolution = 3
         }
 
-        #endregion Enums
+        
 
-        #region Events and delegates
+        
 
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
-        #endregion Events and delegates
+        
 
-        #region Constructors
+        
 
         /// <summary>
         /// Provide a mechanism for reading the temperature and humidity from
@@ -111,9 +111,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Update();
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -300,12 +300,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return (short)((data[0] << 8) | data[1]);
         }
 
-
-
         public void Dispose()
         {
         }
 
-        #endregion Methods
+        
     }
 }

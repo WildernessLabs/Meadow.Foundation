@@ -1,0 +1,12 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Displays.TftSpi\Driver\Displays.TftSpi\Displays.TftSpi.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Hid.Mpr121\Sensors.Hid.Mpr121.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
+  </ItemGroup>
+</Project>

@@ -20,16 +20,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
-        #region Constants
+        
 
         ///// <summary>
         /////     Minimum value that should be used for the polling frequency.
         ///// </summary>
         //public const ushort MinimumPollingPeriod = 100;
 
-        #endregion Constants
+        
 
-        #region Enums
+        
 
         public enum ChipType : byte
         {
@@ -134,9 +134,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Adddress0x77 = 0x77
         }
 
-        #endregion Enums
+        
 
-        #region Classes / structures
+        
 
         /// <summary>
         ///     Compensation data.
@@ -163,9 +163,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             public sbyte H6;
         }
 
-        #endregion Internal Structures
+        
 
-        #region Member Variables / fields
+        
 
         /// <summary>
         ///     Communication bus used to read and write to the BME280 sensor.
@@ -192,9 +192,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        #endregion Member Variables
+        
 
-        #region Properties
+        
 
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
@@ -224,17 +224,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public float Humidity => Conditions.Humidity.Value;
 
-        #endregion Properties
+        
 
-        #region Events and delegates
+        
 
         /// <summary>
         /// </summary>
         public event EventHandler<AtmosphericConditionChangeResult> Updated = delegate { };
 
-        #endregion Events and delegates
+        
 
-        #region Constructors
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
         /// </summary>
@@ -280,9 +280,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             UpdateConfiguration(configuration);
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -331,7 +331,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // Modes.Sleep to save power. Need to figure out what the stanby
             // duration threshold is for that. i'm guessing 5 seconds might be a
             // good value.
-
 
             // thread safety
             lock (_lock) {
@@ -474,7 +473,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             _compensationData.H6 = (sbyte)humidityData2To6[6];
         }
 
-
         /// <summary>
         /// Update the sensor information from the BME280.
         /// </summary>
@@ -616,8 +614,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return _bme280.ReadRegisters((byte)Bme280Comms.Register.ChipID, 1).First();
         }
 
-        #endregion Methods
-
+        
 
         public class Configuration
         {

@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public class Hmc5883
     {
-        #region Enums
+        
 
         /// <summary>
         /// Register of HMC5883L
@@ -169,9 +169,9 @@ namespace Meadow.Foundation.Sensors.Motion
             Single = 0x01
         }
 
-        #endregion Enums
+        
 
-        #region Member variables / fields
+        
 
         protected static II2cPeripheral i2cPeripheral;
 
@@ -181,9 +181,9 @@ namespace Meadow.Foundation.Sensors.Motion
         protected byte sampleAmount;
         protected byte measurementConfig;
 
-        #endregion Member variables / fields
+        
 
-        #region Properties
+        
 
         /// <summary>
         /// HMC5883L Default I2C Address
@@ -205,18 +205,18 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Status DeviceStatus => GetStatus();
 
-        #endregion Properties
+        
 
-        #region Events and delegates
+        
 
         /// <summary>
         ///     Event to be raised when the compass changes
         /// </summary>
         public event SensorVectorEventHandler DirectionChanged = delegate { };
         
-        #endregion Events and delegates
+        
 
-        #region Constructors
+        
 
         protected Hmc5883() { }
 
@@ -238,9 +238,9 @@ namespace Meadow.Foundation.Sensors.Motion
             Initialize();
         }
 
-        #endregion Constructors
+        
 
-        #region Methods
+        
 
         protected virtual void Initialize()
         {
@@ -292,6 +292,6 @@ namespace Meadow.Foundation.Sensors.Motion
             return (Status)status;
         }
 
-        #endregion Methods
+        
     }
 }

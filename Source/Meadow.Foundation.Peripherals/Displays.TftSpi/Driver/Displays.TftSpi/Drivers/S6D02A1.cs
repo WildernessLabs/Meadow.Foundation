@@ -5,10 +5,13 @@ using System.Threading;
 namespace Meadow.Foundation.Displays.Tft
 {
     //Samsung S6D02A1 controller
-    public class S6D02A1 : DisplayTftSpiBase
+    public class S6D02A1 : TftSpiBase
     {
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+
         public S6D02A1(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+            int width, int height, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
         }
@@ -57,7 +60,13 @@ namespace Meadow.Foundation.Displays.Tft
             SendCommand(0xf4, new byte[] { 0x00, 0x09, 0x00, 0x00, 0x00, 0x3f, 0x3f, 0x07, 0x00, 0x3C, 0x36, 0x00, 0x3C, 0x36, 0x00 });   // Power control
             SendCommand(0x36, new byte[] { 0xC8 }); // Memory access data control
             SendCommand(0x35, new byte[] { 0x00 }); // Tearing effect line on
-            SendCommand(0x3a, new byte[] { 0x05 }); // Interface pixel control
+         
+            SendCommand(COLOR_MODE);
+            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+                SendData(0x05); //16 bit RGB565
+            else
+                SendData(0x33); //12 bit RGB444
+
             Thread.Sleep(150);
             SendCommand(0x29, null);                // Display on
             SendCommand(0x2c, null);				// Memory write
@@ -67,7 +76,7 @@ namespace Meadow.Foundation.Displays.Tft
             dataCommandPort.State = (Data);
         }
 
-        protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
+        protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             SendCommand((byte)LcdCommand.CASET);  // column addr set
             dataCommandPort.State = (Data);
@@ -83,9 +92,29 @@ namespace Meadow.Foundation.Displays.Tft
             Write((byte)(y1 >> 8));
             Write((byte)(y1 & 0xff));    // YEND
 
-
             dataCommandPort.State = (Command);
             Write((byte)LcdCommand.RAMWR);  // write to RAM */
+        }
+
+        public void SetRotation(Rotation rotation)
+        {
+            SendCommand(MADCTL);
+
+            switch (rotation)
+            {
+                case Rotation.Normal:
+                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
+                    break;
+                case Rotation.Rotate_90:
+                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
+                    break;
+                case Rotation.Rotate_180:
+                    SendData(MADCTL_BGR);
+                    break;
+                case Rotation.Rotate_270:
+                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
+                    break;
+            }
         }
 
         void SendCommand(byte command, byte[] data)

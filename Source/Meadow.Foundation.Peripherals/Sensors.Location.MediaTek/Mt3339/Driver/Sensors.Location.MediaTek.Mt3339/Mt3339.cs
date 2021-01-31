@@ -31,7 +31,6 @@ namespace Sensors.Location.MediaTek
         public event EventHandler<CourseOverGround> VtgReceived = delegate { };
         public event EventHandler<SatellitesInView> GsvReceived = delegate { };
 
-
         // TODO: if we want to make this public then we're going to have to add
         // a bunch of checks around baud rate, 8n1, etc.
         protected Mt3339(ISerialMessagePort serialPort)
@@ -56,7 +55,7 @@ namespace Sensors.Location.MediaTek
             Console.WriteLine("Finish Mt3339 initialization.");
         }
 
-        public void StartUpdataing()
+        public void StartUpdating()
         {
             // open the serial connection
             serialPort.Open();

@@ -3,10 +3,14 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.Tft
 {
-    public class Ssd1331 : DisplayTftSpiBase
+    public class Ssd1331 : TftSpiBase
     {
+        //the SSD1331 also supports 8 bit RGB332 color but this isn't currently supported (but should be quick to add if anyone wants it
+        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
+
         public Ssd1331(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-           uint width, uint height) : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height)
+           int width, int height) 
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, DisplayColorMode.Format16bppRgb565)
         {
             Initialize();
         }
@@ -74,8 +78,17 @@ namespace Meadow.Foundation.Displays.Tft
             dataCommandPort.State = Data;
         }
 
+        public override bool IsColorModeSupported(DisplayColorMode mode)
+        {
+            if (mode == DisplayColorMode.Format16bppRgb565)
+            {
+                return true;
+            }
+            return false;
+        }
+
         //looks like this display only supports dimensions of 255 or less
-        protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
+        protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             SendCommand(0x15);  // column addr set
             SendCommand((byte)x0);
