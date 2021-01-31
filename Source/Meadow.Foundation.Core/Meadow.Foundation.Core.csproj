@@ -14,8 +14,10 @@
    <RootNamespace>Meadow.Foundation</RootNamespace>
    <IncludeSymbols>true</IncludeSymbols>
    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+   <Configurations>Debug;Release;Nuget Debug</Configurations>
  </PropertyGroup>
  <ItemGroup>
    <PackageReference Include="Meadow" Version="0.15.0" />
+   <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
  </ItemGroup>
 </Project>
