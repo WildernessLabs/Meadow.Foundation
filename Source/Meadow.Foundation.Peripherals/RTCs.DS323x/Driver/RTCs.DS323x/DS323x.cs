@@ -176,7 +176,6 @@ namespace Meadow.Foundation.RTCs
 
             if (interruptPin != null)
             {
-                // TODO: verify with the data sheet that the edge direction here is correct
                 var interruptPort = device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeFalling, ResistorMode.PullUp, 10, 10);
                 _interruptCreatedInternally = true;
 
