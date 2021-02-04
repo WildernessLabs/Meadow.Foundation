@@ -61,7 +61,7 @@ namespace Leds.LedBarGraph_Sample
                 Console.WriteLine("Turning them on using SetLed...");
                 for (int i = 0; i < ledBarGraph.Count; i++)
                 {
-                    ledBarGraph.SetLed((uint) i, true);
+                    ledBarGraph.SetLed(i, true);
                     Thread.Sleep(300);
                 }
 
@@ -70,7 +70,7 @@ namespace Leds.LedBarGraph_Sample
                 Console.WriteLine("Turning them off using SetLed...");
                 for (int i = ledBarGraph.Count - 1; i >= 0; i--)
                 {
-                    ledBarGraph.SetLed((uint) i, false);
+                    ledBarGraph.SetLed(i, false);
                     Thread.Sleep(300);
                 }
 
