@@ -45,11 +45,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
-                if (DigitalIn.InterruptMode != InterruptMode.EdgeBoth)
-                {
-                    throw new Exception("PressEnded event requires InterruptMode.EdgeBoth");
-                }
-
                 pressStartDelegate += value;
             }
             remove => pressStartDelegate -= value;
@@ -62,11 +57,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
-                if (DigitalIn.InterruptMode != InterruptMode.EdgeBoth)
-                {
-                    throw new Exception("PressEnded event requires InterruptMode.EdgeBoth");
-                }
-
                 pressEndDelegate += value;
             }
             remove => pressEndDelegate -= value;
@@ -79,10 +69,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
-                if (DigitalIn.InterruptMode == InterruptMode.None)
-                {
-                    throw new Exception("PressStarted event requires InterruptMode to be != None");
-                }
                 clickDelegate += value;
             }
             remove => clickDelegate -= value;
@@ -95,10 +81,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
-                if (DigitalIn.InterruptMode != InterruptMode.EdgeBoth)
-                {
-                    throw new Exception("LongPressClicked event requires InterruptMode.EdgeBoth");
-                }
                 longPressDelegate += value;
             }
             remove => longPressDelegate -= value;
@@ -125,7 +107,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="device"></param>
         /// <param name="inputPin"></param>
         /// <param name="resistorMode"></param>
-        public PushButton(IIODevice device, IPin inputPin, ResistorMode resistorMode = ResistorMode.ExternalPullUp) 
+        public PushButton(IIODevice device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp) 
             : this(device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistorMode, 50, 25)) { }
 
         /// <summary>
@@ -135,11 +117,14 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="resistorMode"></param>
         public PushButton(IDigitalInputPort interruptPort)
         {
+            if (interruptPort.Resistor == ResistorMode.Disabled)
+            {
+                throw new Exception("PushButton requires ResistorMode to be != Disabled");
+            }
+
             resistorMode = interruptPort.Resistor;
 
-            DigitalIn = interruptPort;
-            DigitalIn.Resistor = resistorMode;
-
+            DigitalIn = interruptPort;            
             DigitalIn.Changed += DigitalInChanged;
         }
 

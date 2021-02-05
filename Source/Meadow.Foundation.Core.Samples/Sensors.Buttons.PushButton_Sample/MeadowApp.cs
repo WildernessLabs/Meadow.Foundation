@@ -111,39 +111,39 @@ namespace Sensors.Buttons.PushButton_Sample
             // Important note: You can only use on Push Button per Group Set (GSXX)
             pushButtons = new List<PushButton>
             {
-                //new PushButton(Device, Device.Pins.A04, ResistorMode.InternalPullUp),         // <- GS00
-                new PushButton(Device, Device.Pins.D06, ResistorMode.InternalPullUp),         // <- GS00
+                //new PushButton(Device, Device.Pins.A04),         // <- GS00
+                new PushButton(Device, Device.Pins.D06),         // <- GS00
 
-                //new PushButton(Device, Device.Pins.A05, ResistorMode.InternalPullUp),         // <- GS01
-                new PushButton(Device, Device.Pins.D09, ResistorMode.InternalPullUp),         // <- GS01
+                //new PushButton(Device, Device.Pins.A05),         // <- GS01
+                new PushButton(Device, Device.Pins.D09),         // <- GS01
 
-                //new PushButton(Device, Device.Pins.A02, ResistorMode.InternalPullUp),         // <- GS03
-                new PushButton(Device, Device.Pins.D14, ResistorMode.InternalPullUp),         // <- GS03
-                //new PushButton(Device, Device.Pins.D15, ResistorMode.InternalPullUp)          // <- GS03
+                //new PushButton(Device, Device.Pins.A02),         // <- GS03
+                new PushButton(Device, Device.Pins.D14),         // <- GS03
+                //new PushButton(Device, Device.Pins.D15)          // <- GS03
 
-                new PushButton(Device, Device.Pins.A00, ResistorMode.InternalPullUp),         // <- GS04
+                new PushButton(Device, Device.Pins.A00),         // <- GS04
 
-                //new PushButton(Device, Device.Pins.A01, ResistorMode.InternalPullUp),         // <- GS05
-                new PushButton(Device, Device.Pins.MOSI,ResistorMode.InternalPullUp),        // <- GS05
+                //new PushButton(Device, Device.Pins.A01),         // <- GS05
+                new PushButton(Device, Device.Pins.MOSI),        // <- GS05
 
-                new PushButton(Device, Device.Pins.D02, ResistorMode.InternalPullUp),         // <- GS06
-                //new PushButton(Device, Device.Pins.D08, ResistorMode.InternalPullUp),         // <- GS06
+                new PushButton(Device, Device.Pins.D02),         // <- GS06
+                //new PushButton(Device, Device.Pins.D08),         // <- GS06
 
-                //new PushButton(Device, Device.Pins.A03, ResistorMode.InternalPullUp),         // <- GS07
-                new PushButton(Device, Device.Pins.D05, ResistorMode.InternalPullUp),         // <- GS07
-                //new PushButton(Device, Device.Pins.D07, ResistorMode.InternalPullUp),         // <- GS07
+                //new PushButton(Device, Device.Pins.A03),         // <- GS07
+                new PushButton(Device, Device.Pins.D05),         // <- GS07
+                //new PushButton(Device, Device.Pins.D07),         // <- GS07
 
-                new PushButton(Device, Device.Pins.D03, ResistorMode.InternalPullUp),         // <- GS08
+                new PushButton(Device, Device.Pins.D03),         // <- GS08
 
-                new PushButton(Device, Device.Pins.D00, ResistorMode.InternalPullUp),         // <- GS09
-                //new PushButton(Device, Device.Pins.D04, ResistorMode.InternalPullUp),         // <- GS09
-                //new PushButton(Device, Device.Pins.D11, ResistorMode.InternalPullUp),         // <- GS09               
+                new PushButton(Device, Device.Pins.D00),         // <- GS09
+                //new PushButton(Device, Device.Pins.D04),         // <- GS09
+                //new PushButton(Device, Device.Pins.D11),         // <- GS09               
                 
-                new PushButton(Device, Device.Pins.MISO, ResistorMode.InternalPullUp),        // <- GS11
+                new PushButton(Device, Device.Pins.MISO),        // <- GS11
                 
-                new PushButton(Device, Device.Pins.D12, ResistorMode.InternalPullUp),         // <- GS14
+                new PushButton(Device, Device.Pins.D12),         // <- GS14
 
-                new PushButton(Device, Device.Pins.D13, ResistorMode.InternalPullUp),         // <- GS15
+                new PushButton(Device, Device.Pins.D13),         // <- GS15
             };
 
             foreach (var pushButton in pushButtons)
