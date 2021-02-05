@@ -282,19 +282,19 @@ namespace Meadow.Foundation
             return "[Color: A={" + A + "}, R={" + R + "}, G={" + G + "}, B={" + B + "}, Hue={" + Hue + "}, Saturation={" + Saturation + "}, Brightness={" + Brightness + "}]";
         }
 
-        static uint ToHex(char c)
+        static int ToHex(char c)
         {
             ushort x = (ushort)c;
             if (x >= '0' && x <= '9')
-                return (uint)(x - '0');
+                return (x - '0');
 
             x |= 0x20;
             if (x >= 'a' && x <= 'f')
-                return (uint)(x - 'a' + 10);
+                return (x - 'a' + 10);
             return 0;
         }
 
-        static uint ToHexD(char c)
+        static int ToHexD(char c)
         {
             var j = ToHex(c);
             return (j << 4) | j;
@@ -340,7 +340,7 @@ namespace Meadow.Foundation
             }
         }
 
-        public static Color FromUint(uint argb)
+        public static Color FromUint(int argb)
         {
             return FromRgba((byte)((argb & 0x00ff0000) >> 0x10), (byte)((argb & 0x0000ff00) >> 0x8), (byte)(argb & 0x000000ff), (byte)((argb & 0xff000000) >> 0x18));
         }

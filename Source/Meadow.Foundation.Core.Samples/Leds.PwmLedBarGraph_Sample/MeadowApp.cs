@@ -61,7 +61,7 @@ namespace Leds.PwmLedBarGraph_Sample
                 Console.WriteLine("Turning them on using SetLed...");
                 for (int i = 0; i < pwmLedBarGraph.Count; i++)
                 {
-                    pwmLedBarGraph.SetLed((uint) i, true);
+                    pwmLedBarGraph.SetLed(i, true);
                     Thread.Sleep(300);
                 }
 
@@ -70,7 +70,7 @@ namespace Leds.PwmLedBarGraph_Sample
                 Console.WriteLine("Turning them off using SetLed...");
                 for (int i = pwmLedBarGraph.Count - 1; i >= 0; i--)
                 {
-                    pwmLedBarGraph.SetLed((uint) i, false);
+                    pwmLedBarGraph.SetLed(i, false);
                     Thread.Sleep(300);
                 }
 

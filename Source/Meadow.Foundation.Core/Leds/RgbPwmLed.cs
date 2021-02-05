@@ -196,7 +196,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="offDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        public void StartBlink(Color color, uint onDuration = 200, uint offDuration = 200, float highBrightness = 1f, float lowBrightness = 0f)
+        public void StartBlink(Color color, int onDuration = 200, int offDuration = 200, float highBrightness = 1f, float lowBrightness = 0f)
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {
@@ -223,7 +223,7 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
-        protected async Task StartBlinkAsync(Color color, uint onDuration, uint offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
+        protected async Task StartBlinkAsync(Color color, int onDuration, int offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             while (true)
             {
@@ -246,7 +246,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="pulseDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        public void StartPulse(Color color, uint pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void StartPulse(Color color, int pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {
@@ -273,7 +273,7 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
-        protected async Task StartPulseAsync(Color color, uint pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
+        protected async Task StartPulseAsync(Color color, int pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;
             bool ascending = true;

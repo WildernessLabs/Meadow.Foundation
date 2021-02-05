@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Displays.Tft
         public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
 
         public St7789(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width, uint height, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444) 
+            int width, int height, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Displays.Tft
             dataCommandPort.State = Data;
         }
 
-        protected override void SetAddressWindow(uint x0, uint y0, uint x1, uint y1)
+        protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             x0 += xOffset;
             y0 += yOffset;

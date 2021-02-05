@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Leds
 		/// </summary>
 		/// <param name="onDuration"></param>
 		/// <param name="offDuration"></param>
-		public void StartBlink(uint onDuration = 200, uint offDuration = 200)
+		public void StartBlink(int onDuration = 200, int offDuration = 200)
 		{
 			Stop();
 
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Leds
 			animationTask.Start();
 		}
 		
-		protected async Task StartBlinkAsync(uint onDuration, uint offDuration, CancellationToken cancellationToken)
+		protected async Task StartBlinkAsync(int onDuration, int offDuration, CancellationToken cancellationToken)
 		{
 			while (true)
 			{

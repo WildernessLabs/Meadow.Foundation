@@ -160,7 +160,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="color"></param>
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
-        public void StartBlink(Colors color, uint onDuration = 200, uint offDuration = 200)
+        public void StartBlink(Colors color, int onDuration = 200, int offDuration = 200)
         {
             Stop();
 
@@ -172,7 +172,7 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
-        protected async Task StartBlinkAsync(Colors color, uint onDuration, uint offDuration, CancellationToken cancellationToken)
+        protected async Task StartBlinkAsync(Colors color, int onDuration, int offDuration, CancellationToken cancellationToken)
         {
             while (true)
             {

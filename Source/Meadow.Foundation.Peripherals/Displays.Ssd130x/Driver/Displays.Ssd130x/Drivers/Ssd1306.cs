@@ -66,9 +66,9 @@ namespace Meadow.Foundation.Displays
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Width => width;
+        public override int Width => width;
 
-        public override uint Height => height;
+        public override int Height => height;
 
         /// <summary>
         ///     SSD1306 SPI display
@@ -91,12 +91,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Width of the display in pixels.
         /// </summary>
-        private uint width;
+        private int width;
 
         /// <summary>
         ///     Height of the display in pixels.
         /// </summary>
-        private uint height;
+        private int height;
 
         /// <summary>
         ///     X offset for non-standard displays.
@@ -307,7 +307,7 @@ namespace Meadow.Foundation.Displays
             }
 
             //align buffer to PAGE_SIZE
-            uint bufferSize = width * height / 8;
+            int bufferSize = width * height / 8;
             bufferSize += bufferSize % 16;
 
             buffer = new byte[bufferSize];

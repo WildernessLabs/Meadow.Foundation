@@ -14,14 +14,14 @@ namespace Meadow.Foundation.Displays.ePaper
 
         int xRefreshStart, yRefreshStart, xRefreshEnd, yRefreshEnd;
 
-        public override uint Width { get; }
-        public override uint Height { get; }
+        public override int Width { get; }
+        public override int Height { get; }
 
         private EpdBase()
         { }
 
         public EpdBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
-            uint width, uint height)
+            int width, int height)
         {
             Width = width;
             Height = height;

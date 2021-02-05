@@ -115,7 +115,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
         /// </summary>
-        public void StartBlink(uint onDuration = 200, uint offDuration = 200, float highBrightness = 1f, float lowBrightness = 0f)
+        public void StartBlink(int onDuration = 200, int offDuration = 200, float highBrightness = 1f, float lowBrightness = 0f)
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {
@@ -140,7 +140,7 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
-        protected async Task StartBlinkAsync(uint onDuration, uint offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
+        protected async Task StartBlinkAsync(int onDuration, int offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             while (true)
             {
@@ -161,7 +161,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
         /// </summary>
-        public void StartPulse(uint pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void StartPulse(int pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0) 
             {
@@ -186,7 +186,7 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
-        protected async Task StartPulseAsync(uint pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
+        protected async Task StartPulseAsync(int pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;
             bool ascending = true;
