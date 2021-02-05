@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
             RPMChangeNotificationThreshold = rpmChangeNotificationThreshold;
 
             // if we terminate in ground, we need to pull the port high to test for circuit completion, otherwise down.
-            //var resistorMode = (type == CircuitTerminationType.CommonGround) ? H.Port.ResistorMode.PullUp : H.Port.ResistorMode.PullDown;
+            //var resistorMode = (type == CircuitTerminationType.CommonGround) ? H.Port.ResistorMode.InternalPullUp : H.Port.ResistorMode.InternalPullDown;
 
             // create the interrupt port from the pin and resistor type
             InputPort = inputPort;

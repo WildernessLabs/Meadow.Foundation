@@ -39,7 +39,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="device"></param>
         /// <param name="inputPin"></param>        
         public Hcsens0040(IIODevice device, IPin pin) : 
-            this (device.CreateDigitalInputPort(pin, InterruptMode.EdgeRising, ResistorMode.PullDown)) { }
+            this (device.CreateDigitalInputPort(pin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown)) { }
 
         /// <summary>
         /// Create a new Parallax PIR object connected to a interrupt port.
