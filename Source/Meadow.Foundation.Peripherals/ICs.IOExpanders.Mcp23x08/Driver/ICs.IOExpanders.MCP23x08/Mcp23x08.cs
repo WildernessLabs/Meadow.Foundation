@@ -204,12 +204,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (IsValidPin(pin))
             {
-                if (resistorMode == ResistorMode.PullDown)
+                if (resistorMode == ResistorMode.InternalPullDown)
                 {
                     Console.WriteLine("Pull-down resistor mode is not supported.");
                     throw new Exception("Pull-down resistor mode is not supported.");
                 }
-                var enablePullUp = resistorMode == ResistorMode.PullUp ? true : false;
+                var enablePullUp = resistorMode == ResistorMode.InternalPullUp ? true : false;
                 this.ConfigureInputPort(pin, enablePullUp, interruptMode);
                 var port = new DigitalInputPort(this, pin, interruptMode);
                 _inputPorts.Add(pin, port);

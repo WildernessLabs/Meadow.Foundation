@@ -975,9 +975,9 @@ namespace Meadow.Foundation.Sensors.Motion
         private ResistorMode MapResistorMode(bool activeLow)
         {
             if (activeLow) {
-                return (ResistorMode.PullUp);
+                return (ResistorMode.InternalPullUp);
             } else {
-                return (ResistorMode.PullDown);
+                return (ResistorMode.InternalPullDown);
             }
         }
 

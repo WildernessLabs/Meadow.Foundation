@@ -84,13 +84,13 @@ namespace MeadowApp
 
             menu = new Menu(display, menuData, false);
 
-            next = new PushButton(Device, Device.Pins.D10);
+            next = new PushButton(Device, Device.Pins.D10, ResistorMode.Disabled);
             next.Clicked += (s, e) => { menu.Next(); };
 
-            select = new PushButton(Device, Device.Pins.D11);
+            select = new PushButton(Device, Device.Pins.D11, ResistorMode.Disabled);
             select.Clicked += (s, e) => { menu.Select(); };
 
-            previous = new PushButton(Device, Device.Pins.D12);
+            previous = new PushButton(Device, Device.Pins.D12, ResistorMode.Disabled);
             previous.Clicked += (s, e) => { menu.Previous(); };
 
             Console.WriteLine("Enable menu...");
