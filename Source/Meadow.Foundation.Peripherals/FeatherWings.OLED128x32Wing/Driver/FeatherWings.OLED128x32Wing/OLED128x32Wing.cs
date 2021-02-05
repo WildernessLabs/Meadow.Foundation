@@ -31,7 +31,8 @@ namespace Meadow.Foundation.FeatherWings
             portA.Resistor = ResistorMode.InternalPullUp;           
             ButtonA = new PushButton(portA);
 
-            ButtonB = new PushButton(portB, ResistorMode.Disabled); // has physical resistor (PU or PD?)
+            portB.Resistor = ResistorMode.Disabled; // TODO: has physical resistor (PU or PD?)
+            ButtonB = new PushButton(portB); 
 
             portC.Resistor = ResistorMode.InternalPullUp;
             ButtonC = new PushButton(portC);
