@@ -34,8 +34,8 @@ namespace MeadowApp
 
             Console.WriteLine("Made it here.");
 
-            button1 = new PushButton(Device, Device.Pins.D12, Meadow.Hardware.ResistorMode.PullDown);
-            button2 =  new PushButton(Device, Device.Pins.D13, Meadow.Hardware.ResistorMode.PullDown);
+            button1 = new PushButton(Device, Device.Pins.D12, Meadow.Hardware.ResistorMode.InternalPullDown);
+            button2 =  new PushButton(Device, Device.Pins.D13, Meadow.Hardware.ResistorMode.InternalPullDown);
 
             button1.PressStarted += Button1_PressStarted;
             button1.PressEnded += Button1_PressEnded;
