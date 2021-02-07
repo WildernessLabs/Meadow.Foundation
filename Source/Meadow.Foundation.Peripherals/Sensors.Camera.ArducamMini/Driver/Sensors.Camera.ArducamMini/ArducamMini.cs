@@ -7,8 +7,6 @@ namespace Meadow.Foundation.Sensors.Camera
 {
     public class ArducamMini
     {
-        
-
         const byte ADDRESS_READ = 0x60;
         const byte ADDRESS_WRITE = 0x61;
 

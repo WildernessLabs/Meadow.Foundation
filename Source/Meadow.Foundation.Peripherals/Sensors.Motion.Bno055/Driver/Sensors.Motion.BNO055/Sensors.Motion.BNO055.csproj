@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, BNO055, Motion</PackageTags>
     <Version>0.1.29</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for Bosch BNO055 sensor</Description>
+    <Description>Bosch BNO055 9 axis absolute orientation sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

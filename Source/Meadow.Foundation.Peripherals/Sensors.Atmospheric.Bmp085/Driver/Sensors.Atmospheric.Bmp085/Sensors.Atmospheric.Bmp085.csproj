@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Atmospheric, BMP085, Bosche</PackageTags>
     <Version>0.1.28</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for Bosch BMP085 atmospheric sensor</Description>
+    <Description>Bosch BMP085 I2C barometric pressure sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

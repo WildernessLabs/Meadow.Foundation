@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Atmospheric, Htu21d</PackageTags>
     <Version>0.1.30</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for HTU21D atmospheric sensor</Description>
+    <Description>HTU21D(F) I2C temperature and humidity sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

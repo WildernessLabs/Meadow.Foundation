@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Light, Bh1750</PackageTags>
     <Version>0.1.27</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for Bh1750</Description>
+    <Description>Bh1750 I2C luminance and color light sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

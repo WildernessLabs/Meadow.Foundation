@@ -2,7 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>MeadowLibrary</AssemblyName>
+    <AssemblyName>Mb10x0</AssemblyName>
+    <Description>MaxSonar MB10x0 serial ultrasonic distance sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

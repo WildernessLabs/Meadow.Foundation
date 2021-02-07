@@ -11,7 +11,7 @@
     <PackageTags>Meadow, Meadow.Foundation, RTC</PackageTags>
     <Version>0.7.30</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for RTC DS1307</Description>
+    <Description>DS1307 I2C real time clock</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

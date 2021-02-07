@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, pressure, Adafruit, MPRLS</PackageTags>
     <Version>0.1.4</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for AdafruitMPRLS pressure sensor</Description>
+    <Description>Adafruit MPRLS I2C barometric pressure sensor with metal port connector</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

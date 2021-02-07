@@ -9,8 +9,6 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class Max7219 : DisplayBase
     {
-        
-
         /// <summary>
         /// MAX7219 Spi Clock Frequency
         /// </summary>

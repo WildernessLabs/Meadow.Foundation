@@ -6,8 +6,6 @@ namespace Meadow.Foundation.Sensors.Light
 {
     public class Bh1750
     {
-        
-
         /// <summary>
         /// I2C address when address pin is high
         /// </summary>

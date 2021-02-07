@@ -10,8 +10,6 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public sealed class Tm1637
     {
-        
-
         /// <summary>
         /// Max segments for a TM1637 controller
         /// </summary>
@@ -73,9 +71,6 @@ namespace Meadow.Foundation.Displays
             }
         }
         private byte _brightness;
-
-        
-
         
 
         private readonly IDigitalOutputPort portClock;
@@ -83,9 +78,6 @@ namespace Meadow.Foundation.Displays
 
         private byte[] displayBuffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-        
-
-        
 
         /// <summary>
         /// Internal registers to be send to the TM1637
@@ -108,10 +100,6 @@ namespace Meadow.Foundation.Displays
             DisplayOn = 0b1000_1000,
             DisplayOff = 0b1000_0000,
         }
-
-        
-
-        
 
         /// <summary>
         /// Initialize a TM1637

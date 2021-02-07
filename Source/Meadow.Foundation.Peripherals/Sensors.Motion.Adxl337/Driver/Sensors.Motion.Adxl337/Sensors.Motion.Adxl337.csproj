@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, ADXL337, Accelerometer</PackageTags>
     <Version>0.2.24</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for ADXL337 sensor</Description>
+    <Description>ADXL337 analog 3 axis accelerometer motion sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

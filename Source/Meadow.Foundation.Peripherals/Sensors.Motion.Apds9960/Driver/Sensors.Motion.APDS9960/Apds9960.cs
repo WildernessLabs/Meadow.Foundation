@@ -8,8 +8,6 @@ namespace Meadow.Foundation.Sensors.Motion
 {
     public class Apds9960
     {
-        
-
         /// <summary>
         ///     Communication bus used to communicate with the sensor.
         ///     This driver is a work-in-progress, contributions are always welcome

@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, GPSWing, GPS, Gnss</PackageTags>
     <Version>0.1.24</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for AdaFruit GPSWing Featherwing</Description>
+    <Description>AdaFruit GPSWing GPS FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Sensors.Location.MediaTek\Mt3339\Driver\Sensors.Location.MediaTek.Mt3339\Sensors.Location.MediaTek.Mt3339.csproj" />

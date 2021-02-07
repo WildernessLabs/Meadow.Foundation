@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>Motors.Tb67h420ftg</AssemblyName>
     <RootNamespace>Meadow.Foundation.Motors</RootNamespace>
+    <Description>Tb67h420ftg digital input motor controller</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <LangVersion>8.0</LangVersion>

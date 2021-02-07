@@ -11,7 +11,7 @@
     <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, TM1637</PackageTags>
     <Version>0.1.28</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for TM1637 display</Description>
+    <Description>TM1637 GPIO character display</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

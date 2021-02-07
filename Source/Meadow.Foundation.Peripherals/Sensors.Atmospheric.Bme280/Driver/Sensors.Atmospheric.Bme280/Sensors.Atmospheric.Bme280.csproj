@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Atmospheric, BME280</PackageTags>
     <Version>0.5.31</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for BME280 atmospheric sensor</Description>
+    <Description>Bosch BME280 SPI and I2C absolute barometric pressure sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

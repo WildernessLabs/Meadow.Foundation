@@ -11,7 +11,7 @@
     <PackageTags>Meadow,Meadow.Foundation,Display,TFT,ILI9163,ILI9341,S6D02A1,SSD1331,SSD1351,ST7735,ST7789</PackageTags>
     <Version>0.7.32</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Drivers for SPI thin-film-transistor displays (Current version supports: ILI9163, ILI9341, S6D02A1, SSD1331, SSD1351, ST7735, ST7789)</Description>
+    <Description>SPI Color TFT and OLED displays (GC9A01, HC8357B, HX8357D, ILI9163, ILI9341, ILI9481, ILI9488, RM68140, S6D02A1, SSD1331, SSD1351, ST7735, ST7789)</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, MPR121, capacitive, keypad</PackageTags>
     <Version>0.1.20</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for Freescale Semiconductor MPR121 capacitive keypad</Description>
+    <Description>Freescale Semiconductor MPR121 I2C capacitive keypad controller</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

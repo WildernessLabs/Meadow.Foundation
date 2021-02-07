@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Light, Temt6000</PackageTags>
     <Version>0.1.27</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for Temt6000</Description>
+    <Description>Temt6000 analog ambient light sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

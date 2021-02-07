@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>NAU7802</AssemblyName>
     <Version>0.1.0</Version>
+    <Description>NAU7802 I2C 24-Bit dual channel analog to digital converter</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

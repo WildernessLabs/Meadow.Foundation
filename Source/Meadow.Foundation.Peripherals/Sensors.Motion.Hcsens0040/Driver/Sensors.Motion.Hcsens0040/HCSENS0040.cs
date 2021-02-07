@@ -8,16 +8,10 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public class Hcsens0040
     {
-        
-
         /// <summary>
         ///     Digital input port
         /// </summary>
         private readonly IDigitalInputPort _digitalInputPort;
-
-        
-
-        
 
         /// <summary>
         ///     Delgate for the motion start and end events.

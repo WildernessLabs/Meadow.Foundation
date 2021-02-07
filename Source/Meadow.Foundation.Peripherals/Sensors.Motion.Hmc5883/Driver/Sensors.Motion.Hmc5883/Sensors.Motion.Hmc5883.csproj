@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Hmc5883, Compass</PackageTags>
     <Version>0.1.6</Version>
-    <Description>Driver for Hmc5883 digital compass</Description>
+    <Description>Hmc5883 / Qmc5883 I2C digital compass</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

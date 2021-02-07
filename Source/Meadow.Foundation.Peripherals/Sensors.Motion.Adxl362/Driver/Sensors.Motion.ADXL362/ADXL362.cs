@@ -11,8 +11,6 @@ namespace Meadow.Foundation.Sensors.Motion
     public class Adxl362 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
         IAccelerometer
     {
-        
-
         /// <summary>
         ///     ADXL362 sensor object.
         /// </summary>
@@ -32,9 +30,6 @@ namespace Meadow.Foundation.Sensors.Motion
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        
-
-        
 
         /// <summary>
         ///     Command byte (first byte in any communication).
@@ -558,10 +553,6 @@ namespace Meadow.Foundation.Sensors.Motion
             public const byte LoopMode = 0x30;
         }
 
-        
-
-        
-
         /// <summary>
         ///     Acceleration along the X-axis.
         /// </summary>
@@ -749,15 +740,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        
-
-        
-
         public event EventHandler<AccelerationConditionChangeResult> Updated;
-
-        
-
-        
 
         /// <summary>
         ///     Create a new ADXL362 object using the specified SPI module.

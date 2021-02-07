@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>Mlx90640</AssemblyName>
     <RootNamespace>Meadow.Foundation.Sensors.Temperature</RootNamespace>
+    <Description>Mlx90640 I2C far infrared thermal sensor array camera</Description>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>

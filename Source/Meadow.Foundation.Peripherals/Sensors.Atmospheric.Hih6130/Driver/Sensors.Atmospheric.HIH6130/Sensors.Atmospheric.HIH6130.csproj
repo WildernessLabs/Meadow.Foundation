@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Atmospheric, HIH6130</PackageTags>
     <Version>0.1.28</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for HIH6130 atmospheric sensor</Description>
+    <Description>HIH6130 I2C temperature and humidity sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

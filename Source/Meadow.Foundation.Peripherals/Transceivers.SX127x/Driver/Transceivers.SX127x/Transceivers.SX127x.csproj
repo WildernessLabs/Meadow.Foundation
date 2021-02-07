@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Transceiver, SX127x</PackageTags>
     <Version>0.0.35</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Description>Driver for SX127x LoRa transceiver</Description>
+    <Description>SX127x SPI LoRa transceiver</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

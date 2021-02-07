@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation,Meadow,Atmospheric,Temperature,Humidity,Mpl3115a2</PackageTags>
     <Version>0.1.24</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for MPL3115A2 atmospheric sensor</Description>
+    <Description>MPL3115A2 I2C barometric pressure, temperature, and altitude sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

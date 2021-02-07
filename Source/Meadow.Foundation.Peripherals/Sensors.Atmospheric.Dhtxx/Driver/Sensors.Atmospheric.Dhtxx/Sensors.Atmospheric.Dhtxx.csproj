@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Atmospheric, DHT10, DHT12, Dhtxx</PackageTags>
     <Version>0.1.27</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for DHT family of atmospheric sensors</Description>
+    <Description>DHTxx I2C temperature and humidity sensors (DHT10, DHT12)</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

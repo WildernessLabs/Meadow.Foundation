@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Max44009, Light</PackageTags>
     <Version>0.1.24</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for Max44009 light sensor</Description>
+    <Description>Max44009 I2C ultraviolet and ambient light sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

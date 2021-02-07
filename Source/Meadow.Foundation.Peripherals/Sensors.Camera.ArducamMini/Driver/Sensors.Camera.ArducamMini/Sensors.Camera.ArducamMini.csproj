@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Arducam, ArducamMini, Camera</PackageTags>
     <Version>0.1.29</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Description>Driver for ArducamMini camera controller</Description>
+    <Description>ArducamMini I2C + SPI high definition 2MP camera controller</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

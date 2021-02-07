@@ -11,7 +11,7 @@
     <PackageTags>Meadow, Meadow.Foundation, Motor, Stepper</PackageTags>
     <Version>0.1.28</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for Uln2003 as a stepper motor controller</Description>
+    <Description>ULN2003 digital input stepper motor controller</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

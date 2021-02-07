@@ -11,7 +11,7 @@
     <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, St7687s</PackageTags>
     <Version>0.1.29</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Description>Driver for St7687s display</Description>
+    <Description>St7687s SPI color display</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Displays.GraphicsLibrary\Displays.GraphicsLibrary.csproj" />

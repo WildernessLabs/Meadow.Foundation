@@ -11,7 +11,7 @@
     <PackageTags>Meadow, Meadow.Foundation, Motor, Stepper, A4988</PackageTags>
     <Version>0.1.24</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for A4988 as a stepper motor controller</Description>
+    <Description>A4988 digital input stepper motor controller</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

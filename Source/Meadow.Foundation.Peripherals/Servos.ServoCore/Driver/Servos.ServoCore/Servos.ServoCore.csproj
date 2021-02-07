@@ -11,7 +11,7 @@
     <PackageTags>Meadow, Meadow.Foundation, Servo, Meadow.Foundation.Servo</PackageTags>
     <Version>0.8.26</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Generic Servo</Description>
+    <Description>PWM generic servo controller</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

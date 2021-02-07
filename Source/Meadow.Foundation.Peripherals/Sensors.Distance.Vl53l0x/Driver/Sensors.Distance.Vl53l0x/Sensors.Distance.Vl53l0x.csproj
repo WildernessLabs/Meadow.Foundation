@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Vl53l0x, distance</PackageTags>
     <Version>0.1.20</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for Vl53l0x time of flight distance sensor</Description>
+    <Description>Vl53l0x I2C time of flight ranging distance sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

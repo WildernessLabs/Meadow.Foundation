@@ -11,7 +11,7 @@
     <PackageTags>Meadow, Meadow.Foundation, Displays, PCD8544, Nokia, 5110</PackageTags>
     <Version>0.6.29</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for PCD8544 display (Nokia 5110)</Description>
+    <Description>PCD8544 SPI monochrome display (Nokia 5110)</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

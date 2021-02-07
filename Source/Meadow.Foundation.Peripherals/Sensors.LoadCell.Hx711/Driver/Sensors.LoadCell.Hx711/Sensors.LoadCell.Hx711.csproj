@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, LoadCell, Hx711</PackageTags>
     <Version>0.1.24</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for Hx711</Description>
+    <Description>Hx711 digital load cell amplifier</Description>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

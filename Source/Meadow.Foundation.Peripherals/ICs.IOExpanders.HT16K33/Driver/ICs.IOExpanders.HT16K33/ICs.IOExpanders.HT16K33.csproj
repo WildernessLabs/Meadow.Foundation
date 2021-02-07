@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, IOExpanders, HT16K33</PackageTags>
     <Version>0.6.30</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for a HT16K33 IO Expander</Description>
+    <Description>HT16K33 I2C IO expander, led driver, and character display controller</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

@@ -11,7 +11,7 @@
     <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, ST7565</PackageTags>
     <Version>0.1.30</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for ST7565 display</Description>
+    <Description>ST7565 SPI color display</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

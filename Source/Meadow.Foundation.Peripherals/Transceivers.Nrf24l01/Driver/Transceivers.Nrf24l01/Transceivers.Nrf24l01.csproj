@@ -3,6 +3,7 @@
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Nrf24l01</AssemblyName>
+    <Description>Nrf24l01 SPI radio transceiver</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

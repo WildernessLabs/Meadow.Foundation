@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation,Meadow,Atmospheric,Temperature,Humidity,SHT31D</PackageTags>
     <Version>0.1.29</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for SHT31D atmospheric sensor</Description>
+    <Description>SHT31-D temperature and humidity sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

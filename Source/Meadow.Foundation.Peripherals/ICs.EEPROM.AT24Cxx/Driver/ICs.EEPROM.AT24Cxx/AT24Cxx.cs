@@ -9,8 +9,6 @@ namespace Meadow.Foundation.ICs.EEPROM
     /// </summary>
     public class At24Cxx
     {
-        
-
         /// <summary>
         ///     Communication bus used to communicate with the EEPEOM.
         /// </summary>
@@ -26,9 +24,6 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// </summary>
         private readonly ushort _memorySize;
 
-        
-
-        
 
         /// <summary>
         ///     Create a new AT24Cxx object using the default parameters for the component.
@@ -43,10 +38,6 @@ namespace Meadow.Foundation.ICs.EEPROM
             _pageSize = pageSize;
             _memorySize = memorySize;
         }
-
-        
-
-        
 
         /// <summary>
         ///     Check the startAddress and the amount of data being accessed to make sure that the

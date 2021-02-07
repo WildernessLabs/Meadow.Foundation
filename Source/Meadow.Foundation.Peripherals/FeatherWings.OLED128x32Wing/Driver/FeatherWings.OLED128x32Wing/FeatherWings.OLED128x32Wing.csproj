@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, FeatherWing, OLED128x32, SSD1306</PackageTags>
     <Version>0.1.24</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for AdaFruit OLED 128x32 Featherwing</Description>
+    <Description>AdaFruit OLED 128x32 monochrome display FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

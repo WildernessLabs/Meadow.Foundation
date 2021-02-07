@@ -12,7 +12,7 @@
     <PackageTags>Meadow.Foundation, FeatherWing, ServoWing, servo, servo motor</PackageTags>
     <Version>0.1.24</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for AdaFruit ServoWing Featherwing</Description>
+    <Description>AdaFruit ServoWing servo controller FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Servos.ServoCore\Driver\Servos.ServoCore\Servos.ServoCore.csproj" />

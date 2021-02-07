@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, KY-038, Sound, KY038</PackageTags>
     <Version>0.1.24</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for KY-038 sound sensor breakout board</Description>
+    <Description>KY-038 analog sound sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

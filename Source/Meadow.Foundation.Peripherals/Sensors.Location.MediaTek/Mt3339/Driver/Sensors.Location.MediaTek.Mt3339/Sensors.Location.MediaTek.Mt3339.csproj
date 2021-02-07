@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Mt3339, GPS, Adafruit Ultimate GPS, GNSS</PackageTags>
     <Version>0.1.25</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for MediaTek MT3339 GNSS chip. Also for AdaFruit Ultimate GPS breakouts.</Description>
+    <Description>MediaTek MT3339 serial GNSS / GPS controller</Description>
     <RootNamespace>Sensors.Location.MediaTek</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
