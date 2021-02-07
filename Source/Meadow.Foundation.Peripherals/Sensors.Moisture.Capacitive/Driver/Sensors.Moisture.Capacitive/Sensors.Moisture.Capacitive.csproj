@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Capacitive, Soil Moisture</PackageTags>
     <Version>0.5.30</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Analog capacitive Soil moisture sensor</Description>
+    <Description>Analog capacitive soil moisture sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
