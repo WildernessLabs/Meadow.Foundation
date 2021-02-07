@@ -41,8 +41,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public DeviceCapabilities Capabilities => throw new NotImplementedException();
 
-        
-
         protected Mcp23x08()
         { }
 
@@ -62,7 +60,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// is used.</param>
         public Mcp23x08(II2cBus i2cBus, bool pinA0, bool pinA1, bool pinA2,
             IDigitalInputPort interruptPort = null)
-            : this(i2cBus, McpAddressTable.GetAddressFromPins(pinA0, pinA1, pinA2))
+            : this(i2cBus, McpAddressTable.GetAddressFromPins(pinA0, pinA1, pinA2), interruptPort)
         {
             // nothing goes here
         }
@@ -415,13 +413,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new NotImplementedException();
         }
 
+        public IPin GetPin(string pinName)
+        {
+            return Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);
+        }
+
         //TODO: we know adding all these sucks. when we convert to .NET Core
         // we'll be able to add these to the IIODevice interface implementation
         // and they won't be necessary to put in like this.
 
         public IAnalogInputPort CreateAnalogInputPort(IPin pin, float voltageReference = 3.3F)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("This part does not support Analog input");
         }
 
         public ISerialPort CreateSerialPort(SerialPortName portName, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, int readBufferSize = 1024)
@@ -487,11 +490,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public void SetSynchronizationContext(SynchronizationContext context)
         {
             throw new NotImplementedException();
-        }
-
-        public IPin GetPin(string pinName)
-        {
-            return Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);
         }
     }
 }

@@ -4,10 +4,8 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.RTCs
 {
-    public class Ds323x
+    public class Ds323x : IDisposable
     {
-        
-
         /// <summary>
         ///     Register addresses in the sensor.
         /// </summary>
@@ -33,10 +31,6 @@ namespace Meadow.Foundation.RTCs
             public static readonly byte TemperatureMSB = 0x11;
             public static readonly byte TemperatureLSB = 0x12;
         }
-
-        
-
-        
 
         /// <summary>
         ///     Number of registers that hold the date and time information.
@@ -82,10 +76,6 @@ namespace Meadow.Foundation.RTCs
         ///     Bit mask to clear the Alarm2 interrupt.
         /// </summary>
         private const byte ALARM2_INTERRUPT_OFF = 0xfd;
-
-        
-
-        
 
         /// <summary>
         ///     Possible values for the alarm that can be set or alarm that has been raised.
@@ -164,23 +154,57 @@ namespace Meadow.Foundation.RTCs
             WhenDayHoursMinutesMatch
         }
 
-        
+        private AlarmRaised _alarm1Delegate;
+        private AlarmRaised _alarm2Delegate;
+        private bool _interruptCreatedInternally;
 
-        
+        protected Ds323x(I2cPeripheral peripheral, IIODevice device, IPin interruptPin)
+        {
+            ds323x = peripheral;
 
-        /// <summary>
-        ///     DS323x Real Time Clock object.
-        /// </summary>
-        protected II2cPeripheral _ds323x = null;
+            if (interruptPin != null)
+            {
+                var interruptPort = device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, 10, 10);
+                _interruptCreatedInternally = true;
 
-        /// <summary>
-        ///     Interrupt port attached to the DS323x RTC module.
-        /// </summary>
-        protected IDigitalInputPort _interruptPort;
+                Initialize(interruptPort);
+            }
+        }
 
-        
+        protected Ds323x(I2cPeripheral peripheral, IDigitalInputPort interruptPort)
+        {
+            ds323x = peripheral;
 
-        
+            Initialize(interruptPort);
+        }
+
+        public void Dispose()
+        {
+            if (_interruptCreatedInternally)
+            {
+                InterruptPort?.Dispose();
+                InterruptPort = null;
+            }
+        }
+
+        private void Initialize(IDigitalInputPort interruptPort)
+        {
+            if (interruptPort != null)
+            {
+                switch (InterruptPort.InterruptMode)
+                {
+                    case InterruptMode.EdgeFalling:
+                    case InterruptMode.EdgeBoth:
+                        // we need a rising edge, so all good;
+                        break;
+                    default:
+                        throw new DeviceConfigurationException("RTC alarms require a falling-edge enabled interrupt port");
+                }
+
+                InterruptPort = interruptPort;
+                InterruptPort.Changed += InterruptPort_Changed;
+            }
+        }
 
         /// <summary>
         ///     Delegate for the alarm events.
@@ -190,16 +214,34 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         ///     Event raised when Alarm1 is triggered.
         /// </summary>
-        public event AlarmRaised OnAlarm1Raised;
+        public event AlarmRaised OnAlarm1Raised
+        {
+            add
+            {
+                if (InterruptPort == null)
+                {
+                    throw new DeviceConfigurationException("Alarm events require creating the Component with an Interrupt Port");
+                }
+                _alarm1Delegate += value;
+            }
+            remove => _alarm1Delegate -= value;
+        }
 
         /// <summary>
         ///     Event raised when Alarm2 is triggered.
         /// </summary>
-        public event AlarmRaised OnAlarm2Raised;
-
-        
-
-        
+        public event AlarmRaised OnAlarm2Raised
+        {
+            add
+            {
+                if (InterruptPort == null)
+                {
+                    throw new DeviceConfigurationException("Alarm events require creating the Component with an Interrupt Port");
+                }
+                _alarm2Delegate += value;
+            }
+            remove => _alarm2Delegate -= value;
+        }
 
         /// <summary>
         ///     Get / Set the current date and time.
@@ -208,10 +250,10 @@ namespace Meadow.Foundation.RTCs
         {
             get
             {
-                var data = _ds323x.ReadRegisters(Registers.Seconds, DATE_TIME_REGISTERS_SIZE);
+                var data = ds323x.ReadRegisters(Registers.Seconds, DATE_TIME_REGISTERS_SIZE);
                 return DecodeDateTimeRegisters(data);
             }
-            set { _ds323x.WriteRegisters(Registers.Seconds, EncodeDateTimeRegisters(value)); }
+            set { ds323x.WriteRegisters(Registers.Seconds, EncodeDateTimeRegisters(value)); }
         }
 
         /// <summary>
@@ -221,11 +263,21 @@ namespace Meadow.Foundation.RTCs
         {
             get
             {
-                var data = _ds323x.ReadRegisters(Registers.TemperatureMSB, 2);
+                var data = ds323x.ReadRegisters(Registers.TemperatureMSB, 2);
                 var temperature = (ushort)((data[0] << 2) | (data[1] >> 6));
                 return temperature * 0.25;
             }
         }
+
+        /// <summary>
+        ///     DS323x Real Time Clock object.
+        /// </summary>
+        protected II2cPeripheral ds323x { get; }
+
+        /// <summary>
+        ///     Interrupt port attached to the DS323x RTC module.
+        /// </summary>
+        protected IDigitalInputPort InterruptPort { get; private set; }
 
         /// <summary>
         ///     Control register.
@@ -236,8 +288,8 @@ namespace Meadow.Foundation.RTCs
         /// </remarks>
         protected byte ControlRegister
         {
-            get { return _ds323x.ReadRegister(Registers.Control); }
-            set { _ds323x.WriteRegister(Registers.Control, value); }
+            get { return ds323x.ReadRegister(Registers.Control); }
+            set { ds323x.WriteRegister(Registers.Control, value); }
         }
 
         /// <summary>
@@ -249,8 +301,8 @@ namespace Meadow.Foundation.RTCs
         /// </remarks>
         protected byte ControlStatusRegister
         {
-            get { return _ds323x.ReadRegister(Registers.ControlStatus); }
-            set { _ds323x.WriteRegister(Registers.ControlStatus, value); }
+            get { return ds323x.ReadRegister(Registers.ControlStatus); }
+            set { ds323x.WriteRegister(Registers.ControlStatus, value); }
         }
 
         /// <summary>
@@ -279,25 +331,21 @@ namespace Meadow.Foundation.RTCs
             }
         }
 
-        
-
-        
-
         /// <summary>
         ///     Alarm interrupt has been raised, work out which one and raise the necessary event.
         /// </summary>
         protected void InterruptPort_Changed(object sender, EventArgs e)
         {
-            if ((OnAlarm1Raised != null) || (OnAlarm2Raised != null))
+            if ((_alarm1Delegate != null) || (_alarm2Delegate != null))
             {
                 var alarm = WhichAlarm;
-                if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (OnAlarm1Raised != null))
+                if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm1Delegate != null))
                 {
-                    OnAlarm1Raised(this);
+                    _alarm1Delegate(this);
                 }
-                if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (OnAlarm2Raised != null))
+                if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm2Delegate != null))
                 {
-                    OnAlarm2Raised(this);
+                    _alarm2Delegate(this);
                 }
             }
         }
@@ -480,7 +528,7 @@ namespace Meadow.Foundation.RTCs
                     data[2] |= 0x40;
                     break;
             }
-            _ds323x.WriteRegisters(register, data);
+            ds323x.WriteRegisters(register, data);
             //
             //  Turn the relevant alarm on.
             //
@@ -556,10 +604,8 @@ namespace Meadow.Foundation.RTCs
         /// </summary>
         public void DisplayRegisters()
         {
-            var data = _ds323x.ReadRegisters(0, 0x12);
+            var data = ds323x.ReadRegisters(0, 0x12);
             DebugInformation.DisplayRegisters(0, data);
         }
-
-        
     }
 }

@@ -9,6 +9,20 @@ namespace Meadow.Foundation.Sensors.Buttons
     /// </summary>
     public class PushButton : IButton, IDisposable
     {
+        /// <summary>
+        /// This duration controls the debounce filter. It also has the effect
+        /// of rate limiting clicks. Decrease this time to allow users to click
+        /// more quickly.
+        /// </summary>
+        public TimeSpan DebounceDuration
+        {
+            get => (DigitalIn != null) ? new TimeSpan(0, 0, 0, 0, (int)DigitalIn.DebounceDuration) : TimeSpan.MinValue;
+            set
+            {
+                DigitalIn.DebounceDuration = (int)value.TotalMilliseconds;
+            }
+        }
+
         event EventHandler clickDelegate = delegate { };
         event EventHandler pressStartDelegate = delegate { };
         event EventHandler pressEndDelegate = delegate { };
@@ -22,16 +36,16 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             get
             {
-                bool currentState = DigitalIn?.Resistor == ResistorMode.InternalPullDown ? true : false;
+                bool currentState = DigitalIn?.Resistor == ResistorMode.InternalPullDown;
 
-                return (state == currentState) ? true : false;
+                return (state == currentState);
             }
         }
 
         /// <summary>
         /// The minimum duration for a long press.
         /// </summary>
-        public TimeSpan LongPressThreshold { get; set; } = new TimeSpan(0, 0, 1);
+        public TimeSpan LongPressThreshold { get; set; } = TimeSpan.Zero;
 
         /// <summary>
         /// Returns digital input port.
@@ -45,6 +59,11 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
+                if (DigitalIn.InterruptMode == InterruptMode.None)
+                {
+                    throw new DeviceConfigurationException("PressStarted event requires InteruptMode to be anything but None");
+                }
+
                 pressStartDelegate += value;
             }
             remove => pressStartDelegate -= value;
@@ -57,6 +76,11 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
+                if (DigitalIn.InterruptMode == InterruptMode.None)
+                {
+                    throw new DeviceConfigurationException("PressEnded event requires InteruptMode to be anything but None");
+                }
+
                 pressEndDelegate += value;
             }
             remove => pressEndDelegate -= value;
@@ -69,6 +93,11 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
+                if (DigitalIn.InterruptMode == InterruptMode.None)
+                {
+                    throw new DeviceConfigurationException("Clicked event requires InteruptMode to be anything but None");
+                }
+
                 clickDelegate += value;
             }
             remove => clickDelegate -= value;
@@ -81,6 +110,11 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
+                if (DigitalIn.InterruptMode == InterruptMode.None)
+                {
+                    throw new DeviceConfigurationException("LongPressClicked event requires InteruptMode to be anything but None");
+                }
+
                 longPressDelegate += value;
             }
             remove => longPressDelegate -= value;
@@ -200,11 +234,8 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         public void Dispose()
         {
-            //if (_inputCreatedInternally)
-            //{
-                DigitalIn.Dispose();
-                DigitalIn = null;
-            //}
+            DigitalIn.Dispose();
+            DigitalIn = null;
         }
     }
 }
