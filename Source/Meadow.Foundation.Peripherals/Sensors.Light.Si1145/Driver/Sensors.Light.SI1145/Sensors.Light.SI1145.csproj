@@ -7,6 +7,6 @@
     <Description>SI1145 I2C ultraviolet and ambient light sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
   </ItemGroup>
 </Project>

@@ -7,6 +7,6 @@
     <Description>APDS9960 I2C proximity, light, color and gesture sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
   </ItemGroup>
 </Project>

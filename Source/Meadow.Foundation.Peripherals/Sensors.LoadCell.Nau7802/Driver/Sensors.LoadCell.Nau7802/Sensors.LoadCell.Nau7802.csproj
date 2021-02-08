@@ -7,6 +7,6 @@
     <Description>NAU7802 I2C 24-Bit dual channel analog to digital converter</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
   </ItemGroup>
 </Project>

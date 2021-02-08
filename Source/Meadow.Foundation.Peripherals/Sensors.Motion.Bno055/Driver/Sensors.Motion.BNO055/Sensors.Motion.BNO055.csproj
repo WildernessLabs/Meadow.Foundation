@@ -9,11 +9,11 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, BNO055, Motion</PackageTags>
-    <Version>0.1.29</Version>
+    <Version>0.1.33</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Bosch BNO055 9 axis absolute orientation sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
   </ItemGroup>
 </Project>

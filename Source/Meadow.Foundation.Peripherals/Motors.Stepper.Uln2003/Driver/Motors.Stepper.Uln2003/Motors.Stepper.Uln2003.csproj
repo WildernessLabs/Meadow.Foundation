@@ -9,11 +9,11 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Motor, Stepper</PackageTags>
-    <Version>0.1.28</Version>
+    <Version>0.1.32</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>ULN2003 digital input stepper motor controller</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
   </ItemGroup>
 </Project>
