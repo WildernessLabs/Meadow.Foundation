@@ -23,7 +23,6 @@ namespace Meadow.Foundation
             get { return _mode == Mode.Default; }
         }
         
-
         public double A
         {
             get { return a; }
@@ -340,7 +339,7 @@ namespace Meadow.Foundation
             }
         }
 
-        public static Color FromUint(int argb)
+        public static Color FromUint(uint argb)
         {
             return FromRgba((byte)((argb & 0x00ff0000) >> 0x10), (byte)((argb & 0x0000ff00) >> 0x8), (byte)(argb & 0x000000ff), (byte)((argb & 0xff000000) >> 0x18));
         }
