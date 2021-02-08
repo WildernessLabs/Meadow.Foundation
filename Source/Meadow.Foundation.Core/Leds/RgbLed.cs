@@ -196,7 +196,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
         [Obsolete("Method deprecated: use StartBlink(Colors color, int onDuration, int offDuration)")]
-        public void StartBlink(Colors color, uint onDuration = 200, uint offDuration = 200)
+        public void StartBlink(Colors color, uint onDuration, uint offDuration)
         {
             Stop();
 

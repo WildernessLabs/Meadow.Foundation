@@ -245,7 +245,7 @@ namespace Meadow.Foundation.Leds
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
         /// </summary>
         [Obsolete("Method deprecated: use StartBlink(int onDuration, int offDuration, float highBrightness, float lowBrightness)")]
-        public void StartBlink(uint onDuration = 200, uint offDuration = 200, float highBrightness = 1f, float lowBrightness = 0f)
+        public void StartBlink(uint onDuration, uint offDuration, float highBrightness, float lowBrightness)
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {
@@ -274,7 +274,7 @@ namespace Meadow.Foundation.Leds
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
         /// </summary>        
         [Obsolete("Method deprecated: use StartPulse(int pulseDuration, float highBrightness, float lowBrightness)")]
-        public void StartPulse(uint pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void StartPulse(uint pulseDuration, float highBrightness, float lowBrightness)
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {

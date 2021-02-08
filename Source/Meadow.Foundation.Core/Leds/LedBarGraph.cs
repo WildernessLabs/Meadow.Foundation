@@ -167,7 +167,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
         [Obsolete("Method deprecated: use StartBlink(int onDuration, int offDuration)")]
-        public void StartBlink(uint onDuration = 200, uint offDuration = 200)
+        public void StartBlink(uint onDuration, uint offDuration)
         {
             foreach (var led in leds)
             {
@@ -182,7 +182,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
         [Obsolete("Method deprecated: use SetLedBlink(int index, int onDuration, int offDuration)")]
-        public void SetLedBlink(uint index, uint onDuration = 200, uint offDuration = 200)
+        public void SetLedBlink(uint index, uint onDuration, uint offDuration)
         {
             if (index >= Count)
             {

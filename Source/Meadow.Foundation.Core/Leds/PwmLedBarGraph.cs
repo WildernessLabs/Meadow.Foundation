@@ -257,7 +257,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
         [Obsolete("Method deprecated: use SetLedBlink(int index, int onDuration, int offDuration, float highBrightness, float lowBrightness)")]
-        public void SetLedBlink(uint index, uint onDuration = 200, uint offDuration = 200, float highBrightness = 1, float lowBrightness = 0)
+        public void SetLedBlink(uint index, uint onDuration, uint offDuration, float highBrightness, float lowBrightness)
         {
             if (index >= Count)
             {
@@ -277,7 +277,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
         [Obsolete("Method deprecated: use SetLedPulse(int index, int pulseDuration, float highBrightness, float lowBrightness)")]
-        public void SetLedPulse(uint index, uint pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void SetLedPulse(uint index, uint pulseDuration, float highBrightness, float lowBrightness)
         {
             if (index >= Count)
             {
@@ -295,7 +295,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness">High brigtness.</param>
         /// <param name="lowBrightness">Low brightness.</param>
         [Obsolete("Method deprecated: use StartBlink(int onDuration, int offDuration, float highBrightness, float lowBrightness)")]
-        public void StartBlink(uint onDuration = 200, uint offDuration = 200, float highBrightness = 1, float lowBrightness = 0)
+        public void StartBlink(uint onDuration, uint offDuration, float highBrightness, float lowBrightness)
         {
             foreach (var pwmLed in pwmLeds)
             {
@@ -310,7 +310,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightness">Low brightness.</param>
         /// </summary>
         [Obsolete("Method deprecated: use StartPulse(int pulseDuration, float highBrightness, float lowBrightness)")]
-        public void StartPulse(uint pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void StartPulse(uint pulseDuration, float highBrightness, float lowBrightness)
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {
