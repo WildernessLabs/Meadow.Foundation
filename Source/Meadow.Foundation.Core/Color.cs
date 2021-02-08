@@ -281,19 +281,19 @@ namespace Meadow.Foundation
             return "[Color: A={" + A + "}, R={" + R + "}, G={" + G + "}, B={" + B + "}, Hue={" + Hue + "}, Saturation={" + Saturation + "}, Brightness={" + Brightness + "}]";
         }
 
-        static int ToHex(char c)
+        static uint ToHex(char c)
         {
             ushort x = (ushort)c;
             if (x >= '0' && x <= '9')
-                return (x - '0');
+                return (uint)(x - '0');
 
             x |= 0x20;
             if (x >= 'a' && x <= 'f')
-                return (x - 'a' + 10);
+                return (uint)(x - 'a' + 10);
             return 0;
         }
 
-        static int ToHexD(char c)
+        static uint ToHexD(char c)
         {
             var j = ToHex(c);
             return (j << 4) | j;
