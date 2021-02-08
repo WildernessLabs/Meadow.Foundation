@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -93,6 +94,24 @@ namespace Meadow.Foundation.Leds
 			}
 
 			Port.State = IsOn;
+		}
+
+		/// <summary>
+		/// Blink animation that turns the LED on and off based on the OnDuration and offDuration values in ms
+		/// </summary>
+		/// <param name="onDuration"></param>
+		/// <param name="offDuration"></param>
+		[Obsolete("Method deprecated: use StartBlink(int onDuration, int offDuration)")]
+		public void StartBlink(uint onDuration, uint offDuration)
+		{
+			Stop();
+
+			animationTask = new Task(async () =>
+			{
+				cancellationTokenSource = new CancellationTokenSource();
+				await StartBlinkAsync((int)onDuration, (int)offDuration, cancellationTokenSource.Token);
+			});
+			animationTask.Start();
 		}
 	}
 }
