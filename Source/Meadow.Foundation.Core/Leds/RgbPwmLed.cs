@@ -327,7 +327,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="offDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        [Obsolete("Method deprecated: use StartBlink(Color, int onDuration, int offDuration, float highBrightness, float lowBrightness)")]
+        [Obsolete("Method deprecated: use StartBlink(Color color, int onDuration, int offDuration, float highBrightness, float lowBrightness)")]
         public void StartBlink(Color color, uint onDuration = 200, uint offDuration = 200, float highBrightness = 1f, float lowBrightness = 0f)
         {
             if (highBrightness > 1 || highBrightness <= 0)

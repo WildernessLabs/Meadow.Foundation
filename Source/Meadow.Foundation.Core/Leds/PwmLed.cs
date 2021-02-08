@@ -244,7 +244,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
         /// </summary>
-        [Obsolete("Method deprecated: use StartBlink(int onDuration, int offDuration)")]
+        [Obsolete("Method deprecated: use StartBlink(int onDuration, int offDuration, float highBrightness, float lowBrightness)")]
         public void StartBlink(uint onDuration = 200, uint offDuration = 200, float highBrightness = 1f, float lowBrightness = 0f)
         {
             if (highBrightness > 1 || highBrightness <= 0)
