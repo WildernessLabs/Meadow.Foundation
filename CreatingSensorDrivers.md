@@ -49,7 +49,7 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// Capacitive Soil Moisture Sensor
     /// </summary>
-    public class Capacitive : FilterableObservableBase<FloatChangeResult, float>, IMoistureSensor
+    public class Capacitive : FilterableChangeObservableBase<FloatChangeResult, float>, IMoistureSensor
     {
         /// <summary>
         /// Raised when the value of the reading changes.
