@@ -17,10 +17,6 @@ namespace Meadow.Foundation.Displays.Led
 
         protected SevenSegment[] sevenSegments;
 
-        
-
-        
-
         /// <summary>
         /// Creates a SevenSegment connected to the especified IPins to a IODevice
         /// </summary>

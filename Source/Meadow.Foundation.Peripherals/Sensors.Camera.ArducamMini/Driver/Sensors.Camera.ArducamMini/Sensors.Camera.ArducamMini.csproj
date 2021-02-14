@@ -14,6 +14,6 @@
     <Description>ArducamMini I2C + SPI high definition 2MP camera controller</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>

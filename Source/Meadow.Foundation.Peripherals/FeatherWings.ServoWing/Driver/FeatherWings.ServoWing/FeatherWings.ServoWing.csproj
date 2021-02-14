@@ -15,7 +15,7 @@
     <Description>AdaFruit ServoWing servo controller FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Servo" Version="0.8.34" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.PCA9685" Version="0.1.28" />
+    <ProjectReference Include="..\..\..\Servos.ServoCore\Driver\Servos.ServoCore\Servos.ServoCore.csproj" />
+    <ProjectReference Include="..\..\..\ICs.IOExpanders.PCA9685\Driver\ICs.IOExpanders.PCA9685\ICs.IOExpanders.PCA9685.csproj" />
   </ItemGroup>
 </Project>

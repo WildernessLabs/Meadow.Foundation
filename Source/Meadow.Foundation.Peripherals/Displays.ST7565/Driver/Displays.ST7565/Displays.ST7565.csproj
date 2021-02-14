@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
@@ -14,7 +14,7 @@
     <Description>ST7565 SPI color display</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
-    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.9.34" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
   </ItemGroup>
 </Project>

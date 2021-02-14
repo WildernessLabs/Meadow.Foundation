@@ -14,7 +14,8 @@
     <Description>AdaFruit OLED 128x32 monochrome display FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
-    <PackageReference Include="Meadow.Foundation.Displays.Ssd130x" Version="0.12.32" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\Displays.Ssd130x\Driver\Displays.Ssd130x\Displays.Ssd130x.csproj" />
   </ItemGroup>
 </Project>

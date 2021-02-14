@@ -14,7 +14,7 @@
     <Description>DHTxx I2C temperature and humidity sensors (DHT10, DHT12)</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Drivers\" />

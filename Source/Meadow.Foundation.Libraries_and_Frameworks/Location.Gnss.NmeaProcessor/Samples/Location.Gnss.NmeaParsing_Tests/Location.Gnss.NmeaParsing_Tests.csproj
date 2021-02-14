@@ -5,7 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing" Version="0.1.31" />
+    <ProjectReference Include="..\..\Driver\Location.Gnss.NmeaProcessor\Location.Gnss.NmeaParsing.csproj" />
   </ItemGroup>
 </Project>
