@@ -12,7 +12,7 @@
     <PackageTags>Meadow, Meadow.Foundation, Display, Graphics</PackageTags>
     <Version>0.9.34</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Graphics Library</Description>
+    <Description>Lightweight integer accurate 2d graphics drawing system designed for embedded systems</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
