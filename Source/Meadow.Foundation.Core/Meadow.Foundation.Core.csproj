@@ -16,6 +16,6 @@
    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
  </PropertyGroup>
  <ItemGroup>
-   <PackageReference Include="Meadow" Version="0.21.0" />
+   <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
  </ItemGroup>
 </Project>

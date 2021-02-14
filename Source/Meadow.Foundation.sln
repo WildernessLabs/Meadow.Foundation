@@ -936,6 +936,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Motors.Tb67h420ftg", "Meado
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tb67h420ftg_Sample", "Meadow.Foundation.Peripherals\Motors.Tb67h420ftg\Samples\Tb67h420ftg_Sample\Tb67h420ftg_Sample.csproj", "{06925ADD-151B-4985-BFE6-09878A4143B0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{9AF656C3-4521-4F85-A06C-2954B1B593EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2042,6 +2044,12 @@ Global
 		{06925ADD-151B-4985-BFE6-09878A4143B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06925ADD-151B-4985-BFE6-09878A4143B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06925ADD-151B-4985-BFE6-09878A4143B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AF656C3-4521-4F85-A06C-2954B1B593EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AF656C3-4521-4F85-A06C-2954B1B593EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AF656C3-4521-4F85-A06C-2954B1B593EC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{9AF656C3-4521-4F85-A06C-2954B1B593EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AF656C3-4521-4F85-A06C-2954B1B593EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AF656C3-4521-4F85-A06C-2954B1B593EC}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2507,6 +2515,7 @@ Global
 		{B59A3D0E-89B2-484E-A2CC-AD7FC433F99A} = {C6103552-7010-4353-9369-F6545D6A4E7B}
 		{8225D4DA-F0E2-4AA5-A657-EC3F34182EC9} = {C6103552-7010-4353-9369-F6545D6A4E7B}
 		{06925ADD-151B-4985-BFE6-09878A4143B0} = {B59A3D0E-89B2-484E-A2CC-AD7FC433F99A}
+		{9AF656C3-4521-4F85-A06C-2954B1B593EC} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
