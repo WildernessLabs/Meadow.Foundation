@@ -3,6 +3,7 @@
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Rc522</AssemblyName>
+    <Description>Rc522 I2C radio frequency ID reader</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation" Version="0.*" />

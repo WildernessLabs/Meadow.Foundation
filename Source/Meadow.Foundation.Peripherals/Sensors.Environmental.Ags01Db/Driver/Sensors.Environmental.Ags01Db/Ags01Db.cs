@@ -12,8 +12,6 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// </summary>
     public class Ags01Db
     {
-        
-
         private const byte CRC_POLYNOMIAL = 0x31;
         private const byte CRC_INIT = 0xFF;
 
@@ -22,15 +20,8 @@ namespace Meadow.Foundation.Sensors.Environmental
         private const byte ASG_VERSION_MSB = 0x0A;
         private const byte ASG_VERSION_LSB = 0x01;
 
-        
-
-        
-
         private readonly II2cPeripheral sensor;
 
-        
-
-        
 
         public Ags01Db(II2cBus i2cBus, byte address = 0x11)
         {

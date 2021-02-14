@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays.ePaper
     public class Ssd1608 : EpdBase
     {
         public Ssd1608(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
-            uint width = 200, uint height = 200) :
+            int width = 200, int height = 200) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         {
         }

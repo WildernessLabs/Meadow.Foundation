@@ -23,7 +23,6 @@ namespace Meadow.Foundation
             get { return _mode == Mode.Default; }
         }
         
-
         public double A
         {
             get { return a; }

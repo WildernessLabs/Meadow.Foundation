@@ -9,9 +9,9 @@ namespace Meadow.Foundation.Displays
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Height => 48;
+        public override int Height => 48;
 
-        public override uint Width => 84;
+        public override int Width => 84;
 
         public bool InvertDisplay
         {

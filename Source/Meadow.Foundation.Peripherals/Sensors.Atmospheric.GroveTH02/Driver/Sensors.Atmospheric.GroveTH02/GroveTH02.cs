@@ -14,8 +14,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
-        
-
         /// <summary>
         ///     Start measurement bit in the configuration register.
         /// </summary>
@@ -40,10 +38,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Minimum value that should be used for the polling frequency.
         /// </summary>
         public const ushort MinimumPollingPeriod = 200;
-
-        
-
-        
 
         /// <summary>
         ///     Register addresses in the Grove TH02 sensor.
@@ -76,10 +70,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             public const byte ID = 0x11;
         }
 
-        
-
-        
-
         /// <summary>
         ///     GroveTH02 object.
         /// </summary>
@@ -90,9 +80,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         private readonly ushort _updateInterval = 100;
 
-        
-
-        
 
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.

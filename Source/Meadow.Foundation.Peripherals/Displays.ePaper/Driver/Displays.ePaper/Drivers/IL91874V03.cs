@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Displays.ePaper
     public class Il91874V03 : EpdBase
     {
         public Il91874V03(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
-            uint width = 176, uint height = 264) :
+            int width = 176, int height = 264) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }
 

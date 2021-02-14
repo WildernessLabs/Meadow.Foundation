@@ -14,16 +14,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public class Hih6130 : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
-        
-
         /// <summary>
         ///     HIH6130 sensor object.
         /// </summary>
         private readonly II2cPeripheral hih6130;
-
-        
-
-        
 
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.

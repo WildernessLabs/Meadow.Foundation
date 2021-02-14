@@ -76,16 +76,16 @@ namespace MeadowApp
 
             Console.WriteLine("Create buttons...");
 
-            up = new PushButton(Device, Device.Pins.D14);
+            up = new PushButton(Device, Device.Pins.D14, ResistorMode.Disabled);
             up.Clicked += Up_Clicked;
 
-            left = new PushButton(Device, Device.Pins.D11);
+            left = new PushButton(Device, Device.Pins.D11, ResistorMode.Disabled);
             left.Clicked += Left_Clicked;
 
-            right = new PushButton(Device, Device.Pins.D10);
+            right = new PushButton(Device, Device.Pins.D10, ResistorMode.Disabled);
             right.Clicked += Right_Clicked;
 
-            down = new PushButton(Device, Device.Pins.D12);
+            down = new PushButton(Device, Device.Pins.D12, ResistorMode.Disabled);
             down.Clicked += Down_Clicked;
 
             menu.Enable();

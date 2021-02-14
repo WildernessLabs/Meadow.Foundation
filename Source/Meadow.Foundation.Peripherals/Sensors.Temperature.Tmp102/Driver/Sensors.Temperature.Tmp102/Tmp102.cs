@@ -14,8 +14,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor
     {
-        
-
         /// <summary>
         ///     Indicate the resolution of the sensor.
         /// </summary>
@@ -32,18 +30,10 @@ namespace Meadow.Foundation.Sensors.Temperature
             Resolution13Bits
         }
 
-        
-
-        
-
         /// <summary>
         ///     TMP102 sensor.
         /// </summary>
         private readonly II2cPeripheral tmp102;
-
-        
-
-        
 
         /// <summary>
         ///     Backing variable for the SensorResolution property.

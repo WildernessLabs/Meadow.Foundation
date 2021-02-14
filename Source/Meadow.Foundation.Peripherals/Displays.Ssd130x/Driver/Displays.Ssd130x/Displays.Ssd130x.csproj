@@ -1,0 +1,23 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Ssd130x</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.Displays.Ssd130x</PackageId>
+    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow, Meadow.Foundation, Display, Graphics, OLED, SSD1306, SSD1309</PackageTags>
+    <Version>0.12.32</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>SSD1306 / SSD1309 SPI and I2C OLED monochrome displays</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.GraphicsLibrary" Version="0.9.34" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Drivers\" />
+  </ItemGroup>
+</Project>

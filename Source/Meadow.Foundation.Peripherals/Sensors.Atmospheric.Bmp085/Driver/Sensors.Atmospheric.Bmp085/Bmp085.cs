@@ -13,10 +13,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public class Bmp085 : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, IBarometricPressureSensor, ITemperatureSensor
     {
-        
-
         /// <summary>
-        ///     SH31D sensor communicates using I2C.
+        ///     BMP085 sensor communicates using I2C.
         /// </summary>
         private readonly II2cPeripheral bmp085;
 

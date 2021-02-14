@@ -10,8 +10,6 @@ namespace Meadow.Foundation.Sensors.Temperature
 
     public class DS18B20 : ITemperatureSensor
     {
-        
-
         /// <summary>
         ///     Type of one wire buses allowed.
         /// </summary>
@@ -27,9 +25,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             /// </summary>
             MultimpleDevices
         }
-
-        
-
         
 
         /// <summary>

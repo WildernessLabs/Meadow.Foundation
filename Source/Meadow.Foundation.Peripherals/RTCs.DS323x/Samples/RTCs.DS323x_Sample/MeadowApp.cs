@@ -7,7 +7,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Ds3231 sensor;
+        private Ds3231 sensor;
 
         public MeadowApp()
         {
@@ -27,7 +27,6 @@ namespace MeadowApp
             sensor.SetAlarm(Ds323x.Alarm.Alarm1Raised, new DateTime(2020, 1, 1, 1, 0, 0),
                          Ds323x.AlarmType.WhenSecondsMatch);
 
-            sensor.OnAlarm1Raised += Sensor_OnAlarm1Raised;
             sensor.DisplayRegisters();
         }
 
@@ -42,7 +41,8 @@ namespace MeadowApp
         {
             Console.WriteLine("Initialize hardware...");
 
-            sensor = new Ds3231(Device, Device.CreateI2cBus(), null);
+            sensor = new Ds3231(Device, Device.CreateI2cBus(), Device.Pins.D06);
+            sensor.OnAlarm1Raised += Sensor_OnAlarm1Raised;
         }
     }
 }

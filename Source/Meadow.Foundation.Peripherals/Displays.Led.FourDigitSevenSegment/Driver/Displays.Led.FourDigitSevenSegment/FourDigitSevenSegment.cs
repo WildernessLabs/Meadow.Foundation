@@ -13,8 +13,6 @@ namespace Meadow.Foundation.Displays.Led
         protected Task animationThread = null;
         protected CancellationTokenSource cts = null;
 
-        
-
         protected readonly IDigitalOutputPort[] digits;
 
         protected SevenSegment[] sevenSegments;

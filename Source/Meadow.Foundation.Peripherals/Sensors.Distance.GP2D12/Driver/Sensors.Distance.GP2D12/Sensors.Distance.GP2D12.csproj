@@ -4,8 +4,9 @@
     <OutputType>Library</OutputType>
     <AssemblyName>SharpGP2D12</AssemblyName>
     <Version>0.1.0</Version>
+    <Description>Sharp GP2D12 analog distance sensor with integrated signal processing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
   </ItemGroup>
 </Project>

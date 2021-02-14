@@ -8,9 +8,9 @@ namespace Meadow.Foundation.Displays
     {
         public override DisplayColorMode ColorMode => DisplayColorMode.Format4bpp;
 
-        public override uint Width => 128;
+        public override int Width => 128;
 
-        public override uint Height => 128;
+        public override int Height => 128;
 
         protected SpiBus spiBus;
         protected ISpiPeripheral spiPeripheral;
@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Displays
 
         protected byte currentPen;
 
-        protected uint xMin, xMax, yMin, yMax;
+        protected int xMin, xMax, yMin, yMax;
 
         protected const bool Data = true;
         protected const bool Command = false;

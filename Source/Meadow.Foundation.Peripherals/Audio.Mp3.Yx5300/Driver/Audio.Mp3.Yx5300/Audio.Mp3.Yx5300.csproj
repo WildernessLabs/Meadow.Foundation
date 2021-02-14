@@ -11,7 +11,7 @@
     <PackageTags>Meadow.Foundation, Audio, MP3, YX5300</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for YX5300 serial MP3 module</Description>
+    <Description>YX5300 serial MP3 player</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation" Version="0.*" />

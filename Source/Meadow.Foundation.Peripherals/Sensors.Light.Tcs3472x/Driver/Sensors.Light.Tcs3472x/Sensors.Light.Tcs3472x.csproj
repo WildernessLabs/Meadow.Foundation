@@ -4,8 +4,9 @@
     <OutputType>Library</OutputType>
     <AssemblyName>Tsc3472x</AssemblyName>
     <Version>0.1.0</Version>
+    <Description>Tsc3472x I2C ambient light and color sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.23.0" />
   </ItemGroup>
 </Project>
