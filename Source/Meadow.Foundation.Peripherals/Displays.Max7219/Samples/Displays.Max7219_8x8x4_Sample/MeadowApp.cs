@@ -35,7 +35,7 @@ namespace MeadowApp
 
             var spiBus = Device.CreateSpiBus(Max7219.SpiClockFrequency);
 
-            display = new Max7219(Device, Device.CreateSpiBus(), Device.Pins.D01, 4, Max7219.Max7219Type.Display);
+            display = new Max7219(Device, spiBus, Device.Pins.D01, 4, Max7219.Max7219Type.Display);
 
             graphics = new GraphicsLibrary(display);
             

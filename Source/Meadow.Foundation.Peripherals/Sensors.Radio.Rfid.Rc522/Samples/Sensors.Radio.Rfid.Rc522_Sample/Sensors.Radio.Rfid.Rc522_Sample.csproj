@@ -5,9 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Driver\Sensors.Radio.Rfid.Rc522\Sensors.Radio.Rfid.Rc522.csproj" />
   </ItemGroup>
 </Project>

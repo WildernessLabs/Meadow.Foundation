@@ -14,6 +14,6 @@
     <Description>AdaFruit GPSWing GPS FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Sensors.Location.MediaTek.Mt3339" Version="0.1.29" />
+    <ProjectReference Include="..\..\..\Sensors.Location.MediaTek\Mt3339\Driver\Sensors.Location.MediaTek.Mt3339\Sensors.Location.MediaTek.Mt3339.csproj" />
   </ItemGroup>
 </Project>
