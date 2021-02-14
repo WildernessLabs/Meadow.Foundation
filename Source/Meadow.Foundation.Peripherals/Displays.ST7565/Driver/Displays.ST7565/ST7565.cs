@@ -68,9 +68,9 @@ namespace Meadow.Foundation.Displays
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Width { get; }
+        public override int Width { get; }
 
-        public override uint Height { get; }
+        public override int Height { get; }
 
         /// <summary>
         ///     SPI object
@@ -124,7 +124,7 @@ namespace Meadow.Foundation.Displays
         ///     Create a new ST7565 object using the default parameters for
         /// </summary>
         public St7565(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width = 128, uint height = 64)
+            int width = 128, int height = 64)
         {
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             resetPort = device.CreateDigitalOutputPort(resetPin, false);

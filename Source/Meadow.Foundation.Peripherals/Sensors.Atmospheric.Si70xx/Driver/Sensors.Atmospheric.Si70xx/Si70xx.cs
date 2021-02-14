@@ -15,13 +15,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
     {
-        
-
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
-
-        
-
-        
 
         /// <summary>
         /// Gets a value indicating whether the sensor is currently in a sampling
@@ -61,10 +55,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Firmware revision of the sensor.
         /// </summary>
         public byte FirmwareRevision { get; private set; }
-
-        
-
-        
 
         /// <summary>
         ///     SI7021 is an I2C device.

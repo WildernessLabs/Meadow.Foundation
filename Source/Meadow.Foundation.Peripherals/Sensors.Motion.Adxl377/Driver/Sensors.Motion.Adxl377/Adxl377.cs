@@ -14,17 +14,11 @@ namespace Meadow.Foundation.Sensors.Motion
     public class Adxl377 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
         IAccelerometer
     {
-        
-
         /// <summary>
         ///     Minimum value that can be used for the update interval when the
         ///     sensor is being configured to generate interrupts.
         /// </summary>
         public const ushort MinimumPollingPeriod = 100;
-
-        
-
-        
 
         /// <summary>
         ///     Analog input channel connected to the x axis.

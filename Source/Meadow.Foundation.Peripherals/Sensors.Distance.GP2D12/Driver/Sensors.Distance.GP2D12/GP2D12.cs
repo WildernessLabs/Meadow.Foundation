@@ -8,8 +8,6 @@ namespace Meadow.Foundation.Sensors.Distance
 {
     public class Gp2D12 : IRangeFinder
     {
-        
-
         IAnalogInputPort analogInputPort;
 
         public event EventHandler<DistanceEventArgs> DistanceDetected;

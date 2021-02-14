@@ -552,7 +552,7 @@ namespace Meadow.Foundation.Sensors.Light
                 {
                   //Port: TODO check  _interruptPin.Dispose();
                 }
-                _interruptPin = device.CreateDigitalInputPort(pin, Hardware.InterruptMode.EdgeRising, ResistorMode.PullUp);
+                _interruptPin = device.CreateDigitalInputPort(pin, Hardware.InterruptMode.EdgeRising, ResistorMode.InternalPullUp);
                 _interruptPin.Changed += InterruptPin_Changed;
             }
             else

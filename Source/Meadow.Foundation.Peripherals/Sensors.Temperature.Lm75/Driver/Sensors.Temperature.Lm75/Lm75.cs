@@ -14,8 +14,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor
     {
-        
-
         /// <summary>
         /// LM75 Registers
         /// </summary>
@@ -27,18 +25,11 @@ namespace Meadow.Foundation.Sensors.Temperature
             LM_TOS = 0x03
         }
 
-        
-
-        
-
         /// <summary>
         ///     LM75 sensor.
         /// </summary>
         private readonly II2cPeripheral lm75;
 
-        
-
-        
 
         public byte DEFAULT_ADDRESS => 0x48;
 

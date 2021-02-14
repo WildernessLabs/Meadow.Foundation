@@ -14,7 +14,7 @@ namespace Sensors.Switches.SpstSwitch_Sample
         {
             Console.WriteLine("Initializing...");
 
-            spstSwitch = new SpstSwitch(Device.CreateDigitalInputPort(Device.Pins.D02, InterruptMode.EdgeFalling, ResistorMode.PullDown));
+            spstSwitch = new SpstSwitch(Device.CreateDigitalInputPort(Device.Pins.D02, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown));
             spstSwitch.Changed += (s,e) => 
             {
                 Console.WriteLine("Switch Changed");

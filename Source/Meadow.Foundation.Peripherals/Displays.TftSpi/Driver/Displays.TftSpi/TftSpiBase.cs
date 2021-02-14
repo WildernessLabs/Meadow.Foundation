@@ -41,8 +41,8 @@ namespace Meadow.Foundation.Displays.Tft
         protected DisplayColorMode colorMode ;
 
         public abstract DisplayColorMode DefautColorMode { get; }
-        public override uint Width => width;
-        public override uint Height => height;
+        public override int Width => width;
+        public override int Height => height;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
@@ -55,9 +55,9 @@ namespace Meadow.Foundation.Displays.Tft
 
         protected ushort currentPen;
 
-        protected uint width;
-        protected uint height;
-        protected uint xMin, xMax, yMin, yMax;
+        protected int width;
+        protected int height;
+        protected int xMin, xMax, yMin, yMax;
 
         protected const bool Data = true;
         protected const bool Command = false;
@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Displays.Tft
         { }
 
         public TftSpiBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width, uint height, DisplayColorMode mode = DisplayColorMode.Format16bppRgb565)
+            int width, int height, DisplayColorMode mode = DisplayColorMode.Format16bppRgb565)
         {
             this.width = width;
             this.height = height;
@@ -114,7 +114,7 @@ namespace Meadow.Foundation.Displays.Tft
             colorMode = mode;
         }
 
-        protected abstract void SetAddressWindow(uint x0, uint y0, uint x1, uint y1);
+        protected abstract void SetAddressWindow(int x0, int y0, int x1, int y1);
 
         /// <summary>
         ///     Clear the display.
@@ -196,7 +196,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// <summary>
         ///     Draw a single pixel 
         /// </summary>
-        /// <param name="x">x location </param>
+        /// <param name="x">x location</param>
         /// <param name="y">y location</param>
         /// <param name="r">8 bit red value</param>
         /// <param name="g">8 bit green value</param>
@@ -206,6 +206,11 @@ namespace Meadow.Foundation.Displays.Tft
             SetPixel(x, y, GetColorFromRGB(r, g, b));
         }
 
+        /// <summary>
+        ///     Invert the color of a single pixel as represented in the display buffer
+        /// </summary>
+        /// <param name="x">x location</param>
+        /// <param name="y">y location</param>
         public override void InvertPixel(int x, int y)
         {
             if (x < 0 || y < 0 || x >= width || y >= height)
@@ -219,7 +224,6 @@ namespace Meadow.Foundation.Displays.Tft
             {
                 InvertPixelRgb444(x, y);
             }
-
         }
 
         void InvertPixelRgb565(int x, int y)
@@ -298,11 +302,11 @@ namespace Meadow.Foundation.Displays.Tft
                 SetPixel444(x, y, color);
             }
 
-            //will probably skip for now
-            /*  xMin = (uint)Math.Min(xMin, x);
-              xMax = (uint)Math.Max(xMax, x);
-              yMin = (uint)Math.Min(yMin, y);
-              yMax = (uint)Math.Max(yMax, y);  */
+            //will skip for now for performance 
+            /*  xMin = Math.Min(xMin, x);
+              xMax = Math.Max(xMax, x);
+              yMin = Math.Min(yMin, y);
+              yMax = Math.Max(yMax, y);  */
         }
 
         /// <summary>
@@ -375,7 +379,7 @@ namespace Meadow.Foundation.Displays.Tft
         /// <summary>
         ///     Draw the display buffer to screen from x0,y0 to x1,y1
         /// </summary>
-        public void Show(uint x0, uint y0, uint x1, uint y1)
+        public void Show(int x0, int y0, int x1, int y1)
         {
             if(x1 < x0 || y1 < y0)
             {   //could throw an exception
@@ -394,8 +398,8 @@ namespace Meadow.Foundation.Displays.Tft
 
             dataCommandPort.State = Data;
 
-            uint sourceIndex;
-            for (uint y = y0; y <= y1; y++)
+            int sourceIndex;
+            for (int y = y0; y <= y1; y++)
             {
                 sourceIndex = ((y * width) + x0) * sizeof(ushort);
                 Array.Copy(spiBuffer, sourceIndex, lineBufferSend, 0, len);

@@ -20,9 +20,9 @@ namespace Meadow.Foundation.FeatherWings
         
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override uint Width => 15;
+        public override int Width => 15;
 
-        public override uint Height => 7;
+        public override int Height => 7;
 
         public byte Frame { get; set; }
 

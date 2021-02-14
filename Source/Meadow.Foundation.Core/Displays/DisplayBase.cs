@@ -43,12 +43,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Width of the display in pixels
         /// </summary>
-        public abstract uint Width { get; }
+        public abstract int Width { get; }
 
         /// <summary>
         /// Height of the display in pixels
         /// </summary>
-        public abstract uint Height { get; }
+        public abstract int Height { get; }
 
         /// <summary>
         /// Indicate of the hardware driver should ignore out of bounds pixels

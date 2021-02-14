@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Peripherals.Leds;
 using static Meadow.Peripherals.Leds.IRgbLed;
+using System;
 
 namespace Meadow.Foundation.Leds
 {
@@ -160,7 +161,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="color"></param>
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
-        public void StartBlink(Colors color, uint onDuration = 200, uint offDuration = 200)
+        public void StartBlink(Colors color, int onDuration = 200, int offDuration = 200)
         {
             Stop();
 
@@ -172,7 +173,7 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
-        protected async Task StartBlinkAsync(Colors color, uint onDuration, uint offDuration, CancellationToken cancellationToken)
+        protected async Task StartBlinkAsync(Colors color, int onDuration, int offDuration, CancellationToken cancellationToken)
         {
             while (true)
             {
@@ -186,6 +187,25 @@ namespace Meadow.Foundation.Leds
                 SetColor(Colors.Black);
                 await Task.Delay((int)offDuration);
             }
+        }
+
+        /// <summary>
+        /// Starts the blink animation.
+        /// </summary>
+        /// <param name="color"></param>
+        /// <param name="onDuration"></param>
+        /// <param name="offDuration"></param>
+        [Obsolete("Method deprecated: use StartBlink(Colors color, int onDuration, int offDuration)")]
+        public void StartBlink(Colors color, uint onDuration, uint offDuration)
+        {
+            Stop();
+
+            animationTask = new Task(async () =>
+            {
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartBlinkAsync(color, (int)onDuration, (int)offDuration, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
         }
     }
 }

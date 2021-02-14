@@ -11,8 +11,6 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public class Hmc5883
     {
-        
-
         /// <summary>
         /// Register of HMC5883L
         /// </summary>
@@ -169,10 +167,6 @@ namespace Meadow.Foundation.Sensors.Motion
             Single = 0x01
         }
 
-        
-
-        
-
         protected static II2cPeripheral i2cPeripheral;
 
         protected byte measuringMode;
@@ -180,10 +174,6 @@ namespace Meadow.Foundation.Sensors.Motion
         protected byte gain;
         protected byte sampleAmount;
         protected byte measurementConfig;
-
-        
-
-        
 
         /// <summary>
         /// HMC5883L Default I2C Address

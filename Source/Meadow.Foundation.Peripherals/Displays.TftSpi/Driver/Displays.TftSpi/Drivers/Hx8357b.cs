@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Displays.Tft
     public class Hx8357b : Hx8357d
     {
         public Hx8357b(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            uint width = 320, uint height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format16bppRgb565)
+            int width = 320, int height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format16bppRgb565)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();

@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <summary>
         /// Contains the previous offset used to find direction information
         /// </summary>
-        private uint _dynamicOffset = 0;
+        private int _dynamicOffset = 0;
 
         /// <summary>
         /// The rotary encoder has 2 inputs, called A and B. Because of its design
@@ -67,8 +67,8 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
         public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
-            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 0, .5),
-                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.PullUp, 0, .5))
+            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, 0, .5),
+                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, 0, .5))
         { }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         private void PhaseAPinChanged(object s, DigitalInputPortEventArgs e)
         {
             // Clear bit A bit
-            uint new2LsBits = _dynamicOffset & 0x02;    // Save bit 2 (B)
+            int new2LsBits = _dynamicOffset & 0x02;    // Save bit 2 (B)
             if (e.Value)
                 new2LsBits |= 0x01;                     // Set bit 1 (A)
 
@@ -102,14 +102,14 @@ namespace Meadow.Foundation.Sensors.Rotary
         private void PhaseBPinChanged(object s, DigitalInputPortEventArgs e)
         {
             // Clear bit B bit
-            uint new2LsBits = _dynamicOffset & 0x01;    // Save bit 1 (A)
+            int new2LsBits = _dynamicOffset & 0x01;    // Save bit 1 (A)
             if (e.Value)
                 new2LsBits |= 0x02;                     // Set bit 2 (B)
 
             FindDirection(new2LsBits);
         }
 
-        private void FindDirection(uint new2LsBits)
+        private void FindDirection(int new2LsBits)
         {
             _dynamicOffset <<= 2;          // Move previous A & B to bits 2 & 3
             _dynamicOffset |= new2LsBits;  // Set the current A & B states in bits 0 & 1

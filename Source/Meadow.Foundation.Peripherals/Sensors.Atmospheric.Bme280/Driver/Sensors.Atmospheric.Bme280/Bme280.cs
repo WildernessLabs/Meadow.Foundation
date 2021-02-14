@@ -20,16 +20,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor, ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
-        
-
         ///// <summary>
         /////     Minimum value that should be used for the polling frequency.
         ///// </summary>
         //public const ushort MinimumPollingPeriod = 100;
-
-        
-
-        
 
         public enum ChipType : byte
         {
