@@ -2,7 +2,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {
     public class Temperature : NumericBase
     {
-        public Temperature() : base(-10, 100, 2)
+        public Temperature() : base(-100, 200, 0)
         {
         }
     }

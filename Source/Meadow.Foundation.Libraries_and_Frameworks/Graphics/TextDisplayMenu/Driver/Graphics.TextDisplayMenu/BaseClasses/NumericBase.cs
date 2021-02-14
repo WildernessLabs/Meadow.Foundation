@@ -48,13 +48,13 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             base.itemID = itemID;
             display.ClearLines();
             display.WriteLine("Enter " + itemID, 0);
-            display.SetCursorPosition(0, 1);
 
             ParseValue(currentValue);
             UpdateInputLine(NumericDisplay);
         }
 
-        public override bool Next()
+        //Up
+        public override bool Previous()
         {
             Console.WriteLine("Next");
             if (position == 0)
@@ -71,7 +71,8 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
-        public override bool Previous()
+        //Down
+        public override bool Next()
         {
             Console.WriteLine("Previous");
             if (position == 0)
@@ -102,7 +103,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 
         protected override void ParseValue(object value)
         {
-            if (value == null || value.ToString() == string.Empty) return;
+            if (value == null || value.ToString() == string.Empty)
+            {
+                return;
+            }
 
             string currentValue = value.ToString();
 
