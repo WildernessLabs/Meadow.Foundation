@@ -1,5 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <Authors>Wilderness Labs</Authors>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Mcp23x08</AssemblyName>
