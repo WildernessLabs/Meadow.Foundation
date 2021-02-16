@@ -1,0 +1,12 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Sensors.Weather.WindVane</AssemblyName>
+    <RootNamespace>Meadow.Foundation.Sensors.Weather</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Units\Meadow.Units.csproj" />
+  </ItemGroup>
+</Project>
