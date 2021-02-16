@@ -1,12 +1,23 @@
 # Meadow.Foundation pipeline
 # Reference: https://aka.ms/yaml
 
+resources:
+  repositories:
+    - repository: MeadowCore
+      type: github
+      endpoint: WildernessLabs
+      name: WildernessLabs/Meadow.Core
+
 trigger:
-  - release
-  - staging
+  - main
+  - develop
+
+pr:
+  - main
+  - develop
 
 variables:
-  solution: "**/Meadow.Foundation.Drivers.sln"
+  solution: "**/Meadow.Foundation.sln"
   buildPlatform: "Any CPU"
   buildConfiguration: "Release"
   internalFeedName: "Meadow02"
@@ -19,6 +30,8 @@ stages:
     jobs:
       - job: Build_Solution
         steps:
+          - checkout: self
+          - checkout: MeadowCore
           - task: NuGetToolInstaller@1
             inputs:
               versionSpec: 5.8
