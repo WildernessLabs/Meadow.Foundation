@@ -73,8 +73,6 @@ namespace Meadow.Foundation.Sensors.Weather
                 handler: result => HandleAnalogUpdate(result),
                 filter: null
                 ));
-            // TODO: consider surfacing the standby duration as a ctor argument
-            inputPort.StartSampling(standbyDuration: 500);
         }
 
         /// <summary>

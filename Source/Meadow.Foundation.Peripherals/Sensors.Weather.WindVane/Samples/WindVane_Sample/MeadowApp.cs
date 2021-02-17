@@ -39,12 +39,18 @@ namespace MeadowApp
 
             // initialize the wind vane driver
             windVane = new WindVane(Device, Device.Pins.A00);
+            windVane.Updated += WindVane_Updated;
             windVane.Subscribe(new FilterableChangeObserver<WindVane.WindVaneChangeResult, Azimuth>(
                 handler: result => { Console.WriteLine($"Wind Direction: {result.New.Compass16PointCardinalName}"); },
                 filter: null
             ));
 
             Console.WriteLine("Initialization complete.");
+        }
+
+        private void WindVane_Updated(object sender, WindVane.WindVaneChangeResult e)
+        {
+            Console.WriteLine($"Updated event {e.New.DecimalDegrees}");
         }
     }
 }
