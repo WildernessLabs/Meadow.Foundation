@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>net472</TargetFramework>
@@ -16,7 +16,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Interfaces\" />
-    <Folder Include="BaseClasses\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
