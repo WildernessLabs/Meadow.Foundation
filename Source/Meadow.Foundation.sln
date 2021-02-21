@@ -948,6 +948,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Units", "..\..\Meado
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindVane_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.WindVane\Samples\WindVane_Sample\WindVane_Sample.csproj", "{3568BBCF-E762-41DA-B36A-2985DA73C41C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web.Maple", "Web.Maple", "{BC05F7F9-0E2A-47AB-A031-C240BCDDC33C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{4A5198A4-169E-4750-87B3-CEA8CD1474DB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{81370786-65AC-49B3-B2E3-412806EE34C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation.Web.Maple.Server", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Driver\Web.Maple.Server\Meadow.Foundation.Web.Maple.Server.csproj", "{3043499B-011D-42E8-A25A-864A0E214EED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.Server_UDP_Listener", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Utilities\Maple.Server_UDP_Listener\Maple.Server_UDP_Listener.csproj", "{6B545252-7BC0-4FF2-B6FB-F37C27C87B73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.Server_ConsoleSample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.Server_ConsoleSample\Maple.Server_ConsoleSample.csproj", "{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.Server_SimpleMeadowSample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.Server_SimpleMeadowSample\Maple.Server_SimpleMeadowSample.csproj", "{8FE67462-2C13-49AF-AAFF-6E67583F666E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2072,6 +2086,22 @@ Global
 		{3568BBCF-E762-41DA-B36A-2985DA73C41C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3568BBCF-E762-41DA-B36A-2985DA73C41C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3568BBCF-E762-41DA-B36A-2985DA73C41C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3043499B-011D-42E8-A25A-864A0E214EED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3043499B-011D-42E8-A25A-864A0E214EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3043499B-011D-42E8-A25A-864A0E214EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3043499B-011D-42E8-A25A-864A0E214EED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B545252-7BC0-4FF2-B6FB-F37C27C87B73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B545252-7BC0-4FF2-B6FB-F37C27C87B73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B545252-7BC0-4FF2-B6FB-F37C27C87B73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B545252-7BC0-4FF2-B6FB-F37C27C87B73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FE67462-2C13-49AF-AAFF-6E67583F666E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FE67462-2C13-49AF-AAFF-6E67583F666E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FE67462-2C13-49AF-AAFF-6E67583F666E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FE67462-2C13-49AF-AAFF-6E67583F666E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2543,6 +2573,13 @@ Global
 		{6BBA7EFF-5889-40C1-B1B4-4552B7C3816B} = {D0C77B85-A3C1-41DC-B95B-EEC141CADA00}
 		{AA0E20F6-18D5-407C-AB1B-B980E479F9E5} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 		{3568BBCF-E762-41DA-B36A-2985DA73C41C} = {4AE4DEFF-D702-4C97-9FEF-82B1B82F4B16}
+		{BC05F7F9-0E2A-47AB-A031-C240BCDDC33C} = {E0384B86-37FC-403C-B1F7-AA5D1B869EB1}
+		{4A5198A4-169E-4750-87B3-CEA8CD1474DB} = {BC05F7F9-0E2A-47AB-A031-C240BCDDC33C}
+		{81370786-65AC-49B3-B2E3-412806EE34C1} = {BC05F7F9-0E2A-47AB-A031-C240BCDDC33C}
+		{3043499B-011D-42E8-A25A-864A0E214EED} = {BC05F7F9-0E2A-47AB-A031-C240BCDDC33C}
+		{6B545252-7BC0-4FF2-B6FB-F37C27C87B73} = {81370786-65AC-49B3-B2E3-412806EE34C1}
+		{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1} = {4A5198A4-169E-4750-87B3-CEA8CD1474DB}
+		{8FE67462-2C13-49AF-AAFF-6E67583F666E} = {4A5198A4-169E-4750-87B3-CEA8CD1474DB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
