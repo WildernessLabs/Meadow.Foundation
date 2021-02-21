@@ -15,6 +15,8 @@ namespace Maple.Server_SimpleMeadowSample
         public MeadowApp()
         {
             Initialize().Wait();
+            // BUGBUG: this causes memory errors when an http request is processed.
+            //server.Advertise = true;
             server.Start();
         }
 
