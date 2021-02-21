@@ -1,5 +1,5 @@
 ﻿
-namespace Meadow.Foundation.Maple
+namespace Meadow.Foundation.Web.Maple.Server
 {
     public class ContentTypes
     {

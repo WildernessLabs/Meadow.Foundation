@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Maple
+namespace Meadow.Foundation.Web.Maple.Server
 {
     public abstract class RequestHandlerBase : IRequestHandler
     {

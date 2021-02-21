@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Meadow.Foundation.Maple;
-using Meadow.Foundation.Maple.Routing;
+using Meadow.Foundation.Web.Maple.Server;
+using Meadow.Foundation.Web.Maple.Server.Routing;
 
 namespace Maple.Server_SimpleMeadowSample.RequestHandlers
 {

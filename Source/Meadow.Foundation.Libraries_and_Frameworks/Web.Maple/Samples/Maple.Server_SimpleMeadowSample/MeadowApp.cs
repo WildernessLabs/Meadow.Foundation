@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Maple;
+using Meadow.Foundation.Web.Maple.Server;
 using Meadow.Gateway.WiFi;
 
 namespace Maple.Server_SimpleMeadowSample

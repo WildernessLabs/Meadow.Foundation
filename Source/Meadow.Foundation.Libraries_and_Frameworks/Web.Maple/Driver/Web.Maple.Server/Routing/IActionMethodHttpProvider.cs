@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Meadow.Foundation.Maple.Routing
+namespace Meadow.Foundation.Web.Maple.Server.Routing
 {
     /// <summary>
     /// Interface that exposes a list of http methods that are supported by an provider.

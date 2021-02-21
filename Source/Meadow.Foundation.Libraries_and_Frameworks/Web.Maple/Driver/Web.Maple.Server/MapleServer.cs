@@ -7,9 +7,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Foundation.Maple.Routing;
+using Meadow.Foundation.Web.Maple.Server.Routing;
 
-namespace Meadow.Foundation.Maple
+namespace Meadow.Foundation.Web.Maple.Server
 {
     public partial class MapleServer
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Foundation.Maple;
+using Meadow.Foundation.Web.Maple.Server;
 
 namespace Maple.Server_BasicSample
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Meadow.Foundation.Maple.Routing
+namespace Meadow.Foundation.Web.Maple.Server.Routing
 {
     /// <summary>
     /// Identifies an action that supports the HTTP PUT method.

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace Meadow.Foundation.Maple
+namespace Meadow.Foundation.Web.Maple.Server
 {
     public interface IRequestHandler : IDisposable
     {

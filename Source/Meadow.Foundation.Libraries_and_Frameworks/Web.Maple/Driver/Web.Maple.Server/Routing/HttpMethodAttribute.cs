@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Meadow.Foundation.Maple.Routing
+namespace Meadow.Foundation.Web.Maple.Server.Routing
 {
     // **Note**: Pulled from https://github.com/dotnet/aspnetcore/blob/c925f99cddac0df90ed0bc4a07ecda6b054a0b02/src/Mvc/Mvc.Core/src/Routing/HttpMethodAttribute.cs#L16
 
