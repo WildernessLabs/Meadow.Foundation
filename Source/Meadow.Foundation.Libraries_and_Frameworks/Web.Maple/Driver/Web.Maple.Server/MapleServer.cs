@@ -143,6 +143,26 @@ namespace Meadow.Foundation.Web.Maple.Server
                     try {
 
                         // Wait for a request to come in
+                        // TODO: today, the logic here is blocking; the request
+                        // is received, and then we proceed to find the appropriate
+                        // handler, instantiate it, execute it, and then continue
+                        // the loop.
+                        //
+                        // this means each request has to wait for handling completion
+                        // before the next one (if there is one), will be dealt with.
+                        //
+                        // to change this, we should probably add a property called `ThreadingMode`
+                        // that is of `enum ThreadModeType { single, multi }`
+                        //
+                        // and, when a new context comes in,
+                        // we should dispatch to a non-blocking/async method that handles.
+                        // something like the following:
+                        // protected void ProcessRequest(HttpListenerContext context)
+                        // {
+                        //     Task.Run(() => {
+                        //         //do all the work here
+                        //     });
+                        // }
                         HttpListenerContext context = await httpListener.GetContextAsync();
                         if (DebugView) { Console.WriteLine("got one!"); }
 
