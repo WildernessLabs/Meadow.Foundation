@@ -111,12 +111,12 @@ namespace Meadow.Foundation.Web.Maple.Server
 
         //public void AddHandler(IRequestHandler handler)
         //{
-        //    handlers.Add(handler);
+        //    requestHandlers.Add(handler);
         //}
 
         //public void RemoveHandler(IRequestHandler handler)
         //{
-        //    handlers.Remove(handler);
+        //    requestHandlers.Remove(handler);
         //}
 
         /// <summary>
