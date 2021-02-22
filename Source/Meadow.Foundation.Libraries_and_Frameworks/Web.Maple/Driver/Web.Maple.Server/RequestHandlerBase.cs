@@ -89,16 +89,6 @@ namespace Meadow.Foundation.Web.Maple.Server
             Context.Response.ContentLength64 = data.LongLength;
             
             await Context.Response.OutputStream.WriteAsync(data, 0, data.Length);
-
-            //int i = 0;
-            //while (i * bufferSize <= data.Length) {
-            //    int min = Min(bufferSize, data.Length - (i * bufferSize));
-            //    Array.Copy(data, i * bufferSize, buffer, 0, min);
-            //    Context.Response.OutputStream.Write(buffer, 0, min);
-            //    i++;
-            //}
-            //Context.Response.OutputStream.Flush();
-
             // correct place?
             Context.Response.Close();
         }
