@@ -11,9 +11,12 @@ namespace Maple.Server_BasicSample.RequestHandlers
         public void Hello()
         {
             Console.WriteLine("GET::Hello");
+
+            string name = base.QueryString["name"] as string;
+
             this.Context.Response.ContentType = ContentTypes.Application_Text;
             this.Context.Response.StatusCode = 200;
-            this.Send("hello world").Wait();
+            this.Send($"hello, {name}").Wait();
         }
 
         [HttpGet]

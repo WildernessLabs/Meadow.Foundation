@@ -40,7 +40,7 @@ namespace Maple.Server_SimpleMeadowSample
             // create our maple web server
             server = new MapleServer(
                 Device.WiFiAdapter.IpAddress,
-                threadMode: RequestProcessMode.Parallel
+                processMode: RequestProcessMode.Parallel
                 );
 
             Console.WriteLine("Finished initialization.");

@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Web.Maple.Server
     public partial class MapleServer
     {
         // set to true for debug console writelines.
-        private bool PrintDebugOutput = false;
+        private bool PrintDebugOutput = true;
 
         private const int MAPLE_SERVER_BROADCASTPORT = 17756;
 
