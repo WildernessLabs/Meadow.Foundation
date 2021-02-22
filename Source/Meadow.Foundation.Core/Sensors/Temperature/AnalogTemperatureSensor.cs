@@ -267,7 +267,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <returns>temperature in celcius</returns>
         protected float VoltageToTemperature(float voltage)
         {
-            return SensorCalibration.SampleReading + (SensorCalibration.MillivoltsAtSampleReading - voltage * 1000) / SensorCalibration.MillivoltsPerDegreeCentigrade;
+            return SensorCalibration.SampleReading + (voltage * 1000 - SensorCalibration.MillivoltsAtSampleReading) / SensorCalibration.MillivoltsPerDegreeCentigrade;
         }
     }
 }
