@@ -38,7 +38,10 @@ namespace Maple.Server_SimpleMeadowSample
             Console.WriteLine($"Connected. IP: {Device.WiFiAdapter.IpAddress}");
 
             // create our maple web server
-            server = new MapleServer(Device.WiFiAdapter.IpAddress);
+            server = new MapleServer(
+                Device.WiFiAdapter.IpAddress,
+                threadMode: RequestProcessMode.Parallel
+                );
 
             Console.WriteLine("Finished initialization.");
         }

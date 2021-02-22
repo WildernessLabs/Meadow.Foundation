@@ -16,13 +16,14 @@ namespace Meadow.Foundation.Web.Maple.Server
     /// </summary>
     public partial class MapleServer
     {
-        private bool DebugView = false;
+        // set to true for debug console writelines.
+        private bool PrintDebugOutput = false;
 
         private const int MAPLE_SERVER_BROADCASTPORT = 17756;
 
         private HttpListener httpListener;
         private IList<Type> requestHandlers = new List<Type>();
-        private IPAddress ipAddress;
+        public IPAddress IPAddress { get; protected set; }
 
         /// <summary>
         /// Whether or not the server is listening for requests.
@@ -30,10 +31,15 @@ namespace Meadow.Foundation.Web.Maple.Server
         public bool Running { get; protected set; } = false;
 
         /// <summary>
+        /// Whether the server should operate on requests serially or in parallel.
+        /// </summary>
+        public RequestProcessMode ThreadingMode { get; protected set; }
+
+        /// <summary>
         /// Whether or not the server should advertise it's name
         /// and IP via UDP for discovery.
         /// </summary>
-        public bool Advertise { get; set; } = false;
+        public bool Advertise { get; protected set; } = false;
 
         /// <summary>
         /// The interval, in milliseconds of how often to advertise.
@@ -52,21 +58,31 @@ namespace Meadow.Foundation.Web.Maple.Server
         /// </summary>
         /// <param name="ipAddress"></param>
         /// <param name="port">Defaults to 5417.</param>
-        public MapleServer(IPAddress ipAddress, int port = 5417)
+        /// <param name="advertise">Whether or not to advertise via UDP.</param>
+        /// <param name="processMode">Whether or not the server should respond to
+        /// requests in parallel or serial. For Meadow, only Serial works
+        /// reliably today.</param>
+        public MapleServer(
+            IPAddress ipAddress,
+            int port = 5417,
+            bool advertise = false,
+            RequestProcessMode processMode = RequestProcessMode.Serial)
         {
-            this.ipAddress = ipAddress;
+            this.IPAddress = ipAddress;
+            this.Advertise = advertise;
+            this.ThreadingMode = processMode;
 
             httpListener = new HttpListener();
             //httpListener.Prefixes.Add($"http://127.0.0.1:{port}/");
             //httpListener.Prefixes.Add($"http://localhost:{port}/");
 
-            if (this.ipAddress != null) {
-                httpListener.Prefixes.Add($"http://{this.ipAddress}:{port}/");
+            if (this.IPAddress != null) {
+                httpListener.Prefixes.Add($"http://{this.IPAddress}:{port}/");
             }
 
             this.Init();
 
-            if (DebugView) { Console.WriteLine($"Will listen @ http://{this.ipAddress}:{port}/"); }
+            if (PrintDebugOutput) { Console.WriteLine($"Will listen @ http://{this.IPAddress}:{port}/"); }
         }
 
         protected void Init()
@@ -81,7 +97,7 @@ namespace Meadow.Foundation.Web.Maple.Server
         {
             httpListener.Start();
             if (Advertise) { StartUdpAdvertisement(); }
-            await HandleIncomingRequests();
+            await StartListeningToIncomingRequests();
             httpListener.Close();
         }
 
@@ -113,10 +129,10 @@ namespace Meadow.Foundation.Web.Maple.Server
                     EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("255.255.255.255"), MAPLE_SERVER_BROADCASTPORT);
                     socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
 
-                    string broadcastData = $"{DeviceName}::{ipAddress}";
+                    string broadcastData = $"{DeviceName}::{IPAddress}";
                     while (Running) {
                         socket.SendTo(UTF8Encoding.UTF8.GetBytes(broadcastData), remoteEndPoint);
-                        if (DebugView) { Console.WriteLine("UDP Broadcast: " + broadcastData + ", port: " + MAPLE_SERVER_BROADCASTPORT); }
+                        if (PrintDebugOutput) { Console.WriteLine("UDP Broadcast: " + broadcastData + ", port: " + MAPLE_SERVER_BROADCASTPORT); }
                         Thread.Sleep(AdvertiseIntervalMs);
                     }
                 }
@@ -151,7 +167,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                 if (requestHandlers.Count == 0) {
                     throw new Exception("No Maple Server `IRequestHandler`s found. Server can not operate.");
                 } else {
-                    if (DebugView) { Console.WriteLine($"requestHandlers.Count: {requestHandlers.Count}"); }
+                    if (PrintDebugOutput) { Console.WriteLine($"requestHandlers.Count: {requestHandlers.Count}"); }
                 }
             }
         }
@@ -162,127 +178,124 @@ namespace Meadow.Foundation.Web.Maple.Server
         /// rather than in parallel.
         /// </summary>
         /// <returns></returns>
-        protected async Task HandleIncomingRequests()
+        protected async Task StartListeningToIncomingRequests()
         {
             // if we're already running, bail out.
             if(Running) {
-                if (DebugView) { Console.WriteLine("Already running."); }
+                if (PrintDebugOutput) { Console.WriteLine("Already running."); }
                 return;
             }
 
             this.Running = true;
 
             await Task.Run(async () => {
-            if (DebugView) { Console.WriteLine("starting up listener."); }
+            if (PrintDebugOutput) { Console.WriteLine("starting up listener."); }
                 while (Running) {
                     try {
-
-                        // Wait for a request to come in
-                        // TODO: today, the logic here is blocking; the request
-                        // is received, and then we proceed to find the appropriate
-                        // handler, instantiate it, execute it, and then continue
-                        // the loop.
-                        //
-                        // this means each request has to wait for handling completion
-                        // before the next one (if there is one), will be dealt with.
-                        //
-                        // to change this, we should probably add a property called `ThreadingMode`
-                        // that is of `enum ThreadModeType { single, multi }`
-                        //
-                        // and, when a new context comes in,
-                        // we should dispatch to a non-blocking/async method that handles.
-                        // something like the following:
-                        // protected void ProcessRequest(HttpListenerContext context)
-                        // {
-                        //     Task.Run(() => {
-                        //         //do all the work here
-                        //     });
-                        // }
+                        // wait for a request to come in
                         HttpListenerContext context = await httpListener.GetContextAsync();
-                        if (DebugView) { Console.WriteLine("got one!"); }
+                        if (PrintDebugOutput) { Console.WriteLine("got one!"); }
 
-                        string[] urlQuery = context.Request.RawUrl.Substring(1).Split('?');
-                        string[] urlParams = urlQuery[0].Split('/');
-                        string methodName = urlParams[0].ToLower();
-
-                        if (DebugView) { Console.WriteLine("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + methodName); }
-
-                        // look in all the known request handlers
-                        bool wasMethodFound = false;
-                        foreach (var handler in requestHandlers) {
-
-                            // look in all the methods in the request handler for a match
-                            var methods = handler.GetMethods();
-                            foreach (var method in methods) {
-
-                                //first, let's see if the method has the correct http verb
-                                List<string> supportedVerbs = new List<string>();
-                                foreach (var attr in method.GetCustomAttributes()) {
-                                    switch (attr) {
-                                        case HttpGetAttribute a:
-                                            supportedVerbs.Add("GET");
-                                            break;
-                                        case HttpPutAttribute a:
-                                            supportedVerbs.Add("PUT");
-                                            break;
-                                        case HttpPatchAttribute a:
-                                            supportedVerbs.Add("PATCH");
-                                            break;
-                                        case HttpPostAttribute a:
-                                            supportedVerbs.Add("POST");
-                                            break;
-                                        case HttpDeleteAttribute a:
-                                            supportedVerbs.Add("DELETE");
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-
-                                // if the verb does't match the context method, then move to the next method to examine it
-                                if (!supportedVerbs.Contains(context.Request.HttpMethod)) {
-                                    continue;
-                                }
-
-                                // match the method name:
-                                if (method.Name.ToLower() == methodName) {
-
-                                    // instantiate the handler, set the context (which contains all the request info)
-                                    IRequestHandler target = Activator.CreateInstance(handler) as IRequestHandler;
-                                    target.Context = context;
-                                    try {
-                                        method.Invoke(target, null);
-                                    } catch (Exception ex) {
-                                        if (DebugView) { Console.WriteLine(ex.Message); }
-                                        context.Response.StatusCode = 500;
-                                        context.Response.Close();
-                                    }
-                                    // Cleanup
-                                    target.Dispose();
-                                    target = null;
-
-                                    wasMethodFound = true;
-                                    break;
-                                }
-                            }
-                            if (wasMethodFound) break;
-                        }
-
-                        // if we couldn't find the method, return 404.
-                        if (!wasMethodFound) {
-                            byte[] data = Encoding.UTF8.GetBytes("<head><body>404. can not find.</body><head>");
-                            context.Response.ContentType = "text/html";
-                            context.Response.ContentEncoding = Encoding.UTF8;
-                            context.Response.ContentLength64 = data.LongLength;
-                            context.Response.StatusCode = 404;
-                            await context.Response.OutputStream.WriteAsync(data, 0, data.Length);
-                            context.Response.Close();
+                        // depending on our processing mode, process either
+                        // synchronously, or spin off a thread and immediately
+                        // process the next request (as it comes in)
+                        switch (ThreadingMode) {
+                            case RequestProcessMode.Serial:
+                                ProcessRequest(context).Wait();
+                                break;
+                            case RequestProcessMode.Parallel:
+                                _ = ProcessRequest(context);
+                                break;
                         }
                     } catch (SocketException e) {
-                        if (DebugView) { Console.WriteLine("Socket Exception: " + e.ToString()); }
+                        if (PrintDebugOutput) { Console.WriteLine("Socket Exception: " + e.ToString()); }
                     } catch (Exception ex) {
-                        if (DebugView) { Console.WriteLine(ex.ToString()); }
+                        if (PrintDebugOutput) { Console.WriteLine(ex.ToString()); }
                     }
+                }
+            });
+        }
+
+        protected Task ProcessRequest(HttpListenerContext context)
+        {
+            return Task.Run(async () => {
+
+                string[] urlQuery = context.Request.RawUrl.Substring(1).Split('?');
+                string[] urlParams = urlQuery[0].Split('/');
+                string methodName = urlParams[0].ToLower();
+
+                if (PrintDebugOutput) { Console.WriteLine("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + methodName); }
+
+                // look in all the known request handlers
+                bool wasMethodFound = false;
+                foreach (var handler in requestHandlers) {
+
+                    // look in all the methods in the request handler for a match
+                    var methods = handler.GetMethods();
+                    foreach (var method in methods) {
+
+                        //first, let's see if the method has the correct http verb
+                        List<string> supportedVerbs = new List<string>();
+                        foreach (var attr in method.GetCustomAttributes()) {
+                            switch (attr) {
+                                case HttpGetAttribute a:
+                                    supportedVerbs.Add("GET");
+                                    break;
+                                case HttpPutAttribute a:
+                                    supportedVerbs.Add("PUT");
+                                    break;
+                                case HttpPatchAttribute a:
+                                    supportedVerbs.Add("PATCH");
+                                    break;
+                                case HttpPostAttribute a:
+                                    supportedVerbs.Add("POST");
+                                    break;
+                                case HttpDeleteAttribute a:
+                                    supportedVerbs.Add("DELETE");
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        // if the verb does't match the context method, then move to the next method to examine it
+                        if (!supportedVerbs.Contains(context.Request.HttpMethod)) {
+                            continue;
+                        }
+
+                        // match the method name:
+                        if (method.Name.ToLower() == methodName) {
+
+                            // instantiate the handler, set the context (which contains all the request info)
+                            IRequestHandler target = Activator.CreateInstance(handler) as IRequestHandler;
+                            target.Context = context;
+                            try {
+                                method.Invoke(target, null);
+                            } catch (Exception ex) {
+                                if (PrintDebugOutput) { Console.WriteLine(ex.Message); }
+                                context.Response.StatusCode = 500;
+                                context.Response.Close();
+                            }
+                            // Cleanup
+                            target.Dispose();
+                            target = null;
+
+                            wasMethodFound = true;
+                            break;
+                        }
+                    }
+                    if (wasMethodFound) break;
+                }
+
+                // if we couldn't find the method, return 404.
+                if (!wasMethodFound) {
+                    byte[] data = Encoding.UTF8.GetBytes("<head><body>404. can not find.</body><head>");
+                    context.Response.ContentType = "text/html";
+                    context.Response.ContentEncoding = Encoding.UTF8;
+                    context.Response.ContentLength64 = data.LongLength;
+                    context.Response.StatusCode = 404;
+                    await context.Response.OutputStream.WriteAsync(data, 0, data.Length);
+                    context.Response.Close();
                 }
             });
         }
