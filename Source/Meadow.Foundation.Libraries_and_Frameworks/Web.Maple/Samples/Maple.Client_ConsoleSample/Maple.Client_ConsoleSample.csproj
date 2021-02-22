@@ -34,9 +34,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Meadow.Foundation.Maple.Client\Meadow.Foundation.Maple.Client.csproj">
-      <Project>{22306E55-4C95-4EAA-87C3-59A4DD908185}</Project>
-      <Name>Meadow.Foundation.Maple.Client</Name>
+    <ProjectReference Include="..\..\Driver\Web.Maple.Client\Meadow.Foundation.Web.Maple.Client.csproj">
+      <Project>{D0C81101-242E-4621-ABBB-444C93F5A4EB}</Project>
+      <Name>Meadow.Foundation.Web.Maple.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

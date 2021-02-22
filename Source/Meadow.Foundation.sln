@@ -962,9 +962,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.Server_ConsoleSample"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.Server_SimpleMeadowSample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.Server_SimpleMeadowSample\Maple.Server_SimpleMeadowSample.csproj", "{8FE67462-2C13-49AF-AAFF-6E67583F666E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation.Maple.Client", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Meadow.Foundation.Maple.Client\Meadow.Foundation.Maple.Client.csproj", "{22306E55-4C95-4EAA-87C3-59A4DD908185}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.Client_ConsoleSample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.Client_ConsoleSample\Maple.Client_ConsoleSample.csproj", "{3FEE6DE3-0AC6-474D-B83A-8DC615B23ECB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation.Web.Maple.Client", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Driver\Web.Maple.Client\Meadow.Foundation.Web.Maple.Client.csproj", "{D0C81101-242E-4621-ABBB-444C93F5A4EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2106,14 +2106,14 @@ Global
 		{8FE67462-2C13-49AF-AAFF-6E67583F666E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FE67462-2C13-49AF-AAFF-6E67583F666E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FE67462-2C13-49AF-AAFF-6E67583F666E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22306E55-4C95-4EAA-87C3-59A4DD908185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22306E55-4C95-4EAA-87C3-59A4DD908185}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22306E55-4C95-4EAA-87C3-59A4DD908185}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22306E55-4C95-4EAA-87C3-59A4DD908185}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3FEE6DE3-0AC6-474D-B83A-8DC615B23ECB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3FEE6DE3-0AC6-474D-B83A-8DC615B23ECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FEE6DE3-0AC6-474D-B83A-8DC615B23ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FEE6DE3-0AC6-474D-B83A-8DC615B23ECB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0C81101-242E-4621-ABBB-444C93F5A4EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0C81101-242E-4621-ABBB-444C93F5A4EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0C81101-242E-4621-ABBB-444C93F5A4EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0C81101-242E-4621-ABBB-444C93F5A4EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2592,8 +2592,8 @@ Global
 		{6B545252-7BC0-4FF2-B6FB-F37C27C87B73} = {81370786-65AC-49B3-B2E3-412806EE34C1}
 		{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1} = {4A5198A4-169E-4750-87B3-CEA8CD1474DB}
 		{8FE67462-2C13-49AF-AAFF-6E67583F666E} = {4A5198A4-169E-4750-87B3-CEA8CD1474DB}
-		{22306E55-4C95-4EAA-87C3-59A4DD908185} = {BC05F7F9-0E2A-47AB-A031-C240BCDDC33C}
 		{3FEE6DE3-0AC6-474D-B83A-8DC615B23ECB} = {4A5198A4-169E-4750-87B3-CEA8CD1474DB}
+		{D0C81101-242E-4621-ABBB-444C93F5A4EB} = {BC05F7F9-0E2A-47AB-A031-C240BCDDC33C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
