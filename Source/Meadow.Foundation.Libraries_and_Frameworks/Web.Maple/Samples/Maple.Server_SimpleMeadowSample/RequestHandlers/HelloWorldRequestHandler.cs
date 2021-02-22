@@ -7,8 +7,6 @@ namespace Maple.Server_SimpleMeadowSample.RequestHandlers
 {
     public class HelloRequestHandler : RequestHandlerBase
     {
-        public HelloRequestHandler() { }
-
         [HttpGet]
         public void Hello()
         {
