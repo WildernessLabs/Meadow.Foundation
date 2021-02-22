@@ -11,6 +11,9 @@ using Meadow.Foundation.Web.Maple.Server.Routing;
 
 namespace Meadow.Foundation.Web.Maple.Server
 {
+    /// <summary>
+    /// A lightweight web server.
+    /// </summary>
     public partial class MapleServer
     {
         private bool DebugView = false;
@@ -21,15 +24,34 @@ namespace Meadow.Foundation.Web.Maple.Server
         private IList<Type> requestHandlers = new List<Type>();
         private IPAddress ipAddress;
 
-        public bool Running { get; set; } = false;
+        /// <summary>
+        /// Whether or not the server is listening for requests.
+        /// </summary>
+        public bool Running { get; protected set; } = false;
 
+        /// <summary>
+        /// Whether or not the server should advertise it's name
+        /// and IP via UDP for discovery.
+        /// </summary>
         public bool Advertise { get; set; } = false;
+
+        /// <summary>
+        /// The interval, in milliseconds of how often to advertise.
+        /// </summary>
         public int AdvertiseIntervalMs { get; set; } = 2000;
 
-
+        /// <summary>
+        /// The name of the device to advertise via UDP.
+        /// </summary>
         // TODO: pull from Device.Name when the API is available.
         public string DeviceName { get; set; } = "Meadow";
 
+        /// <summary>
+        /// Creates a new MapleServer that listens on the specified IP Address
+        /// and Port.
+        /// </summary>
+        /// <param name="ipAddress"></param>
+        /// <param name="port">Defaults to 5417.</param>
         public MapleServer(IPAddress ipAddress, int port = 5417)
         {
             this.ipAddress = ipAddress;
@@ -63,6 +85,9 @@ namespace Meadow.Foundation.Web.Maple.Server
             httpListener.Close();
         }
 
+        /// <summary>
+        /// Stops listening to requests and advertising (if running).
+        /// </summary>
         public void Stop()
         {
             Running = false;
@@ -78,9 +103,9 @@ namespace Meadow.Foundation.Web.Maple.Server
         //    handlers.Remove(handler);
         //}
 
-
-        /// <param name="data">string to be broadcast over UDP</param>
-        /// <param name="interval">millis</param>
+        /// <summary>
+        /// Begins advertising the server name and IP via UDP.
+        /// </summary>
         protected void StartUdpAdvertisement()
         {
             Task.Run(async () => {
@@ -98,6 +123,10 @@ namespace Meadow.Foundation.Web.Maple.Server
             });
         }
 
+        /// <summary>
+        /// Looks for IRequestHandlers and adds them to the `requestHandlers`
+        /// collection for use later.
+        /// </summary>
         protected void LoadRequestHandlers()
         {
             // look through all the assemblies in the app for IRequestHandlers
@@ -127,6 +156,12 @@ namespace Meadow.Foundation.Web.Maple.Server
             }
         }
 
+        /// <summary>
+        /// Starts a thread that listens to incoming Http requests and handles
+        /// them. Note that the current implementation handles requests serially,
+        /// rather than in parallel.
+        /// </summary>
+        /// <returns></returns>
         protected async Task HandleIncomingRequests()
         {
             // if we're already running, bail out.
