@@ -40,6 +40,7 @@ namespace Maple.Server_SimpleMeadowSample
                 Device.WiFiAdapter.IpAddress,
                 // BUGBUG: this causes memory errors when an http request is processed.
                 //advertise: true,
+                // BUGBUG: this can also cause memory errors, if you refresh browser
                 processMode: RequestProcessMode.Parallel
                 );
 
