@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Meadow.Foundation.Web.Maple.Server;
 using Meadow.Foundation.Web.Maple.Server.Routing;
 
-namespace Maple.Server_SimpleMeadowSample.RequestHandlers
+namespace Maple.ServerSimpleMeadow_Sample.RequestHandlers
 {
     public class HelloRequestHandler : RequestHandlerBase
     {

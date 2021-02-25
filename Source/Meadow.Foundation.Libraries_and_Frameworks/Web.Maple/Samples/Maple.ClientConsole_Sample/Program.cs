@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using Meadow.Foundation.Maple.Client;
 using System.Collections.Generic;
 
-namespace Maple.Client_ConsoleSample
+namespace Maple.ClientConsole_Sample
 {
     class MainClass
     {

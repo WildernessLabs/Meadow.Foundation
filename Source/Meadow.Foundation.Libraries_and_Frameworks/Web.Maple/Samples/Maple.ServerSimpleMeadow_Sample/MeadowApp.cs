@@ -6,7 +6,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Web.Maple.Server;
 using Meadow.Gateway.WiFi;
 
-namespace Maple.Server_SimpleMeadowSample
+namespace Maple.ServerSimpleMeadow_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {

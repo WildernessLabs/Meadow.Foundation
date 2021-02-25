@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Meadow;
 
-namespace Maple.Server_SimpleMeadowSample
+namespace Maple.ServerSimpleMeadow_Sample
 {
     class Program
     {

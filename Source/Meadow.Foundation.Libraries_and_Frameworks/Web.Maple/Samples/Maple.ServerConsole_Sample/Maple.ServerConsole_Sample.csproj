@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Maple.Server_BasicSample</RootNamespace>
-    <AssemblyName>Maple.Server_BasicSample</AssemblyName>
+    <RootNamespace>Maple.ServerBasic_Sample</RootNamespace>
+    <AssemblyName>Maple.ServerBasic_Sample</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

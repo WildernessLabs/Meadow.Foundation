@@ -1,5 +1,6 @@
 ﻿using System;
-namespace Maple.Server_SimpleMeadowSample
+
+namespace Maple.ServerSimpleMeadow_Sample
 {
     public class Secrets
     {

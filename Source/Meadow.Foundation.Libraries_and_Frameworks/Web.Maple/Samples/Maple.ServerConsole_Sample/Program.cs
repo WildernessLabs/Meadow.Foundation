@@ -5,7 +5,7 @@ using System.Threading;
 using Meadow.Foundation.Web.Maple.Server;
 using Meadow.Foundation.Web.Maple;
 
-namespace Maple.Server_BasicSample
+namespace Maple.ServerBasic_Sample
 {
     class MainClass
     {
