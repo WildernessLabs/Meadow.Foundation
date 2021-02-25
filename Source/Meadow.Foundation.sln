@@ -958,11 +958,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Foundation.Web.Maple
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.Server_UDP_Listener", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Utilities\Maple.Server_UDP_Listener\Maple.Server_UDP_Listener.csproj", "{6B545252-7BC0-4FF2-B6FB-F37C27C87B73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.ServerConsole_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.Server_ConsoleSample\Maple.ServerConsole_Sample.csproj", "{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.ServerConsole_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.ServerConsole_Sample\Maple.ServerConsole_Sample.csproj", "{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maple.ServerSimpleMeadow_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.Server_SimpleMeadowSample\Maple.ServerSimpleMeadow_Sample.csproj", "{8FE67462-2C13-49AF-AAFF-6E67583F666E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maple.ServerSimpleMeadow_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.ServerSimpleMeadow_Sample\Maple.ServerSimpleMeadow_Sample.csproj", "{8FE67462-2C13-49AF-AAFF-6E67583F666E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.ClientConsole_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.Client_ConsoleSample\Maple.ClientConsole_Sample.csproj", "{3FEE6DE3-0AC6-474D-B83A-8DC615B23ECB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.ClientConsole_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.ClientConsole_Sample\Maple.ClientConsole_Sample.csproj", "{3FEE6DE3-0AC6-474D-B83A-8DC615B23ECB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Foundation.Web.Maple.Client", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Driver\Web.Maple.Client\Meadow.Foundation.Web.Maple.Client.csproj", "{D0C81101-242E-4621-ABBB-444C93F5A4EB}"
 EndProject
