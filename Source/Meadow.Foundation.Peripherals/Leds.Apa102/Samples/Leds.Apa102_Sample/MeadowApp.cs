@@ -23,7 +23,7 @@ namespace Leds.APA102_Sample
         void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
-            apa102 = new Apa102(Device.CreateSpiBus(), 150, Apa102.PixelOrder.BGR);
+            apa102 = new Apa102(Device.CreateSpiBus(), 128, Apa102.PixelOrder.BGR);
         }
 
         void Pulse(Color color)
@@ -35,7 +35,7 @@ namespace Leds.APA102_Sample
 
             while (true)
             {
-                for(uint i = 0; i < apa102.NumberOfLeds; i++)
+                for(int i = 0; i < apa102.NumberOfLeds; i++)
                 {
                     apa102.SetLed(i, color, brightness);
                 }
@@ -58,10 +58,10 @@ namespace Leds.APA102_Sample
 
         void RunColors()
         {
-            uint last = 9999;
+            int last = 9999;
 
             bool forward = true;
-            uint index = 0;
+            int index = 0;
 
             while(true)
             {
@@ -84,7 +84,7 @@ namespace Leds.APA102_Sample
                 }
             }
 
-            for (uint i = 0; i < apa102.NumberOfLeds; i++)
+            for (int i = 0; i < apa102.NumberOfLeds; i++)
             {
                 if(last != 9999) { apa102.SetLed(last, Color.Black); }
                 apa102.SetLed(i, Color.Turquoise);
@@ -96,7 +96,7 @@ namespace Leds.APA102_Sample
         void Run()
         {
             Console.WriteLine("Run...");
-            apa102.Clear();
+            apa102.ClearStrip();
             apa102.Show();
 
             Thread.Sleep(2000);
@@ -114,7 +114,7 @@ namespace Leds.APA102_Sample
             apa102.SetLed(2, Color.Pink);
 
             Thread.Sleep(5000);
-            apa102.Clear();
+            apa102.ClearStrip();
 
         }
     }
