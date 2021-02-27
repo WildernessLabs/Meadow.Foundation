@@ -31,7 +31,8 @@ namespace Leds.Apa102_Display_Sample
             graphics.CurrentFont = new Font4x8();
 
             graphics.Clear();
-            graphics.DrawText(0, 0, "Hello", Color.Blue);
+            graphics.DrawText(0, 1, "MEADOW", Color.FromRgb(0, 0.1, 0.1));
+            graphics.DrawText(24, 1, "F7", Color.FromRgb(0.1, 0, 0));
             graphics.Show();
         }
     }

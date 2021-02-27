@@ -186,7 +186,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Turn off all the Leds
         /// </summary>
-        public virtual void ClearStrip(bool autoWrite = false)
+        public override void Clear(bool autoWrite = false)
         {
             byte[] off = {0, 0, 0};
 

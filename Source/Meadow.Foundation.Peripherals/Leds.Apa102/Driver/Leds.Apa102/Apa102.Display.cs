@@ -15,9 +15,6 @@ namespace Meadow.Foundation.Leds
         public override int Height => height;
         int height;
 
-        byte[] displayBuffer;
-        byte[] readBuffer;
-
         Color pen = Color.White;
 
         public Apa102(ISpiBus spiBus,
@@ -28,11 +25,6 @@ namespace Meadow.Foundation.Leds
         {
             this.width = width;
             this.height = height;
-        }
-
-        public override void Clear(bool updateDisplay = false)
-        {
-            Array.Clear(displayBuffer, 0, displayBuffer.Length);
         }
 
         public override void DrawPixel(int x, int y, Color color)
@@ -47,7 +39,7 @@ namespace Meadow.Foundation.Leds
             }
             else
             {
-                index += width - x;
+                index += width - x - 1;
             }
             SetLed(index, color);
     
