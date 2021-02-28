@@ -29,7 +29,6 @@ namespace Meadow.Foundation.Displays.Tft
             SendData(0xFF);
             SendData(0x83);
             SendData(0x57);
-            SendData(0xFF);
             Thread.Sleep(300);
 
             // setRGB which also enables SDO
