@@ -122,7 +122,11 @@ namespace Meadow.Foundation.Displays.Tft
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
         public override void Clear(bool updateDisplay = false)
         {
-            Clear(0, updateDisplay);
+            Array.Clear(spiBuffer, 0, spiBuffer.Length);
+
+            if(updateDisplay) { Show(); }
+
+            //Clear(0, updateDisplay);
         }
 
         public void Clear(Color color, bool updateDisplay = false)
