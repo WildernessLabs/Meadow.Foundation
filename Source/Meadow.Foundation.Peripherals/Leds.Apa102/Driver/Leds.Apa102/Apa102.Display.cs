@@ -1,7 +1,5 @@
 ﻿using Meadow.Foundation.Displays;
 using Meadow.Hardware;
-using System;
-using static Meadow.Foundation.Leds.Apa102;
 
 namespace Meadow.Foundation.Leds
 {
@@ -27,13 +25,11 @@ namespace Meadow.Foundation.Leds
             this.height = height;
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        private int GetIndexForCoordinate(int x, int y)
         {
-            pen = color;
-
             int index = y * width;
 
-            if(y % 2 == 0)
+            if (y % 2 == 0)
             {
                 index += x;
             }
@@ -41,7 +37,15 @@ namespace Meadow.Foundation.Leds
             {
                 index += width - x - 1;
             }
-            SetLed(index, color);
+
+            return index;
+        }
+
+        public override void DrawPixel(int x, int y, Color color)
+        {
+            pen = color;
+
+            SetLed(GetIndexForCoordinate(x, y), color);
     
         }
 
@@ -57,7 +61,11 @@ namespace Meadow.Foundation.Leds
 
         public override void InvertPixel(int x, int y)
         {
-            throw new System.NotImplementedException();
+            var index = 3 * GetIndexForCoordinate(x, y);
+
+            buffer[index] ^= 0xFF;
+            buffer[index + 1] ^= 0xFF;
+            buffer[index + 2] ^= 0xFF;
         }
 
         public override void SetPenColor(Color pen)
