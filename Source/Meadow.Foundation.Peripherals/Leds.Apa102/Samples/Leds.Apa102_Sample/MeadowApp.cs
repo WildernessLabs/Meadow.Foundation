@@ -96,7 +96,7 @@ namespace Leds.APA102_Sample
         void Run()
         {
             Console.WriteLine("Run...");
-            apa102.ClearStrip();
+            apa102.Clear();
             apa102.Show();
 
             Thread.Sleep(2000);
@@ -114,8 +114,7 @@ namespace Leds.APA102_Sample
             apa102.SetLed(2, Color.Pink);
 
             Thread.Sleep(5000);
-            apa102.ClearStrip();
-
+            apa102.Clear();
         }
     }
 }
