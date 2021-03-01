@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Moisture;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Moisture
 {
@@ -16,14 +15,8 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public event EventHandler<FloatChangeResult> Updated = delegate { };
 
-        
-
         // internal thread lock
-        private object _lock = new object();
-
-        
-
-        
+        object _lock = new object();
 
         /// <summary>
         /// Returns the analog input port
@@ -51,10 +44,6 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// Voltage value of most moist soil
         /// </summary>
         public float MaximumVoltageCalibration { get; set; }
-
-        
-
-        
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the specified analog pin and a IO device.
@@ -99,10 +88,6 @@ namespace Meadow.Foundation.Sensors.Moisture
                 );
         }
 
-        
-
-        
-
         /// <summary>
         /// Convenience method to get the current soil moisture. For frequent reads, use
         /// StartUpdating() and StopUpdating().
@@ -112,14 +97,16 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="sampleInterval">The interval, in milliseconds, between
         /// sample readings.</param>
         /// <returns></returns>
-        public async Task<float> Read(int sampleCount = 10, int sampleInterval = 40)
+        public async Task<FloatChangeResult> Read(int sampleCount = 10, int sampleInterval = 40)
         {
+            // save previous moisture value
+            float previousMoisture = Moisture;
             // read the voltage
             float voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
             // convert and save to our temp property for later retrieval
             Moisture = VoltageToMoisture(voltage);
-            // return
-            return Moisture;
+            // return new and old Moisture values
+            return new FloatChangeResult(Moisture, previousMoisture);
         }
 
         /// <summary>
@@ -180,7 +167,5 @@ namespace Meadow.Foundation.Sensors.Moisture
         {
             return (((toHigh - toLow) * (value - fromLow)) / (fromHigh - fromLow)) - toLow;
         }
-
-        
     }
 }

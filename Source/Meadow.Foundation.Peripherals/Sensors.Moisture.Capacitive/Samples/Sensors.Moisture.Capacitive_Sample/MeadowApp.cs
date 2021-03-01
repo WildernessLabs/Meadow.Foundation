@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Moisture;
@@ -45,22 +46,17 @@ namespace Sensors.Moisture.Capacitive_Sample
             capacitive.StartUpdating();
         }
 
-        void TestCapacitiveRead()
+        async Task TestCapacitiveRead()
         {
             Console.WriteLine("TestCapacitiveSensor...");
 
-            // Use Read(); to get soil moisture value from 0f - 1f
             while (true)
             {
-                float moisture = capacitive.Read().Result;
+                FloatChangeResult moisture = await capacitive.Read();
 
-                if (moisture > 1.0f)
-                    moisture = 1.0f;
-                else 
-                if (moisture < 0)
-                    moisture = 0;
-
-                Console.WriteLine($"Moisture {(int) (moisture * 100)}%");
+                Console.WriteLine($"Moisture New Value { moisture.New}");
+                Console.WriteLine($"Moisture Old Value { moisture.Old}");
+                Console.WriteLine($"Moisture Delta Value { moisture.Delta}");
                 Thread.Sleep(1000);
             }
         }
