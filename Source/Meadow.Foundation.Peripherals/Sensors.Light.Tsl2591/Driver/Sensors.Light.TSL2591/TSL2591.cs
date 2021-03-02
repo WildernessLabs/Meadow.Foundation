@@ -243,7 +243,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Infrared light luminosity.
         /// </summary>
-        public int InfrredLuminosity { get; private set; }
+        public int InfraredLuminosity { get; private set; }
 
         /// <summary>
         /// Visible light luminosity.
@@ -353,7 +353,7 @@ namespace Meadow.Foundation.Sensors.Light
         private void CalculateSensorValues()
         {
             FullSpectrumLuminosity = Channel0;
-            InfrredLuminosity = Channel1;
+            InfraredLuminosity = Channel1;
             VisibleLightLuminosity = Channel0 - Channel1;
 
             double countsPerLux;
