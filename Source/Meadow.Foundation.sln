@@ -968,6 +968,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Foundation.Web.Maple
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.Apa102_Display_Sample", "Leds.Apa102_Display_Sample\Leds.Apa102_Display_Sample.csproj", "{79276BA0-37AB-4C3B-9399-943F5BE8F596}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tb67h420ftg_Encoder_Sample", "Meadow.Foundation.Peripherals\Motors.Tb67h420ftg\Samples\Tb67h420ftg_Encoder_Sample\Tb67h420ftg_Encoder_Sample.csproj", "{A7E44180-C542-4CD4-8D19-978CA15D79C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2122,6 +2124,10 @@ Global
 		{79276BA0-37AB-4C3B-9399-943F5BE8F596}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79276BA0-37AB-4C3B-9399-943F5BE8F596}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79276BA0-37AB-4C3B-9399-943F5BE8F596}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A7E44180-C542-4CD4-8D19-978CA15D79C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7E44180-C542-4CD4-8D19-978CA15D79C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7E44180-C542-4CD4-8D19-978CA15D79C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7E44180-C542-4CD4-8D19-978CA15D79C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2603,6 +2609,7 @@ Global
 		{3FEE6DE3-0AC6-474D-B83A-8DC615B23ECB} = {4A5198A4-169E-4750-87B3-CEA8CD1474DB}
 		{D0C81101-242E-4621-ABBB-444C93F5A4EB} = {BC05F7F9-0E2A-47AB-A031-C240BCDDC33C}
 		{79276BA0-37AB-4C3B-9399-943F5BE8F596} = {CAC3EB01-B0FB-4B42-AA55-F23B4EC38DBA}
+		{A7E44180-C542-4CD4-8D19-978CA15D79C4} = {B59A3D0E-89B2-484E-A2CC-AD7FC433F99A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

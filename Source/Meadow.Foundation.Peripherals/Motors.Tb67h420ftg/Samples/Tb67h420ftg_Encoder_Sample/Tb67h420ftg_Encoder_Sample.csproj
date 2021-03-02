@@ -1,0 +1,11 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Driver\Motors.Tb67h420ftg\Motors.Tb67h420ftg.csproj" />
+    <ProjectReference Include="..\..\..\Displays.Ssd130x\Driver\Displays.Ssd130x\Displays.Ssd130x.csproj" />
+  </ItemGroup>
+</Project>
