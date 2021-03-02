@@ -46,6 +46,11 @@ namespace Meadow.Foundation.Leds
         public Color Color { get; protected set; } = Color.White;
 
         /// <summary>
+        /// The brightness value assigned to the LED relative to Color
+        /// </summary>
+        public float Brightness { get; protected set; } = 1f;
+
+        /// <summary>
         /// Get the red LED port
         /// </summary>
         public IPwmPort RedPwm { get; protected set; }
@@ -172,7 +177,13 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness"></param>
         public void SetColor(Color color, float brightness = 1)
         {
+            if(color == Color && brightness == Brightness)
+            {
+                return;
+            }
+
             Color = color;
+            Brightness = brightness;
 
             RedPwm.DutyCycle = (float)(Color.R * maxRedDutyCycle * brightness);
             GreenPwm.DutyCycle = (float)(Color.G * maxGreenDutyCycle * brightness);
