@@ -7,7 +7,7 @@
         /// <summary>
         ///     Width of the font in pixels.
         /// </summary>
-        private const int WIDTH = 4;
+        private const int WIDTH = 6;
 
         /// <summary>
         ///     Height of the font in pixels.

@@ -1027,18 +1027,68 @@ namespace Meadow.Foundation.Graphics
                     for (int j = 0; j < CurrentFont.Height; j += 2)
                     {
                         //first row - spans 3 bytes (for 2 chars)
-                        bitmap[index + (j + 0) * len + 0] = charMap1[cIndex]; //good
-                        bitmap[index + (j + 0) * len + 1] = (byte)((charMap1[cIndex + 1] & 0x0F) | (charMap2[cIndex] << 4)); //bad?
-                        bitmap[index + (j + 0) * len + 2] = (byte)((charMap2[cIndex] >> 4) | (charMap2[cIndex + 1] << 4)); //good
+                        bitmap[index + (j    ) * len + 0] = charMap1[cIndex]; //good
+                        bitmap[index + (j    ) * len + 1] = (byte)((charMap1[cIndex + 1] & 0x0F) | (charMap2[cIndex] << 4)); 
+                        bitmap[index + (j    ) * len + 2] = (byte)((charMap2[cIndex] >> 4) | (charMap2[cIndex + 1] << 4)); //good
 
                         //2nd row
                         bitmap[index + (j + 1) * len + 0] = (byte)((charMap1[cIndex + 1] >> 4) | charMap1[cIndex + 2] << 4); //good
-                        bitmap[index + (j + 1) * len + 1] = (byte)((charMap1[cIndex + 2] >> 4) | charMap2[cIndex + 1] & 0xF0); //bad?
-                        bitmap[index + (j + 1) * len + 2] = (byte)((charMap2[cIndex + 2])); //good
+                        bitmap[index + (j + 1) * len + 1] = (byte)((charMap1[cIndex + 2] >> 4) | charMap2[cIndex + 1] & 0xF0); 
+                        bitmap[index + (j + 1) * len + 2] = charMap2[cIndex + 2]; //good
 
                         cIndex += 3;
                     }
                     index += 3;
+                }
+            }
+            else if(CurrentFont.Width == 6)
+            {
+                var len = text.Length;
+
+                if(text.Length % 4 != 0)
+                {
+                    len += 4 - text.Length % 4; //chacter length
+                }
+                len = len * 3 / 4; //length in bytes
+
+                bitmap = new byte[len * CurrentFont.Height];
+
+                byte[] charMap1, charMap2, charMap3, charMap4;
+                int index = 0;
+
+                for(int i = 0; i < len; i += 3) 
+                {
+                    //grab four characters at once
+                    charMap1 = CurrentFont[text[index++]];
+                    charMap2 = (index < text.Length) ? CurrentFont[text[index++]] : CurrentFont[' '];
+                    charMap3 = (index < text.Length) ? CurrentFont[text[index++]] : CurrentFont[' '];
+                    charMap4 = (index < text.Length) ? CurrentFont[text[index++]] : CurrentFont[' '];
+
+                    int cIndex = 0;
+                    for (int j = 0; j < CurrentFont.Height; j += 4)
+                    {
+                        //first row
+                        bitmap[i + (j + 0) * len + 0] = (byte)((charMap1[cIndex] & 0x3F) | (charMap2[cIndex] << 6));
+                        bitmap[i + (j + 0) * len + 1] = (byte)((charMap2[cIndex] >> 2) & 0x0F | charMap3[cIndex] << 4);
+                        bitmap[i + (j + 0) * len + 2] = (byte)((charMap3[cIndex] >> 4 & 0x03) | charMap4[cIndex] << 2);
+
+                        //2nd row
+                        bitmap[i + (j + 1) * len + 0] = (byte)((charMap1[cIndex] >> 6) | ((charMap1[cIndex + 1] << 2) & 0x3C) | charMap2[cIndex] & 0xC0);
+                        bitmap[i + (j + 1) * len + 1] = (byte)((charMap2[cIndex + 1] & 0x0F) | (charMap3[cIndex] >> 2) & 0x30 | (charMap3[cIndex + 1] << 6) & 0xC0);
+                        bitmap[i + (j + 1) * len + 2] = (byte)((charMap3[cIndex + 1] >> 2) & 0x03 | (charMap4[cIndex] >> 4) & 0x0C | (charMap4[cIndex + 1] << 4));
+
+                        //3rd row
+                        bitmap[i + (j + 2) * len + 0] = (byte)((charMap1[cIndex + 1] >> 4) | ((charMap1[cIndex + 2] << 4) & 0x30) | (charMap2[cIndex + 1] << 2) & 0xC0); //good
+                        bitmap[i + (j + 2) * len + 1] = (byte)((charMap2[cIndex + 1] >> 6) | ((charMap2[cIndex + 2] << 2) & 0x0C) | charMap3[cIndex + 1] & 0xF0); //good
+                        bitmap[i + (j + 2) * len + 2] = (byte)((charMap3[cIndex + 2] & 0x03) | (charMap4[cIndex + 1] >> 2) & 0x3C | charMap4[cIndex + 2] << 6); //good
+
+                        //4th row
+                        bitmap[i + (j + 3) * len + 0] = (byte)((charMap1[cIndex + 2] >> 2) | (charMap2[cIndex + 2] << 4) & 0xC0);  //g
+                        bitmap[i + (j + 3) * len + 1] = (byte)((charMap2[cIndex + 2] >> 4) | (charMap3[cIndex + 2] << 2) & 0xF0); //g
+                        bitmap[i + (j + 3) * len + 2] = (byte)((charMap3[cIndex + 2] >> 6) | charMap4[cIndex + 2] & 0xFC);
+
+                        cIndex += 3;
+                    }
                 }
             }
             else if (CurrentFont.Width == 4)
