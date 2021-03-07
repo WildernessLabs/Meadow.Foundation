@@ -936,7 +936,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="text">The string to measure.</param>
         /// <param name="scaleFactor">Scalefactor used to calculate the size.</param>
-        public sSize MeasureText(string text, ScaleFactor scaleFactor = ScaleFactor.X1)
+        public Size MeasureText(string text, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             return MeasureText(text, CurrentFont, scaleFactor);
         }
