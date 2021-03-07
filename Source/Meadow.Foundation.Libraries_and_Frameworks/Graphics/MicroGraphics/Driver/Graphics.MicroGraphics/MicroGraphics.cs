@@ -932,6 +932,28 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        ///     Get the size in pixels of a string using the current font
+        /// </summary>
+        /// <param name="text">The string to measure.</param>
+        /// <param name="scaleFactor">Scalefactor used to calculate the size.</param>
+        public Size MeasureString(string text, ScaleFactor scaleFactor = ScaleFactor.X1)
+        {
+            return MeasureString(text, CurrentFont, scaleFactor);
+        }
+
+        /// <summary>
+        ///     Get the size in pixels of a string for a given font and scale factor
+        /// </summary>
+        /// <param name="text">The string to measure.</param>
+        /// <param name="font">The font used to calculate the text size.</param>
+        /// <param name="scaleFactor">Scalefactor used to calculate the size.</param>
+        public Size MeasureString(string text, FontBase font, ScaleFactor scaleFactor = ScaleFactor.X1)
+        {
+            return new Size(text.Length * (int)scaleFactor * font.Width, (int)scaleFactor * font.Height);
+
+        }
+
+        /// <summary>
         ///     Draw a text message on the display using the current font.
         /// </summary>
         /// <param name="x">Abscissa of the location of the text.</param>
@@ -949,11 +971,11 @@ namespace Meadow.Foundation.Graphics
 
             if(alignment == TextAlignment.Center)
             {
-                x = x - text.Length * ((int)scaleFactor * CurrentFont.Width >> 1);
+                x = x - MeasureString(text, scaleFactor).Width >> 1;
             }
             else if(alignment == TextAlignment.Right)
             {
-                x = x - text.Length * (int)scaleFactor * CurrentFont.Width;
+                x = x - MeasureString(text, scaleFactor).Width;
             }
 
             DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, DisplayBase.BitmapMode.And, scaleFactor);
@@ -976,11 +998,11 @@ namespace Meadow.Foundation.Graphics
 
             if (alignment == TextAlignment.Center)
             {
-                x = x - text.Length * ((int)scaleFactor * CurrentFont.Width >> 1);
+                x = x - MeasureString(text, scaleFactor).Width >> 1;
             }
             else if (alignment == TextAlignment.Right)
             {
-                x = x - text.Length * (int)scaleFactor * CurrentFont.Width;
+                x = x - MeasureString(text, scaleFactor).Width;
             }
 
             byte[] bitmap = GetBytesForTextBitmap(text);
