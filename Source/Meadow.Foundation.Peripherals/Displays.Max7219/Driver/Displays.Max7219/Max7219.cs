@@ -210,9 +210,9 @@ namespace Meadow.Foundation.Displays
             SetRegister(Register.DecodeMode, (byte)((maxMode == Max7219Type.Character) ? 0xFF : 0)); // use matrix(0) or digits
         }
 
-            /// <summary>
-            /// Sends data to a specific register replicated for all cascaded devices
-            /// </summary>
+        /// <summary>
+        /// Sends data to a specific register replicated for all cascaded devices
+        /// </summary>
         internal void SetRegister(Register register, byte data)
         {
             var i = 0;
@@ -223,6 +223,39 @@ namespace Meadow.Foundation.Displays
                 writeBuffer[i++] = data;
             }
             max7219.WriteBytes(writeBuffer);
+        }
+
+        /// <summary>
+        /// Sends data to a specific register for a specific device
+        /// </summary>
+        internal void SetRegister(int deviceId, Register register, byte data)
+        {
+            Array.Clear(writeBuffer, 0, writeBuffer.Length);
+
+            writeBuffer[deviceId * 2] = (byte)register;
+            writeBuffer[deviceId * 2 + 1] = data;
+
+            max7219.WriteBytes(writeBuffer);
+        }
+
+        /// <summary>
+        /// Sets the brightness for a specific device 
+        /// </summary>
+        /// <param name="intensity">intensity level ranging from 0..15. </param>
+        /// <param name="deviceId">index of cascaded device. </param>
+        public void SetBrightness(int intensity, int deviceId)
+        {
+            if(deviceId < 0 || deviceId >= DeviceCount)
+            {
+                throw new ArgumentOutOfRangeException(nameof(deviceId), $"Invalid device Id {deviceId}");
+            }
+
+            if (intensity < 0 || intensity > 15)
+            {
+                throw new ArgumentOutOfRangeException(nameof(intensity), $"Invalid intensity for Brightness {intensity}");
+            }
+
+            SetRegister(deviceId, Register.Intensity, (byte)intensity);
         }
 
         /// <summary>
