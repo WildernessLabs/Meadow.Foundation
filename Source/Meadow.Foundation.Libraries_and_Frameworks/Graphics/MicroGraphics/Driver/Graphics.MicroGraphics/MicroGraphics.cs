@@ -971,7 +971,7 @@ namespace Meadow.Foundation.Graphics
 
             if(alignment == TextAlignment.Center)
             {
-                x = x - MeasureText(text, scaleFactor).Width >> 1;
+                x = x - MeasureText(text, scaleFactor).Width / 2;
             }
             else if(alignment == TextAlignment.Right)
             {
@@ -998,7 +998,7 @@ namespace Meadow.Foundation.Graphics
 
             if (alignment == TextAlignment.Center)
             {
-                x = x - MeasureText(text, scaleFactor).Width >> 1;
+                x = x - MeasureText(text, scaleFactor).Width / 2;
             }
             else if (alignment == TextAlignment.Right)
             {
