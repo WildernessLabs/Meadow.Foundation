@@ -12,11 +12,11 @@ namespace Meadow.Foundation.FeatherWings
     {
         public Ssd1306 Display { get; protected set; }
 
-        public IButton ButtonA { get; protected set; }
+        public PushButton ButtonA { get; protected set; }
 
-        public IButton ButtonB { get; protected set; }
+        public PushButton ButtonB { get; protected set; }
 
-        public IButton ButtonC { get; protected set; }
+        public PushButton ButtonC { get; protected set; }
 
         public OLED128x32Wing(II2cBus i2cBus, IIODevice device, IPin pinA, IPin pinB, IPin pinC) : 
             this(i2cBus, 
