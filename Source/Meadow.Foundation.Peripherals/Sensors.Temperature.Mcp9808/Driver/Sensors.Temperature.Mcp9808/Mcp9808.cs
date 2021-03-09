@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         II2cPeripheral i2CPeripheral;
 
-        public const byte DefaultAddress = 0x48;
+        public const byte DefaultAddress = 0x18;
 
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
@@ -60,18 +60,36 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         void Init()
         {
-            i2CPeripheral.ReadUShort(MCP_MANUFACTURER_ID, ByteOrder.LittleEndian);
-
-            i2CPeripheral.ReadUShort(MCP_DEVICE_ID, ByteOrder.LittleEndian);
-
             i2CPeripheral.WriteUShort(MCP_REG_CONFIG, 0x0);
         }
 
+        /// <summary>
+		/// Read the device ID 
+		/// </summary>
+        public ushort GetDeviceId()
+        {
+            return i2CPeripheral.ReadUShort(MCP_DEVICE_ID, ByteOrder.BigEndian);
+        }
+
+        /// <summary>
+		/// Read the manufacture ID 
+		/// </summary>
+        public ushort GetManufactureId()
+        {
+            return i2CPeripheral.ReadUShort(MCP_MANUFACTURER_ID, ByteOrder.BigEndian);
+        }
+
+        /// <summary>
+		/// Read resolution
+		/// </summary>
         public byte GetResolution()
         {
             return i2CPeripheral.ReadRegister(MCP_RESOLUTION);
         }
 
+        /// <summary>
+		/// Set resolution
+		/// </summary>
         public void SetResolution(byte resolution)
         {
             i2CPeripheral.WriteRegister(MCP_RESOLUTION, resolution);
@@ -88,8 +106,13 @@ namespace Meadow.Foundation.Sensors.Temperature
             return Conditions;
         }
 
+        /// <summary>
+		/// Begin reading temperature data
+		/// </summary>
         public void StartUpdating(int standbyDuration = 1000)
         {
+            Console.WriteLine("Start updating");
+
             // thread safety
             lock (_lock)
             {
@@ -162,7 +185,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public void Update()
         {
-            ushort value = i2CPeripheral.ReadUShort(MCP_AMBIENT_TEMP, ByteOrder.LittleEndian);
+            ushort value = i2CPeripheral.ReadUShort(MCP_AMBIENT_TEMP, ByteOrder.BigEndian);
 
             if (value == 0xFFFF)
             {

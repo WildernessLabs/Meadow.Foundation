@@ -24,14 +24,15 @@ namespace Sensors.Temperature.TMP102_Sample
 
             Console.WriteLine("Mcp9808 created");
 
-            Console.WriteLine($"Temp: {sensor.Temperature}");
-
             sensor.Updated += Sensor_Updated;
+
+            Console.WriteLine("Start reading temperature data");
+            sensor.StartUpdating();
         }
 
         private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Atmospheric.AtmosphericConditionChangeResult e)
         {
-            Console.WriteLine($"Temp: {e.New.Temperature}");
+            Console.WriteLine($"Temp: {e.New.Temperature}°C");
         }
     }
 }
