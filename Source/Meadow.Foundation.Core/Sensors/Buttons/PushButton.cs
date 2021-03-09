@@ -23,10 +23,10 @@ namespace Meadow.Foundation.Sensors.Buttons
             }
         }
 
-        event EventHandler clickDelegate;
-        event EventHandler pressStartDelegate;
-        event EventHandler pressEndDelegate;
-        event EventHandler longPressDelegate;
+        event EventHandler clickDelegate = delegate { };
+        event EventHandler pressStartDelegate = delegate { };
+        event EventHandler pressEndDelegate = delegate { };
+        event EventHandler longPressDelegate = delegate { };
 
         /// <summary>
         /// Returns the sanitized state of the switch. If the switch 
