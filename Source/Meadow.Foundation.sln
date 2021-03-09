@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Foundation.Core", "Meadow.Foundation.Core\Meadow.Foundation.Core.csproj", "{CEBD7F9A-4645-4A29-8A97-7889E241896F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meadow.Foundation.Core.Samples", "Meadow.Foundation.Core.Samples", "{7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meadow.Foundation.Libraries_and_Frameworks", "Meadow.Foundation.Libraries_and_Frameworks", "{E0384B86-37FC-403C-B1F7-AA5D1B869EB1}"
@@ -970,16 +968,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tb67h420ftg_Encoder_Sample"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leds.Apa102_Display_Sample", "Meadow.Foundation.Peripherals\Leds.Apa102\Samples\Leds.Apa102_Display_Sample\Leds.Apa102_Display_Sample.csproj", "{2C9DC5E1-C3CA-43F9-8DEB-1733E93B1FC0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation.Core", "Meadow.Foundation.Core\Meadow.Foundation.Core.csproj", "{A237BE35-0618-4B9B-A409-A3AC22053B53}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Temperature.Mcp9808", "Sensors.Temperature.Mcp9808", "{B71872DC-C58D-41A7-B24F-78D8136EE49E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{17A4EBF1-A1F8-475F-A304-A9B7F7B58C82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Temperature.Mcp9808", "Meadow.Foundation.Peripherals\Sensors.Temperature.Mcp9808\Driver\Sensors.Temperature.Mcp9808\Sensors.Temperature.Mcp9808.csproj", "{99621A27-6E31-4D71-A395-FEB610337646}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Temperature.Mcp9808_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Mcp9808\Samples\Sensors.Temperature.Mcp9808_Sample\Sensors.Temperature.Mcp9808_Sample.csproj", "{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CEBD7F9A-4645-4A29-8A97-7889E241896F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CEBD7F9A-4645-4A29-8A97-7889E241896F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CEBD7F9A-4645-4A29-8A97-7889E241896F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CEBD7F9A-4645-4A29-8A97-7889E241896F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{74F47C15-1293-404A-8C92-0F72A3DE7BA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{74F47C15-1293-404A-8C92-0F72A3DE7BA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74F47C15-1293-404A-8C92-0F72A3DE7BA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -2126,6 +2130,18 @@ Global
 		{2C9DC5E1-C3CA-43F9-8DEB-1733E93B1FC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C9DC5E1-C3CA-43F9-8DEB-1733E93B1FC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C9DC5E1-C3CA-43F9-8DEB-1733E93B1FC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A237BE35-0618-4B9B-A409-A3AC22053B53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A237BE35-0618-4B9B-A409-A3AC22053B53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A237BE35-0618-4B9B-A409-A3AC22053B53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A237BE35-0618-4B9B-A409-A3AC22053B53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99621A27-6E31-4D71-A395-FEB610337646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99621A27-6E31-4D71-A395-FEB610337646}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99621A27-6E31-4D71-A395-FEB610337646}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99621A27-6E31-4D71-A395-FEB610337646}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2608,6 +2624,10 @@ Global
 		{D0C81101-242E-4621-ABBB-444C93F5A4EB} = {BC05F7F9-0E2A-47AB-A031-C240BCDDC33C}
 		{A7E44180-C542-4CD4-8D19-978CA15D79C4} = {B59A3D0E-89B2-484E-A2CC-AD7FC433F99A}
 		{2C9DC5E1-C3CA-43F9-8DEB-1733E93B1FC0} = {CAC3EB01-B0FB-4B42-AA55-F23B4EC38DBA}
+		{B71872DC-C58D-41A7-B24F-78D8136EE49E} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{17A4EBF1-A1F8-475F-A304-A9B7F7B58C82} = {B71872DC-C58D-41A7-B24F-78D8136EE49E}
+		{99621A27-6E31-4D71-A395-FEB610337646} = {B71872DC-C58D-41A7-B24F-78D8136EE49E}
+		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A} = {17A4EBF1-A1F8-475F-A304-A9B7F7B58C82}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
