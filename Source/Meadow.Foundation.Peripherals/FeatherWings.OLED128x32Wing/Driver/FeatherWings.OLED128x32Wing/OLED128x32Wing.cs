@@ -27,14 +27,10 @@ namespace Meadow.Foundation.FeatherWings
         public OLED128x32Wing(II2cBus i2cBus, IDigitalInputPort portA, IDigitalInputPort portB, IDigitalInputPort portC)
         {
             Display = new Ssd1306(i2cBus, 0x3C, Ssd1306.DisplayType.OLED128x32);
+            Display.IgnoreOutOfBoundsPixels = true;
 
-            portA.Resistor = ResistorMode.InternalPullUp;           
             ButtonA = new PushButton(portA);
-
-            portB.Resistor = ResistorMode.Disabled; // TODO: has physical resistor (PU or PD?)
             ButtonB = new PushButton(portB); 
-
-            portC.Resistor = ResistorMode.InternalPullUp;
             ButtonC = new PushButton(portC);
         }
     }
