@@ -165,7 +165,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                     }
                 }
                 if (requestHandlers.Count == 0) {
-                    throw new Exception("No Maple Server `IRequestHandler`s found. Server can not operate.");
+                    Console.WriteLine("Warning: No Maple Server `IRequestHandler`s found. Server will not operate.");
                 } else {
                     if (PrintDebugOutput) { Console.WriteLine($"requestHandlers.Count: {requestHandlers.Count}"); }
                 }
