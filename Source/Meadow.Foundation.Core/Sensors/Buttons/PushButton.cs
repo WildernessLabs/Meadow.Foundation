@@ -23,10 +23,10 @@ namespace Meadow.Foundation.Sensors.Buttons
             }
         }
 
-        event EventHandler clickDelegate = delegate { };
-        event EventHandler pressStartDelegate = delegate { };
-        event EventHandler pressEndDelegate = delegate { };
-        event EventHandler longPressDelegate = delegate { };
+        event EventHandler clickDelegate;
+        event EventHandler pressStartDelegate;
+        event EventHandler pressEndDelegate;
+        event EventHandler longPressDelegate;
 
         /// <summary>
         /// Returns the sanitized state of the switch. If the switch 
@@ -205,7 +205,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseClicked()
         {
-            clickDelegate(this, EventArgs.Empty);
+            clickDelegate?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressStarted()
         {
-            pressStartDelegate(this, new EventArgs());
+            pressStartDelegate?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressEnded()
         {
-            pressEndDelegate(this, new EventArgs());
+            pressEndDelegate?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseLongPress()
         {
-            longPressDelegate(this, new EventArgs());
+            longPressDelegate?.Invoke(this, new EventArgs());
         }
 
         public void Dispose()
