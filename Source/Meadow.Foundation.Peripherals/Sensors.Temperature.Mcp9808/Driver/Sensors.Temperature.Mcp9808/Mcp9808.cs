@@ -64,6 +64,30 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         /// <summary>
+		/// Wake the the device if it's in sleep state
+		/// </summary>
+        public void Wake()
+        {
+            ushort conf_shutdown;
+            ushort config = i2CPeripheral.ReadUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
+
+            config = (ushort)(config & (~MCP_CONFIG_SHUTDOWN));
+
+            i2CPeripheral.WriteUShort(MCP_REG_CONFIG, config);
+        }
+
+        /// <summary>
+		/// Set the device into a low power sleep state
+		/// </summary>
+        public void Sleep()
+        {
+            ushort conf_shutdown;
+            ushort config = i2CPeripheral.ReadUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
+
+            i2CPeripheral.WriteUShort(MCP_REG_CONFIG, (ushort)(config | MCP_CONFIG_SHUTDOWN));
+         }
+
+        /// <summary>
 		/// Read the device ID 
 		/// </summary>
         public ushort GetDeviceId()
