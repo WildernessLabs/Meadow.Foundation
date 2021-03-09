@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -31,64 +29,60 @@ namespace Meadow.Foundation.Maple.Client
         /// </summary>
         /// <param name="scanDurationMs"></param>
         /// <returns></returns>
-        public async Task StartScanningForAdvertisingServers(int listenTimeout = 5000)
-        {
-            await Task.Run(async () => {
-                //var hostList = new List<ServerModel>();
-                var listener = new UdpClient(ListenPort);
-                var ipEndPoint = new IPEndPoint(IPAddress.Any, ListenPort);
-                string[] delimeter = new string[] { "::" };
+        public async Task StartScanningForAdvertisingServers()
+        {            
+            //var hostList = new List<ServerModel>();
+            var listener = new UdpClient(ListenPort);
+            var ipEndPoint = new IPEndPoint(IPAddress.Any, ListenPort);
+            string[] delimeter = new string[] { "::" };
 
-                var timeoutTask = UdpTimeoutTask();
+            var timeoutTask = UdpTimeoutTask();
 
-                try {
-                    while (timeoutTask.IsCompleted == false) {
-                        //Console.WriteLine("Waiting for broadcast");
+            try {
+                while (timeoutTask.IsCompleted == false) {
+                    //Console.WriteLine("Waiting for broadcast");
 
-                        // create two tasks, one that will timeout after a while
-                        var tasks = new Task<UdpReceiveResult>[] {
-                            timeoutTask,
-                            listener.ReceiveAsync()
-                        };
+                    // create two tasks, one that will timeout after a while
+                    var tasks = new Task<UdpReceiveResult>[] {
+                        timeoutTask,
+                        listener.ReceiveAsync()
+                    };
 
-                        //
-                        int index = 0;
+                    //
+                    int index = 0;
 
-                        await Task.Run(() => index = Task.WaitAny(tasks));
+                    await Task.Run(() => index = Task.WaitAny(tasks));
 
-                        var results = tasks[index].Result;
+                    var results = tasks[index].Result;
 
-                        if (results.RemoteEndPoint == null) {
-                            break;
-                        }
-
-                        string host = Encoding.UTF8.GetString(results.Buffer, 0, results.Buffer.Length);
-                        string hostIp = host.Split(delimeter, StringSplitOptions.None)[1];
-
-                        //Console.WriteLine($"Raw:{host}, ip:{hostIp}");
-
-                        //Console.WriteLine("Received broadcast from {0} :\n {1}\n", hostIp, host);
-
-                        var server = new ServerModel() {
-                            Name = host.Split(delimeter, StringSplitOptions.None)[0],
-                            IpAddress = host.Split(delimeter, StringSplitOptions.None)[1]
-                        };
-
-                        // if the server doesn't already exist in the list
-                        if (!Servers.Any(s => s.IpAddress == hostIp)) {
-                            // add it
-                            //Console.WriteLine($"Found a server. Name: '{server.Name}', IP: {server.IpAddress} ");
-                            Servers.Add(server);
-                        }
+                    if (results.RemoteEndPoint == null) {
+                        break;
                     }
-                } catch (Exception e) {
-                    Console.WriteLine(e.Message);
-                } finally {
-                    listener.Dispose();
+
+                    string host = Encoding.UTF8.GetString(results.Buffer, 0, results.Buffer.Length);
+                    string hostIp = host.Split(delimeter, StringSplitOptions.None)[1];
+
+                    //Console.WriteLine($"Raw:{host}, ip:{hostIp}");
+
+                    //Console.WriteLine("Received broadcast from {0} :\n {1}\n", hostIp, host);
+
+                    var server = new ServerModel() {
+                        Name = host.Split(delimeter, StringSplitOptions.None)[0],
+                        IpAddress = host.Split(delimeter, StringSplitOptions.None)[1]
+                    };
+
+                    // if the server doesn't already exist in the list
+                    if (!Servers.Any(s => s.IpAddress == hostIp)) {
+                        // add it
+                        //Console.WriteLine($"Found a server. Name: '{server.Name}', IP: {server.IpAddress} ");
+                        Servers.Add(server);
+                    }
                 }
-
-            });
-
+            } catch (Exception e) {
+                Console.WriteLine(e.Message);
+            } finally {
+                listener.Dispose();
+            }
         }
 
         async Task<UdpReceiveResult> UdpTimeoutTask()
