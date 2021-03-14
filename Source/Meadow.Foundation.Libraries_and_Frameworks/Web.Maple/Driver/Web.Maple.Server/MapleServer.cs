@@ -267,8 +267,8 @@ namespace Meadow.Foundation.Web.Maple.Server
                         if (method.Name.ToLower() == methodName) {
 
                             // instantiate the handler, set the context (which contains all the request info)
-                            IRequestHandler target = Activator.CreateInstance(handler) as IRequestHandler;
-                            target.Context = context;
+                            using (IRequestHandler target = Activator.CreateInstance(handler) as IRequestHandler) {
+                                target.Context = context;
                             try {
                                 method.Invoke(target, null);
                             } catch (Exception ex) {
@@ -276,9 +276,10 @@ namespace Meadow.Foundation.Web.Maple.Server
                                 context.Response.StatusCode = 500;
                                 context.Response.Close();
                             }
-                            // Cleanup
-                            target.Dispose();
-                            target = null;
+                                // Cleanup
+                                //target.Dispose();
+                                //target = null;
+                            }
 
                             wasMethodFound = true;
                             break;
