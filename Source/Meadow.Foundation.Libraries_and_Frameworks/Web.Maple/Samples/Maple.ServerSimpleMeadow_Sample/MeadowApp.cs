@@ -14,6 +14,8 @@ namespace Maple.ServerSimpleMeadow_Sample
 
         public MeadowApp()
         {
+            //Thread.Sleep(5000);
+
             Initialize().Wait();
             server.Start();
         }
@@ -38,9 +40,7 @@ namespace Maple.ServerSimpleMeadow_Sample
             // create our maple web server
             server = new MapleServer(
                 Device.WiFiAdapter.IpAddress,
-                // BUGBUG: this causes memory errors when an http request is processed.
-                //advertise: true,
-                // BUGBUG: this can also cause memory errors, if you refresh browser
+                advertise: true,
                 processMode: RequestProcessMode.Parallel
                 );
 
