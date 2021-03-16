@@ -17,12 +17,12 @@ namespace Meadow.Foundation.Web.Maple.Server
     public partial class MapleServer
     {
         // set to true for debug console writelines.
-        private bool PrintDebugOutput = true;
+        private bool printDebugOutput = true;
 
         private const int MAPLE_SERVER_BROADCASTPORT = 17756;
 
-        private HttpListener httpListener;
-        private IList<Type> requestHandlers = new List<Type>();
+        private readonly HttpListener httpListener;
+        private readonly IList<Type> requestHandlers = new List<Type>();
         public IPAddress IPAddress { get; protected set; }
 
         /// <summary>
@@ -68,21 +68,21 @@ namespace Meadow.Foundation.Web.Maple.Server
             bool advertise = false,
             RequestProcessMode processMode = RequestProcessMode.Serial)
         {
-            this.IPAddress = ipAddress;
-            this.Advertise = advertise;
-            this.ThreadingMode = processMode;
+            IPAddress = ipAddress;
+            Advertise = advertise;
+            ThreadingMode = processMode;
 
             httpListener = new HttpListener();
             //httpListener.Prefixes.Add($"http://127.0.0.1:{port}/");
             //httpListener.Prefixes.Add($"http://localhost:{port}/");
 
-            if (this.IPAddress != null) {
-                httpListener.Prefixes.Add($"http://{this.IPAddress}:{port}/");
+            if (IPAddress != null) {
+                httpListener.Prefixes.Add($"http://{IPAddress}:{port}/");
             }
 
-            this.Init();
+            Init();
 
-            if (PrintDebugOutput) { Console.WriteLine($"Will listen @ http://{this.IPAddress}:{port}/"); }
+            if (printDebugOutput) { Console.WriteLine($"Will listen @ http://{IPAddress}:{port}/"); }
         }
 
         protected void Init()
@@ -132,7 +132,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                     string broadcastData = $"{DeviceName}::{IPAddress}";
                     while (Running) {
                         socket.SendTo(UTF8Encoding.UTF8.GetBytes(broadcastData), remoteEndPoint);
-                        if (PrintDebugOutput) { Console.WriteLine("UDP Broadcast: " + broadcastData + ", port: " + MAPLE_SERVER_BROADCASTPORT); }
+                        if (printDebugOutput) { Console.WriteLine("UDP Broadcast: " + broadcastData + ", port: " + MAPLE_SERVER_BROADCASTPORT); }
                         Thread.Sleep(AdvertiseIntervalMs);
                     }
                 }
@@ -167,7 +167,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                 if (requestHandlers.Count == 0) {
                     Console.WriteLine("Warning: No Maple Server `IRequestHandler`s found. Server will not operate.");
                 } else {
-                    if (PrintDebugOutput) { Console.WriteLine($"requestHandlers.Count: {requestHandlers.Count}"); }
+                    if (printDebugOutput) { Console.WriteLine($"requestHandlers.Count: {requestHandlers.Count}"); }
                 }
             }
         }
@@ -182,19 +182,19 @@ namespace Meadow.Foundation.Web.Maple.Server
         {
             // if we're already running, bail out.
             if(Running) {
-                if (PrintDebugOutput) { Console.WriteLine("Already running."); }
+                if (printDebugOutput) { Console.WriteLine("Already running."); }
                 return;
             }
 
-            this.Running = true;
+            Running = true;
 
             await Task.Run(async () => {
-            if (PrintDebugOutput) { Console.WriteLine("starting up listener."); }
+            if (printDebugOutput) { Console.WriteLine("starting up listener."); }
                 while (Running) {
                     try {
                         // wait for a request to come in
                         HttpListenerContext context = await httpListener.GetContextAsync();
-                        if (PrintDebugOutput) { Console.WriteLine("got one!"); }
+                        if (printDebugOutput) { Console.WriteLine("got one!"); }
 
                         // depending on our processing mode, process either
                         // synchronously, or spin off a thread and immediately
@@ -208,9 +208,9 @@ namespace Meadow.Foundation.Web.Maple.Server
                                 break;
                         }
                     } catch (SocketException e) {
-                        if (PrintDebugOutput) { Console.WriteLine("Socket Exception: " + e.ToString()); }
+                        if (printDebugOutput) { Console.WriteLine("Socket Exception: " + e.ToString()); }
                     } catch (Exception ex) {
-                        if (PrintDebugOutput) { Console.WriteLine(ex.ToString()); }
+                        if (printDebugOutput) { Console.WriteLine(ex.ToString()); }
                     }
                 }
             });
@@ -224,7 +224,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                 string[] urlParams = urlQuery[0].Split('/');
                 string methodName = urlParams[0].ToLower();
 
-                if (PrintDebugOutput) { Console.WriteLine("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + methodName); }
+                if (printDebugOutput) { Console.WriteLine("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + methodName); }
 
                 // look in all the known request handlers
                 bool wasMethodFound = false;
@@ -272,7 +272,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                             try {
                                 method.Invoke(target, null);
                             } catch (Exception ex) {
-                                if (PrintDebugOutput) { Console.WriteLine(ex.Message); }
+                                if (printDebugOutput) { Console.WriteLine(ex.Message); }
                                 context.Response.StatusCode = 500;
                                 context.Response.Close();
                             }
