@@ -11,7 +11,8 @@ namespace Meadow.Foundation.Maple.Client
 {
     public class MapleClient
     {
-        public ObservableCollection<ServerModel> Servers {
+        public ObservableCollection<ServerModel> Servers
+        {
             get;
         } = new ObservableCollection<ServerModel>();
 
@@ -25,10 +26,8 @@ namespace Meadow.Foundation.Maple.Client
         }
 
         /// <summary>
-        /// Starts scanning for a 
+        /// Starts scanning for Maple servers
         /// </summary>
-        /// <param name="scanDurationMs"></param>
-        /// <returns></returns>
         public async Task StartScanningForAdvertisingServers()
         {            
             //var hostList = new List<ServerModel>();
@@ -38,26 +37,25 @@ namespace Meadow.Foundation.Maple.Client
 
             var timeoutTask = UdpTimeoutTask();
 
-            try {
-                while (timeoutTask.IsCompleted == false) {
+            try
+            {
+                while (timeoutTask.IsCompleted == false)
+                {
                     //Console.WriteLine("Waiting for broadcast");
-
                     // create two tasks, one that will timeout after a while
                     var tasks = new Task<UdpReceiveResult>[] {
                         timeoutTask,
                         listener.ReceiveAsync()
                     };
 
-                    //
-                    int index = 0;
+                 //   int index = 0;
+                 //   await Task.Run(() => index = Task.WaitAny(tasks));
+                 //   int index = Task.WaitAny(tasks);
+                 //   var results = tasks[index].Result;
 
-                    await Task.Run(() => index = Task.WaitAny(tasks));
-
-                    var results = tasks[index].Result;
-
-                    if (results.RemoteEndPoint == null) {
-                        break;
-                    }
+                    var results = await Task.WhenAny(tasks).Result;
+                 
+                    if (results.RemoteEndPoint == null) { break; }
 
                     string host = Encoding.UTF8.GetString(results.Buffer, 0, results.Buffer.Length);
                     string hostIp = host.Split(delimeter, StringSplitOptions.None)[1];
@@ -66,21 +64,26 @@ namespace Meadow.Foundation.Maple.Client
 
                     //Console.WriteLine("Received broadcast from {0} :\n {1}\n", hostIp, host);
 
-                    var server = new ServerModel() {
+                    var server = new ServerModel()
+                    {
                         Name = host.Split(delimeter, StringSplitOptions.None)[0],
                         IpAddress = host.Split(delimeter, StringSplitOptions.None)[1]
                     };
 
                     // if the server doesn't already exist in the list
-                    if (!Servers.Any(s => s.IpAddress == hostIp)) {
-                        // add it
+                    if (!Servers.Any(s => s.IpAddress == hostIp))
+                    {   // add it
                         //Console.WriteLine($"Found a server. Name: '{server.Name}', IP: {server.IpAddress} ");
                         Servers.Add(server);
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Console.WriteLine(e.Message);
-            } finally {
+            }
+            finally
+            {
                 listener.Dispose();
             }
         }
@@ -98,10 +101,13 @@ namespace Meadow.Foundation.Maple.Client
                 Timeout = TimeSpan.FromSeconds(ListenTimeout)
             };
 
-            try {
+            try
+            {
                 var response = await client.PostAsync(command, null);
                 return response.IsSuccessStatusCode;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return false;
             }
