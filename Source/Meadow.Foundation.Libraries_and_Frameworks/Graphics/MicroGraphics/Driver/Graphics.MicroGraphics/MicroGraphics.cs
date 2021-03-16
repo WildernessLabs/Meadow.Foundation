@@ -38,6 +38,11 @@ namespace Meadow.Foundation.Graphics
         FontBase currentFont;
 
         /// <summary>
+        /// Current color mode
+        /// </summary>
+        public DisplayBase.DisplayColorMode ColorMode => display.ColorMode;
+
+        /// <summary>
         /// Current rotation used for drawing pixels to the display
         /// </summary>
         public RotationType Rotation { get; set; } = RotationType.Default;
