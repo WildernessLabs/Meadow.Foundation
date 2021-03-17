@@ -42,19 +42,19 @@ namespace Meadow.Foundation.Maple.Client
                 while (timeoutTask.IsCompleted == false)
                 {
                     //Console.WriteLine("Waiting for broadcast");
+
                     // create two tasks, one that will timeout after a while
                     var tasks = new Task<UdpReceiveResult>[] {
                         timeoutTask,
                         listener.ReceiveAsync()
                     };
 
-                 //   int index = 0;
-                 //   await Task.Run(() => index = Task.WaitAny(tasks));
-                 //   int index = Task.WaitAny(tasks);
-                 //   var results = tasks[index].Result;
+                    int index = 0;
+                    
+                    await Task.Run(() => index = Task.WaitAny(tasks));
+                    
+                    var results = tasks[index].Result;
 
-                    var results = await Task.WhenAny(tasks).Result;
-                 
                     if (results.RemoteEndPoint == null) { break; }
 
                     string host = Encoding.UTF8.GetString(results.Buffer, 0, results.Buffer.Length);
