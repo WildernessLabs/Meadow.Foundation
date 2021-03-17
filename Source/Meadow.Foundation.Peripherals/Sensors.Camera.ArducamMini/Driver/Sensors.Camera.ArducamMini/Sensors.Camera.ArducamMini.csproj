@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Arducam, ArducamMini, Camera</PackageTags>
     <Version>0.1.33</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>ArducamMini I2C + SPI high definition 2MP camera controller</Description>
   </PropertyGroup>
   <ItemGroup>
