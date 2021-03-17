@@ -205,7 +205,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseClicked()
         {
-            clickDelegate(this, EventArgs.Empty);
+            clickDelegate?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressStarted()
         {
-            pressStartDelegate(this, new EventArgs());
+            pressStartDelegate?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressEnded()
         {
-            pressEndDelegate(this, new EventArgs());
+            pressEndDelegate?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseLongPress()
         {
-            longPressDelegate(this, new EventArgs());
+            longPressDelegate?.Invoke(this, new EventArgs());
         }
 
         public void Dispose()

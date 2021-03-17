@@ -1,5 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Servo</AssemblyName>
@@ -9,7 +10,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Servo, Meadow.Foundation.Servo</PackageTags>
-    <Version>0.8.34</Version>
+    <Version>0.8.38</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>PWM generic servo controller</Description>
   </PropertyGroup>

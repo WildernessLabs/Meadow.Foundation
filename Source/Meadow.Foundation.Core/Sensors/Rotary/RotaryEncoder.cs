@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Rotary;
 
@@ -10,8 +9,6 @@ namespace Meadow.Foundation.Sensors.Rotary
     /// </summary>
     public class RotaryEncoder : IRotaryEncoder
     {
-        #region Properties
-
         /// <summary>
         /// Returns the pin connected to the A-phase output on the rotary encoder.
         /// </summary>
@@ -27,14 +24,10 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// </summary>
         public event RotaryTurnedEventHandler Rotated = delegate { };
 
-        #endregion
-
-        #region Member variables / fields
-
         /// <summary>
         /// Contains the previous offset used to find direction information
         /// </summary>
-        private int _dynamicOffset = 0;
+        private int dynamicOffset = 0;
 
         /// <summary>
         /// The rotary encoder has 2 inputs, called A and B. Because of its design
@@ -54,11 +47,10 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// represent. For example, the if bits 0-3 are all 0, this would mean that A
         /// was Low and is Low, and that B was Low and is Low (nothing changed.)
         /// </summary>
-        private readonly int[] RotEncLookup = { 0, -1, 1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, -1, 0 };
-
-        #endregion
-
-        #region Constructors
+        private readonly int[] RotEncLookup = { 0, -1, 1, 0,
+                                                1, 0, 0, -1,
+                                               -1, 0, 0, 1,
+                                                0, 1, -1, 0 };
 
         /// <summary>
         /// Instantiate a new RotaryEncoder on the specified pins.
@@ -67,8 +59,8 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
         public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
-            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, 0, .5),
-                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, 0, .5))
+            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, 0, 0.1),
+                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, 0, 0.1))
         { }
 
         /// <summary>
@@ -85,16 +77,15 @@ namespace Meadow.Foundation.Sensors.Rotary
             BPhasePort.Changed += PhaseBPinChanged;
         }
 
-        #endregion
-
-        #region Methods
-
         private void PhaseAPinChanged(object s, DigitalInputPortEventArgs e)
         {
             // Clear bit A bit
-            int new2LsBits = _dynamicOffset & 0x02;    // Save bit 2 (B)
+            int new2LsBits = dynamicOffset & 0x02;    // Save bit 2 (B)
+
             if (e.Value)
+            {
                 new2LsBits |= 0x01;                     // Set bit 1 (A)
+            }
 
             FindDirection(new2LsBits);
         }
@@ -102,29 +93,37 @@ namespace Meadow.Foundation.Sensors.Rotary
         private void PhaseBPinChanged(object s, DigitalInputPortEventArgs e)
         {
             // Clear bit B bit
-            int new2LsBits = _dynamicOffset & 0x01;    // Save bit 1 (A)
+            int new2LsBits = dynamicOffset & 0x01;    // Save bit 1 (A)
+
             if (e.Value)
+            {
                 new2LsBits |= 0x02;                     // Set bit 2 (B)
+            }
 
             FindDirection(new2LsBits);
         }
 
         private void FindDirection(int new2LsBits)
         {
-            _dynamicOffset <<= 2;          // Move previous A & B to bits 2 & 3
-            _dynamicOffset |= new2LsBits;  // Set the current A & B states in bits 0 & 1
-            _dynamicOffset &= 0x0000000f;  // Save only lowest 4 bits
+            dynamicOffset <<= 2;          // Move previous A & B to bits 2 & 3
+            dynamicOffset |= new2LsBits;  // Set the current A & B states in bits 0 & 1
+            dynamicOffset &= 0x0000000f;  // Save only lowest 4 bits
 
-            int direction = RotEncLookup[_dynamicOffset];
+            int direction = RotEncLookup[dynamicOffset];
+
             if (direction == 0)
+            {
                 return;                 // nothing changed
+            }
 
             if (direction == 1)
+            {
                 Rotated?.Invoke(this, new RotaryTurnedEventArgs(RotationDirection.Clockwise));
+            }
             else
+            {
                 Rotated?.Invoke(this, new RotaryTurnedEventArgs(RotationDirection.CounterClockwise));
+            }
         }
-
-        #endregion
     }
 }

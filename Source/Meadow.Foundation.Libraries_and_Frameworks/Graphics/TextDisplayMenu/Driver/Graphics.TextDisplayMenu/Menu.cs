@@ -150,9 +150,17 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
             string itemText;
             string displayText = item.Text;
-            if (InputHelpers.Contains(displayText, "{value}") && item.Value != null)
+
+            if (InputHelpers.Contains(displayText, "{value}"))
             {
-                displayText = InputHelpers.Replace(displayText, "{value}", item.Value.ToString());
+                if (item.Value != null)
+                {
+                    displayText = InputHelpers.Replace(displayText, "{value}", item.Value.ToString());
+                }
+                else
+                {
+                    displayText = InputHelpers.Replace(displayText, "{value}", string.Empty);
+                }
             }
 
             itemText = displayText.Substring(0, (displayText.Length >= display.DisplayConfig.Width - 1) ? display.DisplayConfig.Width - 1 : displayText.Length);

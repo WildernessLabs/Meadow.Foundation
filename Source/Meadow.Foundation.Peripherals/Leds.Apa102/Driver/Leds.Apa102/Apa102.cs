@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Leds
     /// Represents APA102/Dotstar Led(s).
     /// </summary>
     /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_DotStar/blob/master/adafruit_dotstar.py </remarks>
-    public class Apa102
+    public partial class Apa102
     {
         //ToDo this could probably move into Meadow.Foundation.Core
         public enum PixelOrder
@@ -32,12 +32,12 @@ namespace Meadow.Foundation.Leds
         static readonly byte[] BRG = { 2, 0, 1 };
         static readonly byte[] BGR = { 2, 1, 0 };
 
-        readonly uint numberOfLeds;
-        readonly uint endHeaderSize;
+        readonly int numberOfLeds;
+        readonly int endHeaderSize;
         readonly byte[] buffer;
-        readonly uint endHeaderIndex;
+        readonly int endHeaderIndex;
         readonly byte[] pixelOrder;
-        public uint NumberOfLeds => numberOfLeds;
+        public int NumberOfLeds => numberOfLeds;
 
         public float Brightness 
         { 
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="numberOfLeds">The number of APA102 LEDs to control</param>
         /// <param name="pixelOrder">Set the pixel order on the LEDs - different strips implement this differently</param>
         /// <param name="autoWrite">Transmit any LED changes right away</param>
-        public Apa102(ISpiBus spiBus, uint numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
+        public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
         {
             spiPeripheral = new SpiPeripheral(spiBus, null);
             this.numberOfLeds = numberOfLeds;
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Leds
             }
 
             buffer = new byte[this.numberOfLeds * 4 + StartHeaderSize + endHeaderSize];
-            endHeaderIndex = (uint)(buffer.Length - endHeaderSize);
+            endHeaderIndex = (buffer.Length - endHeaderSize);
 
             switch (pixelOrder)
             {
@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Leds
                 buffer[i] = 0xFF;
             }
 
-            for (uint i = endHeaderIndex; i < buffer.Length; i++)
+            for (int i = endHeaderIndex; i < buffer.Length; i++)
             {
                 buffer[i] = 0xFF;
             }
@@ -118,7 +118,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="index">Index of the LED to change</param>
         /// <param name="color">The color</param>
-        public virtual void SetLed(uint index, Color color)
+        public virtual void SetLed(int index, Color color)
         {
             SetLed(index, color, Brightness);
         }
@@ -129,7 +129,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="index">Index of the LED to change</param>
         /// <param name="color">The color</param>
         /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
-        public virtual void SetLed(uint index, Color color, float brightness = 1f)
+        public virtual void SetLed(int index, Color color, float brightness = 1f)
         {
             byte[] bColor = new byte[] { (byte)(color.R * 255), (byte)(color.G * 255), (byte)(color.B * 255) };
             SetLed(index, bColor, brightness);
@@ -140,7 +140,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="index">Index of the LED to change</param>
         /// <param name="rgb">Byte array representing the color RGB values. byte[0] = Red, byte[1] = Green, byte[2] = Blue</param>
-        public virtual void SetLed(uint index, byte[] rgb)
+        public virtual void SetLed(int index, byte[] rgb)
         {
             SetLed(index, rgb, Brightness);
         }
@@ -151,7 +151,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="index">Index of the LED to change</param>
         /// <param name="rgb">Byte array representing the color RGB values. byte[0] = Red, byte[1] = Green, byte[2] = Blue</param>
         /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
-        public virtual void SetLed(uint index, byte[] rgb, float brightness = 1f)
+        public virtual void SetLed(int index, byte[] rgb, float brightness = 1f)
         {
             if (index > numberOfLeds)
             {
@@ -186,11 +186,11 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Turn off all the Leds
         /// </summary>
-        public virtual void Clear(bool autoWrite = false)
+        public override void Clear(bool autoWrite = false)
         {
             byte[] off = {0, 0, 0};
 
-            for(uint i=0; i< NumberOfLeds; i++)
+            for(int i=0; i< NumberOfLeds; i++)
             {
                 SetLed(i, off);
             }
@@ -204,7 +204,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Transmit the changes to the LEDs 
         /// </summary>
-        public virtual void Show()
+        public override void Show()
         {
             spiPeripheral.WriteBytes(buffer);
         }

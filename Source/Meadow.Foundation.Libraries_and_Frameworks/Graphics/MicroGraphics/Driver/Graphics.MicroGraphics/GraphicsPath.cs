@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Meadow.Foundation.Graphics
@@ -37,6 +38,25 @@ namespace Meadow.Foundation.Graphics
         public int VerbCount => PathActions.Count; //need to figure out if/when this wouldn't be equal to PointCount
 
         internal List<PathAction> PathActions { get; private set; } = new List<PathAction>();
+
+        public Rect Bounds
+        {
+            get
+            {
+                Point min = Points[0];
+                Point max = Points[0];
+
+                foreach(var p in Points)
+                {
+                    min.X = Math.Min(min.X, p.X);
+                    min.Y = Math.Min(min.Y, p.Y);
+                    max.X = Math.Max(max.X, p.X);
+                    max.Y = Math.Min(max.X, p.Y);
+                }
+
+                return new Rect(min.X, min.Y, max.X, max.Y);
+            }
+        }
 
         public GraphicsPath()
         {

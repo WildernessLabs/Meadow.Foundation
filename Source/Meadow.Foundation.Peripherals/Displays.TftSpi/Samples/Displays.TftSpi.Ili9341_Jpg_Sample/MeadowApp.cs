@@ -20,7 +20,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
         {
             Console.WriteLine("Initializing...");
 
-            var spiBus = Device.CreateSpiBus();
+            var spiBus = Device.CreateSpiBus(24000);
 
             display = new Ili9341
             (
@@ -34,27 +34,29 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
 
             graphics = new GraphicsLibrary(display);
 
+            int delay = 5000;
+
             while (true)
             {
                 JpegTest();
 
-                Thread.Sleep(30000);
+                Thread.Sleep(delay);
 
                 CharacterTest();
 
-                Thread.Sleep(30000);
+                Thread.Sleep(delay);
 
                 DrawMeadowLogo();
 
-                Thread.Sleep(30000);
+                Thread.Sleep(delay);
 
                 FontTest();
 
-                Thread.Sleep(30000);
+                Thread.Sleep(delay);
 
                 TestDisplay();
 
-                Thread.Sleep(30000);
+                Thread.Sleep(delay);
 
                 TestDisplay();
             }
@@ -175,8 +177,6 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
 
                 if (count >= 18 || i >= 254)
                 {
-                    Console.WriteLine(msg);
-
                     graphics.DrawText(12, yPos, msg, Color.LawnGreen);
 
                     yPos += 24;
@@ -186,7 +186,6 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
                 }
 
                 msg += (char)(i);
-                Console.WriteLine($"i = {i}");
                 count++;
             }
 
@@ -239,9 +238,9 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
             // Draw with Display Graphics Library
             graphics.CurrentFont = new Font8x8();
             graphics.Clear();
-            graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
-            graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, false);
-            graphics.DrawCircle(50, 50, 40, Meadow.Foundation.Color.Blue, false);
+            graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Color.Red);
+            graphics.DrawRectangle(20, 15, 40, 20, Color.Yellow, false);
+            graphics.DrawCircle(50, 50, 40, Color.Blue, false);
 
             graphics.DrawText(5, 5, "Meadow F7 SPI", Color.White);
             graphics.Show();

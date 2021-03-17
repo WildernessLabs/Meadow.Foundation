@@ -1,5 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>ServoWing</AssemblyName>
@@ -10,7 +11,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, FeatherWing, ServoWing, servo, servo motor</PackageTags>
-    <Version>0.1.28</Version>
+    <Version>0.1.32</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>AdaFruit ServoWing servo controller FeatherWing</Description>
   </PropertyGroup>
