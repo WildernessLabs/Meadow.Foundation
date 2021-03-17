@@ -10,7 +10,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, motion, magnetometer</PackageTags>
-    <Version>0.1.8</Version>
+    <Version>0.1.12</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Freescale MAG3110 I2C 3 axis magnetometer</Description>
   </PropertyGroup>

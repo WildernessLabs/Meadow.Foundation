@@ -10,7 +10,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Display, Graphics, OLED, SSD1306, SSD1309</PackageTags>
-    <Version>0.12.32</Version>
+    <Version>0.12.36</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>SSD1306 / SSD1309 SPI and I2C OLED monochrome displays</Description>
   </PropertyGroup>
