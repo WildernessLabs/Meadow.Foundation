@@ -6,6 +6,5 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Driver\Sensors.Weather.WindVane\Sensors.Weather.WindVane.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Units\Meadow.Units.csproj" />
   </ItemGroup>
 </Project>
