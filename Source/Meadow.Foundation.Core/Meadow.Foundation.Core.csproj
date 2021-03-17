@@ -18,6 +18,6 @@
    <Description>Core peripheral drivers for Wilderness Labs Meadow</Description>
  </PropertyGroup>
  <ItemGroup>
-   <PackageReference Include="Meadow" Version="0.22.0" />
+   <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
  </ItemGroup>
 </Project>

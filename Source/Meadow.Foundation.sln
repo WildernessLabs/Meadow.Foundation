@@ -974,6 +974,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Mcp9808
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Mcp9808_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Mcp9808\Samples\Sensors.Temperature.Mcp9808_Sample\Sensors.Temperature.Mcp9808_Sample.csproj", "{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{67F9992A-6BD3-4452-89A5-42C4BAABC506}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2128,6 +2130,12 @@ Global
 		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2612,6 +2620,7 @@ Global
 		{17A4EBF1-A1F8-475F-A304-A9B7F7B58C82} = {B71872DC-C58D-41A7-B24F-78D8136EE49E}
 		{99621A27-6E31-4D71-A395-FEB610337646} = {B71872DC-C58D-41A7-B24F-78D8136EE49E}
 		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A} = {17A4EBF1-A1F8-475F-A304-A9B7F7B58C82}
+		{67F9992A-6BD3-4452-89A5-42C4BAABC506} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
