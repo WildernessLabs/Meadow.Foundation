@@ -10,7 +10,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, RTC, Ds323x</PackageTags>
-    <Version>0.1.31</Version>
+    <Version>0.1.35</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Ds323x I2C real time clock (DS3231)</Description>
   </PropertyGroup>

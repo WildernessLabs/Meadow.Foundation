@@ -10,7 +10,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Acceleration, Accelerometer, ADXL345</PackageTags>
-    <Version>0.2.28</Version>
+    <Version>0.2.32</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>ADXL345 I2C 3 axis accelerometer motion sensor</Description>
   </PropertyGroup>

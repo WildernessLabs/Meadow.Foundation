@@ -10,7 +10,7 @@
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, RFID, ID-2LA, ID-12LA, ID-20LA</PackageTags>
-    <Version>0.1.29</Version>
+    <Version>0.1.33</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>IDxxLA Serial radio frequency ID readers</Description>
   </PropertyGroup>
