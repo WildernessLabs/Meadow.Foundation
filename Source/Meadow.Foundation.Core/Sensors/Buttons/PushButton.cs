@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Buttons;
 using System;
 
@@ -141,7 +142,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="device"></param>
         /// <param name="inputPin"></param>
         /// <param name="resistorMode"></param>
-        public PushButton(IIODevice device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp) 
+        public PushButton(IDigitalInputDevice device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp) 
             : this(device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistorMode, 50, 25)) { }
 
         /// <summary>

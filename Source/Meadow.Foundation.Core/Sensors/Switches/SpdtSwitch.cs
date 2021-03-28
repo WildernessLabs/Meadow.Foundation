@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="resistorMode"></param>
         /// <param name="debounceDuration"></param>
         /// <param name="glitchFilterCycleCount"></param>
-        public SpdtSwitch(IIODevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) :
+        public SpdtSwitch(IDigitalInputDevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) :
             this (device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount)) {}
 
         /// <summary>

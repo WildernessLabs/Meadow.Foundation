@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
 
@@ -58,7 +59,7 @@ namespace Meadow.Foundation.Leds
         /// hooked to ground or High. Typically used for RGB Leds which can have
         /// either a common cathode, or common anode. But can also enable an LED
         /// to be reversed by inverting the PWM signal.</param>
-        public PwmLed(IIODevice device, IPin pin,
+        public PwmLed(IPwmOutputDevice device, IPin pin,
             float forwardVoltage, CircuitTerminationType terminationType = CircuitTerminationType.CommonGround) : 
             this (device.CreatePwmPort(pin), forwardVoltage, terminationType) { }
 

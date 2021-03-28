@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="device"></param>
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
-        public RotaryEncoder(IIODevice device, IPin aPhasePin, IPin bPhasePin) :
+        public RotaryEncoder(IDigitalInputDevice device, IPin aPhasePin, IPin bPhasePin) :
             this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, 0, 0.1),
                  device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, 0, 0.1))
         { }
