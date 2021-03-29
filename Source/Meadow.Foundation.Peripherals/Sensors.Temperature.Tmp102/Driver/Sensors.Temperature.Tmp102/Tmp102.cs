@@ -78,15 +78,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        
-
-        
-
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
-
-        
-
-        
 
         /// <summary>
         ///     Create a new TMP102 object using the default configuration for the sensor.
@@ -101,10 +93,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             _sensorResolution = (configuration[1] & 0x10) > 0 ?
                                  Resolution.Resolution13Bits : Resolution.Resolution12Bits;
         }
-
-        
-
-        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -193,7 +181,5 @@ namespace Meadow.Foundation.Sensors.Temperature
             }
             Conditions.Temperature = (float)(sensorReading * 0.0625);
         }
-
-        
     }
 }
