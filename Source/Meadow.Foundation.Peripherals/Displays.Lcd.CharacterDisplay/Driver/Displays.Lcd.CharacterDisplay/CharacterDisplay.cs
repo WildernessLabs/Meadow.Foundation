@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays.Lcd
@@ -10,7 +11,7 @@ namespace Meadow.Foundation.Displays.Lcd
         public TextDisplayConfig DisplayConfig => characterDisplay?.DisplayConfig;
 
         public CharacterDisplay(
-            IIODevice device,
+            IMeadowDevice device,
             IPin pinRS,
             IPin pinE,
             IPin pinD4,
@@ -35,7 +36,7 @@ namespace Meadow.Foundation.Displays.Lcd
         }
 
         public CharacterDisplay(
-            IIODevice device,
+            IMeadowDevice device,
             IPin pinV0,
             IPin pinRS,
             IPin pinE,

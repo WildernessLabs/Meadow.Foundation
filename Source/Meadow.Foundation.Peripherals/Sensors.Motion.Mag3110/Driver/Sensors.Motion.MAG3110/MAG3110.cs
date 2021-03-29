@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using System;
 
 namespace Meadow.Foundation.Sensors.Motion
@@ -6,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Motion
     public class Mag3110
     {
         /// <summary>
-        ///     Sensor readings to be passed back when an interrupt is generated.
+        /// Sensor readings to be passed back when an interrupt is generated.
         /// </summary>
         public struct SensorReading
         {
@@ -16,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Register addresses in the sensor.
+        /// Register addresses in the sensor.
         /// </summary>
         private static class Registers
         {
@@ -41,52 +42,52 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Delegate for the OnDataReceived event.
+        /// Delegate for the OnDataReceived event.
         /// </summary>
         /// <param name="sensorReading">Sensor readings from the MAG3110.</param>
         public delegate void ReadingComplete(SensorReading sensorReading);
 
         /// <summary>
-        ///     Generated when the sensor indicates that data is ready for processing.
+        /// Generated when the sensor indicates that data is ready for processing.
         /// </summary>
         public event ReadingComplete OnReadingComplete;
 
         /// <summary>
-        ///     MAG3110 object.
+        /// MAG3110 object.
         /// </summary>
         private readonly II2cPeripheral i2cPeripheral;
 
         /// <summary>
-        ///     Interrupt port used to detect then end of a conversion.
+        /// Interrupt port used to detect then end of a conversion.
         /// </summary>
         private readonly IDigitalInputPort interruptPort;
 
         /// <summary>
-        ///     Reading from the X axis.
+        /// Reading from the X axis.
         /// </summary>
         /// <remarks>
-        ///     Data in this property is only current after a call to Read.
+        /// Data in this property is only current after a call to Read.
         /// </remarks>
         public short X { get; private set; }
 
         /// <summary>
-        ///     Reading from the Y axis.
+        /// Reading from the Y axis.
         /// </summary>
         /// <remarks>
-        ///     Data in this property is only current after a call to Read.
+        /// Data in this property is only current after a call to Read.
         /// </remarks>
         public short Y { get; private set; }
 
         /// <summary>
-        ///     Reading from the Z axis.
+        /// Reading from the Z axis.
         /// </summary>
         /// <remarks>
-        ///     Data in this property is only current after a call to Read.
+        /// Data in this property is only current after a call to Read.
         /// </remarks>
         public short Z { get; private set; }
 
         /// <summary>
-        ///     Temperature of the sensor die.
+        /// Temperature of the sensor die.
         /// </summary>
         public sbyte Temperature
         {
@@ -94,7 +95,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Change or get the standby status of the sensor.
+        /// Change or get the standby status of the sensor.
         /// </summary>
         public bool Standby
         {
@@ -119,10 +120,10 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Indicate if there is any data ready for reading (x, y or z).
+        /// Indicate if there is any data ready for reading (x, y or z).
         /// </summary>
         /// <remarks>
-        ///     See section 5.1.1 of the datasheet.
+        /// See section 5.1.1 of the datasheet.
         /// </remarks>
         public bool DataReady
         {
@@ -130,12 +131,12 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Enable or disable interrupts.
+        /// Enable or disable interrupts.
         /// </summary>
         /// <remarks>
-        ///     Interrupts can be triggered when a conversion completes (see section 4.2.5
-        ///     of the datasheet).  The interrupts are tied to the ZYXDR bit in the DR Status
-        ///     register.
+        /// Interrupts can be triggered when a conversion completes (see section 4.2.5
+        /// of the datasheet).  The interrupts are tied to the ZYXDR bit in the DR Status
+        /// register.
         /// </remarks>
         private bool _digitalInputsEnabled;
 
@@ -166,7 +167,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin">Interrupt pin used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
         /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>        
-        public Mag3110(IIODevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = 0x0e, ushort speed = 400) :
+        public Mag3110(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = 0x0e, ushort speed = 400) :
             this (i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address) { }
 
         /// <summary>
@@ -194,7 +195,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Reset the sensor.
+        /// Reset the sensor.
         /// </summary>
         public void Reset()
         {
@@ -205,7 +206,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Force the sensor to make a reading and update the relevanyt properties.
+        /// Force the sensor to make a reading and update the relevanyt properties.
         /// </summary>
         public void Read()
         {
@@ -219,7 +220,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Interrupt from the MAG3110 conversion complete interrupt.
+        /// Interrupt from the MAG3110 conversion complete interrupt.
         /// </summary>
         private void DigitalInputPortChanged(object sender, DigitalInputPortEventArgs e)
         {

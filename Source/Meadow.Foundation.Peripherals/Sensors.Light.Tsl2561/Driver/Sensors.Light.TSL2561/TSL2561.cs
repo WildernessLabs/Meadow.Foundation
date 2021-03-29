@@ -5,44 +5,38 @@ using Meadow.Hardware;
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
-    ///     Driver for the TSL2561 light-to-digital converter.
+    /// Driver for the TSL2561 light-to-digital converter.
     /// </summary>
     public class Tsl2561 : IDisposable //, ILightSensor
     {
-        
-
         /// <summary>
-        ///     The command bit in the Command Register.
-        ///     See page 13 of the datasheet.
+        /// The command bit in the Command Register.
+        /// See page 13 of the datasheet.
         /// </summary>
         private const byte CommandBit = 0x80;
 
         /// <summary>
-        ///     The interrupt clear bit in the Command Register.
-        ///     See page 13 of the datasheet.
+        /// The interrupt clear bit in the Command Register.
+        /// See page 13 of the datasheet.
         /// </summary>
         private const byte ClearInterruptBit = 0xC0;
 
         /// <summary>
-        ///     This bit control the write operations for the TSL2561.  Setting
-        ///     this bit puts the chip into Word mode for the specified register.
+        /// This bit control the write operations for the TSL2561.  Setting
+        /// this bit puts the chip into Word mode for the specified register.
         /// </summary>
         /// <remarks>
-        ///     See page 13 of the data sheet.
+        /// See page 13 of the data sheet.
         /// </remarks>
         private const byte WordModeBit = 0x20;
 
         /// <summary>
-        ///     Minimum value that should be used for the polling frequency.
+        /// Minimum value that should be used for the polling frequency.
         /// </summary>
         public const ushort MinimumPollingPeriod = 100;
         
-        
-
-        
-
         /// <summary>
-        ///     Valid addresses for the sensor.
+        /// Valid addresses for the sensor.
         /// </summary>
         public enum Addresses : byte
         {
@@ -52,11 +46,11 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Integration timing.
-        ///     See Timing Register on page 14 of the data sheet.
+        /// Integration timing.
+        /// See Timing Register on page 14 of the data sheet.
         /// </summary>
         /// <remarks>
-        ///     Valid integration times are 13.7ms, 101ms, 402ms and Manual.
+        /// Valid integration times are 13.7ms, 101ms, 402ms and Manual.
         /// </remarks>
         public enum IntegrationTiming : byte
         {
@@ -67,11 +61,11 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Possible gain setting for the sensor.
-        ///     See Timing Register on page 14 of the data sheet.
+        /// Possible gain setting for the sensor.
+        /// See Timing Register on page 14 of the data sheet.
         /// </summary>
         /// <remarks>
-        ///     Possible gain values are low (x1) and high (x16).
+        /// Possible gain values are low (x1) and high (x16).
         /// </remarks>
         public enum Gain
         {
@@ -80,8 +74,8 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Determine if interrupts are enabled or not.
-        ///     See Interrupt Control Register on page 15 of the datasheet.
+        /// Determine if interrupts are enabled or not.
+        /// See Interrupt Control Register on page 15 of the datasheet.
         /// </summary>
         public enum InterruptMode : byte
         {
@@ -89,19 +83,15 @@ namespace Meadow.Foundation.Sensors.Light
             Enable
         }
 
-        
-
-        
-
         /// <summary>
-        ///     TSL2561 register locations.
-        ///     See Register Set on page 12 and Command Register on page 13 of the datasheet.
+        /// TSL2561 register locations.
+        /// See Register Set on page 12 and Command Register on page 13 of the datasheet.
         /// </summary>
         /// <remarks>
-        ///     All of the register numbers have 0x80 added to the register.  When reading
-        ///     or witing to a register the application must set the CMD bit in the command
-        ///     register (see page 13) and the register address is written into the lower
-        ///     four bits of the Command Register.
+        /// All of the register numbers have 0x80 added to the register.  When reading
+        /// or witing to a register the application must set the CMD bit in the command
+        /// register (see page 13) and the register address is written into the lower
+        /// four bits of the Command Register.
         /// </remarks>
         private static class Registers
         {
@@ -115,26 +105,18 @@ namespace Meadow.Foundation.Sensors.Light
             public static readonly byte Data1 = 0x8e;
         }
 
-        
-
-        
-
         /// <summary>
-        ///     GPIO pin on that is connected to the interrupt pin on the TSL2561.
+        /// GPIO pin on that is connected to the interrupt pin on the TSL2561.
         /// </summary>
         private IDigitalInputPort _interruptPin;
 
         /// <summary>
-        ///     Update interval in milliseconds
+        /// Update interval in milliseconds
         /// </summary>
         private readonly ushort updateInterval = 100;
 
-        
-
-        
-
         /// <summary>
-        ///     Implement IDisposable interface.
+        /// Implement IDisposable interface.
         /// </summary>
         public void Dispose()
         {
@@ -144,15 +126,11 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        
-
-        
-
         /// <summary>
-        ///     Get the sensor reading
+        /// Get the sensor reading
         /// </summary>
         /// <remarks>
-        ///     This can be used to get the raw sensor data from the TSL2561.
+        /// This can be used to get the raw sensor data from the TSL2561.
         /// </remarks>
         /// <returns>Sensor data.</returns>
         public ushort[] SensorReading
@@ -161,7 +139,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Luminosity reading from the TSL2561 sensor.
+        /// Luminosity reading from the TSL2561 sensor.
         /// </summary>
         public float Luminosity
         {
@@ -180,12 +158,12 @@ namespace Meadow.Foundation.Sensors.Light
         private float _lastNotifiedLux = 0.001F;
 
         /// <summary>
-        ///     ID of the sensor.
+        /// ID of the sensor.
         /// </summary>
         /// <remarks>
-        ///     The ID register (page 16 of the datasheet) gives two pieces of the information:
-        ///     Part Number: bits 4-7 (0000 = TSL2560, 0001 = TSL2561)
-        ///     Revision number: bits 0-3
+        /// The ID register (page 16 of the datasheet) gives two pieces of the information:
+        /// Part Number: bits 4-7 (0000 = TSL2560, 0001 = TSL2561)
+        /// Revision number: bits 0-3
         /// </remarks>
         public byte ID
         {
@@ -193,13 +171,13 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Gain of the sensor.
-        ///     The sensor gain can be set to high or low.
+        /// Gain of the sensor.
+        /// The sensor gain can be set to high or low.
         /// </summary>
         /// <remarks>
-        ///     The sensor Gain bit can be found in the Timing Register.  This allows the gain
-        ///     to be set to High (16x) or Low (1x).
-        ///     See page 14 of the datasheet.
+        /// The sensor Gain bit can be found in the Timing Register.  This allows the gain
+        /// to be set to High (16x) or Low (1x).
+        /// See page 14 of the datasheet.
         /// </remarks>
         public Gain SensorGain
         {
@@ -224,7 +202,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Integration timing for the sensor reading.
+        /// Integration timing for the sensor reading.
         /// </summary>
         public IntegrationTiming Timing
         {
@@ -252,12 +230,12 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Lower interrupt threshold.
+        /// Lower interrupt threshold.
         /// </summary>
         /// <remarks>
-        ///     Get or se the lower interrupt threshold.  Any readings below this
-        ///     value may trigger an interrupt <seealso cref="SetInterruptMode" />
-        ///     See page 14/15 of the datasheet.
+        /// Get or se the lower interrupt threshold.  Any readings below this
+        /// value may trigger an interrupt <seealso cref="SetInterruptMode" />
+        /// See page 14/15 of the datasheet.
         /// </remarks>
         public ushort ThresholdLow
         {
@@ -269,12 +247,12 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     High interrupt threshold.
+        /// High interrupt threshold.
         /// </summary>
         /// <remarks>
-        ///     Get or se the upper interrupt threshold.  Any readings above this
-        ///     value may trigger an interrupt <seealso cref="SetInterruptMode" />
-        ///     See page 14/15 of the datasheet.
+        /// Get or se the upper interrupt threshold.  Any readings above this
+        /// value may trigger an interrupt <seealso cref="SetInterruptMode" />
+        /// See page 14/15 of the datasheet.
         /// </remarks>
         public ushort ThresholdHigh
         {
@@ -286,57 +264,49 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Changes in light level greater than this value will generate an interrupt
-        ///     in auto-update mode.
+        /// Changes in light level greater than this value will generate an interrupt
+        /// in auto-update mode.
         /// </summary>
         public float LightLevelChangeNotificationThreshold { get; set; } = 0.001F;
 
         /// <summary>
-        ///     ICommunicationBus object used to communicate with the sensor.
+        /// ICommunicationBus object used to communicate with the sensor.
         /// </summary>
         /// <remarks>
-        ///     In this case the actual object will always be an I2SBus object.
+        /// In this case the actual object will always be an I2SBus object.
         /// </remarks>
         private readonly II2cPeripheral tsl2561;
 
-        
-
-        
-
         /// <summary>
-        ///     Allow the user to attach an interrupt to the TSL2561.
+        /// Allow the user to attach an interrupt to the TSL2561.
         /// </summary>
         /// <remarks>
-        ///     This interrupt requires the interrupts to be set up correctly.
-        ///     <see cref="SetInterruptMode" />
+        /// This interrupt requires the interrupts to be set up correctly.
+        /// <see cref="SetInterruptMode" />
         /// </remarks>
         /// <param name="time">Date and time the interrupt was generated.</param>
         public delegate void ThresholdInterrupt(DateTime time);
 
         /// <summary>
-        ///     Interrupt generated when the reading is outside of the threshold window.
+        /// Interrupt generated when the reading is outside of the threshold window.
         /// </summary>
         /// <remarks>
-        ///     This interrupt requires the threshold window to be defined <see cref="SetInterruptMode" />
-        ///     and for the interrupts to be enabled.
+        /// This interrupt requires the threshold window to be defined <see cref="SetInterruptMode" />
+        /// and for the interrupts to be enabled.
         /// </remarks>
         public event ThresholdInterrupt ReadingOutsideThresholdWindow;
 
         /// <summary>
-        ///     Event raised when the temperature change is greater than the 
-        ///     TemperatureChangeNotificationThreshold value.
+        /// Event raised when the temperature change is greater than the 
+        /// TemperatureChangeNotificationThreshold value.
         /// </summary>
         public event EventHandler<float> LightLevelChanged = delegate { };
 
-        
-
-        
-
         /// <summary>
-        ///     Create a new instance of the TSL2561 class with the specified I2C address.
+        /// Create a new instance of the TSL2561 class with the specified I2C address.
         /// </summary>
         /// <remarks>
-        ///     By default the sensor will be set to low gain.
+        /// By default the sensor will be set to low gain.
         /// <remarks>
         /// <param name="address">I2C address of the TSL2561</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
@@ -369,12 +339,8 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        
-
-        
-
         /// <summary>
-        ///     Start the update process.
+        /// Start the update process.
         /// </summary>
         private void StartUpdating()
         {
@@ -389,7 +355,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Update the Luminosity reading.
+        /// Update the Luminosity reading.
         /// </summary>
         public void Update()
         {
@@ -463,10 +429,10 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Turn the TSL2561 off.
+        /// Turn the TSL2561 off.
         /// </summary>
         /// <remarks>
-        ///     Reset the power bits in the control register (page 13 of the datasheet).
+        /// Reset the power bits in the control register (page 13 of the datasheet).
         /// </remarks>
         public void TurnOff()
         {
@@ -474,10 +440,10 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Turn the TSL2561 on.
+        /// Turn the TSL2561 on.
         /// </summary>
         /// <remarks>
-        ///     Set the power bits in the control register (page 13 of the datasheet).
+        /// Set the power bits in the control register (page 13 of the datasheet).
         /// </remarks>
         public void TurnOn()
         {
@@ -485,12 +451,12 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Clear the interrupt flag.
-        ///     Se Command Register on page 13 of the datasheet.
+        /// Clear the interrupt flag.
+        /// Se Command Register on page 13 of the datasheet.
         /// </summary>
         /// <remarks>
-        ///     According to the datasheet, writing a 1 into bit 6 of the command
-        ///     register will clear any pending interrupts.
+        /// According to the datasheet, writing a 1 into bit 6 of the command
+        /// register will clear any pending interrupts.
         /// </remarks>
         public void ClearInterrupt()
         {
@@ -502,7 +468,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Put the sensor into manual integration mode.
+        /// Put the sensor into manual integration mode.
         /// </summary>
         public void ManualStart()
         {
@@ -514,7 +480,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Turn off manual integration mode.
+        /// Turn off manual integration mode.
         /// </summary>
         public void ManualStop()
         {
@@ -523,21 +489,23 @@ namespace Meadow.Foundation.Sensors.Light
             tsl2561.WriteRegister(Registers.Timing, timing);
         }
 
+        // TODO: should this get integrated into one of the ctors? wouldn't it be nicer to
+        // setup the interrupt stuff during construction?
         /// <summary>
-        ///     Turn interrupts on or off and set the conversion trigger count.
+        /// Turn interrupts on or off and set the conversion trigger count.
         /// </summary>
         /// <remarks>
-        ///     The conversion count is the number of conversions that must be outside
-        ///     of the upper and lower limits before and interrupt is generated.
-        ///     See Interrupt Control Register on page 15 and 16 of the datasheet.
+        /// The conversion count is the number of conversions that must be outside
+        /// of the upper and lower limits before and interrupt is generated.
+        /// See Interrupt Control Register on page 15 and 16 of the datasheet.
         /// </remarks>
         /// <param name="mode"></param>
         /// <param name="conversionCount">
-        ///     Number of conversions that must be outside of the threshold before an interrupt is
-        ///     generated.
+        /// Number of conversions that must be outside of the threshold before an interrupt is
+        /// generated.
         /// </param>
         /// <param name="pin">GPIO pin connected to the TSL2561 interrupt pin.  Set to null to use the previously supplied pin.</param>
-        public void SetInterruptMode(IIODevice device, InterruptMode mode, byte conversionCount, IPin pin = null)
+        public void SetInterruptMode(IDigitalInputController device, InterruptMode mode, byte conversionCount, IPin pin = null)
         {
             if (conversionCount > 15)
             {
@@ -581,13 +549,11 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        ///     Process the interrupt generated by the TSL2561.
+        /// Process the interrupt generated by the TSL2561.
         /// </summary>
         private void InterruptPin_Changed(object sender, DigitalInputPortEventArgs e)
         {
             ReadingOutsideThresholdWindow?.Invoke(DateTime.Now);
         }
-
-        
     }
 }

@@ -1,7 +1,7 @@
-﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Moisture;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Moisture;
 
 namespace Meadow.Foundation.Sensors.Moisture
 {
@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="device"></param>
         /// <param name="analogPin"></param>
         public Capacitive(
-            IIODevice device,
+            IAnalogInputController device,
             IPin analogPin,
             float minimumVoltageCalibration = 0f,
             float maximumVoltageCalibration = 3.3f) :

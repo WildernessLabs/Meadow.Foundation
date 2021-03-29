@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using System;
 using System.Diagnostics;
@@ -52,7 +53,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <param name="type"></param>
         /// <param name="numberOfMagnets"></param>
         /// <param name="rpmChangeNotificationThreshold"></param>
-        public LinearHallEffectTachometer(IIODevice device, IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
+        public LinearHallEffectTachometer(IDigitalInputController device, IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F) :
             this(device.CreateDigitalInputPort(inputPin), type, numberOfMagnets, rpmChangeNotificationThreshold)
         {

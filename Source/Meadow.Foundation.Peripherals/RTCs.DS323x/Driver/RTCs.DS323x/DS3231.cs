@@ -15,7 +15,7 @@ namespace Meadow.Foundation.RTCs
         /// <param name="i2cBus">The I2C Bus the peripheral is connected to</param>
         /// <param name="address">I2C Bus address of the peripheral</param>
         public Ds3231(
-            IIODevice device,
+            IDigitalInputController device,
             II2cBus i2cBus,
             IPin interruptPin = null,
             byte address = 0x68)

@@ -1,3 +1,4 @@
+using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Peripherals.Relays;
 
@@ -38,7 +39,7 @@ namespace Meadow.Foundation.Relays
         /// </summary>
         /// <param name="pin"></param>
         /// <param name="type"></param>
-        public Relay(IIODevice device, IPin pin, RelayType type = RelayType.NormallyOpen) :
+        public Relay(IDigitalOutputController device, IPin pin, RelayType type = RelayType.NormallyOpen) :
             this(device.CreateDigitalOutputPort(pin), type) { }
 
         /// <summary>

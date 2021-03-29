@@ -1,4 +1,5 @@
 using System;
+using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
@@ -11,7 +12,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// </summary>
     public class Il0376F : EpdColorBase
     {
-        public Il0376F(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public Il0376F(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width = 200, int height = 200) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Audio.Mp3
@@ -75,7 +76,7 @@ namespace Meadow.Foundation.Audio.Mp3
             Thread.Sleep(500);
         }
 
-        public Yx5300(IIODevice device, SerialPortName serialPortName)
+        public Yx5300(IMeadowDevice device, SerialPortName serialPortName)
             : this(device.CreateSerialPort(
                 serialPortName))
         { }

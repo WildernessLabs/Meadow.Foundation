@@ -5,7 +5,7 @@ using Meadow.Hardware;
 namespace Meadow.Foundation.ICs.EEPROM
 {
     /// <summary>
-    ///     Encapsulation for EEPROMs based upon the AT24Cxx family of chips.
+    /// Encapsulation for EEPROMs based upon the AT24Cxx family of chips.
     /// </summary>
     public class At24Cxx
     {
@@ -23,7 +23,6 @@ namespace Meadow.Foundation.ICs.EEPROM
         ///     Number of bytes in the EEPROM module.
         /// </summary>
         private readonly ushort _memorySize;
-
 
         /// <summary>
         ///     Create a new AT24Cxx object using the default parameters for the component.
@@ -96,7 +95,5 @@ namespace Meadow.Foundation.ICs.EEPROM
                 Thread.Sleep(10);
             }
         }
-
-        
     }
 }

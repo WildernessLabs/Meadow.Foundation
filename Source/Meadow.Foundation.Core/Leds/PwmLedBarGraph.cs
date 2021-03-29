@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using System;
 
 namespace Meadow.Foundation.Leds
@@ -28,7 +29,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPwnPin and a forwardVoltage for all LEDs in the bar graph
         /// </summary>
-        public PwmLedBarGraph(IIODevice device, IPin[] pins, float forwardVoltage)
+        public PwmLedBarGraph(IPwmOutputController device, IPin[] pins, float forwardVoltage)
         {
             pwmLeds = new PwmLed[pins.Length];
 

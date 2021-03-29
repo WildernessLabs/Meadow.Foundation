@@ -1,7 +1,7 @@
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Distance;
 using System;
 using System.Threading;
+using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Distance;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
@@ -10,8 +10,6 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public class Hcsr04 : IRangeFinder
     {
-        
-
         /// <summary>
         /// Returns current distance detected in cm.
         /// </summary>
@@ -35,10 +33,6 @@ namespace Meadow.Foundation.Sensors.Distance
         public event EventHandler<DistanceEventArgs> DistanceDetected = delegate { };
         public event EventHandler<DistanceConditionChangeResult> Updated;
 
-        
-
-        
-
         /// <summary>
         /// Trigger Pin.
         /// </summary>
@@ -51,16 +45,12 @@ namespace Meadow.Foundation.Sensors.Distance
 
         protected long tickStart;
 
-        
-
-        
-
         /// <summary>
         /// Create a new HCSR04 object with an IO Device
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
-        public Hcsr04(IIODevice device, IPin triggerPin, IPin echoPin) :
+        public Hcsr04(IDigitalInputOutputController device, IPin triggerPin, IPin echoPin) :
             this (device.CreateDigitalOutputPort(triggerPin, false), 
                   device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth)) { }
 
@@ -76,8 +66,6 @@ namespace Meadow.Foundation.Sensors.Distance
             this.echoPort = echoPort;
             this.echoPort.Changed += OnEchoPortChanged;
         }
-
-        
 
         /// <summary>
         /// Sends a trigger signal

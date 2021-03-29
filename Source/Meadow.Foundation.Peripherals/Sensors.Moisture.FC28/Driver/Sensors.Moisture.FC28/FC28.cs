@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Moisture;
 using System;
 using System.Threading;
@@ -19,8 +20,6 @@ namespace Meadow.Foundation.Sensors.Moisture
         // internal thread lock
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
-
-        
 
         /// <summary>
         /// Gets a value indicating whether the sensor is currently in a sampling
@@ -54,17 +53,13 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public float MaximumVoltageCalibration { get; set; }
 
-        
-
-        
-
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device.
         /// </summary>
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
         public Fc28(
-            IIODevice device,
+            IMeadowDevice device,
             IPin analogPin,
             IPin digitalPin,
             float minimumVoltageCalibration = 0f,
@@ -88,10 +83,6 @@ namespace Meadow.Foundation.Sensors.Moisture
             MinimumVoltageCalibration = minimumVoltageCalibration;
             MaximumVoltageCalibration = maximumVoltageCalibration;
         }
-
-        
-
-        
 
         /// <summary>
         /// Convenience method to get the current soil moisture. For frequent reads, use
@@ -218,7 +209,5 @@ namespace Meadow.Foundation.Sensors.Moisture
         {
             return (((toHigh - toLow) * (value - fromLow)) / (fromHigh - fromLow)) - toLow;
         }
-
-        
     }
 }

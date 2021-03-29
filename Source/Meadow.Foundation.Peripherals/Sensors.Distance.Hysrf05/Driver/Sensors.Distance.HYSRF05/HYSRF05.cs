@@ -10,8 +10,6 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public class Hysrf05 : IRangeFinder
     {
-        
-
         /// <summary>
         /// Returns current distance detected in cm.
         /// </summary>
@@ -35,10 +33,6 @@ namespace Meadow.Foundation.Sensors.Distance
         public event EventHandler<DistanceEventArgs> DistanceDetected;
         public event EventHandler<DistanceConditionChangeResult> Updated;
 
-        
-
-        
-
         /// <summary>
         /// Trigger Pin.
         /// </summary>
@@ -51,10 +45,6 @@ namespace Meadow.Foundation.Sensors.Distance
 
         protected long tickStart;
 
-        
-
-        
-
         /// <summary>
         /// Create a new HYSRF05 object with a IO Device
         /// HSSRF05 must be running the default 4/5 pin mode
@@ -62,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
-        public Hysrf05(IIODevice device, IPin triggerPin, IPin echoPin) :
+        public Hysrf05(IDigitalInputOutputController device, IPin triggerPin, IPin echoPin) :
             this(device.CreateDigitalOutputPort(triggerPin, false),
                 device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth)) { }
 
@@ -80,8 +70,6 @@ namespace Meadow.Foundation.Sensors.Distance
             this.echoPort = echoPort;
             this.echoPort.Changed += OnEchoPortChanged;
         }
-
-        
 
         /// <summary>
         /// Sends a trigger signal

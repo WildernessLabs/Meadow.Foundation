@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
+// TODO: should this be `Sensors.Gnss.MediaTek`?
 namespace Sensors.Location.MediaTek
 {
     public class NmeaEventArgs
@@ -42,7 +42,7 @@ namespace Sensors.Location.MediaTek
             Init();
         }
 
-        public Mt3339( IIODevice device, SerialPortName serialPortName)
+        public Mt3339(ISerialMessageController device, SerialPortName serialPortName)
             : this(device.CreateSerialMessagePort(
                 serialPortName, suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                 preserveDelimiter: true, readBufferSize: 512))

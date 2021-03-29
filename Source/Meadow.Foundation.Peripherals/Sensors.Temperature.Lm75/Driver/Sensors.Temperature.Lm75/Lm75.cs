@@ -30,7 +30,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         private readonly II2cPeripheral lm75;
 
-
         public byte DEFAULT_ADDRESS => 0x48;
 
         /// <summary>
@@ -54,15 +53,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        
-
-        
-
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
-
-        
-
-        
 
         /// <summary>
         ///     Create a new TMP102 object using the default configuration for the sensor.
@@ -72,10 +63,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             lm75 = new I2cPeripheral(i2cBus, address);
         }
-
-        
-
-        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -174,7 +161,5 @@ namespace Meadow.Foundation.Sensors.Temperature
             //only accurate to +/- 0.1 degrees
             Conditions.Temperature = (float)Math.Round(temp, 1);
         }
-
-        
     }
 }

@@ -14,15 +14,13 @@ namespace Meadow.Foundation.Sensors.Motion
     public class Adxl345 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
         IAccelerometer
     {
+        public event EventHandler<AccelerationConditionChangeResult> Updated = delegate { };
+
         /// <summary>
         ///     Minimum value that can be used for the update interval when the
         ///     sensor is being configured to generate interrupts.
         /// </summary>
         public const ushort MinimumPollingPeriod = 100;
-
-        
-
-        
 
         /// <summary>
         ///     Communication bus used to communicate with the sensor.
@@ -32,10 +30,6 @@ namespace Meadow.Foundation.Sensors.Motion
         // internal thread lock
         private object lockObject = new object();
         private CancellationTokenSource SamplingTokenSource;
-
-        
-
-        
 
         /// <summary>
         ///     Possible values for the range (see DataFormat register).
@@ -64,10 +58,6 @@ namespace Meadow.Foundation.Sensors.Motion
             TwoHz = 0x02,
             OneHz = 0x03,
         }
-
-        
-
-        
 
         /// <summary>
         ///     Control registers for the ADXL345 chip.
@@ -108,10 +98,6 @@ namespace Meadow.Foundation.Sensors.Motion
             public static readonly byte Z0 = 0x36;
             public static readonly byte Z1 = 0x37;
         }
-
-        
-
-        
 
         /// <summary>
         ///     Acceleration along the X-axis.
@@ -182,16 +168,6 @@ namespace Meadow.Foundation.Sensors.Motion
             set { adxl345.WriteRegister(Registers.OffsetZ, (byte)value); }
         }
 
-        
-
-        
-
-        public event EventHandler<AccelerationConditionChangeResult> Updated;
-
-        
-
-        
-
         /// <summary>
         ///     Create a new instance of the ADXL345 communicating over the I2C interface.
         /// </summary>
@@ -207,10 +183,6 @@ namespace Meadow.Foundation.Sensors.Motion
                 throw new Exception("Invalid device ID.");
             }
         }
-
-        
-
-        
 
         ///// <summary>
         ///// Convenience method to get the current temperature. For frequent reads, use

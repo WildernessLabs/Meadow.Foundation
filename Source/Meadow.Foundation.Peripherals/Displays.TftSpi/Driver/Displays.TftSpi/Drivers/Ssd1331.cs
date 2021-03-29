@@ -1,3 +1,4 @@
+using Meadow.Devices;
 using Meadow.Hardware;
 using System.Threading;
 
@@ -8,7 +9,7 @@ namespace Meadow.Foundation.Displays.Tft
         //the SSD1331 also supports 8 bit RGB332 color but this isn't currently supported (but should be quick to add if anyone wants it
         public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
 
-        public Ssd1331(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ssd1331(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
            int width, int height) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, DisplayColorMode.Format16bppRgb565)
         {

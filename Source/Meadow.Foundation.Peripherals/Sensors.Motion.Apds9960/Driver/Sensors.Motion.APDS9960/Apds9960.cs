@@ -1,16 +1,15 @@
-﻿
-
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using System;
 using System.Threading;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
     public class Apds9960
     {
         /// <summary>
-        ///     Communication bus used to communicate with the sensor.
-        ///     This driver is a work-in-progress, contributions are always welcome
+        /// Communication bus used to communicate with the sensor.
+        /// This driver is a work-in-progress, contributions are always welcome
         /// </summary>
         private readonly II2cPeripheral apds9960;
 
@@ -188,10 +187,6 @@ namespace Meadow.Foundation.Sensors.Motion
         static readonly byte DEFAULT_GCONF3 = 0;       // All photodiodes active during gesture
         static readonly byte DEFAULT_GIEN = 0;       // Disable gesture interrupts
 
-        
-
-        
-
         /* Direction definitions */
         public enum Direction
         {
@@ -214,16 +209,12 @@ namespace Meadow.Foundation.Sensors.Motion
             ALL_STATE
         };
 
-        
-
-        
-
         /// <summary>
-        ///     Create a new instance of the APDS9960 communicating over the I2C interface.
+        /// Create a new instance of the APDS9960 communicating over the I2C interface.
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">SI2C bus object</param>
-        public Apds9960(IIODevice device, II2cBus i2cBus, IPin interruptPin, byte address = 0x39)
+        public Apds9960(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin, byte address = 0x39)
         {
             apds9960 = new I2cPeripheral(i2cBus, address);
 
@@ -249,17 +240,12 @@ namespace Meadow.Foundation.Sensors.Motion
             gestureDirection = (int)Direction.NONE;
 
             Initialize();
-
         }
 
         private void InterruptPort_Changed(object sender, DigitalInputPortEventArgs e)
         {
         //    throw new NotImplementedException();
         }
-
-        
-
-        
 
         void Initialize()
         {
@@ -1674,10 +1660,6 @@ namespace Meadow.Foundation.Sensors.Motion
             apds9960.WriteRegister(APDS9960_GCONF4, val);
         }
 
-        
-
-        
-
         /* Container for gesture data */
         public class GestureData
         {
@@ -1690,8 +1672,5 @@ namespace Meadow.Foundation.Sensors.Motion
             public byte InThreshold { get; set; }
             public byte OutThreshold { get; set; }
         }
-
-        
     }
-
 }

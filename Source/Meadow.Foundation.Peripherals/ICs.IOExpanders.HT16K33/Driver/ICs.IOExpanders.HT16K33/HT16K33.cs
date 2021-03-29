@@ -69,8 +69,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             InitHT16K33();
         }
 
-        
-
         void InitHT16K33()
         {
             //   SetIsAwake(true);

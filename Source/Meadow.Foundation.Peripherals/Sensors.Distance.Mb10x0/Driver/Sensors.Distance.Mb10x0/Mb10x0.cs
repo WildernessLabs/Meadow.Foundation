@@ -1,5 +1,5 @@
-﻿using Meadow.Hardware;
-using System;
+﻿using System;
+using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
         public int Baud => 9600;
 
-        public Mb10x0(IIODevice device, SerialPortName portName)
+        public Mb10x0(ISerialController device, SerialPortName portName)
         {
             serialPort = device.CreateSerialPort(portName, Baud);
             serialPort.Open();

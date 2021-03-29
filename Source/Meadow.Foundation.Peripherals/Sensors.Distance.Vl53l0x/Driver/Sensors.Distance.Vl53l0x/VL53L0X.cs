@@ -1,8 +1,8 @@
-﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Distance;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Distance;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
@@ -72,8 +72,6 @@ namespace Meadow.Foundation.Sensors.Distance
         protected const int VcselPeriodPreRange = 0;
         protected const int VcselPeriodFinalRange = 1;
 
-        
-
         public enum UnitType
         {
             mm,
@@ -130,7 +128,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
         public event EventHandler<DistanceConditionChangeResult> Updated;
 
-        public Vl53l0x(IIODevice device, II2cBus i2cBus, byte address = DefaultI2cAddress, UnitType units = UnitType.mm) : 
+        public Vl53l0x(IDigitalOutputController device, II2cBus i2cBus, byte address = DefaultI2cAddress, UnitType units = UnitType.mm) : 
             this (device, i2cBus, null, address, units)
         {
         }
@@ -138,7 +136,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="i2cBus">I2C bus</param>
         /// <param name="address">VL53L0X address</param>
         /// <param name="units">Unit of measure</param>
-        public Vl53l0x(IIODevice device, II2cBus i2cBus, IPin shutdownPin, byte address = DefaultI2cAddress,  UnitType units = UnitType.mm)
+        public Vl53l0x(IDigitalOutputController device, II2cBus i2cBus, IPin shutdownPin, byte address = DefaultI2cAddress,  UnitType units = UnitType.mm)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
