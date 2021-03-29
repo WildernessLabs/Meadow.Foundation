@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -9,8 +10,6 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class St7565 : DisplayBase
     {
-        
-
         /// <summary>
         ///     Allow the programmer to set the scroll direction.
         /// </summary>
@@ -62,10 +61,6 @@ namespace Meadow.Foundation.Displays
             NoOperation = 0xE3
         }
 
-        
-
-        
-
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
         public override int Width { get; }
@@ -91,10 +86,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         private byte[] buffer;
 
-        
-
-        
-
         /// <summary>
         ///     Invert the entire display (true) or return to normal mode (false).
         /// </summary>
@@ -116,14 +107,10 @@ namespace Meadow.Foundation.Displays
             SendCommand(DisplayCommand.AllPixelsOn);
         }
 
-        
-
-        
-
         /// <summary>
         ///     Create a new ST7565 object using the default parameters for
         /// </summary>
-        public St7565(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public St7565(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width = 128, int height = 64)
         {
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
@@ -170,10 +157,6 @@ namespace Meadow.Foundation.Displays
             SendCommand(DisplayCommand.DisplayOn);
             SendCommand(DisplayCommand.AllPixelsOff);
         }
-
-        
-
-        
 
         public const uint ContrastHigh = 34;
         public const uint ContrastMedium = 24;
@@ -381,7 +364,5 @@ namespace Meadow.Foundation.Displays
         {
             SendCommand(0x2e);
         }
-
-        
     }
 }

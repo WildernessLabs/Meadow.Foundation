@@ -1,3 +1,4 @@
+using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
@@ -11,7 +12,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// </summary>
     public class Il91874V03 : EpdBase
     {
-        public Il91874V03(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public Il91874V03(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width = 176, int height = 264) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }

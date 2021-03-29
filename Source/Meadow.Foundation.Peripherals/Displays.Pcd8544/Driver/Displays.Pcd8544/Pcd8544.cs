@@ -1,4 +1,5 @@
 using System;
+using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -31,7 +32,7 @@ namespace Meadow.Foundation.Displays
         protected byte[] displayBuffer;
         protected readonly byte[] spiReceive;
 
-        public Pcd8544(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
+        public Pcd8544(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
             displayBuffer = new byte[Width * Height / 8];
             spiReceive = new byte[Width * Height / 8];

@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using System;
 using System.Threading;
@@ -101,7 +102,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="parity">Parity to use (default is None).</param>
         /// <param name="dataBits">Number of data bits (default is 8 data bits).</param>
         /// <param name="stopBits">Number of stop bits (default is one stop bit).</param>
-        public SerialLcd(IIODevice device, SerialPortName port, TextDisplayConfig config = null, int baudRate = 9600,
+        public SerialLcd(IMeadowDevice device, SerialPortName port, TextDisplayConfig config = null, int baudRate = 9600,
             Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One)
         {
             if (config == null)
