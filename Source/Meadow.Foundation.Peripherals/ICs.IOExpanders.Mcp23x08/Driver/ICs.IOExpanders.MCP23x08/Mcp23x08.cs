@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Provide an interface to connect to a MCP23008 port expander.
     /// </summary>
-    public partial class Mcp23x08 : IIODevice
+    public partial class Mcp23x08 : IDigitalInputDevice, IDigitalOutputDevice
     {
         /// <summary>
         /// Raised when the value of a pin configured for input changes. Use in
@@ -39,10 +39,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         protected object _lock = new object();
 
-        public DeviceCapabilities Capabilities => throw new NotImplementedException();
-
-        protected Mcp23x08()
-        { }
+        protected Mcp23x08() { }
 
         /// <summary>
         /// Instantiates an Mcp23008 on the specified I2C bus using the appropriate
@@ -89,15 +86,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
             IDigitalInputPort interruptPort = null)
         {
             // save our interrupt pin
-            this._interruptPort = interruptPort;
+            // _interruptPort = interruptPort;
             // TODO: more interrupt stuff to solve
             // at a minimum, we need to check the interrupt mode and make sure
             // it's correct, raise an exception if not. also, doc in constructor
             // what we expect from an interrupt port.
-            //this._interruptPort.InterruptMode = InterruptMode.EdgeRising;
-            if (this._interruptPort != null)
+            //_interruptPort.InterruptMode = InterruptMode.EdgeRising;
+            if (_interruptPort != null)
             {
-                this._interruptPort.Changed += HandleChangedInterrupt;
+                _interruptPort.Changed += HandleChangedInterrupt;
             }
             _inputPorts = new Dictionary<IPin, DigitalInputPort>();
             _mcpDevice = device;
@@ -109,13 +106,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
             try
             {
                 // sus out which pin fired
-                byte intflag = this._mcpDevice.ReadRegister(RegisterAddresses.InterruptFlagRegister);
-                byte currentValues = this._mcpDevice.ReadRegister(RegisterAddresses.GPIORegister);
+                byte intflag = _mcpDevice.ReadRegister(RegisterAddresses.InterruptFlagRegister);
+                byte currentValues = _mcpDevice.ReadRegister(RegisterAddresses.GPIORegister);
 
                 //Console.WriteLine($"Input flag:          {intflag:X2}");
                 //Console.WriteLine($"Input Current Value: {currentValues:X2}");
 
-                this.RaiseInputChanged(intflag, currentValues);
+                RaiseInputChanged(intflag, currentValues);
 
             }
             catch (Exception ex)
@@ -184,7 +181,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (IsValidPin(pin))
             {
                 // setup the port internally for output
-                this.SetPortDirection(pin, PortDirectionType.Output);
+                SetPortDirection(pin, PortDirectionType.Output);
 
                 // create the convenience class
                 return new DigitalOutputPort(this, pin, initialState);
@@ -208,7 +205,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     throw new Exception("Pull-down resistor mode is not supported.");
                 }
                 var enablePullUp = resistorMode == ResistorMode.InternalPullUp ? true : false;
-                this.ConfigureInputPort(pin, enablePullUp, interruptMode);
+                ConfigureInputPort(pin, enablePullUp, interruptMode);
                 var port = new DigitalInputPort(this, pin, interruptMode);
                 _inputPorts.Add(pin, port);
                 return port;
@@ -252,7 +249,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (IsValidPin(pin))
             {
                 // set the port direction
-                this.SetPortDirection(pin, PortDirectionType.Input);
+                SetPortDirection(pin, PortDirectionType.Input);
 
                 _gppu = _mcpDevice.ReadRegister(RegisterAddresses.PullupResistorConfigurationRegister);
                 _gppu = BitHelpers.SetBit(_gppu, (byte)pin.Key, enablePullUp);
@@ -303,7 +300,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (IsValidPin(pin))
             {
                 // if the pin isn't configured for output, configure it
-                this.SetPortDirection(pin, PortDirectionType.Output);
+                SetPortDirection(pin, PortDirectionType.Output);
 
                 // update our output latch 
                 _olat = BitHelpers.SetBit(_olat, (byte)pin.Key, value);
@@ -328,7 +325,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (IsValidPin(pin))
             {
                 // if the pin isn't set for input, configure it
-                this.SetPortDirection(pin, PortDirectionType.Input);
+                SetPortDirection(pin, PortDirectionType.Input);
 
                 // update our GPIO values
                 _gpio = _mcpDevice.ReadRegister(RegisterAddresses.GPIORegister);
@@ -382,8 +379,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         protected bool IsValidPin(IPin pin)
         {
-            var contains = this.Pins.AllPins.Contains(pin);
-            return (this.Pins.AllPins.Contains(pin));
+            var contains = Pins.AllPins.Contains(pin);
+            return (Pins.AllPins.Contains(pin));
         }
 
         /// <summary>
@@ -392,104 +389,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="pin"></param>
         protected void ResetPin(IPin pin)
         {
-            this.SetPortDirection(pin, PortDirectionType.Input);
-        }
-
-        // TODO: all these can go away when we get interface implementation 
-        // support from C# 8 into the Meadow.Core project. It won't work today,
-        // even though it's set to C# 8 because the project references the
-        // .NET 4.7.2 runtime. After the latest Mono rebase we'll be able to
-        // move it to Core 3.
-
-        public IBiDirectionalPort CreateBiDirectionalPort(IPin pin,
-            bool initialState = false,
-            InterruptMode interruptMode = InterruptMode.None,
-            ResistorMode resistorMode = ResistorMode.Disabled,
-            PortDirectionType initialDirection = PortDirectionType.Input,
-            double debounceDuration = 0.0,    // 0 - 1000 msec in .1 increments
-            double glitchDuration = 0.0,      // 0 - 1000 msec in .1 increments
-            OutputType outputType = OutputType.PushPull)
-        {
-            throw new NotImplementedException();
+            SetPortDirection(pin, PortDirectionType.Input);
         }
 
         public IPin GetPin(string pinName)
         {
             return Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);
-        }
-
-        //TODO: we know adding all these sucks. when we convert to .NET Core
-        // we'll be able to add these to the IIODevice interface implementation
-        // and they won't be necessary to put in like this.
-
-        public IAnalogInputPort CreateAnalogInputPort(IPin pin, float voltageReference = 3.3F)
-        {
-            throw new NotSupportedException("This part does not support Analog input");
-        }
-
-        public ISerialPort CreateSerialPort(SerialPortName portName, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, int readBufferSize = 1024)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISpiBus CreateSpiBus(IPin[] pins, long speed)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, long speed)
-        {
-            throw new NotImplementedException();
-        }
-
-        public II2cBus CreateI2cBus(IPin[] pins, ushort speed = 100)
-        {
-            throw new NotImplementedException();
-        }
-
-        public II2cBus CreateI2cBus(IPin clock, IPin data, ushort speed = 100)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IPwmPort CreatePwmPort(IPin pin, float frequency = 100, float dutyCycle = 0.5F, bool invert = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, SpiClockConfiguration config)
-        {
-            throw new NotImplementedException();
-        }
-
-        public II2cBus CreateI2cBus(IPin[] pins, int frequencyHz = 100000)
-        {
-            throw new NotImplementedException();
-        }
-
-        public II2cBus CreateI2cBus(IPin clock, IPin data, int frequencyHz = 100000)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetClock(DateTime dateTime)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISerialMessagePort CreateSerialMessagePort(SerialPortName portName, byte[] suffixDelimiter, bool preserveDelimiter, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, int readBufferSize = 512)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISerialMessagePort CreateSerialMessagePort(SerialPortName portName, byte[] prefixDelimiter, bool preserveDelimiter, int messageLength, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, int readBufferSize = 512)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetSynchronizationContext(SynchronizationContext context)
-        {
-            throw new NotImplementedException();
         }
     }
 }
