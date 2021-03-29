@@ -1,10 +1,11 @@
+using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Servos
 {
     public class Servo : ServoBase
     {
-        public Servo(IIODevice device, IPin pwm, ServoConfig config) :
+        public Servo(IMeadowDevice device, IPin pwm, ServoConfig config) :
             this(device.CreatePwmPort(pwm), config) { }
 
         public Servo(IPwmPort pwm, ServoConfig config) : 

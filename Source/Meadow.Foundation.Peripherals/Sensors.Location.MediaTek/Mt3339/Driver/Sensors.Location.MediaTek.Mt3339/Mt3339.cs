@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Meadow.Devices;
 using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
@@ -42,7 +43,7 @@ namespace Sensors.Location.MediaTek
             Init();
         }
 
-        public Mt3339( IIODevice device, SerialPortName serialPortName)
+        public Mt3339(IMeadowDevice device, SerialPortName serialPortName)
             : this(device.CreateSerialMessagePort(
                 serialPortName, suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                 preserveDelimiter: true, readBufferSize: 512))
