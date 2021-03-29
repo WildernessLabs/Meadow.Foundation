@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Meadow.Devices;
 using Meadow.Foundation.Helpers;
-using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -29,7 +29,6 @@ namespace Meadow.Foundation.Sensors.Motion
         // internal thread lock
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
-
 
         /// <summary>
         ///     Command byte (first byte in any communication).
@@ -747,7 +746,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="spiBus">Spi Bus object</param>
         /// <param name="chipSelect">Chip select pin.</param>
-        public Adxl362(IIODevice device, ISpiBus spiBus, IPin chipSelect)
+        public Adxl362(IMeadowDevice device, ISpiBus spiBus, IPin chipSelect)
         {
             //
             //  ADXL362 works in SPI mode 0 (CPOL = 0, CPHA = 0).
@@ -756,10 +755,6 @@ namespace Meadow.Foundation.Sensors.Motion
             Reset();
             Start();
         }
-
-        
-
-        
 
         ///// <summary>
         ///// Convenience method to get the current temperature. For frequent reads, use
@@ -994,7 +989,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin1">Pin connected to interrupt pin 1 on the ADXL362.</param>
         /// <param name="interruptMap2">Bit mask for interrupt pin 2</param>
         /// <param name="interruptPin2">Pin connected to interrupt pin 2 on the ADXL362.</param>
-        private void ConfigureInterrupts(IIODevice device, byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
+        private void ConfigureInterrupts(IMeadowDevice device, byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
         {
             _adxl362.WriteBytes(new byte[] { Command.WriteRegister, interruptMap1, interruptMap2 });
 
@@ -1041,7 +1036,5 @@ namespace Meadow.Foundation.Sensors.Motion
             Array.Copy(registers, 2, dataRegisters, 0, amount);
             DebugInformation.DisplayRegisters(Registers.XAxis8Bits, dataRegisters);
         }
-
-        
     }
 }

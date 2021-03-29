@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation.Spatial;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
 using System;
@@ -39,10 +40,6 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     Voltage that represents 0g.  This is the supply voltage / 2.
         /// </summary>
         private float _zeroGVoltage => SupplyVoltage / 2f;
-
-        
-
-        
 
         /// <summary>
         ///     Acceleration along the X-axis.
@@ -105,15 +102,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        
-
-        
-
         public event EventHandler<AccelerationConditionChangeResult> Updated;
-
-        
-
-        
 
         /// <summary>
         ///     Create a new ADXL337 sensor object.
@@ -121,7 +110,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="xPin">Analog pin connected to the X axis output from the ADXL335 sensor.</param>
         /// <param name="yPin">Analog pin connected to the Y axis output from the ADXL335 sensor.</param>
         /// <param name="zPin">Analog pin connected to the Z axis output from the ADXL335 sensor.</param>
-        public Adxl377(IIODevice device, IPin xPin, IPin yPin, IPin zPin)
+        public Adxl377(IMeadowDevice device, IPin xPin, IPin yPin, IPin zPin)
         {
             _xPort = device.CreateAnalogInputPort(xPin);
             _yPort = device.CreateAnalogInputPort(yPin);
@@ -134,10 +123,6 @@ namespace Meadow.Foundation.Sensors.Motion
             ZVoltsPerG = 0.00825f;
             SupplyVoltage = 3.3f;
         }
-
-        
-
-        
 
         ///// <summary>
         ///// Convenience method to get the current temperature. For frequent reads, use
@@ -235,7 +220,5 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             return new Vector(await _xPort.Read(), await _yPort.Read(), await _zPort.Read());
         }
-
-        
     }
 }

@@ -1,6 +1,7 @@
-﻿using System;
-using System.Threading;
+﻿using Meadow.Devices;
 using Meadow.Hardware;
+using System;
+using System.Threading;
 
 namespace Meadow.Foundation.Sensors.LoadCell
 {
@@ -44,7 +45,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// Creates an instance of the NAU7802 Driver class
         /// </summary>
         /// <param name="bus"></param>
-        public Hx711(IIODevice device, IPin sck, IPin dout)
+        public Hx711(IMeadowDevice device, IPin sck, IPin dout)
         {
             this.sck = device.CreateDigitalOutputPort(sck);
             this.dout = device.CreateDigitalInputPort(dout);

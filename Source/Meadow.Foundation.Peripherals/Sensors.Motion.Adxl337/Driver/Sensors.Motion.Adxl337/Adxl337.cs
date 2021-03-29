@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation.Spatial;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
 using System;
@@ -8,93 +9,83 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    ///     Driver for the ADXL337 triple axis accelerometer.
-    ///     +/- 5g
+    /// Driver for the ADXL337 triple axis accelerometer.
+    /// +/- 5g
     /// </summary>
     public class Adxl337 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
         IAccelerometer
     {
-        
-
         /// <summary>
-        ///     Minimum value that can be used for the update interval when the
-        ///     sensor is being configured to generate interrupts.
+        /// Minimum value that can be used for the update interval when the
+        /// sensor is being configured to generate interrupts.
         /// </summary>
         public const ushort MinimumPollingPeriod = 100;
 
-        
-
-        
-
         /// <summary>
-        ///     Analog input channel connected to the x axis.
+        /// Analog input channel connected to the x axis.
         /// </summary>
         private readonly IAnalogInputPort _xPort;
 
         /// <summary>
-        ///     Analog input channel connected to the x axis.
+        /// Analog input channel connected to the x axis.
         /// </summary>
         private readonly IAnalogInputPort _yPort;
 
         /// <summary>
-        ///     Analog input channel connected to the x axis.
+        /// Analog input channel connected to the x axis.
         /// </summary>
         private readonly IAnalogInputPort _zPort;
 
         /// <summary>
-        ///     Voltage that represents 0g.  This is the supply voltage / 2.
+        /// Voltage that represents 0g.  This is the supply voltage / 2.
         /// </summary>
         private float _zeroGVoltage => SupplyVoltage / 2f;
 
-        
-
-        
-
         /// <summary>
-        ///     Acceleration along the X-axis.
+        /// Acceleration along the X-axis.
         /// </summary>
         /// <remarks>
-        ///     This property will only contain valid data after a call to Read or after
-        ///     an interrupt has been generated.
+        /// This property will only contain valid data after a call to Read or after
+        /// an interrupt has been generated.
         /// </remarks>
         public float XAcceleration => Conditions.XAcceleration.Value;
 
         /// <summary>
-        ///     Acceleration along the Y-axis.
+        /// Acceleration along the Y-axis.
         /// </summary>
         /// <remarks>
-        ///     This property will only contain valid data after a call to Read or after
-        ///     an interrupt has been generated.
+        /// This property will only contain valid data after a call to Read or after
+        /// an interrupt has been generated.
         /// </remarks>
         public float YAcceleration => Conditions.YAcceleration.Value;
 
         /// <summary>
-        ///     Acceleration along the Z-axis.
+        /// Acceleration along the Z-axis.
         /// </summary>
         /// <remarks>
-        ///     This property will only contain valid data after a call to Read or after
-        ///     an interrupt has been generated.
+        /// This property will only contain valid data after a call to Read or after
+        /// an interrupt has been generated.
         /// </remarks>
         public float ZAcceleration => Conditions.ZAcceleration.Value;
 
         /// <summary>
-        ///     Volts per G for the X axis.
+        /// Volts per G for the X axis.
         /// </summary>
         public float XVoltsPerG { get; set; }
 
         /// <summary>
-        ///     Volts per G for the X axis.
+        /// Volts per G for the X axis.
         /// </summary>
         public float YVoltsPerG { get; set; }
 
         /// <summary>
-        ///     Volts per G for the X axis.
+        /// Volts per G for the X axis.
         /// </summary>
         public float ZVoltsPerG { get; set; }
 
         /// <summary>
-        ///     Power supply voltage applied to the sensor.  This will be set (in the constructor)
-        ///     to 3.3V by default.
+        /// Power supply voltage applied to the sensor.  This will be set (in the constructor)
+        /// to 3.3V by default.
         /// </summary>
         public float SupplyVoltage { get; set; }
 
@@ -111,23 +102,15 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        
-
-        
-
         public event EventHandler<AccelerationConditionChangeResult> Updated;
 
-        
-
-        
-
         /// <summary>
-        ///     Create a new ADXL337 sensor object.
+        /// Create a new ADXL337 sensor object.
         /// </summary>
         /// <param name="xPin">Analog pin connected to the X axis output from the ADXL337 sensor.</param>
         /// <param name="yPin">Analog pin connected to the Y axis output from the ADXL337 sensor.</param>
         /// <param name="zPin">Analog pin connected to the Z axis output from the ADXL337 sensor.</param>
-		public Adxl337(IIODevice device, IPin xPin, IPin yPin, IPin zPin)
+        public Adxl337(IMeadowDevice device, IPin xPin, IPin yPin, IPin zPin)
         {
             _xPort = device.CreateAnalogInputPort(xPin);
             _yPort = device.CreateAnalogInputPort(yPin);
@@ -140,10 +123,6 @@ namespace Meadow.Foundation.Sensors.Motion
             ZVoltsPerG = 0.550f;
             SupplyVoltage = 3.3f;
         }
-
-        
-
-        
 
         ///// <summary>
         ///// Convenience method to get the current temperature. For frequent reads, use
@@ -224,7 +203,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Read the sensor output and convert the sensor readings into acceleration values.
+        /// Read the sensor output and convert the sensor readings into acceleration values.
         /// </summary>
         public async Task Update()
         {
@@ -234,14 +213,12 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Get the raw analog input values from the sensor.
+        /// Get the raw analog input values from the sensor.
         /// </summary>
         /// <returns>Vector object containing the raw sensor data from the analog pins.</returns>
         public async Task<Vector> GetRawSensorData()
         {
             return new Vector(await _xPort.Read(), await _yPort.Read(), await _zPort.Read());
         }
-
-        
     }
 }

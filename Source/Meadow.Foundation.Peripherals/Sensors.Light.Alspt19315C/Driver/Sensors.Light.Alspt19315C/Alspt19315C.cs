@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
@@ -22,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Light
         ///     Create a new light sensor object using a static reference voltage.
         /// </summary>
         /// <param name="pin">AnalogChannel connected to the sensor.</param>
-        public Alspt19315C(IIODevice device, IPin pin)
+        public Alspt19315C(IMeadowDevice device, IPin pin)
         {
             sensor = device.CreateAnalogInputPort(pin);
         }
