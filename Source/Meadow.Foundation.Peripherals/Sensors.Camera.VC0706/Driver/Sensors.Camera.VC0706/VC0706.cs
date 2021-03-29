@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using System;
 using System.Text;
 using System.Threading;
@@ -26,7 +27,6 @@ namespace Meadow.Foundation.Sensors.Camera
         static byte MOTION_STATUS = 0x43;
         static byte TVOUT_CTRL = 0x44;
         static byte OSD_ADD_CHAR = 0x45;
-        
 
         static byte STOPCURRENTFRAME = 0x0;
         static byte STOPNEXTFRAME = 0x1;
@@ -73,9 +73,7 @@ namespace Meadow.Foundation.Sensors.Camera
         byte bufferLen;
         ushort frameptr;
 
-        
-
-        public Vc0706(IIODevice device, SerialPortName portName, int baud)
+        public Vc0706(IMeadowDevice device, SerialPortName portName, int baud)
         {
              serialPort = device.CreateSerialPort(portName, baud);
             /*serialPort = device.CreateSerialMessagePort(
@@ -103,8 +101,6 @@ namespace Meadow.Foundation.Sensors.Camera
                     break;
             }
         }
-
-        
 
         bool Reset()
         {

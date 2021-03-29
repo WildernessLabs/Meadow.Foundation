@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Distance;
 using System;
 using System.Threading;
@@ -7,8 +8,6 @@ namespace Meadow.Foundation.Sensors.Distance
 {
     public class Sfsr02 : IRangeFinder
     {
-        
-
         /// <summary>
         /// Returns current distance detected in cm.
         /// </summary>
@@ -32,10 +31,6 @@ namespace Meadow.Foundation.Sensors.Distance
         public event EventHandler<DistanceEventArgs> DistanceDetected;
         public event EventHandler<DistanceConditionChangeResult> Updated;
 
-        
-
-        
-
         /// <summary>
         /// Trigger/Echo Pin
         /// </summary>
@@ -43,16 +38,12 @@ namespace Meadow.Foundation.Sensors.Distance
 
         protected long tickStart;
 
-        
-
-        
-
         /// <summary>
         /// Create a new SFSR02 object with an IO Device
         /// </summary>
         /// <param name="triggerEchoPin"></param>
         /// <param name="device"></param>
-        public Sfsr02(IIODevice device, IPin triggerEchoPin) :
+        public Sfsr02(IMeadowDevice device, IPin triggerEchoPin) :
             this(device.CreateBiDirectionalPort(triggerEchoPin, false))
         { }
 
@@ -66,8 +57,6 @@ namespace Meadow.Foundation.Sensors.Distance
 
             this.triggerEchoPort.Changed += OnEchoPortChanged;
         }
-
-        
 
         /// <summary>
         /// Sends a trigger signal
