@@ -6,13 +6,10 @@ namespace Meadow.Foundation.Audio.Radio
 {
     public class Tea5767
     {
-        
         /// <summary>
         ///     TEA5767 radio.
         /// </summary>
         private readonly II2cPeripheral i2cPeripheral;
-
-        
 
         const byte TEA5767_ADDRESS = 0x60;
         static byte FIRST_DATA = 0;
@@ -55,12 +52,6 @@ namespace Meadow.Foundation.Audio.Radio
 
         public bool IsMuted { get; set; }
 
-        
-
-        
-
-        
-
         /// <summary>
         ///     Create a new TEA5767 object using the default parameters
         /// </summary>
@@ -71,10 +62,6 @@ namespace Meadow.Foundation.Audio.Radio
 
             InitTEA5767();
         }
-
-        
-
-        
 
         void InitTEA5767()
         {
@@ -469,7 +456,5 @@ namespace Meadow.Foundation.Audio.Radio
             transmissionData[FOURTH_DATA] &= 253;
             TransmitData();
         }
-
-        
     }
 }
