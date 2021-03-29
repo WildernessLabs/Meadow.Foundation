@@ -1,9 +1,8 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
-using Meadow.Units;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Meadow.Hardware;
+using Meadow.Units;
 using static Meadow.Foundation.Sensors.Weather.WindVane;
 
 namespace Meadow.Foundation.Sensors.Weather
@@ -45,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="device">The IO Device.</param>
         /// <param name="analogInputPin">The analog input pin.</param>
         /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages.</param>
-        public WindVane(IMeadowDevice device, IPin analogInputPin, IDictionary<float, Azimuth> azimuthVoltages = null)
+        public WindVane(IAnalogInputController device, IPin analogInputPin, IDictionary<float, Azimuth> azimuthVoltages = null)
             : this(device.CreateAnalogInputPort(analogInputPin), azimuthVoltages)
         {
         }

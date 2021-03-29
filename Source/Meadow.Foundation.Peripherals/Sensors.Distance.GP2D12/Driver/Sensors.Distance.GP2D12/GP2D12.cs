@@ -1,8 +1,7 @@
-﻿using Meadow.Devices;
+﻿using System;
+using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Distance;
-using System;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
@@ -21,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
         public DistanceConditions Conditions => throw new NotImplementedException();
 
-        public Gp2D12(IMeadowDevice device, IPin analogInputPin)
+        public Gp2D12(IAnalogInputController device, IPin analogInputPin)
         {
             analogInputPort = device.CreateAnalogInputPort(analogInputPin);
             analogInputPort.Changed += AnalogInputPort_Changed;

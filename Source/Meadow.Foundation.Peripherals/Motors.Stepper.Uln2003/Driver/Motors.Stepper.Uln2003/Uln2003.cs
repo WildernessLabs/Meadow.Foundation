@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <param name="pin2">The GPIO pin number which corresponds pin B on ULN2003 driver board.</param>
         /// <param name="pin3">The GPIO pin number which corresponds pin C on ULN2003 driver board.</param>
         /// <param name="pin4">The GPIO pin number which corresponds pin D on ULN2003 driver board.</param>
-        public Uln2003(IMeadowDevice device, IPin pin1, IPin pin2, IPin pin3, IPin pin4)
+        public Uln2003(IDigitalOutputController device, IPin pin1, IPin pin2, IPin pin3, IPin pin4)
         {
             outputPort1 = device.CreateDigitalOutputPort(pin1);
             outputPort2 = device.CreateDigitalOutputPort(pin2);

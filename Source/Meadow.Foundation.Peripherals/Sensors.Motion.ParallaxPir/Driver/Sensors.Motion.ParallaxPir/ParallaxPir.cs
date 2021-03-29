@@ -1,7 +1,5 @@
-﻿using Meadow.Devices;
+﻿using System;
 using Meadow.Hardware;
-using System;
-using static Meadow.Hardware.DigitalPortBase;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -35,7 +33,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="device"></param>
         /// <param name="inputPin"></param>
-        public ParallaxPir(IMeadowDevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) : 
+        public ParallaxPir(IDigitalInputController device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) : 
             this (device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount)) { }
 
         /// <summary>

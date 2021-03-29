@@ -1,10 +1,10 @@
-﻿using Meadow.Devices;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Meadow.Devices;
 using Meadow.Foundation.Helpers;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -746,7 +746,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="spiBus">Spi Bus object</param>
         /// <param name="chipSelect">Chip select pin.</param>
-        public Adxl362(IMeadowDevice device, ISpiBus spiBus, IPin chipSelect)
+        public Adxl362(IDigitalOutputController device, ISpiBus spiBus, IPin chipSelect)
         {
             //
             //  ADXL362 works in SPI mode 0 (CPOL = 0, CPHA = 0).

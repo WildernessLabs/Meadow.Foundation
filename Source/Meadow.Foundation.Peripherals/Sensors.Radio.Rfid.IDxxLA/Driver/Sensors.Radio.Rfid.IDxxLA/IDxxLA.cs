@@ -1,9 +1,8 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
-using Meadow.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Meadow.Hardware;
+using Meadow.Utilities;
 
 namespace Meadow.Foundation.Sensors.Radio.Rfid
 {
@@ -35,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         /// </summary>
         /// <param name="device">Device to use</param>
         /// <param name="serialPortName">Port name to use</param>
-        public IDxxLA(IMeadowDevice device, SerialPortName serialPortName) :
+        public IDxxLA(ISerialMessageController device, SerialPortName serialPortName) :
             this(device.CreateSerialMessagePort(
                     serialPortName,
                     suffixDelimiter: new byte[] { EndToken },

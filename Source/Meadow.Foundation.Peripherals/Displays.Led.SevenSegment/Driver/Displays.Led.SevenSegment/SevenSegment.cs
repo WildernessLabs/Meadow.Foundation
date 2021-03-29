@@ -80,7 +80,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="pinDecimal"></param>
         /// <param name="isCommonCathode"></param>
         public SevenSegment(
-            IMeadowDevice device, 
+            IDigitalOutputController device, 
             IPin pinA, IPin pinB,
             IPin pinC, IPin pinD,
             IPin pinE, IPin pinF,

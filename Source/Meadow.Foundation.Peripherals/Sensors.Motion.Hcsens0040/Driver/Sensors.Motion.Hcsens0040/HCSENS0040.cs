@@ -1,6 +1,5 @@
-﻿using Meadow.Devices;
+﻿using System;
 using Meadow.Hardware;
-using System;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -29,7 +28,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="device"></param>
         /// <param name="inputPin"></param>        
-        public Hcsens0040(IMeadowDevice device, IPin pin) : 
+        public Hcsens0040(IDigitalInputController device, IPin pin) : 
             this (device.CreateDigitalInputPort(pin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown)) { }
 
         /// <summary>

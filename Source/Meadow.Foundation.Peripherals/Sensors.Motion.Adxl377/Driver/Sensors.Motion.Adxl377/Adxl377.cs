@@ -1,10 +1,9 @@
-﻿using Meadow.Devices;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -110,7 +109,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="xPin">Analog pin connected to the X axis output from the ADXL335 sensor.</param>
         /// <param name="yPin">Analog pin connected to the Y axis output from the ADXL335 sensor.</param>
         /// <param name="zPin">Analog pin connected to the Z axis output from the ADXL335 sensor.</param>
-        public Adxl377(IMeadowDevice device, IPin xPin, IPin yPin, IPin zPin)
+        public Adxl377(IAnalogInputController device, IPin xPin, IPin yPin, IPin zPin)
         {
             _xPort = device.CreateAnalogInputPort(xPin);
             _yPort = device.CreateAnalogInputPort(yPin);

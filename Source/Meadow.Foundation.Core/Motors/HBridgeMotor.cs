@@ -1,7 +1,7 @@
-﻿using Meadow.Devices;
+﻿using System;
+using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Peripherals.Motors;
-using System;
 
 namespace Meadow.Foundation.Motors
 {
@@ -72,6 +72,13 @@ namespace Meadow.Foundation.Motors
         /// </summary>
         public float MotorCalibrationMultiplier { get; set; } = 1;
 
+        // TODO: this convenience constructor is weird. we create the PWM but
+        // not the digital output port. i think if we're going to have a convenience
+        // constructor it should be:
+        public HBridgeMotor(IMeadowDevice device, IPin a1Pin, IPin a2Pin, IPin enablePin, float pwmFrequency = 1600) :
+            this(device.CreatePwmPort(a1Pin), device.CreatePwmPort(a2Pin), device.CreateDigitalOutputPort(enablePin), pwmFrequency)
+        { }
+        // and we should [obsolete] or delete this one:
         public HBridgeMotor(IPwmOutputController device, IPin a1Pin, IPin a2Pin, IDigitalOutputPort enablePin, float pwmFrequency = 1600) :
             this(device.CreatePwmPort(a1Pin), device.CreatePwmPort(a2Pin), enablePin, pwmFrequency)
         { }

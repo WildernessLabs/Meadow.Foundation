@@ -19,7 +19,7 @@ namespace Meadow.Foundation.FeatherWings
 
         public PushButton ButtonC { get; protected set; }
 
-        public OLED128x32Wing(II2cBus i2cBus, IMeadowDevice device, IPin pinA, IPin pinB, IPin pinC) : 
+        public OLED128x32Wing(II2cBus i2cBus, IDigitalInputController device, IPin pinA, IPin pinB, IPin pinC) : 
             this(i2cBus, 
                 device.CreateDigitalInputPort(pinA, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp),
                 device.CreateDigitalInputPort(pinB, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp),

@@ -1,7 +1,6 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
-using System;
+﻿using System;
 using System.Threading;
+using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Light
 {
@@ -490,6 +489,8 @@ namespace Meadow.Foundation.Sensors.Light
             tsl2561.WriteRegister(Registers.Timing, timing);
         }
 
+        // TODO: should this get integrated into one of the ctors? wouldn't it be nicer to
+        // setup the interrupt stuff during construction?
         /// <summary>
         /// Turn interrupts on or off and set the conversion trigger count.
         /// </summary>
@@ -504,7 +505,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// generated.
         /// </param>
         /// <param name="pin">GPIO pin connected to the TSL2561 interrupt pin.  Set to null to use the previously supplied pin.</param>
-        public void SetInterruptMode(IMeadowDevice device, InterruptMode mode, byte conversionCount, IPin pin = null)
+        public void SetInterruptMode(IDigitalInputController device, InterruptMode mode, byte conversionCount, IPin pin = null)
         {
             if (conversionCount > 15)
             {

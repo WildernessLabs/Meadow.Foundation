@@ -1,9 +1,9 @@
-﻿using Meadow.Devices;
+﻿using System.Threading.Tasks;
 using Meadow.Hardware;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
+    //TODO: this class needs the StartUpdating/StopUpdating/IOBservable pattern
     public class Temt6000
     {
         /// <summary>
@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Create a new light sensor object using a static reference voltage.
         /// </summary>
         /// <param name="pin">AnalogChannel connected to the sensor.</param>
-        public Temt6000(IMeadowDevice device, IPin pin)
+        public Temt6000(IAnalogInputController device, IPin pin)
         {
             sensor = device.CreateAnalogInputPort(pin);
         }

@@ -1,8 +1,7 @@
-﻿using Meadow.Devices;
+﻿using System;
+using System.Threading;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Distance;
-using System;
-using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
@@ -43,7 +42,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         /// <param name="triggerEchoPin"></param>
         /// <param name="device"></param>
-        public Sfsr02(IMeadowDevice device, IPin triggerEchoPin) :
+        public Sfsr02(IBiDirectionalController device, IPin triggerEchoPin) :
             this(device.CreateBiDirectionalPort(triggerEchoPin, false))
         { }
 

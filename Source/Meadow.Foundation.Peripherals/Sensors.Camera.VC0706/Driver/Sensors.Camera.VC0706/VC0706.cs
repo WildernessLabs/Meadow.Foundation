@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System;
 using System.Text;
 using System.Threading;
@@ -73,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Camera
         byte bufferLen;
         ushort frameptr;
 
-        public Vc0706(IMeadowDevice device, SerialPortName portName, int baud)
+        public Vc0706(ISerialController device, SerialPortName portName, int baud)
         {
              serialPort = device.CreateSerialPort(portName, baud);
             /*serialPort = device.CreateSerialMessagePort(

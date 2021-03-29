@@ -1,4 +1,3 @@
-using Meadow.Devices;
 using Meadow.Foundation.Helpers;
 using Meadow.Hardware;
 using System;
@@ -159,7 +158,7 @@ namespace Meadow.Foundation.RTCs
         private AlarmRaised _alarm2Delegate;
         private bool _interruptCreatedInternally;
 
-        protected Ds323x(I2cPeripheral peripheral, IMeadowDevice device, IPin interruptPin)
+        protected Ds323x(I2cPeripheral peripheral, IDigitalInputController device, IPin interruptPin)
         {
             ds323x = peripheral;
 
