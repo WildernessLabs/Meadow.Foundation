@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays.Tft
@@ -7,7 +8,7 @@ namespace Meadow.Foundation.Displays.Tft
     {
         public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
 
-        public Ili9163(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ili9163(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
