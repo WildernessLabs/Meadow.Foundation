@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPins
         /// </summary>
-        public LedBarGraph(IDigitalOutputDevice device, IPin[] pins)
+        public LedBarGraph(IDigitalOutputController device, IPin[] pins)
         {
             leds = new Led[pins.Length];
 

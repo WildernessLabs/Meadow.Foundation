@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Provide an interface to connect to a MCP23008 port expander.
     /// </summary>
-    public partial class Mcp23x08 : IDigitalInputDevice, IDigitalOutputDevice
+    public partial class Mcp23x08 : IDigitalInputController, IDigitalOutputController
     {
         /// <summary>
         /// Raised when the value of a pin configured for input changes. Use in

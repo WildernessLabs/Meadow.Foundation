@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="sensorType">Type of sensor attached to the analog port.</param>
         /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
         public AnalogWaterLevel(
-            IAnalogInputDevice device,
+            IAnalogInputController device,
             IPin analogPin,
             Calibration calibration = null
             ) : this(device.CreateAnalogInputPort(analogPin), calibration)

@@ -14,7 +14,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// Control the outputs from a 74595 shift register (or a chain of shift registers)
     /// using a SPI interface.
     /// </remarks>
-    public partial class x74595 : IDigitalOutputDevice
+    public partial class x74595 : IDigitalOutputController
     {
         public PinDefinitions Pins { get; } = new PinDefinitions();
 

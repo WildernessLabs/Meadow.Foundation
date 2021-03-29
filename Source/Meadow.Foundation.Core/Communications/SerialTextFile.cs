@@ -80,7 +80,7 @@ namespace Meadow.Foundation.Communications
         /// <param name="dataBits">Data bits.</param>
         /// <param name="stopBits">Stop bits.</param>
         /// <param name="endOfLine">Text indicating the end of a line of text.</param>
-        public SerialTextFile(ISerialDevice device, SerialPortName port, int baudRate, Parity parity, int dataBits, StopBits stopBits,
+        public SerialTextFile(ISerialController device, SerialPortName port, int baudRate, Parity parity, int dataBits, StopBits stopBits,
             string endOfLine)
         {
             serialPort = device.CreateSerialPort(port, baudRate, dataBits, parity, stopBits);

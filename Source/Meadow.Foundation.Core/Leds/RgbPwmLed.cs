@@ -94,7 +94,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="greenLedForwardVoltage"></param>
         /// <param name="blueLedForwardVoltage"></param>
         /// <param name="isCommonCathode"></param>
-        public RgbPwmLed(IPwmOutputDevice device,
+        public RgbPwmLed(IPwmOutputController device,
             IPin redPwmPin, IPin greenPwmPin, IPin bluePwmPin,
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,

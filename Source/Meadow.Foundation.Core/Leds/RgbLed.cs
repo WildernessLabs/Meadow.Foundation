@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="bluePin">Blue Pin</param>
         /// <param name="commonType">Is Common Cathode</param>
         public RgbLed(
-            IDigitalOutputDevice device, 
+            IDigitalOutputController device, 
             IPin redPin, 
             IPin greenPin, 
             IPin bluePin, 

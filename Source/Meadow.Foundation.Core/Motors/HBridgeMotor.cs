@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Motors
         /// </summary>
         public float MotorCalibrationMultiplier { get; set; } = 1;
 
-        public HBridgeMotor(IPwmOutputDevice device, IPin a1Pin, IPin a2Pin, IDigitalOutputPort enablePin, float pwmFrequency = 1600) :
+        public HBridgeMotor(IPwmOutputController device, IPin a1Pin, IPin a2Pin, IDigitalOutputPort enablePin, float pwmFrequency = 1600) :
             this(device.CreatePwmPort(a1Pin), device.CreatePwmPort(a2Pin), enablePin, pwmFrequency)
         { }
 

@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="sensorType">Type of sensor attached to the analog port.</param>
         /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
         public AnalogTemperature(
-            IAnalogInputDevice device,
+            IAnalogInputController device,
             IPin analogPin,
             KnownSensorType sensorType,
             Calibration calibration = null
