@@ -5,7 +5,7 @@ using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
 // TODO: should this be `Sensors.Gnss.MediaTek`?
-namespace Sensors.Location.MediaTek
+namespace Meadow.Foundation.Sensors.Location.MediaTek
 {
     public class NmeaEventArgs
     {

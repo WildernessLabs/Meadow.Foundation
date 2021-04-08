@@ -1,5 +1,4 @@
-﻿using System;
-namespace Sensors.Location.MediaTek
+﻿namespace Meadow.Foundation.Sensors.Location.MediaTek
 {
     public struct Commands
     {

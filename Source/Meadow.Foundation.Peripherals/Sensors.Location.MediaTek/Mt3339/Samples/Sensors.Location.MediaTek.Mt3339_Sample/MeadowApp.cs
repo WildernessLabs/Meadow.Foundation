@@ -1,10 +1,8 @@
-﻿using System;
-using System.Text;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Hardware;
+using Meadow.Foundation.Sensors.Location.MediaTek;
 using Meadow.Peripherals.Sensors.Location.Gnss;
-using Sensors.Location.MediaTek;
+using System;
 
 namespace MeadowApp
 {
