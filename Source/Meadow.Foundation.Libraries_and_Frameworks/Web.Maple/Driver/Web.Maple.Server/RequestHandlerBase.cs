@@ -96,7 +96,7 @@ namespace Meadow.Foundation.Web.Maple.Server
         //private Hashtable ParseUrlPairs(string s)
         private StringDictionary ParseUrlPairs(string s)
         {
-            if (s == null) {
+            if (string.IsNullOrEmpty(s)) {
                 return null;
             }
 
