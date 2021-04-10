@@ -976,6 +976,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Mcp9808
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{67F9992A-6BD3-4452-89A5-42C4BAABC506}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Weather.SwitchingAnemometer", "Sensors.Weather.SwitchingAnemometer", "{4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{970D9570-A24B-4329-A888-F8DE9199A600}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Weather.SwitchingAnemometer", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Driver\Sensors.Weather.SwitchingAnemometer\Sensors.Weather.SwitchingAnemometer.csproj", "{194B2FB3-B9A0-4430-AE8D-5BE4D94D885D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchingAnemometer_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Samples\SwitchingAnemometer_Sample\SwitchingAnemometer_Sample.csproj", "{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2136,6 +2144,14 @@ Global
 		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Release|Any CPU.Build.0 = Release|Any CPU
 		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{194B2FB3-B9A0-4430-AE8D-5BE4D94D885D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{194B2FB3-B9A0-4430-AE8D-5BE4D94D885D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{194B2FB3-B9A0-4430-AE8D-5BE4D94D885D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{194B2FB3-B9A0-4430-AE8D-5BE4D94D885D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2621,6 +2637,10 @@ Global
 		{99621A27-6E31-4D71-A395-FEB610337646} = {B71872DC-C58D-41A7-B24F-78D8136EE49E}
 		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A} = {17A4EBF1-A1F8-475F-A304-A9B7F7B58C82}
 		{67F9992A-6BD3-4452-89A5-42C4BAABC506} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
+		{4D8E9D80-2108-4564-8B0A-D5DCEB4723C0} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{970D9570-A24B-4329-A888-F8DE9199A600} = {4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}
+		{194B2FB3-B9A0-4430-AE8D-5BE4D94D885D} = {4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}
+		{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6} = {970D9570-A24B-4329-A888-F8DE9199A600}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
