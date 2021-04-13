@@ -32,8 +32,6 @@ namespace Meadow.Foundation.Sensors.Temperature
     public class AnalogTemperature :
         FilterableChangeObservableBase<CompositeChangeResult<Units.Temperature>, Units.Temperature>,
         ITemperatureSensor
-        //FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        //ITemperatureSensor
     {
         /// <summary>
         /// Raised when the value of the reading changes.
@@ -118,7 +116,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     The temperature is given by the following calculation:
         ///     temperature = (reading in millivolts - yIntercept) / millivolts per degree centigrade
         /// </remarks>
-        public Units.Temperature Temperature { get; protected set; }
+        public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
         ///     Default constructor, private to prevent this being used.
