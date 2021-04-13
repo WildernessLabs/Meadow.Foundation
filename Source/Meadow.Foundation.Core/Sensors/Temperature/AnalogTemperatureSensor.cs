@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
+using Meadow.Peripherals.Sensors;
 using System;
 using System.Threading.Tasks;
 
@@ -29,14 +29,16 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP36, LM50             750                     10                      0.5
     /// TMP37                   500                     20                      0
     /// </remarks>
-    public class AnalogTemperature
-        : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+    public class AnalogTemperature :
+        FilterableChangeObservableBase<CompositeChangeResult<Units.Temperature>, Units.Temperature>,
         ITemperatureSensor
+        //FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+        //ITemperatureSensor
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<AtmosphericConditionChangeResult> Updated = delegate { };
+        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
         ///     Calibration class for new sensor types.  This allows new sensors
@@ -116,9 +118,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     The temperature is given by the following calculation:
         ///     temperature = (reading in millivolts - yIntercept) / millivolts per degree centigrade
         /// </remarks>
-        public float Temperature { get; protected set; }
-
-        float ITemperatureSensor.Temperature => Temperature;
+        public Units.Temperature Temperature { get; protected set; }
 
         /// <summary>
         ///     Default constructor, private to prevent this being used.
@@ -188,15 +188,11 @@ namespace Meadow.Foundation.Sensors.Temperature
             (
                 new FilterableChangeObserver<FloatChangeResult, float>(
                     h => {
-                        var newTemp = VoltageToTemperature(h.New);
-                        var oldTemp = VoltageToTemperature(h.Old);
+                        var newTemp = new Units.Temperature(VoltageToTemperature(h.New), Units.Temperature.UnitType.Celsius);
+                        var oldTemp = new Units.Temperature(VoltageToTemperature(h.Old), Units.Temperature.UnitType.Celsius);
                         Temperature = newTemp; // save state
-                        RaiseEventsAndNotify
-                        (
-                            new AtmosphericConditionChangeResult(
-                                new AtmosphericConditions(newTemp, null, null),
-                                new AtmosphericConditions(oldTemp, null, null)
-                            )
+                        RaiseEventsAndNotify (
+                            new CompositeChangeResult<Units.Temperature>(newTemp, oldTemp)
                         );
                     }
                 )
@@ -212,14 +208,14 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        public async Task<AtmosphericConditions> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
+        public async Task<CompositeChangeResult<Units.Temperature>> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
             // read the voltage
             float voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
             // convert and save to our temp property for later retreival
-            Temperature = VoltageToTemperature(voltage);
+            Temperature = new Units.Temperature(VoltageToTemperature(voltage), Units.Temperature.UnitType.Celsius);
             // return
-            return new AtmosphericConditions(Temperature, null, null);
+            return new CompositeChangeResult<Units.Temperature>(Temperature, null);
             //return Temperature;
         }
 
@@ -253,9 +249,9 @@ namespace Meadow.Foundation.Sensors.Temperature
             AnalogInputPort.StopSampling();
         }
 
-        protected void RaiseEventsAndNotify(AtmosphericConditionChangeResult changeResult)
+        protected void RaiseEventsAndNotify(CompositeChangeResult<Units.Temperature> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
+            TemperatureUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
