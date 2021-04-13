@@ -188,8 +188,8 @@ namespace Meadow.Foundation.Sensors.Temperature
             (
                 new FilterableChangeObserver<FloatChangeResult, float>(
                     h => {
-                        var newTemp = new Units.Temperature(VoltageToTemperature(h.New), Units.Temperature.UnitType.Celsius);
-                        var oldTemp = new Units.Temperature(VoltageToTemperature(h.Old), Units.Temperature.UnitType.Celsius);
+                        var newTemp = VoltageToTemperature(h.New);
+                        var oldTemp = VoltageToTemperature(h.Old);
                         Temperature = newTemp; // save state
                         RaiseEventsAndNotify (
                             new CompositeChangeResult<Units.Temperature>(newTemp, oldTemp)
@@ -213,7 +213,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             // read the voltage
             float voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
             // convert and save to our temp property for later retreival
-            Temperature = new Units.Temperature(VoltageToTemperature(voltage), Units.Temperature.UnitType.Celsius);
+            Temperature = VoltageToTemperature(voltage);
             // return
             return new CompositeChangeResult<Units.Temperature>(Temperature, null);
             //return Temperature;
@@ -261,9 +261,15 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="voltage"></param>
         /// <returns>temperature in celcius</returns>
-        protected float VoltageToTemperature(float voltage)
+        protected Units.Temperature VoltageToTemperature(float voltage)
         {
-            return SensorCalibration.SampleReading + (voltage * 1000 - SensorCalibration.MillivoltsAtSampleReading) / SensorCalibration.MillivoltsPerDegreeCentigrade;
+            return new Units.Temperature(
+                SensorCalibration.SampleReading
+                +
+                (voltage * 1000 - SensorCalibration.MillivoltsAtSampleReading)
+                /
+                SensorCalibration.MillivoltsPerDegreeCentigrade,
+                Units.Temperature.UnitType.Celsius);
         }
     }
 }
