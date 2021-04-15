@@ -345,6 +345,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, RelativeHumidity, Pressure> changeResult)
         {
             Updated?.Invoke(this, changeResult);
+            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.New.Value.Unit1, changeResult.Old.Value.Unit1));
+            HumidityUpdated?.Invoke(this, new CompositeChangeResult<Units.RelativeHumidity>(changeResult.New.Value.Unit2, changeResult.Old.Value.Unit2));
+            PressureUpdated?.Invoke(this, new CompositeChangeResult<Units.Pressure>(changeResult.New.Value.Unit3, changeResult.Old.Value.Unit3));
             base.NotifyObservers(changeResult);
         }
 
