@@ -6,6 +6,7 @@ using Meadow.Devices;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Sensors.Atmospheric.BME280_Sample
 {
@@ -37,25 +38,27 @@ namespace Sensors.Atmospheric.BME280_Sample
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree, and humidty by 5%.
             // (blowing hot breath on the sensor should trigger)
-            bme280.Subscribe(new FilterableChangeObserver<AtmosphericConditionChangeResult, AtmosphericConditions>(
-                h => {
-                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New.Temperature}, old: {h.Old.Temperature}");
+            var consumer = Bme280.CreateObserver(
+                handler: result => {
+                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {result.New.Value.Unit1.Celsius}, old: {result.Old.Value.Unit1.Celsius}");
                 },
-                e => {
-                    return (
-                        (Math.Abs(e.Delta.Temperature.Value) > 1)
-                        &&
-                        (Math.Abs(e.Delta.Pressure.Value) > 5)
-                        );
-                }
-                ));
+                filter: result => {
+                    return true;
+                    //return (
+                    //    (Math.Abs(result.Delta.Value.Unit1.Celsius) > 1)
+                    //    &&
+                    //    (Math.Abs(result.Delta.Value.Unit3.Bar) > 5)
+                    //    );
+                } );
+            bme280.Subscribe(consumer);
 
-            // classical .NET events can also be used:
-            bme280.Updated += (object sender, AtmosphericConditionChangeResult e) => {
-                Console.WriteLine($"  Temperature: {e.New.Temperature}°C");
-                Console.WriteLine($"  Pressure: {e.New.Pressure}hPa");
-                Console.WriteLine($"  Relative Humidity: {e.New.Humidity}%");
-            };
+
+            //// classical .NET events can also be used:
+            //bme280.Updated += (object sender, CompositeChangeResult<Units.Temperature, RelativeHumidity, Pressure> e) => {
+            //    Console.WriteLine($"  Temperature: {e.New.Value.unit1.Celsius}°C");
+            //    Console.WriteLine($"  Pressure: {e.New.Value.unit3.Pressure}hPa");
+            //    Console.WriteLine($"  Relative Humidity: {e.New.Humidity}%");
+            //};
 
             // just for funsies.
             Console.WriteLine($"ChipID: {bme280.GetChipID():X2}");

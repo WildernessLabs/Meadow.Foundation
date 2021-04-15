@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20                      0
     /// </remarks>
     public class AnalogTemperature :
-        FilterableChangeObservableBase<CompositeChangeResult<Units.Temperature>, Units.Temperature>,
+        FilterableChangeObservable<CompositeChangeResult<Units.Temperature>, Units.Temperature?>,
         ITemperatureSensor
     {
         /// <summary>
@@ -117,13 +117,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     temperature = (reading in millivolts - yIntercept) / millivolts per degree centigrade
         /// </remarks>
         public Units.Temperature? Temperature { get; protected set; }
-
-        /// <summary>
-        ///     Default constructor, private to prevent this being used.
-        /// </summary>
-        private AnalogTemperature()
-        {
-        }
 
         /// <summary>
         ///     New instance of the AnalogTemperatureSensor class.

@@ -25,18 +25,17 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree.
-            analogTemperature.Subscribe(new FilterableChangeObserver<AtmosphericConditionChangeResult, AtmosphericConditions>(
-                h => {
-                    Console.WriteLine($"Temp changed by a degree; new: {h.New.Temperature}, old: {h.Old.Temperature}");
+            var consumer = AnalogTemperature.CreateObserver(
+                handler: result => {
+                    Console.WriteLine($"Temp changed: ");
                 },
-                e => {
-                    return (Math.Abs(e.Delta.Temperature.Value) > 1);
-                }
-                ));
+                filter: null
+                );
+            analogTemperature.Subscribe(consumer);
 
             // classical .NET events can also be used:
-            analogTemperature.Updated += (object sender, AtmosphericConditionChangeResult e) => {
-                Console.WriteLine($"Temp Changed, temp: {e.New.Temperature}°C");
+            analogTemperature.TemperatureUpdated += (object sender, CompositeChangeResult<Meadow.Units.Temperature> e) => {
+                Console.WriteLine($"Temp Changed, temp: {e.New.Celsius}°C");
             };
 
             // Get an initial reading.
@@ -49,8 +48,8 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
         protected async Task ReadTemp()
         {
-            var conditions = await analogTemperature.Read();
-            Console.WriteLine($"Initial temp: { conditions.Temperature }");
+            var temperature = await analogTemperature.Read();
+            Console.WriteLine($"Initial temp: { temperature.New.Celsius }");
         }
     }
 }
