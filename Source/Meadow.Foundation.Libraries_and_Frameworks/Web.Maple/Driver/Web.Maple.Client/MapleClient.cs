@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Maple.Client
+namespace Meadow.Foundation.Maple.Web.Client
 {
     public class MapleClient
     {
