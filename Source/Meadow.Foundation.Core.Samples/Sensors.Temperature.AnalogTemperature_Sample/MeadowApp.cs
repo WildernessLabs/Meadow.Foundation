@@ -27,7 +27,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             // when the temperature changes by at least a degree.
             var consumer = AnalogTemperature.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Temp changed: ");
+                    Console.WriteLine($"Temp changed: {result.New.Celsius}");
                 },
                 filter: null
                 );
