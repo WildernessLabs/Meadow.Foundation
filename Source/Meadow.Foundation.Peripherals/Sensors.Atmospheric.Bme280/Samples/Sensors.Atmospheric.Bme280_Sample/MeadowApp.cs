@@ -53,12 +53,12 @@ namespace Sensors.Atmospheric.BME280_Sample
             bme280.Subscribe(consumer);
 
 
-            //// classical .NET events can also be used:
-            //bme280.Updated += (object sender, CompositeChangeResult<Units.Temperature, RelativeHumidity, Pressure> e) => {
-            //    Console.WriteLine($"  Temperature: {e.New.Value.unit1.Celsius}°C");
-            //    Console.WriteLine($"  Pressure: {e.New.Value.unit3.Pressure}hPa");
-            //    Console.WriteLine($"  Relative Humidity: {e.New.Humidity}%");
-            //};
+            // classical .NET events can also be used:
+            bme280.Updated += (object sender, CompositeChangeResult<Temperature, RelativeHumidity, Pressure> e) => {
+                Console.WriteLine($"  Temperature: {e.New.Value.Unit1.Celsius}°C");
+                Console.WriteLine($"  Relative Humidity: {e.New.Value.Unit2.Value}%");
+                Console.WriteLine($"  Pressure: {e.New.Value.Unit3.Pascal}hPa");
+            };
 
             // just for funsies.
             Console.WriteLine($"ChipID: {bme280.GetChipID():X2}");
