@@ -984,6 +984,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Weather.SwitchingAn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchingAnemometer_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Samples\SwitchingAnemometer_Sample\SwitchingAnemometer_Sample.csproj", "{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Motors.ElectronicSpeedController", "Motors.ElectronicSpeedController", "{36346C46-BCCE-46D5-964F-E2A71EFD9CA2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D42BCA76-BA33-40A3-9B39-FD72FC9FA9AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motors.ElectronicSpeedController", "Meadow.Foundation.Peripherals\Motors.ElectronicSpeedController\Driver\Motors.ElectronicSpeedController\Motors.ElectronicSpeedController.csproj", "{F3499920-32A2-4E5E-9D9E-4D04B7399C49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElectronicSpeedController_Sample", "Meadow.Foundation.Peripherals\Motors.ElectronicSpeedController\Samples\ElectronicSpeedController_Sample\ElectronicSpeedController_Sample.csproj", "{619B1B71-D04F-43DB-8EC2-A5E40276726D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2152,6 +2160,14 @@ Global
 		{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3499920-32A2-4E5E-9D9E-4D04B7399C49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3499920-32A2-4E5E-9D9E-4D04B7399C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3499920-32A2-4E5E-9D9E-4D04B7399C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3499920-32A2-4E5E-9D9E-4D04B7399C49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{619B1B71-D04F-43DB-8EC2-A5E40276726D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{619B1B71-D04F-43DB-8EC2-A5E40276726D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{619B1B71-D04F-43DB-8EC2-A5E40276726D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{619B1B71-D04F-43DB-8EC2-A5E40276726D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2641,6 +2657,10 @@ Global
 		{970D9570-A24B-4329-A888-F8DE9199A600} = {4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}
 		{194B2FB3-B9A0-4430-AE8D-5BE4D94D885D} = {4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}
 		{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6} = {970D9570-A24B-4329-A888-F8DE9199A600}
+		{36346C46-BCCE-46D5-964F-E2A71EFD9CA2} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{D42BCA76-BA33-40A3-9B39-FD72FC9FA9AA} = {36346C46-BCCE-46D5-964F-E2A71EFD9CA2}
+		{F3499920-32A2-4E5E-9D9E-4D04B7399C49} = {36346C46-BCCE-46D5-964F-E2A71EFD9CA2}
+		{619B1B71-D04F-43DB-8EC2-A5E40276726D} = {D42BCA76-BA33-40A3-9B39-FD72FC9FA9AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
