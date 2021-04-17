@@ -13,8 +13,6 @@ namespace Meadow.Foundation.Sensors.Temperature
     public class Lm75 :
         FilterableChangeObservable<CompositeChangeResult<Units.Temperature>, Units.Temperature>,
         ITemperatureSensor
-    //FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-    //IAtmosphericSensor, ITemperatureSensor
     {
         /// <summary>
         /// LM75 Registers
