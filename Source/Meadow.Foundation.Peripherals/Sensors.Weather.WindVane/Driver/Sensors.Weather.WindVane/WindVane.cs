@@ -17,12 +17,14 @@ namespace Meadow.Foundation.Sensors.Weather
     /// 4.7kΩ / 1kΩ, as can be found in the SparkFun weather shield, or Wilderness
     /// Labs Clima Pro board.
     /// </summary>
-    public partial class WindVane : FilterableChangeObservableBase<WindVaneChangeResult, Azimuth>
+    //public partial class WindVane : FilterableChangeObservableBase<WindVaneChangeResult, Azimuth>
+    public partial class WindVane : FilterableChangeObservable<CompositeChangeResult<Azimuth>, Azimuth>
     {
         /// <summary>
         /// Raised when the azimuth of the wind changes.
         /// </summary>
-        public event EventHandler<WindVaneChangeResult> Updated = delegate { };
+        //public event EventHandler<WindVaneChangeResult> Updated = delegate { };
+        public event EventHandler<CompositeChangeResult<Azimuth>> Updated = delegate { };
 
         /// <summary>
         /// The last recorded azimuth of the wind.
@@ -127,7 +129,8 @@ namespace Meadow.Foundation.Sensors.Weather
         protected void HandleAnalogUpdate(FloatChangeResult result)
         {
             var windAzimuth = LookupWindDirection(result.New);
-            WindVaneChangeResult windChangeResult = new WindVaneChangeResult()
+            CompositeChangeResult<Azimuth> windChangeResult = new CompositeChangeResult<Azimuth>()
+            //WindVaneChangeResult windChangeResult = new WindVaneChangeResult()
             {
                 Old = this.LastRecordedWindAzimuth,
                 New = windAzimuth
@@ -140,7 +143,8 @@ namespace Meadow.Foundation.Sensors.Weather
         /// Thread and inheritance safe way to raise the event and notify subs
         /// </summary>
         /// <param name="windAzimuth"></param>
-        protected void RaiseUpdated(WindVaneChangeResult changeResult)
+        //protected void RaiseUpdated(WindVaneChangeResult changeResult)
+        protected void RaiseUpdated(CompositeChangeResult<Azimuth> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
