@@ -23,6 +23,7 @@ namespace MeadowApp
         {
             Console.WriteLine("Initialize hardware...");
 
+            //==== onboard LED
             onboardLed = new RgbPwmLed(device: Device,
                 redPwmPin: Device.Pins.OnboardLedRed,
                 greenPwmPin: Device.Pins.OnboardLedGreen,
@@ -30,31 +31,34 @@ namespace MeadowApp
                 3.3f, 3.3f, 3.3f,
                 Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
 
-            //==== anemometer
+            //==== create the anemometer
             anemometer = new SwitchingAnemometer(Device, Device.Pins.A01);
 
-            // classic events
+            //==== classic events example
             anemometer.WindSpeedUpdated += (object sender, CompositeChangeResult<Speed> e) =>
             {
                 Console.WriteLine($"new speed: {e.New.KilometersPerHour:n1}kmh, old: {e.Old.KilometersPerHour:n1}kmh");
                 OutputWindSpeed(e.New);
             };
 
-            //// iobservable
-            //anemometer.Subscribe(new FilterableChangeObserver<SwitchingAnemometer.AnemometerChangeResult, float>(
-            //    handler: result => {
-            //        Console.WriteLine($"new speed: {e.New.KilometersPerHour:n1}kmh, old: {e.Old.KilometersPerHour:n1}kmh");
-            //    },
-            //    // only notify if it's change more than 0.1kmh:
-            //    //filter: result => {
-            //    //    Console.WriteLine($"delta: {result.Delta}");
-            //    //    return result.Delta > 0.1;
-            //    //    }
-            //    null
-            //));
+            //==== IObservable example
+            var observer = SwitchingAnemometer.CreateObserver(
+                handler: result => {
+                    Console.WriteLine($"new speed (from observer): {result.New.KilometersPerHour:n1}kmh, old: {result.Old.KilometersPerHour:n1}kmh");
+                },
+                // only notify if it's change more than 0.1kmh:
+                //filter: result => {
+                //    Console.WriteLine($"delta: {result.Delta}");
+                //    return result.Delta > 0.1;
+                //    }
+                null
+                );
+            anemometer.Subscribe(observer);
 
+            // start raising updates
             anemometer.StartUpdating();
 
+            Console.WriteLine("Hardware initialized.");
         }
 
         /// <summary>
