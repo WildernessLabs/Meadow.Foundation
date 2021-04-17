@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Servos
 
             // calculate the appropriate pulse duration for the angle
             float pulseDuration = CalculatePulseDuration(angle);
-            Console.WriteLine("Pulse Duration: " + pulseDuration.ToString());
+            //Console.WriteLine("Pulse Duration: " + pulseDuration.ToString());
 
             // send our pulse to the servo to make it move
             SendCommandPulse(pulseDuration);
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Servos
 
         protected void SendCommandPulse(float pulseDuration)
         {
-            Console.WriteLine($"Sending Command Pulse, duration {pulseDuration}, dutycycle: {CalculateDutyCycle(pulseDuration)}");
+            //Console.WriteLine($"Sending Command Pulse, duration {pulseDuration}, dutycycle: {CalculateDutyCycle(pulseDuration)}");
             _pwm.DutyCycle = CalculateDutyCycle(pulseDuration);
         }
     }
