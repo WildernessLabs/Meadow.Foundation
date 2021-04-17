@@ -1,9 +1,8 @@
-﻿#nullable enable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using Meadow.Foundation.Sensors;
+using Meadow.Units;
 using Meadow.Hardware;
 using static Meadow.Foundation.Sensors.Weather.SwitchingAnemometer;
 
@@ -13,7 +12,8 @@ namespace Meadow.Foundation.Sensors.Weather
     /// Driver for a "switching" anememoter (wind speed gauge) that has an
     /// internal switch that is triggered during every revolution.
     /// </summary>
-    public partial class SwitchingAnemometer : FilterableChangeObservableBase<AnemometerChangeResult, float>
+    //public partial class SwitchingAnemometer : FilterableChangeObservableBase<AnemometerChangeResult, float>
+    public partial class SwitchingAnemometer : FilterableChangeObservable<CompositeChangeResult<Speed>, Speed>
     {
         //==== internals
         IDigitalInputPort inputPort;
@@ -29,9 +29,11 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// Raised when the speed of the wind changes.
         /// </summary>
-        public event EventHandler<AnemometerChangeResult> WindSpeedUpdated = delegate {};
+        //public event EventHandler<AnemometerChangeResult> WindSpeedUpdated = delegate {};
+        public event EventHandler<CompositeChangeResult<Speed>> WindSpeedUpdated = delegate { };
 
-        public float LastRecordedWindSpeed { get; protected set; } = 0f;
+        //public float LastRecordedWindSpeed { get; protected set; } = 0f;
+        public Speed LastRecordedWindSpeed { get; protected set; } = new Speed(0);
 
         /// <summary>
         /// Calibration for how fast the wind speed is when the switch is hit
@@ -110,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 // clear our samples
                 this.samples.Clear();
 
-                RaiseUpdated(oversampledSpeed);
+                RaiseUpdated(new Speed(oversampledSpeed, Speed.UnitType.KilometersPerHour));
 
                 // if we need to wait before taking another sample set, 
                 if (this.standbyDuration > 0) {
@@ -121,9 +123,13 @@ namespace Meadow.Foundation.Sensors.Weather
             }
         }
 
-        protected void RaiseUpdated(float newSpeed)
+        protected void RaiseUpdated(Speed newSpeed)
         {
-            AnemometerChangeResult result = new AnemometerChangeResult() {
+            //AnemometerChangeResult result = new AnemometerChangeResult() {
+            //    Old = this.LastRecordedWindSpeed,
+            //    New = newSpeed
+            //};
+            CompositeChangeResult<Speed> result = new CompositeChangeResult<Speed>() {
                 Old = this.LastRecordedWindSpeed,
                 New = newSpeed
             };

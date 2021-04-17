@@ -3,6 +3,7 @@
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Sensors.Weather.SwitchingAnemometer</AssemblyName>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <LangVersion>8.0</LangVersion>

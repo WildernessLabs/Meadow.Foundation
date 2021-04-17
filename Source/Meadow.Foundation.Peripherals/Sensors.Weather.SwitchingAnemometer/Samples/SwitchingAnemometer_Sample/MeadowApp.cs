@@ -5,6 +5,7 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Weather;
+using Meadow.Units;
 
 namespace MeadowApp
 {
@@ -33,16 +34,16 @@ namespace MeadowApp
             anemometer = new SwitchingAnemometer(Device, Device.Pins.A01);
 
             // classic events
-            anemometer.WindSpeedUpdated += (object sender, SwitchingAnemometer.AnemometerChangeResult e) =>
+            anemometer.WindSpeedUpdated += (object sender, CompositeChangeResult<Speed> e) =>
             {
-                Console.WriteLine($"new speed: {e.New}, old: {e.Old}");
+                Console.WriteLine($"new speed: {e.New.KilometersPerHour:n1}kmh, old: {e.Old.KilometersPerHour:n1}kmh");
                 OutputWindSpeed(e.New);
             };
 
             //// iobservable
             //anemometer.Subscribe(new FilterableChangeObserver<SwitchingAnemometer.AnemometerChangeResult, float>(
             //    handler: result => {
-            //        Console.WriteLine($"new speed: {result.New}, old: {result.Old}");
+            //        Console.WriteLine($"new speed: {e.New.KilometersPerHour:n1}kmh, old: {e.Old.KilometersPerHour:n1}kmh");
             //    },
             //    // only notify if it's change more than 0.1kmh:
             //    //filter: result => {
@@ -61,11 +62,11 @@ namespace MeadowApp
         /// blue @ `0km/h`, and a proportional mix, in between those speeds.
         /// </summary>
         /// <param name="windspeed"></param>
-        void OutputWindSpeed(float windspeed)
+        void OutputWindSpeed(Speed windspeed)
         {
             // `0.0` - `10kmh`
-            int r = (int)Map(windspeed, 0f, 10f, 0f, 255f);
-            int b = (int)Map(windspeed, 0f, 10f, 255f, 0f);
+            int r = (int)Map(windspeed.KilometersPerHour, 0f, 10f, 0f, 255f);
+            int b = (int)Map(windspeed.KilometersPerHour, 0f, 10f, 255f, 0f);
 
             //Console.WriteLine($"r: {r}, b: {b}");
 
@@ -73,7 +74,7 @@ namespace MeadowApp
             onboardLed.SetColor(wspeedColor);
         }
 
-        float Map(float value, float fromSource, float toSource, float fromTarget, float toTarget)
+        double Map(double value, double fromSource, float toSource, float fromTarget, float toTarget)
         {
             return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
         }
