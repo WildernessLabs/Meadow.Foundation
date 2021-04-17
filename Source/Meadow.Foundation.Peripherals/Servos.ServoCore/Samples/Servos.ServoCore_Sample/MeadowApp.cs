@@ -15,7 +15,7 @@ namespace Servos.Servo_Sample
             Console.WriteLine("Initializing...");
 
             //servo = new Servo(Device, Device.Pins.D04, NamedServoConfigs.SG90);
-            servo = new Servo(Device.CreatePwmPort(Device.Pins.D04), NamedServoConfigs.SG90);
+            servo = new Servo(Device.CreatePwmPort(Device.Pins.D02), NamedServoConfigs.SG90);
 
             servo.RotateTo(0);
 
@@ -28,14 +28,14 @@ namespace Servos.Servo_Sample
 
             while (true)
             {
-                for (int i = 0; i <= servo.Config.MaximumAngle; i++)
+                for (int i = 0; i <= servo.Config.MaximumAngle.Degrees; i++)
                 {
                     servo.RotateTo(i);
                     Console.WriteLine($"Rotating to {i}");
                     Thread.Sleep(40);
                 }
                 Thread.Sleep(2000);
-                for (int i = 180; i >= servo.Config.MinimumAngle; i--)
+                for (int i = 180; i >= servo.Config.MinimumAngle.Degrees; i--)
                 {
                     servo.RotateTo(i);
                     Console.WriteLine($"Rotating to {i}");
