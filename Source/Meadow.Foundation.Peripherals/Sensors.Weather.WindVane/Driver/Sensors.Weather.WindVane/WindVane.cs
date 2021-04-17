@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Units;
-using static Meadow.Foundation.Sensors.Weather.WindVane;
+//using static Meadow.Foundation.Sensors.Weather.WindVane;
 
 namespace Meadow.Foundation.Sensors.Weather
 {
