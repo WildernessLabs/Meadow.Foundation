@@ -610,11 +610,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Max7219_8x8x4x2_Sa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.Pca9685", "ICs.IOExpanders.Pca9685", "{2912CE2F-D76A-4F4B-8E11-CA622E6389E6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Pca9685", "Meadow.Foundation.Peripherals\ICs.IOExpanders.PCA9685\Driver\ICs.IOExpanders.PCA9685\ICs.IOExpanders.Pca9685.csproj", "{081252D3-4986-4559-81B2-F39F9E0C50B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Pca9685", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Pca9685\Driver\ICs.IOExpanders.Pca9685\ICs.IOExpanders.Pca9685.csproj", "{081252D3-4986-4559-81B2-F39F9E0C50B1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{3A5ED925-1747-4373-9A2A-F1CCB29BB53A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Pca9685_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.PCA9685\Samples\ICs.IOExpanders.PCA9685_Sample\ICs.IOExpanders.Pca9685_Sample.csproj", "{10AD62E8-B3EB-4C38-BA77-C75482EF9082}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Pca9685_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Pca9685\Samples\ICs.IOExpanders.Pca9685_Sample\ICs.IOExpanders.Pca9685_Sample.csproj", "{10AD62E8-B3EB-4C38-BA77-C75482EF9082}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings.ServoWing", "FeatherWings.ServoWing", "{6AFB5210-A29D-4C9C-BDAE-D229B4A9EA9F}"
 EndProject

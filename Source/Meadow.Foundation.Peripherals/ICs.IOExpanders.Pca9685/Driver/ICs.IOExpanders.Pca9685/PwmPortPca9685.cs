@@ -3,7 +3,7 @@ using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public class PwmPortPCA9685 : IPwmPort
+    public class PwmPortPca9685 : IPwmPort
     {
         readonly byte _address;
         readonly II2cBus _i2cBus;
@@ -42,7 +42,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         IDigitalChannelInfo IPort<IDigitalChannelInfo>.Channel => throw new NotImplementedException();
 
-        public PwmPortPCA9685(II2cBus i2cBus, byte address, byte led0OnL, float frequency, byte portNumber, float dutyCycle)
+        public PwmPortPca9685(II2cBus i2cBus, byte address, byte led0OnL, float frequency, byte portNumber, float dutyCycle)
         {
             _i2cBus = i2cBus;
             _address = address;

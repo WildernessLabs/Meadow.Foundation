@@ -4,7 +4,7 @@ using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
 using System;
 
-namespace ICs.IOExpanders.PCA9685_Sample
+namespace ICs.IOExpanders.Pca9685_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {

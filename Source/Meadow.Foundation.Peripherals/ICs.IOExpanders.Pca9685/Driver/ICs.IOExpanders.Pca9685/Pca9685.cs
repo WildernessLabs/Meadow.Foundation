@@ -79,7 +79,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new ArgumentException("Value must be between 0 and 15", "portNumber");
             }
 
-            var pwmPort = new PwmPortPCA9685(i2CBus, Address, Led0OnL, frequency, portNumber, dutyCycle);
+            var pwmPort = new PwmPortPca9685(i2CBus, Address, Led0OnL, frequency, portNumber, dutyCycle);
 
             return pwmPort;
         }
