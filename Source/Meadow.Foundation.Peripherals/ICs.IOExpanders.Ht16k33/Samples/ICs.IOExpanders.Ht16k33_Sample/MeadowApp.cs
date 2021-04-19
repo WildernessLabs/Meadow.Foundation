@@ -8,12 +8,12 @@ namespace ICs.IOExpanders.HT16K33_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        protected Ht16K33 ht16k33;
+        protected Ht16k33 ht16k33;
 
         public MeadowApp()
         {
             Console.WriteLine("Initialize...");
-            ht16k33 = new Ht16K33(Device.CreateI2cBus());
+            ht16k33 = new Ht16k33(Device.CreateI2cBus());
 
             TestHT16K33();
         }

@@ -16,6 +16,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\ICs.IOExpanders.HT16K33\Driver\ICs.IOExpanders.HT16K33\ICs.IOExpanders.HT16K33.csproj" />
+    <ProjectReference Include="..\..\..\ICs.IOExpanders.HT16K33\Driver\ICs.IOExpanders.HT16K33\ICs.IOExpanders.Ht16k33.csproj" />
   </ItemGroup>
 </Project>

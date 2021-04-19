@@ -241,9 +241,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.Ht16K33", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{1EB7CD8B-7293-4C4A-9C58-160456BCCB1E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.HT16K33", "Meadow.Foundation.Peripherals\ICs.IOExpanders.HT16K33\Driver\ICs.IOExpanders.HT16K33\ICs.IOExpanders.HT16K33.csproj", "{15D040E2-2ECC-413B-AA87-6455D7D930A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Ht16k33", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Ht16k33\Driver\ICs.IOExpanders.Ht16k33\ICs.IOExpanders.Ht16k33.csproj", "{15D040E2-2ECC-413B-AA87-6455D7D930A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.HT16K33_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.HT16K33\Samples\ICs.IOExpanders.HT16K33_Sample\ICs.IOExpanders.HT16K33_Sample.csproj", "{A431E3A8-471B-4D51-B271-8E614F6E77C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Ht16k33_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Ht16k33\Samples\ICs.IOExpanders.Ht16k33_Sample\ICs.IOExpanders.Ht16k33_Sample.csproj", "{A431E3A8-471B-4D51-B271-8E614F6E77C6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.EEPROM.AT24Cxx", "ICs.EEPROM.AT24Cxx", "{6BFD3733-D1EF-4AFB-A87E-40BF28076CE7}"
 EndProject

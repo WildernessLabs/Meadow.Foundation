@@ -5,7 +5,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     //128 LED driver
     //39 key input
-    public class Ht16K33
+    public class Ht16k33
     {
         public enum BlinkRate : byte
         {
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="i2cBus">I2C bus instance</param>
-        public Ht16K33(II2cBus i2cBus, byte address = 0x70)
+        public Ht16k33(II2cBus i2cBus, byte address = 0x70)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
