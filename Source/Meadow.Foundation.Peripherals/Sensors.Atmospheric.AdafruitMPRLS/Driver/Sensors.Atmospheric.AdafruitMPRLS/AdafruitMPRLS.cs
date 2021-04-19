@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// https://www.adafruit.com/product/3965
     /// Device datasheets also available here: https://sensing.honeywell.com/micropressure-mpr-series
     /// </summary>
-    public class AdafruitMPRLSSensor : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>, IAtmosphericSensor
+    public class AdafruitMPRLS : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>, IAtmosphericSensor
     {
         private readonly II2cPeripheral i2cPeripheral;
 
@@ -80,7 +80,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             base.NotifyObservers(changeResult);
         }
 
-        public AdafruitMPRLSSensor(II2cBus i2cbus, int psiMin = 0, int psiMax = 25)
+        public AdafruitMPRLS(II2cBus i2cbus, int psiMin = 0, int psiMax = 25)
         {
             i2cPeripheral = new I2cPeripheral(i2cbus, Address);
         }
