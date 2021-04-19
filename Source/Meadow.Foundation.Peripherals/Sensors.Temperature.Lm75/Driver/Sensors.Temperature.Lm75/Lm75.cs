@@ -26,6 +26,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         private object _lock = new object();
+
         private CancellationTokenSource SamplingTokenSource;
 
         private readonly II2cPeripheral lm75;
@@ -35,10 +36,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// The Temperature value from the last reading.
         /// </summary>
-        public Units.Temperature? Temperature { get; protected set; }
-
-        
-        
+        public Units.Temperature? Temperature { get; protected set; }        
 
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
