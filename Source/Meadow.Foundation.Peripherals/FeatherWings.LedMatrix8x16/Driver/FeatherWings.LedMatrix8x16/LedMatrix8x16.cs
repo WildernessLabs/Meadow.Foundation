@@ -1,19 +1,18 @@
 ﻿using Meadow.Foundation.Displays;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
-using System;
 
 namespace Meadow.Foundation.FeatherWings
 {
     /// <summary>
     /// Represents an Adafruit Led Matrix 8x16 feather wing (HT16K33)
     /// </summary>
-    public class LedMatrix8x16Wing : DisplayBase
+    public class LedMatrix8x16 : DisplayBase
     {
         private Ht16K33 ht16k33;
         private Color pen;
 
-        public LedMatrix8x16Wing(II2cBus i2cBus, byte address = 0x70)
+        public LedMatrix8x16(II2cBus i2cBus, byte address = 0x70)
         {
             ht16k33 = new Ht16K33(i2cBus, address);
         }
