@@ -3,19 +3,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
 
-namespace Meadow.Foundation.Sensors.Atmospheric
+namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
 {
     /// <summary>
     /// Provide a mechanism for reading the Temperature and Humidity from
     /// a HIH6130 temperature and Humidity sensor.
     /// </summary>
     public abstract class DhtBase : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
+        IAtmosphericSensor//, ITemperatureSensor, IHumiditySensor
     {
-        
-
         /// <summary>
         ///     DHT12 sensor object.
         /// </summary>
@@ -29,10 +26,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private readonly BusType _protocol;
 
         private int _lastMeasurement = 0;
-
-        
-
-        
 
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
@@ -60,7 +53,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// How last read went, <c>true</c> for success, <c>false</c> for failure
         /// </summary>
         public bool WasLastReadSuccessful { get; internal set; }
-
         
         private enum BusType
         {
@@ -68,25 +60,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             OneWire,
         }
 
-        
-
-        
-
         // internal thread lock
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        
-
-        
-
-        
-
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
-
-        
-
-        
 
         /// <summary>
         /// Create a DHT sensor through I2C (Only DHT12)
@@ -100,10 +78,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //give the device time to initialize
             Thread.Sleep(1000);
         }
-
-        
-
-        
 
         /// <summary>
         /// Start a reading
@@ -250,6 +224,5 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             return Task.CompletedTask;
         }
-        
     }
 }
