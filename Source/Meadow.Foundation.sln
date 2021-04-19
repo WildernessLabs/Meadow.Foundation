@@ -267,9 +267,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.St7565", "Displays
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{94E618B0-5BA2-4436-B1F5-90CE0E0D2293}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.ST7565", "Meadow.Foundation.Peripherals\Displays.ST7565\Driver\Displays.ST7565\Displays.ST7565.csproj", "{7B529C67-B1BF-41A4-8870-42A027ABFBCF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.St7565", "Meadow.Foundation.Peripherals\Displays.St7565\Driver\Displays.St7565\Displays.St7565.csproj", "{7B529C67-B1BF-41A4-8870-42A027ABFBCF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.ST7565_Sample", "Meadow.Foundation.Peripherals\Displays.ST7565\Samples\Displays.ST7565_Sample\Displays.ST7565_Sample.csproj", "{5574FE78-17B0-4295-9F27-2E4782554102}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.St7565_Sample", "Meadow.Foundation.Peripherals\Displays.St7565\Samples\Displays.St7565_Sample\Displays.St7565_Sample.csproj", "{5574FE78-17B0-4295-9F27-2E4782554102}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.Ssd130x", "Displays.Ssd130x", "{BF341B80-8763-482E-9AF7-5E8DE369ECE1}"
 EndProject
