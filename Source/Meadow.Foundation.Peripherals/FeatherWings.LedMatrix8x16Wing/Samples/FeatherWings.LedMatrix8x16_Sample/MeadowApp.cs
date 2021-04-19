@@ -9,7 +9,7 @@ namespace FeatherWings.LedMatrix8x16_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        LedMatrix8x16 ledMatrixWing;
+        LedMatrix8x16Wing ledMatrixWing;
         GraphicsLibrary graphics;
 
         public MeadowApp()
@@ -32,7 +32,7 @@ namespace FeatherWings.LedMatrix8x16_Sample
         {
             Console.WriteLine("Initialize hardware...");
 
-            ledMatrixWing = new LedMatrix8x16(Device.CreateI2cBus());
+            ledMatrixWing = new LedMatrix8x16Wing(Device.CreateI2cBus());
             ledMatrixWing.Clear();
    
             graphics = new GraphicsLibrary(ledMatrixWing);

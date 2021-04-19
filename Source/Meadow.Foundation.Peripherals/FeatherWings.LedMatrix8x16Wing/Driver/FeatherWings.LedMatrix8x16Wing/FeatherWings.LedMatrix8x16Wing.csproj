@@ -6,7 +6,7 @@
     <AssemblyName>LedMatrix8x16Wing</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.FeatherWings.LedMatrix8x16</PackageId>
+    <PackageId>Meadow.Foundation.FeatherWings.LedMatrix8x16Wing</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, FeatherWing, Led, matrix, HT16K33</PackageTags>

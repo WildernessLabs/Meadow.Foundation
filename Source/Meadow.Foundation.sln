@@ -676,13 +676,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A110
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.IS31FL3731_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.IS31FL3731\Samples\ICs.IOExpanders.IS31FL3731_Sample\ICs.IOExpanders.IS31FL3731_Sample.csproj", "{30A8F1D0-BB6C-486C-AC6B-92EC1551983A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings.LedMatrix8x16", "FeatherWings.LedMatrix8x16", "{F3B4482F-841E-4760-BDEF-F2E473AF7B82}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings.LedMatrix8x16Wing", "FeatherWings.LedMatrix8x16Wing", "{F3B4482F-841E-4760-BDEF-F2E473AF7B82}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.LedMatrix8x16", "Meadow.Foundation.Peripherals\FeatherWings.LedMatrix8x16\Driver\FeatherWings.LedMatrix8x16\FeatherWings.LedMatrix8x16.csproj", "{662A3B12-2977-49E4-9EB7-DB04E165A8ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.LedMatrix8x16Wing", "Meadow.Foundation.Peripherals\FeatherWings.LedMatrix8x16Wing\Driver\FeatherWings.LedMatrix8x16Wing\FeatherWings.LedMatrix8x16Wing.csproj", "{662A3B12-2977-49E4-9EB7-DB04E165A8ED}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{2E9D8016-B006-477C-BFA1-962C1C96A8E4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.LedMatrix8x16_Sample", "Meadow.Foundation.Peripherals\FeatherWings.LedMatrix8x16\Samples\FeatherWings.LedMatrix8x16_Sample\FeatherWings.LedMatrix8x16_Sample.csproj", "{08F47D61-0215-4D48-9654-A67E8214C64F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.LedMatrix8x16Wing_Sample", "Meadow.Foundation.Peripherals\FeatherWings.LedMatrix8x16Wing\Samples\FeatherWings.LedMatrix8x16_Sample\FeatherWings.LedMatrix8x16Wing_Sample.csproj", "{08F47D61-0215-4D48-9654-A67E8214C64F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TftSpi.St7735_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Displays.TftSpi.St7735_Sample\Displays.TftSpi.St7735_Sample.csproj", "{7E466C3D-9630-4F98-BABC-43F23716B434}"
 EndProject
@@ -980,17 +980,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Weather.SwitchingAn
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{970D9570-A24B-4329-A888-F8DE9199A600}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Weather.SwitchingAnemometer", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Driver\Sensors.Weather.SwitchingAnemometer\Sensors.Weather.SwitchingAnemometer.csproj", "{194B2FB3-B9A0-4430-AE8D-5BE4D94D885D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Weather.SwitchingAnemometer", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Driver\Sensors.Weather.SwitchingAnemometer\Sensors.Weather.SwitchingAnemometer.csproj", "{194B2FB3-B9A0-4430-AE8D-5BE4D94D885D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchingAnemometer_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Samples\SwitchingAnemometer_Sample\SwitchingAnemometer_Sample.csproj", "{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwitchingAnemometer_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Samples\SwitchingAnemometer_Sample\SwitchingAnemometer_Sample.csproj", "{FEEB72F9-53A4-4541-BE9C-56B02A0ABCB6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Motors.ElectronicSpeedController", "Motors.ElectronicSpeedController", "{36346C46-BCCE-46D5-964F-E2A71EFD9CA2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D42BCA76-BA33-40A3-9B39-FD72FC9FA9AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motors.ElectronicSpeedController", "Meadow.Foundation.Peripherals\Motors.ElectronicSpeedController\Driver\Motors.ElectronicSpeedController\Motors.ElectronicSpeedController.csproj", "{F3499920-32A2-4E5E-9D9E-4D04B7399C49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Motors.ElectronicSpeedController", "Meadow.Foundation.Peripherals\Motors.ElectronicSpeedController\Driver\Motors.ElectronicSpeedController\Motors.ElectronicSpeedController.csproj", "{F3499920-32A2-4E5E-9D9E-4D04B7399C49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElectronicSpeedController_Sample", "Meadow.Foundation.Peripherals\Motors.ElectronicSpeedController\Samples\ElectronicSpeedController_Sample\ElectronicSpeedController_Sample.csproj", "{619B1B71-D04F-43DB-8EC2-A5E40276726D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicSpeedController_Sample", "Meadow.Foundation.Peripherals\Motors.ElectronicSpeedController\Samples\ElectronicSpeedController_Sample\ElectronicSpeedController_Sample.csproj", "{619B1B71-D04F-43DB-8EC2-A5E40276726D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
