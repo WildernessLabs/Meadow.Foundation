@@ -2,7 +2,7 @@ using Meadow.Devices;
 using Meadow.Hardware;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.Tft
+namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Ssd1351 : TftSpiBase
     {

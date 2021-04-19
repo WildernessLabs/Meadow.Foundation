@@ -2,7 +2,7 @@
 using Meadow.Hardware;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.Tft
+namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Hx8357b : Hx8357d
     {
