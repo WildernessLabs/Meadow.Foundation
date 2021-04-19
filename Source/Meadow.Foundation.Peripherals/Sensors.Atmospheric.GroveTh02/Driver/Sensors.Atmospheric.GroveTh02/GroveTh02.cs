@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -12,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public class GroveTh02 :
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
+        IAtmosphericSensor//, ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
         ///     Start measurement bit in the configuration register.
@@ -125,15 +124,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        
-
-        
-
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
-
-        
-
-        
 
         /// <summary>
         ///     Create a new GroveTH02 object using the default parameters for the component.
@@ -144,10 +135,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             groveTH02 = new I2cPeripheral(i2cBus, address);
         }
-
-        
-
-        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -261,7 +248,5 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             temp >>= 2;
             Conditions.Temperature = (((float)temp) / 32) - 50;
         }
-
-        
     }
 }
