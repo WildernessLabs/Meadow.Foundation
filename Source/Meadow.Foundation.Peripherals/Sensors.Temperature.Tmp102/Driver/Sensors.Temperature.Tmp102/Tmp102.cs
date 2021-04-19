@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Atmospheric;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
@@ -12,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// </summary>    
     public class Tmp102 :
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor, ITemperatureSensor
+        IAtmosphericSensor//, ITemperatureSensor
     {
         /// <summary>
         ///     Indicate the resolution of the sensor.

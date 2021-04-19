@@ -5,7 +5,7 @@ using Meadow.Peripherals.Sensors.Distance;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
-    public class Sfsr02 : IRangeFinder
+    public class Sfsr02// : IRangeFinder
     {
         /// <summary>
         /// Returns current distance detected in cm.

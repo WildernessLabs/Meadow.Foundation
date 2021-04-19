@@ -21,12 +21,10 @@ namespace Sensors.Temperature.TMP102_Sample
             Console.WriteLine("Initialize...");
 
             sensor = new Lm75(Device.CreateI2cBus());
-            sensor.Updated += Sensor_Updated;
-        }
-
-        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Atmospheric.AtmosphericConditionChangeResult e)
-        {
-            Console.WriteLine($"Temp: {e.New.Temperature}°C");
+            sensor.TemperatureUpdated += (s,e) => 
+            {
+                Console.WriteLine($"Temp: {e.New.Celsius}°C");
+            };
         }
     }
 }

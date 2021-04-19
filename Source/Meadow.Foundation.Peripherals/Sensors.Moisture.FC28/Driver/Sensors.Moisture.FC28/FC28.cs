@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor    
     /// </summary>
-    public class Fc28 : FilterableChangeObservableBase<FloatChangeResult, float>, IMoistureSensor
+    public class Fc28 : FilterableChangeObservableBase<FloatChangeResult, float>//, IMoistureSensor
     {
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().

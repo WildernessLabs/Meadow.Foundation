@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Atmospheric;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -15,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Readings from the sensor are made in Single-shot mode.
     /// </remarks>
     public class Sht31D : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor, ITemperatureSensor, IHumiditySensor
+        IAtmosphericSensor//, ITemperatureSensor, IHumiditySensor
     {
         
 

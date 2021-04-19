@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// HCSR04 Distance Sensor
     /// </summary>
-    public class Hcsr04 : IRangeFinder
+    public class Hcsr04// : IRangeFinder
     {
         /// <summary>
         /// Returns current distance detected in cm.

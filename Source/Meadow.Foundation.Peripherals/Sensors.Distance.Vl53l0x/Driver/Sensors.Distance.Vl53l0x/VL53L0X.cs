@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// Represents the Vl53l0x distance sensor
     /// </summary>
-    public class Vl53l0x : FilterableChangeObservableBase<DistanceConditionChangeResult, DistanceConditions>, IRangeFinder
+    public class Vl53l0x : FilterableChangeObservableBase<DistanceConditionChangeResult, DistanceConditions>//, IRangeFinder
     {
         protected const byte RangeStart = 0x00;
         protected const byte SystemThreahHigh = 0x0C;

@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Atmospheric;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
     public class Mcp9808 : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor, ITemperatureSensor
+        IAtmosphericSensor//, ITemperatureSensor
     {
         const ushort MCP_CONFIG_SHUTDOWN = 0x0100;   // shutdown config
         const ushort MCP_CONFIG_CRITLOCKED = 0x0080; // critical trip lock

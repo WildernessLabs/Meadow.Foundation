@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Atmospheric;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -11,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Bosch BMP085 digital pressure and temperature sensor.
     /// </summary>
     public class Bmp085 : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor, IBarometricPressureSensor, ITemperatureSensor
+        IAtmosphericSensor//, IBarometricPressureSensor, ITemperatureSensor
     {
         /// <summary>
         ///     BMP085 sensor communicates using I2C.
