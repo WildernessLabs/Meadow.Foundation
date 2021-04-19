@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP102 Temperature sensor object.
     /// </summary>    
     public class Lm75 :
-        FilterableChangeObservable<CompositeChangeResult<Units.Temperature>, Units.Temperature>,
+        FilterableChangeObservable<CompositeChangeResult<Units.Temperature>, Units.Temperature?>,
         ITemperatureSensor
     {
         /// <summary>
@@ -25,6 +25,9 @@ namespace Meadow.Foundation.Sensors.Temperature
             LM_TOS = 0x03
         }
 
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
         private readonly II2cPeripheral lm75;
 
         public byte DEFAULT_ADDRESS => 0x48;
@@ -32,12 +35,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// The Temperature value from the last reading.
         /// </summary>
-        public Units.Temperature Temperature { get; protected set; }
-        public Units.Temperature Conditions;
+        public Units.Temperature? Temperature { get; protected set; }
 
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
+        
+        
 
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
@@ -46,8 +47,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        public event EventHandler<CompositeChangeResult<Units.Temperature>> Updated = delegate { };
-        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated;
+        /// <summary>
+        /// Raised when the value of the reading changes.
+        /// </summary>
+        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
         ///     Create a new TMP102 object using the default configuration for the sensor.
@@ -62,20 +65,27 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public async Task<Units.Temperature> Read()
+        // TODO: Make this async?
+        public Units.Temperature Read()
         {
-            Temperature = await Read();
-
+            Update();
             return Temperature;
         }
 
+        /// <summary>
+        /// Starts continuously sampling the sensor.
+        ///
+        /// This method also starts raising `TemperatureUpdated` events and IObservable
+        /// subscribers getting notified.
+        /// </summary>
+        /// <param name="standbyDuration">The time, in milliseconds, to wait
+        /// between sets of sample readings. This value determines how often
+        /// `TemperatureUpdated` events are raised and `IObservable` consumers are notified.</param>
         public void StartUpdating(int standbyDuration = 1000)
         {
-            // thread safety
-            lock (_lock) {
-                if (IsSampling) return;
-
-                // state muh-cheen
+            lock (_lock) 
+            {
+                if (IsSampling) { return; }
                 IsSampling = true;
 
                 SamplingTokenSource = new CancellationTokenSource();
@@ -84,9 +94,12 @@ namespace Meadow.Foundation.Sensors.Temperature
                 Units.Temperature oldtemperature;
                 CompositeChangeResult<Units.Temperature> result;
 
-                Task.Factory.StartNew(async () => {
-                    while (true) {
-                        if (ct.IsCancellationRequested) {
+                Task.Factory.StartNew(async () => 
+                {
+                    while (true) 
+                    {
+                        if (ct.IsCancellationRequested) 
+                        {
                             // do task clean up here
                             observers.ForEach(x => x.OnCompleted());
                             break;
@@ -95,11 +108,10 @@ namespace Meadow.Foundation.Sensors.Temperature
                         oldtemperature = Temperature;
 
                         // read
-                        Update(); //syncrhnous for this driver 
+                        Update(); //synchronous for this driver 
 
                         // build a new result with the old and new conditions
-                        //result = new AtmosphericConditionChangeResult(oldtemperature, Conditions);
-                        result = new CompositeChangeResult<Units.Temperature>(oldtemperature, Conditions);
+                        result = new CompositeChangeResult<Units.Temperature>(oldtemperature, Temperature);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -110,13 +122,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                 }, SamplingTokenSource.Token);
             }
         }
-
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature> changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
-        }
-
+        
         /// <summary>
         /// Stops sampling the temperature.
         /// </summary>
@@ -135,7 +141,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Update the Temperature property.
         /// </summary>
-        public void Update()
+        protected void Update()
         {
             lm75.WriteByte((byte)Register.LM_TEMP);
 
@@ -155,8 +161,13 @@ namespace Meadow.Foundation.Sensors.Temperature
             }
 
             //only accurate to +/- 0.1 degrees
-            //Conditions = (float)Math.Round(temp, 1);
-            Conditions = new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius);
+            Temperature = new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius);
+        }
+
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature> changeResult)
+        {
+            TemperatureUpdated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
         }
     }
 }
