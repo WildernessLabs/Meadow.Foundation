@@ -668,13 +668,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{2422
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.CharlieWing_Sample", "Meadow.Foundation.Peripherals\FeatherWings.CharlieWing\Samples\FeatherWings.CharlieWing_Sample\FeatherWings.CharlieWing_Sample.csproj", "{987C5B36-2C11-4B25-9C0C-518B02A527CE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.IS31FL3731", "ICs.IOExpanders.IS31FL3731", "{723D465E-39AA-4297-971E-3871EF832398}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.Is31fl3731", "ICs.IOExpanders.Is31fl3731", "{723D465E-39AA-4297-971E-3871EF832398}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Is31fl3731", "Meadow.Foundation.Peripherals\ICs.IOExpanders.IS31FL3731\Driver\ICs.IOExpanders.IS31FL3731\ICs.IOExpanders.Is31fl3731.csproj", "{02318A44-AD0C-4656-B601-1EE9575B0E79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Is31fl3731", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Is31fl3731\Driver\ICs.IOExpanders.Is31fl3731\ICs.IOExpanders.Is31fl3731.csproj", "{02318A44-AD0C-4656-B601-1EE9575B0E79}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A110CB79-CF10-485F-95DA-678A983A030B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.IS31FL3731_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.IS31FL3731\Samples\ICs.IOExpanders.IS31FL3731_Sample\ICs.IOExpanders.IS31FL3731_Sample.csproj", "{30A8F1D0-BB6C-486C-AC6B-92EC1551983A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Is31fl3731_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Is31fl3731\Samples\ICs.IOExpanders.Is31fl3731_Sample\ICs.IOExpanders.Is31fl3731_Sample.csproj", "{30A8F1D0-BB6C-486C-AC6B-92EC1551983A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings.LedMatrix8x16Wing", "FeatherWings.LedMatrix8x16Wing", "{F3B4482F-841E-4760-BDEF-F2E473AF7B82}"
 EndProject

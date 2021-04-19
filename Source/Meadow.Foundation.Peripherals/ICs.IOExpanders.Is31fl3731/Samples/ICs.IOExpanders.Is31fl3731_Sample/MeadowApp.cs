@@ -5,7 +5,7 @@ using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
 
-namespace ICs.IOExpanders.IS31FL3731_Sample
+namespace ICs.IOExpanders.Is31fl3731_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
