@@ -3,16 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public class Mpl115a2 :
         FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor, ITemperatureSensor, IBarometricPressureSensor
+        IAtmosphericSensor//, ITemperatureSensor, IBarometricPressureSensor
     {
-        
-
         /// <summary>
         ///     Device registers.
         /// </summary>
@@ -45,10 +42,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             public double C12;
         }
 
-        
-
-        
-
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
@@ -75,15 +68,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        
-
-        
-
         public event EventHandler<AtmosphericConditionChangeResult> Updated;
-
-        
-
-        
 
         /// <summary>
         ///     SI7021 is an I2C device.
@@ -99,10 +84,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Update interval in milliseconds
         /// </summary>
         private readonly ushort _updateInterval = 100;
-
-        
-
-        
 
         /// <summary>
         ///     Create a new MPL115A2 temperature and humidity sensor object.
@@ -152,10 +133,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //
             coefficients.C12 = (double)c12 / 4194304;
         }
-
-        
-
-        
 
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
@@ -259,7 +236,5 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                                                           * pressure) + (coefficients.B2 * temperature);
             Conditions.Pressure = (float)(PRESSURE_CONSTANT * compensatedPressure) + 50;
         }
-
-        
     }
 }

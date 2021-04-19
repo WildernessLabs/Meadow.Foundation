@@ -374,7 +374,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.GP2D12_Sam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.GP2D12", "Meadow.Foundation.Peripherals\Sensors.Distance.GP2D12\Driver\Sensors.Distance.GP2D12\Sensors.Distance.GP2D12.csproj", "{E2D4DFD5-F251-42E7-975B-F82CBEB3F35B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.MPL115A2", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl115A2\Driver\Sensors.Atmospheric.MPL115A2\Sensors.Atmospheric.MPL115A2.csproj", "{949DBB54-777B-4C58-A39D-EEA02F00DAB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Mpl115a2", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl115A2\Driver\Sensors.Atmospheric.MPL115A2\Sensors.Atmospheric.Mpl115a2.csproj", "{949DBB54-777B-4C58-A39D-EEA02F00DAB4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Htu21d_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21d\Samples\Sensors.Atmospheric.Htu21d_Sample\Sensors.Atmospheric.Htu21d_Sample.csproj", "{0A1A1B26-9653-49ED-91C4-43DC5E129EFD}"
 EndProject
