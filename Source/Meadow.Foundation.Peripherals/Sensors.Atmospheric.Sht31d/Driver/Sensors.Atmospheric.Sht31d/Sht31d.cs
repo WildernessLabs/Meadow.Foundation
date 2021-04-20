@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <remarks>
     /// Readings from the sensor are made in Single-shot mode.
     /// </remarks>
-    public class Sht31D : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+    public class Sht31d : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
         IAtmosphericSensor//, ITemperatureSensor, IHumiditySensor
     {
         
@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (should be 0x44 or 0x45).</param>
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
-        public Sht31D(II2cBus i2cBus, byte address = 0x44)
+        public Sht31d(II2cBus i2cBus, byte address = 0x44)
         {
             sht31d = new I2cPeripheral(i2cBus, address);
         }
