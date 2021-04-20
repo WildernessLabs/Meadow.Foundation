@@ -12,7 +12,7 @@
     <PackageTags>Meadow.Foundation, Hysrf05, Distance, Sensor</PackageTags>
     <Version>0.1.3</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Description>HYSRF05 digital ultrasonic distance sensor</Description>    
+    <Description>HYSRF05 digital ultrasonic distance sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
