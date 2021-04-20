@@ -27,6 +27,7 @@ namespace Leds.APA102_Sample
         }
 
         void Pulse(Color color)
+        /// Sets the entire strip to be one color.
         {
             Console.WriteLine("Pulse");
 

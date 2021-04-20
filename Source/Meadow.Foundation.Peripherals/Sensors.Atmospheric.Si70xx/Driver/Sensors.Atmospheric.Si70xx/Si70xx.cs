@@ -43,6 +43,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public RelativeHumidity Humidity => Conditions.Humidity;
 
+        /// <summary>
+        /// The last read conditions.
+        /// </summary>
         public (Units.Temperature Temperature, RelativeHumidity Humidity) Conditions;
 
         /// <summary>
@@ -172,7 +175,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             // update confiruation for a one-off read
             this.Conditions = await ReadSensor();
-
             return Conditions;
         }
 
@@ -255,6 +257,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
+        /// <summary>
+        /// Inheritance-safe way to raise events and notify observers.
+        /// </summary>
+        /// <param name="changeResult"></param>
         protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, RelativeHumidity> changeResult)
         {
             Updated?.Invoke(this, changeResult);
