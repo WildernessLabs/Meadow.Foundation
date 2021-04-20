@@ -4,7 +4,6 @@
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>DotstarWing</AssemblyName>
-    <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.FeatherWings.DotstarWing</PackageId>
@@ -16,6 +15,6 @@
     <Description>AdaFruit DotstarWing LED FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Apa102" Version="0.1.4" />
+    <ProjectReference Include="..\..\..\Leds.Apa102\Driver\Leds.Apa102\Leds.Apa102.csproj" />
   </ItemGroup>
 </Project>
