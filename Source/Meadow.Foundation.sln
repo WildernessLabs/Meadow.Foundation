@@ -215,15 +215,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RTCs.Ds1307", "RTCs.Ds1307"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{626AAFA5-97ED-47C3-9303-977B1B17F6A2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.DS1307", "Meadow.Foundation.Peripherals\RTCs.DS1307\Driver\RTCs.DS1307\RTCs.DS1307.csproj", "{43BE21E0-CA04-4987-A1EE-0E3F5E940C00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.Ds1307", "Meadow.Foundation.Peripherals\RTCs.Ds1307\Driver\RTCs.Ds1307\RTCs.Ds1307.csproj", "{43BE21E0-CA04-4987-A1EE-0E3F5E940C00}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.DS1307_Sample", "Meadow.Foundation.Peripherals\RTCs.DS1307\Samples\RTCs.DS1307_Sample\RTCs.DS1307_Sample.csproj", "{CC446671-FBF6-4DAD-8AA9-41BE60DDDC5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.Ds1307_Sample", "Meadow.Foundation.Peripherals\RTCs.Ds1307\Samples\RTCs.Ds1307_Sample\RTCs.Ds1307_Sample.csproj", "{CC446671-FBF6-4DAD-8AA9-41BE60DDDC5A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RTCs.Ds323x", "RTCs.Ds323x", "{A867D092-9D63-4516-89C7-509B161D331A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{C32CCF68-5D86-4337-BF37-4053C7F01848}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.DS323x", "Meadow.Foundation.Peripherals\RTCs.DS323x\Driver\RTCs.DS323x\RTCs.DS323x.csproj", "{225C7669-6CD3-4F24-8F02-5620BF682BF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.Ds323x", "Meadow.Foundation.Peripherals\RTCs.Ds323x\Driver\RTCs.Ds323x\RTCs.Ds323x.csproj", "{225C7669-6CD3-4F24-8F02-5620BF682BF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.x74595", "ICs.IOExpanders.x74595", "{371BBDB4-E337-4A66-A132-86C6DA3E4EB4}"
 EndProject
@@ -468,7 +468,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Temt6000", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Temt6000_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Temt6000\Samples\Sensors.Light.Temt6000_Sample\Sensors.Light.Temt6000_Sample.csproj", "{E05DC818-719E-4EB5-AF5F-A6C9C3C9D01B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.DS323x_Sample", "Meadow.Foundation.Peripherals\RTCs.DS323x\Samples\RTCs.DS323x_Sample\RTCs.DS323x_Sample.csproj", "{A059BFE2-87FD-482C-B1DC-5C8023C79DA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTCs.Ds323x_Sample", "Meadow.Foundation.Peripherals\RTCs.Ds323x\Samples\RTCs.Ds323x_Sample\RTCs.Ds323x_Sample.csproj", "{A059BFE2-87FD-482C-B1DC-5C8023C79DA0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICS.EEPROM.At24Cxx_Sample", "Meadow.Foundation.Peripherals\ICs.EEPROM.At24Cxx\Samples\ICS.EEPROM.At24Cxx_Sample\ICS.EEPROM.At24Cxx_Sample.csproj", "{9AF786F5-B6CA-490B-9926-2CCA9CFF1431}"
 EndProject

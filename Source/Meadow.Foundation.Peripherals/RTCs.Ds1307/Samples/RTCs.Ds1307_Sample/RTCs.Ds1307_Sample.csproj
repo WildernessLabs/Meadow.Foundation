@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\RTCs.DS1307\Driver\RTCs.DS1307\RTCs.DS1307.csproj" />
+    <ProjectReference Include="..\..\Driver\RTCs.DS1307\RTCs.Ds1307.csproj" />
   </ItemGroup>
 </Project>
