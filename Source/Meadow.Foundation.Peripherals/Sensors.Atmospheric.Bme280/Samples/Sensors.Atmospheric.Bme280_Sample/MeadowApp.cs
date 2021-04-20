@@ -35,6 +35,7 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             // TODO: SPI version
 
+            //==== IObservable 
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree, and humidty by 5%.
             // (blowing hot breath on the sensor should trigger)
@@ -53,6 +54,7 @@ namespace Sensors.Atmospheric.BME280_Sample
             bme280.Subscribe(consumer);
 
 
+            //==== Events
             // classical .NET events can also be used:
             bme280.Updated += (object sender, CompositeChangeResult<Temperature, RelativeHumidity, Pressure> e) => {
                 Console.WriteLine($"  Temperature: {e.New.Value.Unit1.Celsius}°C");
