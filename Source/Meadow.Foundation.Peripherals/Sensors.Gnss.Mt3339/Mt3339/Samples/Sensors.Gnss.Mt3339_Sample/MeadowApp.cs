@@ -4,7 +4,7 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
-using Sensors.Location.MediaTek;
+using Meadow.Foundation.Sensors.Gnss;
 
 namespace MeadowApp
 {

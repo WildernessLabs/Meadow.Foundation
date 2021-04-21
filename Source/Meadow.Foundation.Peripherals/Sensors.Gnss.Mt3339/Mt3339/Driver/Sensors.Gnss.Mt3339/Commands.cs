@@ -1,5 +1,6 @@
 ﻿using System;
-namespace Sensors.Location.MediaTek
+
+namespace Meadow.Foundation.Sensors.Gnss
 {
     public struct Commands
     {
