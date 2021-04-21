@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
+﻿using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
+using System;
+using System.Text;
 
-namespace Sensors.Location.MediaTek
+namespace Meadow.Foundation.Sensors.Gnss
 {
-    public class NmeaEventArgs
+	public class NmeaEventArgs
     {
         public string NmeaSentence { get; set; }
     }

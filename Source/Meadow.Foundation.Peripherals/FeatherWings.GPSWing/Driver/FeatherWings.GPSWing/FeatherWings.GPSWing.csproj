@@ -15,6 +15,6 @@
     <Description>AdaFruit GPSWing GPS FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Sensors.Location.MediaTek\Mt3339\Driver\Sensors.Location.MediaTek.Mt3339\Sensors.Location.MediaTek.Mt3339.csproj" />
+    <ProjectReference Include="..\..\..\Sensors.Gnss.Mt3339\Mt3339\Driver\Sensors.Gnss.Mt3339\Sensors.Gnss.Mt3339.csproj" />
   </ItemGroup>
 </Project>

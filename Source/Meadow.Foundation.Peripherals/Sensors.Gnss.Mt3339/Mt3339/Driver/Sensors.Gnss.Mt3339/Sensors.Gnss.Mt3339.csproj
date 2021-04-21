@@ -6,14 +6,14 @@
     <AssemblyName>Mt3339</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Location.MediaTek.Mt3339</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Gnss.Mt3339</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, Mt3339, GPS, Adafruit Ultimate GPS, GNSS</PackageTags>
+    <PackageTags>Meadow.Foundation, MediaTek, Mt3339, GPS, Adafruit Ultimate GPS, GNSS</PackageTags>
     <Version>0.1.33</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>MediaTek MT3339 serial GNSS / GPS controller</Description>
-    <RootNamespace>Sensors.Location.MediaTek</RootNamespace>
+    <RootNamespace>Sensors.Gnss</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Meadow.Peripherals.Sensors.Location.LocationInfo" />

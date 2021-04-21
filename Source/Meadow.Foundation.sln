@@ -688,15 +688,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TftSpi.St7735_Samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leds.PwmLedBarGraph_Sample", "Meadow.Foundation.Core.Samples\Leds.PwmLedBarGraph_Sample\Leds.PwmLedBarGraph_Sample.csproj", "{3AC2D665-8360-4367-9606-F633CA743C9E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Location.MediaTek", "Sensors.Location.MediaTek", "{F07E7336-995C-465C-9F5F-BC19FE7BD5F5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Gnss.Mt3339", "Sensors.Gnss.Mt3339", "{F07E7336-995C-465C-9F5F-BC19FE7BD5F5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mt3339", "Mt3339", "{D5ADAD08-4EBD-4354-B0A1-E4FFF17E2962}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{F5BE2CAF-E124-40A4-8C07-A2023C959B84}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Location.MediaTek.Mt3339_Sample", "Meadow.Foundation.Peripherals\Sensors.Location.MediaTek\Mt3339\Samples\Sensors.Location.MediaTek.Mt3339_Sample\Sensors.Location.MediaTek.Mt3339_Sample.csproj", "{1372483D-0BE9-4A52-9BDC-75A15120279F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Gnss.Mt3339_Sample", "Meadow.Foundation.Peripherals\Sensors.Gnss.Mt3339\Mt3339\Samples\Sensors.Gnss.Mt3339_Sample\Sensors.Gnss.Mt3339_Sample.csproj", "{1372483D-0BE9-4A52-9BDC-75A15120279F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Location.MediaTek.Mt3339", "Meadow.Foundation.Peripherals\Sensors.Location.MediaTek\Mt3339\Driver\Sensors.Location.MediaTek.Mt3339\Sensors.Location.MediaTek.Mt3339.csproj", "{F0970BBA-CC73-4639-BC29-96A571D7BA36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Gnss.Mt3339", "Meadow.Foundation.Peripherals\Sensors.Gnss.Mt3339\Mt3339\Driver\Sensors.Gnss.Mt3339\Sensors.Gnss.Mt3339.csproj", "{F0970BBA-CC73-4639-BC29-96A571D7BA36}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Tmp102_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Samples\Sensors.Temperature.Tmp102_Sample\Sensors.Temperature.Tmp102_Sample.csproj", "{B8F8C9F2-E6BD-4DFA-B472-C80D265AC5DA}"
 EndProject
