@@ -129,13 +129,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Light.Tsl2561", "Se
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EFBB652F-97E4-4237-9901-917A10C1D0B1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.TSL2561", "Meadow.Foundation.Peripherals\Sensors.Light.Tsl2561\Driver\Sensors.Light.TSL2561\Sensors.Light.TSL2561.csproj", "{F60E8843-A7D5-4670-A13D-0F3BC0464BC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Tsl2561", "Meadow.Foundation.Peripherals\Sensors.Light.Tsl2561\Driver\Sensors.Light.Tsl2561\Sensors.Light.Tsl2561.csproj", "{F60E8843-A7D5-4670-A13D-0F3BC0464BC1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Light.Si1145", "Sensors.Light.Si1145", "{46752A8C-7971-41E2-8866-4E962EEDC803}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B99DE5A0-FF26-4805-BBB2-2739582191C0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.SI1145", "Meadow.Foundation.Peripherals\Sensors.Light.Si1145\Driver\Sensors.Light.SI1145\Sensors.Light.SI1145.csproj", "{E77A4923-9FBD-471B-B161-DD9AD138313E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Si1145", "Meadow.Foundation.Peripherals\Sensors.Light.Si1145\Driver\Sensors.Light.Si1145\Sensors.Light.Si1145.csproj", "{E77A4923-9FBD-471B-B161-DD9AD138313E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Light.Alspt19315C", "Sensors.Light.Alspt19315C", "{BE6B35AA-5AD4-4D1F-B699-7752FF425A38}"
 EndProject
@@ -552,7 +552,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Light.Tsl2591", "Se
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{882011AD-05A3-43F9-9B64-2032982948D6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Tsl2591", "Meadow.Foundation.Peripherals\Sensors.Light.Tsl2591\Driver\Sensors.Light.TSL2591\Sensors.Light.Tsl2591.csproj", "{267DBD91-4ABE-4B34-A788-32EC7B34B4FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Tsl2591", "Meadow.Foundation.Peripherals\Sensors.Light.Tsl2591\Driver\Sensors.Light.Tsl2591\Sensors.Light.Tsl2591.csproj", "{267DBD91-4ABE-4B34-A788-32EC7B34B4FE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Tsl2591_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Tsl2591\Samples\Sensors.Light.Tsl2591_Sample\Sensors.Light.Tsl2591_Sample.csproj", "{F151BE23-5AB3-488F-B332-FD851BFF4E24}"
 EndProject
