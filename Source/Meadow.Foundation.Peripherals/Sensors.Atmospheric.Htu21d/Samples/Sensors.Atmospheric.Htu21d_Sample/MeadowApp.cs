@@ -20,6 +20,8 @@ namespace MeadowApp
             // create the I2C Bus
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Standard);
 
+            Console.WriteLine("Created I2C Bus");
+
             // create our device
             htu21d = new Htu21d(i2cBus);
 
