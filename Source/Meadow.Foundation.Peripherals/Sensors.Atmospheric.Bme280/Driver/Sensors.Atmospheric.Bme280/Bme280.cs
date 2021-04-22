@@ -19,6 +19,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         FilterableChangeObservable<CompositeChangeResult<Units.Temperature, RelativeHumidity, Pressure>, Units.Temperature, RelativeHumidity, Pressure>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
+        /// <summary>
+        /// </summary>
+        public event EventHandler<CompositeChangeResult<Units.Temperature, RelativeHumidity, Pressure>> Updated = delegate { };
+        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<CompositeChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<CompositeChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+
         ///// <summary>
         /////     Minimum value that should be used for the polling frequency.
         ///// </summary>
@@ -201,13 +208,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity Humidity => Conditions.Humidity;
 
         public (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) Conditions;
-
-        /// <summary>
-        /// </summary>
-        public event EventHandler<CompositeChangeResult<Units.Temperature, RelativeHumidity, Pressure>> Updated = delegate { };
-        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<CompositeChangeResult<Pressure>> PressureUpdated = delegate { };
-        public event EventHandler<CompositeChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
