@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,25 +17,28 @@ namespace Sensors.Distance.Vl53l0x_Sample
         {
             Initialize();
 
-            sensor.Updated += Sensor_Updated;
+            sensor.DistanceUpdated += Sensor_Updated;
             sensor.StartUpdating();
         }
 
-        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Distance.DistanceConditionChangeResult e)
+        private void Sensor_Updated(object sender, CompositeChangeResult<Length> result)
         {
-            if (e.New == null || e.New.Distance == null)
-            {
+            if (result.New == null) {
                 return;
             }
 
-            Console.WriteLine($"{e.New.Distance.Value}mm");
+            if (result.New < 0) { Console.WriteLine("out of range."); }
+            else {
+                Console.WriteLine($"{result.New.Millimeters}mm / {result.New.Inches:n3}\"");
+            }
         }
 
         void Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initializing hardware...");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
             sensor = new Vl53l0x(Device, i2cBus);
+            Console.WriteLine("Hardware initialized.");
         }
 
         void InitializeWithShutdownPin()

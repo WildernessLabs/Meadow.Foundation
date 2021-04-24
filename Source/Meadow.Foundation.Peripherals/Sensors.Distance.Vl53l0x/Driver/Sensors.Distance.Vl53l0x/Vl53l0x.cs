@@ -2,14 +2,18 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Distance;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
     /// <summary>
     /// Represents the Vl53l0x distance sensor
     /// </summary>
-    public class Vl53l0x : FilterableChangeObservableBase<DistanceConditionChangeResult, DistanceConditions>//, IRangeFinder
+    public class Vl53l0x :
+        FilterableChangeObservable<CompositeChangeResult<Length>, Length>,
+        IRangeFinder
     {
         protected const byte RangeStart = 0x00;
         protected const byte SystemThreahHigh = 0x0C;
@@ -97,7 +101,7 @@ namespace Meadow.Foundation.Sensors.Distance
             }
         }
 
-        public float CurrentDistance => Conditions.Distance.Value;
+        public Length Distance { get; protected set; } = new Length(0);
 
         /// <summary>
         /// Minimum valid distance in mm.
@@ -108,8 +112,6 @@ namespace Meadow.Foundation.Sensors.Distance
         /// Maximum valid distance in mm (CurrentDistance returns -1 if above).
         /// </summary>
         public float MaximumDistance => 2000;
-
-        public DistanceConditions Conditions { get; protected set; } = new DistanceConditions();
 
         // internal thread lock
         private object _lock = new object();
@@ -126,7 +128,7 @@ namespace Meadow.Foundation.Sensors.Distance
        
         byte stopVariable;
 
-        public event EventHandler<DistanceConditionChangeResult> Updated;
+        public event EventHandler<CompositeChangeResult<Length>> DistanceUpdated;
 
         public Vl53l0x(IDigitalOutputController device, II2cBus i2cBus, byte address = DefaultI2cAddress, UnitType units = UnitType.mm) : 
             this (device, i2cBus, null, address, units)
@@ -153,11 +155,11 @@ namespace Meadow.Foundation.Sensors.Distance
         ///// Convenience method to get the current distance. For frequent reads, use
         ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         ///// </summary>
-        public async Task<DistanceConditions> Read()
+        public async Task<Length> Read()
         {
             await Update();
 
-            return Conditions;
+            return Distance;
         }
 
         ///// <summary>
@@ -179,25 +181,25 @@ namespace Meadow.Foundation.Sensors.Distance
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                DistanceConditions oldConditions;
-                DistanceConditionChangeResult result;
+                Length oldResult;
+                CompositeChangeResult<Length> result;
                 Task.Factory.StartNew(async () => {
                     while (true)
                     {
                         if (ct.IsCancellationRequested)
                         {
                             // do task clean up here
-                            _observers.ForEach(x => x.OnCompleted());
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
-                        oldConditions = DistanceConditions.From(Conditions);
+                        oldResult = Distance;
 
                         // read
                         await Update();
 
                         // build a new result with the old and new conditions
-                        result = new DistanceConditionChangeResult(oldConditions, Conditions);
+                        result = new CompositeChangeResult<Length>(oldResult, Distance);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -209,9 +211,9 @@ namespace Meadow.Foundation.Sensors.Distance
             }
         }
 
-        protected void RaiseChangedAndNotify(DistanceConditionChangeResult changeResult)
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Length> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
+            DistanceUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
@@ -236,7 +238,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public async Task Update()
         {
-            Conditions.Distance = await GetRange();
+            Distance = await GetRange();
         }
 
         /// <summary>
@@ -397,11 +399,11 @@ namespace Meadow.Foundation.Sensors.Distance
         /// Returns the current distance/range
         /// </summary>
         /// <returns>The distance in the specified Units. Default mm. Returns -1 if the shutdown pin is used and is off</returns>
-        protected async Task<float> GetRange()
+        protected async Task<Length> GetRange()
         {
             if (IsShutdown)
             {
-                return -1f;
+                return new Length(-1f, Length.UnitType.Millimeters);
             }
 
             float dist = await GetRawRangeData();
@@ -419,7 +421,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 dist = dist / 10;
             }
 
-            return dist;
+            return new Length(dist, Length.UnitType.Millimeters);
         }
 
         /// <summary>
@@ -576,9 +578,5 @@ namespace Meadow.Foundation.Sensors.Distance
             return range_mm;
         }
 
-        public IDisposable Subscribe(IObserver<DistanceConditionChangeResult> observer)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
