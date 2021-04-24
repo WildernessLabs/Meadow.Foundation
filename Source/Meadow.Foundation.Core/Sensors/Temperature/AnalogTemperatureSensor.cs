@@ -201,13 +201,16 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
         public async Task<CompositeChangeResult<Units.Temperature>> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
+            // grab the old temp and store it in a temp var
+            Units.Temperature? oldTemp = Temperature;
+
             // read the voltage
             float voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
-            // convert and save to our temp property for later retreival
+
+            // convert the voltage
             Temperature = VoltageToTemperature(voltage);
-            // return
-            return new CompositeChangeResult<Units.Temperature>(Temperature, null);
-            //return Temperature;
+            
+            return new CompositeChangeResult<Units.Temperature>(Temperature, oldTemp);
         }
 
         /// <summary>
