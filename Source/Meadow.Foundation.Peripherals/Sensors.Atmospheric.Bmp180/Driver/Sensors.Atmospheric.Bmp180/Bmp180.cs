@@ -92,19 +92,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Update();
         }
 
-        event EventHandler<CompositeChangeResult<Units.Temperature>> ITemperatureSensor.TemperatureUpdated
-        {
-            add
-            {
-                throw new NotImplementedException();
-            }
-
-            remove
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
