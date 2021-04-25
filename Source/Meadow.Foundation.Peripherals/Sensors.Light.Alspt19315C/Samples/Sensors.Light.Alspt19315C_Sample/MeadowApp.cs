@@ -19,7 +19,7 @@ namespace MeadowApp
             {
                 while(true)
                 {
-                    Console.WriteLine($"Voltage: {await sensor.GetVoltage()}");
+                    Console.WriteLine($"Voltage: {sensor.Read()}V");
                     await Task.Delay(500);
                 }
             });
