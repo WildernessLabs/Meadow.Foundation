@@ -1,0 +1,10 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Driver\Sensors.AirQuality.Ccs811\Sensors.AirQuality.Ccs811.csproj" />
+  </ItemGroup>
+</Project>

@@ -12,14 +12,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Provide access to the CCS811 C02 and VOC Air Quality Sensor
     /// </summary>
     public class Ccs811 :
-        FilterableChangeObservable<CompositeChangeResult<Units.Concentration>, Units.Concentration>,
-        ICO2Sensor
+        FilterableChangeObservableI2CPeripheral<CompositeChangeResult<Units.Concentration, Units.Concentration>, Units.Concentration, Units.Concentration>,
+        ICO2Sensor, IVocSensor
     {
         // internal thread lock
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
         public event EventHandler<CompositeChangeResult<Concentration>> CO2Updated = delegate { };
+        public event EventHandler<CompositeChangeResult<Concentration>> VOCUpdated = delegate { };
 
         /// <summary>
         ///     Valid addresses for the sensor.
@@ -31,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Default = Address0
         }
 
-        private enum RegisteredWaitHandle : byte
+        private enum Register : byte
         {
             STATUS = 0x00,
             MEAS_MODE = 0x01,
@@ -49,8 +50,30 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             SW_RESET = 0xFF
         }
 
-        private II2cBus Bus { get; set; }
-        public byte Address { get; private set; }
+        public enum MeasurementMode
+        {
+            /// <summary>
+            /// Measurement disabled
+            /// </summary>
+            Idle = 0 << 4,
+            /// <summary>
+            /// Constant power mode, IAQ measurement every second
+            /// </summary>
+            ConstantPower1s = 1 << 4,
+            /// <summary>
+            /// Pulse heating mode IAQ measurement every 10 seconds
+            /// </summary>
+            PulseHeat10s = 2 << 4,
+            /// <summary>
+            /// Low power pulse heating mode IAQ measurement every 60 seconds
+            /// </summary>
+            LowPower = 3 << 4,
+            /// <summary>
+            /// Constant power mode, sensor measurement every 250ms
+            /// </summary>
+            ConstantPower250ms = 4 << 4
+
+        }
 
         /// <summary>
         /// Gets a value indicating whether the sensor is currently in a sampling
@@ -60,12 +83,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public bool IsSampling { get; protected set; } = false;
 
         /// <summary>
-        /// The temperature, from the last reading.
+        /// The last read conditions.
         /// </summary>
-        public Units.Concentration CO2 { get; protected set; }
+        public (Concentration CO2, Concentration VOC) Conditions { get; private set; }
+
+        /// <summary>
+        /// The measured CO2 concentration
+        /// </summary>
+        /// 
+        public Units.Concentration CO2 { get => Conditions.CO2; }
+
+        /// <summary>
+        /// The measured VOC concentration
+        /// </summary>
+        public Units.Concentration VOC { get => Conditions.VOC; }
 
 
         public Ccs811(II2cBus i2cBus, byte address)
+            : base(i2cBus, address, 10, 8)
         {
             switch (address)
             {
@@ -77,43 +112,160 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     throw new ArgumentOutOfRangeException("CCS811 device address must be either 0x5a or 0x5b");
             }
 
-            Bus = i2cBus;
-            Address = address;
-
             Init();
         }
 
-        public Ccs811(II2cBus i2cBus, Addresses address)
+        public Ccs811(II2cBus i2cBus, Addresses address = Addresses.Default)
             : this(i2cBus, (byte)address)
         {
         }
 
         protected void Init()
         {
+            Console.WriteLine("Initializing CCS...");
+
+            // reset
+            Console.WriteLine("Resetting");
+            Reset();
+
+            // wait for the chip to do its thing
+            Thread.Sleep(100);
+
+            // read chip ID to make sure it's a CCS
+            var id = Bus.ReadRegisterByte((byte)Register.HW_ID);
+            Console.WriteLine($"hardware id = 0x{id:x2}");
+
+            // read status
+            var status = Bus.ReadRegisterByte((byte)Register.STATUS);
+            Console.WriteLine($"status = 0x{status:x2}");
+
+            // change mode
+            Console.WriteLine("Setting mode");
+            SetMeasurementMode(MeasurementMode.ConstantPower1s);
         }
 
-        public async Task<Concentration> Read()
+        public void SetMeasurementMode(MeasurementMode mode)
         {
-            CO2 = await Update();
-
-            return CO2;
+            // TODO: interrupts, etc would be here
+            var m = (byte)mode;
+            Console.WriteLine($"mode = 0x{m:x2}");
+            Bus.WriteRegister((byte)Register.MEAS_MODE, m);
         }
 
-        protected async Task<Concentration> Update()
+        private void Reset()
+        {
+            var data = new byte[] { (byte)Register.SW_RESET, 0x11, 0xE5, 0x72, 0x8A };
+            Bus.WriteData(data);
+        }
+
+        public async Task<(Concentration, Concentration)> Read()
+        {
+            var state = await Update();
+
+            return state;
+        }
+
+        private byte[] _readingBuffer = new byte[8];
+
+        public void StartUpdating()
+        {
+            // thread safety
+            lock (_lock)
+            {
+                if (IsSampling) return;
+
+                // state muh-cheen
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                (Concentration CO2, Concentration VOC) oldConditions;
+                CompositeChangeResult<Concentration, Concentration> result;
+
+                Task.Factory.StartNew(async () => {
+                    while (true)
+                    {
+                        // cleanup
+                        if (ct.IsCancellationRequested)
+                        {
+                            // do task clean up here
+                            observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = (Conditions.CO2, Conditions.VOC);
+
+                        // read
+                        Conditions = await Read();
+
+                        Console.WriteLine($"CO2: {Conditions.CO2}");
+                        Console.WriteLine($"VOC: {Conditions.VOC}");
+
+                        // build a new result with the old and new conditions
+                        result = new CompositeChangeResult<Concentration, Concentration>(oldConditions, Conditions);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(1100);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        protected async Task<(Concentration, Concentration)> Update()
         {
             return await Task.Run(() =>
             {
-                var value = Bus.ReadData(00, 00);
-                return new Concentration(0);
+                // data is really in just the first 4, but this gets us status and raw data as well
+                Bus.ReadRegisterBytes((byte)Register.ALG_RESULT_DATA, _readingBuffer);
+
+                Console.WriteLine($"RAW: 0x{(_readingBuffer[6] << 8 | _readingBuffer[7]):x4}");
+                Console.WriteLine($"ERR: 0x{_readingBuffer[5]:x2}");
+                Console.WriteLine($"STATE: 0x{_readingBuffer[4]:x2}");
+
+                (Concentration co2, Concentration voc) state;
+                state.co2 = new Concentration(_readingBuffer[0] << 8 | _readingBuffer[1], Concentration.UnitType.PartsPerMillion);
+                state.voc = new Concentration(_readingBuffer[2] << 8 | _readingBuffer[3], Concentration.UnitType.PartsPerBillion);
+
+                return state;
             });
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Concentration> changeResult)
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Concentration, Concentration> changeResult)
         {
-            CO2Updated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+//            CO2Updated?.Invoke(this, changeResult);
+//            base.NotifyObservers(changeResult);
         }
 
+        /*
+
+        private byte[] _txBuffer = new byte[8];
+        private byte[] _rxBuffer = new byte[8];
+
+        private byte ReadRegisterByte(Register register)
+        {
+            _txBuffer[0] = (byte)register;
+            Bus.WriteReadData(Address, _txBuffer, 1, _rxBuffer, 1);
+            return _rxBuffer[0];
+        }
+
+        private ushort ReadRegisterShort(Register register)
+        {
+            _txBuffer[0] = (byte)register;
+            Bus.WriteReadData(Address, _txBuffer, 1, _rxBuffer, 2);
+            return (ushort)(_rxBuffer[0] << 8 | _rxBuffer[1]);
+        }
+
+        private uint ReadRegisterInt(Register register)
+        {
+            _txBuffer[0] = (byte)register;
+            Bus.WriteReadData(Address, _txBuffer, 1, _rxBuffer, 4);
+            return (uint)(_rxBuffer[0] << 24 | _rxBuffer[1] << 16 | _rxBuffer[2] << 8 | _rxBuffer[3]);
+        }
+        */
         /*
         public int DEFAULT_SPEED => 400;
 
