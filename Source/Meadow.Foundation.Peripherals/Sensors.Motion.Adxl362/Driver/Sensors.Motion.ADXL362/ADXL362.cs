@@ -3,12 +3,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Devices;
 using Meadow.Foundation.Helpers;
+using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class Adxl362 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
+    /// <summary>
+    ///     Driver for the ADXL362 triple axis accelerometer.
+    /// </summary>
+    public class Adxl362 :
+        FilterableChangeObservable<CompositeChangeResult<Acceleration3d>, Acceleration3d>,
         IAccelerometer
     {
         /// <summary>
@@ -26,11 +32,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         private IDigitalInputPort _digitalInputPort2;
 
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        /// <summary>
+         /// <summary>
         ///     Command byte (first byte in any communication).
         /// </summary>
         protected static class Command
@@ -551,35 +553,12 @@ namespace Meadow.Foundation.Sensors.Motion
             /// </remarks>
             public const byte LoopMode = 0x30;
         }
+    
+        public Acceleration3d Acceleration3d { get; protected set; } = new Acceleration3d();
 
-        /// <summary>
-        ///     Acceleration along the X-axis.
-        /// </summary>
-        /// <remarks>
-        ///     This property will only contain valid data after a call to Read or after
-        ///     an interrupt has been generated.
-        /// </remarks>
-        public float XAcceleration => Conditions.XAcceleration.Value;
-
-        /// <summary>
-        ///     Acceleration along the Y-axis.
-        /// </summary>
-        /// <remarks>
-        ///     This property will only contain valid data after a call to Read or after
-        ///     an interrupt has been generated.
-        /// </remarks>
-        public float YAcceleration => Conditions.YAcceleration.Value;
-
-        /// <summary>
-        ///     Acceleration along the Z-axis.
-        /// </summary>
-        /// <remarks>
-        ///     This property will only contain valid data after a call to Read or after
-        ///     an interrupt has been generated.
-        /// </remarks>
-        public float ZAcceleration => Conditions.ZAcceleration.Value;
-
-        public AccelerationConditions Conditions { get; protected set; } = new AccelerationConditions();
+        // internal thread lock
+        private readonly object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
 
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
@@ -739,7 +718,8 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        public event EventHandler<AccelerationConditionChangeResult> Updated;
+        public event EventHandler<CompositeChangeResult<Acceleration3d>> Updated;
+        public event EventHandler<CompositeChangeResult<Acceleration3d>> Acceleration3dUpdated;
 
         /// <summary>
         ///     Create a new ADXL362 object using the specified SPI module.
@@ -760,11 +740,11 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// Convenience method to get the current temperature. For frequent reads, use
         ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         ///// </summary>
-        public Task<AccelerationConditions> Read()
+        public Task<Acceleration3d> Read()
         {
             Update();
 
-            return Task.FromResult(Conditions);
+            return Task.FromResult(Acceleration3d);
         }
 
         ///// <summary>
@@ -776,7 +756,8 @@ namespace Meadow.Foundation.Sensors.Motion
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock) {
+            lock (_lock) 
+            {
                 if (IsSampling) { return; }
 
                 // state muh-cheen
@@ -785,23 +766,25 @@ namespace Meadow.Foundation.Sensors.Motion
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                AccelerationConditions oldConditions;
-                AccelerationConditionChangeResult result;
-                Task.Factory.StartNew(async () => {
-                    while (true) {
-                        if (ct.IsCancellationRequested) {
-                            // do task clean up here
-                            _observers.ForEach(x => x.OnCompleted());
+                Acceleration3d oldConditions;
+                CompositeChangeResult<Acceleration3d> result;
+                Task.Factory.StartNew(async () => 
+                {
+                    while (true) 
+                    {
+                        if (ct.IsCancellationRequested) 
+                        {   // do task clean up here
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
-                        oldConditions = AccelerationConditions.From(Conditions);
+                        oldConditions = Acceleration3d;
 
                         // read
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new AccelerationConditionChangeResult(oldConditions, Conditions);
+                        result = new CompositeChangeResult<Acceleration3d>(oldConditions, Acceleration3d);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -813,14 +796,15 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(AccelerationConditionChangeResult changeResult)
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Acceleration3d> changeResult)
         {
             Updated?.Invoke(this, changeResult);
+            Acceleration3dUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
         ///// <summary>
-        ///// Stops sampling the temperature.
+        ///// Stops sampling the acceleration.
         ///// </summary>
         public void StopUpdating()
         {
@@ -861,6 +845,8 @@ namespace Meadow.Foundation.Sensors.Motion
             _adxl362.WriteBytes(new byte[] { Command.WriteRegister, Registers.PowerControl, power });
         }
 
+        static double ADXL362_MG2G_MULTIPLIER = (0.004);
+
         /// <summary>
         ///     Read the sensors and make the readings available through the
         ///     X, Y and Z properties.
@@ -868,9 +854,10 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Update()
         {
             var sensorReading = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.XAxisLSB }, 8);
-            Conditions.XAcceleration = (short)((sensorReading[3] << 8) | sensorReading[2]);
-            Conditions.YAcceleration = (short)((sensorReading[5] << 8) | sensorReading[4]);
-            Conditions.ZAcceleration = (short)((sensorReading[7] << 8) | sensorReading[6]);
+
+            Acceleration3d.AccelerationX = new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[3] << 8) | sensorReading[2]), Acceleration.UnitType.MetersPerSecondSquared);
+            Acceleration3d.AccelerationY = new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[5] << 8) | sensorReading[4]), Acceleration.UnitType.MetersPerSecondSquared);
+            Acceleration3d.AccelerationZ = new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[7] << 8) | sensorReading[6]), Acceleration.UnitType.MetersPerSecondSquared);
         }
 
         /// <summary>

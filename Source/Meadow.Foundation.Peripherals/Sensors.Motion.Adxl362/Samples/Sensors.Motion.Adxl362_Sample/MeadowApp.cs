@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
@@ -12,22 +11,30 @@ namespace MeadowApp
 
         public MeadowApp()
         {
-            Initialize();
-
-            sensor.Updated += Sensor_Updated;
-            sensor.Start();
+            InitHardware();
         }
 
-        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Motion.AccelerationConditionChangeResult e)
+        public void InitHardware()
         {
-            Console.WriteLine($"X: {e.New.XAcceleration}, Y: {e.New.YAcceleration}, Z: {e.New.ZAcceleration}");
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Adxl362(Device, Device.CreateSpiBus(), Device.Pins.D00);
+
+            var observer = Adxl362.CreateObserver(e =>
+            {
+                Console.WriteLine($"X: {e.New.AccelerationX.Gravity}g, Y: {e.New.AccelerationY.Gravity}g, Z: {e.New.AccelerationZ.Gravity}g");
+            });
+
+            sensor.Subscribe(observer);
+
+           // sensor.Updated += Sensor_Updated;
+
+            sensor.StartUpdating(500);
+        }
+
+        private void Sensor_Updated(object sender, CompositeChangeResult<Meadow.Units.Acceleration3d> e)
+        {
+            Console.WriteLine($"X: {e.New.AccelerationX}, Y: {e.New.AccelerationY}, Z: {e.New.AccelerationZ}");
         }
     }
 }
