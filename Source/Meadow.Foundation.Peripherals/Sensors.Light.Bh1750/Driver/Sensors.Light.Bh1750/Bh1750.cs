@@ -31,19 +31,11 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public MeasuringModes MeasuringMode { get; set; }
 
-        
-
-        
-
         private II2cPeripheral bh1750;
 
         private const byte DefaultLightTransmittance = 0b_0100_0101;
         private const float MaxTransmittance = 2.225f;
         private const float MinTransmittance = 0.272f;
-
-        
-
-        
 
         /// <summary>
         /// The measuring mode of BH1750FVI
@@ -100,10 +92,6 @@ namespace Meadow.Foundation.Sensors.Light
             MeasurementTimeLow = 0b_0110_0000,
         }
 
-        
-
-        
-
         /// <summary>
         ///     Create a new BH1750 light sensor object using a static reference voltage.
         /// </summary>
@@ -116,10 +104,6 @@ namespace Meadow.Foundation.Sensors.Light
 
             Initialize();
         }
-
-        
-
-        
 
         private void Initialize()
         {
@@ -172,7 +156,5 @@ namespace Meadow.Foundation.Sensors.Light
 
             return result;
         }
-
-        
     }
 }
