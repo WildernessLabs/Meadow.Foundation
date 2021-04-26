@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Light
 {
     public class Si1145
     {
-        
-
         /// <summary>
         ///     Command bus object used to communicate with the SI1145 sensor.
         /// </summary>
         private II2cPeripheral si1145;
-
-        
-
-        
 
         /* COMMANDS*/
         readonly byte PARAM_QUERY = 0x80;
@@ -133,10 +128,6 @@ namespace Meadow.Foundation.Sensors.Light
         readonly byte REG_PARAMRD = 0x2E;
         readonly byte REG_CHIPSTAT = 0x30;
 
-        
-
-        
-
         /// <summary>
         ///     Create a new SI1145 sensor object.
         /// </summary>
@@ -154,29 +145,26 @@ namespace Meadow.Foundation.Sensors.Light
             Initialize();
         }
 
-        
-
-        
-
-        public double GetUltraViolet()
+        public double GetUltraVioletIndex()
         {
             byte[] data = si1145.ReadRegisters(0x2C, 2);
             int result = (data[1] << 8) | data[0];
-            return result / 100.0;
+
+            return result / 100.0; ;
         }
 
-        public double GetIfrared()
+        public Illuminance GetIfrared()
         {
             byte[] data = si1145.ReadRegisters(0x22, 2);
             int result = (data[1] << 8) | data[0];
-            return result;
+            return new Illuminance(result, Illuminance.UnitType.Lux);
         }
 
-        public double GetVisible()
+        public Illuminance GetVisible()
         {
             byte[] data = si1145.ReadRegisters(0x24, 2);
             int result = (data[1] << 8) | data[0];
-            return result;
+            return new Illuminance(result, Illuminance.UnitType.Lux);
         }
 
         public double GetProximity()
@@ -248,7 +236,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         private void Write8(byte reg, byte val)
-        {
+        {   //this can be replaced by WriteRegister
             si1145.WriteByte(reg);
             si1145.WriteByte(val);
         }
@@ -277,7 +265,5 @@ namespace Meadow.Foundation.Sensors.Light
 
             Thread.Sleep(10);
         }
-
-        
     }
 }

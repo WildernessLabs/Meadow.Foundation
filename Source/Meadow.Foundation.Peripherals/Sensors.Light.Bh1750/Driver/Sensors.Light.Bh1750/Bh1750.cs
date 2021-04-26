@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Buffers.Binary;
 
@@ -132,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Get BH1750 Illuminance
         /// </summary>
         /// <returns>Illuminance (Lux)</returns>
-        public double GetIlluminance()
+        public Illuminance GetIlluminance()
         {
             if (MeasuringMode == MeasuringModes.OneTimeHighResolutionMode ||
                 MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2 ||
@@ -154,7 +155,7 @@ namespace Meadow.Foundation.Sensors.Light
                 result *= 2;
             }
 
-            return result;
+            return new Illuminance(result, Illuminance.UnitType.Lux);
         }
     }
 }
