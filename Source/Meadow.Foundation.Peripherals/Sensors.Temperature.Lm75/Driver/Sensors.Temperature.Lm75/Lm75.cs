@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Sensors.Atmospheric;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
@@ -36,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// The Temperature value from the last reading.
         /// </summary>
-        public Units.Temperature? Temperature { get; protected set; }        
+        public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
@@ -126,12 +125,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock) {
-                if (!IsSampling) return;
+            lock (_lock) 
+            {
+                if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
 
-                // state muh-cheen
                 IsSampling = false;
             }
         }

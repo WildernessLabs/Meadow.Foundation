@@ -3,7 +3,7 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
 
-namespace Sensors.Temperature.TMP102_Sample
+namespace Sensors.Temperature.Lm75_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
