@@ -1,6 +1,7 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Moisture;
+using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,12 +11,14 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor    
     /// </summary>
-    public class Fc28 : FilterableChangeObservableBase<FloatChangeResult, float>//, IMoistureSensor
+    public class Fc28 : 
+        FilterableChangeObservable<CompositeChangeResult<ScalarDouble>, ScalarDouble?>, 
+        IMoistureSensor
     {
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
-        /// </summary>
-        public event EventHandler<FloatChangeResult> Updated = delegate { };
+        /// </summary>        
+        public event EventHandler<CompositeChangeResult<ScalarDouble>> HumidityUpdated = delegate { };
 
         // internal thread lock
         private object _lock = new object();
@@ -41,17 +44,19 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Last value read from the moisture sensor.
         /// </summary>
-        public float Moisture { get; private set; }
+        public ScalarDouble Moisture { get; private set; }
 
         /// <summary>
         /// Voltage value of most dry soil 
         /// </summary>
-        public float MinimumVoltageCalibration { get; set; }
+        public double MinimumVoltageCalibration { get; set; }
 
         /// <summary>
         /// Voltage value of most moist soil
         /// </summary>
-        public float MaximumVoltageCalibration { get; set; }
+        public double MaximumVoltageCalibration { get; set; }
+
+        ScalarDouble IMoistureSensor.Moisture => throw new NotImplementedException();
 
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device.
@@ -62,8 +67,8 @@ namespace Meadow.Foundation.Sensors.Moisture
             IMeadowDevice device,
             IPin analogPin,
             IPin digitalPin,
-            float minimumVoltageCalibration = 0f,
-            float maximumVoltageCalibration = 3.3f) :
+            double minimumVoltageCalibration = 0f,
+            double maximumVoltageCalibration = 3.3f) :
             this(device.CreateAnalogInputPort(analogPin), device.CreateDigitalOutputPort(digitalPin), minimumVoltageCalibration, maximumVoltageCalibration)
         { }
 
@@ -75,8 +80,8 @@ namespace Meadow.Foundation.Sensors.Moisture
         public Fc28(
             IAnalogInputPort analogPort,
             IDigitalOutputPort digitalPort,
-            float minimumVoltageCalibration = 0f,
-            float maximumVoltageCalibration = 3.3f)
+            double minimumVoltageCalibration = 0f,
+            double maximumVoltageCalibration = 3.3f)
         {
             AnalogInputPort = analogPort;
             DigitalPort = digitalPort;
@@ -93,15 +98,16 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="sampleInterval">The interval, in milliseconds, between
         /// sample readings.</param>
         /// <returns></returns>
-        public async Task<float> Read(int sampleCount = 10, int sampleInterval = 40)
+        public async Task<CompositeChangeResult<ScalarDouble>> Read(int sampleCount = 10, int sampleInterval = 40)
         {
+            ScalarDouble previousMoisture = Moisture;
+
             DigitalPort.State = true;
             float voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
             DigitalPort.State = false;
-
-            // convert and save to our temp property for later retrieval
+            
             Moisture = VoltageToMoisture(voltage);
-            return Moisture;
+            return new CompositeChangeResult<ScalarDouble>(Moisture, previousMoisture);
         }
 
         /// <summary>
@@ -132,9 +138,10 @@ namespace Meadow.Foundation.Sensors.Moisture
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                float oldConditions;
-                FloatChangeResult result;
-                Task.Factory.StartNew(async () => {
+                ScalarDouble oldConditions;
+                CompositeChangeResult<ScalarDouble> result;
+                Task.Factory.StartNew(async () => 
+                {
                     while (true) {
                         // TODO: someone please review; is this the correct
                         // place to do this?
@@ -143,17 +150,17 @@ namespace Meadow.Foundation.Sensors.Moisture
                         // cleanup
                         if (ct.IsCancellationRequested) {
                             // do task clean up here
-                            _observers.ForEach(x => x.OnCompleted());
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
                         oldConditions = Moisture;
 
                         // read                        
-                        Moisture = Read(sampleCount, sampleIntervalDuration).Result;
+                        await Read(sampleCount, sampleIntervalDuration);
 
                         // build a new result with the old and new conditions
-                        result = new FloatChangeResult(oldConditions, Moisture);
+                        result = new CompositeChangeResult<ScalarDouble>(Moisture, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -170,10 +177,12 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock) {
-                if (!IsSampling) return;
+            lock (_lock) 
+            {
+                if (!IsSampling) { return; }
 
-                if (SamplingTokenSource != null) {
+                if (SamplingTokenSource != null) 
+                {
                     SamplingTokenSource.Cancel();
                 }
 
@@ -181,19 +190,20 @@ namespace Meadow.Foundation.Sensors.Moisture
             }
         }
 
-        protected void RaiseChangedAndNotify(FloatChangeResult changeResult)
+        protected void RaiseChangedAndNotify(CompositeChangeResult<ScalarDouble> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
+            HumidityUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
-        protected float VoltageToMoisture(float voltage)
+        protected ScalarDouble VoltageToMoisture(double voltage)
         {
-            if (MinimumVoltageCalibration > MaximumVoltageCalibration) {
-                return 1f - Map(voltage, MaximumVoltageCalibration, MinimumVoltageCalibration, 0f, 1.0f);
+            if (MinimumVoltageCalibration > MaximumVoltageCalibration) 
+            {
+                return new ScalarDouble(1f - Map(voltage, MaximumVoltageCalibration, MinimumVoltageCalibration, 0d, 1.0d));
             }
 
-            return 1f - Map(voltage, MinimumVoltageCalibration, MaximumVoltageCalibration, 0f, 1.0f);
+            return new ScalarDouble(1f - Map(voltage, MinimumVoltageCalibration, MaximumVoltageCalibration, 0d, 1.0d));
         }
 
         /// <summary>
@@ -205,7 +215,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="toLow"></param>
         /// <param name="toHigh"></param>
         /// <returns></returns>
-        protected float Map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
+        protected double Map(double value, double fromLow, double fromHigh, double toLow, double toHigh)
         {
             return (((toHigh - toLow) * (value - fromLow)) / (fromHigh - fromLow)) - toLow;
         }

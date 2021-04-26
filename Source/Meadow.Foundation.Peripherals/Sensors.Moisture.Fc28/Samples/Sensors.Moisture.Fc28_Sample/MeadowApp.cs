@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Moisture;
+using Meadow.Units;
 
 namespace Sensors.Moisture.FC28_Sample
 {
@@ -29,16 +31,16 @@ namespace Sensors.Moisture.FC28_Sample
         {
             Console.WriteLine("TestFC28Updating...");
 
-            fc28.Subscribe(new FilterableChangeObserver<FloatChangeResult, float>(
-                h => {
-                    Console.WriteLine($"Moisture values: {Math.Truncate(h.New)}, old: {Math.Truncate(h.Old)}, delta: {h.DeltaPercent}");
-                },
-                e => {
-                    return true;
-                }
-            ));
+            var consumer = Fc28.CreateObserver(
+                handler: result => 
+                { 
+                
+                }, 
+                filter: null
+            );
+            fc28.Subscribe(consumer);
 
-            fc28.Updated += (object sender, FloatChangeResult e) =>
+            fc28.HumidityUpdated += (object sender, CompositeChangeResult<ScalarDouble> e) =>
             {
                 Console.WriteLine($"Moisture Updated: {e.New}");
             };
@@ -46,22 +48,16 @@ namespace Sensors.Moisture.FC28_Sample
             fc28.StartUpdating();
         }
 
-        void TestFC28Read()
+        async Task TestFC28Read()
         {
             Console.WriteLine("TestFC28Sensor...");
 
             // Use Read(); to get soil moisture value from 0 - 100
             while (true)
             {
-                float moisture = fc28.Read().Result;
+                var moisture = await fc28.Read();
 
-                if (moisture > 1.0f)
-                    moisture = 1.0f;
-                else
-                if (moisture < 0)
-                    moisture = 0;
-
-                Console.WriteLine($"Moisture {(int)(moisture * 100)}%");
+                Console.WriteLine($"Moisture {(int)(moisture.New.Value * 100)}%");
                 Thread.Sleep(1000);
             }
         }

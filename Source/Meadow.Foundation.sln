@@ -115,7 +115,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Moisture.Fc28", "Se
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{BDBF448A-E9DA-4629-953C-1FADE3817724}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Moisture.FC28_Sample", "Meadow.Foundation.Peripherals\Sensors.Moisture.FC28\Samples\Sensors.Moisture.FC28_Sample\Sensors.Moisture.FC28_Sample.csproj", "{C4028ACB-8530-4BC9-91F7-120A3EB5B2CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Moisture.Fc28_Sample", "Meadow.Foundation.Peripherals\Sensors.Moisture.Fc28\Samples\Sensors.Moisture.Fc28_Sample\Sensors.Moisture.Fc28_Sample.csproj", "{C4028ACB-8530-4BC9-91F7-120A3EB5B2CE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Moisture.Capacitive", "Sensors.Moisture.Capacitive", "{A9CD1742-A2D0-4346-9007-809FA6EC6F8D}"
 EndProject
@@ -311,7 +311,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Apds9960_Sam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Sht31d_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Sht31d\Samples\Sensors.Atmospheric.Sht31d_Sample\Sensors.Atmospheric.Sht31d_Sample.csproj", "{51B930DB-5D89-417E-A78F-4A365CAA17D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Moisture.FC28", "Meadow.Foundation.Peripherals\Sensors.Moisture.FC28\Driver\Sensors.Moisture.FC28\Sensors.Moisture.FC28.csproj", "{5B8B4327-8936-4AC1-B77D-1D219A897ECF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Moisture.Fc28", "Meadow.Foundation.Peripherals\Sensors.Moisture.Fc28\Driver\Sensors.Moisture.Fc28\Sensors.Moisture.Fc28.csproj", "{5B8B4327-8936-4AC1-B77D-1D219A897ECF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Camera.ArducamMini", "Sensors.Camera.ArducamMini", "{12B24D04-F1A5-4CB8-AC7F-13E965EC982D}"
 EndProject
