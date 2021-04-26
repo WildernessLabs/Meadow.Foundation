@@ -1,9 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Moisture;
+using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensors.Moisture.Capacitive_Sample
 {
@@ -29,18 +30,18 @@ namespace Sensors.Moisture.Capacitive_Sample
         {
             Console.WriteLine("TestCapacitiveUpdating...");
 
-            capacitive.Subscribe(new FilterableChangeObserver<FloatChangeResult, float>(
-                h => {
-                    Console.WriteLine($"Moisture values: {Math.Truncate(h.New)}, old: {Math.Truncate(h.Old)}, delta: {h.DeltaPercent}");
+            var consumer = Capacitive.CreateObserver(
+                handler: result =>
+                {
+                    Console.WriteLine($"Moisture values: {Math.Truncate(result.New.Value)}, old: {Math.Truncate(result.Old.Value)}, delta: {result.Delta.Value}");
                 },
-                e => {
-                    return true;
-                }
-            ));
+                filter: null
+            );
+            capacitive.Subscribe(consumer);
 
-            capacitive.Updated += (object sender, FloatChangeResult e) =>
+            capacitive.HumidityUpdated += (object sender, CompositeChangeResult<ScalarDouble> e) =>
             {
-                Console.WriteLine($"Moisture Updated: {e.New}");
+                Console.WriteLine($"Moisture Updated: {e.New.Value}");
             };
 
             capacitive.StartUpdating();
@@ -52,11 +53,11 @@ namespace Sensors.Moisture.Capacitive_Sample
 
             while (true)
             {
-                FloatChangeResult moisture = await capacitive.Read();
+                var moisture = await capacitive.Read();
 
-                Console.WriteLine($"Moisture New Value { moisture.New}");
-                Console.WriteLine($"Moisture Old Value { moisture.Old}");
-                Console.WriteLine($"Moisture Delta Value { moisture.Delta}");
+                Console.WriteLine($"Moisture New Value { moisture.New.Value}");
+                Console.WriteLine($"Moisture Old Value { moisture.Old.Value}");
+                Console.WriteLine($"Moisture Delta Value { moisture.Delta.Value}");
                 Thread.Sleep(1000);
             }
         }

@@ -56,8 +56,6 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public double MaximumVoltageCalibration { get; set; }
 
-        ScalarDouble IMoistureSensor.Moisture => throw new NotImplementedException();
-
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device.
         /// </summary>

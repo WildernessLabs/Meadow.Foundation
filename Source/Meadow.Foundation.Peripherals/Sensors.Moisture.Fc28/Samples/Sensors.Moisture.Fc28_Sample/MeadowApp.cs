@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Moisture;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensors.Moisture.FC28_Sample
 {
@@ -42,7 +42,7 @@ namespace Sensors.Moisture.FC28_Sample
 
             fc28.HumidityUpdated += (object sender, CompositeChangeResult<ScalarDouble> e) =>
             {
-                Console.WriteLine($"Moisture Updated: {e.New}");
+                Console.WriteLine($"Moisture Updated: {e.New.Value}");
             };
 
             fc28.StartUpdating();
@@ -52,12 +52,13 @@ namespace Sensors.Moisture.FC28_Sample
         {
             Console.WriteLine("TestFC28Sensor...");
 
-            // Use Read(); to get soil moisture value from 0 - 100
             while (true)
             {
                 var moisture = await fc28.Read();
 
-                Console.WriteLine($"Moisture {(int)(moisture.New.Value * 100)}%");
+                Console.WriteLine($"Moisture New Value { moisture.New.Value}");
+                Console.WriteLine($"Moisture Old Value { moisture.Old.Value}");
+                Console.WriteLine($"Moisture Delta Value { moisture.Delta.Value}");
                 Thread.Sleep(1000);
             }
         }

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
-using Meadow.Peripherals.Sensors.Atmospheric;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Temperature.AnalogTemperature_Sample
 {
