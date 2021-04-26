@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         public const byte DefaultAddress = 0x18;
 
-        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated;
+        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         // <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.

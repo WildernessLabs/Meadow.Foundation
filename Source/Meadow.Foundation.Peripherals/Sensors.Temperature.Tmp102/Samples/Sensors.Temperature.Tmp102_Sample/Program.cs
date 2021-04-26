@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Meadow;
 
-namespace Sensors.Temperature.Lm75_Sample
+namespace Sensors.Temperature.Tmp102_Sample
 {
     class Program
     {
