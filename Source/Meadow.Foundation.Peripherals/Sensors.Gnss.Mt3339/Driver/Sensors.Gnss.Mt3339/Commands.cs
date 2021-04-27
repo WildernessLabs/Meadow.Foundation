@@ -1,4 +1,4 @@
-﻿namespace Meadow.Foundation.Sensors.Location.MediaTek
+﻿namespace Meadow.Foundation.Sensors.Gnss
 {
     public struct Commands
     {

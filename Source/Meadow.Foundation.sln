@@ -688,15 +688,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TftSpi.St7735_Samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leds.PwmLedBarGraph_Sample", "Meadow.Foundation.Core.Samples\Leds.PwmLedBarGraph_Sample\Leds.PwmLedBarGraph_Sample.csproj", "{3AC2D665-8360-4367-9606-F633CA743C9E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Location.MediaTek", "Sensors.Location.MediaTek", "{F07E7336-995C-465C-9F5F-BC19FE7BD5F5}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mt3339", "Mt3339", "{D5ADAD08-4EBD-4354-B0A1-E4FFF17E2962}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Gnss.Mt3339", "Sensors.Gnss.Mt3339", "{F07E7336-995C-465C-9F5F-BC19FE7BD5F5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{F5BE2CAF-E124-40A4-8C07-A2023C959B84}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Location.MediaTek.Mt3339_Sample", "Meadow.Foundation.Peripherals\Sensors.Location.MediaTek\Mt3339\Samples\Sensors.Location.MediaTek.Mt3339_Sample\Sensors.Location.MediaTek.Mt3339_Sample.csproj", "{1372483D-0BE9-4A52-9BDC-75A15120279F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Gnss.Mt3339_Sample", "Meadow.Foundation.Peripherals\Sensors.Gnss.Mt3339\Samples\Sensors.Gnss.Mt3339_Sample\Sensors.Gnss.Mt3339_Sample.csproj", "{1372483D-0BE9-4A52-9BDC-75A15120279F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Location.MediaTek.Mt3339", "Meadow.Foundation.Peripherals\Sensors.Location.MediaTek\Mt3339\Driver\Sensors.Location.MediaTek.Mt3339\Sensors.Location.MediaTek.Mt3339.csproj", "{F0970BBA-CC73-4639-BC29-96A571D7BA36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Gnss.Mt3339", "Meadow.Foundation.Peripherals\Sensors.Gnss.Mt3339\Driver\Sensors.Gnss.Mt3339\Sensors.Gnss.Mt3339.csproj", "{F0970BBA-CC73-4639-BC29-96A571D7BA36}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Tmp102_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Samples\Sensors.Temperature.Tmp102_Sample\Sensors.Temperature.Tmp102_Sample.csproj", "{B8F8C9F2-E6BD-4DFA-B472-C80D265AC5DA}"
 EndProject
@@ -974,7 +972,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Mcp9808
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Mcp9808_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Mcp9808\Samples\Sensors.Temperature.Mcp9808_Sample\Sensors.Temperature.Mcp9808_Sample.csproj", "{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{67F9992A-6BD3-4452-89A5-42C4BAABC506}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{67F9992A-6BD3-4452-89A5-42C4BAABC506}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Weather.SwitchingAnemometer", "Sensors.Weather.SwitchingAnemometer", "{4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}"
 EndProject
@@ -988,11 +986,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Motors.ElectronicSpeedContr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicSpeedController_Sample", "Meadow.Foundation.Peripherals\Motors.ElectronicSpeedController\Samples\ElectronicSpeedController_Sample\ElectronicSpeedController_Sample.csproj", "{619B1B71-D04F-43DB-8EC2-A5E40276726D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mpl115a2_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl115A2\Samples\Mpl115a2_Sample\Mpl115a2_Sample.csproj", "{33938F9C-B8B0-41A0-B712-EFC58D42BE39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mpl115a2_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl115A2\Samples\Mpl115a2_Sample\Mpl115a2_Sample.csproj", "{33938F9C-B8B0-41A0-B712-EFC58D42BE39}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "SwitchingAnemometer_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Samples\SwitchingAnemometer_Sample\SwitchingAnemometer_Sample.csproj", "{861EE1C5-D337-4DA2-A529-30C063F866CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwitchingAnemometer_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Samples\SwitchingAnemometer_Sample\SwitchingAnemometer_Sample.csproj", "{861EE1C5-D337-4DA2-A529-30C063F866CE}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.Weather.SwitchingAnemometer", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Driver\Sensors.Weather.SwitchingAnemometer\Sensors.Weather.SwitchingAnemometer.csproj", "{16F83745-20F8-4641-B38D-AB5F7A454F76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Weather.SwitchingAnemometer", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Driver\Sensors.Weather.SwitchingAnemometer\Sensors.Weather.SwitchingAnemometer.csproj", "{16F83745-20F8-4641-B38D-AB5F7A454F76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2517,10 +2515,9 @@ Global
 		{7E466C3D-9630-4F98-BABC-43F23716B434} = {8FB70D12-1111-480B-B64C-B8EB65977F58}
 		{3AC2D665-8360-4367-9606-F633CA743C9E} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
 		{F07E7336-995C-465C-9F5F-BC19FE7BD5F5} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
-		{D5ADAD08-4EBD-4354-B0A1-E4FFF17E2962} = {F07E7336-995C-465C-9F5F-BC19FE7BD5F5}
-		{F5BE2CAF-E124-40A4-8C07-A2023C959B84} = {D5ADAD08-4EBD-4354-B0A1-E4FFF17E2962}
+		{F5BE2CAF-E124-40A4-8C07-A2023C959B84} = {F07E7336-995C-465C-9F5F-BC19FE7BD5F5}
 		{1372483D-0BE9-4A52-9BDC-75A15120279F} = {F5BE2CAF-E124-40A4-8C07-A2023C959B84}
-		{F0970BBA-CC73-4639-BC29-96A571D7BA36} = {D5ADAD08-4EBD-4354-B0A1-E4FFF17E2962}
+		{F0970BBA-CC73-4639-BC29-96A571D7BA36} = {F07E7336-995C-465C-9F5F-BC19FE7BD5F5}
 		{B8F8C9F2-E6BD-4DFA-B472-C80D265AC5DA} = {D5471726-76C5-46DD-9931-6328C6A3D375}
 		{5A2A60C7-58CC-401D-81C9-90C02C582121} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{F5C426C9-EFE2-4A20-9548-2879604C5AE4} = {5A2A60C7-58CC-401D-81C9-90C02C582121}
@@ -2666,8 +2663,8 @@ Global
 		{F3499920-32A2-4E5E-9D9E-4D04B7399C49} = {36346C46-BCCE-46D5-964F-E2A71EFD9CA2}
 		{619B1B71-D04F-43DB-8EC2-A5E40276726D} = {D42BCA76-BA33-40A3-9B39-FD72FC9FA9AA}
 		{33938F9C-B8B0-41A0-B712-EFC58D42BE39} = {118BEE02-672E-419F-96BC-2AED0276B9A9}
-		{16F83745-20F8-4641-B38D-AB5F7A454F76} = {4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}
 		{861EE1C5-D337-4DA2-A529-30C063F866CE} = {970D9570-A24B-4329-A888-F8DE9199A600}
+		{16F83745-20F8-4641-B38D-AB5F7A454F76} = {4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

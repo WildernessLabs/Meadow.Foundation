@@ -2,7 +2,7 @@
 using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.Location.MediaTek
+namespace Meadow.Foundation.Sensors.Gnss
 {
     public class MtkDecoder : INmeaDecoder
     {

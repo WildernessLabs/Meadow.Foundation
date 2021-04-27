@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Meadow.Foundation.Sensors.Location.MediaTek
+namespace Meadow.Foundation.Sensors.Gnss
 {
     public static class Lookups
     {

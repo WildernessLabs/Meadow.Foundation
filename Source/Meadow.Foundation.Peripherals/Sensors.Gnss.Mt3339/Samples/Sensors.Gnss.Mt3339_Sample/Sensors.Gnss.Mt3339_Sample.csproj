@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Location.MediaTek.Mt3339\Sensors.Location.MediaTek.Mt3339.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Gnss.Mt3339\Sensors.Gnss.Mt3339.csproj" />
   </ItemGroup>
 </Project>
