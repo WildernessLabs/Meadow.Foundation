@@ -1,555 +1,554 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Devices;
+﻿using Meadow.Devices;
 using Meadow.Foundation.Helpers;
-using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    ///     Driver for the ADXL362 triple axis accelerometer.
+    /// Driver for the ADXL362 triple axis accelerometer.
     /// </summary>
     public class Adxl362 :
         FilterableChangeObservable<CompositeChangeResult<Acceleration3d>, Acceleration3d>,
         IAccelerometer
     {
         /// <summary>
-        ///     ADXL362 sensor object.
+        /// ADXL362 sensor object.
         /// </summary>
         protected readonly ISpiPeripheral _adxl362;
 
         /// <summary>
-        ///     Digital input port attached to interrupt pin 1 on the ADXL362.
+        /// Digital input port attached to interrupt pin 1 on the ADXL362.
         /// </summary>
         private IDigitalInputPort _digitalInputPort1;
 
         /// <summary>
-        ///     Digital Input port attached to interrupt pin 2 on the ADXL362.
+        /// Digital Input port attached to interrupt pin 2 on the ADXL362.
         /// </summary>
         private IDigitalInputPort _digitalInputPort2;
 
-         /// <summary>
-        ///     Command byte (first byte in any communication).
+        /// <summary>
+        /// Command byte (first byte in any communication).
         /// </summary>
         protected static class Command
         {
             /// <summary>
-            ///     Write to one or more registers.
+            /// Write to one or more registers.
             /// </summary>
             public const byte WriteRegister = 0x0a;
 
             /// <summary>
-            ///     Read the contents of one or more registers.
+            /// Read the contents of one or more registers.
             /// </summary>
             public const byte Readegister = 0x0b;
 
             /// <summary>
-            ///     Read the FIFO buffer.
+            /// Read the FIFO buffer.
             /// </summary>
             public const byte ReadFIFO = 0x0d;
         }
 
         /// <summary>
-        ///     Registers in the ADXL362 sensor.
+        /// Registers in the ADXL362 sensor.
         /// </summary>
         protected static class Registers
         {
             /// <summary>
-            ///     Device ID (should be 0xad).
+            /// Device ID (should be 0xad).
             /// </summary>
             public const byte DeviceID = 0x00;
 
             /// <summary>
-            ///     Device IS MST (should be 0x1d).
+            /// Device IS MST (should be 0x1d).
             /// </summary>
             public const byte DeviceIDMST = 0x01;
 
             /// <summary>
-            ///     Part ID (should be 0xf2).
+            /// Part ID (should be 0xf2).
             /// </summary>
             public const byte PartID = 0x03;
 
             /// <summary>
-            ///     Revision ID (starts with 0x01 and increments for each change to the silicon).
+            /// Revision ID (starts with 0x01 and increments for each change to the silicon).
             /// </summary>
             public const byte SiliconRevisionID = 0x03;
 
             /// <summary>
-            ///     X-axis MSB (8-bits used when limited resolution is acceptable).
+            /// X-axis MSB (8-bits used when limited resolution is acceptable).
             /// </summary>
             public const byte XAxis8Bits = 0x08;
 
             /// <summary>
-            ///     Y-axis MSB (8-bits used when limited resolution is acceptable).
+            /// Y-axis MSB (8-bits used when limited resolution is acceptable).
             /// </summary>
             public const byte YAxis8Bits = 0x09;
 
             /// <summary>
-            ///     Z-axis MSB (8-bits used when limited resolution is acceptable).
+            /// Z-axis MSB (8-bits used when limited resolution is acceptable).
             /// </summary>
             public const byte ZAxis8Bits = 0x0a;
 
             /// <summary>
-            ///     Status register
+            /// Status register
             /// </summary>
             public const byte Status = 0x0b;
 
             /// <summary>
-            ///     FIFO entires (LSB)
+            /// FIFO entires (LSB)
             /// </summary>
             public const byte FIFORCEntriesLSB = 0x0c;
 
             /// <summary>
-            ///     FIFO entries (MSB)
+            /// FIFO entries (MSB)
             /// </summary>
             public const byte FIFOEntriesMSB = 0x0d;
 
             /// <summary>
-            ///     X-axis (LSB)
+            /// X-axis (LSB)
             /// </summary>
             public const byte XAxisLSB = 0x0e;
 
             /// <summary>
-            ///     X-axis MSB
+            /// X-axis MSB
             /// </summary>
             public const byte XAxisMSB = 0x0f;
 
             /// <summary>
-            ///     Y-axis (LSB)
+            /// Y-axis (LSB)
             /// </summary>
             public const byte YAxisLSB = 0x10;
 
             /// <summary>
-            ///     Y-Axis (MSB)
+            /// Y-Axis (MSB)
             /// </summary>
             public const byte YAxisMSB = 0x11;
 
             /// <summary>
-            ///     Z-axis (LSB)
+            /// Z-axis (LSB)
             /// </summary>
             public const byte ZAxisLSB = 0x12;
 
             /// <summary>
-            ///     Z-axis (MSB)
+            /// Z-axis (MSB)
             /// </summary>
             public const byte ZAxisMSB = 0x13;
 
             /// <summary>
-            ///     Temperature (LSB)
+            /// Temperature (LSB)
             /// </summary>
             public const byte TemperatureLSB = 0x14;
 
             /// <summary>
-            ///     Temperature (MSB)
+            /// Temperature (MSB)
             /// </summary>
             public const byte TemperatureMSB = 0x15;
 
             /// <summary>
-            ///     Soft reset register.
+            /// Soft reset register.
             /// </summary>
             /// <remarks>
-            ///     Writing 0x52 (ASCII for R) resets the sensor.
-            ///     All register settings are cleared, the sensor is placed into standby mode.
+            /// Writing 0x52 (ASCII for R) resets the sensor.
+            /// All register settings are cleared, the sensor is placed into standby mode.
             /// </remarks>
             public const byte SoftReset = 0x1f;
 
             /// <summary>
-            ///     Activity threshold (LSB)
+            /// Activity threshold (LSB)
             /// </summary>
             public const byte ActivityThresholdLSB = 0x20;
 
             /// <summary>
-            ///     Activity threshold (MSB)
+            /// Activity threshold (MSB)
             /// </summary>
             public const byte ActivityThresholdMSB = 0x21;
 
             /// <summary>
-            ///     Activity time count.
+            /// Activity time count.
             /// </summary>
             /// <remarks>
-            ///     The contents of this register indicates the number of readings in any
-            ///     of the axis that must exceed the activity threshold before an interrupt
-            ///     is generated.
+            /// The contents of this register indicates the number of readings in any
+            /// of the axis that must exceed the activity threshold before an interrupt
+            /// is generated.
             /// </remarks>
             public const byte ActivityTimeCount = 0x22;
 
             /// <summary>
-            ///     Inactivity threshold (LSB)
+            /// Inactivity threshold (LSB)
             /// </summary>
             public const byte InactivityThresholdLSB = 0x23;
 
             /// <summary>
-            ///     Inactivity threshold (MSB)
+            /// Inactivity threshold (MSB)
             /// </summary>
             public const byte InactivityThresholdMSB = 0x24;
 
             /// <summary>
-            ///     Inactivity time count (LSB).
+            /// Inactivity time count (LSB).
             /// </summary>
             /// <remarks>
-            ///     The contents of this register indicates the number of readings in any
-            ///     of the axis that must be below the inactivity threshold before an
-            ///     interrupt is generated.
+            /// The contents of this register indicates the number of readings in any
+            /// of the axis that must be below the inactivity threshold before an
+            /// interrupt is generated.
             /// </remarks>
             public const byte InactivityCountLSB = 0x25;
 
             /// <summary>
-            ///     Inactivity time count (MSB).
+            /// Inactivity time count (MSB).
             /// </summary>
             /// <remarks>
-            ///     The contents of this register indicates the number of readings in any
-            ///     of the axis that must be below the inactivity threshold before an
-            ///     interrupt is generated.
+            /// The contents of this register indicates the number of readings in any
+            /// of the axis that must be below the inactivity threshold before an
+            /// interrupt is generated.
             /// </remarks>
             public const byte InactivityCountMSB = 0x26;
 
             /// <summary>
-            ///     Activity / Inactivity control.
+            /// Activity / Inactivity control.
             /// </summary>
             public const byte ActivityInactivityControl = 0x27;
 
             /// <summary>
-            ///     FIFO Control.
+            /// FIFO Control.
             /// </summary>
             public const byte FIFOControl = 0x28;
 
             /// <summary>
-            ///     FIFO samples to store.
+            /// FIFO samples to store.
             /// </summary>
             public const byte FIFOSampleCount = 0x29;
 
             /// <summary>
-            ///     Interrupt map register (1)
+            /// Interrupt map register (1)
             /// </summary>
             public const byte InterruptMap1 = 0x2a;
 
             /// <summary>
-            ///     Interrupt map register (2)
+            /// Interrupt map register (2)
             /// </summary>
             public const byte InterruptMap2 = 0x2b;
 
             /// <summary>
-            ///     Filter control register.
+            /// Filter control register.
             /// </summary>
             public const byte FilterControl = 0x2c;
 
             /// <summary>
-            ///     Power control.
+            /// Power control.
             /// </summary>
             public const byte PowerControl = 0x2d;
 
             /// <summary>
-            ///     Self test.
+            /// Self test.
             /// </summary>
             /// <remarks>
-            ///     Setting this register to 0x01 forces a self test on th X, Y
-            ///     and Z axes.
+            /// Setting this register to 0x01 forces a self test on th X, Y
+            /// and Z axes.
             /// </remarks>
             public const byte SelfTest = 0x2e;
         }
 
         /// <summary>
-        ///     Masks for the bits in the Power Control register.
+        /// Masks for the bits in the Power Control register.
         /// </summary>
         protected static class PowerControlMask
         {
             /// <summary>
-            ///     Place the sensor inStandby.
+            /// Place the sensor inStandby.
             /// </summary>
             public const byte Standby = 0x00;
 
             /// <summary>
-            ///     Make measurements.
+            /// Make measurements.
             /// </summary>
             public const byte Measure = 0x01;
 
             /// <summary>
-            ///     Auto-sleep.
+            /// Auto-sleep.
             /// </summary>
             public const byte AutoSleep = 0x04;
 
             /// <summary>
-            ///     Wakeup mode.
+            /// Wakeup mode.
             /// </summary>
             public const byte WakeupMode = 0x08;
 
             /// <summary>
-            ///     Low noise mode.
+            /// Low noise mode.
             /// </summary>
             public const byte LowNoise = 0x10;
 
             /// <summary>
-            ///     Ultra-low noise mode.
+            /// Ultra-low noise mode.
             /// </summary>
             public const byte UltralowNoise = 0x20;
 
             /// <summary>
-            ///     External clock enabled on the INT1 pin.
+            /// External clock enabled on the INT1 pin.
             /// </summary>
             public const byte ExternalClock = 0x40;
         }
 
         /// <summary>
-        ///     Masks for the bit in the filter control register.
+        /// Masks for the bit in the filter control register.
         /// </summary>
         public static class FilterControlMask
         {
             /// <summary>
-            ///     Data rate of 12.5Hz
+            /// Data rate of 12.5Hz
             /// </summary>
             public const byte DataRate12HalfHz = 0x00;
 
             /// <summary>
-            ///     Data rate of 25 Hz
+            /// Data rate of 25 Hz
             /// </summary>
             public const byte DataRate25Hz = 0x01;
 
             /// <summary>
-            ///     Data rate of 50 Hz.
+            /// Data rate of 50 Hz.
             /// </summary>
             public const byte DataRate50Hz = 0x02;
 
             /// <summary>
-            ///     Data rate 100 Hz.
+            /// Data rate 100 Hz.
             /// </summary>
             public const byte DataRate100Hz = 0x03;
 
             /// <summary>
-            ///     Data rate of 200 Hz.
+            /// Data rate of 200 Hz.
             /// </summary>
             public const byte DataRate200Hz = 0x04;
 
             /// <summary>
-            ///     Data rate of 400 Hz
+            /// Data rate of 400 Hz
             /// </summary>
             public const byte DataRate400Hz = 0x05;
 
             /// <summary>
-            ///     Enable the external sampling trigger.
+            /// Enable the external sampling trigger.
             /// </summary>
             /// <remarks>
-            ///     Setting this bit to 1 enables the sampling to be controlled by the INT2 pin.
+            /// Setting this bit to 1 enables the sampling to be controlled by the INT2 pin.
             /// </remarks>
             public const byte ExternalSampling = 0x08;
 
             /// <summary>
-            ///     Half or quarter bandwidth.
+            /// Half or quarter bandwidth.
             /// </summary>
             /// <remarks>
-            ///     Setting this bit to 1 changes the anti-aliasing filters from 1/2 the output
-            ///     data rate to 1/4 the output data rate.
+            /// Setting this bit to 1 changes the anti-aliasing filters from 1/2 the output
+            /// data rate to 1/4 the output data rate.
             /// </remarks>
             public const byte HalfBandwidth = 0x10;
 
             /// <summary>
-            ///     Set the range to +/- 2g.
+            /// Set the range to +/- 2g.
             /// </summary>
             public const byte Range2g = 0x00;
 
             /// <summary>
-            ///     Set the range to +/- 4g
+            /// Set the range to +/- 4g
             /// </summary>
             public const byte Range4g = 0x40;
 
             /// <summary>
-            ///     Set the range to +/- 8g
+            /// Set the range to +/- 8g
             /// </summary>
             public const byte Range8g = 0x80;
         }
 
         /// <summary>
-        ///     Bit masks for the interrupt 1 / 2 control.
+        /// Bit masks for the interrupt 1 / 2 control.
         /// </summary>
         public static class InterruptMask
         {
             /// <summary>
-            ///     Bit indicating that data is ready for processing.
+            /// Bit indicating that data is ready for processing.
             /// </summary>
             public const byte DataReady = 0x01;
 
             /// <summary>
-            ///     Bit indicating that data is ready in the FIFO buffer.
+            /// Bit indicating that data is ready in the FIFO buffer.
             /// </summary>
             public const byte FIFODataReady = 0x02;
 
             /// <summary>
-            ///     Bit indicating that the FIFO buffer has reached the high watermark.
+            /// Bit indicating that the FIFO buffer has reached the high watermark.
             /// </summary>
             public const byte FIFOHighWatermarkReached = 0x04;
 
             /// <summary>
-            ///     Bit indicating that the FIFO buffer has overrun.
+            /// Bit indicating that the FIFO buffer has overrun.
             /// </summary>
             public const byte FIFOOverrun = 0x08;
 
             /// <summary>
-            ///     Activity interrupt bit.
+            /// Activity interrupt bit.
             /// </summary>
             public const byte Activity = 0x10;
 
             /// <summary>
-            ///     Inactivity interrupt.
+            /// Inactivity interrupt.
             /// </summary>
             public const byte Inactivity = 0x20;
 
             /// <summary>
-            ///     Awake interrupt.
+            /// Awake interrupt.
             /// </summary>
             public const byte Awake = 0x40;
 
             /// <summary>
-            ///     Interrupt active high / low (1 = low, 0 = high).
+            /// Interrupt active high / low (1 = low, 0 = high).
             /// </summary>
             public const byte ActiveLow = 0x80;
         }
 
         /// <summary>
-        ///     FIFO control bits.
+        /// FIFO control bits.
         /// </summary>
         protected static class FIFOControlMask
         {
             /// <summary>
-            ///     Disable FIFO mode.
+            /// Disable FIFO mode.
             /// </summary>
             public const byte FIFODisabled = 0x00;
 
             /// <summary>
-            ///     Enable FiFO oldest saved first mode.
+            /// Enable FiFO oldest saved first mode.
             /// </summary>
             public const byte FIFOOldestSaved = 0x01;
 
             /// <summary>
-            ///     Enable FIFOI stream mode.
+            /// Enable FIFOI stream mode.
             /// </summary>
             public const byte FIFOStreamMode = 0x02;
 
             /// <summary>
-            ///     Enable FIFO triggered mode.
+            /// Enable FIFO triggered mode.
             /// </summary>
             public const byte FIFOTriggeredMode = 0x03;
 
             /// <summary>
-            ///     When this bit is set to 1, the temperature data is stored in the FIFO
-            ///     buffer as well as the x, y and z axis data.
+            /// When this bit is set to 1, the temperature data is stored in the FIFO
+            /// buffer as well as the x, y and z axis data.
             /// </summary>
             public const byte StoreTemperatureData = 0x04;
 
             /// <summary>
-            ///     MSB of the FIFO sample count.  This allows the FIFO buffer to contain 512 samples.
+            /// MSB of the FIFO sample count.  This allows the FIFO buffer to contain 512 samples.
             /// </summary>
             public const byte AboveHalf = 0x08;
         }
 
         /// <summary>
-        ///     Status bit mask.
+        /// Status bit mask.
         /// </summary>
         protected static class StatusBitsMask
         {
             /// <summary>
-            ///     Indicates if data is ready to be read.
+            /// Indicates if data is ready to be read.
             /// </summary>
             public const byte DataReady = 0x01;
 
             /// <summary>
-            ///     Indicate when FIFO data is ready to be read.
+            /// Indicate when FIFO data is ready to be read.
             /// </summary>
             public const byte FIFOReady = 0x02;
 
             /// <summary>
-            ///     Set when the FIFO watermark has been reached.
+            /// Set when the FIFO watermark has been reached.
             /// </summary>
             public const byte FIFOWatermark = 0x04;
 
             /// <summary>
-            ///     True when incoming data is replacing existing data in the FIFO buffer.
+            /// True when incoming data is replacing existing data in the FIFO buffer.
             /// </summary>
             public const byte FIFOOverRun = 0x08;
 
             /// <summary>
-            ///     Activity has been detected.
+            /// Activity has been detected.
             /// </summary>
             public const byte ActivityDetected = 0x10;
 
             /// <summary>
-            ///     Indicate that the sensor is either inactive or a free-fall condition
-            ///     has been detected.
+            /// Indicate that the sensor is either inactive or a free-fall condition
+            /// has been detected.
             /// </summary>
             public const byte InactivityDetected = 0x20;
 
             /// <summary>
-            ///     Indicate if the sensor is awake (true) or inactive (false).
+            /// Indicate if the sensor is awake (true) or inactive (false).
             /// </summary>
             public const byte Awake = 0x40;
 
             /// <summary>
-            ///     SEU Error Detect. 1 indicates one of two conditions: either an
-            ///     SEU event, such as an alpha particle of a power glitch, has disturbed
-            ///     a user register setting or the ADXL362 is not configured. This bit
-            ///     is high upon both startup and soft reset, and resets as soon as any
-            ///     register write commands are performed.
+            /// SEU Error Detect. 1 indicates one of two conditions: either an
+            /// SEU event, such as an alpha particle of a power glitch, has disturbed
+            /// a user register setting or the ADXL362 is not configured. This bit
+            /// is high upon both startup and soft reset, and resets as soon as any
+            /// register write commands are performed.
             /// </summary>
             public const byte ErrorUserRegister = 0x80;
         }
 
         /// <summary>
-        ///     Control bits determining how the activity / inactivity functionality is configured.
+        /// Control bits determining how the activity / inactivity functionality is configured.
         /// </summary>
         protected static class ActivityInactivityControlMask
         {
             /// <summary>
-            ///     Determine if the activity functionality is enabled (1) or disabled (0).
+            /// Determine if the activity functionality is enabled (1) or disabled (0).
             /// </summary>
             public const byte ActivityEnable = 0x01;
 
             /// <summary>
-            ///     Determine is activity mode is in reference (1) or absolute mode (0).
+            /// Determine is activity mode is in reference (1) or absolute mode (0).
             /// </summary>
             public const byte ActivityMode = 0x02;
 
             /// <summary>
-            ///     Determine if inactivity mode is enabled (1) or disabled (0).
+            /// Determine if inactivity mode is enabled (1) or disabled (0).
             /// </summary>
             public const byte InactivityEnable = 0x04;
 
             /// <summary>
-            ///     Determine is inactivity mode is in reference (1) or absolute mode (0).
+            /// Determine is inactivity mode is in reference (1) or absolute mode (0).
             /// </summary>
             public const byte Inactivitymode = 0x08;
 
             /// <summary>
-            ///     Default mode.
+            /// Default mode.
             /// </summary>
             /// <remarks>
-            ///     Activity and inactivity detection are both enabled, and their interrupts
-            ///     (if mapped) must be acknowledged by the host processor by reading the STATUS
-            ///     register. Auto-sleep is disabled in this mode. Use this mode for free fall
-            ///     detection applications.
+            /// Activity and inactivity detection are both enabled, and their interrupts
+            /// (if mapped) must be acknowledged by the host processor by reading the STATUS
+            /// register. Auto-sleep is disabled in this mode. Use this mode for free fall
+            /// detection applications.
             /// </remarks>
             public const byte DefaultMode = 0x00;
 
             /// <summary>
-            ///     Link activity and inactivity.
+            /// Link activity and inactivity.
             /// </summary>
             /// <remarks>
-            ///     Activity and inactivity detection are linked sequentially such that only one
-            ///     is enabled at a time. Their interrupts (if mapped) must be acknowledged by
-            ///     the host processor by reading the STATUS register.
+            /// Activity and inactivity detection are linked sequentially such that only one
+            /// is enabled at a time. Their interrupts (if mapped) must be acknowledged by
+            /// the host processor by reading the STATUS register.
             /// </remarks>
             public const byte LinkedMode = 0x10;
 
             /// <summary>
             /// </summary>
             /// <remarks>
-            ///     Activity and inactivity detection are linked sequentially such that only one is
-            ///     enabled at a time, and their interrupts are internally acknowledged (do not
-            ///     need to be serviced by the host processor).
-            ///     To use either linked or looped mode, both ACT_EN (Bit 0) and INACT_EN (Bit 2)
-            ///     must be set to 1; otherwise, the default mode is used. For additional information,
-            ///     refer to the Linking Activity and Inactivity Detection section.
+            /// Activity and inactivity detection are linked sequentially such that only one is
+            /// enabled at a time, and their interrupts are internally acknowledged (do not
+            /// need to be serviced by the host processor).
+            /// To use either linked or looped mode, both ACT_EN (Bit 0) and INACT_EN (Bit 2)
+            /// must be set to 1; otherwise, the default mode is used. For additional information,
+            /// refer to the Linking Activity and Inactivity Detection section.
             /// </remarks>
             public const byte LoopMode = 0x30;
         }
@@ -568,7 +567,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public bool IsSampling { get; protected set; } = false;
 
         /// <summary>
-        ///     Indicate of data is ready to be read.
+        /// Indicate of data is ready to be read.
         /// </summary>
         public bool DataReady {
             get {
@@ -578,7 +577,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Indicate if there is any data in the FIFO buffer.
+        /// Indicate if there is any data in the FIFO buffer.
         /// </summary>
         public bool FIFOReady {
             get {
@@ -588,8 +587,8 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Indicate if there are at least the desired number
-        ///     of samples in the FIFO buffer.
+        /// Indicate if there are at least the desired number
+        /// of samples in the FIFO buffer.
         /// </summary>
         public bool FIFOWatermark {
             get {
@@ -599,8 +598,8 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Indicate if the FIFO buffer has overrun (newly generated data
-        ///     is overwriting data already stored in the FIFO buffer.
+        /// Indicate if the FIFO buffer has overrun (newly generated data
+        /// is overwriting data already stored in the FIFO buffer.
         /// </summary>
         public bool FIFOOverrun {
             get {
@@ -610,8 +609,8 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Indicate if any activity has been detected over the
-        ///     specified threshold.
+        /// Indicate if any activity has been detected over the
+        /// specified threshold.
         /// </summary>
         public bool ActivityDetected {
             get {
@@ -621,8 +620,8 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Indicate if the sensor has detected inactivity or a
-        ///     free fall condition.
+        /// Indicate if the sensor has detected inactivity or a
+        /// free fall condition.
         /// </summary>
         public bool InactivityDetected {
             get {
@@ -632,7 +631,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Indicate if the sensor is awake or inactive.
+        /// Indicate if the sensor is awake or inactive.
         /// </summary>
         public bool Awake {
             get {
@@ -642,8 +641,8 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Read the device ID, MEMS ID, Part ID and silicon revision ID and
-        ///     encode the value in a 32-bit integer.
+        /// Read the device ID, MEMS ID, Part ID and silicon revision ID and
+        /// encode the value in a 32-bit integer.
         /// </summary>
         public int DeviceID {
             get {
@@ -657,7 +656,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Read the status register.
+        /// Read the status register.
         /// </summary>
         public byte Status {
             get {
@@ -667,7 +666,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Sensor temperature.
+        /// Sensor temperature.
         /// </summary>
         public double Temperature {
             get {
@@ -678,7 +677,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Activity / Inactivity control register (see page 29 of the data sheet).
+        /// Activity / Inactivity control register (see page 29 of the data sheet).
         /// </summary>
         public byte ActivityInactivityControl {
             get {
@@ -691,9 +690,9 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Set the value of the self test register.  Setting this to true will put
-        ///     the device into self test mode, setting this to false will turn off the
-        ///     self test.
+        /// Set the value of the self test register.  Setting this to true will put
+        /// the device into self test mode, setting this to false will turn off the
+        /// self test.
         /// </summary>
         public bool SelfTest {
             set {
@@ -706,7 +705,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///      Get / set the filter control register (see page 33 of the data sheet).   
+        ///  Get / set the filter control register (see page 33 of the data sheet).   
         /// </summary>
         public byte FilterControl {
             get {
@@ -722,7 +721,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public event EventHandler<CompositeChangeResult<Acceleration3d>> Acceleration3dUpdated;
 
         /// <summary>
-        ///     Create a new ADXL362 object using the specified SPI module.
+        /// Create a new ADXL362 object using the specified SPI module.
         /// </summary>
         /// <param name="spiBus">Spi Bus object</param>
         /// <param name="chipSelect">Chip select pin.</param>
@@ -819,7 +818,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Reset the sensor.
+        /// Reset the sensor.
         /// </summary>
         public void Reset()
         {
@@ -828,7 +827,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Start making sensor readings.
+        /// Start making sensor readings.
         /// </summary>
         public void Start()
         {
@@ -836,7 +835,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Stop sensor readings.
+        /// Stop sensor readings.
         /// </summary>
         public void Stop()
         {
@@ -848,8 +847,8 @@ namespace Meadow.Foundation.Sensors.Motion
         static double ADXL362_MG2G_MULTIPLIER = (0.004);
 
         /// <summary>
-        ///     Read the sensors and make the readings available through the
-        ///     X, Y and Z properties.
+        /// Read the sensors and make the readings available through the
+        /// X, Y and Z properties.
         /// </summary>
         public void Update()
         {
@@ -861,20 +860,20 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Configure the activity threshold and activity time.   Once configured it will be
-        ///     necessary to set the activity/inactivity control and interrupts if required. 
+        /// Configure the activity threshold and activity time.   Once configured it will be
+        /// necessary to set the activity/inactivity control and interrupts if required. 
         /// </summary>
         /// <remark>
-        ///     The combination of the activity threshold, the activity time, the
-        ///     output data rate and the sensitivity determine if activity is detected
-        ///     according to the following formula:
+        /// The combination of the activity threshold, the activity time, the
+        /// output data rate and the sensitivity determine if activity is detected
+        /// according to the following formula:
         /// 
-        ///     Activity threshold = Threshold / Sensitivity
-        ///     Time = Activity time / output data rate
+        /// Activity threshold = Threshold / Sensitivity
+        /// Time = Activity time / output data rate
         /// 
-        ///     Note that the sensitivity is in the Filter Control register.
+        /// Note that the sensitivity is in the Filter Control register.
         /// 
-        ///     Further information can be found on page 27 of the data sheet.
+        /// Further information can be found on page 27 of the data sheet.
         /// </remark>
         /// <param name="threshold">11-bit unsigned value for the activity threshold.</param>
         /// <param name="numberOfSamples">Number of consecutive samples that must exceed the threshold</param>
@@ -896,20 +895,20 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Configure the inactivity threshold and activity time.   Once configured it will be
-        ///     necessary to set the activity/inactivity control and interrupts if required. 
+        /// Configure the inactivity threshold and activity time.   Once configured it will be
+        /// necessary to set the activity/inactivity control and interrupts if required. 
         /// </summary>
         /// <remark>
-        ///     The combination of the activity threshold, the activity time, the
-        ///     output data rate and the sensitivity determine if activity is detected
-        ///     according to the following formula:
+        /// The combination of the activity threshold, the activity time, the
+        /// output data rate and the sensitivity determine if activity is detected
+        /// according to the following formula:
         /// 
-        ///     Inactivity threshold = Threshold / Sensitivity
-        ///     Time = Inactivity time / output data rate
+        /// Inactivity threshold = Threshold / Sensitivity
+        /// Time = Inactivity time / output data rate
         /// 
-        ///     Note that the sensitivity is in the Filter Control register.
+        /// Note that the sensitivity is in the Filter Control register.
         /// 
-        ///     Further information can be found on page 27 and 28 of the data sheet.
+        /// Further information can be found on page 27 and 28 of the data sheet.
         /// </remark>
         /// <param name="threshold">11-bit unsigned value for the activity threshold.</param>
         /// <param name="numberOfSamples">Number of consecutive samples that must exceed the threshold</param>
@@ -932,8 +931,8 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Map the pull-up / pull-down resistor mode based upon the interrupt
-        ///     state (active low or active high) to the appropriate resistor mode.
+        /// Map the pull-up / pull-down resistor mode based upon the interrupt
+        /// state (active low or active high) to the appropriate resistor mode.
         /// </summary>
         /// <param name="activeLow">True if the resistor should be pull-up, otherwise a pull-down resistor.</param>
         /// <returns>Resistor mode mapping based upon the active low state.</returns>
@@ -947,8 +946,8 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Map the interrupt state (active low or active high) to the
-        ///     appropriate interrupt mode.
+        /// Map the interrupt state (active low or active high) to the
+        /// appropriate interrupt mode.
         /// </summary>
         /// <param name="activeLow">True of the interrupt is active low, false for active high.</param>
         /// <returns>Interrupt mode mapping based upon the active low state.</returns>
@@ -962,15 +961,15 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Configure the interrupts for the ADXL362.
+        /// Configure the interrupts for the ADXL362.
         /// </summary>
         /// <remark>
-        ///     Set the interrupt mask for interrupt pins 1 and 2
-        ///     pins to the interrupt pins on the ADXL362 if requested.
+        /// Set the interrupt mask for interrupt pins 1 and 2
+        /// pins to the interrupt pins on the ADXL362 if requested.
         /// 
-        ///     Interrupts can be disabled by passing 0 for the interrupt maps.  It is also
-        ///     possible to disconnect and ADXL362 by setting the interrupt pin
-        ///     to GPIO_NONE.
+        /// Interrupts can be disabled by passing 0 for the interrupt maps.  It is also
+        /// possible to disconnect and ADXL362 by setting the interrupt pin
+        /// to GPIO_NONE.
         /// </remark>
         /// <param name="interruptMap1">Bit mask for interrupt pin 1</param>
         /// <param name="interruptPin1">Pin connected to interrupt pin 1 on the ADXL362.</param>
@@ -996,7 +995,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Sensor has generated an interrupt, work out what to do.
+        /// Sensor has generated an interrupt, work out what to do.
         /// </summary>
         private void InterruptChanged(object sender, DigitalInputPortEventArgs e)
         {
@@ -1007,7 +1006,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Display the register contents.
+        /// Display the register contents.
         /// </summary>
         private void DisplayRegisters()
         {

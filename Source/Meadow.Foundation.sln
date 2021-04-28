@@ -73,7 +73,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Mag3110", "S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B80C99F7-CFC0-409B-AFDD-23E2C8775327}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.MAG3110", "Meadow.Foundation.Peripherals\Sensors.Motion.Mag3110\Driver\Sensors.Motion.MAG3110\Sensors.Motion.MAG3110.csproj", "{02E56C68-5B09-4331-9E5D-7FD9217594F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Mag3110", "Meadow.Foundation.Peripherals\Sensors.Motion.Mag3110\Driver\Sensors.Motion.Mag3110\Sensors.Motion.Mag3110.csproj", "{02E56C68-5B09-4331-9E5D-7FD9217594F0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Mpu6050", "Sensors.Motion.Mpu6050", "{A4089518-DBDB-4E12-8A31-D916859259F0}"
 EndProject
@@ -87,25 +87,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Bno055", "Se
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{07F59EFA-8D03-489D-BB05-905C3B0A7699}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.BNO055", "Meadow.Foundation.Peripherals\Sensors.Motion.Bno055\Driver\Sensors.Motion.BNO055\Sensors.Motion.BNO055.csproj", "{94A3A79A-3614-426C-A99C-F1F5CCDC4305}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Bno055", "Meadow.Foundation.Peripherals\Sensors.Motion.Bno055\Driver\Sensors.Motion.Bno055\Sensors.Motion.Bno055.csproj", "{94A3A79A-3614-426C-A99C-F1F5CCDC4305}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Apds9960", "Sensors.Motion.Apds9960", "{58CE81BF-8BBD-4840-A8D0-DC5C19E23100}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{D744EA2C-4534-42ED-B7BB-CC511762C509}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.APDS9960", "Meadow.Foundation.Peripherals\Sensors.Motion.Apds9960\Driver\Sensors.Motion.APDS9960\Sensors.Motion.APDS9960.csproj", "{894672CE-285A-40E7-98C7-EEBC530BBF24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Apds9960", "Meadow.Foundation.Peripherals\Sensors.Motion.Apds9960\Driver\Sensors.Motion.Apds9960\Sensors.Motion.Apds9960.csproj", "{894672CE-285A-40E7-98C7-EEBC530BBF24}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Adxl362", "Sensors.Motion.Adxl362", "{4E2218F3-0F2C-4E03-A66F-186515BB7BCE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{FCA47C65-6C9F-4314-B53E-7ADD9577ABE8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.ADXL362", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl362\Driver\Sensors.Motion.ADXL362\Sensors.Motion.ADXL362.csproj", "{159398B2-C343-4452-A477-529AF5CDEC19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Adxl362", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl362\Driver\Sensors.Motion.Adxl362\Sensors.Motion.Adxl362.csproj", "{159398B2-C343-4452-A477-529AF5CDEC19}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Adxl345", "Sensors.Motion.Adxl345", "{27F6839F-A1C9-4B36-B31B-0E938A6C7235}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{8DD795F4-2DA9-447B-BE2E-BD6C9F2B2FE5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.ADXL345", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl345\Driver\Sensors.Motion.ADXL345\Sensors.Motion.ADXL345.csproj", "{91300B57-61A5-4FF5-A750-BBCF171A1889}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Adxl345", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl345\Driver\Sensors.Motion.Adxl345\Sensors.Motion.Adxl345.csproj", "{91300B57-61A5-4FF5-A750-BBCF171A1889}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Adxl335", "Sensors.Motion.Adxl335", "{49385FEE-7136-4294-B79E-CB79538FF90D}"
 EndProject
