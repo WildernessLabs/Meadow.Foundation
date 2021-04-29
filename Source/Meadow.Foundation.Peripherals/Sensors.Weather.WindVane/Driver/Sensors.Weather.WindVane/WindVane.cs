@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="device">The IO Device.</param>
         /// <param name="analogInputPin">The analog input pin.</param>
         /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages.</param>
-        public WindVane(IAnalogInputController device, IPin analogInputPin, IDictionary<float, Azimuth> azimuthVoltages = null)
+        public WindVane(IAnalogInputController device, IPin analogInputPin, IDictionary<Voltage, Azimuth> azimuthVoltages = null)
             : this(device.CreateAnalogInputPort(analogInputPin), azimuthVoltages)
         {
         }
