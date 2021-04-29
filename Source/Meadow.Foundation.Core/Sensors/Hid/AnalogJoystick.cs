@@ -1,6 +1,7 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Hid;
+using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
@@ -29,9 +30,9 @@ namespace Meadow.Foundation.Sensors.Hid
 
         public bool IsInverted { get; protected set; }
 
-        public float HorizontalValue { get; protected set; }
+        public Voltage HorizontalValue { get; protected set; }
 
-        public float VerticalValue { get; protected set; }
+        public Voltage VerticalValue { get; protected set; }
 
         #endregion
 
@@ -83,11 +84,13 @@ namespace Meadow.Foundation.Sensors.Hid
 
             HorizontalInputPort.Subscribe
             (
-                new FilterableChangeObserver<FloatChangeResult, float>(
+                IAnalogInputPort.CreateObserver(
                     h => {
                         HorizontalValue = h.New;
-                        if ((Math.Abs(h.Old - Calibration.HorizontalCenter) < Calibration.DeadZone) &&
-                            (Math.Abs(h.New - Calibration.HorizontalCenter) < Calibration.DeadZone)) {
+                        if (
+                            (((h.Old - Calibration.HorizontalCenter).Abs()) < Calibration.DeadZone)
+                            &&
+                            ((h.New - Calibration.HorizontalCenter).Abs() < Calibration.DeadZone)) {
                             return;
                         }
 
@@ -108,11 +111,13 @@ namespace Meadow.Foundation.Sensors.Hid
 
             VerticalInputPort.Subscribe
             (
-                new FilterableChangeObserver<FloatChangeResult, float>(
+               IAnalogInputPort.CreateObserver(
                     v => {
                         VerticalValue = v.New;
-                        if ((Math.Abs(v.Old - Calibration.VerticalCenter) < Calibration.DeadZone) &&
-                            (Math.Abs(v.New - Calibration.VerticalCenter) < Calibration.DeadZone)) {
+                        if (
+                            ((v.Old - Calibration.VerticalCenter).Abs() < Calibration.DeadZone)
+                            &&
+                            ((v.New - Calibration.VerticalCenter).Abs() < Calibration.DeadZone)) {
                             return;
                         }
 
@@ -152,7 +157,7 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             var timeoutTask = Task.Delay(duration);
 
-            float h, v;
+            Voltage h, v;
 
             while (timeoutTask.IsCompleted == false) {
                 h = await HorizontalInputPort.Read();
@@ -199,12 +204,12 @@ namespace Meadow.Foundation.Sensors.Hid
             return DigitalJoystickPosition.Center;
         }
 
-        public Task<float> GetHorizontalValue()
+        public Task<Voltage> GetHorizontalValue()
         {
             return HorizontalInputPort.Read(1);
         }
 
-        public Task<float> GetVerticalValue()
+        public Task<Voltage> GetVerticalValue()
         {
             return VerticalInputPort.Read(1);
         }
@@ -229,25 +234,25 @@ namespace Meadow.Foundation.Sensors.Hid
             base.NotifyObservers(changeResult);
         }
 
-        float GetNormalizedPosition(float value, bool isHorizontal)
+        float GetNormalizedPosition(Voltage value, bool isHorizontal)
         {
-            float normalized;
+            double normalized;
 
             if (isHorizontal) {
                 if (value <= Calibration.HorizontalCenter) {
-                    normalized = (value - Calibration.HorizontalCenter) / (Calibration.HorizontalCenter - Calibration.HorizontalMin);
+                    normalized = (value.Volts - Calibration.HorizontalCenter.Volts) / (Calibration.HorizontalCenter.Volts - Calibration.HorizontalMin.Volts);
                 } else {
-                    normalized = (value - Calibration.HorizontalCenter) / (Calibration.HorizontalMax - Calibration.HorizontalCenter);
+                    normalized = (value.Volts - Calibration.HorizontalCenter.Volts) / (Calibration.HorizontalMax.Volts - Calibration.HorizontalCenter.Volts);
                 }
             } else {
                 if (value <= Calibration.VerticalCenter) {
-                    normalized = (value - Calibration.VerticalCenter) / (Calibration.VerticalCenter - Calibration.VerticalMin);
+                    normalized = (value.Volts - Calibration.VerticalCenter.Volts) / (Calibration.VerticalCenter.Volts - Calibration.VerticalMin.Volts);
                 } else {
-                    normalized = (value - Calibration.VerticalCenter) / (Calibration.VerticalMax - Calibration.VerticalCenter);
+                    normalized = (value.Volts - Calibration.VerticalCenter.Volts) / (Calibration.VerticalMax.Volts - Calibration.VerticalCenter.Volts);
                 }
             }
 
-            return IsInverted ? -1 * normalized : normalized;
+            return (float)(IsInverted ? -1 * normalized : normalized);
         }
 
         #endregion Methods
@@ -263,31 +268,31 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </remarks>
         public class JoystickCalibration
         {
-            public float HorizontalCenter { get; protected set; }
-            public float HorizontalMin { get; protected set; }
-            public float HorizontalMax { get; protected set; }
+            public Voltage HorizontalCenter { get; protected set; }
+            public Voltage HorizontalMin { get; protected set; }
+            public Voltage HorizontalMax { get; protected set; }
 
-            public float VerticalCenter { get; protected set; }
-            public float VerticalMin { get; protected set; }
-            public float VerticalMax { get; protected set; }
+            public Voltage VerticalCenter { get; protected set; }
+            public Voltage VerticalMin { get; protected set; }
+            public Voltage VerticalMax { get; protected set; }
 
-            public float DeadZone { get; protected set; }
+            public Voltage DeadZone { get; protected set; }
 
-            public JoystickCalibration(float analogVoltage)
+            public JoystickCalibration(Voltage voltage)
             {
-                HorizontalCenter = analogVoltage / 2;
+                HorizontalCenter = voltage / 2;
                 HorizontalMin = 0;
-                HorizontalMax = analogVoltage;
+                HorizontalMax = voltage;
 
-                VerticalCenter = analogVoltage / 2;
+                VerticalCenter = voltage / 2;
                 VerticalMin = 0;
-                VerticalMax = analogVoltage;
+                VerticalMax = voltage;
 
                 DeadZone = 0.2f;
             }
 
-            public JoystickCalibration(float horizontalCenter, float horizontalMin, float horizontalMax,
-                float verticalCenter, float verticalMin, float verticalMax, float deadZone)
+            public JoystickCalibration(Voltage horizontalCenter, Voltage horizontalMin, Voltage horizontalMax,
+                Voltage verticalCenter, Voltage verticalMin, Voltage verticalMax, Voltage deadZone)
             {
                 HorizontalCenter = horizontalCenter;
                 HorizontalMin = horizontalMin;
