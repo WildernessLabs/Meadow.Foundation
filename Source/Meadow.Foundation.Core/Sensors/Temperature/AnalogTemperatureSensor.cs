@@ -3,6 +3,7 @@ using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors;
 using System;
 using System.Threading.Tasks;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
@@ -177,7 +178,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             // pattern through the sensor driver
             AnalogInputPort.Subscribe
             (
-                new FilterableChangeObserver<FloatChangeResult, float>(
+                IAnalogInputPort.CreateObserver(
                     h => {
                         var newTemp = VoltageToTemperature(h.New);
                         var oldTemp = VoltageToTemperature(h.Old);
@@ -205,7 +206,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             Units.Temperature? oldTemp = Temperature;
 
             // read the voltage
-            float voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
+            var voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
 
             // convert the voltage
             Temperature = VoltageToTemperature(voltage);
@@ -255,12 +256,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="voltage"></param>
         /// <returns>temperature in celcius</returns>
-        protected Units.Temperature VoltageToTemperature(float voltage)
+        protected Units.Temperature VoltageToTemperature(Voltage voltage)
         {
             return new Units.Temperature(
                 SensorCalibration.SampleReading
                 +
-                (voltage * 1000 - SensorCalibration.MillivoltsAtSampleReading)
+                (voltage.Millivolts - SensorCalibration.MillivoltsAtSampleReading)
                 /
                 SensorCalibration.MillivoltsPerDegreeCentigrade,
                 Units.Temperature.UnitType.Celsius);

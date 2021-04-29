@@ -3,18 +3,18 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>GPSWing</AssemblyName>
+    <AssemblyName>Apds9960</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.FeatherWings.GPSWing</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Motion.Apds9960</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, GPSWing, GPS, Gnss</PackageTags>
-    <Version>0.1.32</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>AdaFruit GPSWing GPS FeatherWing</Description>
+    <PackageTags>Meadow.Foundation, Acceleration, Accelerometer, Apds9960</PackageTags>
+    <Version>0.1.3</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Description>APDS9960 I2C proximity, light, color and gesture sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Sensors.Gnss.Mt3339\Driver\Sensors.Gnss.Mt3339\Sensors.Gnss.Mt3339.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>

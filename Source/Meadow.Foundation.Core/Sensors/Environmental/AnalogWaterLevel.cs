@@ -1,5 +1,6 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
@@ -20,13 +21,13 @@ namespace Meadow.Foundation.Sensors.Environmental
         public class Calibration
         {
 
-            public float VoltsAtZero { get; protected set; } = 1f;
+            public Voltage VoltsAtZero { get; protected set; } = new Voltage(1, Voltage.UnitType.Volts);
 
             /// <summary>
             ///     Linear change in the sensor output (in millivolts) per 1 mm
             ///     change in temperature.
             /// </summary>
-            public float VoltsPerCentimeter { get; protected set; } = 0.25f;
+            public Voltage VoltsPerCentimeter { get; protected set; } = new Voltage(0.25, Voltage.UnitType.Volts);
 
             /// <summary>
             ///     Default constructor. Create a new Calibration object with default values
@@ -88,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             // wire up our observable
             AnalogInputPort.Subscribe
             (
-                new FilterableChangeObserver<FloatChangeResult, float>(
+                IAnalogInputPort.CreateObserver(
                     h => {
                         var newWaterLevel = VoltageToWaterLevel(h.New);
                         var oldWaterLevel = VoltageToWaterLevel(h.Old);
@@ -115,7 +116,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         public async Task<float> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
             // read the voltage
-            float voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
+            Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
 
             // convert and save to our temp property for later retreival
             WaterLevel = VoltageToWaterLevel(voltage);
@@ -166,13 +167,13 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         /// <param name="voltage"></param>
         /// <returns></returns>
-        protected float VoltageToWaterLevel(float voltage)
+        protected float VoltageToWaterLevel(Voltage voltage)
         {
             if(voltage <= LevelCalibration.VoltsAtZero)
             {
                 return 0;
             }
-            return (voltage - LevelCalibration.VoltsAtZero) / LevelCalibration.VoltsPerCentimeter;
+            return (float)((voltage.Volts - LevelCalibration.VoltsAtZero.Volts) / LevelCalibration.VoltsPerCentimeter.Volts);
         }
     }
 }

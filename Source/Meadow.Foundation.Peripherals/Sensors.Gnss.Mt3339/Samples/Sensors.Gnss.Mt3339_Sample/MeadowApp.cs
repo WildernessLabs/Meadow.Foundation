@@ -1,10 +1,10 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Location.MediaTek;
+using Meadow.Foundation.Sensors.Gnss;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 using System;
 
-namespace MeadowApp
+namespace Sensors.Gnss.Mt3339_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
