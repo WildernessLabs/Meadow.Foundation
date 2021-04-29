@@ -39,14 +39,14 @@ namespace Meadow.Foundation.Sensors.Moisture
         public ScalarDouble Moisture { get; protected set; }
 
         /// <summary>
-        /// Voltage value of most dry soil 
+        /// Voltage value of most dry soil. Default of `0V`.
         /// </summary>
-        public double MinimumVoltageCalibration { get; set; }
+        public Voltage MinimumVoltageCalibration { get; set; } = new Voltage(0);
 
         /// <summary>
-        /// Voltage value of most moist soil
+        /// Voltage value of most moist soil. Default of `3.3V`.
         /// </summary>
-        public double MaximumVoltageCalibration { get; set; }
+        public Voltage MaximumVoltageCalibration { get; set; } = new Voltage(3.3);
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the specified analog pin and a IO device.
@@ -56,8 +56,8 @@ namespace Meadow.Foundation.Sensors.Moisture
         public Capacitive(
             IAnalogInputController device,
             IPin analogPin,
-            double minimumVoltageCalibration = 0f,
-            double maximumVoltageCalibration = 3.3f) :
+            Voltage? minimumVoltageCalibration,
+            Voltage? maximumVoltageCalibration) :
             this(device.CreateAnalogInputPort(analogPin), minimumVoltageCalibration, maximumVoltageCalibration)
         { }
 
@@ -67,12 +67,15 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="analogPort"></param>
         public Capacitive(
             IAnalogInputPort analogPort,
-            double minimumVoltageCalibration = 0f,
-            double maximumVoltageCalibration = 3.3f)
+            Voltage? minimumVoltageCalibration,
+            Voltage? maximumVoltageCalibration)
         {
             AnalogInputPort = analogPort;
-            MinimumVoltageCalibration = minimumVoltageCalibration;
-            MaximumVoltageCalibration = maximumVoltageCalibration;
+
+            if(minimumVoltageCalibration is { } min) { MinimumVoltageCalibration = min; }
+            if(maximumVoltageCalibration is { } max) { MaximumVoltageCalibration = max; }
+            //MinimumVoltageCalibration = minimumVoltageCalibration;
+            //MaximumVoltageCalibration = maximumVoltageCalibration;
 
             // wire up our observable
             // have to convert from voltage to temp units for our consumers
@@ -80,7 +83,7 @@ namespace Meadow.Foundation.Sensors.Moisture
             // pattern through the sensor driver
             AnalogInputPort.Subscribe
             (
-                new FilterableChangeObserver<FloatChangeResult, float>(
+                IAnalogInputPort.CreateObserver(
                     h => {
                         var newMoisture = VoltageToMoisture(h.New);
                         var oldMoisture = VoltageToMoisture(h.Old);
@@ -107,7 +110,7 @@ namespace Meadow.Foundation.Sensors.Moisture
             // save previous moisture value
             ScalarDouble previousMoisture = Moisture;
             // read the voltage
-            float voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
+            Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
             // convert and save to our temp property for later retrieval
             Moisture = VoltageToMoisture(voltage);
             // return new and old Moisture values
@@ -150,13 +153,13 @@ namespace Meadow.Foundation.Sensors.Moisture
             base.NotifyObservers(changeResult);
         }
 
-        protected ScalarDouble VoltageToMoisture(float voltage)
+        protected ScalarDouble VoltageToMoisture(Voltage voltage)
         {
             if (MinimumVoltageCalibration > MaximumVoltageCalibration) {
-                return new ScalarDouble(1f - Map(voltage, MaximumVoltageCalibration, MinimumVoltageCalibration, 0f, 1.0f));
+                return new ScalarDouble(1f - Map(voltage.Volts, MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0f, 1.0f));
             }
 
-            return new ScalarDouble(1f - Map(voltage, MinimumVoltageCalibration, MaximumVoltageCalibration, 0f, 1.0f));
+            return new ScalarDouble(1f - Map(voltage.Volts, MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0f, 1.0f));
         }
 
         /// <summary>
