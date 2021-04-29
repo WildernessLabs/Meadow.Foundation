@@ -47,14 +47,14 @@ namespace Meadow.Foundation.Sensors.Moisture
         public ScalarDouble Moisture { get; private set; }
 
         /// <summary>
-        /// Voltage value of most dry soil 
+        /// Voltage value of most dry soil. Default of `0V`.
         /// </summary>
-        public double MinimumVoltageCalibration { get; set; }
+        public Voltage MinimumVoltageCalibration { get; set; } = new Voltage(0);
 
         /// <summary>
-        /// Voltage value of most moist soil
+        /// Voltage value of most moist soil. Default of `3.3V`.
         /// </summary>
-        public double MaximumVoltageCalibration { get; set; }
+        public Voltage MaximumVoltageCalibration { get; set; } = new Voltage(3.3);
 
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device.
@@ -65,8 +65,8 @@ namespace Meadow.Foundation.Sensors.Moisture
             IMeadowDevice device,
             IPin analogPin,
             IPin digitalPin,
-            double minimumVoltageCalibration = 0f,
-            double maximumVoltageCalibration = 3.3f) :
+            Voltage? minimumVoltageCalibration,
+            Voltage? maximumVoltageCalibration) :
             this(device.CreateAnalogInputPort(analogPin), device.CreateDigitalOutputPort(digitalPin), minimumVoltageCalibration, maximumVoltageCalibration)
         { }
 
@@ -78,13 +78,13 @@ namespace Meadow.Foundation.Sensors.Moisture
         public Fc28(
             IAnalogInputPort analogPort,
             IDigitalOutputPort digitalPort,
-            double minimumVoltageCalibration = 0f,
-            double maximumVoltageCalibration = 3.3f)
+            Voltage? minimumVoltageCalibration,
+            Voltage? maximumVoltageCalibration)
         {
             AnalogInputPort = analogPort;
             DigitalPort = digitalPort;
-            MinimumVoltageCalibration = minimumVoltageCalibration;
-            MaximumVoltageCalibration = maximumVoltageCalibration;
+            if (minimumVoltageCalibration is { } min) { MinimumVoltageCalibration = min; }
+            if (maximumVoltageCalibration is { } max) { MaximumVoltageCalibration = max; }
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Meadow.Foundation.Sensors.Moisture
             ScalarDouble previousMoisture = Moisture;
 
             DigitalPort.State = true;
-            float voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
+            Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
             DigitalPort.State = false;
             
             Moisture = VoltageToMoisture(voltage);
@@ -194,14 +194,14 @@ namespace Meadow.Foundation.Sensors.Moisture
             base.NotifyObservers(changeResult);
         }
 
-        protected ScalarDouble VoltageToMoisture(double voltage)
+        protected ScalarDouble VoltageToMoisture(Voltage voltage)
         {
             if (MinimumVoltageCalibration > MaximumVoltageCalibration) 
             {
-                return new ScalarDouble(1f - Map(voltage, MaximumVoltageCalibration, MinimumVoltageCalibration, 0d, 1.0d));
+                return new ScalarDouble(1f - Map(voltage.Volts, MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0d, 1.0d));
             }
 
-            return new ScalarDouble(1f - Map(voltage, MinimumVoltageCalibration, MaximumVoltageCalibration, 0d, 1.0d));
+            return new ScalarDouble(1f - Map(voltage.Volts, MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0d, 1.0d));
         }
 
         /// <summary>
