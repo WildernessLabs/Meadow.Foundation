@@ -7,9 +7,9 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Light
 {
     public class Temt6000 :
-        FilterableChangeObservable<CompositeChangeResult<ScalarDouble>, ScalarDouble>
+        FilterableChangeObservable<CompositeChangeResult<Voltage>, Voltage>
     {
-        public ScalarDouble Voltage { get; protected set; } = new ScalarDouble(0);
+        public Voltage Voltage { get; protected set; } = new Voltage(0);
 
         // internal thread lock
         private object _lock = new object();
@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        public event EventHandler<CompositeChangeResult<ScalarDouble>> Updated;
+        public event EventHandler<CompositeChangeResult<Voltage>> Updated;
 
         /// <summary>
         /// Analog port connected to the sensor.
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         ///     Voltage being output by the sensor.
         /// </summary>
-        public async Task<ScalarDouble> Read()
+        public async Task<Voltage> Read()
         {
             await Update();
 
@@ -67,8 +67,8 @@ namespace Meadow.Foundation.Sensors.Light
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                ScalarDouble oldConditions;
-                CompositeChangeResult<ScalarDouble> result;
+                Voltage oldConditions;
+                CompositeChangeResult<Voltage> result;
                 Task.Factory.StartNew(async () =>
                 {
                     while (true)
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Light
                         await Update();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<ScalarDouble>(oldConditions, Voltage);
+                        result = new CompositeChangeResult<Voltage>(oldConditions, Voltage);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -97,7 +97,7 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<ScalarDouble> changeResult)
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Voltage> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
@@ -124,7 +124,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public async Task Update()
         {
-            Voltage = new ScalarDouble(await sensor.Read());
+            Voltage = await sensor.Read();
         }
     }
 }
