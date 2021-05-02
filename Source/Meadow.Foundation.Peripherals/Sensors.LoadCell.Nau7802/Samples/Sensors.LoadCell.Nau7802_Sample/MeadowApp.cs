@@ -21,29 +21,26 @@ namespace Sensors.LoadCell.Nau7802_Sample
             var bus = Device.CreateI2cBus();
 
             Console.WriteLine($"Creating Sensor...");
-            using (_loadSensor = new Nau7802(bus))
+            _loadSensor = new Nau7802(bus);
+            if (CalibrationFactor == 0)
             {
-                if (CalibrationFactor == 0)
-                {
-                    GetAndDisplayCalibrationUnits(_loadSensor);
-                }
-                else
-                {
-                    // wait for the ADC to settle
-                    Thread.Sleep(500);
+                GetAndDisplayCalibrationUnits(_loadSensor);
+            }
+            else
+            {
+                // wait for the ADC to settle
+                Thread.Sleep(500);
 
-                    // Set the current load to be zero
-                    _loadSensor.SetCalibrationFactor(CalibrationFactor, CalibrationWeight);
-                    _loadSensor.Tare();
+                // Set the current load to be zero
+                _loadSensor.SetCalibrationFactor(CalibrationFactor, CalibrationWeight);
+                _loadSensor.Tare();
 
-                    // start reading
-                    while (true)
-                    {
-                        var c = _loadSensor.GetWeight();
-                        Console.WriteLine($"Conversion returned {c.Grams:0.00}g");
-                        Thread.Sleep(1000);
-                    }
-                }
+                // start reading
+                _loadSensor.MassUpdated += (sender, values) =>
+                {
+                    Console.WriteLine($"Mass is now returned {values.New.Grams:N2}g");
+                };
+                _loadSensor.StartUpdating(TimeSpan.FromSeconds(2));
             }
         }
 

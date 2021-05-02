@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Units;
 
@@ -31,6 +32,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         protected virtual void Dispose(bool disposing)
         {
+            StopUpdating();
         }
 
         /// <summary>
@@ -220,6 +222,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             _gramsPerAdcUnit = knownValue.Grams / (double)factor;
         }
 
+        /*
         /// <summary>
         /// Gets the current sensor weight
         /// </summary>
@@ -240,6 +243,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             // convert to desired units
             return new Mass(grams, Mass.UnitType.Grams);
         }
+        */
 
         private int DoConversion()
         {
@@ -256,6 +260,126 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
             // convert based on gain, etc.
             return adc;
+        }
+
+        private object SyncRoot { get; } = new object();
+        private CancellationTokenSource SamplingTokenSource { get; set; }
+        public bool IsSampling { get; private set; }
+        public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
+
+        public event EventHandler<CompositeChangeResult<Mass>> MassUpdated = delegate { };
+
+        /// <summary>
+        /// The last read conditions.
+        /// </summary>
+        public Mass Conditions { get; private set; }
+
+        /// <summary>
+        /// Convenience method to get the current sensor readings. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        /// </summary>
+        public async Task<Mass> Read()
+        {
+            // update confiruation for a one-off read
+            this.Conditions = await ReadSensor();
+            return Conditions;
+        }
+
+        protected async Task<Mass> ReadSensor()
+        {
+            return await Task.Run(() => {
+                if (_gramsPerAdcUnit == 0)
+                {
+                    throw new Exception("Calibration factor has not been set");
+                }
+
+                // get an ADC conversion
+                var c = DoConversion();
+                // subtract the tare
+                var adc = c - _tareValue;
+                // convert to grams
+                var grams = adc * _gramsPerAdcUnit;
+                // convert to desired units
+                return new Mass(grams, Mass.UnitType.Grams);
+            });
+        }
+
+        public void StartUpdating()
+        {
+            StartUpdating(DefaultSamplePeriod);
+        }
+
+        public void StartUpdating(TimeSpan period)
+        {
+            // thread safety
+            lock (SyncRoot)
+            {
+                if (IsSampling) return;
+
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                Mass oldConditions;
+                CompositeChangeResult<Mass> result;
+
+                Task.Factory.StartNew(async () => {
+                    while (true)
+                    {
+                        // cleanup
+                        if (ct.IsCancellationRequested)
+                        {
+                            // do task clean up here
+                            observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Conditions;
+
+                        // read
+                        Conditions = await Read();
+
+                        // build a new result with the old and new conditions
+                        result = new CompositeChangeResult<Mass>(Conditions, oldConditions);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(period);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        /// <summary>
+        /// Inheritance-safe way to raise events and notify observers.
+        /// </summary>
+        /// <param name="changeResult"></param>
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Mass> changeResult)
+        {
+            try
+            {
+                MassUpdated?.Invoke(this, changeResult);
+                base.NotifyObservers(changeResult);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"NAU7802 event handler threw: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Stops sampling the mass.
+        /// </summary>
+        public void StopUpdating()
+        {
+            lock (SyncRoot)
+            {
+                if (!IsSampling) return;
+                SamplingTokenSource.Cancel();
+            }
         }
     }
 }
