@@ -13,12 +13,12 @@ namespace MeadowApp
         {
             Initalize();
 
-            sensor.DistanceDetected += Sensor_DistanceDetected;
+            sensor.DistanceUpdated += Sensor_DistanceUpdated;
         }
 
-        private void Sensor_DistanceDetected(object sender, Meadow.Peripherals.Sensors.Distance.DistanceEventArgs e)
+        private void Sensor_DistanceUpdated(object sender, CompositeChangeResult<Meadow.Units.Length> e)
         {
-            Console.WriteLine($"Distance: {e.Distance}");
+            Console.WriteLine($"Distance: {e.New.Centimeters}cm");
         }
 
         public void Initalize()
