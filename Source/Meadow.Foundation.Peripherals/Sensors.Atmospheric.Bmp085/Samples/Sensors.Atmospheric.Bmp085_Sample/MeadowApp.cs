@@ -22,23 +22,20 @@ namespace Sensors.Atmospheric.Bmp085_Sample
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree, and humidty by 5%.
             // (blowing hot breath on the sensor should trigger)
-            bmp085.Subscribe(new FilterableChangeObserver<AtmosphericConditionChangeResult, AtmosphericConditions>(
-                h => {
-                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New.Temperature}, old: {h.Old.Temperature}");
-                },
-                e => {
-                    return (
-                        (Math.Abs(e.Delta.Temperature.Value) > 1)
-                        &&
-                        (Math.Abs(e.Delta.Pressure.Value) > 5)
-                        );
-                }
-                ));
+            var observer = Bmp085.CreateObserver(h =>
+            {
+                Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New.Value.Unit1}, old: {h.Old.Value.Unit1}");
+            },
+                e =>
+                {
+                    return ((Math.Abs(e.Delta.Value.Unit1.Value) > 1) &&
+                            (Math.Abs(e.Delta.Value.Unit2.Value) > 5));
+                });
 
-            // classical .NET events can also be used:
-            bmp085.Updated += (object sender, AtmosphericConditionChangeResult e) => {
-                Console.WriteLine($"  Temperature: {e.New.Temperature}°C, Pressure: {e.New.Pressure}hPa");
-            };
+
+            bmp085.Subscribe(observer);
+
+            bmp085.Updated += Bmp085_Updated;
 
             // get an initial reading
             ReadConditions().Wait();
@@ -47,10 +44,15 @@ namespace Sensors.Atmospheric.Bmp085_Sample
             bmp085.StartUpdating();
         }
 
+        private void Bmp085_Updated(object sender, CompositeChangeResult<Meadow.Units.Temperature, Meadow.Units.Pressure> e)
+        {
+            Console.WriteLine($"Temperature: {e.New.Value.Unit1.Celsius}°C, Pressure: {e.New.Value.Unit2.Pascal}Pa");
+        }
+
         protected async Task ReadConditions()
         {
             var conditions = await bmp085.Read();
-            Console.WriteLine($"Temperature: {conditions.Temperature}°C, Pressure: {conditions.Pressure}hPa");
+            Console.WriteLine($"Temperature: {conditions.Temperature.Celsius}°C, Pressure: {conditions.Pressure.Pascal}Pa");
         }
     }
 }

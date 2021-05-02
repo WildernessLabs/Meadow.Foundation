@@ -2,14 +2,22 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public class Mpl115a2 :
-        FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor//, ITemperatureSensor, IBarometricPressureSensor
+        FilterableChangeObservable<CompositeChangeResult<Units.Temperature, Pressure>, Units.Temperature, Pressure>,
+        ITemperatureSensor, IBarometricPressureSensor
     {
+        /// <summary>
+        /// </summary>
+        public event EventHandler<CompositeChangeResult<Units.Temperature, Pressure>> Updated = delegate { };
+        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<CompositeChangeResult<Pressure>> PressureUpdated = delegate { };
+
         /// <summary>
         ///     Device registers.
         /// </summary>
@@ -31,8 +39,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        ///     Structure holding the doubleing point equivalent of the compensation
-        ///     coefficients for the sensor.
+        /// Structure holding the doubleing point equivalent of the compensation
+        /// coefficients for the sensor.
         /// </summary>
         private struct Coefficients
         {
@@ -45,17 +53,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature.Value;
+        public Units.Temperature Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// The humidity, in percent relative humidity, from the last reading..
+        /// The pressure, in hectopascals (hPa), from the last reading. 1 hPa
+        /// is equal to one millibar, or 1/10th of a kilopascal (kPa)/centibar.
         /// </summary>
-        public float Pressure => Conditions.Pressure.Value;
+        public Pressure Pressure => Conditions.Pressure;
 
-        /// <summary>
-        /// The AtmosphericConditions from the last reading.
-        /// </summary>
-        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
+        public (Units.Temperature Temperature, Pressure Pressure) Conditions;
 
         // internal thread lock
         private object _lock = new object();
@@ -68,25 +74,20 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        public event EventHandler<AtmosphericConditionChangeResult> Updated;
-
-        /// <summary>
-        ///     SI7021 is an I2C device.
-        /// </summary>
         private readonly II2cPeripheral mpl115a2;
 
         /// <summary>
-        ///     doubleing point variants of the compensation coefficients from the sensor.
+        /// doubling point variants of the compensation coefficients from the sensor.
         /// </summary>
         private Coefficients coefficients;
 
         /// <summary>
-        ///     Update interval in milliseconds
+        /// Update interval in milliseconds
         /// </summary>
         private readonly ushort _updateInterval = 100;
 
         /// <summary>
-        ///     Create a new MPL115A2 temperature and humidity sensor object.
+        /// Create a new MPL115A2 temperature and humidity sensor object.
         /// </summary>
         /// <param name="address">Sensor address (default to 0x60).</param>
         /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
@@ -138,10 +139,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public async Task<AtmosphericConditions> Read()
+        public async Task<(Units.Temperature Temperature, Pressure Pressure)> Read()
         {
-            Conditions = await Read();
-
+            this.Conditions = await GetSensorData();
             return Conditions;
         }
 
@@ -157,23 +157,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                AtmosphericConditions oldConditions;
-                AtmosphericConditionChangeResult result;
+                (Units.Temperature Temperature, Pressure Pressure) oldConditions;
+                CompositeChangeResult<Units.Temperature, Pressure> result;
+
                 Task.Factory.StartNew(async () => {
                     while (true) {
                         if (ct.IsCancellationRequested) {
                             // do task clean up here
-                            _observers.ForEach(x => x.OnCompleted());
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
-                        oldConditions = AtmosphericConditions.From(Conditions);
+                        oldConditions = (Conditions.Temperature, Conditions.Pressure);
 
                         // read
-                        await Update();
+                        await Read();
 
                         // build a new result with the old and new conditions
-                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+                        result = new CompositeChangeResult<Units.Temperature, Pressure>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -185,9 +186,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
+        /// <summary>
+        /// Inheritance-safe way to raise events and notify observers.
+        /// </summary>
+        /// <param name="changeResult"></param>
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, Pressure> changeResult)
         {
             Updated?.Invoke(this, changeResult);
+            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.New.Value.Unit1, changeResult.Old.Value.Unit1));
+            PressureUpdated?.Invoke(this, new CompositeChangeResult<Units.Pressure>(changeResult.New.Value.Unit2, changeResult.Old.Value.Unit2));
             base.NotifyObservers(changeResult);
         }
 
@@ -207,34 +214,40 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        ///     Update the temperature and pressure from the sensor and set the Pressure property.
+        /// Update the temperature and pressure from the sensor and set the Pressure property.
         /// </summary>
-        public async Task Update()
+        protected async Task<(Units.Temperature Temperature, Pressure Pressure)> GetSensorData()
         {
-            //
-            //  Tell the sensor to take a temperature and pressure reading, wait for
-            //  3ms (see section 2.2 of the datasheet) and then read the ADC values.
-            //
-            mpl115a2.WriteBytes(new byte[] { Registers.StartConversion, 0x00 });
+            return await Task.Run(async () => {
+                (Units.Temperature Temperature, Pressure Pressure) conditions;
 
-            await Task.Delay(5);
+                //
+                //  Tell the sensor to take a temperature and pressure reading, wait for
+                //  3ms (see section 2.2 of the datasheet) and then read the ADC values.
+                //
+                mpl115a2.WriteBytes(new byte[] { Registers.StartConversion, 0x00 });
 
-            var data = mpl115a2.ReadRegisters(Registers.PressureMSB, 4);
-            //
-            //  Extract the sensor data, note that this is a 10-bit reading so move
-            //  the data right 6 bits (see section 3.1 of the datasheet).
-            //
-            var pressure = (ushort)(((data[0] << 8) + data[1]) >> 6);
-            var temperature = (ushort)(((data[2] << 8) + data[3]) >> 6);
-            Conditions.Temperature = (float)((temperature - 498.0) / -5.35) + 25;
-            //
-            //  Now use the calculations in section 3.2 to determine the
-            //  current pressure reading.
-            //
-            const double PRESSURE_CONSTANT = 65.0 / 1023.0;
-            var compensatedPressure = coefficients.A0 + ((coefficients.B1 + (coefficients.C12 * temperature))
-                                                          * pressure) + (coefficients.B2 * temperature);
-            Conditions.Pressure = (float)(PRESSURE_CONSTANT * compensatedPressure) + 50;
+                await Task.Delay(5);
+
+                var data = mpl115a2.ReadRegisters(Registers.PressureMSB, 4);
+                //
+                //  Extract the sensor data, note that this is a 10-bit reading so move
+                //  the data right 6 bits (see section 3.1 of the datasheet).
+                //
+                var pressure = (ushort)(((data[0] << 8) + data[1]) >> 6);
+                var temperature = (ushort)(((data[2] << 8) + data[3]) >> 6);
+                conditions.Temperature = new Units.Temperature((float)((temperature - 498.0) / -5.35) + 25, Units.Temperature.UnitType.Celsius);
+                //
+                //  Now use the calculations in section 3.2 to determine the
+                //  current pressure reading.
+                //
+                const double PRESSURE_CONSTANT = 65.0 / 1023.0;
+                var compensatedPressure = coefficients.A0 + ((coefficients.B1 + (coefficients.C12 * temperature))
+                                                              * pressure) + (coefficients.B2 * temperature);
+                conditions.Pressure = new Pressure((float)(PRESSURE_CONSTANT * compensatedPressure) + 50, Pressure.UnitType.Pascal);
+
+                return conditions;
+            });
         }
     }
 }

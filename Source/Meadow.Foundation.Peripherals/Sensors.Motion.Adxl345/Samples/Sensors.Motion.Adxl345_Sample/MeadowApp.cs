@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
-using Meadow.Hardware;
 
 namespace MeadowApp
 {
@@ -18,21 +16,25 @@ namespace MeadowApp
 
         public void InitHardware()
         {
-            Console.WriteLine("Creating output ports...");
+            Console.WriteLine("Initialize...");
 
-            //polling
             sensor = new Adxl345(Device.CreateI2cBus(), 83);
 
-            sensor.SetPowerState(false, false, true, false, Adxl345.Frequency.EightHz);
+            var observer = Adxl345.CreateObserver(e =>
+            {
+                Console.WriteLine($"X: {e.New.AccelerationX.Gravity}g, Y: {e.New.AccelerationY.Gravity}g, Z: {e.New.AccelerationZ.Gravity}g");
+            });
 
-            sensor.Updated += Sensor_Updated;
+            sensor.Subscribe(observer);
 
-            sensor.StartUpdating(1000);
+           // sensor.Updated += Sensor_Updated;
+
+            sensor.StartUpdating(500);
         }
 
-        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Motion.AccelerationConditionChangeResult e)
+        private void Sensor_Updated(object sender, CompositeChangeResult<Meadow.Units.Acceleration3d> e)
         {
-            Console.WriteLine($"X: {e.New.XAcceleration}, Y: {e.New.YAcceleration}, Z: {e.New.ZAcceleration}");
+            Console.WriteLine($"X: {e.New.AccelerationX}, Y: {e.New.AccelerationY}, Z: {e.New.AccelerationZ}");
         }
     }
 }

@@ -2,7 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -10,9 +12,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     ///     Driver for the MPL3115A2 pressure and humidity sensor.
     /// </summary>
     public class Mpl3115a2 :
-        FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor
+        FilterableChangeObservable<CompositeChangeResult<Units.Temperature, Pressure>, Units.Temperature, Pressure>,
+        ITemperatureSensor, IBarometricPressureSensor
     {
+        /// <summary>
+        /// </summary>
+        public event EventHandler<CompositeChangeResult<Units.Temperature, Pressure>> Updated = delegate { };
+        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<CompositeChangeResult<Pressure>> PressureUpdated = delegate { };
+
         /// <summary>
         ///     Object used to communicate with the sensor.
         /// </summary>
@@ -26,20 +34,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public bool IsSampling { get; protected set; } = false;
 
         /// <summary>
-        /// The AtmosphericConditions from the last reading.
+        /// The temperature, from the last reading.
         /// </summary>
-        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
+        public Units.Temperature Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// The temperature, in degrees celsius (°C), from the last reading.
+        /// The pressure, from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature.Value;
+        public Pressure Pressure => Conditions.Pressure;
 
-        /// <summary>
-        /// The pressure, in hectopascals (hPa), from the last reading. 1 hPa
-        /// is equal to one millibar, or 1/10th of a kilopascal (kPa)/centibar.
-        /// </summary>
-        public float Pressure => Conditions.Pressure.Value;
+        public (Units.Temperature Temperature, Pressure Pressure) Conditions;
 
         /// <summary>
         ///     Check if the part is in standby mode or change the standby mode.
@@ -66,15 +70,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public byte Status => mpl3115a2.ReadRegister(Registers.Status);
 
-        /// <summary>
-        /// </summary>
-        public event EventHandler<AtmosphericConditionChangeResult> Updated = delegate { };
-
         // internal thread lock
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
-
-        
 
         /// <summary>
         ///     Create a new MPL3115A2 object with the default address and speed settings.
@@ -98,28 +96,25 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                                             ConfigurationRegisterBits.EnableTemperatureEvent));
         }
 
-        
-
-        
-
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
         // TODO: Add oversampling parameters (need to break the control registers
         // for oversampling out into their own enum)
-        public async Task<AtmosphericConditions> Read()
+        public async Task<(Units.Temperature Temperature, Pressure Pressure)> Read()
         {
-            // do a one off read and save the results
-            Conditions = await ReadSensor();
-            // return the data
+            this.Conditions = await GetSensorData();
             return Conditions;
         }
 
-        protected async Task<AtmosphericConditions> ReadSensor()
+        /// <summary>
+        /// Update the temperature and pressure from the sensor and set the Pressure property.
+        /// </summary>
+        protected async Task<(Units.Temperature Temperature, Pressure Pressure)> GetSensorData()
         {
             return await Task.Run(() => {
-                AtmosphericConditions conditions = new AtmosphericConditions();
+                (Units.Temperature Temperature, Pressure Pressure) conditions;
                 //
                 //  Force the sensor to make a reading by setting the OST bit in Control
                 //  register 1 (see 7.17.1 of the datasheet).
@@ -134,8 +129,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 Thread.Sleep(100);
                 var data = mpl3115a2.ReadRegisters(Registers.PressureMSB, 5);
-                conditions.Pressure = DecodePresssure(data[0], data[1], data[2]);
-                conditions.Temperature = DecodeTemperature(data[3], data[4]);
+                conditions.Pressure = new Pressure(DecodePresssure(data[0], data[1], data[2]), Pressure.UnitType.Pascal);
+                conditions.Temperature = new Units.Temperature(DecodeTemperature(data[3], data[4]), Units.Temperature.UnitType.Celsius);
 
                 return conditions;
             });
@@ -153,24 +148,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                AtmosphericConditions oldConditions;
-                AtmosphericConditionChangeResult result;
+                (Units.Temperature Temperature, Pressure Pressure) oldConditions;
+                CompositeChangeResult<Units.Temperature, Pressure> result;
 
                 Task.Run(async () => {
                     while (true) {
                         // cleanup
                         if (ct.IsCancellationRequested) {   // do task clean up here
-                            _observers.ForEach(x => x.OnCompleted());
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
-                        oldConditions = AtmosphericConditions.From(Conditions);
+                        oldConditions = (Conditions.Temperature, Conditions.Pressure);
 
                         // read
                         await Read();
 
                         // build a new result with the old and new conditions
-                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+                        result = new CompositeChangeResult<Units.Temperature, Pressure>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -182,9 +177,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
+        /// <summary>
+        /// Inheritance-safe way to raise events and notify observers.
+        /// </summary>
+        /// <param name="changeResult"></param>
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, Pressure> changeResult)
         {
             Updated?.Invoke(this, changeResult);
+            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.New.Value.Unit1, changeResult.Old.Value.Unit1));
+            PressureUpdated?.Invoke(this, new CompositeChangeResult<Units.Pressure>(changeResult.New.Value.Unit2, changeResult.Old.Value.Unit2));
             base.NotifyObservers(changeResult);
         }
 
@@ -281,10 +282,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             mpl3115a2.WriteRegister(Registers.Control1, data);
         }
 
-        
-
-        
-
         /// <summary>
         ///     Status register bits.
         /// </summary>
@@ -297,10 +294,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             PressureDataOverwrite = 0x40,
             PressureOrTemperatureOverwrite = 0x80
         }
-
-        
-
-        
 
         /// <summary>
         ///     Registers for non-FIFO mode.
@@ -451,8 +444,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             /// </summary>
             public static readonly byte EnableTemperatureEvent = 0x04;
         }
-
-        
 
     }
 }

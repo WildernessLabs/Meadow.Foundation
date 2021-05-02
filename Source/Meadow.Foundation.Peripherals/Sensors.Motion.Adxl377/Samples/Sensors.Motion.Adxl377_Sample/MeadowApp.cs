@@ -20,14 +20,21 @@ namespace MeadowApp
 
             sensor = new Adxl377(Device, Device.Pins.A00, Device.Pins.A01, Device.Pins.A02);
 
-            sensor.Updated += Sensor_Updated;
+            var observer = Adxl377.CreateObserver(e =>
+            {
+                Console.WriteLine($"X: {e.New.AccelerationX.Gravity}g, Y: {e.New.AccelerationY.Gravity}g, Z: {e.New.AccelerationZ.Gravity}g");
+            });
+
+            sensor.Subscribe(observer);
+
+           // sensor.Updated += Sensor_Updated;
 
             sensor.StartUpdating(500);
         }
 
-        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Motion.AccelerationConditionChangeResult e)
+        private void Sensor_Updated(object sender, CompositeChangeResult<Meadow.Units.Acceleration3d> e)
         {
-            Console.WriteLine($"X: {e.New.XAcceleration}, Y: {e.New.YAcceleration}, Z: {e.New.ZAcceleration}");
+            Console.WriteLine($"X: {e.New.AccelerationX}, Y: {e.New.AccelerationY}, Z: {e.New.AccelerationZ}");
         }
     }
 }

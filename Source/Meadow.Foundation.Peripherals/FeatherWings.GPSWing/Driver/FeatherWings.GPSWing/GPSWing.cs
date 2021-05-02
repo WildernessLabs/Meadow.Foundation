@@ -1,4 +1,4 @@
-﻿using Meadow.Foundation.Sensors.Location.MediaTek;
+﻿using Meadow.Foundation.Sensors.Gnss;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.FeatherWings

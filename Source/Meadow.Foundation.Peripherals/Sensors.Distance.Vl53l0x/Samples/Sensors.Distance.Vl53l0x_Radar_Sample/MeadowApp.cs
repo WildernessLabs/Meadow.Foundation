@@ -79,10 +79,10 @@ namespace MeadowApp
 
                 graphics.DrawText(0, 0, $"{180 - angle}°", Color.Yellow);
 
-                if (sensor?.Conditions?.Distance != null && sensor?.Conditions?.Distance.Value >= 0)
+                if (sensor?.Distance != null && sensor?.Distance.Value >= 0)
                 {
-                    graphics.DrawText(170, 0, $"{sensor.Conditions.Distance.Value}mm", Color.Yellow);
-                    radarData[angle] = sensor.Conditions.Distance.Value / 2;
+                    graphics.DrawText(170, 0, $"{sensor.Distance.Millimeters}mm", Color.Yellow);
+                    radarData[angle] = (float)(sensor.Distance.Millimeters / 2);
                 }
                 else
                 {
