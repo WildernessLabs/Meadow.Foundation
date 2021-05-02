@@ -1,37 +1,40 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Distance;
+using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
     /// <summary>
     /// HCSR04 Distance Sensor
     /// </summary>
-    public class Hcsr04// : IRangeFinder
+    public class Hcsr04:
+        FilterableChangeObservable<CompositeChangeResult<Length>, Length>, 
+        IRangeFinder
     {
-        /// <summary>
-        /// Returns current distance detected in cm.
-        /// </summary>
-        public float CurrentDistance { get; private set; } = -1;
 
-        /// <summary>
-        /// Minimum valid distance in cm (CurrentDistance returns -1 if below).
-        /// </summary>
-        public float MinimumDistance => 2;
-
-        /// <summary>
-        /// Maximum valid distance in cm (CurrentDistance returns -1 if above).
-        /// </summary>
-        public float MaximumDistance => 400;
-
-        public DistanceConditions Conditions => throw new NotImplementedException();
-
-        /// <summary>
+		/// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
-        public event EventHandler<DistanceEventArgs> DistanceDetected = delegate { };
-        public event EventHandler<DistanceConditionChangeResult> Updated;
+        public event EventHandler<CompositeChangeResult<Length>> DistanceUpdated;
+        public event EventHandler<CompositeChangeResult<Length>> Updated;
+
+        /// <summary>
+        /// Returns current distance
+        /// </summary>
+        public Length Distance { get; private set; } = 0;
+
+        /// <summary>
+        /// Minimum valid distance in cm
+        /// </summary>
+        public double MinimumDistance => 2;
+
+        /// <summary>
+        /// Maximum valid distance in cm
+        /// </summary>
+        public double MaximumDistance => 400;
 
         /// <summary>
         /// Trigger Pin.
@@ -72,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public void MeasureDistance()
         {
-            CurrentDistance = -1;
+            Distance = -1;
 
             // Raise trigger port to high for 10+ micro-seconds
             triggerPort.State = true;
@@ -87,13 +90,10 @@ namespace Meadow.Foundation.Sensors.Distance
         private void OnEchoPortChanged(object sender, DigitalInputPortEventArgs e)
         {
             if (e.Value == true)
-          // if(echoPort.State == true)
             {
                 tickStart = DateTime.Now.Ticks;
                 return;
             }
-
-        //    Console.WriteLine("false");
 
             // Calculate Difference
             var elapsed = DateTime.Now.Ticks - tickStart;
@@ -103,21 +103,20 @@ namespace Meadow.Foundation.Sensors.Distance
             // divide by 58 for cm (assume speed of sound is 340m/s)
             var curDis = elapsed / 580;
 
-            CurrentDistance = curDis; 
+            var oldDistance = Distance;
+            Distance = new Length(curDis, Length.UnitType.Centimeters); 
 
             //debug - remove 
-            Console.WriteLine($"{elapsed}, {curDis}, {CurrentDistance}, {DateTime.Now.Ticks}");
+            Console.WriteLine($"{elapsed}, {curDis}, {Distance}, {DateTime.Now.Ticks}");
 
             //restore this before publishing to hide false results 
-        //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
-        //       CurrentDistance = -1;
+            //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
+            //       CurrentDistance = -1;
 
-            DistanceDetected?.Invoke(this, new DistanceEventArgs(CurrentDistance));
-        }
+            var result = new CompositeChangeResult<Length>(oldDistance, Distance);
 
-        public IDisposable Subscribe(IObserver<DistanceConditionChangeResult> observer)
-        {
-            throw new NotImplementedException();
+            Updated?.Invoke(this, result);
+            DistanceUpdated?.Invoke(this, result);
         }
     }
 }

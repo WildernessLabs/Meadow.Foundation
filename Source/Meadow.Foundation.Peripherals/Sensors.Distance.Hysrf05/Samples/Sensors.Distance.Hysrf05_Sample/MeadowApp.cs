@@ -14,7 +14,7 @@ namespace Sensors.Distance.HYSRF05_Sample
         public MeadowApp()
         {
             hYSRF05 = new Hysrf05(Device, Device.Pins.D05, Device.Pins.D06);
-            hYSRF05.DistanceDetected += HYSRF05DistanceDetected;
+            hYSRF05.DistanceUpdated += HYSRF05_DistanceUpdated;
 
             while (true)
             {
@@ -24,11 +24,9 @@ namespace Sensors.Distance.HYSRF05_Sample
             }
         }
 
-        // Prints the measured distance after sending a trigger signal
-        // Valid distance ranges from 2cm to 400cm. Prints -1 otherwise.
-        private void HYSRF05DistanceDetected(object sender, Meadow.Peripherals.Sensors.Distance.DistanceEventArgs e)
+        private void HYSRF05_DistanceUpdated(object sender, CompositeChangeResult<Meadow.Units.Length> e)
         {
-            Console.WriteLine($"{e.Distance}");
+            Console.WriteLine($"Distance is {e.New.Centimeters}cm");
         }
     }
 }

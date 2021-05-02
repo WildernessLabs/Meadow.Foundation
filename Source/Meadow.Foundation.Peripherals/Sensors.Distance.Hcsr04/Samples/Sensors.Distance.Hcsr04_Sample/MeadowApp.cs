@@ -17,7 +17,7 @@ namespace Sensors.Distance.HCSR04_Sample
              Console.WriteLine($"Hello HC-SR04 sample");
 
             hCSR04 = new Hcsr04(Device, Device.Pins.D05, Device.Pins.D06);
-            hCSR04.DistanceDetected += HCSR04DistanceDetected;
+            hCSR04.DistanceUpdated += HCSR04_DistanceUpdated;
 
             Console.WriteLine("Starting loop");
 
@@ -29,11 +29,9 @@ namespace Sensors.Distance.HCSR04_Sample
             }
         }
 
-        // Prints the measured distance after sending a trigger signal
-        // Valid distance ranges from 2cm to 400cm. Prints -1 otherwise.
-        private void HCSR04DistanceDetected(object sender, Meadow.Peripherals.Sensors.Distance.DistanceEventArgs e)
+        private void HCSR04_DistanceUpdated(object sender, CompositeChangeResult<Meadow.Units.Length> e)
         {
-            Console.WriteLine($"Distance (cm): {e.Distance}");
+            Console.WriteLine($"Distance (cm): {e.New.Centimeters}");
         }
     }
 }

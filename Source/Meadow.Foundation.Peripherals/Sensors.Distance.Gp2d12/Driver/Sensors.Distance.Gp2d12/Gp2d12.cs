@@ -1,52 +1,70 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Distance;
+using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
-    public class Gp2d12 //: IRangeFinder
+    /// <summary>
+    /// GP2D12 Distance Sensor
+    /// </summary>
+    public class Gp2d12 :
+        FilterableChangeObservable<CompositeChangeResult<Length>, Length>, 
+        IRangeFinder
     {
         IAnalogInputPort analogInputPort;
 
-        public event EventHandler<DistanceEventArgs> DistanceDetected;
-        public event EventHandler<DistanceConditionChangeResult> Updated;
+		/// <summary>
+        /// Raised when an received a rebound trigger signal
+        /// </summary>
+        public event EventHandler<CompositeChangeResult<Length>> DistanceUpdated;
+        public event EventHandler<CompositeChangeResult<Length>> Updated;
 
-        public float CurrentDistance { get; private set; } = -1;
+        /// <summary>
+        /// Returns current distance
+        /// </summary>
+        public Length Distance { get; private set; } = 0;
 
-        public float MinimumDistance => 0.098f;
+        /// <summary>
+        /// Minimum valid distance in cm
+        /// </summary>
+        public double MinimumDistance => 2;
 
-        public float MaximumDistance => 0.79f;
+        /// <summary>
+        /// Maximum valid distance in cm
+        /// </summary>
+        public double MaximumDistance => 400;
 
-        public DistanceConditions Conditions => throw new NotImplementedException();
-
+        /// <summary>
+        /// Create a new Gp2d12 object with an IO Device
+        /// </summary>
         public Gp2d12(IAnalogInputController device, IPin analogInputPin)
         {
             analogInputPort = device.CreateAnalogInputPort(analogInputPin);
             analogInputPort.Changed += AnalogInputPort_Changed;
         }
 
-        private void AnalogInputPort_Changed(object sender, FloatChangeResult e)
+        private void AnalogInputPort_Changed(object sender, CompositeChangeResult<Voltage> e)
         {
-            CurrentDistance = 26 / e.New;
-            DistanceDetected?.Invoke(this, new DistanceEventArgs(CurrentDistance));
+            var oldDistance = Distance;
+            Distance = new Length(26 / e.New.Volts, Length.UnitType.Meters);
+
+            var result =  new CompositeChangeResult<Length>(oldDistance, Distance);
+
+            Updated?.Invoke(this, result);
+            DistanceUpdated?.Invoke(this, result);
         }
 
-        public async Task<float> ReadDistance()
+        public async Task<Length> ReadDistance()
         {
             var value = await analogInputPort.Read();
 
-            CurrentDistance = 26 / value;
+            var distance = 26 / value.Volts;
 
-            CurrentDistance = Math.Max(CurrentDistance, MinimumDistance);
-            CurrentDistance = Math.Min(CurrentDistance, MaximumDistance);
+            distance = Math.Max(distance, MinimumDistance);
 
-            return CurrentDistance;
-        }
-
-        public IDisposable Subscribe(IObserver<DistanceConditionChangeResult> observer)
-        {
-            throw new NotImplementedException();
+            return Distance = new Length(distance, Length.UnitType.Meters);
         }
     }
 }
