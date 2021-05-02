@@ -245,7 +245,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         Conditions = await Read();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Units.Temperature, RelativeHumidity>(oldConditions, Conditions);
+                        result = new CompositeChangeResult<Units.Temperature, RelativeHumidity>(Conditions, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
