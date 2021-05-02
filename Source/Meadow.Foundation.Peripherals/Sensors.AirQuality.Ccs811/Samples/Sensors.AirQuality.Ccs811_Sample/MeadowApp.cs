@@ -19,6 +19,12 @@ namespace Sensors.AirQuality.Ccs811_Sample
 
             ccs811.StartUpdating();
 
+            var bl = ccs811.GetBaseline();
+            Console.WriteLine($"Baseline A: 0x{bl:x4}");
+            ccs811.SetBaseline(0x847b);
+            bl = ccs811.GetBaseline();
+            Console.WriteLine($"Baseline B: 0x{bl:x4}");
+            ccs811.SetMeasurementMode(Ccs811.MeasurementMode.ConstantPower250ms);
             /*
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree, and humidty by 5%.

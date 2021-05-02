@@ -135,6 +135,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             var id = Bus.ReadRegisterByte((byte)Register.HW_ID);
             Console.WriteLine($"hardware id = 0x{id:x2}");
 
+            // read chip version to make sure it's a CCS
+            var ver = Bus.ReadRegisterByte((byte)Register.HW_VERSION);
+            Console.WriteLine($"hardware version A = 0x{id:x2}");
+
+            // read chip version to make sure it's a CCS
+            var fwb = Bus.ReadRegisterShort((byte)Register.FW_BOOT_VERSION);
+            Console.WriteLine($"FWB version = 0x{id:x4}");
+
+            // read chip version to make sure it's a CCS
+            var fwa = Bus.ReadRegisterShort((byte)Register.FW_APP_VERSION);
+            Console.WriteLine($"FWA version = 0x{id:x4}");
+
             // read status
             var status = Bus.ReadRegisterByte((byte)Register.STATUS);
             Console.WriteLine($"status = 0x{status:x2}");
@@ -142,20 +154,38 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // change mode
             Console.WriteLine("Setting mode");
             SetMeasurementMode(MeasurementMode.ConstantPower1s);
+            var mode = Bus.ReadRegisterByte((byte)Register.MEAS_MODE);
+            Console.WriteLine($"mode = 0x{mode:x2}");
+        }
+
+        public ushort GetBaseline()
+        {
+            return Bus.ReadRegisterShort((byte)Register.BASELINE);
+
+        }
+
+        public void SetBaseline(ushort value)
+        {
+            Bus.WriteRegister((byte)Register.BASELINE, value);
+        }
+
+        public MeasurementMode GetMeasurementMode()
+        {
+            return (MeasurementMode)Bus.ReadRegisterByte((byte)Register.MEAS_MODE);
         }
 
         public void SetMeasurementMode(MeasurementMode mode)
         {
             // TODO: interrupts, etc would be here
             var m = (byte)mode;
-            Console.WriteLine($"mode = 0x{m:x2}");
+            Console.WriteLine($"writing mode = 0x{m:x2}");
             Bus.WriteRegister((byte)Register.MEAS_MODE, m);
         }
 
         private void Reset()
         {
             var data = new byte[] { (byte)Register.SW_RESET, 0x11, 0xE5, 0x72, 0x8A };
-            Bus.WriteData(data);
+            Bus.WriteBytes(data);
         }
 
         public async Task<(Concentration, Concentration)> Read()
@@ -219,12 +249,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             return await Task.Run(() =>
             {
+                _readingBuffer = new byte[8];
+
+//                Bus.WriteBytes(new byte[] { (byte)Register.ALG_RESULT_DATA });
+//                Bus.ReadBytes(_readingBuffer);
+
                 // data is really in just the first 4, but this gets us status and raw data as well
                 Bus.ReadRegisterBytes((byte)Register.ALG_RESULT_DATA, _readingBuffer);
-
-                Console.WriteLine($"RAW: 0x{(_readingBuffer[6] << 8 | _readingBuffer[7]):x4}");
-                Console.WriteLine($"ERR: 0x{_readingBuffer[5]:x2}");
-                Console.WriteLine($"STATE: 0x{_readingBuffer[4]:x2}");
+                Console.WriteLine($"READING: {BitConverter.ToString(_readingBuffer)}");
 
                 (Concentration co2, Concentration voc) state;
                 state.co2 = new Concentration(_readingBuffer[0] << 8 | _readingBuffer[1], Concentration.UnitType.PartsPerMillion);
