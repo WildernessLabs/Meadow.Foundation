@@ -14,8 +14,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
     {
         //==== internals
-        private II2cBus Device { get; }
-        private object SyncRoot { get; } = new object();
+        private byte[] _read = new byte[3];
         private double _gramsPerAdcUnit = 0;
         private PU_CTRL_BITS _currentPU_CTRL;
         private int _tareValue;
@@ -27,7 +26,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
         public Nau7802(II2cBus bus)
             : base(bus, (byte)Addresses.Default)
         {
-            Device = bus;
             Initialize((byte)Addresses.Default);
         }
 
@@ -60,52 +58,10 @@ namespace Meadow.Foundation.Sensors.LoadCell
             Thread.Sleep(500);
         }
 
-        private void WriteRegister(Register register, PU_CTRL_BITS value)
-        {
-            WriteRegister(register, (byte)value);
-        }
-
-        private void WriteRegister(Register register, byte value)
-        {
-            lock (SyncRoot)
-            {
-                Span<byte> buffer = stackalloc byte[2];
-
-                buffer[0] = (byte)register;
-                buffer[1] = value;
-
-                Device.WriteData(Address, buffer);
-            }
-        }
-
-        private byte ReadRegister(Register register)
-        {
-            lock (SyncRoot)
-            {
-                Span<byte> write = stackalloc byte[1];
-                Span<byte> read = stackalloc byte[1];
-
-                write[0] = (byte)register;
-
-                Device.WriteReadData(Address, write, read);
-
-                return read[0];
-            }
-        }
-
         private int ReadADC()
         {
-            lock (SyncRoot)
-            {
-                Span<byte> write = stackalloc byte[1];
-                Span<byte> read = stackalloc byte[3];
-
-                write[0] = (byte)Register.ADCO_B2;
-
-                Device.WriteReadData(Address, write, read);
-
-                return read[0] << 16 | read[1] << 8 | read[2];
-            }
+            Bus.ReadRegisterBytes((byte)Register.ADCO_B2, _read);
+            return _read[0] << 16 | _read[1] << 8 | _read[2];
         }
 
         /// <summary>
@@ -127,20 +83,20 @@ namespace Meadow.Foundation.Sensors.LoadCell
             Output.WriteLine($"Powering up...");
 
             // read the control register
-            _currentPU_CTRL = (PU_CTRL_BITS)ReadRegister(Register.PU_CTRL);
+            _currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
 
             Output.WriteLine($"PU_CTRL: 0x{_currentPU_CTRL:x}");
 
             // Set and clear the RR bit in 0x00, to guarantee a reset of all register values
             _currentPU_CTRL |= PU_CTRL_BITS.RR;
-            WriteRegister(Register.PU_CTRL, _currentPU_CTRL);
+            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
             Thread.Sleep(1); // make sure it has time to do it's thing
             _currentPU_CTRL &= ~PU_CTRL_BITS.RR;
-            WriteRegister(Register.PU_CTRL, _currentPU_CTRL);
+            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
 
             // turn on the analog and digital power
             _currentPU_CTRL |= (PU_CTRL_BITS.PUD | PU_CTRL_BITS.PUA);
-            WriteRegister(Register.PU_CTRL, _currentPU_CTRL);
+            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
             Thread.Sleep(10); // make sure it has time to do it's thing
 
 
@@ -149,7 +105,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             SetLDO(LdoVoltage.LDO_3V3);
             SetGain(AdcGain.Gain128);
             SetConversionRate(ConversionRate.SamplePerSecond80);
-            WriteRegister(Register.OTP_ADC, 0x30); // turn off CLK_CHP
+            Bus.WriteRegister((byte)Register.OTP_ADC, 0x30); // turn off CLK_CHP
             EnableCh2DecouplingCap();
 
             if (!CalibrateAdc())
@@ -159,7 +115,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
             // No conversion will take place until the R0x00 bit 4 “CS” is set Logic = 1 
             _currentPU_CTRL |= PU_CTRL_BITS.CS;
-            WriteRegister(Register.PU_CTRL, _currentPU_CTRL);
+            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
 
             // Enter the low power standby condition by setting PUA and PUD bits to 0, in R0x00 
             // Resume operation by setting PUA and PUD bits to 1, in R0x00.This sequence is the same for powering up from the standby condition, except that from standby all of the information in the configuration and calibration registers will be retained if the power supply is stable.Depending on conditions and the application, it may be desirable to perform calibration again to update the calibration registers for the best possible accuracy.
@@ -168,57 +124,57 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private bool IsConversionComplete()
         {
-            var puctrl = (PU_CTRL_BITS)ReadRegister(Register.PU_CTRL);
+            var puctrl = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
             return (puctrl & PU_CTRL_BITS.CR) == PU_CTRL_BITS.CR;
         }
 
         private void EnableCh2DecouplingCap()
         {
             // app note - enable ch2 decoupling cap
-            var pga_pwr = ReadRegister(Register.PGA_PWR);
+            var pga_pwr = Bus.ReadRegisterByte((byte)Register.PGA_PWR);
             pga_pwr |= 1 << 7;
-            WriteRegister(Register.PGA_PWR, pga_pwr);
+            Bus.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
         }
 
         private void SetLDO(LdoVoltage value)
         {
-            var ctrl1 = ReadRegister(Register.CTRL1);
+            var ctrl1 = Bus.ReadRegisterByte((byte)Register.CTRL1);
             ctrl1 &= 0b11000111; // clear LDO
             ctrl1 |= (byte)((byte)value << 3);
-            WriteRegister(Register.CTRL1, ctrl1);
+            Bus.WriteRegister((byte)Register.CTRL1, ctrl1);
             _currentPU_CTRL |= PU_CTRL_BITS.AVDDS;
-            WriteRegister(Register.PU_CTRL, _currentPU_CTRL); // enable internal LDO
+            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL); // enable internal LDO
         }
 
         private void SetGain(AdcGain value)
         {
-            var ctrl1 = ReadRegister(Register.CTRL1);
+            var ctrl1 = Bus.ReadRegisterByte((byte)Register.CTRL1);
             ctrl1 &= 0b11111000; // clear gain
             ctrl1 |= (byte)value;
-            WriteRegister(Register.CTRL1, ctrl1);
+            Bus.WriteRegister((byte)Register.CTRL1, ctrl1);
         }
 
         private void SetConversionRate(ConversionRate value)
         {
-            var ctrl2 = ReadRegister(Register.CTRL2);
+            var ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
             ctrl2 &= 0b10001111; // clear gain
             ctrl2 |= (byte)((byte)value << 4);
-            WriteRegister(Register.CTRL2, ctrl2);
+            Bus.WriteRegister((byte)Register.CTRL2, ctrl2);
         }
 
         private bool CalibrateAdc()
         {
             // read ctrl2
-            var ctrl2 = ReadRegister(Register.CTRL2);
+            var ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
 
             // turn on the calibration bit
             ctrl2 |= (byte)CTRL2_BITS.CALS;
-            WriteRegister(Register.CTRL2, ctrl2);
+            Bus.WriteRegister((byte)Register.CTRL2, ctrl2);
 
             // now wiat for either completion or error
             do
             {
-                ctrl2 = ReadRegister(Register.CTRL2);
+                ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
                 if ((ctrl2 & (byte)CTRL2_BITS.CAL_ERROR) != 0)
                 {
                     // calibration error
@@ -287,17 +243,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private int DoConversion()
         {
-            /*
-            Console.WriteLine($"Starting conversion...");
-            WriteRegister(Register.PU_CTRL, (byte)(_currentPU_CTRL | PU_CTRL_BITS.CS));
-
-            // wait for ready
-            do
-            {
-                _currentPU_CTRL = (PU_CTRL_BITS)ReadRegister(Register.PU_CTRL);
-            } while ((_currentPU_CTRL & PU_CTRL_BITS.CR) == 0);
-            */
-
             if(!IsConversionComplete())
             {
                 Output.WriteLine("ADC is busy");
