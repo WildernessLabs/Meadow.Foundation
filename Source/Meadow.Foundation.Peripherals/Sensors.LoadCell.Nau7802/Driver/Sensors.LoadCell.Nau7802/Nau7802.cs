@@ -1,32 +1,31 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.LoadCell
 {
     /// <summary>
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
-    /// <remarks><b>Work in progress.  This driver is not yet functional.</b></remarks>
-    public partial class Nau7802 : IDisposable //Todo: FilterableObservableBase<FloatChangeResult, float>,  IDisposable
+    public partial class Nau7802 :
+        FilterableChangeObservableI2CPeripheral<CompositeChangeResult<Units.Mass>, Units.Mass>,
+        IDisposable
+
     {
         //==== internals
         private II2cBus Device { get; }
         private object SyncRoot { get; } = new object();
-        private decimal gramsPerAdcUnit = 0;
+        private double _gramsPerAdcUnit = 0;
         private PU_CTRL_BITS _currentPU_CTRL;
-        private int tareValue;
-
-        /// <summary>
-        /// The peripheral's address on the I2C Bus
-        /// </summary>
-        public byte Address { get; private set; }
+        private int _tareValue;
 
         /// <summary>
         /// Creates an instance of the NAU7802 Driver class
         /// </summary>
         /// <param name="bus"></param>
         public Nau7802(II2cBus bus)
+            : base(bus, (byte)Addresses.Default)
         {
             Device = bus;
             Initialize((byte)Addresses.Default);
@@ -54,8 +53,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 default:
                     throw new ArgumentOutOfRangeException($"NAU7802 device supports only address {(int)Addresses.Default}");
             }
-
-            Address = address;
 
             PowerOn();
 
@@ -121,18 +118,18 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 Thread.Sleep(1);
             }
 
-            tareValue = ReadADC();
-            Console.WriteLine($"Tare base = {tareValue}");
+            _tareValue = ReadADC();
+            Output.WriteLine($"Tare base = {_tareValue}");
         }
 
         private void PowerOn()
         {
-            Console.WriteLine($"Powering up...");
+            Output.WriteLine($"Powering up...");
 
             // read the control register
             _currentPU_CTRL = (PU_CTRL_BITS)ReadRegister(Register.PU_CTRL);
 
-            Console.WriteLine($"PU_CTRL: 0x{_currentPU_CTRL:x}");
+            Output.WriteLine($"PU_CTRL: 0x{_currentPU_CTRL:x}");
 
             // Set and clear the RR bit in 0x00, to guarantee a reset of all register values
             _currentPU_CTRL |= PU_CTRL_BITS.RR;
@@ -147,7 +144,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             Thread.Sleep(10); // make sure it has time to do it's thing
 
 
-            Console.WriteLine($"Configuring...");
+            Output.WriteLine($"Configuring...");
 
             SetLDO(LdoVoltage.LDO_3V3);
             SetGain(AdcGain.Gain128);
@@ -262,18 +259,18 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// </summary>
         /// <param name="factor"></param>
         /// <param name="knownValue"></param>
-        public void SetCalibrationFactor(int factor, Weight knownValue)
+        public void SetCalibrationFactor(int factor, Mass knownValue)
         {
-            gramsPerAdcUnit = knownValue.ConvertTo(WeightUnits.Grams) / (decimal)factor;
+            _gramsPerAdcUnit = knownValue.Grams / (double)factor;
         }
 
         /// <summary>
         /// Gets the current sensor weight
         /// </summary>
         /// <returns></returns>
-        public Weight GetWeight()
+        public Mass GetWeight()
         {
-            if(gramsPerAdcUnit == 0)
+            if(_gramsPerAdcUnit == 0)
             {
                 throw new Exception("Calibration factor has not been set");
             }
@@ -281,11 +278,11 @@ namespace Meadow.Foundation.Sensors.LoadCell
             // get an ADC conversion
             var c = DoConversion();
             // subtract the tare
-            var adc = c - tareValue;
+            var adc = c - _tareValue;
             // convert to grams
-            var grams = adc * gramsPerAdcUnit;
+            var grams = adc * _gramsPerAdcUnit;
             // convert to desired units
-            return new Weight(grams, WeightUnits.Grams);
+            return new Mass(grams, Mass.UnitType.Grams);
         }
 
         private int DoConversion()
@@ -303,14 +300,14 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
             if(!IsConversionComplete())
             {
-                Console.WriteLine("ADC is busy");
+                Output.WriteLine("ADC is busy");
                 return 0;
             }
 
             //read
-            Console.WriteLine("Reading ADC...");
+            Output.WriteLine("Reading ADC...");
             var adc = ReadADC();
-            Console.WriteLine($"ADC = 0x{adc:x}");
+            Output.WriteLine($"ADC = 0x{adc:x}");
 
             // convert based on gain, etc.
             return adc;

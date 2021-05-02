@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Sensors.LoadCell;
+using Meadow.Units;
 using System;
 using System.Threading;
 
@@ -12,8 +13,7 @@ namespace Sensors.LoadCell.Nau7802_Sample
         private Nau7802 _loadSensor;
 
         public int CalibrationFactor { get; set; } = 636574; // TODO: change this based on your scale (using the method provided below)
-        public decimal CalibrationWeight { get; set; } = 1205; // TODO: enter the known-weight you used in calibration
-        public WeightUnits CalibrationWeightUnits { get; set; } = WeightUnits.Grams; // TODO: enter the units of the known-weight you used in calibration
+        public Mass CalibrationWeight { get; set; } = new Mass(1205, Mass.UnitType.Grams); // TODO: enter the known-weight you used in calibration
 
         public MeadowApp()
         {
@@ -33,14 +33,14 @@ namespace Sensors.LoadCell.Nau7802_Sample
                     Thread.Sleep(500);
 
                     // Set the current load to be zero
-                    _loadSensor.SetCalibrationFactor(CalibrationFactor, new Weight(CalibrationWeight, CalibrationWeightUnits));
+                    _loadSensor.SetCalibrationFactor(CalibrationFactor, CalibrationWeight);
                     _loadSensor.Tare();
 
                     // start reading
                     while (true)
                     {
                         var c = _loadSensor.GetWeight();
-                        Console.WriteLine($"Conversion returned {c.StandardValue} {c.StandardUnits}");
+                        Console.WriteLine($"Conversion returned {c.Grams:0.00}g");
                         Thread.Sleep(1000);
                     }
                 }
