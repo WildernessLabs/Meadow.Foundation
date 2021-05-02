@@ -171,7 +171,8 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// </summary>
         public void StopUpdating()
         {
-            lock (_lock) {
+            lock (_lock) 
+            {
                 if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
@@ -190,18 +191,22 @@ namespace Meadow.Foundation.Sensors.Motion
             var y = await _yPort.Read();
             var z = await _zPort.Read();
 
-            Acceleration3d.AccelerationX = new Acceleration((x - _zeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity);
-            Acceleration3d.AccelerationY = new Acceleration((y - _zeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity);
-            Acceleration3d.AccelerationZ = new Acceleration((z - _zeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity);
+            Acceleration3d.AccelerationX = new Acceleration((x.Volts - _zeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity);
+            Acceleration3d.AccelerationY = new Acceleration((y.Volts - _zeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity);
+            Acceleration3d.AccelerationZ = new Acceleration((z.Volts - _zeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity);
         }
 
         /// <summary>
         /// Get the raw analog input values from the sensor.
         /// </summary>
         /// <returns>Vector object containing the raw sensor data from the analog pins.</returns>
-        public async Task<Vector> GetRawSensorData()
+        public async Task<(Voltage XVolts, Voltage YVolts, Voltage ZVolts)> GetRawSensorData()
         {
-            return new Vector(await _xPort.Read(), await _yPort.Read(), await _zPort.Read());
+            var x = await _xPort.Read();
+            var y = await _yPort.Read();
+            var z = await _zPort.Read();
+
+            return (x, y, z);
         }
     }
 }
