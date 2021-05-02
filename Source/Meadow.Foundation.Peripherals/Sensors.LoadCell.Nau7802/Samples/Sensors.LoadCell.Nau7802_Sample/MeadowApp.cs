@@ -11,8 +11,8 @@ namespace Sensors.LoadCell.Nau7802_Sample
     {
         private Nau7802 _loadSensor;
 
-        public int CalibrationFactor { get; set; } = 5691; // TODO: change this based on your scale (using the method provided below)
-        public decimal CalibrationWeight { get; set; } = 1970; // TODO: enter the known-weight you used in calibration
+        public int CalibrationFactor { get; set; } = 636574; // TODO: change this based on your scale (using the method provided below)
+        public decimal CalibrationWeight { get; set; } = 1205; // TODO: enter the known-weight you used in calibration
         public WeightUnits CalibrationWeightUnits { get; set; } = WeightUnits.Grams; // TODO: enter the units of the known-weight you used in calibration
 
         public MeadowApp()

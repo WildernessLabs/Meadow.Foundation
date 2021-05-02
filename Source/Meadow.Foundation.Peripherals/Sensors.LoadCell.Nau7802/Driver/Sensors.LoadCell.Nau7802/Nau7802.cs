@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         private II2cBus Device { get; }
         private object SyncRoot { get; } = new object();
         private decimal gramsPerAdcUnit = 0;
-        private PU_CTRL_BITS currentPU_CTRL;
+        private PU_CTRL_BITS _currentPU_CTRL;
         private int tareValue;
 
         /// <summary>
@@ -130,43 +130,39 @@ namespace Meadow.Foundation.Sensors.LoadCell
             Console.WriteLine($"Powering up...");
 
             // read the control register
-            currentPU_CTRL = (PU_CTRL_BITS)ReadRegister(Register.PU_CTRL);
+            _currentPU_CTRL = (PU_CTRL_BITS)ReadRegister(Register.PU_CTRL);
 
-            Console.WriteLine($"PU_CTRL: 0x{currentPU_CTRL:x}");
+            Console.WriteLine($"PU_CTRL: 0x{_currentPU_CTRL:x}");
 
-            // Set the RR bit to 1 in R0x00, to guarantee a reset of all register values
-            currentPU_CTRL |= PU_CTRL_BITS.RR;
-            WriteRegister(Register.PU_CTRL, currentPU_CTRL);
+            // Set and clear the RR bit in 0x00, to guarantee a reset of all register values
+            _currentPU_CTRL |= PU_CTRL_BITS.RR;
+            WriteRegister(Register.PU_CTRL, _currentPU_CTRL);
+            Thread.Sleep(1); // make sure it has time to do it's thing
+            _currentPU_CTRL &= ~PU_CTRL_BITS.RR;
+            WriteRegister(Register.PU_CTRL, _currentPU_CTRL);
 
-            // Set the RR bit to 0 and PUD bit 1, in R0x00, to enter normal operation 
-            currentPU_CTRL &= ~PU_CTRL_BITS.RR;
-            currentPU_CTRL |= (PU_CTRL_BITS.PUD | PU_CTRL_BITS.PUA);
-            WriteRegister(Register.PU_CTRL, currentPU_CTRL);
+            // turn on the analog and digital power
+            _currentPU_CTRL |= (PU_CTRL_BITS.PUD | PU_CTRL_BITS.PUA);
+            WriteRegister(Register.PU_CTRL, _currentPU_CTRL);
+            Thread.Sleep(10); // make sure it has time to do it's thing
 
-            // After about 200 microseconds, the PWRUP bit will be Logic = 1 indicating the device is ready for the remaining programming setup. 
-            do
-            {
-                Thread.Sleep(1);
-                currentPU_CTRL = (PU_CTRL_BITS)ReadRegister(Register.PU_CTRL);
-            } while ((currentPU_CTRL & PU_CTRL_BITS.PUR) == 0);
-
-            // At this point, all appropriate device selections and configuration can be made
-            //  a.For example R0x00 = 0xAE 
-            //  b.R0x15 = 0x30 
 
             Console.WriteLine($"Configuring...");
 
             SetLDO(LdoVoltage.LDO_3V3);
             SetGain(AdcGain.Gain128);
             SetConversionRate(ConversionRate.SamplePerSecond80);
-            WriteRegister(Register.OTP_B1, 0x30); // turn off CLK_CHP
+            WriteRegister(Register.OTP_ADC, 0x30); // turn off CLK_CHP
             EnableCh2DecouplingCap();
 
-            CalibrateAdc();
+            if (!CalibrateAdc())
+            {
+                throw new Exception("Calibration error");
+            }
 
             // No conversion will take place until the R0x00 bit 4 “CS” is set Logic = 1 
-            currentPU_CTRL |= PU_CTRL_BITS.CS;
-            WriteRegister(Register.PU_CTRL, currentPU_CTRL);
+            _currentPU_CTRL |= PU_CTRL_BITS.CS;
+            WriteRegister(Register.PU_CTRL, _currentPU_CTRL);
 
             // Enter the low power standby condition by setting PUA and PUD bits to 0, in R0x00 
             // Resume operation by setting PUA and PUD bits to 1, in R0x00.This sequence is the same for powering up from the standby condition, except that from standby all of the information in the configuration and calibration registers will be retained if the power supply is stable.Depending on conditions and the application, it may be desirable to perform calibration again to update the calibration registers for the best possible accuracy.
@@ -183,7 +179,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         {
             // app note - enable ch2 decoupling cap
             var pga_pwr = ReadRegister(Register.PGA_PWR);
-            pga_pwr |= 1 << 3;
+            pga_pwr |= 1 << 7;
             WriteRegister(Register.PGA_PWR, pga_pwr);
         }
 
@@ -193,8 +189,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
             ctrl1 &= 0b11000111; // clear LDO
             ctrl1 |= (byte)((byte)value << 3);
             WriteRegister(Register.CTRL1, ctrl1);
-            currentPU_CTRL |= PU_CTRL_BITS.AVDDS;
-            WriteRegister(Register.PU_CTRL, currentPU_CTRL); // enable internal LDO
+            _currentPU_CTRL |= PU_CTRL_BITS.AVDDS;
+            WriteRegister(Register.PU_CTRL, _currentPU_CTRL); // enable internal LDO
         }
 
         private void SetGain(AdcGain value)
@@ -213,27 +209,33 @@ namespace Meadow.Foundation.Sensors.LoadCell
             WriteRegister(Register.CTRL2, ctrl2);
         }
 
-        private void CalibrateAdc()
+        private bool CalibrateAdc()
         {
+            // read ctrl2
             var ctrl2 = ReadRegister(Register.CTRL2);
-            ctrl2 |= (byte)((byte)1 << 7);
+
+            // turn on the calibration bit
+            ctrl2 |= (byte)CTRL2_BITS.CALS;
             WriteRegister(Register.CTRL2, ctrl2);
 
+            // now wiat for either completion or error
             do
             {
                 ctrl2 = ReadRegister(Register.CTRL2);
-                if ((ctrl2 & (1 << 3)) != 0)
+                if ((ctrl2 & (byte)CTRL2_BITS.CAL_ERROR) != 0)
                 {
                     // calibration error
-                    throw new Exception("Calibration error");
+                    return false;
                 }
-                if ((ctrl2 & (1 << 2)) == 0)
+                if ((ctrl2 & (byte)CTRL2_BITS.CALS) == 0)
                 {
                     // cal complete
                     break;
                 }
+                Thread.Sleep(1);
             } while (true);
 
+            return true;
         }
 
         /// <summary>

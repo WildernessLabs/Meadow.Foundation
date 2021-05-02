@@ -12,6 +12,15 @@ namespace Meadow.Foundation.Sensors.LoadCell
             Default = Address0
         }
 
+        private enum CTRL2_BITS : byte
+        {
+            CALMOD = 1 << 0,
+            CALS = 1 << 2,
+            CAL_ERROR = 1 << 3,
+            CRS = 1 << 4,
+            CHS = 1 << 7,
+        }
+
         private enum Register : byte
         {
             PU_CTRL = 0x00,
@@ -35,8 +44,9 @@ namespace Meadow.Foundation.Sensors.LoadCell
             ADCO_B2 = 0x12,
             ADCO_B1 = 0x13,
             ADCO_B0 = 0x14,
-            OTP_B1 = 0x15,
-            OTP_B0 = 0x16,
+            OTP_ADC = 0x15,
+            OTP_B1 = 0x16,
+            OTP_B0 = 0x17,
             PGA = 0x1B,
             PGA_PWR = 0x1C,
             DEV_REV = 0x1f
