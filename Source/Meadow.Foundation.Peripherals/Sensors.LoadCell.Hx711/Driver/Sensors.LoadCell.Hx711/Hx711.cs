@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.LoadCell
 {
     /// <summary>
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
-    public class Hx711 : FilterableChangeObservableBase<FloatChangeResult, float>,  IDisposable
+    public class Hx711 : 
+        FilterableChangeObservable<CompositeChangeResult<Mass>, Mass>,
+        IDisposable
     {
         public enum AdcGain
         {
@@ -28,7 +31,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         private uint dout_mask;
         private const int timing_iterations = 3;
         private uint tareValue = 0;
-        private decimal gramsPerAdcUnit;
+        private double gramsPerAdcUnit;
 
         private IDigitalOutputPort sck;
         private IDigitalInputPort dout;
@@ -133,16 +136,16 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// </summary>
         /// <param name="factor"></param>
         /// <param name="knownValue"></param>
-        public void SetCalibrationFactor(int factor, Weight knownValue)
+        public void SetCalibrationFactor(int factor, Mass knownValue)
         {
-            gramsPerAdcUnit = knownValue.ConvertTo(WeightUnits.Grams) / (decimal)factor;
+            gramsPerAdcUnit = (knownValue.Grams / factor);
         }
 
         /// <summary>
         /// Gets the current sensor weight
         /// </summary>
         /// <returns></returns>
-        public Weight GetWeight()
+        public Mass GetWeight()
         {
             if (gramsPerAdcUnit == 0)
             {
@@ -169,7 +172,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             var grams = value * gramsPerAdcUnit;
 
             // convert to desired units
-            return new Weight(grams, WeightUnits.Grams);
+            return new Mass(grams, Mass.UnitType.Grams);
         }
 
         private void CalculateRegisterValues(IPin sck, IPin dout)
