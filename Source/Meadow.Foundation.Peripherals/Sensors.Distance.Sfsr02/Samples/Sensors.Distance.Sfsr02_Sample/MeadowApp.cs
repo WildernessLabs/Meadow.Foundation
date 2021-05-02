@@ -14,7 +14,7 @@ namespace Sensors.Distance.SFSR02_Sample
         public MeadowApp()
         {
             sFSR02 = new Sfsr02(Device, Device.Pins.D03);
-            sFSR02.DistanceDetected += SFSR02DistanceDetected;
+            sFSR02.DistanceUpdated += SFSR02_DistanceUpdated;
 
             while (true)
             {
@@ -26,11 +26,9 @@ namespace Sensors.Distance.SFSR02_Sample
             }
         }
 
-        // Prints the measured distance after sending a trigger signal
-        // Valid distance ranges from 2cm to 400cm. Prints -1 otherwise.
-        private void SFSR02DistanceDetected(object sender, Meadow.Peripherals.Sensors.Distance.DistanceEventArgs e)
+        private void SFSR02_DistanceUpdated(object sender, CompositeChangeResult<Meadow.Units.Length> e)
         {
-            Console.WriteLine($"{e.Distance}");
+            Console.WriteLine($"{e.New.Centimeters}cm");
         }
     }
 }

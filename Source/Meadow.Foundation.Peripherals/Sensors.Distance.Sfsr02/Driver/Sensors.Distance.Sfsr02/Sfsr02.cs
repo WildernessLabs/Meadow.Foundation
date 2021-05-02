@@ -1,34 +1,40 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Distance;
+using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
-    public class Sfsr02// : IRangeFinder
+    /// <summary>
+    /// Sfsr02 Distance Sensor
+    /// </summary>
+    public class Sfsr02:
+        FilterableChangeObservable<CompositeChangeResult<Length>, Length>, 
+        IRangeFinder
     {
-        /// <summary>
-        /// Returns current distance detected in cm.
-        /// </summary>
-        public float CurrentDistance { get; private set; } = -1;
 
-        /// <summary>
-        /// Minimum valid distance in cm (CurrentDistance returns -1 if below).
-        /// </summary>
-        public float MinimumDistance => 2;
-
-        /// <summary>
-        /// Maximum valid distance in cm (CurrentDistance returns -1 if above).
-        /// </summary>
-        public float MaximumDistance => 800;
-
-        public DistanceConditions Conditions => throw new NotImplementedException();
-
-        /// <summary>
+		/// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
-        public event EventHandler<DistanceEventArgs> DistanceDetected;
-        public event EventHandler<DistanceConditionChangeResult> Updated;
+        public event EventHandler<CompositeChangeResult<Length>> DistanceUpdated;
+        public event EventHandler<CompositeChangeResult<Length>> Updated;
+
+        /// <summary>
+        /// Returns current distance
+        /// </summary>
+        public Length Distance { get; private set; } = 0;
+
+        /// <summary>
+        /// Minimum valid distance in cm
+        /// </summary>
+        public double MinimumDistance => 2;
+
+        /// <summary>
+        /// Maximum valid distance in cm
+        /// </summary>
+        public double MaximumDistance => 450;
+
 
         /// <summary>
         /// Trigger/Echo Pin
@@ -66,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Distance
             triggerEchoPort.State = false;
             Thread.Sleep(1); //smallest amount of time we can wait
 
-            CurrentDistance = -1;
+            Distance = -1;
 
             // Raise trigger port to high for 20 micro-seconds
             triggerEchoPort.State = true;
@@ -89,22 +95,27 @@ namespace Meadow.Foundation.Sensors.Distance
             }
 
             // Calculate Difference
-            float elapsed = DateTime.Now.Ticks - tickStart;
+            var elapsed = DateTime.Now.Ticks - tickStart;
 
             // Return elapsed ticks
             // x10 for ticks to micro sec
             // divide by 58 for cm (assume speed of sound is 340m/s)
-            CurrentDistance = elapsed / 580f;
+            var curDis = elapsed / 580;
 
+            var oldDistance = Distance;
+            Distance = new Length(curDis, Length.UnitType.Centimeters); 
+
+            //debug - remove 
+            Console.WriteLine($"{elapsed}, {curDis}, {Distance}, {DateTime.Now.Ticks}");
+
+            //restore this before publishing to hide false results 
             //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
             //       CurrentDistance = -1;
 
-            DistanceDetected?.Invoke(this, new DistanceEventArgs(CurrentDistance));
-        }
+            var result = new CompositeChangeResult<Length>(oldDistance, Distance);
 
-        public IDisposable Subscribe(IObserver<DistanceConditionChangeResult> observer)
-        {
-            throw new NotImplementedException();
+            Updated?.Invoke(this, result);
+            DistanceUpdated?.Invoke(this, result);
         }
     }
 }
