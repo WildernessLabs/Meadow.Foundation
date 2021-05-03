@@ -15,6 +15,6 @@
     <Description>AdaFruit MotorWing motor controller FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ICs.IOExpanders.PCA9685\Driver\ICs.IOExpanders.PCA9685\ICs.IOExpanders.Pca9685.csproj" />
+    <ProjectReference Include="..\..\..\ICs.IOExpanders.Pca9685\Driver\ICs.IOExpanders.Pca9685\ICs.IOExpanders.Pca9685.csproj" />
   </ItemGroup>
 </Project>

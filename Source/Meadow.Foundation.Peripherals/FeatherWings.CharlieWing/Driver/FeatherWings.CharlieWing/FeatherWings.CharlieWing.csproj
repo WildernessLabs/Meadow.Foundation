@@ -15,6 +15,6 @@
     <Description>AdaFruit CharlieWing Matrix LED FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ICs.IOExpanders.IS31FL3731\Driver\ICs.IOExpanders.IS31FL3731\ICs.IOExpanders.Is31fl3731.csproj" />
+    <ProjectReference Include="..\..\..\ICs.IOExpanders.Is31fl3731\Driver\ICs.IOExpanders.Is31fl3731\ICs.IOExpanders.Is31fl3731.csproj" />
   </ItemGroup>
 </Project>
