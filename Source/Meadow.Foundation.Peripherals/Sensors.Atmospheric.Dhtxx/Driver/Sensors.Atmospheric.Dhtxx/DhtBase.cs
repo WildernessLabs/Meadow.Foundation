@@ -200,6 +200,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, RelativeHumidity> changeResult)
         {
             Updated?.Invoke(this, changeResult);
+            HumidityUpdated?.Invoke(this, new CompositeChangeResult<RelativeHumidity>(changeResult.New.Value.Unit2, changeResult.Old.Value.Unit2));
+            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.New.Value.Unit1, changeResult.Old.Value.Unit1));
             base.NotifyObservers(changeResult);
         }
 

@@ -1,5 +1,7 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,34 +15,29 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <remarks>
     /// Readings from the sensor are made in Single-shot mode.
     /// </remarks>
-    public class Sht31d : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor//, ITemperatureSensor, IHumiditySensor
+    public class Sht31d :
+        FilterableChangeObservable<CompositeChangeResult<Units.Temperature, RelativeHumidity>, Units.Temperature, RelativeHumidity>,
+        ITemperatureSensor, IHumiditySensor
     {
-        
-
         /// <summary>
         ///     SH31D sensor communicates using I2C.
         /// </summary>
         private readonly II2cPeripheral sht31d;
 
-        
-
-        
-
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature.Value;
+        public Units.Temperature Temperature => Conditions.Temperature;
 
         /// <summary>
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
-        public float Humidity => Conditions.Humidity.Value;
+        public RelativeHumidity Humidity => Conditions.Humidity;
 
         /// <summary>
         /// The AtmosphericConditions from the last reading.
         /// </summary>
-        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
+        public (Units.Temperature Temperature, RelativeHumidity Humidity) Conditions;
 
         // internal thread lock
         private object _lock = new object();
@@ -53,15 +50,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        
-
-        
-
-        public event EventHandler<AtmosphericConditionChangeResult> Updated;
-
-        
-
-        
+        public event EventHandler<CompositeChangeResult<Units.Temperature, RelativeHumidity>> Updated;
+        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated;
+        public event EventHandler<CompositeChangeResult<RelativeHumidity>> HumidityUpdated;
 
         /// <summary>
         ///     Create a new SHT31D object.
@@ -73,15 +64,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             sht31d = new I2cPeripheral(i2cBus, address);
         }
 
-        
-
-        
-
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public Task<AtmosphericConditions> Read()
+        public Task<(Units.Temperature Temperature, RelativeHumidity Humidity)> Read()
         {
             Update();
 
@@ -100,23 +87,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                AtmosphericConditions oldConditions;
-                AtmosphericConditionChangeResult result;
+                (Units.Temperature, RelativeHumidity) oldConditions;
+                CompositeChangeResult<Units.Temperature, RelativeHumidity> result;
+
                 Task.Factory.StartNew(async () => {
                     while (true) {
                         if (ct.IsCancellationRequested) {
                             // do task clean up here
-                            _observers.ForEach(x => x.OnCompleted());
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
-                        oldConditions = AtmosphericConditions.From(Conditions);
+                        oldConditions = Conditions;
 
                         // read
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+                        result = new CompositeChangeResult<Units.Temperature, RelativeHumidity>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -128,9 +116,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, RelativeHumidity> changeResult)
         {
             Updated?.Invoke(this, changeResult);
+            HumidityUpdated?.Invoke(this, new CompositeChangeResult<RelativeHumidity>(changeResult.New.Value.Unit2, changeResult.Old.Value.Unit2));
+            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.New.Value.Unit1, changeResult.Old.Value.Unit1));
             base.NotifyObservers(changeResult);
         }
 
@@ -155,10 +145,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void Update()
         {
             var data = sht31d.WriteRead(new byte[] { 0x2c, 0x06 }, 6);
-            Conditions.Humidity = (100 * (float)((data[3] << 8) + data[4])) / 65535;
-            Conditions.Temperature = ((175 * (float)((data[0] << 8) + data[1])) / 65535) - 45;
-        }
+            var humidity = (100 * (float)((data[3] << 8) + data[4])) / 65535;
+            var tempC = ((175 * (float)((data[0] << 8) + data[1])) / 65535) - 45;
 
-        
+            Conditions.Humidity = new RelativeHumidity(humidity);
+            Conditions.Temperature = new Units.Temperature(tempC, Units.Temperature.UnitType.Celsius);
+        }
     }
 }
