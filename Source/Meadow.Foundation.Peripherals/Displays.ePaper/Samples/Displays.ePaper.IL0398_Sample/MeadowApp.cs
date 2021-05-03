@@ -35,6 +35,7 @@ namespace Displays.ePaper.IL0398_Sample
             graphics.CurrentFont = new Font8x12();
             graphics.DrawText(2, 2, "IL0398");
             graphics.DrawText(2, 20, "Meadow F7");
+            canvas.CurrentFont = new Font8x12();
 
             int ySpacing = 6;
 
