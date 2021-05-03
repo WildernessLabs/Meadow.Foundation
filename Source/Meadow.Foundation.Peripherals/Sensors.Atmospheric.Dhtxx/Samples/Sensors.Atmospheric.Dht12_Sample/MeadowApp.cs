@@ -18,9 +18,9 @@ namespace Sensors.Atmospheric.Dht12_Sample
             sensor.Updated += Sensor_Updated;
         }
 
-        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Atmospheric.AtmosphericConditionChangeResult e)
+        private void Sensor_Updated(object sender, CompositeChangeResult<Meadow.Units.Temperature, Meadow.Units.RelativeHumidity> e)
         {
-            Console.WriteLine($"Humidity: {e.New.Humidity}%, Temperature: {e.New.Temperature}°C");
+            Console.WriteLine($"Humidity: {e.New.Value.Unit2.Value*100}%, Temperature: {e.New.Value.Unit1.Celsius}°C");
         }
 
         public void Initialize()
