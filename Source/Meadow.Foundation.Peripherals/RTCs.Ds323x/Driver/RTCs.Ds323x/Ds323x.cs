@@ -259,13 +259,13 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         ///     Get the current die temperature.
         /// </summary>
-        public double Temperature
+        public Units.Temperature Temperature
         {
             get
             {
                 var data = ds323x.ReadRegisters(Registers.TemperatureMSB, 2);
                 var temperature = (ushort)((data[0] << 2) | (data[1] >> 6));
-                return temperature * 0.25;
+                return new Units.Temperature(temperature * 0.25, Units.Temperature.UnitType.Celsius);
             }
         }
 
