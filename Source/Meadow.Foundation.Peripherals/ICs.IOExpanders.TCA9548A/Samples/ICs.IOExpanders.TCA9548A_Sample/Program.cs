@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using System.Threading;
 
-namespace ICs.IOExpanders.TCA9685_Sample
+namespace ICs.IOExpanders.Tca9685_Sample
 {
     class Program
     {

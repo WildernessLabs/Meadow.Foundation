@@ -9,22 +9,22 @@ using Meadow.Utilities;
 
 namespace ICs.IOExpanders.TCA9548A
 {
-    public class Tca9548A : II2cPeripheral
+    public class Tca9548a : II2cPeripheral
     {
         private readonly Dictionary<byte, II2cBus> _buses;
         private byte _selectedBus = 0xff;
         internal SemaphoreSlim BusSelectorSemaphore = new SemaphoreSlim(1, 1);
 
-        public Tca9548A(II2cBus bus, byte address)
+        public Tca9548a(II2cBus bus, byte address)
         {
             Console.WriteLine($"Creating TCA9548A @ {Address}");
             Address = address;
             Bus = bus;
             _buses = Enumerable.Range(0, 8).Select(Convert.ToByte)
-                               .ToDictionary(b => b, b => new Tca9548ABus(this, bus.Frequency, b) as II2cBus);
+                               .ToDictionary(b => b, b => new Tca9548aBus(this, bus.Frequency, b) as II2cBus);
         }
 
-        public Tca9548A(II2cBus bus, bool a0, bool a1, bool a2) : this(bus, TcaAddressTable.GetAddressFromPins(a0, a1, a2))
+        public Tca9548a(II2cBus bus, bool a0, bool a1, bool a2) : this(bus, TcaAddressTable.GetAddressFromPins(a0, a1, a2))
         {
 
         }

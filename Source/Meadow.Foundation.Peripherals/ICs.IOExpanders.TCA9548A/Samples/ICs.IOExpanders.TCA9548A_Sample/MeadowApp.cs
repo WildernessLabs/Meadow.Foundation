@@ -8,11 +8,14 @@ using System.Threading;
 using ICs.IOExpanders.TCA9548A;
 using Meadow.Foundation.ICs.IOExpanders;
 
-namespace ICs.IOExpanders.TCA9685_Sample
+namespace ICs.IOExpanders.Tca9685_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        private Tca9548A _tca9548A;
+        Tca9548a tca9548a;
+        II2cBus i2cBus;
+        Mcp23x08 mcp0;
+        Mcp23x08 mcp1;
 
         public MeadowApp()
         {
@@ -23,19 +26,17 @@ namespace ICs.IOExpanders.TCA9685_Sample
         void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
-            var i2CBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
 
-            _tca9548A = new Tca9548A(i2CBus, 0x71);
+            i2cBus = Device.CreateI2cBus(I2cBusSpeed.Standard);
+            tca9548a = new Tca9548a(i2cBus, 0x70);
+            mcp0 = new Mcp23x08(tca9548a.Bus0);
+            mcp1 = new Mcp23x08(tca9548a.Bus1);
         }
 
         public void Run()
         {
-            var meadowBus = Device.CreateI2cBus(I2cBusSpeed.Standard);
-            var tca = new Tca9548A(meadowBus, 0x71);
-            var bus0Mcp23008 = new Mcp23x08(tca.Bus0);
-            var bus1Mcp23008 = new Mcp23x08(tca.Bus1);
-            var bus0Port0 = bus0Mcp23008.CreateDigitalOutputPort(bus0Mcp23008.Pins.GP0);
-            var bus1Port0 = bus1Mcp23008.CreateDigitalOutputPort(bus1Mcp23008.Pins.GP0);
+            var bus0Port0 = mcp0.CreateDigitalOutputPort(mcp0.Pins.GP0);
+            var bus1Port0 = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP0);
             while (true)
             {
                 bus0Port0.State = true;
