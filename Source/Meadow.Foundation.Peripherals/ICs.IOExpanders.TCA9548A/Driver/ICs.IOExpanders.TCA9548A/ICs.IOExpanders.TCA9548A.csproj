@@ -1,26 +1,17 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-    <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Hx711</AssemblyName>
+    <AssemblyName>TCA9548A</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.LoadCell.Hx711</PackageId>
+    <PackageId>Meadow.Foundation.ICs.IOExpanders.TCA9548A</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, LoadCell, Hx711</PackageTags>
-    <Version>0.1.32</Version>
+    <PackageTags>Meadow.Foundation, TCA9548A</PackageTags>
+    <Version>0.0.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Hx711 digital load cell amplifier</Description>
-    <Configurations>Release;Debug</Configurations>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>Driver for TCA9548A I2C IO expander</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
