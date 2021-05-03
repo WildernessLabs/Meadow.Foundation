@@ -29,13 +29,13 @@ namespace AdafruitMPRLSSensorExample
             PressureSensor.Updated += PressureSensor_Updated;
         }
 
-        private void PressureSensor_Updated(object sender, Meadow.Peripherals.Sensors.Atmospheric.AtmosphericConditionChangeResult e)
+        private void PressureSensor_Updated(object sender, CompositeChangeResult<Meadow.Units.Pressure> e)
         {
-            Console.WriteLine($"new pressure PSI: {e.New.Pressure}, old pressure PSI: {e.Old.Pressure}");
+            Console.WriteLine($"New pressure PSI: {e.New.Psi}, Old pressure PSI: {e.Old.Psi}");
 
-            Console.WriteLine($"pressure in hPA: {PressureSensor.CalculatedhPAMeasurement}");
+            Console.WriteLine($"Pressure in Pascal: {e.New.Pascal}");
 
-            Console.WriteLine($"raw sensor value: {PressureSensor.RawPSIMeasurement}");
+            Console.WriteLine($"Raw sensor value: {PressureSensor.RawPSIMeasurement}");
         }
     }
 }
