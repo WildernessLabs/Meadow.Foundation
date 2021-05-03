@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\ICs.IOExpanders.Mcp23x08\Driver\ICs.IOExpanders.MCP23x08\ICs.IOExpanders.MCP23x08.csproj" />
+    <ProjectReference Include="..\..\..\ICs.IOExpanders.Mcp23x08\Driver\ICs.IOExpanders.MCP23x08\ICs.IOExpanders.Mcp23x08.csproj" />
     <ProjectReference Include="..\..\Driver\ICs.IOExpanders.Tca9548a\ICs.IOExpanders.Tca9548a.csproj" />
   </ItemGroup>
 </Project>

@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-using Meadow;
-using Meadow.Hardware;
-using Meadow.Utilities;
-
-namespace ICs.IOExpanders.TCA9548A
+namespace Meadow.Foundation.ICs.IOExpanders
 {
     public class Tca9548a : II2cPeripheral
     {

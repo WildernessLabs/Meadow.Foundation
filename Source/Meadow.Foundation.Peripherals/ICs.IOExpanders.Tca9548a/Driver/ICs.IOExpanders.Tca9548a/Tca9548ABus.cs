@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using System;
 using System.Collections.Generic;
 
-using Meadow.Hardware;
-
-namespace ICs.IOExpanders.TCA9548A
+namespace Meadow.Foundation.ICs.IOExpanders
 {
     public class Tca9548aBus : II2cBus
     {

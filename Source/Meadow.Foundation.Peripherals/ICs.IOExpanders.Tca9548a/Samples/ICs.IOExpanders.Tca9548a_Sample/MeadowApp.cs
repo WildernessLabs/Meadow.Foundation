@@ -1,12 +1,9 @@
 ﻿using Meadow;
-using Meadow.Foundation;
 using Meadow.Devices;
+using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
 using System;
 using System.Threading;
-
-using ICs.IOExpanders.TCA9548A;
-using Meadow.Foundation.ICs.IOExpanders;
 
 namespace ICs.IOExpanders.Tca9685_Sample
 {

@@ -1,4 +1,4 @@
-﻿namespace ICs.IOExpanders.TCA9548A
+﻿namespace Meadow.Foundation.ICs.IOExpanders
 {
     public static class TcaAddressTable
     {
