@@ -28,10 +28,6 @@ namespace Meadow.Foundation.Sensors.Environmental
             sensor = new I2cPeripheral(i2cBus, address);
         }
 
-        
-
-        
-
         /// <summary>
         /// Get ASG01DB VOC Gas Concentration
         /// </summary>
@@ -42,12 +38,6 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             sensor.WriteBytes(data);
             var readBuffer = sensor.ReadBytes(3);
-
-            // CRC check
-         //   if (!CheckCrc8(readBuffer, 2, readBuffer[1]))
-         //   {
-         //       return -1;
-         //   }
 
             ushort res = BinaryPrimitives.ReadUInt16BigEndian(readBuffer.AsSpan(0, 2));
 
@@ -107,7 +97,5 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             return (crc == crc8);
         }
-
-        
     }
 }

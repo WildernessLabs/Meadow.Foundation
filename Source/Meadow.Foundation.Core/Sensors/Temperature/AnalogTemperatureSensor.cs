@@ -3,6 +3,7 @@ using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors;
 using System;
 using System.Threading.Tasks;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
@@ -177,7 +178,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             // pattern through the sensor driver
             AnalogInputPort.Subscribe
             (
-                new FilterableChangeObserver<FloatChangeResult, float>(
+                IAnalogInputPort.CreateObserver(
                     h => {
                         var newTemp = VoltageToTemperature(h.New);
                         var oldTemp = VoltageToTemperature(h.Old);
@@ -201,13 +202,16 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
         public async Task<CompositeChangeResult<Units.Temperature>> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
+            // grab the old temp and store it in a temp var
+            Units.Temperature? oldTemp = Temperature;
+
             // read the voltage
-            float voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
-            // convert and save to our temp property for later retreival
+            var voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
+
+            // convert the voltage
             Temperature = VoltageToTemperature(voltage);
-            // return
-            return new CompositeChangeResult<Units.Temperature>(Temperature, null);
-            //return Temperature;
+            
+            return new CompositeChangeResult<Units.Temperature>(Temperature, oldTemp);
         }
 
         /// <summary>
@@ -252,12 +256,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="voltage"></param>
         /// <returns>temperature in celcius</returns>
-        protected Units.Temperature VoltageToTemperature(float voltage)
+        protected Units.Temperature VoltageToTemperature(Voltage voltage)
         {
             return new Units.Temperature(
                 SensorCalibration.SampleReading
                 +
-                (voltage * 1000 - SensorCalibration.MillivoltsAtSampleReading)
+                (voltage.Millivolts - SensorCalibration.MillivoltsAtSampleReading)
                 /
                 SensorCalibration.MillivoltsPerDegreeCentigrade,
                 Units.Temperature.UnitType.Celsius);

@@ -3,7 +3,7 @@ using Meadow.Hardware;
 using System;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.Tft
+namespace Meadow.Foundation.Displays.TftSpi
 {
     //Samsung S6D02A1 controller
     public class S6D02A1 : TftSpiBase

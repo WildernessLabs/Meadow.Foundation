@@ -5,8 +5,6 @@ namespace Meadow.Foundation.Sensors.Light
 {
     public class Bh1745
     {
-        
-
         /// <summary>
         /// The primary I2c address of the BH1745
         /// </summary>
@@ -226,10 +224,6 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public ChannelMultipliers CompensationMultipliers { get; set; }
 
-        
-
-        
-
         I2cPeripheral bh1745;
 
         //masks
@@ -263,10 +257,6 @@ namespace Meadow.Foundation.Sensors.Light
         private readonly byte TL = 0x64;
         private readonly byte MANUFACTURER_ID = 0x92;
 
-        
-
-        
-
         /// <summary>
         /// The available ADC gain scaling options for the Bh1745
         /// </summary>
@@ -276,7 +266,7 @@ namespace Meadow.Foundation.Sensors.Light
             X2 = 0x1,
             X16 = 0x2
         }
-
+        
         public enum InterruptType : byte
         {
             ToggleMeasurementEnd = 0x0,
@@ -315,10 +305,6 @@ namespace Meadow.Foundation.Sensors.Light
             Ms5120 = 5120
         }
 
-        
-
-        
-
         /// <summary>
         ///     Create a new BH17545 color sensor object
         /// </summary>
@@ -336,10 +322,6 @@ namespace Meadow.Foundation.Sensors.Light
 
             Reset();
         }
-
-        
-
-        
 
         /// <summary>
         /// Resets the device to the default configuration
@@ -430,10 +412,6 @@ namespace Meadow.Foundation.Sensors.Light
             return Color.FromRgb(red, green, blue);
         }
 
-        
-
-        
-
         /// <summary>
         /// Channel compensation multipliers used to compensate the four (4) color channels of the Bh1745
         /// </summary>
@@ -456,7 +434,5 @@ namespace Meadow.Foundation.Sensors.Light
             /// </summary>
             public double Clear { get; set; } = 1;
         }
-
-        
     }
 }

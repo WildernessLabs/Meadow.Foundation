@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Power
                     // valid;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("INA200 device address must be either 0x40 or 0x41");
+                    throw new ArgumentOutOfRangeException("INA260 device address must be either 0x40 or 0x41");
             }
 
             Bus = i2cBus;

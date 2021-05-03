@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
-using Meadow.Peripherals.Sensors.Atmospheric;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Temperature.AnalogTemperature_Sample
 {
@@ -23,19 +21,21 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
                 sensorType: AnalogTemperature.KnownSensorType.LM35
             );
 
+            //==== IObservable Pattern
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree.
             var consumer = AnalogTemperature.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Temp changed: {result.New.Celsius}");
+                    Console.WriteLine($"Temp changed: {result.New.Celsius:N2}C, old: {result.Old.Celsius:N2}C");
                 },
                 filter: null
                 );
             analogTemperature.Subscribe(consumer);
 
+            //==== Classic Events
             // classical .NET events can also be used:
             analogTemperature.TemperatureUpdated += (object sender, CompositeChangeResult<Meadow.Units.Temperature> e) => {
-                Console.WriteLine($"Temp Changed, temp: {e.New.Celsius}°C");
+                Console.WriteLine($"Temp Changed, temp: {e.New.Celsius:N2}C, old: {e.Old.Celsius:N2}C");
             };
 
             // Get an initial reading.
@@ -49,7 +49,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
         protected async Task ReadTemp()
         {
             var temperature = await analogTemperature.Read();
-            Console.WriteLine($"Initial temp: { temperature.New.Celsius }");
+            Console.WriteLine($"Initial temp: {temperature.New.Celsius:N2}C");
         }
     }
 }

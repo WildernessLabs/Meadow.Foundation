@@ -23,14 +23,16 @@ namespace Sensors.Motion.mpu5060_Sample
 
             while (true)
             {
-                Console.WriteLine($"{mpu.TemperatureC}°C");
+                Console.WriteLine($"{mpu.Temperature.Celsius}°C");
                 Thread.Sleep(5000);
             }
         }
 
-        private void Mpu_Updated(object sender, Meadow.Peripherals.Sensors.Motion.AccelerationConditionChangeResult e)
+        private void Mpu_Updated(object sender, CompositeChangeResult<Meadow.Units.Acceleration3d, Meadow.Units.AngularAcceleration3d> e)
         {
-            Console.WriteLine($"X: {e.New.XAcceleration}, Y: {e.New.YAcceleration}, Z: {e.New.ZAcceleration}");
+            Console.WriteLine($"X: {e.New.Value.Unit1.AccelerationX.MetersPerSecondSquared}, " +
+                $"Y: {e.New.Value.Unit1.AccelerationY.MetersPerSecondSquared}, " +
+                $"Z: {e.New.Value.Unit1.AccelerationZ.MetersPerSecondSquared}");
         }
     }
 }

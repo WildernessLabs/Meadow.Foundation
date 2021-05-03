@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Meadow;
 
-namespace MeadowApp
+namespace Sensors.Atmospheric.Dht12_Sample
 {
     class Program
     {

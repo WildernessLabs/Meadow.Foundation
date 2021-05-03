@@ -1,8 +1,6 @@
-﻿using Meadow.Devices;
-using Meadow.Foundation.Displays;
+﻿using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Buttons;
 
 namespace Meadow.Foundation.FeatherWings
 {

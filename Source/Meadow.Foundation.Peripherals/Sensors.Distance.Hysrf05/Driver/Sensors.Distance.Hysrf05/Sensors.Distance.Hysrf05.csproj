@@ -1,0 +1,20 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Hysrf05</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.Sensors.Distance.Hysrf05</PackageId>
+    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation, Hysrf05, Distance, Sensor</PackageTags>
+    <Version>0.1.3</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Description>HYSRF05 digital ultrasonic distance sensor</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,9 +1,9 @@
 ﻿using System;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Atmospheric;
+using Meadow.Foundation.Sensors.Atmospheric.Dhtxx;
 
-namespace MeadowApp
+namespace Sensors.Atmospheric.Dht12_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {

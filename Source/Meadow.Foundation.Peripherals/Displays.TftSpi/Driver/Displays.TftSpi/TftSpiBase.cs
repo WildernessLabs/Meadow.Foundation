@@ -3,7 +3,7 @@ using Meadow.Hardware;
 using System;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.Tft
+namespace Meadow.Foundation.Displays.TftSpi
 {
     public abstract class TftSpiBase : DisplayBase, IDisposable
     {

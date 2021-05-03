@@ -1,5 +1,6 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Linq;
 
@@ -18,7 +19,7 @@ namespace Meadow.Foundation.Motors.Stepper
         private IDigitalOutputPort ms3;
         private StepDivisor _divisor;
         private object _syncRoot = new object();
-        private float _stepAngle;
+        private Angle _stepAngle;
         private int _stepDivisor;
 
         /// <summary>
@@ -104,7 +105,7 @@ namespace Meadow.Foundation.Motors.Stepper
                 throw new ArgumentException("All micro-step pins must be either null or valid pins");
             }
 
-            StepAngle = 1.8f; // common default
+            StepAngle = new Angle(1.8, Angle.UnitType.Degrees); // common default
             RotationSpeedDivisor = 2;
         }
 
@@ -115,7 +116,7 @@ namespace Meadow.Foundation.Motors.Stepper
         {
             get
             {
-                var v = (int)(360f / _stepAngle) * (int)StepDivisor;
+                var v = (int)(360 / _stepAngle.Degrees) * (int)StepDivisor;
                 return v;
             }
         }
@@ -123,13 +124,13 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <summary>
         /// Gets or sets the angle, in degrees, of one step for the connected stepper motor.
         /// </summary>
-        public float StepAngle
+        public Units.Angle StepAngle
         {
             get => _stepAngle;
             set
             {
-                if (value <= 0) throw new ArgumentOutOfRangeException("Step angle must be positive");
-                if (value == _stepAngle) return;
+                if (value <= 0) { throw new ArgumentOutOfRangeException("Step angle must be positive"); }
+                if (value == _stepAngle) { return; }
                 _stepAngle = value;
             }
         }

@@ -8,8 +8,6 @@ namespace Meadow.Foundation.Sensors.Hid
 {
     public partial class Mpr121
     {
-        
-
         private readonly II2cPeripheral i2cPeripheral;
 
         private int refreshPeriod;
@@ -17,10 +15,6 @@ namespace Meadow.Foundation.Sensors.Hid
         private Timer timer;
 
         private Dictionary<Channels, bool> channelStatus;
-
-        
-
-        
 
         /// <summary>
         /// Notifies about a the channel statuses have been changed.
@@ -61,10 +55,6 @@ namespace Meadow.Foundation.Sensors.Hid
             }
         }
 
-        
-
-        
-
         /// <summary>
         ///     Create a new MPR121 keypad object.
         /// </summary>
@@ -92,8 +82,6 @@ namespace Meadow.Foundation.Sensors.Hid
             
             timer = new Timer(RefreshChannelStatus, this, refreshPeriod, refreshPeriod);
         }
-
-        
 
         /// <summary>
         /// Reads the channel status of MPR121 controller.

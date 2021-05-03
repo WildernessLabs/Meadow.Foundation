@@ -1,15 +1,12 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Displays;
+using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Hardware;
+using System;
 
 namespace MeadowApp
 {

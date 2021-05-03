@@ -2,7 +2,7 @@
 using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.Tft
+namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Hx8357d : TftSpiBase
     {

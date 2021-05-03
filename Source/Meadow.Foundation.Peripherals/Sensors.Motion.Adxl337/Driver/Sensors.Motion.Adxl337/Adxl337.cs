@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -11,7 +12,8 @@ namespace Meadow.Foundation.Sensors.Motion
     /// Driver for the ADXL337 triple axis accelerometer.
     /// +/- 5g
     /// </summary>
-    public class Adxl337 : FilterableChangeObservableBase<AccelerationConditionChangeResult, AccelerationConditions>,
+    public class Adxl337 :
+        FilterableChangeObservable<CompositeChangeResult<Acceleration3d>, Acceleration3d>,
         IAccelerometer
     {
         /// <summary>
@@ -41,33 +43,6 @@ namespace Meadow.Foundation.Sensors.Motion
         private float _zeroGVoltage => SupplyVoltage / 2f;
 
         /// <summary>
-        /// Acceleration along the X-axis.
-        /// </summary>
-        /// <remarks>
-        /// This property will only contain valid data after a call to Read or after
-        /// an interrupt has been generated.
-        /// </remarks>
-        public float XAcceleration => Conditions.XAcceleration.Value;
-
-        /// <summary>
-        /// Acceleration along the Y-axis.
-        /// </summary>
-        /// <remarks>
-        /// This property will only contain valid data after a call to Read or after
-        /// an interrupt has been generated.
-        /// </remarks>
-        public float YAcceleration => Conditions.YAcceleration.Value;
-
-        /// <summary>
-        /// Acceleration along the Z-axis.
-        /// </summary>
-        /// <remarks>
-        /// This property will only contain valid data after a call to Read or after
-        /// an interrupt has been generated.
-        /// </remarks>
-        public float ZAcceleration => Conditions.ZAcceleration.Value;
-
-        /// <summary>
         /// Volts per G for the X axis.
         /// </summary>
         public float XVoltsPerG { get; set; }
@@ -88,7 +63,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public float SupplyVoltage { get; set; }
 
-        public AccelerationConditions Conditions { get; protected set; } = new AccelerationConditions();
+        public Acceleration3d Acceleration3d { get; protected set; } = new Acceleration3d();
 
         // internal thread lock
         private object _lock = new object();
@@ -101,7 +76,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        public event EventHandler<AccelerationConditionChangeResult> Updated;
+        public event EventHandler<CompositeChangeResult<Acceleration3d>> Updated;
+        public event EventHandler<CompositeChangeResult<Acceleration3d>> Acceleration3dUpdated;
 
         /// <summary>
         /// Create a new ADXL337 sensor object.
@@ -127,11 +103,11 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// Convenience method to get the current temperature. For frequent reads, use
         ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         ///// </summary>
-        public async Task<AccelerationConditions> Read()
+        public async Task<Acceleration3d> Read()
         {
             await Update();
 
-            return Conditions;
+            return Acceleration3d;
         }
 
         ///// <summary>
@@ -143,7 +119,8 @@ namespace Meadow.Foundation.Sensors.Motion
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock) {
+            lock (_lock) 
+            {
                 if (IsSampling) { return; }
 
                 // state muh-cheen
@@ -152,23 +129,25 @@ namespace Meadow.Foundation.Sensors.Motion
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                AccelerationConditions oldConditions;
-                AccelerationConditionChangeResult result;
-                Task.Factory.StartNew(async () => {
-                    while (true) {
-                        if (ct.IsCancellationRequested) {
-                            // do task clean up here
-                            _observers.ForEach(x => x.OnCompleted());
+                Acceleration3d oldConditions;
+                CompositeChangeResult<Acceleration3d> result;
+                Task.Factory.StartNew(async () => 
+                {
+                    while (true) 
+                    {
+                        if (ct.IsCancellationRequested) 
+                        {   // do task clean up here
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
-                        oldConditions = AccelerationConditions.From(Conditions);
+                        oldConditions = Acceleration3d;
 
                         // read
                         await Update();
 
                         // build a new result with the old and new conditions
-                        result = new AccelerationConditionChangeResult(oldConditions, Conditions);
+                        result = new CompositeChangeResult<Acceleration3d>(oldConditions, Acceleration3d);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -180,18 +159,20 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(AccelerationConditionChangeResult changeResult)
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Acceleration3d> changeResult)
         {
             Updated?.Invoke(this, changeResult);
+            Acceleration3dUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
         ///// <summary>
-        ///// Stops sampling the temperature.
+        ///// Stops sampling the acceleration.
         ///// </summary>
         public void StopUpdating()
         {
-            lock (_lock) {
+            lock (_lock) 
+            {
                 if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
@@ -206,18 +187,26 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public async Task Update()
         {
-            Conditions.XAcceleration = (await _xPort.Read() - _zeroGVoltage) / XVoltsPerG;
-            Conditions.YAcceleration = (await _yPort.Read() - _zeroGVoltage) / YVoltsPerG;
-            Conditions.ZAcceleration = (await _zPort.Read() - _zeroGVoltage) / ZVoltsPerG;
+            var x = await _xPort.Read();
+            var y = await _yPort.Read();
+            var z = await _zPort.Read();
+
+            Acceleration3d.AccelerationX = new Acceleration((x.Volts - _zeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity);
+            Acceleration3d.AccelerationY = new Acceleration((y.Volts - _zeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity);
+            Acceleration3d.AccelerationZ = new Acceleration((z.Volts - _zeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity);
         }
 
         /// <summary>
         /// Get the raw analog input values from the sensor.
         /// </summary>
         /// <returns>Vector object containing the raw sensor data from the analog pins.</returns>
-        public async Task<Vector> GetRawSensorData()
+        public async Task<(Voltage XVolts, Voltage YVolts, Voltage ZVolts)> GetRawSensorData()
         {
-            return new Vector(await _xPort.Read(), await _yPort.Read(), await _zPort.Read());
+            var x = await _xPort.Read();
+            var y = await _yPort.Read();
+            var z = await _zPort.Read();
+
+            return (x, y, z);
         }
     }
 }

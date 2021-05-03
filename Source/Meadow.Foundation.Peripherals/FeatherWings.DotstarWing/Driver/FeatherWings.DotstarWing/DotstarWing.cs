@@ -19,21 +19,21 @@ namespace Meadow.Foundation.FeatherWings
             set => ledMatrix.Brightness = value;  
         }
 
-        public DotstarWing(ISpiBus spiBus, IDigitalOutputPort chipSelect) : this(spiBus,chipSelect,72)
+        public DotstarWing(ISpiBus spiBus) : this(spiBus,72)
         {
         }
 
-        public DotstarWing(ISpiBus spiBus, IDigitalOutputPort chipSelect, uint numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
+        public DotstarWing(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
         {
             penColor = Color.White;
-            ledMatrix = new Apa102(spiBus, chipSelect, numberOfLeds, pixelOrder, autoWrite);
+            ledMatrix = new Apa102(spiBus, numberOfLeds, pixelOrder, autoWrite);
         }
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format12bppRgb444;
 
-        public override uint Width => 12;
+        public override int Width => 12;
 
-        public override uint Height => 6;
+        public override int Height => 6;
 
         public override void Clear(bool updateDisplay = false)
         {
@@ -42,14 +42,14 @@ namespace Meadow.Foundation.FeatherWings
 
         public override void DrawPixel(int x, int y, Color color)
         {
-            uint minor = (uint)x;
-            uint major = (uint)y;
-            uint majorScale;
+            int minor = x;
+            int major = y;
+            int majorScale;
 
             major = Height - 1 - major;
             majorScale = Width;
 
-            uint pixelOffset = (major * majorScale) + minor;
+            int pixelOffset = (major * majorScale) + minor;
 
             if (pixelOffset >= 0 && pixelOffset < Height * Width)
             {
@@ -82,6 +82,11 @@ namespace Meadow.Foundation.FeatherWings
         public override void Show()
         {
             ledMatrix.Show();
+        }
+
+        public override void InvertPixel(int x, int y)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

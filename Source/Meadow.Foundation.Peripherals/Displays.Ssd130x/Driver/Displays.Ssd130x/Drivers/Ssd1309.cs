@@ -1,8 +1,7 @@
-﻿using System;
-using Meadow.Devices;
+﻿using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Displays.Ssd130x
 {
     public class Ssd1309 : Ssd1306
     {
@@ -14,7 +13,6 @@ namespace Meadow.Foundation.Displays
         ///     This can be changed by setting the <seealso cref="IgnoreOutOfBoundsPixels" />
         ///     property to true.
         /// </remarks>
-        ///
         public Ssd1309(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, DisplayType.OLED128x64)
         {

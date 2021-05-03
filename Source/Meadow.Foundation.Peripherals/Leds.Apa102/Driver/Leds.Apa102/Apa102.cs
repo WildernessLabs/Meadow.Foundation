@@ -158,10 +158,14 @@ namespace Meadow.Foundation.Leds
                 throw new ArgumentOutOfRangeException("Index must be less than the number of leds specified");
             }
 
-            if (brightness < 0 || brightness > 1f)
-            {
-                throw new ArgumentOutOfRangeException("brightness must be between 0.0 and 1.0");
-            }
+            // clamp
+            if(brightness>1) { brightness = 1; }
+            if(brightness<0) { brightness = 0; }
+
+            //if (brightness < 0 || brightness > 1f)
+            //{
+            //    throw new ArgumentOutOfRangeException("brightness must be between 0.0 and 1.0");
+            //}
 
             var offset = index * 4 + StartHeaderSize;
             //var rgb = value;

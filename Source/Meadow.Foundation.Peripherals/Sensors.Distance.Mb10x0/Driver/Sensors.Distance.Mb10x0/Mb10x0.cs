@@ -1,26 +1,50 @@
 ﻿using System;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
-    public class Mb10x0
+    public class Mb10x0 :
+        FilterableChangeObservable<CompositeChangeResult<Length>, Length>,
+        IRangeFinder
+
     {
+        //==== events
+        public event EventHandler<CompositeChangeResult<Length>> DistanceUpdated = delegate { };
+
+        //==== internals
         ISerialPort serialPort;
 
+        //==== public properties
         public int Baud => 9600;
 
+        /// <summary>
+        /// The distance to the measured object.
+        /// </summary>
+        public Length Distance { get; protected set; } = new Length(0);
+
+        /// <summary>
+        /// Creates a new `Mb10x0` device on the specified serial port.
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="portName"></param>
         public Mb10x0(ISerialController device, SerialPortName portName)
         {
             serialPort = device.CreateSerialPort(portName, Baud);
             serialPort.Open();
         }
 
+        /// <summary>
+        /// Creates a new `Mb10x0` device on the specified serial port.
+        /// </summary>
+        /// <param name="serialPort"></param>
         public Mb10x0(ISerialPort serialPort)
         {
             this.serialPort = serialPort;
         }
 
-        public int ReadSerial()
+        public Length ReadSerial()
         {
             var len = serialPort.BytesToRead;
 
@@ -46,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
             Console.WriteLine($"Length: {len}");
 
-            return 0;
+            return new Length(0, Length.UnitType.Millimeters);
         }
     }
 }

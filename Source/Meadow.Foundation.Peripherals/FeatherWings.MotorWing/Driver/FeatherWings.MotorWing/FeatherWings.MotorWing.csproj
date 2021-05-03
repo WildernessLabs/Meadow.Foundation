@@ -4,20 +4,17 @@
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>MotorWing</AssemblyName>
-    <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.FeatherWings.MotorWing</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, FeatherWing, MotorWing, motor driver</PackageTags>
+    <PackageTags>Meadow.Foundation, FeatherWing, MotorWing, Motor Driver</PackageTags>
     <Version>0.1.32</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>AdaFruit MotorWing motor controller FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
     <ProjectReference Include="..\..\..\ICs.IOExpanders.PCA9685\Driver\ICs.IOExpanders.PCA9685\ICs.IOExpanders.Pca9685.csproj" />
   </ItemGroup>
 </Project>

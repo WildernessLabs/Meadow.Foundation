@@ -29,10 +29,9 @@ namespace FeatherWings.DotstarWing_Sample
         void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
-            ISpiBus spiBus = Device.CreateSpiBus();
-            IDigitalOutputPort spiPeriphChipSelect = Device.CreateDigitalOutputPort(Device.Pins.D04);
+            ISpiBus spiBus = Device.CreateSpiBus();            
             
-            dotStarWing = new DotstarWing(spiBus, spiPeriphChipSelect);
+            dotStarWing = new DotstarWing(spiBus);
             
             graphics = new GraphicsLibrary(dotStarWing);
             graphics.CurrentFont = new Font4x8();

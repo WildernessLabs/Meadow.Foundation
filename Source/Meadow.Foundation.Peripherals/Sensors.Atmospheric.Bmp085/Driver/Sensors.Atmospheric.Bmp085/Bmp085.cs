@@ -1,18 +1,33 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Meadow;
+using Meadow.Bases;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
+using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Bosch BMP085 digital pressure and temperature sensor.
     /// </summary>
-    public class Bmp085 : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor, IBarometricPressureSensor, ITemperatureSensor
+    public class Bmp085 : 
+        FilterableChangeObservable<CompositeChangeResult<Units.Temperature, Pressure>, Units.Temperature, Pressure>,
+        ITemperatureSensor, IBarometricPressureSensor
     {
+        /// <summary>
+        /// Last value read from the Pressure sensor.
+        /// </summary>
+        public Units.Temperature Temperature => Conditions.Temperature;
+
+        /// <summary>
+        /// Last value read from the Pressure sensor.
+        /// </summary>
+        public Pressure Pressure => Conditions.Pressure;
+
+        public (Units.Temperature Temperature, Pressure Pressure) Conditions;
+
         /// <summary>
         ///     BMP085 sensor communicates using I2C.
         /// </summary>
@@ -38,25 +53,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private short _mc;
         private short _md;
 
-        
-
-        
-
-        /// <summary>
-        /// Pressure
-        /// </summary>
-        public float Pressure => Conditions.Pressure.Value;
-
-        /// <summary>
-        /// The temperature, in degrees celsius (°C), from the last reading.
-        /// </summary>
-        public float Temperature => Conditions.Temperature.Value;
-
-        /// <summary>
-        /// The AtmosphericConditions from the last reading.
-        /// </summary>
-        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
-
         // internal thread lock
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
@@ -70,10 +66,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         public static int DEFAULT_SPEED => 40000; // BMP085 clock rate
 
-        
-
-        
-
         public enum DeviceMode
         {
             UltraLowPower = 0,
@@ -82,15 +74,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             UltraHighResolution = 3
         }
 
-        
-
-        
-
-        public event EventHandler<AtmosphericConditionChangeResult> Updated;
-
-        
-
-        
+        public event EventHandler<CompositeChangeResult<Units.Temperature, Pressure>> Updated = delegate { };
+        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<CompositeChangeResult<Pressure>> PressureUpdated = delegate { };
 
         /// <summary>
         /// Provide a mechanism for reading the temperature and humidity from
@@ -109,15 +95,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Update();
         }
 
-        
-
-        
-
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public Task<AtmosphericConditions> Read()
+        public Task<(Units.Temperature Temperature, Pressure Pressure)> Read()
         {
             Update();
 
@@ -127,7 +109,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
-            lock (_lock) {
+            lock (_lock)
+            {
                 if (IsSampling) return;
 
                 // state muh-cheen
@@ -136,23 +119,27 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                AtmosphericConditions oldConditions;
-                AtmosphericConditionChangeResult result;
+                (Units.Temperature, Pressure) oldConditions;
+
+                CompositeChangeResult<Units.Temperature, Pressure> result;
+
                 Task.Factory.StartNew(async () => {
-                    while (true) {
-                        if (ct.IsCancellationRequested) {
+                    while (true)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
                             // do task clean up here
-                            _observers.ForEach(x => x.OnCompleted());
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
-                        oldConditions = AtmosphericConditions.From(Conditions);
+                        oldConditions = (Conditions.Temperature, Conditions.Pressure);
 
                         // read
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+                        result = new CompositeChangeResult<Units.Temperature, Pressure>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -164,8 +151,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, Pressure> changeResult)
         {
+            PressureUpdated?.Invoke(this, new CompositeChangeResult<Pressure>(changeResult.Old.Value.Unit2, changeResult.New.Value.Unit2));
+            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.Old.Value.Unit1, changeResult.New.Value.Unit1));
+
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
@@ -175,8 +165,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock) {
-                if (!IsSampling) return;
+            lock (_lock)
+            {
+                if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
 
@@ -201,7 +192,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             x2 = (_mc << 11) / (x1 + _md);
             b5 = x1 + x2;
 
-            Conditions.Temperature = (float)((b5 + 8) >> 4) / 10;
+            Conditions.Temperature = new Units.Temperature((float)((b5 + 8) >> 4) / 10, Units.Temperature.UnitType.Celsius);
 
             // calculate the compensated pressure
             b6 = b5 - 4000;
@@ -209,7 +200,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             x2 = _ac2 * b6 >> 11;
             x3 = x1 + x2;
 
-            switch (oversamplingSetting) {
+            switch (oversamplingSetting)
+            {
                 case 0:
                     b3 = ((_ac1 * 4 + x3) + 2) >> 2;
                     break;
@@ -235,7 +227,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             x1 = (x1 * 3038) >> 16;
             x2 = (-7357 * p) >> 16;
 
-            Conditions.Pressure = (int)(p + ((x1 + x2 + 3791) >> 4));
+            int value = (int)(p + ((x1 + x2 + 3791) >> 4));
+
+            Conditions.Pressure = new Pressure(value, Pressure.UnitType.Pascal);
         }
 
         private long ReadUncompensatedTemperature()
@@ -301,7 +295,5 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void Dispose()
         {
         }
-
-        
     }
 }
