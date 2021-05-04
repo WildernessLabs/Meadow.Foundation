@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
@@ -8,8 +8,8 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.Tca9548a</PackageId>
     <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, TCA9548A</PackageTags>
-    <Version>0.0.0</Version>
+    <PackageTags>Meadow.Foundation, TCA9548A, i2c, io, expander</PackageTags>
+    <Version>0.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for TCA9548A I2C IO expander</Description>
   </PropertyGroup>
