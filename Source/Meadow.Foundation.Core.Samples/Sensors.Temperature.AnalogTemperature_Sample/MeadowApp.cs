@@ -26,7 +26,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             // when the temperature changes by at least a degree.
             var consumer = AnalogTemperature.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Temp changed: {result.New.Celsius:N2}C, old: {result.Old.Celsius:N2}C");
+                    Console.WriteLine($"Temp changed: {result.New?.Celsius:N2}C, old: {result.Old?.Celsius:N2}C");
                 },
                 filter: null
                 );
@@ -35,7 +35,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             //==== Classic Events
             // classical .NET events can also be used:
             analogTemperature.TemperatureUpdated += (object sender, CompositeChangeResult<Meadow.Units.Temperature> e) => {
-                Console.WriteLine($"Temp Changed, temp: {e.New.Celsius:N2}C, old: {e.Old.Celsius:N2}C");
+                Console.WriteLine($"Temp Changed, temp: {e.New?.Celsius:N2}C, old: {e.Old?.Celsius:N2}C");
             };
 
             // Get an initial reading.
@@ -49,7 +49,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
         protected async Task ReadTemp()
         {
             var temperature = await analogTemperature.Read();
-            Console.WriteLine($"Initial temp: {temperature.New.Celsius:N2}C");
+            Console.WriteLine($"Initial temp: {temperature.New?.Celsius:N2}C");
         }
     }
 }
