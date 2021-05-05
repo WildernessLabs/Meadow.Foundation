@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Light;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
     /// Driver for the TSL2561 light-to-digital converter.
     /// </summary>
-    public class Tsl2561 : IDisposable //, ILightSensor
+    public class Tsl2561:
+        FilterableChangeObservable<CompositeChangeResult<Illuminance>, Illuminance>,
+        ILightSensor
     {
         /// <summary>
         /// The command bit in the Command Register.
@@ -116,24 +121,13 @@ namespace Meadow.Foundation.Sensors.Light
         private readonly ushort updateInterval = 100;
 
         /// <summary>
-        /// Implement IDisposable interface.
-        /// </summary>
-        public void Dispose()
-        {
-            if (_interruptPin != null)
-            {
-              //TODO - check if needed  _interruptPin.Dispose();
-            }
-        }
-
-        /// <summary>
         /// Get the sensor reading
         /// </summary>
         /// <remarks>
         /// This can be used to get the raw sensor data from the TSL2561.
         /// </remarks>
         /// <returns>Sensor data.</returns>
-        public ushort[] SensorReading
+        public ushort[] GetRawSensorReading
         {
             get { return tsl2561.ReadUShorts(Registers.Data0, 2, ByteOrder.LittleEndian); }
         }
@@ -141,21 +135,21 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Luminosity reading from the TSL2561 sensor.
         /// </summary>
-        public float Luminosity
-        {
-            get { return _lightLevel; }
-            set
-            {
-                _lightLevel = value;
-                if ((updateInterval > 0) && (Math.Abs(_lastNotifiedLux - value) >= LightLevelChangeNotificationThreshold))
-                {
-                    LightLevelChanged(this, value);
-                    _lastNotifiedLux = value;
-                }
-            }
-        }
-        private float _lightLevel;
-        private float _lastNotifiedLux = 0.001F;
+        public Illuminance Illuminance { get; protected set; }
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+        /// <summary>
+        /// Gets a value indicating whether the analog input port is currently
+        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
+        /// </summary>
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
+
+        public event EventHandler<CompositeChangeResult<Illuminance>> Updated;
+        public event EventHandler<CompositeChangeResult<Illuminance>> LuminosityUpdated;
 
         /// <summary>
         /// ID of the sensor.
@@ -239,7 +233,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </remarks>
         public ushort ThresholdLow
         {
-            get { return tsl2561.ReadUShort(Registers.ThresholdLow, ByteOrder.LittleEndian); }
+            get => tsl2561.ReadUShort(Registers.ThresholdLow, ByteOrder.LittleEndian); 
             set
             {
                 tsl2561.WriteUShort((byte) (Registers.ThresholdLow + WordModeBit), value, ByteOrder.LittleEndian);
@@ -256,7 +250,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </remarks>
         public ushort ThresholdHigh
         {
-            get { return tsl2561.ReadUShort(Registers.ThresholdHigh, ByteOrder.LittleEndian); }
+            get => tsl2561.ReadUShort(Registers.ThresholdHigh, ByteOrder.LittleEndian); 
             set
             {
                 tsl2561.WriteUShort((byte) (Registers.ThresholdHigh + WordModeBit), value, ByteOrder.LittleEndian);
@@ -297,12 +291,6 @@ namespace Meadow.Foundation.Sensors.Light
         public event ThresholdInterrupt ReadingOutsideThresholdWindow;
 
         /// <summary>
-        /// Event raised when the temperature change is greater than the 
-        /// TemperatureChangeNotificationThreshold value.
-        /// </summary>
-        public event EventHandler<float> LightLevelChanged = delegate { };
-
-        /// <summary>
         /// Create a new instance of the TSL2561 class with the specified I2C address.
         /// </summary>
         /// <remarks>
@@ -339,19 +327,87 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        /// <summary>
-        /// Start the update process.
-        /// </summary>
-        private void StartUpdating()
+        ///// <summary>
+        ///// Convenience method to get the current temperature. For frequent reads, use
+        ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        ///// </summary>
+        public Illuminance Read()
         {
-            Thread t = new Thread(() => {
-                while (true)
+            Update();
+
+            return Illuminance;
+        }
+
+        ///// <summary>
+        ///// Starts continuously sampling the sensor.
+        /////
+        ///// This method also starts raising `Changed` events and IObservable
+        ///// subscribers getting notified.
+        ///// </summary>
+        public void StartUpdating(int standbyDuration = 1000)
+        {
+            // thread safety
+            lock (_lock)
+            {
+                if (IsSampling) { return; }
+
+                // state muh-cheen
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                Illuminance oldConditions;
+                CompositeChangeResult<Illuminance> result;
+                Task.Factory.StartNew(async () =>
                 {
-                    Update();
-                    Thread.Sleep(updateInterval);
-                }
-            });
-            t.Start();
+                    while (true)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {   // do task clean up here
+                            observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Illuminance;
+
+                        // read
+                        Update();
+
+                        // build a new result with the old and new conditions
+                        result = new CompositeChangeResult<Illuminance>(oldConditions, Illuminance);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Illuminance> changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            LuminosityUpdated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+        ///// <summary>
+        ///// Stops sampling the acceleration.
+        ///// </summary>
+        public void StopUpdating()
+        {
+            lock (_lock)
+            {
+                if (!IsSampling) { return; }
+
+                SamplingTokenSource?.Cancel();
+
+                // state muh-cheen
+                IsSampling = false;
+            }
         }
 
         /// <summary>
@@ -359,14 +415,14 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public void Update()
         {
-            var adcData = SensorReading;
+            var adcData = GetRawSensorReading;
             if (adcData[0] != 0)
             {
                 var data0 = adcData[0];
                 var data1 = adcData[1];
                 if ((data0 == 0xffff) | (data1 == 0xffff))
                 {
-                    Luminosity = 0.0F;
+                    Illuminance = new Illuminance(0.0);
                 }
                 double d0 = data0;
                 double d1 = data1;
@@ -424,7 +480,7 @@ namespace Meadow.Foundation.Sensors.Light
                         }
                     }
                 }
-                Luminosity = (float)result;
+                Illuminance = new Illuminance(result);
             }
         }
 
