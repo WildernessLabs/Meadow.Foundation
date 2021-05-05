@@ -2,13 +2,18 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Light;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
     /// High Accuracy Ambient Light Sensor 
     /// </summary>
-    public class Veml7700 : IDisposable
+    public class Veml7700 :
+        FilterableChangeObservable<CompositeChangeResult<Illuminance>, Illuminance>,
+        ILightSensor, 
+        IDisposable
     {
         /// <summary>
         ///     Valid addresses for the sensor.
@@ -37,18 +42,20 @@ namespace Meadow.Foundation.Sensors.Light
             AlsInt = 0x06
         }
 
-        public delegate void ValueChangedHandler(float previousValue, float newValue);
-
-        public event ValueChangedHandler LuxChanged;
-
         private ushort _config;
-        private float? _lastLux;
-        private float _lux;
-        private bool m_run;
 
         private II2cBus Device { get; set; }
-        private object SyncRoot { get; } = new object();
-        private CancellationTokenSource SamplingTokenSource { get; set; }
+        /// <summary>
+        /// Luminosity reading from the TSL2561 sensor.
+        /// </summary>
+        public Illuminance Illuminance { get; protected set; }
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+        public event EventHandler<CompositeChangeResult<Illuminance>> Updated;
+        public event EventHandler<CompositeChangeResult<Illuminance>> LuminosityUpdated;
 
         public int ChangeThreshold { get; set; }
         public byte Address { get; private set; }
@@ -63,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Light
 
         protected virtual void Dispose(bool disposing)
         {
-            m_run = false;
+            IsSampling = false;
         }
 
         /// <summary>
@@ -74,50 +81,99 @@ namespace Meadow.Foundation.Sensors.Light
             Dispose(true);
         }
 
-        private async Task StateMachine()
+        bool IsSampling = false;
+
+        ///// <summary>
+        ///// Starts continuously sampling the sensor.
+        /////
+        ///// This method also starts raising `Changed` events and IObservable
+        ///// subscribers getting notified.
+        ///// </summary>
+        public void StartUpdating()
         {
-            int integrationTime;
-            int gain;
-            int scaleA;
-            int scaleB;
-
-            // based on Vishay Application Note 8323
-            // power on, with IT == 0
-            m_run = true;
-
-            while (m_run)
+            // thread safety
+            lock (_lock)
             {
-                gain = 1;
-                integrationTime = 0;
-                var capturing = true;
+                if (IsSampling) { return; }
 
-                WriteRegister(Register.AlsConf0, 0);
+                // state muh-cheen
+                IsSampling = true;
 
-                // wait > 2.5ms
-                await Task.Delay(5);
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
 
-                SetPower(false);
-                scaleA = SetGain(gain);
-                scaleB = SetIntegrationTime(integrationTime);
-                SetPower(true);
+                Illuminance oldConditions;
 
-                while (capturing)
+                int integrationTime;
+                int gain;
+                int scaleA;
+                int scaleB;
+
+                Task.Factory.StartNew(async () =>
                 {
+                    gain = 1;
+                    integrationTime = 0;
+                    var capturing = true;
 
-                    // read data
-                    var data = ReadRegister(DataSource == LightSensor.Ambient ? Register.Als : Register.White);
+                    WriteRegister(Register.AlsConf0, 0);
 
-                    if (data < 100)
+                    // wait > 2.5ms
+                    await Task.Delay(5);
+
+                    SetPower(false);
+                    scaleA = SetGain(gain);
+                    scaleB = SetIntegrationTime(integrationTime);
+                    SetPower(true);
+
+                    while (true)
                     {
-                        // increase gain
-                        if (++gain > 4)
-                        {
-                            gain = 4;
+                        if (ct.IsCancellationRequested)
+                        {   // do task clean up here
+                            observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Illuminance;
 
-                            // increase integration time
-                            if (++integrationTime >= 4)
+                        // read data
+                        var data = ReadRegister(DataSource == LightSensor.Ambient ? Register.Als : Register.White);
+
+                        if (data < 100)
+                        {
+                            // increase gain
+                            if (++gain > 4)
                             {
-                                Lux = scaleA * scaleB * 0.0036f * (float)data;
+                                gain = 4;
+
+                                // increase integration time
+                                if (++integrationTime >= 4)
+                                {
+                                    Illuminance = new Illuminance(scaleA * scaleB * 0.0036f * (float)data);
+                                    capturing = false;
+                                }
+                                else
+                                {
+                                    // power down (we're changing config)
+                                    SetPower(false);
+                                    scaleB = SetIntegrationTime(integrationTime);
+                                    SetPower(true);
+                                }
+                            }
+                            else
+                            {
+                                // power down (we're changing config)
+                                SetPower(false);
+                                scaleA = SetGain(gain);
+                                SetPower(true);
+                            }
+                        }
+                        else if (data > 10000)
+                        {
+                            // decrease integration time
+                            if (--integrationTime <= -2)
+                            {
+                                Illuminance = CalculateCorrectedLux(scaleA * scaleB * 0.0036f * (float)data);
+
                                 capturing = false;
                             }
                             else
@@ -130,45 +186,30 @@ namespace Meadow.Foundation.Sensors.Light
                         }
                         else
                         {
-                            // power down (we're changing config)
-                            SetPower(false);
-                            scaleA = SetGain(gain);
-                            SetPower(true);
-                        }
-                    }
-                    else if (data > 10000)
-                    {
-                        // decrease integration time
-                        if (--integrationTime <= -2)
-                        {
-                            var corrected = CalculateCorrectedLux(scaleA * scaleB * 0.0036f * (float)data);
-                            Lux = corrected;
+                            Illuminance = CalculateCorrectedLux(0.0036f * scaleA * scaleB * (float)data);
                             capturing = false;
                         }
-                        else
-                        {
-                            // power down (we're changing config)
-                            SetPower(false);
-                            scaleB = SetIntegrationTime(integrationTime);
-                            SetPower(true);
-                        }
-                    }
-                    else
-                    {
-                        var corrected = CalculateCorrectedLux(0.0036f * scaleA * scaleB * (float)data);
-                        Lux = corrected;
-                        capturing = false;
-                    }
 
-                    await Task.Delay(GetDelayTime(integrationTime));
-                }
-            }
+                        // let everyone know
+                        RaiseChangedAndNotify(new CompositeChangeResult<Illuminance>(Illuminance, oldConditions));
+
+                        await Task.Delay(GetDelayTime(integrationTime));
+                    }
+                });
+            }      
         }
 
-        private float CalculateCorrectedLux(float lux)
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Illuminance> changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            LuminosityUpdated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
+
+        private Illuminance CalculateCorrectedLux(float lux)
         {
             // per the App Note
-            return (float)(6.0135E-13 * Math.Pow(lux, 4) - 9.3924E-09 * Math.Pow(lux, 3) + 8.1488E-05 * Math.Pow(lux, 2) + 1.0023E+00 * lux);
+            return new Illuminance(6.0135E-13 * Math.Pow(lux, 4) - 9.3924E-09 * Math.Pow(lux, 3) + 8.1488E-05 * Math.Pow(lux, 2) + 1.0023E+00 * lux);
         }
 
         private void SetPower(bool on)
@@ -264,7 +305,6 @@ namespace Meadow.Foundation.Sensors.Light
             _config = cfg;
 
             return scale;
-
         }
 
         private int GetDelayTime(int it)
@@ -309,45 +349,13 @@ namespace Meadow.Foundation.Sensors.Light
             }
 
             Address = address;
-
-            _ = Task.Run(StateMachine);
         }
 
-        /// <summary>
-        /// Reads the value of white light channel
-        /// </summary>
-        public float Lux
-        {
-            get => _lux;
-            private set
-            {
-                if (value == Lux)
-                {
-                    return;
-                }
-
-                if (ChangeThreshold > 0 && _lastLux.HasValue)
-                {
-                    if (Math.Abs(_lastLux.Value - value) > ChangeThreshold)
-                    {
-                        _lastLux = Lux;
-                        _lux = value;
-                        LuxChanged?.Invoke(_lastLux.Value, Lux);
-                    }
-                }
-                else
-                {
-                    _lastLux = Lux;
-                    _lux = value;
-                    LuxChanged?.Invoke(_lastLux.HasValue ? _lastLux.Value : 0, Lux);
-                }
-            }
-        }
 
         private void WriteRegister(Register register, ushort value)
         {
             // VEML registers are LSB|MSB
-            lock (SyncRoot)
+            lock (_lock)
             {
                 Span<byte> buffer = stackalloc byte[3];
 
@@ -361,7 +369,7 @@ namespace Meadow.Foundation.Sensors.Light
 
         private ushort ReadRegister(Register register)
         {
-            lock (SyncRoot)
+            lock (_lock)
             {
                 var read = Device.WriteReadData(Address, 2, new byte[] { (byte)register });
 
