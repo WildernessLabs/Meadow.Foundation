@@ -18,8 +18,11 @@ namespace MeadowApp
             {
                 sensor.Read();
 
-                Console.WriteLine($"X: {sensor.X}, Y: {sensor.Y}, Z: {sensor.Z}");
-                Console.WriteLine($"Temperature: {sensor.Temperature}");
+                Console.WriteLine($"X: {sensor.MagneticField3d.magneticFieldX}, " +
+                    $"Y: {sensor.MagneticField3d.magneticFieldY}, " +
+                    $"Z: {sensor.MagneticField3d.magneticFieldZ}");
+
+                Console.WriteLine($"Temperature: {sensor.Temperature.Celsius}");
 
                 Thread.Sleep(1000);
             }
