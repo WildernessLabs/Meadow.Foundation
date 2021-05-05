@@ -159,10 +159,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Part Number: bits 4-7 (0000 = TSL2560, 0001 = TSL2561)
         /// Revision number: bits 0-3
         /// </remarks>
-        public byte ID
-        {
-            get { return tsl2561.ReadRegister(Registers.ID); }
-        }
+        public byte ID => tsl2561.ReadRegister(Registers.ID); 
 
         /// <summary>
         /// Gain of the sensor.
