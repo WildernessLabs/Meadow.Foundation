@@ -37,7 +37,6 @@ namespace Sensors.Atmospheric.BME280_Sample
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree, and humidty by 5%.
             // (blowing hot breath on the sensor should trigger)
-
             var consumer = Bme280.CreateObserver(
                 handler: result => {
                     Console.WriteLine($"Temp and pressure changed by threshold; new temp: {result.New.Temperature.Celsius}, old: {result.Old?.Temperature.Celsius}");
@@ -62,18 +61,12 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             // just for funsies.
             Console.WriteLine($"ChipID: {bme280.GetChipID():X2}");
-            //Thread.Sleep(1000);
-
-            //// is this necessary? if so, it should probably be tucked into the driver
-            //Console.WriteLine("Reset");
-            //bme280.Reset();
 
             // get an initial reading
             ReadConditions().Wait();
 
             // start updating continuously
             bme280.StartUpdating();
-
         }
 
         protected async Task ReadConditions()
@@ -84,6 +77,5 @@ namespace Sensors.Atmospheric.BME280_Sample
             Console.WriteLine($"  Pressure: {conditions.Pressure}hPa");
             Console.WriteLine($"  Relative Humidity: {conditions.Humidity}%");
         }
-
     }
 }
