@@ -108,7 +108,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         public async Task<CompositeChangeResult<ScalarDouble>> Read(int sampleCount = 10, int sampleInterval = 40)
         {
             // save previous moisture value
-            ScalarDouble previousMoisture = Moisture;
+            ScalarDouble? previousMoisture = Moisture;
             // read the voltage
             Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
             // convert and save to our temp property for later retrieval

@@ -1,21 +1,17 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Motion;
+using Meadow.Units;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class Mag3110
+    public class Mag3110:
+        FilterableChangeObservable<CompositeChangeResult<MagneticField3d>, MagneticField3d>
+       // IMagnetometer
     {
-        /// <summary>
-        /// Sensor readings to be passed back when an interrupt is generated.
-        /// </summary>
-        public struct SensorReading
-        {
-            public short X;
-            public short Y;
-            public short Z;
-        }
-
         /// <summary>
         /// Register addresses in the sensor.
         /// </summary>
@@ -41,16 +37,21 @@ namespace Meadow.Foundation.Sensors.Motion
             public static readonly byte Control2 = 0x11;
         }
 
-        /// <summary>
-        /// Delegate for the OnDataReceived event.
-        /// </summary>
-        /// <param name="sensorReading">Sensor readings from the MAG3110.</param>
-        public delegate void ReadingComplete(SensorReading sensorReading);
+        public MagneticField3d MagneticField3d { get; protected set; } = new MagneticField3d();
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
 
         /// <summary>
-        /// Generated when the sensor indicates that data is ready for processing.
+        /// Gets a value indicating whether the analog input port is currently
+        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
         /// </summary>
-        public event ReadingComplete OnReadingComplete;
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
+
+        public event EventHandler<CompositeChangeResult<MagneticField3d>> Updated;
+        public event EventHandler<CompositeChangeResult<MagneticField3d>> MagneticField3dUpdated;
 
         /// <summary>
         /// MAG3110 object.
@@ -63,36 +64,9 @@ namespace Meadow.Foundation.Sensors.Motion
         private readonly IDigitalInputPort interruptPort;
 
         /// <summary>
-        /// Reading from the X axis.
-        /// </summary>
-        /// <remarks>
-        /// Data in this property is only current after a call to Read.
-        /// </remarks>
-        public short X { get; private set; }
-
-        /// <summary>
-        /// Reading from the Y axis.
-        /// </summary>
-        /// <remarks>
-        /// Data in this property is only current after a call to Read.
-        /// </remarks>
-        public short Y { get; private set; }
-
-        /// <summary>
-        /// Reading from the Z axis.
-        /// </summary>
-        /// <remarks>
-        /// Data in this property is only current after a call to Read.
-        /// </remarks>
-        public short Z { get; private set; }
-
-        /// <summary>
         /// Temperature of the sensor die.
         /// </summary>
-        public sbyte Temperature
-        {
-            get { return(sbyte) i2cPeripheral.ReadRegister((byte) Registers.Temperature); }
-        }
+        public Units.Temperature Temperature => new Units.Temperature((sbyte)i2cPeripheral.ReadRegister(Registers.Temperature), Units.Temperature.UnitType.Celsius);
 
         /// <summary>
         /// Change or get the standby status of the sensor.
@@ -106,7 +80,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             set
             {
-                var controlRegister = i2cPeripheral.ReadRegister((byte) Registers.Control1);
+                var controlRegister = i2cPeripheral.ReadRegister(Registers.Control1);
                 if (value)
                 {
                     controlRegister &= 0xfc; // ~0x03
@@ -115,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     controlRegister |= 0x01;
                 }
-                i2cPeripheral.WriteRegister((byte) Registers.Control1, controlRegister);
+                i2cPeripheral.WriteRegister(Registers.Control1, controlRegister);
             }
         }
 
@@ -125,9 +99,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         /// See section 5.1.1 of the datasheet.
         /// </remarks>
-        public bool DataReady
+        public bool IsDataReady
         {
-            get { return(i2cPeripheral.ReadRegister((byte) Registers.DRStatus) & 0x08) > 0; }
+            get { return(i2cPeripheral.ReadRegister(Registers.DRStatus) & 0x08) > 0; }
         }
 
         /// <summary>
@@ -146,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Motion
             set
             {
                 Standby = true;
-                var cr2 = i2cPeripheral.ReadRegister((byte) Registers.Control2);
+                var cr2 = i2cPeripheral.ReadRegister(Registers.Control2);
                 if (value)
                 {
                     cr2 |= 0x80;
@@ -155,7 +129,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     cr2 &= 0x7f;
                 }
-                i2cPeripheral.WriteRegister((byte) Registers.Control2, cr2);
+                i2cPeripheral.WriteRegister(Registers.Control2, cr2);
                 _digitalInputsEnabled = value;
             }
         }
@@ -200,30 +174,99 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Reset()
         {
             Standby = true;
-            i2cPeripheral.WriteRegister((byte) Registers.Control1, 0x00);
-            i2cPeripheral.WriteRegister((byte) Registers.Control2, 0x80);
-            i2cPeripheral.WriteRegisters((byte) Registers.XOffsetMSB, new byte[] { 0, 0, 0, 0, 0, 0 });
+            i2cPeripheral.WriteRegister(Registers.Control1, 0x00);
+            i2cPeripheral.WriteRegister(Registers.Control2, 0x80);
+            i2cPeripheral.WriteRegisters(Registers.XOffsetMSB, new byte[] { 0, 0, 0, 0, 0, 0 });
         }
 
-        /// <summary>
-        /// Force the sensor to make a reading and update the relevanyt properties.
-        /// </summary>
-        public void Read()
+        ///// <summary>
+        ///// Convenience method to get the current temperature. For frequent reads, use
+        ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        ///// </summary>
+        public MagneticField3d Read()
         {
-            var controlRegister = i2cPeripheral.ReadRegister((byte) Registers.Control1);
-            controlRegister |= 0x02;
-            i2cPeripheral.WriteRegister((byte) Registers.Control1, controlRegister);
-            var data = i2cPeripheral.ReadRegisters((byte) Registers.XMSB, 6);
-            X = (short) ((data[0] << 8) | data[1]);
-            Y = (short) ((data[2] << 8) | data[3]);
-            Z = (short) ((data[4] << 8) | data[5]);
+            Update();
+
+            return MagneticField3d;
+        }
+
+        ///// <summary>
+        ///// Starts continuously sampling the sensor.
+        /////
+        ///// This method also starts raising `Changed` events and IObservable
+        ///// subscribers getting notified.
+        ///// </summary>
+        public void StartUpdating(int standbyDuration = 1000)
+        {
+            // thread safety
+            lock (_lock)
+            {
+                if (IsSampling) { return; }
+
+                // state muh-cheen
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                MagneticField3d oldConditions;
+                CompositeChangeResult<MagneticField3d> result;
+                Task.Factory.StartNew(async () =>
+                {
+                    while (true)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {   // do task clean up here
+                            observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = MagneticField3d;
+
+                        // read
+                        Update();
+
+                        // build a new result with the old and new conditions
+                        result = new CompositeChangeResult<MagneticField3d>(oldConditions, MagneticField3d);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        protected void RaiseChangedAndNotify(CompositeChangeResult<MagneticField3d> changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            MagneticField3dUpdated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
         }
 
         /// <summary>
-        /// Interrupt from the MAG3110 conversion complete interrupt.
+        /// Read data from the sensor 
+        /// </summary>
+        public void Update()
+        {
+            var controlRegister = i2cPeripheral.ReadRegister(Registers.Control1);
+            controlRegister |= 0x02;
+            i2cPeripheral.WriteRegister(Registers.Control1, controlRegister);
+            var data = i2cPeripheral.ReadRegisters(Registers.XMSB, 6);
+
+            MagneticField3d.magneticFieldX = new MagneticField((short)((data[0] << 8) | data[1]), MagneticField.UnitType.MicroTesla);
+            MagneticField3d.magneticFieldY = new MagneticField((short)((data[2] << 8) | data[3]), MagneticField.UnitType.MicroTesla);
+            MagneticField3d.magneticFieldZ = new MagneticField((short)((data[4] << 8) | data[5]), MagneticField.UnitType.MicroTesla);
+        }
+
+        /// <summary>
+        /// Interrupt for the MAG3110 conversion complete interrupt.
         /// </summary>
         private void DigitalInputPortChanged(object sender, DigitalInputPortEventArgs e)
         {
+            /*
             if (OnReadingComplete != null)
             {
                 Read();
@@ -232,7 +275,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 readings.Y = Y;
                 readings.Z = Z;
                 OnReadingComplete(readings);
-            }
+            }*/
         }
     }
 }

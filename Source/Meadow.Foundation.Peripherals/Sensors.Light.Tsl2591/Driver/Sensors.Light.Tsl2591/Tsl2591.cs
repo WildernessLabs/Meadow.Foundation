@@ -2,13 +2,18 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Light;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
     ///     Driver for the TSL2591 light-to-digital converter.
     /// </summary>
-    public class Tsl2591 : IDisposable
+    public class Tsl2591 :
+        FilterableChangeObservable<CompositeChangeResult<Illuminance>, Illuminance>,
+        ILightSensor,
+        IDisposable
     {
         /// <summary>
         ///     Valid addresses for the sensor.
@@ -88,12 +93,69 @@ namespace Meadow.Foundation.Sensors.Light
 
         private II2cBus i2cBus { get; set; }
         private object SyncRoot { get; } = new object();
-        private CancellationTokenSource SamplingTokenSource { get; set; }
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
 
         public int ChangeThreshold { get; set; }
 
         public bool IsSampling { get; private set; }
         public byte Address { get; private set; }
+
+        public event EventHandler<CompositeChangeResult<Illuminance>> Updated;
+        public event EventHandler<CompositeChangeResult<Illuminance>> LuminosityUpdated;
+
+        /// <summary>
+        /// Full spectrum luminosity (visible and infrared light combined).
+        /// </summary>
+        public Illuminance FullSpectrumLuminosity { get; private set; }
+
+        /// <summary>
+        /// Infrared light luminosity.
+        /// </summary>
+        public Illuminance InfraredLuminosity { get; private set; }
+
+        /// <summary>
+        /// Visible light luminosity.
+        /// </summary>
+        public Illuminance VisibleLightLuminosity { get; private set; }
+
+        /// <summary>
+        /// Visible lux.
+        /// </summary>
+        public Illuminance Illuminance { get; private set; }
+
+        /// <summary>
+        /// Reads the value of ADC Channel 0
+        /// </summary>
+        public int Channel0
+        {
+            private set => _ch0 = value;
+            get
+            {
+                if (!IsSampling)
+                {
+                    Update();
+                }
+                return _ch0;
+            }
+        }
+
+        /// <summary>
+        /// Reads the value of ADC Channel 1
+        /// </summary>
+        public int Channel1
+        {
+            private set => _ch1 = value;
+            get
+            {
+                if (!IsSampling)
+                {
+                    Update();
+                }
+                return _ch1;
+            }
+        }
 
         public Tsl2591(II2cBus bus, byte address = (byte) Addresses.Default)
         {
@@ -129,51 +191,54 @@ namespace Meadow.Foundation.Sensors.Light
         /// upon the <seealso cref="IntegrationPeriod"/>.
         /// </remarks>
         /// <param name="samplePeriod">Requested sampling period.</param>
-        public void StartSampling(TimeSpan samplePeriod)
+        public void StartUpdating(int standbyDuration = 1000)
         {
-            lock (SyncRoot)
+            // thread safety
+            lock (_lock)
             {
-                TimeSpan minimumSamplePeriod = TimeSpan.FromMilliseconds(IntegrationTimeInMilliseconds(IntegrationTime) + 20);
-                if (_samplePeriod < minimumSamplePeriod)
-                {
-                    _samplePeriod = minimumSamplePeriod;
-                }
-                else
-                {
-                    // allow subsequent calls to StartSampling to just change the sample period
-                    _samplePeriod = samplePeriod;
-                }
+                if (IsSampling) { return; }
 
-                if (IsSampling)
-                {
-                    return;
-                }
+                // state muh-cheen
+                IsSampling = true;
 
                 SamplingTokenSource = new CancellationTokenSource();
-                var ct = SamplingTokenSource.Token;
+                CancellationToken ct = SamplingTokenSource.Token;
 
+                Illuminance oldConditions;
+                CompositeChangeResult<Illuminance> result;
                 Task.Factory.StartNew(async () =>
                 {
-                    IsSampling = true;
-
                     while (true)
                     {
-                        // check for stop
                         if (ct.IsCancellationRequested)
-                        {
-                            IsSampling = false;
+                        {   // do task clean up here
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
+                        // capture history
+                        oldConditions = Illuminance;
 
-                        // do reads
-                        RefreshChannels(true);
+                        // read
+                        Update();
 
-                        await Task.Delay(_samplePeriod);
+                        // build a new result with the old and new conditions
+                        result = new CompositeChangeResult<Illuminance>(oldConditions, Illuminance);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(standbyDuration);
                     }
-
-                    IsSampling = false;
-                });
+                }, SamplingTokenSource.Token);
             }
+        }
+
+        protected void RaiseChangedAndNotify(CompositeChangeResult<Illuminance> changeResult)
+        {
+            Updated?.Invoke(this, changeResult);
+            LuminosityUpdated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
         }
 
         public void StopSampling()
@@ -232,61 +297,6 @@ namespace Meadow.Foundation.Sensors.Light
                 _integrationTime = value;
                 WriteRegister(Register.Command | Register.Config, (byte) ((byte) _integrationTime | (byte) _gain));
                 PowerOn();
-            }
-        }
-
-        /// <summary>
-        /// Full spectrum luminosity (visible and infrared light combined).
-        /// </summary>
-        public int FullSpectrumLuminosity { get; private set; }
-
-        /// <summary>
-        /// Infrared light luminosity.
-        /// </summary>
-        public int InfraredLuminosity { get; private set; }
-
-        /// <summary>
-        /// Visible light luminosity.
-        /// </summary>
-        public int VisibleLightLuminosity { get; private set; }
-
-        /// <summary>
-        /// Visible lux.
-        /// </summary>
-        /// <remarks>
-        /// A Lux value of -1 indicates that no reading has been made or that the sensor is overloaded.
-        /// </remarks>
-        public double Lux { get; private set; }
-
-        /// <summary>
-        /// Reads the value of ADC Channel 0
-        /// </summary>
-        public int Channel0
-        {
-            private set => _ch0 = value;
-            get
-            {
-                if (!IsSampling)
-                {
-                    RefreshChannels();
-                }
-                return _ch0;
-            }
-        }
-
-        /// <summary>
-        /// Reads the value of ADC Channel 1
-        /// </summary>
-        public int Channel1
-        {
-            private set => _ch1 = value;
-            get
-            {
-                if (!IsSampling)
-                {
-                    RefreshChannels();
-                }
-                return _ch1;
             }
         }
 
@@ -360,14 +370,14 @@ namespace Meadow.Foundation.Sensors.Light
 
             if ((Channel0 == 0xffff) || (Channel1 == 0xffff))
             {
-                Lux = -1;
+                Illuminance = -1;
                 return;
             }
             countsPerLux = (IntegrationTimeInMilliseconds(IntegrationTime) * GainMultiplier(Gain)) / 408.0;
-            Lux = (Channel0 - Channel1) * (1 - (Channel1 / Channel0)) / countsPerLux;
+            Illuminance = new Illuminance((Channel0 - Channel1) * (1 - (Channel1 / Channel0)) / countsPerLux);
         }
 
-        public void RefreshChannels(bool raiseEvents = false)
+        public void Update(bool raiseEvents = false)
         {
             // data sheet indicates you should always read all 4 bytes, in order, for valid data
             Channel0 = ReadRegisterUInt16(Register.CH0DataL | Register.Command);
