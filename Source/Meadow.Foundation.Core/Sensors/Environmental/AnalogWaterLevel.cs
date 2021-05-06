@@ -55,13 +55,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         public float WaterLevel { get; protected set; }
 
         /// <summary>
-        ///     Default constructor, private to prevent this being used.
-        /// </summary>
-        private AnalogWaterLevel()
-        {
-        }
-
-        /// <summary>
         ///     New instance of the AnalogWaterLevel class.
         /// </summary>
         /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
