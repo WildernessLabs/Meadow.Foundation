@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors;
 using System;
 using System.Threading.Tasks;
@@ -31,7 +30,9 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20                      0
     /// </remarks>
     public class AnalogTemperature :
-        FilterableChangeObservable<CompositeChangeResult<Units.Temperature>, Units.Temperature?>,
+        //FilterableChangeObservable<CompositeChangeResult<Units.Temperature>, Units.Temperature?>,
+        //FilterableChangeObservable<CompositeChangeResult<(Units.Temperature, float foo)>, (Units.Temperature, float foo)>,
+        FilterableChangeObservable<CompositeChangeResult<Units.Temperature>, Units.Temperature>,
         ITemperatureSensor
     {
         /// <summary>
@@ -181,7 +182,11 @@ namespace Meadow.Foundation.Sensors.Temperature
                 IAnalogInputPort.CreateObserver(
                     h => {
                         var newTemp = VoltageToTemperature(h.New);
-                        var oldTemp = VoltageToTemperature(h.Old);
+
+                        // old might be null if it's the first reading
+                        Units.Temperature? oldTemp = null;
+                        if (h.Old is { } oldVoltage) { oldTemp = VoltageToTemperature(oldVoltage); }
+                                                
                         Temperature = newTemp; // save state
                         RaiseEventsAndNotify (
                             new CompositeChangeResult<Units.Temperature>(newTemp, oldTemp)
@@ -206,12 +211,13 @@ namespace Meadow.Foundation.Sensors.Temperature
             Units.Temperature? oldTemp = Temperature;
 
             // read the voltage
-            var voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
+            Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
 
             // convert the voltage
-            Temperature = VoltageToTemperature(voltage);
+            var newTemp = VoltageToTemperature(voltage);
+            Temperature = newTemp;
             
-            return new CompositeChangeResult<Units.Temperature>(Temperature, oldTemp);
+            return new CompositeChangeResult<Units.Temperature>(newTemp, oldTemp);
         }
 
         /// <summary>

@@ -11,12 +11,12 @@ namespace Meadow.Foundation.Sensors.Hid
     /// 2-axis analog joystick
     /// </summary>
     public class AnalogJoystick
-        : FilterableChangeObservableBase<JoystickPositionChangeResult, JoystickPosition>
+        : FilterableChangeObservable<CompositeChangeResult<JoystickPosition>, JoystickPosition>
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<JoystickPositionChangeResult> Updated = delegate { };
+        public event EventHandler<CompositeChangeResult<JoystickPosition>> Updated = delegate { };
 
         #region Properties
 
@@ -82,28 +82,39 @@ namespace Meadow.Foundation.Sensors.Hid
         void InitSubscriptions()
         {
 
-            HorizontalInputPort.Subscribe
+            _ = HorizontalInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
                     h => {
                         HorizontalValue = h.New;
                         if (
-                            (((h.Old - Calibration.HorizontalCenter).Abs()) < Calibration.DeadZone)
+                            (((h.Old - Calibration.HorizontalCenter)?.Abs()) < Calibration.DeadZone)
                             &&
                             ((h.New - Calibration.HorizontalCenter).Abs() < Calibration.DeadZone)) {
                             return;
                         }
 
-                        var oldH = GetNormalizedPosition(h.Old, true);
+                        // TODO: wouldn't it be better to store the old position on the class
+                        // rather than compute each time?
+
+                        // if we have an old position
+                        float? oldH = null;
+                        if (h.Old is { } old) { oldH = GetNormalizedPosition(old, true); }
+
                         var newH = GetNormalizedPosition(h.New, true);
                         var v = GetNormalizedPosition(VerticalValue, false);
 
+                        JoystickPosition? oldPosition = null;
+                        if(oldH is { } oldPos) { oldPosition = new JoystickPosition(oldPos, v); }
+                        // in C#9, we'll be able to do this directly in the method:
+                        //(oldH is { } oldPos) ? new JoystickPosition(oldPos, v) : null;
+
                         RaiseEventsAndNotify
                         (
-                            new JoystickPositionChangeResult(
+                            new CompositeChangeResult<JoystickPosition>(
                                 new JoystickPosition(newH, v),
-                                new JoystickPosition(oldH, v)
-                            )
+                                oldPosition
+                                )
                         );
                     }
                 )
@@ -115,21 +126,26 @@ namespace Meadow.Foundation.Sensors.Hid
                     v => {
                         VerticalValue = v.New;
                         if (
-                            ((v.Old - Calibration.VerticalCenter).Abs() < Calibration.DeadZone)
+                            ((v.Old - Calibration.VerticalCenter)?.Abs() < Calibration.DeadZone)
                             &&
                             ((v.New - Calibration.VerticalCenter).Abs() < Calibration.DeadZone)) {
                             return;
                         }
 
-                        var oldV = GetNormalizedPosition(v.Old, false);
+                        float? oldV = null;
+                        if (v.Old is { } old) { oldV = GetNormalizedPosition(old, false); }
+
                         var newV = GetNormalizedPosition(v.New, false);
                         var h = GetNormalizedPosition(HorizontalValue, true);
 
+                        JoystickPosition? oldPosition = null;
+                        if (oldV is { } oldPos) { oldPosition = new JoystickPosition(oldPos, h); }
+
                         RaiseEventsAndNotify
                         (
-                            new JoystickPositionChangeResult(
+                            new CompositeChangeResult<JoystickPosition>(
                                 new JoystickPosition(h, newV),
-                                new JoystickPosition(h, oldV)
+                                oldPosition
                             )
                         );
                     }
@@ -228,7 +244,7 @@ namespace Meadow.Foundation.Sensors.Hid
             VerticalInputPort.StopSampling();
         }
 
-        protected void RaiseEventsAndNotify(JoystickPositionChangeResult changeResult)
+        protected void RaiseEventsAndNotify(CompositeChangeResult<JoystickPosition> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Environmental
 {
     public class AnalogWaterLevel
-        : FilterableChangeObservableBase<FloatChangeResult, float>
+        //: FilterableChangeObservableBase<FloatChangeResult, float>
+        : FilterableChangeObservable<CompositeChangeResult<float>, float>
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<FloatChangeResult> Updated = delegate { };
+        public event EventHandler<CompositeChangeResult<float>> Updated = delegate { };
 
         /// <summary>
         ///     Calibration class for new sensor types.  This allows new sensors
@@ -91,13 +92,16 @@ namespace Meadow.Foundation.Sensors.Environmental
             (
                 IAnalogInputPort.CreateObserver(
                     h => {
+                        // capture the old water leve.
+                        var oldWaterLevel = WaterLevel;
+                        //var oldWaterLevel = VoltageToWaterLevel(h.Old);
+
+                        // get the new one
                         var newWaterLevel = VoltageToWaterLevel(h.New);
-                        var oldWaterLevel = VoltageToWaterLevel(h.Old);
                         WaterLevel = newWaterLevel; // save state
 
-                        RaiseEventsAndNotify
-                        (
-                            new FloatChangeResult(newWaterLevel, oldWaterLevel)
+                        RaiseEventsAndNotify(
+                            new CompositeChangeResult<float>(newWaterLevel, oldWaterLevel)
                         );
                     }
                 )
@@ -155,7 +159,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             AnalogInputPort.StopSampling();
         }
 
-        protected void RaiseEventsAndNotify(FloatChangeResult changeResult)
+        protected void RaiseEventsAndNotify(CompositeChangeResult<float> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
