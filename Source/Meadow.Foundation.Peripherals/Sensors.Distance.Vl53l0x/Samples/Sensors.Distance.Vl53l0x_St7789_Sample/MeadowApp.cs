@@ -57,7 +57,7 @@ namespace Sensors.Distance.Vl53l0x_St7789_Sample
             Console.WriteLine("Init complete");
         }
 
-        private void Sensor_Updated(object sender, CompositeChangeResult<Length> result)
+        private void Sensor_Updated(object sender, ChangeResult<Length> result)
         {
             if(result.New == null) {   
                 return;   

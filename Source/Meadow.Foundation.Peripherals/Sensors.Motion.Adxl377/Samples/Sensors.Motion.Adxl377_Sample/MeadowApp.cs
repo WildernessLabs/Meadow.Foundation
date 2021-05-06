@@ -32,7 +32,7 @@ namespace MeadowApp
             sensor.StartUpdating(500);
         }
 
-        private void Sensor_Updated(object sender, CompositeChangeResult<Meadow.Units.Acceleration3d> e)
+        private void Sensor_Updated(object sender, ChangeResult<Meadow.Units.Acceleration3d> e)
         {
             Console.WriteLine($"X: {e.New.AccelerationX}, Y: {e.New.AccelerationY}, Z: {e.New.AccelerationZ}");
         }

@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -13,12 +12,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// temperature and humidity sensors
     /// </summary>
     public class Htu21d :
-        FilterableChangeObservable<CompositeChangeResult<Units.Temperature, RelativeHumidity>, Units.Temperature, RelativeHumidity>,
+        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, RelativeHumidity)>, (Units.Temperature, RelativeHumidity)>,
         ITemperatureSensor, IHumiditySensor
     {
-        public event EventHandler<CompositeChangeResult<Units.Temperature, RelativeHumidity>> Updated = delegate { };
-        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<CompositeChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<ChangeResult<(Units.Temperature, RelativeHumidity)>> Updated = delegate { };
+        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<ChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
         /// Gets a value indicating whether the sensor is currently in a sampling
@@ -32,12 +31,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The temperature, from the last reading.
         /// </summary>
-        public Units.Temperature Temperature => Conditions.Temperature;
+        public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
-        public RelativeHumidity Humidity => Conditions.Humidity;
+        public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
         /// The last read conditions.
@@ -168,8 +167,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                (Units.Temperature Temperature, RelativeHumidity Humidity) oldConditions;
-                CompositeChangeResult<Units.Temperature, RelativeHumidity> result;
+                (Units.Temperature Temperature, RelativeHumidity Humidity)? oldConditions;
+                ChangeResult<(Units.Temperature, RelativeHumidity)> result;
 
                 Task.Factory.StartNew(async () =>
                 {
@@ -183,13 +182,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             break;
                         }
                         // capture history
-                        oldConditions = (Conditions.Temperature, Conditions.Humidity);
+                        oldConditions = Conditions;
 
                         // read
                         Conditions = await ReadSensor();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Units.Temperature, RelativeHumidity>(oldConditions, Conditions);
+                        result = new ChangeResult<(Units.Temperature, RelativeHumidity)>(Conditions, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -205,11 +204,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, RelativeHumidity> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, RelativeHumidity Huidity)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
-            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.New.Value.Unit1, changeResult.Old.Value.Unit1));
-            HumidityUpdated?.Invoke(this, new CompositeChangeResult<Units.RelativeHumidity>(changeResult.New.Value.Unit2, changeResult.Old.Value.Unit2));
+            TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));
+            HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(changeResult.New.Huidity, changeResult.Old?.Huidity));
             base.NotifyObservers(changeResult);
         }
 

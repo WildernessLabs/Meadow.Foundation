@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     public class Mag3110:
-        FilterableChangeObservable<CompositeChangeResult<MagneticField3d>, MagneticField3d>
+        FilterableChangeObservableBase<ChangeResult<MagneticField3d>, MagneticField3d>
        // IMagnetometer
     {
         /// <summary>
@@ -50,8 +50,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        public event EventHandler<CompositeChangeResult<MagneticField3d>> Updated;
-        public event EventHandler<CompositeChangeResult<MagneticField3d>> MagneticField3dUpdated;
+        public event EventHandler<ChangeResult<MagneticField3d>> Updated;
+        public event EventHandler<ChangeResult<MagneticField3d>> MagneticField3dUpdated;
 
         /// <summary>
         /// MAG3110 object.
@@ -210,7 +210,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 MagneticField3d oldConditions;
-                CompositeChangeResult<MagneticField3d> result;
+                ChangeResult<MagneticField3d> result;
                 Task.Factory.StartNew(async () =>
                 {
                     while (true)
@@ -227,7 +227,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<MagneticField3d>(oldConditions, MagneticField3d);
+                        result = new ChangeResult<MagneticField3d>(oldConditions, MagneticField3d);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -239,7 +239,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<MagneticField3d> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<MagneticField3d> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             MagneticField3dUpdated?.Invoke(this, changeResult);
@@ -256,9 +256,9 @@ namespace Meadow.Foundation.Sensors.Motion
             i2cPeripheral.WriteRegister(Registers.Control1, controlRegister);
             var data = i2cPeripheral.ReadRegisters(Registers.XMSB, 6);
 
-            MagneticField3d.magneticFieldX = new MagneticField((short)((data[0] << 8) | data[1]), MagneticField.UnitType.MicroTesla);
-            MagneticField3d.magneticFieldY = new MagneticField((short)((data[2] << 8) | data[3]), MagneticField.UnitType.MicroTesla);
-            MagneticField3d.magneticFieldZ = new MagneticField((short)((data[4] << 8) | data[5]), MagneticField.UnitType.MicroTesla);
+            MagneticField3d.MagneticFieldX = new MagneticField((short)((data[0] << 8) | data[1]), MagneticField.UnitType.MicroTesla);
+            MagneticField3d.MagneticFieldY = new MagneticField((short)((data[2] << 8) | data[3]), MagneticField.UnitType.MicroTesla);
+            MagneticField3d.MagneticFieldZ = new MagneticField((short)((data[4] << 8) | data[5]), MagneticField.UnitType.MicroTesla);
         }
 
         /// <summary>

@@ -12,9 +12,9 @@ namespace Sensors.LoadCell.Hx711_Sample
     {
         private Hx711 loadSensor;
 
-        public int CalibrationFactor { get; set; } = 9834945 - 8458935; // TODO: change this based on your scale (using the method provided below)
-        public double CalibrationWeight { get; set; } = 3030; // TODO: enter the known-weight (in units below) you used in calibration
-        public WeightUnits CalibrationWeightUnits { get; set; } = WeightUnits.Grams; // TODO: enter the units of the known-weight you used in calibration
+        public int CalibrationFactor { get; set; } = 0; //9834945 - 8458935; // TODO: change this based on your scale (using the method provided below)
+        public double CalibrationWeight { get; set; } = 10; // TODO: enter the known-weight (in units below) you used in calibration
+        public WeightUnits CalibrationWeightUnits { get; set; } = WeightUnits.Pounds; // TODO: enter the units of the known-weight you used in calibration
 
         public MeadowApp()
         {

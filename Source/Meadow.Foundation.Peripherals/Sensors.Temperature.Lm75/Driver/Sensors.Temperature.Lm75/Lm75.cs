@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP102 Temperature sensor object.
     /// </summary>    
     public class Lm75 :
-        FilterableChangeObservable<CompositeChangeResult<Units.Temperature>, Units.Temperature?>,
+        FilterableChangeObservableBase<ChangeResult<Units.Temperature>, Units.Temperature>,
         ITemperatureSensor
     {
         /// <summary>
@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
         ///     Create a new TMP102 object using the default configuration for the sensor.
@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Units.Temperature Read()
         {
             Update();
-            return Temperature;
+            return Temperature.Value;
         }
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace Meadow.Foundation.Sensors.Temperature
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                Units.Temperature oldtemperature;
-                CompositeChangeResult<Units.Temperature> result;
+                Units.Temperature? oldtemperature;
+                ChangeResult<Units.Temperature> result;
 
                 Task.Factory.StartNew(async () => 
                 {
@@ -108,7 +108,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                         Update(); //synchronous for this driver 
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Units.Temperature>(oldtemperature, Temperature);
+                        result = new ChangeResult<Units.Temperature>(Temperature.Value, oldtemperature);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -161,7 +161,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             Temperature = new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius);
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<Units.Temperature> changeResult)
         {
             TemperatureUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

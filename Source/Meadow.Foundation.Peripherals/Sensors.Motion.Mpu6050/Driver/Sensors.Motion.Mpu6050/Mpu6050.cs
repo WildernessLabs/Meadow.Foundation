@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     public class Mpu6050 :
-        FilterableChangeObservable<CompositeChangeResult<Acceleration3d, AngularAcceleration3d>, Acceleration3d, AngularAcceleration3d>,
+        FilterableChangeObservableBase<ChangeResult<(Acceleration3d, AngularAcceleration3d)>, (Acceleration3d, AngularAcceleration3d)>,
         IAccelerometer, IAngularAccelerometer, IDisposable
     {
         /// <summary>
@@ -39,9 +39,9 @@ namespace Meadow.Foundation.Sensors.Motion
             GyroZ = 0x47
         }
 
-        public event EventHandler<CompositeChangeResult<Acceleration3d, AngularAcceleration3d>> Updated;
-        public event EventHandler<CompositeChangeResult<Acceleration3d>> Acceleration3dUpdated;
-        public event EventHandler<CompositeChangeResult<AngularAcceleration3d>> AngularAcceleration3dUpdated;
+        public event EventHandler<ChangeResult<(Acceleration3d, AngularAcceleration3d)>> Updated;
+        public event EventHandler<ChangeResult<Acceleration3d>> Acceleration3dUpdated;
+        public event EventHandler<ChangeResult<AngularAcceleration3d>> AngularAcceleration3dUpdated;
 
         /*
         /// <summary>
@@ -160,7 +160,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 (Acceleration3d, AngularAcceleration3d) oldConditions;
-                CompositeChangeResult<Acceleration3d, AngularAcceleration3d> result;
+                ChangeResult<(Acceleration3d, AngularAcceleration3d)> result;
                 Task.Factory.StartNew(async () => {
                     while (true) {
                         if (ct.IsCancellationRequested) {
@@ -175,7 +175,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Acceleration3d, AngularAcceleration3d>(oldConditions, Conditions);
+                        result = new ChangeResult<(Acceleration3d, AngularAcceleration3d)>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -187,10 +187,10 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Acceleration3d, AngularAcceleration3d> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<(Acceleration3d, AngularAcceleration3d)> changeResult)
         {
-            AngularAcceleration3dUpdated?.Invoke(this, new CompositeChangeResult<AngularAcceleration3d>(changeResult.Old.Value.Unit2, changeResult.New.Value.Unit2));
-            Acceleration3dUpdated?.Invoke(this, new CompositeChangeResult<Acceleration3d>(changeResult.Old.Value.Unit1, changeResult.New.Value.Unit1));
+            AngularAcceleration3dUpdated?.Invoke(this, new ChangeResult<AngularAcceleration3d>(changeResult.Old.Value.Item2, changeResult.New.Item2));
+            Acceleration3dUpdated?.Invoke(this, new ChangeResult<Acceleration3d>(changeResult.Old.Value.Item1, changeResult.New.Item1));
 
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

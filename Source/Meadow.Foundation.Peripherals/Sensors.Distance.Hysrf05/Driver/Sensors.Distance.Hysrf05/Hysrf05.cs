@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
@@ -10,15 +10,15 @@ namespace Meadow.Foundation.Sensors.Distance
     /// HYSRF05 Distance Sensor
     /// </summary>
     public class Hysrf05:
-        FilterableChangeObservable<CompositeChangeResult<Length>, Length>, 
+        FilterableChangeObservableBase<ChangeResult<Length>, Length>, 
         IRangeFinder
     {
 
 		/// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
-        public event EventHandler<CompositeChangeResult<Length>> DistanceUpdated;
-        public event EventHandler<CompositeChangeResult<Length>> Updated;
+        public event EventHandler<ChangeResult<Length>> DistanceUpdated;
+        public event EventHandler<ChangeResult<Length>> Updated;
 
         /// <summary>
         /// Returns current distance
@@ -116,7 +116,7 @@ namespace Meadow.Foundation.Sensors.Distance
             //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
             //       CurrentDistance = -1;
 
-            var result = new CompositeChangeResult<Length>(oldDistance, Distance);
+            var result = new ChangeResult<Length>(oldDistance, Distance);
 
             Updated?.Invoke(this, result);
             DistanceUpdated?.Invoke(this, result);

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Atmospheric;
 
 namespace Sensors.Atmospheric.BME680_Sample

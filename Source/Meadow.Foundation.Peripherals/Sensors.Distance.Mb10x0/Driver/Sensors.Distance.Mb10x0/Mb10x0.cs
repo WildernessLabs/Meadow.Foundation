@@ -6,12 +6,12 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Distance
 {
     public class Mb10x0 :
-        FilterableChangeObservable<CompositeChangeResult<Length>, Length>,
+        FilterableChangeObservableBase<ChangeResult<Length>, Length>,
         IRangeFinder
 
     {
         //==== events
-        public event EventHandler<CompositeChangeResult<Length>> DistanceUpdated = delegate { };
+        public event EventHandler<ChangeResult<Length>> DistanceUpdated = delegate { };
 
         //==== internals
         ISerialPort serialPort;

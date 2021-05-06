@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
-using System.Threading.Tasks;
 using Meadow.Units;
 
 namespace BasicSensors.Atmospheric.SI7021_Sample
@@ -30,15 +30,15 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
             //==== Events
             // classical .NET events can also be used:
-            si7021.Updated += (object sender, CompositeChangeResult<Temperature, RelativeHumidity> result) => {
-                Console.WriteLine($"  Temperature: {result.New?.Unit1.Celsius:F1}°C");
-                Console.WriteLine($"  Relative Humidity: {result.New?.Unit2.Value:F1}%");
+            si7021.Updated += (object sender, ChangeResult<(Temperature Temperature, RelativeHumidity Humidity)> result) => {
+                Console.WriteLine($"  Temperature: {result.New.Temperature.Celsius:F1}°C");
+                Console.WriteLine($"  Relative Humidity: {result.New.Humidity.Value:F1}%");
             };
 
             //==== IObservable
             var consumer = Si70xx.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Observer triggered; new temp: {result.New?.Unit1.Celsius}, old: {result.Old?.Unit1.Celsius}");
+                    Console.WriteLine($"Observer triggered; new temp: {result.New.Item1.Celsius}, old: {result.Old?.Item1.Celsius}");
                 },
                 filter: result => {
                     return true;

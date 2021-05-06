@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
     public partial class Nau7802 :
-        FilterableChangeObservableI2CPeripheral<CompositeChangeResult<Units.Mass>, Units.Mass>,
+        FilterableChangeObservableI2CPeripheral<ChangeResult<Units.Mass>, Units.Mass>,
         IDisposable
 
     {
@@ -267,7 +267,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         public bool IsSampling { get; private set; }
         public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
 
-        public event EventHandler<CompositeChangeResult<Mass>> MassUpdated = delegate { };
+        public event EventHandler<ChangeResult<Mass>> MassUpdated = delegate { };
 
         /// <summary>
         /// The last read conditions.
@@ -322,7 +322,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 Mass oldConditions;
-                CompositeChangeResult<Mass> result;
+                ChangeResult<Mass> result;
 
                 Task.Factory.StartNew(async () => {
                     while (true)
@@ -341,7 +341,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                         Conditions = await Read();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Mass>(Conditions, oldConditions);
+                        result = new ChangeResult<Mass>(Conditions, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -357,7 +357,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Mass> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<Mass> changeResult)
         {
             try
             {

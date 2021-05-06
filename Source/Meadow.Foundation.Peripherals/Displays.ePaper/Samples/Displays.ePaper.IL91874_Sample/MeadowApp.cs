@@ -36,7 +36,7 @@ namespace Displays.ePaper.IL91874_Sample
             graphics.Clear();
 
             graphics.DrawText(2, 2, "IL91874");
-            graphics.DrawText(2, 20, "Meadow B4.6!");
+            graphics.DrawText(2, 20, "Hello, Honeybees!");
 
             /* int ySpacing = 12;
 

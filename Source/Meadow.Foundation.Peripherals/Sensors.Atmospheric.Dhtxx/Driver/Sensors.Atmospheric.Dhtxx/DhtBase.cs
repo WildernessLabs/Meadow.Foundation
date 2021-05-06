@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
@@ -13,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
     /// a DHT temperature and Humidity sensor.
     /// </summary>
     public abstract class DhtBase : 
-        FilterableChangeObservable<CompositeChangeResult<Units.Temperature, RelativeHumidity>, Units.Temperature, RelativeHumidity>,
+        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, RelativeHumidity)>, (Units.Temperature, RelativeHumidity)>,
         ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
@@ -33,12 +32,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// <summary>
         /// The temperature
         /// </summary>
-        public Units.Temperature Temperature => Conditions.Temperature;
+        public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
         /// The relative humidity
         /// </summary>
-        public RelativeHumidity Humidity => Conditions.Humidity;
+        public RelativeHumidity? Humidity => Conditions.Humidity;
 
         public (Units.Temperature Temperature, RelativeHumidity Humidity) Conditions;
      
@@ -64,9 +63,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        public event EventHandler<CompositeChangeResult<Units.Temperature, RelativeHumidity>> Updated;
-        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated;
-        public event EventHandler<CompositeChangeResult<RelativeHumidity>> HumidityUpdated;
+        public event EventHandler<ChangeResult<(Units.Temperature, RelativeHumidity)>> Updated;
+        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated;
+        public event EventHandler<ChangeResult<RelativeHumidity>> HumidityUpdated;
 
         /// <summary>
         /// Create a DHT sensor through I2C (Only DHT12)
@@ -168,7 +167,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 (Units.Temperature, RelativeHumidity) oldConditions;
-                CompositeChangeResult<Units.Temperature, RelativeHumidity> result;
+                ChangeResult<(Units.Temperature, RelativeHumidity)> result;
 
                 Task.Factory.StartNew(async () => {
                     while (true) {
@@ -185,7 +184,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
                         await Update();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Units.Temperature, RelativeHumidity>(oldConditions, Conditions);
+                        result = new ChangeResult<(Units.Temperature, RelativeHumidity)>(Conditions, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -197,11 +196,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
             }
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, RelativeHumidity> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
-            HumidityUpdated?.Invoke(this, new CompositeChangeResult<RelativeHumidity>(changeResult.New.Value.Unit2, changeResult.Old.Value.Unit2));
-            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.New.Value.Unit1, changeResult.Old.Value.Unit1));
+            HumidityUpdated?.Invoke(this, new ChangeResult<RelativeHumidity>(changeResult.New.Humidity, changeResult.Old?.Humidity));
+            TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));
             base.NotifyObservers(changeResult);
         }
 

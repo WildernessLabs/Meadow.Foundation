@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Atmospheric;
 
 namespace Sensors.Atmospheric.Bmp085_Sample
@@ -24,12 +23,12 @@ namespace Sensors.Atmospheric.Bmp085_Sample
             // (blowing hot breath on the sensor should trigger)
             var observer = Bmp085.CreateObserver(h =>
             {
-                Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New.Value.Unit1}, old: {h.Old.Value.Unit1}");
+                Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New.Item1}, old: {h.Old?.Item1}");
             },
                 e =>
                 {
-                    return ((Math.Abs(e.Delta.Value.Unit1.Value) > 1) &&
-                            (Math.Abs(e.Delta.Value.Unit2.Value) > 5));
+                    return ((Math.Abs(e.Delta.Value.Item1.Value) > 1) &&
+                            (Math.Abs(e.Delta.Value.Item2.Value) > 5));
                 });
 
 
@@ -44,9 +43,9 @@ namespace Sensors.Atmospheric.Bmp085_Sample
             bmp085.StartUpdating();
         }
 
-        private void Bmp085_Updated(object sender, CompositeChangeResult<Meadow.Units.Temperature, Meadow.Units.Pressure> e)
+        private void Bmp085_Updated(object sender, ChangeResult<(Meadow.Units.Temperature Temperature, Meadow.Units.Pressure Pressure)> e)
         {
-            Console.WriteLine($"Temperature: {e.New.Value.Unit1.Celsius}°C, Pressure: {e.New.Value.Unit2.Pascal}Pa");
+            Console.WriteLine($"Temperature: {e.New.Temperature.Celsius}°C, Pressure: {e.New.Pressure.Pascal}Pa");
         }
 
         protected async Task ReadConditions()

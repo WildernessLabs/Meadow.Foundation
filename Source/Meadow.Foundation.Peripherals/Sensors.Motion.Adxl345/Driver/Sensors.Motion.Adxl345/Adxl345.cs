@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     +/- 16g
     /// </summary>
     public class Adxl345 :
-        FilterableChangeObservable<CompositeChangeResult<Acceleration3d>, Acceleration3d>,
+        FilterableChangeObservableBase<ChangeResult<Acceleration3d>, Acceleration3d>,
         IAccelerometer
     {
         /// <summary>
@@ -108,8 +108,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        public event EventHandler<CompositeChangeResult<Acceleration3d>> Updated;
-        public event EventHandler<CompositeChangeResult<Acceleration3d>> Acceleration3dUpdated;
+        public event EventHandler<ChangeResult<Acceleration3d>> Updated;
+        public event EventHandler<ChangeResult<Acceleration3d>> Acceleration3dUpdated;
 
         /// <summary>
         ///     Values stored in this register are automatically added to the X reading.
@@ -195,7 +195,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 Acceleration3d oldConditions;
-                CompositeChangeResult<Acceleration3d> result;
+                ChangeResult<Acceleration3d> result;
                 Task.Factory.StartNew(async () => 
                 {
                     while (true) 
@@ -212,7 +212,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Acceleration3d>(oldConditions, Acceleration3d);
+                        result = new ChangeResult<Acceleration3d>(oldConditions, Acceleration3d);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -224,7 +224,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Acceleration3d> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<Acceleration3d> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             Acceleration3dUpdated?.Invoke(this, changeResult);

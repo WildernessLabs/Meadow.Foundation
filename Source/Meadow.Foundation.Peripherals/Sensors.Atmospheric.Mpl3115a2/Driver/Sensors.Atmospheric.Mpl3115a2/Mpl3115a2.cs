@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
@@ -12,14 +11,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     ///     Driver for the MPL3115A2 pressure and humidity sensor.
     /// </summary>
     public class Mpl3115a2 :
-        FilterableChangeObservable<CompositeChangeResult<Units.Temperature, Pressure>, Units.Temperature, Pressure>,
+        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, Pressure)>, (Units.Temperature, Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
         /// <summary>
         /// </summary>
-        public event EventHandler<CompositeChangeResult<Units.Temperature, Pressure>> Updated = delegate { };
-        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<CompositeChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<ChangeResult<(Units.Temperature, Pressure)>> Updated = delegate { };
+        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<ChangeResult<Pressure>> PressureUpdated = delegate { };
 
         /// <summary>
         ///     Object used to communicate with the sensor.
@@ -36,12 +35,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The temperature, from the last reading.
         /// </summary>
-        public Units.Temperature Temperature => Conditions.Temperature;
+        public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
         /// The pressure, from the last reading.
         /// </summary>
-        public Pressure Pressure => Conditions.Pressure;
+        public Pressure? Pressure => Conditions.Pressure;
 
         public (Units.Temperature Temperature, Pressure Pressure) Conditions;
 
@@ -129,7 +128,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 Thread.Sleep(100);
                 var data = mpl3115a2.ReadRegisters(Registers.PressureMSB, 5);
-                conditions.Pressure = new Pressure(DecodePresssure(data[0], data[1], data[2]), Pressure.UnitType.Pascal);
+                conditions.Pressure = new Pressure(DecodePresssure(data[0], data[1], data[2]), Units.Pressure.UnitType.Pascal);
                 conditions.Temperature = new Units.Temperature(DecodeTemperature(data[3], data[4]), Units.Temperature.UnitType.Celsius);
 
                 return conditions;
@@ -149,7 +148,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 (Units.Temperature Temperature, Pressure Pressure) oldConditions;
-                CompositeChangeResult<Units.Temperature, Pressure> result;
+                ChangeResult<(Units.Temperature, Pressure)> result;
 
                 Task.Run(async () => {
                     while (true) {
@@ -165,7 +164,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         await Read();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Units.Temperature, Pressure>(oldConditions, Conditions);
+                        result = new ChangeResult<(Units.Temperature, Pressure)>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -181,11 +180,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, Pressure> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, Pressure Pressure)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
-            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.New.Value.Unit1, changeResult.Old.Value.Unit1));
-            PressureUpdated?.Invoke(this, new CompositeChangeResult<Units.Pressure>(changeResult.New.Value.Unit2, changeResult.Old.Value.Unit2));
+            TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));
+            PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(changeResult.New.Pressure, changeResult.Old?.Pressure));
             base.NotifyObservers(changeResult);
         }
 

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Atmospheric;
 
 namespace Sensors.Atmospheric.Bmp180_Sample
@@ -22,16 +21,16 @@ namespace Sensors.Atmospheric.Bmp180_Sample
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree, and humidty by 5%.
             // (blowing hot breath on the sensor should trigger)
-            var observer = Bmp180.CreateObserver(h =>
-            {
-                Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New.Value.Unit1}, old: {h.Old.Value.Unit1}");
-            },
-                e =>
-                {
-                    return ((Math.Abs(e.Delta.Value.Unit1.Value) > 1) &&
-                            (Math.Abs(e.Delta.Value.Unit2.Value) > 5));
-                });
-
+            var observer = Bmp180.CreateObserver(
+                handler: result => {
+                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {result.New.Item1}, old: {result.Old?.Item1}");
+                },
+                filter: null);
+                //e =>
+                //{
+                //    return ((Math.Abs(e.Delta.Value.Unit1.Value) > 1) &&
+                //            (Math.Abs(e.Delta.Value.Unit2.Value) > 5));
+                //});
 
             bmp180.Subscribe(observer);
 
@@ -44,9 +43,9 @@ namespace Sensors.Atmospheric.Bmp180_Sample
             bmp180.StartUpdating();
         }
 
-        private void Bmp180_Updated(object sender, CompositeChangeResult<Meadow.Units.Temperature, Meadow.Units.Pressure> e)
+        private void Bmp180_Updated(object sender, ChangeResult<(Meadow.Units.Temperature Temperature, Meadow.Units.Pressure Pressure)> result)
         {
-            Console.WriteLine($"Temperature: {e.New.Value.Unit1.Celsius}°C, Pressure: {e.New.Value.Unit2.Pascal}Pa");
+            Console.WriteLine($"Temperature: {result.New.Temperature.Celsius}°C, Pressure: {result.New.Pressure.Pascal}Pa");
         }
 
         protected async Task ReadConditions()

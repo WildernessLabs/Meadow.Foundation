@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// internal switch that is triggered during every revolution.
     /// </summary>
     //public partial class SwitchingAnemometer : FilterableChangeObservableBase<AnemometerChangeResult, float>
-    public partial class SwitchingAnemometer : FilterableChangeObservable<CompositeChangeResult<Speed>, Speed>
+    public partial class SwitchingAnemometer : FilterableChangeObservableBase<ChangeResult<Speed>, Speed>
     {
         //==== internals
         IDigitalInputPort inputPort;
@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// Raised when the speed of the wind changes.
         /// </summary>
         //public event EventHandler<AnemometerChangeResult> WindSpeedUpdated = delegate {};
-        public event EventHandler<CompositeChangeResult<Speed>> WindSpeedUpdated = delegate { };
+        public event EventHandler<ChangeResult<Speed>> WindSpeedUpdated = delegate { };
 
         //public float LastRecordedWindSpeed { get; protected set; } = 0f;
         public Speed LastRecordedWindSpeed { get; protected set; } = new Speed(0);
@@ -105,7 +105,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 // skip the first sample, which won't have a valid reading
                 for (int i = 1; i < samples.Count; i++ ){
                     //if (debug) { Console.WriteLine($"Sample [{i}] speed: [{SwitchIntervalToKmh(samples[i].Delta)}]; duration: {samples[i].Delta}, newTime: {samples[i].New}, oldTime: {samples[i].Old}"); }
-                    speedSum += SwitchIntervalToKmh(samples[i].Delta);
+                    speedSum += SwitchIntervalToKmh(samples[i].Delta.Value);
                 }
                 oversampledSpeed = speedSum / samples.Count - 1;
 
@@ -129,7 +129,7 @@ namespace Meadow.Foundation.Sensors.Weather
             //    Old = this.LastRecordedWindSpeed,
             //    New = newSpeed
             //};
-            CompositeChangeResult<Speed> result = new CompositeChangeResult<Speed>() {
+            ChangeResult<Speed> result = new ChangeResult<Speed>() {
                 Old = this.LastRecordedWindSpeed,
                 New = newSpeed
             };

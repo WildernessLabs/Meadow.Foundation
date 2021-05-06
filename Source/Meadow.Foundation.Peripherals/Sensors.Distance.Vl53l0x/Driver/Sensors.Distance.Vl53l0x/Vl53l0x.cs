@@ -12,11 +12,11 @@ namespace Meadow.Foundation.Sensors.Distance
     /// Represents the Vl53l0x distance sensor
     /// </summary>
     public class Vl53l0x :
-        FilterableChangeObservable<CompositeChangeResult<Length>, Length>,
+        FilterableChangeObservableBase<ChangeResult<Length>, Length>,
         IRangeFinder
     {
         //==== events
-        public event EventHandler<CompositeChangeResult<Length>> DistanceUpdated = delegate { };
+        public event EventHandler<ChangeResult<Length>> DistanceUpdated = delegate { };
 
         //==== internals
         protected const byte RangeStart = 0x00;
@@ -186,7 +186,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 Length oldResult;
-                CompositeChangeResult<Length> result;
+                ChangeResult<Length> result;
                 Task.Factory.StartNew(async () => {
                     while (true)
                     {
@@ -203,7 +203,7 @@ namespace Meadow.Foundation.Sensors.Distance
                         await Update();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Length>(oldResult, Distance);
+                        result = new ChangeResult<Length>(oldResult, Distance);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -215,7 +215,7 @@ namespace Meadow.Foundation.Sensors.Distance
             }
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Length> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<Length> changeResult)
         {
             DistanceUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

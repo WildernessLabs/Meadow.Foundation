@@ -7,7 +7,7 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Light
 {
     public class Alspt19315C :
-        FilterableChangeObservable<CompositeChangeResult<Voltage>, Voltage>
+        FilterableChangeObservableBase<ChangeResult<Voltage>, Voltage>
     {
         public Voltage Voltage { get; protected set; } = new Voltage(0);
 
@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        public event EventHandler<CompositeChangeResult<Voltage>> Updated;
+        public event EventHandler<ChangeResult<Voltage>> Updated;
 
         /// <summary>
         ///     Analog port connected to the sensor.
@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Sensors.Light
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 Voltage oldConditions;
-                CompositeChangeResult<Voltage> result;
+                ChangeResult<Voltage> result;
                 Task.Factory.StartNew(async () =>
                 {
                     while (true)
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Light
                         await Update();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Voltage>(oldConditions, Voltage);
+                        result = new ChangeResult<Voltage>(oldConditions, Voltage);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -97,7 +97,7 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Voltage> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<Voltage> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

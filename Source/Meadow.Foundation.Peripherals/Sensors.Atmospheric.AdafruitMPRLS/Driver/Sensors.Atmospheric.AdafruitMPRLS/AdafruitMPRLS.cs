@@ -1,11 +1,10 @@
-﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Units;
-using System;
+﻿using System;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
+using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -15,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Device datasheets also available here: https://sensing.honeywell.com/micropressure-mpr-series
     /// </summary>
     public class AdafruitMPRLS :
-        FilterableChangeObservableBase<CompositeChangeResult<Pressure>, Pressure>,
+        FilterableChangeObservableBase<ChangeResult<Pressure>, Pressure>,
         IBarometricPressureSensor
     {
         private readonly II2cPeripheral i2cPeripheral;
@@ -48,25 +47,25 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Convienence property to get the raw measurement from the sensor.
         /// </summary>
-        public Pressure RawPSIMeasurement { get; set; }
+        public Pressure? RawPSIMeasurement { get; set; }
 
-           //Tells us that the sensor has reached its pressure limit.
+        //Tells us that the sensor has reached its pressure limit.
         public bool InternalMathSaturated { get; set; }
 
         private int psiMin => 0;
         private int psiMax => 25;
 
-        private Pressure oldConditions { get; set; }
+        private Pressure? oldConditions { get; set; }
 
         //This value is set by the manufacturer and can't be changed.
         public const byte Address = 0x18;
 
-        public Pressure Pressure { get; set; } = new Pressure(0);
+        public Pressure? Pressure { get; set; } = new Pressure(0);
 
-        public event EventHandler<CompositeChangeResult<Pressure>> Updated;
-        public event EventHandler<CompositeChangeResult<Pressure>> PressureUpdated;
+        public event EventHandler<ChangeResult<Pressure>> Updated;
+        public event EventHandler<ChangeResult<Pressure>> PressureUpdated;
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Pressure> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<Pressure> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             PressureUpdated?.Invoke(this, changeResult);
@@ -82,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             await Update();
 
-            return Pressure;
+            return Pressure.GetValueOrDefault();
         }
 
         public void StartUpdating(int readFrequencyMs = 1000)
@@ -102,15 +101,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     {
                         if (cancellationToken.IsCancellationRequested)
                         {
-                            _observers.ForEach(x => x.OnCompleted());
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
-
+                        // save state
                         oldConditions = Pressure;
-
+                        // update
                         await Update();
 
-                        var changeResult = new CompositeChangeResult<Pressure>(Pressure, oldConditions);
+                        var changeResult = new ChangeResult<Pressure>(Pressure.GetValueOrDefault(), oldConditions);
 
                         RaiseChangedAndNotify(changeResult);
 
@@ -185,8 +184,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             calculatedPSIMeasurement += psiMin;
             //Console.WriteLine(CalculatedPSIMeasurement);
 
-            RawPSIMeasurement = new Pressure(rawPSIMeasurement, Pressure.UnitType.Psi);
-            Pressure = new Pressure(calculatedPSIMeasurement, Pressure.UnitType.Psi);
+            RawPSIMeasurement = new Pressure(rawPSIMeasurement, Units.Pressure.UnitType.Psi);
+            Pressure = new Pressure(calculatedPSIMeasurement, Units.Pressure.UnitType.Psi);
         }
     }
 }

@@ -28,10 +28,11 @@ namespace BasicSensors.Atmospheric.SHT31D_Sample
 
         }
 
-        private void Sensor_Updated(object sender, CompositeChangeResult<Meadow.Units.Temperature, Meadow.Units.RelativeHumidity> e)
+        private void Sensor_Updated( object sender,
+            ChangeResult<(Meadow.Units.Temperature Temperature, Meadow.Units.RelativeHumidity Humidity)> e)
         {
-            Console.WriteLine($"Temp: {e.New.Value.Unit1.Celsius}");
-            Console.WriteLine($"Humidity: {e.New.Value.Unit2.Value}");
+            Console.WriteLine($"Temp: {e.New.Temperature.Celsius}");
+            Console.WriteLine($"Humidity: {e.New.Humidity.Value}");
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
-using Meadow.Bases;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
@@ -13,18 +12,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Bosch BMP085 digital pressure and temperature sensor.
     /// </summary>
     public class Bmp085 : 
-        FilterableChangeObservable<CompositeChangeResult<Units.Temperature, Pressure>, Units.Temperature, Pressure>,
+        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, Pressure)>, (Units.Temperature, Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
         /// <summary>
         /// Last value read from the Pressure sensor.
         /// </summary>
-        public Units.Temperature Temperature => Conditions.Temperature;
+        public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
         /// Last value read from the Pressure sensor.
         /// </summary>
-        public Pressure Pressure => Conditions.Pressure;
+        public Pressure? Pressure => Conditions.Pressure;
 
         public (Units.Temperature Temperature, Pressure Pressure) Conditions;
 
@@ -74,9 +73,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             UltraHighResolution = 3
         }
 
-        public event EventHandler<CompositeChangeResult<Units.Temperature, Pressure>> Updated = delegate { };
-        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<CompositeChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<ChangeResult<(Units.Temperature, Pressure)>> Updated = delegate { };
+        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<ChangeResult<Pressure>> PressureUpdated = delegate { };
 
         /// <summary>
         /// Provide a mechanism for reading the temperature and humidity from
@@ -121,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 (Units.Temperature, Pressure) oldConditions;
 
-                CompositeChangeResult<Units.Temperature, Pressure> result;
+                ChangeResult<(Units.Temperature, Pressure)> result;
 
                 Task.Factory.StartNew(async () => {
                     while (true)
@@ -139,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Units.Temperature, Pressure>(oldConditions, Conditions);
+                        result = new ChangeResult<(Units.Temperature, Pressure)>(Conditions, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -151,10 +150,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, Pressure> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, Pressure Pressure)> changeResult)
         {
-            PressureUpdated?.Invoke(this, new CompositeChangeResult<Pressure>(changeResult.Old.Value.Unit2, changeResult.New.Value.Unit2));
-            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.Old.Value.Unit1, changeResult.New.Value.Unit1));
+            TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));
+            PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(changeResult.New.Pressure, changeResult.Old?.Pressure));
 
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
@@ -229,7 +228,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             int value = (int)(p + ((x1 + x2 + 3791) >> 4));
 
-            Conditions.Pressure = new Pressure(value, Pressure.UnitType.Pascal);
+            Conditions.Pressure = new Pressure(value, Units.Pressure.UnitType.Pascal);
         }
 
         private long ReadUncompensatedTemperature()

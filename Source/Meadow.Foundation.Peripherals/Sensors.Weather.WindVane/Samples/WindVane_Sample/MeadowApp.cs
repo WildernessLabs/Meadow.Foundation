@@ -30,7 +30,7 @@ namespace MeadowApp
             windVane = new WindVane(Device, Device.Pins.A00);
 
             //==== Classic event example:
-            windVane.Updated += (object sender, CompositeChangeResult<Azimuth> e) => {
+            windVane.Updated += (object sender, ChangeResult<Azimuth> e) => {
                 Console.WriteLine($"Updated event {e.New.DecimalDegrees}");
             };
 

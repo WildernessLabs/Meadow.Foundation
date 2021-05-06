@@ -29,7 +29,7 @@ namespace Sensors.Distance.HCSR04_Sample
             }
         }
 
-        private void HCSR04_DistanceUpdated(object sender, CompositeChangeResult<Meadow.Units.Length> e)
+        private void HCSR04_DistanceUpdated(object sender, ChangeResult<Meadow.Units.Length> e)
         {
             Console.WriteLine($"Distance (cm): {e.New.Centimeters}");
         }

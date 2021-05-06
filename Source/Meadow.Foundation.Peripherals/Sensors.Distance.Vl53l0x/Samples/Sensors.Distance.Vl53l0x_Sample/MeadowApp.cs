@@ -21,7 +21,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
             sensor.StartUpdating();
         }
 
-        private void Sensor_Updated(object sender, CompositeChangeResult<Length> result)
+        private void Sensor_Updated(object sender, ChangeResult<Length> result)
         {
             if (result.New == null) {
                 return;

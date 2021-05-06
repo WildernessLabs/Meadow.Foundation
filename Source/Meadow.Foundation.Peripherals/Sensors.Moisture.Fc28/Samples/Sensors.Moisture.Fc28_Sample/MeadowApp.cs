@@ -40,9 +40,9 @@ namespace Sensors.Moisture.FC28_Sample
             );
             fc28.Subscribe(consumer);
 
-            fc28.HumidityUpdated += (object sender, CompositeChangeResult<ScalarDouble> e) =>
+            fc28.HumidityUpdated += (object sender, ChangeResult<double> e) =>
             {
-                Console.WriteLine($"Moisture Updated: {e.New.Value}");
+                Console.WriteLine($"Moisture Updated: {e.New}");
             };
 
             fc28.StartUpdating();
@@ -56,7 +56,7 @@ namespace Sensors.Moisture.FC28_Sample
             {
                 var moisture = await fc28.Read();
 
-                Console.WriteLine($"Moisture New Value { moisture.New.Value}");
+                Console.WriteLine($"Moisture New Value { moisture.New}");
                 Console.WriteLine($"Moisture Old Value { moisture.Old.Value}");
                 Console.WriteLine($"Moisture Delta Value { moisture.Delta.Value}");
                 Thread.Sleep(1000);

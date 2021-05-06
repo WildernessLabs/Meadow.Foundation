@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// GP2D12 Distance Sensor
     /// </summary>
     public class Gp2d12 :
-        FilterableChangeObservable<CompositeChangeResult<Length>, Length>, 
+        FilterableChangeObservableBase<ChangeResult<Length>, Length>, 
         IRangeFinder
     {
         IAnalogInputPort analogInputPort;
@@ -18,8 +18,8 @@ namespace Meadow.Foundation.Sensors.Distance
 		/// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
-        public event EventHandler<CompositeChangeResult<Length>> DistanceUpdated;
-        public event EventHandler<CompositeChangeResult<Length>> Updated;
+        public event EventHandler<ChangeResult<Length>> DistanceUpdated;
+        public event EventHandler<ChangeResult<Length>> Updated;
 
         /// <summary>
         /// Returns current distance
@@ -45,12 +45,12 @@ namespace Meadow.Foundation.Sensors.Distance
             analogInputPort.Changed += AnalogInputPort_Changed;
         }
 
-        private void AnalogInputPort_Changed(object sender, CompositeChangeResult<Voltage> e)
+        private void AnalogInputPort_Changed(object sender, ChangeResult<Voltage> e)
         {
             var oldDistance = Distance;
             Distance = new Length(26 / e.New.Volts, Length.UnitType.Meters);
 
-            var result =  new CompositeChangeResult<Length>(oldDistance, Distance);
+            var result =  new ChangeResult<Length>(oldDistance, Distance);
 
             Updated?.Invoke(this, result);
             DistanceUpdated?.Invoke(this, result);

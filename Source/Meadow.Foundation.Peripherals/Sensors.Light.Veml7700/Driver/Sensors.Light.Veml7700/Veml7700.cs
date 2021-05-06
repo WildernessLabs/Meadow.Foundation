@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// High Accuracy Ambient Light Sensor 
     /// </summary>
     public class Veml7700 :
-        FilterableChangeObservable<CompositeChangeResult<Illuminance>, Illuminance>,
+        FilterableChangeObservableBase<ChangeResult<Illuminance>, Illuminance>,
         ILightSensor, 
         IDisposable
     {
@@ -54,8 +54,8 @@ namespace Meadow.Foundation.Sensors.Light
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        public event EventHandler<CompositeChangeResult<Illuminance>> Updated;
-        public event EventHandler<CompositeChangeResult<Illuminance>> LuminosityUpdated;
+        public event EventHandler<ChangeResult<Illuminance>> Updated;
+        public event EventHandler<ChangeResult<Illuminance>> LuminosityUpdated;
 
         public int ChangeThreshold { get; set; }
         public byte Address { get; private set; }
@@ -191,7 +191,7 @@ namespace Meadow.Foundation.Sensors.Light
                         }
 
                         // let everyone know
-                        RaiseChangedAndNotify(new CompositeChangeResult<Illuminance>(Illuminance, oldConditions));
+                        RaiseChangedAndNotify(new ChangeResult<Illuminance>(Illuminance, oldConditions));
 
                         await Task.Delay(GetDelayTime(integrationTime));
                     }
@@ -199,7 +199,7 @@ namespace Meadow.Foundation.Sensors.Light
             }      
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Illuminance> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<Illuminance> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             LuminosityUpdated?.Invoke(this, changeResult);

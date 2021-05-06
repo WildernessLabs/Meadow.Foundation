@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Meadow;
+using Meadow.Units;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Peripherals.Sensors;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -10,9 +12,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Grove TH02 temperature and humidity sensor.
     /// </summary>
     public class GroveTh02 :
-        FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor//, ITemperatureSensor, IHumiditySensor
+        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, RelativeHumidity)>, (Units.Temperature, RelativeHumidity)>,
+        ITemperatureSensor, IHumiditySensor
     {
+        /// <summary>
+        /// </summary>
+        public event EventHandler<ChangeResult<(Units.Temperature, RelativeHumidity)>> Updated = delegate { };
+        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<ChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+
         /// <summary>
         ///     Start measurement bit in the configuration register.
         /// </summary>
@@ -79,16 +87,20 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         private readonly ushort _updateInterval = 100;
 
-
         /// <summary>
-        /// The temperature, in degrees celsius (°C), from the last reading.
+        /// The temperature, from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature.Value;
+        public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
-        public float Humidity => Conditions.Humidity.Value;
+        public RelativeHumidity? Humidity => Conditions.Humidity;
+
+        /// <summary>
+        /// The last read conditions.
+        /// </summary>
+        public (Units.Temperature Temperature, RelativeHumidity Humidity) Conditions;
 
         /// <summary>
         ///     Get / set the heater status.
@@ -108,11 +120,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        /// <summary>
-        /// The AtmosphericConditions from the last reading.
-        /// </summary>
-        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
-
         // internal thread lock
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
@@ -123,8 +130,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
-
-        public event EventHandler<AtmosphericConditionChangeResult> Updated;
 
         /// <summary>
         ///     Create a new GroveTH02 object using the default parameters for the component.
@@ -140,10 +145,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public async Task<AtmosphericConditions> Read()
+        public async Task<(Units.Temperature Temperature, RelativeHumidity Humidity)> Read()
         {
-            Conditions = await Read();
-
+            // update confiruation for a one-off read
+            this.Conditions = await ReadSensor();
             return Conditions;
         }
 
@@ -159,23 +164,25 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                AtmosphericConditions oldConditions;
-                AtmosphericConditionChangeResult result;
+                (Units.Temperature Temperature, RelativeHumidity Humidity) oldConditions;
+                ChangeResult<(Units.Temperature, RelativeHumidity)> result;
+
                 Task.Factory.StartNew(async () => {
                     while (true) {
+                        // cleanup
                         if (ct.IsCancellationRequested) {
                             // do task clean up here
-                            _observers.ForEach(x => x.OnCompleted());
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
-                        oldConditions = AtmosphericConditions.From(Conditions);
+                        oldConditions = (Conditions.Temperature, Conditions.Humidity);
 
                         // read
-                        await Update();
+                        Conditions = await Read();
 
                         // build a new result with the old and new conditions
-                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+                        result = new ChangeResult<(Units.Temperature, RelativeHumidity)>(Conditions, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -187,9 +194,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
+        /// <summary>
+        /// Inheritance-safe way to raise events and notify observers.
+        /// </summary>
+        /// <param name="changeResult"></param>
+        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
+            TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));
+            HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(changeResult.New.Humidity, changeResult.Old?.Humidity));
             base.NotifyObservers(changeResult);
         }
 
@@ -211,8 +224,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Force the sensor to make a reading and update the relevant properties.
         /// </summary>
-        async Task Update()
+        protected async Task<(Units.Temperature Temperature, RelativeHumidity Humidity)> ReadSensor()
         {
+            (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
+
             int temp = 0;
             //
             //  Get the humidity first.
@@ -230,7 +245,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             temp = data[0] << 8;
             temp |= data[1];
             temp >>= 4;
-            Conditions.Humidity = (((float)temp) / 16) - 24;
+            conditions.Humidity = new RelativeHumidity( (((float)temp) / 16) - 24);
             //
             //  Now get the temperature.
             //
@@ -246,7 +261,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             temp = data[0] << 8;
             temp |= data[1];
             temp >>= 2;
-            Conditions.Temperature = (((float)temp) / 32) - 50;
+            conditions.Temperature = new Units.Temperature( (((float)temp) / 32) - 50);
+
+            return conditions;
         }
     }
 }

@@ -18,13 +18,13 @@ namespace Meadow.Foundation.Sensors.Weather
     /// Labs Clima Pro board.
     /// </summary>
     //public partial class WindVane : FilterableChangeObservableBase<WindVaneChangeResult, Azimuth>
-    public partial class WindVane : FilterableChangeObservable<CompositeChangeResult<Azimuth>, Azimuth>
+    public partial class WindVane : FilterableChangeObservableBase<ChangeResult<Azimuth>, Azimuth>
     {
         /// <summary>
         /// Raised when the azimuth of the wind changes.
         /// </summary>
         //public event EventHandler<WindVaneChangeResult> Updated = delegate { };
-        public event EventHandler<CompositeChangeResult<Azimuth>> Updated = delegate { };
+        public event EventHandler<ChangeResult<Azimuth>> Updated = delegate { };
 
         /// <summary>
         /// The last recorded azimuth of the wind.
@@ -127,10 +127,10 @@ namespace Meadow.Foundation.Sensors.Weather
         /// Takes the analog reading and converts to the wind azimuth, then
         /// raises the event/updates subscribers.
         /// </summary>
-        protected void HandleAnalogUpdate(CompositeChangeResult<Voltage> result)
+        protected void HandleAnalogUpdate(ChangeResult<Voltage> result)
         {
             var windAzimuth = LookupWindDirection(result.New);
-            CompositeChangeResult<Azimuth> windChangeResult = new CompositeChangeResult<Azimuth>()
+            ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>()
             //WindVaneChangeResult windChangeResult = new WindVaneChangeResult()
             {
                 Old = this.LastRecordedWindAzimuth,
@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         /// <param name="windAzimuth"></param>
         //protected void RaiseUpdated(WindVaneChangeResult changeResult)
-        protected void RaiseUpdated(CompositeChangeResult<Azimuth> changeResult)
+        protected void RaiseUpdated(ChangeResult<Azimuth> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

@@ -30,14 +30,14 @@ namespace MeadowApp
             sensor = new Hih6130(Device.CreateI2cBus());
 
             // classic .NET
-            sensor.Updated += (object sender, CompositeChangeResult <Temperature, RelativeHumidity> result) => {
-                Console.WriteLine($"Temperature: {result.New?.Unit1.Celsius:N1}C, Humidity: {result.New?.Unit2:N1}%.");
+            sensor.Updated += (object sender, ChangeResult <(Temperature Temperature, RelativeHumidity Humidity)> result) => {
+                Console.WriteLine($"Temperature: {result.New.Temperature.Celsius:N1}C, Humidity: {result.New.Humidity:N1}%.");
             };
 
             // IObservable
             sensor.Subscribe(Hih6130.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Observer triggered; Temperature: {result.New?.Unit1.Celsius:N1}C, Humidity: {result.New?.Unit2:N1}%.");
+                    Console.WriteLine($"Observer triggered; Temperature: {result.New.Item1.Celsius:N1}C, Humidity: {result.New.Item2:N1}%.");
                 },
                 filter: null
                 ));

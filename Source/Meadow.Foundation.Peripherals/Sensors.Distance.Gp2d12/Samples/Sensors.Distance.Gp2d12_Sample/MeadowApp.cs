@@ -16,7 +16,7 @@ namespace MeadowApp
             sensor.DistanceUpdated += Sensor_DistanceUpdated;
         }
 
-        private void Sensor_DistanceUpdated(object sender, CompositeChangeResult<Meadow.Units.Length> e)
+        private void Sensor_DistanceUpdated(object sender, ChangeResult<Meadow.Units.Length> e)
         {
             Console.WriteLine($"Distance: {e.New.Centimeters}cm");
         }

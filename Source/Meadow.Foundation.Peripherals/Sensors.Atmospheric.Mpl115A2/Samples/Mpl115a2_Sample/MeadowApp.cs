@@ -43,15 +43,15 @@ namespace MeadowApp
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, CompositeChangeResult<Temperature, Pressure> result) => {
-                Console.WriteLine($"  Temperature: {result.New.Value.Unit1.Celsius:F1}°C");
-                Console.WriteLine($"  Pressure: {result.New.Value.Unit2.Pascal:F1}hpa");
+            sensor.Updated += (object sender, ChangeResult<(Temperature Temperature, Pressure Pressure)> result) => {
+                Console.WriteLine($"  Temperature: {result.New.Temperature.Celsius:F1}°C");
+                Console.WriteLine($"  Pressure: {result.New.Pressure.Pascal:F1}hpa");
             };
 
             //==== IObservable
             var consumer = Mpl115a2.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Observer triggered; new temp: {result.New.Value.Unit1.Celsius}, old: {result.Old.Value.Unit1.Celsius}");
+                    Console.WriteLine($"Observer triggered; new temp: {result.New.Item1.Celsius}, old: {result.Old?.Item1.Celsius}");
                 },
                 filter: result => {
                     return true;

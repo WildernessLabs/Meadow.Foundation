@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Light
     ///     Driver for the TSL2591 light-to-digital converter.
     /// </summary>
     public class Tsl2591 :
-        FilterableChangeObservable<CompositeChangeResult<Illuminance>, Illuminance>,
+        FilterableChangeObservableBase<ChangeResult<Illuminance>, Illuminance>,
         ILightSensor,
         IDisposable
     {
@@ -102,8 +102,8 @@ namespace Meadow.Foundation.Sensors.Light
         public bool IsSampling { get; private set; }
         public byte Address { get; private set; }
 
-        public event EventHandler<CompositeChangeResult<Illuminance>> Updated;
-        public event EventHandler<CompositeChangeResult<Illuminance>> LuminosityUpdated;
+        public event EventHandler<ChangeResult<Illuminance>> Updated;
+        public event EventHandler<ChangeResult<Illuminance>> LuminosityUpdated;
 
         /// <summary>
         /// Full spectrum luminosity (visible and infrared light combined).
@@ -205,7 +205,7 @@ namespace Meadow.Foundation.Sensors.Light
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 Illuminance oldConditions;
-                CompositeChangeResult<Illuminance> result;
+                ChangeResult<Illuminance> result;
                 Task.Factory.StartNew(async () =>
                 {
                     while (true)
@@ -222,7 +222,7 @@ namespace Meadow.Foundation.Sensors.Light
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Illuminance>(oldConditions, Illuminance);
+                        result = new ChangeResult<Illuminance>(oldConditions, Illuminance);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -234,7 +234,7 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Illuminance> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<Illuminance> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             LuminosityUpdated?.Invoke(this, changeResult);

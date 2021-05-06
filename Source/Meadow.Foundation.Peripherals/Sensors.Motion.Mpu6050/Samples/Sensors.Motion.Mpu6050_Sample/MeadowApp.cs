@@ -28,11 +28,11 @@ namespace Sensors.Motion.mpu5060_Sample
             }
         }
 
-        private void Mpu_Updated(object sender, CompositeChangeResult<Meadow.Units.Acceleration3d, Meadow.Units.AngularAcceleration3d> e)
+        private void Mpu_Updated(object sender, ChangeResult<(Meadow.Units.Acceleration3d Acceleration, Meadow.Units.AngularAcceleration3d AngularAcceleration)> e)
         {
-            Console.WriteLine($"X: {e.New.Value.Unit1.AccelerationX.MetersPerSecondSquared}, " +
-                $"Y: {e.New.Value.Unit1.AccelerationY.MetersPerSecondSquared}, " +
-                $"Z: {e.New.Value.Unit1.AccelerationZ.MetersPerSecondSquared}");
+            Console.WriteLine($"X: {e.New.Acceleration.AccelerationX.MetersPerSecondSquared}, " +
+                $"Y: {e.New.Acceleration.AccelerationY.MetersPerSecondSquared}, " +
+                $"Z: {e.New.Acceleration.AccelerationZ.MetersPerSecondSquared}");
         }
     }
 }

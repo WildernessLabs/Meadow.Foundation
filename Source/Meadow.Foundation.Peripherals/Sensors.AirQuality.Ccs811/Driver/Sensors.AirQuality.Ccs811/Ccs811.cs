@@ -12,15 +12,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Provide access to the CCS811 C02 and VOC Air Quality Sensor
     /// </summary>
     public class Ccs811 :
-        FilterableChangeObservableI2CPeripheral<CompositeChangeResult<Units.Concentration, Units.Concentration>, Units.Concentration, Units.Concentration>,
+        FilterableChangeObservableBaseI2CPeripheral<ChangeResult<Units.Concentration, Units.Concentration>, Units.Concentration, Units.Concentration>,
         ICO2Sensor, IVocSensor
     {
         // internal thread lock
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        public event EventHandler<CompositeChangeResult<Concentration>> CO2Updated = delegate { };
-        public event EventHandler<CompositeChangeResult<Concentration>> VOCUpdated = delegate { };
+        public event EventHandler<ChangeResult<Concentration>> CO2Updated = delegate { };
+        public event EventHandler<ChangeResult<Concentration>> VOCUpdated = delegate { };
 
         /// <summary>
         ///     Valid addresses for the sensor.
@@ -211,7 +211,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 (Concentration CO2, Concentration VOC) oldConditions;
-                CompositeChangeResult<Concentration, Concentration> result;
+                ChangeResult<Concentration, Concentration> result;
 
                 Task.Factory.StartNew(async () => {
                     while (true)
@@ -233,7 +233,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         Console.WriteLine($"VOC: {Conditions.VOC}");
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Concentration, Concentration>(oldConditions, Conditions);
+                        result = new ChangeResult<Concentration, Concentration>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -266,7 +266,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             });
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Concentration, Concentration> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<Concentration, Concentration> changeResult)
         {
 //            CO2Updated?.Invoke(this, changeResult);
 //            base.NotifyObservers(changeResult);
@@ -496,7 +496,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 (Units.Temperature Temperature, RelativeHumidity Humidity) oldConditions;
-                CompositeChangeResult<Units.Temperature, RelativeHumidity> result;
+                ChangeResult<Units.Temperature, RelativeHumidity> result;
 
                 Task.Factory.StartNew(async () => {
                     while (true) {
@@ -513,7 +513,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         Conditions = await Read();
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Units.Temperature, RelativeHumidity>(oldConditions, Conditions);
+                        result = new ChangeResult<Units.Temperature, RelativeHumidity>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -529,11 +529,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, RelativeHumidity> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<Units.Temperature, RelativeHumidity> changeResult)
         {
             Updated?.Invoke(this, changeResult);
-            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.New.Value.Unit1, changeResult.Old.Value.Unit1));
-            HumidityUpdated?.Invoke(this, new CompositeChangeResult<Units.RelativeHumidity>(changeResult.New.Value.Unit2, changeResult.Old.Value.Unit2));
+            TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Value.Unit1, changeResult.Old.Value.Unit1));
+            HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(changeResult.New.Value.Unit2, changeResult.Old.Value.Unit2));
             base.NotifyObservers(changeResult);
         }
 

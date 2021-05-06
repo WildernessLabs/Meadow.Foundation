@@ -12,13 +12,13 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor    
     /// </summary>
     public class Fc28 : 
-        FilterableChangeObservable<CompositeChangeResult<ScalarDouble>, ScalarDouble?>, 
+        FilterableChangeObservableBase<ChangeResult<double>, double>, 
         IMoistureSensor
     {
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
         /// </summary>        
-        public event EventHandler<CompositeChangeResult<ScalarDouble>> HumidityUpdated = delegate { };
+        public event EventHandler<ChangeResult<double>> HumidityUpdated = delegate { };
 
         // internal thread lock
         private object _lock = new object();
@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Last value read from the moisture sensor.
         /// </summary>
-        public ScalarDouble Moisture { get; private set; }
+        public double Moisture { get; private set; }
 
         /// <summary>
         /// Voltage value of most dry soil. Default of `0V`.
@@ -96,16 +96,16 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="sampleInterval">The interval, in milliseconds, between
         /// sample readings.</param>
         /// <returns></returns>
-        public async Task<CompositeChangeResult<ScalarDouble>> Read(int sampleCount = 10, int sampleInterval = 40)
+        public async Task<ChangeResult<double>> Read(int sampleCount = 10, int sampleInterval = 40)
         {
-            ScalarDouble previousMoisture = Moisture;
+            double previousMoisture = Moisture;
 
             DigitalPort.State = true;
             Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
             DigitalPort.State = false;
             
             Moisture = VoltageToMoisture(voltage);
-            return new CompositeChangeResult<ScalarDouble>(Moisture, previousMoisture);
+            return new ChangeResult<double>(Moisture, previousMoisture);
         }
 
         /// <summary>
@@ -136,8 +136,8 @@ namespace Meadow.Foundation.Sensors.Moisture
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                ScalarDouble oldConditions;
-                CompositeChangeResult<ScalarDouble> result;
+                double oldConditions;
+                ChangeResult<double> result;
                 Task.Factory.StartNew(async () => 
                 {
                     while (true) {
@@ -158,7 +158,7 @@ namespace Meadow.Foundation.Sensors.Moisture
                         await Read(sampleCount, sampleIntervalDuration);
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<ScalarDouble>(Moisture, oldConditions);
+                        result = new ChangeResult<double>(Moisture, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -188,20 +188,20 @@ namespace Meadow.Foundation.Sensors.Moisture
             }
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<ScalarDouble> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<double> changeResult)
         {
             HumidityUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
-        protected ScalarDouble VoltageToMoisture(Voltage voltage)
+        protected double VoltageToMoisture(Voltage voltage)
         {
             if (MinimumVoltageCalibration > MaximumVoltageCalibration) 
             {
-                return new ScalarDouble(1f - Map(voltage.Volts, MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0d, 1.0d));
+                return (1f - Map(voltage.Volts, MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0d, 1.0d));
             }
 
-            return new ScalarDouble(1f - Map(voltage.Volts, MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0d, 1.0d));
+            return (1f - Map(voltage.Volts, MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0d, 1.0d));
         }
 
         /// <summary>

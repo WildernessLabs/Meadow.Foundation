@@ -35,15 +35,15 @@ namespace MeadowApp
 
             //==== Events
             // classical .NET events can also be used:
-            htu21d.Updated += (object sender, CompositeChangeResult<Temperature, RelativeHumidity> result) => {
-                Console.WriteLine($"  Temperature: {result.New.Value.Unit1.Celsius:F1}°C");
-                Console.WriteLine($"  Relative Humidity: {result.New.Value.Unit2.Value:F1}%");
+            htu21d.Updated += (object sender, ChangeResult<(Temperature Temperature, RelativeHumidity Humidity)> result) => {
+                Console.WriteLine($"  Temperature: {result.New.Temperature.Celsius:F1}°C");
+                Console.WriteLine($"  Relative Humidity: {result.New.Humidity.Value:F1}%");
             };
 
             //==== IObservable
             var consumer = Htu21d.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Observer triggered; new temp: {result.New.Value.Unit1.Celsius}, old: {result.Old.Value.Unit1.Celsius}");
+                    Console.WriteLine($"Observer triggered; new temp: {result.New.Item1.Celsius}, old: {result.Old?.Item1.Celsius}");
                 },
                 filter: result => {
                     return true;

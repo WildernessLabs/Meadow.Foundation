@@ -17,14 +17,14 @@ namespace Displays.ePaper.IL91874V03_Sample
             Console.WriteLine("ePaper sample");
             Console.WriteLine("Create Spi bus");
 
-            var spiBus = Device.CreateSpiBus();// Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, 2000);
+            var spiBus = Device.CreateSpiBus(48000);// Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, 2000);
 
             Console.WriteLine("Create display driver instance");
             display = new Il91874V03(device: Device, spiBus: spiBus,
-                chipSelectPin: Device.Pins.D02,
-                dcPin: Device.Pins.D01,
-                resetPin: Device.Pins.D00,
-                busyPin: Device.Pins.D03,
+                chipSelectPin: Device.Pins.D12,
+                dcPin: Device.Pins.D13,
+                resetPin: Device.Pins.D14,
+                busyPin: Device.Pins.D15,
                 width: 176,
                 height: 264);
 

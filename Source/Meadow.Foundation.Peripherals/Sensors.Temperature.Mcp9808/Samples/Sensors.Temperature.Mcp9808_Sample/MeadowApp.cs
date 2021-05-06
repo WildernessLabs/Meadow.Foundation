@@ -26,14 +26,14 @@ namespace Sensors.Temperature.Mcp9808_Sample
                 handler: result =>
                 {
                     Console.WriteLine($"Temperature New Value { result.New.Celsius}");
-                    Console.WriteLine($"Temperature Old Value { result.Old.Celsius}");
-                    Console.WriteLine($"Temperature Delta Value { result.Delta.Celsius}");
+                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}");
+                    Console.WriteLine($"Temperature Delta Value { result.Delta?.Celsius}");
                 },
                 filter: null
             );
             mcp9808.Subscribe(consumer);
 
-            mcp9808.TemperatureUpdated += (object sender, CompositeChangeResult<Meadow.Units.Temperature> e) =>
+            mcp9808.TemperatureUpdated += (object sender, ChangeResult<Meadow.Units.Temperature> e) =>
             {
                 Console.WriteLine($"Moisture Updated: {e.New.Value}");
             };

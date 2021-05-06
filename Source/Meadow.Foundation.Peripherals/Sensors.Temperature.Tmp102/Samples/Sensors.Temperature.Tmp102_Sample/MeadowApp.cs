@@ -26,14 +26,14 @@ namespace Sensors.Temperature.Tmp102_Sample
                 handler: result =>
                 {
                     Console.WriteLine($"Temperature New Value { result.New.Celsius}");
-                    Console.WriteLine($"Temperature Old Value { result.Old.Celsius}");
-                    Console.WriteLine($"Temperature Delta Value { result.Delta.Celsius}");
+                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}");
+                    Console.WriteLine($"Temperature Delta Value { result.Delta?.Celsius}");
                 },
                 filter: null
             );
             tmp102.Subscribe(consumer);
 
-            tmp102.TemperatureUpdated += (object sender, CompositeChangeResult<Meadow.Units.Temperature> e) =>
+            tmp102.TemperatureUpdated += (object sender, ChangeResult<Meadow.Units.Temperature> e) =>
             {
                 Console.WriteLine($"Moisture Updated: {e.New.Value}");
             };
