@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// from the Bosch BME280 sensor.
     /// </remarks>
     public class Bme280 :
-        FilterableChangeObservable<ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>, (Units.Temperature, RelativeHumidity, Pressure)>,
+        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>, (Units.Temperature, RelativeHumidity, Pressure)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         /// <summary>
@@ -589,6 +589,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return bme280Comms.ReadRegisters((byte)Bme280Comms.Register.ChipID, 1).First();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        // Implementor Notes:
+        //  This is a convenience method that provides named tuple elements. It's not strictly
+        //  necessary, as the `FilterableChangeObservable` base c
         public static new
             FilterableChangeObserver<ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>, (Units.Temperature, RelativeHumidity, Pressure)>
             CreateObserver(
@@ -596,9 +605,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 Predicate<ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)>>? filter = null
             )
         {
-            //return new FilterableChangeObserver<T, U1>(
-            //    handler, filter);
-
             return new FilterableChangeObserver<ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>, (Units.Temperature, RelativeHumidity, Pressure)>(
                 handler: handler, filter: filter
                 );

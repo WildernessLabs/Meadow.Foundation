@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// 2-axis analog joystick
     /// </summary>
     public class AnalogJoystick
-        : FilterableChangeObservable<ChangeResult<JoystickPosition>, JoystickPosition>
+        : FilterableChangeObservableBase<ChangeResult<JoystickPosition>, JoystickPosition>
     {
         /// <summary>
         /// Raised when the value of the reading changes.
