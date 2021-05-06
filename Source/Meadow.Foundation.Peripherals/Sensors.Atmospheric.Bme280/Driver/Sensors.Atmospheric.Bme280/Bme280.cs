@@ -597,7 +597,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns></returns>
         // Implementor Notes:
         //  This is a convenience method that provides named tuple elements. It's not strictly
-        //  necessary, as the `FilterableChangeObservable` base c
+        //  necessary, as the `FilterableChangeObservableBase` class provides a default implementation,
+        //  but if you use it, then the parameters are named `Item1`, `Item2`, etc. instead of
+        //  `Temperature`, `Pressure`, etc.
         public static new
             FilterableChangeObserver<ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>, (Units.Temperature, RelativeHumidity, Pressure)>
             CreateObserver(
@@ -609,7 +611,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 handler: handler, filter: filter
                 );
         }
-
 
 
         public class Configuration
