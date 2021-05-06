@@ -210,17 +210,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) Conditions;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
-        /// </summary>
-        /// <remarks>
-        ///     This constructor is private to force the use of the constructor which defines the
-        ///     communication parameters for the sensor.
-        /// </remarks>
-        private Bme280()
-        {
-        }
-
-        /// <summary>
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
         /// </summary>
         /// <param name="i2c">I2C Bus to use for communicating with the sensor</param>
