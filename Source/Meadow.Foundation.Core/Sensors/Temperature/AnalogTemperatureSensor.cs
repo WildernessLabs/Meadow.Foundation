@@ -30,15 +30,13 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20                      0
     /// </remarks>
     public class AnalogTemperature :
-        //FilterableChangeObservable<CompositeChangeResult<Units.Temperature>, Units.Temperature?>,
-        //FilterableChangeObservable<CompositeChangeResult<(Units.Temperature, float foo)>, (Units.Temperature, float foo)>,
-        FilterableChangeObservable<CompositeChangeResult<Units.Temperature>, Units.Temperature>,
+        FilterableChangeObservable<ChangeResult<Units.Temperature>, Units.Temperature>,
         ITemperatureSensor
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
         ///     Calibration class for new sensor types.  This allows new sensors
@@ -189,7 +187,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                                                 
                         Temperature = newTemp; // save state
                         RaiseEventsAndNotify (
-                            new CompositeChangeResult<Units.Temperature>(newTemp, oldTemp)
+                            new ChangeResult<Units.Temperature>(newTemp, oldTemp)
                         );
                     }
                 )
@@ -205,7 +203,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        public async Task<CompositeChangeResult<Units.Temperature>> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
+        public async Task<ChangeResult<Units.Temperature>> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
             // grab the old temp and store it in a temp var
             Units.Temperature? oldTemp = Temperature;
@@ -217,7 +215,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             var newTemp = VoltageToTemperature(voltage);
             Temperature = newTemp;
             
-            return new CompositeChangeResult<Units.Temperature>(newTemp, oldTemp);
+            return new ChangeResult<Units.Temperature>(newTemp, oldTemp);
         }
 
         /// <summary>
@@ -250,7 +248,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             AnalogInputPort.StopSampling();
         }
 
-        protected void RaiseEventsAndNotify(CompositeChangeResult<Units.Temperature> changeResult)
+        protected void RaiseEventsAndNotify(ChangeResult<Units.Temperature> changeResult)
         {
             TemperatureUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

@@ -11,12 +11,12 @@ namespace Meadow.Foundation.Sensors.Hid
     /// 2-axis analog joystick
     /// </summary>
     public class AnalogJoystick
-        : FilterableChangeObservable<CompositeChangeResult<JoystickPosition>, JoystickPosition>
+        : FilterableChangeObservable<ChangeResult<JoystickPosition>, JoystickPosition>
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<CompositeChangeResult<JoystickPosition>> Updated = delegate { };
+        public event EventHandler<ChangeResult<JoystickPosition>> Updated = delegate { };
 
         #region Properties
 
@@ -111,7 +111,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
                         RaiseEventsAndNotify
                         (
-                            new CompositeChangeResult<JoystickPosition>(
+                            new ChangeResult<JoystickPosition>(
                                 new JoystickPosition(newH, v),
                                 oldPosition
                                 )
@@ -143,7 +143,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
                         RaiseEventsAndNotify
                         (
-                            new CompositeChangeResult<JoystickPosition>(
+                            new ChangeResult<JoystickPosition>(
                                 new JoystickPosition(h, newV),
                                 oldPosition
                             )
@@ -244,7 +244,7 @@ namespace Meadow.Foundation.Sensors.Hid
             VerticalInputPort.StopSampling();
         }
 
-        protected void RaiseEventsAndNotify(CompositeChangeResult<JoystickPosition> changeResult)
+        protected void RaiseEventsAndNotify(ChangeResult<JoystickPosition> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

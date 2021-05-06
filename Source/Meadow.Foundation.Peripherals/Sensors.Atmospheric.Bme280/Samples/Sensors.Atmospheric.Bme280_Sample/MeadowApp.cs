@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Hardware;
 using Meadow.Units;
@@ -39,9 +37,10 @@ namespace Sensors.Atmospheric.BME280_Sample
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree, and humidty by 5%.
             // (blowing hot breath on the sensor should trigger)
+
             var consumer = Bme280.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {result.New.Value.Unit1.Celsius}, old: {result.Old.Value.Unit1.Celsius}");
+                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {result.New.Temperature.Celsius}, old: {result.Old?.Temperature.Celsius}");
                 },
                 filter: result => {
                     return true;
@@ -53,13 +52,12 @@ namespace Sensors.Atmospheric.BME280_Sample
                 } );
             bme280.Subscribe(consumer);
 
-
             //==== Events
             // classical .NET events can also be used:
-            bme280.Updated += (object sender, CompositeChangeResult<Temperature, RelativeHumidity, Pressure> e) => {
-                Console.WriteLine($"  Temperature: {e.New.Value.Unit1.Celsius}°C");
-                Console.WriteLine($"  Relative Humidity: {e.New.Value.Unit2.Value}%");
-                Console.WriteLine($"  Pressure: {e.New.Value.Unit3.Pascal}hPa");
+            bme280.Updated += (object sender, ChangeResult<(Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)> e) => {
+                Console.WriteLine($"  Temperature: {e.New.Temperature.Celsius:N2}°C");
+                Console.WriteLine($"  Relative Humidity: {e.New.Humidity:N1}%");
+                Console.WriteLine($"  Pressure: {e.New.Pressure.Pascal:N1}hPa");
             };
 
             // just for funsies.

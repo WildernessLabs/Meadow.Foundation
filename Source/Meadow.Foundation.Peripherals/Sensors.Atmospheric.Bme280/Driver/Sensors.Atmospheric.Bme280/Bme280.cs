@@ -16,15 +16,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// from the Bosch BME280 sensor.
     /// </remarks>
     public class Bme280 :
-        FilterableChangeObservable<CompositeChangeResult<Units.Temperature, RelativeHumidity, Pressure>, Units.Temperature, RelativeHumidity, Pressure>,
+        FilterableChangeObservable<ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>, (Units.Temperature, RelativeHumidity, Pressure)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         /// <summary>
         /// </summary>
-        public event EventHandler<CompositeChangeResult<Units.Temperature, RelativeHumidity, Pressure>> Updated = delegate { };
-        public event EventHandler<CompositeChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<CompositeChangeResult<Pressure>> PressureUpdated = delegate { };
-        public event EventHandler<CompositeChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)>> Updated = delegate { };
+        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<ChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<ChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         ///// <summary>
         /////     Minimum value that should be used for the polling frequency.
@@ -194,18 +194,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
-        public Units.Temperature Temperature => Conditions.Temperature;
+        public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
         /// The pressure, in hectopascals (hPa), from the last reading. 1 hPa
         /// is equal to one millibar, or 1/10th of a kilopascal (kPa)/centibar.
         /// </summary>
-        public Pressure Pressure => Conditions.Pressure;
+        public Pressure? Pressure => Conditions.Pressure;
 
         /// <summary>
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
-        public RelativeHumidity Humidity => Conditions.Humidity;
+        public RelativeHumidity? Humidity => Conditions.Humidity;
 
         public (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) Conditions;
 
@@ -314,7 +314,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) oldConditions;
 
-                CompositeChangeResult<Units.Temperature, RelativeHumidity, Pressure> result;
+                ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)> result;
 
                 Task.Factory.StartNew(async () => {
                     while (true) {
@@ -330,7 +330,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         await Read(temperatureSampleCount, pressureSampleCount, humiditySampleCount);
 
                         // build a new result with the old and new conditions
-                        result = new CompositeChangeResult<Units.Temperature, RelativeHumidity, Pressure>(oldConditions, Conditions);
+                        result = new ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -342,12 +342,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(CompositeChangeResult<Units.Temperature, RelativeHumidity, Pressure> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
-            TemperatureUpdated?.Invoke(this, new CompositeChangeResult<Units.Temperature>(changeResult.New.Value.Unit1, changeResult.Old.Value.Unit1));
-            HumidityUpdated?.Invoke(this, new CompositeChangeResult<Units.RelativeHumidity>(changeResult.New.Value.Unit2, changeResult.Old.Value.Unit2));
-            PressureUpdated?.Invoke(this, new CompositeChangeResult<Units.Pressure>(changeResult.New.Value.Unit3, changeResult.Old.Value.Unit3));
+            TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));
+            HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(changeResult.New.Humidity, changeResult.Old?.Humidity));
+            PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(changeResult.New.Pressure, changeResult.Old?.Pressure));
             base.NotifyObservers(changeResult);
         }
 
@@ -587,6 +587,21 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public byte GetChipID()
         {
             return bme280Comms.ReadRegisters((byte)Bme280Comms.Register.ChipID, 1).First();
+        }
+
+        public static new
+            FilterableChangeObserver<ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>, (Units.Temperature, RelativeHumidity, Pressure)>
+            CreateObserver(
+                Action<ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)>> handler,
+                Predicate<ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)>>? filter = null
+            )
+        {
+            //return new FilterableChangeObserver<T, U1>(
+            //    handler, filter);
+
+            return new FilterableChangeObserver<ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>, (Units.Temperature, RelativeHumidity, Pressure)>(
+                handler: handler, filter: filter
+                );
         }
 
 

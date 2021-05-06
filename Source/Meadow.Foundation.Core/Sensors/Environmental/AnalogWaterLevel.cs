@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Environmental
 {
     public class AnalogWaterLevel
-        //: FilterableChangeObservableBase<FloatChangeResult, float>
-        : FilterableChangeObservable<CompositeChangeResult<float>, float>
+        : FilterableChangeObservable<ChangeResult<float>, float>
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<CompositeChangeResult<float>> Updated = delegate { };
+        public event EventHandler<ChangeResult<float>> Updated = delegate { };
 
         /// <summary>
         ///     Calibration class for new sensor types.  This allows new sensors
@@ -101,7 +100,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                         WaterLevel = newWaterLevel; // save state
 
                         RaiseEventsAndNotify(
-                            new CompositeChangeResult<float>(newWaterLevel, oldWaterLevel)
+                            new ChangeResult<float>(newWaterLevel, oldWaterLevel)
                         );
                     }
                 )
@@ -159,7 +158,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             AnalogInputPort.StopSampling();
         }
 
-        protected void RaiseEventsAndNotify(CompositeChangeResult<float> changeResult)
+        protected void RaiseEventsAndNotify(ChangeResult<float> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
