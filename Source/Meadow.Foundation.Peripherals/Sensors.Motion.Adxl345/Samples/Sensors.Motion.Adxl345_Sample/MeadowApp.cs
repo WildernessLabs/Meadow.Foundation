@@ -22,7 +22,7 @@ namespace MeadowApp
 
             var observer = Adxl345.CreateObserver(e =>
             {
-                Console.WriteLine($"X: {e.New.AccelerationX.Gravity}g, Y: {e.New.AccelerationY.Gravity}g, Z: {e.New.AccelerationZ.Gravity}g");
+                Console.WriteLine($"X: {e.New.X.Gravity}g, Y: {e.New.Y.Gravity}g, Z: {e.New.Z.Gravity}g");
             });
 
             sensor.Subscribe(observer);
@@ -34,7 +34,7 @@ namespace MeadowApp
 
         private void Sensor_Updated(object sender, ChangeResult<Meadow.Units.Acceleration3d> e)
         {
-            Console.WriteLine($"X: {e.New.AccelerationX}, Y: {e.New.AccelerationY}, Z: {e.New.AccelerationZ}");
+            Console.WriteLine($"X: {e.New.X}, Y: {e.New.Y}, Z: {e.New.Z}");
         }
     }
 }

@@ -147,7 +147,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         await Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<Acceleration3d>(oldConditions, Acceleration3d);
+                        result = new ChangeResult<Acceleration3d>(Acceleration3d, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -191,9 +191,11 @@ namespace Meadow.Foundation.Sensors.Motion
             var y = await _yPort.Read();
             var z = await _zPort.Read();
 
-            Acceleration3d.AccelerationX = new Acceleration((x.Volts - _zeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity);
-            Acceleration3d.AccelerationY = new Acceleration((y.Volts - _zeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity);
-            Acceleration3d.AccelerationZ = new Acceleration((z.Volts - _zeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity);
+            Acceleration3d = new Acceleration3d(
+                new Acceleration((x.Volts - _zeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
+                new Acceleration((y.Volts - _zeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
+                new Acceleration((z.Volts - _zeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity)
+                );
         }
 
         /// <summary>

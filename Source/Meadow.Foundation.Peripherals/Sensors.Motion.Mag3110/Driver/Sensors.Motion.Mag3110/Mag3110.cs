@@ -227,7 +227,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<MagneticField3d>(oldConditions, MagneticField3d);
+                        result = new ChangeResult<MagneticField3d>(MagneticField3d, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -256,9 +256,11 @@ namespace Meadow.Foundation.Sensors.Motion
             i2cPeripheral.WriteRegister(Registers.Control1, controlRegister);
             var data = i2cPeripheral.ReadRegisters(Registers.XMSB, 6);
 
-            MagneticField3d.MagneticFieldX = new MagneticField((short)((data[0] << 8) | data[1]), MagneticField.UnitType.MicroTesla);
-            MagneticField3d.MagneticFieldY = new MagneticField((short)((data[2] << 8) | data[3]), MagneticField.UnitType.MicroTesla);
-            MagneticField3d.MagneticFieldZ = new MagneticField((short)((data[4] << 8) | data[5]), MagneticField.UnitType.MicroTesla);
+            MagneticField3d = new MagneticField3d(
+                new MagneticField((short)((data[0] << 8) | data[1]), MagneticField.UnitType.MicroTesla),
+                new MagneticField((short)((data[2] << 8) | data[3]), MagneticField.UnitType.MicroTesla),
+                new MagneticField((short)((data[4] << 8) | data[5]), MagneticField.UnitType.MicroTesla)
+                );
         }
 
         /// <summary>

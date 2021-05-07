@@ -278,9 +278,9 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 var a_scale = (1 << AccelerometerScale) / AccelScaleBase;
                 var g_scale = (1 << GyroScale) / GyroScaleBase;
-                Conditions.Acceleration3d.AccelerationX = new Acceleration(ScaleAndOffset(data, 0, a_scale));
-                Conditions.Acceleration3d.AccelerationY = new Acceleration(ScaleAndOffset(data, 2, a_scale));
-                Conditions.Acceleration3d.AccelerationZ = new Acceleration(ScaleAndOffset (data, 4, a_scale));
+                Conditions.Acceleration3d.X = new Acceleration(ScaleAndOffset(data, 0, a_scale));
+                Conditions.Acceleration3d.Y = new Acceleration(ScaleAndOffset(data, 2, a_scale));
+                Conditions.Acceleration3d.Z = new Acceleration(ScaleAndOffset (data, 4, a_scale));
                 _temperature = new Units.Temperature(ScaleAndOffset(data, 6, 1 / 340f, 36.53f), Units.Temperature.UnitType.Celsius);
                 Conditions.AngularAcceleration3d.AccelerationX = new AngularAcceleration(ScaleAndOffset(data, 8, g_scale));
                 Conditions.AngularAcceleration3d.AccelerationY = new AngularAcceleration(ScaleAndOffset(data, 10, g_scale));

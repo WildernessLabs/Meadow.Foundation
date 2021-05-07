@@ -212,7 +212,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<Acceleration3d>(oldConditions, Acceleration3d);
+                        result = new ChangeResult<Acceleration3d>(Acceleration3d, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -347,9 +347,11 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Update()
         {
             var data = adxl345.ReadRegisters(Registers.X0, 6);
-            Acceleration3d.AccelerationX = new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[0] + (data[1] << 8)), Acceleration.UnitType.MetersPerSecondSquared);
-            Acceleration3d.AccelerationY = new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[2] + (data[3] << 8)), Acceleration.UnitType.MetersPerSecondSquared);
-            Acceleration3d.AccelerationZ = new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[4] + (data[5] << 8)), Acceleration.UnitType.MetersPerSecondSquared);
+            Acceleration3d = new Acceleration3d(
+                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[0] + (data[1] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
+                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[2] + (data[3] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
+                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[4] + (data[5] << 8)), Acceleration.UnitType.MetersPerSecondSquared)
+                );
         }
 
         /// <summary>
