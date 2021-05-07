@@ -39,7 +39,7 @@ namespace Sensors.Atmospheric.BME280_Sample
             // (blowing hot breath on the sensor should trigger)
             var consumer = Bme280.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {result.New.Temperature.Celsius}, old: {result.Old?.Temperature.Celsius}");
+                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {result.New.Temperature?.Celsius}, old: {result.Old?.Temperature?.Celsius}");
                 },
                 filter: result => {
                     return true;
@@ -53,10 +53,10 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             //==== Events
             // classical .NET events can also be used:
-            bme280.Updated += (object sender, ChangeResult<(Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)> e) => {
-                Console.WriteLine($"  Temperature: {e.New.Temperature.Celsius:N2}°C");
+            bme280.Updated += (object sender, ChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> e) => {
+                Console.WriteLine($"  Temperature: {e.New.Temperature?.Celsius:N2}°C");
                 Console.WriteLine($"  Relative Humidity: {e.New.Humidity:N1}%");
-                Console.WriteLine($"  Pressure: {e.New.Pressure.Pascal:N1}hPa");
+                Console.WriteLine($"  Pressure: {e.New.Pressure?.Pascal:N1}hPa");
             };
 
             // just for funsies.

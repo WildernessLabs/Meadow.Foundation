@@ -16,12 +16,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// from the Bosch BME280 sensor.
     /// </remarks>
     public class Bme280 :
-        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>, (Units.Temperature, RelativeHumidity, Pressure)>,
+        FilterableChangeObservableBase<ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)>, (Units.Temperature?, RelativeHumidity?, Pressure?)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         /// <summary>
         /// </summary>
-        public event EventHandler<ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)>> Updated = delegate { };
+        public event EventHandler<ChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>> Updated = delegate { };
         public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<ChangeResult<Pressure>> PressureUpdated = delegate { };
         public event EventHandler<ChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
@@ -207,7 +207,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
-        public (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) Conditions;
+        public (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) Conditions;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
@@ -249,7 +249,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="temperatureSampleCount">The number of sample readings to take. 
         /// Must be greater than 0. These samples are automatically averaged.</param>
-        public async Task<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)> Read(
+        public async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> Read(
             Oversample temperatureSampleCount = Oversample.OversampleX8,
             Oversample pressureSampleCount = Oversample.OversampleX8,
             Oversample humiditySampleCount = Oversample.OversampleX8)
@@ -301,9 +301,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) oldConditions;
+                (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) oldConditions;
 
-                ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)> result;
+                ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)> result;
 
                 Task.Factory.StartNew(async () => {
                     while (true) {
@@ -319,7 +319,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         await Read(temperatureSampleCount, pressureSampleCount, humiditySampleCount);
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>(oldConditions, Conditions);
+                        result = new ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)>(Conditions, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -331,12 +331,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
-            TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));
-            HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(changeResult.New.Humidity, changeResult.Old?.Humidity));
-            PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(changeResult.New.Pressure, changeResult.Old?.Pressure));
+            if (changeResult.New.Temperature is { } temp) {
+                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+            }
+            if (changeResult.New.Humidity is { } humidity) {
+                HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
+            }
+            if (changeResult.New.Pressure is { } pressure) {
+                PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
+            }
             base.NotifyObservers(changeResult);
         }
 
@@ -590,13 +596,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         //  but if you use it, then the parameters are named `Item1`, `Item2`, etc. instead of
         //  `Temperature`, `Pressure`, etc.
         public static new
-            FilterableChangeObserver<ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>, (Units.Temperature, RelativeHumidity, Pressure)>
+            FilterableChangeObserver<ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)>, (Units.Temperature?, RelativeHumidity?, Pressure?)>
             CreateObserver(
-                Action<ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)>> handler,
-                Predicate<ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)>>? filter = null
+                Action<ChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>> handler,
+                Predicate<ChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>>? filter = null
             )
         {
-            return new FilterableChangeObserver<ChangeResult<(Units.Temperature, RelativeHumidity, Pressure)>, (Units.Temperature, RelativeHumidity, Pressure)>(
+            return new FilterableChangeObserver<ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)>, (Units.Temperature?, RelativeHumidity?, Pressure?)>(
                 handler: handler, filter: filter
                 );
         }
