@@ -12,16 +12,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// temperature and humidity sensors.
     /// </summary>
     public class Si70xx :
-        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, RelativeHumidity)>, (Units.Temperature, RelativeHumidity)>,
+        FilterableChangeObservableBase<(Units.Temperature, RelativeHumidity)>,
         ITemperatureSensor, IHumiditySensor
-    //FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-    //IAtmosphericSensor//, ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
         /// </summary>
-        public event EventHandler<ChangeResult<(Units.Temperature, RelativeHumidity)>> Updated = delegate { };
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<ChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<(Units.Temperature, RelativeHumidity)>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
         /// Gets a value indicating whether the sensor is currently in a sampling
@@ -260,7 +258,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));

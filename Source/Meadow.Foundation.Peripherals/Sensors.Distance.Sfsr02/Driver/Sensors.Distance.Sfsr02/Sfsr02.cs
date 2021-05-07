@@ -10,15 +10,15 @@ namespace Meadow.Foundation.Sensors.Distance
     /// Sfsr02 Distance Sensor
     /// </summary>
     public class Sfsr02:
-        FilterableChangeObservableBase<ChangeResult<Length>, Length>, 
+        FilterableChangeObservableBase<Length>, 
         IRangeFinder
     {
 
 		/// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
-        public event EventHandler<ChangeResult<Length>> DistanceUpdated;
-        public event EventHandler<ChangeResult<Length>> Updated;
+        public event EventHandler<IChangeResult<Length>> DistanceUpdated;
+        public event EventHandler<IChangeResult<Length>> Updated;
 
         /// <summary>
         /// Returns current distance

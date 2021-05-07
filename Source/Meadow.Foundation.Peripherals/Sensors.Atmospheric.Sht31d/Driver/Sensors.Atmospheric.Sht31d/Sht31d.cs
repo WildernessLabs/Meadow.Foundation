@@ -15,9 +15,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Readings from the sensor are made in Single-shot mode.
     /// </remarks>
     public class Sht31d :
-        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, RelativeHumidity)>, (Units.Temperature, RelativeHumidity)>,
+        FilterableChangeObservableBase<(Units.Temperature, RelativeHumidity)>,
         ITemperatureSensor, IHumiditySensor
     {
+        public event EventHandler<IChangeResult<(Units.Temperature, RelativeHumidity)>> Updated;
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated;
+
         /// <summary>
         ///     SH31D sensor communicates using I2C.
         /// </summary>
@@ -48,10 +52,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
-
-        public event EventHandler<ChangeResult<(Units.Temperature, RelativeHumidity)>> Updated;
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated;
-        public event EventHandler<ChangeResult<RelativeHumidity>> HumidityUpdated;
 
         /// <summary>
         ///     Create a new SHT31D object.
@@ -115,7 +115,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             HumidityUpdated?.Invoke(this, new ChangeResult<RelativeHumidity>(changeResult.New.Humidity, changeResult.Old?.Humidity));

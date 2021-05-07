@@ -12,46 +12,6 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
     {
         Mpl3115a2 sensor;
 
-        //public MeadowApp()
-        //{
-        //    Console.WriteLine("Initializing...");
-
-        //    // configure our BME280 on the I2C Bus
-        //    var i2c = Device.CreateI2cBus();
-        //    sensor = new Mpl3115a2(i2c);
-
-        //    // Example that uses an IObersvable subscription to only be notified
-        //    // when the temperature changes by at least a degree, and humidty by 5%.
-        //    // (blowing hot breath on the sensor should trigger)
-        //    sensor.Subscribe(new FilterableChangeObserver<AtmosphericConditionChangeResult, AtmosphericConditions>(
-        //        h => {
-        //            Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New.Temperature}, old: {h.Old.Temperature}");
-        //        },
-        //        e =>
-        //        {
-        //            return
-        //            (
-        //                (Math.Abs(e.Delta.Temperature.Value) > 1) &&
-        //                (Math.Abs(e.Delta.Pressure.Value) > 5)
-        //            );
-        //        }
-        //    ));
-
-        //    // classical .NET events can also be used:
-        //    sensor.Updated += (object sender, AtmosphericConditionChangeResult e) =>
-        //    {
-        //        Console.WriteLine($"Temperature: {e.New.Temperature}C, Pressure: {e.New.Pressure}hPa");
-        //    }; 
-
-        //    // get an initial reading
-        //    ReadConditions().Wait();
-
-        //    Console.WriteLine("Begin updates");
-
-        //    // start updating continuously
-        //    sensor.StartUpdating();
-        //}
-
         public MeadowApp()
         {
             Initialize();
@@ -79,7 +39,7 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, ChangeResult<(Temperature Temperature, Pressure Pressure)> result) => {
+            sensor.Updated += (object sender, IChangeResult<(Temperature Temperature, Pressure Pressure)> result) => {
                 Console.WriteLine($"  Temperature: {result.New.Temperature.Celsius:F1}°C");
                 Console.WriteLine($"  Pressure: {result.New.Pressure.Pascal:F1}hpa");
             };

@@ -12,9 +12,32 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
     /// a DHT temperature and Humidity sensor.
     /// </summary>
     public abstract class DhtBase : 
-        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, RelativeHumidity)>, (Units.Temperature, RelativeHumidity)>,
+        FilterableChangeObservableBase<(Units.Temperature, RelativeHumidity)>,
         ITemperatureSensor, IHumiditySensor
     {
+        //==== events
+        public event EventHandler<IChangeResult<(Units.Temperature, RelativeHumidity)>> Updated;
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated;
+
+        //==== internals
+        private readonly BusType protocol;
+        private int lastMeasurement = 0;
+
+        // TODO: move into another file? `DhtBase.BusType.cs`?
+        private enum BusType
+        {
+            I2C,
+            OneWire,
+        }
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+
+        //==== properties
+
         /// <summary>
         ///     DHT12 sensor object.
         /// </summary>
@@ -24,10 +47,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// Read buffer
         /// </summary>
         protected byte[] readBuffer = new byte[5];
-
-        private readonly BusType protocol;
-
-        private int lastMeasurement = 0;
 
         /// <summary>
         /// The temperature
@@ -52,20 +71,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// How last read went, <c>true</c> for success, <c>false</c> for failure
         /// </summary>
         public bool WasLastReadSuccessful { get; internal set; }
-        
-        private enum BusType
-        {
-            I2C,
-            OneWire,
-        }
-
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        public event EventHandler<ChangeResult<(Units.Temperature, RelativeHumidity)>> Updated;
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated;
-        public event EventHandler<ChangeResult<RelativeHumidity>> HumidityUpdated;
 
         /// <summary>
         /// Create a DHT sensor through I2C (Only DHT12)
@@ -196,7 +201,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             HumidityUpdated?.Invoke(this, new ChangeResult<RelativeHumidity>(changeResult.New.Humidity, changeResult.Old?.Humidity));

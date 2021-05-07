@@ -13,9 +13,13 @@ namespace Meadow.Foundation.Sensors.Motion
     /// Driver for the ADXL362 triple axis accelerometer.
     /// </summary>
     public class Adxl362 :
-        FilterableChangeObservableBase<ChangeResult<Acceleration3d>, Acceleration3d>,
+        FilterableChangeObservableBase<Acceleration3d>,
         IAccelerometer
     {
+        //==== events
+        public event EventHandler<IChangeResult<Acceleration3d>> Updated;
+        public event EventHandler<IChangeResult<Acceleration3d>> Acceleration3dUpdated;
+
         /// <summary>
         /// ADXL362 sensor object.
         /// </summary>
@@ -30,6 +34,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Digital Input port attached to interrupt pin 2 on the ADXL362.
         /// </summary>
         private IDigitalInputPort _digitalInputPort2;
+
+        //TODO: move these classes out into their own files like `Adxl362.Commands.cs`
+        // also, make sure plural is consistent. `Commands`, not `Command`.
 
         /// <summary>
         /// Command byte (first byte in any communication).
@@ -717,9 +724,6 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        public event EventHandler<ChangeResult<Acceleration3d>> Updated;
-        public event EventHandler<ChangeResult<Acceleration3d>> Acceleration3dUpdated;
-
         /// <summary>
         /// Create a new ADXL362 object using the specified SPI module.
         /// </summary>
@@ -795,7 +799,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<Acceleration3d> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Acceleration3d> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             Acceleration3dUpdated?.Invoke(this, changeResult);

@@ -35,7 +35,7 @@ namespace MeadowApp
             anemometer = new SwitchingAnemometer(Device, Device.Pins.A01);
 
             //==== classic events example
-            anemometer.WindSpeedUpdated += (object sender, ChangeResult<Speed> e) =>
+            anemometer.WindSpeedUpdated += (object sender, IChangeResult<Speed> e) =>
             {
                 Console.WriteLine($"new speed: {e.New.KilometersPerHour:n1}kmh, old: {e.Old?.KilometersPerHour:n1}kmh");
                 OutputWindSpeed(e.New);
@@ -69,18 +69,13 @@ namespace MeadowApp
         void OutputWindSpeed(Speed windspeed)
         {
             // `0.0` - `10kmh`
-            int r = (int)Map(windspeed.KilometersPerHour, 0f, 10f, 0f, 255f);
-            int b = (int)Map(windspeed.KilometersPerHour, 0f, 10f, 255f, 0f);
+            int r = (int)windspeed.KilometersPerHour.Map(0f, 10f, 0f, 255f);
+            int b = (int)windspeed.KilometersPerHour.Map(0f, 10f, 255f, 0f);
 
             //Console.WriteLine($"r: {r}, b: {b}");
 
             var wspeedColor = Color.FromRgb(r, 0, b);
             onboardLed.SetColor(wspeedColor);
-        }
-
-        double Map(double value, double fromSource, float toSource, float fromTarget, float toTarget)
-        {
-            return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
         }
     }
 }

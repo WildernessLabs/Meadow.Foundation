@@ -29,7 +29,7 @@ namespace AdafruitMPRLSSensorExample
             PressureSensor.Updated += PressureSensor_Updated;
         }
 
-        private void PressureSensor_Updated(object sender, ChangeResult<Meadow.Units.Pressure> result)
+        private void PressureSensor_Updated(object sender, IChangeResult<Meadow.Units.Pressure> result)
         {
             Console.WriteLine($"New pressure PSI: {result.New.Psi}, Old pressure PSI: {result.Old?.Psi}");
 

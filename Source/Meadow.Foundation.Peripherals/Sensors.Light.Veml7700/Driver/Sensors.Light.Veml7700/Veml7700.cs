@@ -11,10 +11,24 @@ namespace Meadow.Foundation.Sensors.Light
     /// High Accuracy Ambient Light Sensor 
     /// </summary>
     public class Veml7700 :
-        FilterableChangeObservableBase<ChangeResult<Illuminance>, Illuminance>,
+        FilterableChangeObservableBase<Illuminance>,
         ILightSensor, 
         IDisposable
     {
+        //==== events
+        public event EventHandler<IChangeResult<Illuminance>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
+
+        //==== internals
+        private ushort _config;
+        private II2cBus Device { get; set; }
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+        //==== properties
+
+        // TODo: move these enums into their own files e.g. `Veml7700.Addresses.cs`
         /// <summary>
         ///     Valid addresses for the sensor.
         /// </summary>
@@ -24,6 +38,7 @@ namespace Meadow.Foundation.Sensors.Light
             Default = Address0
         }
 
+        // TODO: rename to `LightSensorType`
         public enum LightSensor
         {
             Ambient,
@@ -41,21 +56,10 @@ namespace Meadow.Foundation.Sensors.Light
             White = 0x05,
             AlsInt = 0x06
         }
-
-        private ushort _config;
-
-        private II2cBus Device { get; set; }
         /// <summary>
         /// Luminosity reading from the TSL2561 sensor.
         /// </summary>
         public Illuminance Illuminance { get; protected set; }
-
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        public event EventHandler<ChangeResult<Illuminance>> Updated;
-        public event EventHandler<ChangeResult<Illuminance>> LuminosityUpdated;
 
         public int ChangeThreshold { get; set; }
         public byte Address { get; private set; }
@@ -199,7 +203,7 @@ namespace Meadow.Foundation.Sensors.Light
             }      
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<Illuminance> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Illuminance> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             LuminosityUpdated?.Invoke(this, changeResult);

@@ -11,10 +11,41 @@ namespace Meadow.Foundation.Sensors.Light
     ///     Driver for the TSL2591 light-to-digital converter.
     /// </summary>
     public class Tsl2591 :
-        FilterableChangeObservableBase<ChangeResult<Illuminance>, Illuminance>,
+        FilterableChangeObservableBase<Illuminance>,
         ILightSensor,
         IDisposable
     {
+        //==== events
+        public event EventHandler<IChangeResult<Illuminance>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
+
+        // TODO: delete this after doing next todo.
+        public delegate void ValueChangedHandler(int previousValue, int newValue);
+        // TODO: should these be EventHandler<IChangeResult<int>>??
+        public event ValueChangedHandler Channel0Changed = delegate { };
+        public event ValueChangedHandler Channel1Changed = delegate { };
+
+        //==== internals
+        private int _ch0;
+        private int _ch1;
+        private int? _lastCh0;
+        private int? _lastCh1;
+        private TimeSpan _samplePeriod;
+        private IntegrationTimes _integrationTime;
+        private GainFactor _gain;
+
+        private II2cBus i2cBus { get; set; }
+        private object SyncRoot { get; } = new object();
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+
+        //==== properties
+
+        // TODO: move these into their own files, e.g. `Tsl2591.Addresses.cs`
+        // TODO: standardize pluarls. e.g. `Register` -> `Registers`
+
         /// <summary>
         ///     Valid addresses for the sensor.
         /// </summary>
@@ -77,33 +108,10 @@ namespace Meadow.Foundation.Sensors.Light
             Aien = 0x10,
             Npien = 0x80
         }
-
-        public delegate void ValueChangedHandler(int previousValue, int newValue);
-
-        public event ValueChangedHandler Channel0Changed;
-        public event ValueChangedHandler Channel1Changed;
-
-        private int _ch0;
-        private int _ch1;
-        private int? _lastCh0;
-        private int? _lastCh1;
-        private TimeSpan _samplePeriod;
-        private IntegrationTimes _integrationTime;
-        private GainFactor _gain;
-
-        private II2cBus i2cBus { get; set; }
-        private object SyncRoot { get; } = new object();
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
         public int ChangeThreshold { get; set; }
 
         public bool IsSampling { get; private set; }
         public byte Address { get; private set; }
-
-        public event EventHandler<ChangeResult<Illuminance>> Updated;
-        public event EventHandler<ChangeResult<Illuminance>> LuminosityUpdated;
 
         /// <summary>
         /// Full spectrum luminosity (visible and infrared light combined).
@@ -234,7 +242,7 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<Illuminance> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Illuminance> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             LuminosityUpdated?.Invoke(this, changeResult);

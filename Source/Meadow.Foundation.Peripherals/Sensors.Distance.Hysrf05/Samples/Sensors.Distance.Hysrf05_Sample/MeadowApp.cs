@@ -24,7 +24,7 @@ namespace Sensors.Distance.HYSRF05_Sample
             }
         }
 
-        private void HYSRF05_DistanceUpdated(object sender, ChangeResult<Meadow.Units.Length> e)
+        private void HYSRF05_DistanceUpdated(object sender, IChangeResult<Meadow.Units.Length> e)
         {
             Console.WriteLine($"Distance is {e.New.Centimeters}cm");
         }

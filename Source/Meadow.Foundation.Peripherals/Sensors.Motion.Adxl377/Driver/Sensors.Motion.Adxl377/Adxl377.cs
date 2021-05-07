@@ -13,9 +13,20 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     +/- 200g
     /// </summary>
     public class Adxl377 :
-        FilterableChangeObservableBase<ChangeResult<Acceleration3d>, Acceleration3d>,
+        FilterableChangeObservableBase<Acceleration3d>,
         IAccelerometer
     {
+        //==== events
+        public event EventHandler<IChangeResult<Acceleration3d>> Updated;
+        public event EventHandler<IChangeResult<Acceleration3d>> Acceleration3dUpdated;
+
+        //==== internals
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+        //==== properties
+
         /// <summary>
         /// Minimum value that can be used for the update interval when the
         /// sensor is being configured to generate interrupts.
@@ -65,19 +76,12 @@ namespace Meadow.Foundation.Sensors.Motion
 
         public Acceleration3d Acceleration3d { get; protected set; } = new Acceleration3d();
 
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
         /// sampling the ADC. Call StartSampling() to spin up the sampling process.
         /// </summary>
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
-
-        public event EventHandler<ChangeResult<Acceleration3d>> Updated;
-        public event EventHandler<ChangeResult<Acceleration3d>> Acceleration3dUpdated;
 
         /// <summary>
         ///     Create a new ADXL337 sensor object.
@@ -159,7 +163,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<Acceleration3d> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Acceleration3d> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             Acceleration3dUpdated?.Invoke(this, changeResult);

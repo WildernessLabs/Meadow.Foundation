@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     public class Mpu6050 :
-        FilterableChangeObservableBase<ChangeResult<(Acceleration3d, AngularAcceleration3d)>, (Acceleration3d, AngularAcceleration3d)>,
+        FilterableChangeObservableBase<(Acceleration3d, AngularAcceleration3d)>,
         IAccelerometer, IAngularAccelerometer, IDisposable
     {
         /// <summary>
@@ -39,9 +39,9 @@ namespace Meadow.Foundation.Sensors.Motion
             GyroZ = 0x47
         }
 
-        public event EventHandler<ChangeResult<(Acceleration3d, AngularAcceleration3d)>> Updated;
-        public event EventHandler<ChangeResult<Acceleration3d>> Acceleration3dUpdated;
-        public event EventHandler<ChangeResult<AngularAcceleration3d>> AngularAcceleration3dUpdated;
+        public event EventHandler<IChangeResult<(Acceleration3d, AngularAcceleration3d)>> Updated;
+        public event EventHandler<IChangeResult<Acceleration3d>> Acceleration3dUpdated;
+        public event EventHandler<IChangeResult<AngularAcceleration3d>> AngularAcceleration3dUpdated;
 
         /*
         /// <summary>
@@ -187,7 +187,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<(Acceleration3d, AngularAcceleration3d)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Acceleration3d, AngularAcceleration3d)> changeResult)
         {
             AngularAcceleration3dUpdated?.Invoke(this, new ChangeResult<AngularAcceleration3d>(changeResult.Old.Value.Item2, changeResult.New.Item2));
             Acceleration3dUpdated?.Invoke(this, new ChangeResult<Acceleration3d>(changeResult.Old.Value.Item1, changeResult.New.Item1));

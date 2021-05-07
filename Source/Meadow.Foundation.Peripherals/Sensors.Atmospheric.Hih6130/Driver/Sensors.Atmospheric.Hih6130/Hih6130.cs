@@ -12,14 +12,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// a HIH6130 temperature and Humidity sensor.
     /// </summary>
     public class Hih6130 :
-        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, RelativeHumidity)>, (Units.Temperature, RelativeHumidity)>,
+        FilterableChangeObservableBase<(Units.Temperature, RelativeHumidity)>,
         ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
         /// </summary>
-        public event EventHandler<ChangeResult<(Units.Temperature, RelativeHumidity)>> Updated = delegate { };
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<ChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<(Units.Temperature, RelativeHumidity)>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
         ///     HIH6130 sensor object.
@@ -119,7 +119,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));

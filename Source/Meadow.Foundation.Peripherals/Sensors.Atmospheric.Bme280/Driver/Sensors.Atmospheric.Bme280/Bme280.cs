@@ -16,21 +16,27 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// from the Bosch BME280 sensor.
     /// </remarks>
     public class Bme280 :
-        FilterableChangeObservableBase<ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)>, (Units.Temperature?, RelativeHumidity?, Pressure?)>,
+        FilterableChangeObservableBase<(Units.Temperature?, RelativeHumidity?, Pressure?)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
+        //==== events
         /// <summary>
         /// </summary>
-        public event EventHandler<ChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>> Updated = delegate { };
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<ChangeResult<Pressure>> PressureUpdated = delegate { };
-        public event EventHandler<ChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
+        //==== internals
+
+        //==== properties
         ///// <summary>
         /////     Minimum value that should be used for the polling frequency.
         ///// </summary>
         //public const ushort MinimumPollingPeriod = 100;
 
+
+        // TODO: move these enums into their own files, e.g. `Bme280.ChipType.cs`
         public enum ChipType : byte
         {
             BMP = 0x58,
@@ -331,7 +337,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             if (changeResult.New.Temperature is { } temp) {
@@ -596,13 +602,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         //  but if you use it, then the parameters are named `Item1`, `Item2`, etc. instead of
         //  `Temperature`, `Pressure`, etc.
         public static new
-            FilterableChangeObserver<ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)>, (Units.Temperature?, RelativeHumidity?, Pressure?)>
+            FilterableChangeObserver<(Units.Temperature?, RelativeHumidity?, Pressure?)>
             CreateObserver(
-                Action<ChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>> handler,
-                Predicate<ChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>>? filter = null
+                Action<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>> handler,
+                Predicate<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>>? filter = null
             )
         {
-            return new FilterableChangeObserver<ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)>, (Units.Temperature?, RelativeHumidity?, Pressure?)>(
+            return new FilterableChangeObserver<(Units.Temperature?, RelativeHumidity?, Pressure?)>(
                 handler: handler, filter: filter
                 );
         }

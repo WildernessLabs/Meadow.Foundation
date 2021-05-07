@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP102 Temperature sensor object.
     /// </summary>    
     public class Tmp102 :
-        FilterableChangeObservableBase<ChangeResult<Units.Temperature>, Units.Temperature>,
+        FilterableChangeObservableBase<Units.Temperature>,
         ITemperatureSensor
     {
         /// <summary>
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
         ///     Create a new TMP102 object using the default configuration for the sensor.
@@ -175,7 +175,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             Temperature = new Units.Temperature((float)(sensorReading * 0.0625), Units.Temperature.UnitType.Celsius);            
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<Units.Temperature> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Units.Temperature> changeResult)
         {
             TemperatureUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

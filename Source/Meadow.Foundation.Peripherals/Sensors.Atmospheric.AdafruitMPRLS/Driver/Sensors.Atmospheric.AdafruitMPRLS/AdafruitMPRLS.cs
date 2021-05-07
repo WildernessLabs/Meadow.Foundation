@@ -14,9 +14,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Device datasheets also available here: https://sensing.honeywell.com/micropressure-mpr-series
     /// </summary>
     public class AdafruitMPRLS :
-        FilterableChangeObservableBase<ChangeResult<Pressure>, Pressure>,
+        FilterableChangeObservableBase<Pressure>,
         IBarometricPressureSensor
     {
+        //==== events
+        public event EventHandler<IChangeResult<Pressure>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+
+        //==== internals
         private readonly II2cPeripheral i2cPeripheral;
 
         //Defined in section 6.6.1 of the datasheet.
@@ -24,6 +29,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private object _lock = new object();
         private CancellationTokenSource samplingTokenSource;
 
+        private int psiMin => 0;
+        private int psiMax => 25;
+
+        private Pressure? oldConditions { get; set; }
+
+        //This value is set by the manufacturer and can't be changed.
+        public const byte Address = 0x18;
+
+        //==== properties
         /// <summary>
         /// Indicates that the sensor is in use.
         /// </summary>
@@ -52,20 +66,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         //Tells us that the sensor has reached its pressure limit.
         public bool InternalMathSaturated { get; set; }
 
-        private int psiMin => 0;
-        private int psiMax => 25;
-
-        private Pressure? oldConditions { get; set; }
-
-        //This value is set by the manufacturer and can't be changed.
-        public const byte Address = 0x18;
-
         public Pressure? Pressure { get; set; } = new Pressure(0);
 
-        public event EventHandler<ChangeResult<Pressure>> Updated;
-        public event EventHandler<ChangeResult<Pressure>> PressureUpdated;
 
-        protected void RaiseChangedAndNotify(ChangeResult<Pressure> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Pressure> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             PressureUpdated?.Invoke(this, changeResult);

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     public class Mag3110:
-        FilterableChangeObservableBase<ChangeResult<MagneticField3d>, MagneticField3d>
+        FilterableChangeObservableBase<MagneticField3d>
        // IMagnetometer
     {
         /// <summary>
@@ -50,8 +50,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        public event EventHandler<ChangeResult<MagneticField3d>> Updated;
-        public event EventHandler<ChangeResult<MagneticField3d>> MagneticField3dUpdated;
+        public event EventHandler<IChangeResult<MagneticField3d>> Updated;
+        public event EventHandler<IChangeResult<MagneticField3d>> MagneticField3dUpdated;
 
         /// <summary>
         /// MAG3110 object.
@@ -239,7 +239,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<MagneticField3d> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<MagneticField3d> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             MagneticField3dUpdated?.Invoke(this, changeResult);

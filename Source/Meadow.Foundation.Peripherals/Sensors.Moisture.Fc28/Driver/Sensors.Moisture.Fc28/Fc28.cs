@@ -12,13 +12,13 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor    
     /// </summary>
     public class Fc28 : 
-        FilterableChangeObservableBase<ChangeResult<double>, double>, 
+        FilterableChangeObservableBase<double>, 
         IMoistureSensor
     {
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
         /// </summary>        
-        public event EventHandler<ChangeResult<double>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<double>> HumidityUpdated = delegate { };
 
         // internal thread lock
         private object _lock = new object();
@@ -188,7 +188,7 @@ namespace Meadow.Foundation.Sensors.Moisture
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<double> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<double> changeResult)
         {
             HumidityUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
@@ -198,24 +198,10 @@ namespace Meadow.Foundation.Sensors.Moisture
         {
             if (MinimumVoltageCalibration > MaximumVoltageCalibration) 
             {
-                return (1f - Map(voltage.Volts, MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0d, 1.0d));
+                return (1f - voltage.Volts.Map(MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0d, 1.0d));
             }
 
-            return (1f - Map(voltage.Volts, MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0d, 1.0d));
-        }
-
-        /// <summary>
-        /// Re-maps a value from one range (fromLow - fromHigh) to another (toLow - toHigh).
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="fromLow"></param>
-        /// <param name="fromHigh"></param>
-        /// <param name="toLow"></param>
-        /// <param name="toHigh"></param>
-        /// <returns></returns>
-        protected double Map(double value, double fromLow, double fromHigh, double toLow, double toHigh)
-        {
-            return (((toHigh - toLow) * (value - fromLow)) / (fromHigh - fromLow)) - toLow;
+            return (1f - voltage.Volts.Map(MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0d, 1.0d));
         }
     }
 }

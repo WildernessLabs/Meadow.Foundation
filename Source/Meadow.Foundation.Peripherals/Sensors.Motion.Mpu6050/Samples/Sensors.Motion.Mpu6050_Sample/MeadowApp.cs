@@ -28,7 +28,7 @@ namespace Sensors.Motion.mpu5060_Sample
             }
         }
 
-        private void Mpu_Updated(object sender, ChangeResult<(Meadow.Units.Acceleration3d Acceleration, Meadow.Units.AngularAcceleration3d AngularAcceleration)> e)
+        private void Mpu_Updated(object sender, IChangeResult<(Meadow.Units.Acceleration3d Acceleration, Meadow.Units.AngularAcceleration3d AngularAcceleration)> e)
         {
             Console.WriteLine($"X: {e.New.Acceleration.X.MetersPerSecondSquared}, " +
                 $"Y: {e.New.Acceleration.Y.MetersPerSecondSquared}, " +

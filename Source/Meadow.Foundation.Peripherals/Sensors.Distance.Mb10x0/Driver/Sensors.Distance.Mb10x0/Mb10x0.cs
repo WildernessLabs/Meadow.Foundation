@@ -5,13 +5,13 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
+    // TODO: why is `DistanceUpdated` never invoked? is this sensor done?
     public class Mb10x0 :
-        FilterableChangeObservableBase<ChangeResult<Length>, Length>,
+        FilterableChangeObservableBase<Length>,
         IRangeFinder
-
     {
         //==== events
-        public event EventHandler<ChangeResult<Length>> DistanceUpdated = delegate { };
+        public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
 
         //==== internals
         ISerialPort serialPort;

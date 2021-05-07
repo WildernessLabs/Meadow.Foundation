@@ -30,7 +30,7 @@ namespace MeadowApp
             sensor = new Hih6130(Device.CreateI2cBus());
 
             // classic .NET
-            sensor.Updated += (object sender, ChangeResult <(Temperature Temperature, RelativeHumidity Humidity)> result) => {
+            sensor.Updated += (object sender, IChangeResult <(Temperature Temperature, RelativeHumidity Humidity)> result) => {
                 Console.WriteLine($"Temperature: {result.New.Temperature.Celsius:N1}C, Humidity: {result.New.Humidity:N1}%.");
             };
 

@@ -8,15 +8,17 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public class Mpl115a2 :
-        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, Pressure)>, (Units.Temperature, Pressure)>,
+        FilterableChangeObservableBase<(Units.Temperature, Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
         /// <summary>
         /// </summary>
-        public event EventHandler<ChangeResult<(Units.Temperature, Pressure)>> Updated = delegate { };
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<ChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<IChangeResult<(Units.Temperature, Pressure)>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
+
+        // TODO: move this into an `Mpl115a2.Registers.cs` file.
         /// <summary>
         ///     Device registers.
         /// </summary>
@@ -189,7 +191,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, Pressure Pressure)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature Temperature, Pressure Pressure)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));

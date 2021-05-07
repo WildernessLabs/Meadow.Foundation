@@ -22,7 +22,7 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
 
             // Example that uses an IObersvable subscription to only be notified
             // when the level changes by at least 0.1cm
-            analogWaterLevel.Subscribe(new FilterableChangeObserver<ChangeResult<float>, float>(
+            analogWaterLevel.Subscribe(AnalogWaterLevel.CreateObserver(
                 h => Console.WriteLine($"Water level changed by 10 mm; new: {h.New}, old: {h.Old}"),
                 // TODO: revisit this
                 null //e => { return Math.Abs(e.Delta) > 0.1f; }

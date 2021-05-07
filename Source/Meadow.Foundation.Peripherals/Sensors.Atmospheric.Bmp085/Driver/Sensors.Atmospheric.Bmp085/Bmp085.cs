@@ -12,21 +12,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Bosch BMP085 digital pressure and temperature sensor.
     /// </summary>
     public class Bmp085 : 
-        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, Pressure)>, (Units.Temperature, Pressure)>,
+        FilterableChangeObservableBase<(Units.Temperature, Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
-        /// <summary>
-        /// Last value read from the Pressure sensor.
-        /// </summary>
-        public Units.Temperature? Temperature => Conditions.Temperature;
+        //==== Events
+        public event EventHandler<IChangeResult<(Units.Temperature, Pressure)>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
-        /// <summary>
-        /// Last value read from the Pressure sensor.
-        /// </summary>
-        public Pressure? Pressure => Conditions.Pressure;
-
-        public (Units.Temperature Temperature, Pressure Pressure) Conditions;
-
+        //==== Internals
         /// <summary>
         ///     BMP085 sensor communicates using I2C.
         /// </summary>
@@ -56,6 +50,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
+        //==== properties
+        /// <summary>
+        /// Last value read from the Pressure sensor.
+        /// </summary>
+        public Units.Temperature? Temperature => Conditions.Temperature;
+
+        /// <summary>
+        /// Last value read from the Pressure sensor.
+        /// </summary>
+        public Pressure? Pressure => Conditions.Pressure;
+
+        public (Units.Temperature Temperature, Pressure Pressure) Conditions;
+
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
         /// sampling the ADC. Call StartSampling() to spin up the sampling process.
@@ -72,10 +79,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             HighResolution = 2,
             UltraHighResolution = 3
         }
-
-        public event EventHandler<ChangeResult<(Units.Temperature, Pressure)>> Updated = delegate { };
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<ChangeResult<Pressure>> PressureUpdated = delegate { };
 
         /// <summary>
         /// Provide a mechanism for reading the temperature and humidity from
@@ -150,7 +153,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, Pressure Pressure)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature Temperature, Pressure Pressure)> changeResult)
         {
             TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));
             PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(changeResult.New.Pressure, changeResult.Old?.Pressure));

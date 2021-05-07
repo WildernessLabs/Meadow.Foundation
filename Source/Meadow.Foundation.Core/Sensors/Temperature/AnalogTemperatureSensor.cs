@@ -30,13 +30,13 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20                      0
     /// </remarks>
     public class AnalogTemperature :
-        FilterableChangeObservableBase<ChangeResult<Units.Temperature>, Units.Temperature>,
+        FilterableChangeObservableBase<Units.Temperature>,
         ITemperatureSensor
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
         ///     Calibration class for new sensor types.  This allows new sensors

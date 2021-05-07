@@ -21,15 +21,17 @@ namespace Sensors.Atmospheric.Bmp085_Sample
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree, and humidty by 5%.
             // (blowing hot breath on the sensor should trigger)
-            var observer = Bmp085.CreateObserver(h =>
-            {
-                Console.WriteLine($"Temp and pressure changed by threshold; new temp: {h.New.Item1}, old: {h.Old?.Item1}");
-            },
-                e =>
-                {
-                    return ((Math.Abs(e.Delta.Value.Item1.Value) > 1) &&
-                            (Math.Abs(e.Delta.Value.Item2.Value) > 5));
-                });
+            var observer = Bmp085.CreateObserver(
+                handler: result => {
+                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {result.New.Item1}, old: {result.Old?.Item1}");
+                },
+                filter: null
+                //result =>
+                //{
+                //    return ((Math.Abs(result.Delta.Value.Item1.Value) > 1) &&
+                //            (Math.Abs(result.Delta.Value.Item2.Value) > 5));
+                //}
+                );
 
 
             bmp085.Subscribe(observer);
@@ -43,7 +45,7 @@ namespace Sensors.Atmospheric.Bmp085_Sample
             bmp085.StartUpdating();
         }
 
-        private void Bmp085_Updated(object sender, ChangeResult<(Meadow.Units.Temperature Temperature, Meadow.Units.Pressure Pressure)> e)
+        private void Bmp085_Updated(object sender, IChangeResult<(Meadow.Units.Temperature Temperature, Meadow.Units.Pressure Pressure)> e)
         {
             Console.WriteLine($"Temperature: {e.New.Temperature.Celsius}°C, Pressure: {e.New.Pressure.Pascal}Pa");
         }

@@ -10,13 +10,13 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// Capacitive Soil Moisture Sensor
     /// </summary>
     public class Capacitive :
-        FilterableChangeObservableBase<ChangeResult<double>, double>,
+        FilterableChangeObservableBase<double>,
         IMoistureSensor
     {
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
         /// </summary>        
-        public event EventHandler<ChangeResult<double>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<double>> HumidityUpdated = delegate { };
 
         // internal thread lock
         object _lock = new object();
@@ -148,7 +148,7 @@ namespace Meadow.Foundation.Sensors.Moisture
             AnalogInputPort.StopSampling();
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<double> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<double> changeResult)
         {
             HumidityUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
@@ -157,24 +157,10 @@ namespace Meadow.Foundation.Sensors.Moisture
         protected double VoltageToMoisture(Voltage voltage)
         {
             if (MinimumVoltageCalibration > MaximumVoltageCalibration) {
-                return (1f - Map(voltage.Volts, MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0f, 1.0f));
+                return (1f - voltage.Volts.Map(MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0f, 1.0f));
             }
 
-            return (1f - Map(voltage.Volts, MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0f, 1.0f));
-        }
-
-        /// <summary>
-        /// Re-maps a value from one range (fromLow - fromHigh) to another (toLow - toHigh).
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="fromLow"></param>
-        /// <param name="fromHigh"></param>
-        /// <param name="toLow"></param>
-        /// <param name="toHigh"></param>
-        /// <returns></returns>
-        protected double Map(double value, double fromLow, double fromHigh, double toLow, double toHigh)
-        {
-            return (((toHigh - toLow) * (value - fromLow)) / (fromHigh - fromLow)) - toLow;
+            return (1f - voltage.Volts.Map(MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0f, 1.0f));
         }
     }
 }

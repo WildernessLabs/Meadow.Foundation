@@ -7,13 +7,19 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Light
 {
     public class Temt6000 :
-        FilterableChangeObservableBase<ChangeResult<Voltage>, Voltage>
+        FilterableChangeObservableBase<Voltage>
     {
-        public Voltage Voltage { get; protected set; } = new Voltage(0);
+        //==== events
+        public event EventHandler<IChangeResult<Voltage>> Updated;
 
+        //==== internals
         // internal thread lock
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
+
+        //==== properties
+
+        public Voltage Voltage { get; protected set; } = new Voltage(0);
 
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
@@ -21,8 +27,6 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
-
-        public event EventHandler<ChangeResult<Voltage>> Updated;
 
         /// <summary>
         /// Analog port connected to the sensor.
@@ -97,15 +101,15 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<Voltage> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Voltage> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
-        ///// <summary>
-        ///// Stops sampling the acceleration.
-        ///// </summary>
+        /// <summary>
+        /// Stops sampling the acceleration.
+        /// </summary>
         public void StopUpdating()
         {
             lock (_lock)

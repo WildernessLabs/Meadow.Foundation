@@ -29,8 +29,8 @@ namespace Sensors.Moisture.Capacitive_Sample
                 {
                     Console.WriteLine($"Subscribed - " +
                         $"new: {result.New}, " +
-                        $"old: {result.Old.Value}, " +
-                        $"delta: {result.Delta.Value}");
+                        $"old: {result.Old.Value}"); //+
+                        //$"delta: {result.Delta.Value}");
                 },
                 filter: null
             );
@@ -38,9 +38,9 @@ namespace Sensors.Moisture.Capacitive_Sample
 
             //==== Classic Events
             // classical .NET events can also be used:
-            capacitive.HumidityUpdated += (object sender, ChangeResult<double> e) =>
+            capacitive.HumidityUpdated += (object sender, IChangeResult<double> e) =>
             {
-                Console.WriteLine($"Updated - New: {e.New}, Old: {e.Old.Value}, Delta: {e.Delta.Value}");
+                Console.WriteLine($"Updated - New: {e.New}, Old: {e.Old.Value}");
             };
 
             // Get an initial reading.

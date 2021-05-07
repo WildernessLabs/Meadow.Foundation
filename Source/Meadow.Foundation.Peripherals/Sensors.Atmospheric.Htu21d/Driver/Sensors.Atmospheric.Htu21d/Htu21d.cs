@@ -12,13 +12,34 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// temperature and humidity sensors
     /// </summary>
     public class Htu21d :
-        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, RelativeHumidity)>, (Units.Temperature, RelativeHumidity)>,
+        FilterableChangeObservableBase<(Units.Temperature, RelativeHumidity)>,
         ITemperatureSensor, IHumiditySensor
     {
-        public event EventHandler<ChangeResult<(Units.Temperature, RelativeHumidity)>> Updated = delegate { };
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<ChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        //==== Events
+        public event EventHandler<IChangeResult<(Units.Temperature, RelativeHumidity)>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
+        //==== internals
+
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+        private const byte TEMPERATURE_MEASURE_NOHOLD = 0xF3;
+        private const byte HUMDITY_MEASURE_NOHOLD = 0xF5;
+        private const byte TEMPERATURE_MEASURE_HOLD = 0xE3;
+        private const byte HUMDITY_MEASURE_HOLD = 0xE5;
+        private const byte TEMPERATURE_MEASURE_PREVIOUS = 0xE0;
+
+        private const byte WRITE_USER_REGISTER = 0xE6;
+        private const byte READ_USER_REGISTER = 0xE7;
+        private const byte READ_HEATER_REGISTER = 0x11;
+        private const byte WRITE_HEATER_REGISTER = 0x51;
+        private const byte SOFT_RESET = 0x0F;
+
+
+        //==== propertires
         /// <summary>
         /// Gets a value indicating whether the sensor is currently in a sampling
         /// loop. Call StartSampling() to spin up the sampling process.
@@ -57,22 +78,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// HTD21D(F) is an I2C device.
         /// </summary>
         protected readonly II2cPeripheral htu21d;
-
-		// internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        private const byte TEMPERATURE_MEASURE_NOHOLD = 0xF3;
-        private const byte HUMDITY_MEASURE_NOHOLD = 0xF5;
-        private const byte TEMPERATURE_MEASURE_HOLD = 0xE3;
-        private const byte HUMDITY_MEASURE_HOLD = 0xE5;
-        private const byte TEMPERATURE_MEASURE_PREVIOUS = 0xE0;
-
-        private const byte WRITE_USER_REGISTER = 0xE6;
-        private const byte READ_USER_REGISTER = 0xE7;
-        private const byte READ_HEATER_REGISTER = 0x11;
-        private const byte WRITE_HEATER_REGISTER = 0x51;
-        private const byte SOFT_RESET = 0x0F;
 
         /// <summary>
         /// Resolution of sensor data
@@ -204,7 +209,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, RelativeHumidity Huidity)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature Temperature, RelativeHumidity Huidity)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));

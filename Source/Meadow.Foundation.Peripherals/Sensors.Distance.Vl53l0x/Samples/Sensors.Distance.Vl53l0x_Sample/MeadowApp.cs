@@ -1,11 +1,9 @@
-﻿using Meadow;
+﻿using System;
+using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
 using Meadow.Hardware;
 using Meadow.Units;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Sensors.Distance.Vl53l0x_Sample
 {
@@ -21,7 +19,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
             sensor.StartUpdating();
         }
 
-        private void Sensor_Updated(object sender, ChangeResult<Length> result)
+        private void Sensor_Updated(object sender, IChangeResult<Length> result)
         {
             if (result.New == null) {
                 return;

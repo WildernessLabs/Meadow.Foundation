@@ -26,7 +26,7 @@ namespace Sensors.Distance.SFSR02_Sample
             }
         }
 
-        private void SFSR02_DistanceUpdated(object sender, ChangeResult<Meadow.Units.Length> e)
+        private void SFSR02_DistanceUpdated(object sender, IChangeResult<Meadow.Units.Length> e)
         {
             Console.WriteLine($"{e.New.Centimeters}cm");
         }

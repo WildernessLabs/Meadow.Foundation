@@ -43,7 +43,7 @@ namespace Sensors.Atmospheric.Bmp180_Sample
             bmp180.StartUpdating();
         }
 
-        private void Bmp180_Updated(object sender, ChangeResult<(Meadow.Units.Temperature Temperature, Meadow.Units.Pressure Pressure)> result)
+        private void Bmp180_Updated(object sender, IChangeResult<(Meadow.Units.Temperature Temperature, Meadow.Units.Pressure Pressure)> result)
         {
             Console.WriteLine($"Temperature: {result.New.Temperature.Celsius}°C, Pressure: {result.New.Pressure.Pascal}Pa");
         }

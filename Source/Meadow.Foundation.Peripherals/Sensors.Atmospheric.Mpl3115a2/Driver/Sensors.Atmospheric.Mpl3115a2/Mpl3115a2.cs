@@ -11,14 +11,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     ///     Driver for the MPL3115A2 pressure and humidity sensor.
     /// </summary>
     public class Mpl3115a2 :
-        FilterableChangeObservableBase<ChangeResult<(Units.Temperature, Pressure)>, (Units.Temperature, Pressure)>,
+        FilterableChangeObservableBase<(Units.Temperature, Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
         /// <summary>
         /// </summary>
-        public event EventHandler<ChangeResult<(Units.Temperature, Pressure)>> Updated = delegate { };
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        public event EventHandler<ChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<IChangeResult<(Units.Temperature, Pressure)>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
         /// <summary>
         ///     Object used to communicate with the sensor.
@@ -180,7 +180,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(ChangeResult<(Units.Temperature Temperature, Pressure Pressure)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature Temperature, Pressure Pressure)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));
@@ -345,6 +345,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             public static readonly byte TemperatureOffset = 0x2c;
             public static readonly byte AltitudeOffset = 0x2d;
         }
+
+        // TODO: move these into their own files, e.g. `Mpl3115a2.ControlRegisterBits.cs`
 
         /// <summary>
         ///     Byte values for the various masks in the control registers.

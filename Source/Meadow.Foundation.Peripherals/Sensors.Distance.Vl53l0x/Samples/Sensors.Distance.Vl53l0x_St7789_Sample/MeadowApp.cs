@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Distance;
 using Meadow.Hardware;
 using Meadow.Units;
@@ -57,7 +55,7 @@ namespace Sensors.Distance.Vl53l0x_St7789_Sample
             Console.WriteLine("Init complete");
         }
 
-        private void Sensor_Updated(object sender, ChangeResult<Length> result)
+        private void Sensor_Updated(object sender, IChangeResult<Length> result)
         {
             if(result.New == null) {   
                 return;   

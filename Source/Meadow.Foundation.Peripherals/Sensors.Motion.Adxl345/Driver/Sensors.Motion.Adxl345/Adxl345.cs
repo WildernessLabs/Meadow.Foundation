@@ -13,9 +13,13 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     +/- 16g
     /// </summary>
     public class Adxl345 :
-        FilterableChangeObservableBase<ChangeResult<Acceleration3d>, Acceleration3d>,
+        FilterableChangeObservableBase<Acceleration3d>,
         IAccelerometer
     {
+        //==== events
+        public event EventHandler<IChangeResult<Acceleration3d>> Updated;
+        public event EventHandler<IChangeResult<Acceleration3d>> Acceleration3dUpdated;
+
         /// <summary>
         /// Minimum value that can be used for the update interval when the
         /// sensor is being configured to generate interrupts.
@@ -107,9 +111,6 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
-
-        public event EventHandler<ChangeResult<Acceleration3d>> Updated;
-        public event EventHandler<ChangeResult<Acceleration3d>> Acceleration3dUpdated;
 
         /// <summary>
         ///     Values stored in this register are automatically added to the X reading.
@@ -224,7 +225,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<Acceleration3d> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Acceleration3d> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             Acceleration3dUpdated?.Invoke(this, changeResult);

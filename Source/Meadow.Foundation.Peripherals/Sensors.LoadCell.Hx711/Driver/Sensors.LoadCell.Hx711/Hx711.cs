@@ -9,9 +9,13 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
     public class Hx711 : 
-        FilterableChangeObservableBase<ChangeResult<Mass>, Mass>,
+        FilterableChangeObservableBase<Mass>,
         IDisposable
     {
+        //==== events
+
+        //==== internals
+        // TODO: move into `Hx711.AdcGainOptions.cs` and rename
         public enum AdcGain
         {
             Gain128 = 1,
@@ -39,6 +43,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private object syncRoot { get; } = new object();
 
+
+        //==== properties
         public bool IsDisposed { get; private set; }
         public bool IsSleeping { get; private set; }
         public AdcGain Gain { get; private set; } = AdcGain.Gain128;

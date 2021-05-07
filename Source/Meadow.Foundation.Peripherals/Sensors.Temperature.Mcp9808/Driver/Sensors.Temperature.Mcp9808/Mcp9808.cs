@@ -7,9 +7,18 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Temperature
 {
     public class Mcp9808 :
-        FilterableChangeObservableBase<ChangeResult<Units.Temperature>, Units.Temperature>,
+        FilterableChangeObservableBase<Units.Temperature>,
         ITemperatureSensor
     {
+        //==== events
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+
+        //==== internals
+        // internal thread lock
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+
+        // TODO: move these into an `Mcp9808.Commands.cs` class?
         const ushort MCP_CONFIG_SHUTDOWN = 0x0100;   // shutdown config
         const ushort MCP_CONFIG_CRITLOCKED = 0x0080; // critical trip lock
         const ushort MCP_CONFIG_WINLOCKED = 0x0040; // alarm window lock
@@ -31,18 +40,14 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         II2cPeripheral i2CPeripheral;
 
-        public const byte DefaultAddress = 0x18;
 
-        public event EventHandler<ChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        //==== properties
+        public const byte DefaultAddress = 0x18;
 
         // <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
-
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
 
         public bool IsSampling { get; protected set; } = false;
 
@@ -215,7 +220,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             Temperature = new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius);
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<Units.Temperature> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Units.Temperature> changeResult)
         {
             TemperatureUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

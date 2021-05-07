@@ -11,9 +11,14 @@ namespace Meadow.Foundation.Sensors.Light
     /// Driver for the TSL2561 light-to-digital converter.
     /// </summary>
     public class Tsl2561:
-        FilterableChangeObservableBase<ChangeResult<Illuminance>, Illuminance>,
+        FilterableChangeObservableBase<Illuminance>,
         ILightSensor
     {
+        //==== events
+        public event EventHandler<IChangeResult<Illuminance>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
+
+        //==== internals
         /// <summary>
         /// The command bit in the Command Register.
         /// See page 13 of the datasheet.
@@ -36,10 +41,46 @@ namespace Meadow.Foundation.Sensors.Light
         private const byte WordModeBit = 0x20;
 
         /// <summary>
+        /// TSL2561 register locations.
+        /// See Register Set on page 12 and Command Register on page 13 of the datasheet.
+        /// </summary>
+        /// <remarks>
+        /// All of the register numbers have 0x80 added to the register.  When reading
+        /// or witing to a register the application must set the CMD bit in the command
+        /// register (see page 13) and the register address is written into the lower
+        /// four bits of the Command Register.
+        /// </remarks>
+        private static class Registers
+        {
+            public static readonly byte Control = 0x80;
+            public static readonly byte Timing = 0x81;
+            public static readonly byte ThresholdLow = 0x82;
+            public static readonly byte ThresholdHigh = 0x84;
+            public static readonly byte InterruptControl = 0x86;
+            public static readonly byte ID = 0x8a;
+            public static readonly byte Data0 = 0x8c;
+            public static readonly byte Data1 = 0x8e;
+        }
+
+        /// <summary>
+        /// GPIO pin on that is connected to the interrupt pin on the TSL2561.
+        /// </summary>
+        private IDigitalInputPort _interruptPin;
+
+        /// <summary>
+        /// Update interval in milliseconds
+        /// </summary>
+        private readonly ushort updateInterval = 100;
+
+
+        //==== properties
+        /// <summary>
         /// Minimum value that should be used for the polling frequency.
         /// </summary>
         public const ushort MinimumPollingPeriod = 100;
-        
+
+
+        // TODO: move these enums into their own files, e.g. `Tsl2561.Addresses.cs`
         /// <summary>
         /// Valid addresses for the sensor.
         /// </summary>
@@ -89,38 +130,6 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// TSL2561 register locations.
-        /// See Register Set on page 12 and Command Register on page 13 of the datasheet.
-        /// </summary>
-        /// <remarks>
-        /// All of the register numbers have 0x80 added to the register.  When reading
-        /// or witing to a register the application must set the CMD bit in the command
-        /// register (see page 13) and the register address is written into the lower
-        /// four bits of the Command Register.
-        /// </remarks>
-        private static class Registers
-        {
-            public static readonly byte Control = 0x80;
-            public static readonly byte Timing = 0x81;
-            public static readonly byte ThresholdLow = 0x82;
-            public static readonly byte ThresholdHigh = 0x84;
-            public static readonly byte InterruptControl = 0x86;
-            public static readonly byte ID = 0x8a;
-            public static readonly byte Data0 = 0x8c;
-            public static readonly byte Data1 = 0x8e;
-        }
-
-        /// <summary>
-        /// GPIO pin on that is connected to the interrupt pin on the TSL2561.
-        /// </summary>
-        private IDigitalInputPort _interruptPin;
-
-        /// <summary>
-        /// Update interval in milliseconds
-        /// </summary>
-        private readonly ushort updateInterval = 100;
-
-        /// <summary>
         /// Get the sensor reading
         /// </summary>
         /// <remarks>
@@ -147,9 +156,6 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
-
-        public event EventHandler<ChangeResult<Illuminance>> Updated;
-        public event EventHandler<ChangeResult<Illuminance>> LuminosityUpdated;
 
         /// <summary>
         /// ID of the sensor.
@@ -384,7 +390,7 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<Illuminance> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Illuminance> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             LuminosityUpdated?.Invoke(this, changeResult);

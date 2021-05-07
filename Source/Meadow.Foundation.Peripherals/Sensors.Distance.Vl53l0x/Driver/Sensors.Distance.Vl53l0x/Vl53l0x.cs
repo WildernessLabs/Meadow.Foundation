@@ -12,11 +12,11 @@ namespace Meadow.Foundation.Sensors.Distance
     /// Represents the Vl53l0x distance sensor
     /// </summary>
     public class Vl53l0x :
-        FilterableChangeObservableBase<ChangeResult<Length>, Length>,
+        FilterableChangeObservableBase<Length>,
         IRangeFinder
     {
         //==== events
-        public event EventHandler<ChangeResult<Length>> DistanceUpdated = delegate { };
+        public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
 
         //==== internals
         protected const byte RangeStart = 0x00;
@@ -215,7 +215,7 @@ namespace Meadow.Foundation.Sensors.Distance
             }
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<Length> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Length> changeResult)
         {
             DistanceUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

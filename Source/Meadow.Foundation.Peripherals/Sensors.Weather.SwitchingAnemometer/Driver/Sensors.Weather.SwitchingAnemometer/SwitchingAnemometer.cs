@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Meadow.Foundation.Sensors;
-using Meadow.Units;
 using Meadow.Hardware;
-using static Meadow.Foundation.Sensors.Weather.SwitchingAnemometer;
+using Meadow.Peripherals.Sensors.Weather;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Weather
 {
@@ -12,9 +11,15 @@ namespace Meadow.Foundation.Sensors.Weather
     /// Driver for a "switching" anememoter (wind speed gauge) that has an
     /// internal switch that is triggered during every revolution.
     /// </summary>
-    //public partial class SwitchingAnemometer : FilterableChangeObservableBase<AnemometerChangeResult, float>
-    public partial class SwitchingAnemometer : FilterableChangeObservableBase<ChangeResult<Speed>, Speed>
+    public partial class SwitchingAnemometer :
+        FilterableChangeObservableBase<Speed>, IAnemometer
     {
+        //==== events
+        /// <summary>
+        /// Raised when the speed of the wind changes.
+        /// </summary>
+        public event EventHandler<IChangeResult<Speed>> WindSpeedUpdated = delegate { };
+
         //==== internals
         IDigitalInputPort inputPort;
         bool running = false;
@@ -26,14 +31,11 @@ namespace Meadow.Foundation.Sensors.Weather
         // Turn on for debug output
         bool debug = false;
 
+        //==== properties
         /// <summary>
-        /// Raised when the speed of the wind changes.
+        /// The last recored wind speed.
         /// </summary>
-        //public event EventHandler<AnemometerChangeResult> WindSpeedUpdated = delegate {};
-        public event EventHandler<ChangeResult<Speed>> WindSpeedUpdated = delegate { };
-
-        //public float LastRecordedWindSpeed { get; protected set; } = 0f;
-        public Speed LastRecordedWindSpeed { get; protected set; } = new Speed(0);
+        public Speed? WindSpeed { get; protected set; }
 
         /// <summary>
         /// Calibration for how fast the wind speed is when the switch is hit
@@ -123,6 +125,7 @@ namespace Meadow.Foundation.Sensors.Weather
             }
         }
 
+        // TODO: refactor this to match other sensors, e.g. RaiseUpdated(IChangeResult<Speed> result)
         protected void RaiseUpdated(Speed newSpeed)
         {
             //AnemometerChangeResult result = new AnemometerChangeResult() {
@@ -130,11 +133,11 @@ namespace Meadow.Foundation.Sensors.Weather
             //    New = newSpeed
             //};
             ChangeResult<Speed> result = new ChangeResult<Speed>() {
-                Old = this.LastRecordedWindSpeed,
+                Old = this.WindSpeed,
                 New = newSpeed
             };
             // capture last recorded now that we have a new result
-            this.LastRecordedWindSpeed = newSpeed;
+            this.WindSpeed = newSpeed;
 
             //if (debug) {
             //    Console.WriteLine($"1) Result.Old: {result.Old}, New: {result.New}");

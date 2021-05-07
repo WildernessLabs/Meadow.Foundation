@@ -10,15 +10,29 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
     public partial class Nau7802 :
-        FilterableChangeObservableI2CPeripheral<ChangeResult<Units.Mass>, Units.Mass>,
+        FilterableChangeObservableI2CPeripheral<Units.Mass>,
         IDisposable
 
     {
+        //==== events
+        public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
+
         //==== internals
         private byte[] _read = new byte[3];
         private double _gramsPerAdcUnit = 0;
         private PU_CTRL_BITS _currentPU_CTRL;
         private int _tareValue;
+        private object SyncRoot { get; } = new object();
+        private CancellationTokenSource SamplingTokenSource { get; set; }
+
+        //==== Properties
+        public bool IsSampling { get; private set; }
+        public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
+
+        /// <summary>
+        /// The last read conditions.
+        /// </summary>
+        public Mass Conditions { get; private set; }
 
         /// <summary>
         /// Creates an instance of the NAU7802 Driver class
@@ -262,18 +276,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
             return adc;
         }
 
-        private object SyncRoot { get; } = new object();
-        private CancellationTokenSource SamplingTokenSource { get; set; }
-        public bool IsSampling { get; private set; }
-        public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
-
-        public event EventHandler<ChangeResult<Mass>> MassUpdated = delegate { };
-
-        /// <summary>
-        /// The last read conditions.
-        /// </summary>
-        public Mass Conditions { get; private set; }
-
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
@@ -357,7 +359,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(ChangeResult<Mass> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Mass> changeResult)
         {
             try
             {
