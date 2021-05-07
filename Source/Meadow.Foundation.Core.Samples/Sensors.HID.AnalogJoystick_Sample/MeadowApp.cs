@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Hid;
-using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Displays.TftSpi;
-using Meadow.Hardware;
-using static Meadow.Foundation.Displays.DisplayBase;
-using Meadow.Peripherals.Sensors.Hid;
 using Meadow.Foundation;
+using Meadow.Foundation.Displays.TftSpi;
+using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Sensors.Hid;
+using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Hid;
+using static Meadow.Foundation.Displays.DisplayBase;
 
 namespace MeadowApp
 {
@@ -22,12 +23,13 @@ namespace MeadowApp
         bool hasDisplay = true; // Set to false if you don't have a display hooked up
         int displayWidth = 240;
         int displayHeight = 240;
+        bool rendering = false;
 
         public MeadowApp()
         {
             Initialize();
 
-            if (hasDisplay) { DrawCrosshairs(new JoystickPosition(0f, 0f)); }
+            if (hasDisplay) { Render(new JoystickPosition(0f, 0f)); }
 
             _ = joystick.SetCenterPosition(); //fire and forget 
             joystick.Updated += JoystickUpdated;
@@ -71,37 +73,81 @@ namespace MeadowApp
         void JoystickUpdated(object sender, ChangeResult<JoystickPosition> e)
         {
             Console.WriteLine($"Horizontal: {e.New.Horizontal:n2}, Vertical: {e.New.Vertical:n2})");
-            if (hasDisplay) { DrawCrosshairs(e.New); }
+            if (hasDisplay) { Render(e.New); }
         }
 
-        void DrawCrosshairs(JoystickPosition position)
+        void Render(JoystickPosition position)
         {
-            int crossWidth = 11;
-            int crossHeight = crossWidth;
-            Color blue = Color.FromHex("#23abe3");
-            Color green = Color.FromHex("#C9DB31");
-            Color orange = Color.FromHex("#EF7D3B");
+            if(rendering) { Console.WriteLine("already rendering"); return; }
 
-            // calculate the centerpoint
-            (int X, int Y) centerPoint = (0, 0);
-            // NOTE: Juego has its joystick rotated 90° counter clockwise,
-            // so Horizontal is Vertical
-            centerPoint.X = (int)position.Vertical.Map(-1, 1, 0, displayWidth);
-            centerPoint.Y = (int)(-position.Horizontal).Map(-1, 1, 0, displayHeight);
+            rendering = true;
 
-            Console.WriteLine($"Centerpoint X:{centerPoint.X}, Y:{centerPoint.Y}");
+            // this seems to be slower, but need to profile
+            //Device.BeginInvokeOnMainThread(() => {
+            //    int crossWidth = 11;
+            //    int crossHeight = crossWidth;
+            //    Color blue = Color.FromHex("#23abe3");
+            //    Color green = Color.FromHex("#C9DB31");
+            //    Color orange = Color.FromHex("#EF7D3B");
 
-            canvas.Clear();
+            //    // calculate the centerpoint
+            //    (int X, int Y) centerPoint = (0, 0);
+            //    // NOTE: Juego has its joystick rotated 90° counter clockwise,
+            //    // so Horizontal is Vertical
+            //    centerPoint.X = (int)position.Vertical.Map(-1, 1, 0, displayWidth);
+            //    centerPoint.Y = (int)(-position.Horizontal).Map(-1, 1, 0, displayHeight);
 
-            // draw the cross lines
-            canvas.DrawHorizontalLine(centerPoint.X - (crossWidth / 2), centerPoint.Y, crossWidth, blue);
-            canvas.DrawVerticalLine(centerPoint.X, centerPoint.Y - (crossHeight / 2), crossHeight, blue);
-            canvas.DrawCircle(centerPoint.X, centerPoint.Y, crossWidth / 2 + 2, orange);
+            //    // clear the buffer
+            //    canvas.Clear();
 
-            // draw our coordinates
-            canvas.CurrentFont = new Font12x20();
-            canvas.DrawText(0, 0, $"X: {centerPoint.X:N0} Y:{centerPoint.Y:N0}", green);
-            canvas.Show();
+            //    // draw the cross lines
+            //    canvas.DrawHorizontalLine(centerPoint.X - (crossWidth / 2), centerPoint.Y, crossWidth, blue);
+            //    canvas.DrawVerticalLine(centerPoint.X, centerPoint.Y - (crossHeight / 2), crossHeight, blue);
+            //    canvas.DrawCircle(centerPoint.X, centerPoint.Y, crossWidth / 2 + 2, orange);
+
+            //    // draw our coordinates
+            //    canvas.CurrentFont = new Font12x20();
+            //    canvas.DrawText(0, 0, $"X: {centerPoint.X:N0} Y:{centerPoint.Y:N0}", green);
+
+            //    // blit the buffer to the screen
+            //    canvas.Show();
+
+            //    rendering = false;
+
+            //});
+
+            Task t = new Task(() => {
+                int crossWidth = 11;
+                int crossHeight = crossWidth;
+                Color blue = Color.FromHex("#23abe3");
+                Color green = Color.FromHex("#C9DB31");
+                Color orange = Color.FromHex("#EF7D3B");
+
+                // calculate the centerpoint
+                (int X, int Y) centerPoint = (0, 0);
+                // NOTE: Juego has its joystick rotated 90° counter clockwise,
+                // so Horizontal is Vertical
+                centerPoint.X = (int)position.Vertical.Map(-1, 1, 0, displayWidth);
+                centerPoint.Y = (int)(-position.Horizontal).Map(-1, 1, 0, displayHeight);
+
+                // clear the buffer
+                canvas.Clear();
+
+                // draw the cross lines
+                canvas.DrawHorizontalLine(centerPoint.X - (crossWidth / 2), centerPoint.Y, crossWidth, blue);
+                canvas.DrawVerticalLine(centerPoint.X, centerPoint.Y - (crossHeight / 2), crossHeight, blue);
+                canvas.DrawCircle(centerPoint.X, centerPoint.Y, crossWidth / 2 + 2, orange);
+
+                // draw our coordinates
+                canvas.CurrentFont = new Font12x20();
+                canvas.DrawText(0, 0, $"X: {centerPoint.X:N0} Y:{centerPoint.Y:N0}", green);
+
+                // blit the buffer to the screen
+                canvas.Show();
+
+                rendering = false;
+            });
+            t.Start();
         }
     }
 }
