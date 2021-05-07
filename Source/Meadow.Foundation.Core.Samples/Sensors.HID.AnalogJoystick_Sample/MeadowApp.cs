@@ -86,8 +86,8 @@ namespace MeadowApp
             (int X, int Y) centerPoint = (0, 0);
             // NOTE: Juego has its joystick rotated 90° counter clockwise,
             // so Horizontal is Vertical
-            centerPoint.X = (int)Map(position.Vertical, -1, 1, 0, displayWidth);
-            centerPoint.Y = (int)Map(-(position.Horizontal), -1, 1, 0, displayHeight);
+            centerPoint.X = (int)position.Vertical.Map(-1, 1, 0, displayWidth);
+            centerPoint.Y = (int)(-position.Horizontal).Map(-1, 1, 0, displayHeight);
 
             Console.WriteLine($"Centerpoint X:{centerPoint.X}, Y:{centerPoint.Y}");
 
@@ -102,20 +102,6 @@ namespace MeadowApp
             canvas.CurrentFont = new Font12x20();
             canvas.DrawText(0, 0, $"X: {centerPoint.X:N0} Y:{centerPoint.Y:N0}", green);
             canvas.Show();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="sourceMin"></param>
-        /// <param name="sourceMax"></param>
-        /// <param name="targetMin"></param>
-        /// <param name="targetMax"></param>
-        /// <returns></returns>
-        float Map(float value, float sourceMin, float sourceMax, float targetMin, float targetMax)
-        {
-            return (value - sourceMin) / (sourceMax - sourceMin) * (targetMax - targetMin) + targetMin;
         }
     }
 }
