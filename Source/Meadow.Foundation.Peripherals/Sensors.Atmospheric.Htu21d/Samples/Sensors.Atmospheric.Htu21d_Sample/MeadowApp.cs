@@ -63,29 +63,5 @@ namespace MeadowApp
             Console.WriteLine($"  Temperature: {result.Temperature.Celsius:F1}°C");
             Console.WriteLine($"  Relative Humidity: {result.Humidity:F1}%");
         }
-
-
-        //Htu21d sensor;
-
-        //public MeadowApp()
-        //{
-        //    InitHardware();
-
-        //    sensor.StartUpdating(1000);
-        //}
-
-        //public void InitHardware()
-        //{
-        //    Console.WriteLine("Init hardware...");
-
-        //    sensor = new Htu21d(Device.CreateI2cBus(400));
-
-        //    sensor.Updated += Sensor_Updated;
-        //}
-
-        //private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Atmospheric.AtmosphericConditionChangeResult e)
-        //{
-        //    Console.WriteLine($"Temp: {e.New.Temperature}, Humidity: {e.New.Humidity}");
-        //}
     }
 }
