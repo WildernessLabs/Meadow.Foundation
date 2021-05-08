@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Weather;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Weather
@@ -16,7 +17,8 @@ namespace Meadow.Foundation.Sensors.Weather
     /// 4.7kΩ / 1kΩ, as can be found in the SparkFun weather shield, or Wilderness
     /// Labs Clima Pro board.
     /// </summary>
-    public partial class WindVane : FilterableChangeObservableBase<Azimuth>
+    public partial class WindVane
+        : FilterableChangeObservableBase<Azimuth>, IWindVane
     {
         //==== events
         /// <summary>
@@ -27,7 +29,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// The last recorded azimuth of the wind.
         /// </summary>
-        public Azimuth LastRecordedWindAzimuth { get; protected set; } = 0;
+        public Azimuth? WindAzimuth { get; protected set; }
 
         // TODO: consider making an `ImmutableDictionary` (need to add package
         /// <summary>
@@ -131,11 +133,11 @@ namespace Meadow.Foundation.Sensors.Weather
             ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>()
             //WindVaneChangeResult windChangeResult = new WindVaneChangeResult()
             {
-                Old = this.LastRecordedWindAzimuth,
+                Old = this.WindAzimuth,
                 New = windAzimuth
             };
             RaiseUpdated(windChangeResult);
-            this.LastRecordedWindAzimuth = windAzimuth;
+            this.WindAzimuth = windAzimuth;
         }
 
         /// <summary>
