@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// The distance to the measured object.
         /// </summary>
-        public Length Distance { get; protected set; } = new Length(0);
+        public Length? Distance { get; protected set; } = new Length(0);
 
         /// <summary>
         /// Creates a new `Mb10x0` device on the specified serial port.

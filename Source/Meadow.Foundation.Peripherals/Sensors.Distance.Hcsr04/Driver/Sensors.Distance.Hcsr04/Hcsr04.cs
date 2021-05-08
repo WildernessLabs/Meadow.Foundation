@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Returns current distance
         /// </summary>
-        public Length Distance { get; private set; } = 0;
+        public Length? Distance { get; private set; } = 0;
 
         /// <summary>
         /// Minimum valid distance in cm
@@ -104,7 +104,8 @@ namespace Meadow.Foundation.Sensors.Distance
             var curDis = elapsed / 580;
 
             var oldDistance = Distance;
-            Distance = new Length(curDis, Length.UnitType.Centimeters); 
+            var newDistance = new Length(curDis, Length.UnitType.Centimeters);
+            Distance = newDistance;
 
             //debug - remove 
             Console.WriteLine($"{elapsed}, {curDis}, {Distance}, {DateTime.Now.Ticks}");
@@ -113,7 +114,7 @@ namespace Meadow.Foundation.Sensors.Distance
             //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
             //       CurrentDistance = -1;
 
-            var result = new ChangeResult<Length>(oldDistance, Distance);
+            var result = new ChangeResult<Length>(newDistance, oldDistance);
 
             RaiseChangedAndNotify(result);
         }

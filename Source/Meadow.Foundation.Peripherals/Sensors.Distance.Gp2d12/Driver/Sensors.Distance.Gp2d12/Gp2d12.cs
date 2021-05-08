@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Returns current distance
         /// </summary>
-        public Length Distance { get; private set; } = 0;
+        public Length? Distance { get; private set; } = 0;
 
         /// <summary>
         /// Minimum valid distance in cm
@@ -48,9 +48,10 @@ namespace Meadow.Foundation.Sensors.Distance
         private void AnalogInputPort_Changed(object sender, IChangeResult<Voltage> e)
         {
             var oldDistance = Distance;
-            Distance = new Length(26 / e.New.Volts, Length.UnitType.Meters);
+            var newDistance = new Length(26 / e.New.Volts, Length.UnitType.Meters);
+            Distance = newDistance;
 
-            var result =  new ChangeResult<Length>(oldDistance, Distance);
+            var result = new ChangeResult<Length>(newDistance, oldDistance);
 
             Updated?.Invoke(this, result);
             DistanceUpdated?.Invoke(this, result);
@@ -63,8 +64,9 @@ namespace Meadow.Foundation.Sensors.Distance
             var distance = 26 / value.Volts;
 
             distance = Math.Max(distance, MinimumDistance);
-
-            return Distance = new Length(distance, Length.UnitType.Meters);
+            var newDistance = new Length(distance, Length.UnitType.Meters);
+            Distance = newDistance;
+            return newDistance;
         }
     }
 }

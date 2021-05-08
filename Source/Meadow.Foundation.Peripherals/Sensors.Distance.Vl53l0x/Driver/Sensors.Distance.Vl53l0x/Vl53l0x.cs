@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// The distance to the measured object.
         /// </summary>
-        public Length Distance { get; protected set; } = new Length(0);
+        public Length? Distance { get; protected set; } = new Length(0);
 
         /// <summary>
         /// Minimum valid distance in mm.
@@ -162,7 +162,7 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             await Update();
 
-            return Distance;
+            return Distance.Value;
         }
 
         ///// <summary>
@@ -184,7 +184,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                Length oldResult;
+                Length? oldResult;
                 ChangeResult<Length> result;
                 Task.Factory.StartNew(async () => {
                     while (true)
@@ -202,7 +202,7 @@ namespace Meadow.Foundation.Sensors.Distance
                         await Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<Length>(oldResult, Distance);
+                        result = new ChangeResult<Length>(Distance.Value, oldResult);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
