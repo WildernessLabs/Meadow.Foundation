@@ -461,10 +461,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// 
+        /// Creates a `FilterableChangeObserver` that has a handler and a filter.
         /// </summary>
-        /// <param name="handler"></param>
-        /// <param name="filter"></param>
+        /// <param name="handler">The action that is invoked when the filter is satisifed.</param>
+        /// <param name="filter">An optional filter that determines whether or not the
+        /// consumer should be notified.</param>
+        /// <returns></returns>
         /// <returns></returns>
         // Implementor Notes:
         //  This is a convenience method that provides named tuple elements. It's not strictly
