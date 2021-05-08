@@ -101,7 +101,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Initialize();
         }
 
-        protected void HandleChangedInterrupt(object sender, EventArgs e)
+        protected void HandleChangedInterrupt(object sender, DigitalInputPortChangeResult e)
         {
             try
             {

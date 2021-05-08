@@ -163,7 +163,7 @@ namespace Meadow.Foundation.Sensors.Buttons
             DigitalIn.Changed += DigitalInChanged;
         }
 
-        void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
+        void DigitalInChanged(object sender, DigitalInputPortChangeResult e)
         {
             bool state = (resistorMode == ResistorMode.InternalPullUp || 
                           resistorMode == ResistorMode.ExternalPullUp) ? !e.Value : e.Value;

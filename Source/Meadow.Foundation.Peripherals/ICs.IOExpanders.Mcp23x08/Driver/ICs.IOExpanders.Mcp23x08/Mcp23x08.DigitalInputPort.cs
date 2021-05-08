@@ -60,16 +60,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
                             case InterruptMode.EdgeFalling:
                                 if (currentState)
                                     RaiseChangedAndNotify(
-                                        new DigitalInputPortEventArgs(false, now, _lastChangeTime));
+                                        new DigitalInputPortChangeResult(false, now, _lastChangeTime));
                                 break;
                             case InterruptMode.EdgeRising:
                                 if (currentState)
                                     RaiseChangedAndNotify(
-                                        new DigitalInputPortEventArgs(true, now, _lastChangeTime));
+                                        new DigitalInputPortChangeResult(true, now, _lastChangeTime));
                                 break;
                             case InterruptMode.EdgeBoth:
                                 RaiseChangedAndNotify(
-                                    new DigitalInputPortEventArgs(currentState, now,
+                                    new DigitalInputPortChangeResult(currentState, now,
                                         _lastChangeTime));
                                 break;
                             case InterruptMode.None:

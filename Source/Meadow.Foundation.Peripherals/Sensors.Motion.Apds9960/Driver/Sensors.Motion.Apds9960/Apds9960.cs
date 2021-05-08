@@ -242,7 +242,7 @@ namespace Meadow.Foundation.Sensors.Motion
             Initialize();
         }
 
-        private void InterruptPort_Changed(object sender, DigitalInputPortEventArgs e)
+        private void InterruptPort_Changed(object sender, DigitalInputPortChangeResult e)
         {
         //    throw new NotImplementedException();
         }

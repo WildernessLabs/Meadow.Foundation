@@ -1003,7 +1003,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Sensor has generated an interrupt, work out what to do.
         /// </summary>
-        private void InterruptChanged(object sender, DigitalInputPortEventArgs e)
+        private void InterruptChanged(object sender, DigitalInputPortChangeResult e)
         {
             var status = Status;
             if ((status & StatusBitsMask.ActivityDetected) != 0) {

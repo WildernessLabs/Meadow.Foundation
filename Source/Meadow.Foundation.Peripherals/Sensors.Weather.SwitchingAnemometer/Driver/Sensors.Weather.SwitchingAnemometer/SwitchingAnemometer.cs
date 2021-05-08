@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Sensors.Weather
         int standbyDuration;
         int overSampleCount;
         System.Timers.Timer? noWindTimer;
-        List<DigitalInputPortEventArgs>? samples;
+        List<DigitalInputPortChangeResult>? samples;
 
         // Turn on for debug output
         bool debug = false;
@@ -81,11 +81,11 @@ namespace Meadow.Foundation.Sensors.Weather
             inputPort.Changed -= HandleInputPortChange;
         }
 
-        protected void HandleInputPortChange(object sender, DigitalInputPortEventArgs result)
+        protected void HandleInputPortChange(object sender, DigitalInputPortChangeResult result)
         {
             if (!running) { return; }
 
-            if(samples == null) { samples = new List<DigitalInputPortEventArgs>(); }
+            if(samples == null) { samples = new List<DigitalInputPortChangeResult>(); }
 
             // reset our nowind timer, since a sample has come in. note that the API is awkward
             noWindTimer?.Stop();

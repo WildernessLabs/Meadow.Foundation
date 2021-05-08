@@ -266,7 +266,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Interrupt for the MAG3110 conversion complete interrupt.
         /// </summary>
-        private void DigitalInputPortChanged(object sender, DigitalInputPortEventArgs e)
+        private void DigitalInputPortChanged(object sender, DigitalInputPortChangeResult e)
         {
             /*
             if (OnReadingComplete != null)

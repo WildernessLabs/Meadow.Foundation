@@ -90,7 +90,7 @@ namespace Meadow.Foundation.Sensors.Distance
             triggerPort.State = false;
         }
 
-        private void OnEchoPortChanged(object sender, DigitalInputPortEventArgs e)
+        private void OnEchoPortChanged(object sender, DigitalInputPortChangeResult e)
         {
             if (e.Value == true) //echo is high
             {

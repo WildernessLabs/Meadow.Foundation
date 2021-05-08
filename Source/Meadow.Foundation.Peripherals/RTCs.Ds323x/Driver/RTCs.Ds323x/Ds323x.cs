@@ -202,7 +202,18 @@ namespace Meadow.Foundation.RTCs
                 }
 
                 InterruptPort = interruptPort;
-                InterruptPort.Changed += InterruptPort_Changed;
+                InterruptPort.Changed += (s, cr) => {
+                    //Alarm interrupt has been raised, work out which one and raise the necessary event.
+                    if ((_alarm1Delegate != null) || (_alarm2Delegate != null)) {
+                        var alarm = WhichAlarm;
+                        if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm1Delegate != null)) {
+                            _alarm1Delegate(this);
+                        }
+                        if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm2Delegate != null)) {
+                            _alarm2Delegate(this);
+                        }
+                    }
+                };
             }
         }
 
@@ -328,25 +339,6 @@ namespace Meadow.Foundation.RTCs
                     result = Alarm.Alarm2Raised;
                 }
                 return result;
-            }
-        }
-
-        /// <summary>
-        ///     Alarm interrupt has been raised, work out which one and raise the necessary event.
-        /// </summary>
-        protected void InterruptPort_Changed(object sender, EventArgs e)
-        {
-            if ((_alarm1Delegate != null) || (_alarm2Delegate != null))
-            {
-                var alarm = WhichAlarm;
-                if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm1Delegate != null))
-                {
-                    _alarm1Delegate(this);
-                }
-                if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm2Delegate != null))
-                {
-                    _alarm2Delegate(this);
-                }
             }
         }
 
