@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
 
         /// <summary>
-        /// The last read conditions.
+        /// The last read Mass.
         /// </summary>
         public Mass? Mass { get; private set; }
 
@@ -363,6 +363,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             catch(Exception ex)
             {
                 Console.WriteLine($"NAU7802 event handler threw: {ex.Message}");
+                throw;
             }
         }
 

@@ -34,13 +34,12 @@ namespace Sensors.LoadCell.Hx711_Sample
                     loadSensor.SetCalibrationFactor(CalibrationFactor, new Mass(CalibrationWeight, Mass.UnitType.Grams));
                     loadSensor.Tare();
 
-                    // start reading
-                    while (true)
+                    loadSensor.MassUpdated += (sender, values) =>
                     {
-                        var c = loadSensor.GetWeight();
-                        Console.WriteLine($"Conversion returned {c.Grams:0.0}g");
-                        Thread.Sleep(1000);
-                    }
+                        Console.WriteLine($"Mass is now returned {values.New.Grams:N2}g");
+                    };
+                    loadSensor.StartUpdating(TimeSpan.FromSeconds(2));
+
                 }
             }
         }
