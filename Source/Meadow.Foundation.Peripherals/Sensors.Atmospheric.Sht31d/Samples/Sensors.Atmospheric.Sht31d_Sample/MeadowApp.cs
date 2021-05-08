@@ -32,7 +32,7 @@ namespace BasicSensors.Atmospheric.SHT31D_Sample
             IChangeResult<(Meadow.Units.Temperature Temperature, Meadow.Units.RelativeHumidity Humidity)> e)
         {
             Console.WriteLine($"Temp: {e.New.Temperature.Celsius}");
-            Console.WriteLine($"Humidity: {e.New.Humidity.Value}");
+            Console.WriteLine($"Humidity: {e.New.Humidity.Percent}");
         }
     }
 }

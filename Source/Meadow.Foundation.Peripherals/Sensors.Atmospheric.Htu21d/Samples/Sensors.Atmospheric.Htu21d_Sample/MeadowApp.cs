@@ -37,7 +37,7 @@ namespace MeadowApp
             // classical .NET events can also be used:
             htu21d.Updated += (object sender, IChangeResult<(Temperature Temperature, RelativeHumidity Humidity)> result) => {
                 Console.WriteLine($"  Temperature: {result.New.Temperature.Celsius:F1}°C");
-                Console.WriteLine($"  Relative Humidity: {result.New.Humidity.Value:F1}%");
+                Console.WriteLine($"  Relative Humidity: {result.New.Humidity.Percent:F1}%");
             };
 
             //==== IObservable

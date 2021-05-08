@@ -39,24 +39,30 @@ namespace Sensors.Atmospheric.BME280_Sample
             // (blowing hot breath on the sensor should trigger)
             var consumer = Bme280.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Temp and pressure changed by threshold; new temp: {result.New.Temperature?.Celsius}, old: {result.Old?.Temperature?.Celsius}");
+                    Console.WriteLine($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
                 },
+                // only notify if the change is greater than 0.5°C
                 filter: result => {
-                    return true;
-                    //return (
-                    //    (Math.Abs(result.Delta.Value.Unit1.Celsius) > 1)
-                    //    &&
-                    //    (Math.Abs(result.Delta.Value.Unit3.Bar) > 5)
-                    //    );
-                } );
+                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                        return (
+                        (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5
+                        &&
+                        (result.New.Humidity.Value.Percent - old.Humidity.Value.Percent) > 0.05
+                        ); // returns true if > 0.5°C change.
+                    }
+                    return false;
+                }
+                // if you want to always get notified, pass null for the filter:
+                //filter: null
+                );
             bme280.Subscribe(consumer);
 
             //==== Events
             // classical .NET events can also be used:
             bme280.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> e) => {
-                Console.WriteLine($"  Temperature: {e.New.Temperature?.Celsius:N2}°C");
-                Console.WriteLine($"  Relative Humidity: {e.New.Humidity:N1}%");
-                Console.WriteLine($"  Pressure: {e.New.Pressure?.Pascal:N1}hPa");
+                Console.WriteLine($"  Temperature: {e.New.Temperature?.Celsius:N2}C");
+                Console.WriteLine($"  Relative Humidity: {e.New.Humidity:N2}%");
+                Console.WriteLine($"  Pressure: {e.New.Pressure?.Bar:N2}bar");
             };
 
             // just for funsies.
@@ -73,9 +79,9 @@ namespace Sensors.Atmospheric.BME280_Sample
         {
             var conditions = await bme280.Read();
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {conditions.Temperature}°C");
-            Console.WriteLine($"  Pressure: {conditions.Pressure}hPa");
-            Console.WriteLine($"  Relative Humidity: {conditions.Humidity}%");
+            Console.WriteLine($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
+            Console.WriteLine($"  Pressure: {conditions.Pressure?.Bar:N2}hPa");
+            Console.WriteLine($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
         }
     }
 }
