@@ -35,19 +35,28 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
                 Console.WriteLine($"  Relative Humidity: {result.New.Humidity.Value:F1}%");
             };
 
-            //==== IObservable
+            //==== IObservable 
+            // Example that uses an IObersvable subscription to only be notified
+            // when the temperature changes by at least a degree, and humidty by 5%.
+            // (blowing hot breath on the sensor should trigger)
             var consumer = Si70xx.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Observer triggered; new temp: {result.New.Temperature?.Celsius}, old: {result.Old?.Temperature?.Celsius}");
+                    Console.WriteLine($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
                 },
+                // only notify if the change is greater than 0.5°C
                 filter: result => {
-                    return true;
-                    //return (
-                    //    (Math.Abs(result.Delta.Value.Unit1.Celsius) > 1)
-                    //    &&
-                    //    (Math.Abs(result.Delta.Value.Unit3.Bar) > 5)
-                    //    );
-                });
+                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                        return (
+                        (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5 // returns true if > 0.5°C change.
+                        &&
+                        (result.New.Humidity.Value.Percent - old.Humidity.Value.Percent) > 0.05 // 5% humidity change
+                        ); 
+                    }
+                    return false;
+                }
+                // if you want to always get notified, pass null for the filter:
+                //filter: null
+                );
             si7021.Subscribe(consumer);
         }
 
@@ -58,10 +67,5 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
             Console.WriteLine($"  Temperature: {result.Temperature?.Celsius:F1}°C");
             Console.WriteLine($"  Relative Humidity: {result.Humidity:F1}%");
         }
-
-        //protected void ShowConditions()
-        //{
-        //    Console.WriteLine($"  T: {si7021.Conditions.Temperature:F1}C    RH: {si7021.Conditions.Humidity:F1}%");
-        //}
     }
 }

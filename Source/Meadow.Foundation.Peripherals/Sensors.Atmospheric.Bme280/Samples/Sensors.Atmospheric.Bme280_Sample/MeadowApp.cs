@@ -10,7 +10,7 @@ namespace Sensors.Atmospheric.BME280_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Bme280 bme280;
+        Bme280 sensor;
 
         IDigitalOutputPort trigger;
 
@@ -25,7 +25,7 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus();
-            bme280 = new Bme280 (
+            sensor = new Bme280 (
                 i2c,
                 Bme280.I2cAddress.Adddress0x76 //default
                 //Bme280.I2cAddress.Adddress0x77 //default
@@ -55,29 +55,29 @@ namespace Sensors.Atmospheric.BME280_Sample
                 // if you want to always get notified, pass null for the filter:
                 //filter: null
                 );
-            bme280.Subscribe(consumer);
+            sensor.Subscribe(consumer);
 
             //==== Events
             // classical .NET events can also be used:
-            bme280.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> e) => {
+            sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> e) => {
                 Console.WriteLine($"  Temperature: {e.New.Temperature?.Celsius:N2}C");
                 Console.WriteLine($"  Relative Humidity: {e.New.Humidity:N2}%");
                 Console.WriteLine($"  Pressure: {e.New.Pressure?.Bar:N2}bar");
             };
 
             // just for funsies.
-            Console.WriteLine($"ChipID: {bme280.GetChipID():X2}");
+            Console.WriteLine($"ChipID: {sensor.GetChipID():X2}");
 
-            // get an initial reading
+            //==== one-off read
             ReadConditions().Wait();
 
             // start updating continuously
-            bme280.StartUpdating();
+            sensor.StartUpdating();
         }
 
         protected async Task ReadConditions()
         {
-            var conditions = await bme280.Read();
+            var conditions = await sensor.Read();
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
             Console.WriteLine($"  Pressure: {conditions.Pressure?.Bar:N2}hPa");

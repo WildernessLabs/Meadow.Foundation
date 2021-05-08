@@ -178,7 +178,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) oldConditions;
-
                 ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)> result;
 
                 Task.Factory.StartNew(async () => {
