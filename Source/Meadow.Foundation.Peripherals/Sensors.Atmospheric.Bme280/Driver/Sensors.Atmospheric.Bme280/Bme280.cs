@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// This class implements the functionality necessary to read the temperature, pressure and humidity
     /// from the Bosch BME280 sensor.
     /// </remarks>
-    public class Bme280 :
+    public partial class Bme280 :
         FilterableChangeObservableBase<(Units.Temperature?, RelativeHumidity?, Pressure?)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
@@ -34,136 +34,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /////     Minimum value that should be used for the polling frequency.
         ///// </summary>
         //public const ushort MinimumPollingPeriod = 100;
-
-
-        // TODO: move these enums into their own files, e.g. `Bme280.ChipType.cs`
-        public enum ChipType : byte
-        {
-            BMP = 0x58,
-            BME = 0x60
-        }
-
-        /// <summary>
-        ///     Valid oversampling values.
-        /// </summary>
-        /// <remarks>
-        ///     000 - Data output set to 0x8000
-        ///     001 - Oversampling x1
-        ///     010 - Oversampling x2
-        ///     011 - Oversampling x4
-        ///     100 - Oversampling x8
-        ///     101, 110, 111 - Oversampling x16
-        /// </remarks>
-        public enum Oversample : byte
-        {
-            Skip = 0,
-            OversampleX1,
-            OversampleX2,
-            OversampleX4,
-            OversampleX8,
-            OversampleX16
-        }
-
-        /// <summary>
-        ///     Valid values for the operating mode of the sensor.
-        /// </summary>
-        public enum Modes : byte
-        {
-            /// <summary>
-            /// no operation, all registers accessible, lowest power, selected after startup
-            /// </summary>
-            Sleep = 0,
-            /// <summary>
-            /// perform one measurement, store results and return to sleep mode
-            /// </summary>
-            Forced = 1,
-            /// <summary>
-            /// perpetual cycling of measurements and inactive periods.
-            /// </summary>
-            Normal = 3
-        }
-
-        /// <summary>
-        ///     Valid values for the inactive duration in normal mode.
-        /// </summary>
-        public enum StandbyDuration : byte
-        {
-            /// <summary>
-            /// 0.5 milliseconds
-            /// </summary>
-            MsHalf = 0,
-            /// <summary>
-            /// 62.5 milliseconds
-            /// </summary>
-            Ms62Half,
-            /// <summary>
-            /// 125 milliseconds
-            /// </summary>
-            Ms125,
-            /// <summary>
-            /// 250 milliseconds
-            /// </summary>
-            Ms250,
-            /// <summary>
-            /// 500 milliseconds
-            /// </summary>
-            Ms500,
-            /// <summary>
-            /// 1000 milliseconds
-            /// </summary>
-            Ms1000,
-            /// <summary>
-            /// 10 milliseconds
-            /// </summary>
-            Ms10,
-            /// <summary>
-            /// 20 milliseconds
-            /// </summary>
-            Ms20
-        }
-
-        /// <summary>
-        ///     Valid filter co-efficient values.
-        /// </summary>
-        public enum FilterCoefficient : byte
-        {
-            Off = 0,
-            Two,
-            Four,
-            Eight,
-            Sixteen
-        }
-
-        public enum I2cAddress : byte
-        {
-            Adddress0x76 = 0x76,
-            Adddress0x77 = 0x77
-        }
-
-        /// <summary>
-        ///     Compensation data.
-        /// </summary>
-        protected struct CompensationData
-        {
-            public ushort T1;
-            public short T2;
-            public short T3;
-            public ushort P1;
-            public short P2;
-            public short P3;
-            public short P4;
-            public short P5;
-            public short P6;
-            public short P7;
-            public short P8;
-            public short P9;
-            public byte H1;
-            public short H2;
-            public byte H3;
-            public short H4;
-            public short H5;
-            public sbyte H6;
-        }
 
         /// <summary>
         ///     Communication bus used to read and write to the BME280 sensor.
@@ -612,43 +482,5 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 handler: handler, filter: filter
                 );
         }
-
-
-        public class Configuration
-        {
-            /// <summary>
-            ///     Temperature over sampling configuration.
-            /// </summary>
-            public Oversample TemperatureOverSampling { get; set; }
-
-            /// <summary>
-            ///     Pressure over sampling configuration.
-            /// </summary>
-            public Oversample PressureOversampling { get; set; }
-
-            /// <summary>
-            ///     Humidity over sampling configuration.
-            /// </summary>
-            public Oversample HumidityOverSampling { get; set; }
-
-            /// <summary>
-            ///     Set the operating mode for the sensor.
-            /// </summary>
-            public Modes Mode { get; set; }
-
-            /// <summary>
-            ///     Set the standby period for the sensor.
-            /// </summary>
-            public StandbyDuration Standby { get; set; }
-
-            /// <summary>
-            ///     Determine the time constant for the IIR filter.
-            /// </summary>
-            /// <remarks>
-            ///     See section 3.44 of the datasheet for more informaiton.
-            /// </remarks>
-            public FilterCoefficient Filter { get; set; }
-        }
-
     }
 }
