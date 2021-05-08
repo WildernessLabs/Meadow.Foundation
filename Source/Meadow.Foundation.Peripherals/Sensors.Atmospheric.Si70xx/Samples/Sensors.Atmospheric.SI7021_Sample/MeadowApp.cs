@@ -55,7 +55,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
         {
             var result = await si7021.Read();
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {result.Temperature.Celsius:F1}°C");
+            Console.WriteLine($"  Temperature: {result.Temperature?.Celsius:F1}°C");
             Console.WriteLine($"  Relative Humidity: {result.Humidity:F1}%");
         }
 
