@@ -20,7 +20,7 @@ namespace Sensors.Atmospheric.Dht12_Sample
 
         private void Sensor_Updated(object sender, IChangeResult<(Meadow.Units.Temperature Temperature, Meadow.Units.RelativeHumidity Humidity)> result)
         {
-            Console.WriteLine($"Humidity: {result.New.Humidity.Value*100}%, Temperature: {result.New.Temperature.Celsius}°C");
+            Console.WriteLine($"Humidity: {result.New.Humidity.Percent*100}%, Temperature: {result.New.Temperature.Celsius}°C");
         }
 
         public void Initialize()

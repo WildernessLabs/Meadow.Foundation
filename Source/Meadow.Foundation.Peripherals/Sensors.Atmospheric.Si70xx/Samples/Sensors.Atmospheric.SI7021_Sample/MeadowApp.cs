@@ -30,15 +30,15 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
             //==== Events
             // classical .NET events can also be used:
-            si7021.Updated += (object sender, IChangeResult<(Temperature Temperature, RelativeHumidity Humidity)> result) => {
-                Console.WriteLine($"  Temperature: {result.New.Temperature.Celsius:F1}°C");
+            si7021.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity)> result) => {
+                Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:F1}°C");
                 Console.WriteLine($"  Relative Humidity: {result.New.Humidity.Value:F1}%");
             };
 
             //==== IObservable
             var consumer = Si70xx.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Observer triggered; new temp: {result.New.Item1.Celsius}, old: {result.Old?.Item1.Celsius}");
+                    Console.WriteLine($"Observer triggered; new temp: {result.New.Temperature?.Celsius}, old: {result.Old?.Temperature?.Celsius}");
                 },
                 filter: result => {
                     return true;

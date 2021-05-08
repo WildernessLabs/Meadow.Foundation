@@ -12,12 +12,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// temperature and humidity sensors.
     /// </summary>
     public class Si70xx :
-        FilterableChangeObservableBase<(Units.Temperature, RelativeHumidity)>,
+        FilterableChangeObservableBase<(Units.Temperature?, RelativeHumidity?)>,
         ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
         /// </summary>
-        public event EventHandler<IChangeResult<(Units.Temperature, RelativeHumidity)>> Updated = delegate { };
+        public event EventHandler<IChangeResult<(Units.Temperature?, RelativeHumidity?)>> Updated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The last read conditions.
         /// </summary>
-        public (Units.Temperature Temperature, RelativeHumidity Humidity) Conditions;
+        public (Units.Temperature? Temperature, RelativeHumidity? Humidity) Conditions;
 
         /// <summary>
         ///     Serial number of the device.
@@ -168,7 +168,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public async Task<(Units.Temperature Temperature, RelativeHumidity Humidity)> Read()
+        public async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> Read()
         {
             // update confiruation for a one-off read
             this.Conditions = await ReadSensor();
@@ -224,8 +224,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                (Units.Temperature Temperature, RelativeHumidity Humidity) oldConditions;
-                ChangeResult<(Units.Temperature, RelativeHumidity)> result;
+                (Units.Temperature? Temperature, RelativeHumidity? Humidity) oldConditions;
+                ChangeResult<(Units.Temperature?, RelativeHumidity?)> result;
 
                 Task.Factory.StartNew(async () => {
                     while (true) {
@@ -242,7 +242,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         Conditions = await Read();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<(Units.Temperature, RelativeHumidity)>(Conditions, oldConditions);
+                        result = new ChangeResult<(Units.Temperature?, RelativeHumidity?)>(Conditions, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -258,11 +258,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature Temperature, RelativeHumidity Humidity)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
-            TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(changeResult.New.Temperature, changeResult.Old?.Temperature));
-            HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(changeResult.New.Humidity, changeResult.Old?.Humidity));
+            if (changeResult.New.Temperature is { } temp) {
+                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+            }
+            if (changeResult.New.Humidity is { } humidity) {
+                HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
+            }
             base.NotifyObservers(changeResult);
         }
 
@@ -322,6 +326,31 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             si7021.WriteBytes(new byte[] { userData }); //Write the new resolution bits
         }
 
-        
+        /// <summary>
+        /// Creates a `FilterableChangeObserver` that has a handler and a filter.
+        /// </summary>
+        /// <param name="handler">The action that is invoked when the filter is satisifed.</param>
+        /// <param name="filter">An optional filter that determines whether or not the
+        /// consumer should be notified.</param>
+        /// <returns></returns>
+        /// <returns></returns>
+        // Implementor Notes:
+        //  This is a convenience method that provides named tuple elements. It's not strictly
+        //  necessary, as the `FilterableChangeObservableBase` class provides a default implementation,
+        //  but if you use it, then the parameters are named `Item1`, `Item2`, etc. instead of
+        //  `Temperature`, `Pressure`, etc.
+        public static new
+            FilterableChangeObserver<(Units.Temperature?, RelativeHumidity?)>
+            CreateObserver(
+                Action<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>> handler,
+                Predicate<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>>? filter = null
+            )
+        {
+            return new FilterableChangeObserver<(Units.Temperature?, RelativeHumidity?)>(
+                handler: handler, filter: filter
+                );
+        }
+
+
     }
 }
