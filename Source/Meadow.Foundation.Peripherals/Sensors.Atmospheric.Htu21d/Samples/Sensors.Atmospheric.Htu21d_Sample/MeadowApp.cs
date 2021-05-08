@@ -11,56 +11,62 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Htu21d htu21d;
+        Htu21d sensor;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            // create the I2C Bus
-            var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Standard);
+            // configure our sensor on the I2C Bus
+            var i2cBus = Device.CreateI2cBus();
 
-            Console.WriteLine("Created I2C Bus");
+            sensor = new Htu21d(i2cBus);
 
-            // create our device
-            htu21d = new Htu21d(i2cBus);
-
-            Console.WriteLine($"Chip Serial: {htu21d.SerialNumber}");
+            Console.WriteLine($"Chip Serial: {sensor.SerialNumber}");
 
             // get an initial reading
             ReadConditions().Wait();
 
             // start updating continuously
-            htu21d.StartUpdating();
+            sensor.StartUpdating();
 
             //==== Events
             // classical .NET events can also be used:
-            htu21d.Updated += (object sender, IChangeResult<(Temperature Temperature, RelativeHumidity Humidity)> result) => {
-                Console.WriteLine($"  Temperature: {result.New.Temperature.Celsius:F1}°C");
-                Console.WriteLine($"  Relative Humidity: {result.New.Humidity.Percent:F1}%");
+            sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity)> result) => {
+                Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:F1}°C");
+                Console.WriteLine($"  Relative Humidity: {result.New.Humidity.Value:F1}%");
             };
 
-            //==== IObservable
+            //==== IObservable 
+            // Example that uses an IObersvable subscription to only be notified
+            // when the temperature changes by at least a degree, and humidty by 5%.
+            // (blowing hot breath on the sensor should trigger)
             var consumer = Htu21d.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Observer triggered; new temp: {result.New.Item1.Celsius}, old: {result.Old?.Item1.Celsius}");
+                    Console.WriteLine($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
                 },
+                // only notify if the change is greater than 0.5°C
                 filter: result => {
-                    return true;
-                    //return (
-                    //    (Math.Abs(result.Delta.Value.Unit1.Celsius) > 1)
-                    //    &&
-                    //    (Math.Abs(result.Delta.Value.Unit3.Bar) > 5)
-                    //    );
-                });
-            htu21d.Subscribe(consumer);
+                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                        return (
+                        (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5 // returns true if > 0.5°C change.
+                        &&
+                        (result.New.Humidity.Value.Percent - old.Humidity.Value.Percent) > 0.05 // 5% humidity change
+                        );
+                    }
+                    return false;
+                }
+                // if you want to always get notified, pass null for the filter:
+                //filter: null
+                );
+            sensor.Subscribe(consumer);
         }
 
         protected async Task ReadConditions()
         {
-            var result = await htu21d.Read();
+            var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {result.Temperature.Celsius:F1}°C");
+            Console.WriteLine($"  Temperature: {result.Temperature?.Celsius:F1}°C");
             Console.WriteLine($"  Relative Humidity: {result.Humidity:F1}%");
         }
     }

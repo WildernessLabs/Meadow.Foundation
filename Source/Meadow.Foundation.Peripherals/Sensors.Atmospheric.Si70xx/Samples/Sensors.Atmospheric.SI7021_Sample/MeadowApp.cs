@@ -9,28 +9,28 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Si70xx si7021;
+        Si70xx sensor;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            // configure our SI7021 on the I2C Bus
+            // configure our sensor on the I2C Bus
             var i2cBus = Device.CreateI2cBus();
 
-            si7021 = new Si70xx(i2cBus);
+            sensor = new Si70xx(i2cBus);
 
-            Console.WriteLine($"Chip Serial: {si7021.SerialNumber}");
+            Console.WriteLine($"Chip Serial: {sensor.SerialNumber}");
 
             // get an initial reading
             ReadConditions().Wait();
 
             // start updating continuously
-            si7021.StartUpdating();
+            sensor.StartUpdating();
 
             //==== Events
             // classical .NET events can also be used:
-            si7021.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity)> result) => {
+            sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity)> result) => {
                 Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:F1}°C");
                 Console.WriteLine($"  Relative Humidity: {result.New.Humidity.Value:F1}%");
             };
@@ -57,12 +57,12 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
                 // if you want to always get notified, pass null for the filter:
                 //filter: null
                 );
-            si7021.Subscribe(consumer);
+            sensor.Subscribe(consumer);
         }
 
         protected async Task ReadConditions()
         {
-            var result = await si7021.Read();
+            var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"  Temperature: {result.Temperature?.Celsius:F1}°C");
             Console.WriteLine($"  Relative Humidity: {result.Humidity:F1}%");
