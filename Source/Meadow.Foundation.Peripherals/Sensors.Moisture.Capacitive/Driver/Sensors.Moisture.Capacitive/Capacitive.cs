@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Last value read from the moisture sensor.
         /// </summary>
-        public double Moisture { get; protected set; }
+        public double? Moisture { get; protected set; }
 
         /// <summary>
         /// Voltage value of most dry soil. Default of `0V`.
@@ -113,9 +113,10 @@ namespace Meadow.Foundation.Sensors.Moisture
             // read the voltage
             Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
             // convert and save to our temp property for later retrieval
-            Moisture = VoltageToMoisture(voltage);
+            var newMoisture = VoltageToMoisture(voltage);
+            Moisture = newMoisture;
             // return new and old Moisture values
-            return new ChangeResult<double>(Moisture, previousMoisture);
+            return new ChangeResult<double>(newMoisture, previousMoisture);
         }
 
         /// <summary>

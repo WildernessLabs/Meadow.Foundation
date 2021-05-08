@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Last value read from the moisture sensor.
         /// </summary>
-        public double Moisture { get; private set; }
+        public double? Moisture { get; private set; }
 
         /// <summary>
         /// Voltage value of most dry soil. Default of `0V`.
@@ -98,14 +98,15 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <returns></returns>
         public async Task<ChangeResult<double>> Read(int sampleCount = 10, int sampleInterval = 40)
         {
-            double previousMoisture = Moisture;
+            double? oldMoisture = Moisture;
 
             DigitalPort.State = true;
             Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
             DigitalPort.State = false;
-            
-            Moisture = VoltageToMoisture(voltage);
-            return new ChangeResult<double>(Moisture, previousMoisture);
+
+            var newMoisture = VoltageToMoisture(voltage);
+            Moisture = newMoisture;
+            return new ChangeResult<double>(newMoisture, oldMoisture);
         }
 
         /// <summary>
@@ -136,7 +137,7 @@ namespace Meadow.Foundation.Sensors.Moisture
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                double oldConditions;
+                double? oldConditions;
                 ChangeResult<double> result;
                 Task.Factory.StartNew(async () => 
                 {
@@ -158,7 +159,7 @@ namespace Meadow.Foundation.Sensors.Moisture
                         await Read(sampleCount, sampleIntervalDuration);
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<double>(Moisture, oldConditions);
+                        result = new ChangeResult<double>(Moisture.Value, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
