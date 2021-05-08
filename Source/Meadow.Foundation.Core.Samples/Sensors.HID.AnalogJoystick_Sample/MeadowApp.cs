@@ -33,7 +33,9 @@ namespace MeadowApp
 
             _ = joystick.SetCenterPosition(); //fire and forget 
             joystick.Updated += JoystickUpdated;
-            joystick.StartUpdating();
+            // these are pretty fast updates (40ms in total), if you need more time to process, you can
+            // increase the sample interval duration and/or standby duration.
+            joystick.StartUpdating(sampleCount:2, sampleIntervalDuration:10, standbyDuration:20);
         }
 
         void Initialize()
