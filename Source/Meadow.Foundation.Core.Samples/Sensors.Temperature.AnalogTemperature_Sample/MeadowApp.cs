@@ -29,17 +29,11 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
                     Console.WriteLine($"Observer filter satisfied: {result.New.Celsius:N2}C, old: {result.Old?.Celsius:N2}C");
                 },
                 // only notify if the change is greater than 0.5°C
-                // this filter is a predicate, so if you want to get notified,
-                // is needs to return true.
                 filter: result => {
                     // if it's not null, do a comparison
                     if (result.Old is { } old) {
-                        return (result.New - old).Abs().Celsius > 0.5;
-                    } // if the old result is null, it's the first time, so we want to get notified
-                    else {
-                        Console.WriteLine("Filter: result.old is null");
-                        return true;
-                    }
+                        return (result.New - old).Abs().Celsius > 0.5; // returns true if > 0.5°C change.
+                    } return false;
                 }
                 // if you want to always get notified, pass null for the filter:
                 //filter: null
@@ -53,7 +47,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             };
 
             //==== One-off reading use case/pattern
-            //ReadTemp().Wait();
+            ReadTemp().Wait();
 
             // Spin up the sampling thread so that events are raised and
             // IObservable notifications are sent.
