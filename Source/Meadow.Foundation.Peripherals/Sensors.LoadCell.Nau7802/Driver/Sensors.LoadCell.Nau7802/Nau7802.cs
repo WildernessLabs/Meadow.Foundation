@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.LoadCell
@@ -11,6 +12,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// </summary>
     public partial class Nau7802 :
         FilterableChangeObservableI2CPeripheral<Units.Mass>,
+        IMassSensor,
         IDisposable
 
     {
@@ -32,7 +34,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <summary>
         /// The last read conditions.
         /// </summary>
-        public Mass Conditions { get; private set; }
+        public Mass? Mass { get; private set; }
 
         /// <summary>
         /// Creates an instance of the NAU7802 Driver class
@@ -76,6 +78,11 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private int ReadADC()
         {
+            while (!IsConversionComplete())
+            {
+                Thread.Sleep(1);
+            }
+
             Bus.ReadRegisterBytes((byte)Register.ADCO_B2, _read);
             return _read[0] << 16 | _read[1] << 8 | _read[2];
         }
@@ -91,20 +98,15 @@ namespace Meadow.Foundation.Sensors.LoadCell
             }
 
             _tareValue = ReadADC();
-            Output.WriteLine($"Tare base = {_tareValue}");
+            Output.WriteLine($"Tare base = {_tareValue:x}");
         }
 
         private void PowerOn()
         {
             Output.WriteLine($"Powering up...");
 
-            // read the control register
-            _currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
-
-            Output.WriteLine($"PU_CTRL: 0x{_currentPU_CTRL:x}");
-
             // Set and clear the RR bit in 0x00, to guarantee a reset of all register values
-            _currentPU_CTRL |= PU_CTRL_BITS.RR;
+            _currentPU_CTRL = PU_CTRL_BITS.RR;
             Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
             Thread.Sleep(1); // make sure it has time to do it's thing
             _currentPU_CTRL &= ~PU_CTRL_BITS.RR;
@@ -113,7 +115,18 @@ namespace Meadow.Foundation.Sensors.LoadCell
             // turn on the analog and digital power
             _currentPU_CTRL |= (PU_CTRL_BITS.PUD | PU_CTRL_BITS.PUA);
             Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
-            Thread.Sleep(10); // make sure it has time to do it's thing
+            // wait for power-up ready
+            var timeout = 100;
+            do
+            {
+                if(timeout-- <= 0)
+                {
+                    Output.WriteLine("Timeout powering up");
+                    throw new Exception("Timeout powering up");
+                }
+                Thread.Sleep(10);
+                _currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
+            } while ((_currentPU_CTRL & PU_CTRL_BITS.PUR) != PU_CTRL_BITS.PUR);
 
 
             Output.WriteLine($"Configuring...");
@@ -129,9 +142,13 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 throw new Exception("Calibration error");
             }
 
-            // No conversion will take place until the R0x00 bit 4 “CS” is set Logic = 1 
+            // turn on cycle start
+            _currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
             _currentPU_CTRL |= PU_CTRL_BITS.CS;
             Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+
+
+            Output.WriteLine($"PU_CTRL: {_currentPU_CTRL}"); // 0xBE
 
             // Enter the low power standby condition by setting PUA and PUD bits to 0, in R0x00 
             // Resume operation by setting PUA and PUD bits to 1, in R0x00.This sequence is the same for powering up from the standby condition, except that from standby all of the information in the configuration and calibration registers will be retained if the power supply is stable.Depending on conditions and the application, it may be desirable to perform calibration again to update the calibration registers for the best possible accuracy.
@@ -236,29 +253,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
             _gramsPerAdcUnit = knownValue.Grams / (double)factor;
         }
 
-        /*
-        /// <summary>
-        /// Gets the current sensor weight
-        /// </summary>
-        /// <returns></returns>
-        public Mass GetWeight()
-        {
-            if(_gramsPerAdcUnit == 0)
-            {
-                throw new Exception("Calibration factor has not been set");
-            }
-
-            // get an ADC conversion
-            var c = DoConversion();
-            // subtract the tare
-            var adc = c - _tareValue;
-            // convert to grams
-            var grams = adc * _gramsPerAdcUnit;
-            // convert to desired units
-            return new Mass(grams, Mass.UnitType.Grams);
-        }
-        */
-
         private int DoConversion()
         {
             if(!IsConversionComplete())
@@ -280,11 +274,11 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public async Task<Mass> Read()
+        public async Task<Mass?> Read()
         {
             // update confiruation for a one-off read
-            this.Conditions = await ReadSensor();
-            return Conditions;
+            this.Mass = await ReadSensor();
+            return Mass;
         }
 
         protected async Task<Mass> ReadSensor()
@@ -302,7 +296,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 // convert to grams
                 var grams = adc * _gramsPerAdcUnit;
                 // convert to desired units
-                return new Mass(grams, Mass.UnitType.Grams);
+                return new Mass(grams, Units.Mass.UnitType.Grams);
             });
         }
 
@@ -323,7 +317,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                Mass oldConditions;
+                Mass? oldConditions;
                 ChangeResult<Mass> result;
 
                 Task.Factory.StartNew(async () => {
@@ -337,13 +331,13 @@ namespace Meadow.Foundation.Sensors.LoadCell
                             break;
                         }
                         // capture history
-                        oldConditions = Conditions;
+                        oldConditions = Mass;
 
                         // read
-                        Conditions = await Read();
+                        Mass = await Read();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<Mass>(Conditions, oldConditions);
+                        result = new ChangeResult<Mass>(Mass.Value, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
