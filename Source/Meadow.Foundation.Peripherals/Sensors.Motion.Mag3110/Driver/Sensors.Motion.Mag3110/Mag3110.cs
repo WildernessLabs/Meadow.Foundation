@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     public class Mag3110:
-        FilterableChangeObservableBase<MagneticField3d>
+        FilterableChangeObservableBase<MagneticField3D>
        // IMagnetometer
     {
         /// <summary>
@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Motion
             public static readonly byte Control2 = 0x11;
         }
 
-        public MagneticField3d MagneticField3d { get; protected set; } = new MagneticField3d();
+        public MagneticField3D MagneticField3d { get; protected set; } = new MagneticField3D();
 
         // internal thread lock
         private object _lock = new object();
@@ -50,8 +50,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
-        public event EventHandler<IChangeResult<MagneticField3d>> Updated;
-        public event EventHandler<IChangeResult<MagneticField3d>> MagneticField3dUpdated;
+        public event EventHandler<IChangeResult<MagneticField3D>> Updated;
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated;
 
         /// <summary>
         /// MAG3110 object.
@@ -183,7 +183,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// Convenience method to get the current temperature. For frequent reads, use
         ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         ///// </summary>
-        public MagneticField3d Read()
+        public MagneticField3D Read()
         {
             Update();
 
@@ -209,8 +209,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                MagneticField3d oldConditions;
-                ChangeResult<MagneticField3d> result;
+                MagneticField3D oldConditions;
+                ChangeResult<MagneticField3D> result;
                 Task.Factory.StartNew(async () =>
                 {
                     while (true)
@@ -227,7 +227,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<MagneticField3d>(MagneticField3d, oldConditions);
+                        result = new ChangeResult<MagneticField3D>(MagneticField3d, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -239,7 +239,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<MagneticField3d> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<MagneticField3D> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             MagneticField3dUpdated?.Invoke(this, changeResult);
@@ -256,7 +256,7 @@ namespace Meadow.Foundation.Sensors.Motion
             i2cPeripheral.WriteRegister(Registers.Control1, controlRegister);
             var data = i2cPeripheral.ReadRegisters(Registers.XMSB, 6);
 
-            MagneticField3d = new MagneticField3d(
+            MagneticField3d = new MagneticField3D(
                 new MagneticField((short)((data[0] << 8) | data[1]), MagneticField.UnitType.MicroTesla),
                 new MagneticField((short)((data[2] << 8) | data[3]), MagneticField.UnitType.MicroTesla),
                 new MagneticField((short)((data[4] << 8) | data[5]), MagneticField.UnitType.MicroTesla)

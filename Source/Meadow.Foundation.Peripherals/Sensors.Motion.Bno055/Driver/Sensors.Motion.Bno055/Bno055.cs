@@ -179,7 +179,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Get the magnetometer readings.
         /// </summary>
-	    public MagneticField3d MagneticField3d
+	    public MagneticField3D MagneticField3d
 		{
 	        get
 	        {
@@ -196,14 +196,14 @@ namespace Meadow.Foundation.Sensors.Motion
 	            }
 	            var data = GetReadings(Registers.MagnetometerXLSB - Registers.StartOfSensorData, 16.0);
 
-				return new MagneticField3d(data.X, data.Y, data.Z, MagneticField.UnitType.Telsa);
+				return new MagneticField3D(data.X, data.Y, data.Z, MagneticField.UnitType.Telsa);
 			}
 	    }
 
         /// <summary>
         ///     Get the gyroscope readings.
         /// </summary>
-	    public AngularAcceleration3d AngularAcceleration3d
+	    public AngularAcceleration3D AngularAcceleration3d
 		{
 	        get
 	        {
@@ -222,7 +222,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
 				var data = GetReadings(Registers.GyroscopeXLSB - Registers.StartOfSensorData, divisor);
 
-				return new AngularAcceleration3d(data.X, data.Y, data.Z, AngularAcceleration.UnitType.RadiansPerSecondSquared);
+				return new AngularAcceleration3D(data.X, data.Y, data.Z, AngularAcceleration.UnitType.RadiansPerSecondSquared);
 			}
 	    }
 
