@@ -58,7 +58,6 @@ namespace Sensors.Moisture.FC28_Sample
 
                 Console.WriteLine($"Moisture New Value { moisture.New}");
                 Console.WriteLine($"Moisture Old Value { moisture.Old.Value}");
-                Console.WriteLine($"Moisture Delta Value { moisture.Delta.Value}");
                 Thread.Sleep(1000);
             }
         }

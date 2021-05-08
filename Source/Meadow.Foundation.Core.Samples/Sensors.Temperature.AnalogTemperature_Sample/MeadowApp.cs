@@ -30,8 +30,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
                 },
                 // only notify if the change is greater than 0.5°C
                 filter: result => {
-                    // if it's not null, do a comparison
-                    if (result.Old is { } old) {
+                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
                         return (result.New - old).Abs().Celsius > 0.5; // returns true if > 0.5°C change.
                     } return false;
                 }
