@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Sensors.Distance;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Distance
