@@ -156,7 +156,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             if (changeResult.New.Pressure is { } pressure) {
                 PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
             }
-            Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 

@@ -13,65 +13,54 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        RgbPwmLed onboardLed;
         Mpl115a2 sensor;
 
         public MeadowApp()
         {
-            Initialize();
-        }
+            Console.WriteLine("Initializing...");
 
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
+            // configure our sensor on the I2C Bus
+            sensor = new Mpl115a2(Device.CreateI2cBus());
 
-            // create the I2C Bus
-            var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Standard);
+            //==== IObservable 
+            // Example that uses an IObersvable subscription to only be notified
+            // when the temperature changes by at least a degree, and humidty by 5%.
+            // (blowing hot breath on the sensor should trigger)
+            var consumer = Mpl115a2.CreateObserver(
+                handler: result => {
+                    Console.WriteLine($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
+                },
+                // only notify if the change is greater than 0.5°C
+                filter: result => {
+                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                        return (
+                        (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5); // returns true if > 0.5°C change.
+                    }
+                    return false;
+                }
+                // if you want to always get notified, pass null for the filter:
+                //filter: null
+                );
+            sensor.Subscribe(consumer);
 
-            Console.WriteLine("Created I2C Bus");
+            //==== Events
+            // classical .NET events can also be used:
+            sensor.Updated += (object sender, IChangeResult<(Meadow.Units.Temperature? Temperature, Meadow.Units.Pressure? Pressure)> e) => {
+                Console.WriteLine($"  Temperature: {e.New.Temperature?.Celsius:N2}C");
+                Console.WriteLine($"  Pressure: {e.New.Pressure?.Bar:N2}bar");
+            };
 
-            // create our device
-            sensor = new Mpl115a2(i2cBus);
-
-            Console.WriteLine("Sensor initialized.");
-
-            // get an initial reading
+            //==== one-off read
             ReadConditions().Wait();
 
             // start updating continuously
             sensor.StartUpdating();
-
-            //==== Events
-            // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<(Temperature Temperature, Pressure Pressure)> result) => {
-                Console.WriteLine($"  Temperature: {result.New.Temperature.Celsius:F1}°C");
-                Console.WriteLine($"  Pressure: {result.New.Pressure.Pascal:F1}hpa");
-            };
-
-            //==== IObservable
-            var consumer = Mpl115a2.CreateObserver(
-                handler: result => {
-                    Console.WriteLine($"Observer triggered; new temp: {result.New.Item1.Celsius}, old: {result.Old?.Item1.Celsius}");
-                },
-                filter: result => {
-                    return true;
-                    //return (
-                    //    (Math.Abs(result.Delta.Value.Unit1.Celsius) > 1)
-                    //    &&
-                    //    (Math.Abs(result.Delta.Value.Unit3.Bar) > 5)
-                    //    );
-                });
-            sensor.Subscribe(consumer);
-
-            Console.WriteLine("Hardware initialized.");
         }
 
         protected async Task ReadConditions()
         {
-            var result = await sensor.Read();
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {result.Temperature.Celsius:F1}°C");
-            Console.WriteLine($"  Pressure: {result.Pressure:F1}hpa");
+            var conditions = await sensor.Read();
+            Console.WriteLine($"Temperature: {conditions.Temperature?.Celsius}°C, Pressure: {conditions.Pressure?.Pascal}Pa");
         }
     }
 }
