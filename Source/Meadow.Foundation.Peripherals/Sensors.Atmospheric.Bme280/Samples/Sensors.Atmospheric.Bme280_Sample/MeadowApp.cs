@@ -45,9 +45,9 @@ namespace Sensors.Atmospheric.BME280_Sample
                 filter: result => {
                     if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
                         return (
-                        (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5
+                        (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5 // returns true if > 0.5°C change.
                         &&
-                        (result.New.Humidity.Value.Percent - old.Humidity.Value.Percent) > 0.05
+                        (result.New.Humidity.Value.Percent - old.Humidity.Value.Percent) > 0.05 // 5% humidity change
                         ); // returns true if > 0.5°C change.
                     }
                     return false;
