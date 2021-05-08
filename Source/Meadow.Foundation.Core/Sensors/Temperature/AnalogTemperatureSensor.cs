@@ -178,12 +178,12 @@ namespace Meadow.Foundation.Sensors.Temperature
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    h => {
-                        var newTemp = VoltageToTemperature(h.New);
+                    result => {
+                        var newTemp = VoltageToTemperature(result.New);
 
                         // old might be null if it's the first reading
                         Units.Temperature? oldTemp = null;
-                        if (h.Old is { } oldVoltage) { oldTemp = VoltageToTemperature(oldVoltage); }
+                        if (result.Old is { } oldVoltage) { oldTemp = VoltageToTemperature(oldVoltage); }
                                                 
                         Temperature = newTemp; // save state
                         RaiseEventsAndNotify (

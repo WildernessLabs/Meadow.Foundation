@@ -21,25 +21,39 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
                 sensorType: AnalogTemperature.KnownSensorType.LM35
             );
 
-            //==== IObservable Pattern
+            //==== IObservable Pattern with an optional notification filter.
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree.
             var consumer = AnalogTemperature.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Temp changed: {result.New.Celsius:N2}C, old: {result.Old?.Celsius:N2}C");
+                    Console.WriteLine($"Observer filter satisfied: {result.New.Celsius:N2}C, old: {result.Old?.Celsius:N2}C");
                 },
-                filter: null
-                );
+                // only notify if the change is greater than 0.5°C
+                // this filter is a predicate, so if you want to get notified,
+                // is needs to return true.
+                filter: result => {
+                    // if it's not null, do a comparison
+                    if (result.Old is { } old) {
+                        return (result.New - old).Abs().Celsius > 0.5;
+                    } // if the old result is null, it's the first time, so we want to get notified
+                    else {
+                        Console.WriteLine("Filter: result.old is null");
+                        return true;
+                    }
+                }
+                // if you want to always get notified, pass null for the filter:
+                //filter: null
+            );
             analogTemperature.Subscribe(consumer);
 
-            //==== Classic Events
+            //==== Classic Events Pattern
             // classical .NET events can also be used:
             analogTemperature.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> result) => {
                 Console.WriteLine($"Temp Changed, temp: {result.New.Celsius:N2}C, old: {result.Old?.Celsius:N2}C");
             };
 
-            // Get an initial reading.
-            ReadTemp().Wait();
+            //==== One-off reading use case/pattern
+            //ReadTemp().Wait();
 
             // Spin up the sampling thread so that events are raised and
             // IObservable notifications are sent.
