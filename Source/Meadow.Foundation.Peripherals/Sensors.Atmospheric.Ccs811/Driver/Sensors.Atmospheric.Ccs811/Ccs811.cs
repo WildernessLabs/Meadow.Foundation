@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -12,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Provide access to the CCS811 C02 and VOC Air Quality Sensor
     /// </summary>
     public class Ccs811 :
-        FilterableChangeObservableBaseI2CPeripheral<ChangeResult<Units.Concentration, Units.Concentration>, Units.Concentration, Units.Concentration>,
+        FilterableChangeObservableI2CPeripheral<(Concentration?, Concentration?)>,
         ICO2Sensor, IVocSensor
     {
         // internal thread lock
@@ -91,12 +90,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// The measured CO2 concentration
         /// </summary>
         /// 
-        public Units.Concentration CO2 { get => Conditions.CO2; }
+        public Concentration? CO2 { get => Conditions.CO2; }
 
         /// <summary>
         /// The measured VOC concentration
         /// </summary>
-        public Units.Concentration VOC { get => Conditions.VOC; }
+        public Concentration? VOC { get => Conditions.VOC; }
 
 
         public Ccs811(II2cBus i2cBus, byte address)
@@ -211,7 +210,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 (Concentration CO2, Concentration VOC) oldConditions;
-                ChangeResult<Concentration, Concentration> result;
+                ChangeResult<(Concentration?, Concentration?)> result;
 
                 Task.Factory.StartNew(async () => {
                     while (true)
@@ -233,7 +232,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         Console.WriteLine($"VOC: {Conditions.VOC}");
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<Concentration, Concentration>(oldConditions, Conditions);
+                        result = new ChangeResult<(Concentration?, Concentration?)>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -266,7 +265,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             });
         }
 
-        protected void RaiseChangedAndNotify(ChangeResult<Concentration, Concentration> changeResult)
+        protected void RaiseChangedAndNotify(ChangeResult<(Concentration?, Concentration?)> changeResult)
         {
 //            CO2Updated?.Invoke(this, changeResult);
 //            base.NotifyObservers(changeResult);

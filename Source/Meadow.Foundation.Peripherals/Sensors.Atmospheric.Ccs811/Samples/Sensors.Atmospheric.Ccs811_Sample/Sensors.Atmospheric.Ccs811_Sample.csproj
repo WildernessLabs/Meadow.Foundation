@@ -5,6 +5,6 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.AirQuality.Ccs811\Sensors.AirQuality.Ccs811.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Ccs811\Sensors.Atmospheric.Ccs811.csproj" />
   </ItemGroup>
 </Project>
