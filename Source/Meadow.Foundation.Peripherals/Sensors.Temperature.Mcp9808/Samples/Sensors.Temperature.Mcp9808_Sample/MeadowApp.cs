@@ -27,7 +27,6 @@ namespace Sensors.Temperature.Mcp9808_Sample
                 {
                     Console.WriteLine($"Temperature New Value { result.New.Celsius}");
                     Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}");
-                    //Console.WriteLine($"Temperature Delta Value { result.Delta?.Celsius}");
                 },
                 filter: null
             );
@@ -35,7 +34,7 @@ namespace Sensors.Temperature.Mcp9808_Sample
 
             mcp9808.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
             {
-                Console.WriteLine($"Moisture Updated: {e.New.Value}");
+                Console.WriteLine($"Temperature Updated: {e.New.Celsius:N2}C");
             };
 
             mcp9808.StartUpdating();

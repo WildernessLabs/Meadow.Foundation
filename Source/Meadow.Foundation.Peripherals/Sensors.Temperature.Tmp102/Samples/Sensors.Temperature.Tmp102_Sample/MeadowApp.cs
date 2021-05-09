@@ -35,7 +35,7 @@ namespace Sensors.Temperature.Tmp102_Sample
 
             tmp102.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
             {
-                Console.WriteLine($"Moisture Updated: {e.New.Value}");
+                Console.WriteLine($"Temperature Updated: {e.New.Celsius:N2}C");
             };
 
             tmp102.StartUpdating();
