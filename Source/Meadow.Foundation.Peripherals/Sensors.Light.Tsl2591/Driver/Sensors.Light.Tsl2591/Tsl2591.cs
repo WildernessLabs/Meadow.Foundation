@@ -131,7 +131,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Visible lux.
         /// </summary>
-        public Illuminance Illuminance { get; private set; }
+        public Illuminance? Illuminance { get; private set; }
 
         /// <summary>
         /// Reads the value of ADC Channel 0
@@ -212,7 +212,7 @@ namespace Meadow.Foundation.Sensors.Light
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                Illuminance oldConditions;
+                Illuminance? oldConditions;
                 ChangeResult<Illuminance> result;
                 Task.Factory.StartNew(async () =>
                 {
@@ -230,7 +230,7 @@ namespace Meadow.Foundation.Sensors.Light
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<Illuminance>(oldConditions, Illuminance);
+                        result = new ChangeResult<Illuminance>(Illuminance.Value, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);

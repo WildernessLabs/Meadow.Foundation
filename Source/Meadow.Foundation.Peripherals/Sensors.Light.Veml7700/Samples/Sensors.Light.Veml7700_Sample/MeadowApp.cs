@@ -24,10 +24,5 @@ namespace Sensors.Light.Veml7700_Sample
                 }
             }
         }
-
-        private void OnLightChanged(float previousValue, float newValue)
-        {
-            Console.WriteLine($"Light: {_veml.Illuminance.Lux} lux");
-        }
     }
 }

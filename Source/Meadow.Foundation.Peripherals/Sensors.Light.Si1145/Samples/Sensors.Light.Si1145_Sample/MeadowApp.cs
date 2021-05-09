@@ -16,7 +16,7 @@ namespace MeadowApp
 
             while (true)
             {
-                Console.WriteLine($"IR: {sensor.GetIfrared()}");
+                Console.WriteLine($"IR: {sensor.GetInfrared()}");
                 Console.WriteLine($"UV: {sensor.GetUltraVioletIndex()}");
                 Console.WriteLine($"VI: {sensor.GetVisible()}");
                 Console.WriteLine($"PX: {sensor.GetProximity()}");

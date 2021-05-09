@@ -38,8 +38,7 @@ namespace Meadow.Foundation.Sensors.Light
             Default = Address0
         }
 
-        // TODO: rename to `LightSensorType`
-        public enum LightSensor
+        public enum LightSensorType
         {
             Ambient,
             White
@@ -59,12 +58,12 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Luminosity reading from the TSL2561 sensor.
         /// </summary>
-        public Illuminance Illuminance { get; protected set; }
+        public Illuminance? Illuminance { get; protected set; }
 
         public int ChangeThreshold { get; set; }
         public byte Address { get; private set; }
 
-        public LightSensor DataSource { get; set; } = LightSensor.Ambient;
+        public LightSensorType DataSource { get; set; } = LightSensorType.Ambient;
 
         public Veml7700(II2cBus bus)
         {
@@ -100,13 +99,12 @@ namespace Meadow.Foundation.Sensors.Light
             {
                 if (IsSampling) { return; }
 
-                // state muh-cheen
                 IsSampling = true;
 
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                Illuminance oldConditions;
+                Illuminance? oldConditions;
 
                 int integrationTime;
                 int gain;
@@ -117,7 +115,6 @@ namespace Meadow.Foundation.Sensors.Light
                 {
                     gain = 1;
                     integrationTime = 0;
-                    var capturing = true;
 
                     WriteRegister(Register.AlsConf0, 0);
 
@@ -140,7 +137,7 @@ namespace Meadow.Foundation.Sensors.Light
                         oldConditions = Illuminance;
 
                         // read data
-                        var data = ReadRegister(DataSource == LightSensor.Ambient ? Register.Als : Register.White);
+                        var data = ReadRegister(DataSource == LightSensorType.Ambient ? Register.Als : Register.White);
 
                         if (data < 100)
                         {
@@ -153,7 +150,6 @@ namespace Meadow.Foundation.Sensors.Light
                                 if (++integrationTime >= 4)
                                 {
                                     Illuminance = new Illuminance(scaleA * scaleB * 0.0036f * (float)data);
-                                    capturing = false;
                                 }
                                 else
                                 {
@@ -177,8 +173,6 @@ namespace Meadow.Foundation.Sensors.Light
                             if (--integrationTime <= -2)
                             {
                                 Illuminance = CalculateCorrectedLux(scaleA * scaleB * 0.0036f * (float)data);
-
-                                capturing = false;
                             }
                             else
                             {
@@ -191,11 +185,10 @@ namespace Meadow.Foundation.Sensors.Light
                         else
                         {
                             Illuminance = CalculateCorrectedLux(0.0036f * scaleA * scaleB * (float)data);
-                            capturing = false;
                         }
 
                         // let everyone know
-                        RaiseChangedAndNotify(new ChangeResult<Illuminance>(Illuminance, oldConditions));
+                        RaiseChangedAndNotify(new ChangeResult<Illuminance>(Illuminance.Value, oldConditions));
 
                         await Task.Delay(GetDelayTime(integrationTime));
                     }

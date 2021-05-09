@@ -153,7 +153,7 @@ namespace Meadow.Foundation.Sensors.Light
             return result / 100.0; ;
         }
 
-        public Illuminance GetIfrared()
+        public Illuminance GetInfrared()
         {
             byte[] data = si1145.ReadRegisters(0x22, 2);
             int result = (data[1] << 8) | data[0];
