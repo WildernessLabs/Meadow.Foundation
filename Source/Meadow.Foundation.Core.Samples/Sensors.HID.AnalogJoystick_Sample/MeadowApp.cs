@@ -31,11 +31,18 @@ namespace MeadowApp
 
             if (hasDisplay) { Render(new JoystickPosition(0f, 0f)); }
 
-            _ = joystick.SetCenterPosition(); //fire and forget 
+            // assume that the stick is in the center when it starts up
+            _ = joystick.SetCenterPosition(); //fire and forget
+
+
+            //==== Classic Events
             joystick.Updated += JoystickUpdated;
+
+            //==== IObservable
+
             // these are pretty fast updates (40ms in total), if you need more time to process, you can
             // increase the sample interval duration and/or standby duration.
-            joystick.StartUpdating(sampleCount:2, sampleIntervalDuration:10, standbyDuration:20);
+            joystick.StartUpdating(sampleCount:3, sampleIntervalDuration:5, standbyDuration:10);
         }
 
         void Initialize()
@@ -74,7 +81,7 @@ namespace MeadowApp
 
         void JoystickUpdated(object sender, ChangeResult<JoystickPosition> e)
         {
-            Console.WriteLine($"Horizontal: {e.New.Horizontal:n2}, Vertical: {e.New.Vertical:n2})");
+            Console.WriteLine($"Horizontal: {e.New.Horizontal:n2}, Vertical: {e.New.Vertical:n2}");
             if (hasDisplay) { Render(e.New); }
         }
 
@@ -129,8 +136,12 @@ namespace MeadowApp
                 (int X, int Y) centerPoint = (0, 0);
                 // NOTE: Juego has its joystick rotated 90° counter clockwise,
                 // so Horizontal is Vertical
-                centerPoint.X = (int)position.Vertical.Map(-1, 1, 0, displayWidth);
-                centerPoint.Y = (int)(-position.Horizontal).Map(-1, 1, 0, displayHeight);
+                if (position.Vertical is { } vertical) {
+                    centerPoint.X = (int)vertical.Map(-1, 1, 0, displayWidth);
+                } else { centerPoint.X = 0.Map(-1, 1, 0, displayWidth); }
+                if (position.Horizontal is { } horizontal) {
+                    centerPoint.Y = (int)(-horizontal).Map(-1, 1, 0, displayHeight);
+                } else { centerPoint.Y = 0.Map(-1, 1, 0, displayHeight); }
 
                 // clear the buffer
                 canvas.Clear();
