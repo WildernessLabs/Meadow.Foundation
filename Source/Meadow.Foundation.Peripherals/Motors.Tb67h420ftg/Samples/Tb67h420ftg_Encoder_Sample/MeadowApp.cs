@@ -69,7 +69,7 @@ namespace MeadowApp
 
         int forwardCount = 0;
         int backwardsCount = 0;
-        private void Encoder_Rotated(object sender, Meadow.Peripherals.Sensors.Rotary.RotaryTurnedEventArgs e)
+        private void Encoder_Rotated(object sender, Meadow.Peripherals.Sensors.Rotary.RotaryChangeResult e)
         {
             if(e.Direction == Meadow.Peripherals.Sensors.Rotary.RotationDirection.Clockwise)
             {

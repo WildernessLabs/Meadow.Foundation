@@ -53,7 +53,7 @@ namespace MeadowApp
             Console.WriteLine("Hardware initialized.");
         }
 
-        private void Rotary_Rotated(object sender, Meadow.Peripherals.Sensors.Rotary.RotaryTurnedEventArgs e)
+        private void Rotary_Rotated(object sender, Meadow.Peripherals.Sensors.Rotary.RotaryChangeResult e)
         {
             esc.Power += (e.Direction == RotationDirection.Clockwise) ? powerIncrement : -powerIncrement;
             DisplayPowerOnLed(esc.Power);

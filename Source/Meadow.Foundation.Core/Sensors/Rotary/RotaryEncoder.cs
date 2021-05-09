@@ -7,8 +7,17 @@ namespace Meadow.Foundation.Sensors.Rotary
     /// <summary>
     /// Digital rotary encoder that uses two-bit Gray Code to encode rotation.
     /// </summary>
-    public class RotaryEncoder : IRotaryEncoder
+    public class RotaryEncoder :
+        FilterableChangeObservableBase<RotationDirection>,
+        IRotaryEncoder
     {
+        //==== events
+        /// <summary>
+        /// Raised when the rotary encoder is rotated and returns a RotaryTurnedEventArgs object which describes the direction of rotation.
+        /// </summary>
+        public event EventHandler<RotaryChangeResult> Rotated = delegate { };
+
+        //==== properties
         /// <summary>
         /// Returns the pin connected to the A-phase output on the rotary encoder.
         /// </summary>
@@ -20,10 +29,11 @@ namespace Meadow.Foundation.Sensors.Rotary
         public IDigitalInputPort BPhasePort { get; }
 
         /// <summary>
-        /// Raised when the rotary encoder is rotated and returns a RotaryTurnedEventArgs object which describes the direction of rotation.
+        /// Gets the last direction of rotation
         /// </summary>
-        public event RotaryTurnedEventHandler Rotated = delegate { };
+        public RotationDirection? LastDirectionOfRotation { get; protected set; }
 
+        //==== internals
         /// <summary>
         /// Contains the previous offset used to find direction information
         /// </summary>
@@ -43,7 +53,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         ///
         /// Bits 0 and 1 represent the current state of A and B while bits 2 and 3
         /// represent previous states of A and B. This 4-bit number yields 16 possible
-        /// combination, however, there are combination that for which not change is
+        /// combination, however, there are combination that for which no change is
         /// represent. For example, the if bits 0-3 are all 0, this would mean that A
         /// was Low and is Low, and that B was Low and is Low (nothing changed.)
         /// </summary>
@@ -82,8 +92,7 @@ namespace Meadow.Foundation.Sensors.Rotary
             // Clear bit A bit
             int new2LsBits = dynamicOffset & 0x02;    // Save bit 2 (B)
 
-            if (e.Value)
-            {
+            if (e.Value) {
                 new2LsBits |= 0x01;                     // Set bit 1 (A)
             }
 
@@ -95,8 +104,7 @@ namespace Meadow.Foundation.Sensors.Rotary
             // Clear bit B bit
             int new2LsBits = dynamicOffset & 0x01;    // Save bit 1 (A)
 
-            if (e.Value)
-            {
+            if (e.Value) {
                 new2LsBits |= 0x02;                     // Set bit 2 (B)
             }
 
@@ -111,19 +119,27 @@ namespace Meadow.Foundation.Sensors.Rotary
 
             int direction = RotEncLookup[dynamicOffset];
 
-            if (direction == 0)
-            {
-                return;                 // nothing changed
-            }
+            // save state
+            var oldRotation = LastDirectionOfRotation;
 
-            if (direction == 1)
-            {
-                Rotated?.Invoke(this, new RotaryTurnedEventArgs(RotationDirection.Clockwise));
+            switch (direction) {
+                case 0: // no valid change
+                    return;
+                case 1: // clockwise
+                    LastDirectionOfRotation = RotationDirection.Clockwise;
+                    RaiseRotatedAndNotify(new RotaryChangeResult(RotationDirection.Clockwise, oldRotation));
+                    break;
+                default: // counter clockwise
+                    LastDirectionOfRotation = RotationDirection.CounterClockwise;
+                    RaiseRotatedAndNotify(new RotaryChangeResult(RotationDirection.CounterClockwise, oldRotation));
+                    break;
             }
-            else
-            {
-                Rotated?.Invoke(this, new RotaryTurnedEventArgs(RotationDirection.CounterClockwise));
-            }
+        }
+
+        void RaiseRotatedAndNotify(RotaryChangeResult result)
+        {
+            Rotated?.Invoke(this, result);
+            base.NotifyObservers(result);
         }
     }
 }
