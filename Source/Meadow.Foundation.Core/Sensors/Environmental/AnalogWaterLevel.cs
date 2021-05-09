@@ -63,21 +63,20 @@ namespace Meadow.Foundation.Sensors.Environmental
         public AnalogWaterLevel(
             IAnalogInputController device,
             IPin analogPin,
-            Calibration calibration = null
+            Calibration? calibration = null
             ) : this(device.CreateAnalogInputPort(analogPin), calibration)
         {
         }
 
         public AnalogWaterLevel(IAnalogInputPort analogInputPort,
-                                 Calibration calibration = null)
+                                 Calibration? calibration = null)
         {
             AnalogInputPort = analogInputPort;
 
             //
             //  If the calibration object is null use the defaults for TMP35.
             //
-            LevelCalibration = calibration;
-            if (LevelCalibration == null) { LevelCalibration = new Calibration(); }
+            LevelCalibration = calibration ?? new Calibration();
 
             // wire up our observable
             AnalogInputPort.Subscribe

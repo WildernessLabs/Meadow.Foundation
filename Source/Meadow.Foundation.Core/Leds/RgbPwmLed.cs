@@ -20,8 +20,8 @@ namespace Meadow.Foundation.Leds
         readonly float MAX_FORWARD_VOLTAGE = 3.3f;
         readonly float DEFAULT_DUTY_CYCLE = 0f;
 
-        protected Task animationTask = null;
-        protected CancellationTokenSource cancellationTokenSource = null;
+        protected Task? animationTask = null;
+        protected CancellationTokenSource? cancellationTokenSource = null;
 
         protected double maxRedDutyCycle = 1;
         protected double maxGreenDutyCycle = 1;

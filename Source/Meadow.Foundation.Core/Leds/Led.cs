@@ -12,8 +12,8 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class Led : ILed
 	{
-		protected Task animationTask;
-		protected CancellationTokenSource cancellationTokenSource;
+		protected Task? animationTask;
+		protected CancellationTokenSource? cancellationTokenSource;
 
 		/// <summary>
 		/// Gets the port that is driving the LED

@@ -13,8 +13,8 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public partial class RgbLed : IRgbLed
     {
-        protected Task animationTask;
-        protected CancellationTokenSource cancellationTokenSource;
+        protected Task? animationTask;
+        protected CancellationTokenSource? cancellationTokenSource;
 
         /// <summary>
         /// Get the color the LED has been set to.

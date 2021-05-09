@@ -10,9 +10,9 @@ namespace Meadow.Foundation.Motors
     /// </summary>
     public class HBridgeMotor : IDCMotor
     {
-        protected IPwmPort motorLeftPwm = null; // H-Bridge 1A pin
-        protected IPwmPort motorRighPwm = null; // H-Bridge 2A pin
-        protected IDigitalOutputPort enablePort = null; // if enabled, then IsNeutral = false
+        protected IPwmPort motorLeftPwm; // H-Bridge 1A pin
+        protected IPwmPort motorRighPwm; // H-Bridge 2A pin
+        protected IDigitalOutputPort enablePort; // if enabled, then IsNeutral = false
 
         /// <summary>
         /// When true, the wheels spin "freely"

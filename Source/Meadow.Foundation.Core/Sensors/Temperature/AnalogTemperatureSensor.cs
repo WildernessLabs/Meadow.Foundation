@@ -128,14 +128,14 @@ namespace Meadow.Foundation.Sensors.Temperature
             IAnalogInputController device,
             IPin analogPin,
             KnownSensorType sensorType,
-            Calibration calibration = null
+            Calibration? calibration = null
             ) : this(device.CreateAnalogInputPort(analogPin), sensorType, calibration)
         {
         }
 
         public AnalogTemperature(IAnalogInputPort analogInputPort,
                                  KnownSensorType sensorType,
-                                 Calibration calibration = null)
+                                 Calibration? calibration = null)
         {
             AnalogInputPort = analogInputPort;
 
@@ -163,6 +163,10 @@ namespace Meadow.Foundation.Sensors.Temperature
                     break;
                 case KnownSensorType.Custom:
                     //user provided calibration
+                    if(calibration == null)
+                    {
+                        throw new ArgumentNullException("Custom Calibration sensor type requires a Calibration parameter");
+                    }
                     break;
                 default:
                     calibration = new Calibration();

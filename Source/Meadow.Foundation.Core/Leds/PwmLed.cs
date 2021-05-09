@@ -13,8 +13,8 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class PwmLed : IPwmLed
     {
-        protected Task animationTask;
-        protected CancellationTokenSource cancellationTokenSource;
+        protected Task? animationTask;
+        protected CancellationTokenSource? cancellationTokenSource;
 
         protected float maximumPwmDuty = 1;
         protected bool inverted;

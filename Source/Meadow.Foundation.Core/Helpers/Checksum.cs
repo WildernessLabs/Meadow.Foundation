@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Helpers
         /// <summary>
         ///     Lookup table for the polynomial CRC 8 method.
         /// </summary>
-        private static byte[] _lookupTable = null;
+        private static byte[]? _lookupTable = null;
 
         /// <summary>
         ///     When the _lookupTable is not null then _polynomial will contain the 
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Helpers
         /// <summary>
         ///     Generte the lookup table for the PolynomialCRC method.
         /// </summary>
-        private static void PopulateLookupTable(byte polynomial)
+        private static byte[] PopulateLookupTable(byte polynomial)
         {
             _lookupTable = new byte[256];
 
@@ -75,6 +75,8 @@ namespace Meadow.Foundation.Helpers
                 _lookupTable[outer] = (byte) temp;            
             }
             _polynomial = polynomial;
+
+            return _lookupTable;
         }
 
         /// <summary>
@@ -88,10 +90,15 @@ namespace Meadow.Foundation.Helpers
             {
                 throw new ArgumentException("data", "PolynomialCRC: Data to CRC is invalid.");
             }
-            if ((_lookupTable == null) || ((_lookupTable != null) && (_polynomial != polynomial)))
+            if (_lookupTable == null)
             {
-                PopulateLookupTable(polynomial);
+                _lookupTable = PopulateLookupTable(polynomial);
             }
+            else if (_polynomial != polynomial)
+            {
+                _lookupTable = PopulateLookupTable(polynomial);
+            }
+
             byte crc = 0;
             foreach (byte b in data)
             {

@@ -236,7 +236,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         public void Dispose()
         {
             DigitalIn.Dispose();
-            DigitalIn = null;
         }
     }
 }

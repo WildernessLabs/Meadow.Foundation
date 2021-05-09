@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Returns the switch array.
         /// </summary>
-        public ISwitch[] Switches = null;
+        public ISwitch[] Switches { get; }
 
         /// <summary>
         /// Raised when one of the switches is switched on or off.

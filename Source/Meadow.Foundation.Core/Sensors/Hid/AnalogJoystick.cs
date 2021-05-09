@@ -59,12 +59,12 @@ namespace Meadow.Foundation.Sensors.Hid
 
         #region Constructors
 
-        public AnalogJoystick(IAnalogInputController device, IPin horizontalPin, IPin verticalPin, JoystickCalibration calibration = null, bool isInverted = false) :
+        public AnalogJoystick(IAnalogInputController device, IPin horizontalPin, IPin verticalPin, JoystickCalibration? calibration = null, bool isInverted = false) :
             this(device.CreateAnalogInputPort(horizontalPin), device.CreateAnalogInputPort(verticalPin), calibration, isInverted)
         { }
 
         public AnalogJoystick(IAnalogInputPort horizontalInputPort, IAnalogInputPort verticalInputPort,
-            JoystickCalibration calibration = null, bool isInverted = false)
+            JoystickCalibration? calibration = null, bool isInverted = false)
         {
             HorizontalInputPort = horizontalInputPort;
             VerticalInputPort = verticalInputPort;
