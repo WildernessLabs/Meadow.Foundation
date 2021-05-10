@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     public class Mpu6050 :
-        FilterableChangeObservableBase<(Acceleration3d, AngularAcceleration3D)>,
+        FilterableChangeObservableBase<(Acceleration3D, AngularAcceleration3D)>,
         IAccelerometer, IAngularAccelerometer, IDisposable
     {
         /// <summary>
@@ -39,9 +39,9 @@ namespace Meadow.Foundation.Sensors.Motion
             GyroZ = 0x47
         }
 
-        public event EventHandler<IChangeResult<(Acceleration3d, AngularAcceleration3D)>> Updated;
-        public event EventHandler<IChangeResult<Acceleration3d>> Acceleration3dUpdated;
-        public event EventHandler<IChangeResult<AngularAcceleration3D>> AngularAcceleration3dUpdated;
+        public event EventHandler<IChangeResult<(Acceleration3D, AngularAcceleration3D)>> Updated;
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
+        public event EventHandler<IChangeResult<AngularAcceleration3D>> AngularAcceleration3DUpdated;
 
         /*
         /// <summary>
@@ -83,10 +83,10 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }*/
 
-        public (Acceleration3d Acceleration3d, AngularAcceleration3D AngularAcceleration3d) Conditions;
+        public (Acceleration3D Acceleration3d, AngularAcceleration3D AngularAcceleration3d) Conditions;
 
-        public Acceleration3d Acceleration3d { get; protected set; } = new Acceleration3d();
-        public AngularAcceleration3D AngularAcceleration3d { get; protected set; } = new AngularAcceleration3D();
+        public Acceleration3D Acceleration3D { get; protected set; } = new Acceleration3D();
+        public AngularAcceleration3D AngularAcceleration3D { get; protected set; } = new AngularAcceleration3D();
 
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
@@ -159,8 +159,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                (Acceleration3d, AngularAcceleration3D) oldConditions;
-                ChangeResult<(Acceleration3d, AngularAcceleration3D)> result;
+                (Acceleration3D, AngularAcceleration3D) oldConditions;
+                ChangeResult<(Acceleration3D, AngularAcceleration3D)> result;
                 Task.Factory.StartNew(async () => {
                     while (true) {
                         if (ct.IsCancellationRequested) {
@@ -175,7 +175,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<(Acceleration3d, AngularAcceleration3D)>(oldConditions, Conditions);
+                        result = new ChangeResult<(Acceleration3D, AngularAcceleration3D)>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -187,10 +187,10 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<(Acceleration3d, AngularAcceleration3D)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Acceleration3D, AngularAcceleration3D)> changeResult)
         {
-            AngularAcceleration3dUpdated?.Invoke(this, new ChangeResult<AngularAcceleration3D>(changeResult.Old.Value.Item2, changeResult.New.Item2));
-            Acceleration3dUpdated?.Invoke(this, new ChangeResult<Acceleration3d>(changeResult.Old.Value.Item1, changeResult.New.Item1));
+            AngularAcceleration3DUpdated?.Invoke(this, new ChangeResult<AngularAcceleration3D>(changeResult.Old.Value.Item2, changeResult.New.Item2));
+            Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(changeResult.Old.Value.Item1, changeResult.New.Item1));
 
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);

@@ -13,12 +13,12 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     +/- 16g
     /// </summary>
     public class Adxl345 :
-        FilterableChangeObservableBase<Acceleration3d>,
+        FilterableChangeObservableBase<Acceleration3D>,
         IAccelerometer
     {
         //==== events
-        public event EventHandler<IChangeResult<Acceleration3d>> Updated;
-        public event EventHandler<IChangeResult<Acceleration3d>> Acceleration3dUpdated;
+        public event EventHandler<IChangeResult<Acceleration3D>> Updated;
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
         /// <summary>
         /// Minimum value that can be used for the update interval when the
@@ -99,7 +99,7 @@ namespace Meadow.Foundation.Sensors.Motion
             public static readonly byte Z1 = 0x37;
         }
     
-        public Acceleration3d Acceleration3d { get; protected set; } = new Acceleration3d();
+        public Acceleration3D Acceleration3D { get; protected set; } = new Acceleration3D();
 
         // internal thread lock
         private object _lock = new object();
@@ -169,11 +169,11 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// Convenience method to get the current temperature. For frequent reads, use
         ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         ///// </summary>
-        public Task<Acceleration3d> Read()
+        public Task<Acceleration3D> Read()
         {
             Update();
 
-            return Task.FromResult(Acceleration3d);
+            return Task.FromResult(Acceleration3D);
         }
 
         ///// <summary>
@@ -195,8 +195,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                Acceleration3d oldConditions;
-                ChangeResult<Acceleration3d> result;
+                Acceleration3D oldConditions;
+                ChangeResult<Acceleration3D> result;
                 Task.Factory.StartNew(async () => 
                 {
                     while (true) 
@@ -207,13 +207,13 @@ namespace Meadow.Foundation.Sensors.Motion
                             break;
                         }
                         // capture history
-                        oldConditions = Acceleration3d;
+                        oldConditions = Acceleration3D;
 
                         // read
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<Acceleration3d>(Acceleration3d, oldConditions);
+                        result = new ChangeResult<Acceleration3D>(Acceleration3D, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -225,10 +225,10 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<Acceleration3d> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Acceleration3D> changeResult)
         {
             Updated?.Invoke(this, changeResult);
-            Acceleration3dUpdated?.Invoke(this, changeResult);
+            Acceleration3DUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
@@ -348,7 +348,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Update()
         {
             var data = adxl345.ReadRegisters(Registers.X0, 6);
-            Acceleration3d = new Acceleration3d(
+            Acceleration3D = new Acceleration3D(
                 new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[0] + (data[1] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
                 new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[2] + (data[3] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
                 new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[4] + (data[5] << 8)), Acceleration.UnitType.MetersPerSecondSquared)

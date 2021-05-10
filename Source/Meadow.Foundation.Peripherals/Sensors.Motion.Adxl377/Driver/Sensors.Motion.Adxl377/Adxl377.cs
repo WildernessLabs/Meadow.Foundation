@@ -13,12 +13,12 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     +/- 200g
     /// </summary>
     public class Adxl377 :
-        FilterableChangeObservableBase<Acceleration3d>,
+        FilterableChangeObservableBase<Acceleration3D>,
         IAccelerometer
     {
         //==== events
-        public event EventHandler<IChangeResult<Acceleration3d>> Updated;
-        public event EventHandler<IChangeResult<Acceleration3d>> Acceleration3dUpdated;
+        public event EventHandler<IChangeResult<Acceleration3D>> Updated;
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
         //==== internals
         // internal thread lock
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public float SupplyVoltage { get; set; }
 
-        public Acceleration3d Acceleration3d { get; protected set; } = new Acceleration3d();
+        public Acceleration3D Acceleration3D { get; protected set; } = new Acceleration3D();
 
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
@@ -107,11 +107,11 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// Convenience method to get the current temperature. For frequent reads, use
         ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         ///// </summary>
-        public async Task<Acceleration3d> Read()
+        public async Task<Acceleration3D> Read()
         {
             await Update();
 
-            return Acceleration3d;
+            return Acceleration3D;
         }
 
         ///// <summary>
@@ -133,8 +133,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                Acceleration3d oldConditions;
-                ChangeResult<Acceleration3d> result;
+                Acceleration3D oldConditions;
+                ChangeResult<Acceleration3D> result;
                 Task.Factory.StartNew(async () => 
                 {
                     while (true) 
@@ -145,13 +145,13 @@ namespace Meadow.Foundation.Sensors.Motion
                             break;
                         }
                         // capture history
-                        oldConditions = Acceleration3d;
+                        oldConditions = Acceleration3D;
 
                         // read
                         await Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<Acceleration3d>(Acceleration3d, oldConditions);
+                        result = new ChangeResult<Acceleration3D>(Acceleration3D, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -163,10 +163,10 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<Acceleration3d> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Acceleration3D> changeResult)
         {
             Updated?.Invoke(this, changeResult);
-            Acceleration3dUpdated?.Invoke(this, changeResult);
+            Acceleration3DUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
@@ -195,7 +195,7 @@ namespace Meadow.Foundation.Sensors.Motion
             var y = await _yPort.Read();
             var z = await _zPort.Read();
 
-            Acceleration3d = new Acceleration3d(
+            Acceleration3D = new Acceleration3D(
                 new Acceleration((x.Volts - _zeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
                 new Acceleration((y.Volts - _zeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
                 new Acceleration((z.Volts - _zeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity)

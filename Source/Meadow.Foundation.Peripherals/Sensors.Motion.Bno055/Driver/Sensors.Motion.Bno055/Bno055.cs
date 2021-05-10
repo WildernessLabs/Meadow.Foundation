@@ -154,7 +154,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	        }
 	    }
 
-		public Acceleration3d Acceleration3d
+		public Acceleration3D Acceleration3d
         {
 			get
             {
@@ -172,7 +172,7 @@ namespace Meadow.Foundation.Sensors.Motion
 				double divisor = 100.0; //m/s2
 				var data = GetReadings(Registers.AccelerometerXLSB - Registers.StartOfSensorData, divisor);
 
-				return new Acceleration3d(data.X, data.Y, data.Z, Acceleration.UnitType.MetersPerSecondSquared);
+				return new Acceleration3D(data.X, data.Y, data.Z, Acceleration.UnitType.MetersPerSecondSquared);
 			}
         }
 
@@ -275,7 +275,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///     Retrieve the linear acceleration vector (fusion mode only).
         /// </summary>
-	    public Acceleration3d LinearAcceleration
+	    public Acceleration3D LinearAcceleration
 	    {
 	        get
 	        {
@@ -291,14 +291,14 @@ namespace Meadow.Foundation.Sensors.Motion
 	            
 				var data = GetReadings(Registers.LinearAccelerationXLSB - Registers.StartOfSensorData, divisor);
 
-				return new Acceleration3d(data.X, data.Y, data.Z, Acceleration.UnitType.MetersPerSecondSquared);
+				return new Acceleration3D(data.X, data.Y, data.Z, Acceleration.UnitType.MetersPerSecondSquared);
 	        }
 	    }
 
         /// <summary>
         ///     Retrieve the gravity vector (fusion mode only).
         /// </summary>
-	    public Acceleration3d GravityVector
+	    public Acceleration3D GravityVector
 	    {
 	        get
 	        {
@@ -314,7 +314,7 @@ namespace Meadow.Foundation.Sensors.Motion
 	            
 				var data = GetReadings(Registers.GravityVectorXLSB - Registers.StartOfSensorData, divisor);
 
-				return new Acceleration3d(data.X, data.Y, data.Z, Acceleration.UnitType.MetersPerSecondSquared);
+				return new Acceleration3D(data.X, data.Y, data.Z, Acceleration.UnitType.MetersPerSecondSquared);
 			}
 	    }
 

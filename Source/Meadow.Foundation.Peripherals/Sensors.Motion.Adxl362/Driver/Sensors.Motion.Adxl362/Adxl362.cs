@@ -13,12 +13,12 @@ namespace Meadow.Foundation.Sensors.Motion
     /// Driver for the ADXL362 triple axis accelerometer.
     /// </summary>
     public class Adxl362 :
-        FilterableChangeObservableBase<Acceleration3d>,
+        FilterableChangeObservableBase<Acceleration3D>,
         IAccelerometer
     {
         //==== events
-        public event EventHandler<IChangeResult<Acceleration3d>> Updated;
-        public event EventHandler<IChangeResult<Acceleration3d>> Acceleration3dUpdated;
+        public event EventHandler<IChangeResult<Acceleration3D>> Updated;
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
         /// <summary>
         /// ADXL362 sensor object.
@@ -560,7 +560,7 @@ namespace Meadow.Foundation.Sensors.Motion
             public const byte LoopMode = 0x30;
         }
     
-        public Acceleration3d Acceleration3d { get; protected set; } = new Acceleration3d();
+        public Acceleration3D Acceleration3D { get; protected set; } = new Acceleration3D();
 
         // internal thread lock
         private readonly object _lock = new object();
@@ -743,11 +743,11 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// Convenience method to get the current temperature. For frequent reads, use
         ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         ///// </summary>
-        public Task<Acceleration3d> Read()
+        public Task<Acceleration3D> Read()
         {
             Update();
 
-            return Task.FromResult(Acceleration3d);
+            return Task.FromResult(Acceleration3D);
         }
 
         ///// <summary>
@@ -769,8 +769,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                Acceleration3d oldConditions;
-                ChangeResult<Acceleration3d> result;
+                Acceleration3D oldConditions;
+                ChangeResult<Acceleration3D> result;
                 Task.Factory.StartNew(async () => 
                 {
                     while (true) 
@@ -781,13 +781,13 @@ namespace Meadow.Foundation.Sensors.Motion
                             break;
                         }
                         // capture history
-                        oldConditions = Acceleration3d;
+                        oldConditions = Acceleration3D;
 
                         // read
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<Acceleration3d>(Acceleration3d, oldConditions);
+                        result = new ChangeResult<Acceleration3D>(Acceleration3D, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -799,10 +799,10 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<Acceleration3d> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<Acceleration3D> changeResult)
         {
             Updated?.Invoke(this, changeResult);
-            Acceleration3dUpdated?.Invoke(this, changeResult);
+            Acceleration3DUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
@@ -858,7 +858,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             var sensorReading = _adxl362.WriteRead(new byte[] { Command.Readegister, Registers.XAxisLSB }, 8);
 
-            Acceleration3d = new Acceleration3d(
+            Acceleration3D = new Acceleration3D(
                 new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[3] << 8) | sensorReading[2]), Acceleration.UnitType.MetersPerSecondSquared),
                 new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[5] << 8) | sensorReading[4]), Acceleration.UnitType.MetersPerSecondSquared),
                 new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[7] << 8) | sensorReading[6]), Acceleration.UnitType.MetersPerSecondSquared)
