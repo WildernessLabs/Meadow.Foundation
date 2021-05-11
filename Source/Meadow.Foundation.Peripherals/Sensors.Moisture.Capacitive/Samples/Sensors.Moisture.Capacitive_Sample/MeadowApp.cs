@@ -25,12 +25,12 @@ namespace Sensors.Moisture.Capacitive_Sample
             // Example that uses an IObservable subscription to only be notified
             // when the humidity changes by filter defined.
             var consumer = Capacitive.CreateObserver(
-                handler: result =>
-                {
+                handler: result => {
+                    // the first time through, old will be null.
+                    string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
                     Console.WriteLine($"Subscribed - " +
                         $"new: {result.New}, " +
-                        $"old: {result.Old.Value}"); //+
-                        //$"delta: {result.Delta.Value}");
+                        $"old: {oldValue}");
                 },
                 filter: null
             );
@@ -38,9 +38,11 @@ namespace Sensors.Moisture.Capacitive_Sample
 
             //==== Classic Events
             // classical .NET events can also be used:
-            capacitive.HumidityUpdated += (object sender, IChangeResult<double> e) =>
+            capacitive.HumidityUpdated += (object sender, IChangeResult<double> result) =>
             {
-                Console.WriteLine($"Updated - New: {e.New}, Old: {e.Old.Value}");
+                // the first time through, old will be null.
+                string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
+                Console.WriteLine($"Updated - New: {result.New}, Old: {oldValue}");
             };
 
             // Get an initial reading.
