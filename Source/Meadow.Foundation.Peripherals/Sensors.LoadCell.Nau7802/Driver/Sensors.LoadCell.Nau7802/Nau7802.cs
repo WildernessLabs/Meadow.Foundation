@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         private PU_CTRL_BITS _currentPU_CTRL;
         private int _tareValue;
         private object SyncRoot { get; } = new object();
-        private CancellationTokenSource SamplingTokenSource { get; set; }
+        private CancellationTokenSource? SamplingTokenSource { get; set; }
 
         //==== Properties
         public bool IsSampling { get; private set; }
@@ -375,7 +375,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             lock (SyncRoot)
             {
                 if (!IsSampling) return;
-                SamplingTokenSource.Cancel();
+                SamplingTokenSource?.Cancel();
             }
         }
     }
