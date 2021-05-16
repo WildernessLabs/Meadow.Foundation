@@ -47,7 +47,7 @@ namespace Sensors.Atmospheric.BME280_Sample
                         return (
                         (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5 // returns true if > 0.5°C change.
                         &&
-                        (result.New.Humidity.Value.Percent - old.Humidity.Value.Percent) > 0.05 // 5% humidity change
+                        (result.New.Humidity.Value - old.Humidity.Value).Percent > 0.05 // 5% humidity change
                         ); // returns true if > 0.5°C change.
                     }
                     return false;

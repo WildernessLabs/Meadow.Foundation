@@ -33,8 +33,8 @@ namespace MeadowApp
             //==== Events
             // classical .NET events can also be used:
             sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity)> result) => {
-                Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:F1}°C");
-                Console.WriteLine($"  Relative Humidity: {result.New.Humidity.Value:F1}%");
+                Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:F1}C");
+                Console.WriteLine($"  Relative Humidity: {result.New.Humidity?.Percent:F1}%");
             };
 
             //==== IObservable 
@@ -51,7 +51,7 @@ namespace MeadowApp
                         return (
                         (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5 // returns true if > 0.5°C change.
                         &&
-                        (result.New.Humidity.Value.Percent - old.Humidity.Value.Percent) > 0.05 // 5% humidity change
+                        (result.New.Humidity.Value - old.Humidity.Value).Percent > 0.05 // 5% humidity change
                         );
                     }
                     return false;
@@ -66,7 +66,7 @@ namespace MeadowApp
         {
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {result.Temperature?.Celsius:F1}°C");
+            Console.WriteLine($"  Temperature: {result.Temperature?.Celsius:F1}C");
             Console.WriteLine($"  Relative Humidity: {result.Humidity:F1}%");
         }
     }
