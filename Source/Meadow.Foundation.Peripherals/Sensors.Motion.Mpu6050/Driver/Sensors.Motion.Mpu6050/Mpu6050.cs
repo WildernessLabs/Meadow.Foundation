@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     public class Mpu6050 :
-        FilterableChangeObservableBase<(Acceleration3D, AngularAcceleration3D)>,
+        FilterableChangeObservableBase<(Acceleration3D?, AngularAcceleration3D?)>,
         IAccelerometer, IAngularAccelerometer, IDisposable
     {
         /// <summary>
@@ -39,7 +39,7 @@ namespace Meadow.Foundation.Sensors.Motion
             GyroZ = 0x47
         }
 
-        public event EventHandler<IChangeResult<(Acceleration3D, AngularAcceleration3D)>> Updated;
+        public event EventHandler<IChangeResult<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D)>> Updated;
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
         public event EventHandler<IChangeResult<AngularAcceleration3D>> AngularAcceleration3DUpdated;
 
@@ -83,10 +83,10 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }*/
 
-        public (Acceleration3D Acceleration3d, AngularAcceleration3D AngularAcceleration3d) Conditions;
+        public (Acceleration3D? Acceleration3d, AngularAcceleration3D? AngularAcceleration3d) Conditions;
 
-        public Acceleration3D Acceleration3D { get; protected set; } = new Acceleration3D();
-        public AngularAcceleration3D AngularAcceleration3D { get; protected set; } = new AngularAcceleration3D();
+        public Acceleration3D? Acceleration3D { get; protected set; }
+        public AngularAcceleration3D? AngularAcceleration3D { get; protected set; }
 
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
@@ -159,8 +159,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                (Acceleration3D, AngularAcceleration3D) oldConditions;
-                ChangeResult<(Acceleration3D, AngularAcceleration3D)> result;
+                (Acceleration3D?, AngularAcceleration3D?) oldConditions;
+                ChangeResult<(Acceleration3D?, AngularAcceleration3D?)> result;
                 Task.Factory.StartNew(async () => {
                     while (true) {
                         if (ct.IsCancellationRequested) {
@@ -175,7 +175,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<(Acceleration3D, AngularAcceleration3D)>(oldConditions, Conditions);
+                        result = new ChangeResult<(Acceleration3D?, AngularAcceleration3D?)>(oldConditions, Conditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -187,12 +187,15 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<(Acceleration3D, AngularAcceleration3D)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D)> changeResult)
         {
-            AngularAcceleration3DUpdated?.Invoke(this, new ChangeResult<AngularAcceleration3D>(changeResult.Old.Value.Item2, changeResult.New.Item2));
-            Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(changeResult.Old.Value.Item1, changeResult.New.Item1));
-
             Updated?.Invoke(this, changeResult);
+            if (changeResult.New.AngularAcceleration3D is { } angular) {
+                AngularAcceleration3DUpdated?.Invoke(this, new ChangeResult<Units.AngularAcceleration3D>(angular, changeResult.Old?.AngularAcceleration3D));
+            }
+            if (changeResult.New.Acceleration3D is { } accel) {
+                Acceleration3DUpdated?.Invoke(this, new ChangeResult<Units.Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
+            }
             base.NotifyObservers(changeResult);
         }
 
@@ -278,13 +281,19 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 var a_scale = (1 << AccelerometerScale) / AccelScaleBase;
                 var g_scale = (1 << GyroScale) / GyroScaleBase;
-                Conditions.Acceleration3d.X = new Acceleration(ScaleAndOffset(data, 0, a_scale));
-                Conditions.Acceleration3d.Y = new Acceleration(ScaleAndOffset(data, 2, a_scale));
-                Conditions.Acceleration3d.Z = new Acceleration(ScaleAndOffset (data, 4, a_scale));
+                Acceleration3D newAccel = new Acceleration3D(
+                    new Acceleration(ScaleAndOffset(data, 0, a_scale)),
+                    new Acceleration(ScaleAndOffset(data, 2, a_scale)),
+                    new Acceleration(ScaleAndOffset(data, 4, a_scale))
+                    );
+                Conditions.Acceleration3d = newAccel;
                 _temperature = new Units.Temperature(ScaleAndOffset(data, 6, 1 / 340f, 36.53f), Units.Temperature.UnitType.Celsius);
-                Conditions.AngularAcceleration3d.X = new AngularAcceleration(ScaleAndOffset(data, 8, g_scale));
-                Conditions.AngularAcceleration3d.Y = new AngularAcceleration(ScaleAndOffset(data, 10, g_scale));
-                Conditions.AngularAcceleration3d.Z = new AngularAcceleration(ScaleAndOffset(data, 12, g_scale));
+                AngularAcceleration3D angularAccel = new AngularAcceleration3D(
+                    new AngularAcceleration(ScaleAndOffset(data, 8, g_scale)),
+                    new AngularAcceleration(ScaleAndOffset(data, 10, g_scale)),
+                    new AngularAcceleration(ScaleAndOffset(data, 12, g_scale))
+                    );
+                Conditions.AngularAcceleration3d = angularAccel;
             }
         }
 

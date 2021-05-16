@@ -17,7 +17,8 @@ namespace Meadow.Foundation.Sensors.Motion
         IAccelerometer
     {
         //==== events
-        public event EventHandler<IChangeResult<Acceleration3D>> Updated;
+        // [Bryan (2021.05.16)] commented this out, it's a duplicate of the other, no?
+        //public event EventHandler<IChangeResult<Acceleration3D>> Updated;
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
         //==== internals
@@ -74,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public float SupplyVoltage { get; set; }
 
-        public Acceleration3D Acceleration3D { get; protected set; } = new Acceleration3D();
+        public Acceleration3D? Acceleration3D { get; protected set; }
 
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
@@ -111,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             await Update();
 
-            return Acceleration3D;
+            return Acceleration3D.Value;
         }
 
         ///// <summary>
@@ -133,7 +134,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                Acceleration3D oldConditions;
+                Acceleration3D? oldConditions;
                 ChangeResult<Acceleration3D> result;
                 Task.Factory.StartNew(async () => 
                 {
@@ -151,7 +152,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         await Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<Acceleration3D>(Acceleration3D, oldConditions);
+                        result = new ChangeResult<Acceleration3D>(Acceleration3D.Value, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -165,7 +166,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         protected void RaiseChangedAndNotify(IChangeResult<Acceleration3D> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
+            //Updated?.Invoke(this, changeResult);
             Acceleration3DUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }

@@ -17,7 +17,8 @@ namespace Meadow.Foundation.Sensors.Motion
         IAccelerometer
     {
         //==== events
-        public event EventHandler<IChangeResult<Acceleration3D>> Updated;
+        // [Bryan (2021.05.16)] commented this out, it's a duplicate of the other, no?
+        //public event EventHandler<IChangeResult<Acceleration3D>> Updated;
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
         /// <summary>
@@ -99,7 +100,7 @@ namespace Meadow.Foundation.Sensors.Motion
             public static readonly byte Z1 = 0x37;
         }
     
-        public Acceleration3D Acceleration3D { get; protected set; } = new Acceleration3D();
+        public Acceleration3D? Acceleration3D { get; protected set; }
 
         // internal thread lock
         private object _lock = new object();
@@ -171,9 +172,13 @@ namespace Meadow.Foundation.Sensors.Motion
         ///// </summary>
         public Task<Acceleration3D> Read()
         {
+            // TODO: why does this method return a `Task`? should `Update` be awaited
+            // or something?
+            // seems like the ADXL335 might have the right pattern here.
+
             Update();
 
-            return Task.FromResult(Acceleration3D);
+            return Task.FromResult(Acceleration3D.Value);
         }
 
         ///// <summary>
@@ -195,7 +200,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                Acceleration3D oldConditions;
+                Acceleration3D? oldConditions;
                 ChangeResult<Acceleration3D> result;
                 Task.Factory.StartNew(async () => 
                 {
@@ -213,7 +218,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         Update();
 
                         // build a new result with the old and new conditions
-                        result = new ChangeResult<Acceleration3D>(Acceleration3D, oldConditions);
+                        result = new ChangeResult<Acceleration3D>(Acceleration3D.Value, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -227,7 +232,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         protected void RaiseChangedAndNotify(IChangeResult<Acceleration3D> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
+            //Updated?.Invoke(this, changeResult);
             Acceleration3DUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }

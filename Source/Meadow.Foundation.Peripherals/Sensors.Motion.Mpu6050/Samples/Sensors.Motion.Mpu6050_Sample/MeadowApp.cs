@@ -3,6 +3,7 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
+using Meadow.Units;
 
 namespace Sensors.Motion.mpu5060_Sample
 {
@@ -23,16 +24,20 @@ namespace Sensors.Motion.mpu5060_Sample
 
             while (true)
             {
-                Console.WriteLine($"{mpu.Temperature.Celsius}°C");
+                Console.WriteLine($"{mpu.Temperature.Celsius:n2}C");
                 Thread.Sleep(5000);
             }
         }
 
-        private void Mpu_Updated(object sender, IChangeResult<(Meadow.Units.Acceleration3D Acceleration, Meadow.Units.AngularAcceleration3D AngularAcceleration)> e)
+        private void Mpu_Updated(object sender, IChangeResult<(Acceleration3D? Acceleration, AngularAcceleration3D? AngularAcceleration)> e)
         {
-            Console.WriteLine($"X: {e.New.Acceleration.X.MetersPerSecondSquared}, " +
-                $"Y: {e.New.Acceleration.Y.MetersPerSecondSquared}, " +
-                $"Z: {e.New.Acceleration.Z.MetersPerSecondSquared}");
+            Console.WriteLine($"Accel: [X:{e.New.Acceleration?.X.MetersPerSecondSquared:N2}," +
+                $"Y:{e.New.Acceleration?.Y.MetersPerSecondSquared:N2}," +
+                $"Z:{e.New.Acceleration?.Z.MetersPerSecondSquared:N2} (mps^2)]");
+
+            Console.WriteLine($"Angular Accel: [X:{e.New.AngularAcceleration?.X.DegreesPerSecondSquared:N2}," +
+                $"Y:{e.New.AngularAcceleration?.Y.DegreesPerSecondSquared:N2}," +
+                $"Z:{e.New.AngularAcceleration?.Z.DegreesPerSecondSquared:N2} (dps^2)]");
         }
     }
 }
