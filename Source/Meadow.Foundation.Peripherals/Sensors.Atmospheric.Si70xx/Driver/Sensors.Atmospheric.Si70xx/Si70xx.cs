@@ -182,7 +182,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 if (IsSampling) return;
 
-                // state muh-cheen
                 IsSampling = true;
 
                 SamplingTokenSource = new CancellationTokenSource();
@@ -200,6 +199,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         {
                             // do task clean up here
                             observers.ForEach(x => x.OnCompleted());
+                            IsSampling = false;
                             break;
                         }
                         // capture history
