@@ -149,7 +149,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 if (IsSampling) return;
 
-                // state muh-cheen
                 IsSampling = true;
 
                 SamplingTokenSource = new CancellationTokenSource();
@@ -166,6 +165,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         {
                             // do task clean up here
                             observers.ForEach(x => x.OnCompleted());
+                            IsSampling = false;
                             break;
                         }
                         // capture history
@@ -173,9 +173,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                         // read
                         Conditions = await Read();
-
-                        Console.WriteLine($"CO2: {Conditions.CO2}");
-                        Console.WriteLine($"VOC: {Conditions.VOC}");
 
                         // build a new result with the old and new conditions
                         result = new ChangeResult<(Concentration?, Concentration?)>(oldConditions, Conditions);

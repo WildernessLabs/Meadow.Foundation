@@ -22,12 +22,12 @@ namespace MeadowApp
             Console.WriteLine($"-- INA260 Sample App ---");
             Console.WriteLine($"Manufacturer: {ina.ManufacturerID}");
             Console.WriteLine($"Die: {ina.DieID}");
-
-            while (true)
+            ina.Updated += (s, v) =>
             {
-                Console.WriteLine($"{ina.Voltage}V @ {ina.Current}A");
-                Thread.Sleep(1000);
-            }
+                Console.WriteLine($"{v.New.Item2}V @ {v.New.Item3}A");
+            };
+
+            ina.StartUpdating(TimeSpan.FromSeconds(2));
         }
     }
 }

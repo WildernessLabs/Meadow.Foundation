@@ -57,6 +57,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Ccs811"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Ccs811_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Ccs811\Samples\Sensors.Atmospheric.Ccs811_Sample\Sensors.Atmospheric.Ccs811_Sample.csproj", "{77D60666-74F5-4FFC-9DFC-CE627CA5FBB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Power.Ina260_Sample", "Meadow.Foundation.Peripherals\Sensors.Power.Ina260\Samples\Sensors.Power.Ina260_Sample\Sensors.Power.Ina260_Sample.csproj", "{E497D0B1-6223-4780-8C47-5FECA2174A78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{77D60666-74F5-4FFC-9DFC-CE627CA5FBB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77D60666-74F5-4FFC-9DFC-CE627CA5FBB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77D60666-74F5-4FFC-9DFC-CE627CA5FBB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E497D0B1-6223-4780-8C47-5FECA2174A78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E497D0B1-6223-4780-8C47-5FECA2174A78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E497D0B1-6223-4780-8C47-5FECA2174A78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E497D0B1-6223-4780-8C47-5FECA2174A78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -159,6 +165,7 @@ Global
 		{26168853-9FB7-40C9-BB1E-A2C75D75C971} = {5D97AFA0-97DC-4474-A566-A304540CF153}
 		{E270B850-7557-47CB-9B76-B83BCA996812} = {40A8373C-947F-4602-AF28-46636374DDCC}
 		{77D60666-74F5-4FFC-9DFC-CE627CA5FBB0} = {7AE7FA55-0129-45A1-9EDA-08164AAEE294}
+		{E497D0B1-6223-4780-8C47-5FECA2174A78} = {FD862DA1-AE23-4444-917E-AB681829785F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
