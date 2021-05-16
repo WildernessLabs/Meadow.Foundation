@@ -43,11 +43,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.LoadCell.Hx711", "S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Power.Ina260", "Sensors.Power.Ina260", "{FD862DA1-AE23-4444-917E-AB681829785F}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.AirQuality.Ccs811_Sample", "Meadow.Foundation.Peripherals\Sensors.AirQuality.Ccs811\Samples\Sensors.AirQuality.Ccs811_Sample\Sensors.AirQuality.Ccs811_Sample.csproj", "{FDC6EA5D-C885-48BA-B2FB-D93BF580A1E2}"
-EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.AirQuality.Ccs811", "Meadow.Foundation.Peripherals\Sensors.AirQuality.Ccs811\Driver\Sensors.AirQuality.Ccs811\Sensors.AirQuality.Ccs811.csproj", "{26FA3F01-C04D-4EEB-A379-BD2D22B56C82}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.LoadCell.Hx711_Sample", "Meadow.Foundation.Peripherals\Sensors.LoadCell.Hx711\Samples\Sensors.LoadCell.Hx711_Sample\Sensors.LoadCell.Hx711_Sample.csproj", "{656C0628-DEE2-414E-974F-AD44A50B5433}"
+EndProject
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.AirQuality.Ccs811_Sample", "Meadow.Foundation.Peripherals\Sensors.AirQuality.Ccs811\Samples\Sensors.AirQuality.Ccs811_Sample\Sensors.AirQuality.Ccs811_Sample.csproj", "{AF3F2F38-ABF8-432E-8FB2-37F79C7C8EC4}"
+EndProject
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensors.AirQuality.Ccs811", "Meadow.Foundation.Peripherals\Sensors.AirQuality.Ccs811\Driver\Sensors.AirQuality.Ccs811\Sensors.AirQuality.Ccs811.csproj", "{21AA0C2E-7C68-485E-AC6C-3A50D7153FE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Bme280_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme280\Samples\Sensors.Atmospheric.Bme280_Sample\Sensors.Atmospheric.Bme280_Sample.csproj", "{1030519C-E500-469F-B946-2C8AC67EEA86}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Htu21d", "Sensors.Atmospheric.Htu21d", "{5D97AFA0-97DC-4474-A566-A304540CF153}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Htu21d", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21d\Driver\Sensors.Atmospheric.Htu21d\Sensors.Atmospheric.Htu21d.csproj", "{C96DC407-8163-4A77-9B10-66262F9C9491}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Htu21d_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu21d\Samples\Sensors.Atmospheric.Htu21d_Sample\Sensors.Atmospheric.Htu21d_Sample.csproj", "{26168853-9FB7-40C9-BB1E-A2C75D75C971}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,18 +105,30 @@ Global
 		{AFD4D9A4-76F2-45F8-ADF3-2A82BAC67B4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFD4D9A4-76F2-45F8-ADF3-2A82BAC67B4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFD4D9A4-76F2-45F8-ADF3-2A82BAC67B4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FDC6EA5D-C885-48BA-B2FB-D93BF580A1E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FDC6EA5D-C885-48BA-B2FB-D93BF580A1E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FDC6EA5D-C885-48BA-B2FB-D93BF580A1E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FDC6EA5D-C885-48BA-B2FB-D93BF580A1E2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26FA3F01-C04D-4EEB-A379-BD2D22B56C82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26FA3F01-C04D-4EEB-A379-BD2D22B56C82}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26FA3F01-C04D-4EEB-A379-BD2D22B56C82}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26FA3F01-C04D-4EEB-A379-BD2D22B56C82}.Release|Any CPU.Build.0 = Release|Any CPU
 		{656C0628-DEE2-414E-974F-AD44A50B5433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{656C0628-DEE2-414E-974F-AD44A50B5433}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{656C0628-DEE2-414E-974F-AD44A50B5433}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{656C0628-DEE2-414E-974F-AD44A50B5433}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF3F2F38-ABF8-432E-8FB2-37F79C7C8EC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF3F2F38-ABF8-432E-8FB2-37F79C7C8EC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF3F2F38-ABF8-432E-8FB2-37F79C7C8EC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF3F2F38-ABF8-432E-8FB2-37F79C7C8EC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21AA0C2E-7C68-485E-AC6C-3A50D7153FE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21AA0C2E-7C68-485E-AC6C-3A50D7153FE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21AA0C2E-7C68-485E-AC6C-3A50D7153FE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21AA0C2E-7C68-485E-AC6C-3A50D7153FE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1030519C-E500-469F-B946-2C8AC67EEA86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1030519C-E500-469F-B946-2C8AC67EEA86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1030519C-E500-469F-B946-2C8AC67EEA86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1030519C-E500-469F-B946-2C8AC67EEA86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C96DC407-8163-4A77-9B10-66262F9C9491}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C96DC407-8163-4A77-9B10-66262F9C9491}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C96DC407-8163-4A77-9B10-66262F9C9491}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C96DC407-8163-4A77-9B10-66262F9C9491}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26168853-9FB7-40C9-BB1E-A2C75D75C971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26168853-9FB7-40C9-BB1E-A2C75D75C971}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26168853-9FB7-40C9-BB1E-A2C75D75C971}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26168853-9FB7-40C9-BB1E-A2C75D75C971}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -132,9 +152,13 @@ Global
 		{A32CFFFB-C516-462B-BEF6-C8646C626B48} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{FD862DA1-AE23-4444-917E-AB681829785F} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{A237BE35-0618-4B9B-A409-A3AC22053B53} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
-		{26FA3F01-C04D-4EEB-A379-BD2D22B56C82} = {40A8373C-947F-4602-AF28-46636374DDCC}
-		{FDC6EA5D-C885-48BA-B2FB-D93BF580A1E2} = {7AE7FA55-0129-45A1-9EDA-08164AAEE294}
 		{656C0628-DEE2-414E-974F-AD44A50B5433} = {A32CFFFB-C516-462B-BEF6-C8646C626B48}
+		{21AA0C2E-7C68-485E-AC6C-3A50D7153FE5} = {40A8373C-947F-4602-AF28-46636374DDCC}
+		{AF3F2F38-ABF8-432E-8FB2-37F79C7C8EC4} = {7AE7FA55-0129-45A1-9EDA-08164AAEE294}
+		{1030519C-E500-469F-B946-2C8AC67EEA86} = {0E08A04C-D1BD-4C46-9174-813C69151F38}
+		{5D97AFA0-97DC-4474-A566-A304540CF153} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{C96DC407-8163-4A77-9B10-66262F9C9491} = {5D97AFA0-97DC-4474-A566-A304540CF153}
+		{26168853-9FB7-40C9-BB1E-A2C75D75C971} = {5D97AFA0-97DC-4474-A566-A304540CF153}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

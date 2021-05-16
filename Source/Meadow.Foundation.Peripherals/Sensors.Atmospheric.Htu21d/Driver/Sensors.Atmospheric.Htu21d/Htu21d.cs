@@ -11,8 +11,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Provide access to the Htu21d(f)
     /// temperature and humidity sensors
     /// </summary>
-    public class Htu21d :
-        FilterableChangeObservableBase<(Units.Temperature?, RelativeHumidity?)>,
+    public partial class Htu21d :
+        FilterableChangeObservableI2CPeripheral<(Units.Temperature?, RelativeHumidity?)>,
         ITemperatureSensor, IHumiditySensor
     {
         //==== Events
@@ -24,19 +24,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         // internal thread lock
         private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        private const byte TEMPERATURE_MEASURE_NOHOLD = 0xF3;
-        private const byte HUMDITY_MEASURE_NOHOLD = 0xF5;
-        private const byte TEMPERATURE_MEASURE_HOLD = 0xE3;
-        private const byte HUMDITY_MEASURE_HOLD = 0xE5;
-        private const byte TEMPERATURE_MEASURE_PREVIOUS = 0xE0;
-
-        private const byte WRITE_USER_REGISTER = 0xE6;
-        private const byte READ_USER_REGISTER = 0xE7;
-        private const byte READ_HEATER_REGISTER = 0x11;
-        private const byte WRITE_HEATER_REGISTER = 0x51;
-        private const byte SOFT_RESET = 0x0F;
+        private byte[] _rx = new byte[3];
+        private CancellationTokenSource? SamplingTokenSource { get; set; }
 
 
         //==== propertires
@@ -73,22 +62,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Firmware revision of the sensor.
         /// </summary>
         public byte FirmwareRevision { get; private set; }
-
-        /// <summary>
-        /// HTD21D(F) is an I2C device.
-        /// </summary>
-        protected readonly II2cPeripheral htu21d;
-
-        /// <summary>
-        /// Resolution of sensor data
-        /// </summary>
-        public enum SensorResolution : byte
-        {
-            TEMP14_HUM12 = 0x00,
-            TEMP12_HUM8 = 0x01,
-            TEMP13_HUM10 = 0x80,
-            TEMP11_HUM11 = 0x81,
-        }
 		
         /// <summary>
         /// Create a new Htu21d temperature and humidity sensor.
@@ -96,15 +69,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="address">Sensor address (default to 0x40).</param>
         /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
         public Htu21d(II2cBus i2cBus, byte address = 0x40)
+            : base(i2cBus, address)
         {
-            htu21d = new I2cPeripheral(i2cBus, address);
-
             Initialize();
         }
 
         protected void Initialize ()
         {
-            htu21d.WriteByte(SOFT_RESET);
+            Bus.WriteBytes(SOFT_RESET);
 					 			
 			Thread.Sleep(100);
           
@@ -127,38 +99,35 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
             return await Task.Run(() => {
-                htu21d.WriteByte(HUMDITY_MEASURE_NOHOLD);
-                //
-                //  Maximum conversion time is 12ms (page 5 of the datasheet).
-                //
-                Thread.Sleep(25);
-                var data = htu21d.ReadBytes(3);
-                var humidityReading = (ushort)((data[0] << 8) + data[1]);
-                conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, RelativeHumidity.UnitType.Percent) ;
-                if (conditions.Humidity < 0) {
+                // ---- HUMIDITY
+                Bus.WriteBytes(HUMDITY_MEASURE_NOHOLD);
+                Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
+                Bus.ReadBytes(_rx, 3); // 2 data bytes plus a checksum (we ignore the checksum here)
+                var humidityReading = (ushort)((_rx[0] << 8) + _rx[1]);
+                conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, RelativeHumidity.UnitType.Percent);
+                if (conditions.Humidity < 0)
+                {
                     conditions.Humidity = 0;
-                } else {
-                    if (conditions.Humidity > 100) {
+                }
+                else
+                {
+                    if (conditions.Humidity > 100)
+                    {
                         conditions.Humidity = 100;
                     }
                 }
-                data = htu21d.ReadRegisters(TEMPERATURE_MEASURE_PREVIOUS, 2);
-                var temperatureReading = (short)((data[0] << 8) + data[1]);
+
+                // ---- TEMPERATURE
+                Bus.WriteBytes(TEMPERATURE_MEASURE_NOHOLD);
+                Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
+                Bus.ReadBytes(_rx, 3); // 2 data bytes plus a checksum (we ignore the checksum here)
+                var temperatureReading = (short)((_rx[0] << 8) + _rx[1]);
                 conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), Units.Temperature.UnitType.Celsius);
 
                 return conditions;
             });
         }
 		
-		/// <summary>
-        /// Reset the sensor and take a fresh reading.
-        /// </summary>
-        public void Reset()
-        {
-            htu21d.WriteByte(READ_USER_REGISTER);
-            Thread.Sleep(50);
-        }
-
         public void StartUpdating(int standbyDuration = 1000)
         {
             // thread safety
@@ -243,14 +212,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="onOrOff">Heater status, true = turn heater on, false = turn heater off.</param>
         public void Heater(bool onOrOff)
         {
-            var register = htu21d.ReadRegister(READ_USER_REGISTER);
+            var register = Bus.ReadRegisterByte(READ_HEATER_REGISTER);
             register &= 0xfd;
 
-            if (onOrOff) 
-			{
+            if (onOrOff)
+            {
                 register |= 0x02;
             }
-            htu21d.WriteRegister(WRITE_USER_REGISTER, register);
+            Bus.WriteRegister(WRITE_HEATER_REGISTER, register);
         }
 		
 		//Set sensor resolution
@@ -264,19 +233,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         //Power on default is 0/0
         void SetResolution(SensorResolution resolution)
         {
-            byte userData = htu21d.ReadRegister(READ_USER_REGISTER); //Go get the current register state
-                                                                         //userRegister &= 0b01111110; //Turn off the resolution bits
-                                                                         //resolution &= 0b10000001; //Turn off all other bits but resolution bits
-                                                                         //userRegister |= resolution; //Mask in the requested resolution bits
-            var res = (byte)resolution;                                         
+            var register = Bus.ReadRegisterByte(READ_USER_REGISTER);
+            //userRegister &= 0b01111110; //Turn off the resolution bits
+            //resolution &= 0b10000001; //Turn off all other bits but resolution bits
+            //userRegister |= resolution; //Mask in the requested resolution bits
 
-            userData &= 0x73; //Turn off the resolution bits
+            var res = (byte)resolution;
+
+            register &= 0x73; //Turn off the resolution bits
             res &= 0x81; //Turn off all other bits but resolution bits
-            userData |= res; //Mask in the requested resolution bits
+            register |= res; //Mask in the requested resolution bits
 
             //Request a write to user register
-            htu21d.WriteBytes(new byte[] { WRITE_USER_REGISTER }); //Write to the user register
-            htu21d.WriteBytes(new byte[] { userData }); //Write the new resolution bits
+            Bus.WriteRegister(WRITE_USER_REGISTER, register); //Write the new resolution bits
         }
 
         /// <summary>

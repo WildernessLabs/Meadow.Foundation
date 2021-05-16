@@ -24,4 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Htu21d.Enums" />
+  </ItemGroup>
 </Project>
