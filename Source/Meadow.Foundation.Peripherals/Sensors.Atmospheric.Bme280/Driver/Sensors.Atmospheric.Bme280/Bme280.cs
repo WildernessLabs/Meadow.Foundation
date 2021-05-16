@@ -361,7 +361,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                                ((adcTemperature >> 4) - compensationData.T1)) >> 12) * compensationData.T3) >> 14;
                 var tfine = tvar1 + tvar2;
                 //
-                conditions.Temperature = new Units.Temperature((float)(((tfine * 5) + 128) >> 8) / 100);
+                conditions.Temperature = new Units.Temperature((float)(((tfine * 5) + 128) >> 8) / 100, Units.Temperature.UnitType.Celsius);
                 //
                 // Pressure calculation from section 4.2.3 of the datasheet.
                 //
@@ -405,7 +405,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     pvar2 = (compensationData.P8 * pressure) >> 19;
                     pressure = ((pressure + pvar1 + pvar2) >> 8) + ((long)compensationData.P7 << 4);
                     //
-                    conditions.Pressure = new Pressure(pressure / 256);
+                    conditions.Pressure = new Pressure((double)pressure / 256, Units.Pressure.UnitType.Pascal);
                 }
                 //
                 // Humidity calculations from section 4.2.3 of the datasheet.
@@ -448,7 +448,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
                 v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
                 //
-                conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024);
+                conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024, RelativeHumidity.UnitType.Percent);
 
                 return conditions;
             });
