@@ -13,7 +13,7 @@ namespace Sensors.AirQuality.Ccs811_Sample
         public MeadowApp()
         {
             // configure our BME280 on the I2C Bus
-            var i2c = Device.CreateI2cBus();
+            var i2c = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Fast);
             ccs811 = new Ccs811(i2c);
 
             ccs811.StartUpdating();
