@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
+    // TODO:
+    //  * no one-off `Read()` method.
+    //  * needs to inherit from `FilterableChangeObservableI2CPeripheral`, currently using a bunch of allocating methods.
+
     public class Mpu6050 :
         FilterableChangeObservableBase<(Acceleration3D?, AngularAcceleration3D?)>,
         IAccelerometer, IAngularAccelerometer, IDisposable
@@ -108,8 +112,10 @@ namespace Meadow.Foundation.Sensors.Motion
         private int AccelerometerScale { get; set; }
         private II2cBus Device { get; set; }
 
-        public float GyroChangeThreshold { get; set; }
-        public float AccelerationChangeThreshold { get; set; }
+        // [Bryan 2021.05.16] removed: this is an old pattern, and the filterable
+        // observerable handles it. also, these settings weren't used anywhere.
+        //public float GyroChangeThreshold { get; set; }
+        //public float AccelerationChangeThreshold { get; set; }
         public byte Address { get; private set; }
 
         public Mpu6050(II2cBus bus, byte address = 0x68)
@@ -305,5 +311,31 @@ namespace Meadow.Foundation.Sensors.Motion
                 return (s * scale) + offset;
             }
         }
+
+        /// <summary>
+        /// Creates a `FilterableChangeObserver` that has a handler and a filter.
+        /// </summary>
+        /// <param name="handler">The action that is invoked when the filter is satisifed.</param>
+        /// <param name="filter">An optional filter that determines whether or not the
+        /// consumer should be notified.</param>
+        /// <returns></returns>
+        /// <returns></returns>
+        // Implementor Notes:
+        //  This is a convenience method that provides named tuple elements. It's not strictly
+        //  necessary, as the `FilterableChangeObservableBase` class provides a default implementation,
+        //  but if you use it, then the parameters are named `Item1`, `Item2`, etc. instead of
+        //  `Temperature`, `Pressure`, etc.
+        public static new
+            FilterableChangeObserver<(Acceleration3D?, AngularAcceleration3D?)>
+            CreateObserver(
+                Action<IChangeResult<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D)>> handler,
+                Predicate<IChangeResult<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D)>>? filter = null
+            )
+        {
+            return new FilterableChangeObserver<(Acceleration3D?, AngularAcceleration3D?)>(
+                handler: handler, filter: filter
+                );
+        }
+
     }
 }
