@@ -12,6 +12,8 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         private II2cPeripheral si1145;
 
+        // TODO: move these things out into their own classes. E.g. `Si1145.Commands.cs`
+
         /* COMMANDS*/
         readonly byte PARAM_QUERY = 0x80;
         readonly byte PARAM_SET = 0xA0;

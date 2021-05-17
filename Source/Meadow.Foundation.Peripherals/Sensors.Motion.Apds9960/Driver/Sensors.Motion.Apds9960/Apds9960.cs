@@ -25,6 +25,8 @@ namespace Meadow.Foundation.Sensors.Motion
         State gestureState;
         Direction gestureDirection;
 
+        // TODO: Please move these into classes, e.g.: `Apds9960.Addresses.cs` or whatever
+
         /* APDS-9960 I2C address */
         static readonly byte APDS9960_I2C_ADDR = 0x39;
 
