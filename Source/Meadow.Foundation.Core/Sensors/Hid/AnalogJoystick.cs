@@ -256,8 +256,8 @@ namespace Meadow.Foundation.Sensors.Hid
             int sampleIntervalDuration = 40,
             int standbyDuration = 100)
         {
-            HorizontalInputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
-            VerticalInputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
+            HorizontalInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
+            VerticalInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
         }
 
         /// <summary>
@@ -265,8 +265,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public void StopUpdating()
         {
-            HorizontalInputPort.StopSampling();
-            VerticalInputPort.StopSampling();
+            HorizontalInputPort.StopUpdating();
+            VerticalInputPort.StopUpdating();
         }
 
         /// <summary>

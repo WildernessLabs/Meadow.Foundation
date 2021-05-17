@@ -138,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Moisture
             int sampleIntervalDuration = 40,
             int standbyDuration = 1000)
         {
-            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
+            AnalogInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public void StopUpdating()
         {
-            AnalogInputPort.StopSampling();
+            AnalogInputPort.StopUpdating();
         }
 
         protected void RaiseChangedAndNotify(IChangeResult<double> changeResult)

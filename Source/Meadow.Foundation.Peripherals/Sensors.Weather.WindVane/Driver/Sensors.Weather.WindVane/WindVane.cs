@@ -95,7 +95,7 @@ namespace Meadow.Foundation.Sensors.Weather
             int sampleIntervalDuration = 20,
             int standbyDuration = 500)
         {
-            inputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
+            inputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public void StopUpdating()
         {
-            inputPort.StopSampling();
+            inputPort.StopUpdating();
         }
 
         /// <summary>
