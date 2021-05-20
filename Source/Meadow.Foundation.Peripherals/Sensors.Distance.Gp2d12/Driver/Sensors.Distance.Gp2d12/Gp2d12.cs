@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Sensors.Distance
         public Gp2d12(IAnalogInputController device, IPin analogInputPin)
         {
             analogInputPort = device.CreateAnalogInputPort(analogInputPin);
-            analogInputPort.Changed += AnalogInputPort_Changed;
+            analogInputPort.Updated += AnalogInputPort_Changed;
         }
 
         private void AnalogInputPort_Changed(object sender, IChangeResult<Voltage> e)
