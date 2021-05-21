@@ -86,9 +86,9 @@ namespace Meadow.Foundation.Sensors.Distance
             triggerEchoPort.Direction = PortDirectionType.Input;
         }
 
-        private void OnEchoPortChanged(object sender, DigitalInputPortChangeResult e)
+        private void OnEchoPortChanged(object sender, DigitalPortResult e)
         {
-            if (e.Value == true)
+            if (e.New.State)
             {
                 tickStart = DateTime.Now.Ticks;
                 return;

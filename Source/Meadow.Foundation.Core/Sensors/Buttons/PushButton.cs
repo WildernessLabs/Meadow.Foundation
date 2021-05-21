@@ -163,15 +163,18 @@ namespace Meadow.Foundation.Sensors.Buttons
             DigitalIn.Changed += DigitalInChanged;
         }
 
-        void DigitalInChanged(object sender, DigitalInputPortChangeResult e)
+        void DigitalInChanged(object sender, DigitalPortResult result)
         {
             bool state = (resistorMode == ResistorMode.InternalPullUp || 
-                          resistorMode == ResistorMode.ExternalPullUp) ? !e.Value : e.Value;
+                          resistorMode == ResistorMode.ExternalPullUp) ? !result.New.State : result.New.State;
 
-            //Console.WriteLine($"PB: InputChanged. State == {State}. e.Value: {e.Value}.  DI State: {DigitalIn.State}");
+            //Console.WriteLine($"PB: InputChanged. State == {State}. result.New.State: {result.New.State}.  DI State: {DigitalIn.State}");
 
             if (state)
             {
+                // TODO: BC 2021.05.21 - I don't think this is right. Clicked
+                // shouldn't raise until the press is released, and only if it's
+                // not a long clicked
                 RaiseClicked();
 
                 // save our press start time (for long press event)

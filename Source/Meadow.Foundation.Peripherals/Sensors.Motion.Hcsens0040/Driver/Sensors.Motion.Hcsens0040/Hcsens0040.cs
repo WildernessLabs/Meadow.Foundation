@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Catch the PIR motion change interrupts and work out which interrupt should be raised.
         /// </summary>
-        private void DigitalInputPortChanged(object sender, DigitalInputPortChangeResult e)
+        private void DigitalInputPortChanged(object sender, DigitalPortResult e)
         {
             if (_digitalInputPort.State == true)
             {

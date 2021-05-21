@@ -87,24 +87,24 @@ namespace Meadow.Foundation.Sensors.Rotary
             BPhasePort.Changed += PhaseBPinChanged;
         }
 
-        private void PhaseAPinChanged(object s, DigitalInputPortChangeResult e)
+        private void PhaseAPinChanged(object s, DigitalPortResult result)
         {
             // Clear bit A bit
             int new2LsBits = dynamicOffset & 0x02;    // Save bit 2 (B)
 
-            if (e.Value) {
+            if (result.New.State) {
                 new2LsBits |= 0x01;                     // Set bit 1 (A)
             }
 
             FindDirection(new2LsBits);
         }
 
-        private void PhaseBPinChanged(object s, DigitalInputPortChangeResult e)
+        private void PhaseBPinChanged(object s, DigitalPortResult result)
         {
             // Clear bit B bit
             int new2LsBits = dynamicOffset & 0x01;    // Save bit 1 (A)
 
-            if (e.Value) {
+            if (result.New.State) {
                 new2LsBits |= 0x02;                     // Set bit 2 (B)
             }
 

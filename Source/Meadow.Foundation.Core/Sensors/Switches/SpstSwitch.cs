@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void DigitalInChanged(object sender, DigitalInputPortChangeResult e)
+        protected void DigitalInChanged(object sender, DigitalPortResult e)
         {
             IsOn = DigitalIn.State;
         }

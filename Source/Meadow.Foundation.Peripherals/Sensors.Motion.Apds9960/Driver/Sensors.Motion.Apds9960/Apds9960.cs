@@ -244,7 +244,7 @@ namespace Meadow.Foundation.Sensors.Motion
             Initialize();
         }
 
-        private void InterruptPort_Changed(object sender, DigitalInputPortChangeResult e)
+        private void InterruptPort_Changed(object sender, DigitalPortResult e)
         {
         //    throw new NotImplementedException();
         }

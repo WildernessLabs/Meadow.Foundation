@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
             InputPort.Changed += InputPortChanged;
         }
 
-        void InputPortChanged(object sender, DigitalInputPortChangeResult e)
+        void InputPortChanged(object sender, DigitalPortResult e)
         {
             var time = DateTime.Now;
 

@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Sound
             }
         }
 
-        private void DigitalInputPort_Changed(object sender, DigitalInputPortChangeResult e)
+        private void DigitalInputPort_Changed(object sender, DigitalPortResult e)
         {
            
         }

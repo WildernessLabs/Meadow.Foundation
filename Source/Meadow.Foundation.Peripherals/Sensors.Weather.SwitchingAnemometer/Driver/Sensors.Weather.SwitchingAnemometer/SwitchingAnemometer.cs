@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Sensors.Weather
         int standbyDuration;
         int overSampleCount;
         System.Timers.Timer? noWindTimer;
-        List<DigitalInputPortChangeResult>? samples;
+        List<DigitalPortResult>? samples;
 
         // Turn on for debug output
         bool debug = false;
@@ -81,11 +81,11 @@ namespace Meadow.Foundation.Sensors.Weather
             inputPort.Changed -= HandleInputPortChange;
         }
 
-        protected void HandleInputPortChange(object sender, DigitalInputPortChangeResult result)
+        protected void HandleInputPortChange(object sender, DigitalPortResult result)
         {
             if (!running) { return; }
 
-            if(samples == null) { samples = new List<DigitalInputPortChangeResult>(); }
+            if(samples == null) { samples = new List<DigitalPortResult>(); }
 
             // reset our nowind timer, since a sample has come in. note that the API is awkward
             noWindTimer?.Stop();
@@ -104,11 +104,20 @@ namespace Meadow.Foundation.Sensors.Weather
             if (samples.Count >= overSampleCount) {
                 float speedSum = 0f;
                 float oversampledSpeed = 0f;
-                // skip the first sample, which won't have a valid reading
-                for (int i = 1; i < samples.Count; i++ ){
-                    //if (debug) { Console.WriteLine($"Sample [{i}] speed: [{SwitchIntervalToKmh(samples[i].Delta)}]; duration: {samples[i].Delta}, newTime: {samples[i].New}, oldTime: {samples[i].Old}"); }
-                    speedSum += SwitchIntervalToKmh(samples[i].Delta.Value);
+
+                // sum up the speeds
+                foreach(var sample in samples) {
+                    // skip the first (old will be null)
+                    if (sample.Old is { } old) {
+                        speedSum += SwitchIntervalToKmh(sample.New.Time - old.Time);
+                    }
                 }
+                //// skip the first sample, which won't have a valid reading
+                //for (int i = 1; i < samples.Count; i++ ){
+                //    //if (debug) { Console.WriteLine($"Sample [{i}] speed: [{SwitchIntervalToKmh(samples[i].Delta)}]; duration: {samples[i].Delta}, newTime: {samples[i].New}, oldTime: {samples[i].Old}"); }
+                //    speedSum += SwitchIntervalToKmh(samples[i].Delta.Value);
+                //}
+                // average the speeds
                 oversampledSpeed = speedSum / samples.Count - 1;
 
                 // clear our samples

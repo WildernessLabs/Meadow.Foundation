@@ -58,19 +58,24 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         switch (InterruptMode)
                         {
                             case InterruptMode.EdgeFalling:
-                                if (currentState)
-                                    RaiseChangedAndNotify(
-                                        new DigitalInputPortChangeResult(false, now, _lastChangeTime));
+                                if (currentState) {
+                                    RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(false, now), new DigitalState(true, _lastChangeTime)));
+                                    // BC: 2021.05.21 updating to the new b5.0 result type.
+                                    // old code below. TODO: passing an assumption for the old result, but
+                                    // if it's the first time through, the old result should be `null`
+                                    /*new DigitalPortResult(false, now, _lastChangeTime));*/
+                                }
                                 break;
                             case InterruptMode.EdgeRising:
-                                if (currentState)
-                                    RaiseChangedAndNotify(
-                                        new DigitalInputPortChangeResult(true, now, _lastChangeTime));
+                                if (currentState) {
+                                    RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(true, now), new DigitalState(false, _lastChangeTime)));
+                                    /*new DigitalPortResult(true, now, _lastChangeTime));*/
+                                }
                                 break;
                             case InterruptMode.EdgeBoth:
                                 RaiseChangedAndNotify(
-                                    new DigitalInputPortChangeResult(currentState, now,
-                                        _lastChangeTime));
+                                    new DigitalPortResult(new DigitalState(currentState, now), new DigitalState(!currentState, _lastChangeTime)));
+                                    /*new DigitalPortResult(currentState, now, _lastChangeTime));*/
                                 break;
                             case InterruptMode.None:
                                 break;
