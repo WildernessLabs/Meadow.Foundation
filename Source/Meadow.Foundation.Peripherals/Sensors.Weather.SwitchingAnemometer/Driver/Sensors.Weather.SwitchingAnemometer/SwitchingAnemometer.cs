@@ -7,6 +7,13 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Weather
 {
+    // TODO: there still seems to be some issue with initial reading
+    // every once in a while, i'll get 0.0kmh, then i'll give it a spin and
+    // it'll give me something insane like:
+    // new speed: 65.9kmh, old: 0.0kmh
+    // new speed(from observer) : 65.9kmh, old: 0.0kmh
+    // then the next reading will be 3kmh.
+
     /// <summary>
     /// Driver for a "switching" anememoter (wind speed gauge) that has an
     /// internal switch that is triggered during every revolution.
@@ -106,17 +113,12 @@ namespace Meadow.Foundation.Sensors.Weather
                 float oversampledSpeed = 0f;
 
                 // sum up the speeds
-                foreach(var sample in samples) {
+                foreach (var sample in samples) {
                     // skip the first (old will be null)
                     if (sample.Old is { } old) {
                         speedSum += SwitchIntervalToKmh(sample.New.Time - old.Time);
                     }
                 }
-                //// skip the first sample, which won't have a valid reading
-                //for (int i = 1; i < samples.Count; i++ ){
-                //    //if (debug) { Console.WriteLine($"Sample [{i}] speed: [{SwitchIntervalToKmh(samples[i].Delta)}]; duration: {samples[i].Delta}, newTime: {samples[i].New}, oldTime: {samples[i].Old}"); }
-                //    speedSum += SwitchIntervalToKmh(samples[i].Delta.Value);
-                //}
                 // average the speeds
                 oversampledSpeed = speedSum / samples.Count - 1;
 
