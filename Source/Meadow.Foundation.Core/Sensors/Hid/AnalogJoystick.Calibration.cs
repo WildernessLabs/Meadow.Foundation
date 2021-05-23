@@ -1,5 +1,6 @@
 ﻿using System;
 using Meadow.Units;
+using VU = Meadow.Units.Voltage.UnitType;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
@@ -26,11 +27,11 @@ namespace Meadow.Foundation.Sensors.Hid
 
             public JoystickCalibration(Voltage voltage)
             {
-                HorizontalCenter = voltage / 2;
+                HorizontalCenter = new Voltage(voltage.Volts / 2, VU.Volts);
                 HorizontalMin = 0;
                 HorizontalMax = voltage;
 
-                VerticalCenter = voltage / 2;
+                VerticalCenter = new Voltage(voltage.Volts / 2, VU.Volts);
                 VerticalMin = 0;
                 VerticalMax = voltage;
 
