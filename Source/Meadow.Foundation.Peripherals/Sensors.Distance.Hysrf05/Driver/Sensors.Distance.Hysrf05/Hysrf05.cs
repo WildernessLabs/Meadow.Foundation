@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Returns current distance
         /// </summary>
-        public Length? Distance { get; private set; } = 0;
+        public Length? Distance { get; private set; }
 
         /// <summary>
         /// Minimum valid distance in cm
@@ -78,7 +78,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public void MeasureDistance()
         {
-            Distance = -1;
+            //Distance = -1;
 
             // Raise trigger port to high for 10+ micro-seconds
             triggerPort.State = true;

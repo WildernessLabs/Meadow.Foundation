@@ -5,6 +5,7 @@ using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using VU = Meadow.Units.Voltage.UnitType;
 
 namespace Sensors.Moisture.FC28_Sample
 {
@@ -19,8 +20,8 @@ namespace Sensors.Moisture.FC28_Sample
             fc28 = new Fc28(
                 Device.CreateAnalogInputPort(Device.Pins.A01),
                 Device.CreateDigitalOutputPort(Device.Pins.D15),
-                minimumVoltageCalibration: 3.24f,
-                maximumVoltageCalibration: 2.25f
+                minimumVoltageCalibration: new Voltage(3.24f, VU.Volts),
+                maximumVoltageCalibration: new Voltage(2.25f, VU.Volts)
             );
 
             TestFC28Updating();

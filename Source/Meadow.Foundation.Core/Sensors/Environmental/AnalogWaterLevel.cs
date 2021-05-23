@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             ///     Create a new Calibration object using the specified values.
             /// </summary>
             /// <param name="millivoltsPerMillimeter">Millivolt change per degree centigrade (from the data sheet).</param>
-            public Calibration(float voltsPerCentimeter, float voltsAtZeo)
+            public Calibration(Voltage voltsPerCentimeter, Voltage voltsAtZeo)
             {
                 VoltsPerCentimeter = voltsPerCentimeter;
                 VoltsAtZero = voltsAtZeo;

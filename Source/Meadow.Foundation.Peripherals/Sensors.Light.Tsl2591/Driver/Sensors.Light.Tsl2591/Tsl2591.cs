@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
+using IU = Meadow.Units.Illuminance.UnitType;
 
 namespace Meadow.Foundation.Sensors.Light
 {
@@ -370,15 +371,15 @@ namespace Meadow.Foundation.Sensors.Light
 
         private void CalculateSensorValues()
         {
-            FullSpectrumLuminosity = Channel0;
-            InfraredLuminosity = Channel1;
-            VisibleLightLuminosity = Channel0 - Channel1;
+            FullSpectrumLuminosity = new Illuminance(Channel0, IU.Lux);
+            InfraredLuminosity = new Illuminance(Channel1, IU.Lux);
+            VisibleLightLuminosity = new Illuminance(Channel0 - Channel1, IU.Lux);
 
             double countsPerLux;
 
             if ((Channel0 == 0xffff) || (Channel1 == 0xffff))
             {
-                Illuminance = -1;
+                Illuminance = new Illuminance(-1, IU.Lux);
                 return;
             }
             countsPerLux = (IntegrationTimeInMilliseconds(IntegrationTime) * GainMultiplier(Gain)) / 408.0;

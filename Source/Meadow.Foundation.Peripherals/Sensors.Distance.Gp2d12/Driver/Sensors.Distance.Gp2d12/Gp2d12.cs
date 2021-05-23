@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Returns current distance
         /// </summary>
-        public Length? Distance { get; private set; } = 0;
+        public Length? Distance { get; private set; }
 
         /// <summary>
         /// Minimum valid distance in cm

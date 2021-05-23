@@ -4,6 +4,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
 using Meadow.Hardware;
 using Meadow.Units;
+using LU = Meadow.Units.Length.UnitType;
 
 namespace Sensors.Distance.Vl53l0x_Sample
 {
@@ -25,7 +26,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
                 return;
             }
 
-            if (result.New < 0) { Console.WriteLine("out of range."); }
+            if (result.New < new Length(0, LU.Millimeters)) { Console.WriteLine("out of range."); }
             else {
                 Console.WriteLine($"{result.New.Millimeters}mm / {result.New.Inches:n3}\"");
             }

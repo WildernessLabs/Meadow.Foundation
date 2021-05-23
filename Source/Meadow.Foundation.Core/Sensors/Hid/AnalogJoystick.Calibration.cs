@@ -28,14 +28,14 @@ namespace Meadow.Foundation.Sensors.Hid
             public JoystickCalibration(Voltage voltage)
             {
                 HorizontalCenter = new Voltage(voltage.Volts / 2, VU.Volts);
-                HorizontalMin = 0;
+                HorizontalMin = new Voltage(0, VU.Volts);
                 HorizontalMax = voltage;
 
                 VerticalCenter = new Voltage(voltage.Volts / 2, VU.Volts);
-                VerticalMin = 0;
+                VerticalMin = new Voltage(0, VU.Volts);
                 VerticalMax = voltage;
 
-                DeadZone = 0.2f;
+                DeadZone = new Voltage(0.2f, VU.Volts);
             }
 
             public JoystickCalibration(Voltage horizontalCenter, Voltage horizontalMin, Voltage horizontalMax,

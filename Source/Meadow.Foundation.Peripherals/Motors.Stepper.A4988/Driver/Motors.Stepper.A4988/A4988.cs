@@ -1,6 +1,7 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Units;
+using AU = Meadow.Units.Angle.UnitType;
 using System;
 using System.Linq;
 
@@ -105,7 +106,7 @@ namespace Meadow.Foundation.Motors.Stepper
                 throw new ArgumentException("All micro-step pins must be either null or valid pins");
             }
 
-            StepAngle = new Angle(1.8, Angle.UnitType.Degrees); // common default
+            StepAngle = new Angle(1.8, AU.Degrees); // common default
             RotationSpeedDivisor = 2;
         }
 
@@ -129,7 +130,7 @@ namespace Meadow.Foundation.Motors.Stepper
             get => _stepAngle;
             set
             {
-                if (value <= 0) { throw new ArgumentOutOfRangeException("Step angle must be positive"); }
+                if (value <= new Angle(0, AU.Degrees)) { throw new ArgumentOutOfRangeException("Step angle must be positive"); }
                 if (value == _stepAngle) { return; }
                 _stepAngle = value;
             }

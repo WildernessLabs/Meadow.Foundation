@@ -4,6 +4,7 @@ using Meadow.Peripherals.Sensors.Hid;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
+using VU = Meadow.Units.Voltage.UnitType;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
@@ -70,7 +71,7 @@ namespace Meadow.Foundation.Sensors.Hid
             IsInverted = isInverted;
 
             if (calibration == null) {
-                Calibration = new JoystickCalibration(3.3f);
+                Calibration = new JoystickCalibration(new Voltage(3.3f, VU.Volts));
             } else {
                 Calibration = calibration;
             }
@@ -194,25 +195,25 @@ namespace Meadow.Foundation.Sensors.Hid
             var h = Position?.Horizontal;
             var v = Position?.Vertical;
 
-            if (h > Calibration.HorizontalCenter + Calibration.DeadZone) {
-                if (v > Calibration.VerticalCenter + Calibration.DeadZone) {
+            if (h > (Calibration.HorizontalCenter + Calibration.DeadZone).Volts) {
+                if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts) {
                     return IsInverted ? DigitalJoystickPosition.DownLeft : DigitalJoystickPosition.UpRight;
                 }
-                if (v < Calibration.VerticalCenter - Calibration.DeadZone) {
+                if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts) {
                     return IsInverted ? DigitalJoystickPosition.UpLeft : DigitalJoystickPosition.DownRight;
                 }
                 return IsInverted ? DigitalJoystickPosition.Left : DigitalJoystickPosition.Right;
-            } else if (h < Calibration.HorizontalCenter - Calibration.DeadZone) {
-                if (v > Calibration.VerticalCenter + Calibration.DeadZone) {
+            } else if (h < (Calibration.HorizontalCenter - Calibration.DeadZone).Volts) {
+                if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts) {
                     return IsInverted ? DigitalJoystickPosition.DownRight : DigitalJoystickPosition.UpLeft;
                 }
-                if (v < Calibration.VerticalCenter - Calibration.DeadZone) {
+                if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts) {
                     return IsInverted ? DigitalJoystickPosition.UpRight : DigitalJoystickPosition.DownLeft;
                 }
                 return IsInverted ? DigitalJoystickPosition.Right : DigitalJoystickPosition.Left;
-            } else if (v > Calibration.VerticalCenter + Calibration.DeadZone) {
+            } else if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts) {
                 return IsInverted ? DigitalJoystickPosition.Down : DigitalJoystickPosition.Up;
-            } else if (v < Calibration.VerticalCenter - Calibration.DeadZone) {
+            } else if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts) {
                 return IsInverted ? DigitalJoystickPosition.Up : DigitalJoystickPosition.Down;
             }
 

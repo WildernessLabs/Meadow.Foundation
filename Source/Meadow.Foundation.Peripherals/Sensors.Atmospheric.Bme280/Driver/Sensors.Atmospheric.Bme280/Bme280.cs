@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using PU = Meadow.Units.Pressure.UnitType;
+using TU = Meadow.Units.Temperature.UnitType;
+using HU = Meadow.Units.RelativeHumidity.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -396,7 +399,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 pvar1 = ((pvar1 * pvar1 * compensationData.P8) >> 8) + ((pvar1 * compensationData.P2) << 12);
                 pvar1 = ((((long)1 << 47) + pvar1) * compensationData.P1) >> 33;
                 if (pvar1 == 0) {
-                    conditions.Pressure = 0;
+                    conditions.Pressure = new Pressure(0, PU.Pascal);
                 } else {
                     var adcPressure = (readings[0] << 12) | (readings[1] << 4) | ((readings[2] >> 4) & 0x0f);
                     long pressure = 1048576 - adcPressure;
@@ -405,7 +408,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     pvar2 = (compensationData.P8 * pressure) >> 19;
                     pressure = ((pressure + pvar1 + pvar2) >> 8) + ((long)compensationData.P7 << 4);
                     //
-                    conditions.Pressure = new Pressure((double)pressure / 256, Units.Pressure.UnitType.Pascal);
+                    conditions.Pressure = new Pressure((double)pressure / 256, PU.Pascal);
                 }
                 //
                 // Humidity calculations from section 4.2.3 of the datasheet.

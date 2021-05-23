@@ -8,6 +8,8 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Distance;
 using Meadow.Foundation.Servos;
 using Meadow.Hardware;
+using Meadow.Units;
+using LU = Meadow.Units.Length.UnitType;
 
 namespace MeadowApp
 {
@@ -79,7 +81,7 @@ namespace MeadowApp
 
                 graphics.DrawText(0, 0, $"{180 - angle}°", Color.Yellow);
 
-                if (sensor?.Distance != null && sensor?.Distance.Value >= 0)
+                if (sensor?.Distance != null && sensor?.Distance.Value >= new Length(0, LU.Millimeters))
                 {
                     graphics.DrawText(170, 0, $"{sensor.Distance?.Millimeters}mm", Color.Yellow);
                     radarData[angle] = (float)(sensor.Distance?.Millimeters / 2);

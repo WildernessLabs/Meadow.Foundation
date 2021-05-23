@@ -4,6 +4,7 @@ using System.Threading;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Weather;
 using Meadow.Units;
+using SU = Meadow.Units.Speed.UnitType;
 
 namespace Meadow.Foundation.Sensors.Weather
 {
@@ -125,7 +126,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 // clear our samples
                 this.samples.Clear();
 
-                RaiseUpdated(new Speed(oversampledSpeed, Speed.UnitType.KilometersPerHour));
+                RaiseUpdated(new Speed(oversampledSpeed, SU.KilometersPerHour));
 
                 // if we need to wait before taking another sample set, 
                 if (this.standbyDuration > 0) {
@@ -212,7 +213,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 // if there aren't enough samples to make a reading
                 if (samples == null || samples.Count <= overSampleCount ) {
                     // raise the wind updated event with `0` wind speed
-                    RaiseUpdated(0);
+                    RaiseUpdated(new Speed(0, SU.KilometersPerHour));
                     // sleep for the standby duration
                     if (standbyDuration > 0) {
                         if (debug) { Console.WriteLine("Sleeping for a bit."); }

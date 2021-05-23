@@ -2,6 +2,7 @@
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using LU = Meadow.Units.Length.UnitType;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
@@ -51,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Distance
             if(len == 0) 
             {
                 Console.WriteLine("No data");
-                return 0; 
+                return new Length(0, LU.Millimeters); 
             }
 
             var data = new byte[len];
@@ -70,7 +71,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
             Console.WriteLine($"Length: {len}");
 
-            return new Length(0, Length.UnitType.Millimeters);
+            return new Length(0, LU.Millimeters);
         }
     }
 }

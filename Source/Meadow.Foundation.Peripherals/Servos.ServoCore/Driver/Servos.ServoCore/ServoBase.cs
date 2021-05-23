@@ -19,9 +19,7 @@ namespace Meadow.Foundation.Servos
         /// <summary>
         /// Returns the current angle. Returns -1 if the angle is unknown.
         /// </summary>
-        public Angle Angle {
-            get { return _angle; }
-        } protected Angle _angle = new Angle(-1, Angle.UnitType.Degrees);
+        public Angle? Angle { get; protected set; }
 
         /// <summary>
         /// Instantiates a new Servo on the specified PWM Pin with the specified config.
@@ -57,7 +55,7 @@ namespace Meadow.Foundation.Servos
             SendCommandPulse(pulseDuration);
 
             // update the state
-            _angle = angle;
+            Angle = angle;
         }
 
         /// <summary>
@@ -67,7 +65,7 @@ namespace Meadow.Foundation.Servos
         public void Stop()
         {
             _pwm.Stop();
-            _angle = -1;
+            Angle = null;
         }
 
         protected float CalculatePulseDuration(Angle angle)

@@ -166,7 +166,7 @@ namespace Meadow.Foundation.Sensors.Weather
             Voltage difference;
             foreach (var a in AzimuthVoltages)
             {
-                difference = (a.Key - voltage.Volts).Abs();
+                difference = (a.Key - voltage).Abs();
                 // if the closest fit hasn't been set or is further than the
                 // computed voltage difference, then we've found a better fit.
                 if (closestFit == null || closestFit.Item2 > difference)

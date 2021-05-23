@@ -9,8 +9,6 @@ namespace Meadow.Foundation.Servos
 
         void RotateTo(Angle angle);
 
-        //void RotateTo(int angle, double speed);
-
-        Angle Angle { get; }
+        Angle? Angle { get; }
     }
 }

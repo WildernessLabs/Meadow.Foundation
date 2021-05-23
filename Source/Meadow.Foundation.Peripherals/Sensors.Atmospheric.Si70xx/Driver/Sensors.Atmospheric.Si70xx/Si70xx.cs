@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using HU = Meadow.Units.RelativeHumidity.UnitType;
+using TU = Meadow.Units.Temperature.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -152,15 +154,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 Bus.ReadBytes(_rx, 3); // 2 data bytes plus a checksum (we ignore the checksum here)
                 var humidityReading = (ushort)((_rx[0] << 8) + _rx[1]);
                 conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, RelativeHumidity.UnitType.Percent);
-                if (conditions.Humidity < 0)
+                if (conditions.Humidity < new RelativeHumidity(0, HU.Percent))
                 {
-                    conditions.Humidity = 0;
+                    conditions.Humidity = new RelativeHumidity(0, HU.Percent);
                 }
                 else
                 {
-                    if (conditions.Humidity > 100)
+                    if (conditions.Humidity > new RelativeHumidity(100, HU.Percent))
                     {
-                        conditions.Humidity = 100;
+                        conditions.Humidity = new RelativeHumidity(100, HU.Percent);
                     }
                 }
 
