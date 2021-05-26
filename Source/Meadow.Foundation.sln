@@ -972,8 +972,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Mcp9808
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Mcp9808_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Mcp9808\Samples\Sensors.Temperature.Mcp9808_Sample\Sensors.Temperature.Mcp9808_Sample.csproj", "{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{67F9992A-6BD3-4452-89A5-42C4BAABC506}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Weather.SwitchingAnemometer", "Sensors.Weather.SwitchingAnemometer", "{4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{970D9570-A24B-4329-A888-F8DE9199A600}"
@@ -994,21 +992,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Tca9548a", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{9AE0AEB5-3AC7-4049-A047-33C0F2D5D3CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwitchingAnemometer_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Samples\SwitchingAnemometer_Sample\SwitchingAnemometer_Sample.csproj", "{A9C5ABB6-C9A8-4AA1-A543-CD19F3A2EFF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwitchingAnemometer_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Samples\SwitchingAnemometer_Sample\SwitchingAnemometer_Sample.csproj", "{A9C5ABB6-C9A8-4AA1-A543-CD19F3A2EFF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Weather.SwitchingAnemometer", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Driver\Sensors.Weather.SwitchingAnemometer\Sensors.Weather.SwitchingAnemometer.csproj", "{82980954-71E5-48CE-BA13-00B841707B04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Weather.SwitchingAnemometer", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Driver\Sensors.Weather.SwitchingAnemometer\Sensors.Weather.SwitchingAnemometer.csproj", "{82980954-71E5-48CE-BA13-00B841707B04}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Ccs811", "Sensors.Atmospheric.Ccs811", "{8A5A02DE-D320-489F-86D9-278022BDFE00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Ccs811", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Ccs811\Driver\Sensors.Atmospheric.Ccs811\Sensors.Atmospheric.Ccs811.csproj", "{FDA130ED-6502-4357-BB48-A6C080BDB511}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Ccs811", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Ccs811\Driver\Sensors.Atmospheric.Ccs811\Sensors.Atmospheric.Ccs811.csproj", "{FDA130ED-6502-4357-BB48-A6C080BDB511}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A857BC05-B321-4E1F-8FB9-CAA9BE65118B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Atmospheric.Ccs811_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Ccs811\Samples\Sensors.Atmospheric.Ccs811_Sample\Sensors.Atmospheric.Ccs811_Sample.csproj", "{D4CA169B-7E84-4AE3-BE82-F232277D4CD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Ccs811_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Ccs811\Samples\Sensors.Atmospheric.Ccs811_Sample\Sensors.Atmospheric.Ccs811_Sample.csproj", "{D4CA169B-7E84-4AE3-BE82-F232277D4CD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Buttons.PushButton_BasicSample", "Meadow.Foundation.Core.Samples\Sensors.Buttons.PushButton_BasicSample\Sensors.Buttons.PushButton_BasicSample.csproj", "{2FFEB068-12D2-4EF6-B3CE-767F2E223177}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Buttons.PushButton_BasicSample", "Meadow.Foundation.Core.Samples\Sensors.Buttons.PushButton_BasicSample\Sensors.Buttons.PushButton_BasicSample.csproj", "{2FFEB068-12D2-4EF6-B3CE-767F2E223177}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "ICs.IOExpanders.Tca9548a_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Tca9548a\Samples\ICs.IOExpanders.Tca9548a_Sample\ICs.IOExpanders.Tca9548a_Sample.csproj", "{6E1ADC42-1E91-4921-84BB-E219000A3BED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Tca9548a_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Tca9548a\Samples\ICs.IOExpanders.Tca9548a_Sample\ICs.IOExpanders.Tca9548a_Sample.csproj", "{6E1ADC42-1E91-4921-84BB-E219000A3BED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2164,12 +2162,6 @@ Global
 		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Release|Any CPU.Build.0 = Release|Any CPU
-		{67F9992A-6BD3-4452-89A5-42C4BAABC506}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{F3499920-32A2-4E5E-9D9E-4D04B7399C49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F3499920-32A2-4E5E-9D9E-4D04B7399C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3499920-32A2-4E5E-9D9E-4D04B7399C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -2693,7 +2685,6 @@ Global
 		{17A4EBF1-A1F8-475F-A304-A9B7F7B58C82} = {B71872DC-C58D-41A7-B24F-78D8136EE49E}
 		{99621A27-6E31-4D71-A395-FEB610337646} = {B71872DC-C58D-41A7-B24F-78D8136EE49E}
 		{F3C9CC02-DBA5-4A63-8211-6DDB20791E1A} = {17A4EBF1-A1F8-475F-A304-A9B7F7B58C82}
-		{67F9992A-6BD3-4452-89A5-42C4BAABC506} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 		{4D8E9D80-2108-4564-8B0A-D5DCEB4723C0} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{970D9570-A24B-4329-A888-F8DE9199A600} = {4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}
 		{36346C46-BCCE-46D5-964F-E2A71EFD9CA2} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
@@ -2704,8 +2695,8 @@ Global
 		{F0351FC4-759D-4CFE-8995-4C280771E369} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{F6824EF1-9F19-4727-8D35-E63AC59F816F} = {F0351FC4-759D-4CFE-8995-4C280771E369}
 		{9AE0AEB5-3AC7-4049-A047-33C0F2D5D3CA} = {F0351FC4-759D-4CFE-8995-4C280771E369}
-		{82980954-71E5-48CE-BA13-00B841707B04} = {4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}
 		{A9C5ABB6-C9A8-4AA1-A543-CD19F3A2EFF9} = {970D9570-A24B-4329-A888-F8DE9199A600}
+		{82980954-71E5-48CE-BA13-00B841707B04} = {4D8E9D80-2108-4564-8B0A-D5DCEB4723C0}
 		{8A5A02DE-D320-489F-86D9-278022BDFE00} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{FDA130ED-6502-4357-BB48-A6C080BDB511} = {8A5A02DE-D320-489F-86D9-278022BDFE00}
 		{A857BC05-B321-4E1F-8FB9-CAA9BE65118B} = {8A5A02DE-D320-489F-86D9-278022BDFE00}
