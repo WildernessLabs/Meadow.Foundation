@@ -1,8 +1,9 @@
+using Meadow.Devices;
 using Meadow.Hardware;
 using System;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.Tft
+namespace Meadow.Foundation.Displays.TftSpi
 {
     public abstract class TftSpiBase : DisplayBase, IDisposable
     {
@@ -67,7 +68,7 @@ namespace Meadow.Foundation.Displays.Tft
         internal TftSpiBase()
         { }
 
-        public TftSpiBase(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public TftSpiBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height, DisplayColorMode mode = DisplayColorMode.Format16bppRgb565)
         {
             this.width = width;

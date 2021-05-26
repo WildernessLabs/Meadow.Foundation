@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -71,13 +72,11 @@ namespace Meadow.Foundation.Displays
             }
         }
         private byte _brightness;
-        
 
         private readonly IDigitalOutputPort portClock;
         private readonly IBiDirectionalPort portData;
 
         private byte[] displayBuffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
 
         /// <summary>
         /// Internal registers to be send to the TM1637
@@ -106,7 +105,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="pinClock">The clock pin</param>
         /// <param name="pinData">The data pin</param>
-        public Tm1637(IIODevice device, IPin pinClock, IPin pinData)
+        public Tm1637(IMeadowDevice device, IPin pinClock, IPin pinData)
         {
             portClock = device.CreateDigitalOutputPort(pinClock);
             portData = device.CreateBiDirectionalPort(pinData);
@@ -304,7 +303,5 @@ namespace Meadow.Foundation.Displays
             };
             Show(clearDisplay);
         }
-
-        
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -58,10 +59,6 @@ namespace Meadow.Foundation.Displays
 
         private readonly byte DECIMAL = 0b10000000;
 
-        
-
-        
-
         public enum Max7219Type
         {
             Character, 
@@ -109,10 +106,6 @@ namespace Meadow.Foundation.Displays
             DisplayTest = 0x0F
         }
 
-        
-
-        
-
         public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceCount = 1, Max7219Type maxMode = Max7219Type.Display)
             :this(spiBus, csPort, 8, 1, maxMode)
         {
@@ -139,15 +132,13 @@ namespace Meadow.Foundation.Displays
         /// Creates a Max7219 Device given a <see paramref="spiBus" /> to communicate over and the
         /// number of devices that are cascaded.
         /// </summary>
-        public Max7219(IIODevice device, ISpiBus spiBus, IPin csPin, int deviceRows = 1, int deviceColumns = 1, Max7219Type maxMode = Max7219Type.Display)
+        public Max7219(IMeadowDevice device, ISpiBus spiBus, IPin csPin, int deviceRows = 1, int deviceColumns = 1, Max7219Type maxMode = Max7219Type.Display)
             : this(spiBus, device.CreateDigitalOutputPort(csPin), deviceRows, deviceColumns, maxMode)
         { }
 
-        public Max7219(IIODevice device, ISpiBus spiBus, IPin csPin, int deviceCount = 1, Max7219Type maxMode = Max7219Type.Display)
+        public Max7219(IMeadowDevice device, ISpiBus spiBus, IPin csPin, int deviceCount = 1, Max7219Type maxMode = Max7219Type.Display)
             : this(spiBus, device.CreateDigitalOutputPort(csPin), deviceCount, 1, maxMode)
         { }
-
-        
 
         /// <summary>
         /// Standard initialization routine.

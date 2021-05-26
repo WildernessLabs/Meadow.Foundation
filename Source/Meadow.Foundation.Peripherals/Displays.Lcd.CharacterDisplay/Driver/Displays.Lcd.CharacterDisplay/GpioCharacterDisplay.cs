@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using System;
 using System.Threading;
@@ -34,7 +35,7 @@ namespace Meadow.Foundation.Displays.Lcd
         public TextDisplayConfig DisplayConfig { get; protected set; }
 
         public GpioCharacterDisplay(
-            IIODevice device,
+            IMeadowDevice device,
             IPin pinRS,
             IPin pinE,
             IPin pinD4,
@@ -74,7 +75,7 @@ namespace Meadow.Foundation.Displays.Lcd
         }
 
         public GpioCharacterDisplay(
-            IIODevice device,
+            IMeadowDevice device,
             IPin pinV0,
             IPin pinRS,
             IPin pinE,

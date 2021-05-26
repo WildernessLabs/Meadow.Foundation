@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
-using Meadow.Peripherals.Sensors.Atmospheric;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Temperature.AnalogTemperature_Sample
 {
@@ -23,23 +21,31 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
                 sensorType: AnalogTemperature.KnownSensorType.LM35
             );
 
+            //==== IObservable Pattern with an optional notification filter.
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree.
-            analogTemperature.Subscribe(new FilterableChangeObserver<AtmosphericConditionChangeResult, AtmosphericConditions>(
-                h => {
-                    Console.WriteLine($"Temp changed by a degree; new: {h.New.Temperature}, old: {h.Old.Temperature}");
+            var consumer = AnalogTemperature.CreateObserver(
+                handler: result => {
+                    Console.WriteLine($"Observer filter satisfied: {result.New.Celsius:N2}C, old: {result.Old?.Celsius:N2}C");
                 },
-                e => {
-                    return (Math.Abs(e.Delta.Temperature.Value) > 1);
+                // only notify if the change is greater than 0.5°C
+                filter: result => {
+                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                        return (result.New - old).Abs().Celsius > 0.5; // returns true if > 0.5°C change.
+                    } return false;
                 }
-                ));
+                // if you want to always get notified, pass null for the filter:
+                //filter: null
+            );
+            analogTemperature.Subscribe(consumer);
 
+            //==== Classic Events Pattern
             // classical .NET events can also be used:
-            analogTemperature.Updated += (object sender, AtmosphericConditionChangeResult e) => {
-                Console.WriteLine($"Temp Changed, temp: {e.New.Temperature}°C");
+            analogTemperature.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> result) => {
+                Console.WriteLine($"Temp Changed, temp: {result.New.Celsius:N2}C, old: {result.Old?.Celsius:N2}C");
             };
 
-            // Get an initial reading.
+            //==== One-off reading use case/pattern
             ReadTemp().Wait();
 
             // Spin up the sampling thread so that events are raised and
@@ -49,8 +55,8 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
         protected async Task ReadTemp()
         {
-            var conditions = await analogTemperature.Read();
-            Console.WriteLine($"Initial temp: { conditions.Temperature }");
+            var temperature = await analogTemperature.Read();
+            Console.WriteLine($"Initial temp: {temperature.New.Celsius:N2}C");
         }
     }
 }

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Displays;
+using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
-using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
+using System;
+using System.Threading;
 
 namespace Displays.Ssd1309_3DCube_Sample
 {
@@ -147,7 +144,7 @@ namespace Displays.Ssd1309_3DCube_Sample
 
         }
 
-        private void PortRight_Changed(object sender, DigitalInputPortEventArgs e)
+        private void PortRight_Changed(object sender, DigitalPortResult e)
         {
             /*    graphics.Clear();
                 graphics.DrawText(0, 0, "R" + count++);
@@ -157,7 +154,7 @@ namespace Displays.Ssd1309_3DCube_Sample
             breakoutGame.Right(breakoutGame.Paddle.Width);
         }
 
-        private void PortDown_Changed(object sender, DigitalInputPortEventArgs e)
+        private void PortDown_Changed(object sender, DigitalPortResult e)
         {
             /*  graphics.Clear();
               graphics.DrawText(0, 0, "D" + count++);
@@ -165,7 +162,7 @@ namespace Displays.Ssd1309_3DCube_Sample
       //      snakeGame.Direction = SnakeDirection.Down;
         }
 
-        private void PortUp_Changed(object sender, DigitalInputPortEventArgs e)
+        private void PortUp_Changed(object sender, DigitalPortResult e)
         {
           /*  graphics.Clear();
             graphics.DrawText(0, 0, "U" + count++);
@@ -175,7 +172,7 @@ namespace Displays.Ssd1309_3DCube_Sample
 
         }
 
-        private void PortLeft_Changed(object sender, DigitalInputPortEventArgs e)
+        private void PortLeft_Changed(object sender, DigitalPortResult e)
         {
             /* graphics.Clear();
             graphics.DrawText(0, 0, "L" + count++);

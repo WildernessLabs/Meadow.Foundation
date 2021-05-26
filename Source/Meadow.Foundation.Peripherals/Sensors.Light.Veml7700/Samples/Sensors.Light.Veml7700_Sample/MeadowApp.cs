@@ -17,18 +17,12 @@ namespace Sensors.Light.Veml7700_Sample
             {
 
                 _veml.ChangeThreshold = 10;
-                _veml.LuxChanged += OnLightChanged;
-
+    
                 while (true)
                 {
                     Thread.Sleep(5000);
                 }
             }
-        }
-
-        private void OnLightChanged(float previousValue, float newValue)
-        {
-            Console.WriteLine($"Light: {_veml.Lux} lux");
         }
     }
 }

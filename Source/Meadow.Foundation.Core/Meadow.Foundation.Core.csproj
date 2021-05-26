@@ -16,8 +16,10 @@
    <IncludeSymbols>true</IncludeSymbols>
    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
    <Description>Core peripheral drivers for Wilderness Labs Meadow</Description>
+   <Nullable>enable</Nullable>
+   <LangVersion>8.0</LangVersion>
  </PropertyGroup>
  <ItemGroup>
-   <PackageReference Include="Meadow" Version="0.22.0" />
+   <PackageReference Include="Meadow" Version="0.23.0" />
  </ItemGroup>
 </Project>

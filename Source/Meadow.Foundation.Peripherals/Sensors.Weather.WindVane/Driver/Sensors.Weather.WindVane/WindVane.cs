@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Meadow;
-using Meadow.Hardware;
-using Meadow.Foundation.Sensors;
-using Meadow.Units;
-using static Meadow.Foundation.Sensors.Weather.WindVane;
 using System.Threading.Tasks;
+using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Weather;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Weather
 {
@@ -19,23 +17,25 @@ namespace Meadow.Foundation.Sensors.Weather
     /// 4.7kΩ / 1kΩ, as can be found in the SparkFun weather shield, or Wilderness
     /// Labs Clima Pro board.
     /// </summary>
-    public partial class WindVane : FilterableChangeObservableBase<WindVaneChangeResult, Azimuth>
+    public partial class WindVane
+        : FilterableChangeObservableBase<Azimuth>, IWindVane
     {
+        //==== events
         /// <summary>
         /// Raised when the azimuth of the wind changes.
         /// </summary>
-        public event EventHandler<WindVaneChangeResult> Updated = delegate { };
+        public event EventHandler<IChangeResult<Azimuth>> Updated = delegate { };
 
         /// <summary>
         /// The last recorded azimuth of the wind.
         /// </summary>
-        public Azimuth LastRecordedWindAzimuth { get; protected set; } = 0;
+        public Azimuth? WindAzimuth { get; protected set; }
 
         // TODO: consider making an `ImmutableDictionary` (need to add package
         /// <summary>
         /// Voltage -> wind azimuth lookup dictionary.
         /// </summary>
-        public IDictionary<float, Azimuth> AzimuthVoltages { get; protected set; }
+        public IDictionary<Voltage, Azimuth> AzimuthVoltages { get; protected set; }
 
         protected IAnalogInputPort inputPort;
 
@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="device">The IO Device.</param>
         /// <param name="analogInputPin">The analog input pin.</param>
         /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages.</param>
-        public WindVane(IIODevice device, IPin analogInputPin, IDictionary<float, Azimuth> azimuthVoltages = null)
+        public WindVane(IAnalogInputController device, IPin analogInputPin, IDictionary<Voltage, Azimuth> azimuthVoltages = null)
             : this(device.CreateAnalogInputPort(analogInputPin), azimuthVoltages)
         {
         }
@@ -57,7 +57,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         /// <param name="inputPort">The analog input.</param>
         /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages.</param>
-        public WindVane(IAnalogInputPort inputPort, IDictionary<float, Azimuth> azimuthVoltages = null)
+        public WindVane(IAnalogInputPort inputPort, IDictionary<Voltage, Azimuth> azimuthVoltages = null)
         {
             this.AzimuthVoltages = azimuthVoltages;
             this.inputPort = inputPort;
@@ -69,7 +69,8 @@ namespace Meadow.Foundation.Sensors.Weather
             // if no lookup has been provided, load the defaults
             if (AzimuthVoltages == null) { LoadDefaultAzimuthVoltages(); }
 
-            inputPort.Subscribe(new FilterableChangeObserver<FloatChangeResult, float>(
+            inputPort.Subscribe(
+                IAnalogInputPort.CreateObserver(
                 handler: result => HandleAnalogUpdate(result),
                 filter: null
                 ));
@@ -94,7 +95,7 @@ namespace Meadow.Foundation.Sensors.Weather
             int sampleIntervalDuration = 20,
             int standbyDuration = 500)
         {
-            inputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
+            inputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
         }
 
         /// <summary>
@@ -102,7 +103,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public void StopUpdating()
         {
-            inputPort.StopSampling();
+            inputPort.StopUpdating();
         }
 
         /// <summary>
@@ -117,7 +118,7 @@ namespace Meadow.Foundation.Sensors.Weather
         public async Task<Azimuth> Read(int sampleCount = 5, int sampleIntervalDuration = 20)
         {
             // read the voltage
-            float voltage = await inputPort.Read(sampleCount, sampleIntervalDuration);
+            Voltage voltage = await inputPort.Read(sampleCount, sampleIntervalDuration);
             // get the azimuth
             return LookupWindDirection(voltage);
         }
@@ -126,23 +127,25 @@ namespace Meadow.Foundation.Sensors.Weather
         /// Takes the analog reading and converts to the wind azimuth, then
         /// raises the event/updates subscribers.
         /// </summary>
-        protected void HandleAnalogUpdate(FloatChangeResult result)
+        protected void HandleAnalogUpdate(IChangeResult<Voltage> result)
         {
             var windAzimuth = LookupWindDirection(result.New);
-            WindVaneChangeResult windChangeResult = new WindVaneChangeResult()
+            ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>()
+            //WindVaneChangeResult windChangeResult = new WindVaneChangeResult()
             {
-                Old = this.LastRecordedWindAzimuth,
+                Old = this.WindAzimuth,
                 New = windAzimuth
             };
             RaiseUpdated(windChangeResult);
-            this.LastRecordedWindAzimuth = windAzimuth;
+            this.WindAzimuth = windAzimuth;
         }
 
         /// <summary>
         /// Thread and inheritance safe way to raise the event and notify subs
         /// </summary>
         /// <param name="windAzimuth"></param>
-        protected void RaiseUpdated(WindVaneChangeResult changeResult)
+        //protected void RaiseUpdated(WindVaneChangeResult changeResult)
+        protected void RaiseUpdated(IChangeResult<Azimuth> changeResult)
         {
             Updated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
@@ -154,21 +157,21 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         /// <param name="voltage"></param>
         /// <returns></returns>
-        protected Azimuth LookupWindDirection(float voltage)
+        protected Azimuth LookupWindDirection(Voltage voltage)
         {
-            Tuple<Azimuth, double> closestFit = null;
+            Tuple<Azimuth, Voltage> closestFit = null;
 
             // loop through each azimuth lookup and compute the difference
             // between the measured voltage and the voltage for that azimumth
-            double difference;
+            Voltage difference;
             foreach (var a in AzimuthVoltages)
             {
-                difference = Math.Abs(a.Key - voltage);
+                difference = (a.Key - voltage).Abs();
                 // if the closest fit hasn't been set or is further than the
                 // computed voltage difference, then we've found a better fit.
                 if (closestFit == null || closestFit.Item2 > difference)
                 {
-                    closestFit = new Tuple<Azimuth, double>(a.Value, difference);
+                    closestFit = new Tuple<Azimuth, Voltage>(a.Value, difference);
                 }
             }
 
@@ -182,23 +185,23 @@ namespace Meadow.Foundation.Sensors.Weather
         protected void LoadDefaultAzimuthVoltages()
         {
             Console.WriteLine("Loading default azimuth voltages");
-            this.AzimuthVoltages = new Dictionary<float, Azimuth> {
-                { 2.9f, new Azimuth(Azimuth16PointCardinalNames.N) },
-                { 2.04f, new Azimuth(Azimuth16PointCardinalNames.NNE) },
-                { 2.19f, new Azimuth(Azimuth16PointCardinalNames.NE) },
-                { 0.95f, new Azimuth(Azimuth16PointCardinalNames.ENE) },
-                { 0.989f, new Azimuth(Azimuth16PointCardinalNames.E) },
-                { 0.874f, new Azimuth(Azimuth16PointCardinalNames.ESE) },
-                { 1.34f, new Azimuth(Azimuth16PointCardinalNames.SE) },
-                { 1.12f, new Azimuth(Azimuth16PointCardinalNames.SSE) },
-                { 1.689f, new Azimuth(Azimuth16PointCardinalNames.S) },
-                { 1.55f, new Azimuth(Azimuth16PointCardinalNames.SSW) },
-                { 2.59f, new Azimuth(Azimuth16PointCardinalNames.SW) },
-                { 2.522f, new Azimuth(Azimuth16PointCardinalNames.WSW) },
-                { 3.18f, new Azimuth(Azimuth16PointCardinalNames.W) },
-                { 2.98f, new Azimuth(Azimuth16PointCardinalNames.WNW) },
-                { 3.08f, new Azimuth(Azimuth16PointCardinalNames.NW) },
-                { 2.74f, new Azimuth(Azimuth16PointCardinalNames.NNW) },
+            this.AzimuthVoltages = new Dictionary<Voltage, Azimuth> {
+                { new Voltage(2.9f), new Azimuth(Azimuth16PointCardinalNames.N) },
+                { new Voltage(2.04f), new Azimuth(Azimuth16PointCardinalNames.NNE) },
+                { new Voltage(2.19f), new Azimuth(Azimuth16PointCardinalNames.NE) },
+                { new Voltage(0.95f), new Azimuth(Azimuth16PointCardinalNames.ENE) },
+                { new Voltage(0.989f), new Azimuth(Azimuth16PointCardinalNames.E) },
+                { new Voltage(0.874f), new Azimuth(Azimuth16PointCardinalNames.ESE) },
+                { new Voltage(1.34f), new Azimuth(Azimuth16PointCardinalNames.SE) },
+                { new Voltage(1.12f), new Azimuth(Azimuth16PointCardinalNames.SSE) },
+                { new Voltage(1.689f), new Azimuth(Azimuth16PointCardinalNames.S) },
+                { new Voltage(1.55f), new Azimuth(Azimuth16PointCardinalNames.SSW) },
+                { new Voltage(2.59f), new Azimuth(Azimuth16PointCardinalNames.SW) },
+                { new Voltage(2.522f), new Azimuth(Azimuth16PointCardinalNames.WSW) },
+                { new Voltage(3.18f), new Azimuth(Azimuth16PointCardinalNames.W) },
+                { new Voltage(2.98f), new Azimuth(Azimuth16PointCardinalNames.WNW) },
+                { new Voltage(3.08f), new Azimuth(Azimuth16PointCardinalNames.NW) },
+                { new Voltage(2.74f), new Azimuth(Azimuth16PointCardinalNames.NNW) },
             };
         }
     }

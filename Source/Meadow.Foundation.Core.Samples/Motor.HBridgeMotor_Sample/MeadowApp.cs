@@ -31,15 +31,15 @@ namespace Motor.HBridgeMotor_Sample
             while (true)
             {
                 // Motor Forwards
-                motor1.Speed = 1f;
+                motor1.Power = 1f;
                 Thread.Sleep(1000);
 
                 // Motor Stops
-                motor1.Speed = 0f;
+                motor1.Power = 0f;
                 Thread.Sleep(500);
 
                 // Motor Backwards
-                motor1.Speed = -1f;
+                motor1.Power = -1f;
                 Thread.Sleep(1000);
             }
         }

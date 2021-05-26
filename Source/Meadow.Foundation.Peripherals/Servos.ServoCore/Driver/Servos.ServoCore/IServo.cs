@@ -1,4 +1,5 @@
 using System;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Servos
 {
@@ -6,10 +7,8 @@ namespace Meadow.Foundation.Servos
     {
         ServoConfig Config { get; }
 
-        void RotateTo(int angle);
+        void RotateTo(Angle angle);
 
-        //void RotateTo(int angle, double speed);
-
-        int Angle { get; }
+        Angle? Angle { get; }
     }
 }

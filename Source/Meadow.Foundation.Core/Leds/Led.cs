@@ -1,3 +1,4 @@
+﻿using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
 using System;
@@ -11,8 +12,8 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class Led : ILed
 	{
-		protected Task animationTask;
-		protected CancellationTokenSource cancellationTokenSource;
+		protected Task? animationTask;
+		protected CancellationTokenSource? cancellationTokenSource;
 
 		/// <summary>
 		/// Gets the port that is driving the LED
@@ -39,7 +40,7 @@ namespace Meadow.Foundation.Leds
 		/// Creates a LED through a pin directly from the Digital IO of the board
 		/// </summary>
 		/// <param name="pin"></param>
-		public Led(IIODevice device, IPin pin) :
+		public Led(IDigitalOutputController device, IPin pin) :
 			this(device.CreateDigitalOutputPort(pin, false))
 		{ }
 

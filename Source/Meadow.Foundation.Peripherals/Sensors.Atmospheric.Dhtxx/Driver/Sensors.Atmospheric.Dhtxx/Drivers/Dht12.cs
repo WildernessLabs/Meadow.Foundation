@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 
-namespace Meadow.Foundation.Sensors.Atmospheric
+namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
 {
     /// <summary>
     /// Represents a DHT10 temp / humidity sensor

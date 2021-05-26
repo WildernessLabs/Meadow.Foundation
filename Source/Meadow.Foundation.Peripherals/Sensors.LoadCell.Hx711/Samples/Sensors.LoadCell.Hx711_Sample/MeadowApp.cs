@@ -1,4 +1,5 @@
 ﻿using Meadow;
+using Meadow.Units;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Sensors.LoadCell;
@@ -11,9 +12,9 @@ namespace Sensors.LoadCell.Hx711_Sample
     {
         private Hx711 loadSensor;
 
-        public int CalibrationFactor { get; set; } = 9834945 - 8458935; // TODO: change this based on your scale (using the method provided below)
-        public decimal CalibrationWeight { get; set; } = 3030; // TODO: enter the known-weight (in units below) you used in calibration
-        public WeightUnits CalibrationWeightUnits { get; set; } = WeightUnits.Grams; // TODO: enter the units of the known-weight you used in calibration
+        public int CalibrationFactor { get; set; } = 0; //9834945 - 8458935; // TODO: change this based on your scale (using the method provided below)
+        public double CalibrationWeight { get; set; } = 10; // TODO: enter the known-weight (in units below) you used in calibration
+        public WeightUnits CalibrationWeightUnits { get; set; } = WeightUnits.Pounds; // TODO: enter the units of the known-weight you used in calibration
 
         public MeadowApp()
         {
@@ -30,16 +31,15 @@ namespace Sensors.LoadCell.Hx711_Sample
                     Thread.Sleep(500);
 
                     // Set the current load to be zero
-                    loadSensor.SetCalibrationFactor(CalibrationFactor, new Weight(CalibrationWeight, CalibrationWeightUnits));
+                    loadSensor.SetCalibrationFactor(CalibrationFactor, new Mass(CalibrationWeight, Mass.UnitType.Grams));
                     loadSensor.Tare();
 
-                    // start reading
-                    while (true)
+                    loadSensor.MassUpdated += (sender, values) =>
                     {
-                        var c = loadSensor.GetWeight();
-                        Console.WriteLine($"Conversion returned {c.StandardValue:0.0} {c.StandardUnits}");
-                        Thread.Sleep(1000);
-                    }
+                        Console.WriteLine($"Mass is now returned {values.New.Grams:N2}g");
+                    };
+                    loadSensor.StartUpdating(TimeSpan.FromSeconds(2));
+
                 }
             }
         }

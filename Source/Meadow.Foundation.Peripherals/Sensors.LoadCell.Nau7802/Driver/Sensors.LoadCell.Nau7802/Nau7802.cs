@@ -1,147 +1,54 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.LoadCell
 {
     /// <summary>
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
-    /// <remarks><b>Work in progress.  This driver is not yet functional.</b></remarks>
-    public class Nau7802 : IDisposable //Todo: FilterableObservableBase<FloatChangeResult, float>,  IDisposable
+    public partial class Nau7802 :
+        FilterableChangeObservableI2CPeripheral<Units.Mass>,
+        IMassSensor,
+        IDisposable
+
     {
-        /// <summary>
-        /// Valid addresses for the sensor.
-        /// </summary>
-        public enum Addresses : byte
-        {
-            Address0 = 0x2A,
-            Default = Address0
-        }
+        //==== events
+        public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
 
-        private enum Register : byte
-        {
-            PU_CTRL = 0x00,
-            CTRL1 = 0x01,
-            CTRL2 = 0x02,
-            OCAL1_B2 = 0x03,
-            OCAL1_B1 = 0x04,
-            OCAL1_B0 = 0x05,
-            GCAL1_B3 = 0x06,
-            GCAL1_B2 = 0x07,
-            GCAL1_B1 = 0x08,
-            GCAL1_B0 = 0x09,
-            OCAL2_B2 = 0x0a,
-            OCAL2_B1 = 0x0b,
-            OCAL2_B0 = 0x0c,
-            GCAL2_B3 = 0x0d,
-            GCAL2_B2 = 0x0e,
-            GCAL2_B1 = 0x0f,
-            GCAL2_B0 = 0x10,
-            I2C_CTRL = 0x11,
-            ADCO_B2 = 0x12,
-            ADCO_B1 = 0x13,
-            ADCO_B0 = 0x14,
-            OTP_B1 = 0x15,
-            OTP_B0 = 0x16,
-            PGA = 0x1B,
-            PGA_PWR = 0x1C,
-            DEV_REV = 0x1f
-        }
-
-        [Flags]
-        private enum PU_CTRL_BITS
-        {
-            /// <summary>
-            /// Register Reset
-            /// </summary>
-            RR = 1 << 0,
-            /// <summary>
-            /// Power up digital
-            /// </summary>
-            PUD = 1 << 1,
-            /// <summary>
-            /// Power-up analog
-            /// </summary>
-            PUA = 1 << 2,
-            /// <summary>
-            /// Power-up ready
-            /// </summary>
-            PUR = 1 << 3,
-            /// <summary>
-            /// Cycle start
-            /// </summary>
-            CS = 1 << 4,
-            /// <summary>
-            /// Cycle ready
-            /// </summary>
-            CR = 1 << 5,
-            /// <summary>
-            /// System clock source select
-            /// </summary>
-            OSCS = 1 << 6,
-            /// <summary>
-            /// AVDD source select
-            /// </summary>
-            AVDDS = 1 << 7
-        }
-
-        private enum LdoVoltage
-        {
-            LDO_2V4 = 0b111,
-            LDO_2V7 = 0b110,
-            LDO_3V0 = 0b101,
-            LDO_3V3 = 0b100,
-            LDO_3V6 = 0b011,
-            LDO_3V9 = 0b010,
-            LDO_4V2 = 0b001,
-            LDO_4V5 = 0b000,
-        }
-
-        private enum AdcGain
-        {
-            Gain0 = 0b000,
-            Gain2 = 0b001,
-            Gain4 = 0b010,
-            Gain8 = 0b011,
-            Gain16 = 0b100,
-            Gain32 = 0b101,
-            Gain64 = 0b110,
-            Gain128 = 0b111,
-        }
-
-        private enum ConversionRate
-        {
-            SamplePerSecond10 = 0b000,
-            SamplePerSecond20 = 0b001,
-            SamplePerSecond40 = 0b010,
-            SamplePerSecond80 = 0b011,
-            SamplePerSecond320 = 0b111,
-        }
-
-        private II2cBus Device { get; }
+        //==== internals
+        private byte[] _read = new byte[3];
+        private double _gramsPerAdcUnit = 0;
+        private PU_CTRL_BITS _currentPU_CTRL;
+        private int _tareValue;
         private object SyncRoot { get; } = new object();
-        private decimal gramsPerAdcUnit = 0;
-        private PU_CTRL_BITS currentPU_CTRL;
-        private int tareValue;
+        private CancellationTokenSource? SamplingTokenSource { get; set; }
+
+        //==== Properties
+        public bool IsSampling { get; private set; }
+        public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
 
         /// <summary>
-        /// The peripheral's address on the I2C Bus
+        /// The last read Mass.
         /// </summary>
-        public byte Address { get; private set; }
+        public Mass? Mass { get; private set; }
 
         /// <summary>
         /// Creates an instance of the NAU7802 Driver class
         /// </summary>
         /// <param name="bus"></param>
         public Nau7802(II2cBus bus)
+            : base(bus, (byte)Addresses.Default)
         {
-            Device = bus;
             Initialize((byte)Addresses.Default);
         }
 
         protected virtual void Dispose(bool disposing)
         {
+            StopUpdating();
         }
 
         /// <summary>
@@ -163,60 +70,21 @@ namespace Meadow.Foundation.Sensors.LoadCell
                     throw new ArgumentOutOfRangeException($"NAU7802 device supports only address {(int)Addresses.Default}");
             }
 
-            Address = address;
-
             PowerOn();
 
             // let the ADCs settle
             Thread.Sleep(500);
         }
 
-        private void WriteRegister(Register register, PU_CTRL_BITS value)
-        {
-            WriteRegister(register, (byte)value);
-        }
-
-        private void WriteRegister(Register register, byte value)
-        {
-            lock (SyncRoot)
-            {
-                Span<byte> buffer = stackalloc byte[2];
-
-                buffer[0] = (byte)register;
-                buffer[1] = value;
-
-                Device.WriteData(Address, buffer);
-            }
-        }
-
-        private byte ReadRegister(Register register)
-        {
-            lock (SyncRoot)
-            {
-                Span<byte> write = stackalloc byte[1];
-                Span<byte> read = stackalloc byte[1];
-
-                write[0] = (byte)register;
-
-                Device.WriteReadData(Address, write, read);
-
-                return read[0];
-            }
-        }
-
         private int ReadADC()
         {
-            lock (SyncRoot)
+            while (!IsConversionComplete())
             {
-                Span<byte> write = stackalloc byte[1];
-                Span<byte> read = stackalloc byte[3];
-
-                write[0] = (byte)Register.ADCO_B2;
-
-                Device.WriteReadData(Address, write, read);
-
-                return read[0] << 16 | read[1] << 8 | read[2];
+                Thread.Sleep(1);
             }
+
+            Bus.ReadRegisterBytes((byte)Register.ADCO_B2, _read);
+            return _read[0] << 16 | _read[1] << 8 | _read[2];
         }
 
         /// <summary>
@@ -229,52 +97,58 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 Thread.Sleep(1);
             }
 
-            tareValue = ReadADC();
-            Console.WriteLine($"Tare base = {tareValue}");
+            _tareValue = ReadADC();
+            Output.WriteLine($"Tare base = {_tareValue:x}");
         }
 
         private void PowerOn()
         {
-            Console.WriteLine($"Powering up...");
+            Output.WriteLine($"Powering up...");
 
-            // read the control register
-            currentPU_CTRL = (PU_CTRL_BITS)ReadRegister(Register.PU_CTRL);
+            // Set and clear the RR bit in 0x00, to guarantee a reset of all register values
+            _currentPU_CTRL = PU_CTRL_BITS.RR;
+            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            Thread.Sleep(1); // make sure it has time to do it's thing
+            _currentPU_CTRL &= ~PU_CTRL_BITS.RR;
+            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
 
-            Console.WriteLine($"PU_CTRL: 0x{currentPU_CTRL:x}");
-
-            // Set the RR bit to 1 in R0x00, to guarantee a reset of all register values
-            currentPU_CTRL |= PU_CTRL_BITS.RR;
-            WriteRegister(Register.PU_CTRL, currentPU_CTRL);
-
-            // Set the RR bit to 0 and PUD bit 1, in R0x00, to enter normal operation 
-            currentPU_CTRL &= ~PU_CTRL_BITS.RR;
-            currentPU_CTRL |= (PU_CTRL_BITS.PUD | PU_CTRL_BITS.PUA);
-            WriteRegister(Register.PU_CTRL, currentPU_CTRL);
-
-            // After about 200 microseconds, the PWRUP bit will be Logic = 1 indicating the device is ready for the remaining programming setup. 
+            // turn on the analog and digital power
+            _currentPU_CTRL |= (PU_CTRL_BITS.PUD | PU_CTRL_BITS.PUA);
+            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            // wait for power-up ready
+            var timeout = 100;
             do
             {
-                Thread.Sleep(1);
-                currentPU_CTRL = (PU_CTRL_BITS)ReadRegister(Register.PU_CTRL);
-            } while ((currentPU_CTRL & PU_CTRL_BITS.PUR) == 0);
+                if(timeout-- <= 0)
+                {
+                    Output.WriteLine("Timeout powering up");
+                    throw new Exception("Timeout powering up");
+                }
+                Thread.Sleep(10);
+                _currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
+            } while ((_currentPU_CTRL & PU_CTRL_BITS.PUR) != PU_CTRL_BITS.PUR);
 
-            // At this point, all appropriate device selections and configuration can be made
-            //  a.For example R0x00 = 0xAE 
-            //  b.R0x15 = 0x30 
 
-            Console.WriteLine($"Configuring...");
+            Output.WriteLine($"Configuring...");
 
             SetLDO(LdoVoltage.LDO_3V3);
             SetGain(AdcGain.Gain128);
             SetConversionRate(ConversionRate.SamplePerSecond80);
-            WriteRegister(Register.OTP_B1, 0x30); // turn off CLK_CHP
+            Bus.WriteRegister((byte)Register.OTP_ADC, 0x30); // turn off CLK_CHP
             EnableCh2DecouplingCap();
 
-            CalibrateAdc();
+            if (!CalibrateAdc())
+            {
+                throw new Exception("Calibration error");
+            }
 
-            // No conversion will take place until the R0x00 bit 4 “CS” is set Logic = 1 
-            currentPU_CTRL |= PU_CTRL_BITS.CS;
-            WriteRegister(Register.PU_CTRL, currentPU_CTRL);
+            // turn on cycle start
+            _currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
+            _currentPU_CTRL |= PU_CTRL_BITS.CS;
+            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+
+
+            Output.WriteLine($"PU_CTRL: {_currentPU_CTRL}"); // 0xBE
 
             // Enter the low power standby condition by setting PUA and PUD bits to 0, in R0x00 
             // Resume operation by setting PUA and PUD bits to 1, in R0x00.This sequence is the same for powering up from the standby condition, except that from standby all of the information in the configuration and calibration registers will be retained if the power supply is stable.Depending on conditions and the application, it may be desirable to perform calibration again to update the calibration registers for the best possible accuracy.
@@ -283,65 +157,71 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private bool IsConversionComplete()
         {
-            var puctrl = (PU_CTRL_BITS)ReadRegister(Register.PU_CTRL);
+            var puctrl = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
             return (puctrl & PU_CTRL_BITS.CR) == PU_CTRL_BITS.CR;
         }
 
         private void EnableCh2DecouplingCap()
         {
             // app note - enable ch2 decoupling cap
-            var pga_pwr = ReadRegister(Register.PGA_PWR);
-            pga_pwr |= 1 << 3;
-            WriteRegister(Register.PGA_PWR, pga_pwr);
+            var pga_pwr = Bus.ReadRegisterByte((byte)Register.PGA_PWR);
+            pga_pwr |= 1 << 7;
+            Bus.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
         }
 
         private void SetLDO(LdoVoltage value)
         {
-            var ctrl1 = ReadRegister(Register.CTRL1);
+            var ctrl1 = Bus.ReadRegisterByte((byte)Register.CTRL1);
             ctrl1 &= 0b11000111; // clear LDO
             ctrl1 |= (byte)((byte)value << 3);
-            WriteRegister(Register.CTRL1, ctrl1);
-            currentPU_CTRL |= PU_CTRL_BITS.AVDDS;
-            WriteRegister(Register.PU_CTRL, currentPU_CTRL); // enable internal LDO
+            Bus.WriteRegister((byte)Register.CTRL1, ctrl1);
+            _currentPU_CTRL |= PU_CTRL_BITS.AVDDS;
+            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL); // enable internal LDO
         }
 
         private void SetGain(AdcGain value)
         {
-            var ctrl1 = ReadRegister(Register.CTRL1);
+            var ctrl1 = Bus.ReadRegisterByte((byte)Register.CTRL1);
             ctrl1 &= 0b11111000; // clear gain
             ctrl1 |= (byte)value;
-            WriteRegister(Register.CTRL1, ctrl1);
+            Bus.WriteRegister((byte)Register.CTRL1, ctrl1);
         }
 
         private void SetConversionRate(ConversionRate value)
         {
-            var ctrl2 = ReadRegister(Register.CTRL2);
+            var ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
             ctrl2 &= 0b10001111; // clear gain
             ctrl2 |= (byte)((byte)value << 4);
-            WriteRegister(Register.CTRL2, ctrl2);
+            Bus.WriteRegister((byte)Register.CTRL2, ctrl2);
         }
 
-        private void CalibrateAdc()
+        private bool CalibrateAdc()
         {
-            var ctrl2 = ReadRegister(Register.CTRL2);
-            ctrl2 |= (byte)((byte)1 << 7);
-            WriteRegister(Register.CTRL2, ctrl2);
+            // read ctrl2
+            var ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
 
+            // turn on the calibration bit
+            ctrl2 |= (byte)CTRL2_BITS.CALS;
+            Bus.WriteRegister((byte)Register.CTRL2, ctrl2);
+
+            // now wiat for either completion or error
             do
             {
-                ctrl2 = ReadRegister(Register.CTRL2);
-                if ((ctrl2 & (1 << 3)) != 0)
+                ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
+                if ((ctrl2 & (byte)CTRL2_BITS.CAL_ERROR) != 0)
                 {
                     // calibration error
-                    throw new Exception("Calibration error");
+                    return false;
                 }
-                if ((ctrl2 & (1 << 2)) == 0)
+                if ((ctrl2 & (byte)CTRL2_BITS.CALS) == 0)
                 {
                     // cal complete
                     break;
                 }
+                Thread.Sleep(1);
             } while (true);
 
+            return true;
         }
 
         /// <summary>
@@ -368,58 +248,135 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// </summary>
         /// <param name="factor"></param>
         /// <param name="knownValue"></param>
-        public void SetCalibrationFactor(int factor, Weight knownValue)
+        public void SetCalibrationFactor(int factor, Mass knownValue)
         {
-            gramsPerAdcUnit = knownValue.ConvertTo(WeightUnits.Grams) / (decimal)factor;
-        }
-
-        /// <summary>
-        /// Gets the current sensor weight
-        /// </summary>
-        /// <returns></returns>
-        public Weight GetWeight()
-        {
-            if(gramsPerAdcUnit == 0)
-            {
-                throw new Exception("Calibration factor has not been set");
-            }
-
-            // get an ADC conversion
-            var c = DoConversion();
-            // subtract the tare
-            var adc = c - tareValue;
-            // convert to grams
-            var grams = adc * gramsPerAdcUnit;
-            // convert to desired units
-            return new Weight(grams, WeightUnits.Grams);
+            _gramsPerAdcUnit = knownValue.Grams / (double)factor;
         }
 
         private int DoConversion()
         {
-            /*
-            Console.WriteLine($"Starting conversion...");
-            WriteRegister(Register.PU_CTRL, (byte)(_currentPU_CTRL | PU_CTRL_BITS.CS));
-
-            // wait for ready
-            do
-            {
-                _currentPU_CTRL = (PU_CTRL_BITS)ReadRegister(Register.PU_CTRL);
-            } while ((_currentPU_CTRL & PU_CTRL_BITS.CR) == 0);
-            */
-
             if(!IsConversionComplete())
             {
-                Console.WriteLine("ADC is busy");
+                Output.WriteLine("ADC is busy");
                 return 0;
             }
 
             //read
-            Console.WriteLine("Reading ADC...");
+            Output.WriteLine("Reading ADC...");
             var adc = ReadADC();
-            Console.WriteLine($"ADC = 0x{adc:x}");
+            Output.WriteLine($"ADC = 0x{adc:x}");
 
             // convert based on gain, etc.
             return adc;
+        }
+
+        /// <summary>
+        /// Convenience method to get the current sensor readings. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        /// </summary>
+        public async Task<Mass?> Read()
+        {
+            // update confiruation for a one-off read
+            this.Mass = await ReadSensor();
+            return Mass;
+        }
+
+        protected async Task<Mass> ReadSensor()
+        {
+            return await Task.Run(() => {
+                if (_gramsPerAdcUnit == 0)
+                {
+                    throw new Exception("Calibration factor has not been set");
+                }
+
+                // get an ADC conversion
+                var c = DoConversion();
+                // subtract the tare
+                var adc = c - _tareValue;
+                // convert to grams
+                var grams = adc * _gramsPerAdcUnit;
+                // convert to desired units
+                return new Mass(grams, Units.Mass.UnitType.Grams);
+            });
+        }
+
+        public void StartUpdating()
+        {
+            StartUpdating(DefaultSamplePeriod);
+        }
+
+        public void StartUpdating(TimeSpan period)
+        {
+            // thread safety
+            lock (SyncRoot)
+            {
+                if (IsSampling) return;
+
+                IsSampling = true;
+
+                SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                Mass? oldConditions;
+                ChangeResult<Mass> result;
+
+                Task.Factory.StartNew(async () => {
+                    while (true)
+                    {
+                        // cleanup
+                        if (ct.IsCancellationRequested)
+                        {
+                            // do task clean up here
+                            observers.ForEach(x => x.OnCompleted());
+                            break;
+                        }
+                        // capture history
+                        oldConditions = Mass;
+
+                        // read
+                        Mass = await Read();
+
+                        // build a new result with the old and new conditions
+                        result = new ChangeResult<Mass>(Mass.Value, oldConditions);
+
+                        // let everyone know
+                        RaiseChangedAndNotify(result);
+
+                        // sleep for the appropriate interval
+                        await Task.Delay(period);
+                    }
+                }, SamplingTokenSource.Token);
+            }
+        }
+
+        /// <summary>
+        /// Inheritance-safe way to raise events and notify observers.
+        /// </summary>
+        /// <param name="changeResult"></param>
+        protected void RaiseChangedAndNotify(IChangeResult<Mass> changeResult)
+        {
+            try
+            {
+                MassUpdated?.Invoke(this, changeResult);
+                base.NotifyObservers(changeResult);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"NAU7802 event handler threw: {ex.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Stops sampling the mass.
+        /// </summary>
+        public void StopUpdating()
+        {
+            lock (SyncRoot)
+            {
+                if (!IsSampling) return;
+                SamplingTokenSource?.Cancel();
+            }
         }
     }
 }

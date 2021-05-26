@@ -4,7 +4,6 @@
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Apa102</AssemblyName>
-    <RootNamespace>Meadow.Foundation.Leds</RootNamespace>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Leds.Apa102</PackageId>
@@ -14,9 +13,7 @@
     <Version>0.1.32</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Apa102 SPI RGB LED driver</Description>
-  </PropertyGroup>
-  <ItemGroup>
-  </ItemGroup>
+  </PropertyGroup>  
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>

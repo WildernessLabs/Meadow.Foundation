@@ -1,4 +1,5 @@
 ﻿using System;
+using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.Led
@@ -8,7 +9,6 @@ namespace Meadow.Foundation.Displays.Led
     /// </summary>
     public class SevenSegment
     {
-        
         /// <summary>
         /// Valid Characters to display
         /// </summary>
@@ -33,10 +33,6 @@ namespace Meadow.Foundation.Displays.Led
             Blank,
             count
         }
-
-        
-
-        
 
         private readonly IDigitalOutputPort _portA;
         private readonly IDigitalOutputPort _portB;
@@ -70,10 +66,6 @@ namespace Meadow.Foundation.Displays.Led
              {0, 0, 0, 0, 0, 0, 0}, //blank
         };
 
-        
-
-        
-
         /// <summary>
         /// Creates a SevenSegment connected to the especified IPins to a IODevice
         /// </summary>
@@ -88,7 +80,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="pinDecimal"></param>
         /// <param name="isCommonCathode"></param>
         public SevenSegment(
-            IIODevice device, 
+            IDigitalOutputController device, 
             IPin pinA, IPin pinB,
             IPin pinC, IPin pinD,
             IPin pinE, IPin pinF,
@@ -134,10 +126,6 @@ namespace Meadow.Foundation.Displays.Led
 
             _isCommonCathode = isCommonCathode;
         }
-
-        
-
-        
 
         /// <summary>
         /// Displays the especified character
@@ -189,7 +177,5 @@ namespace Meadow.Foundation.Displays.Led
 
             SetDisplay(charType, showDecimal);
         }
-
-        
     }
 }

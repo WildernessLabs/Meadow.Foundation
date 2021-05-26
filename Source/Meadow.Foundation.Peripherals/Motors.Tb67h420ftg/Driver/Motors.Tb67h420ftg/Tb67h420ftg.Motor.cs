@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Motors
             protected void Init() {
                 // wire up the fault event, if the LOx port is configured.
                 if (fault != null) {
-                    fault.Changed += (object sender, DigitalInputPortEventArgs e) => {
+                    fault.Changed += (object sender, DigitalPortResult e) => {
                         this.RaiseMotorOvercurrentFault();
                     };
                 }

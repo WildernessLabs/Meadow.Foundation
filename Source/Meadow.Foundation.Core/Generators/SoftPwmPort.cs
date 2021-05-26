@@ -53,7 +53,7 @@ namespace Meadow.Foundation.Generators
 
         protected float frequency = 1.0f; // in the case it doesn't get set before dutycycle, initialize to 1
 
-        protected Thread th = null;
+        protected Thread? th = null;
         protected int onTimeMilliseconds = 0;
         protected int offTimeMilliseconds = 0;
         protected bool running = false;

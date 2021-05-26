@@ -2,7 +2,7 @@
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays;
+using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Graphics;
 
 namespace Displays.Ssd1309_Sample

@@ -1,8 +1,8 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
+using Meadow.Peripherals.Sensors;
 using System;
 using System.Threading.Tasks;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
@@ -29,14 +29,14 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP36, LM50             750                     10                      0.5
     /// TMP37                   500                     20                      0
     /// </remarks>
-    public class AnalogTemperature
-        : FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
+    public class AnalogTemperature :
+        FilterableChangeObservableBase<Units.Temperature>,
         ITemperatureSensor
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<AtmosphericConditionChangeResult> Updated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
         ///     Calibration class for new sensor types.  This allows new sensors
@@ -116,16 +116,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     The temperature is given by the following calculation:
         ///     temperature = (reading in millivolts - yIntercept) / millivolts per degree centigrade
         /// </remarks>
-        public float Temperature { get; protected set; }
-
-        float ITemperatureSensor.Temperature => Temperature;
-
-        /// <summary>
-        ///     Default constructor, private to prevent this being used.
-        /// </summary>
-        private AnalogTemperature()
-        {
-        }
+        public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
         ///     New instance of the AnalogTemperatureSensor class.
@@ -134,17 +125,17 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="sensorType">Type of sensor attached to the analog port.</param>
         /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
         public AnalogTemperature(
-            IIODevice device,
+            IAnalogInputController device,
             IPin analogPin,
             KnownSensorType sensorType,
-            Calibration calibration = null
+            Calibration? calibration = null
             ) : this(device.CreateAnalogInputPort(analogPin), sensorType, calibration)
         {
         }
 
         public AnalogTemperature(IAnalogInputPort analogInputPort,
                                  KnownSensorType sensorType,
-                                 Calibration calibration = null)
+                                 Calibration? calibration = null)
         {
             AnalogInputPort = analogInputPort;
 
@@ -172,6 +163,10 @@ namespace Meadow.Foundation.Sensors.Temperature
                     break;
                 case KnownSensorType.Custom:
                     //user provided calibration
+                    if(calibration == null)
+                    {
+                        throw new ArgumentNullException("Custom Calibration sensor type requires a Calibration parameter");
+                    }
                     break;
                 default:
                     calibration = new Calibration();
@@ -186,17 +181,17 @@ namespace Meadow.Foundation.Sensors.Temperature
             // pattern through the sensor driver
             AnalogInputPort.Subscribe
             (
-                new FilterableChangeObserver<FloatChangeResult, float>(
-                    h => {
-                        var newTemp = VoltageToTemperature(h.New);
-                        var oldTemp = VoltageToTemperature(h.Old);
+                IAnalogInputPort.CreateObserver(
+                    result => {
+                        var newTemp = VoltageToTemperature(result.New);
+
+                        // old might be null if it's the first reading
+                        Units.Temperature? oldTemp = null;
+                        if (result.Old is { } oldVoltage) { oldTemp = VoltageToTemperature(oldVoltage); }
+                                                
                         Temperature = newTemp; // save state
-                        RaiseEventsAndNotify
-                        (
-                            new AtmosphericConditionChangeResult(
-                                new AtmosphericConditions(newTemp, null, null),
-                                new AtmosphericConditions(oldTemp, null, null)
-                            )
+                        RaiseEventsAndNotify (
+                            new ChangeResult<Units.Temperature>(newTemp, oldTemp)
                         );
                     }
                 )
@@ -212,15 +207,19 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        public async Task<AtmosphericConditions> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
+        public async Task<ChangeResult<Units.Temperature>> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
+            // grab the old temp and store it in a temp var
+            Units.Temperature? oldTemp = Temperature;
+
             // read the voltage
-            float voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
-            // convert and save to our temp property for later retreival
-            Temperature = VoltageToTemperature(voltage);
-            // return
-            return new AtmosphericConditions(Temperature, null, null);
-            //return Temperature;
+            Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
+
+            // convert the voltage
+            var newTemp = VoltageToTemperature(voltage);
+            Temperature = newTemp;
+            
+            return new ChangeResult<Units.Temperature>(newTemp, oldTemp);
         }
 
         /// <summary>
@@ -242,7 +241,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             int sampleIntervalDuration = 40,
             int standbyDuration = 100)
         {
-            AnalogInputPort.StartSampling(sampleCount, sampleIntervalDuration, standbyDuration);
+            AnalogInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
         }
 
         /// <summary>
@@ -250,12 +249,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public void StopUpdating()
         {
-            AnalogInputPort.StopSampling();
+            AnalogInputPort.StopUpdating();
         }
 
-        protected void RaiseEventsAndNotify(AtmosphericConditionChangeResult changeResult)
+        protected void RaiseEventsAndNotify(ChangeResult<Units.Temperature> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
+            TemperatureUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
@@ -265,9 +264,15 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="voltage"></param>
         /// <returns>temperature in celcius</returns>
-        protected float VoltageToTemperature(float voltage)
+        protected Units.Temperature VoltageToTemperature(Voltage voltage)
         {
-            return SensorCalibration.SampleReading + (voltage * 1000 - SensorCalibration.MillivoltsAtSampleReading) / SensorCalibration.MillivoltsPerDegreeCentigrade;
+            return new Units.Temperature(
+                SensorCalibration.SampleReading
+                +
+                (voltage.Millivolts - SensorCalibration.MillivoltsAtSampleReading)
+                /
+                SensorCalibration.MillivoltsPerDegreeCentigrade,
+                Units.Temperature.UnitType.Celsius);
         }
     }
 }

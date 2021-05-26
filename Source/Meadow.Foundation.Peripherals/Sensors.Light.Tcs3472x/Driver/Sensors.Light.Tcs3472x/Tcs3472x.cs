@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Buffers.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
@@ -158,8 +157,10 @@ namespace Meadow.Foundation.Sensors.Light
         /// Set/Clear the colors and clear interrupts
         /// </summary>
         /// <param name="state">true to set all interrupts, false to clear</param>
-        public void SetInterrupt(bool state) =>
+        public void SetInterrupt(bool state)
+        {
             SetInterrupt(InterruptState.All, state);
+        }
 
         /// <summary>
         /// Set/clear a specific interrupt persistence

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Weather;
 using Meadow.Units;
 
@@ -11,7 +8,6 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        RgbPwmLed onboardLed;
         WindVane windVane;
 
         public MeadowApp()
@@ -30,27 +26,24 @@ namespace MeadowApp
         {
             Console.WriteLine("Initialize hardware...");
 
-            onboardLed = new RgbPwmLed(device: Device,
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                3.3f, 3.3f, 3.3f,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
-
             // initialize the wind vane driver
             windVane = new WindVane(Device, Device.Pins.A00);
-            windVane.Updated += WindVane_Updated;
-            windVane.Subscribe(new FilterableChangeObserver<WindVane.WindVaneChangeResult, Azimuth>(
+
+            //==== Classic event example:
+            windVane.Updated += (object sender, IChangeResult<Azimuth> e) => {
+                Console.WriteLine($"Updated event {e.New.DecimalDegrees}");
+            };
+
+            //==== IObservable Pattern
+            var observer = WindVane.CreateObserver(
                 handler: result => { Console.WriteLine($"Wind Direction: {result.New.Compass16PointCardinalName}"); },
                 filter: null
-            ));
+            );
+            windVane.Subscribe(observer);
+
 
             Console.WriteLine("Initialization complete.");
         }
 
-        private void WindVane_Updated(object sender, WindVane.WindVaneChangeResult e)
-        {
-            Console.WriteLine($"Updated event {e.New.DecimalDegrees}");
-        }
     }
 }

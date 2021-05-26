@@ -1,7 +1,8 @@
 ﻿using System;
+using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Displays.Ssd130x
 {
     /// <summary>
     /// Provide an interface to the SSD1306 family of OLED displays.
@@ -236,7 +237,7 @@ namespace Meadow.Foundation.Displays
         /// </remarks>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
         ///
-        public Ssd1306(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ssd1306(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             DisplayType displayType = DisplayType.OLED128x64)
         {
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);

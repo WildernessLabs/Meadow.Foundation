@@ -1,7 +1,7 @@
 ﻿using System;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays.Tft;
+using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 
 namespace Displays.Tft.Ili9163_Sample

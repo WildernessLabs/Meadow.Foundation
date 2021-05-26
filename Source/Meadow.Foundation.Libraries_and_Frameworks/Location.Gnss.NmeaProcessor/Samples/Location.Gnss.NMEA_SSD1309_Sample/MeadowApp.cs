@@ -1,12 +1,11 @@
-﻿using System;
-using System.Text;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Communications;
-using Meadow.Foundation.Displays;
+using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
 using Meadow.Hardware;
+using System;
+using System.Text;
 
 namespace Sensors.GPS.NMEA_SSD1309_Sample
 {

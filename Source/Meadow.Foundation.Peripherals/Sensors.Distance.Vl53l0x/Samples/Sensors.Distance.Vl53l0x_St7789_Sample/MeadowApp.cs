@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
-using Meadow.Foundation.Displays.Tft;
+using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Distance;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Sensors.Distance.Vl53l0x_St7789_Sample
 {
@@ -50,23 +49,22 @@ namespace Sensors.Distance.Vl53l0x_St7789_Sample
             sensor = new Vl53l0x(Device, i2cBus);
 
             Console.WriteLine("Start updating");
-            sensor.Updated += Sensor_Updated;
+            sensor.DistanceUpdated += Sensor_Updated;
             sensor.StartUpdating(100);
 
             Console.WriteLine("Init complete");
         }
 
-        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Distance.DistanceConditionChangeResult e)
+        private void Sensor_Updated(object sender, IChangeResult<Length> result)
         {
-            if(e.New == null || e.New.Distance == null)
-            {   
+            if(result.New == null) {   
                 return;   
             }
 
-            Console.WriteLine($"{e.New.Distance.Value}mm");
+            Console.WriteLine($"{result.New.Millimeters}mm");
 
             graphics.DrawRectangle(0, 0, 135, 33, Color.Black, true);
-            graphics.DrawText(0, 0, $"{e.New.Distance.Value}mm", Color.White, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 0, $"{result.New.Millimeters}mm", Color.White, GraphicsLibrary.ScaleFactor.X2);
             graphics.Show();
         }
     }

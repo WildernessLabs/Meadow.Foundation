@@ -59,23 +59,23 @@ namespace MeadowApp
         private void Button1_PressStarted(object sender, EventArgs e)
         {
             Console.WriteLine("Motor 1 start.");
-            motorDriver.Motor1.Speed = 1f;
+            motorDriver.Motor1.Power = 1f;
         }
         private void Button1_PressEnded(object sender, EventArgs e)
         {
             Console.WriteLine("Motor 1 stop.");
-            motorDriver.Motor1.Speed = 0f;
+            motorDriver.Motor1.Power = 0f;
         }
 
         private void Button2_PressStarted(object sender, EventArgs e)
         {
             Console.WriteLine("Motor 2 start.");
-            motorDriver.Motor2.Speed = 0.5f;
+            motorDriver.Motor2.Power = 0.5f;
         }
         private void Button2_PressEnded(object sender, EventArgs e)
         {
             Console.WriteLine("Motor 2 stop.");
-            motorDriver.Motor2.Speed = 0f;
+            motorDriver.Motor2.Power = 0f;
         }
 
     }

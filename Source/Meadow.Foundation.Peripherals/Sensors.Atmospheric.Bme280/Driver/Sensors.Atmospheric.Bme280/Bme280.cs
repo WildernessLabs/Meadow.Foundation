@@ -4,8 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
+using Meadow.Units;
+using PU = Meadow.Units.Pressure.UnitType;
+using TU = Meadow.Units.Temperature.UnitType;
+using HU = Meadow.Units.RelativeHumidity.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -16,150 +18,25 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// This class implements the functionality necessary to read the temperature, pressure and humidity
     /// from the Bosch BME280 sensor.
     /// </remarks>
-    public class Bme280 :
-        FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor, ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
+    public partial class Bme280 :
+        FilterableChangeObservableBase<(Units.Temperature?, RelativeHumidity?, Pressure?)>,
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
+        //==== events
+        /// <summary>
+        /// </summary>
+        public event EventHandler<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+
+        //==== internals
+
+        //==== properties
         ///// <summary>
         /////     Minimum value that should be used for the polling frequency.
         ///// </summary>
         //public const ushort MinimumPollingPeriod = 100;
-
-        public enum ChipType : byte
-        {
-            BMP = 0x58,
-            BME = 0x60
-        }
-
-        /// <summary>
-        ///     Valid oversampling values.
-        /// </summary>
-        /// <remarks>
-        ///     000 - Data output set to 0x8000
-        ///     001 - Oversampling x1
-        ///     010 - Oversampling x2
-        ///     011 - Oversampling x4
-        ///     100 - Oversampling x8
-        ///     101, 110, 111 - Oversampling x16
-        /// </remarks>
-        public enum Oversample : byte
-        {
-            Skip = 0,
-            OversampleX1,
-            OversampleX2,
-            OversampleX4,
-            OversampleX8,
-            OversampleX16
-        }
-
-        /// <summary>
-        ///     Valid values for the operating mode of the sensor.
-        /// </summary>
-        public enum Modes : byte
-        {
-            /// <summary>
-            /// no operation, all registers accessible, lowest power, selected after startup
-            /// </summary>
-            Sleep = 0,
-            /// <summary>
-            /// perform one measurement, store results and return to sleep mode
-            /// </summary>
-            Forced = 1,
-            /// <summary>
-            /// perpetual cycling of measurements and inactive periods.
-            /// </summary>
-            Normal = 3
-        }
-
-        /// <summary>
-        ///     Valid values for the inactive duration in normal mode.
-        /// </summary>
-        public enum StandbyDuration : byte
-        {
-            /// <summary>
-            /// 0.5 milliseconds
-            /// </summary>
-            MsHalf = 0,
-            /// <summary>
-            /// 62.5 milliseconds
-            /// </summary>
-            Ms62Half,
-            /// <summary>
-            /// 125 milliseconds
-            /// </summary>
-            Ms125,
-            /// <summary>
-            /// 250 milliseconds
-            /// </summary>
-            Ms250,
-            /// <summary>
-            /// 500 milliseconds
-            /// </summary>
-            Ms500,
-            /// <summary>
-            /// 1000 milliseconds
-            /// </summary>
-            Ms1000,
-            /// <summary>
-            /// 10 milliseconds
-            /// </summary>
-            Ms10,
-            /// <summary>
-            /// 20 milliseconds
-            /// </summary>
-            Ms20
-        }
-
-        /// <summary>
-        ///     Valid filter co-efficient values.
-        /// </summary>
-        public enum FilterCoefficient : byte
-        {
-            Off = 0,
-            Two,
-            Four,
-            Eight,
-            Sixteen
-        }
-
-        public enum I2cAddress : byte
-        {
-            Adddress0x76 = 0x76,
-            Adddress0x77 = 0x77
-        }
-
-        
-
-        
-
-        /// <summary>
-        ///     Compensation data.
-        /// </summary>
-        protected struct CompensationData
-        {
-            public ushort T1;
-            public short T2;
-            public short T3;
-            public ushort P1;
-            public short P2;
-            public short P3;
-            public short P4;
-            public short P5;
-            public short P6;
-            public short P7;
-            public short P8;
-            public short P9;
-            public byte H1;
-            public short H2;
-            public byte H3;
-            public short H4;
-            public short H5;
-            public sbyte H6;
-        }
-
-        
-
-        
 
         /// <summary>
         ///     Communication bus used to read and write to the BME280 sensor.
@@ -168,12 +45,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
         ///     selection to be made in the constructor.
         /// </remarks>
-        private readonly Bme280Comms _bme280;
+        private readonly Bme280Comms bme280Comms;
 
         /// <summary>
         ///     Compensation data from the sensor.
         /// </summary>
-        protected CompensationData _compensationData;
+        protected CompensationData compensationData;
 
         ///// <summary>
         /////     Update interval in milliseconds
@@ -186,10 +63,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private object _lock = new object();
         private CancellationTokenSource SamplingTokenSource;
 
-        
-
-        
-
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
         /// sampling the ADC. Call StartSampling() to spin up the sampling process.
@@ -198,47 +71,22 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public bool IsSampling { get; protected set; } = false;
 
         /// <summary>
-        /// The AtmosphericConditions from the last reading.
-        /// </summary>
-        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
-
-        /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
-        public float Temperature => Conditions.Temperature.Value;
+        public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
         /// The pressure, in hectopascals (hPa), from the last reading. 1 hPa
         /// is equal to one millibar, or 1/10th of a kilopascal (kPa)/centibar.
         /// </summary>
-        public float Pressure => Conditions.Pressure.Value;
+        public Pressure? Pressure => Conditions.Pressure;
 
         /// <summary>
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
-        public float Humidity => Conditions.Humidity.Value;
+        public RelativeHumidity? Humidity => Conditions.Humidity;
 
-        
-
-        
-
-        /// <summary>
-        /// </summary>
-        public event EventHandler<AtmosphericConditionChangeResult> Updated = delegate { };
-
-        
-
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
-        /// </summary>
-        /// <remarks>
-        ///     This constructor is private to force the use of the constructor which defines the
-        ///     communication parameters for the sensor.
-        /// </remarks>
-        private Bme280()
-        {
-        }
+        public (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) Conditions;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
@@ -247,13 +95,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="busAddress">I2C address of the sensor (default = 0x77).</param>
         public Bme280(II2cBus i2c, I2cAddress busAddress = I2cAddress.Adddress0x77)
         {
-            _bme280 = new Bme280I2C(i2c, (byte)busAddress);
+            bme280Comms = new Bme280I2C(i2c, (byte)busAddress);
             Init();
         }
 
         public Bme280(ISpiBus spi, IDigitalOutputPort chipSelect)
         {
-            _bme280 = new Bme280Spi(spi, chipSelect);
+            bme280Comms = new Bme280Spi(spi, chipSelect);
             Init();
         }
 
@@ -274,17 +122,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             UpdateConfiguration(configuration);
         }
 
-        
-
-        
-
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
         /// <param name="temperatureSampleCount">The number of sample readings to take. 
         /// Must be greater than 0. These samples are automatically averaged.</param>
-        public async Task<AtmosphericConditions> Read(
+        public async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> Read(
             Oversample temperatureSampleCount = Oversample.OversampleX8,
             Oversample pressureSampleCount = Oversample.OversampleX8,
             Oversample humiditySampleCount = Oversample.OversampleX8)
@@ -297,7 +141,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             configuration.Filter = FilterCoefficient.Off;
             UpdateConfiguration(configuration);
 
-            this.Conditions = await Read();
+            Conditions = await Update();
 
             return Conditions;
         }
@@ -328,7 +172,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             // thread safety
             lock (_lock) {
-                if (IsSampling) return;
+                if (IsSampling) { return; }
 
                 // state muh-cheen
                 IsSampling = true;
@@ -336,23 +180,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                AtmosphericConditions oldConditions;
-                AtmosphericConditionChangeResult result;
+                (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) oldConditions;
+                ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)> result;
+
                 Task.Factory.StartNew(async () => {
                     while (true) {
                         if (ct.IsCancellationRequested) {
                             // do task clean up here
-                            _observers.ForEach(x => x.OnCompleted());
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
-                        oldConditions = AtmosphericConditions.From(Conditions);
+                        oldConditions = (Conditions.Temperature, Conditions.Humidity, Conditions.Pressure);
 
                         // read
                         await Read(temperatureSampleCount, pressureSampleCount, humiditySampleCount);
 
                         // build a new result with the old and new conditions
-                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+                        result = new ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)>(Conditions, oldConditions);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -364,9 +209,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
         {
             Updated?.Invoke(this, changeResult);
+            if (changeResult.New.Temperature is { } temp) {
+                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+            }
+            if (changeResult.New.Humidity is { } humidity) {
+                HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
+            }
+            if (changeResult.New.Pressure is { } pressure) {
+                PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
+            }
             base.NotifyObservers(changeResult);
         }
 
@@ -403,16 +257,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //
             //  Put to sleep to allow the configuration to be changed.
             //
-            _bme280.WriteRegister(Bme280Comms.Register.Measurement, 0x00);
+            bme280Comms.WriteRegister(Bme280Comms.Register.Measurement, 0x00);
 
             var data = (byte)((((byte)configuration.Standby << 5) & 0xe0) | (((byte)configuration.Filter << 2) & 0x1c));
-            _bme280.WriteRegister(Bme280Comms.Register.Configuration, data);
+            bme280Comms.WriteRegister(Bme280Comms.Register.Configuration, data);
             data = (byte)((byte)configuration.HumidityOverSampling & 0x07);
-            _bme280.WriteRegister(Bme280Comms.Register.Humidity, data);
+            bme280Comms.WriteRegister(Bme280Comms.Register.Humidity, data);
             data = (byte)((((byte)configuration.TemperatureOverSampling << 5) & 0xe0) |
                            (((byte)configuration.PressureOversampling << 2) & 0x1c) |
                            ((byte)configuration.Mode & 0x03));
-            _bme280.WriteRegister(Bme280Comms.Register.Measurement, data);
+            bme280Comms.WriteRegister(Bme280Comms.Register.Measurement, data);
         }
 
         /// <summary>
@@ -423,7 +277,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </remarks>
         public void Reset()
         {
-            _bme280.WriteRegister(Bme280Comms.Register.Reset, 0xb6);
+            bme280Comms.WriteRegister(Bme280Comms.Register.Reset, 0xb6);
             UpdateConfiguration(configuration);
         }
 
@@ -441,30 +295,30 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </remarks>
         protected void ReadCompensationData()
         {
-            var temperatureAndPressureData = _bme280.ReadRegisters(0x88, 24);
-            var humidityData1 = _bme280.ReadRegisters(0xa1, 1);
-            var humidityData2To6 = _bme280.ReadRegisters(0xe1, 7);
+            var temperatureAndPressureData = bme280Comms.ReadRegisters(0x88, 24);
+            var humidityData1 = bme280Comms.ReadRegisters(0xa1, 1);
+            var humidityData2To6 = bme280Comms.ReadRegisters(0xe1, 7);
 
-            _compensationData.T1 = (ushort)(temperatureAndPressureData[0] + (temperatureAndPressureData[1] << 8));
-            _compensationData.T2 = (short)(temperatureAndPressureData[2] + (temperatureAndPressureData[3] << 8));
-            _compensationData.T3 = (short)(temperatureAndPressureData[4] + (temperatureAndPressureData[5] << 8));
+            compensationData.T1 = (ushort)(temperatureAndPressureData[0] + (temperatureAndPressureData[1] << 8));
+            compensationData.T2 = (short)(temperatureAndPressureData[2] + (temperatureAndPressureData[3] << 8));
+            compensationData.T3 = (short)(temperatureAndPressureData[4] + (temperatureAndPressureData[5] << 8));
             //
-            _compensationData.P1 = (ushort)(temperatureAndPressureData[6] + (temperatureAndPressureData[7] << 8));
-            _compensationData.P2 = (short)(temperatureAndPressureData[8] + (temperatureAndPressureData[9] << 8));
-            _compensationData.P3 = (short)(temperatureAndPressureData[10] + (temperatureAndPressureData[11] << 8));
-            _compensationData.P4 = (short)(temperatureAndPressureData[12] + (temperatureAndPressureData[13] << 8));
-            _compensationData.P5 = (short)(temperatureAndPressureData[14] + (temperatureAndPressureData[15] << 8));
-            _compensationData.P6 = (short)(temperatureAndPressureData[16] + (temperatureAndPressureData[17] << 8));
-            _compensationData.P7 = (short)(temperatureAndPressureData[18] + (temperatureAndPressureData[19] << 8));
-            _compensationData.P8 = (short)(temperatureAndPressureData[20] + (temperatureAndPressureData[21] << 8));
-            _compensationData.P9 = (short)(temperatureAndPressureData[22] + (temperatureAndPressureData[23] << 8));
+            compensationData.P1 = (ushort)(temperatureAndPressureData[6] + (temperatureAndPressureData[7] << 8));
+            compensationData.P2 = (short)(temperatureAndPressureData[8] + (temperatureAndPressureData[9] << 8));
+            compensationData.P3 = (short)(temperatureAndPressureData[10] + (temperatureAndPressureData[11] << 8));
+            compensationData.P4 = (short)(temperatureAndPressureData[12] + (temperatureAndPressureData[13] << 8));
+            compensationData.P5 = (short)(temperatureAndPressureData[14] + (temperatureAndPressureData[15] << 8));
+            compensationData.P6 = (short)(temperatureAndPressureData[16] + (temperatureAndPressureData[17] << 8));
+            compensationData.P7 = (short)(temperatureAndPressureData[18] + (temperatureAndPressureData[19] << 8));
+            compensationData.P8 = (short)(temperatureAndPressureData[20] + (temperatureAndPressureData[21] << 8));
+            compensationData.P9 = (short)(temperatureAndPressureData[22] + (temperatureAndPressureData[23] << 8));
             //
-            _compensationData.H1 = humidityData1[0];
-            _compensationData.H2 = (short)(humidityData2To6[0] + (humidityData2To6[1] << 8));
-            _compensationData.H3 = humidityData2To6[2];
-            _compensationData.H4 = (short)((humidityData2To6[3] << 4) + (humidityData2To6[4] & 0xf));
-            _compensationData.H5 = (short)(((humidityData2To6[4] & 0xf) >> 4) + (humidityData2To6[5] << 4));
-            _compensationData.H6 = (sbyte)humidityData2To6[6];
+            compensationData.H1 = humidityData1[0];
+            compensationData.H2 = (short)(humidityData2To6[0] + (humidityData2To6[1] << 8));
+            compensationData.H3 = humidityData2To6[2];
+            compensationData.H4 = (short)((humidityData2To6[3] << 4) + (humidityData2To6[4] & 0xf));
+            compensationData.H5 = (short)(((humidityData2To6[4] & 0xf) >> 4) + (humidityData2To6[5] << 4));
+            compensationData.H6 = (sbyte)humidityData2To6[6];
         }
 
         /// <summary>
@@ -480,12 +334,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Formulas - section 4.2.3 Compensation Formulas
         ///     The integer formulas have been used to try and keep the calculations performant.
         /// </remarks>
-        protected async Task<AtmosphericConditions> Read()
+        protected async Task<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)> Update()
         {
             return await Task.Run(() => {
-                AtmosphericConditions conditions = new AtmosphericConditions();
+                (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
 
-                var readings = _bme280.ReadRegisters(0xf7, 8);
+                var readings = bme280Comms.ReadRegisters(0xf7, 8);
                 //
                 //  Temperature calculation from section 4.2.3 of the datasheet.
                 //
@@ -505,12 +359,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 // }
                 //
                 var adcTemperature = (readings[3] << 12) | (readings[4] << 4) | ((readings[5] >> 4) & 0x0f);
-                var tvar1 = (((adcTemperature >> 3) - (_compensationData.T1 << 1)) * _compensationData.T2) >> 11;
-                var tvar2 = (((((adcTemperature >> 4) - _compensationData.T1) *
-                               ((adcTemperature >> 4) - _compensationData.T1)) >> 12) * _compensationData.T3) >> 14;
+                var tvar1 = (((adcTemperature >> 3) - (compensationData.T1 << 1)) * compensationData.T2) >> 11;
+                var tvar2 = (((((adcTemperature >> 4) - compensationData.T1) *
+                               ((adcTemperature >> 4) - compensationData.T1)) >> 12) * compensationData.T3) >> 14;
                 var tfine = tvar1 + tvar2;
                 //
-                conditions.Temperature = (float)(((tfine * 5) + 128) >> 8) / 100;
+                conditions.Temperature = new Units.Temperature((float)(((tfine * 5) + 128) >> 8) / 100, Units.Temperature.UnitType.Celsius);
                 //
                 // Pressure calculation from section 4.2.3 of the datasheet.
                 //
@@ -539,22 +393,22 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 // }
                 //
                 long pvar1 = tfine - 128000;
-                var pvar2 = pvar1 * pvar1 * _compensationData.P6;
-                pvar2 += (pvar1 * _compensationData.P5) << 17;
-                pvar2 += (long)_compensationData.P4 << 35;
-                pvar1 = ((pvar1 * pvar1 * _compensationData.P8) >> 8) + ((pvar1 * _compensationData.P2) << 12);
-                pvar1 = ((((long)1 << 47) + pvar1) * _compensationData.P1) >> 33;
+                var pvar2 = pvar1 * pvar1 * compensationData.P6;
+                pvar2 += (pvar1 * compensationData.P5) << 17;
+                pvar2 += (long)compensationData.P4 << 35;
+                pvar1 = ((pvar1 * pvar1 * compensationData.P8) >> 8) + ((pvar1 * compensationData.P2) << 12);
+                pvar1 = ((((long)1 << 47) + pvar1) * compensationData.P1) >> 33;
                 if (pvar1 == 0) {
-                    conditions.Pressure = 0;
+                    conditions.Pressure = new Pressure(0, PU.Pascal);
                 } else {
                     var adcPressure = (readings[0] << 12) | (readings[1] << 4) | ((readings[2] >> 4) & 0x0f);
                     long pressure = 1048576 - adcPressure;
                     pressure = (((pressure << 31) - pvar2) * 3125) / pvar1;
-                    pvar1 = (_compensationData.P9 * (pressure >> 13) * (pressure >> 13)) >> 25;
-                    pvar2 = (_compensationData.P8 * pressure) >> 19;
-                    pressure = ((pressure + pvar1 + pvar2) >> 8) + ((long)_compensationData.P7 << 4);
+                    pvar1 = (compensationData.P9 * (pressure >> 13) * (pressure >> 13)) >> 25;
+                    pvar2 = (compensationData.P8 * pressure) >> 19;
+                    pressure = ((pressure + pvar1 + pvar2) >> 8) + ((long)compensationData.P7 << 4);
                     //
-                    conditions.Pressure = (float)pressure / 256;
+                    conditions.Pressure = new Pressure((double)pressure / 256, PU.Pascal);
                 }
                 //
                 // Humidity calculations from section 4.2.3 of the datasheet.
@@ -579,12 +433,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 var adcHumidity = (readings[6] << 8) | readings[7];
                 var v_x1_u32r = tfine - 76800;
 
-                v_x1_u32r = ((((adcHumidity << 14) - (_compensationData.H4 << 20) - (_compensationData.H5 * v_x1_u32r)) +
+                v_x1_u32r = ((((adcHumidity << 14) - (compensationData.H4 << 20) - (compensationData.H5 * v_x1_u32r)) +
                               16384) >> 15) *
-                            ((((((((v_x1_u32r * _compensationData.H6) >> 10) *
-                                  (((v_x1_u32r * _compensationData.H3) >> 11) + 32768)) >> 10) + 2097152) *
-                               _compensationData.H2) + 8192) >> 14);
-                v_x1_u32r = v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * _compensationData.H1) >> 4);
+                            ((((((((v_x1_u32r * compensationData.H6) >> 10) *
+                                  (((v_x1_u32r * compensationData.H3) >> 11) + 32768)) >> 10) + 2097152) *
+                               compensationData.H2) + 8192) >> 14);
+                v_x1_u32r = v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * compensationData.H1) >> 4);
 
                 //v_x1_u32r = (((((adcHumidity << 14) - (((int) _compensationData.H4) << 20) - (((int) _compensationData.H5) * v_x1_u32r)) +
                 //            ((int) 16384)) >> 15) * (((((((v_x1_u32r * ((int) _compensationData.H6)) >> 10) * (((v_x1_u32r *
@@ -597,7 +451,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
                 v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
                 //
-                conditions.Humidity = (float)(v_x1_u32r >> 12) / 1024;
+                conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024, RelativeHumidity.UnitType.Percent);
 
                 return conditions;
             });
@@ -605,46 +459,32 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         public byte GetChipID()
         {
-            return _bme280.ReadRegisters((byte)Bme280Comms.Register.ChipID, 1).First();
+            return bme280Comms.ReadRegisters((byte)Bme280Comms.Register.ChipID, 1).First();
         }
 
-        
-
-        public class Configuration
+        /// <summary>
+        /// Creates a `FilterableChangeObserver` that has a handler and a filter.
+        /// </summary>
+        /// <param name="handler">The action that is invoked when the filter is satisifed.</param>
+        /// <param name="filter">An optional filter that determines whether or not the
+        /// consumer should be notified.</param>
+        /// <returns></returns>
+        /// <returns></returns>
+        // Implementor Notes:
+        //  This is a convenience method that provides named tuple elements. It's not strictly
+        //  necessary, as the `FilterableChangeObservableBase` class provides a default implementation,
+        //  but if you use it, then the parameters are named `Item1`, `Item2`, etc. instead of
+        //  `Temperature`, `Pressure`, etc.
+        public static new
+            FilterableChangeObserver<(Units.Temperature?, RelativeHumidity?, Pressure?)>
+            CreateObserver(
+                Action<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>> handler,
+                Predicate<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>>? filter = null
+            )
         {
-            /// <summary>
-            ///     Temperature over sampling configuration.
-            /// </summary>
-            public Oversample TemperatureOverSampling { get; set; }
-
-            /// <summary>
-            ///     Pressure over sampling configuration.
-            /// </summary>
-            public Oversample PressureOversampling { get; set; }
-
-            /// <summary>
-            ///     Humidity over sampling configuration.
-            /// </summary>
-            public Oversample HumidityOverSampling { get; set; }
-
-            /// <summary>
-            ///     Set the operating mode for the sensor.
-            /// </summary>
-            public Modes Mode { get; set; }
-
-            /// <summary>
-            ///     Set the standby period for the sensor.
-            /// </summary>
-            public StandbyDuration Standby { get; set; }
-
-            /// <summary>
-            ///     Determine the time constant for the IIR filter.
-            /// </summary>
-            /// <remarks>
-            ///     See section 3.44 of the datasheet for more informaiton.
-            /// </remarks>
-            public FilterCoefficient Filter { get; set; }
+            return new FilterableChangeObserver<(Units.Temperature?, RelativeHumidity?, Pressure?)>(
+                handler: handler, filter: filter
+                );
         }
-
     }
 }

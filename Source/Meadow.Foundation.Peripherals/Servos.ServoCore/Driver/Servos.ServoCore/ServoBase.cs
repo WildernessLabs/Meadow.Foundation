@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.Servos
@@ -18,9 +19,7 @@ namespace Meadow.Foundation.Servos
         /// <summary>
         /// Returns the current angle. Returns -1 if the angle is unknown.
         /// </summary>
-        public int Angle {
-            get { return _angle; }
-        } protected int _angle = -1;
+        public Angle? Angle { get; protected set; }
 
         /// <summary>
         /// Instantiates a new Servo on the specified PWM Pin with the specified config.
@@ -41,7 +40,7 @@ namespace Meadow.Foundation.Servos
         /// Rotates the servo to a given angle.
         /// </summary>
         /// <param name="angle">The angle to rotate to.</param>
-        public void RotateTo(int angle)
+        public void RotateTo(Angle angle)
         {
             // angle check
             if (angle < _config.MinimumAngle || angle > _config.MaximumAngle) {
@@ -56,7 +55,7 @@ namespace Meadow.Foundation.Servos
             SendCommandPulse(pulseDuration);
 
             // update the state
-            _angle = angle;
+            Angle = angle;
         }
 
         /// <summary>
@@ -66,19 +65,24 @@ namespace Meadow.Foundation.Servos
         public void Stop()
         {
             _pwm.Stop();
-            _angle = -1;
+            Angle = null;
         }
 
-        protected float CalculatePulseDuration(int angle)
+        protected float CalculatePulseDuration(Angle angle)
         {
             // offset + (angle percent * duration length)
-            return _config.MinimumPulseDuration + (((float)angle / _config.MaximumAngle) * (_config.MaximumPulseDuration - _config.MinimumPulseDuration));
+            return _config.MinimumPulseDuration + (float)((angle.Degrees / _config.MaximumAngle.Degrees) * (_config.MaximumPulseDuration - _config.MinimumPulseDuration));
             // sample calcs:
             // 0 degrees time = 1000 + ( (0 / 180) * 1000 ) = 1,000 microseconds
             // 90 degrees time = 1000 + ( (90 / 180) * 1000 ) = 1,500 microseconds
             // 180 degrees time = 1000 + ( (180 / 180) * 1000 ) = 2,000 microseconds
         }
 
+        /// <summary>
+        /// Note that this calculation expects a pulse duration in _microseconds_.
+        /// </summary>
+        /// <param name="pulseDuration">Microseconds</param>
+        /// <returns></returns>
         protected float CalculateDutyCycle(float pulseDuration)
         {
             // the pulse duration is dependent on the frequency we're driving the servo at
@@ -87,7 +91,7 @@ namespace Meadow.Foundation.Servos
 
         protected void SendCommandPulse(float pulseDuration)
         {
-            //Console.WriteLine("Sending Command Pulse");
+            //Console.WriteLine($"Sending Command Pulse, duration {pulseDuration}, dutycycle: {CalculateDutyCycle(pulseDuration)}");
             _pwm.DutyCycle = CalculateDutyCycle(pulseDuration);
         }
     }

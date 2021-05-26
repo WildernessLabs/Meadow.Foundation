@@ -1,6 +1,7 @@
-﻿using Meadow.Hardware;
+﻿using System;
+using Meadow.Devices;
+using Meadow.Hardware;
 using Meadow.Peripherals.Motors;
-using System;
 
 namespace Meadow.Foundation.Motors
 {
@@ -9,51 +10,60 @@ namespace Meadow.Foundation.Motors
     /// </summary>
     public class HBridgeMotor : IDCMotor
     {
-        protected IPwmPort _motorLeftPwm = null; // H-Bridge 1A pin
-        protected IPwmPort _motorRighPwm = null; // H-Bridge 2A pin
-        protected IDigitalOutputPort _enablePort = null; // if enabled, then IsNeutral = false
+        protected IPwmPort motorLeftPwm; // H-Bridge 1A pin
+        protected IPwmPort motorRighPwm; // H-Bridge 2A pin
+        protected IDigitalOutputPort enablePort; // if enabled, then IsNeutral = false
 
         /// <summary>
         /// When true, the wheels spin "freely"
         /// </summary>
         public bool IsNeutral
         {
-            get => _isNeutral;
+            get => isNeutral;
             set
             {
-                _isNeutral = value;
+                isNeutral = value;
                 // if neutral, we disable the port
-                _enablePort.State = !_isNeutral;
+                enablePort.State = !isNeutral;
             }
         }
-        protected bool _isNeutral = true;
+        protected bool isNeutral = true;
 
         /// <summary>
-        /// 0 - 1 for the speed.
+        /// The power applied to the motor, as a percentage between
+        /// `-1.0` and `1.0`.
         /// </summary>
-        public float Speed
-        {
-            get => _speed;
-            set
-            {
-                _motorLeftPwm.Stop();
-                _motorRighPwm.Stop();
+        public float Power {
+            get => power;
+            set {
+                motorLeftPwm.Stop();
+                motorRighPwm.Stop();
 
-                _speed = value;
+                power = value;
 
-                var calibratedSpeed = _speed * MotorCalibrationMultiplier;
+                var calibratedSpeed = power * MotorCalibrationMultiplier;
                 var absoluteSpeed = Math.Min(Math.Abs(calibratedSpeed), 1);
                 var isForward = calibratedSpeed > 0;
 
-                _motorLeftPwm.DutyCycle = (isForward) ? absoluteSpeed : 0;
-                _motorRighPwm.DutyCycle = (isForward) ? 0 : absoluteSpeed;
+                motorLeftPwm.DutyCycle = (isForward) ? absoluteSpeed : 0;
+                motorRighPwm.DutyCycle = (isForward) ? 0 : absoluteSpeed;
                 IsNeutral = false;
 
-                _motorLeftPwm.Start();
-                _motorRighPwm.Start();
+                motorLeftPwm.Start();
+                motorRighPwm.Start();
             }
         }
-        protected float _speed = 0;
+        protected float power = 0;
+
+        /// <summary>
+        /// Obsolete, please use `Power`.
+        /// </summary>
+        [Obsolete]
+        public float Speed
+        {
+            get => Power;
+            set { Power = value; }
+        }
 
         /// <summary>
         /// The frequency of the PWM used to drive the motors. 
@@ -61,9 +71,9 @@ namespace Meadow.Foundation.Motors
         /// </summary>
         public float PwmFrequency
         {
-            get => _pwmFrequency;
+            get => pwmFrequency;
         }
-        protected readonly float _pwmFrequency;
+        protected readonly float pwmFrequency;
 
         /// <summary>
         /// Not all motors are created equally. This number scales the Speed Input so
@@ -71,23 +81,30 @@ namespace Meadow.Foundation.Motors
         /// </summary>
         public float MotorCalibrationMultiplier { get; set; } = 1;
 
-        public HBridgeMotor(IIODevice device, IPin a1Pin, IPin a2Pin, IDigitalOutputPort enablePin, float pwmFrequency = 1600) :
+        // TODO: this convenience constructor is weird. we create the PWM but
+        // not the digital output port. i think if we're going to have a convenience
+        // constructor it should be:
+        public HBridgeMotor(IMeadowDevice device, IPin a1Pin, IPin a2Pin, IPin enablePin, float pwmFrequency = 1600) :
+            this(device.CreatePwmPort(a1Pin), device.CreatePwmPort(a2Pin), device.CreateDigitalOutputPort(enablePin), pwmFrequency)
+        { }
+        // and we should [obsolete] or delete this one:
+        public HBridgeMotor(IPwmOutputController device, IPin a1Pin, IPin a2Pin, IDigitalOutputPort enablePin, float pwmFrequency = 1600) :
             this(device.CreatePwmPort(a1Pin), device.CreatePwmPort(a2Pin), enablePin, pwmFrequency)
         { }
 
         public HBridgeMotor(IPwmPort a1Pin, IPwmPort a2Pin, IDigitalOutputPort enablePin, float pwmFrequency = 1600)
         {
-            _pwmFrequency = pwmFrequency;
+            this.pwmFrequency = pwmFrequency;
 
-            _motorLeftPwm = a1Pin;
-            _motorLeftPwm.Frequency = 1600;
-            _motorLeftPwm.Start();
+            motorLeftPwm = a1Pin;
+            motorLeftPwm.Frequency = 1600;
+            motorLeftPwm.Start();
 
-            _motorRighPwm = a2Pin;
-            _motorRighPwm.Frequency = 1600;
-            _motorRighPwm.Start();
+            motorRighPwm = a2Pin;
+            motorRighPwm.Frequency = 1600;
+            motorRighPwm.Start();
 
-            _enablePort = enablePin;
+            enablePort = enablePin;
         }
     }
 }

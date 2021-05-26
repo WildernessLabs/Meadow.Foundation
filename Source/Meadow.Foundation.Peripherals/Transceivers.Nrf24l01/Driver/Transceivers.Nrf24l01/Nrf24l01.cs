@@ -1,7 +1,7 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using System;
 using System.Linq;
-using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 
@@ -173,7 +173,7 @@ namespace Meadow.Foundation.Transceivers
         byte[] pipe0_reading_address = new byte[5];
 
         public Nrf24l01(
-            IIODevice device, 
+            IMeadowDevice device, 
             ISpiBus spiBus, 
             IPin chipEnablePin, 
             IPin chipSelectLine, 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.Led
@@ -31,7 +32,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="pinDecimal"></param>
         /// <param name="isCommonCathode"></param>
         public FourDigitSevenSegment(
-            IIODevice device, 
+            IMeadowDevice device, 
             IPin pinDigit1, IPin pinDigit2,
             IPin pinDigit3, IPin pinDigit4,
             IPin pinA, IPin pinB,

@@ -1,6 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Units;
+using AU = Meadow.Units.Angle.UnitType;
+using System;
+using System.Linq;
 
 namespace Meadow.Foundation.Motors.Stepper
 {
@@ -17,7 +20,7 @@ namespace Meadow.Foundation.Motors.Stepper
         private IDigitalOutputPort ms3;
         private StepDivisor _divisor;
         private object _syncRoot = new object();
-        private float _stepAngle;
+        private Angle _stepAngle;
         private int _stepDivisor;
 
         /// <summary>
@@ -32,7 +35,7 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <param name="step">The Meadow pin connected to the STEP pin of the A4988</param>
         /// <param name="direction">The Meadow pin connected to the DIR pin of the A4988</param>
         /// <remarks>You must provide either all of the micro-step (MS) lines or none of them</remarks>
-        public A4988(IIODevice device, IPin step, IPin direction)
+        public A4988(IDigitalOutputController device, IPin step, IPin direction)
             : this(device, step, direction, null, null, null, null)
         {
         }
@@ -47,7 +50,7 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <param name="ms2">The (optional) Meadow pin connected to the MS2 pin of the A4988</param>
         /// <param name="ms3">The (optional) Meadow pin connected to the MS3 pin of the A4988</param>
         /// <remarks>You must provide either all of the micro-step (MS) lines or none of them</remarks>
-        public A4988(IIODevice device, IPin step, IPin direction, IPin ms1, IPin ms2, IPin ms3)
+        public A4988(IDigitalOutputController device, IPin step, IPin direction, IPin ms1, IPin ms2, IPin ms3)
             : this(device, step, direction, null, ms1, ms2, ms3)
         {
 
@@ -60,7 +63,7 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <param name="step">The Meadow pin connected to the STEP pin of the A4988</param>
         /// <param name="direction">The Meadow pin connected to the DIR pin of the A4988</param>
         /// <param name="enable">The (optional) Meadow pin connected to the ENABLE pin of the A4988</param>
-        public A4988(IIODevice device, IPin step, IPin direction, IPin enable)
+        public A4988(IDigitalOutputController device, IPin step, IPin direction, IPin enable)
             : this(device, step, direction, enable, null, null, null)
         {
 
@@ -77,7 +80,7 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <param name="ms2">The (optional) Meadow pin connected to the MS2 pin of the A4988</param>
         /// <param name="ms3">The (optional) Meadow pin connected to the MS3 pin of the A4988</param>
         /// <remarks>You must provide either all of the micro-step (MS) lines or none of them</remarks>
-        public A4988(IIODevice device, IPin step, IPin direction, IPin enable, IPin ms1, IPin ms2, IPin ms3)
+        public A4988(IDigitalOutputController device, IPin step, IPin direction, IPin enable, IPin ms1, IPin ms2, IPin ms3)
         {
             stepPort = device.CreateDigitalOutputPort(step);
             directionPort = device.CreateDigitalOutputPort(direction);
@@ -103,7 +106,7 @@ namespace Meadow.Foundation.Motors.Stepper
                 throw new ArgumentException("All micro-step pins must be either null or valid pins");
             }
 
-            StepAngle = 1.8f; // common default
+            StepAngle = new Angle(1.8, AU.Degrees); // common default
             RotationSpeedDivisor = 2;
         }
 
@@ -114,7 +117,7 @@ namespace Meadow.Foundation.Motors.Stepper
         {
             get
             {
-                var v = (int)(360f / _stepAngle) * (int)StepDivisor;
+                var v = (int)(360 / _stepAngle.Degrees) * (int)StepDivisor;
                 return v;
             }
         }
@@ -122,13 +125,13 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <summary>
         /// Gets or sets the angle, in degrees, of one step for the connected stepper motor.
         /// </summary>
-        public float StepAngle
+        public Units.Angle StepAngle
         {
             get => _stepAngle;
             set
             {
-                if (value <= 0) throw new ArgumentOutOfRangeException("Step angle must be positive");
-                if (value == _stepAngle) return;
+                if (value <= new Angle(0, AU.Degrees)) { throw new ArgumentOutOfRangeException("Step angle must be positive"); }
+                if (value == _stepAngle) { return; }
                 _stepAngle = value;
             }
         }

@@ -1,5 +1,6 @@
-﻿using System;
+﻿using Meadow.Devices;
 using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Motors.Stepper
 {
@@ -13,7 +14,8 @@ namespace Meadow.Foundation.Motors.Stepper
         /// Sets the motor speed to revolutions per minute.
         /// </summary>
         /// <remarks>Default revolutions per minute for 28BYJ-48 is approximately 15.</remarks>
-        public short RPM { get; set; } = 15;
+        public Units.AngularVelocity AngularVelocity { get; set; } = new Units.AngularVelocity(15, Units.AngularVelocity.UnitType.RevolutionsPerMinute);
+        public double RPM => AngularVelocity.RevolutionsPerMinute;
 
         /// <summary>
         /// Sets the stepper's mode.
@@ -26,11 +28,17 @@ namespace Meadow.Foundation.Motors.Stepper
                 mode = value;
 
                 if (mode == StepperMode.FullStepSinglePhase)
+                {
                     currentSwitchingSequence = fullStepSinglePhaseSequence;
+                }
                 else if (mode == StepperMode.FullStepDualPhase)
+                {
                     currentSwitchingSequence = fullStepDualPhaseSequence;
+                }
                 else
+                {
                     currentSwitchingSequence = halfStepSequence;
+                }
 
                 // C# 8
                 //currentSwitchingSequence = mode switch
@@ -105,7 +113,7 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <param name="pin2">The GPIO pin number which corresponds pin B on ULN2003 driver board.</param>
         /// <param name="pin3">The GPIO pin number which corresponds pin C on ULN2003 driver board.</param>
         /// <param name="pin4">The GPIO pin number which corresponds pin D on ULN2003 driver board.</param>
-        public Uln2003(IIODevice device, IPin pin1, IPin pin2, IPin pin3, IPin pin4)
+        public Uln2003(IDigitalOutputController device, IPin pin1, IPin pin2, IPin pin3, IPin pin4)
         {
             outputPort1 = device.CreateDigitalOutputPort(pin1);
             outputPort2 = device.CreateDigitalOutputPort(pin2);
@@ -173,7 +181,5 @@ namespace Meadow.Foundation.Motors.Stepper
             outputPort3.State = currentSwitchingSequence[2, engineStep - 1];
             outputPort4.State = currentSwitchingSequence[3, engineStep - 1];
         }
-
-        
     }
 }

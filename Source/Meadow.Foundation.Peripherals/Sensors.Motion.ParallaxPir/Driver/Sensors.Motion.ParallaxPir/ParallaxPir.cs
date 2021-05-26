@@ -1,50 +1,39 @@
-﻿using Meadow.Hardware;
-using System;
-using static Meadow.Hardware.DigitalPortBase;
+﻿using System;
+using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    ///     Create a new Parallax PIR object.
+    /// Create a new Parallax PIR object.
     /// </summary>
     public class ParallaxPir
     {
-        
-
         /// <summary>
-        ///     Digital input port
+        /// Digital input port
         /// </summary>
         private readonly IDigitalInputPort _digitalInputPort;
 
-        
-
-        
-
         /// <summary>
-        ///     Delgate for the motion start and end events.
+        /// Delgate for the motion start and end events.
         /// </summary>
         public delegate void MotionChange(object sender);
 
         /// <summary>
-        ///     Event raised when motion is detected.
+        /// Event raised when motion is detected.
         /// </summary>
         public event MotionChange OnMotionStart;
 
         /// <summary>
-        ///     Event raised when the PIR indicates that there is not longer any motion.
+        /// Event raised when the PIR indicates that there is not longer any motion.
         /// </summary>
         public event MotionChange OnMotionEnd;
-
-        
-
-        
 
         /// <summary>
         /// Create a new Parallax PIR object connected to an input pin and IO Device.
         /// </summary>
         /// <param name="device"></param>
-        /// <param name="inputPin"></param>        
-        public ParallaxPir(IIODevice device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) : 
+        /// <param name="inputPin"></param>
+        public ParallaxPir(IDigitalInputController device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) : 
             this (device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount)) { }
 
         /// <summary>
@@ -65,14 +54,10 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        
-
-        
-
         /// <summary>
-        ///     Catch the PIR motion change interrupts and work out which interrupt should be raised.
+        /// Catch the PIR motion change interrupts and work out which interrupt should be raised.
         /// </summary>
-        private void DigitalInputPortChanged(object sender, DigitalInputPortEventArgs e)
+        private void DigitalInputPortChanged(object sender, DigitalPortResult e)
         {
             if (_digitalInputPort.State)
             {
@@ -83,7 +68,5 @@ namespace Meadow.Foundation.Sensors.Motion
                 OnMotionEnd?.Invoke(this);
             }
         }
-
-        
     }
 }

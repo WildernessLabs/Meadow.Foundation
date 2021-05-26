@@ -1,13 +1,14 @@
 ﻿using System.Threading;
+using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.Tft
+namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Hx8357d : TftSpiBase
     {
         public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
 
-        public Hx8357d(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Hx8357d(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width = 320, int height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format16bppRgb565)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {

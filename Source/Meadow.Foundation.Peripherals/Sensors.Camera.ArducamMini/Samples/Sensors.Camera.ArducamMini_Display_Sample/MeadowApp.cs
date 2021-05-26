@@ -3,7 +3,7 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Camera;
-using Meadow.Foundation.Displays.Tft;
+using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics;
 using NanoJpeg;

@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using System;
 using System.Threading;
 
@@ -10,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Sound
         protected IAnalogInputPort analogPort;
         protected IDigitalInputPort digitalInputPort;
 
-        public Ky038(IIODevice device, IPin A0, IPin D0) : 
+        public Ky038(IMeadowDevice device, IPin A0, IPin D0) : 
             this (device.CreateAnalogInputPort(A0), device.CreateDigitalInputPort(D0))
         {
         }
@@ -22,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Sound
 
             digitalInputPort.Changed += DigitalInputPort_Changed;
 
-            analogPort.StartSampling();
+            analogPort.StartUpdating();
 
             while (true)
             {
@@ -31,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Sound
             }
         }
 
-        private void DigitalInputPort_Changed(object sender, DigitalInputPortEventArgs e)
+        private void DigitalInputPort_Changed(object sender, DigitalPortResult e)
         {
            
         }

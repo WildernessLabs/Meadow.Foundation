@@ -3,6 +3,8 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Servos;
+using Meadow.Units;
+using AU = Meadow.Units.Angle.UnitType;
 
 namespace Servos.Servo_Sample
 {
@@ -15,9 +17,9 @@ namespace Servos.Servo_Sample
             Console.WriteLine("Initializing...");
 
             //servo = new Servo(Device, Device.Pins.D04, NamedServoConfigs.SG90);
-            servo = new Servo(Device.CreatePwmPort(Device.Pins.D04), NamedServoConfigs.SG90);
+            servo = new Servo(Device.CreatePwmPort(Device.Pins.D02), NamedServoConfigs.SG90);
 
-            servo.RotateTo(0);
+            servo.RotateTo(new Angle(0, AU.Degrees));
 
             TestServo();
         }
@@ -28,16 +30,16 @@ namespace Servos.Servo_Sample
 
             while (true)
             {
-                for (int i = 0; i <= servo.Config.MaximumAngle; i++)
+                for (int i = 0; i <= servo.Config.MaximumAngle.Degrees; i++)
                 {
-                    servo.RotateTo(i);
+                    servo.RotateTo(new Angle(i, AU.Degrees));
                     Console.WriteLine($"Rotating to {i}");
                     Thread.Sleep(40);
                 }
                 Thread.Sleep(2000);
-                for (int i = 180; i >= servo.Config.MinimumAngle; i--)
+                for (int i = 180; i >= servo.Config.MinimumAngle.Degrees; i--)
                 {
-                    servo.RotateTo(i);
+                    servo.RotateTo(new Angle(i, AU.Degrees));
                     Console.WriteLine($"Rotating to {i}");
                     Thread.Sleep(40);
                 }

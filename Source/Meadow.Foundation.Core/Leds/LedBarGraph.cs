@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using System;
 
 namespace Meadow.Foundation.Leds
@@ -28,7 +29,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPins
         /// </summary>
-        public LedBarGraph(IIODevice device, IPin[] pins)
+        public LedBarGraph(IDigitalOutputController device, IPin[] pins)
         {
             leds = new Led[pins.Length];
 

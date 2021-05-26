@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using System;
 using System.Diagnostics;
@@ -16,7 +17,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// Event raised when the RPM change is greater than the 
         /// RPMChangeNotificationThreshold value.
         /// </summary>
-        public event EventHandler<FloatChangeResult> RPMsChanged = delegate { };
+        public event EventHandler<ChangeResult<float>> RPMsChanged = delegate { };
 
         /// <summary>
         /// Any changes to the RPMs that are greater than the RPM change
@@ -52,7 +53,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <param name="type"></param>
         /// <param name="numberOfMagnets"></param>
         /// <param name="rpmChangeNotificationThreshold"></param>
-        public LinearHallEffectTachometer(IIODevice device, IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
+        public LinearHallEffectTachometer(IDigitalInputController device, IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F) :
             this(device.CreateDigitalInputPort(inputPin), type, numberOfMagnets, rpmChangeNotificationThreshold)
         {
@@ -74,7 +75,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
             InputPort.Changed += InputPortChanged;
         }
 
-        void InputPortChanged(object sender, DigitalInputPortEventArgs e)
+        void InputPortChanged(object sender, DigitalPortResult e)
         {
             var time = DateTime.Now;
 
@@ -132,7 +133,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
 
         protected void OnRaiseRPMChanged()
         {
-            RPMsChanged(this, new FloatChangeResult(_lastNotifiedRPMs, _RPMs));
+            RPMsChanged(this, new ChangeResult<float>(_lastNotifiedRPMs, _RPMs));
             _lastNotifiedRPMs = _RPMs;
         }
     }

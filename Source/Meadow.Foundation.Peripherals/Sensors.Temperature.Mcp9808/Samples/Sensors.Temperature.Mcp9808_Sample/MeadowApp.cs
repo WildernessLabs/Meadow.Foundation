@@ -1,38 +1,56 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
+using System;
+using System.Threading;
 
-namespace Sensors.Temperature.TMP102_Sample
+namespace Sensors.Temperature.Mcp9808_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Mcp9808 sensor;
+        Mcp9808 mcp9808;
 
         public MeadowApp()
         {
-            InitHardware();
+            mcp9808 = new Mcp9808(Device.CreateI2cBus());
 
-            sensor.StartUpdating();
+            TestUpdating();
+            //TestRead();
         }
 
-        public void InitHardware()
+        void TestUpdating()
         {
-            Console.WriteLine("Init Mcp9808...");
+            Console.WriteLine("TestFC28Updating...");
 
-            sensor = new Mcp9808(Device.CreateI2cBus());
+            var consumer = Mcp9808.CreateObserver(
+                handler: result =>
+                {
+                    Console.WriteLine($"Temperature New Value { result.New.Celsius}");
+                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}");
+                },
+                filter: null
+            );
+            mcp9808.Subscribe(consumer);
 
-            Console.WriteLine("Mcp9808 created");
+            mcp9808.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+            {
+                Console.WriteLine($"Temperature Updated: {e.New.Celsius:N2}C");
+            };
 
-            sensor.Updated += Sensor_Updated;
-
-            Console.WriteLine("Start reading temperature data");
-            sensor.StartUpdating();
+            mcp9808.StartUpdating();
         }
 
-        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Atmospheric.AtmosphericConditionChangeResult e)
+        void TestRead()
         {
-            Console.WriteLine($"Temp: {e.New.Temperature}°C");
+            Console.WriteLine("TestFC28Sensor...");
+
+            while (true)
+            {
+                var temp = mcp9808.Read();
+
+                Console.WriteLine($"Temperature New Value { temp.Celsius}");
+                Thread.Sleep(1000);
+            }
         }
     }
 }

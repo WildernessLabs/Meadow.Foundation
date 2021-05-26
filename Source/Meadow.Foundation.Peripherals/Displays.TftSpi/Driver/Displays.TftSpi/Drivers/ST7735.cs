@@ -1,7 +1,8 @@
+using Meadow.Devices;
 using Meadow.Hardware;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.Tft
+namespace Meadow.Foundation.Displays.TftSpi
 {
     public class St7735 : TftSpiBase
     {
@@ -12,7 +13,7 @@ namespace Meadow.Foundation.Displays.Tft
 
         public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
 
-        public St7735(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public St7735(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height,
             DisplayType displayType = DisplayType.ST7735R, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)

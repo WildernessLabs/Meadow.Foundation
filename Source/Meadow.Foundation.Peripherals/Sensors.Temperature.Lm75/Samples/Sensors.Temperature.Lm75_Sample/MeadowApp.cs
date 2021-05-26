@@ -1,32 +1,57 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
+using System;
+using System.Threading;
 
-namespace Sensors.Temperature.TMP102_Sample
+namespace Sensors.Temperature.Lm75_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Lm75 sensor;
+        Lm75 lm75;
 
         public MeadowApp()
         {
-            InitHardware();
+            lm75 = new Lm75(Device.CreateI2cBus());
 
-            sensor.StartUpdating();
+            TestUpdating();
+            //TestRead();
         }
 
-        public void InitHardware()
+        void TestUpdating()
         {
-            Console.WriteLine("Initialize...");
+            Console.WriteLine("TestFC28Updating...");
 
-            sensor = new Lm75(Device.CreateI2cBus());
-            sensor.Updated += Sensor_Updated;
+            var consumer = Lm75.CreateObserver(
+                handler: result =>
+                {
+                    Console.WriteLine($"Temperature New Value { result.New.Celsius}");
+                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}");
+                    //Console.WriteLine($"Temperature Delta Value { result.Delta?.Celsius}");
+                },
+                filter: null
+            );
+            lm75.Subscribe(consumer);
+
+            lm75.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+            {
+                Console.WriteLine($"Temperature Updated: {e.New.Celsius:n2}C");
+            };
+
+            lm75.StartUpdating();
         }
 
-        private void Sensor_Updated(object sender, Meadow.Peripherals.Sensors.Atmospheric.AtmosphericConditionChangeResult e)
+        void TestRead()
         {
-            Console.WriteLine($"Temp: {e.New.Temperature}°C");
+            Console.WriteLine("TestFC28Sensor...");
+
+            while (true)
+            {
+                var temp = lm75.Read();
+
+                Console.WriteLine($"Temperature New Value { temp.Celsius}");                
+                Thread.Sleep(1000);
+            }
         }
     }
 }

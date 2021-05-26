@@ -5,7 +5,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 {
     class Program
     {
-        static IApp app;
+        static IApp? app;
 
         public static void Main(string[] args)
         {

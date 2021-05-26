@@ -1,6 +1,5 @@
 ﻿#nullable enable
-
-using System;
+using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Motors
@@ -42,7 +41,7 @@ namespace Meadow.Foundation.Motors
         public HBridgeMotor Motor1 { get; protected set; }
         public HBridgeMotor? Motor2 { get; protected set; }
 
-        public Tb67h420ftg(IIODevice device,
+        public Tb67h420ftg(IMeadowDevice device,
             IPin inA1, IPin inA2, IPin pwmA,
             IPin? inB1, IPin? inB2, IPin? pwmB,
             IPin? fault1, IPin? fault2,
@@ -95,6 +94,5 @@ namespace Meadow.Foundation.Motors
 
             //
         }
-
     }
 }

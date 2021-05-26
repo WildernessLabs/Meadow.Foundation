@@ -3,6 +3,7 @@ using System.Threading;
 using Meadow.Hardware;
 using System.Threading.Tasks;
 using static Meadow.Peripherals.Leds.IRgbLed;
+using Meadow.Devices;
 
 namespace Meadow.Foundation.Leds
 {
@@ -19,8 +20,8 @@ namespace Meadow.Foundation.Leds
         readonly float MAX_FORWARD_VOLTAGE = 3.3f;
         readonly float DEFAULT_DUTY_CYCLE = 0f;
 
-        protected Task animationTask = null;
-        protected CancellationTokenSource cancellationTokenSource = null;
+        protected Task? animationTask = null;
+        protected CancellationTokenSource? cancellationTokenSource = null;
 
         protected double maxRedDutyCycle = 1;
         protected double maxGreenDutyCycle = 1;
@@ -93,7 +94,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="greenLedForwardVoltage"></param>
         /// <param name="blueLedForwardVoltage"></param>
         /// <param name="isCommonCathode"></param>
-        public RgbPwmLed(IIODevice device,
+        public RgbPwmLed(IPwmOutputController device,
             IPin redPwmPin, IPin greenPwmPin, IPin bluePwmPin,
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,

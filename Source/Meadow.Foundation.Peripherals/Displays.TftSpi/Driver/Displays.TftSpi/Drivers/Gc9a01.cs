@@ -1,13 +1,14 @@
 ﻿using System.Threading;
+using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.Tft
+namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Gc9a01 : TftSpiBase
     {
         public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
 
-        public Gc9a01(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
+        public Gc9a01(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, 240, 240, DisplayColorMode.Format16bppRgb565)
         {
             Initialize();

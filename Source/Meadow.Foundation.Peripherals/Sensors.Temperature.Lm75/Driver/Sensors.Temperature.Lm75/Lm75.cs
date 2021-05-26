@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Atmospheric;
-using Meadow.Peripherals.Sensors.Temperature;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
@@ -11,9 +10,23 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP102 Temperature sensor object.
     /// </summary>    
     public class Lm75 :
-        FilterableChangeObservableBase<AtmosphericConditionChangeResult, AtmosphericConditions>,
-        IAtmosphericSensor, ITemperatureSensor
+        FilterableChangeObservableBase<Units.Temperature>,
+        ITemperatureSensor
     {
+        //==== Events
+        /// <summary>
+        /// Raised when the value of the reading changes.
+        /// </summary>
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+
+        //==== internals
+        private object _lock = new object();
+        private CancellationTokenSource SamplingTokenSource;
+        private readonly II2cPeripheral lm75;
+
+        //==== properties
+
+        // todo: rename and move into `Lm75.Registers.cs` file.
         /// <summary>
         /// LM75 Registers
         /// </summary>
@@ -25,27 +38,12 @@ namespace Meadow.Foundation.Sensors.Temperature
             LM_TOS = 0x03
         }
 
-        /// <summary>
-        ///     LM75 sensor.
-        /// </summary>
-        private readonly II2cPeripheral lm75;
-
-
         public byte DEFAULT_ADDRESS => 0x48;
 
         /// <summary>
-        /// The AtmosphericConditions from the last reading.
+        /// The Temperature value from the last reading.
         /// </summary>
-        public AtmosphericConditions Conditions { get; protected set; } = new AtmosphericConditions();
-
-        /// <summary>
-        /// The temperature, in degrees celsius (°C), from the last reading.
-        /// </summary>
-        public float Temperature => Conditions.Temperature.Value;
-
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
+        public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
         /// Gets a value indicating whether the analog input port is currently
@@ -53,16 +51,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
-
-        
-
-        
-
-        public event EventHandler<AtmosphericConditionChangeResult> Updated;
-
-        
-
-        
 
         /// <summary>
         ///     Create a new TMP102 object using the default configuration for the sensor.
@@ -73,50 +61,57 @@ namespace Meadow.Foundation.Sensors.Temperature
             lm75 = new I2cPeripheral(i2cBus, address);
         }
 
-        
-
-        
-
         /// <summary>
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public async Task<AtmosphericConditions> Read()
+        // TODO: Make this async?
+        public Units.Temperature Read()
         {
-            Conditions = await Read();
-
-            return Conditions;
+            Update();
+            return Temperature.Value;
         }
 
+        /// <summary>
+        /// Starts continuously sampling the sensor.
+        ///
+        /// This method also starts raising `TemperatureUpdated` events and IObservable
+        /// subscribers getting notified.
+        /// </summary>
+        /// <param name="standbyDuration">The time, in milliseconds, to wait
+        /// between sets of sample readings. This value determines how often
+        /// `TemperatureUpdated` events are raised and `IObservable` consumers are notified.</param>
         public void StartUpdating(int standbyDuration = 1000)
         {
-            // thread safety
-            lock (_lock) {
-                if (IsSampling) return;
-
-                // state muh-cheen
+            lock (_lock) 
+            {
+                if (IsSampling) { return; }
                 IsSampling = true;
 
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                AtmosphericConditions oldConditions;
-                AtmosphericConditionChangeResult result;
-                Task.Factory.StartNew(async () => {
-                    while (true) {
-                        if (ct.IsCancellationRequested) {
+                Units.Temperature? oldtemperature;
+                ChangeResult<Units.Temperature> result;
+
+                Task.Factory.StartNew(async () => 
+                {
+                    while (true) 
+                    {
+                        if (ct.IsCancellationRequested) 
+                        {
                             // do task clean up here
-                            _observers.ForEach(x => x.OnCompleted());
+                            observers.ForEach(x => x.OnCompleted());
                             break;
                         }
                         // capture history
-                        oldConditions = AtmosphericConditions.From(Conditions);
+                        oldtemperature = Temperature;
 
                         // read
-                        Update(); //syncrhnous for this driver 
+                        Update(); //synchronous for this driver 
 
                         // build a new result with the old and new conditions
-                        result = new AtmosphericConditionChangeResult(oldConditions, Conditions);
+                        result = new ChangeResult<Units.Temperature>(Temperature.Value, oldtemperature);
 
                         // let everyone know
                         RaiseChangedAndNotify(result);
@@ -127,32 +122,26 @@ namespace Meadow.Foundation.Sensors.Temperature
                 }, SamplingTokenSource.Token);
             }
         }
-
-        protected void RaiseChangedAndNotify(AtmosphericConditionChangeResult changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
-        }
-
+        
         /// <summary>
         /// Stops sampling the temperature.
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock) {
-                if (!IsSampling) return;
+            lock (_lock) 
+            {
+                if (!IsSampling) { return; }
 
                 SamplingTokenSource?.Cancel();
 
-                // state muh-cheen
                 IsSampling = false;
             }
         }
 
         /// <summary>
-        ///     Update the Temperature property.
+        /// Update the Temperature property.
         /// </summary>
-        public void Update()
+        protected void Update()
         {
             lm75.WriteByte((byte)Register.LM_TEMP);
 
@@ -172,9 +161,13 @@ namespace Meadow.Foundation.Sensors.Temperature
             }
 
             //only accurate to +/- 0.1 degrees
-            Conditions.Temperature = (float)Math.Round(temp, 1);
+            Temperature = new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius);
         }
 
-        
+        protected void RaiseChangedAndNotify(IChangeResult<Units.Temperature> changeResult)
+        {
+            TemperatureUpdated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Devices;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Buttons;
 using System;
 
@@ -141,7 +142,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="device"></param>
         /// <param name="inputPin"></param>
         /// <param name="resistorMode"></param>
-        public PushButton(IIODevice device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp) 
+        public PushButton(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp) 
             : this(device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistorMode, 50, 25)) { }
 
         /// <summary>
@@ -162,15 +163,18 @@ namespace Meadow.Foundation.Sensors.Buttons
             DigitalIn.Changed += DigitalInChanged;
         }
 
-        void DigitalInChanged(object sender, DigitalInputPortEventArgs e)
+        void DigitalInChanged(object sender, DigitalPortResult result)
         {
             bool state = (resistorMode == ResistorMode.InternalPullUp || 
-                          resistorMode == ResistorMode.ExternalPullUp) ? !e.Value : e.Value;
+                          resistorMode == ResistorMode.ExternalPullUp) ? !result.New.State : result.New.State;
 
-            //Console.WriteLine($"PB: InputChanged. State == {State}. e.Value: {e.Value}.  DI State: {DigitalIn.State}");
+            //Console.WriteLine($"PB: InputChanged. State == {State}. result.New.State: {result.New.State}.  DI State: {DigitalIn.State}");
 
             if (state)
             {
+                // TODO: BC 2021.05.21 - I don't think this is right. Clicked
+                // shouldn't raise until the press is released, and only if it's
+                // not a long clicked
                 RaiseClicked();
 
                 // save our press start time (for long press event)
@@ -235,7 +239,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         public void Dispose()
         {
             DigitalIn.Dispose();
-            DigitalIn = null;
         }
     }
 }

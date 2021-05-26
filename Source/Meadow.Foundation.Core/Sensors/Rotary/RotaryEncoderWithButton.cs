@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="buttonPin"></param>
         /// <param name="resistor"></param>
         /// <param name="debounceDuration"></param>
-        public RotaryEncoderWithButton(IIODevice device, IPin aPhasePin, IPin bPhasePin, IPin buttonPin, ResistorMode buttonResistorMode = ResistorMode.InternalPullDown)
+        public RotaryEncoderWithButton(IDigitalInputController device, IPin aPhasePin, IPin bPhasePin, IPin buttonPin, ResistorMode buttonResistorMode = ResistorMode.InternalPullDown)
             : base(device, aPhasePin, bPhasePin)
         {
             _button = new PushButton(device, buttonPin, buttonResistorMode);

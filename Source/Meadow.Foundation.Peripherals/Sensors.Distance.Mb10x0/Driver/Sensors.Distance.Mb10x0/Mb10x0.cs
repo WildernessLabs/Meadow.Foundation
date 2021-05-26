@@ -1,33 +1,58 @@
-﻿using Meadow.Hardware;
-using System;
+﻿using System;
+using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using Meadow.Units;
+using LU = Meadow.Units.Length.UnitType;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
-    public class Mb10x0
+    // TODO: why is `DistanceUpdated` never invoked? is this sensor done?
+    public class Mb10x0 :
+        FilterableChangeObservableBase<Length>,
+        IRangeFinder
     {
+        //==== events
+        public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
+
+        //==== internals
         ISerialPort serialPort;
 
+        //==== public properties
         public int Baud => 9600;
 
-        public Mb10x0(IIODevice device, SerialPortName portName)
+        /// <summary>
+        /// The distance to the measured object.
+        /// </summary>
+        public Length? Distance { get; protected set; } = new Length(0);
+
+        /// <summary>
+        /// Creates a new `Mb10x0` device on the specified serial port.
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="portName"></param>
+        public Mb10x0(ISerialController device, SerialPortName portName)
         {
             serialPort = device.CreateSerialPort(portName, Baud);
             serialPort.Open();
         }
 
+        /// <summary>
+        /// Creates a new `Mb10x0` device on the specified serial port.
+        /// </summary>
+        /// <param name="serialPort"></param>
         public Mb10x0(ISerialPort serialPort)
         {
             this.serialPort = serialPort;
         }
 
-        public int ReadSerial()
+        public Length ReadSerial()
         {
             var len = serialPort.BytesToRead;
 
             if(len == 0) 
             {
                 Console.WriteLine("No data");
-                return 0; 
+                return new Length(0, LU.Millimeters); 
             }
 
             var data = new byte[len];
@@ -46,7 +71,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
             Console.WriteLine($"Length: {len}");
 
-            return 0;
+            return new Length(0, LU.Millimeters);
         }
     }
 }

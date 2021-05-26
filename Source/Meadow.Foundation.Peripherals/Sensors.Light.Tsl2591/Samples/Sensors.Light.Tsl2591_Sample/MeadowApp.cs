@@ -18,7 +18,7 @@ namespace Sensors.Light.Tsl2591_Sample
             tsl.PowerOn();
             tsl.ChangeThreshold = 10;
             tsl.Channel0Changed += OnLightChange;
-            tsl.StartSampling(TimeSpan.FromSeconds(1));
+            tsl.StartUpdating();
 
             while (true)
             {

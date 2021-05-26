@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation.Displays.ePaper;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Displays.ePaper;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
@@ -67,7 +68,7 @@ namespace Meadow.Foundation.Displays.ePaper
         public static byte[] LutData = { 0x02, 0x02, 0x01, 0x11, 0x12, 0x12 }; //""fiiYX\x99\x99\x88\x00\x00\x00\x00\xf8\xb4\x13Q5QQ\x19\x01\x00' };
         //_LUT_DATA = b'\x02\x02\x01\x11\x12\x12""fiiYX\x99\x99\x88\x00\x00\x00\x00\xf8\xb4\x13Q5QQ\x19\x01\x00'
 
-        public Ssd1681(IIODevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public Ssd1681(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         {
