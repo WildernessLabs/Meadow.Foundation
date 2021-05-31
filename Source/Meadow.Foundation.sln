@@ -1008,7 +1008,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Buttons.PushButton_
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Tca9548a_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Tca9548a\Samples\ICs.IOExpanders.Tca9548a_Sample\ICs.IOExpanders.Tca9548a_Sample.csproj", "{6E1ADC42-1E91-4921-84BB-E219000A3BED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{FCD06DCF-A1FC-4C51-BDA7-6AEE12A51D8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core.NetStandard", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.NetStandard.csproj", "{060AEDEF-5638-47AF-B576-9C2BC1FDC6DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2204,12 +2204,12 @@ Global
 		{6E1ADC42-1E91-4921-84BB-E219000A3BED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E1ADC42-1E91-4921-84BB-E219000A3BED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E1ADC42-1E91-4921-84BB-E219000A3BED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FCD06DCF-A1FC-4C51-BDA7-6AEE12A51D8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FCD06DCF-A1FC-4C51-BDA7-6AEE12A51D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FCD06DCF-A1FC-4C51-BDA7-6AEE12A51D8E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{FCD06DCF-A1FC-4C51-BDA7-6AEE12A51D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FCD06DCF-A1FC-4C51-BDA7-6AEE12A51D8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FCD06DCF-A1FC-4C51-BDA7-6AEE12A51D8E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{060AEDEF-5638-47AF-B576-9C2BC1FDC6DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{060AEDEF-5638-47AF-B576-9C2BC1FDC6DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{060AEDEF-5638-47AF-B576-9C2BC1FDC6DF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{060AEDEF-5638-47AF-B576-9C2BC1FDC6DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{060AEDEF-5638-47AF-B576-9C2BC1FDC6DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{060AEDEF-5638-47AF-B576-9C2BC1FDC6DF}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2711,7 +2711,7 @@ Global
 		{D4CA169B-7E84-4AE3-BE82-F232277D4CD4} = {A857BC05-B321-4E1F-8FB9-CAA9BE65118B}
 		{2FFEB068-12D2-4EF6-B3CE-767F2E223177} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
 		{6E1ADC42-1E91-4921-84BB-E219000A3BED} = {9AE0AEB5-3AC7-4049-A047-33C0F2D5D3CA}
-		{FCD06DCF-A1FC-4C51-BDA7-6AEE12A51D8E} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
+		{060AEDEF-5638-47AF-B576-9C2BC1FDC6DF} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

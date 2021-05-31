@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing.Text;
 using System.Threading;
 using Meadow.Devices;
 using Meadow.Hardware;
