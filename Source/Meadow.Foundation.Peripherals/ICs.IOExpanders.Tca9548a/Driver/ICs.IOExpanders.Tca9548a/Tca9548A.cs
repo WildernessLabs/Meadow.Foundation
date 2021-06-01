@@ -38,7 +38,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                                .Select(Convert.ToByte)
                                .ToDictionary(
                                    b => b,
-                                   b => new Tca9548aBus(this, bus.Frequency, b) as II2cBus);
+                                   b => new Tca9548aBus(this, (int)bus.Frequency.Hertz, b) as II2cBus);
         }
 
         /// <summary>
