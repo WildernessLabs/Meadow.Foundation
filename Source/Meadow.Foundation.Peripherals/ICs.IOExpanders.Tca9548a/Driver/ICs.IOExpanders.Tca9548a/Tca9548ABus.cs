@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Collections.Generic;
 
@@ -17,8 +18,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         public int Frequency { get; set; }
-
-        
+        Frequency II2cBus.Frequency { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public void WriteData(byte peripheralAddress, params byte[] data)
         {
@@ -113,6 +113,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public void WriteReadData(byte peripheralAddress, Span<byte> writeBuffer, int writeCount, Span<byte> readBuffer, int readCount)
         {
             throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            //throw new NotImplementedException();
         }
     }
 }
