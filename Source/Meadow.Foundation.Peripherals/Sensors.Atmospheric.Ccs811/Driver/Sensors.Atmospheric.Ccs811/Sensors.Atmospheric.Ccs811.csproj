@@ -7,7 +7,6 @@
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Ccs811</PackageId>
-    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, VOC, Air, Ccs811</PackageTags>
     <Version>0.1.0</Version>
@@ -16,9 +15,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
+    <PackageIcon>icon.png</PackageIcon>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath=""/>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>
