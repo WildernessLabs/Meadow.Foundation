@@ -1,0 +1,18 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Sensors.Light.AnalogSolarIntensityGauge</AssemblyName>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Meadow.Foundation.Sensors.Light</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+  </ItemGroup>
+</Project>

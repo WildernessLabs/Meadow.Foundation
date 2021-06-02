@@ -250,6 +250,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <param name="knownValue"></param>
         public void SetCalibrationFactor(int factor, Mass knownValue)
         {
+            Console.WriteLine($"SetCalibrationFactor: knownValue.Grams: {knownValue.Grams:N1}");
             _gramsPerAdcUnit = knownValue.Grams / (double)factor;
         }
 

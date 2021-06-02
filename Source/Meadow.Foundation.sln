@@ -986,8 +986,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Ccs811_
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Buttons.PushButton_BasicSample", "Meadow.Foundation.Core.Samples\Sensors.Buttons.PushButton_BasicSample\Sensors.Buttons.PushButton_BasicSample.csproj", "{2FFEB068-12D2-4EF6-B3CE-767F2E223177}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Tca9548a_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Tca9548a\Samples\ICs.IOExpanders.Tca9548a_Sample\ICs.IOExpanders.Tca9548a_Sample.csproj", "{6E1ADC42-1E91-4921-84BB-E219000A3BED}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{AF5CC396-C17D-4918-A084-0CADE96807F1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.F7", "..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj", "{745237F7-53BC-4E0B-AAEF-8815271E6454}"
@@ -995,6 +993,16 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Contracts", "..\..\Meadow.Core\source\Meadow.Contracts\Meadow.Contracts.csproj", "{EC5EBD25-4E25-4EBC-8369-AEDF9C8A489E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Units", "..\..\Meadow.Core\source\Meadow.Units\Meadow.Units.csproj", "{4AEBFC8D-EE9A-4075-9AD7-8AB0F8FB054A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Light.AnalogSolarIntensityGauge", "Sensors.Light.AnalogSolarIntensityGauge", "{A4871FEF-60ED-4BB1-B03C-C149D297A2D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.AnalogSolarIntensityGauge", "Meadow.Foundation.Peripherals\Sensors.Light.AnalogSolarIntensityGauge\Driver\Sensors.Light.AnalogSolarIntensityGauge\Sensors.Light.AnalogSolarIntensityGauge.csproj", "{91D22CEA-4C96-4643-B486-6ED49FA1124D}"
+EndProject
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "ICs.IOExpanders.Tca9548a_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Tca9548a\Samples\ICs.IOExpanders.Tca9548a_Sample\ICs.IOExpanders.Tca9548a_Sample.csproj", "{223CF15A-83B8-4E43-9645-50D45D9470A5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{40E200ED-D7B8-4FFD-B4FC-753E56DA831E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalogSolarIntensityGauge_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.AnalogSolarIntensityGauge\Samples\AnalogSolarIntensityGauge_Sample\AnalogSolarIntensityGauge_Sample.csproj", "{0B04C0F8-204C-496D-B48D-51017DF99DB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2170,10 +2178,6 @@ Global
 		{2FFEB068-12D2-4EF6-B3CE-767F2E223177}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FFEB068-12D2-4EF6-B3CE-767F2E223177}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FFEB068-12D2-4EF6-B3CE-767F2E223177}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6E1ADC42-1E91-4921-84BB-E219000A3BED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6E1ADC42-1E91-4921-84BB-E219000A3BED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6E1ADC42-1E91-4921-84BB-E219000A3BED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6E1ADC42-1E91-4921-84BB-E219000A3BED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AF5CC396-C17D-4918-A084-0CADE96807F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AF5CC396-C17D-4918-A084-0CADE96807F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF5CC396-C17D-4918-A084-0CADE96807F1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -2198,6 +2202,18 @@ Global
 		{4AEBFC8D-EE9A-4075-9AD7-8AB0F8FB054A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AEBFC8D-EE9A-4075-9AD7-8AB0F8FB054A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4AEBFC8D-EE9A-4075-9AD7-8AB0F8FB054A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{91D22CEA-4C96-4643-B486-6ED49FA1124D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91D22CEA-4C96-4643-B486-6ED49FA1124D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91D22CEA-4C96-4643-B486-6ED49FA1124D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91D22CEA-4C96-4643-B486-6ED49FA1124D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{223CF15A-83B8-4E43-9645-50D45D9470A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{223CF15A-83B8-4E43-9645-50D45D9470A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{223CF15A-83B8-4E43-9645-50D45D9470A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{223CF15A-83B8-4E43-9645-50D45D9470A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B04C0F8-204C-496D-B48D-51017DF99DB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B04C0F8-204C-496D-B48D-51017DF99DB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B04C0F8-204C-496D-B48D-51017DF99DB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B04C0F8-204C-496D-B48D-51017DF99DB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2688,11 +2704,15 @@ Global
 		{A857BC05-B321-4E1F-8FB9-CAA9BE65118B} = {8A5A02DE-D320-489F-86D9-278022BDFE00}
 		{D4CA169B-7E84-4AE3-BE82-F232277D4CD4} = {A857BC05-B321-4E1F-8FB9-CAA9BE65118B}
 		{2FFEB068-12D2-4EF6-B3CE-767F2E223177} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
-		{6E1ADC42-1E91-4921-84BB-E219000A3BED} = {9AE0AEB5-3AC7-4049-A047-33C0F2D5D3CA}
 		{AF5CC396-C17D-4918-A084-0CADE96807F1} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 		{745237F7-53BC-4E0B-AAEF-8815271E6454} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 		{EC5EBD25-4E25-4EBC-8369-AEDF9C8A489E} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 		{4AEBFC8D-EE9A-4075-9AD7-8AB0F8FB054A} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
+		{A4871FEF-60ED-4BB1-B03C-C149D297A2D7} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{91D22CEA-4C96-4643-B486-6ED49FA1124D} = {A4871FEF-60ED-4BB1-B03C-C149D297A2D7}
+		{223CF15A-83B8-4E43-9645-50D45D9470A5} = {9AE0AEB5-3AC7-4049-A047-33C0F2D5D3CA}
+		{40E200ED-D7B8-4FFD-B4FC-753E56DA831E} = {A4871FEF-60ED-4BB1-B03C-C149D297A2D7}
+		{0B04C0F8-204C-496D-B48D-51017DF99DB4} = {40E200ED-D7B8-4FFD-B4FC-753E56DA831E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
