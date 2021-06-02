@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Displays
         protected IDigitalOutputPort resetPort;
         protected IDigitalOutputPort chipSelectPort;
         protected ISpiPeripheral spiDisplay;
-        protected SpiBus spi;
+        protected ISpiBus spi;
 
         protected byte[] displayBuffer;
         protected readonly byte[] spiReceive;
@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Displays
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
 
-            spi = (SpiBus)spiBus;
+            spi = spiBus;
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
 
             Initialize();

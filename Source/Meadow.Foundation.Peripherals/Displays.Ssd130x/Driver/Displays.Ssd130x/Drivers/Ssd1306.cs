@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         ///     SSD1306 SPI display
         /// </summary>
         protected ISpiPeripheral spiPeripheral;
-        protected SpiBus spi;
+        protected ISpiBus spi;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
@@ -244,7 +244,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false);
 
-            spi = (SpiBus)spiBus;
+            spi = spiBus;
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
             connectionType = ConnectionType.SPI;

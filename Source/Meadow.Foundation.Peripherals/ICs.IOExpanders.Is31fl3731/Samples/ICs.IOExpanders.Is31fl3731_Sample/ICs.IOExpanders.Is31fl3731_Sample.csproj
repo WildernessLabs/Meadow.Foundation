@@ -9,6 +9,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj"/>
     <ProjectReference Include="..\..\Driver\ICs.IOExpanders.Is31fl3731\ICs.IOExpanders.Is31fl3731.csproj" />
   </ItemGroup>
 </Project>

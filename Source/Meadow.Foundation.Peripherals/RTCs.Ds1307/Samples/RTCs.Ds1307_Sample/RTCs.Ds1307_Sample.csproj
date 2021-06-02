@@ -9,6 +9,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj"/>
     <ProjectReference Include="..\..\Driver\RTCs.DS1307\RTCs.Ds1307.csproj" />
   </ItemGroup>
 </Project>

@@ -10,6 +10,7 @@
     <RootNamespace>ICs.IOExpanders</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj"/>
     <ProjectReference Include="..\..\Driver\ICs.IOExpanders.Pca9685\ICs.IOExpanders.Pca9685.csproj" />
   </ItemGroup>
 </Project>

@@ -48,7 +48,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
         protected IDigitalOutputPort chipSelectPort;
-        protected SpiBus spi;
+        protected ISpiBus spi;
         protected ISpiPeripheral spiDisplay;
 
         protected byte[] spiBuffer;
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             this.width = width;
             this.height = height;
 
-            spi = (SpiBus)spiBus;
+            spi = spiBus;
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }

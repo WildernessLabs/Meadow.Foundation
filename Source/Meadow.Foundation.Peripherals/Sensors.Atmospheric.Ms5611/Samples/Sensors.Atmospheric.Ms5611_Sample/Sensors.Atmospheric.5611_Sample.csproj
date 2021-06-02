@@ -9,6 +9,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj"/>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Ms5611\Driver\Sensors.Atmospheric.Ms5611\Sensors.Atmospheric.MS5611.csproj" />
   </ItemGroup>
 </Project>
