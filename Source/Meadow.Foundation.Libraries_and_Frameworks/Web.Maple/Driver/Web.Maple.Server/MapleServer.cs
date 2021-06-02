@@ -124,13 +124,17 @@ namespace Meadow.Foundation.Web.Maple.Server
         /// </summary>
         protected void StartUdpAdvertisement()
         {
-            Task.Run(async () => {
-                using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
+            Task.Run(() => 
+            {
+                using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) 
+                {
                     EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("255.255.255.255"), MAPLE_SERVER_BROADCASTPORT);
                     socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
 
                     string broadcastData = $"{DeviceName}::{IPAddress}";
-                    while (Running) {
+
+                    while (Running) 
+                    {
                         socket.SendTo(UTF8Encoding.UTF8.GetBytes(broadcastData), remoteEndPoint);
                         if (printDebugOutput) { Console.WriteLine("UDP Broadcast: " + broadcastData + ", port: " + MAPLE_SERVER_BROADCASTPORT); }
                         Thread.Sleep(AdvertiseIntervalMs);
