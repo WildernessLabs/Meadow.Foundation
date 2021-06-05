@@ -8,22 +8,22 @@ namespace Sensors.AirQuality.Ccs811_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Ccs811 ccs811;
+        Ccs811 sensor;
 
         public MeadowApp()
         {
             // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Fast);
-            ccs811 = new Ccs811(i2c);
+            sensor = new Ccs811(i2c);
 
-            ccs811.StartUpdating();
+            sensor.StartUpdating();
 
-            var bl = ccs811.GetBaseline();
+            var bl = sensor.GetBaseline();
             Console.WriteLine($"Baseline A: 0x{bl:x4}");
-            ccs811.SetBaseline(0x847b);
-            bl = ccs811.GetBaseline();
+            sensor.SetBaseline(0x847b);
+            bl = sensor.GetBaseline();
             Console.WriteLine($"Baseline B: 0x{bl:x4}");
-            ccs811.SetMeasurementMode(Ccs811.MeasurementMode.ConstantPower250ms);
+            sensor.SetMeasurementMode(Ccs811.MeasurementMode.ConstantPower250ms);
             /*
             // Example that uses an IObersvable subscription to only be notified
             // when the temperature changes by at least a degree, and humidty by 5%.
@@ -45,10 +45,11 @@ namespace Sensors.AirQuality.Ccs811_Sample
             bmp180.Updated += (object sender, AtmosphericConditionChangeResult e) => {
                 Console.WriteLine($"Temperature: {e.New.Temperature}°C, Pressure: {e.New.Pressure}hPa");
             };
-
+            */
             // get an initial reading
             ReadConditions().Wait();
 
+            /*
             // start updating continuously
             bmp180.StartUpdating();
             */
@@ -56,6 +57,8 @@ namespace Sensors.AirQuality.Ccs811_Sample
 
         protected async Task ReadConditions()
         {
+            var conditions = await sensor.Read();
+            Console.WriteLine($"CO2: {conditions.Co2.PartsPerMillion:n1}ppm, VOC: {conditions.Voc.PartsPerMillion:n1}ppm");
         }
     }
 }
