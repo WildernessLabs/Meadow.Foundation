@@ -83,7 +83,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 Thread.Sleep(1);
             }
 
-            Bus.ReadRegisterBytes((byte)Register.ADCO_B2, _read);
+            //Bus.ReadRegisterBytes((byte)Register.ADCO_B2, _read);
+            I2cPeripheral.ReadRegister((byte)Register.ADCO_B2, _read);
             return _read[0] << 16 | _read[1] << 8 | _read[2];
         }
 
@@ -107,14 +108,17 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
             // Set and clear the RR bit in 0x00, to guarantee a reset of all register values
             _currentPU_CTRL = PU_CTRL_BITS.RR;
-            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            //Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            I2cPeripheral.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
             Thread.Sleep(1); // make sure it has time to do it's thing
             _currentPU_CTRL &= ~PU_CTRL_BITS.RR;
-            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            //Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            I2cPeripheral.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
 
             // turn on the analog and digital power
             _currentPU_CTRL |= (PU_CTRL_BITS.PUD | PU_CTRL_BITS.PUA);
-            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            //Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            I2cPeripheral.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
             // wait for power-up ready
             var timeout = 100;
             do
@@ -125,7 +129,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
                     throw new Exception("Timeout powering up");
                 }
                 Thread.Sleep(10);
-                _currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
+                //_currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
+                _currentPU_CTRL = (PU_CTRL_BITS)I2cPeripheral.ReadRegister((byte)Register.PU_CTRL);
             } while ((_currentPU_CTRL & PU_CTRL_BITS.PUR) != PU_CTRL_BITS.PUR);
 
 
@@ -134,7 +139,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
             SetLDO(LdoVoltage.LDO_3V3);
             SetGain(AdcGain.Gain128);
             SetConversionRate(ConversionRate.SamplePerSecond80);
-            Bus.WriteRegister((byte)Register.OTP_ADC, 0x30); // turn off CLK_CHP
+            //Bus.WriteRegister((byte)Register.OTP_ADC, 0x30); // turn off CLK_CHP
+            I2cPeripheral.WriteRegister((byte)Register.OTP_ADC, 0x30); // turn off CLK_CHP
             EnableCh2DecouplingCap();
 
             if (!CalibrateAdc())
@@ -143,9 +149,11 @@ namespace Meadow.Foundation.Sensors.LoadCell
             }
 
             // turn on cycle start
-            _currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
+            //_currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
+            _currentPU_CTRL = (PU_CTRL_BITS)I2cPeripheral.ReadRegister((byte)Register.PU_CTRL);
             _currentPU_CTRL |= PU_CTRL_BITS.CS;
-            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            //Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            I2cPeripheral.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
 
 
             Output.WriteLine($"PU_CTRL: {_currentPU_CTRL}"); // 0xBE
@@ -157,57 +165,70 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private bool IsConversionComplete()
         {
-            var puctrl = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
+            //var puctrl = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
+            var puctrl = (PU_CTRL_BITS)I2cPeripheral.ReadRegister((byte)Register.PU_CTRL);
             return (puctrl & PU_CTRL_BITS.CR) == PU_CTRL_BITS.CR;
         }
 
         private void EnableCh2DecouplingCap()
         {
             // app note - enable ch2 decoupling cap
-            var pga_pwr = Bus.ReadRegisterByte((byte)Register.PGA_PWR);
+            //var pga_pwr = Bus.ReadRegisterByte((byte)Register.PGA_PWR);
+            var pga_pwr = I2cPeripheral.ReadRegister((byte)Register.PGA_PWR);
             pga_pwr |= 1 << 7;
-            Bus.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
+            //Bus.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
+            I2cPeripheral.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
         }
 
         private void SetLDO(LdoVoltage value)
         {
-            var ctrl1 = Bus.ReadRegisterByte((byte)Register.CTRL1);
+            //var ctrl1 = Bus.ReadRegisterByte((byte)Register.CTRL1);
+            var ctrl1 = I2cPeripheral.ReadRegister((byte)Register.CTRL1);
             ctrl1 &= 0b11000111; // clear LDO
             ctrl1 |= (byte)((byte)value << 3);
-            Bus.WriteRegister((byte)Register.CTRL1, ctrl1);
+            //Bus.WriteRegister((byte)Register.CTRL1, ctrl1);
+            I2cPeripheral.WriteRegister((byte)Register.CTRL1, ctrl1);
             _currentPU_CTRL |= PU_CTRL_BITS.AVDDS;
-            Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL); // enable internal LDO
+            //Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL); // enable internal LDO
+            I2cPeripheral.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL); // enable internal LDO
         }
 
         private void SetGain(AdcGain value)
         {
-            var ctrl1 = Bus.ReadRegisterByte((byte)Register.CTRL1);
+            //var ctrl1 = Bus.ReadRegisterByte((byte)Register.CTRL1);
+            var ctrl1 = I2cPeripheral.ReadRegister((byte)Register.CTRL1);
             ctrl1 &= 0b11111000; // clear gain
             ctrl1 |= (byte)value;
-            Bus.WriteRegister((byte)Register.CTRL1, ctrl1);
+            //Bus.WriteRegister((byte)Register.CTRL1, ctrl1);
+            I2cPeripheral.WriteRegister((byte)Register.CTRL1, ctrl1);
         }
 
         private void SetConversionRate(ConversionRate value)
         {
-            var ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
+            //var ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
+            var ctrl2 = I2cPeripheral.ReadRegister((byte)Register.CTRL2);
             ctrl2 &= 0b10001111; // clear gain
             ctrl2 |= (byte)((byte)value << 4);
-            Bus.WriteRegister((byte)Register.CTRL2, ctrl2);
+            //Bus.WriteRegister((byte)Register.CTRL2, ctrl2);
+            I2cPeripheral.WriteRegister((byte)Register.CTRL2, ctrl2);
         }
 
         private bool CalibrateAdc()
         {
             // read ctrl2
-            var ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
+            //var ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
+            var ctrl2 = I2cPeripheral.ReadRegister((byte)Register.CTRL2);
 
             // turn on the calibration bit
             ctrl2 |= (byte)CTRL2_BITS.CALS;
-            Bus.WriteRegister((byte)Register.CTRL2, ctrl2);
+            //Bus.WriteRegister((byte)Register.CTRL2, ctrl2);
+            I2cPeripheral.WriteRegister((byte)Register.CTRL2, ctrl2);
 
             // now wiat for either completion or error
             do
             {
-                ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
+                //ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
+                ctrl2 = I2cPeripheral.ReadRegister((byte)Register.CTRL2);
                 if ((ctrl2 & (byte)CTRL2_BITS.CAL_ERROR) != 0)
                 {
                     // calibration error

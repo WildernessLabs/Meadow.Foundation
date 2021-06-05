@@ -130,9 +130,12 @@ namespace Meadow.Foundation.Sensors.Power
             return await Task.Run(() =>
             {
                 (Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current) conditions;
-                conditions.Voltage = new Units.Voltage(Bus.ReadRegisterShort((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
-                conditions.Current = new Units.Current(Bus.ReadRegisterShort((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
-                conditions.Power = new Units.Power(Bus.ReadRegisterShort((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
+                //conditions.Voltage = new Units.Voltage(Bus.ReadRegisterShort((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
+                conditions.Voltage = new Units.Voltage(I2cPeripheral.ReadRegister((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
+                //conditions.Current = new Units.Current(Bus.ReadRegisterShort((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
+                conditions.Current = new Units.Current(I2cPeripheral.ReadRegister((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
+                //conditions.Power = new Units.Power(Bus.ReadRegisterShort((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
+                conditions.Power = new Units.Power(I2cPeripheral.ReadRegister((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
 
                 return conditions;
             });
@@ -171,7 +174,8 @@ namespace Meadow.Foundation.Sensors.Power
         /// </summary>
         public int ManufacturerID
         {
-            get => Bus.ReadRegisterShort((byte)Register.ManufacturerID);
+            //get => Bus.ReadRegisterShort((byte)Register.ManufacturerID);
+            get => I2cPeripheral.ReadRegister((byte)Register.ManufacturerID);
         }
 
         /// <summary>
@@ -179,7 +183,8 @@ namespace Meadow.Foundation.Sensors.Power
         /// </summary>
         public int DieID
         {
-            get => Bus.ReadRegisterShort((byte)Register.ManufacturerID);
+            //get => Bus.ReadRegisterShort((byte)Register.ManufacturerID);
+            get => I2cPeripheral.ReadRegister((byte)Register.ManufacturerID);
         }
     }
 }
