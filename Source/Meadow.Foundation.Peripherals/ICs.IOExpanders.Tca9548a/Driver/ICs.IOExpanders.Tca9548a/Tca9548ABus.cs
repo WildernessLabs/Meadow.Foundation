@@ -107,17 +107,40 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public void WriteData(byte peripheralAddress, byte[] data, int length)
         {
-            throw new NotImplementedException();
+            _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
+            try {
+                _tca9548a.SelectBus(_busIndex);
+                _tca9548a.Bus.WriteData(peripheralAddress, data, length);
+            } finally {
+                _tca9548a.BusSelectorSemaphore.Release();
+            }
         }
 
         public void WriteReadData(byte peripheralAddress, Span<byte> writeBuffer, int writeCount, Span<byte> readBuffer, int readCount)
         {
-            throw new NotImplementedException();
+            _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
+            try {
+                _tca9548a.SelectBus(_busIndex);
+                _tca9548a.Bus.WriteReadData(peripheralAddress, writeBuffer, writeCount, readBuffer, readCount);
+            } finally {
+                _tca9548a.BusSelectorSemaphore.Release();
+            }
         }
 
         public void Dispose()
         {
             //throw new NotImplementedException();
+        }
+
+        public void ReadData(byte peripheralAddress, Span<byte> readBuffer)
+        {
+            _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
+            try {
+                _tca9548a.SelectBus(_busIndex);
+                _tca9548a.Bus.ReadData(peripheralAddress, readBuffer);
+            } finally {
+                _tca9548a.BusSelectorSemaphore.Release();
+            }
         }
     }
 }

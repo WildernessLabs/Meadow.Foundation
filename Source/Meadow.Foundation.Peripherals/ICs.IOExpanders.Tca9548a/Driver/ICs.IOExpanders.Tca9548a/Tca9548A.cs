@@ -220,5 +220,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             throw new NotSupportedException("This method is not supported for this device");
         }
+
+        /// <exception cref="NotSupportedException">This method is not supported for this device</exception>
+        public void Read(Span<byte> readBuffer)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <exception cref="NotSupportedException">This method is not supported for this device</exception>
+        public void ReadRegister(byte address, Span<byte> buffer)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
