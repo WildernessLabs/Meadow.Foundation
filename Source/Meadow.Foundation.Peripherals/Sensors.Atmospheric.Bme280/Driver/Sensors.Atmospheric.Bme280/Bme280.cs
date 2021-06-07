@@ -31,6 +31,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         //==== internals
+        byte[] readBuffer = new byte[8];
+        byte[] writeBuffer = new byte[8];
 
         //==== properties
         ///// <summary>
@@ -339,7 +341,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return await Task.Run(() => {
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
 
-                var readings = bme280Comms.ReadRegisters(0xf7, 8);
+                bme280Comms.ReadRegisters(0xf7, readBuffer, 8);
                 //
                 //  Temperature calculation from section 4.2.3 of the datasheet.
                 //
@@ -358,7 +360,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //     return T;
                 // }
                 //
-                var adcTemperature = (readings[3] << 12) | (readings[4] << 4) | ((readings[5] >> 4) & 0x0f);
+                var adcTemperature = (readBuffer[3] << 12) | (readBuffer[4] << 4) | ((readBuffer[5] >> 4) & 0x0f);
                 var tvar1 = (((adcTemperature >> 3) - (compensationData.T1 << 1)) * compensationData.T2) >> 11;
                 var tvar2 = (((((adcTemperature >> 4) - compensationData.T1) *
                                ((adcTemperature >> 4) - compensationData.T1)) >> 12) * compensationData.T3) >> 14;
@@ -401,7 +403,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 if (pvar1 == 0) {
                     conditions.Pressure = new Pressure(0, PU.Pascal);
                 } else {
-                    var adcPressure = (readings[0] << 12) | (readings[1] << 4) | ((readings[2] >> 4) & 0x0f);
+                    var adcPressure = (readBuffer[0] << 12) | (readBuffer[1] << 4) | ((readBuffer[2] >> 4) & 0x0f);
                     long pressure = 1048576 - adcPressure;
                     pressure = (((pressure << 31) - pvar2) * 3125) / pvar1;
                     pvar1 = (compensationData.P9 * (pressure >> 13) * (pressure >> 13)) >> 25;
@@ -430,7 +432,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //     return (BME280_U32_t)(v_x1_u32r>>12);
                 // }
                 //
-                var adcHumidity = (readings[6] << 8) | readings[7];
+                var adcHumidity = (readBuffer[6] << 8) | readBuffer[7];
                 var v_x1_u32r = tfine - 76800;
 
                 v_x1_u32r = ((((adcHumidity << 14) - (compensationData.H4 << 20) - (compensationData.H5 * v_x1_u32r)) +

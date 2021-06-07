@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// temperature and humidity sensors
     /// </summary>
     public partial class Htu21d :
-        FilterableChangeObservableI2CPeripheral<(Units.Temperature?, RelativeHumidity?)>,
+        I2cFilterableObservableBase<(Units.Temperature?, RelativeHumidity?)>,
         ITemperatureSensor, IHumiditySensor
     {
         //==== Events
@@ -79,7 +79,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected void Initialize ()
         {
             //Bus.WriteBytes(SOFT_RESET);
-            I2cPeripheral.WriteByte(SOFT_RESET);
+            I2cPeripheral.Write(SOFT_RESET);
 					 			
 			Thread.Sleep(100);
           
@@ -104,7 +104,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return await Task.Run(() => {
                 // ---- HUMIDITY
                 //Bus.WriteBytes(HUMDITY_MEASURE_NOHOLD);
-                I2cPeripheral.WriteByte(HUMDITY_MEASURE_NOHOLD);
+                I2cPeripheral.Write(HUMDITY_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
                 //Bus.ReadBytes(_rx, 3); // 2 data bytes plus a checksum (we ignore the checksum here)
                 I2cPeripheral.Read(_rx);// 2 data bytes plus a checksum (we ignore the checksum here)
@@ -124,7 +124,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 // ---- TEMPERATURE
                 //Bus.WriteBytes(TEMPERATURE_MEASURE_NOHOLD);
-                I2cPeripheral.WriteByte(TEMPERATURE_MEASURE_NOHOLD);
+                I2cPeripheral.Write(TEMPERATURE_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
                 //Bus.ReadBytes(_rx, 3); // 2 data bytes plus a checksum (we ignore the checksum here)
                 I2cPeripheral.Read(_rx);// 2 data bytes plus a checksum (we ignore the checksum here)

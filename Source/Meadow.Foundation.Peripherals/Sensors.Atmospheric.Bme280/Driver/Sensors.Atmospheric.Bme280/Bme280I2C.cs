@@ -19,8 +19,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             _address = busAddress;
         }
 
-        public override byte[] ReadRegisters(byte startRegister, int readCount)
+        public override void ReadRegisters(byte startRegister, int readCount)
         {
+            
             return _i2c.WriteReadData(_address, readCount, (byte)startRegister);
         }
 

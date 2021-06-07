@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
     public partial class Nau7802 :
-        FilterableChangeObservableI2CPeripheral<Units.Mass>,
+        I2cFilterableObservableBase<Units.Mass>,
         IMassSensor,
         IDisposable
 

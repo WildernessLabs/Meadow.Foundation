@@ -48,13 +48,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        public void WriteData(byte peripheralAddress, Span<byte> data)
+        public void Write(byte peripheralAddress, Span<byte> data)
         {
             _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
             try
             {
                 _tca9548a.SelectBus(_busIndex);
-                _tca9548a.Bus.WriteData(peripheralAddress, data);
+                _tca9548a.Bus.Write(peripheralAddress, data);
             }
             finally
             {
@@ -77,13 +77,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        public void ExchangeData(byte peripheralAddress, Span<byte> writeBuffer, Span<byte> readBuffer)
+        public void Exchange(byte peripheralAddress, Span<byte> writeBuffer, Span<byte> readBuffer)
         {
             _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
             try
             {
                 _tca9548a.SelectBus(_busIndex);
-                _tca9548a.Bus.ExchangeData(peripheralAddress, writeBuffer, readBuffer);
+                _tca9548a.Bus.Exchange(peripheralAddress, writeBuffer, readBuffer);
             }
             finally
             {
@@ -132,12 +132,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             //throw new NotImplementedException();
         }
 
-        public void ReadData(byte peripheralAddress, Span<byte> readBuffer)
+        public void Read(byte peripheralAddress, Span<byte> readBuffer)
         {
             _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
             try {
                 _tca9548a.SelectBus(_busIndex);
-                _tca9548a.Bus.ReadData(peripheralAddress, readBuffer);
+                _tca9548a.Bus.Read(peripheralAddress, readBuffer);
             } finally {
                 _tca9548a.BusSelectorSemaphore.Release();
             }

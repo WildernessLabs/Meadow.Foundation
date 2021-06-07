@@ -117,7 +117,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             var @byte = BitHelpers.SetBit(0x00, busIndex, true);
-            WriteByte(@byte);
+            Write(@byte);
             var selectedBus = ReadBytes(1)[0];
             if (selectedBus.CompareTo(selectedBus) != 0)
                 throw new Exception(
@@ -126,8 +126,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             _selectedBus = busIndex;
         }
 
-        ///<inheritdoc cref="WriteByte"/>
-        public void WriteByte(byte value)
+        ///<inheritdoc cref="Write"/>
+        public void Write(byte value)
         {
             Bus.WriteData(Address, value);
         }
@@ -139,9 +139,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new NotSupportedException("This method is not supported for this device");
         }
 
-        /// <inheritdoc cref="WriteUShort"/>
+        /// <inheritdoc cref="WriteRegister"/>
         /// <exception cref="NotSupportedException">This method is not supported for this device</exception>
-        public void WriteUShort(byte address,
+        public void WriteRegister(byte address,
                                 ushort value,
                                 ByteOrder order = ByteOrder.LittleEndian)
         {
@@ -178,9 +178,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new NotSupportedException("This method is not supported for this device");
         }
 
-        /// <inheritdoc cref="IByteCommunications.ExchangeData(System.Span{byte},System.Span{byte})"/>
+        /// <inheritdoc cref="IByteCommunications.Exchange(System.Span{byte},System.Span{byte})"/>
         /// <exception cref="NotSupportedException">This method is not supported for this device</exception>
-        public void ExchangeData(Span<byte> writeBuffer, Span<byte> readBuffer)
+        public void Exchange(Span<byte> writeBuffer, Span<byte> readBuffer)
         {
             throw new NotSupportedException("This method is not supported for this device");
         }
@@ -205,9 +205,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new NotSupportedException("This method is not supported for this device");
         }
 
-        /// <inheritdoc cref="ReadUShort"/>
+        /// <inheritdoc cref="ReadRegisterAsUShort"/>
         /// <exception cref="NotSupportedException">This method is not supported for this device</exception>
-        public ushort ReadUShort(byte address, ByteOrder order)
+        public ushort ReadRegisterAsUShort(byte address, ByteOrder order)
         {
             throw new NotSupportedException("This method is not supported for this device");
         }

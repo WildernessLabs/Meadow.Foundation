@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Provide access to the CCS811 C02 and VOC Air Quality Sensor
     /// </summary>
     public partial class Ccs811 :
-        FilterableChangeObservableI2CPeripheral<(Concentration?, Concentration?)>,
+        I2cFilterableObservableBase<(Concentration?, Concentration?)>,
         ICO2Sensor, IVocSensor
     {
         // internal thread lock
@@ -86,7 +86,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             // start the firmware app
             //Bus.WriteBytes((byte)BootloaderCommand.APP_START);
-            I2cPeripheral.WriteByte((byte)BootloaderCommand.APP_START);
+            I2cPeripheral.Write((byte)BootloaderCommand.APP_START);
 
             // change mode
             SetMeasurementMode(MeasurementMode.ConstantPower1s);

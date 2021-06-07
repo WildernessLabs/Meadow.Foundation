@@ -405,7 +405,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 sourceIndex = ((y * width) + x0) * sizeof(ushort);
 
-                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiWriteBuffer.Span.Slice(sourceIndex, len), spiReadBuffer.Span.Slice(sourceIndex, len));
+                spi.Exchange(chipSelectPort, ChipSelectMode.ActiveLow, spiWriteBuffer.Span.Slice(sourceIndex, len), spiReadBuffer.Span.Slice(sourceIndex, len));
             }
 
             xMin = width;
@@ -456,7 +456,7 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         protected void Write(byte value)
         {
-            spiDisplay.WriteByte(value);
+            spiDisplay.Write(value);
         }
 
         protected void Write(byte[] data)

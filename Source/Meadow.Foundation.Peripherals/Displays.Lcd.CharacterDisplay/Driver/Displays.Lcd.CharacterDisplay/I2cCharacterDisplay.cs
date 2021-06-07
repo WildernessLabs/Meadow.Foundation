@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Displays.Lcd
 
         void ExpanderWrite(byte value)
         {
-            i2cPeripheral.WriteByte((byte)(value | backlightValue));
+            i2cPeripheral.Write((byte)(value | backlightValue));
         }
 
         void Send(byte value, byte mode)

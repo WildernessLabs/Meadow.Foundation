@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// temperature and humidity sensors.
     /// </summary>
     public partial class Si70xx :
-        FilterableChangeObservableI2CPeripheral<(Units.Temperature?, RelativeHumidity?)>,
+        I2cFilterableObservableBase<(Units.Temperature?, RelativeHumidity?)>,
         ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
@@ -83,7 +83,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected void Reset()
         {
             //Bus.WriteBytes(CMD_RESET);
-            I2cPeripheral.WriteByte(CMD_RESET);
+            I2cPeripheral.Write(CMD_RESET);
             Thread.Sleep(100);
         }
 
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             tx[0] = READ_ID_PART1;
             tx[1] = READ_ID_PART2;
             //Bus.WriteReadData(tx, 2, rx, 8);
-            I2cPeripheral.ExchangeData(tx.Slice(0, 2), rx.Slice(0, 8));
+            I2cPeripheral.Exchange(tx.Slice(0, 2), rx.Slice(0, 8));
             for (var index = 0; index < 4; index++)
             {
                 SerialNumber <<= 8;
@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             tx[0] = READ_2ND_ID_PART1;
             tx[1] = READ_2ND_ID_PART2;
             //Bus.WriteReadData(tx, 2, rx, 8);
-            I2cPeripheral.ExchangeData(tx.Slice(0, 2), rx.Slice(0, 8));
+            I2cPeripheral.Exchange(tx.Slice(0, 2), rx.Slice(0, 8));
 
             SerialNumber <<= 8;
             SerialNumber += rx[0];
@@ -153,7 +153,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 // ---- HUMIDITY
                 //Bus.WriteBytes(HUMDITY_MEASURE_NOHOLD);
-                I2cPeripheral.WriteByte(HUMDITY_MEASURE_NOHOLD);
+                I2cPeripheral.Write(HUMDITY_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
                 //Bus.ReadBytes(_rx, 3); // 2 data bytes plus a checksum (we ignore the checksum here)
                 I2cPeripheral.Read(_rx); // 2 data bytes plus a checksum (we ignore the checksum here)
@@ -173,7 +173,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 // ---- TEMPERATURE
                 //Bus.WriteBytes(TEMPERATURE_MEASURE_NOHOLD);
-                I2cPeripheral.WriteByte(TEMPERATURE_MEASURE_NOHOLD);
+                I2cPeripheral.Write(TEMPERATURE_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
                 //Bus.ReadBytes(_rx, 3); // 2 data bytes plus a checksum (we ignore the checksum here)
                 I2cPeripheral.Read(_rx); // 2 data bytes plus a checksum (we ignore the checksum here)

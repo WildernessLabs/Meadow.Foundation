@@ -153,7 +153,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
-            hih6130.WriteByte(0);
+            hih6130.Write(0);
             //
             //  Sensor takes 35ms to make a valid reading.
             //

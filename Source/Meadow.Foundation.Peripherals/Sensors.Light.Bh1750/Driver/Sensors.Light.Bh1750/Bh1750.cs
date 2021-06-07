@@ -108,8 +108,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         private void Initialize()
         {
-            bh1750.WriteByte((byte)Command.PowerOn);
-            bh1750.WriteByte((byte)Command.Reset);
+            bh1750.Write((byte)Command.PowerOn);
+            bh1750.Write((byte)Command.Reset);
         }
 
         /// <summary>
@@ -125,8 +125,8 @@ namespace Meadow.Foundation.Sensors.Light
 
             byte val = (byte)(DefaultLightTransmittance / transmittance);
 
-            bh1750.WriteByte((byte)((byte)Command.MeasurementTimeHigh | (val >> 5)));
-            bh1750.WriteByte((byte)((byte)Command.MeasurementTimeLow | (val & 0b_0001_1111)));
+            bh1750.Write((byte)((byte)Command.MeasurementTimeHigh | (val >> 5)));
+            bh1750.Write((byte)((byte)Command.MeasurementTimeLow | (val & 0b_0001_1111)));
         }
 
         /// <summary>
@@ -139,10 +139,10 @@ namespace Meadow.Foundation.Sensors.Light
                 MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2 ||
                 MeasuringMode == MeasuringModes.OneTimeLowResolutionMode)
             {
-                bh1750.WriteByte((byte)Command.PowerOn);
+                bh1750.Write((byte)Command.PowerOn);
             }
 
-            bh1750.WriteByte((byte)MeasuringMode);
+            bh1750.Write((byte)MeasuringMode);
             var data = bh1750.ReadBytes(2);
 
             ushort raw = BinaryPrimitives.ReadUInt16BigEndian(data);
