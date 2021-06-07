@@ -8,11 +8,7 @@ using Meadow.Units;
 namespace BasicSensors.Atmospheric.SI7021_Sample
 {
     public class MeadowApp
-    #if JETSON
-        : App<MeadowOnLinux<JetsonNanoPinout>, MeadowApp>
-    #else
         :App<F7Micro, MeadowApp>
-    #endif
     {
         Si70xx sensor;
 
@@ -21,11 +17,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
             Console.WriteLine("Initializing...");
 
             // configure our sensor on the I2C Bus
-#if JETSON
-            var i2cBus = Device.CreateI2cBus(1);
-#else
             var i2cBus = Device.CreateI2cBus();
-#endif            
             sensor = new Si70xx(i2cBus);
 
             Console.WriteLine($"Chip Serial: {sensor.SerialNumber}");
