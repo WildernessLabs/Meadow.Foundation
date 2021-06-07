@@ -121,7 +121,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
             try {
                 _tca9548a.SelectBus(_busIndex);
-                _tca9548a.Bus.ExchangeData(peripheralAddress, writeBuffer, writeCount, readBuffer, readCount);
+                _tca9548a.Bus.Exchange(peripheralAddress, writeBuffer[0..writeCount], readBuffer[0..readCount]);
             } finally {
                 _tca9548a.BusSelectorSemaphore.Release();
             }

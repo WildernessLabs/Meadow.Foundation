@@ -126,6 +126,23 @@ namespace Meadow.Foundation.ICs.IOExpanders
             _selectedBus = busIndex;
         }
 
+
+        public void Write(Span<byte> data)
+        {
+            Bus.Write(Address, data);
+        }
+
+        public void WriteRegister(byte address, uint value, ByteOrder order = ByteOrder.LittleEndian)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteRegister(byte address, ulong value, ByteOrder order = ByteOrder.LittleEndian)
+        {
+            throw new NotImplementedException();
+        }
+
+
         ///<inheritdoc cref="Write"/>
         public void Write(byte value)
         {
