@@ -31,6 +31,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         //==== internals
+        protected Memory<byte> readBuffer = new byte[32];
+        protected Memory<byte> writeBuffer = new byte[32];
 
         //==== properties
         ///// <summary>
@@ -295,30 +297,37 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </remarks>
         protected void ReadCompensationData()
         {
-            var temperatureAndPressureData = bme280Comms.ReadRegisters(0x88, 24);
-            var humidityData1 = bme280Comms.ReadRegisters(0xa1, 1);
-            var humidityData2To6 = bme280Comms.ReadRegisters(0xe1, 7);
+            // read the temperature and pressure data into the internal read buffer
+            bme280Comms.ReadRegisters(0x88, readBuffer.Span[0..24]);
 
-            compensationData.T1 = (ushort)(temperatureAndPressureData[0] + (temperatureAndPressureData[1] << 8));
-            compensationData.T2 = (short)(temperatureAndPressureData[2] + (temperatureAndPressureData[3] << 8));
-            compensationData.T3 = (short)(temperatureAndPressureData[4] + (temperatureAndPressureData[5] << 8));
-            //
-            compensationData.P1 = (ushort)(temperatureAndPressureData[6] + (temperatureAndPressureData[7] << 8));
-            compensationData.P2 = (short)(temperatureAndPressureData[8] + (temperatureAndPressureData[9] << 8));
-            compensationData.P3 = (short)(temperatureAndPressureData[10] + (temperatureAndPressureData[11] << 8));
-            compensationData.P4 = (short)(temperatureAndPressureData[12] + (temperatureAndPressureData[13] << 8));
-            compensationData.P5 = (short)(temperatureAndPressureData[14] + (temperatureAndPressureData[15] << 8));
-            compensationData.P6 = (short)(temperatureAndPressureData[16] + (temperatureAndPressureData[17] << 8));
-            compensationData.P7 = (short)(temperatureAndPressureData[18] + (temperatureAndPressureData[19] << 8));
-            compensationData.P8 = (short)(temperatureAndPressureData[20] + (temperatureAndPressureData[21] << 8));
-            compensationData.P9 = (short)(temperatureAndPressureData[22] + (temperatureAndPressureData[23] << 8));
-            //
-            compensationData.H1 = humidityData1[0];
-            compensationData.H2 = (short)(humidityData2To6[0] + (humidityData2To6[1] << 8));
-            compensationData.H3 = humidityData2To6[2];
-            compensationData.H4 = (short)((humidityData2To6[3] << 4) + (humidityData2To6[4] & 0xf));
-            compensationData.H5 = (short)(((humidityData2To6[4] & 0xf) >> 4) + (humidityData2To6[5] << 4));
-            compensationData.H6 = (sbyte)humidityData2To6[6];
+            // Temperature
+            compensationData.T1 = (ushort)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
+            compensationData.T2 = (short)(readBuffer.Span[2] + (readBuffer.Span[3] << 8));
+            compensationData.T3 = (short)(readBuffer.Span[4] + (readBuffer.Span[5] << 8));
+            // Pressure
+            compensationData.P1 = (ushort)(readBuffer.Span[6] + (readBuffer.Span[7] << 8));
+            compensationData.P2 = (short)(readBuffer.Span[8] + (readBuffer.Span[9] << 8));
+            compensationData.P3 = (short)(readBuffer.Span[10] + (readBuffer.Span[11] << 8));
+            compensationData.P4 = (short)(readBuffer.Span[12] + (readBuffer.Span[13] << 8));
+            compensationData.P5 = (short)(readBuffer.Span[14] + (readBuffer.Span[15] << 8));
+            compensationData.P6 = (short)(readBuffer.Span[16] + (readBuffer.Span[17] << 8));
+            compensationData.P7 = (short)(readBuffer.Span[18] + (readBuffer.Span[19] << 8));
+            compensationData.P8 = (short)(readBuffer.Span[20] + (readBuffer.Span[21] << 8));
+            compensationData.P9 = (short)(readBuffer.Span[22] + (readBuffer.Span[23] << 8));
+
+            // read the humidity data. have to read twice because they're in different,
+            // non-sequential registers
+
+            // first one
+            bme280Comms.ReadRegisters(0xa1, readBuffer.Span[0..1]);
+            compensationData.H1 = readBuffer.Span[0];
+            // 2-6
+            bme280Comms.ReadRegisters(0xe1, readBuffer.Span[0..7]);
+            compensationData.H2 = (short)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
+            compensationData.H3 = readBuffer.Span[2];
+            compensationData.H4 = (short)((readBuffer.Span[3] << 4) + (readBuffer.Span[4] & 0xf));
+            compensationData.H5 = (short)(((readBuffer.Span[4] & 0xf) >> 4) + (readBuffer.Span[5] << 4));
+            compensationData.H6 = (sbyte)readBuffer.Span[6];
         }
 
         /// <summary>
@@ -339,7 +348,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return await Task.Run(() => {
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
 
-                var readings = bme280Comms.ReadRegisters(0xf7, 8);
+                // readily read the readings from the reading register into the read buffer
+                bme280Comms.ReadRegisters(0xf7, readBuffer.Span[0..8]);
                 //
                 //  Temperature calculation from section 4.2.3 of the datasheet.
                 //
@@ -358,13 +368,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //     return T;
                 // }
                 //
-                var adcTemperature = (readings[3] << 12) | (readings[4] << 4) | ((readings[5] >> 4) & 0x0f);
+                var adcTemperature = (readBuffer.Span[3] << 12) | (readBuffer.Span[4] << 4) | ((readBuffer.Span[5] >> 4) & 0x0f);
                 var tvar1 = (((adcTemperature >> 3) - (compensationData.T1 << 1)) * compensationData.T2) >> 11;
                 var tvar2 = (((((adcTemperature >> 4) - compensationData.T1) *
                                ((adcTemperature >> 4) - compensationData.T1)) >> 12) * compensationData.T3) >> 14;
                 var tfine = tvar1 + tvar2;
                 //
-                conditions.Temperature = new Units.Temperature((float)(((tfine * 5) + 128) >> 8) / 100, Units.Temperature.UnitType.Celsius);
+                conditions.Temperature = new Units.Temperature((float)(((tfine * 5) + 128) >> 8) / 100, TU.Celsius);
                 //
                 // Pressure calculation from section 4.2.3 of the datasheet.
                 //
@@ -401,7 +411,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 if (pvar1 == 0) {
                     conditions.Pressure = new Pressure(0, PU.Pascal);
                 } else {
-                    var adcPressure = (readings[0] << 12) | (readings[1] << 4) | ((readings[2] >> 4) & 0x0f);
+                    var adcPressure = (readBuffer.Span[0] << 12) | (readBuffer.Span[1] << 4) | ((readBuffer.Span[2] >> 4) & 0x0f);
                     long pressure = 1048576 - adcPressure;
                     pressure = (((pressure << 31) - pvar2) * 3125) / pvar1;
                     pvar1 = (compensationData.P9 * (pressure >> 13) * (pressure >> 13)) >> 25;
@@ -430,7 +440,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //     return (BME280_U32_t)(v_x1_u32r>>12);
                 // }
                 //
-                var adcHumidity = (readings[6] << 8) | readings[7];
+                var adcHumidity = (readBuffer.Span[6] << 8) | readBuffer.Span[7];
                 var v_x1_u32r = tfine - 76800;
 
                 v_x1_u32r = ((((adcHumidity << 14) - (compensationData.H4 << 20) - (compensationData.H5 * v_x1_u32r)) +
@@ -451,7 +461,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
                 v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
                 //
-                conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024, RelativeHumidity.UnitType.Percent);
+                conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024, HU.Percent);
 
                 return conditions;
             });
@@ -459,7 +469,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         public byte GetChipID()
         {
-            return bme280Comms.ReadRegisters((byte)Bme280Comms.Register.ChipID, 1).First();
+            bme280Comms.ReadRegisters((byte)Bme280Comms.Register.ChipID, readBuffer.Span[0..1]);
+            return readBuffer.Span[0];
         }
 
         /// <summary>

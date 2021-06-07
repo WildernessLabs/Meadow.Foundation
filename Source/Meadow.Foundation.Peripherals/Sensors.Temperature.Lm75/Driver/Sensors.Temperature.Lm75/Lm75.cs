@@ -143,7 +143,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         protected void Update()
         {
-            lm75.WriteByte((byte)Register.LM_TEMP);
+            lm75.Write((byte)Register.LM_TEMP);
 
             var data = lm75.ReadRegisters((byte)Register.LM_TEMP, 2);
 

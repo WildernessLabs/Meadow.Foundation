@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Sensors.Atmospheric
+﻿using System;
+
+namespace Meadow.Foundation.Sensors.Atmospheric
 {
     internal abstract class Bme280Comms
     {
@@ -16,6 +18,6 @@
         }
 
         public abstract void WriteRegister(Register register, byte value);
-        public abstract byte[] ReadRegisters(byte startRegister, int readCount);
+        public abstract void ReadRegisters(byte startRegister, Span<byte> readBuffer);
     }
 }

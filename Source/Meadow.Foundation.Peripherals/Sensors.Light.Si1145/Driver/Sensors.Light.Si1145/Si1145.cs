@@ -239,8 +239,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         private void Write8(byte reg, byte val)
         {   //this can be replaced by WriteRegister
-            si1145.WriteByte(reg);
-            si1145.WriteByte(val);
+            si1145.Write(reg);
+            si1145.Write(val);
         }
 
         private byte ReadParam(byte param)

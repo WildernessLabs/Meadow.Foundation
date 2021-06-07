@@ -340,7 +340,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                spiPeripheral.WriteByte(command);
+                spiPeripheral.Write(command);
             }
             else
             {

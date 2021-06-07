@@ -119,7 +119,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// </summary>
         internal virtual void ReadDataI2c()
         {
-            sensor.WriteByte(0x00);
+            sensor.Write(0x00);
             readBuffer = sensor.ReadBytes(5);
 
             lastMeasurement = Environment.TickCount;

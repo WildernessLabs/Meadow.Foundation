@@ -192,7 +192,7 @@ namespace Meadow.Foundation.Displays
 
         protected void Write(byte value)
         {
-            spiPeripheral.WriteByte(value);
+            spiPeripheral.Write(value);
         }
 
         protected void Write(byte[] data)

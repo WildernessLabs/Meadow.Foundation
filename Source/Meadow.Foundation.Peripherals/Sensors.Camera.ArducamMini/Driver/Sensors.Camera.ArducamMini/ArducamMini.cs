@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Sensors.Camera
         {
             // return spiDevice.WriteRead(new byte[] { address, 0 }, 2)[1];
             //return spiDevice.ReadRegister(address);
-            spiDevice.WriteByte(address);
+            spiDevice.Write(address);
             return spiDevice.ReadBytes(1)[0];
         }
 

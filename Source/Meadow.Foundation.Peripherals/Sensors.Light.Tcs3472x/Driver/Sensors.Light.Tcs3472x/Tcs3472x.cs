@@ -216,7 +216,7 @@ namespace Meadow.Foundation.Sensors.Light
 
         private ushort I2cRead16(Registers reg)
         {
-            return i2CPeripheral.ReadUShort((byte)(Registers.COMMAND_BIT | reg), ByteOrder.BigEndian);
+            return i2CPeripheral.ReadRegisterAsUShort((byte)(Registers.COMMAND_BIT | reg), ByteOrder.BigEndian);
         }
     }
 }

@@ -273,8 +273,8 @@ namespace Meadow.Foundation.Transceivers
 
         void ToggleFeatures()
         {
-            rf24.WriteByte(ACTIVATE);
-            rf24.WriteByte(0x73);
+            rf24.Write(ACTIVATE);
+            rf24.Write(0x73);
         }
 
         public void SetChannel(byte channel)
@@ -291,12 +291,12 @@ namespace Meadow.Foundation.Transceivers
 
         void FlushRx()
         {
-            rf24.WriteByte(FLUSH_RX);
+            rf24.Write(FLUSH_RX);
         }
 
         void FlushTx()
         {
-            rf24.WriteByte(FLUSH_TX);
+            rf24.Write(FLUSH_TX);
         }
 
         void PowerDown()
@@ -605,7 +605,7 @@ namespace Meadow.Foundation.Transceivers
             if (dynamic_payloads_enabled)
                 blank_len = (byte)(payload_size - data_len);
 
-            rf24.WriteByte(writeType);
+            rf24.Write(writeType);
             rf24.WriteBytes(current);
         }
 
