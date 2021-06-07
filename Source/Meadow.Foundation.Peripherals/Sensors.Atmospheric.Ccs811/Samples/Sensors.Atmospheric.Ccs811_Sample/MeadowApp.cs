@@ -21,7 +21,7 @@ namespace Sensors.AirQuality.Ccs811_Sample
             sensor = new Ccs811(i2c);
 
             //==== IObservable 
-            // Example that uses an IObersvable subscription to
+            // Example that uses an IObservable subscription to
             // only notify if the change is greater than 1000ppm CO2 and 100ppb VOC.
             // breathing on the sensor should trigger
             var consumer = Ccs811.CreateObserver(
