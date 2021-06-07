@@ -18,6 +18,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         public abstract void WriteRegister(Register register, byte value);
-        public abstract void ReadRegisters(byte startRegister, Span<byte> readBuffer, int readCount);
+        public abstract void ReadRegisters(byte startRegister, Span<byte> readBuffer);
     }
 }
