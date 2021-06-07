@@ -360,7 +360,7 @@ namespace Meadow.Foundation.Sensors.Light
                 buffer[1] = (byte)(value & 0x00ff);
                 buffer[2] = (byte)((value & 0xff00) >> 8);
 
-                Device.WriteData(Address, buffer);
+                Device.Write(Address, buffer);
             }
         }
 

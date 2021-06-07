@@ -199,7 +199,7 @@ namespace Meadow.Foundation.Sensors.Light
             get => _lowerInterruptThreshold;
             set
             {
-                bh1745.WriteUShort(TL, value);
+                bh1745.WriteRegisterUShort(TL, value);
                 _lowerInterruptThreshold = value;
             }
         }
@@ -213,7 +213,7 @@ namespace Meadow.Foundation.Sensors.Light
             get => _upperInterruptThreshold;
             set
             {
-                bh1745.WriteUShort(TH, value);
+                bh1745.WriteRegisterUShort(TH, value);
                 _upperInterruptThreshold = value;
             }
         }
@@ -368,25 +368,25 @@ namespace Meadow.Foundation.Sensors.Light
         /// Reads the red data register of the sensor
         /// </summary>
         /// <returns></returns>
-        public ushort ReadRedDataRegister() => bh1745.ReadUShort(RED_DATA);
+        public ushort ReadRedDataRegister() => bh1745.ReadRegisterAsUShort(RED_DATA);
 
         /// <summary>
         /// Reads the green data register of the sensor
         /// </summary>
         /// <returns></returns>
-        public ushort ReadGreenDataRegister() => bh1745.ReadUShort(GREEN_DATA);
+        public ushort ReadGreenDataRegister() => bh1745.ReadRegisterAsUShort(GREEN_DATA);
 
         /// <summary>
         /// Reads the blue data register of the sensor
         /// </summary>
         /// <returns></returns>
-        public ushort ReadBlueDataRegister() => bh1745.ReadUShort(BLUE_DATA);
+        public ushort ReadBlueDataRegister() => bh1745.ReadRegisterAsUShort(BLUE_DATA);
 
         /// <summary>
         /// Reads the clear data register of the sensor
         /// </summary>
         /// <returns></returns>
-        public ushort ReadClearDataRegister() => bh1745.ReadUShort(CLEAR_DATA);
+        public ushort ReadClearDataRegister() => bh1745.ReadRegisterAsUShort(CLEAR_DATA);
 
         /// <summary>
         /// Gets the compensated color reading from the sensor

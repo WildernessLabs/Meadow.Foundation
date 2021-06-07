@@ -60,7 +60,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         void Init()
         {
-            i2CPeripheral.WriteUShort(MCP_REG_CONFIG, 0x0);
+            i2CPeripheral.WriteRegister(MCP_REG_CONFIG, (ushort)0x0);
         }
 
         /// <summary>
@@ -69,11 +69,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         public void Wake()
         {
             ushort conf_shutdown;
-            ushort config = i2CPeripheral.ReadUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
+            ushort config = i2CPeripheral.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
 
             config = (ushort)(config & (~MCP_CONFIG_SHUTDOWN));
 
-            i2CPeripheral.WriteUShort(MCP_REG_CONFIG, config);
+            i2CPeripheral.WriteRegister(MCP_REG_CONFIG, config);
         }
 
         /// <summary>
@@ -82,9 +82,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         public void Sleep()
         {
             ushort conf_shutdown;
-            ushort config = i2CPeripheral.ReadUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
+            ushort config = i2CPeripheral.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
 
-            i2CPeripheral.WriteUShort(MCP_REG_CONFIG, (ushort)(config | MCP_CONFIG_SHUTDOWN));
+            i2CPeripheral.WriteRegister(MCP_REG_CONFIG, (ushort)(config | MCP_CONFIG_SHUTDOWN));
          }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public ushort GetDeviceId()
         {
-            return i2CPeripheral.ReadUShort(MCP_DEVICE_ID, ByteOrder.BigEndian);
+            return i2CPeripheral.ReadRegisterAsUShort(MCP_DEVICE_ID, ByteOrder.BigEndian);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public ushort GetManufactureId()
         {
-            return i2CPeripheral.ReadUShort(MCP_MANUFACTURER_ID, ByteOrder.BigEndian);
+            return i2CPeripheral.ReadRegisterAsUShort(MCP_MANUFACTURER_ID, ByteOrder.BigEndian);
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public void Update()
         {
-            ushort value = i2CPeripheral.ReadUShort(MCP_AMBIENT_TEMP, ByteOrder.BigEndian);
+            ushort value = i2CPeripheral.ReadRegisterAsUShort(MCP_AMBIENT_TEMP, ByteOrder.BigEndian);
 
             if (value == 0xFFFF)
             {

@@ -5,8 +5,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     internal class Bme280I2C : Bme280Comms
     {
-        private II2cBus _i2c;
-        private byte _address;
+        protected I2cPeripheral i2CPeripheral;
 
         internal Bme280I2C(II2cBus i2c, byte busAddress)
         {
@@ -14,19 +13,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 throw new ArgumentOutOfRangeException(nameof(busAddress), "Address should be 0x76 or 0x77");
             }
-
-            _i2c = i2c;
-            _address = busAddress;
+            i2CPeripheral = new I2cPeripheral(i2c, busAddress);
         }
 
-        public override byte[] ReadRegisters(byte startRegister, int readCount)
+        public override void ReadRegisters(byte startRegister, Span<byte> readBuffer)
         {
-            return _i2c.WriteReadData(_address, readCount, (byte)startRegister);
+            i2CPeripheral.ReadRegister(startRegister, readBuffer);
         }
 
         public override void WriteRegister(Register register, byte value)
         {
-            _i2c.WriteData(_address, (byte)register, value);
+            i2CPeripheral.WriteRegister(((byte)register), value);
         }
     }
 }

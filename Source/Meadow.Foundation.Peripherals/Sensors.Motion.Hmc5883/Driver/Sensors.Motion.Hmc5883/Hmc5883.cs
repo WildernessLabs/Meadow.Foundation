@@ -248,9 +248,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Raw Data</returns>
         private Vector GetDirection()
         {
-            ushort x = i2cPeripheral.ReadUShort((byte)Register.HMC_X_MSB_REG_ADDR, ByteOrder.BigEndian);
-            ushort y = i2cPeripheral.ReadUShort((byte)Register.HMC_Y_MSB_REG_ADDR, ByteOrder.BigEndian);
-            ushort z = i2cPeripheral.ReadUShort((byte)Register.HMC_Z_MSB_REG_ADDR, ByteOrder.BigEndian);
+            ushort x = i2cPeripheral.ReadRegisterAsUShort((byte)Register.HMC_X_MSB_REG_ADDR, ByteOrder.BigEndian);
+            ushort y = i2cPeripheral.ReadRegisterAsUShort((byte)Register.HMC_Y_MSB_REG_ADDR, ByteOrder.BigEndian);
+            ushort z = i2cPeripheral.ReadRegisterAsUShort((byte)Register.HMC_Z_MSB_REG_ADDR, ByteOrder.BigEndian);
 
             return new Vector(x, y, z);
         }
@@ -276,7 +276,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         private Status GetStatus()
         {
-            i2cPeripheral.WriteByte((byte)Register.HMC_STATUS_REG_ADDR);
+            i2cPeripheral.Write((byte)Register.HMC_STATUS_REG_ADDR);
             byte status = i2cPeripheral.ReadBytes(1)[0];
 
             return (Status)status;

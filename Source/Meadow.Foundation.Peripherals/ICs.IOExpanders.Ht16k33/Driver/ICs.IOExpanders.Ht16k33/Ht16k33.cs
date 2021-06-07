@@ -75,9 +75,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             //   SetDisplayOn(true);
             //   SetBlinkRate(BlinkRate.Off);
 
-            i2cPeripheral.WriteByte(0x21);
+            i2cPeripheral.Write(0x21);
 
-            i2cPeripheral.WriteByte(0x81);
+            i2cPeripheral.Write(0x81);
 
             SetBrightness(Brightness.Maximum);
             ClearDisplay();
@@ -87,28 +87,28 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             byte value = (byte)(HT16K33_SS | (byte)(awake ? 1 : 0));
 
-            i2cPeripheral.WriteByte(value);
+            i2cPeripheral.Write(value);
         }
 
         public void SetDisplayOn(bool isOn)
         {
             byte value = (byte)(HT16K33_DSP | (byte)(isOn ? 1 : 0));
 
-            i2cPeripheral.WriteByte(value);
+            i2cPeripheral.Write(value);
         }
 
         public void SetBlinkRate(BlinkRate blinkRate)
         {
             byte value = (byte)(HT16K33_DSP | (byte)blinkRate);
 
-            i2cPeripheral.WriteByte(value);
+            i2cPeripheral.Write(value);
         }
 
         public void SetBrightness(Brightness brightness)
         {
             byte value = (byte)(HT16K33_DIM | (byte)brightness);
 
-            i2cPeripheral.WriteByte(value);
+            i2cPeripheral.Write(value);
         }
 
         public void ClearDisplay()
