@@ -178,9 +178,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new NotSupportedException("This method is not supported for this device");
         }
 
-        /// <inheritdoc cref="IByteCommunications.WriteRead(System.Span{byte},System.Span{byte})"/>
+        /// <inheritdoc cref="IByteCommunications.ExchangeData(System.Span{byte},System.Span{byte})"/>
         /// <exception cref="NotSupportedException">This method is not supported for this device</exception>
-        public void WriteRead(Span<byte> writeBuffer, Span<byte> readBuffer)
+        public void ExchangeData(Span<byte> writeBuffer, Span<byte> readBuffer)
         {
             throw new NotSupportedException("This method is not supported for this device");
         }

@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             tx[0] = READ_ID_PART1;
             tx[1] = READ_ID_PART2;
             //Bus.WriteReadData(tx, 2, rx, 8);
-            I2cPeripheral.WriteRead(tx.Slice(0, 2), rx.Slice(0, 8));
+            I2cPeripheral.ExchangeData(tx.Slice(0, 2), rx.Slice(0, 8));
             for (var index = 0; index < 4; index++)
             {
                 SerialNumber <<= 8;
@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             tx[0] = READ_2ND_ID_PART1;
             tx[1] = READ_2ND_ID_PART2;
             //Bus.WriteReadData(tx, 2, rx, 8);
-            I2cPeripheral.WriteRead(tx.Slice(0, 2), rx.Slice(0, 8));
+            I2cPeripheral.ExchangeData(tx.Slice(0, 2), rx.Slice(0, 8));
 
             SerialNumber <<= 8;
             SerialNumber += rx[0];
