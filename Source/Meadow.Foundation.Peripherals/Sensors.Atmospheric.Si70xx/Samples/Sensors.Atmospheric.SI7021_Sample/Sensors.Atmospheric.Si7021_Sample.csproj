@@ -16,7 +16,8 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj"/>
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Linux\Meadow.Linux.csproj" />
     <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Si70xx\Sensors.Atmospheric.Si70xx.csproj" />
   </ItemGroup>
 </Project>

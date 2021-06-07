@@ -7,7 +7,12 @@ using Meadow.Units;
 
 namespace BasicSensors.Atmospheric.SI7021_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp
+#if JETSON
+        : MeadowOnLinux<JetsonNanoPinout>
+#else
+        :App<F7Micro, MeadowApp>
+#endif
     {
         Si70xx sensor;
 
