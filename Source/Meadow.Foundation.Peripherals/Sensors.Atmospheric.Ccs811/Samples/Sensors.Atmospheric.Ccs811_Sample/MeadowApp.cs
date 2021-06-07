@@ -21,17 +21,15 @@ namespace Sensors.AirQuality.Ccs811_Sample
             sensor = new Ccs811(i2c);
 
             //==== IObservable 
-            // Example that uses an IObersvable subscription to only be notified
-            // when the temperature changes by at least a degree, and humidty by 5%.
-            // (blowing hot breath on the sensor should trigger)
+            // Example that uses an IObersvable subscription to
+            // only notify if the change is greater than 1000ppm CO2 and 100ppb VOC.
+            // breathing on the sensor should trigger
             var consumer = Ccs811.CreateObserver(
                 handler: result => {
                     Console.WriteLine($"Observer triggered:");
                     Console.WriteLine($"   new CO2: {result.New.Co2?.PartsPerMillion:N1}ppm, old: {result.Old?.Co2?.PartsPerMillion:N1}ppm.");
                     Console.WriteLine($"   new VOC: {result.New.Voc?.PartsPerBillion:N1}ppb, old: {result.Old?.Voc?.PartsPerBillion:N1}ppb.");
                 },
-                // only notify if the change is greater than 1000ppm CO2 and 100ppb VOC.
-                // breathing on the sensor should trigger
                 filter: result => {
                     if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
                         return (
