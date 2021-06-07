@@ -11,25 +11,25 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Provide access to the CCS811 C02 and VOC Air Quality Sensor
     /// </summary>
     public partial class Ccs811 :
-        I2cFilterableObservableBase<(Concentration? CO2, Concentration? VOC)>,
-        ICO2Sensor, IVocSensor
+        I2cFilterableObservableBase<(Concentration? Co2, Concentration? Voc)>,
+        ICo2Sensor, IVocSensor
     {
         // internal thread lock
         private byte[] _readingBuffer = new byte[8];
 
-        public event EventHandler<ChangeResult<Concentration>> CO2Updated = delegate { };
-        public event EventHandler<ChangeResult<Concentration>> VOCUpdated = delegate { };
+        public event EventHandler<ChangeResult<Concentration>> Co2Updated = delegate { };
+        public event EventHandler<ChangeResult<Concentration>> VocUpdated = delegate { };
 
         /// <summary>
         /// The measured CO2 concentration
         /// </summary>
         /// 
-        public Concentration? CO2 => Conditions.CO2;
+        public Concentration? Co2 => Conditions.Co2;
 
         /// <summary>
         /// The measured VOC concentration
         /// </summary>
-        public Concentration? VOC => Conditions.VOC;
+        public Concentration? Voc => Conditions.Voc;
 
 
         public Ccs811(II2cBus i2cBus, byte address)
@@ -132,7 +132,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             I2cPeripheral.Write(new byte[] { (byte)Register.SW_RESET, 0x11, 0xE5, 0x72, 0x8A });
         }
 
-        protected override async Task<(Concentration? CO2, Concentration? VOC)> ReadSensor()
+        protected override async Task<(Concentration? Co2, Concentration? Voc)> ReadSensor()
         {
             return await Task.Run(() =>
             {
@@ -147,15 +147,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             });
         }
 
-        protected override void RaiseChangedAndNotify(IChangeResult<(Concentration? CO2, Concentration? VOC)> changeResult)
+        protected override void RaiseChangedAndNotify(IChangeResult<(Concentration? Co2, Concentration? Voc)> changeResult)
         {
-            if (changeResult.New.CO2 is { } co2)
+            if (changeResult.New.Co2 is { } co2)
             {
-                CO2Updated?.Invoke(this, new ChangeResult<Concentration>(co2, changeResult.Old?.CO2));
+                Co2Updated?.Invoke(this, new ChangeResult<Concentration>(co2, changeResult.Old?.Co2));
             }
-            if (changeResult.New.VOC is { } voc)
+            if (changeResult.New.Voc is { } voc)
             {
-                VOCUpdated?.Invoke(this, new ChangeResult<Concentration>(voc, changeResult.Old?.VOC));
+                VocUpdated?.Invoke(this, new ChangeResult<Concentration>(voc, changeResult.Old?.Voc));
             }
 
             base.RaiseChangedAndNotify(changeResult);
