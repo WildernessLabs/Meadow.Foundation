@@ -9,7 +9,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 {
     public class MeadowApp
     #if JETSON
-        : MeadowOnLinux<JetsonNanoPinout>
+        : App<MeadowOnLinux<JetsonNanoPinout>, MeadowApp>
     #else
         :App<F7Micro, MeadowApp>
     #endif
@@ -22,7 +22,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
             // configure our sensor on the I2C Bus
 #if JETSON
-            var i2cBus = this.CreateI2cBus(1);
+            var i2cBus = Device.CreateI2cBus(1);
 #else
             var i2cBus = Device.CreateI2cBus();
 #endif            
