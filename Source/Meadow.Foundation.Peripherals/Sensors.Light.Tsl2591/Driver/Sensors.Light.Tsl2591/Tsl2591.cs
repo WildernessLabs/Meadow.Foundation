@@ -17,7 +17,6 @@ namespace Meadow.Foundation.Sensors.Light
         IDisposable
     {
         //==== events
-        public event EventHandler<IChangeResult<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>> Updated = delegate { };
         public event EventHandler<IChangeResult<Illuminance>> FullSpectrumUpdated = delegate { };
         public event EventHandler<IChangeResult<Illuminance>> InfraredUpdated = delegate { };
         public event EventHandler<IChangeResult<Illuminance>> VisibleLightUpdated = delegate { };
@@ -89,7 +88,6 @@ namespace Meadow.Foundation.Sensors.Light
 
         protected override void RaiseChangedAndNotify(IChangeResult<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
             if (changeResult.New.FullSpectrum is { } ill)
             {
                 FullSpectrumUpdated?.Invoke(this, new ChangeResult<Illuminance>(ill, changeResult.Old?.FullSpectrum));
@@ -107,7 +105,7 @@ namespace Meadow.Foundation.Sensors.Light
                 LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.Integrated));
             }
 
-            base.NotifyObservers(changeResult);
+            base.RaiseChangedAndNotify(changeResult);
         }
 
         public void PowerOn()

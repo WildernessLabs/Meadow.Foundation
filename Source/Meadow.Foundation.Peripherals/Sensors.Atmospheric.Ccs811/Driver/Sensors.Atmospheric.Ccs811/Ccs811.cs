@@ -11,40 +11,25 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Provide access to the CCS811 C02 and VOC Air Quality Sensor
     /// </summary>
     public partial class Ccs811 :
-        I2cFilterableObservableBase<(Concentration?, Concentration?)>,
+        I2cFilterableObservableBase<(Concentration? CO2, Concentration? VOC)>,
         ICO2Sensor, IVocSensor
     {
         // internal thread lock
-        private object _lock = new object();
         private byte[] _readingBuffer = new byte[8];
-        private CancellationTokenSource? SamplingTokenSource { get; set; }
 
-        public event EventHandler<IChangeResult<(Concentration?, Concentration?)>> Updated = delegate { };
         public event EventHandler<ChangeResult<Concentration>> CO2Updated = delegate { };
         public event EventHandler<ChangeResult<Concentration>> VOCUpdated = delegate { };
-
-        /// <summary>
-        /// Gets a value indicating whether the sensor is currently in a sampling
-        /// loop. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
-
-        /// <summary>
-        /// The last read conditions.
-        /// </summary>
-        public (Concentration CO2, Concentration VOC) Conditions { get; private set; }
 
         /// <summary>
         /// The measured CO2 concentration
         /// </summary>
         /// 
-        public Concentration? CO2 { get => Conditions.CO2; }
+        public Concentration? CO2 => Conditions.CO2;
 
         /// <summary>
         /// The measured VOC concentration
         /// </summary>
-        public Concentration? VOC { get => Conditions.VOC; }
+        public Concentration? VOC => Conditions.VOC;
 
 
         public Ccs811(II2cBus i2cBus, byte address)
@@ -144,70 +129,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private void Reset()
         {
             //Bus.WriteBytes((byte)Register.SW_RESET, 0x11, 0xE5, 0x72, 0x8A);
-            I2cPeripheral.WriteBytes(new byte[] { (byte)Register.SW_RESET, 0x11, 0xE5, 0x72, 0x8A });
+            I2cPeripheral.Write(new byte[] { (byte)Register.SW_RESET, 0x11, 0xE5, 0x72, 0x8A });
         }
 
-        public async Task<(Concentration Co2, Concentration Voc)> Read()
-        {
-            var state = await Update();
-
-            return state;
-        }
-
-        public void StartUpdating()
-        {
-            // thread safety
-            lock (_lock)
-            {
-                if (IsSampling) return;
-
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                (Concentration CO2, Concentration VOC) oldConditions;
-                ChangeResult<(Concentration?, Concentration?)> result;
-
-                Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        // cleanup
-                        if (ct.IsCancellationRequested)
-                        {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            IsSampling = false;
-                            break;
-                        }
-                        // capture history
-                        oldConditions = (Conditions.CO2, Conditions.VOC);
-
-                        // read
-                        Conditions = await Read();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<(Concentration?, Concentration?)>(oldConditions, Conditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(1100);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        protected async Task<(Concentration Co2, Concentration Voc)> Update()
+        protected override async Task<(Concentration? CO2, Concentration? VOC)> ReadSensor()
         {
             return await Task.Run(() =>
             {
-                _readingBuffer = new byte[8];
-                
-
                 // data is really in just the first 4, but this gets us status and raw data as well
-                //Bus.ReadRegisterBytes((byte)Register.ALG_RESULT_DATA, _readingBuffer);
                 I2cPeripheral.ReadRegister((byte)Register.ALG_RESULT_DATA, _readingBuffer);
 
                 (Concentration co2, Concentration voc) state;
@@ -218,9 +147,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             });
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<(Concentration? CO2, Concentration? VOC)> changeResult)
+        protected override void RaiseChangedAndNotify(IChangeResult<(Concentration? CO2, Concentration? VOC)> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
             if (changeResult.New.CO2 is { } co2)
             {
                 CO2Updated?.Invoke(this, new ChangeResult<Concentration>(co2, changeResult.Old?.CO2));
@@ -229,7 +157,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 VOCUpdated?.Invoke(this, new ChangeResult<Concentration>(voc, changeResult.Old?.VOC));
             }
-            base.NotifyObservers(changeResult);
+
+            base.RaiseChangedAndNotify(changeResult);
         }
 
         /// <summary>

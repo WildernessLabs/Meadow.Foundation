@@ -19,7 +19,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     {
         /// <summary>
         /// </summary>
-        public event EventHandler<IChangeResult<(Units.Temperature?, RelativeHumidity?)>> Updated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
@@ -158,7 +157,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="changeResult"></param>
         protected override void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
             if (changeResult.New.Temperature is { } temp)
             {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
@@ -167,7 +165,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
-            base.NotifyObservers(changeResult);
+
+            base.RaiseChangedAndNotify(changeResult);
         }
 
         /// <summary>
