@@ -127,9 +127,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
 
-        public void Write(Span<byte> data)
+        public void Write(Span<byte> writeBuffer)
         {
-            Bus.Write(Address, data);
+            Bus.Write(Address, writeBuffer);
         }
 
         public void WriteRegister(byte address, uint value, ByteOrder order = ByteOrder.LittleEndian)
