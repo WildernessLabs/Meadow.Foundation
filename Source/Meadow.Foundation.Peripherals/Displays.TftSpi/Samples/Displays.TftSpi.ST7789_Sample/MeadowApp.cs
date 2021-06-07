@@ -47,7 +47,7 @@ namespace Displays.Tft.ST7789_Sample
             while (true)
             {
                 PathTest();
-                Thread.Sleep(100000);
+                Thread.Sleep(5000);
 
                 LineTest();
 
