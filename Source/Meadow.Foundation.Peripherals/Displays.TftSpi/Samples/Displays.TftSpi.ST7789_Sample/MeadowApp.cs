@@ -15,6 +15,7 @@ namespace Displays.Tft.ST7789_Sample
     {
         GraphicsLibrary canvas;
         TftSpiBase display;
+        int sleepDuration = 500;
 
         public MeadowApp()
         {
@@ -26,7 +27,7 @@ namespace Displays.Tft.ST7789_Sample
 
             display.ClearScreen(0xFF);
             display.Show();
-            Thread.Sleep(1000);
+            Thread.Sleep(sleepDuration);
 
             canvas.Clear(true);
             
@@ -42,43 +43,45 @@ namespace Displays.Tft.ST7789_Sample
 
             canvas.Show();
 
-            Thread.Sleep(2000);
+            Thread.Sleep(sleepDuration);
 
             while (true)
             {
                 PathTest();
-                Thread.Sleep(5000);
+                Thread.Sleep(sleepDuration);
 
                 LineTest();
+                Thread.Sleep(sleepDuration);
 
                 PolarLineTest();
-                Thread.Sleep(5000);
+                Thread.Sleep(sleepDuration);
 
                 RoundRectTest();
-                Thread.Sleep(5000);
+                Thread.Sleep(sleepDuration);
 
                 QuadrantTest();
-                Thread.Sleep(5000);
+                Thread.Sleep(sleepDuration);
 
                 StrokeTest();
-                Thread.Sleep(5000);
+                Thread.Sleep(sleepDuration);
 
                 ShapeTest();
-                Thread.Sleep(5000);
+                Thread.Sleep(sleepDuration);
 
                 FontScaleTest();
-                Thread.Sleep(5000);
+                Thread.Sleep(sleepDuration);
 
                 FontAlignmentTest();
-                Thread.Sleep(5000);                   
+                Thread.Sleep(sleepDuration);                   
 
                 ColorFontTest();
-                Thread.Sleep(5000);
+                Thread.Sleep(sleepDuration);
 
                 CircleTest();
-                Thread.Sleep(5000);
+                Thread.Sleep(sleepDuration);
 
                 InvertTest();
+                Thread.Sleep(sleepDuration);
             }
         }
 

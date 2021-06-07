@@ -376,7 +376,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             }
 
             dataCommandPort.State = Data;
-            spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiWriteBuffer.Span, spiReadBuffer.Span, len);
+            spi.Exchange(chipSelectPort, spiWriteBuffer.Span, spiReadBuffer.Span);
 
           /*  xMin = width;
             yMin = height;
@@ -405,7 +405,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 sourceIndex = ((y * width) + x0) * sizeof(ushort);
 
-                spi.Exchange(chipSelectPort, ChipSelectMode.ActiveLow, spiWriteBuffer.Span.Slice(sourceIndex, len), spiReadBuffer.Span.Slice(sourceIndex, len));
+                spi.Exchange(chipSelectPort, spiWriteBuffer.Span.Slice(sourceIndex, len), spiReadBuffer.Span.Slice(sourceIndex, len));
             }
 
             xMin = width;
@@ -461,7 +461,7 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         protected void Write(byte[] data)
         {
-            spiDisplay.WriteBytes(data);
+            spiDisplay.Write(data);
         }
 
         protected void DelayMs(int millseconds)
@@ -489,7 +489,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected void SendData(byte[] data)
         {
             dataCommandPort.State = Data;
-            spiDisplay.WriteBytes(data);
+            spiDisplay.Write(data);
         }
 
         /// <summary>
