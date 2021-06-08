@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Distance
 {
     // TODO: why is `DistanceUpdated` never invoked? is this sensor done?
     public class Mb10x0 :
-        FilterableChangeObservableBase<Length>,
+        SensorBase<Length>,
         IRangeFinder
     {
         //==== events

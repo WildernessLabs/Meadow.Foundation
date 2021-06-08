@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// HYSRF05 Distance Sensor
     /// </summary>
     public class Hysrf05:
-        FilterableChangeObservableBase<Length>, 
+        SensorBase<Length>, 
         IRangeFinder
     {
 

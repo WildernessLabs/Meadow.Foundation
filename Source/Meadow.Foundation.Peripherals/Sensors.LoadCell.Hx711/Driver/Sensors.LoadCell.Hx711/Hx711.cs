@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
     public class Hx711 :
-        FilterableChangeObservableBase<Mass>,
+        SensorBase<Mass>,
         IMassSensor,
         IDisposable
     {

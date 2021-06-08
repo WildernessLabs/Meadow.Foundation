@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     +/- 200g
     /// </summary>
     public class Adxl377 :
-        FilterableChangeObservableBase<Acceleration3D>,
+        SensorBase<Acceleration3D>,
         IAccelerometer
     {
         //==== events

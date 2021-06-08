@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// internal switch that is triggered during every revolution.
     /// </summary>
     public partial class SwitchingAnemometer :
-        FilterableChangeObservableBase<Speed>, IAnemometer
+        SensorBase<Speed>, IAnemometer
     {
         //==== events
         /// <summary>

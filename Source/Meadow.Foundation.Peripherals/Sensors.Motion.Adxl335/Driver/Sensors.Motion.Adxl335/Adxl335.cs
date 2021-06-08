@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     +/- 3g
     /// </summary>
     public class Adxl335 :
-        FilterableChangeObservableBase<Acceleration3D>,
+        SensorBase<Acceleration3D>,
         IAccelerometer
     {
         // [Bryan (2021.05.16)] commented this out, it's a duplicate of the other, no?

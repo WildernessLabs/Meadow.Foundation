@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// GP2D12 Distance Sensor
     /// </summary>
     public class Gp2d12 :
-        FilterableChangeObservableBase<Length>, 
+        SensorBase<Length>, 
         IRangeFinder
     {
         IAnalogInputPort analogInputPort;

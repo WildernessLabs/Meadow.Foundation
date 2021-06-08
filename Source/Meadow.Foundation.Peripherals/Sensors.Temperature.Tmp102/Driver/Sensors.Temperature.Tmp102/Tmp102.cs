@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP102 Temperature sensor object.
     /// </summary>    
     public class Tmp102 :
-        FilterableChangeObservableBase<Units.Temperature>,
+        SensorBase<Units.Temperature>,
         ITemperatureSensor
     {
         /// <summary>

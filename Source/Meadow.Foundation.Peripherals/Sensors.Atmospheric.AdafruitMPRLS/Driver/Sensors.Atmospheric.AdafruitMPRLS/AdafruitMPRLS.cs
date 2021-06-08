@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Device datasheets also available here: https://sensing.honeywell.com/micropressure-mpr-series
     /// </summary>
     public class AdafruitMPRLS :
-        FilterableChangeObservableBase<Pressure>,
+        SensorBase<Pressure>,
         IBarometricPressureSensor
     {
         //==== events

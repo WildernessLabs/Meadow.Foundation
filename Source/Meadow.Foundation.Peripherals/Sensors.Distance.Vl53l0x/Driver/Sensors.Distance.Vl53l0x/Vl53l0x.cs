@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// Represents the Vl53l0x distance sensor
     /// </summary>
     public class Vl53l0x :
-        FilterableChangeObservableBase<Length>,
+        SensorBase<Length>,
         IRangeFinder
     {
         //==== events

@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// Labs Clima Pro board.
     /// </summary>
     public partial class WindVane
-        : FilterableChangeObservableBase<Azimuth>, IWindVane
+        : SensorBase<Azimuth>, IWindVane
     {
         //==== events
         /// <summary>

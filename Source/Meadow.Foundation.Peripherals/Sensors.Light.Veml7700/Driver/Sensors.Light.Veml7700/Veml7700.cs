@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// High Accuracy Ambient Light Sensor 
     /// </summary>
     public class Veml7700 :
-        FilterableChangeObservableBase<Illuminance>,
+        SensorBase<Illuminance>,
         ILightSensor, 
         IDisposable
     {

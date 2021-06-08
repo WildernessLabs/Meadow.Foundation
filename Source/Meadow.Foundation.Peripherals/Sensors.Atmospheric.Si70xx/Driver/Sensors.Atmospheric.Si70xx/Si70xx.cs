@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// temperature and humidity sensors.
     /// </summary>
     public partial class Si70xx :
-        I2cFilterableObservableBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
+        I2cSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
         /// <summary>

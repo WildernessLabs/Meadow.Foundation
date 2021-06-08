@@ -8,7 +8,7 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public class Bmp180 :
-        FilterableChangeObservableBase<(Units.Temperature?, Pressure?)>,
+        SensorBase<(Units.Temperature?, Pressure?)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
         //==== events

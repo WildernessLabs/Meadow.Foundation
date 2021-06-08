@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Temperature
 {
     public class Mcp9808 :
-        FilterableChangeObservableBase<Units.Temperature>,
+        SensorBase<Units.Temperature>,
         ITemperatureSensor
     {
         //==== events

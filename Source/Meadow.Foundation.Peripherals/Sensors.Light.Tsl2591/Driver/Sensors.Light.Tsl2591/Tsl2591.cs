@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Light
     ///     Driver for the TSL2591 light-to-digital converter.
     /// </summary>
     public partial class Tsl2591 :
-        I2cFilterableObservableBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,
+        I2cSensorBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,
         ILightSensor,
         IDisposable
     {

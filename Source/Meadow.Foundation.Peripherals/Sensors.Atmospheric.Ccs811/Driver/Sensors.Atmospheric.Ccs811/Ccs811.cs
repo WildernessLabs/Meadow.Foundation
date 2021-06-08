@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Provide access to the CCS811 C02 and VOC Air Quality Sensor
     /// </summary>
     public partial class Ccs811 :
-        I2cFilterableObservableBase<(Concentration? Co2, Concentration? Voc)>,
+        I2cSensorBase<(Concentration? Co2, Concentration? Voc)>,
         ICo2Sensor, IVocSensor
     {
         // internal thread lock

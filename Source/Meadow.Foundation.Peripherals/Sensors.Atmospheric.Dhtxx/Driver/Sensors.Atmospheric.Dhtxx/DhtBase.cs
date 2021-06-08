@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
     /// a DHT temperature and Humidity sensor.
     /// </summary>
     public abstract class DhtBase : 
-        FilterableChangeObservableBase<(Units.Temperature?, RelativeHumidity?)>,
+        SensorBase<(Units.Temperature?, RelativeHumidity?)>,
         ITemperatureSensor, IHumiditySensor
     {
         //==== events

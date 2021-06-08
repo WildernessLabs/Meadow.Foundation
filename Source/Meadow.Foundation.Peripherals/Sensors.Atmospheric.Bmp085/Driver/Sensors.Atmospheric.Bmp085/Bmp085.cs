@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Bosch BMP085 digital pressure and temperature sensor.
     /// </summary>
     public class Bmp085 : 
-        FilterableChangeObservableBase<(Units.Temperature?, Pressure?)>,
+        SensorBase<(Units.Temperature?, Pressure?)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
         //==== Events

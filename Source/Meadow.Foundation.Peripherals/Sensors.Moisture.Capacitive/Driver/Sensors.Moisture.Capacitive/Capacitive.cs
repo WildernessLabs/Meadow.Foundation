@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// Capacitive Soil Moisture Sensor
     /// </summary>
     public class Capacitive :
-        FilterableChangeObservableBase<double>,
+        SensorBase<double>,
         IMoistureSensor
     {
         /// <summary>

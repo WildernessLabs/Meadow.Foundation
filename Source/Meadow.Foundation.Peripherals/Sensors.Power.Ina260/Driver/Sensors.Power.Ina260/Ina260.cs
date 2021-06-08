@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Power
 {
     public partial class Ina260
-        : I2cFilterableObservableBase<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)>
+        : I2cSensorBase<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)>
     {
         public delegate void ValueChangedHandler(float previousValue, float newValue);
 

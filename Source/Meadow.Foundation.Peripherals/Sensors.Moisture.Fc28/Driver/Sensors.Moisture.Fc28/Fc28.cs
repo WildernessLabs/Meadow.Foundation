@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor    
     /// </summary>
     public class Fc28 : 
-        FilterableChangeObservableBase<double>, 
+        SensorBase<double>, 
         IMoistureSensor
     {
         /// <summary>

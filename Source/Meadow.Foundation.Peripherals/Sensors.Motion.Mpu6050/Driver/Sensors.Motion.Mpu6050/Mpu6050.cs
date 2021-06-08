@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Motion
     //  * needs to inherit from `FilterableChangeObservableI2CPeripheral`, currently using a bunch of allocating methods.
 
     public class Mpu6050 :
-        FilterableChangeObservableBase<(Acceleration3D?, AngularAcceleration3D?)>,
+        SensorBase<(Acceleration3D?, AngularAcceleration3D?)>,
         IAccelerometer, IAngularAccelerometer, IDisposable
     {
         /// <summary>

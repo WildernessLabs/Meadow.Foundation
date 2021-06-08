@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// Sfsr02 Distance Sensor
     /// </summary>
     public class Sfsr02:
-        FilterableChangeObservableBase<Length>, 
+        SensorBase<Length>, 
         IRangeFinder
     {
 

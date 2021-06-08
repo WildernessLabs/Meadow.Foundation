@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Rotary
     /// Digital rotary encoder that uses two-bit Gray Code to encode rotation.
     /// </summary>
     public class RotaryEncoder :
-        FilterableChangeObservableBase<RotationDirection>,
+        SensorBase<RotationDirection>,
         IRotaryEncoder
     {
         //==== events

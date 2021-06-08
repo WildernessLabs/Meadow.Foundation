@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     ///     Driver for the MPL3115A2 pressure and humidity sensor.
     /// </summary>
     public class Mpl3115a2 :
-        FilterableChangeObservableBase<(Units.Temperature?, Pressure?)>,
+        SensorBase<(Units.Temperature?, Pressure?)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
         /// <summary>

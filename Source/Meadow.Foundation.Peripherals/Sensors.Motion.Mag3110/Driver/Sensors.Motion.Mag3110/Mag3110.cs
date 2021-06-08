@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     public class Mag3110:
-        FilterableChangeObservableBase<MagneticField3D>
+        SensorBase<MagneticField3D>
        // IMagnetometer
     {
         /// <summary>

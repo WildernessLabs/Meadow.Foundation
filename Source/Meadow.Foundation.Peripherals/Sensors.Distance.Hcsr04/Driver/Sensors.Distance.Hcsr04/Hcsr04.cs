@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// HCSR04 Distance Sensor
     /// </summary>
     public class Hcsr04:
-        FilterableChangeObservableBase<Length>, 
+        SensorBase<Length>, 
         IRangeFinder
     {
 

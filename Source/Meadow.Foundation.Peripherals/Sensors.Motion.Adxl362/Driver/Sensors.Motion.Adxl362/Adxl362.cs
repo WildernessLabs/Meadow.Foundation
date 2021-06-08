@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// Driver for the ADXL362 triple axis accelerometer.
     /// </summary>
     public class Adxl362 :
-        FilterableChangeObservableBase<Acceleration3D>,
+        SensorBase<Acceleration3D>,
         IAccelerometer
     {
         //==== events

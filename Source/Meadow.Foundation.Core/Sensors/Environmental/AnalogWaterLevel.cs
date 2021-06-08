@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Environmental
 {
     public class AnalogWaterLevel
-        : FilterableChangeObservableBase<float>
+        : SensorBase<float>
     {
         /// <summary>
         /// Raised when the value of the reading changes.

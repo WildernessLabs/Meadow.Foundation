@@ -7,7 +7,7 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Light
 {
     public class Alspt19315C :
-        FilterableChangeObservableBase<Voltage>
+        SensorBase<Voltage>
     {
         //==== Events
         public event EventHandler<IChangeResult<Voltage>> Updated;

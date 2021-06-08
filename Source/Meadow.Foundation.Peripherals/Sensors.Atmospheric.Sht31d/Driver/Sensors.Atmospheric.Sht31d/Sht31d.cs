@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Readings from the sensor are made in Single-shot mode.
     /// </remarks>
     public class Sht31d :
-        FilterableChangeObservableBase<(Units.Temperature?, RelativeHumidity?)>,
+        SensorBase<(Units.Temperature?, RelativeHumidity?)>,
         ITemperatureSensor, IHumiditySensor
     {
         public event EventHandler<IChangeResult<(Units.Temperature?, RelativeHumidity?)>> Updated;

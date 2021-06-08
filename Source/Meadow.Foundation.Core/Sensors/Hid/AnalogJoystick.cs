@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// 2-axis analog joystick
     /// </summary>
     public partial class AnalogJoystick
-        : FilterableChangeObservableBase<JoystickPosition>
+        : SensorBase<JoystickPosition>
     {
         //==== events
         /// <summary>

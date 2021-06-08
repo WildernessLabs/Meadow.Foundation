@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20                      0
     /// </remarks>
     public class AnalogTemperature :
-        FilterableChangeObservableBase<Units.Temperature>,
+        SensorBase<Units.Temperature>,
         ITemperatureSensor
     {
         /// <summary>

@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// a HIH6130 temperature and Humidity sensor.
     /// </summary>
     public class Hih6130 :
-        FilterableChangeObservableBase<(Units.Temperature?, RelativeHumidity?)>,
+        SensorBase<(Units.Temperature?, RelativeHumidity?)>,
         ITemperatureSensor, IHumiditySensor
     {
         /// <summary>

@@ -7,7 +7,7 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Light
 {
     public class Temt6000 :
-        FilterableChangeObservableBase<Voltage>
+        SensorBase<Voltage>
     {
         //==== events
         public event EventHandler<IChangeResult<Voltage>> Updated;

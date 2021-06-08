@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// from the Bosch BME280 sensor.
     /// </remarks>
     public partial class Bme280 :
-        FilterableChangeObservableBase<(Units.Temperature?, RelativeHumidity?, Pressure?)>,
+        SensorBase<(Units.Temperature?, RelativeHumidity?, Pressure?)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         //==== events
