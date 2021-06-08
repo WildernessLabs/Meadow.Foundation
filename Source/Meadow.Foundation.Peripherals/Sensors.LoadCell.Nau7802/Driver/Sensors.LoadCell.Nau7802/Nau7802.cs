@@ -24,11 +24,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
         private double _gramsPerAdcUnit = 0;
         private PU_CTRL_BITS _currentPU_CTRL;
         private int _tareValue;
-        private object SyncRoot { get; } = new object();
-        private CancellationTokenSource? SamplingTokenSource { get; set; }
 
         //==== Properties
-        public bool IsSampling { get; private set; }
         public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
 
         /// <summary>
@@ -44,19 +41,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
             : base(bus, (byte)Addresses.Default)
         {
             Initialize((byte)Addresses.Default);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            StopUpdating();
-        }
-
-        /// <summary>
-        /// Dispose managed resources
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
         }
 
         private void Initialize(byte address)
@@ -292,18 +276,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             return adc;
         }
 
-        /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        public async Task<Mass?> Read()
-        {
-            // update confiruation for a one-off read
-            this.Mass = await ReadSensor();
-            return Mass;
-        }
-
-        protected async Task<Mass> ReadSensor()
+        protected override async Task<Mass> ReadSensor()
         {
             return await Task.Run(() => {
                 if (_gramsPerAdcUnit == 0)
@@ -322,82 +295,22 @@ namespace Meadow.Foundation.Sensors.LoadCell
             });
         }
 
-        public void StartUpdating()
-        {
-            StartUpdating(DefaultSamplePeriod);
-        }
-
-        public void StartUpdating(TimeSpan period)
-        {
-            // thread safety
-            lock (SyncRoot)
-            {
-                if (IsSampling) return;
-
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                Mass? oldConditions;
-                ChangeResult<Mass> result;
-
-                Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        // cleanup
-                        if (ct.IsCancellationRequested)
-                        {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = Mass;
-
-                        // read
-                        Mass = await Read();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<Mass>(Mass.Value, oldConditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(period);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
 
         /// <summary>
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(IChangeResult<Mass> changeResult)
+        protected override void RaiseChangedAndNotify(IChangeResult<Mass> changeResult)
         {
             try
             {
                 MassUpdated?.Invoke(this, changeResult);
-                base.NotifyObservers(changeResult);
+                base.RaiseChangedAndNotify(changeResult);
             }
             catch(Exception ex)
             {
                 Console.WriteLine($"NAU7802 event handler threw: {ex.Message}");
                 throw;
-            }
-        }
-
-        /// <summary>
-        /// Stops sampling the mass.
-        /// </summary>
-        public void StopUpdating()
-        {
-            lock (SyncRoot)
-            {
-                if (!IsSampling) return;
-                SamplingTokenSource?.Cancel();
             }
         }
     }

@@ -14,30 +14,20 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// temperature and humidity sensors
     /// </summary>
     public partial class Htu21d :
-        I2cFilterableObservableBase<(Units.Temperature?, RelativeHumidity?)>,
+        I2cFilterableObservableBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
         //==== Events
-        public event EventHandler<IChangeResult<(Units.Temperature?, RelativeHumidity?)>> Updated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         //==== internals
 
         // internal thread lock
-        private object _lock = new object();
         private byte[] _rx = new byte[3];
-        private CancellationTokenSource? SamplingTokenSource { get; set; }
 
 
-        //==== propertires
-        /// <summary>
-        /// Gets a value indicating whether the sensor is currently in a sampling
-        /// loop. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
-		
+        //==== propertires		
         public int DEFAULT_SPEED => 400;
 
         /// <summary>
@@ -49,11 +39,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
-
-        /// <summary>
-        /// The last read conditions.
-        /// </summary>
-        public (Units.Temperature? Temperature, RelativeHumidity? Humidity) Conditions;
 
         /// <summary>
         /// Serial number of the device.
@@ -86,18 +71,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             SetResolution(SensorResolution.TEMP11_HUM11);
         }
 
-        /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        public async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> Read()
-        {
-            // update confiruation for a one-off read
-            this.Conditions = await ReadSensor();
-            return Conditions;
-        }
-
-        protected async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
+        protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
             (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
@@ -135,82 +109,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             });
         }
 		
-        public void StartUpdating(int standbyDuration = 1000)
-        {
-            // thread safety
-            lock (_lock)
-            {
-                if (IsSampling) return;
-
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                (Units.Temperature? Temperature, RelativeHumidity? Humidity)? oldConditions;
-                ChangeResult<(Units.Temperature?, RelativeHumidity?)> result;
-
-                Task.Factory.StartNew(async () =>
-                {
-                    while (true)
-                    {
-                        // cleanup
-                        if (ct.IsCancellationRequested)
-                        {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = Conditions;
-
-                        // read
-                        Conditions = await ReadSensor();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<(Units.Temperature?, RelativeHumidity?)>(Conditions, oldConditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
         /// <summary>
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
+        protected override void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
             if (changeResult.New.Temperature is { } temp) {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             if (changeResult.New.Humidity is { } humidity) {
                 HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
-            base.NotifyObservers(changeResult);
-        }
-
-        /// <summary>
-        /// Stops sampling the temperature.
-        /// </summary>
-        public void StopUpdating()
-        {
-            lock (_lock)
-            {
-                if (!IsSampling) return;
-
-                SamplingTokenSource?.Cancel();
-
-                // state muh-cheen
-                IsSampling = false;
-            }
+            base.RaiseChangedAndNotify(changeResult);
         }
 		
 		/// <summary>

@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,12 +7,10 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Power
 {
     public partial class Ina260
-        : I2cFilterableObservableBase<(Units.Power?, Units.Voltage?, Units.Current?)>
+        : I2cFilterableObservableBase<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)>
     {
         public delegate void ValueChangedHandler(float previousValue, float newValue);
 
-
-        public event EventHandler<IChangeResult<(Units.Power?, Units.Voltage?, Units.Current?)>> Updated = delegate { };
         public event EventHandler<IChangeResult<Units.Power>> PowerUpdated = delegate { };
         public event EventHandler<IChangeResult<Units.Voltage>> VoltageUpdated = delegate { };
         public event EventHandler<IChangeResult<Units.Current>> CurrentUpdated = delegate { };
@@ -20,10 +19,6 @@ namespace Meadow.Foundation.Sensors.Power
         private TimeSpan _samplePeriod;
 
         private Register RegisterPointer { get; set; }
-        private object SyncRoot { get; } = new object();
-        private CancellationTokenSource SamplingTokenSource { get; set; }
-
-        public bool IsSampling { get; private set; }
 
         /// <summary>
         /// The value of the current (in Amps) flowing through the shunt resistor from the last reading
@@ -39,11 +34,6 @@ namespace Meadow.Foundation.Sensors.Power
         /// The power from the last reading..
         /// </summary>
         public Units.Power? Power => Conditions.Power;
-
-        /// <summary>
-        /// The last read conditions.
-        /// </summary>
-        public (Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current) Conditions;
 
         public Ina260(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
@@ -64,68 +54,7 @@ namespace Meadow.Foundation.Sensors.Power
         {
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if(disposing)
-            {
-                StopSampling();
-            }
-        }
-
-        public void StartUpdating(TimeSpan samplePeriod)
-        {
-            lock (SyncRoot)
-            {
-                // allow subsequent calls to StartSampling to just change the sample period
-                _samplePeriod = samplePeriod;
-
-                if (IsSampling)
-                {
-                    return;
-                }
-
-                SamplingTokenSource = new CancellationTokenSource();
-                var ct = SamplingTokenSource.Token;
-
-                Task.Factory.StartNew(async () =>
-                {
-                    IsSampling = true;
-
-                    (Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current) oldConditions;
-                    ChangeResult<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)> result;
-
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            IsSampling = false;
-                            break;
-                        }
-
-                        // capture history
-                        oldConditions = (Conditions.Power, Conditions.Voltage, Conditions.Current);
-
-                        // read
-                        Conditions = await Update();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<(Units.Power?, Units.Voltage?, Units.Current?)>(oldConditions, Conditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        await Task.Delay(_samplePeriod);
-                    }
-
-                    IsSampling = false;
-                });
-            }
-        }
-
-
-        protected async Task<(Units.Power?, Units.Voltage?, Units.Current?)> Update()
+        protected override async Task<(Units.Power? Power, Voltage? Voltage, Current? Current)> ReadSensor()
         {
             return await Task.Run(() =>
             {
@@ -141,18 +70,8 @@ namespace Meadow.Foundation.Sensors.Power
             });
         }
 
-        public void StopSampling()
+        protected override void RaiseChangedAndNotify(IChangeResult<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)> changeResult)
         {
-            lock (SyncRoot)
-            {
-                if (!IsSampling) return;
-                SamplingTokenSource.Cancel();
-            }
-        }
-
-        protected void RaiseChangedAndNotify(IChangeResult<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)> changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
             if (changeResult.New.Power is { } power)
             {
                 PowerUpdated?.Invoke(this, new ChangeResult<Units.Power>(power, changeResult.Old?.Power));
@@ -165,7 +84,8 @@ namespace Meadow.Foundation.Sensors.Power
             {
                 CurrentUpdated?.Invoke(this, new ChangeResult<Units.Current>(amps, changeResult.Old?.Current));
             }
-            base.NotifyObservers(changeResult);
+
+            base.RaiseChangedAndNotify(changeResult);
         }
 
 
