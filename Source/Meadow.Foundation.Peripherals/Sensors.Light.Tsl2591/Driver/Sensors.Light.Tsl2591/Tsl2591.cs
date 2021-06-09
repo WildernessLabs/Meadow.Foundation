@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Light
     ///     Driver for the TSL2591 light-to-digital converter.
     /// </summary>
     public partial class Tsl2591 :
-        I2cSensorBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,
+        ByteCommsSensorBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,
         ILightSensor,
         IDisposable
     {
@@ -63,8 +63,8 @@ namespace Meadow.Foundation.Sensors.Light
             return await Task.Run(() =>
             {
                 // data sheet indicates you should always read all 4 bytes, in order, for valid data
-                var channel0 = I2cPeripheral.ReadRegisterAsUShort((byte)(Register.CH0DataL | Register.Command));
-                var channel1 = I2cPeripheral.ReadRegisterAsUShort((byte)(Register.CH1DataL | Register.Command));
+                var channel0 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH0DataL | Register.Command));
+                var channel1 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH1DataL | Register.Command));
 
                 conditions.FullSpectrum = new Illuminance(channel0, IU.Lux);
                 conditions.Infrared = new Illuminance(channel1, IU.Lux);
@@ -110,22 +110,22 @@ namespace Meadow.Foundation.Sensors.Light
 
         public void PowerOn()
         {
-            I2cPeripheral.WriteRegister((byte)(Register.Enable | Register.Command), 3);
+            Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 3);
         }
 
         public void PowerOff()
         {
-            I2cPeripheral.WriteRegister((byte)(Register.Enable | Register.Command), 0);
+            Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 0);
         }
 
         public int PackageID
         {
-            get => I2cPeripheral.ReadRegister((byte)(Register.PackageID | Register.Command));
+            get => Peripheral.ReadRegister((byte)(Register.PackageID | Register.Command));
         }
 
         public int DeviceID
         {
-            get => I2cPeripheral.ReadRegister((byte)(Register.DeviceID | Register.Command));
+            get => Peripheral.ReadRegister((byte)(Register.DeviceID | Register.Command));
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Light
             {
                 PowerOff();
                 _gain = value;
-                I2cPeripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte) ((byte) _integrationTime | (byte) _gain));
+                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte) ((byte) _integrationTime | (byte) _gain));
                 PowerOn();
             }
         }
@@ -153,7 +153,7 @@ namespace Meadow.Foundation.Sensors.Light
             {
                 PowerOff();
                 _integrationTime = value;
-                I2cPeripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte) ((byte) _integrationTime | (byte) _gain));
+                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte) ((byte) _integrationTime | (byte) _gain));
                 PowerOn();
             }
         }

@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// temperature and humidity sensors
     /// </summary>
     public partial class Htu21d :
-        I2cSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
+        ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
         //==== Events
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected void Initialize ()
         {
             //Bus.WriteBytes(SOFT_RESET);
-            I2cPeripheral.Write(SOFT_RESET);
+            Peripheral.Write(SOFT_RESET);
 					 			
 			Thread.Sleep(100);
           
@@ -78,10 +78,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return await Task.Run(() => {
                 // ---- HUMIDITY
                 //Bus.WriteBytes(HUMDITY_MEASURE_NOHOLD);
-                I2cPeripheral.Write(HUMDITY_MEASURE_NOHOLD);
+                Peripheral.Write(HUMDITY_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
                 //Bus.ReadBytes(_rx, 3); // 2 data bytes plus a checksum (we ignore the checksum here)
-                I2cPeripheral.Read(_rx);// 2 data bytes plus a checksum (we ignore the checksum here)
+                Peripheral.Read(_rx);// 2 data bytes plus a checksum (we ignore the checksum here)
                 var humidityReading = (ushort)((_rx[0] << 8) + _rx[1]);
                 conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, RelativeHumidity.UnitType.Percent);
                 if (conditions.Humidity < new RelativeHumidity(0, HU.Percent))
@@ -98,10 +98,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 // ---- TEMPERATURE
                 //Bus.WriteBytes(TEMPERATURE_MEASURE_NOHOLD);
-                I2cPeripheral.Write(TEMPERATURE_MEASURE_NOHOLD);
+                Peripheral.Write(TEMPERATURE_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
                 //Bus.ReadBytes(_rx, 3); // 2 data bytes plus a checksum (we ignore the checksum here)
-                I2cPeripheral.Read(_rx);// 2 data bytes plus a checksum (we ignore the checksum here)
+                Peripheral.Read(_rx);// 2 data bytes plus a checksum (we ignore the checksum here)
                 var temperatureReading = (short)((_rx[0] << 8) + _rx[1]);
                 conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), Units.Temperature.UnitType.Celsius);
 
@@ -131,7 +131,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void Heater(bool onOrOff)
         {
             //var register = Bus.ReadRegisterByte(READ_HEATER_REGISTER);
-            var register = I2cPeripheral.ReadRegister(READ_HEATER_REGISTER);
+            var register = Peripheral.ReadRegister(READ_HEATER_REGISTER);
             register &= 0xfd;
 
             if (onOrOff)
@@ -139,7 +139,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 register |= 0x02;
             }
             //Bus.WriteRegister(WRITE_HEATER_REGISTER, register);
-            I2cPeripheral.WriteRegister(WRITE_HEATER_REGISTER, register);
+            Peripheral.WriteRegister(WRITE_HEATER_REGISTER, register);
         }
 		
 		//Set sensor resolution
@@ -154,7 +154,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         void SetResolution(SensorResolution resolution)
         {
             //var register = Bus.ReadRegisterByte(READ_USER_REGISTER);
-            var register = I2cPeripheral.ReadRegister(READ_HEATER_REGISTER);
+            var register = Peripheral.ReadRegister(READ_HEATER_REGISTER);
             //userRegister &= 0b01111110; //Turn off the resolution bits
             //resolution &= 0b10000001; //Turn off all other bits but resolution bits
             //userRegister |= resolution; //Mask in the requested resolution bits
@@ -167,7 +167,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             //Request a write to user register
             //Bus.WriteRegister(WRITE_USER_REGISTER, register); //Write the new resolution bits
-            I2cPeripheral.WriteRegister(WRITE_USER_REGISTER, register); //Write the new resolution bits
+            Peripheral.WriteRegister(WRITE_USER_REGISTER, register); //Write the new resolution bits
         }
 
         /// <summary>

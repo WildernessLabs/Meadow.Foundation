@@ -20,7 +20,7 @@
    <LangVersion>8.0</LangVersion>
  </PropertyGroup>
  <ItemGroup>
-   <None Include="..\..\Source\icon.png" Pack="true" PackagePath=""/>
+   <None Include="..\..\Source\icon.png" Pack="true" PackagePath="" />
    <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
  </ItemGroup>
 </Project>
