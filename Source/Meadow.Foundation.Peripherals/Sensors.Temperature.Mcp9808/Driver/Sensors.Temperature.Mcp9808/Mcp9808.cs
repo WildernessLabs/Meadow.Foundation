@@ -11,12 +11,13 @@ namespace Meadow.Foundation.Sensors.Temperature
         ITemperatureSensor
     {
         //==== events
+        public event EventHandler<IChangeResult<Units.Temperature>> Updated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         //==== internals
         // internal thread lock
         private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
+        private CancellationTokenSource? SamplingTokenSource;
 
         // TODO: move these into an `Mcp9808.Commands.cs` class?
         const ushort MCP_CONFIG_SHUTDOWN = 0x0100;   // shutdown config
@@ -39,7 +40,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         const byte MCP_RESOLUTION = 0x08;     // resolution
 
         II2cPeripheral i2CPeripheral;
-
 
         //==== properties
         public const byte DefaultAddress = 0x18;
@@ -123,11 +123,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        // TODO: Make this async?
-        public Units.Temperature Read()
+        public async Task<Units.Temperature?> Read()
         {
-            Update();
-            return Temperature.Value;
+            await Update();
+            return Temperature;
         }
 
         /// <summary>
@@ -135,8 +134,6 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public void StartUpdating(int standbyDuration = 1000)
         {
-            Console.WriteLine("Start updating");
-
             // thread safety
             lock (_lock)
             {
@@ -150,7 +147,8 @@ namespace Meadow.Foundation.Sensors.Temperature
 
                 Units.Temperature? oldtemperature;
                 ChangeResult<Units.Temperature> result;
-                Task.Factory.StartNew(async () => {
+                Task.Factory.StartNew(async () => 
+                {
                     while (true)
                     {
                         if (ct.IsCancellationRequested)
@@ -160,13 +158,11 @@ namespace Meadow.Foundation.Sensors.Temperature
                             break;
                         }
 
-                        Console.WriteLine("history");
-
                         // capture history
                         oldtemperature = Temperature;
 
                         // read
-                        Update(); //syncrhnous for this driver 
+                        await Update();
 
                         // build a new result with the old and new conditions
                         result = new ChangeResult<Units.Temperature>(Temperature.Value, oldtemperature);
@@ -199,29 +195,33 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         ///     Update the Temperature property.
         /// </summary>
-        public void Update()
+        public Task Update()
         {
-            ushort value = i2CPeripheral.ReadRegisterAsUShort(MCP_AMBIENT_TEMP, ByteOrder.BigEndian);
-
-            if (value == 0xFFFF)
+            return Task.Run(() =>
             {
-                return; 
-            }
+                ushort value = i2CPeripheral.ReadRegisterAsUShort(MCP_AMBIENT_TEMP, ByteOrder.BigEndian);
 
-            double temp = value & 0x0FFF;
+                if (value == 0xFFFF)
+                {
+                    return;
+                }
 
-            temp /= 16.0;
+                double temp = value & 0x0FFF;
 
-            if ((value & 0x1000) != 0)
-            {
-                temp -= 256;
-            }
+                temp /= 16.0;
 
-            Temperature = new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius);
+                if ((value & 0x1000) != 0)
+                {
+                    temp -= 256;
+                }
+
+                Temperature = new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius);
+            });            
         }
 
         protected void RaiseChangedAndNotify(IChangeResult<Units.Temperature> changeResult)
         {
+            Updated?.Invoke(this, changeResult);
             TemperatureUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
