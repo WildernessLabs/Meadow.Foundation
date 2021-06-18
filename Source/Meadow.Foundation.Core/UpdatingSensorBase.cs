@@ -32,7 +32,7 @@ namespace Meadow.Foundation
         /// <summary>
         /// Starts updating the sensor on the updateInterval frequency specified.
         ///
-        /// This method also starts raising `Changed` events and notifying
+        /// This method also starts raising `Updated` events and notifying
         /// IObservable subscribers. Use the `updateInterval` parameter
         /// to specify how often events and notifications are raised/sent.
         /// </summary>
@@ -82,7 +82,7 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        /// Stops sampling the temperature.
+        /// Stops sampling the sensor.
         /// </summary>
         public void StopUpdating()
         {

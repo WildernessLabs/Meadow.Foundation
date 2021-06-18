@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation
 {
     /// <summary>
+    /// Provides observable functionality.
+    /// 
     /// Keeps an internal collection of `observers`, and provides methods such
     /// as `NotifyObservers` and `Subscribe`.
     /// </summary>
