@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Power
             });
         }
 
-        protected override void RaiseChangedAndNotify(IChangeResult<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)> changeResult)
         {
             if (changeResult.New.Power is { } power)
             {
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Power
                 CurrentUpdated?.Invoke(this, new ChangeResult<Units.Current>(amps, changeResult.Old?.Current));
             }
 
-            base.RaiseChangedAndNotify(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
 

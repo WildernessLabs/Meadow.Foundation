@@ -198,6 +198,18 @@ namespace Meadow.Foundation.Sensors.Temperature
            );
         }
 
+        public async Task<Units.Temperature> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
+        {
+            // update confiruation for a one-off read
+            this.Conditions = await ReadSensor();
+            return Conditions;
+        }
+
+        protected override Task<Units.Temperature> ReadSensor()
+        {
+            return ReadSensor(10, 40);
+        }
+
         /// <summary>
         /// Convenience method to get the current temperature. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
@@ -207,11 +219,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        public async Task<ChangeResult<Units.Temperature>> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
+        protected async Task<Units.Temperature> ReadSensor(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
-            // grab the old temp and store it in a temp var
-            Units.Temperature? oldTemp = Temperature;
-
             // read the voltage
             Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
 
@@ -219,7 +228,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             var newTemp = VoltageToTemperature(voltage);
             Temperature = newTemp;
             
-            return new ChangeResult<Units.Temperature>(newTemp, oldTemp);
+            return newTemp;
         }
 
         /// <summary>

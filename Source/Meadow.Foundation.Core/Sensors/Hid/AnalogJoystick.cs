@@ -15,10 +15,10 @@ namespace Meadow.Foundation.Sensors.Hid
         : SensorBase<JoystickPosition>
     {
         //==== events
-        /// <summary>
-        /// Raised when the value of the reading changes.
-        /// </summary>
-        public event EventHandler<ChangeResult<JoystickPosition>> Updated = delegate { };
+        ///// <summary>
+        ///// Raised when the value of the reading changes.
+        ///// </summary>
+        //public event EventHandler<ChangeResult<JoystickPosition>> Updated = delegate { };
 
         //==== properties
         protected IAnalogInputPort HorizontalInputPort { get; set; }
@@ -109,7 +109,7 @@ namespace Meadow.Foundation.Sensors.Hid
                         Position = newPosition;
 
                         var result = new ChangeResult<JoystickPosition>(newPosition, oldPosition);
-                        RaiseEventsAndNotify(result);
+                        base.RaiseEventsAndNotify(result);
                         
                     }
                 )
@@ -143,7 +143,7 @@ namespace Meadow.Foundation.Sensors.Hid
                         Position = newPosition;
 
                         var result = new ChangeResult<JoystickPosition>(newPosition, oldPosition);
-                        RaiseEventsAndNotify(result);
+                        base.RaiseEventsAndNotify(result);
                     }
                 )
            );
@@ -221,6 +221,19 @@ namespace Meadow.Foundation.Sensors.Hid
 
         }
 
+        public async Task<JoystickPosition> Read(int sampleCount = 2, int sampleIntervalDuration = 20)
+        {
+            // update confiruation for a one-off read
+            this.Conditions = await ReadSensor();
+            return Conditions;
+        }
+
+        // TODO what??
+        protected override Task<JoystickPosition> ReadSensor()
+        {
+            return ReadSensor(10, 40);
+        }
+
         /// <summary>
         /// Convenience method to get the current temperature. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
@@ -230,7 +243,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        public async Task<JoystickPosition> Read(int sampleCount = 2, int sampleIntervalDuration = 20)
+        protected async Task<JoystickPosition> ReadSensor(int sampleCount = 2, int sampleIntervalDuration = 20)
         {
             var h = await HorizontalInputPort.Read(sampleCount, sampleIntervalDuration);
             var v = await VerticalInputPort.Read(sampleCount, sampleIntervalDuration);
@@ -270,15 +283,15 @@ namespace Meadow.Foundation.Sensors.Hid
             VerticalInputPort.StopUpdating();
         }
 
-        /// <summary>
-        /// Inheritance safe way to raise events.
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected void RaiseEventsAndNotify(ChangeResult<JoystickPosition> changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
-        }
+        ///// <summary>
+        ///// Inheritance safe way to raise events.
+        ///// </summary>
+        ///// <param name="changeResult"></param>
+        //protected void RaiseEventsAndNotify(ChangeResult<JoystickPosition> changeResult)
+        //{
+        //    Updated?.Invoke(this, changeResult);
+        //    base.NotifyObservers(changeResult);
+        //}
 
         /// <summary>
         /// Converts a voltage value to positional data, taking into account the

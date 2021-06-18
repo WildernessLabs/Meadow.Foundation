@@ -86,7 +86,7 @@ namespace Meadow.Foundation.Sensors.Light
             });
         }
 
-        protected override void RaiseChangedAndNotify(IChangeResult<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> changeResult)
         {
             if (changeResult.New.FullSpectrum is { } ill)
             {
@@ -105,7 +105,7 @@ namespace Meadow.Foundation.Sensors.Light
                 LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.Integrated));
             }
 
-            base.RaiseChangedAndNotify(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         public void PowerOn()

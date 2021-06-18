@@ -147,7 +147,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             });
         }
 
-        protected override void RaiseChangedAndNotify(IChangeResult<(Concentration? Co2, Concentration? Voc)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Concentration? Co2, Concentration? Voc)> changeResult)
         {
             if (changeResult.New.Co2 is { } co2)
             {
@@ -158,7 +158,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 VocUpdated?.Invoke(this, new ChangeResult<Concentration>(voc, changeResult.Old?.Voc));
             }
 
-            base.RaiseChangedAndNotify(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

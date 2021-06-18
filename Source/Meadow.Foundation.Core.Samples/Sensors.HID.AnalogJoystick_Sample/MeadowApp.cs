@@ -79,7 +79,7 @@ namespace MeadowApp
             Console.WriteLine("Hardware initialization complete.");
         }
 
-        void JoystickUpdated(object sender, ChangeResult<JoystickPosition> e)
+        void JoystickUpdated(object sender, IChangeResult<JoystickPosition> e)
         {
             Console.WriteLine($"Horizontal: {e.New.Horizontal:n2}, Vertical: {e.New.Vertical:n2}");
             if (hasDisplay) { Render(e.New); }

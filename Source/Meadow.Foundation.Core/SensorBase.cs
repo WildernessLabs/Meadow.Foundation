@@ -1,78 +1,53 @@
-﻿using Meadow.Units;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation
 {
     /// <summary>
     /// Base class for sensors and other updating classes that want to support
     /// having their updates consumed by observers that can optionally use filters.
-    ///
-    /// Keeps an internal collection of `observers`, and provides methods such
-    /// as `NotifyObservers` and `Subscribe`.
     /// </summary>
     /// <typeparam name="UNIT"></typeparam>
-    public abstract class SensorBase<UNIT> : IObservable<IChangeResult<UNIT>>
+    public abstract class SensorBase<UNIT> : ObservableBase<UNIT>
         where UNIT : struct
     {
-        // collection of observers
-        protected List<IObserver<IChangeResult<UNIT>>> observers { get; set; } = new List<IObserver<IChangeResult<UNIT>>>();
+        //==== events
+        public event EventHandler<IChangeResult<UNIT>> Updated = delegate { };
 
-        protected void NotifyObservers(IChangeResult<UNIT> changeResult)
+        //==== properties
+        /// <summary>
+        /// The last read conditions.
+        /// </summary>
+        public UNIT Conditions { get; protected set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the sensor is currently in a sampling
+        /// loop. Call StartSampling() to spin up the sampling process.
+        /// </summary>
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
+
+        //==== ISensor Methods
+        protected abstract Task<UNIT> ReadSensor();
+
+        protected virtual void RaiseEventsAndNotify(IChangeResult<UNIT> changeResult)
         {
-            observers.ForEach(x => x.OnNext(changeResult));
+            Updated.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
         }
 
         /// <summary>
-        /// Subscribes an `IObserver` to get notified when a change occurs.
+        /// Convenience method to get the current sensor readings. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        /// <param name="observer">The `IObserver` that will receive the
-        /// change notifications.</param>
-        /// <returns></returns>
-        public IDisposable Subscribe(IObserver<IChangeResult<UNIT>> observer)
+        // TODO: `ValueTask`?
+        public async Task<UNIT> Read()
         {
-            if (!observers.Contains(observer)) {
-                observers.Add(observer);
-            }
-
-            return new Unsubscriber(observers, observer);
+            // update confiruation for a one-off read
+            this.Conditions = await ReadSensor();
+            return Conditions;
         }
-
-        /// <summary>
-        /// class to handle the collection of subscribers.
-        /// </summary>
-        private class Unsubscriber : IDisposable
-        {
-            private List<IObserver<IChangeResult<UNIT>>> observers;
-            private IObserver<IChangeResult<UNIT>> observer;
-
-            public Unsubscriber(List<IObserver<IChangeResult<UNIT>>> observers, IObserver<IChangeResult<UNIT>> observer)
-            {
-                this.observers = observers;
-                this.observer = observer;
-            }
-
-            public void Dispose()
-            {
-                if (!(observer == null)) { observers.Remove(observer); }
-            }
-        }
-
-        /// <summary>
-        /// Convenience method to generate a an `FilterableChangeObserver` with
-        /// the correct signature.
-        /// </summary>
-        /// <param name="handler">The action that is invoked when the filter is satisifed.</param>
-        /// <param name="filter">An optional filter that determines whether or not the
-        /// consumer should be notified.</param>
-        /// <returns>A FilterableChangeObserver</returns>
-        public static FilterableChangeObserver<UNIT> CreateObserver(
-            Action<IChangeResult<UNIT>> handler,
-            Predicate<IChangeResult<UNIT>>? filter = null)
-        {
-            return new FilterableChangeObserver<UNIT>(
-                handler, filter);
-        }
-
     }
 }

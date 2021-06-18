@@ -300,12 +300,12 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected override void RaiseChangedAndNotify(IChangeResult<Mass> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<Mass> changeResult)
         {
             try
             {
                 MassUpdated?.Invoke(this, changeResult);
-                base.RaiseChangedAndNotify(changeResult);
+                base.RaiseEventsAndNotify(changeResult);
             }
             catch(Exception ex)
             {

@@ -9,10 +9,10 @@ namespace Meadow.Foundation.Sensors.Environmental
     public class AnalogWaterLevel
         : SensorBase<float>
     {
-        /// <summary>
-        /// Raised when the value of the reading changes.
-        /// </summary>
-        public event EventHandler<ChangeResult<float>> Updated = delegate { };
+        ///// <summary>
+        ///// Raised when the value of the reading changes.
+        ///// </summary>
+        //public event EventHandler<ChangeResult<float>> Updated = delegate { };
 
         /// <summary>
         ///     Calibration class for new sensor types.  This allows new sensors
@@ -91,12 +91,24 @@ namespace Meadow.Foundation.Sensors.Environmental
                         var newWaterLevel = VoltageToWaterLevel(h.New);
                         WaterLevel = newWaterLevel; // save state
 
-                        RaiseEventsAndNotify(
+                        base.RaiseEventsAndNotify(
                             new ChangeResult<float>(newWaterLevel, oldWaterLevel)
                         );
                     }
                 )
            );
+        }
+
+        public async Task<float> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
+        {
+            // update confiruation for a one-off read
+            this.Conditions = await ReadSensor();
+            return Conditions;
+        }
+
+        protected override Task<float> ReadSensor()
+        {
+            return ReadSensor(10, 40);
         }
 
         /// <summary>
@@ -108,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        public async Task<float> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
+        protected async Task<float> ReadSensor(int sampleCount = 10, int sampleIntervalDuration = 40)
         {
             // read the voltage
             Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
@@ -150,11 +162,11 @@ namespace Meadow.Foundation.Sensors.Environmental
             AnalogInputPort.StopUpdating();
         }
 
-        protected void RaiseEventsAndNotify(ChangeResult<float> changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
-        }
+        //protected void RaiseEventsAndNotify(ChangeResult<float> changeResult)
+        //{
+        //    Updated?.Invoke(this, changeResult);
+        //    base.NotifyObservers(changeResult);
+        //}
 
         /// <summary>
         /// Converts a voltage value to a level in centimeters, based on the current

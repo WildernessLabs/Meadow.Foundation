@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sensors.Temperature.AnalogTemperature_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         AnalogTemperature analogTemperature;
 
@@ -17,7 +17,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             // configure our AnalogTemperature sensor
             analogTemperature = new AnalogTemperature (
                 device: Device,
-                analogPin: Device.Pins.A00,
+                analogPin: Device.Pins.A03,
                 sensorType: AnalogTemperature.KnownSensorType.LM35
             );
 
@@ -56,7 +56,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
         protected async Task ReadTemp()
         {
             var temperature = await analogTemperature.Read();
-            Console.WriteLine($"Initial temp: {temperature.New.Celsius:N2}C");
+            Console.WriteLine($"Initial temp: {temperature.Celsius:N2}C");
         }
     }
 }

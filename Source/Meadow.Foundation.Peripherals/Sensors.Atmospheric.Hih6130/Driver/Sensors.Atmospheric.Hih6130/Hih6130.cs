@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected override void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp) {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             if (changeResult.New.Humidity is { } humidity) {
                 HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
-            base.RaiseChangedAndNotify(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
