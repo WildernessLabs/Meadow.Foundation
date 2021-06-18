@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation
 {
-    public abstract class UpdatingSensorBase<UNIT>
+    public abstract class SamplingSensorBase<UNIT>
         : SensorBase<UNIT>
         where UNIT : struct
     {
-        public UpdatingSensorBase()
+        public SamplingSensorBase()
         {
         }
 

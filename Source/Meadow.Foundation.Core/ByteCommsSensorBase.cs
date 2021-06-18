@@ -4,7 +4,7 @@ using Meadow.Hardware;
 namespace Meadow.Foundation
 {
     public abstract class ByteCommsSensorBase<UNIT> :
-        UpdatingSensorBase<UNIT>, IDisposable where UNIT : struct
+        SamplingSensorBase<UNIT>, IDisposable where UNIT : struct
     {
         //==== events
 
