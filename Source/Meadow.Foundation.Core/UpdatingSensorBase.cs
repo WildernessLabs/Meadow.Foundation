@@ -13,10 +13,6 @@ namespace Meadow.Foundation
         {
         }
 
-        ////==== internals
-        //protected object samplingLock = new object();
-        //private CancellationTokenSource? SamplingTokenSource { get; set; }
-
         /// <summary>
         /// Starts updating the sensor on an update interval of `5` seconds.
         ///
