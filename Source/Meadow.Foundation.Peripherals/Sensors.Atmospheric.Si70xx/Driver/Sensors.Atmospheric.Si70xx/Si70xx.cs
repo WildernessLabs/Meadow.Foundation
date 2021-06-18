@@ -49,16 +49,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public byte FirmwareRevision { get; private set; }
 
-        private byte[] _rx =new byte[3];
-
-
         /// <summary>
         ///     Create a new SI7021 temperature and humidity sensor.
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40).</param>
         /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
         public Si70xx(II2cBus i2cBus, byte address = 0x40)
-            : base(i2cBus, address)
+            : base(i2cBus, address, 8, 3)
         {
             Initialize();
         }
@@ -71,8 +68,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected void Initialize()
         {
-            Span<byte> tx = stackalloc byte[2];
-            Span<byte> rx = stackalloc byte[8];
+            // write buffer for initialization commands only can be two bytes.
+            Span<byte> tx = WriteBuffer.Span[0..2];
 
             Reset();
 
@@ -83,32 +80,32 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // this device is...interesting.  Most registers are 1-byte addressing, but a few are 2-bytes?
             tx[0] = READ_ID_PART1;
             tx[1] = READ_ID_PART2;
-            Peripheral.Exchange(tx, rx);
+            Peripheral.Exchange(tx, ReadBuffer.Span);
             for (var index = 0; index < 4; index++)
             {
                 SerialNumber <<= 8;
-                SerialNumber += rx[index * 2];
+                SerialNumber += ReadBuffer.Span[index * 2];
             }
 
             tx[0] = READ_2ND_ID_PART1;
             tx[1] = READ_2ND_ID_PART2;
-            Peripheral.Exchange(tx, rx);
+            Peripheral.Exchange(tx, ReadBuffer.Span);
 
             SerialNumber <<= 8;
-            SerialNumber += rx[0];
+            SerialNumber += ReadBuffer.Span[0];
             SerialNumber <<= 8;
-            SerialNumber += rx[1];
+            SerialNumber += ReadBuffer.Span[1];
             SerialNumber <<= 8;
-            SerialNumber += rx[3];
+            SerialNumber += ReadBuffer.Span[3];
             SerialNumber <<= 8;
-            SerialNumber += rx[4];
-            if ((rx[0] == 0) || (rx[0] == 0xff))
+            SerialNumber += ReadBuffer.Span[4];
+            if ((ReadBuffer.Span[0] == 0) || (ReadBuffer.Span[0] == 0xff))
             {
                 SensorType = DeviceType.EngineeringSample;
             }
             else
             {
-                SensorType = (DeviceType)rx[0];
+                SensorType = (DeviceType)ReadBuffer.Span[0];
             }
 
             SetResolution(SensorResolution.TEMP11_HUM11);
@@ -120,14 +117,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             return await Task.Run(() =>
             {
-                var buffer = new Span<byte>(_rx);
-
                 // ---- HUMIDITY
                 Peripheral.Write(HUMDITY_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-                Peripheral.Read(buffer); // 2 data bytes plus a checksum (we ignore the checksum here)
-                var humidityReading = (ushort)((_rx[0] << 8) + _rx[1]);
-                conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, RelativeHumidity.UnitType.Percent);
+                Peripheral.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+                var humidityReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
+                conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, HU.Percent);
                 if (conditions.Humidity < new RelativeHumidity(0, HU.Percent))
                 {
                     conditions.Humidity = new RelativeHumidity(0, HU.Percent);
@@ -143,9 +138,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 // ---- TEMPERATURE
                 Peripheral.Write(TEMPERATURE_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-                Peripheral.Read(buffer); // 2 data bytes plus a checksum (we ignore the checksum here)
-                var temperatureReading = (short)((_rx[0] << 8) + _rx[1]);
-                conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), Units.Temperature.UnitType.Celsius);
+                Peripheral.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+                var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
+                conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), TU.Celsius);
 
                 return conditions;
             });
