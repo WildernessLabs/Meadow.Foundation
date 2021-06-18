@@ -16,6 +16,10 @@ namespace Meadow.Foundation
         //==== events
         public event EventHandler<IChangeResult<UNIT>> Updated = delegate { };
 
+        //==== internals
+        protected object samplingLock = new object();
+        protected CancellationTokenSource? SamplingTokenSource { get; set; }
+
         //==== properties
         /// <summary>
         /// The last read conditions.

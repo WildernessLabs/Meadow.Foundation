@@ -250,7 +250,13 @@ namespace Meadow.Foundation.Sensors.Temperature
             int sampleIntervalDuration = 40,
             int standbyDuration = 100)
         {
-            AnalogInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
+            // thread safety
+            lock (samplingLock) {
+                if (IsSampling) return;
+
+                IsSampling = true;
+                AnalogInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
+            }
         }
 
         /// <summary>
@@ -258,7 +264,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public void StopUpdating()
         {
-            AnalogInputPort.StopUpdating();
+            lock (samplingLock) {
+                if (!IsSampling) return;
+
+                base.IsSampling = false;
+                AnalogInputPort.StopUpdating();
+            }
         }
 
         protected void RaiseEventsAndNotify(ChangeResult<Units.Temperature> changeResult)

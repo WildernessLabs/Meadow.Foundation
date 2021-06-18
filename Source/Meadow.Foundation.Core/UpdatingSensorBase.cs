@@ -13,9 +13,9 @@ namespace Meadow.Foundation
         {
         }
 
-        //==== internals
-        protected object _lock = new object();
-        private CancellationTokenSource? SamplingTokenSource { get; set; }
+        ////==== internals
+        //protected object samplingLock = new object();
+        //private CancellationTokenSource? SamplingTokenSource { get; set; }
 
         /// <summary>
         /// Starts updating the sensor on an update interval of `5` seconds.
@@ -42,12 +42,12 @@ namespace Meadow.Foundation
         public virtual void StartUpdating(TimeSpan updateInterval)
         {
             // thread safety
-            lock (_lock) {
+            lock (samplingLock) {
                 if (IsSampling) return;
 
                 IsSampling = true;
 
-                SamplingTokenSource = new CancellationTokenSource();
+                base.SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
                 UNIT oldConditions;
@@ -86,7 +86,7 @@ namespace Meadow.Foundation
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock) {
+            lock (samplingLock) {
                 if (!IsSampling) return;
 
                 SamplingTokenSource?.Cancel();
