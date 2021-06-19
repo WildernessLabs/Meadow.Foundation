@@ -19,13 +19,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// from the Bosch BME280 sensor.
     /// </remarks>
     public partial class Bme280 :
-        SensorBase<(Units.Temperature?, RelativeHumidity?, Pressure?)>,
+        SensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         //==== events
         /// <summary>
         /// </summary>
-        public event EventHandler<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>> Updated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
@@ -61,16 +60,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected Configuration configuration;
 
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
+        //// internal thread lock
+        //private object _lock = new object();
+        //private CancellationTokenSource SamplingTokenSource;
 
-        /// <summary>
-        /// Gets a value indicating whether the analog input port is currently
-        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
+        ///// <summary>
+        ///// Gets a value indicating whether the analog input port is currently
+        ///// sampling the ADC. Call StartSampling() to spin up the sampling process.
+        ///// </summary>
+        ///// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        //public bool IsSampling { get; protected set; } = false;
 
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
@@ -88,7 +87,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
-        public (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) Conditions;
+        //public (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) Conditions;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
@@ -98,12 +97,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Bme280(II2cBus i2c, I2cAddress busAddress = I2cAddress.Adddress0x77)
         {
             bme280Comms = new Bme280I2C(i2c, (byte)busAddress);
+            configuration = new Configuration(); // here to avoid the warning
             Init();
         }
 
         public Bme280(ISpiBus spi, IDigitalOutputPort chipSelect)
         {
             bme280Comms = new Bme280Spi(spi, chipSelect);
+            configuration = new Configuration(); // here to avoid the warning
             Init();
         }
 
@@ -118,7 +119,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //
             //  Update the configuration information and start sampling.
             //
-            configuration = new Configuration();
+            
             configuration.Mode = Modes.Sleep;
             configuration.Filter = FilterCoefficient.Off;
             UpdateConfiguration(configuration);
@@ -143,7 +144,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             configuration.Filter = FilterCoefficient.Off;
             UpdateConfiguration(configuration);
 
-            Conditions = await Update();
+            Conditions = await ReadSensor();
 
             return Conditions;
         }
@@ -173,7 +174,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // good value.
 
             // thread safety
-            lock (_lock) {
+            lock (samplingLock) {
                 if (IsSampling) { return; }
 
                 // state muh-cheen
@@ -202,7 +203,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         result = new ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)>(Conditions, oldConditions);
 
                         // let everyone know
-                        RaiseChangedAndNotify(result);
+                        RaiseEventsAndNotify(result);
 
                         // sleep for the appropriate interval
                         await Task.Delay(standbyDuration);
@@ -211,9 +212,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
             if (changeResult.New.Temperature is { } temp) {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
@@ -223,7 +223,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             if (changeResult.New.Pressure is { } pressure) {
                 PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
             }
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void StopUpdating()
         {
-            lock (_lock) {
+            lock (samplingLock) {
                 if (!IsSampling) return;
 
                 SamplingTokenSource?.Cancel();
@@ -343,7 +343,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Formulas - section 4.2.3 Compensation Formulas
         ///     The integer formulas have been used to try and keep the calculations performant.
         /// </remarks>
-        protected async Task<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)> Update()
+        protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
         {
             return await Task.Run(() => {
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
