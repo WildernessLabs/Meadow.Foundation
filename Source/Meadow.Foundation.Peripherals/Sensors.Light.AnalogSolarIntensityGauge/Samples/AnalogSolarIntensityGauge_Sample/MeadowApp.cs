@@ -59,7 +59,7 @@ namespace MeadowApp
         async Task ReadSolarIntensityGauge()
         {
             var result = await solarGauge.Read();
-            Console.WriteLine($"Solar Intensity: {result.New * 100:n2}%");
+            Console.WriteLine($"Solar Intensity: {result * 100:n2}%");
         }
     }
 }

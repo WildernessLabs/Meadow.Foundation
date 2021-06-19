@@ -11,8 +11,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// Driver to measure solar panel input. 
     /// </summary>
-    public class AnalogSolarIntensityGauge :
-        SensorBase<float>,
+    public class AnalogSolarIntensityGauge : SensorBase<float>,
         ISolarIntensityGauge, ISensor
     {
         //==== events
@@ -34,13 +33,13 @@ namespace Meadow.Foundation.Sensors.Light
         public AnalogSolarIntensityGauge(IAnalogInputPort analogIn)
         {
             // TODO: input port validation if any (is it constructed all right?)
-
             this.analogIn = analogIn;
-
             Init();
         }
 
-        public AnalogSolarIntensityGauge(IAnalogInputPort analogIn, Voltage minVoltageReference, Voltage maxVoltageReference)
+        public AnalogSolarIntensityGauge(
+            IAnalogInputPort analogIn,
+            Voltage minVoltageReference, Voltage maxVoltageReference)
             : this(analogIn)
         {
             this.MinVoltageReference = minVoltageReference;
@@ -52,27 +51,32 @@ namespace Meadow.Foundation.Sensors.Light
             // wire up our analog input observer
             var observer = IAnalogInputPort.CreateObserver(
                 handler: result => {
-                    var newReading = ConvertVoltageToIntensity(result.New);
-
-                    // old might be null if it's the first reading
-                    float? oldValue = null;
-                    if (result.Old is { } oldReading) { oldValue = ConvertVoltageToIntensity(oldReading); }
-
-                    SolarIntensity = newReading; // save state
-                    RaiseEventsAndNotify(
-                        new ChangeResult<float>(newReading, oldValue)
-                    );
+                    // create a new change result from the new value
+                    ChangeResult<float> changeResult = new ChangeResult<float>() {
+                        New = ConvertVoltageToIntensity(result.New),
+                        Old = SolarIntensity
+                    };
+                    // save state
+                    SolarIntensity = changeResult.New;
+                    // notify
+                    RaiseEventsAndNotify(changeResult);
                 },
-                null
-                );
+                null);
             analogIn.Subscribe(observer);
         }
 
-        public async Task<IChangeResult<float>> Read(int sampleCount = 5, int sampleIntervalDuration = 40)
+        public Task<float> Read(int sampleCount = 5, int sampleIntervalDuration = 40)
         {
-            // grab the old reading and store it in a temp var
-            float? previousIntensity = SolarIntensity;
+            return ReadSensor(sampleCount, sampleIntervalDuration);
+        }
 
+        protected override Task<float> ReadSensor()
+        {
+            return ReadSensor(5, 40);
+        }
+
+        protected async Task<float> ReadSensor(int sampleCount = 5, int sampleIntervalDuration = 40)
+        {
             // read the voltage
             Voltage voltage = await analogIn.Read(sampleCount, sampleIntervalDuration);
 
@@ -82,7 +86,7 @@ namespace Meadow.Foundation.Sensors.Light
             // save our value
             SolarIntensity = newSolarIntensity;
 
-            return new ChangeResult<float>(newSolarIntensity, previousIntensity);
+            return newSolarIntensity;
         }
 
         /// <summary>
@@ -115,14 +119,10 @@ namespace Meadow.Foundation.Sensors.Light
             analogIn.StopUpdating();
         }
 
-        /// <summary>
-        /// Inheritance-safe way to raise events and notify observers
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected void RaiseEventsAndNotify(IChangeResult<float> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<float> changeResult)
         {
-            SolarIntensityUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+            this.SolarIntensityUpdated?.Invoke(this, changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
