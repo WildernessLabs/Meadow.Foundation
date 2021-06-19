@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// internal switch that is triggered during every revolution.
     /// </summary>
     public partial class SwitchingAnemometer :
-        SensorBase<Speed>, IAnemometer
+        ObservableBase<Speed>, IAnemometer
     {
         //==== events
         /// <summary>
@@ -126,7 +126,12 @@ namespace Meadow.Foundation.Sensors.Weather
                 // clear our samples
                 this.samples.Clear();
 
-                RaiseUpdated(new Speed(oversampledSpeed, SU.KilometersPerHour));
+                // capture history
+                Speed? oldSpeed = WindSpeed;
+                // save state
+                Speed newSpeed = new Speed(oversampledSpeed, SU.KilometersPerHour);
+                WindSpeed = newSpeed;
+                RaiseUpdated(new ChangeResult<Speed>(newSpeed, oldSpeed));
 
                 // if we need to wait before taking another sample set, 
                 if (this.standbyDuration > 0) {
@@ -137,27 +142,10 @@ namespace Meadow.Foundation.Sensors.Weather
             }
         }
 
-        // TODO: refactor this to match other sensors, e.g. RaiseUpdated(IChangeResult<Speed> result)
-        protected void RaiseUpdated(Speed newSpeed)
+        protected void RaiseUpdated(IChangeResult<Speed> changeResult)
         {
-            //AnemometerChangeResult result = new AnemometerChangeResult() {
-            //    Old = this.LastRecordedWindSpeed,
-            //    New = newSpeed
-            //};
-            ChangeResult<Speed> result = new ChangeResult<Speed>() {
-                Old = this.WindSpeed,
-                New = newSpeed
-            };
-            // capture last recorded now that we have a new result
-            this.WindSpeed = newSpeed;
-
-            //if (debug) {
-            //    Console.WriteLine($"1) Result.Old: {result.Old}, New: {result.New}");
-            //    Console.WriteLine($"2) Delta: {result.Delta}");
-            //}
-
-            WindSpeedUpdated?.Invoke(this, result);
-            base.NotifyObservers(result);
+            WindSpeedUpdated?.Invoke(this, changeResult);
+            base.NotifyObservers(changeResult);
         }
 
         /// <summary>
@@ -212,8 +200,14 @@ namespace Meadow.Foundation.Sensors.Weather
                 }
                 // if there aren't enough samples to make a reading
                 if (samples == null || samples.Count <= overSampleCount ) {
+                    // capture the old value
+                    Speed? oldSpeed = WindSpeed;
+                    // save state
+                    Speed newSpeed = new Speed(0, SU.KilometersPerHour);
+                    WindSpeed = newSpeed;
+
                     // raise the wind updated event with `0` wind speed
-                    RaiseUpdated(new Speed(0, SU.KilometersPerHour));
+                    RaiseUpdated(new ChangeResult<Speed>(newSpeed, oldSpeed));
                     // sleep for the standby duration
                     if (standbyDuration > 0) {
                         if (debug) { Console.WriteLine("Sleeping for a bit."); }
