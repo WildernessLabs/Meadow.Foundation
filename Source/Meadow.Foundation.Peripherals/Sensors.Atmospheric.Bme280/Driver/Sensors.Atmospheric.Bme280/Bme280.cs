@@ -11,6 +11,8 @@ using HU = Meadow.Units.RelativeHumidity.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
+    // Todo: someone clever _might_ be able to update this to SamplingSensorBase and
+    // shave some code off, but it does some idiosyncratic stuff.
     /// <summary>
     /// BME280 Temperature, Pressure and Humidity Sensor.
     /// </summary>
@@ -34,11 +36,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected Memory<byte> writeBuffer = new byte[32];
 
         //==== properties
-        ///// <summary>
-        /////     Minimum value that should be used for the polling frequency.
-        ///// </summary>
-        //public const ushort MinimumPollingPeriod = 100;
-
         /// <summary>
         ///     Communication bus used to read and write to the BME280 sensor.
         /// </summary>
@@ -60,17 +57,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected Configuration configuration;
 
-        //// internal thread lock
-        //private object _lock = new object();
-        //private CancellationTokenSource SamplingTokenSource;
-
-        ///// <summary>
-        ///// Gets a value indicating whether the analog input port is currently
-        ///// sampling the ADC. Call StartSampling() to spin up the sampling process.
-        ///// </summary>
-        ///// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        //public bool IsSampling { get; protected set; } = false;
-
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
@@ -86,8 +72,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// The humidity, in percent relative humidity, from the last reading..
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
-
-        //public (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) Conditions;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
