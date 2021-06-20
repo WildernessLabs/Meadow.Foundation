@@ -9,22 +9,6 @@ namespace Meadow.Foundation
         : SensorBase<UNIT>
         where UNIT : struct
     {
-        public SamplingSensorBase()
-        {
-        }
-
-        /// <summary>
-        /// Starts updating the sensor on an update interval of `5` seconds.
-        ///
-        /// This method also starts raising `Changed` events and notifying
-        /// IObservable subscribers. Use the `updateInterval` parameter
-        /// to specify how often events and notifications are raised/sent.
-        /// </summary>
-        public virtual void StartUpdating()
-        {
-            StartUpdating(TimeSpan.FromSeconds(5));
-        }
-
         /// <summary>
         /// Starts updating the sensor on the updateInterval frequency specified.
         ///
@@ -32,10 +16,8 @@ namespace Meadow.Foundation
         /// IObservable subscribers. Use the `updateInterval` parameter
         /// to specify how often events and notifications are raised/sent.
         /// </summary>
-        /// <param name="updateInterval">A `TimeSpan` that specifies how long to
-        /// wait between readings. This value influences how often `*Updated`
-        /// events are raised and `IObservable` consumers are notified.</param>
-        public virtual void StartUpdating(TimeSpan updateInterval)
+        /// <param name="updateInterval"></param>
+        public virtual void StartUpdating()
         {
             // thread safety
             lock (samplingLock) {
@@ -71,7 +53,7 @@ namespace Meadow.Foundation
                         RaiseEventsAndNotify(result);
 
                         // sleep for the appropriate interval
-                        await Task.Delay(updateInterval);
+                        await Task.Delay(SamplingStandbyDuration);
                     }
                 }, SamplingTokenSource.Token);
             }

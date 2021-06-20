@@ -33,6 +33,13 @@ namespace Meadow.Foundation
         /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
         public bool IsSampling { get; protected set; } = false;
 
+        /// <summary>
+        /// A `TimeSpan` that specifies how long to
+        /// wait between readings. This value influences how often `*Updated`
+        /// events are raised and `IObservable` consumers are notified.
+        /// </summary>
+        public TimeSpan SamplingStandbyDuration { get; set; } = TimeSpan.FromSeconds(5);
+
         //==== ISensor Methods
         protected abstract Task<UNIT> ReadSensor();
 
@@ -49,7 +56,6 @@ namespace Meadow.Foundation
         // TODO: `ValueTask`?
         public async Task<UNIT> Read()
         {
-            // update confiruation for a one-off read
             this.Conditions = await ReadSensor();
             return Conditions;
         }

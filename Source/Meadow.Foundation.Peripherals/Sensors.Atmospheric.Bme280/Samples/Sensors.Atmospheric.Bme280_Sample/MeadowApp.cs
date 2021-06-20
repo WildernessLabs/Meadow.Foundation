@@ -12,23 +12,16 @@ namespace Sensors.Atmospheric.BME280_Sample
     {
         Bme280 sensor;
 
-        IDigitalOutputPort trigger;
-
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
-
-            // create a trigger for the LA
-            trigger = Device.CreateDigitalOutputPort(Device.Pins.D13);
-            Console.WriteLine("Trigger on D02");
-            trigger.State = true;
 
             // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus();
             sensor = new Bme280 (
                 i2c,
-                Bme280.I2cAddress.Adddress0x76 //default
-                //Bme280.I2cAddress.Adddress0x77 //default
+                Bme280.I2cAddress.Adddress0x76 // SDA pulled up
+                //Bme280.I2cAddress.Adddress0x77 // SDA pulled down
             );
 
             // TODO: SPI version

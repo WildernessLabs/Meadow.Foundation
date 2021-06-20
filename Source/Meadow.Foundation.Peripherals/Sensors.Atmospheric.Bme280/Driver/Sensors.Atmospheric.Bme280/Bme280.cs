@@ -11,8 +11,25 @@ using HU = Meadow.Units.RelativeHumidity.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    // Todo: someone clever _might_ be able to update this to SamplingSensorBase and
-    // shave some code off, but it does some idiosyncratic stuff.
+    // TODO: for standby durations of 1,000ms and less, the sensor
+    // will actually handle the reading loop. you put it into `Normal`
+    // mode and set it to one of the known `StandbyDuration`s.
+    //
+    // So perhaps this should be an option. From a method signature
+    // standpoint, i think that we would add an overload that took
+    // a known `StandbyDuration` instead of an int.
+    //
+    // With that said, however, as far as I can tell, the sensor won't
+    // send an interrupt when a new reading is taken, so i'm not sure
+    // how we would synchronize with it, since the time that each read
+    // takes is determined by the samples, filter, etc. -b
+    //
+    // TODO: for longer standby durations, we should put the sensor into
+    // Modes.Sleep to save power. Need to figure out what the stanby
+    // duration threshold is for that. i'm guessing 5 seconds might be a
+    // good value.
+
+
     /// <summary>
     /// BME280 Temperature, Pressure and Humidity Sensor.
     /// </summary>
@@ -21,7 +38,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// from the Bosch BME280 sensor.
     /// </remarks>
     public partial class Bme280 :
-        SensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
+        SamplingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         //==== events
@@ -36,6 +53,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected Memory<byte> writeBuffer = new byte[32];
 
         //==== properties
+        public Oversample TemperatureSampleCount { get; set; } = Oversample.OversampleX8;
+        public Oversample PressureSampleCount { get; set; } = Oversample.OversampleX8;
+        public Oversample HumiditySampleCount { get; set; } = Oversample.OversampleX8;
+
         /// <summary>
         ///     Communication bus used to read and write to the BME280 sensor.
         /// </summary>
@@ -100,100 +121,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // these are basically calibrations burned into the chip.
             ReadCompensationData();
 
-            //
-            //  Update the configuration information and start sampling.
-            //
-            
+            // set to sleep until we're ready to start sampling 
             configuration.Mode = Modes.Sleep;
             configuration.Filter = FilterCoefficient.Off;
             UpdateConfiguration(configuration);
-        }
-
-        /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        /// <param name="temperatureSampleCount">The number of sample readings to take. 
-        /// Must be greater than 0. These samples are automatically averaged.</param>
-        public async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> Read(
-            Oversample temperatureSampleCount = Oversample.OversampleX8,
-            Oversample pressureSampleCount = Oversample.OversampleX8,
-            Oversample humiditySampleCount = Oversample.OversampleX8)
-        {
-            // update confiruation for a one-off read
-            configuration.TemperatureOverSampling = temperatureSampleCount;
-            configuration.PressureOversampling = pressureSampleCount;
-            configuration.HumidityOverSampling = humiditySampleCount;
-            configuration.Mode = Modes.Forced;
-            configuration.Filter = FilterCoefficient.Off;
-            UpdateConfiguration(configuration);
-
-            Conditions = await ReadSensor();
-
-            return Conditions;
-        }
-
-        public void StartUpdating(
-            Oversample temperatureSampleCount = Oversample.OversampleX8,
-            Oversample pressureSampleCount = Oversample.OversampleX8,
-            Oversample humiditySampleCount = Oversample.OversampleX1,
-            int standbyDuration = 1000)
-        {
-            // TODO: for standby durations of 1,000ms and less, the sensor
-            // will actually handle the reading loop. you put it into `Normal`
-            // mode and set it to one of the known `StandbyDuration`s.
-            //
-            // So perhaps this should be an option. From a method signature
-            // standpoint, i think that we would add an overload that took
-            // a known `StandbyDuration` instead of an int.
-            //
-            // With that said, however, as far as I can tell, the sensor won't
-            // send an interrupt when a new reading is taken, so i'm not sure
-            // how we would synchronize with it, since the time that each read
-            // takes is determined by the samples, filter, etc. -b
-            //
-            // TODO: for longer standby durations, we should put the sensor into
-            // Modes.Sleep to save power. Need to figure out what the stanby
-            // duration threshold is for that. i'm guessing 5 seconds might be a
-            // good value.
-
-            // thread safety
-            lock (samplingLock) {
-                if (IsSampling) { return; }
-
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) oldConditions;
-                ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)> result;
-
-                Task.Factory.StartNew(async () => {
-                    while (true) {
-                        if (ct.IsCancellationRequested) {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = (Conditions.Temperature, Conditions.Humidity, Conditions.Pressure);
-
-                        // read
-                        await Read(temperatureSampleCount, pressureSampleCount, humiditySampleCount);
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)>(Conditions, oldConditions);
-
-                        // let everyone know
-                        RaiseEventsAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
         }
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
@@ -208,110 +139,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
             }
             base.RaiseEventsAndNotify(changeResult);
-        }
-
-        /// <summary>
-        /// Stops sampling the temperature.
-        /// </summary>
-        public void StopUpdating()
-        {
-            lock (samplingLock) {
-                if (!IsSampling) return;
-
-                SamplingTokenSource?.Cancel();
-
-                // state muh-cheen
-                IsSampling = false;
-            }
-        }
-
-        /// <summary>
-        ///     Update the configuration for the BME280.
-        /// </summary>
-        /// <remarks>
-        ///     This method uses the data in the configuration properties in order to set up the
-        ///     BME280.  Ensure that the following are set correctly before calling this method:
-        ///     - Standby
-        ///     - Filter
-        ///     - HumidityOverSampling
-        ///     - TemperatureOverSampling
-        ///     - PressureOverSampling
-        ///     - Mode
-        /// </remarks>
-        protected void UpdateConfiguration(Configuration configuration)
-        {
-            //
-            //  Put to sleep to allow the configuration to be changed.
-            //
-            bme280Comms.WriteRegister(Bme280Comms.Register.Measurement, 0x00);
-
-            var data = (byte)((((byte)configuration.Standby << 5) & 0xe0) | (((byte)configuration.Filter << 2) & 0x1c));
-            bme280Comms.WriteRegister(Bme280Comms.Register.Configuration, data);
-            data = (byte)((byte)configuration.HumidityOverSampling & 0x07);
-            bme280Comms.WriteRegister(Bme280Comms.Register.Humidity, data);
-            data = (byte)((((byte)configuration.TemperatureOverSampling << 5) & 0xe0) |
-                           (((byte)configuration.PressureOversampling << 2) & 0x1c) |
-                           ((byte)configuration.Mode & 0x03));
-            bme280Comms.WriteRegister(Bme280Comms.Register.Measurement, data);
-        }
-
-        /// <summary>
-        ///     Reset the sensor.
-        /// </summary>
-        /// <remarks>
-        ///     Perform a full power-on-reset of the sensor and reset the configuration of the sensor.
-        /// </remarks>
-        public void Reset()
-        {
-            bme280Comms.WriteRegister(Bme280Comms.Register.Reset, 0xb6);
-            UpdateConfiguration(configuration);
-        }
-
-        /// <summary>
-        ///     Reads the compensation data.
-        /// </summary>
-        /// <remarks>
-        ///     The compensation data is written to the chip at the time of manufacture and cannot be changed.
-        ///     This information is used to convert the readings from the sensor into actual temperature,
-        ///     pressure and humidity readings.
-        ///     From the data sheet, the register addresses and length are:
-        ///     Temperature and pressure: start address 0x88, end address 0x9F (length = 24)
-        ///     Humidity 1: 0xa1, length = 1
-        ///     Humidity 2 and 3: start address 0xe1, end address 0xe7, (length = 8)
-        /// </remarks>
-        protected void ReadCompensationData()
-        {
-            // read the temperature and pressure data into the internal read buffer
-            bme280Comms.ReadRegisters(0x88, readBuffer.Span[0..24]);
-
-            // Temperature
-            compensationData.T1 = (ushort)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
-            compensationData.T2 = (short)(readBuffer.Span[2] + (readBuffer.Span[3] << 8));
-            compensationData.T3 = (short)(readBuffer.Span[4] + (readBuffer.Span[5] << 8));
-            // Pressure
-            compensationData.P1 = (ushort)(readBuffer.Span[6] + (readBuffer.Span[7] << 8));
-            compensationData.P2 = (short)(readBuffer.Span[8] + (readBuffer.Span[9] << 8));
-            compensationData.P3 = (short)(readBuffer.Span[10] + (readBuffer.Span[11] << 8));
-            compensationData.P4 = (short)(readBuffer.Span[12] + (readBuffer.Span[13] << 8));
-            compensationData.P5 = (short)(readBuffer.Span[14] + (readBuffer.Span[15] << 8));
-            compensationData.P6 = (short)(readBuffer.Span[16] + (readBuffer.Span[17] << 8));
-            compensationData.P7 = (short)(readBuffer.Span[18] + (readBuffer.Span[19] << 8));
-            compensationData.P8 = (short)(readBuffer.Span[20] + (readBuffer.Span[21] << 8));
-            compensationData.P9 = (short)(readBuffer.Span[22] + (readBuffer.Span[23] << 8));
-
-            // read the humidity data. have to read twice because they're in different,
-            // non-sequential registers
-
-            // first one
-            bme280Comms.ReadRegisters(0xa1, readBuffer.Span[0..1]);
-            compensationData.H1 = readBuffer.Span[0];
-            // 2-6
-            bme280Comms.ReadRegisters(0xe1, readBuffer.Span[0..7]);
-            compensationData.H2 = (short)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
-            compensationData.H3 = readBuffer.Span[2];
-            compensationData.H4 = (short)((readBuffer.Span[3] << 4) + (readBuffer.Span[4] & 0xf));
-            compensationData.H5 = (short)(((readBuffer.Span[4] & 0xf) >> 4) + (readBuffer.Span[5] << 4));
-            compensationData.H6 = (sbyte)readBuffer.Span[6];
         }
 
         /// <summary>
@@ -330,6 +157,20 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
         {
             return await Task.Run(() => {
+
+                //TODO: set an update flag on the oversample properties and set
+                // these once, unless the update flag has been set.
+
+                // update configuration
+                configuration.TemperatureOverSampling = TemperatureSampleCount;
+                configuration.PressureOversampling = PressureSampleCount;
+                configuration.HumidityOverSampling = HumiditySampleCount;
+                // TODO: do we need this?
+                //configuration.Mode = Modes.Forced;
+                configuration.Filter = FilterCoefficient.Off;
+                UpdateConfiguration(configuration);
+
+
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
 
                 // readily read the readings from the reading register into the read buffer
@@ -449,6 +290,94 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 return conditions;
             });
+        }
+        /// <summary>
+        ///     Update the configuration for the BME280.
+        /// </summary>
+        /// <remarks>
+        ///     This method uses the data in the configuration properties in order to set up the
+        ///     BME280.  Ensure that the following are set correctly before calling this method:
+        ///     - Standby
+        ///     - Filter
+        ///     - HumidityOverSampling
+        ///     - TemperatureOverSampling
+        ///     - PressureOverSampling
+        ///     - Mode
+        /// </remarks>
+        protected void UpdateConfiguration(Configuration configuration)
+        {
+            //
+            //  Put to sleep to allow the configuration to be changed.
+            //
+            bme280Comms.WriteRegister(Bme280Comms.Register.Measurement, 0x00);
+
+            var data = (byte)((((byte)configuration.Standby << 5) & 0xe0) | (((byte)configuration.Filter << 2) & 0x1c));
+            bme280Comms.WriteRegister(Bme280Comms.Register.Configuration, data);
+            data = (byte)((byte)configuration.HumidityOverSampling & 0x07);
+            bme280Comms.WriteRegister(Bme280Comms.Register.Humidity, data);
+            data = (byte)((((byte)configuration.TemperatureOverSampling << 5) & 0xe0) |
+                           (((byte)configuration.PressureOversampling << 2) & 0x1c) |
+                           ((byte)configuration.Mode & 0x03));
+            bme280Comms.WriteRegister(Bme280Comms.Register.Measurement, data);
+        }
+
+        /// <summary>
+        ///     Reset the sensor.
+        /// </summary>
+        /// <remarks>
+        ///     Perform a full power-on-reset of the sensor and reset the configuration of the sensor.
+        /// </remarks>
+        public void Reset()
+        {
+            bme280Comms.WriteRegister(Bme280Comms.Register.Reset, 0xb6);
+            UpdateConfiguration(configuration);
+        }
+
+        /// <summary>
+        ///     Reads the compensation data.
+        /// </summary>
+        /// <remarks>
+        ///     The compensation data is written to the chip at the time of manufacture and cannot be changed.
+        ///     This information is used to convert the readings from the sensor into actual temperature,
+        ///     pressure and humidity readings.
+        ///     From the data sheet, the register addresses and length are:
+        ///     Temperature and pressure: start address 0x88, end address 0x9F (length = 24)
+        ///     Humidity 1: 0xa1, length = 1
+        ///     Humidity 2 and 3: start address 0xe1, end address 0xe7, (length = 8)
+        /// </remarks>
+        protected void ReadCompensationData()
+        {
+            // read the temperature and pressure data into the internal read buffer
+            bme280Comms.ReadRegisters(0x88, readBuffer.Span[0..24]);
+
+            // Temperature
+            compensationData.T1 = (ushort)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
+            compensationData.T2 = (short)(readBuffer.Span[2] + (readBuffer.Span[3] << 8));
+            compensationData.T3 = (short)(readBuffer.Span[4] + (readBuffer.Span[5] << 8));
+            // Pressure
+            compensationData.P1 = (ushort)(readBuffer.Span[6] + (readBuffer.Span[7] << 8));
+            compensationData.P2 = (short)(readBuffer.Span[8] + (readBuffer.Span[9] << 8));
+            compensationData.P3 = (short)(readBuffer.Span[10] + (readBuffer.Span[11] << 8));
+            compensationData.P4 = (short)(readBuffer.Span[12] + (readBuffer.Span[13] << 8));
+            compensationData.P5 = (short)(readBuffer.Span[14] + (readBuffer.Span[15] << 8));
+            compensationData.P6 = (short)(readBuffer.Span[16] + (readBuffer.Span[17] << 8));
+            compensationData.P7 = (short)(readBuffer.Span[18] + (readBuffer.Span[19] << 8));
+            compensationData.P8 = (short)(readBuffer.Span[20] + (readBuffer.Span[21] << 8));
+            compensationData.P9 = (short)(readBuffer.Span[22] + (readBuffer.Span[23] << 8));
+
+            // read the humidity data. have to read twice because they're in different,
+            // non-sequential registers
+
+            // first one
+            bme280Comms.ReadRegisters(0xa1, readBuffer.Span[0..1]);
+            compensationData.H1 = readBuffer.Span[0];
+            // 2-6
+            bme280Comms.ReadRegisters(0xe1, readBuffer.Span[0..7]);
+            compensationData.H2 = (short)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
+            compensationData.H3 = readBuffer.Span[2];
+            compensationData.H4 = (short)((readBuffer.Span[3] << 4) + (readBuffer.Span[4] & 0xf));
+            compensationData.H5 = (short)(((readBuffer.Span[4] & 0xf) >> 4) + (readBuffer.Span[5] << 4));
+            compensationData.H6 = (sbyte)readBuffer.Span[6];
         }
 
         public byte GetChipID()
