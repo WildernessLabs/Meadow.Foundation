@@ -23,7 +23,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The measured CO2 concentration
         /// </summary>
-        /// 
         public Concentration? Co2 => Conditions.Co2;
 
         /// <summary>
