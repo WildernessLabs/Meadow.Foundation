@@ -7,6 +7,9 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
+    // TODO: Add oversampling parameters (need to break the control registers
+    // for oversampling out into their own enum)
+
     /// <summary>
     /// Driver for the MPL3115A2 pressure and humidity sensor.
     /// </summary>
@@ -74,21 +77,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        // TODO: Add oversampling parameters (need to break the control registers
-        // for oversampling out into their own enum)
-        protected override async Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
-        {
-            this.Conditions = await GetSensorData();
-            return Conditions;
-        }
-
-        /// <summary>
         /// Update the temperature and pressure from the sensor and set the Pressure property.
         /// </summary>
-        protected async Task<(Units.Temperature? Temperature, Pressure? Pressure)> GetSensorData()
+        protected override async Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
         {
             return await Task.Run(() => {
                 (Units.Temperature? Temperature, Pressure? Pressure) conditions;
