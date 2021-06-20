@@ -20,12 +20,12 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <summary>
         /// Returns the pin connected to the A-phase output on the rotary encoder.
         /// </summary>
-        public IDigitalInputPort APhasePort { get; }
+        protected IDigitalInputPort APhasePort { get; }
 
         /// <summary>
         /// Returns the pin connected to the B-phase output on the rotary encoder.
         /// </summary>
-        public IDigitalInputPort BPhasePort { get; }
+        protected IDigitalInputPort BPhasePort { get; }
 
         /// <summary>
         /// Gets the last direction of rotation
