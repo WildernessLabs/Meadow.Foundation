@@ -38,8 +38,6 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         //==== internals
         protected IAnalogInputPort AnalogInputPort { get; }
-        protected int sampleCount = 5;
-        protected int sampleIntervalMs = 40;
 
         //==== properties
         /// <summary>
@@ -90,8 +88,6 @@ namespace Meadow.Foundation.Sensors.Temperature
                       sensorType, calibration)
         {
             base.UpdateInterval = TimeSpan.FromMilliseconds(updateIntervalMs);
-            this.sampleCount = sampleCount;
-            this.sampleIntervalMs = sampleIntervalMs;
         }
 
         public AnalogTemperature(IAnalogInputPort analogInputPort,
