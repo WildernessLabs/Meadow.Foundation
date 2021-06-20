@@ -68,14 +68,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                 )
            );
         }
-
-        public async Task<float> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
-        {
-            // update confiruation for a one-off read
-            this.Conditions = await ReadSensor();
-            return Conditions;
-        }
-
+        
         /// <summary>
         /// Convenience method to get the current temperature. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
@@ -123,12 +116,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             AnalogInputPort.StopUpdating();
         }
-
-        //protected void RaiseEventsAndNotify(ChangeResult<float> changeResult)
-        //{
-        //    Updated?.Invoke(this, changeResult);
-        //    base.NotifyObservers(changeResult);
-        //}
 
         /// <summary>
         /// Converts a voltage value to a level in centimeters, based on the current
