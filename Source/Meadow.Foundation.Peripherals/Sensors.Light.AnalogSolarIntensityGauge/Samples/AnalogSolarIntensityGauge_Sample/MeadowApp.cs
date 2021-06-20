@@ -10,7 +10,6 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        IAnalogInputPort analogIn;
         AnalogSolarIntensityGauge solarGauge;
 
         public MeadowApp()
@@ -29,9 +28,7 @@ namespace MeadowApp
             Console.WriteLine("Initialize hardware...");
 
             Console.WriteLine("Creating analog input port.");
-            analogIn = Device.CreateAnalogInputPort(Device.Pins.A02);
-
-            solarGauge = new AnalogSolarIntensityGauge(analogIn);
+            solarGauge = new AnalogSolarIntensityGauge(Device, Device.Pins.A02, updateIntervalMs: 1000);
 
             //==== classic .NET Event
             solarGauge.SolarIntensityUpdated += (s, result) => {
@@ -53,7 +50,7 @@ namespace MeadowApp
 
         void Start()
         {
-            solarGauge.StartUpdating(standbyDuration: 500);
+            solarGauge.StartUpdating();
         }
 
         async Task ReadSolarIntensityGauge()

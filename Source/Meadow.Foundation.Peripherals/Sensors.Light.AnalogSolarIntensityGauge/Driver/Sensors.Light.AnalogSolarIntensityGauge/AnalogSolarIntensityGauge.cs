@@ -32,34 +32,45 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public float? SolarIntensity { get; protected set; }
 
-        //public AnalogSolarIntensityGauge(IAnalogInputPort analogIn)
-        //{
-        //    // TODO: input port validation if any (is it constructed all right?)
-        //    this.analogIn = analogIn;
-        //    Init();
-        //}
-
+        /// <summary>
+        /// Creates a new instance of an analog solar intensity driver.
+        /// </summary>
+        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
+        /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
+        /// <param name="minVoltageReference">The minimum voltage expected when the solar panel isn't receiving light. Default is 0.</param>
+        /// <param name="maxVoltageReference">The maxmimu voltage expected when the solar panel is in full sun. Default is 3.3V.</param>
+        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
+        /// between sets of sample readings. This value determines how often
+        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
+        /// <param name="sampleCount">How many samples to take during a given
+        /// reading. These are automatically averaged to reduce noise.</param>
+        /// <param name="sampleIntervalMs">The time, in milliseconds,
+        /// to wait in between samples during a reading.</param>
         public AnalogSolarIntensityGauge(
             IAnalogInputController device, IPin analogPin,
-            Voltage minVoltageReference, Voltage maxVoltageReference,
+            Voltage? minVoltageReference = null, Voltage? maxVoltageReference = null,
             int updateIntervalMs = 10000,
             int sampleCount = 5, int sampleIntervalMs = 40)
              : this(device.CreateAnalogInputPort(analogPin, updateIntervalMs, sampleCount, sampleIntervalMs),
-                   minVoltageReference, maxVoltageReference,
-                   updateIntervalMs, sampleCount, sampleIntervalMs)
-        {}
-
-        public AnalogSolarIntensityGauge(
-            IAnalogInputPort analogIn,
-            Voltage minVoltageReference, Voltage maxVoltageReference,
-            int updateIntervalMs = 10000,
-            int sampleCount = 5, int sampleIntervalMs = 40)
+                   minVoltageReference, maxVoltageReference)
         {
-            this.MinVoltageReference = minVoltageReference;
-            this.MaxVoltageReference = maxVoltageReference;
             base.UpdateInterval = TimeSpan.FromMilliseconds(updateIntervalMs);
             this.sampleCount = sampleCount;
             this.sampleIntervalMs = sampleIntervalMs;
+        }
+
+        /// <summary>
+        /// Creates a new instance of an analog solar intensity driver.
+        /// </summary>
+        /// <param name="analogIn">The `IAnalogInputPort` connected to the solar panel.</param>
+        /// <param name="minVoltageReference">The minimum voltage expected when the solar panel isn't receiving light. Default is 0.</param>
+        /// <param name="maxVoltageReference">The maxmimu voltage expected when the solar panel is in full sun. Default is 3.3V.</param>
+        public AnalogSolarIntensityGauge(
+            IAnalogInputPort analogIn,
+            Voltage? minVoltageReference = null, Voltage? maxVoltageReference = null)
+        {
+            if (minVoltageReference is { } minV) { this.MinVoltageReference = minV; }
+            if (maxVoltageReference is { } maxV) { this.MaxVoltageReference = maxV; }
 
             // TODO: input port validation if any (is it constructed all right?)
             this.analogIn = analogIn;
@@ -85,20 +96,10 @@ namespace Meadow.Foundation.Sensors.Light
             analogIn.Subscribe(observer);
         }
 
-        public Task<float> Read(int sampleCount = 5, int sampleIntervalDuration = 40)
-        {
-            return ReadSensor(sampleCount, sampleIntervalDuration);
-        }
-
-        protected override Task<float> ReadSensor()
-        {
-            return ReadSensor(5, 40);
-        }
-
-        protected async Task<float> ReadSensor(int sampleCount = 5, int sampleIntervalDuration = 40)
+        protected override async Task<float> ReadSensor()
         {
             // read the voltage
-            Voltage voltage = await analogIn.Read(sampleCount, sampleIntervalDuration);
+            Voltage voltage = await analogIn.Read();
 
             // convert the voltage
             var newSolarIntensity = ConvertVoltageToIntensity(voltage);
