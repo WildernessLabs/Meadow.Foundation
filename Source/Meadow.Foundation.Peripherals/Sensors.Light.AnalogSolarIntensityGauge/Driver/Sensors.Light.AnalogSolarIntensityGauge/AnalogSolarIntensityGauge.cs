@@ -19,6 +19,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         //==== internals
         protected IAnalogInputPort analogIn;
+        protected int sampleCount = 5;
+        protected int sampleIntervalMs = 40;
 
         //==== properties
         public Voltage MinVoltageReference { get; protected set; } = new Voltage(0, VU.Volts);
@@ -30,20 +32,38 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public float? SolarIntensity { get; protected set; }
 
-        public AnalogSolarIntensityGauge(IAnalogInputPort analogIn)
-        {
-            // TODO: input port validation if any (is it constructed all right?)
-            this.analogIn = analogIn;
-            Init();
-        }
+        //public AnalogSolarIntensityGauge(IAnalogInputPort analogIn)
+        //{
+        //    // TODO: input port validation if any (is it constructed all right?)
+        //    this.analogIn = analogIn;
+        //    Init();
+        //}
+
+        public AnalogSolarIntensityGauge(
+            IAnalogInputController device, IPin analogPin,
+            Voltage minVoltageReference, Voltage maxVoltageReference,
+            int updateIntervalMs = 10000,
+            int sampleCount = 5, int sampleIntervalMs = 40)
+             : this(device.CreateAnalogInputPort(analogPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+                   minVoltageReference, maxVoltageReference,
+                   updateIntervalMs, sampleCount, sampleIntervalMs)
+        {}
 
         public AnalogSolarIntensityGauge(
             IAnalogInputPort analogIn,
-            Voltage minVoltageReference, Voltage maxVoltageReference)
-            : this(analogIn)
+            Voltage minVoltageReference, Voltage maxVoltageReference,
+            int updateIntervalMs = 10000,
+            int sampleCount = 5, int sampleIntervalMs = 40)
         {
             this.MinVoltageReference = minVoltageReference;
             this.MaxVoltageReference = maxVoltageReference;
+            base.UpdateInterval = TimeSpan.FromMilliseconds(updateIntervalMs);
+            this.sampleCount = sampleCount;
+            this.sampleIntervalMs = sampleIntervalMs;
+
+            // TODO: input port validation if any (is it constructed all right?)
+            this.analogIn = analogIn;
+            Init();
         }
 
         protected void Init()
@@ -103,12 +123,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="standbyDuration">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
-        public void StartUpdating(
-            int sampleCount = 5,
-            int sampleIntervalDuration = 40,
-            int standbyDuration = 10000)
+        public void StartUpdating()
         {
-            analogIn.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
+            analogIn.StartUpdating();
         }
 
         /// <summary>

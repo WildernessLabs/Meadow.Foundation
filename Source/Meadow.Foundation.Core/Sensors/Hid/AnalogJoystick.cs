@@ -3,6 +3,7 @@ using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Hid;
 using Meadow.Units;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using VU = Meadow.Units.Voltage.UnitType;
 
@@ -15,10 +16,6 @@ namespace Meadow.Foundation.Sensors.Hid
         : SensorBase<JoystickPosition>
     {
         //==== events
-        ///// <summary>
-        ///// Raised when the value of the reading changes.
-        ///// </summary>
-        //public event EventHandler<ChangeResult<JoystickPosition>> Updated = delegate { };
 
         //==== internals
         protected int sampleCount;
@@ -27,47 +24,6 @@ namespace Meadow.Foundation.Sensors.Hid
         //==== properties
         protected IAnalogInputPort HorizontalInputPort { get; set; }
         protected IAnalogInputPort VerticalInputPort { get; set; }
-
-        ///// <summary>
-        ///// Number of samples to take per reading. If > `1` then the port will
-        ///// take multiple readings and These are automatically averaged to
-        ///// reduce noise, a process known as _oversampling_.
-        ///// </summary>
-        //public int SampleCount {
-        //    get => sampleCount;
-        //    set {
-                
-        //        HorizontalInputPort.SampleCount = value;
-        //        VerticalInputPort.SampleCount = value;
-        //        sampleCount = value;
-        //    }
-        //} protected int sampleCount = 2;
-
-        ///// <summary>
-        ///// Duration in between samples when oversampling.
-        ///// </summary>
-        //public TimeSpan SampleInterval {
-        //    get => sampleInterval;
-        //    set {
-        //        HorizontalInputPort.SampleInterval = value;
-        //        VerticalInputPort.SampleInterval = value;
-        //        sampleInterval = value;
-        //    }
-        //} protected TimeSpan sampleInterval = TimeSpan.FromMilliseconds(20);
-
-        ///// <summary>
-        ///// A `TimeSpan` that specifies how long to
-        ///// wait between readings. This value influences how often `*Updated`
-        ///// events are raised and `IObservable` consumers are notified.
-        ///// </summary>
-        //public override TimeSpan UpdateInterval {
-        //    get => updateInterval;
-        //    set {
-        //        HorizontalInputPort.UpdateInterval = value;
-        //        VerticalInputPort.UpdateInterval = value;
-        //        updateInterval = value;
-        //    }
-        //} protected TimeSpan updateInterval = TimeSpan.FromSeconds(5);
 
         /// <summary>
         /// 
@@ -209,8 +165,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <returns></returns>
         public async Task SetCenterPosition()
         {
-            var hCenter = await HorizontalInputPort.Read(2, 20);
-            var vCenter = await VerticalInputPort.Read(2, 20);
+            var hCenter = await HorizontalInputPort.Read();
+            var vCenter = await VerticalInputPort.Read();
 
             Calibration = new JoystickCalibration(
                 hCenter, Calibration.HorizontalMin, Calibration.HorizontalMax,
@@ -271,19 +227,6 @@ namespace Meadow.Foundation.Sensors.Hid
 
         }
 
-        public async Task<JoystickPosition> Read(int sampleCount = 2, int sampleIntervalDuration = 20)
-        {
-            // update confiruation for a one-off read
-            this.Conditions = await ReadSensor();
-            return Conditions;
-        }
-
-        // TODO what??
-        protected override Task<JoystickPosition> ReadSensor()
-        {
-            return ReadSensor(10, 40);
-        }
-
         /// <summary>
         /// Convenience method to get the current temperature. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
@@ -293,10 +236,10 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        protected async Task<JoystickPosition> ReadSensor(int sampleCount = 2, int sampleIntervalDuration = 20)
+        protected override async Task<JoystickPosition> ReadSensor()
         {
-            var h = await HorizontalInputPort.Read(sampleCount, sampleIntervalDuration);
-            var v = await VerticalInputPort.Read(sampleCount, sampleIntervalDuration);
+            var h = await HorizontalInputPort.Read();
+            var v = await VerticalInputPort.Read();
 
             JoystickPosition position = new JoystickPosition( GetNormalizedPosition(h, true), GetNormalizedPosition(v, false));
             return position;
@@ -318,8 +261,18 @@ namespace Meadow.Foundation.Sensors.Hid
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
         public void StartUpdating()
         {
-            HorizontalInputPort.StartUpdating();
-            VerticalInputPort.StartUpdating();
+            // thread safety
+            lock (samplingLock) {
+                if (IsSampling) return;
+
+                IsSampling = true;
+
+                base.SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                HorizontalInputPort.StartUpdating();
+                VerticalInputPort.StartUpdating();
+            }
         }
 
         /// <summary>
@@ -327,8 +280,17 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public void StopUpdating()
         {
-            HorizontalInputPort.StopUpdating();
-            VerticalInputPort.StopUpdating();
+            lock (samplingLock) {
+                if (!IsSampling) return;
+
+                HorizontalInputPort.StopUpdating();
+                VerticalInputPort.StopUpdating();
+
+                SamplingTokenSource?.Cancel();
+
+                // state muh-cheen
+                IsSampling = false;
+            }
         }
 
         /// <summary>

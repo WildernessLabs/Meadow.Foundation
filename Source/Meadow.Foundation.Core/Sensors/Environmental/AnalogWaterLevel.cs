@@ -76,11 +76,6 @@ namespace Meadow.Foundation.Sensors.Environmental
             return Conditions;
         }
 
-        protected override Task<float> ReadSensor()
-        {
-            return ReadSensor(10, 40);
-        }
-
         /// <summary>
         /// Convenience method to get the current temperature. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
@@ -90,10 +85,10 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        protected async Task<float> ReadSensor(int sampleCount = 10, int sampleIntervalDuration = 40)
+        protected override async Task<float> ReadSensor()
         {
             // read the voltage
-            Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
+            Voltage voltage = await AnalogInputPort.Read();
 
             // convert and save to our temp property for later retreival
             WaterLevel = VoltageToWaterLevel(voltage);

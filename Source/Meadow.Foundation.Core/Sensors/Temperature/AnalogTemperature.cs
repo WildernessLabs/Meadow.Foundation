@@ -162,7 +162,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         protected override async Task<Units.Temperature> ReadSensor()
         {
             // read the voltage
-            Voltage voltage = await AnalogInputPort.Read(this.sampleCount, this.sampleIntervalMs);
+            Voltage voltage = await AnalogInputPort.Read();
 
             // convert the voltage
             var newTemp = VoltageToTemperature(voltage);
