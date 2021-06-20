@@ -29,7 +29,13 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public Azimuth? WindAzimuth { get; protected set; }
 
+        /// <summary>
+        /// Number of samples to take per reading. Default is 2.
+        /// </summary>
         public int SampleCount { get; set; } = 2;
+        /// <summary>
+        /// Duration of time between samples. Default is 40ms.
+        /// </summary>
         public TimeSpan SampleInterval { get; set; } = TimeSpan.FromMilliseconds(40);
 
         // TODO: consider making an `ImmutableDictionary` (need to add package
