@@ -29,6 +29,9 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public Azimuth? WindAzimuth { get; protected set; }
 
+        public int SampleCount { get; set; } = 2;
+        public TimeSpan SampleInterval { get; set; } = TimeSpan.FromMilliseconds(40);
+
         // TODO: consider making an `ImmutableDictionary` (need to add package
         /// <summary>
         /// Voltage -> wind azimuth lookup dictionary.
@@ -86,17 +89,14 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="standbyDuration">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
-        public void StartUpdating(
-            int sampleCount = 5,
-            int sampleIntervalDuration = 20,
-            int standbyDuration = 500)
+        public void StartUpdating()
         {
             // thread safety
             lock (samplingLock) {
                 if (IsSampling) return;
 
                 IsSampling = true;
-                inputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
+                inputPort.StartUpdating(SampleCount, SampleInterval.Milliseconds, UpdateInterval.Seconds * 1000);
             }
         }
 
@@ -113,18 +113,6 @@ namespace Meadow.Foundation.Sensors.Weather
             }
         }
 
-        public async Task<Azimuth> Read(int sampleCount = 5, int sampleIntervalDuration = 20)
-        {
-            // update confiruation for a one-off read
-            this.Conditions = await ReadSensor(sampleCount, sampleIntervalDuration);
-            return Conditions;
-        }
-
-        protected override Task<Azimuth> ReadSensor()
-        {
-            return ReadSensor(5, 20);
-        }
-
         /// <summary>
         /// Convenience method to get the current wind azimuth. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
@@ -134,10 +122,10 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        protected async Task<Azimuth> ReadSensor(int sampleCount = 5, int sampleIntervalDuration = 20)
+        protected override async Task<Azimuth> ReadSensor()
         {
             // read the voltage
-            Voltage voltage = await inputPort.Read(5, 20/*sampleCount, sampleIntervalDuration*/);
+            Voltage voltage = await inputPort.Read(SampleCount, UpdateInterval.Milliseconds);
             // get the azimuth
             return LookupWindDirection(voltage);
         }
