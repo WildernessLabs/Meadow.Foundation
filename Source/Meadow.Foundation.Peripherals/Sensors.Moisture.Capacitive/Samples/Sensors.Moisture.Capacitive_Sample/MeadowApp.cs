@@ -56,7 +56,7 @@ namespace Sensors.Moisture.Capacitive_Sample
         protected async Task ReadMoisture()
         {
             var moisture = await capacitive.Read();
-            Console.WriteLine($"Moisture New Value { moisture.New}");            
+            Console.WriteLine($"Moisture New Value { moisture }");            
         }
     }
 }

@@ -9,9 +9,7 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// Capacitive Soil Moisture Sensor
     /// </summary>
-    public class Capacitive :
-        SensorBase<double>,
-        IMoistureSensor
+    public class Capacitive : SensorBase<double>, IMoistureSensor
     {
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
@@ -25,13 +23,6 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// Returns the analog input port
         /// </summary>
         public IAnalogInputPort AnalogInputPort { get; protected set; }
-
-        /// <summary>
-        /// Gets a value indicating whether the analog input port is currently
-        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
 
         /// <summary>
         /// Last value read from the moisture sensor.
@@ -51,14 +42,22 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the specified analog pin and a IO device.
         /// </summary>
-        /// <param name="device"></param>
-        /// <param name="analogPin"></param>
+        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
+        /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
+        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
+        /// between sets of sample readings. This value determines how often
+        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
+        /// <param name="sampleCount">How many samples to take during a given
+        /// reading. These are automatically averaged to reduce noise.</param>
+        /// <param name="sampleIntervalMs">The time, in milliseconds,
+        /// to wait in between samples during a reading.</param>
         public Capacitive(
-            IAnalogInputController device,
-            IPin analogPin,
-            Voltage? minimumVoltageCalibration,
-            Voltage? maximumVoltageCalibration) :
-            this(device.CreateAnalogInputPort(analogPin), minimumVoltageCalibration, maximumVoltageCalibration)
+            IAnalogInputController device, IPin analogPin,
+            Voltage? minimumVoltageCalibration, Voltage? maximumVoltageCalibration,
+            int updateIntervalMs = 1000,
+            int sampleCount = 5, int sampleIntervalMs = 40)
+                : this(device.CreateAnalogInputPort(analogPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+                      minimumVoltageCalibration, maximumVoltageCalibration)
         { }
 
         /// <summary>
@@ -67,15 +66,12 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="analogPort"></param>
         public Capacitive(
             IAnalogInputPort analogPort,
-            Voltage? minimumVoltageCalibration,
-            Voltage? maximumVoltageCalibration)
+            Voltage? minimumVoltageCalibration, Voltage? maximumVoltageCalibration)
         {
             AnalogInputPort = analogPort;
 
             if(minimumVoltageCalibration is { } min) { MinimumVoltageCalibration = min; }
             if(maximumVoltageCalibration is { } max) { MaximumVoltageCalibration = max; }
-            //MinimumVoltageCalibration = minimumVoltageCalibration;
-            //MaximumVoltageCalibration = maximumVoltageCalibration;
 
             // wire up our observable
             // have to convert from voltage to temp units for our consumers
@@ -97,26 +93,15 @@ namespace Meadow.Foundation.Sensors.Moisture
            );
         }
 
-        /// <summary>
-        /// Convenience method to get the current soil moisture. For frequent reads, use
-        /// StartUpdating() and StopUpdating().
-        /// </summary>
-        /// <param name="sampleCount">The number of sample readings to take. 
-        /// Must be greater than 0.</param>
-        /// <param name="sampleInterval">The interval, in milliseconds, between
-        /// sample readings.</param>
-        /// <returns></returns>
-        public async Task<ChangeResult<double>> Read(int sampleCount = 10, int sampleInterval = 40)
+        protected override async Task<double> ReadSensor()
         {
-            // save previous moisture value
-            double? previousMoisture = Moisture;
             // read the voltage
-            Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleInterval);
+            Voltage voltage = await AnalogInputPort.Read();
             // convert and save to our temp property for later retrieval
             var newMoisture = VoltageToMoisture(voltage);
             Moisture = newMoisture;
             // return new and old Moisture values
-            return new ChangeResult<double>(newMoisture, previousMoisture);
+            return newMoisture;
         }
 
         /// <summary>
@@ -133,12 +118,9 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="standbyDuration">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
         /// `Updated` events are raised and `IObservable` consumers are notified.</param>
-        public void StartUpdating(
-            int sampleCount = 10,
-            int sampleIntervalDuration = 40,
-            int standbyDuration = 1000)
+        public void StartUpdating()
         {
-            AnalogInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
+            AnalogInputPort.StartUpdating();
         }
 
         /// <summary>
