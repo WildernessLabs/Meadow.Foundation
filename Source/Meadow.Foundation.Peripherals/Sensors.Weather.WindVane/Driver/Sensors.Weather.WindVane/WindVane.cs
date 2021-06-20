@@ -51,8 +51,13 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="device">The IO Device.</param>
         /// <param name="analogInputPin">The analog input pin.</param>
         /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages.</param>
-        public WindVane(IAnalogInputController device, IPin analogInputPin, IDictionary<Voltage, Azimuth> azimuthVoltages = null)
-            : this(device.CreateAnalogInputPort(analogInputPin), azimuthVoltages)
+        public WindVane(
+            IAnalogInputController device, IPin analogInputPin,
+            IDictionary<Voltage, Azimuth> azimuthVoltages = null,
+            int updateIntervalMs = 1000,
+            int sampleCount = 1, int sampleIntervalMs = 40)
+            : this(device.CreateAnalogInputPort(analogInputPin, updateIntervalMs, sampleCount, sampleIntervalMs)
+                  , azimuthVoltages)
         {
         }
 
@@ -102,7 +107,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 if (IsSampling) return;
 
                 IsSampling = true;
-                inputPort.StartUpdating(SampleCount, SampleInterval.Milliseconds, UpdateInterval.Seconds * 1000);
+                inputPort.StartUpdating();
             }
         }
 
@@ -131,7 +136,7 @@ namespace Meadow.Foundation.Sensors.Weather
         protected override async Task<Azimuth> ReadSensor()
         {
             // read the voltage
-            Voltage voltage = await inputPort.Read(SampleCount, UpdateInterval.Milliseconds);
+            Voltage voltage = await inputPort.Read();
             // get the azimuth
             return LookupWindDirection(voltage);
         }
