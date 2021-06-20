@@ -52,11 +52,18 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="device"></param>
+        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="horizontalPin"></param>
         /// <param name="verticalPin"></param>
-        /// <param name="calibration"></param>
-        /// <param name="isInverted"></param>
+        /// <param name="calibration">Calibration for the joystick.</param>
+        /// <param name="isInverted">Whether or not the vertical component is inverted.</param>
+        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
+        /// between sets of sample readings. This value determines how often
+        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
+        /// <param name="sampleCount">How many samples to take during a given
+        /// reading. These are automatically averaged to reduce noise.</param>
+        /// <param name="sampleIntervalMs">The time, in milliseconds,
+        /// to wait in between samples during a reading.</param>
         public AnalogJoystick(
             IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
             JoystickCalibration? calibration = null, bool isInverted = false,
