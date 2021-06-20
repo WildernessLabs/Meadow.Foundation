@@ -20,9 +20,54 @@ namespace Meadow.Foundation.Sensors.Hid
         ///// </summary>
         //public event EventHandler<ChangeResult<JoystickPosition>> Updated = delegate { };
 
+        //==== internals
+        protected int sampleCount;
+        protected int sampleIntervalMs;
+
         //==== properties
         protected IAnalogInputPort HorizontalInputPort { get; set; }
         protected IAnalogInputPort VerticalInputPort { get; set; }
+
+        ///// <summary>
+        ///// Number of samples to take per reading. If > `1` then the port will
+        ///// take multiple readings and These are automatically averaged to
+        ///// reduce noise, a process known as _oversampling_.
+        ///// </summary>
+        //public int SampleCount {
+        //    get => sampleCount;
+        //    set {
+                
+        //        HorizontalInputPort.SampleCount = value;
+        //        VerticalInputPort.SampleCount = value;
+        //        sampleCount = value;
+        //    }
+        //} protected int sampleCount = 2;
+
+        ///// <summary>
+        ///// Duration in between samples when oversampling.
+        ///// </summary>
+        //public TimeSpan SampleInterval {
+        //    get => sampleInterval;
+        //    set {
+        //        HorizontalInputPort.SampleInterval = value;
+        //        VerticalInputPort.SampleInterval = value;
+        //        sampleInterval = value;
+        //    }
+        //} protected TimeSpan sampleInterval = TimeSpan.FromMilliseconds(20);
+
+        ///// <summary>
+        ///// A `TimeSpan` that specifies how long to
+        ///// wait between readings. This value influences how often `*Updated`
+        ///// events are raised and `IObservable` consumers are notified.
+        ///// </summary>
+        //public override TimeSpan UpdateInterval {
+        //    get => updateInterval;
+        //    set {
+        //        HorizontalInputPort.UpdateInterval = value;
+        //        VerticalInputPort.UpdateInterval = value;
+        //        updateInterval = value;
+        //    }
+        //} protected TimeSpan updateInterval = TimeSpan.FromSeconds(5);
 
         /// <summary>
         /// 
@@ -58,8 +103,13 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="isInverted"></param>
         public AnalogJoystick(
             IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
-            JoystickCalibration? calibration = null, bool isInverted = false)
-                : this(device.CreateAnalogInputPort(horizontalPin), device.CreateAnalogInputPort(verticalPin), calibration, isInverted)
+            JoystickCalibration? calibration = null, bool isInverted = false,
+            int updateIntervalMs = 1000,
+            int sampleCount = 5, int sampleIntervalMs = 40)
+                : this(
+                      device.CreateAnalogInputPort(horizontalPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+                      device.CreateAnalogInputPort(verticalPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+                      calibration, isInverted)
         { }
 
         public AnalogJoystick(
@@ -266,12 +316,10 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="standbyDuration">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
-        public void StartUpdating(int sampleCount = 3,
-            int sampleIntervalDuration = 40,
-            int standbyDuration = 100)
+        public void StartUpdating()
         {
-            HorizontalInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
-            VerticalInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
+            HorizontalInputPort.StartUpdating();
+            VerticalInputPort.StartUpdating();
         }
 
         /// <summary>
@@ -282,16 +330,6 @@ namespace Meadow.Foundation.Sensors.Hid
             HorizontalInputPort.StopUpdating();
             VerticalInputPort.StopUpdating();
         }
-
-        ///// <summary>
-        ///// Inheritance safe way to raise events.
-        ///// </summary>
-        ///// <param name="changeResult"></param>
-        //protected void RaiseEventsAndNotify(ChangeResult<JoystickPosition> changeResult)
-        //{
-        //    Updated?.Invoke(this, changeResult);
-        //    base.NotifyObservers(changeResult);
-        //}
 
         /// <summary>
         /// Converts a voltage value to positional data, taking into account the

@@ -36,16 +36,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
-        //==== properties
-        /// <summary>
-        /// Number of samples to take per reading.
-        /// </summary>
-        public int SampleCount { get; set; } = 10;
-        /// <summary>
-        /// Duration in between samples.
-        /// </summary>
-        public TimeSpan SampleInterval { get; set; } = TimeSpan.FromMilliseconds(40);
+        //==== internals
+        protected IAnalogInputPort AnalogInputPort { get; }
+        protected int sampleCount = 5;
+        protected int sampleIntervalMs = 40;
 
+        //==== properties
         /// <summary>
         ///     Type of temperature sensor.
         /// </summary>
@@ -61,8 +57,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         public Calibration SensorCalibration { get; set; }
-
-        protected IAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         ///     Temperature in degrees centigrade.
@@ -80,12 +74,16 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="sensorType">Type of sensor attached to the analog port.</param>
         /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
         public AnalogTemperature(
-            IAnalogInputController device,
-            IPin analogPin,
-            KnownSensorType sensorType,
-            Calibration? calibration = null
-            ) : this(device.CreateAnalogInputPort(analogPin), sensorType, calibration)
+            IAnalogInputController device, IPin analogPin,
+            KnownSensorType sensorType, Calibration? calibration = null,
+            int updateIntervalMs = 1000,
+            int sampleCount = 5, int sampleIntervalMs = 40)
+                : this(device.CreateAnalogInputPort(analogPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+                      sensorType, calibration)
         {
+            base.UpdateInterval = TimeSpan.FromMilliseconds(updateIntervalMs);
+            this.sampleCount = sampleCount;
+            this.sampleIntervalMs = sampleIntervalMs;
         }
 
         public AnalogTemperature(IAnalogInputPort analogInputPort,
@@ -164,7 +162,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         protected override async Task<Units.Temperature> ReadSensor()
         {
             // read the voltage
-            Voltage voltage = await AnalogInputPort.Read(SampleCount, SampleInterval.Milliseconds);
+            Voltage voltage = await AnalogInputPort.Read(this.sampleCount, this.sampleIntervalMs);
 
             // convert the voltage
             var newTemp = VoltageToTemperature(voltage);
@@ -193,7 +191,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             lock (samplingLock) {
                 if (IsSampling) return;
                 IsSampling = true;
-                AnalogInputPort.StartUpdating(SampleCount, SampleInterval.Milliseconds, UpdateInterval.Seconds * 1000);
+                AnalogInputPort.StartUpdating();
             }
         }
 

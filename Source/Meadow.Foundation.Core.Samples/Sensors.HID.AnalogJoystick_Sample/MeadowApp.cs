@@ -39,10 +39,7 @@ namespace MeadowApp
             joystick.Updated += JoystickUpdated;
 
             //==== IObservable
-
-            // these are pretty fast updates (40ms in total), if you need more time to process, you can
-            // increase the sample interval duration and/or standby duration.
-            joystick.StartUpdating(sampleCount:3, sampleIntervalDuration:5, standbyDuration:10);
+            joystick.StartUpdating();
         }
 
         void Initialize()
@@ -50,9 +47,11 @@ namespace MeadowApp
             Console.WriteLine("Initializing hardware...");
 
             //==== Joystick
+            // these are pretty fast updates (40ms in total), if you need more time to process, you can
+            // increase the sample interval duration and/or standby duration.
             joystick = new AnalogJoystick(
-                Device.CreateAnalogInputPort(Device.Pins.A01),
-                Device.CreateAnalogInputPort(Device.Pins.A00),
+                Device.CreateAnalogInputPort(Device.Pins.A01, 20, 1, 10),
+                Device.CreateAnalogInputPort(Device.Pins.A00, 20, 1, 10),
                 null, false);
 
             //==== Display and graphics

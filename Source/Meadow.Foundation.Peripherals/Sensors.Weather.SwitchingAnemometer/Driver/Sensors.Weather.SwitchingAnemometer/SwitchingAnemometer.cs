@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Weather
         List<DigitalPortResult>? samples;
 
         // Turn on for debug output
-        bool debug = false;
+        bool debug = true;
 
         //==== properties
         /// <summary>
@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 if(value < 2) { throw new ArgumentException("Sample count must be 2 or more."); }
                 sampleCount = value;
             }
-        } protected int sampleCount = 5;
+        } protected int sampleCount = 3;
 
         /// <summary>
         /// Calibration for how fast the wind speed is when the switch is hit
@@ -125,7 +125,7 @@ namespace Meadow.Foundation.Sensors.Weather
             // speed is based on duration between clicks, we need at least two
             // clicks to measure duration.
             samples.Add(result);
-            if (debug) { Console.WriteLine($"result #[{samples.Count}] new: [{result.New}], old: [{result.Old}]"); }
+            if (debug) { Console.WriteLine($"result #[{samples.Count}] new: [{result.New.State}], old: [{result.Old?.State}]"); }
 
             // if we don't have two samples, move on
             if (samples.Count < 1) { return; }
@@ -208,6 +208,7 @@ namespace Meadow.Foundation.Sensors.Weather
             // start a timer that we can use to raise a zero wind event in the case
             // that we're not getting input events (because there is no wind)
             noWindTimer = new System.Timers.Timer(NoWindTimeout.Seconds * 1000);
+            //noWindTimer = new System.Timers.Timer(5000);
             noWindTimer.Elapsed += (object sender, System.Timers.ElapsedEventArgs e) => {
                 if (debug) { Console.WriteLine("No wind timer elapsed."); }
                 // if not running, clear the timer and bail out.

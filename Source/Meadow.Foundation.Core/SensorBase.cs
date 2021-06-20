@@ -38,7 +38,7 @@ namespace Meadow.Foundation
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
         /// </summary>
-        public TimeSpan UpdateInterval { get; set; } = TimeSpan.FromSeconds(5);
+        public virtual TimeSpan UpdateInterval { get; protected set; } = TimeSpan.FromSeconds(5);
 
         //==== ISensor Methods
         protected abstract Task<UNIT> ReadSensor();

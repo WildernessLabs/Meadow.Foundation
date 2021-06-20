@@ -18,7 +18,8 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             analogTemperature = new AnalogTemperature (
                 device: Device,
                 analogPin: Device.Pins.A03,
-                sensorType: AnalogTemperature.KnownSensorType.LM35
+                sensorType: AnalogTemperature.KnownSensorType.LM35,
+                updateIntervalMs: 1000
             );
 
             //==== IObservable Pattern with an optional notification filter.

@@ -6,50 +6,15 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Environmental
 {
-    public class AnalogWaterLevel
+    public partial class AnalogWaterLevel
         : SensorBase<float>
     {
-        ///// <summary>
-        ///// Raised when the value of the reading changes.
-        ///// </summary>
-        //public event EventHandler<ChangeResult<float>> Updated = delegate { };
+        //==== internals
+        protected IAnalogInputPort AnalogInputPort { get; }
+        protected int sampleCount = 5;
+        protected int sampleIntervalMs = 40;
 
-        /// <summary>
-        ///     Calibration class for new sensor types.  This allows new sensors
-        ///     to be used with this class.
-        /// </summary>
-        public class Calibration
-        {
-
-            public Voltage VoltsAtZero { get; protected set; } = new Voltage(1, Voltage.UnitType.Volts);
-
-            /// <summary>
-            ///     Linear change in the sensor output (in millivolts) per 1 mm
-            ///     change in temperature.
-            /// </summary>
-            public Voltage VoltsPerCentimeter { get; protected set; } = new Voltage(0.25, Voltage.UnitType.Volts);
-
-            /// <summary>
-            ///     Default constructor. Create a new Calibration object with default values
-            ///     for the properties.
-            /// </summary>
-            public Calibration()
-            {
-            }
-
-            /// <summary>
-            ///     Create a new Calibration object using the specified values.
-            /// </summary>
-            /// <param name="millivoltsPerMillimeter">Millivolt change per degree centigrade (from the data sheet).</param>
-            public Calibration(Voltage voltsPerCentimeter, Voltage voltsAtZeo)
-            {
-                VoltsPerCentimeter = voltsPerCentimeter;
-                VoltsAtZero = voltsAtZeo;
-            }
-        }
-
-        public IAnalogInputPort AnalogInputPort { get; protected set; }
-
+        //==== properties
         public Calibration LevelCalibration { get; protected set; }
 
         public float WaterLevel { get; protected set; }
@@ -63,9 +28,14 @@ namespace Meadow.Foundation.Sensors.Environmental
         public AnalogWaterLevel(
             IAnalogInputController device,
             IPin analogPin,
-            Calibration? calibration = null
-            ) : this(device.CreateAnalogInputPort(analogPin), calibration)
+            Calibration? calibration = null,
+            int updateIntervalMs = 1000,
+            int sampleCount = 5, int sampleIntervalMs = 40)
+                : this(device.CreateAnalogInputPort(analogPin), calibration)
         {
+            base.UpdateInterval = TimeSpan.FromMilliseconds(updateIntervalMs);
+            this.sampleCount = sampleCount;
+            this.sampleIntervalMs = sampleIntervalMs;
         }
 
         public AnalogWaterLevel(IAnalogInputPort analogInputPort,
@@ -146,12 +116,9 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="standbyDuration">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
-        public void StartUpdating(
-            int sampleCount = 10,
-            int sampleIntervalDuration = 40,
-            int standbyDuration = 100)
+        public void StartUpdating()
         {
-            AnalogInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
+            AnalogInputPort.StartUpdating();
         }
 
         /// <summary>
