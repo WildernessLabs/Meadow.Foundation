@@ -29,67 +29,22 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP36, LM50             750                     10                      0.5
     /// TMP37                   500                     20                      0
     /// </remarks>
-    public class AnalogTemperature :
-        SensorBase<Units.Temperature>,
-        ITemperatureSensor
+    public partial class AnalogTemperature : SensorBase<Units.Temperature>, ITemperatureSensor
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
+        //==== properties
         /// <summary>
-        ///     Calibration class for new sensor types.  This allows new sensors
-        ///     to be used with this class.
+        /// Number of samples to take per reading.
         /// </summary>
-        /// <remarks>
-        ///     The default settings for this object are correct for the TMP35.
-        /// </remarks>
-        public class Calibration
-        {
-            /// <summary>
-            ///     Sample reading as specified in the product data sheet.
-            ///     Measured in degrees Centigrade.
-            /// </summary>
-            public int SampleReading { get; protected set; } = 25;
-
-            /// <summary>
-            ///     Millivolt reading the sensor will generate when the sensor
-            ///     is at the Samplereading temperature.  This value can be
-            ///     obtained from the data sheet. 
-            /// </summary>
-            public int MillivoltsAtSampleReading { get; protected set; } = 250;
-
-            /// <summary>
-            ///     Linear change in the sensor output (in millivolts) per 1 degree C
-            ///     change in temperature.
-            /// </summary>
-            public int MillivoltsPerDegreeCentigrade { get; protected set; } = 10;
-
-            /// <summary>
-            ///     Default constructor.  Create a new Calibration object with default values
-            ///     for the properties.
-            /// </summary>
-            public Calibration()
-            {
-            }
-
-            /// <summary>
-            ///     Create a new Calibration object using the specified values.
-            /// </summary>
-            /// <param name="degreesCelciusSampleReading">Sample reading from the data sheet.</param>
-            /// <param name="millivoltsAtSampleReading">Millivolts output at the sample reading (from the data sheet).</param>
-            /// <param name="millivoltsPerDegreeCentigrade">Millivolt change per degree centigrade (from the data sheet).</param>
-            /// <param name="millivoltsOffset">Millovolts offset (from the data sheet).</param>
-            public Calibration(int degreesCelciusSampleReading,
-                               int millivoltsAtSampleReading,
-                               int millivoltsPerDegreeCentigrade)
-            {
-                SampleReading = degreesCelciusSampleReading;
-                MillivoltsAtSampleReading = millivoltsAtSampleReading;
-                MillivoltsPerDegreeCentigrade = millivoltsPerDegreeCentigrade;
-            }
-        }
+        public int SampleCount { get; set; } = 10;
+        /// <summary>
+        /// Duration in between samples.
+        /// </summary>
+        public TimeSpan SampleInterval { get; set; } = TimeSpan.FromMilliseconds(40);
 
         /// <summary>
         ///     Type of temperature sensor.
@@ -107,7 +62,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 
         public Calibration SensorCalibration { get; set; }
 
-        public IAnalogInputPort AnalogInputPort { get; protected set; }
+        protected IAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         ///     Temperature in degrees centigrade.
@@ -197,18 +152,6 @@ namespace Meadow.Foundation.Sensors.Temperature
            );
         }
 
-        public async Task<Units.Temperature> Read(int sampleCount = 10, int sampleIntervalDuration = 40)
-        {
-            // update confiruation for a one-off read
-            this.Conditions = await ReadSensor();
-            return Conditions;
-        }
-
-        protected override Task<Units.Temperature> ReadSensor()
-        {
-            return ReadSensor(10, 40);
-        }
-
         /// <summary>
         /// Convenience method to get the current temperature. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
@@ -218,10 +161,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        protected async Task<Units.Temperature> ReadSensor(int sampleCount = 10, int sampleIntervalDuration = 40)
+        protected override async Task<Units.Temperature> ReadSensor()
         {
             // read the voltage
-            Voltage voltage = await AnalogInputPort.Read(sampleCount, sampleIntervalDuration);
+            Voltage voltage = await AnalogInputPort.Read(SampleCount, SampleInterval.Milliseconds);
 
             // convert the voltage
             var newTemp = VoltageToTemperature(voltage);
@@ -244,17 +187,13 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="standbyDuration">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
-        public void StartUpdating(
-            int sampleCount = 10,
-            int sampleIntervalDuration = 40,
-            int standbyDuration = 100)
+        public void StartUpdating()
         {
             // thread safety
             lock (samplingLock) {
                 if (IsSampling) return;
-
                 IsSampling = true;
-                AnalogInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
+                AnalogInputPort.StartUpdating(SampleCount, SampleInterval.Milliseconds, UpdateInterval.Seconds * 1000);
             }
         }
 
@@ -265,7 +204,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             lock (samplingLock) {
                 if (!IsSampling) return;
-
                 base.IsSampling = false;
                 AnalogInputPort.StopUpdating();
             }
