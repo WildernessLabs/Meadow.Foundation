@@ -22,9 +22,16 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         ///     New instance of the AnalogWaterLevel class.
         /// </summary>
-        /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
-        /// <param name="sensorType">Type of sensor attached to the analog port.</param>
-        /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
+        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
+        /// <param name="analogPin">Analog pin the sensor is connected to.</param>
+        /// <param name="calibration">Calibration for the analog sensor.</param> // TODO: @Jorge, what's this mean?
+        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
+        /// between sets of sample readings. This value determines how often
+        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
+        /// <param name="sampleCount">How many samples to take during a given
+        /// reading. These are automatically averaged to reduce noise.</param>
+        /// <param name="sampleIntervalMs">The time, in milliseconds,
+        /// to wait in between samples during a reading.</param>
         public AnalogWaterLevel(
             IAnalogInputController device,
             IPin analogPin,
