@@ -53,7 +53,7 @@ namespace Meadow.Foundation
                         RaiseEventsAndNotify(result);
 
                         // sleep for the appropriate interval
-                        await Task.Delay(SamplingStandbyDuration);
+                        await Task.Delay(UpdateInterval);
                     }
                 }, SamplingTokenSource.Token);
             }
