@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
-        ///     New instance of the AnalogTemperatureSensor class.
+        /// Creates a new instance of the AnalogTemperature class.
         /// </summary>
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
