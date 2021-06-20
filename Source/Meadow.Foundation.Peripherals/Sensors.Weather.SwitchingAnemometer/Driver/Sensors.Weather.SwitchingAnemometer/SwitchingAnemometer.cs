@@ -31,8 +31,7 @@ namespace Meadow.Foundation.Sensors.Weather
         //==== internals
         IDigitalInputPort inputPort;
         bool running = false;
-        int standbyDuration;
-        int overSampleCount;
+        
         System.Timers.Timer? noWindTimer;
         List<DigitalPortResult>? samples;
 
@@ -44,6 +43,29 @@ namespace Meadow.Foundation.Sensors.Weather
         /// The last recored wind speed.
         /// </summary>
         public Speed? WindSpeed { get; protected set; }
+
+        /// <summary>
+        /// A `TimeSpan` that specifies how long to
+        /// wait between readings. This value influences how often `*Updated`
+        /// events are raised and `IObservable` consumers are notified.
+        /// </summary>
+        public TimeSpan UpdateInterval { get; set; } = TimeSpan.FromSeconds(5);
+
+        /// <summary>
+        /// Time to wait if no events come in to register a zero speed wind.
+        /// </summary>
+        public TimeSpan NoWindTimeout { get; set; } = TimeSpan.FromSeconds(4);
+
+        /// <summary>
+        /// Number of samples to take for a reading.
+        /// </summary>
+        public int SampleCount {
+            get => sampleCount;
+            set {
+                if(value < 2) { throw new ArgumentException("Sample count must be 2 or more."); }
+                sampleCount = value;
+            }
+        } protected int sampleCount = 5;
 
         /// <summary>
         /// Calibration for how fast the wind speed is when the switch is hit
@@ -109,7 +131,7 @@ namespace Meadow.Foundation.Sensors.Weather
             if (samples.Count < 1) { return; }
 
             // if we've reached our sample count
-            if (samples.Count >= overSampleCount) {
+            if (samples.Count >= SampleCount) {
                 float speedSum = 0f;
                 float oversampledSpeed = 0f;
 
@@ -134,9 +156,9 @@ namespace Meadow.Foundation.Sensors.Weather
                 RaiseUpdated(new ChangeResult<Speed>(newSpeed, oldSpeed));
 
                 // if we need to wait before taking another sample set, 
-                if (this.standbyDuration > 0) {
+                if (UpdateInterval > TimeSpan.Zero) {
                     this.UnsubscribeToInputPortEvents();
-                    Thread.Sleep(standbyDuration);
+                    Thread.Sleep(UpdateInterval);
                     this.SubscribeToinputPortEvents();
                 }
             }
@@ -175,22 +197,17 @@ namespace Meadow.Foundation.Sensors.Weather
         /// wait for events from the anemometer. If no events come in by the time
         /// this elapses, then an event of `0` wind will be raised.</param>
         public void StartUpdating(
-            int sampleCount = 5,
-            int standbyDuration = 500,
-            int noWindTimeout = 4000)
+            )
         {
-            if(standbyDuration < 0) { throw new ArgumentException("`StandbyDuration` must be greater than or equal to `0`."); }
-            if(sampleCount < 2) { sampleCount = 2; }
             if(running) { return; }
 
-            this.overSampleCount = sampleCount;
-            this.standbyDuration = standbyDuration;
+            this.SampleCount = sampleCount;
 
             running = true;
 
             // start a timer that we can use to raise a zero wind event in the case
             // that we're not getting input events (because there is no wind)
-            noWindTimer = new System.Timers.Timer(noWindTimeout);
+            noWindTimer = new System.Timers.Timer(NoWindTimeout.Seconds * 1000);
             noWindTimer.Elapsed += (object sender, System.Timers.ElapsedEventArgs e) => {
                 if (debug) { Console.WriteLine("No wind timer elapsed."); }
                 // if not running, clear the timer and bail out.
@@ -199,7 +216,7 @@ namespace Meadow.Foundation.Sensors.Weather
                     return;
                 }
                 // if there aren't enough samples to make a reading
-                if (samples == null || samples.Count <= overSampleCount ) {
+                if (samples == null || samples.Count <= SampleCount ) {
                     // capture the old value
                     Speed? oldSpeed = WindSpeed;
                     // save state
@@ -209,9 +226,9 @@ namespace Meadow.Foundation.Sensors.Weather
                     // raise the wind updated event with `0` wind speed
                     RaiseUpdated(new ChangeResult<Speed>(newSpeed, oldSpeed));
                     // sleep for the standby duration
-                    if (standbyDuration > 0) {
+                    if (UpdateInterval > TimeSpan.Zero) {
                         if (debug) { Console.WriteLine("Sleeping for a bit."); }
-                        Thread.Sleep(standbyDuration);
+                        Thread.Sleep(UpdateInterval);
                         if (debug) { Console.WriteLine("Woke up."); }
                     }
 
