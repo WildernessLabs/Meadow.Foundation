@@ -8,7 +8,6 @@ namespace Meadow.Foundation.Sensors.Light
 {
     public class Alspt19315C : SensorBase<Voltage>
     {
-
         //==== internals
         /// <summary>
         /// Analog port connected to the sensor.
