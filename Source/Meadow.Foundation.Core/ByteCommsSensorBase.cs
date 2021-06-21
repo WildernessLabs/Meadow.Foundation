@@ -24,8 +24,8 @@ namespace Meadow.Foundation
         //==== ctors
         protected ByteCommsSensorBase(
             II2cBus i2cBus, byte address,
-            int readBufferSize = 8, int writeBufferSize = 8,
-            int updateIntervalMs = 1000)
+            int updateIntervalMs = 1000,
+            int readBufferSize = 8, int writeBufferSize = 8)
                 : base(updateIntervalMs)
         {
             Peripheral = new I2cPeripheral(i2cBus, address, readBufferSize, writeBufferSize);
@@ -34,8 +34,8 @@ namespace Meadow.Foundation
 
         protected ByteCommsSensorBase(
             ISpiBus spiBus, IDigitalOutputPort? chipSelect,
-            int readBufferSize = 8, int writeBufferSize = 8,
             int updateIntervalMs = 1000,
+            int readBufferSize = 8, int writeBufferSize = 8,
             ChipSelectMode csMode = ChipSelectMode.ActiveLow)
                 : base(updateIntervalMs)
         {
