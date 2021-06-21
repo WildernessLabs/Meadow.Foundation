@@ -31,8 +31,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Concentration? Voc => Conditions.Voc;
 
 
-        public Ccs811(II2cBus i2cBus, byte address, int updateIntervalMs = 1000)
-            : base(i2cBus, address, updateIntervalMs, 10, 8)
+        public Ccs811(II2cBus i2cBus, byte address)
+            : base(i2cBus, address, 10, 8)
         {
             switch (address)
             {
@@ -47,8 +47,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Init();
         }
 
-        public Ccs811(II2cBus i2cBus, Addresses address = Addresses.Default, int updateIntervalMs = 1000)
-            : this(i2cBus, (byte)address, updateIntervalMs)
+        public Ccs811(II2cBus i2cBus, Addresses address = Addresses.Default)
+            : this(i2cBus, (byte)address)
         {
         }
 

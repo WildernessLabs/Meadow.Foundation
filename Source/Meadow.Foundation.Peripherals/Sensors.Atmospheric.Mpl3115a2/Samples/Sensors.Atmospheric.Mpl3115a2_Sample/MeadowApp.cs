@@ -51,7 +51,7 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
             ReadConditions().Wait();
 
             // start updating continuously
-            sensor.StartUpdating();
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         protected async Task ReadConditions()

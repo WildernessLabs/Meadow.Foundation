@@ -72,9 +72,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
         /// <param name="sensorType">Type of sensor attached to the analog port.</param>
         /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
-        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
-        /// between sets of sample readings. This value determines how often
-        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
         /// <param name="sampleCount">How many samples to take during a given
         /// reading. These are automatically averaged to reduce noise.</param>
         /// <param name="sampleIntervalMs">The time, in milliseconds,
@@ -82,12 +79,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         public AnalogTemperature(
             IAnalogInputController device, IPin analogPin,
             KnownSensorType sensorType, Calibration? calibration = null,
-            int updateIntervalMs = 1000,
             int sampleCount = 5, int sampleIntervalMs = 40)
-                : this(device.CreateAnalogInputPort(analogPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleIntervalMs),
                       sensorType, calibration)
         {
-            base.UpdateInterval = TimeSpan.FromMilliseconds(updateIntervalMs);
         }
 
         public AnalogTemperature(IAnalogInputPort analogInputPort,
@@ -178,13 +173,17 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// subscribers getting notified. Use the `readIntervalDuration` parameter
         /// to specify how often events and notifications are raised/sent.
         /// </summary>
-        public void StartUpdating()
+        /// <param name="updateInterval">A `TimeSpan` that specifies how long to
+        /// wait between readings. This value influences how often `*Updated`
+        /// events are raised and `IObservable` consumers are notified.
+        /// The default is 5 seconds.</param>
+        public void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety
             lock (samplingLock) {
                 if (IsSampling) return;
                 IsSampling = true;
-                AnalogInputPort.StartUpdating();
+                AnalogInputPort.StartUpdating(updateInterval);
             }
         }
 

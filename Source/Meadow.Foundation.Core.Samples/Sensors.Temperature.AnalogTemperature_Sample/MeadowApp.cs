@@ -18,8 +18,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             analogTemperature = new AnalogTemperature (
                 device: Device,
                 analogPin: Device.Pins.A03,
-                sensorType: AnalogTemperature.KnownSensorType.LM35,
-                updateIntervalMs: 1000
+                sensorType: AnalogTemperature.KnownSensorType.LM35
             );
 
             //==== IObservable Pattern with an optional notification filter.
@@ -51,7 +50,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
             // Spin up the sampling thread so that events are raised and
             // IObservable notifications are sent.
-            analogTemperature.StartUpdating();
+            analogTemperature.StartUpdating(TimeSpan.FromMilliseconds(1000));
         }
 
         protected async Task ReadTemp()

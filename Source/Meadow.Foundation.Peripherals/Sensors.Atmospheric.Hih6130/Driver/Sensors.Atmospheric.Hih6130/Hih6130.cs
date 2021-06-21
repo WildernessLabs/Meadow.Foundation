@@ -35,8 +35,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Address of the HIH6130 (default = 0x27).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
-        public Hih6130(II2cBus i2cBus, byte address = 0x27, int updateIntervalMs = 1000)
-            : base(i2cBus, address, updateIntervalMs, readBufferSize: 4, writeBufferSize: 4)
+        public Hih6130(II2cBus i2cBus, byte address = 0x27)
+            : base(i2cBus, address, readBufferSize: 4, writeBufferSize: 4)
         {
         }
 

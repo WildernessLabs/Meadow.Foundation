@@ -54,7 +54,7 @@ namespace MeadowApp
             ReadConditions().Wait();
 
             // start updating continuously
-            sensor.StartUpdating();
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         protected async Task ReadConditions()

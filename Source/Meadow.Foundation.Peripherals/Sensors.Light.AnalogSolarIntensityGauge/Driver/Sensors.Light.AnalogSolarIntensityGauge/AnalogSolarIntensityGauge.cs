@@ -117,16 +117,13 @@ namespace Meadow.Foundation.Sensors.Light
         /// subscribers getting notified. Use the `readIntervalDuration` parameter
         /// to specify how often events and notifications are raised/sent.
         /// </summary>
-        /// <param name="sampleCount">How many samples to take during a given
-        /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalDuration">The time, in milliseconds,
-        /// to wait in between samples during a reading.</param>
-        /// <param name="standbyDuration">The time, in milliseconds, to wait
-        /// between sets of sample readings. This value determines how often
-        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
-        public void StartUpdating()
+        /// <param name="updateInterval">A `TimeSpan` that specifies how long to
+        /// wait between readings. This value influences how often `*Updated`
+        /// events are raised and `IObservable` consumers are notified.
+        /// The default is 5 seconds.</param>
+        public void StartUpdating(TimeSpan updateInterval)
         {
-            analogIn.StartUpdating();
+            analogIn.StartUpdating(updateInterval);
         }
 
         /// <summary>

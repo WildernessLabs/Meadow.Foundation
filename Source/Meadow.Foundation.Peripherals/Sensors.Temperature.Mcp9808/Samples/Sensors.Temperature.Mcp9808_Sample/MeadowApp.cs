@@ -37,7 +37,7 @@ namespace Sensors.Temperature.Mcp9808_Sample
                 Console.WriteLine($"Temperature Updated: {e.New.Celsius:N2}C");
             };
 
-            mcp9808.StartUpdating();
+            mcp9808.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         void TestRead()
@@ -46,9 +46,9 @@ namespace Sensors.Temperature.Mcp9808_Sample
 
             while (true)
             {
-                var temp = mcp9808.Read();
+                var temp = mcp9808.Read().Result;
 
-                Console.WriteLine($"Temperature New Value { temp.Celsius}");
+                Console.WriteLine($"Temperature New Value { temp.Celsius }");
                 Thread.Sleep(1000);
             }
         }

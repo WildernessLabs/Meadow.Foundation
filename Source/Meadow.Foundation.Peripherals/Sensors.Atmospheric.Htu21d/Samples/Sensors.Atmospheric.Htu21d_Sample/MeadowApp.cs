@@ -24,12 +24,6 @@ namespace MeadowApp
 
             Console.WriteLine($"Chip Serial: {sensor.SerialNumber}");
 
-            // get an initial reading
-            ReadConditions().Wait();
-
-            // start updating continuously
-            sensor.StartUpdating();
-
             //==== Events
             // classical .NET events can also be used:
             sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity)> result) => {
@@ -60,6 +54,12 @@ namespace MeadowApp
                 //filter: null
                 );
             sensor.Subscribe(consumer);
+
+            // get an initial reading
+            ReadConditions().Wait();
+
+            // start updating continuously
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         protected async Task ReadConditions()

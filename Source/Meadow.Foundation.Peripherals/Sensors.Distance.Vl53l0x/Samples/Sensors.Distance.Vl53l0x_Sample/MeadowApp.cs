@@ -17,7 +17,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
             Initialize();
 
             sensor.DistanceUpdated += Sensor_Updated;
-            sensor.StartUpdating();
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(250));
         }
 
         private void Sensor_Updated(object sender, IChangeResult<Length> result)

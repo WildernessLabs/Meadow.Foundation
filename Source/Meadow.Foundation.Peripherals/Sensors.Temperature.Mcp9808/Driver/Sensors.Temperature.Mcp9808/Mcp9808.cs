@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
-    public class Mcp9808 :
-        ByteCommsSensorBase<Units.Temperature>,
-        ITemperatureSensor
+    public class Mcp9808 : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
     {
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
@@ -38,8 +36,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
 
-        public Mcp9808(II2cBus i2CBus, byte address = DefaultAddress, int updateIntervalMs = 1000)
-            : base(i2CBus, address, updateIntervalMs, readBufferSize: 8, writeBufferSize: 8)
+        public Mcp9808(II2cBus i2CBus, byte address = DefaultAddress)
+            : base(i2CBus, address, readBufferSize: 8, writeBufferSize: 8)
         {
             Peripheral.WriteRegister(MCP_REG_CONFIG, (ushort)0x0);
         }
@@ -100,68 +98,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             Peripheral.WriteRegister(MCP_RESOLUTION, resolution);
         }
 
-        /// <summary>
-		/// Begin reading temperature data
-		/// </summary>
-        public void StartUpdating(int standbyDuration = 1000)
-        {
-            // thread safety
-            lock (samplingLock)
-            {
-                if (IsSampling) return;
-
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                Units.Temperature? oldtemperature;
-                ChangeResult<Units.Temperature> result;
-                Task.Factory.StartNew(async () => 
-                {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-
-                        // capture history
-                        oldtemperature = Temperature;
-
-                        // read
-                        await ReadSensor();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<Units.Temperature>(Temperature.Value, oldtemperature);
-
-                        // let everyone know
-                        RaiseEventsAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        /// <summary>
-        /// Stops sampling the temperature.
-        /// </summary>
-        public void StopUpdating()
-        {
-            lock (samplingLock)
-            {
-                if (!IsSampling) return;
-
-                base.IsSampling = false;
-                SamplingTokenSource?.Cancel();
-            }
-        }
-
         protected override async Task<Units.Temperature> ReadSensor()
         {
             return await Task.Run(() =>
@@ -186,7 +122,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
         {
             TemperatureUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }

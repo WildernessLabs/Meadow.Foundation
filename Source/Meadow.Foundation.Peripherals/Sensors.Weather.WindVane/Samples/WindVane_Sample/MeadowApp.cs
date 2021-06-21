@@ -19,7 +19,7 @@ namespace MeadowApp
             Console.WriteLine($"Initial azimuth: {azi.Compass16PointCardinalName}");
 
             // start updating
-            windVane.StartUpdating();
+            windVane.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         void Initialize()

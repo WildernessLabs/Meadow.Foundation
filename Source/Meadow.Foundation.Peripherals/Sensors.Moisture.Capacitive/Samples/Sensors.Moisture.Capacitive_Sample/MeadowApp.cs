@@ -50,7 +50,7 @@ namespace Sensors.Moisture.Capacitive_Sample
 
             // Spin up the sampling thread so that events are raised and
             // IObservable notifications are sent.
-            capacitive.StartUpdating();
+            capacitive.StartUpdating(TimeSpan.FromSeconds(5));
         }
 
         protected async Task ReadMoisture()

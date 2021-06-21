@@ -50,7 +50,7 @@ namespace MeadowApp
 
         void Start()
         {
-            solarGauge.StartUpdating();
+            solarGauge.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         async Task ReadSolarIntensityGauge()

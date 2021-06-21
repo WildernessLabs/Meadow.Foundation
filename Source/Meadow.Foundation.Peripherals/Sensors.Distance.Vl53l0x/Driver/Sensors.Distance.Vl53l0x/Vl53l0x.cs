@@ -123,8 +123,8 @@ namespace Meadow.Foundation.Sensors.Distance
 
         public Vl53l0x(
             IDigitalOutputController device, II2cBus i2cBus,
-            int updateIntervalMs = 1000, byte address = DefaultI2cAddress)
-                : this (device, i2cBus, null, updateIntervalMs, address)
+            byte address = DefaultI2cAddress)
+                : this (device, i2cBus, null, address)
         {
         }
 
@@ -133,8 +133,8 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="units">Unit of measure</param>
         public Vl53l0x(
             IDigitalOutputController device, II2cBus i2cBus, IPin shutdownPin,
-            int updateIntervalMs = 1000, byte address = DefaultI2cAddress)
-                : base(i2cBus, address, updateIntervalMs)
+            byte address = DefaultI2cAddress)
+                : base(i2cBus, address)
         {
             if(shutdownPin != null) {
                 device.CreateDigitalOutputPort(shutdownPin, true);

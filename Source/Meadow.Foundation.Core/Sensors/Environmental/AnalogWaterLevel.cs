@@ -104,9 +104,13 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// subscribers getting notified. Use the `readIntervalDuration` parameter
         /// to specify how often events and notifications are raised/sent.
         /// </summary>
-        public void StartUpdating()
+        /// <param name="updateInterval">A `TimeSpan` that specifies how long to
+        /// wait between readings. This value influences how often `*Updated`
+        /// events are raised and `IObservable` consumers are notified.
+        /// The default is 5 seconds.</param>
+        public void StartUpdating(TimeSpan? updateInterval)
         {
-            AnalogInputPort.StartUpdating();
+            AnalogInputPort.StartUpdating(updateInterval);
         }
 
         /// <summary>

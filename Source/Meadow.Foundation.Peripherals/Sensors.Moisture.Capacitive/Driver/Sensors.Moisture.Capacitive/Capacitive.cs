@@ -54,9 +54,8 @@ namespace Meadow.Foundation.Sensors.Moisture
         public Capacitive(
             IAnalogInputController device, IPin analogPin,
             Voltage? minimumVoltageCalibration, Voltage? maximumVoltageCalibration,
-            int updateIntervalMs = 1000,
             int sampleCount = 5, int sampleIntervalMs = 40)
-                : this(device.CreateAnalogInputPort(analogPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleIntervalMs),
                       minimumVoltageCalibration, maximumVoltageCalibration)
         { }
 
@@ -111,16 +110,13 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// subscribers getting notified. Use the `standbyDuration` parameter
         /// to specify how often events and notifications are raised/sent.
         /// </summary>
-        /// <param name="sampleCount">How many samples to take during a given
-        /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalDuration">The time, in milliseconds,
-        /// to wait in between samples during a reading.</param>
-        /// <param name="standbyDuration">The time, in milliseconds, to wait
-        /// between sets of sample readings. This value determines how often
-        /// `Updated` events are raised and `IObservable` consumers are notified.</param>
-        public void StartUpdating()
+        /// <param name="updateInterval">A `TimeSpan` that specifies how long to
+        /// wait between readings. This value influences how often `*Updated`
+        /// events are raised and `IObservable` consumers are notified.
+        /// The default is 5 seconds.</param>
+        public void StartUpdating(TimeSpan updateInterval)
         {
-            AnalogInputPort.StartUpdating();
+            AnalogInputPort.StartUpdating(updateInterval);
         }
 
         /// <summary>
@@ -134,7 +130,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         protected void RaiseChangedAndNotify(IChangeResult<double> changeResult)
         {
             HumidityUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         protected double VoltageToMoisture(Voltage voltage)
