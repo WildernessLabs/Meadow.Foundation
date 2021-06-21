@@ -52,10 +52,10 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> e) => {
-                Console.WriteLine($"  Temperature: {e.New.Temperature?.Celsius:N2}C");
-                Console.WriteLine($"  Relative Humidity: {e.New.Humidity:N2}%");
-                Console.WriteLine($"  Pressure: {e.New.Pressure?.Millibar:N2}mbar ({e.New.Pressure?.Pascal:N2}Pa)");
+            sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> result) => {
+                Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
+                Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
+                Console.WriteLine($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
             };
 
             // just for funsies.
