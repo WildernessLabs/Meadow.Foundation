@@ -10,9 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// Represents the Vl53l0x distance sensor
     /// </summary>
-    public class Vl53l0x :
-        SensorBase<Length>,
-        IRangeFinder
+    public class Vl53l0x : ByteCommsSensorBase<Length>, IRangeFinder
     {
         //==== events
         public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
@@ -119,129 +117,35 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public Length MaximumDistance => new Length(2000, Length.UnitType.Millimeters);
 
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        /// <summary>
-        /// Is the sensor sampling 
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
-
-        readonly II2cPeripheral i2cPeripheral;
         readonly IDigitalOutputPort shutdownPort;
        
         byte stopVariable;
 
-        public Vl53l0x(IDigitalOutputController device, II2cBus i2cBus, byte address = DefaultI2cAddress) : 
-            this (device, i2cBus, null, address)
+        public Vl53l0x(
+            IDigitalOutputController device, II2cBus i2cBus,
+            int updateIntervalMs = 1000, byte address = DefaultI2cAddress)
+                : this (device, i2cBus, null, address)
         {
         }
 
         /// <param name="i2cBus">I2C bus</param>
         /// <param name="address">VL53L0X address</param>
         /// <param name="units">Unit of measure</param>
-        public Vl53l0x(IDigitalOutputController device, II2cBus i2cBus, IPin shutdownPin, byte address = DefaultI2cAddress)
+        public Vl53l0x(
+            IDigitalOutputController device, II2cBus i2cBus, IPin shutdownPin,
+            int updateIntervalMs = 1000, byte address = DefaultI2cAddress)
+                : base(i2cBus, address, updateIntervalMs)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
-
-            if(shutdownPin != null)
-            {
+            if(shutdownPin != null) {
                 device.CreateDigitalOutputPort(shutdownPin, true);
             }
-
             Initialize().Wait();
         }
 
-        ///// <summary>
-        ///// Convenience method to get the current distance. For frequent reads, use
-        ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        ///// </summary>
-        public async Task<Length> Read()
-        {
-            await Update();
-
-            return Distance.Value;
-        }
-
-        ///// <summary>
-        ///// Starts continuously sampling the sensor.
-        /////
-        ///// This method also starts raising `Changed` events and IObservable
-        ///// subscribers getting notified.
-        ///// </summary>
-        public void StartUpdating(int standbyDuration = 1000)
-        {
-            // thread safety
-            lock (_lock)
-            {
-                if (IsSampling) { return; }
-
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                Length? oldResult;
-                ChangeResult<Length> result;
-                Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldResult = Distance;
-
-                        // read
-                        await Update();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<Length>(Distance.Value, oldResult);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        protected void RaiseChangedAndNotify(IChangeResult<Length> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
         {
             DistanceUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
-        }
-
-        ///// <summary>
-        ///// Stops sampling the temperature.
-        ///// </summary>
-        public void StopUpdating()
-        {
-            lock (_lock)
-            {
-                if (!IsSampling) { return; }
-
-                SamplingTokenSource?.Cancel();
-
-                // state muh-cheen
-                IsSampling = false;
-            }
-        }
-
-        /// <summary>
-        ///     Read the sensor output and convert the sensor readings into acceleration values.
-        /// </summary>
-        public async Task Update()
-        {
-            Distance = await GetRange();
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
@@ -259,21 +163,21 @@ namespace Meadow.Foundation.Sensors.Distance
                 throw new Exception("Failed to find expected ID register values");
             }
 
-            i2cPeripheral.WriteRegister(0x88, 0x00);
-            i2cPeripheral.WriteRegister(0x80, 0x01);
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(0x00, 0x00);
+            Peripheral.WriteRegister(0x88, 0x00);
+            Peripheral.WriteRegister(0x80, 0x01);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(0x00, 0x00);
 
             stopVariable = Read(0x91);
 
-            i2cPeripheral.WriteRegister(0x00, 0x01);
-            i2cPeripheral.WriteRegister(0xFF, 0x00);
-            i2cPeripheral.WriteRegister(0x80, 0x00);
+            Peripheral.WriteRegister(0x00, 0x01);
+            Peripheral.WriteRegister(0xFF, 0x00);
+            Peripheral.WriteRegister(0x80, 0x00);
 
             var configControl = ((byte)(Read(MsrcConfigControl) | 0x12));
             var signalRateLimit = 0.25f;
 
-            i2cPeripheral.WriteRegister(SystemSequenceConfig, 0xFF);
+            Peripheral.WriteRegister(SystemSequenceConfig, 0xFF);
             var spadInfo = GetSpadInfo();
             int spadCount = spadInfo.Item1;
             bool spad_is_aperture = spadInfo.Item2;
@@ -281,11 +185,11 @@ namespace Meadow.Foundation.Sensors.Distance
             byte[] ref_spad_map = new byte[7];
             ref_spad_map[0] = GlobalConfigSpadEnablesRef0;
 
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(DynamicSpadRefEnStartOffset, 0x00);
-            i2cPeripheral.WriteRegister(DynamicSpadNumRequestedRefSpad, 0x2C);
-            i2cPeripheral.WriteRegister(0xFF, 0x00);
-            i2cPeripheral.WriteRegister(GlobalConfigRefEnStartSelect, 0xB4);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(DynamicSpadRefEnStartOffset, 0x00);
+            Peripheral.WriteRegister(DynamicSpadNumRequestedRefSpad, 0x2C);
+            Peripheral.WriteRegister(0xFF, 0x00);
+            Peripheral.WriteRegister(GlobalConfigRefEnStartSelect, 0xB4);
 
             var first_spad_to_enable = (spad_is_aperture) ? 12 : 0;
             var spads_enabled = 0;
@@ -302,108 +206,110 @@ namespace Meadow.Foundation.Sensors.Distance
                 }
             }
 
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(0x00, 0x00);
-            i2cPeripheral.WriteRegister(0xFF, 0x00);
-            i2cPeripheral.WriteRegister(0x09, 0x00);
-            i2cPeripheral.WriteRegister(0x10, 0x00);
-            i2cPeripheral.WriteRegister(0x11, 0x00);
-            i2cPeripheral.WriteRegister(0x24, 0x01);
-            i2cPeripheral.WriteRegister(0x25, 0xFF);
-            i2cPeripheral.WriteRegister(0x75, 0x00);
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(0x4E, 0x2C);
-            i2cPeripheral.WriteRegister(0x48, 0x00);
-            i2cPeripheral.WriteRegister(0x30, 0x20);
-            i2cPeripheral.WriteRegister(0xFF, 0x00);
-            i2cPeripheral.WriteRegister(0x30, 0x09);
-            i2cPeripheral.WriteRegister(0x54, 0x00);
-            i2cPeripheral.WriteRegister(0x31, 0x04);
-            i2cPeripheral.WriteRegister(0x32, 0x03);
-            i2cPeripheral.WriteRegister(0x40, 0x83);
-            i2cPeripheral.WriteRegister(0x46, 0x25);
-            i2cPeripheral.WriteRegister(0x60, 0x00);
-            i2cPeripheral.WriteRegister(0x27, 0x00);
-            i2cPeripheral.WriteRegister(0x50, 0x06);
-            i2cPeripheral.WriteRegister(0x51, 0x00);
-            i2cPeripheral.WriteRegister(0x52, 0x96);
-            i2cPeripheral.WriteRegister(0x56, 0x08);
-            i2cPeripheral.WriteRegister(0x57, 0x30);
-            i2cPeripheral.WriteRegister(0x61, 0x00);
-            i2cPeripheral.WriteRegister(0x62, 0x00);
-            i2cPeripheral.WriteRegister(0x64, 0x00);
-            i2cPeripheral.WriteRegister(0x65, 0x00);
-            i2cPeripheral.WriteRegister(0x66, 0xA0);
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(0x22, 0x32);
-            i2cPeripheral.WriteRegister(0x47, 0x14);
-            i2cPeripheral.WriteRegister(0x49, 0xFF);
-            i2cPeripheral.WriteRegister(0x4A, 0x00);
-            i2cPeripheral.WriteRegister(0xFF, 0x00);
-            i2cPeripheral.WriteRegister(0x7A, 0x0A);
-            i2cPeripheral.WriteRegister(0x7B, 0x00);
-            i2cPeripheral.WriteRegister(0x78, 0x21);
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(0x23, 0x34);
-            i2cPeripheral.WriteRegister(0x42, 0x00);
-            i2cPeripheral.WriteRegister(0x44, 0xFF);
-            i2cPeripheral.WriteRegister(0x45, 0x26);
-            i2cPeripheral.WriteRegister(0x46, 0x05);
-            i2cPeripheral.WriteRegister(0x40, 0x40);
-            i2cPeripheral.WriteRegister(0x0E, 0x06);
-            i2cPeripheral.WriteRegister(0x20, 0x1A);
-            i2cPeripheral.WriteRegister(0x43, 0x40);
-            i2cPeripheral.WriteRegister(0xFF, 0x00);
-            i2cPeripheral.WriteRegister(0x34, 0x03);
-            i2cPeripheral.WriteRegister(0x35, 0x44);
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(0x31, 0x04);
-            i2cPeripheral.WriteRegister(0x4B, 0x09);
-            i2cPeripheral.WriteRegister(0x4C, 0x05);
-            i2cPeripheral.WriteRegister(0x4D, 0x04);
-            i2cPeripheral.WriteRegister(0xFF, 0x00);
-            i2cPeripheral.WriteRegister(0x44, 0x00);
-            i2cPeripheral.WriteRegister(0x45, 0x20);
-            i2cPeripheral.WriteRegister(0x47, 0x08);
-            i2cPeripheral.WriteRegister(0x48, 0x28);
-            i2cPeripheral.WriteRegister(0x67, 0x00);
-            i2cPeripheral.WriteRegister(0x70, 0x04);
-            i2cPeripheral.WriteRegister(0x71, 0x01);
-            i2cPeripheral.WriteRegister(0x72, 0xFE);
-            i2cPeripheral.WriteRegister(0x76, 0x00);
-            i2cPeripheral.WriteRegister(0x77, 0x00);
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(0x0D, 0x01);
-            i2cPeripheral.WriteRegister(0xFF, 0x00);
-            i2cPeripheral.WriteRegister(0x80, 0x01);
-            i2cPeripheral.WriteRegister(0x01, 0xF8);
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(0x8E, 0x01);
-            i2cPeripheral.WriteRegister(0x00, 0x01);
-            i2cPeripheral.WriteRegister(0xFF, 0x00);
-            i2cPeripheral.WriteRegister(0x80, 0x00);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(0x00, 0x00);
+            Peripheral.WriteRegister(0xFF, 0x00);
+            Peripheral.WriteRegister(0x09, 0x00);
+            Peripheral.WriteRegister(0x10, 0x00);
+            Peripheral.WriteRegister(0x11, 0x00);
+            Peripheral.WriteRegister(0x24, 0x01);
+            Peripheral.WriteRegister(0x25, 0xFF);
+            Peripheral.WriteRegister(0x75, 0x00);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(0x4E, 0x2C);
+            Peripheral.WriteRegister(0x48, 0x00);
+            Peripheral.WriteRegister(0x30, 0x20);
+            Peripheral.WriteRegister(0xFF, 0x00);
+            Peripheral.WriteRegister(0x30, 0x09);
+            Peripheral.WriteRegister(0x54, 0x00);
+            Peripheral.WriteRegister(0x31, 0x04);
+            Peripheral.WriteRegister(0x32, 0x03);
+            Peripheral.WriteRegister(0x40, 0x83);
+            Peripheral.WriteRegister(0x46, 0x25);
+            Peripheral.WriteRegister(0x60, 0x00);
+            Peripheral.WriteRegister(0x27, 0x00);
+            Peripheral.WriteRegister(0x50, 0x06);
+            Peripheral.WriteRegister(0x51, 0x00);
+            Peripheral.WriteRegister(0x52, 0x96);
+            Peripheral.WriteRegister(0x56, 0x08);
+            Peripheral.WriteRegister(0x57, 0x30);
+            Peripheral.WriteRegister(0x61, 0x00);
+            Peripheral.WriteRegister(0x62, 0x00);
+            Peripheral.WriteRegister(0x64, 0x00);
+            Peripheral.WriteRegister(0x65, 0x00);
+            Peripheral.WriteRegister(0x66, 0xA0);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(0x22, 0x32);
+            Peripheral.WriteRegister(0x47, 0x14);
+            Peripheral.WriteRegister(0x49, 0xFF);
+            Peripheral.WriteRegister(0x4A, 0x00);
+            Peripheral.WriteRegister(0xFF, 0x00);
+            Peripheral.WriteRegister(0x7A, 0x0A);
+            Peripheral.WriteRegister(0x7B, 0x00);
+            Peripheral.WriteRegister(0x78, 0x21);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(0x23, 0x34);
+            Peripheral.WriteRegister(0x42, 0x00);
+            Peripheral.WriteRegister(0x44, 0xFF);
+            Peripheral.WriteRegister(0x45, 0x26);
+            Peripheral.WriteRegister(0x46, 0x05);
+            Peripheral.WriteRegister(0x40, 0x40);
+            Peripheral.WriteRegister(0x0E, 0x06);
+            Peripheral.WriteRegister(0x20, 0x1A);
+            Peripheral.WriteRegister(0x43, 0x40);
+            Peripheral.WriteRegister(0xFF, 0x00);
+            Peripheral.WriteRegister(0x34, 0x03);
+            Peripheral.WriteRegister(0x35, 0x44);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(0x31, 0x04);
+            Peripheral.WriteRegister(0x4B, 0x09);
+            Peripheral.WriteRegister(0x4C, 0x05);
+            Peripheral.WriteRegister(0x4D, 0x04);
+            Peripheral.WriteRegister(0xFF, 0x00);
+            Peripheral.WriteRegister(0x44, 0x00);
+            Peripheral.WriteRegister(0x45, 0x20);
+            Peripheral.WriteRegister(0x47, 0x08);
+            Peripheral.WriteRegister(0x48, 0x28);
+            Peripheral.WriteRegister(0x67, 0x00);
+            Peripheral.WriteRegister(0x70, 0x04);
+            Peripheral.WriteRegister(0x71, 0x01);
+            Peripheral.WriteRegister(0x72, 0xFE);
+            Peripheral.WriteRegister(0x76, 0x00);
+            Peripheral.WriteRegister(0x77, 0x00);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(0x0D, 0x01);
+            Peripheral.WriteRegister(0xFF, 0x00);
+            Peripheral.WriteRegister(0x80, 0x01);
+            Peripheral.WriteRegister(0x01, 0xF8);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(0x8E, 0x01);
+            Peripheral.WriteRegister(0x00, 0x01);
+            Peripheral.WriteRegister(0xFF, 0x00);
+            Peripheral.WriteRegister(0x80, 0x00);
 
-            i2cPeripheral.WriteRegister(SystemInterruptConfigGpio, 0x04);
+            Peripheral.WriteRegister(SystemInterruptConfigGpio, 0x04);
             var gpio_hv_mux_active_high = Read(GpioHvMuxActiveHigh);
-            i2cPeripheral.WriteRegister(GpioHvMuxActiveHigh, (byte)(gpio_hv_mux_active_high & ~0x10));
+            Peripheral.WriteRegister(GpioHvMuxActiveHigh, (byte)(gpio_hv_mux_active_high & ~0x10));
 
-            i2cPeripheral.WriteRegister(GpioHvMuxActiveHigh, 0x01);
-            i2cPeripheral.WriteRegister(SystemSequenceConfig, 0xE8);
+            Peripheral.WriteRegister(GpioHvMuxActiveHigh, 0x01);
+            Peripheral.WriteRegister(SystemSequenceConfig, 0xE8);
 
-            i2cPeripheral.WriteRegister(SystemSequenceConfig, 0x01);
+            Peripheral.WriteRegister(SystemSequenceConfig, 0x01);
             PerformSingleRefCalibration(0x40);
-            i2cPeripheral.WriteRegister(SystemSequenceConfig, 0x02);
+            Peripheral.WriteRegister(SystemSequenceConfig, 0x02);
             PerformSingleRefCalibration(0x00);
 
-            i2cPeripheral.WriteRegister(SystemSequenceConfig, 0xE8);
+            Peripheral.WriteRegister(SystemSequenceConfig, 0xE8);
         }
 
         /// <summary>
         /// Returns the current distance/range
         /// </summary>
         /// <returns>The distance in the specified Units. Default mm. Returns -1 if the shutdown pin is used and is off</returns>
-        protected async Task<Length> GetRange()
+        protected override async Task<Length> ReadSensor()
         {
+            //Console.WriteLine("ReadSensor");
+
             if (IsShutdown) {
                 return new Length(-1f, Length.UnitType.Millimeters);
             }
@@ -429,7 +335,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 return;
 
             byte address = (byte)(newAddress & 0x7F);
-            i2cPeripheral.WriteRegister(I2CSlaveDeviceAddress, address);
+            Peripheral.WriteRegister(I2CSlaveDeviceAddress, address);
         }
 
         /// <summary>
@@ -448,26 +354,27 @@ namespace Meadow.Foundation.Sensors.Distance
 
             if (state == false)
             {
-                Initialize();
+                await Initialize();
+                // TODO: is this still needed? the previous line wasn't awaited before.
                 await Task.Delay(2).ConfigureAwait(false);
             }
         }
 
         protected Tuple<int, bool> GetSpadInfo()
         {
-            i2cPeripheral.WriteRegister(0x80, 0x01);
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(0x00, 0x00);
-            i2cPeripheral.WriteRegister(0xFF, 0x06);
+            Peripheral.WriteRegister(0x80, 0x01);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(0x00, 0x00);
+            Peripheral.WriteRegister(0xFF, 0x06);
 
             var result = (byte)(Read(0x83) | 0x04);
-            i2cPeripheral.WriteRegister(0x83, result);
+            Peripheral.WriteRegister(0x83, result);
 
-            i2cPeripheral.WriteRegister(0xFF, 0x07);
-            i2cPeripheral.WriteRegister(0x81, 0x01);
-            i2cPeripheral.WriteRegister(0x94, 0x6B);
+            Peripheral.WriteRegister(0xFF, 0x07);
+            Peripheral.WriteRegister(0x81, 0x01);
+            Peripheral.WriteRegister(0x94, 0x6B);
 
-            i2cPeripheral.WriteRegister(0x83, 0x00);
+            Peripheral.WriteRegister(0x83, 0x00);
 
             int tCount = 0;
             while (Read(0x83) == 0x00)
@@ -480,28 +387,28 @@ namespace Meadow.Foundation.Sensors.Distance
                 }
             }
 
-            i2cPeripheral.WriteRegister(0x83, 0x01);
+            Peripheral.WriteRegister(0x83, 0x01);
             var tmp = Read(0x92);
             var count = tmp & 0x7F;
             var is_aperture = ((tmp >> 7) & 0x01) == 1;
 
-            i2cPeripheral.WriteRegister(0x81, 0x00);
-            i2cPeripheral.WriteRegister(0xFF, 0x06);
+            Peripheral.WriteRegister(0x81, 0x00);
+            Peripheral.WriteRegister(0xFF, 0x06);
 
             var t = (byte)(Read(0x83) & ~0x04);
-            i2cPeripheral.WriteRegister(0xFF, t);
+            Peripheral.WriteRegister(0xFF, t);
 
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(0x00, 0x01);
-            i2cPeripheral.WriteRegister(0xFF, 0x00);
-            i2cPeripheral.WriteRegister(0x80, 0x00);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(0x00, 0x01);
+            Peripheral.WriteRegister(0xFF, 0x00);
+            Peripheral.WriteRegister(0x80, 0x00);
 
             return new Tuple<int, bool>(count, is_aperture);
         }
 
         protected void PerformSingleRefCalibration(byte vhvInitByte)
         {
-            i2cPeripheral.WriteRegister(RangeStart, (byte)(0x01 | vhvInitByte & 0xFF));
+            Peripheral.WriteRegister(RangeStart, (byte)(0x01 | vhvInitByte & 0xFF));
 
             int tCount = 0;
 
@@ -515,33 +422,33 @@ namespace Meadow.Foundation.Sensors.Distance
                 }
             }
 
-            i2cPeripheral.WriteRegister(GpioHvMuxActiveHigh, 0x01);
-            i2cPeripheral.WriteRegister(RangeStart, 0x00);
+            Peripheral.WriteRegister(GpioHvMuxActiveHigh, 0x01);
+            Peripheral.WriteRegister(RangeStart, 0x00);
         }
 
         protected byte Read(byte address)
         {
-            var result = i2cPeripheral.ReadRegister(address);
+            var result = Peripheral.ReadRegister(address);
             return result;
         }
 
         protected int Read16(byte address)
         {
-            var result = i2cPeripheral.ReadRegisters(address, 2);
-
-            return (result[0] << 8) | result[1];
+            //var result = Peripheral.ReadRegisters(address, 2);
+            Peripheral.ReadRegister(address, ReadBuffer.Span[0..2]);
+            return (ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1];
         }
 
         protected async Task<int> GetRawRangeData()
         {
-            i2cPeripheral.WriteRegister(0x80, 0x01);
-            i2cPeripheral.WriteRegister(0xFF, 0x01);
-            i2cPeripheral.WriteRegister(0x00, 0x00);
-            i2cPeripheral.WriteRegister(0x91, stopVariable);
-            i2cPeripheral.WriteRegister(0x00, 0x01);
-            i2cPeripheral.WriteRegister(0xFF, 0x00);
-            i2cPeripheral.WriteRegister(0x80, 0x00);
-            i2cPeripheral.WriteRegister(RangeStart, 0x01);
+            Peripheral.WriteRegister(0x80, 0x01);
+            Peripheral.WriteRegister(0xFF, 0x01);
+            Peripheral.WriteRegister(0x00, 0x00);
+            Peripheral.WriteRegister(0x91, stopVariable);
+            Peripheral.WriteRegister(0x00, 0x01);
+            Peripheral.WriteRegister(0xFF, 0x00);
+            Peripheral.WriteRegister(0x80, 0x00);
+            Peripheral.WriteRegister(RangeStart, 0x01);
 
             int tCount = 0;
             while ((byte)(Read(RangeStart) & 0x01) > 0)
@@ -568,7 +475,7 @@ namespace Meadow.Foundation.Sensors.Distance
             }
 
             var range_mm = Read16(ResultRangeStatus + 10);
-            i2cPeripheral.WriteRegister(GpioHvMuxActiveHigh, 0x01);
+            Peripheral.WriteRegister(GpioHvMuxActiveHigh, 0x01);
 
             return range_mm;
         }

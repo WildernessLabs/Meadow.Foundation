@@ -54,8 +54,8 @@ namespace MeadowApp
 
             Console.WriteLine("Create time of flight sensor");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
-            sensor = new Vl53l0x(Device, i2cBus);
-            sensor.StartUpdating(200);
+            sensor = new Vl53l0x(Device, i2cBus, 250);
+            sensor.StartUpdating();
 
             Console.WriteLine("Create servo");
         }

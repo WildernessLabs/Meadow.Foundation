@@ -46,11 +46,10 @@ namespace Sensors.Distance.Vl53l0x_St7789_Sample
 
             Console.WriteLine("Create time of flight sensor");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
-            sensor = new Vl53l0x(Device, i2cBus);
+            sensor = new Vl53l0x(Device, i2cBus, 250);
 
             Console.WriteLine("Start updating");
             sensor.DistanceUpdated += Sensor_Updated;
-            sensor.StartUpdating(100);
 
             Console.WriteLine("Init complete");
         }
