@@ -7,18 +7,18 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
 {
+    // TODO: BC: this sensor needs to be tested after updating it to the new pattern.
     /// <summary>
     /// Provide a mechanism for reading the Temperature and Humidity from
     /// a DHT temperature and Humidity sensor.
     /// </summary>
     public abstract class DhtBase : 
-        SensorBase<(Units.Temperature?, RelativeHumidity?)>,
+        ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
         //==== events
-        public event EventHandler<IChangeResult<(Units.Temperature?, RelativeHumidity?)>> Updated;
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated;
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         //==== internals
         private readonly BusType protocol;
@@ -31,22 +31,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
             OneWire,
         }
 
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-
         //==== properties
-
-        /// <summary>
-        ///     DHT12 sensor object.
-        /// </summary>
-        protected readonly II2cPeripheral sensor;
-
-        /// <summary>
-        /// Read buffer
-        /// </summary>
-        protected byte[] readBuffer = new byte[5];
 
         /// <summary>
         /// The temperature
@@ -58,15 +43,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
-        public (Units.Temperature? Temperature, RelativeHumidity? Humidity) Conditions;
-     
-        /// <summary>
-        /// Gets a value indicating whether the analog input port is currently
-        /// sampling the sensor. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling, otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
-
         /// <summary>
         /// How last read went, <c>true</c> for success, <c>false</c> for failure
         /// </summary>
@@ -77,8 +53,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// </summary>
         /// <param name="i2cDevice">The I2C device used for communication.</param>
         public DhtBase(II2cBus i2cBus, byte address = 0x5C)
+            : base(i2cBus, address, writeBufferSize: 8, readBufferSize: 6)
         {
-            sensor = new I2cPeripheral(i2cBus, address);
             protocol = BusType.I2C;
 
             //give the device time to initialize
@@ -119,14 +95,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// </summary>
         internal virtual void ReadDataI2c()
         {
-            sensor.Write(0x00);
-            readBuffer = sensor.ReadBytes(5);
+            Peripheral.Write(0x00);
+            Peripheral.Read(ReadBuffer.Span[0..5]);
 
             lastMeasurement = Environment.TickCount;
 
-            if ((readBuffer[4] == ((readBuffer[0] + readBuffer[1] + readBuffer[2] + readBuffer[3]) & 0xFF))) 
+            if ((ReadBuffer.Span[4] == ((ReadBuffer.Span[0] + ReadBuffer.Span[1] + ReadBuffer.Span[2] + ReadBuffer.Span[3]) & 0xFF))) 
             {
-                WasLastReadSuccessful = (readBuffer[0] != 0) || (readBuffer[2] != 0);
+                WasLastReadSuccessful = (ReadBuffer.Span[0] != 0) || (ReadBuffer.Span[2] != 0);
             } 
             else 
             {
@@ -139,101 +115,31 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// </summary>
         /// <param name="data">Data</param>
         /// <returns>Humidity</returns>
-        internal abstract float GetHumidity(byte[] data);
+        internal abstract float GetHumidity();
 
         /// <summary>
         /// Converting data to Temperature
         /// </summary>
         /// <param name="data">Data</param>
         /// <returns>Temperature</returns>
-        internal abstract float GetTemperature(byte[] data);
+        internal abstract float GetTemperature();
 
-        /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        public async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> Read()
+        protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
-            await Update();
-
-            return Conditions;
-        }
-
-        public void StartUpdating(int standbyDuration = 1000)
-        {
-            // thread safety
-            lock (_lock) 
-            {
-                if (IsSampling) return;
-
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                (Units.Temperature?, RelativeHumidity?) oldConditions;
-                ChangeResult<(Units.Temperature?, RelativeHumidity?)> result;
-
-                Task.Factory.StartNew(async () => {
-                    while (true) {
-                        // cleanup
-                        if (ct.IsCancellationRequested) {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = Conditions;
-
-                        // read
-                        await Update();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<(Units.Temperature?, RelativeHumidity?)>(Conditions, oldConditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
             if (changeResult.New.Temperature is { } temp) {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             if (changeResult.New.Humidity is { } humidity) {
                 HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
-        /// <summary>
-        /// Stops sampling the temperature.
-        /// </summary>
-        public void StopUpdating()
+        protected override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
-            lock (_lock) 
-            {
-                if (!IsSampling) return;
+            // TODO: shouldn't this fire up a task and read on a background thread?
+            (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
-                SamplingTokenSource?.Cancel();
-
-                // state muh-cheen
-                IsSampling = false;
-            }
-        }
-
-        /// <summary>
-        ///     Force the sensor to make a reading and update the relevant properties.
-        /// </summary>
-        public Task Update()
-        {
             if (protocol == BusType.I2C) 
             {
                 ReadDataI2c();
@@ -243,10 +149,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
                 ReadDataOneWire();
             }
 
-            Conditions.Humidity = new RelativeHumidity(GetHumidity(readBuffer), RelativeHumidity.UnitType.Percent);
-            Conditions.Temperature = new Units.Temperature(GetTemperature(readBuffer), Units.Temperature.UnitType.Celsius);
+            conditions.Humidity = new RelativeHumidity(GetHumidity(), RelativeHumidity.UnitType.Percent);
+            conditions.Temperature = new Units.Temperature(GetTemperature(), Units.Temperature.UnitType.Celsius);
 
-            return Task.CompletedTask;
+            return Task.FromResult(conditions);
         }
 
         /// <summary>
