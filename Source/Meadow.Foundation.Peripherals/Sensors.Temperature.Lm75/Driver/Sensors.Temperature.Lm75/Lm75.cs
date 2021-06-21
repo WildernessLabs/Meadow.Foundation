@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,9 +10,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// <summary>
     /// TMP102 Temperature sensor object.
     /// </summary>    
-    public class Lm75 :
-        SensorBase<Units.Temperature>,
-        ITemperatureSensor
+    public partial class Lm75 : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
     {
         //==== Events
         /// <summary>
@@ -20,24 +19,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         //==== internals
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-        private readonly II2cPeripheral lm75;
 
         //==== properties
-
-        // todo: rename and move into `Lm75.Registers.cs` file.
-        /// <summary>
-        /// LM75 Registers
-        /// </summary>
-        enum Register : byte
-        {
-            LM_TEMP = 0x00,
-            LM_CONFIG = 0x01,
-            LM_THYST = 0x02,
-            LM_TOS = 0x03
-        }
-
         public byte DEFAULT_ADDRESS => 0x48;
 
         /// <summary>
@@ -46,128 +29,48 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
-        /// Gets a value indicating whether the analog input port is currently
-        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
-
-        /// <summary>
         ///     Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>
         public Lm75(II2cBus i2cBus, byte address = 0x48)
+            : base(i2cBus, address)
         {
-            lm75 = new I2cPeripheral(i2cBus, address);
-        }
-
-        /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        // TODO: Make this async?
-        public Units.Temperature Read()
-        {
-            Update();
-            return Temperature.Value;
-        }
-
-        /// <summary>
-        /// Starts continuously sampling the sensor.
-        ///
-        /// This method also starts raising `TemperatureUpdated` events and IObservable
-        /// subscribers getting notified.
-        /// </summary>
-        /// <param name="standbyDuration">The time, in milliseconds, to wait
-        /// between sets of sample readings. This value determines how often
-        /// `TemperatureUpdated` events are raised and `IObservable` consumers are notified.</param>
-        public void StartUpdating(int standbyDuration = 1000)
-        {
-            lock (_lock) 
-            {
-                if (IsSampling) { return; }
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                Units.Temperature? oldtemperature;
-                ChangeResult<Units.Temperature> result;
-
-                Task.Factory.StartNew(async () => 
-                {
-                    while (true) 
-                    {
-                        if (ct.IsCancellationRequested) 
-                        {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldtemperature = Temperature;
-
-                        // read
-                        Update(); //synchronous for this driver 
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<Units.Temperature>(Temperature.Value, oldtemperature);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-        
-        /// <summary>
-        /// Stops sampling the temperature.
-        /// </summary>
-        public void StopUpdating()
-        {
-            lock (_lock) 
-            {
-                if (!IsSampling) { return; }
-
-                SamplingTokenSource?.Cancel();
-
-                IsSampling = false;
-            }
         }
 
         /// <summary>
         /// Update the Temperature property.
         /// </summary>
-        protected void Update()
+        protected override Task<Units.Temperature> ReadSensor()
         {
-            lm75.Write((byte)Register.LM_TEMP);
+            return Task.Run(() => {
 
-            var data = lm75.ReadRegisters((byte)Register.LM_TEMP, 2);
+                Peripheral.Write((byte)Registers.LM_TEMP);
 
-            // Details in Datasheet P10
-            double temp = 0;
-            ushort raw = (ushort)((data[0] << 3) | (data[1] >> 5));
-            if ((data[0] & 0x80) == 0) {
-                // temperature >= 0
-                temp = raw * 0.125;
-            } else {
-                raw |= 0xF800;
-                raw = (ushort)(~raw + 1);
+                Peripheral.ReadRegister((byte)Registers.LM_TEMP, ReadBuffer.Span[0..2]);
 
-                temp = raw * (-1) * 0.125;
-            }
+                // Details in Datasheet P10
+                double temp = 0;
+                ushort raw = (ushort)((ReadBuffer.Span[0] << 3) | (ReadBuffer.Span[1] >> 5));
+                if ((ReadBuffer.Span[0] & 0x80) == 0) {
+                    // temperature >= 0
+                    temp = raw * 0.125;
+                } else {
+                    raw |= 0xF800;
+                    raw = (ushort)(~raw + 1);
 
-            //only accurate to +/- 0.1 degrees
-            Temperature = new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius);
+                    temp = raw * (-1) * 0.125;
+                }
+
+                //only accurate to +/- 0.1 degrees
+                return(new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius));
+
+            });
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<Units.Temperature> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
         {
             TemperatureUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }

@@ -3,9 +3,11 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensors.Temperature.Lm75_Sample
 {
+    // TODO: this sample needs to be updated.
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         Lm75 lm75;
@@ -14,8 +16,9 @@ namespace Sensors.Temperature.Lm75_Sample
         {
             lm75 = new Lm75(Device.CreateI2cBus());
 
+            TestRead().Wait();
+
             TestUpdating();
-            //TestRead();
         }
 
         void TestUpdating()
@@ -41,17 +44,14 @@ namespace Sensors.Temperature.Lm75_Sample
             lm75.StartUpdating();
         }
 
-        void TestRead()
+        async Task TestRead()
         {
             Console.WriteLine("TestFC28Sensor...");
 
-            while (true)
-            {
-                var temp = lm75.Read();
+            var temp = await lm75.Read();
 
-                Console.WriteLine($"Temperature New Value { temp.Celsius}");                
-                Thread.Sleep(1000);
-            }
+            Console.WriteLine($"Temperature New Value { temp.Celsius}");                
+            Thread.Sleep(1000);
         }
     }
 }
