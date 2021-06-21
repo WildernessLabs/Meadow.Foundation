@@ -1,10 +1,12 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
+using Meadow.Units;
 using System;
 
 namespace AdafruitMPRLSSensorExample
 {
+    // TODO: this app needs rewritten
     /// <summary>
     /// Connect VIN to 3.3v
     /// Connect GND to ground
@@ -24,18 +26,18 @@ namespace AdafruitMPRLSSensorExample
         {
             PressureSensor = new AdafruitMPRLS(Device.CreateI2cBus());
 
-            PressureSensor.StartUpdating();
+            PressureSensor.StartUpdating(TimeSpan.FromSeconds(1));
 
             PressureSensor.Updated += PressureSensor_Updated;
         }
 
-        private void PressureSensor_Updated(object sender, IChangeResult<Meadow.Units.Pressure> result)
+        private void PressureSensor_Updated(object sender, IChangeResult<(Pressure? Pressure, Pressure? RawPsiMeasurement)> result)
         {
-            Console.WriteLine($"New pressure PSI: {result.New.Psi}, Old pressure PSI: {result.Old?.Psi}");
+            Console.WriteLine($"New pressure PSI: {result.New.Pressure?.Psi}, Old pressure PSI: {result.Old?.Pressure?.Psi}");
 
-            Console.WriteLine($"Pressure in Pascal: {result.New.Pascal}");
+            Console.WriteLine($"Pressure in Pascal: {result.New.Pressure?.Pascal}");
 
-            Console.WriteLine($"Raw sensor value: {PressureSensor.RawPSIMeasurement}");
+            Console.WriteLine($"Raw sensor value: {result.New.RawPsiMeasurement?.Psi}");
         }
     }
 }
