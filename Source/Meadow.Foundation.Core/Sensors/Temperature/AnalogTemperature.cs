@@ -199,10 +199,10 @@ namespace Meadow.Foundation.Sensors.Temperature
             }
         }
 
-        protected void RaiseEventsAndNotify(ChangeResult<Units.Temperature> changeResult)
-        {
+        protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
+        { 
             TemperatureUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
