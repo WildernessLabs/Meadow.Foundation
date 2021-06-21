@@ -9,6 +9,7 @@ using VU = Meadow.Units.Voltage.UnitType;
 
 namespace Sensors.Moisture.FC28_Sample
 {
+    // TODO: this needs a better sample.
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         Fc28 fc28;
@@ -57,8 +58,7 @@ namespace Sensors.Moisture.FC28_Sample
             {
                 var moisture = await fc28.Read();
 
-                Console.WriteLine($"Moisture New Value { moisture.New}");
-                Console.WriteLine($"Moisture Old Value { moisture.Old.Value}");
+                Console.WriteLine($"Moisture Value { moisture}");
                 Thread.Sleep(1000);
             }
         }
