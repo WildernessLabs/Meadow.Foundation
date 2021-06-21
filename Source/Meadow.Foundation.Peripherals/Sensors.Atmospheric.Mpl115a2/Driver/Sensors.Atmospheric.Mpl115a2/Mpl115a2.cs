@@ -45,17 +45,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private Coefficients coefficients;
 
         /// <summary>
-        /// Update interval in milliseconds
-        /// </summary>
-        private readonly ushort _updateInterval = 100;
-
-        /// <summary>
         /// Create a new MPL115A2 temperature and humidity sensor object.
         /// </summary>
         /// <param name="address">Sensor address (default to 0x60).</param>
         /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
-        public Mpl115a2(II2cBus i2cBus, byte address = 0x60)
-            : base(i2cBus, address)
+        public Mpl115a2(II2cBus i2cBus, byte address = 0x60, int updateIntervalMs = 1000)
+            : base(i2cBus, address, updateIntervalMs)
         {
             //var device = new I2cPeripheral(i2cBus, address);
             //mpl115a2 = device;

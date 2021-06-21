@@ -38,8 +38,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
 
-        public Mcp9808(II2cBus i2CBus, byte address = DefaultAddress)
-            : base(i2CBus, address, readBufferSize: 8, writeBufferSize: 8)
+        public Mcp9808(II2cBus i2CBus, byte address = DefaultAddress, int updateIntervalMs = 1000)
+            : base(i2CBus, address, updateIntervalMs, readBufferSize: 8, writeBufferSize: 8)
         {
             Peripheral.WriteRegister(MCP_REG_CONFIG, (ushort)0x0);
         }

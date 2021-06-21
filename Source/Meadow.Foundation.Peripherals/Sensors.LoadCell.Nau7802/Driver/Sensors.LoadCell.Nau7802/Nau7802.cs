@@ -37,8 +37,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// Creates an instance of the NAU7802 Driver class
         /// </summary>
         /// <param name="bus"></param>
-        public Nau7802(II2cBus bus)
-            : base(bus, (byte)Addresses.Default)
+        public Nau7802(II2cBus bus, int updateIntervalMs = 1000)
+            : base(bus, (byte)Addresses.Default, updateIntervalMs)
         {
             Initialize((byte)Addresses.Default);
         }

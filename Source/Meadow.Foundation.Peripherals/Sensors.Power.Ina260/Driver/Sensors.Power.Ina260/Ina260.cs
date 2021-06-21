@@ -35,8 +35,8 @@ namespace Meadow.Foundation.Sensors.Power
         /// </summary>
         public Units.Power? Power => Conditions.Power;
 
-        public Ina260(II2cBus i2cBus, byte address = (byte)Addresses.Default)
-            : base(i2cBus, address)
+        public Ina260(II2cBus i2cBus, byte address = (byte)Addresses.Default, int updateIntervalMs = 1000)
+            : base(i2cBus, address, updateIntervalMs)
         {
             switch (address)
             {
@@ -49,8 +49,8 @@ namespace Meadow.Foundation.Sensors.Power
             }
         }
 
-        public Ina260(II2cBus i2cBus, Addresses address)
-            : this(i2cBus, (byte)address)
+        public Ina260(II2cBus i2cBus, Addresses address, int updateIntervalMs = 1000)
+            : this(i2cBus, (byte)address, updateIntervalMs)
         {
         }
 

@@ -60,8 +60,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Address of the sensor (default = 0x60).</param>
         /// <param name="i2cBus">I2cBus (Maximum is 400 kHz).</param>
-        public Mpl3115a2(II2cBus i2cBus, byte address = 0x60)
-            : base(i2cBus, address, 5)
+        public Mpl3115a2(II2cBus i2cBus, byte address = 0x60, int updateIntervalMs = 1000)
+            : base(i2cBus, address, updateIntervalMs, 5)
         {
             if (Peripheral.ReadRegister(Registers.WhoAmI) != 0xc4) {
                 throw new Exception("Unexpected device ID, expected 0xc4");

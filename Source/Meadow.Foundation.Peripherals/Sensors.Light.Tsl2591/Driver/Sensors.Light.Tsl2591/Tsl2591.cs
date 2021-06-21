@@ -48,8 +48,8 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public Illuminance? Illuminance => Conditions.Integrated;
 
-        public Tsl2591(II2cBus bus, byte address = (byte) Addresses.Default)
-            : base(bus, address)
+        public Tsl2591(II2cBus bus, byte address = (byte) Addresses.Default, int updateIntervalMs = 1000)
+            : base(bus, address, updateIntervalMs)
         {
             Gain = GainFactor.Medium;
             IntegrationTime = IntegrationTimes.Time_100Ms;

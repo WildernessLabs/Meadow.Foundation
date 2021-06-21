@@ -35,8 +35,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (should be 0x44 or 0x45).</param>
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
-        public Sht31d(II2cBus i2cBus, byte address = 0x44)
-            : base(i2cBus, address, readBufferSize: 6, writeBufferSize: 2)
+        public Sht31d(II2cBus i2cBus, byte address = 0x44, int updateIntervalMs = 1000)
+            : base(i2cBus, address, updateIntervalMs, readBufferSize: 6, writeBufferSize: 2)
         {            
         }
 

@@ -124,7 +124,7 @@ namespace Meadow.Foundation.Sensors.Distance
         public Vl53l0x(
             IDigitalOutputController device, II2cBus i2cBus,
             int updateIntervalMs = 1000, byte address = DefaultI2cAddress)
-                : this (device, i2cBus, null, address)
+                : this (device, i2cBus, null, updateIntervalMs, address)
         {
         }
 
