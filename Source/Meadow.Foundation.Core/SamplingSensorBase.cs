@@ -20,7 +20,7 @@ namespace Meadow.Foundation
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
         /// The default is 5 seconds.</param>
-        public virtual void StartUpdating(TimeSpan? updateInterval)
+        public virtual void StartUpdating(TimeSpan? updateInterval = null)
         {
             // thread safety
             lock (samplingLock) {
