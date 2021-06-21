@@ -9,6 +9,11 @@ namespace Meadow.Foundation
         : SensorBase<UNIT>
         where UNIT : struct
     {
+        public SamplingSensorBase(int updateIntervalMs = 1000) : base (updateIntervalMs)
+        {
+
+        }
+
         /// <summary>
         /// Starts updating the sensor on the updateInterval frequency specified.
         ///

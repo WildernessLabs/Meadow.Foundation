@@ -40,6 +40,12 @@ namespace Meadow.Foundation
         /// </summary>
         public virtual TimeSpan UpdateInterval { get; protected set; } = TimeSpan.FromSeconds(5);
 
+        public SensorBase(int updateIntervalMs = 1000)
+        {
+            UpdateInterval = TimeSpan.FromMilliseconds(updateIntervalMs);
+        }
+
+
         //==== ISensor Methods
         protected abstract Task<UNIT> ReadSensor();
 
