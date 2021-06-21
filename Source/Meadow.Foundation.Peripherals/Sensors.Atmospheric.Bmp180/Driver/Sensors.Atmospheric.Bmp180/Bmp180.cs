@@ -7,21 +7,20 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
+    // TODO: BC: this driver needs testing after updating to the new stuff,
+    // I don't have a BMP180
+
+    // TODO: is this sensor _any_ different from the BMP085? i just took a
+    // cursory look, and they look the exact same.
     public class Bmp180 :
-        SensorBase<(Units.Temperature?, Pressure?)>,
+        ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
         //==== events
-        public event EventHandler<IChangeResult<(Units.Temperature?, Pressure?)>> Updated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
         //==== internals
-        /// <summary>
-        ///     BMP180 sensor communicates using I2C.
-        /// </summary>
-        private readonly II2cPeripheral bmp180;
-
         // Oversampling for measurements.  Please see the datasheet for this sensor for more information.
         private byte oversamplingSetting;
 
@@ -42,10 +41,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private short _mc;
         private short _md;
 
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
         //==== properties
         /// <summary>
         /// Last value read from the Pressure sensor.
@@ -56,15 +51,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Last value read from the Pressure sensor.
         /// </summary>
         public Pressure? Pressure => Conditions.Pressure;
-
-        public (Units.Temperature? Temperature, Pressure? Pressure) Conditions;
-
-        /// <summary>
-        /// Gets a value indicating whether the analog input port is currently
-        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
 
         public static int DEFAULT_SPEED => 40000; // BMP085 clock rate
 
@@ -79,108 +65,36 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Provide a mechanism for reading the temperature and humidity from
         /// a Bmp085 temperature / humidity sensor.
         /// </summary>
-        public Bmp180(II2cBus i2cBus, byte address = 0x77, DeviceMode deviceMode = DeviceMode.Standard)
+        public Bmp180(II2cBus i2cBus, byte address = 0x77,
+            DeviceMode deviceMode = DeviceMode.Standard)
+                : base(i2cBus, address)
         {
-            bmp180 = new I2cPeripheral(i2cBus, address);
-
             oversamplingSetting = (byte)deviceMode;
 
             // Get calibration data that will be used for future measurement taking.
             GetCalibrationData();
-
-            // Take initial measurements.
-            Update();
         }
 
-        /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        public async Task<(Units.Temperature? Temperature, Pressure? Pressure)> Read()
+        protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)> changeResult)
         {
-            await Update();
-            return Conditions;
-        }
-
-        public void StartUpdating(int standbyDuration = 1000)
-        {
-            // thread safety
-            lock (_lock)
-            {
-                if (IsSampling) return;
-
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                (Units.Temperature?, Pressure?) oldConditions;
-                ChangeResult<(Units.Temperature?, Pressure?)> result;
-
-                Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-
-                        oldConditions = (Conditions.Temperature, Conditions.Pressure);
-
-                        // read
-                        Update();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<(Units.Temperature?, Pressure?)>(Conditions, oldConditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)> changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
             if (changeResult.New.Temperature is { } temp) {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             if (changeResult.New.Pressure is { } pressure) {
                 PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
             }
-            base.NotifyObservers(changeResult);
-        }
-
-        /// <summary>
-        /// Stops sampling the temperature.
-        /// </summary>
-        public void StopUpdating()
-        {
-            lock (_lock)
-            {
-                if (!IsSampling) { return; }
-
-                SamplingTokenSource?.Cancel();
-
-                // state muh-cheen
-                IsSampling = false;
-            }
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
         /// Calculates the compensated pressure and temperature.
         /// </summary>
-        private Task Update()
+        protected override Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
         {
             return Task.Run(() => 
             {
+                (Units.Temperature? Temperature, Pressure? Pressure) conditions;
+
                 long x1, x2, x3, b3, b4, b5, b6, b7, p;
 
                 long ut = ReadUncompensatedTemperature();
@@ -192,7 +106,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 x2 = (_mc << 11) / (x1 + _md);
                 b5 = x1 + x2;
 
-                Conditions.Temperature = new Units.Temperature((float)((b5 + 8) >> 4) / 10, Units.Temperature.UnitType.Celsius);
+                conditions.Temperature = new Units.Temperature((float)((b5 + 8) >> 4) / 10, Units.Temperature.UnitType.Celsius);
 
                 // calculate the compensated pressure
                 b6 = b5 - 4000;
@@ -229,41 +143,57 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 int value = (int)(p + ((x1 + x2 + 3791) >> 4));
 
-                Conditions.Pressure = new Pressure(value, Units.Pressure.UnitType.Pascal);
+                conditions.Pressure = new Pressure(value, Units.Pressure.UnitType.Pascal);
+
+                return conditions;
             });            
         }
 
         private long ReadUncompensatedTemperature()
         {
             // write register address
-            bmp180.WriteBytes(new byte[] { 0xF4, 0x2E });
+            // TODO: delete after validating
+            //Peripheral.WriteBytes(new byte[] { 0xF4, 0x2E });
+            WriteBuffer.Span[0] = 0xf4;
+            WriteBuffer.Span[1] = 0x2e;
+            Peripheral.Write(WriteBuffer.Span[0..2]);
 
             // Required as per datasheet.
             Thread.Sleep(5);
 
             // write register address
-            bmp180.WriteBytes(new byte[] { 0xF6 });
+            // TODO: Delete after validating
+            //Peripheral.WriteBytes(new byte[] { 0xF6 });
+            WriteBuffer.Span[0] = 0xf6;
+            Peripheral.Write(WriteBuffer.Span[0]);
 
             // get MSB and LSB result
-            byte[] data = new byte[2];
-            data = bmp180.ReadBytes(2);
+            // TODO: Delete after validating
+            //byte[] data = new byte[2];
+            //data = Peripheral.ReadBytes(2);
+            Peripheral.Read(ReadBuffer.Span[0..2]);
 
-            return ((data[0] << 8) | data[1]);
+            return ((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
         }
 
         private long ReadUncompensatedPressure()
         {
             // write register address
-            bmp180.WriteBytes(new byte[] { 0xF4, (byte)(0x34 + (oversamplingSetting << 6)) });
+            // TODO: Delete after validating
+            //Peripheral.WriteBytes(new byte[] { 0xF4, (byte)(0x34 + (oversamplingSetting << 6)) });
+            WriteBuffer.Span[0] = 0xf4;
+            WriteBuffer.Span[1] = (byte)(0x34 + (oversamplingSetting << 6));
 
             // insert pressure waittime using oversampling setting as index.
             Thread.Sleep(pressureWaitTime[oversamplingSetting]);
 
             // get MSB and LSB result
-            byte[] data = new byte[3];
-            data = bmp180.ReadRegisters(0xF6, 3);
+            // TODO: delete after validating
+            //byte[] data = new byte[3];
+            //data = Peripheral.ReadRegisters(0xF6, 3);
+            Peripheral.ReadRegister(0xf6, ReadBuffer.Span[0..3]);
 
-            return ((data[0] << 16) | (data[1] << 8) | (data[2])) >> (8 - oversamplingSetting);
+            return ((ReadBuffer.Span[0] << 16) | (ReadBuffer.Span[1] << 8) | (ReadBuffer.Span[2])) >> (8 - oversamplingSetting);
         }
 
         /// <summary>
@@ -286,15 +216,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private short ReadShort(byte address)
         {
+            // TODO: i think we already have a method that does this. I'm just not sure
+            // which endian it is. not sure what the last statement here is dooing
+
             // get MSB and LSB result
-            byte[] data = new byte[2];
-            data = bmp180.ReadRegisters(address, 2);
+            // TODO: delete after validating
+            //byte[] data = new byte[2];
+            //data = Peripheral.ReadRegisters(address, 2);
+            Peripheral.ReadRegister(address, ReadBuffer.Span[0..2]);
 
-            return (short)((data[0] << 8) | data[1]);
-        }
-
-        public void Dispose()
-        {
+            return (short)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
         }
 
         /// <summary>

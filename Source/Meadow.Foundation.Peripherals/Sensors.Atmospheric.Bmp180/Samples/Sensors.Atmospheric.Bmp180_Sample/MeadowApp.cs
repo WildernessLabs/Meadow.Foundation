@@ -49,7 +49,7 @@ namespace Sensors.Atmospheric.Bmp180_Sample
             ReadConditions().Wait();
 
             // start updating continuously
-            sensor.StartUpdating();
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         protected async Task ReadConditions()

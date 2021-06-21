@@ -216,6 +216,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private short ReadShort(byte address)
         {
+            // TODO: i think we already have a method that does this. I'm just not sure
+            // which endian it is. not sure what the last statement here is dooing
+
             // get MSB and LSB result
             // TODO: delete after validating
             //byte[] data = new byte[2];

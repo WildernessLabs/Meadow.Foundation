@@ -6,6 +6,9 @@ using Meadow.Foundation.Sensors.Temperature;
 
 namespace Sensors.Temperature.Tmp102_Sample
 {
+    // TODO: This sample needs a rewrite. See the other atmospheric samples for
+    // an example of the sample pattern.
+
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         Tmp102 tmp102;
@@ -38,7 +41,7 @@ namespace Sensors.Temperature.Tmp102_Sample
                 Console.WriteLine($"Temperature Updated: {e.New.Celsius:N2}C");
             };
 
-            tmp102.StartUpdating();
+            tmp102.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         void TestRead()
@@ -47,7 +50,7 @@ namespace Sensors.Temperature.Tmp102_Sample
 
             while (true)
             {
-                var temp = tmp102.Read();
+                var temp = tmp102.Read().Result;
 
                 Console.WriteLine($"Temperature New Value { temp.Celsius}");
                 Thread.Sleep(1000);
