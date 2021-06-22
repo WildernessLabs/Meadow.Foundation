@@ -24,7 +24,7 @@
             Gain60X = 0x03,
         }
 
-        internal enum Registers
+        protected enum Registers
         {
             ENABLE = 0x00,
             // RGBC interrupt enable.  When asserted, permits RGBC interrupts to be generated.

@@ -2,20 +2,30 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
-    ///     Driver for the Tcs3472x light-to-digital converter.
+    /// Driver for the Tcs3472x light-to-digital converter.
     /// </summary>
     public partial class Tcs3472x
+        : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>, ILightSensor
     {
-        I2cPeripheral i2CPeripheral;
+        //==== events
+        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
+        //==== internals
         private byte integrationTimeByte;
         private double integrationTime;
         private bool isLongTime;
         private GainType gain;
+
+        //==== properties
+        /// <summary>
+        /// 
+        /// </summary>
+        public Illuminance? Illuminance => Conditions.AmbientLight;
 
         /// <summary>
         /// Set/Get the time to wait for the sensor to read the data
@@ -42,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Light
             set
             {
                 gain = value;
-                i2CPeripheral.WriteRegister((byte)Registers.CONTROL, (byte)gain);
+                Peripheral.WriteRegister((byte)Registers.CONTROL, (byte)gain);
             }
         }
 
@@ -51,6 +61,19 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public DeviceType Device { get; internal set; }
 
+
+        /// <summary>
+        /// Get true if RGBC is clear channel interrupt
+        /// </summary>
+        public bool IsClearInterrupt {
+            get {
+                var status = Peripheral.ReadRegister((byte)(Registers.COMMAND_BIT | Registers.STATUS));
+                return ((Registers)(status & (byte)Registers.STATUS_AINT) == Registers.STATUS_AINT);
+            }
+        }
+
+        //==== ctors
+
         /// <summary>
         ///     Create a new instance of the Tcs3472x class with the specified I2C address.
         /// </summary>
@@ -58,12 +81,13 @@ namespace Meadow.Foundation.Sensors.Light
         ///     By default the sensor will be set to low gain.
         /// <remarks>
         /// <param name="i2cBus">I2C bus.</param>
-        public Tcs3472x(II2cBus i2cBus, byte address = 0x29, double integrationTime = 0.700, GainType gain = GainType.Gain60X)
+        public Tcs3472x(
+            II2cBus i2cBus, byte address = 0x29,
+            double integrationTime = 0.700, GainType gain = GainType.Gain60X)
+                : base(i2cBus, address)
         {
-            i2CPeripheral = new I2cPeripheral(i2cBus, address);
-
             //detect device type
-            Device = (DeviceType)i2CPeripheral.ReadRegister((byte)(Registers.COMMAND_BIT | Registers.ID));
+            Device = (DeviceType)Peripheral.ReadRegister((byte)(Registers.COMMAND_BIT | Registers.ID));
 
             Console.WriteLine($"Device: {Device}");
             
@@ -77,29 +101,53 @@ namespace Meadow.Foundation.Sensors.Light
             PowerOn();
         }
 
-        /// <summary>
-        /// Get true is there are valid data
-        /// </summary>
-        public bool IsValidData
+        //==== internal methods
+
+        protected override Task<(Illuminance? AmbientLight, Color? Color, bool Valid)> ReadSensor()
         {
-            get
-            {
-                var status = i2CPeripheral.ReadRegister((byte)(Registers.COMMAND_BIT | Registers.STATUS));
-                return ((Registers)(status & (byte)Registers.STATUS_AVALID) == Registers.STATUS_AVALID);
-            }
+            return Task.Run(async () => {
+                (Illuminance? AmbientLight, Color? Color, bool Valid) conditions;
+
+
+                // To have a new reading, you need to wait for integration time to happen
+                // If you don't wait, then you'll read the previous value
+                await Task.Delay((int)(IntegrationTime * 1000.0));
+
+                var divide = (256 - integrationTimeByte) * 1024.0;
+
+                // If we are in long wait, we'll need to divide even more
+                if (isLongTime) {
+                    divide *= 12.0;
+                }
+
+                Console.WriteLine($"Red: {I2cRead16(Registers.RDATAL)}");
+                Console.WriteLine($"Green: {I2cRead16(Registers.GDATAL)}");
+                Console.WriteLine($"Blue: {I2cRead16(Registers.BDATAL)}");
+
+                double r = (I2cRead16(Registers.RDATAL) / divide);
+                double g = (I2cRead16(Registers.GDATAL) / divide);
+                double b = (I2cRead16(Registers.BDATAL) / divide);
+                double a = (I2cRead16(Registers.CDATAL) / divide);
+
+                conditions.Color = Color.FromRgba(r, g, b, a);
+
+                // TODO: how to get this? is it just the alpha channel?
+                conditions.AmbientLight = new Illuminance(0);
+
+                conditions.Valid = IsValidData();
+
+                return conditions;
+            });
         }
 
-        /// <summary>
-        /// Get true if RGBC is clear channel interrupt
-        /// </summary>
-        public bool IsClearInterrupt
+        protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> changeResult)
         {
-            get
-            {
-                var status = i2CPeripheral.ReadRegister((byte)(Registers.COMMAND_BIT | Registers.STATUS));
-                return ((Registers)(status & (byte)Registers.STATUS_AINT) == Registers.STATUS_AINT);
+            if (changeResult.New.AmbientLight is { } ambient) {
+                LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
             }
+            base.RaiseEventsAndNotify(changeResult);
         }
+
 
         /// <summary>
         /// Set the integration (sampling) time for the sensor
@@ -116,7 +164,7 @@ namespace Meadow.Foundation.Sensors.Light
 
                 isLongTime = false;
                 var timeByte = Math.Clamp((int)(0x100 - (timeSeconds / 0.0024)), 0, 255);
-                i2CPeripheral.WriteRegister((byte)Registers.ATIME, (byte)timeByte);
+                Peripheral.WriteRegister((byte)Registers.ATIME, (byte)timeByte);
                 integrationTimeByte = (byte)timeByte;
             }
             else
@@ -129,28 +177,28 @@ namespace Meadow.Foundation.Sensors.Light
                 isLongTime = true;
                 var timeByte = (int)(0x100 - (timeSeconds / 0.029));
                 timeByte = Math.Clamp(timeByte, 0, 255);
-                i2CPeripheral.WriteRegister((byte)Registers.WTIME, (byte)timeByte);
+                Peripheral.WriteRegister((byte)Registers.WTIME, (byte)timeByte);
                 integrationTimeByte = (byte)timeByte;
             }
         }
 
         private void SetConfigLongTime(bool setLong)
         {
-            i2CPeripheral.WriteRegister((byte)Registers.CONFIG, setLong ? (byte)(Registers.CONFIG_WLONG) : (byte)0x00);
+            Peripheral.WriteRegister((byte)Registers.CONFIG, setLong ? (byte)(Registers.CONFIG_WLONG) : (byte)0x00);
         }
 
         private void PowerOn()
         {
-            i2CPeripheral.WriteRegister((byte)Registers.ENABLE, (byte)Registers.ENABLE_PON);
+            Peripheral.WriteRegister((byte)Registers.ENABLE, (byte)Registers.ENABLE_PON);
             Thread.Sleep(3);
-            i2CPeripheral.WriteRegister((byte)Registers.ENABLE, (byte)(Registers.ENABLE_PON | Registers.ENABLE_AEN));
+            Peripheral.WriteRegister((byte)Registers.ENABLE, (byte)(Registers.ENABLE_PON | Registers.ENABLE_AEN));
         }
 
         private void PowerOff()
         {
-            var powerState = i2CPeripheral.ReadRegister((byte)Registers.ENABLE);
+            var powerState = Peripheral.ReadRegister((byte)Registers.ENABLE);
             powerState = (byte)(powerState & ~(byte)(Registers.ENABLE_PON | Registers.ENABLE_AEN));
-            i2CPeripheral.WriteRegister((byte)Registers.ENABLE, powerState);
+            Peripheral.WriteRegister((byte)Registers.ENABLE, powerState);
         }
 
         /// <summary>
@@ -171,52 +219,28 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="state">True to set the interrupt, false to clear</param>
         public void SetInterrupt(InterruptState interupt, bool state)
         {
-            i2CPeripheral.WriteRegister((byte)Registers.PERS, (byte)interupt);
-            var enable = i2CPeripheral.ReadRegister((byte)Registers.ENABLE);
+            Peripheral.WriteRegister((byte)Registers.PERS, (byte)interupt);
+            var enable = Peripheral.ReadRegister((byte)Registers.ENABLE);
 
             enable = state
                 ? enable |= (byte)Registers.ENABLE_AIEN
                 : enable = (byte)(enable & ~(byte)Registers.ENABLE_AIEN);
-            i2CPeripheral.WriteRegister((byte)Registers.ENABLE, enable);
+            Peripheral.WriteRegister((byte)Registers.ENABLE, enable);
         }
 
         /// <summary>
-        /// Get the color
+        /// Get true is there are valid data
         /// </summary>
-        /// <param name="delay">Wait to read the data that the integration time is passed</param>
-        /// <returns></returns>
-        public async Task<Color> GetColor(bool delay = true)
+        protected bool IsValidData()
         {
-            // To have a new reading, you need to wait for integration time to happen
-            // If you don't wait, then you'll read the previous value
-            if (delay)
-            {
-                await Task.Delay((int)(IntegrationTime * 1000.0));
-            }
-
-            var divide = (256 - integrationTimeByte) * 1024.0;
-
-            // If we are in long wait, we'll need to divide even more
-            if (isLongTime)
-            {
-                divide *= 12.0;
-            }
-
-            Console.WriteLine($"Red: {I2cRead16(Registers.RDATAL)}");
-            Console.WriteLine($"Green: {I2cRead16(Registers.GDATAL)}");
-            Console.WriteLine($"Blue: {I2cRead16(Registers.BDATAL)}");
-
-            double r = (I2cRead16(Registers.RDATAL) / divide);
-            double g = (I2cRead16(Registers.GDATAL) / divide);
-            double b = (I2cRead16(Registers.BDATAL) / divide);
-            double a = (I2cRead16(Registers.CDATAL) / divide);
-
-            return Color.FromRgba(r, g, b, a);
+            var status = Peripheral.ReadRegister((byte)(Registers.COMMAND_BIT | Registers.STATUS));
+            return ((Registers)(status & (byte)Registers.STATUS_AVALID) == Registers.STATUS_AVALID);
         }
 
-        private ushort I2cRead16(Registers reg)
+
+        protected ushort I2cRead16(Registers reg)
         {
-            return i2CPeripheral.ReadRegisterAsUShort((byte)(Registers.COMMAND_BIT | reg), ByteOrder.BigEndian);
+            return Peripheral.ReadRegisterAsUShort((byte)(Registers.COMMAND_BIT | reg), ByteOrder.BigEndian);
         }
     }
 }
