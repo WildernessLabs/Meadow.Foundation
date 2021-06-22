@@ -18,8 +18,6 @@ namespace Meadow.Foundation.Sensors.Motion
     public class Adxl337 : SamplingSensorBase<Acceleration3D>, IAccelerometer
     {
         //==== events
-        // [Bryan (2021.05.16)] commented this out, it's a duplicate of the other, no?
-        //public event EventHandler<IChangeResult<Acceleration3D>> Updated;
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
         //==== internals

@@ -16,7 +16,7 @@ namespace MeadowApp
         {
             Console.WriteLine("Initializing");
 
-            // Mpu5060 I2C address could be 0x68 or 0x69
+            // create the sensor driver
             sensor = new Adxl337(
                 Device, Device.Pins.A00, Device.Pins.A01, Device.Pins.A02);
 

@@ -14,6 +14,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public class Adxl335 : SamplingSensorBase<Acceleration3D>, IAccelerometer
     {
+        //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
         /// <summary>
