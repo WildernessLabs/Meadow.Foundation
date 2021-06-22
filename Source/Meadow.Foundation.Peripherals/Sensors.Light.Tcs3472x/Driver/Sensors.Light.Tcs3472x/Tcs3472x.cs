@@ -7,11 +7,15 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Light
 {
+    // TODO: B: i converted this sensor, but it doesn't work for me, and i'm
+    // not sure it ever worked. there's lots of console.writelines in here.
+
     /// <summary>
     /// Driver for the Tcs3472x light-to-digital converter.
     /// </summary>
     public partial class Tcs3472x
-        : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>, ILightSensor
+        : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>,
+            ILightSensor//, IColorSensor
     {
         //==== events
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };

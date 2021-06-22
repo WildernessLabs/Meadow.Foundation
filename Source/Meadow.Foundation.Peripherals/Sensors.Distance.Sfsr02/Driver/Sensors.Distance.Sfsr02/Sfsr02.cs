@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
@@ -9,17 +10,24 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// Sfsr02 Distance Sensor
     /// </summary>
-    public class Sfsr02:
-        SensorBase<Length>, 
-        IRangeFinder
+    public class Sfsr02: SensorBase<Length>, IRangeFinder
     {
-
+        //==== events
 		/// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
         public event EventHandler<IChangeResult<Length>> DistanceUpdated;
-        public event EventHandler<IChangeResult<Length>> Updated;
 
+        //==== internals
+        /// <summary>
+        /// Trigger/Echo Pin
+        /// </summary>
+        protected IBiDirectionalPort triggerEchoPort;
+
+        protected long tickStart;
+
+
+        //==== properties
         /// <summary>
         /// Returns current distance
         /// </summary>
@@ -34,14 +42,6 @@ namespace Meadow.Foundation.Sensors.Distance
         /// Maximum valid distance in cm
         /// </summary>
         public double MaximumDistance => 450;
-
-
-        /// <summary>
-        /// Trigger/Echo Pin
-        /// </summary>
-        protected IBiDirectionalPort triggerEchoPort;
-
-        protected long tickStart;
 
         /// <summary>
         /// Create a new SFSR02 object with an IO Device
@@ -115,13 +115,19 @@ namespace Meadow.Foundation.Sensors.Distance
 
             var result = new ChangeResult<Length>(newDistance, oldDistance);
 
-            RaiseChangedAndNotify(result);
+            RaiseEventsAndNotify(result);
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<Length> result)
+        protected override Task<Length> ReadSensor()
         {
-            Updated?.Invoke(this, result);
-            DistanceUpdated?.Invoke(this, result);
+            //TODO:
+            throw new NotImplementedException();
+        }
+
+        protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
+        {
+            DistanceUpdated?.Invoke(this, changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }
