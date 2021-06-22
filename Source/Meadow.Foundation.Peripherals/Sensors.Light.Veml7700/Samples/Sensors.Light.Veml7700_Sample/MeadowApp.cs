@@ -48,7 +48,7 @@ namespace Sensors.Light.Veml7700_Sample
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<Illuminance> result) => {
+            sensor.Updated += (sender, result) => {
                 Console.WriteLine($"Illuminance: {result.New.Lux:n3}Lux");
             };
 

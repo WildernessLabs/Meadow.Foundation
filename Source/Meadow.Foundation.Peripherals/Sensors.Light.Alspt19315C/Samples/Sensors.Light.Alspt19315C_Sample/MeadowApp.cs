@@ -40,7 +40,7 @@ namespace MeadowApp
 
             //==== Classic Events Pattern
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<Voltage> result) => {
+            sensor.Updated += (sender, result) => {
                 Console.WriteLine($"Voltage Changed, new: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V");
             };
 

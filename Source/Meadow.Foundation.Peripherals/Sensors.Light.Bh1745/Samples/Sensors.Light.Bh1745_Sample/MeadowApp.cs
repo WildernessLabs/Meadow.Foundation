@@ -54,7 +54,7 @@ namespace MeadowApp
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> result) => {
+            sensor.Updated += (sender, result) => {
                 Console.WriteLine($"  Ambient Light: {result.New.AmbientLight?.Lux:N2}Lux");
                 Console.WriteLine($"  Color: {result.New.Color}");
                 if(result.New.Color is { } color) { rgbLed.SetColor(color); }

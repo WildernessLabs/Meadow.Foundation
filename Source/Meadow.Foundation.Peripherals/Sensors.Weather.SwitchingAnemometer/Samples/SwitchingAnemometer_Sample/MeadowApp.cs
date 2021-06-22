@@ -35,10 +35,10 @@ namespace MeadowApp
             anemometer = new SwitchingAnemometer(Device, Device.Pins.A01);
 
             //==== classic events example
-            anemometer.WindSpeedUpdated += (object sender, IChangeResult<Speed> e) =>
+            anemometer.WindSpeedUpdated += (sender, result) =>
             {
-                Console.WriteLine($"new speed: {e.New.KilometersPerHour:n1}kmh, old: {e.Old?.KilometersPerHour:n1}kmh");
-                OutputWindSpeed(e.New);
+                Console.WriteLine($"new speed: {result.New.KilometersPerHour:n1}kmh, old: {result.Old?.KilometersPerHour:n1}kmh");
+                OutputWindSpeed(result.New);
             };
 
             //==== IObservable example

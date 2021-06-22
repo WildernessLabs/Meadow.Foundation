@@ -41,7 +41,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
             //==== Classic Events Pattern
             // classical .NET events can also be used:
-            analogTemperature.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> result) => {
+            analogTemperature.TemperatureUpdated += (sender, result) => {
                 Console.WriteLine($"Temp Changed, temp: {result.New.Celsius:N2}C, old: {result.Old?.Celsius:N2}C");
             };
 

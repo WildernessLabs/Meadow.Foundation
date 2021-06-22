@@ -39,7 +39,7 @@ namespace MeadowApp
 
             //==== Classic Events Pattern
             // classical .NET events can also be used:
-            sensor.DistanceUpdated += (object sender, IChangeResult<Length> result) => {
+            sensor.DistanceUpdated += (sender, result) => {
                 Console.WriteLine($"Temp Changed, temp: {result.New.Centimeters:N2}cm, old: {result.Old?.Centimeters:N2}cm");
             };
 

@@ -45,7 +45,7 @@ namespace MeadowApp
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<Meadow.Units.Illuminance> result) => {
+            sensor.Updated += (sender, result) => {
                 Console.WriteLine($"Light: {result.New.Lux:N2}Lux");
             };
 

@@ -45,9 +45,9 @@ namespace MeadowApp
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, Pressure? Pressure)> e) => {
-                Console.WriteLine($"  Temperature: {e.New.Temperature?.Celsius:N2}C");
-                Console.WriteLine($"  Pressure: {e.New.Pressure?.Bar:N2}Bar");
+            sensor.Updated += (sender, result) => {
+                Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
+                Console.WriteLine($"  Pressure: {result.New.Pressure?.Bar:N2}Bar");
             };
 
             //==== one-off read

@@ -24,7 +24,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity)> result) => {
+            sensor.Updated += (sender, result) => {
                 Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:F1}C");
                 Console.WriteLine($"  Relative Humidity: {result.New.Humidity:F1}%");
             };

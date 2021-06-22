@@ -43,7 +43,7 @@ namespace Sensors.Light.Tsl2591_Sample
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<(Meadow.Units.Illuminance? FullSpectrum, Meadow.Units.Illuminance? Infrared, Meadow.Units.Illuminance? VisibleLight, Meadow.Units.Illuminance? Integrated)> result) => {
+            sensor.Updated += (sender, result) => {
                 Console.WriteLine($"  Full Spectrum Light: {result.New.FullSpectrum?.Lux:N2}Lux");
                 Console.WriteLine($"  Infrared Light: {result.New.Infrared?.Lux:N2}Lux");
                 Console.WriteLine($"  Visible Light: {result.New.VisibleLight?.Lux:N2}Lux");

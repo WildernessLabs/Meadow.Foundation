@@ -38,7 +38,7 @@ namespace Sensors.Moisture.Capacitive_Sample
 
             //==== Classic Events
             // classical .NET events can also be used:
-            capacitive.HumidityUpdated += (object sender, IChangeResult<double> result) =>
+            capacitive.HumidityUpdated += (sender, result) =>
             {
                 // the first time through, old will be null.
                 string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching

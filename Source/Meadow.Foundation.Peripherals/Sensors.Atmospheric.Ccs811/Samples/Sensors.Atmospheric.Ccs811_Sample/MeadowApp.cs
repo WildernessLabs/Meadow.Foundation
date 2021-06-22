@@ -47,8 +47,8 @@ namespace Sensors.AirQuality.Ccs811_Sample
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<(Concentration? Co2, Concentration? Voc)> e) => {
-                Console.WriteLine($"CO2: {e.New.Co2.Value.PartsPerMillion:n1}ppm, VOC: {e.New.Voc.Value.PartsPerBillion:n1}ppb");
+            sensor.Updated += (sender, result) => {
+                Console.WriteLine($"CO2: {result.New.Co2.Value.PartsPerMillion:n1}ppm, VOC: {result.New.Voc.Value.PartsPerBillion:n1}ppb");
             };
 
             //==== one-off read
