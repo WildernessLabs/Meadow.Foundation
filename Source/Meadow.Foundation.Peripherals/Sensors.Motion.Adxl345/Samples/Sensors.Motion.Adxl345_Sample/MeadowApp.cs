@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
@@ -11,30 +12,63 @@ namespace MeadowApp
 
         public MeadowApp()
         {
-            InitHardware();
+            Console.WriteLine("Initializing");
+
+            // Mpu5060 I2C address could be 0x68 or 0x69
+            sensor = new Adxl345(
+                Device.CreateI2cBus(),
+                Adxl345.Addresses.Low // Address pin pulled low.
+                //Adxl345.Addresses.High // Address pin pulled high
+                );
+
+            //==== Events
+            // classical .NET events can also be used:
+            sensor.Updated += (sender, result) => {
+                Console.WriteLine($"Accel: [X:{result.New.X.MetersPerSecondSquared:N2}," +
+                    $"Y:{result.New.Y.MetersPerSecondSquared:N2}," +
+                    $"Z:{result.New.Z.MetersPerSecondSquared:N2} (mps^2)]");
+            };
+
+            //==== IObservable 
+            // Example that uses an IObersvable subscription to only be notified
+            // when the temperature changes by at least a degree, and humidty by 5%.
+            // (blowing hot breath on the sensor should trigger)
+            // TODO/BUG: uncommenting this means no events are raised.
+            //var consumer = Mpu6050.CreateObserver(
+            //    handler: result => {
+            //        Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.Acceleration3D?.X:N2}, old: X:{result.Old?.Acceleration3D?.X:N2}");
+            //    },
+            //    // only notify if the change is greater than 0.5°C
+            //    filter: result => {
+            //        if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+            //            return (
+            //            (result.New.Acceleration3D.Value - old.Acceleration3D.Value).X > 0.1 // returns true if > 0.1 X change.
+            //            // can add addtional constraints, too:
+            //            //&&
+            //            //(result.New.AngularAcceleration3D.Value - old.AngularAcceleration3D.Value).X > 0.05 // 
+            //            );
+            //        }
+            //        return false;
+            //    }
+            //    // if you want to always get notified, pass null for the filter:
+            //    //filter: null
+            //    );
+            //sensor.Subscribe(consumer);
+
+            //==== one-off read
+            ReadConditions().Wait();
+
+            // start updating
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
         }
 
-        public void InitHardware()
+        protected async Task ReadConditions()
         {
-            Console.WriteLine("Initialize...");
-
-            sensor = new Adxl345(Device.CreateI2cBus(), 83);
-
-            var observer = Adxl345.CreateObserver(e =>
-            {
-                Console.WriteLine($"X: {e.New.X.Gravity}g, Y: {e.New.Y.Gravity}g, Z: {e.New.Z.Gravity}g");
-            });
-
-            sensor.Subscribe(observer);
-
-           // sensor.Updated += Sensor_Updated;
-
-            sensor.StartUpdating(500);
-        }
-
-        private void Sensor_Updated(object sender, ChangeResult<Meadow.Units.Acceleration3D> e)
-        {
-            Console.WriteLine($"X: {e.New.X}, Y: {e.New.Y}, Z: {e.New.Z}");
+            var result = await sensor.Read();
+            Console.WriteLine("Initial Readings:");
+            Console.WriteLine($"Accel: [X:{result.X.MetersPerSecondSquared:N2}," +
+                $"Y:{result.Y.MetersPerSecondSquared:N2}," +
+                $"Z:{result.Z.MetersPerSecondSquared:N2} (mps^2)]");
         }
     }
 }

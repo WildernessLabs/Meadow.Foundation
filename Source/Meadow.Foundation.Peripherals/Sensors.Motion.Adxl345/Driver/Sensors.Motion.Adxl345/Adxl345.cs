@@ -12,106 +12,22 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     Driver for the ADXL345 triple axis accelerometer.
     ///     +/- 16g
     /// </summary>
-    public class Adxl345 :
-        SensorBase<Acceleration3D>,
-        IAccelerometer
+    public partial class Adxl345 : ByteCommsSensorBase<Acceleration3D>, IAccelerometer
     {
         //==== events
-        // [Bryan (2021.05.16)] commented this out, it's a duplicate of the other, no?
-        //public event EventHandler<IChangeResult<Acceleration3D>> Updated;
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
+        //==== internals
+        static double ADXL345_MG2G_MULTIPLIER = (0.004);
+
+        //==== properties
         /// <summary>
         /// Minimum value that can be used for the update interval when the
         /// sensor is being configured to generate interrupts.
         /// </summary>
         public const ushort MinimumPollingPeriod = 100;
 
-        /// <summary>
-        ///     Communication bus used to communicate with the sensor.
-        /// </summary>
-        private readonly II2cPeripheral adxl345;
-
-        /// <summary>
-        ///     Possible values for the range (see DataFormat register).
-        /// </summary>
-        /// <remarks>
-        ///     See page 27 of the data sheet.
-        /// </remarks>
-        public enum Range : byte
-        {
-            TwoG = 0x00,
-            FourG = 0x01,
-            EightG = 0x02,
-            SixteenG = 0x03
-        }
-
-        /// <summary>
-        ///     Frequency of the sensor readings when the device is in sleep mode.
-        /// </summary>
-        /// <remarks>
-        ///     See page 26 of the data sheet.
-        /// </remarks>
-        public enum Frequency : byte
-        {
-            EightHz = 0x00,
-            FourHz = 0x01,
-            TwoHz = 0x02,
-            OneHz = 0x03,
-        }
-
-        /// <summary>
-        ///     Control registers for the ADXL345 chip.
-        /// </summary>
-        /// <remarks>
-        ///     Taken from table 19 on page 23 of the data sheet.
-        /// </remarks>
-        private static class Registers
-        {
-            public static readonly byte ActivityInactivityControl = 0x27;
-            public static readonly byte ActivityThreshold = 0x24;
-            public static readonly byte DataFormat = 0x31;
-            public static readonly byte DataRate = 0x2c;
-            public static readonly byte DeviceID = 0x00;
-            public static readonly byte FirstInFirstOutControl = 0x38;
-            public static readonly byte FirstInFirstOutStatus = 0x39;
-            public static readonly byte FreeFallThreshold = 0x28;
-            public static readonly byte FreeFallTime = 0x29;
-            public static readonly byte InactivityThreshold = 0x25;
-            public static readonly byte InactivityTime = 0x26;
-            public static readonly byte InterruptEnable = 0x2e;
-            public static readonly byte InterruptMap = 0x2f;
-            public static readonly byte InterruptSource = 0x30;
-            public static readonly byte OffsetX = 0x1e;
-            public static readonly byte OffsetY = 0x1f;
-            public static readonly byte OffsetZ = 0x20;
-            public static readonly byte PowerControl = 0x2d;
-            public static readonly byte TAPActivityStatus = 0x2a;
-            public static readonly byte TAPAxes = 0x2a;
-            public static readonly byte TAPDuration = 0x21;
-            public static readonly byte TAPLatency = 0x22;
-            public static readonly byte TAPThreshold = 0x1d;
-            public static readonly byte TAPWindow = 0x23;
-            public static readonly byte X0 = 0x32;
-            public static readonly byte X1 = 0x33;
-            public static readonly byte Y0 = 0x33;
-            public static readonly byte Y1 = 0x34;
-            public static readonly byte Z0 = 0x36;
-            public static readonly byte Z1 = 0x37;
-        }
-    
-        public Acceleration3D? Acceleration3D { get; protected set; }
-
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        /// <summary>
-        /// Gets a value indicating whether the analog input port is currently
-        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
+        public Acceleration3D? Acceleration3D => Conditions;
 
         /// <summary>
         ///     Values stored in this register are automatically added to the X reading.
@@ -121,8 +37,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetX 
 		{
-            get { return (sbyte)adxl345.ReadRegister(Registers.OffsetX); }
-            set { adxl345.WriteRegister(Registers.OffsetX, (byte)value); }
+            get { return (sbyte)Peripheral.ReadRegister(Registers.OFFSET_X); }
+            set { Peripheral.WriteRegister(Registers.OFFSET_X, (byte)value); }
         }
 
         /// <summary>
@@ -133,8 +49,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetY 
 		{
-            get { return (sbyte)adxl345.ReadRegister(Registers.OffsetY); }
-            set { adxl345.WriteRegister(Registers.OffsetY, (byte)value); }
+            get { return (sbyte)Peripheral.ReadRegister(Registers.OFFSET_Y); }
+            set { Peripheral.WriteRegister(Registers.OFFSET_Y, (byte)value); }
         }
 
         /// <summary>
@@ -145,20 +61,21 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetZ 
 		{
-            get { return (sbyte)adxl345.ReadRegister(Registers.OffsetZ); }
-            set { adxl345.WriteRegister(Registers.OffsetZ, (byte)value); }
+            get { return (sbyte)Peripheral.ReadRegister(Registers.OFFSET_Z); }
+            set { Peripheral.WriteRegister(Registers.OFFSET_Z, (byte)value); }
         }
+
+        //==== ctors
 
         /// <summary>
         ///     Create a new instance of the ADXL345 communicating over the I2C interface.
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
-        public Adxl345(II2cBus i2cBus, byte address = 0x53)
+        public Adxl345(II2cBus i2cBus, byte address = Addresses.Low)
+            : base(i2cBus, address)
         {
-            adxl345 = new I2cPeripheral(i2cBus, address);
-
-            var deviceID = adxl345.ReadRegister(Registers.DeviceID);
+            var deviceID = Peripheral.ReadRegister(Registers.DEVICE_ID);
 
             if (deviceID != 0xe5) 
 			{
@@ -166,90 +83,25 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        ///// <summary>
-        ///// Convenience method to get the current temperature. For frequent reads, use
-        ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        ///// </summary>
-        public Task<Acceleration3D> Read()
+        protected override Task<Acceleration3D> ReadSensor()
         {
-            // TODO: why does this method return a `Task`? should `Update` be awaited
-            // or something?
-            // seems like the ADXL335 might have the right pattern here.
+            return Task.Run(() => {
+                // read the data from the sensor starting at the X0 register
+                Peripheral.ReadRegister(Registers.X0, ReadBuffer.Span[0..6]);
 
-            Update();
+                return new Acceleration3D(
+                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
+                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[2] + (ReadBuffer.Span[3] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
+                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[4] + (ReadBuffer.Span[5] << 8)), Acceleration.UnitType.MetersPerSecondSquared)
+                    );
 
-            return Task.FromResult(Acceleration3D.Value);
+            });
         }
 
-        ///// <summary>
-        ///// Starts continuously sampling the sensor.
-        /////
-        ///// This method also starts raising `Changed` events and IObservable
-        ///// subscribers getting notified.
-        ///// </summary>
-        public void StartUpdating(int standbyDuration = 1000)
+        protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
         {
-            // thread safety
-            lock (_lock) 
-            {
-                if (IsSampling) { return; }
-
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                Acceleration3D? oldConditions;
-                ChangeResult<Acceleration3D> result;
-                Task.Factory.StartNew(async () => 
-                {
-                    while (true) 
-                    {
-                        if (ct.IsCancellationRequested) 
-                        {   // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = Acceleration3D;
-
-                        // read
-                        Update();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<Acceleration3D>(Acceleration3D.Value, oldConditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        protected void RaiseChangedAndNotify(IChangeResult<Acceleration3D> changeResult)
-        {
-            //Updated?.Invoke(this, changeResult);
             Acceleration3DUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
-        }
-
-        ///// <summary>
-        ///// Stops sampling the acceleration.
-        ///// </summary>
-        public void StopUpdating()
-        {
-            lock (_lock) {
-                if (!IsSampling) { return; }
-
-                SamplingTokenSource?.Cancel();
-
-                // state muh-cheen
-                IsSampling = false;
-            }
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
@@ -260,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="measuring">Enable or disable measurements (turn on or off).</param>
         /// <param name="sleep">Put the part to sleep (true) or run in normal more (false).</param>
         /// <param name="frequency">Frequency of measurements when the part is in sleep mode.</param>
-        public void SetPowerState(bool linkActivityAndInactivity, bool autoASleep, bool measuring, bool sleep, Frequency frequency)
+        public void SetPowerState(bool linkActivityAndInactivity, bool autoASleep, bool measuring, bool sleep, Frequencies frequency)
         {
             byte data = 0;
             if (linkActivityAndInactivity) {
@@ -277,7 +129,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             data |= (byte)frequency;
 
-            adxl345.WriteRegister(Registers.PowerControl, data);
+            Peripheral.WriteRegister(Registers.POWER_CONTROL, data);
         }
 
         /// <summary>
@@ -298,7 +150,7 @@ namespace Meadow.Foundation.Sensors.Motion
         ///         2:  +/- 8g
         ///         3:  +/ 16g
         /// </remarks>
-        public void SetDataFormat(bool selfTest, bool spiMode, bool fullResolution, bool justification, Range range)
+        public void SetDataFormat(bool selfTest, bool spiMode, bool fullResolution, bool justification, GForceRanges range)
         {
             byte data = 0;
             if (selfTest) {
@@ -315,7 +167,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             data |= (byte)range;
 
-            adxl345.WriteRegister(Registers.DataFormat, data);
+            Peripheral.WriteRegister(Registers.DATA_FORMAT, data);
         }
 
         /// <summary>
@@ -338,35 +190,18 @@ namespace Meadow.Foundation.Sensors.Motion
                 data |= 0x10;
             }
 
-            adxl345.WriteRegister(Registers.DataRate, data);
+            Peripheral.WriteRegister(Registers.DATA_RATE, data);
         }
 
-        static double ADXL345_MG2G_MULTIPLIER = (0.004);
-
-        /// <summary>
-        ///     Read the six sensor bytes and set the values for the X, Y and Z acceleration.
-        /// </summary>
-        /// <remarks>
-        ///     All six acceleration registers should be read at the same time to ensure consistency
-        ///     of the measurements.
-        /// </remarks>
-        public void Update()
-        {
-            var data = adxl345.ReadRegisters(Registers.X0, 6);
-            Acceleration3D = new Acceleration3D(
-                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[0] + (data[1] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
-                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[2] + (data[3] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
-                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(data[4] + (data[5] << 8)), Acceleration.UnitType.MetersPerSecondSquared)
-                );
-        }
 
         /// <summary>
         ///     Dump the registers to the debug output stream.
         /// </summary>
         public void DisplayRegisters()
         {
-            var registers = adxl345.ReadRegisters(Registers.TAPThreshold, 29);
-            DebugInformation.DisplayRegisters(Registers.TAPThreshold, registers);
+            byte[] registerData = new byte[29];
+            Peripheral.ReadRegister(Registers.TAP_THRESHOLD, registerData);
+            DebugInformation.DisplayRegisters(Registers.TAP_THRESHOLD, registerData);
         }
     }
 }
