@@ -12,12 +12,8 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     Driver for the ADXL335 triple axis accelerometer.
     ///     +/- 3g
     /// </summary>
-    public class Adxl335 :
-        SensorBase<Acceleration3D>,
-        IAccelerometer
+    public class Adxl335 : SamplingSensorBase<Acceleration3D>, IAccelerometer
     {
-        // [Bryan (2021.05.16)] commented this out, it's a duplicate of the other, no?
-        //public event EventHandler<IChangeResult<Acceleration3D>> Updated;
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
         /// <summary>
@@ -29,22 +25,22 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Analog input channel connected to the x axis.
         /// </summary>
-        private readonly IAnalogInputPort _xPort;
+        protected readonly IAnalogInputPort _xPort;
 
         /// <summary>
         /// Analog input channel connected to the x axis.
         /// </summary>
-        private readonly IAnalogInputPort _yPort;
+        protected readonly IAnalogInputPort _yPort;
 
         /// <summary>
         /// Analog input channel connected to the x axis.
         /// </summary>
-        private readonly IAnalogInputPort _zPort;
+        protected readonly IAnalogInputPort _zPort;
 
         /// <summary>
         /// Voltage that represents 0g.  This is the supply voltage / 2.
         /// </summary>
-        private float _zeroGVoltage => SupplyVoltage / 2f;
+        protected float _zeroGVoltage => SupplyVoltage / 2f;
 
         /// <summary>
         /// Volts per G for the X axis.
@@ -67,18 +63,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public float SupplyVoltage { get; set; }
 
-        public Acceleration3D? Acceleration3D { get; protected set; } = new Acceleration3D();
-
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        /// <summary>
-        /// Gets a value indicating whether the analog input port is currently
-        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
+        public Acceleration3D? Acceleration3D => Conditions;
 
         /// <summary>
         ///     Create a new ADXL335 sensor object.
@@ -100,103 +85,25 @@ namespace Meadow.Foundation.Sensors.Motion
             SupplyVoltage = 3.3f;
         }
 
-        ///// <summary>
-        ///// Convenience method to get the current temperature. For frequent reads, use
-        ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        ///// </summary>
-        public async Task<Acceleration3D> Read()
+        protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
         {
-            await Update();
-
-            return Acceleration3D.Value;
-        }
-
-        ///// <summary>
-        ///// Starts continuously sampling the sensor.
-        /////
-        ///// This method also starts raising `Changed` events and IObservable
-        ///// subscribers getting notified.
-        ///// </summary>
-        public void StartUpdating(int standbyDuration = 1000)
-        {
-            // thread safety
-            lock (_lock) 
-            {
-                if (IsSampling) { return; }
-
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                Acceleration3D? oldConditions;
-                ChangeResult<Acceleration3D> result;
-                Task.Factory.StartNew(async () => 
-                {
-                    while (true) 
-                    {
-                        if (ct.IsCancellationRequested) 
-                        {   // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = Acceleration3D;
-
-                        // read
-                        await Update();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<Acceleration3D>(Acceleration3D.Value, oldConditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        protected void RaiseChangedAndNotify(IChangeResult<Acceleration3D> changeResult)
-        {
-            //Updated?.Invoke(this, changeResult);
             Acceleration3DUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
         }
 
-        ///// <summary>
-        ///// Stops sampling the acceleration.
-        ///// </summary>
-        public void StopUpdating()
-        {
-            lock (_lock) 
-            {
-                if (!IsSampling) { return; }
+        protected override Task<Acceleration3D> ReadSensor()
+        { 
+            return Task.Run(async () => {
+                var x = await _xPort.Read();
+                var y = await _yPort.Read();
+                var z = await _zPort.Read();
 
-                SamplingTokenSource?.Cancel();
-
-                // state muh-cheen
-                IsSampling = false;
-            }
-        }
-
-        /// <summary>
-        /// Read the sensor output and convert the sensor readings into acceleration values.
-        /// </summary>
-        public async Task Update()
-        {
-            var x = await _xPort.Read();
-            var y = await _yPort.Read();
-            var z = await _zPort.Read();
-
-            Acceleration3D = new Acceleration3D(
-                new Acceleration((x.Volts - _zeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
-                new Acceleration((y.Volts - _zeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
-                new Acceleration((z.Volts - _zeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity)
-                );
+                return new Acceleration3D(
+                    new Acceleration((x.Volts - _zeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
+                    new Acceleration((y.Volts - _zeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
+                    new Acceleration((z.Volts - _zeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity)
+                    );
+            });
         }
 
         /// <summary>
