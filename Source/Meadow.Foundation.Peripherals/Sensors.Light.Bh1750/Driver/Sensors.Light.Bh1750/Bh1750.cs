@@ -1,13 +1,18 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
+using IU = Meadow.Units.Illuminance.UnitType;
 using System;
 using System.Buffers.Binary;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
-    public partial class Bh1750 : ByteCommsSensorBase<Illuminance>
+    public partial class Bh1750 : ByteCommsSensorBase<Illuminance>, ILightSensor
     {
+        //==== events
+        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
+
         /// <summary>
         /// BH1750 Light Transmittance (27.20-222.50%)
         /// </summary>
@@ -23,9 +28,12 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public MeasuringModes MeasuringMode { get; set; }
 
+        public Illuminance? Illuminance => Conditions;
+
         private const byte DefaultLightTransmittance = 0b_0100_0101;
         private const float MaxTransmittance = 2.225f;
         private const float MinTransmittance = 0.272f;
+
 
         /// <summary>
         ///     Create a new BH1750 light sensor object using a static reference voltage.
@@ -69,7 +77,7 @@ namespace Meadow.Foundation.Sensors.Light
                     result *= 2;
                 }
 
-                return new Illuminance(result, Illuminance.UnitType.Lux);
+                return new Illuminance(result, IU.Lux);
             });
         }
 
@@ -88,6 +96,12 @@ namespace Meadow.Foundation.Sensors.Light
 
             Peripheral.Write((byte)((byte)Commands.MeasurementTimeHigh | (val >> 5)));
             Peripheral.Write((byte)((byte)Commands.MeasurementTimeLow | (val & 0b_0001_1111)));
+        }
+
+        protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
+        {
+            this.LuminosityUpdated?.Invoke(this, changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }
