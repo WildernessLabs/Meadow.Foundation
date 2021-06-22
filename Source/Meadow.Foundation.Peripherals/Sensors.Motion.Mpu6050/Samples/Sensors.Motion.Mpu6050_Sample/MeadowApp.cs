@@ -17,18 +17,24 @@ namespace Sensors.Motion.mpu5060_Sample
             Console.WriteLine("Initializing");
 
             // Mpu5060 I2C address could be 0x68 or 0x69
-            sensor = new Mpu6050(Device.CreateI2cBus(), 0x69);
+            sensor = new Mpu6050(
+                Device.CreateI2cBus(),
+                Mpu6050.Addresses.High // Address pin pulled high
+                //Mpu6050.Addresses.Low // Address pin pulled low.
+                );
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<(Acceleration3D? Acceleration, AngularAcceleration3D? AngularAcceleration)> e) => {
-                Console.WriteLine($"Accel: [X:{e.New.Acceleration?.X.MetersPerSecondSquared:N2}," +
-                    $"Y:{e.New.Acceleration?.Y.MetersPerSecondSquared:N2}," +
-                    $"Z:{e.New.Acceleration?.Z.MetersPerSecondSquared:N2} (mps^2)]");
+            sensor.Updated += (sender, result) => {
+                Console.WriteLine($"Accel: [X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
+                    $"Y:{result.New.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
+                    $"Z:{result.New.Acceleration3D?.Z.MetersPerSecondSquared:N2} (mps^2)]");
 
-                Console.WriteLine($"Angular Accel: [X:{e.New.AngularAcceleration?.X.DegreesPerSecondSquared:N2}," +
-                    $"Y:{e.New.AngularAcceleration?.Y.DegreesPerSecondSquared:N2}," +
-                    $"Z:{e.New.AngularAcceleration?.Z.DegreesPerSecondSquared:N2} (dps^2)]");
+                Console.WriteLine($"Angular Accel: [X:{result.New.AngularAcceleration3D?.X.DegreesPerSecondSquared:N2}," +
+                    $"Y:{result.New.AngularAcceleration3D?.Y.DegreesPerSecondSquared:N2}," +
+                    $"Z:{result.New.AngularAcceleration3D?.Z.DegreesPerSecondSquared:N2} (dps^2)]");
+
+                Console.WriteLine($"Temp: {result.New.Temperature?.Celsius:N2}C");
             };
 
             //==== IObservable 
@@ -58,32 +64,26 @@ namespace Sensors.Motion.mpu5060_Sample
             //sensor.Subscribe(consumer);
 
             //==== one-off read
-            //ReadConditions().Wait();
+            ReadConditions().Wait();
 
             // start updating
-            sensor.StartUpdating(500);
-
-
-            while (true)
-            {
-                Console.WriteLine($"{sensor.Temperature.Celsius:n2}C");
-                Thread.Sleep(5000);
-            }
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
         }
 
-        // TODO: uncomment when there is a `Read()` method
-        //protected async Task ReadConditions()
-        //{
-        //    var conditions = await sensor.Read();
-        //    Console.WriteLine("Initial Readings:");
-        //    Console.WriteLine($"Accel: [X:{conditions.New.Acceleration?.X.MetersPerSecondSquared:N2}," +
-        //        $"Y:{conditions.New.Acceleration?.Y.MetersPerSecondSquared:N2}," +
-        //        $"Z:{conditions.New.Acceleration?.Z.MetersPerSecondSquared:N2} (mps^2)]");
+        protected async Task ReadConditions()
+        {
+            var result = await sensor.Read();
+            Console.WriteLine("Initial Readings:");
+            Console.WriteLine($"Accel: [X:{result.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
+                $"Y:{result.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
+                $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (mps^2)]");
 
-        //    Console.WriteLine($"Angular Accel: [X:{conditions.New.AngularAcceleration?.X.DegreesPerSecondSquared:N2}," +
-        //        $"Y:{conditions.New.AngularAcceleration?.Y.DegreesPerSecondSquared:N2}," +
-        //        $"Z:{conditions.New.AngularAcceleration?.Z.DegreesPerSecondSquared:N2} (dps^2)]");
-        //}
+            Console.WriteLine($"Angular Accel: [X:{result.AngularAcceleration3D?.X.DegreesPerSecondSquared:N2}," +
+                $"Y:{result.AngularAcceleration3D?.Y.DegreesPerSecondSquared:N2}," +
+                $"Z:{result.AngularAcceleration3D?.Z.DegreesPerSecondSquared:N2} (dps^2)]");
+
+            Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
+        }
 
     }
 }
