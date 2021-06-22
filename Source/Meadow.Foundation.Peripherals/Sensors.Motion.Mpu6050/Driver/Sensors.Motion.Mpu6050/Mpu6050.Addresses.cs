@@ -4,7 +4,7 @@ namespace Meadow.Foundation.Sensors.Motion
     public partial class Mpu6050
     {
         /// <summary>
-        ///     Valid addresses for the sensor.
+        /// Valid addresses for the sensor.
         /// </summary>
         public static class Addresses
         {
