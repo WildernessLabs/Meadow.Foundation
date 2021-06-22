@@ -29,7 +29,7 @@ namespace MeadowApp
 
            // sensor.Updated += Sensor_Updated;
 
-            sensor.StartUpdating(500);
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
         }
 
         private void Sensor_Updated(object sender, ChangeResult<Meadow.Units.Acceleration3D> e)
