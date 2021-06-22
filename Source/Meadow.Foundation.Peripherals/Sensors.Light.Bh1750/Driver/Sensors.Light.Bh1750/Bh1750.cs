@@ -18,10 +18,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public double LightTransmittance
         {
-            get => _lightTransmittance;
-            set => SetLightTransmittance(_lightTransmittance = value);
-        }
-        private double _lightTransmittance;
+            get => lightTransmittance;
+            set => SetLightTransmittance(lightTransmittance = value);
+        } private double lightTransmittance;
 
         /// <summary>
         /// BH1750 Measuring Mode
@@ -36,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Light
 
 
         /// <summary>
-        ///     Create a new BH1750 light sensor object using a static reference voltage.
+        /// Create a new BH1750 light sensor object using a static reference voltage.
         /// </summary>
         public Bh1750(
             II2cBus i2cBus, byte address,
@@ -70,7 +69,7 @@ namespace Meadow.Foundation.Sensors.Light
 
                 ushort raw = BinaryPrimitives.ReadUInt16BigEndian(ReadBuffer.Span[0..2]);
 
-                double result = raw / (1.2 * _lightTransmittance);
+                double result = raw / (1.2 * lightTransmittance);
 
                 if (MeasuringMode == MeasuringModes.ContinuouslyHighResolutionMode2 ||
                     MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2) {
