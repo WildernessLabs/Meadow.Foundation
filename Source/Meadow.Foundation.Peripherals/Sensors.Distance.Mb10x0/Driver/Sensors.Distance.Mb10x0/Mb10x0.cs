@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
@@ -7,9 +8,7 @@ using LU = Meadow.Units.Length.UnitType;
 namespace Meadow.Foundation.Sensors.Distance
 {
     // TODO: why is `DistanceUpdated` never invoked? is this sensor done?
-    public class Mb10x0 :
-        SensorBase<Length>,
-        IRangeFinder
+    public class Mb10x0 : SensorBase<Length>, IRangeFinder
     {
         //==== events
         public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
@@ -72,6 +71,11 @@ namespace Meadow.Foundation.Sensors.Distance
             Console.WriteLine($"Length: {len}");
 
             return new Length(0, LU.Millimeters);
+        }
+
+        protected override Task<Length> ReadSensor()
+        {
+            throw new NotImplementedException();
         }
     }
 }
