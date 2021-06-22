@@ -120,14 +120,6 @@ namespace Meadow.Foundation.Sensors.Light
             return Peripheral.ReadRegister(Registers.REG_PARAMRD);
         }
 
-        //private void Write8(byte reg, byte val)
-        //{   //this can be replaced by WriteRegister
-        //    //Peripheral.Write(reg);
-        //    //Peripheral.Write(val);
-
-        //    Peripheral.WriteRegister(reg, val);
-        //}
-
         private byte ReadParam(byte param)
         {
             Peripheral.WriteRegister(Registers.REG_COMMAND, (byte)(param | Commands.PARAM_QUERY));
