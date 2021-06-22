@@ -6,6 +6,9 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
+    // TODO: consider creating an AnalogSensorBase. there are a number of these
+    // analog sensors.
+
     /// <summary>
     /// Provide the ability to read the temperature from the following sensors:
     /// - TMP35 / 36 / 37
