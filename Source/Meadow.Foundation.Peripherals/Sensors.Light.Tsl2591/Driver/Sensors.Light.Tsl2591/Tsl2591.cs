@@ -8,6 +8,8 @@ using IU = Meadow.Units.Illuminance.UnitType;
 
 namespace Meadow.Foundation.Sensors.Light
 {
+    // TODO: This sensor has an interr
+
     /// <summary>
     ///     Driver for the TSL2591 light-to-digital converter.
     /// </summary>
@@ -26,7 +28,6 @@ namespace Meadow.Foundation.Sensors.Light
         private IntegrationTimes _integrationTime;
         private GainFactor _gain;
 
-        public int ChangeThreshold { get; set; }
 
         /// <summary>
         /// Full spectrum luminosity (visible and infrared light combined).
