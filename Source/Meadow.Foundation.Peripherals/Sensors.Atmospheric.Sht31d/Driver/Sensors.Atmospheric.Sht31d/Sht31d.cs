@@ -72,30 +72,5 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             return Task.FromResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>(conditions);
         }
-
-        /// <summary>
-        /// Creates a `FilterableChangeObserver` that has a handler and a filter.
-        /// </summary>
-        /// <param name="handler">The action that is invoked when the filter is satisifed.</param>
-        /// <param name="filter">An optional filter that determines whether or not the
-        /// consumer should be notified.</param>
-        /// <returns></returns>
-        /// <returns></returns>
-        // Implementor Notes:
-        //  This is a convenience method that provides named tuple elements. It's not strictly
-        //  necessary, as the `FilterableChangeObservableBase` class provides a default implementation,
-        //  but if you use it, then the parameters are named `Item1`, `Item2`, etc. instead of
-        //  `Temperature`, `Pressure`, etc.
-        public static new
-            FilterableChangeObserver<(Units.Temperature?, RelativeHumidity?)>
-            CreateObserver(
-                Action<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>> handler,
-                Predicate<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>>? filter = null
-            )
-        {
-            return new FilterableChangeObserver<(Units.Temperature?, RelativeHumidity?)>(
-                handler: handler, filter: filter
-                );
-        }
     }
 }

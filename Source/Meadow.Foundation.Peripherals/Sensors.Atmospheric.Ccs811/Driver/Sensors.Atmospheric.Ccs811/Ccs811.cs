@@ -159,30 +159,5 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             base.RaiseEventsAndNotify(changeResult);
         }
-
-        /// <summary>
-        /// Creates a `FilterableChangeObserver` that has a handler and a filter.
-        /// </summary>
-        /// <param name="handler">The action that is invoked when the filter is satisifed.</param>
-        /// <param name="filter">An optional filter that determines whether or not the
-        /// consumer should be notified.</param>
-        /// <returns></returns>
-        /// <returns></returns>
-        // Implementor Notes:
-        //  This is a convenience method that provides named tuple elements. It's not strictly
-        //  necessary, as the `FilterableChangeObservableBase` class provides a default implementation,
-        //  but if you use it, then the parameters are named `Item1`, `Item2`, etc. instead of
-        //  `Concentration`, etc.
-        public static new
-            FilterableChangeObserver<(Units.Concentration?, Concentration?)>
-            CreateObserver(
-                Action<IChangeResult<(Units.Concentration? Temperature, Concentration? Humidity)>> handler,
-                Predicate<IChangeResult<(Units.Concentration? Temperature, Concentration? Humidity)>>? filter = null
-            )
-        {
-            return new FilterableChangeObserver<(Units.Concentration?, Concentration?)>(
-                handler: handler, filter: filter
-                );
-        }
     }
 }
