@@ -5,6 +5,7 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
 using Meadow.Units;
+using AU = Meadow.Units.Acceleration.UnitType;
 
 namespace Sensors.Motion.mpu5060_Sample
 {
@@ -39,29 +40,22 @@ namespace Sensors.Motion.mpu5060_Sample
 
             //==== IObservable 
             // Example that uses an IObersvable subscription to only be notified
-            // when the temperature changes by at least a degree, and humidty by 5%.
-            // (blowing hot breath on the sensor should trigger)
-            // TODO/BUG: uncommenting this means no events are raised.
-            //var consumer = Mpu6050.CreateObserver(
-            //    handler: result => {
-            //        Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.Acceleration3D?.X:N2}, old: X:{result.Old?.Acceleration3D?.X:N2}");
-            //    },
-            //    // only notify if the change is greater than 0.5°C
-            //    filter: result => {
-            //        if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
-            //            return (
-            //            (result.New.Acceleration3D.Value - old.Acceleration3D.Value).X > 0.1 // returns true if > 0.1 X change.
-            //            // can add addtional constraints, too:
-            //            //&&
-            //            //(result.New.AngularAcceleration3D.Value - old.AngularAcceleration3D.Value).X > 0.05 // 
-            //            );
-            //        }
-            //        return false;
-            //    }
-            //    // if you want to always get notified, pass null for the filter:
-            //    //filter: null
-            //    );
-            //sensor.Subscribe(consumer);
+            // when the filter is satisfied
+            var consumer = Mpu6050.CreateObserver(
+                handler: result => {
+                    Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.Acceleration3D?.X:N2}, old: X:{result.Old?.Acceleration3D?.X:N2}");
+                },
+                // only notify if there's a greater than 1G change in the Z direction
+                filter: result => {
+                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                        return ((result.New.Acceleration3D.Value - old.Acceleration3D.Value).Z > new Acceleration(1, AU.Gravity));
+                    }
+                    return false;
+                }
+                // if you want to always get notified, pass null for the filter:
+                //filter: null
+                );
+            sensor.Subscribe(consumer);
 
             //==== one-off read
             ReadConditions().Wait();
