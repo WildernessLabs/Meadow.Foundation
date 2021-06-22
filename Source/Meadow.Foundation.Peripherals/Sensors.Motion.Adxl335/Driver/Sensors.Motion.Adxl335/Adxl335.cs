@@ -25,22 +25,22 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Analog input channel connected to the x axis.
         /// </summary>
-        protected readonly IAnalogInputPort _xPort;
+        protected readonly IAnalogInputPort xPort;
 
         /// <summary>
         /// Analog input channel connected to the x axis.
         /// </summary>
-        protected readonly IAnalogInputPort _yPort;
+        protected readonly IAnalogInputPort yPort;
 
         /// <summary>
         /// Analog input channel connected to the x axis.
         /// </summary>
-        protected readonly IAnalogInputPort _zPort;
+        protected readonly IAnalogInputPort zPort;
 
         /// <summary>
         /// Voltage that represents 0g.  This is the supply voltage / 2.
         /// </summary>
-        protected float _zeroGVoltage => SupplyVoltage / 2f;
+        protected float ZeroGVoltage => SupplyVoltage / 2f;
 
         /// <summary>
         /// Volts per G for the X axis.
@@ -73,9 +73,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="zPin">Analog pin connected to the Z axis output from the ADXL335 sensor.</param>
         public Adxl335(IAnalogInputController device, IPin xPin, IPin yPin, IPin zPin)
         {
-            _xPort = device.CreateAnalogInputPort(xPin);
-            _yPort = device.CreateAnalogInputPort(yPin);
-            _zPort = device.CreateAnalogInputPort(zPin);
+            xPort = device.CreateAnalogInputPort(xPin);
+            yPort = device.CreateAnalogInputPort(yPin);
+            zPort = device.CreateAnalogInputPort(zPin);
             //
             //  Now set the default calibration data.
             //
@@ -94,29 +94,29 @@ namespace Meadow.Foundation.Sensors.Motion
         protected override Task<Acceleration3D> ReadSensor()
         { 
             return Task.Run(async () => {
-                var x = await _xPort.Read();
-                var y = await _yPort.Read();
-                var z = await _zPort.Read();
+                var x = await xPort.Read();
+                var y = await yPort.Read();
+                var z = await zPort.Read();
 
                 return new Acceleration3D(
-                    new Acceleration((x.Volts - _zeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
-                    new Acceleration((y.Volts - _zeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
-                    new Acceleration((z.Volts - _zeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity)
+                    new Acceleration((x.Volts - ZeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
+                    new Acceleration((y.Volts - ZeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
+                    new Acceleration((z.Volts - ZeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity)
                     );
             });
         }
 
-        /// <summary>
-        /// Get the raw analog input values from the sensor.
-        /// </summary>
-        /// <returns>Vector object containing the raw sensor data from the analog pins.</returns>
-        public async Task<(Voltage XVolts, Voltage YVolts, Voltage ZVolts)> GetRawSensorData()
-        {
-            var x = await _xPort.Read();
-            var y = await _yPort.Read();
-            var z = await _zPort.Read();
+        ///// <summary>
+        ///// Get the raw analog input values from the sensor.
+        ///// </summary>
+        ///// <returns>Vector object containing the raw sensor data from the analog pins.</returns>
+        //public async Task<(Voltage XVolts, Voltage YVolts, Voltage ZVolts)> GetRawSensorData()
+        //{
+        //    var x = await _xPort.Read();
+        //    var y = await _yPort.Read();
+        //    var z = await _zPort.Read();
 
-            return (x, y, z);
-        }
+        //    return (x, y, z);
+        //}
     }
 }

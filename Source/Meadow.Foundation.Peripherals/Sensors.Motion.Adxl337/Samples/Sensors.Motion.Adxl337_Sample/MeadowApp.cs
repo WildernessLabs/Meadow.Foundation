@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
+using Meadow.Units;
+using AU = Meadow.Units.Acceleration.UnitType;
 
 namespace MeadowApp
 {
@@ -11,30 +14,53 @@ namespace MeadowApp
 
         public MeadowApp()
         {
-            InitHardware();
+            Console.WriteLine("Initializing");
+
+            // Mpu5060 I2C address could be 0x68 or 0x69
+            sensor = new Adxl337(
+                Device, Device.Pins.A00, Device.Pins.A01, Device.Pins.A02);
+
+            //==== Events
+            // classical .NET events can also be used:
+            sensor.Updated += (sender, result) => {
+                Console.WriteLine($"Accel: [X:{result.New.X.MetersPerSecondSquared:N2}," +
+                    $"Y:{result.New.Y.MetersPerSecondSquared:N2}," +
+                    $"Z:{result.New.Z.MetersPerSecondSquared:N2} (mps^2)]");
+            };
+
+            //==== IObservable 
+            // Example that uses an IObersvable subscription to only be notified
+            // when the filter is satisfied
+            var consumer = Adxl337.CreateObserver(
+                handler: result => {
+                    Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.X:N2}, old: X:{result.Old?.X:N2}");
+                },
+                // only notify if there's a greater than 1G change in the Z direction
+                filter: result => {
+                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                        return ((result.New - old).Z > new Acceleration(1, AU.Gravity));
+                    }
+                    return false;
+                }
+                // if you want to always get notified, pass null for the filter:
+                //filter: null
+                );
+            sensor.Subscribe(consumer);
+
+            //==== one-off read
+            ReadConditions().Wait();
+
+            // start updating
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
         }
 
-        public void InitHardware()
+        protected async Task ReadConditions()
         {
-            Console.WriteLine("Initialize...");
-
-            sensor = new Adxl337(Device, Device.Pins.A00, Device.Pins.A01, Device.Pins.A02);
-
-            var observer = Adxl337.CreateObserver(e =>
-            {
-                Console.WriteLine($"X: {e.New.X.Gravity}g, Y: {e.New.Y.Gravity}g, Z: {e.New.Z.Gravity}g");
-            });
-
-            sensor.Subscribe(observer);
-
-           // sensor.Updated += Sensor_Updated;
-
-            sensor.StartUpdating(500);
-        }
-
-        private void Sensor_Updated(object sender, ChangeResult<Meadow.Units.Acceleration3D> e)
-        {
-            Console.WriteLine($"X: {e.New.X}, Y: {e.New.Y}, Z: {e.New.Z}");
+            var result = await sensor.Read();
+            Console.WriteLine("Initial Readings:");
+            Console.WriteLine($"Accel: [X:{result.X.MetersPerSecondSquared:N2}," +
+                $"Y:{result.Y.MetersPerSecondSquared:N2}," +
+                $"Z:{result.Z.MetersPerSecondSquared:N2} (mps^2)]");
         }
     }
 }
