@@ -279,5 +279,10 @@ namespace Meadow.Foundation.Sensors.Motion
                 OnReadingComplete(readings);
             }*/
         }
+
+        protected override Task<MagneticField3D> ReadSensor()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
