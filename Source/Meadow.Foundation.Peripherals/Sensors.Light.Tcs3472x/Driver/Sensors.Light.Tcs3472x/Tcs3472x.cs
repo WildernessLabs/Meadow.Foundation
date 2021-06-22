@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Light
