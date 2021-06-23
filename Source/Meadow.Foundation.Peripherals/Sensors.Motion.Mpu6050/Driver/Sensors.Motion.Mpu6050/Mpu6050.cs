@@ -13,27 +13,30 @@ namespace Meadow.Foundation.Sensors.Motion
         ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, Units.Temperature? Temperature)>,
         IAccelerometer, IAngularAccelerometer, ITemperatureSensor
     {
+        //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
         public event EventHandler<IChangeResult<AngularAcceleration3D>> AngularAcceleration3DUpdated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
+        //==== internals
+        private const float GyroScaleBase = 131f;
+        private const float AccelScaleBase = 16384f;
+        private int GyroScale { get; set; }
+        private int AccelerometerScale { get; set; }
+
+        //==== properties
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
         public AngularAcceleration3D? AngularAcceleration3D => Conditions.AngularAcceleration3D;
         public Units.Temperature? Temperature => Conditions.Temperature;
 
-        private const float GyroScaleBase = 131f;
-        private const float AccelScaleBase = 16384f;
-
-        private int GyroScale { get; set; }
-        private int AccelerometerScale { get; set; }
-
+        //==== ctors
         public Mpu6050(II2cBus i2cBus, byte address = Addresses.Low)
             : base(i2cBus, address, readBufferSize:14)
         {
             Initialize(address);
         }
 
-        private void Initialize(byte address)
+        protected void Initialize(byte address)
         {
             switch (address) {
                 case 0x68:
@@ -55,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Motion
             LoadConfiguration();
         }
 
-        private void LoadConfiguration()
+        protected void LoadConfiguration()
         {
             // read all 3 config bytes
             Peripheral.ReadRegister(Registers.CONFIG, ReadBuffer.Span[0..3]);
