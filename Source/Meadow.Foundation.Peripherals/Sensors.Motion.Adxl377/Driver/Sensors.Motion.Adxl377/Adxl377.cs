@@ -8,6 +8,7 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
+    // TODO: add Temperature
     /// <summary>
     ///     Driver for the ADXL377 triple axis accelerometer.
     ///     +/- 200g
