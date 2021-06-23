@@ -95,7 +95,7 @@ namespace Meadow.Foundation.Sensors.Motion
         protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
         {
             Acceleration3DUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         protected override Task<Acceleration3D> ReadSensor()

@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Motion
     public class Adxl335 : SamplingSensorBase<Acceleration3D>, IAccelerometer
     {
         //==== events
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
 
         /// <summary>
         /// Minimum value that can be used for the update interval when the
@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Motion
         protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
         {
             Acceleration3DUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         protected override Task<Acceleration3D> ReadSensor()
@@ -98,7 +98,6 @@ namespace Meadow.Foundation.Sensors.Motion
                 var x = await xPort.Read();
                 var y = await yPort.Read();
                 var z = await zPort.Read();
-
                 return new Acceleration3D(
                     new Acceleration((x.Volts - ZeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
                     new Acceleration((y.Volts - ZeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
