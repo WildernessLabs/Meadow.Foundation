@@ -11,22 +11,22 @@ namespace Meadow.Foundation.Sensors.Motion
             /// <summary>
             /// Determine if the activity functionality is enabled (1) or disabled (0).
             /// </summary>
-            public const byte ActivityEnable = 0x01;
+            public const byte ACTIVITY_ENABLE = 0x01;
 
             /// <summary>
             /// Determine is activity mode is in reference (1) or absolute mode (0).
             /// </summary>
-            public const byte ActivityMode = 0x02;
+            public const byte ACTIVITY_MODE = 0x02;
 
             /// <summary>
             /// Determine if inactivity mode is enabled (1) or disabled (0).
             /// </summary>
-            public const byte InactivityEnable = 0x04;
+            public const byte INACTIVITY_ENABLE = 0x04;
 
             /// <summary>
             /// Determine is inactivity mode is in reference (1) or absolute mode (0).
             /// </summary>
-            public const byte Inactivitymode = 0x08;
+            public const byte INACTIVITY_MODE = 0x08;
 
             /// <summary>
             /// Default mode.
@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Motion
             /// register. Auto-sleep is disabled in this mode. Use this mode for free fall
             /// detection applications.
             /// </remarks>
-            public const byte DefaultMode = 0x00;
+            public const byte DEFAULT_MODE = 0x00;
 
             /// <summary>
             /// Link activity and inactivity.
@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Motion
             /// is enabled at a time. Their interrupts (if mapped) must be acknowledged by
             /// the host processor by reading the STATUS register.
             /// </remarks>
-            public const byte LinkedMode = 0x10;
+            public const byte LINKED_MODE = 0x10;
 
             /// <summary>
             /// </summary>
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Motion
             /// must be set to 1; otherwise, the default mode is used. For additional information,
             /// refer to the Linking Activity and Inactivity Detection section.
             /// </remarks>
-            public const byte LoopMode = 0x30;
+            public const byte LOOP_MODE = 0x30;
         }
     }
 }

@@ -3,19 +3,25 @@ using Meadow.Foundation.Helpers;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
+using AU = Meadow.Units.Acceleration.UnitType;
+using TU = Meadow.Units.Temperature.UnitType;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Meadow.Peripherals.Sensors;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
     /// Driver for the ADXL362 triple axis accelerometer.
     /// </summary>
-    public partial class Adxl362 : ByteCommsSensorBase<Acceleration3D>, IAccelerometer
+    public partial class Adxl362
+        : ByteCommsSensorBase<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)>,
+        IAccelerometer, ITemperatureSensor
     {
         //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
 
         //==== internals
         static double ADXL362_MG2G_MULTIPLIER = (0.004);
@@ -30,15 +36,23 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         private IDigitalInputPort _digitalInputPort2;
 
-        public Acceleration3D? Acceleration3D => Conditions;
+        public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
+
+        public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
         /// Indicate of data is ready to be read.
         /// </summary>
         public bool DataReady {
             get {
-                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DeviceID }, 1);
-                return (status[0] & StatusBitsMasks.DataReady) != 0;
+                // TODO: this can't be right. 2 bytes in, 1 byte out on SPI?
+                // first byte should be blank
+                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DEVICE_ID }, 1);
+                return (status[0] & StatusBitsMasks.DATA_READY) != 0;
+                //WriteBuffer.Span[0] = Commands.READ_REGISTER;
+                //WriteBuffer.Span[1] = Registers.DEVICE_ID;
+                //Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..2]);
+                //return (WriteBuffer.Span[1] & StatusBitsMasks.DATA_READY) != 0;
             }
         }
 
@@ -47,8 +61,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public bool FIFOReady {
             get {
-                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DeviceID }, 1);
-                return (status[0] & StatusBitsMasks.FIFOReady) != 0;
+                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DEVICE_ID }, 1);
+                return (status[0] & StatusBitsMasks.FIFO_READY) != 0;
             }
         }
 
@@ -58,8 +72,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public bool FIFOWatermark {
             get {
-                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DeviceID }, 1);
-                return (status[0] & StatusBitsMasks.FIFOWatermark) != 0;
+                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DEVICE_ID }, 1);
+                return (status[0] & StatusBitsMasks.FIFO_WATERMARK) != 0;
             }
         }
 
@@ -69,8 +83,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public bool FIFOOverrun {
             get {
-                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DeviceID }, 1);
-                return (status[0] & StatusBitsMasks.FIFOOverRun) != 0;
+                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DEVICE_ID }, 1);
+                return (status[0] & StatusBitsMasks.FIFO_OVERRUN) != 0;
             }
         }
 
@@ -80,8 +94,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public bool ActivityDetected {
             get {
-                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DeviceID }, 1);
-                return (status[0] & StatusBitsMasks.ActivityDetected) != 0;
+                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DEVICE_ID }, 1);
+                return (status[0] & StatusBitsMasks.ACTIVITY_DETECTED) != 0;
             }
         }
 
@@ -91,8 +105,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public bool InactivityDetected {
             get {
-                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DeviceID }, 1);
-                return (status[0] & StatusBitsMasks.InactivityDetected) != 0;
+                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DEVICE_ID }, 1);
+                return (status[0] & StatusBitsMasks.INACTIVITY_DETECTED) != 0;
             }
         }
 
@@ -101,8 +115,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public bool Awake {
             get {
-                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DeviceID }, 1);
-                return (status[0] & StatusBitsMasks.Awake) != 0;
+                var status = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DEVICE_ID }, 1);
+                return (status[0] & StatusBitsMasks.AWAKE) != 0;
             }
         }
 
@@ -112,7 +126,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public int DeviceID {
             get {
-                var deviceID = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DeviceID }, 6);
+                var deviceID = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.DEVICE_ID }, 6);
                 int result = deviceID[0];
                 result |= deviceID[1] << 8;
                 result |= deviceID[2] << 16;
@@ -126,19 +140,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public byte Status {
             get {
-                var result = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.Status }, 1);
+                var result = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.STATUS }, 1);
                 return result[0];
-            }
-        }
-
-        /// <summary>
-        /// Sensor temperature.
-        /// </summary>
-        public double Temperature {
-            get {
-                var result = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.TemperatureLSB }, 2);
-                short temperature = (short)((result[1] << 8) + result[0]);
-                return (temperature);
             }
         }
 
@@ -147,7 +150,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public byte ActivityInactivityControl {
             get {
-                var registers = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.ActivityInactivityControl }, 1);
+                var registers = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.ACTIVITY_INACTIVITY_CONTROL }, 1);
                 return (registers[0]);
             }
             set {
@@ -175,7 +178,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public byte FilterControl {
             get {
-                var register = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.FilterControl }, 1);
+                var register = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.FILTER_CONTROL }, 1);
                 return (register[0]);
             }
             set {
@@ -198,9 +201,14 @@ namespace Meadow.Foundation.Sensors.Motion
             Start();
         }
 
-        protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> changeResult)
         {
-            Acceleration3DUpdated?.Invoke(this, changeResult);
+            if (changeResult.New.Temperature is { } temp) {
+                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+            }
+            if (changeResult.New.Acceleration3D is { } accel) {
+                Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
+            }
             base.RaiseEventsAndNotify(changeResult);
         }
 
@@ -209,7 +217,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public void Reset()
         {
-            Peripheral.WriteBytes(new byte[] { Commands.WRITE_REGISTER, Registers.SoftReset, 0x52 });
+            Peripheral.WriteBytes(new byte[] { Commands.WRITE_REGISTER, Registers.SOFT_RESET, 0x52 });
             Thread.Sleep(10);
         }
 
@@ -218,7 +226,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public void Start()
         {
-            Peripheral.WriteBytes(new byte[] { Commands.WRITE_REGISTER, Registers.PowerControl, 0x02 });
+            Peripheral.WriteBytes(new byte[] { Commands.WRITE_REGISTER, Registers.POWER_CONTROL, 0x02 });
         }
 
         /// <summary>
@@ -226,22 +234,34 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public void Stop()
         {
-            var powerControl = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.PowerControl, 0x02 }, 1);
-            byte power = (byte)((powerControl[0] & (~PowerControlMasks.Measure)) & 0xff);
-            Peripheral.WriteBytes(new byte[] { Commands.WRITE_REGISTER, Registers.PowerControl, power });
+            var powerControl = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.POWER_CONTROL, 0x02 }, 1);
+            byte power = (byte)((powerControl[0] & (~PowerControlMasks.MEASURE)) & 0xff);
+            Peripheral.WriteBytes(new byte[] { Commands.WRITE_REGISTER, Registers.POWER_CONTROL, power });
         }
 
 
-        protected override Task<Acceleration3D> ReadSensor()
+        protected override Task<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() => {
-                var sensorReading = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.XAxisLSB }, 8);
 
-                return new Acceleration3D(
-                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[3] << 8) | sensorReading[2]), Acceleration.UnitType.MetersPerSecondSquared),
-                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[5] << 8) | sensorReading[4]), Acceleration.UnitType.MetersPerSecondSquared),
-                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[7] << 8) | sensorReading[6]), Acceleration.UnitType.MetersPerSecondSquared)
+                (Acceleration3D? Acceleration3D, Units.Temperature? Temperature) conditions;
+
+                //var sensorReading = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.X_AXIS_LSB }, 8);
+                WriteBuffer.Span[0] = Commands.READ_REGISTER;
+                WriteBuffer.Span[1] = Registers.X_AXIS_LSB;
+                Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..8]);
+
+
+                conditions.Acceleration3D = new Acceleration3D(
+                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[3] << 8) | ReadBuffer.Span[2]), AU.MetersPerSecondSquared),
+                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4]), AU.MetersPerSecondSquared),
+                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[7] << 8) | ReadBuffer.Span[6]), AU.MetersPerSecondSquared)
                     );
+
+                var result = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.TEMPERATURE_LSB }, 2);
+                conditions.Temperature = new Units.Temperature((short)((result[1] << 8) + result[0]), TU.Celsius);
+
+                return conditions;
             });
         }
 
@@ -272,13 +292,12 @@ namespace Meadow.Foundation.Sensors.Motion
             //
             //  The threshold and number of samples register are in consecutive locations.
             //
-            var data = new byte[5];
-            data[0] = Commands.WRITE_REGISTER;
-            data[1] = Registers.ActivityThresholdLSB;
-            data[2] = (byte)(threshold & 0xff);
-            data[3] = (byte)((threshold >> 8) & 0xff);
-            data[4] = numberOfSamples;
-            Peripheral.WriteBytes(data);
+            WriteBuffer.Span[0] = Commands.WRITE_REGISTER;
+            WriteBuffer.Span[1] = Registers.ACTIVITY_THRESHOLD_LSB;
+            WriteBuffer.Span[2] = (byte)(threshold & 0xff);
+            WriteBuffer.Span[3] = (byte)((threshold >> 8) & 0xff);
+            WriteBuffer.Span[4] = numberOfSamples;
+            Peripheral.Write(WriteBuffer.Span[0..5]);
         }
 
         /// <summary>
@@ -307,14 +326,13 @@ namespace Meadow.Foundation.Sensors.Motion
             //
             //  The threshold and number of samples register are in consecutive locations.
             //
-            var data = new byte[5];
-            data[0] = Commands.WRITE_REGISTER;
-            data[1] = Registers.InactivityCountLSB;
-            data[2] = (byte)(threshold & 0xff);
-            data[3] = (byte)((threshold >> 8) & 0xff);
-            data[4] = (byte)(numberOfSamples & 0xff);
-            data[5] = (byte)((threshold >> 8) & 0xff);
-            Peripheral.WriteBytes(data);
+            WriteBuffer.Span[0] = Commands.WRITE_REGISTER;
+            WriteBuffer.Span[1] = Registers.INACTIVITY_TIME_COUNT_LSB;
+            WriteBuffer.Span[2] = (byte)(threshold & 0xff);
+            WriteBuffer.Span[3] = (byte)((threshold >> 8) & 0xff);
+            WriteBuffer.Span[4] = (byte)(numberOfSamples & 0xff);
+            WriteBuffer.Span[5] = (byte)((threshold >> 8) & 0xff);
+            Peripheral.Write(WriteBuffer.Span[0..6]);
         }
 
         /// <summary>
@@ -364,7 +382,11 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin2">Pin connected to interrupt pin 2 on the ADXL362.</param>
         private void ConfigureInterrupts(IMeadowDevice device, byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
         {
-            Peripheral.WriteBytes(new byte[] { Commands.WRITE_REGISTER, interruptMap1, interruptMap2 });
+            //Peripheral.WriteBytes(new byte[] { Commands.WRITE_REGISTER, interruptMap1, interruptMap2 });
+            WriteBuffer.Span[0] = Commands.WRITE_REGISTER;
+            WriteBuffer.Span[1] = interruptMap1;
+            WriteBuffer.Span[2] = interruptMap2;
+            Peripheral.Write(WriteBuffer.Span[0..3]);
 
             if (interruptPin1 != null) {
                 _digitalInputPort1 = device.CreateDigitalInputPort(interruptPin1, InterruptMode.EdgeRising, MapResistorMode((interruptMap1 & 0xf0) > 0));
@@ -387,7 +409,7 @@ namespace Meadow.Foundation.Sensors.Motion
         private void InterruptChanged(object sender, DigitalPortResult e)
         {
             var status = Status;
-            if ((status & StatusBitsMasks.ActivityDetected) != 0) {
+            if ((status & StatusBitsMasks.ACTIVITY_DETECTED) != 0) {
                 //TODO: shouldn't this actually do something? why is it commented out?
                 // AccelerationChanged(this, new SensorVectorEventArgs(lastNotifiedReading, currentReading));
             }
@@ -398,17 +420,26 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         private void DisplayRegisters()
         {
-            var command = new byte[] { Commands.READ_REGISTER, 0x00 };
-            var registers = Peripheral.WriteRead(command, 6);
-            var idRegisters = new byte[4];
-            Array.Copy(registers, 2, idRegisters, 0, 4);
-            DebugInformation.DisplayRegisters(0x00, idRegisters);
-            command[1] = Registers.XAxis8Bits;
-            var amount = Registers.SelfTest - Registers.XAxis8Bits + 1;
-            registers = Peripheral.WriteRead(command, (ushort)(amount + 2));
-            var dataRegisters = new byte[amount];
-            Array.Copy(registers, 2, dataRegisters, 0, amount);
-            DebugInformation.DisplayRegisters(Registers.XAxis8Bits, dataRegisters);
+            //var command = new byte[] { Commands.READ_REGISTER, 0x00 };
+            //var registers = Peripheral.WriteRead(command, 6);
+            WriteBuffer.Span[0] = Commands.READ_REGISTER;
+            WriteBuffer.Span[1] = 0x00;
+            Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..6]);
+
+            //var idRegisters = new byte[4];
+            //Array.Copy(registers, 2, idRegisters, 0, 4);
+            DebugInformation.DisplayRegisters(0x00, ReadBuffer.Span[2..6].ToArray());
+
+            //command[1] = Registers.X_AXIS_8BITS;
+            WriteBuffer.Span[1] = Registers.X_AXIS_8BITS;
+            var amount = Registers.SELF_TEST - Registers.X_AXIS_8BITS + 1;
+            //registers = Peripheral.WriteRead(command, (ushort)(amount + 2));
+            Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..(amount + 2)]);
+
+            //var dataRegisters = new byte[amount];
+            //Array.Copy(registers, 2, dataRegisters, 0, amount);
+
+            DebugInformation.DisplayRegisters(Registers.X_AXIS_8BITS, ReadBuffer.Span[2..6].ToArray());
         }
     }
 }
