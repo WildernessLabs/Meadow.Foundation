@@ -22,11 +22,11 @@ namespace MeadowApp
             //==== Events
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) => {
-                Console.WriteLine($"Accel: [X:{result.New.MagneticField3D.X.MicroTesla:N2}," +
-                    $"Y:{result.New.MagneticField3D.Y.MicroTesla:N2}," +
-                    $"Z:{result.New.MagneticField3D.Z.MicroTesla:N2} (mps^2)]");
+                Console.WriteLine($"Accel: [X:{result.New.MagneticField3D?.X.MicroTesla:N2}," +
+                    $"Y:{result.New.MagneticField3D?.Y.MicroTesla:N2}," +
+                    $"Z:{result.New.MagneticField3D?.Z.MicroTesla:N2} (mps^2)]");
 
-                Console.WriteLine($"Temp: {result.New.Temperature.Celsius:N2}C");
+                Console.WriteLine($"Temp: {result.New.Temperature?.Celsius:N2}C");
             };
 
             //==== IObservable 
@@ -34,12 +34,12 @@ namespace MeadowApp
             // when the filter is satisfied
             var consumer = Mag3110.CreateObserver(
                 handler: result => {
-                    Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.MagneticField3D.X.MicroTesla:N2}, old: X:{result.Old?.MagneticField3D.X.MicroTesla:N2}");
+                    Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.MagneticField3D?.X.MicroTesla:N2}, old: X:{result.Old?.MagneticField3D?.X.MicroTesla:N2}");
                 },
                 // only notify if there's a greater than 1 micro tesla on the Y axis
                 filter: result => {
                     if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
-                        return ((result.New.MagneticField3D - old.MagneticField3D).Y > new MagneticField(1, MU.MicroTesla));
+                        return ((result.New.MagneticField3D - old.MagneticField3D)?.Y > new MagneticField(1, MU.MicroTesla));
                     }
                     return false;
                 }
@@ -59,15 +59,15 @@ namespace MeadowApp
         {
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"Accel: [X:{result.MagneticField3D.X.MicroTesla:N2}," +
-                $"Y:{result.MagneticField3D.Y.MicroTesla:N2}," +
-                $"Z:{result.MagneticField3D.Z.MicroTesla:N2} (mps^2)]");
+            Console.WriteLine($"Accel: [X:{result.MagneticField3D?.X.MicroTesla:N2}," +
+                $"Y:{result.MagneticField3D?.Y.MicroTesla:N2}," +
+                $"Z:{result.MagneticField3D?.Z.MicroTesla:N2} (mps^2)]");
 
-            Console.WriteLine($"Angular Accel: [X:{result.MagneticField3D.X.MicroTesla:N2}," +
-                $"Y:{result.MagneticField3D.Y.MicroTesla:N2}," +
-                $"Z:{result.MagneticField3D.Z.MicroTesla:N2} (dps^2)]");
+            Console.WriteLine($"Angular Accel: [X:{result.MagneticField3D?.X.MicroTesla:N2}," +
+                $"Y:{result.MagneticField3D?.Y.MicroTesla:N2}," +
+                $"Z:{result.MagneticField3D?.Z.MicroTesla:N2} (dps^2)]");
 
-            Console.WriteLine($"Temp: {result.Temperature.Celsius:N2}C");
+            Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
         }
 
     }

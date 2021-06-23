@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Motion
 {
     // TODO: Interrupt handling is commented out
     public partial class Mag3110 :
-        ByteCommsSensorBase<(MagneticField3D MagneticField3D, Units.Temperature Temperature)>,
+        ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
         ITemperatureSensor
         //IMagnetometer
     {
@@ -152,7 +152,7 @@ namespace Meadow.Foundation.Sensors.Motion
             Peripheral.Write(WriteBuffer.Span[0..7]);
         }
 
-        protected override void RaiseEventsAndNotify(IChangeResult<(MagneticField3D MagneticField3D, Units.Temperature Temperature)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> changeResult)
         {
             if (changeResult.New.MagneticField3D is { } mag) {
                 MagneticField3dUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag, changeResult.Old?.MagneticField3D));
@@ -163,10 +163,10 @@ namespace Meadow.Foundation.Sensors.Motion
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        protected override Task<(MagneticField3D MagneticField3D, Units.Temperature Temperature)> ReadSensor()
+        protected override Task<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() => {
-                (MagneticField3D MagneticField3D, Units.Temperature Temperature) conditions;
+                (MagneticField3D? MagneticField3D, Units.Temperature? Temperature) conditions;
 
                 var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
                 controlRegister |= 0x02;
