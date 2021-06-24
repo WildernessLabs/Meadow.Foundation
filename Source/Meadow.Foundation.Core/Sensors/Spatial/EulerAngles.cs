@@ -3,7 +3,7 @@
     /// <summary>
     ///     Euler angles to define the orientation.
     /// </summary>
-    public class EulerAngles
+    public struct EulerAngles
     {
         /// <summary>
         ///     Heading.
