@@ -237,30 +237,29 @@ namespace Meadow.Foundation.Sensors.Motion
                 // make all the readings
                 // 	This method reads ony the sensor motion / orientation registers.  When
                 // 	accessing the data from a register it is necessary to subtract the
-                // 	accress of the start of the sensor registers from the register required
+                // 	access of the start of the sensor registers from the register required
                 // 	in order to get the correct offset into the _sensorReadings array.
-                sensorReadings = Peripheral.ReadRegisters(Registers.AccelerometerXLSB,
-                                                        (ushort)(Registers.GravityVectorZMSB - Registers.AccelerometerXLSB));
+                sensorReadings = Peripheral.ReadRegisters(
+                    Registers.AccelerometerXLSB,
+                    (ushort)(Registers.GravityVectorZMSB + 1 - Registers.AccelerometerXLSB)
+                );
 
-                Console.WriteLine($"Registers.GravityVectorZMSB - Registers.AccelerometerXLSB: {Registers.GravityVectorZMSB - Registers.AccelerometerXLSB}");
+                // to look at the raw data:
+                //DebugInformation.DisplayRegisters(0x00, sensorReadings);
 
                 //---- Acceleration3D
                 double accelDivisor = 100.0; //m/s2
                 var accelData = GetReadings(Registers.AccelerometerXLSB - Registers.StartOfSensorData, accelDivisor);
-
                 conditions.Acceleration3D = new Acceleration3D(accelData.X, accelData.Y, accelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
 
                 //---- AngularAcceleration3D
                 double angularDivisor = 900.0; //radians
                 var angularData = GetReadings(Registers.GyroscopeXLSB - Registers.StartOfSensorData, angularDivisor);
-
                 conditions.AngularAcceleration3D = new AngularAcceleration3D(angularData.X, angularData.Y, angularData.Z, AngularAcceleration.UnitType.RadiansPerSecondSquared);
 
                 //---- MagneticField3D
                 var magnetometerData = GetReadings(Registers.MagnetometerXLSB - Registers.StartOfSensorData, 16.0);
-
                 conditions.MagneticField3D = new MagneticField3D(magnetometerData.X, magnetometerData.Y, magnetometerData.Z, MagneticField.UnitType.Tesla);
-
 
                 //---- Quarternion Orientation
                 int quaternionData = Registers.QuaternionDataWLSB - Registers.StartOfSensorData;
@@ -272,31 +271,18 @@ namespace Meadow.Foundation.Sensors.Motion
                 conditions.QuaternionOrientation = new Quaternion(w * factor, x * factor, y * factor, z * factor);
 
                 //---- Linear Acceleration
-                if (!IsInFusionMode) {
-                    throw new InvalidOperationException("Linear accelration vectors are only available in fusion mode.");
-                }
                 double linearAccellDivisor = 100.0; //m/s2
                 var linearAccelData = GetReadings(Registers.LinearAccelerationXLSB - Registers.StartOfSensorData, linearAccellDivisor);
 
                 conditions.LinearAcceleration = new Acceleration3D(linearAccelData.X, linearAccelData.Y, linearAccelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
 
-                // TODO: this throws an errr
                 //---- Gravity Vector
-                //if (!IsInFusionMode) {
-                //    throw new InvalidOperationException("Linear acceleration vectors are only available in fusion mode.");
-                //}
                 double gravityVectorDivisor = 100.0; //m/s2
-                Console.WriteLine($"Registers.GravityVectorXLSB - Registers.StartOfSensorData: {Registers.GravityVectorXLSB - Registers.StartOfSensorData}");
-                Console.WriteLine($"SensorReadings.Length: {sensorReadings.Length}");
-
                 var gravityVectorData = GetReadings(Registers.GravityVectorXLSB - Registers.StartOfSensorData, gravityVectorDivisor);
-                Console.WriteLine("Here.");
-                //conditions.GravityVector = new Acceleration3D(gravityVectorData.X, gravityVectorData.Y, gravityVectorData.Z, Acceleration.UnitType.MetersPerSecondSquared);
-                conditions.GravityVector = null;
+                conditions.GravityVector = new Acceleration3D(gravityVectorData.X, gravityVectorData.Y, gravityVectorData.Z, Acceleration.UnitType.MetersPerSecondSquared);
 
                 //---- euler
                 double eulerDivisor = 900.0; //radians
-
                 conditions.EulerOrientation = ConvertReadingToEulerAngles(Registers.EulerAngleXLSB - Registers.StartOfSensorData, eulerDivisor);
 
                 //---- temperature
