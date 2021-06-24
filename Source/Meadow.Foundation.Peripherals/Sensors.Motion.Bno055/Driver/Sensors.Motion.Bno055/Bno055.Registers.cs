@@ -1,5 +1,7 @@
 ﻿namespace Meadow.Foundation.Sensors.Motion
 {
+    // TODO: make all these constants and fix casing.
+    // e.g. `public const CHIP_ID = 0X00;`
     public partial class Bno055
     {
 

@@ -42,6 +42,16 @@ namespace MeadowApp
                     $"Y:{result.New.GravityVector?.Y.MetersPerSecondSquared:N2}," +
                     $"Z:{result.New.GravityVector?.Z.MetersPerSecondSquared:N2} (meters/s^2)]");
 
+                // TODO: what is the unit here. quaternion need to be unitized.
+                Console.WriteLine($"Quaternion orientation: [X:{result.New.QuaternionOrientation?.X:N2}," +
+                    $"Y:{result.New.QuaternionOrientation?.Y:N2}," +
+                    $"Z:{result.New.QuaternionOrientation?.Z:N2}]");
+
+                // TODO: what is the unit here. euler angles need to be unitized.
+                Console.WriteLine($"Euler orientation: [heading: {result.New.EulerOrientation?.Heading:N2}," +
+                    $"Roll: {result.New.EulerOrientation?.Roll:N2}," +
+                    $"Pitch: {result.New.EulerOrientation?.Pitch:N2}]");
+
                 Console.WriteLine($"Linear Accel: [X:{result.New.LinearAcceleration?.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.LinearAcceleration?.Y.MetersPerSecondSquared:N2}," +
                     $"Z:{result.New.LinearAcceleration?.Z.MetersPerSecondSquared:N2} (meters/s^2)]");
