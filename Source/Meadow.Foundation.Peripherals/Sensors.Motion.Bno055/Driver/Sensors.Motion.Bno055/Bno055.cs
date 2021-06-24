@@ -252,7 +252,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 //}
                 var magnetometerData = GetReadings(Registers.MagnetometerXLSB - Registers.StartOfSensorData, 16.0);
 
-                conditions.MagneticField3D = new MagneticField3D(magnetometerData.X, magnetometerData.Y, magnetometerData.Z, MagneticField.UnitType.Telsa);
+                conditions.MagneticField3D = new MagneticField3D(magnetometerData.X, magnetometerData.Y, magnetometerData.Z, MagneticField.UnitType.Tesla);
 
                 //---- Quarternion Orientation
                 int quaternionData = Registers.QuaternionDataWLSB - Registers.StartOfSensorData;
