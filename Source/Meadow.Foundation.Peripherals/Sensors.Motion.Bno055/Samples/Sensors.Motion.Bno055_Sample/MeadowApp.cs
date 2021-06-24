@@ -34,6 +34,10 @@ namespace MeadowApp
                     $"Y:{result.New.AngularAcceleration3D?.Y.DegreesPerSecondSquared:N2}," +
                     $"Z:{result.New.AngularAcceleration3D?.Z.DegreesPerSecondSquared:N2} (degrees/s^2)]");
 
+                Console.WriteLine($"Compass: [X:{result.New.MagneticField3D?.X.MilliTesla:N2}," +
+                    $"Y:{result.New.MagneticField3D?.Y.MilliTesla:N2}," +
+                    $"Z:{result.New.MagneticField3D?.Z.MilliTesla:N2} (MilliTesla)]");
+
                 Console.WriteLine($"Gravity: [X:{result.New.GravityVector?.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.GravityVector?.Y.MetersPerSecondSquared:N2}," +
                     $"Z:{result.New.GravityVector?.Z.MetersPerSecondSquared:N2} (meters/s^2)]");

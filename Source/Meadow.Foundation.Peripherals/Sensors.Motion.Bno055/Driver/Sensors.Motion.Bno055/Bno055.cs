@@ -197,18 +197,14 @@ namespace Meadow.Foundation.Sensors.Motion
         public Bno055(II2cBus i2cBus, byte address = 0x28)
             : base(i2cBus, address, readBufferSize:256)
         {
-            Console.WriteLine("ctor");
             if (Peripheral.ReadRegister(Registers.ChipID) != 0xa0) {
                 throw new Exception("Sensor ID should be 0xa0.");
             }
-            Console.WriteLine("ctor finished");
         }
 
         protected override Task<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation, Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector, EulerAngles? EulerOrientation, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() => {
-
-
                 // TODO: set operating mode to all the things so we don't have to
                 // do all these checks
 
@@ -276,8 +272,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 conditions.LinearAcceleration = new Acceleration3D(linearAccelData.X, linearAccelData.Y, linearAccelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
 
-                Console.WriteLine("7");
-
+                // TODO: this throws an errr
                 //---- Gravity Vector
                 //if (!IsInFusionMode) {
                 //    throw new InvalidOperationException("Linear acceleration vectors are only available in fusion mode.");
@@ -287,8 +282,6 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 //conditions.GravityVector = new Acceleration3D(gravityVectorData.X, gravityVectorData.Y, gravityVectorData.Z, Acceleration.UnitType.MetersPerSecondSquared);
                 conditions.GravityVector = null;
-
-                Console.WriteLine("8");
 
                 //---- euler
                 if (!IsInFusionMode) {
