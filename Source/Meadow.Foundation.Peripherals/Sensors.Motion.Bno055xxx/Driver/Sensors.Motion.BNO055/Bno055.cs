@@ -242,6 +242,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 sensorReadings = Peripheral.ReadRegisters(Registers.AccelerometerXLSB,
                                                         (ushort)(Registers.GravityVectorZMSB - Registers.AccelerometerXLSB));
 
+                Console.WriteLine($"Registers.GravityVectorZMSB - Registers.AccelerometerXLSB: {Registers.GravityVectorZMSB - Registers.AccelerometerXLSB}");
+
                 //---- Acceleration3D
                 double accelDivisor = 100.0; //m/s2
                 var accelData = GetReadings(Registers.AccelerometerXLSB - Registers.StartOfSensorData, accelDivisor);
@@ -283,9 +285,12 @@ namespace Meadow.Foundation.Sensors.Motion
                 //if (!IsInFusionMode) {
                 //    throw new InvalidOperationException("Linear acceleration vectors are only available in fusion mode.");
                 //}
-                //double gravityVectorDivisor = 100.0; //m/s2
-                //var gravityVectorData = GetReadings(Registers.GravityVectorXLSB - Registers.StartOfSensorData, gravityVectorDivisor);
+                double gravityVectorDivisor = 100.0; //m/s2
+                Console.WriteLine($"Registers.GravityVectorXLSB - Registers.StartOfSensorData: {Registers.GravityVectorXLSB - Registers.StartOfSensorData}");
+                Console.WriteLine($"SensorReadings.Length: {sensorReadings.Length}");
 
+                var gravityVectorData = GetReadings(Registers.GravityVectorXLSB - Registers.StartOfSensorData, gravityVectorDivisor);
+                Console.WriteLine("Here.");
                 //conditions.GravityVector = new Acceleration3D(gravityVectorData.X, gravityVectorData.Y, gravityVectorData.Z, Acceleration.UnitType.MetersPerSecondSquared);
                 conditions.GravityVector = null;
 

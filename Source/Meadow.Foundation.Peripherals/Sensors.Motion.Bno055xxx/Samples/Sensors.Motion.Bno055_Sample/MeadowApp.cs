@@ -68,14 +68,6 @@ namespace MeadowApp
                 );
             sensor.Subscribe(consumer);
 
-            // debug
-            //sensor.DisplayRegisters();
-
-            Console.WriteLine($"IsFullyCalibrated: {sensor.IsFullyCalibrated}");
-
-            // debug
-            //sensor.DisplayRegisters();
-
             //==== one-off read
             ReadConditions().Wait();
 
