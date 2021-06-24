@@ -54,7 +54,7 @@ namespace Meadow.Foundation
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
         // TODO: `ValueTask`?
-        public async Task<UNIT> Read()
+        public virtual async Task<UNIT> Read()
         {
             this.Conditions = await ReadSensor();
             return Conditions;

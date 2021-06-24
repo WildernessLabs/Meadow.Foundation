@@ -39,7 +39,7 @@ namespace Meadow.Foundation
             Init(readBufferSize, writeBufferSize);
         }
 
-        protected void Init(int readBufferSize = 8, int writeBufferSize = 8)
+        protected virtual void Init(int readBufferSize = 8, int writeBufferSize = 8)
         {
             this.ReadBuffer = new byte[readBufferSize];
             this.WriteBuffer = new byte[writeBufferSize];
@@ -56,7 +56,7 @@ namespace Meadow.Foundation
         /// <summary>
         /// Dispose managed resources
         /// </summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             Dispose(true);
         }
