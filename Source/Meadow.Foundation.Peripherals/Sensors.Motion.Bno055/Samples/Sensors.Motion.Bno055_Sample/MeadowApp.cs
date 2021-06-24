@@ -71,6 +71,9 @@ namespace MeadowApp
             //==== one-off read
             ReadConditions().Wait();
 
+            // for debugging, you can print out the registers:
+            //sensor.DisplayRegisters();
+
             // start updating
             sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
         }

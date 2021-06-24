@@ -10,6 +10,17 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
+    //TODO: the sensor works great as is right now, but there's some room for
+    // improvement. Currently, we basically turn it on full bore and get all
+    // the readings.
+    // However, there's an opportunity here to allow users to selectively turn
+    // on the various features, and then in the `ReadSensor()` method we can
+    // check before we do the reading to see what the user has turned on.
+    // if the feature is turned on, we can read and parse the registers and then
+    // set the `Conditions.[X] = reading`, otherwise set them to `null`, since
+    // all the conditions are nullable. this would provide folks with an
+    // opportunity to use the sensor in a low or lower-power configuration.
+
     /// <summary>
     ///     Provide methods / properties to allow an application to control a BNO055 
     ///     9-axis absolute orientation sensor.
@@ -40,11 +51,6 @@ namespace Meadow.Foundation.Sensors.Motion
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         //==== internals
-
-        /// <summary>
-        ///     Sensor readings from the last time the BNO055 was polled.
-        /// </summary>
-        private byte[] sensorReadings;
 
         //==== properties
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
@@ -239,13 +245,12 @@ namespace Meadow.Foundation.Sensors.Motion
                 // 	accessing the data from a register it is necessary to subtract the
                 // 	access of the start of the sensor registers from the register required
                 // 	in order to get the correct offset into the _sensorReadings array.
-                sensorReadings = Peripheral.ReadRegisters(
-                    Registers.AccelerometerXLSB,
-                    (ushort)(Registers.GravityVectorZMSB + 1 - Registers.AccelerometerXLSB)
-                );
 
-                // to look at the raw data:
-                //DebugInformation.DisplayRegisters(0x00, sensorReadings);
+                int length = Registers.GravityVectorZMSB + 1 - Registers.AccelerometerXLSB;
+                Peripheral.ReadRegister(Registers.AccelerometerXLSB, ReadBuffer.Span[0..length]);
+
+                // for debugging, you can look at the raw data:
+                //DebugInformation.DisplayRegisters(0x00, ReadBuffer.Span[0..length].ToArray());
 
                 //---- Acceleration3D
                 double accelDivisor = 100.0; //m/s2
@@ -263,17 +268,16 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 //---- Quarternion Orientation
                 int quaternionData = Registers.QuaternionDataWLSB - Registers.StartOfSensorData;
-                short w = (short)((sensorReadings[quaternionData + 1] << 8) | sensorReadings[quaternionData]);
-                short x = (short)((sensorReadings[quaternionData + 3] << 8) | sensorReadings[quaternionData + 2]);
-                short y = (short)((sensorReadings[quaternionData + 5] << 8) | sensorReadings[quaternionData + 4]);
-                short z = (short)((sensorReadings[quaternionData + 5] << 8) | sensorReadings[quaternionData + 4]);
+                short w = (short)((ReadBuffer.Span[quaternionData + 1] << 8) | ReadBuffer.Span[quaternionData]);
+                short x = (short)((ReadBuffer.Span[quaternionData + 3] << 8) | ReadBuffer.Span[quaternionData + 2]);
+                short y = (short)((ReadBuffer.Span[quaternionData + 5] << 8) | ReadBuffer.Span[quaternionData + 4]);
+                short z = (short)((ReadBuffer.Span[quaternionData + 5] << 8) | ReadBuffer.Span[quaternionData + 4]);
                 double factor = 1.0 / (1 << 14);
                 conditions.QuaternionOrientation = new Quaternion(w * factor, x * factor, y * factor, z * factor);
 
                 //---- Linear Acceleration
                 double linearAccellDivisor = 100.0; //m/s2
                 var linearAccelData = GetReadings(Registers.LinearAccelerationXLSB - Registers.StartOfSensorData, linearAccellDivisor);
-
                 conditions.LinearAcceleration = new Acceleration3D(linearAccelData.X, linearAccelData.Y, linearAccelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
 
                 //---- Gravity Vector
@@ -331,9 +335,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="start">Start of the data in the _sensorReadings member variable.</param>
         protected (double X, double Y, double Z) GetReadings(int start, double divisor)
         {
-            var x = (short)((sensorReadings[start + 1] << 8) | sensorReadings[start]);
-            var y = (short)((sensorReadings[start + 3] << 8) | sensorReadings[start + 2]);
-            var z = (short)((sensorReadings[start + 5] << 8) | sensorReadings[start + 4]);
+            var x = (short)((ReadBuffer.Span[start + 1] << 8) | ReadBuffer.Span[start]);
+            var y = (short)((ReadBuffer.Span[start + 3] << 8) | ReadBuffer.Span[start + 2]);
+            var z = (short)((ReadBuffer.Span[start + 5] << 8) | ReadBuffer.Span[start + 4]);
 
             return (x / divisor, y / divisor, z / divisor);
         }
@@ -346,9 +350,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>EulerAngles object containing the orientation informaiton.</returns>
         protected EulerAngles ConvertReadingToEulerAngles(int start, double divisor)
         {
-            var x = (short)((sensorReadings[start + 1] << 8) | sensorReadings[start]);
-            var y = (short)((sensorReadings[start + 3] << 8) | sensorReadings[start + 2]);
-            var z = (short)((sensorReadings[start + 5] << 8) | sensorReadings[start + 4]);
+            var x = (short)((ReadBuffer.Span[start + 1] << 8) | ReadBuffer.Span[start]);
+            var y = (short)((ReadBuffer.Span[start + 3] << 8) | ReadBuffer.Span[start + 2]);
+            var z = (short)((ReadBuffer.Span[start + 5] << 8) | ReadBuffer.Span[start + 4]);
             return new EulerAngles(x / divisor, y / divisor, z / divisor);
         }
 
@@ -357,12 +361,15 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
 	    public void DisplayRegisters()
         {
-            Console.WriteLine("ReadRegisters");
+            Console.WriteLine("== REGISTERS ========================================================================");
 
-            var registers = Peripheral.ReadRegisters(Registers.ChipID, 0x6a);
-            DebugInformation.DisplayRegisters(0x00, registers);
+            int length = 0x6A;
+            byte[] buffer = new byte[length];
 
-            Console.WriteLine("ReadRegisters end");
+            Peripheral.ReadRegister(Registers.ChipID, buffer);
+            DebugInformation.DisplayRegisters(0x00, buffer);
+
+            Console.WriteLine("== /REGISTERS =======================================================================");
         }
     }
 }
