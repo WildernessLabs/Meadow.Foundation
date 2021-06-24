@@ -24,13 +24,19 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </remarks>
     public partial class Bno055 : ByteCommsSensorBase<(
         Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D,
-        MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
+        MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
+        Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
+        EulerAngles? EulerOrientation, Units.Temperature? Temperature)>,
         IAccelerometer, IAngularAccelerometer, ITemperatureSensor
     {
         //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
         public event EventHandler<IChangeResult<AngularAcceleration3D>> AngularAcceleration3DUpdated = delegate { };
         public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<Quaternion>> QuaternionOrientationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> LinearAccelerationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> GravityVectorUpdated = delegate { };
+        public event EventHandler<IChangeResult<EulerAngles>> EulerOrientationUpdated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         //==== internals
@@ -40,13 +46,15 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         private byte[] sensorReadings;
 
-
         //==== properties
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
         public AngularAcceleration3D? AngularAcceleration3D => Conditions.AngularAcceleration3D;
         public MagneticField3D? MagneticField3D => Conditions.MagneticField3D;
+        public Quaternion? QuaternionOrientation => Conditions.QuaternionOrientation;
+        public Acceleration3D? LinearAcceleration => Conditions.LinearAcceleration;
+        public Acceleration3D? GravityVector => Conditions.GravityVector;
+        public EulerAngles? EulerOrientation => Conditions.EulerOrientation;
         public Units.Temperature? Temperature => Conditions.Temperature;
-
 
         /// <summary>
         ///     Select the source of the Temperatute property.
@@ -88,7 +96,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 return (Peripheral.ReadRegister(Registers.OperatingMode));
             }
             set {
-                if (value > OperatingModes.MaximumValue) {
+                if (value > OperatingModes.MAXIMUM_VALUE) {
                     throw new ArgumentOutOfRangeException();
                 }
                 Peripheral.WriteRegister(Registers.OperatingMode, value);
@@ -123,87 +131,11 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
 	    public bool IsInFusionMode {
             get {
-                return ((OperatingMode == OperatingModes.Compass) ||
-                        (OperatingMode == OperatingModes.MagnetForGyroscope) ||
-                        (OperatingMode == OperatingModes.NineDegreesOfFreedom) ||
-                        (OperatingMode == OperatingModes.InertialMeasurementUnit) ||
-                        (OperatingMode == OperatingModes.NineDegreesOfFreedom));
-            }
-        }
-
-        /// <summary>
-        ///     Orientation in Euler angles.
-        /// </summary>
-	    public EulerAngles EulerOrientation {
-            get {
-                if (sensorReadings == null) {
-                    throw new InvalidOperationException("Read() must be called before the sensor readings are available.");
-                }
-                if (!IsInFusionMode) {
-                    throw new InvalidOperationException("Euler angles are only available in fusion mode.");
-                }
-                double divisor = 900.0; //radians
-
-                return ConvertReadingToEulerAngles(Registers.EulerAngleXLSB - Registers.StartOfSensorData, divisor);
-            }
-        }
-
-        /// <summary>
-        ///     Get the Quaternion orientation.
-        /// </summary>
-	    public Quaternion QuaternionOrientation {
-            get {
-                if (sensorReadings == null) {
-                    throw new InvalidOperationException("Read() must be called before the sensor readings are available.");
-                }
-                if (!IsInFusionMode) {
-                    throw new InvalidOperationException("Quaterionorientation is only available in fusion mode.");
-                }
-                int start = Registers.QuaternionDataWLSB - Registers.StartOfSensorData;
-                short w = (short)((sensorReadings[start + 1] << 8) | sensorReadings[start]);
-                short x = (short)((sensorReadings[start + 3] << 8) | sensorReadings[start + 2]);
-                short y = (short)((sensorReadings[start + 5] << 8) | sensorReadings[start + 4]);
-                short z = (short)((sensorReadings[start + 5] << 8) | sensorReadings[start + 4]);
-                double factor = 1.0 / (1 << 14);
-                return new Quaternion(w * factor, x * factor, y * factor, z * factor);
-            }
-        }
-
-        /// <summary>
-        ///     Retrieve the linear acceleration vector (fusion mode only).
-        /// </summary>
-	    public Acceleration3D LinearAcceleration {
-            get {
-                if (sensorReadings == null) {
-                    throw new InvalidOperationException("Read() must be called before the sensor readings are available.");
-                }
-                if (!IsInFusionMode) {
-                    throw new InvalidOperationException("Linear accelration vectors are only available in fusion mode.");
-                }
-                double divisor = 100.0; //m/s2
-
-                var data = GetReadings(Registers.LinearAccelerationXLSB - Registers.StartOfSensorData, divisor);
-
-                return new Acceleration3D(data.X, data.Y, data.Z, Acceleration.UnitType.MetersPerSecondSquared);
-            }
-        }
-
-        /// <summary>
-        ///     Retrieve the gravity vector (fusion mode only).
-        /// </summary>
-	    public Acceleration3D GravityVector {
-            get {
-                if (sensorReadings == null) {
-                    throw new InvalidOperationException("Read() must be called before the sensor readings are available.");
-                }
-                if (!IsInFusionMode) {
-                    throw new InvalidOperationException("Linear acceleration vectors are only available in fusion mode.");
-                }
-                double divisor = 100.0; //m/s2
-
-                var data = GetReadings(Registers.GravityVectorXLSB - Registers.StartOfSensorData, divisor);
-
-                return new Acceleration3D(data.X, data.Y, data.Z, Acceleration.UnitType.MetersPerSecondSquared);
+                return ((OperatingMode == OperatingModes.COMPASS) ||
+                        (OperatingMode == OperatingModes.MAGNET_FOR_GYROSCOPE) ||
+                        (OperatingMode == OperatingModes.NINE_DEGREES_OF_FREEDOM) ||
+                        (OperatingMode == OperatingModes.INERTIAL_MEASUREMENT_UNIT) ||
+                        (OperatingMode == OperatingModes.NINE_DEGREES_OF_FREEDOM));
             }
         }
 
@@ -255,24 +187,35 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
+        //==== ctors
+
         /// <summary>
         ///     Create a new BNO055 object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the BNO055 (default = 0x28).</param>
         /// <param name="i2cBus">I2C bus (default = 400 KHz).</param>
         public Bno055(II2cBus i2cBus, byte address = 0x28)
-            : base(i2cBus, address)
+            : base(i2cBus, address, readBufferSize:256)
         {
+            Console.WriteLine("ctor");
             if (Peripheral.ReadRegister(Registers.ChipID) != 0xa0) {
                 throw new Exception("Sensor ID should be 0xa0.");
             }
+            Console.WriteLine("ctor finished");
         }
 
-        protected override Task<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> ReadSensor()
+        protected override Task<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation, Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector, EulerAngles? EulerOrientation, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() => {
-                (Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, MagneticField3D? MagneticField3D, Units.Temperature? Temperature) conditions;
 
+                Console.WriteLine("ReadSensor");
+
+                // TODO: set operating mode to all the things so we don't have to
+                // do all these checks
+
+                (Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation, Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector, EulerAngles? EulerOrientation, Units.Temperature? Temperature) conditions;
+
+                Console.WriteLine("1");
                 // make all the readings
                 // 	This method reads ony the sensor motion / orientation registers.  When
                 // 	accessing the data from a register it is necessary to subtract the
@@ -281,40 +224,92 @@ namespace Meadow.Foundation.Sensors.Motion
                 sensorReadings = Peripheral.ReadRegisters(Registers.AccelerometerXLSB,
                                                         (ushort)(Registers.GravityVectorZMSB - Registers.AccelerometerXLSB));
 
+                Console.WriteLine("2");
+
                 //---- Acceleration3D
-                if ((OperatingMode != OperatingModes.Accelerometer) &&
-                (OperatingMode != OperatingModes.AccelerometerMagnetometer) &&
-                (OperatingMode != OperatingModes.AccelerometerMagnetometerGyroscope) &&
-                (OperatingMode != OperatingModes.AccelerometeraGyroscope)) {
-                    throw new Exception("Accelerometer is not currently enabled.");
-                }
+                //if ((OperatingMode != OperatingModes.ACCELEROMETER) &&
+                //(OperatingMode != OperatingModes.ACCELEROMETER_MAGNETOMETER) &&
+                //(OperatingMode != OperatingModes.ACCELEROMETER_MAGNETOMETER_GYROSCOPE) &&
+                //(OperatingMode != OperatingModes.ACCELEROMETER_GYROSCOPE)) {
+                //    throw new Exception("Accelerometer is not currently enabled.");
+                //}
                 double accelDivisor = 100.0; //m/s2
                 var accelData = GetReadings(Registers.AccelerometerXLSB - Registers.StartOfSensorData, accelDivisor);
 
                 conditions.Acceleration3D = new Acceleration3D(accelData.X, accelData.Y, accelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
 
+                Console.WriteLine("3");
+
                 //---- AngularAcceleration3D
-                if ((OperatingMode != OperatingModes.Gyroscope) &&
-                    (OperatingMode != OperatingModes.AccelerometeraGyroscope) &&
-                    (OperatingMode != OperatingModes.AccelerometerMagnetometerGyroscope) &&
-                    (OperatingMode != OperatingModes.MagnetometerGyroscope)) {
-                    throw new Exception("Gyroscope is not currently enabled.");
-                }
+                //if ((OperatingMode != OperatingModes.GYROSCOPE) &&
+                //    (OperatingMode != OperatingModes.ACCELEROMETER_GYROSCOPE) &&
+                //    (OperatingMode != OperatingModes.ACCELEROMETER_MAGNETOMETER_GYROSCOPE) &&
+                //    (OperatingMode != OperatingModes.MAGNETOMETER_GYROSCOPE)) {
+                //    throw new Exception("Gyroscope is not currently enabled.");
+                //}
                 double angularDivisor = 900.0; //radians
                 var angularData = GetReadings(Registers.GyroscopeXLSB - Registers.StartOfSensorData, angularDivisor);
 
                 conditions.AngularAcceleration3D = new AngularAcceleration3D(angularData.X, angularData.Y, angularData.Z, AngularAcceleration.UnitType.RadiansPerSecondSquared);
 
+                Console.WriteLine("4");
+
                 //---- MagneticField3D
-                if ((OperatingMode != OperatingModes.Magnetometer) &&
-                    (OperatingMode != OperatingModes.AccelerometerMagnetometer) &&
-                    (OperatingMode != OperatingModes.AccelerometerMagnetometerGyroscope) &&
-                    (OperatingMode != OperatingModes.MagnetometerGyroscope)) {
-                    throw new Exception("Magnetometer is not currently enabled.");
-                }
+                //if ((OperatingMode != OperatingModes.MAGNETOMETER) &&
+                //    (OperatingMode != OperatingModes.ACCELEROMETER_MAGNETOMETER) &&
+                //    (OperatingMode != OperatingModes.ACCELEROMETER_MAGNETOMETER_GYROSCOPE) &&
+                //    (OperatingMode != OperatingModes.MAGNETOMETER_GYROSCOPE)) {
+                //    throw new Exception("Magnetometer is not currently enabled.");
+                //}
                 var magnetometerData = GetReadings(Registers.MagnetometerXLSB - Registers.StartOfSensorData, 16.0);
 
                 conditions.MagneticField3D = new MagneticField3D(magnetometerData.X, magnetometerData.Y, magnetometerData.Z, MagneticField.UnitType.Telsa);
+
+                Console.WriteLine("5");
+
+                //---- Quarternion Orientation
+                int quaternionData = Registers.QuaternionDataWLSB - Registers.StartOfSensorData;
+                short w = (short)((sensorReadings[quaternionData + 1] << 8) | sensorReadings[quaternionData]);
+                short x = (short)((sensorReadings[quaternionData + 3] << 8) | sensorReadings[quaternionData + 2]);
+                short y = (short)((sensorReadings[quaternionData + 5] << 8) | sensorReadings[quaternionData + 4]);
+                short z = (short)((sensorReadings[quaternionData + 5] << 8) | sensorReadings[quaternionData + 4]);
+                double factor = 1.0 / (1 << 14);
+                conditions.QuaternionOrientation = new Quaternion(w * factor, x * factor, y * factor, z * factor);
+
+                Console.WriteLine("6");
+
+                //---- Linear Acceleration
+                if (!IsInFusionMode) {
+                    throw new InvalidOperationException("Linear accelration vectors are only available in fusion mode.");
+                }
+                double linearAccellDivisor = 100.0; //m/s2
+                var linearAccelData = GetReadings(Registers.LinearAccelerationXLSB - Registers.StartOfSensorData, linearAccellDivisor);
+
+                conditions.LinearAcceleration = new Acceleration3D(linearAccelData.X, linearAccelData.Y, linearAccelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
+
+                Console.WriteLine("7");
+
+                ////---- Gravity Vector
+                //if (!IsInFusionMode) {
+                //    throw new InvalidOperationException("Linear acceleration vectors are only available in fusion mode.");
+                //}
+                //double gravityVectorDivisor = 100.0; //m/s2
+                //var gravityVectorData = GetReadings(Registers.GravityVectorXLSB - Registers.StartOfSensorData, gravityVectorDivisor);
+
+                //conditions.GravityVector = new Acceleration3D(gravityVectorData.X, gravityVectorData.Y, gravityVectorData.Z, Acceleration.UnitType.MetersPerSecondSquared);
+                conditions.GravityVector = null;
+
+                Console.WriteLine("8");
+
+                //---- euler
+                if (!IsInFusionMode) {
+                    throw new InvalidOperationException("Euler angles are only available in fusion mode.");
+                }
+                double eulerDivisor = 900.0; //radians
+
+                conditions.EulerOrientation = ConvertReadingToEulerAngles(Registers.EulerAngleXLSB - Registers.StartOfSensorData, eulerDivisor);
+
+                Console.WriteLine("9");
 
                 //---- temperature
                 conditions.Temperature = new Units.Temperature(Peripheral.ReadRegister(Registers.Temperature), Units.Temperature.UnitType.Celsius);
@@ -323,7 +318,11 @@ namespace Meadow.Foundation.Sensors.Motion
             });
         }
 
-        protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<
+            (Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D,
+            MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
+            Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
+            EulerAngles? EulerOrientation, Units.Temperature? Temperature)> changeResult)
         {
             if (changeResult.New.Acceleration3D is { } accel) {
                 Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
@@ -333,6 +332,18 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             if (changeResult.New.MagneticField3D is { } magnetic) {
                 MagneticField3DUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(magnetic, changeResult.Old?.MagneticField3D));
+            }
+            if (changeResult.New.QuaternionOrientation is { } quaternion) {
+                QuaternionOrientationUpdated?.Invoke(this, new ChangeResult<Quaternion>(quaternion, changeResult.Old?.QuaternionOrientation));
+            }
+            if (changeResult.New.LinearAcceleration is { } linear) {
+                LinearAccelerationUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(linear, changeResult.Old?.LinearAcceleration));
+            }
+            if (changeResult.New.GravityVector is { } gravity) {
+                GravityVectorUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(gravity, changeResult.Old?.GravityVector));
+            }
+            if (changeResult.New.EulerOrientation is { } euler) {
+                EulerOrientationUpdated?.Invoke(this, new ChangeResult<EulerAngles>(euler, changeResult.Old?.EulerOrientation));
             }
             if (changeResult.New.Temperature is { } temp) {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
@@ -374,8 +385,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
 	    public void DisplayRegisters()
         {
+            Console.WriteLine("ReadRegisters");
+
             var registers = Peripheral.ReadRegisters(Registers.ChipID, 0x6a);
             DebugInformation.DisplayRegisters(0x00, registers);
+
+            Console.WriteLine("ReadRegisters end");
         }
     }
 }
