@@ -17,7 +17,7 @@ namespace MeadowApp
             Console.WriteLine("Initializing");
 
             // create the sensor driver
-            sensor = new Adxl362(Device, Device.CreateSpiBus(), Device.Pins.D01);
+            sensor = new Adxl362(Device, Device.CreateSpiBus(), Device.Pins.D00);
 
             //==== Events
             // classical .NET events can also be used:
@@ -48,11 +48,14 @@ namespace MeadowApp
                 );
             sensor.Subscribe(consumer);
 
+            //
+            Console.WriteLine($"Device ID: {sensor.DeviceID}");
+
             //==== one-off read
             ReadConditions().Wait();
 
             // start updating
-            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
         }
 
         protected async Task ReadConditions()

@@ -239,6 +239,11 @@ namespace Meadow.Foundation.Sensors.Motion
             Peripheral.WriteBytes(new byte[] { Commands.WRITE_REGISTER, Registers.POWER_CONTROL, power });
         }
 
+        public override void StartUpdating(TimeSpan? updateInterval = null)
+        {
+            Start();
+            base.StartUpdating(updateInterval);
+        }
 
         protected override Task<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> ReadSensor()
         {
@@ -246,17 +251,24 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 (Acceleration3D? Acceleration3D, Units.Temperature? Temperature) conditions;
 
-                //var sensorReading = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.X_AXIS_LSB }, 8);
-                WriteBuffer.Span[0] = Commands.READ_REGISTER;
-                WriteBuffer.Span[1] = Registers.X_AXIS_LSB;
-                Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..8]);
-
+                var sensorReading = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.X_AXIS_LSB }, 8);
 
                 conditions.Acceleration3D = new Acceleration3D(
-                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[3] << 8) | ReadBuffer.Span[2]), AU.MetersPerSecondSquared),
-                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4]), AU.MetersPerSecondSquared),
-                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[7] << 8) | ReadBuffer.Span[6]), AU.MetersPerSecondSquared)
+                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[3] << 8) | sensorReading[2]), AU.MetersPerSecondSquared),
+                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[5] << 8) | sensorReading[4]), AU.MetersPerSecondSquared),
+                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((sensorReading[7] << 8) | sensorReading[6]), AU.MetersPerSecondSquared)
                     );
+
+                // new methods
+                //WriteBuffer.Span[0] = Commands.READ_REGISTER;
+                //WriteBuffer.Span[1] = Registers.X_AXIS_LSB;
+                //Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..8]);
+
+                //conditions.Acceleration3D = new Acceleration3D(
+                //    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[3] << 8) | ReadBuffer.Span[2]), AU.MetersPerSecondSquared),
+                //    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4]), AU.MetersPerSecondSquared),
+                //    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[7] << 8) | ReadBuffer.Span[6]), AU.MetersPerSecondSquared)
+                //    );
 
                 var result = Peripheral.WriteRead(new byte[] { Commands.READ_REGISTER, Registers.TEMPERATURE_LSB }, 2);
                 conditions.Temperature = new Units.Temperature((short)((result[1] << 8) + result[0]), TU.Celsius);
