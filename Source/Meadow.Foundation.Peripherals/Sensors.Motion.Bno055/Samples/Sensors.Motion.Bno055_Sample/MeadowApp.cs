@@ -34,9 +34,9 @@ namespace MeadowApp
                     $"Y:{result.New.AngularAcceleration3D?.Y.DegreesPerSecondSquared:N2}," +
                     $"Z:{result.New.AngularAcceleration3D?.Z.DegreesPerSecondSquared:N2} (degrees/s^2)]");
 
-                Console.WriteLine($"Compass: [X:{result.New.MagneticField3D?.X.MilliTesla:N2}," +
-                    $"Y:{result.New.MagneticField3D?.Y.MilliTesla:N2}," +
-                    $"Z:{result.New.MagneticField3D?.Z.MilliTesla:N2} (MilliTesla)]");
+                Console.WriteLine($"Compass: [X:{result.New.MagneticField3D?.X.Tesla:N2}," +
+                    $"Y:{result.New.MagneticField3D?.Y.Tesla:N2}," +
+                    $"Z:{result.New.MagneticField3D?.Z.Tesla:N2} (MilliTesla)]");
 
                 Console.WriteLine($"Gravity: [X:{result.New.GravityVector?.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.GravityVector?.Y.MetersPerSecondSquared:N2}," +
@@ -69,7 +69,7 @@ namespace MeadowApp
             sensor.Subscribe(consumer);
 
             // debug
-            sensor.DisplayRegisters();
+            //sensor.DisplayRegisters();
 
             sensor.PowerMode = Bno055.PowerModes.NORMAL;
             //sensor.OperatingMode = Bno055.OperatingModes.CONFIGURATION_MODE;
@@ -78,7 +78,7 @@ namespace MeadowApp
             Console.WriteLine($"IsFullyCalibrated: {sensor.IsFullyCalibrated}");
 
             // debug
-            sensor.DisplayRegisters();
+            //sensor.DisplayRegisters();
 
             //==== one-off read
             ReadConditions().Wait();
