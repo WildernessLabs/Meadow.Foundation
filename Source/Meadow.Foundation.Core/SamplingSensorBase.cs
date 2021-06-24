@@ -68,7 +68,7 @@ namespace Meadow.Foundation
         /// <summary>
         /// Stops sampling the sensor.
         /// </summary>
-        public void StopUpdating()
+        public virtual void StopUpdating()
         {
             lock (samplingLock) {
                 if (!IsSampling) return;
