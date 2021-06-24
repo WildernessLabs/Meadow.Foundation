@@ -208,14 +208,12 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             return Task.Run(() => {
 
-                Console.WriteLine("ReadSensor");
 
                 // TODO: set operating mode to all the things so we don't have to
                 // do all these checks
 
                 (Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation, Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector, EulerAngles? EulerOrientation, Units.Temperature? Temperature) conditions;
 
-                Console.WriteLine("1");
                 // make all the readings
                 // 	This method reads ony the sensor motion / orientation registers.  When
                 // 	accessing the data from a register it is necessary to subtract the
@@ -224,7 +222,6 @@ namespace Meadow.Foundation.Sensors.Motion
                 sensorReadings = Peripheral.ReadRegisters(Registers.AccelerometerXLSB,
                                                         (ushort)(Registers.GravityVectorZMSB - Registers.AccelerometerXLSB));
 
-                Console.WriteLine("2");
 
                 //---- Acceleration3D
                 //if ((OperatingMode != OperatingModes.ACCELEROMETER) &&
@@ -238,8 +235,6 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 conditions.Acceleration3D = new Acceleration3D(accelData.X, accelData.Y, accelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
 
-                Console.WriteLine("3");
-
                 //---- AngularAcceleration3D
                 //if ((OperatingMode != OperatingModes.GYROSCOPE) &&
                 //    (OperatingMode != OperatingModes.ACCELEROMETER_GYROSCOPE) &&
@@ -252,8 +247,6 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 conditions.AngularAcceleration3D = new AngularAcceleration3D(angularData.X, angularData.Y, angularData.Z, AngularAcceleration.UnitType.RadiansPerSecondSquared);
 
-                Console.WriteLine("4");
-
                 //---- MagneticField3D
                 //if ((OperatingMode != OperatingModes.MAGNETOMETER) &&
                 //    (OperatingMode != OperatingModes.ACCELEROMETER_MAGNETOMETER) &&
@@ -265,8 +258,6 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 conditions.MagneticField3D = new MagneticField3D(magnetometerData.X, magnetometerData.Y, magnetometerData.Z, MagneticField.UnitType.Telsa);
 
-                Console.WriteLine("5");
-
                 //---- Quarternion Orientation
                 int quaternionData = Registers.QuaternionDataWLSB - Registers.StartOfSensorData;
                 short w = (short)((sensorReadings[quaternionData + 1] << 8) | sensorReadings[quaternionData]);
@@ -275,8 +266,6 @@ namespace Meadow.Foundation.Sensors.Motion
                 short z = (short)((sensorReadings[quaternionData + 5] << 8) | sensorReadings[quaternionData + 4]);
                 double factor = 1.0 / (1 << 14);
                 conditions.QuaternionOrientation = new Quaternion(w * factor, x * factor, y * factor, z * factor);
-
-                Console.WriteLine("6");
 
                 //---- Linear Acceleration
                 if (!IsInFusionMode) {
@@ -289,7 +278,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 Console.WriteLine("7");
 
-                ////---- Gravity Vector
+                //---- Gravity Vector
                 //if (!IsInFusionMode) {
                 //    throw new InvalidOperationException("Linear acceleration vectors are only available in fusion mode.");
                 //}
@@ -308,8 +297,6 @@ namespace Meadow.Foundation.Sensors.Motion
                 double eulerDivisor = 900.0; //radians
 
                 conditions.EulerOrientation = ConvertReadingToEulerAngles(Registers.EulerAngleXLSB - Registers.StartOfSensorData, eulerDivisor);
-
-                Console.WriteLine("9");
 
                 //---- temperature
                 conditions.Temperature = new Units.Temperature(Peripheral.ReadRegister(Registers.Temperature), Units.Temperature.UnitType.Celsius);
@@ -355,15 +342,13 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     Convert a section of the sensor data into a tuple.
         /// </summary>
         /// <param name="start">Start of the data in the _sensorReadings member variable.</param>
-        /// <param name="divisor">Divisor to use to convert the data into the correct scale.</param>
-        /// <returns>New Vector object containing the specified data.</returns>
-        protected (short X, short Y, short Z) GetReadings(int start, double divisor)
+        protected (double X, double Y, double Z) GetReadings(int start, double divisor)
         {
             var x = (short)((sensorReadings[start + 1] << 8) | sensorReadings[start]);
             var y = (short)((sensorReadings[start + 3] << 8) | sensorReadings[start + 2]);
             var z = (short)((sensorReadings[start + 5] << 8) | sensorReadings[start + 4]);
 
-            return (x, y, z);
+            return (x / divisor, y / divisor, z / divisor);
         }
 
         /// <summary>

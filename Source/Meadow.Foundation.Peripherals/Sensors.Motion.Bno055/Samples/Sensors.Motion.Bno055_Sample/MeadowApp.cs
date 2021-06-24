@@ -28,7 +28,19 @@ namespace MeadowApp
             sensor.Updated += (sender, result) => {
                 Console.WriteLine($"Accel: [X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
-                    $"Z:{result.New.Acceleration3D?.Z.MetersPerSecondSquared:N2} (mps^2)]");
+                    $"Z:{result.New.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
+
+                Console.WriteLine($"Gyro: [X:{result.New.AngularAcceleration3D?.X.DegreesPerSecondSquared:N2}," +
+                    $"Y:{result.New.AngularAcceleration3D?.Y.DegreesPerSecondSquared:N2}," +
+                    $"Z:{result.New.AngularAcceleration3D?.Z.DegreesPerSecondSquared:N2} (degrees/s^2)]");
+
+                Console.WriteLine($"Gravity: [X:{result.New.GravityVector?.X.MetersPerSecondSquared:N2}," +
+                    $"Y:{result.New.GravityVector?.Y.MetersPerSecondSquared:N2}," +
+                    $"Z:{result.New.GravityVector?.Z.MetersPerSecondSquared:N2} (meters/s^2)]");
+
+                Console.WriteLine($"Linear Accel: [X:{result.New.LinearAcceleration?.X.MetersPerSecondSquared:N2}," +
+                    $"Y:{result.New.LinearAcceleration?.Y.MetersPerSecondSquared:N2}," +
+                    $"Z:{result.New.LinearAcceleration?.Z.MetersPerSecondSquared:N2} (meters/s^2)]");
 
                 Console.WriteLine($"Temp: {result.New.Temperature?.Celsius:N2}C");
             };
