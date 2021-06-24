@@ -36,7 +36,7 @@ namespace MeadowApp
 
                 Console.WriteLine($"Compass: [X:{result.New.MagneticField3D?.X.Tesla:N2}," +
                     $"Y:{result.New.MagneticField3D?.Y.Tesla:N2}," +
-                    $"Z:{result.New.MagneticField3D?.Z.Tesla:N2} (MilliTesla)]");
+                    $"Z:{result.New.MagneticField3D?.Z.Tesla:N2} (Tesla)]");
 
                 Console.WriteLine($"Gravity: [X:{result.New.GravityVector?.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.GravityVector?.Y.MetersPerSecondSquared:N2}," +
@@ -70,10 +70,6 @@ namespace MeadowApp
 
             // debug
             //sensor.DisplayRegisters();
-
-            sensor.PowerMode = Bno055.PowerModes.NORMAL;
-            //sensor.OperatingMode = Bno055.OperatingModes.CONFIGURATION_MODE;
-            sensor.OperatingMode = Bno055.OperatingModes.NINE_DEGREES_OF_FREEDOM;
 
             Console.WriteLine($"IsFullyCalibrated: {sensor.IsFullyCalibrated}");
 

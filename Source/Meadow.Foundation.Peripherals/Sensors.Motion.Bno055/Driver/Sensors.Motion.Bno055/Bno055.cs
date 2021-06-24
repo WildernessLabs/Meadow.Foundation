@@ -200,15 +200,39 @@ namespace Meadow.Foundation.Sensors.Motion
             if (Peripheral.ReadRegister(Registers.ChipID) != 0xa0) {
                 throw new Exception("Sensor ID should be 0xa0.");
             }
+
+        }
+
+        public override void StartUpdating(TimeSpan? updateInterval = null)
+        {
+            // set up to run
+            PowerMode = PowerModes.NORMAL;
+            OperatingMode = OperatingModes.NINE_DEGREES_OF_FREEDOM;
+            base.StartUpdating(updateInterval);
+        }
+
+        public override void StopUpdating()
+        {
+            PowerMode = PowerModes.SUSPENDED;
+            base.StopUpdating();
         }
 
         protected override Task<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation, Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector, EulerAngles? EulerOrientation, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() => {
-                // TODO: set operating mode to all the things so we don't have to
-                // do all these checks
+                if(PowerMode != PowerModes.NORMAL) {
+                    PowerMode = PowerModes.NORMAL;
+                }
 
-                (Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation, Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector, EulerAngles? EulerOrientation, Units.Temperature? Temperature) conditions;
+                if (OperatingMode != OperatingModes.NINE_DEGREES_OF_FREEDOM) {
+                    OperatingMode = OperatingModes.NINE_DEGREES_OF_FREEDOM;
+                }
+
+                // The amazing Octple!
+                (Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D,
+                MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
+                Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
+                EulerAngles? EulerOrientation, Units.Temperature? Temperature) conditions;
 
                 // make all the readings
                 // 	This method reads ony the sensor motion / orientation registers.  When
@@ -218,41 +242,23 @@ namespace Meadow.Foundation.Sensors.Motion
                 sensorReadings = Peripheral.ReadRegisters(Registers.AccelerometerXLSB,
                                                         (ushort)(Registers.GravityVectorZMSB - Registers.AccelerometerXLSB));
 
-
                 //---- Acceleration3D
-                //if ((OperatingMode != OperatingModes.ACCELEROMETER) &&
-                //(OperatingMode != OperatingModes.ACCELEROMETER_MAGNETOMETER) &&
-                //(OperatingMode != OperatingModes.ACCELEROMETER_MAGNETOMETER_GYROSCOPE) &&
-                //(OperatingMode != OperatingModes.ACCELEROMETER_GYROSCOPE)) {
-                //    throw new Exception("Accelerometer is not currently enabled.");
-                //}
                 double accelDivisor = 100.0; //m/s2
                 var accelData = GetReadings(Registers.AccelerometerXLSB - Registers.StartOfSensorData, accelDivisor);
 
                 conditions.Acceleration3D = new Acceleration3D(accelData.X, accelData.Y, accelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
 
                 //---- AngularAcceleration3D
-                //if ((OperatingMode != OperatingModes.GYROSCOPE) &&
-                //    (OperatingMode != OperatingModes.ACCELEROMETER_GYROSCOPE) &&
-                //    (OperatingMode != OperatingModes.ACCELEROMETER_MAGNETOMETER_GYROSCOPE) &&
-                //    (OperatingMode != OperatingModes.MAGNETOMETER_GYROSCOPE)) {
-                //    throw new Exception("Gyroscope is not currently enabled.");
-                //}
                 double angularDivisor = 900.0; //radians
                 var angularData = GetReadings(Registers.GyroscopeXLSB - Registers.StartOfSensorData, angularDivisor);
 
                 conditions.AngularAcceleration3D = new AngularAcceleration3D(angularData.X, angularData.Y, angularData.Z, AngularAcceleration.UnitType.RadiansPerSecondSquared);
 
                 //---- MagneticField3D
-                //if ((OperatingMode != OperatingModes.MAGNETOMETER) &&
-                //    (OperatingMode != OperatingModes.ACCELEROMETER_MAGNETOMETER) &&
-                //    (OperatingMode != OperatingModes.ACCELEROMETER_MAGNETOMETER_GYROSCOPE) &&
-                //    (OperatingMode != OperatingModes.MAGNETOMETER_GYROSCOPE)) {
-                //    throw new Exception("Magnetometer is not currently enabled.");
-                //}
                 var magnetometerData = GetReadings(Registers.MagnetometerXLSB - Registers.StartOfSensorData, 16.0);
 
                 conditions.MagneticField3D = new MagneticField3D(magnetometerData.X, magnetometerData.Y, magnetometerData.Z, MagneticField.UnitType.Tesla);
+
 
                 //---- Quarternion Orientation
                 int quaternionData = Registers.QuaternionDataWLSB - Registers.StartOfSensorData;
@@ -284,9 +290,6 @@ namespace Meadow.Foundation.Sensors.Motion
                 conditions.GravityVector = null;
 
                 //---- euler
-                if (!IsInFusionMode) {
-                    throw new InvalidOperationException("Euler angles are only available in fusion mode.");
-                }
                 double eulerDivisor = 900.0; //radians
 
                 conditions.EulerOrientation = ConvertReadingToEulerAngles(Registers.EulerAngleXLSB - Registers.StartOfSensorData, eulerDivisor);
