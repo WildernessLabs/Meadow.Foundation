@@ -48,7 +48,7 @@ namespace MeadowApp
                 );
             sensor.Subscribe(consumer);
 
-            //
+            //==== get the device id
             Console.WriteLine($"Device ID: {sensor.DeviceID}");
 
             //==== one-off read
