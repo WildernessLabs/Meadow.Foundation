@@ -10,6 +10,16 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
+    // Sample Reading:
+    // Accel: [X:0.00,Y:-1.15,Z:10.09 (m/s^2)]
+    // Gyro: [X:0.00,Y:-0.06,Z:0.06 (degrees/s)]
+    // Compass: [X:19.38,Y:-36.75,Z:-118.25 (Tesla)]
+    // Gravity: [X:0.00, Y:-1.12, Z:9.74 (meters/s^2)]
+    // Quaternion orientation: [X:-0.06, Y:0.00, Z:0.00]
+    // Euler orientation: [heading: 0.00, Roll: 0.00, Pitch: 0.12]
+    // Linear Accel: [X:0.00, Y:-0.03, Z:0.35 (meters/s^2)]
+    // Temp: 33.00C
+
     //TODO: the sensor works great as is right now, but there's some room for
     // improvement. Currently, we basically turn it on full bore and get all
     // the readings.
@@ -34,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Motion
     ///     Gyroscope       2000 dps    32 Hz
     /// </remarks>
     public partial class Bno055 : ByteCommsSensorBase<(
-        Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D,
+        Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
         MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
         Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
         EulerAngles? EulerOrientation, Units.Temperature? Temperature)>,
@@ -42,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Motion
     {
         //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
-        public event EventHandler<IChangeResult<AngularAcceleration3D>> AngularAcceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
         public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
         public event EventHandler<IChangeResult<Quaternion>> QuaternionOrientationUpdated = delegate { };
         public event EventHandler<IChangeResult<Acceleration3D>> LinearAccelerationUpdated = delegate { };
@@ -54,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         //==== properties
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
-        public AngularAcceleration3D? AngularAcceleration3D => Conditions.AngularAcceleration3D;
+        public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
         public MagneticField3D? MagneticField3D => Conditions.MagneticField3D;
         public Quaternion? QuaternionOrientation => Conditions.QuaternionOrientation;
         public Acceleration3D? LinearAcceleration => Conditions.LinearAcceleration;
@@ -223,7 +233,11 @@ namespace Meadow.Foundation.Sensors.Motion
             base.StopUpdating();
         }
 
-        protected override Task<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation, Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector, EulerAngles? EulerOrientation, Units.Temperature? Temperature)> ReadSensor()
+        protected override Task<
+            (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
+            MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
+            Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
+            EulerAngles? EulerOrientation, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() => {
                 if(PowerMode != PowerModes.NORMAL) {
@@ -235,7 +249,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 }
 
                 // The amazing Octple!
-                (Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D,
+                (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
                 MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
                 Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
                 EulerAngles? EulerOrientation, Units.Temperature? Temperature) conditions;
@@ -260,7 +274,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 //---- AngularAcceleration3D
                 double angularDivisor = 900.0; //radians
                 var angularData = GetReadings(Registers.GyroscopeXLSB - Registers.StartOfSensorData, angularDivisor);
-                conditions.AngularAcceleration3D = new AngularAcceleration3D(angularData.X, angularData.Y, angularData.Z, AngularAcceleration.UnitType.RadiansPerSecondSquared);
+                conditions.AngularVelocity3D = new AngularVelocity3D(angularData.X, angularData.Y, angularData.Z, AngularVelocity.UnitType.RadiansPerSecond);
 
                 //---- MagneticField3D
                 var magnetometerData = GetReadings(Registers.MagnetometerXLSB - Registers.StartOfSensorData, 16.0);
@@ -297,7 +311,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         protected override void RaiseEventsAndNotify(IChangeResult<
-            (Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D,
+            (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
             MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
             Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
             EulerAngles? EulerOrientation, Units.Temperature? Temperature)> changeResult)
@@ -305,8 +319,8 @@ namespace Meadow.Foundation.Sensors.Motion
             if (changeResult.New.Acceleration3D is { } accel) {
                 Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
             }
-            if (changeResult.New.AngularAcceleration3D is { } angular) {
-                AngularAcceleration3DUpdated?.Invoke(this, new ChangeResult<AngularAcceleration3D>(angular, changeResult.Old?.AngularAcceleration3D));
+            if (changeResult.New.AngularVelocity3D is { } angular) {
+                AngularVelocity3DUpdated?.Invoke(this, new ChangeResult<AngularVelocity3D>(angular, changeResult.Old?.AngularVelocity3D));
             }
             if (changeResult.New.MagneticField3D is { } magnetic) {
                 MagneticField3DUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(magnetic, changeResult.Old?.MagneticField3D));
