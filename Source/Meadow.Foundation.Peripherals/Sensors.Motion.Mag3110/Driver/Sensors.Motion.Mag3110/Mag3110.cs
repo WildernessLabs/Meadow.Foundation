@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
+    // TODO: Sensor is fully converted but data isn't right:
+    // Accel: [X:429.00,Y:-45.00,Z:-1,682.00 (mps^2)]
+    // Temp: 16.00C
+
     // TODO: Interrupt handling is commented out
     public partial class Mag3110 :
         ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,

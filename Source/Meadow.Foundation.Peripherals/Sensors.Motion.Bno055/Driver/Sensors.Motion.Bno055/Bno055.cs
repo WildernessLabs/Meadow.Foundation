@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Sensors.Motion
         MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
         Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
         EulerAngles? EulerOrientation, Units.Temperature? Temperature)>,
-        IAccelerometer, IAngularAccelerometer, ITemperatureSensor
+        IAccelerometer, IGyroscope, ITemperatureSensor
     {
         //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
