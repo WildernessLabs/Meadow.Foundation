@@ -31,9 +31,9 @@ namespace Sensors.Motion.mpu5060_Sample
                     $"Y:{result.New.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
                     $"Z:{result.New.Acceleration3D?.Z.MetersPerSecondSquared:N2} (mps^2)]");
 
-                Console.WriteLine($"Angular Accel: [X:{result.New.AngularAcceleration3D?.X.DegreesPerSecondSquared:N2}," +
-                    $"Y:{result.New.AngularAcceleration3D?.Y.DegreesPerSecondSquared:N2}," +
-                    $"Z:{result.New.AngularAcceleration3D?.Z.DegreesPerSecondSquared:N2} (dps^2)]");
+                Console.WriteLine($"Angular Velocity: [X:{result.New.AngularVelocity3D?.X.DegreesPerSecond:N2}," +
+                    $"Y:{result.New.AngularVelocity3D?.Y.DegreesPerSecond:N2}," +
+                    $"Z:{result.New.AngularVelocity3D?.Z.DegreesPerSecond:N2} (dps)]");
 
                 Console.WriteLine($"Temp: {result.New.Temperature?.Celsius:N2}C");
             };
@@ -72,9 +72,9 @@ namespace Sensors.Motion.mpu5060_Sample
                 $"Y:{result.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
                 $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (mps^2)]");
 
-            Console.WriteLine($"Angular Accel: [X:{result.AngularAcceleration3D?.X.DegreesPerSecondSquared:N2}," +
-                $"Y:{result.AngularAcceleration3D?.Y.DegreesPerSecondSquared:N2}," +
-                $"Z:{result.AngularAcceleration3D?.Z.DegreesPerSecondSquared:N2} (dps^2)]");
+            Console.WriteLine($"Angular Accel: [X:{result.AngularVelocity3D?.X.DegreesPerSecond:N2}," +
+                $"Y:{result.AngularVelocity3D?.Y.DegreesPerSecond:N2}," +
+                $"Z:{result.AngularVelocity3D?.Z.DegreesPerSecond:N2} (dps)]");
 
             Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
         }

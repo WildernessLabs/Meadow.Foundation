@@ -9,22 +9,22 @@ using TU = Meadow.Units.Temperature.UnitType;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    // TODO: B: this class is fully converted, but the data seems off:
-    // Accel: [X:0.02,Y:-0.03,Z:1.07 (mps^2)] <- this seems like a unit conversion error.
-    // Angular Accel: [X:-346.26, Y:-392.98, Z:-280.31 (dps^2)] <- not sure if this is right or not
-    // Temp: 28.34C <- this is correct. warm here today. :)
+    // Sample reading:
+    // Accel: [X:0.24,Y:-0.74,Z:10.49 (mps^2)]
+    // Angular Velocity: [X:-0.90, Y:-1.24, Z:-0.52 (dps)]
+    // Temp: 33.33C
 
     // TODO: this sensor has software controlled sensitivity ranges. we should
     // expose them. note the `AccelScaleBase` will need to change. Right now it's
     // hard coded to +-2G
 
     public partial class Mpu6050 :
-        ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, Units.Temperature? Temperature)>,
+        ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
         IAccelerometer, IGyroscope, ITemperatureSensor
     {
         //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
-        public event EventHandler<IChangeResult<AngularAcceleration3D>> AngularAcceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         //==== internals
@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         //==== properties
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
-        public AngularAcceleration3D? AngularAcceleration3D => Conditions.AngularAcceleration3D;
+        public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         //==== ctors
@@ -76,10 +76,10 @@ namespace Meadow.Foundation.Sensors.Motion
             AccelerometerScale = (ReadBuffer.Span[2] & 0b00011000) >> 3;
         }
 
-        protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, Units.Temperature? Temperature)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> changeResult)
         {
-            if (changeResult.New.AngularAcceleration3D is { } angular) {
-                AngularAcceleration3DUpdated?.Invoke(this, new ChangeResult<AngularAcceleration3D>(angular, changeResult.Old?.AngularAcceleration3D));
+            if (changeResult.New.AngularVelocity3D is { } angular) {
+                AngularVelocity3DUpdated?.Invoke(this, new ChangeResult<AngularVelocity3D>(angular, changeResult.Old?.AngularVelocity3D));
             }
             if (changeResult.New.Acceleration3D is { } accel) {
                 Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
@@ -90,10 +90,10 @@ namespace Meadow.Foundation.Sensors.Motion
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        protected override Task<(Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, Units.Temperature? Temperature)> ReadSensor()
+        protected override Task<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() => {
-                (Acceleration3D? Acceleration3D, AngularAcceleration3D? AngularAcceleration3D, Units.Temperature? Temperature) conditions;
+                (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature) conditions;
 
                 // we'll just read 14 bytes (7 registers), starting at 0x3b
                 Peripheral.ReadRegister(Registers.ACCELEROMETER_X, ReadBuffer.Span);
@@ -114,12 +114,12 @@ namespace Meadow.Foundation.Sensors.Motion
                 conditions.Temperature = new Units.Temperature(ScaleAndOffset(ReadBuffer.Span, 6, 1 / 340f, 36.53f), TU.Celsius);
 
                 //---- angular acceleration
-                AngularAcceleration3D angularAccel = new AngularAcceleration3D(
-                    new AngularAcceleration(ScaleAndOffset(ReadBuffer.Span, 8, g_scale), AngularAcceleration.UnitType.DegreesPerSecondSquared),
-                    new AngularAcceleration(ScaleAndOffset(ReadBuffer.Span, 10, g_scale), AngularAcceleration.UnitType.DegreesPerSecondSquared),
-                    new AngularAcceleration(ScaleAndOffset(ReadBuffer.Span, 12, g_scale), AngularAcceleration.UnitType.DegreesPerSecondSquared)
+                AngularVelocity3D angularVelocity = new AngularVelocity3D(
+                    new AngularVelocity(ScaleAndOffset(ReadBuffer.Span, 8, g_scale), AngularVelocity.UnitType.DegreesPerSecond),
+                    new AngularVelocity(ScaleAndOffset(ReadBuffer.Span, 10, g_scale), AngularVelocity.UnitType.DegreesPerSecond),
+                    new AngularVelocity(ScaleAndOffset(ReadBuffer.Span, 12, g_scale), AngularVelocity.UnitType.DegreesPerSecond)
                     );
-                conditions.AngularAcceleration3D = angularAccel;
+                conditions.AngularVelocity3D = angularVelocity;
 
                 //ushort rawTemp = Peripheral.ReadRegisterAsUShort(Registers.TEMPERATURE, ByteOrder.BigEndian);
                 //return new Units.Temperature(rawTemp * (1 << GyroScale) / GyroScaleBase, TU.Celsius);
