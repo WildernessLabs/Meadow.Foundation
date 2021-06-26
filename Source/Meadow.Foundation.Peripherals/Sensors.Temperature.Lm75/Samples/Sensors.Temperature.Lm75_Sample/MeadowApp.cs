@@ -23,13 +23,13 @@ namespace Sensors.Temperature.Lm75_Sample
 
         void TestUpdating()
         {
-            Console.WriteLine("TestFC28Updating...");
+            Console.WriteLine("TestUpdating...");
 
             var consumer = Lm75.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Temperature New Value { result.New.Celsius}");
-                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}");
+                    Console.WriteLine($"Temperature New Value { result.New.Celsius}C");
+                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}C");
                     //Console.WriteLine($"Temperature Delta Value { result.Delta?.Celsius}");
                 },
                 filter: null
@@ -46,7 +46,7 @@ namespace Sensors.Temperature.Lm75_Sample
 
         async Task TestRead()
         {
-            Console.WriteLine("TestFC28Sensor...");
+            Console.WriteLine("TestRead...");
 
             var temp = await lm75.Read();
 

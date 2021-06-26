@@ -23,13 +23,13 @@ namespace Sensors.Temperature.Tmp102_Sample
 
         void TestUpdating()
         {
-            Console.WriteLine("TestFC28Updating...");
+            Console.WriteLine("Test Updating...");
 
             var consumer = Tmp102.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Temperature New Value { result.New.Celsius}");
-                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}");
+                    Console.WriteLine($"Temperature New Value { result.New.Celsius}C");
+                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}C");
                     //Console.WriteLine($"Temperature Delta Value { result.Delta?.Celsius}");
                 },
                 filter: null
@@ -46,13 +46,13 @@ namespace Sensors.Temperature.Tmp102_Sample
 
         void TestRead()
         {
-            Console.WriteLine("TestFC28Sensor...");
+            Console.WriteLine("TestTmp102Sensor...");
 
             while (true)
             {
                 var temp = tmp102.Read().Result;
 
-                Console.WriteLine($"Temperature New Value { temp.Celsius}");
+                Console.WriteLine($"Temperature New Value { temp.Celsius}C");
                 Thread.Sleep(1000);
             }
         }

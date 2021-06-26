@@ -26,7 +26,6 @@ namespace Sensors.Moisture.FC28_Sample
             );
 
             TestFC28Updating();
-            //TestFC28Read();
         }
 
         void TestFC28Updating() 
