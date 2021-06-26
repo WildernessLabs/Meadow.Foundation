@@ -25,13 +25,16 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         ///     Get / set the resolution of the sensor.
         /// </summary>
-        public Resolution SensorResolution {
-            get { return _sensorResolution; }
-            set {
+        public Resolution SensorResolution 
+        {
+            get => _sensorResolution; 
+            set 
+            {
                 Peripheral.ReadRegister(0x01, ReadBuffer.Span);
                 // TODO: Delete after testing
                 //var configuration = Peripheral.ReadRegisters(0x01, 2);
-                if (value == Resolution.Resolution12Bits) {
+                if (value == Resolution.Resolution12Bits) 
+                {
                     ReadBuffer.Span[1] &= 0xef;
                 } else {
                     ReadBuffer.Span[1] |= 0x10;
@@ -43,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         /// <summary>
-        /// The temperature, in degrees celsius (°C), from the last reading.
+        /// The temperature from the last reading.
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
 

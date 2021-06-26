@@ -48,7 +48,7 @@ namespace Sensors.Temperature.Mcp9808_Sample
             {
                 var temp = mcp9808.Read().Result;
 
-                Console.WriteLine($"Temperature New Value {Stemp.Celsius}C");
+                Console.WriteLine($"Temperature New Value {temp.Celsius}C");
                 Thread.Sleep(1000);
             }
         }
