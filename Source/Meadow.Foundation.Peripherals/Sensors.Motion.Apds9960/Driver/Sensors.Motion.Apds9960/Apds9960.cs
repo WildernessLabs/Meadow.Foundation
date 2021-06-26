@@ -1,18 +1,19 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class Apds9960
+    public partial class Apds9960 : ByteCommsSensorBase<(Color? Color, Illuminance? AmbientLight)>
     {
-        /// <summary>
-        /// Communication bus used to communicate with the sensor.
-        /// This driver is a work-in-progress, contributions are always welcome
-        /// </summary>
-        private readonly II2cPeripheral apds9960;
+        //==== events
+        public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = delegate { };
+        public event EventHandler<IChangeResult<Color>> ColorUpdated = delegate { };
 
+        //==== internals
         IDigitalInputPort interruptPort;
 
         GestureData gestureData;
@@ -22,208 +23,33 @@ namespace Meadow.Foundation.Sensors.Motion
         int gestureLrCount;
         int gestureNearCount;
         int gestureFarCount;
-        State gestureState;
+        States gestureState;
         Direction gestureDirection;
-
-        // TODO: Please move these into classes, e.g.: `Apds9960.Addresses.cs` or whatever
-
-        /* APDS-9960 I2C address */
-        static readonly byte APDS9960_I2C_ADDR = 0x39;
-
-        /* Gesture parameters */
-        static readonly byte GESTURE_THRESHOLD_OUT = 10;
-        static readonly byte GESTURE_SENSITIVITY_1 = 50;
-        static readonly byte GESTURE_SENSITIVITY_2 = 20;
 
         /* Error code for returned values */
         static readonly byte ERROR = 0xFF;
 
-        /* Acceptable device IDs */
-        static readonly byte APDS9960_ID_1 = 0xAB;
-        static readonly byte APDS9960_ID_2 = 0x9C;
-
         /* Misc parameters */
         static readonly byte FIFO_PAUSE_TIME = 30;      // Wait period (ms) between FIFO reads
 
-        /* APDS-9960 register addresses */
-        static readonly byte APDS9960_ENABLE = 0x80;
-        static readonly byte APDS9960_ATIME = 0x81;
-        static readonly byte APDS9960_WTIME = 0x83;
-        static readonly byte APDS9960_AILTL = 0x84;
-        static readonly byte APDS9960_AILTH = 0x85;
-        static readonly byte APDS9960_AIHTL = 0x86;
-        static readonly byte APDS9960_AIHTH = 0x87;
-        static readonly byte APDS9960_PILT = 0x89;
-        static readonly byte APDS9960_PIHT = 0x8B;
-        static readonly byte APDS9960_PERS = 0x8C;
-        static readonly byte APDS9960_CONFIG1 = 0x8D;
-        static readonly byte APDS9960_PPULSE = 0x8E;
-        static readonly byte APDS9960_CONTROL = 0x8F;
-        static readonly byte APDS9960_CONFIG2 = 0x90;
-        static readonly byte APDS9960_ID = 0x92;
-        static readonly byte APDS9960_STATUS = 0x93;
-        static readonly byte APDS9960_CDATAL = 0x94;
-        static readonly byte APDS9960_CDATAH = 0x95;
-        static readonly byte APDS9960_RDATAL = 0x96;
-        static readonly byte APDS9960_RDATAH = 0x97;
-        static readonly byte APDS9960_GDATAL = 0x98;
-        static readonly byte APDS9960_GDATAH = 0x99;
-        static readonly byte APDS9960_BDATAL = 0x9A;
-        static readonly byte APDS9960_BDATAH = 0x9B;
-        static readonly byte APDS9960_PDATA = 0x9C;
-        static readonly byte APDS9960_POFFSET_UR = 0x9D;
-        static readonly byte APDS9960_POFFSET_DL = 0x9E;
-        static readonly byte APDS9960_CONFIG3 = 0x9F;
-        static readonly byte APDS9960_GPENTH = 0xA0;
-        static readonly byte APDS9960_GEXTH = 0xA1;
-        static readonly byte APDS9960_GCONF1 = 0xA2;
-        static readonly byte APDS9960_GCONF2 = 0xA3;
-        static readonly byte APDS9960_GOFFSET_U = 0xA4;
-        static readonly byte APDS9960_GOFFSET_D = 0xA5;
-        static readonly byte APDS9960_GOFFSET_L = 0xA7;
-        static readonly byte APDS9960_GOFFSET_R = 0xA9;
-        static readonly byte APDS9960_GPULSE = 0xA6;
-        static readonly byte APDS9960_GCONF3 = 0xAA;
-        static readonly byte APDS9960_GCONF4 = 0xAB;
-        static readonly byte APDS9960_GFLVL = 0xAE;
-        static readonly byte APDS9960_GSTATUS = 0xAF;
-        static readonly byte APDS9960_IFORCE = 0xE4;
-        static readonly byte APDS9960_PICLEAR = 0xE5;
-        static readonly byte APDS9960_CICLEAR = 0xE6;
-        static readonly byte APDS9960_AICLEAR = 0xE7;
-        static readonly byte APDS9960_GFIFO_U = 0xFC;
-        static readonly byte APDS9960_GFIFO_D = 0xFD;
-        static readonly byte APDS9960_GFIFO_L = 0xFE;
-        static readonly byte APDS9960_GFIFO_R = 0xFF;
+        //==== properties
 
-        /* Bit fields */
-        static readonly byte APDS9960_PON = 0b00000001;
-        static readonly byte APDS9960_AEN = 0b00000010;
-        static readonly byte APDS9960_PEN = 0b00000100;
-        static readonly byte APDS9960_WEN = 0b00001000;
-        static readonly byte APSD9960_AIEN = 0b00010000;
-        static readonly byte APDS9960_PIEN = 0b00100000;
-        static readonly byte APDS9960_GEN = 0b01000000;
-        static readonly byte APDS9960_GVALID = 0b00000001;
+        public Color? Color => Conditions.Color;
+        public Illuminance? AmbientLight => Conditions.AmbientLight;
 
-        /* On/Off definitions */
-        static readonly byte OFF = 0;
-        static readonly byte ON = 1;
-
-        /* Acceptable parameters for setMode */
-        static readonly byte POWER = 0;
-        static readonly byte AMBIENT_LIGHT = 1;
-        static readonly byte PROXIMITY = 2;
-        static readonly byte WAIT = 3;
-        static readonly byte AMBIENT_LIGHT_INT = 4;
-        static readonly byte PROXIMITY_INT = 5;
-        static readonly byte GESTURE = 6;
-        static readonly byte ALL = 7;
-
-        /* LED Drive values */
-        static readonly byte LED_DRIVE_100MA = 0;
-        static readonly byte LED_DRIVE_50MA = 1;
-        static readonly byte LED_DRIVE_25MA = 2;
-        static readonly byte LED_DRIVE_12_5MA = 3;
-
-        /* Proximity Gain (PGAIN) values */
-        static readonly byte PGAIN_1X = 0;
-        static readonly byte PGAIN_2X = 1;
-        static readonly byte PGAIN_4X = 2;
-        static readonly byte PGAIN_8X = 3;
-
-        /* ALS Gain (AGAIN) values */
-        static readonly byte AGAIN_1X = 0;
-        static readonly byte AGAIN_4X = 1;
-        static readonly byte AGAIN_16X = 2;
-        static readonly byte AGAIN_64X = 3;
-
-        /* Gesture Gain (GGAIN) values */
-        static readonly byte GGAIN_1X = 0;
-        static readonly byte GGAIN_2X = 1;
-        static readonly byte GGAIN_4X = 2;
-        static readonly byte GGAIN_8X = 3;
-
-        /* LED Boost values */
-        static readonly byte LED_BOOST_100 = 0;
-        static readonly byte LED_BOOST_150 = 1;
-        static readonly byte LED_BOOST_200 = 2;
-        static readonly byte LED_BOOST_300 = 3;
-
-        /* Gesture wait time values */
-        static readonly byte GWTIME_0MS = 0;
-        static readonly byte GWTIME_2_8MS = 1;
-        static readonly byte GWTIME_5_6MS = 2;
-        static readonly byte GWTIME_8_4MS = 3;
-        static readonly byte GWTIME_14_0MS = 4;
-        static readonly byte GWTIME_22_4MS = 5;
-        static readonly byte GWTIME_30_8MS = 6;
-        static readonly byte GWTIME_39_2MS = 7;
-
-        /* Default values */
-        static readonly byte DEFAULT_ATIME = 219;     // 103ms
-        static readonly byte DEFAULT_WTIME = 246;     // 27ms
-        static readonly byte DEFAULT_PROX_PPULSE = 0x87;    // 16us, 8 pulses
-        static readonly byte DEFAULT_GESTURE_PPULSE = 0x89;    // 16us, 10 pulses
-        static readonly byte DEFAULT_POFFSET_UR = 0;       // 0 offset
-        static readonly byte DEFAULT_POFFSET_DL = 0;       // 0 offset      
-        static readonly byte DEFAULT_CONFIG1 = 0x60;    // No 12x wait (WTIME) factor
-        static readonly byte DEFAULT_LDRIVE = LED_DRIVE_100MA;
-        static readonly byte DEFAULT_PGAIN = PGAIN_4X;
-        static readonly byte DEFAULT_AGAIN = AGAIN_4X;
-        static readonly byte DEFAULT_PILT = 0;       // Low proximity threshold
-        static readonly byte DEFAULT_PIHT = 50;      // High proximity threshold
-        static readonly ushort DEFAULT_AILT = 0xFFFF;  // Force interrupt for calibration
-        static readonly byte DEFAULT_AIHT = 0;
-        static readonly byte DEFAULT_PERS = 0x11;    // 2 consecutive prox or ALS for int.
-        static readonly byte DEFAULT_CONFIG2 = 0x01;    // No saturation interrupts or LED boost  
-        static readonly byte DEFAULT_CONFIG3 = 0;       // Enable all photodiodes, no SAI
-        static readonly byte DEFAULT_GPENTH = 40;      // Threshold for entering gesture mode
-        static readonly byte DEFAULT_GEXTH = 30;      // Threshold for exiting gesture mode    
-        static readonly byte DEFAULT_GCONF1 = 0x40;    // 4 gesture events for int., 1 for exit
-        static readonly byte DEFAULT_GGAIN = GGAIN_4X;
-        static readonly byte DEFAULT_GLDRIVE = LED_DRIVE_100MA;
-        static readonly byte DEFAULT_GWTIME = GWTIME_2_8MS;
-        static readonly byte DEFAULT_GOFFSET = 0;       // No offset scaling for gesture mode
-        static readonly byte DEFAULT_GPULSE = 0xC9;    // 32us, 10 pulses
-        static readonly byte DEFAULT_GCONF3 = 0;       // All photodiodes active during gesture
-        static readonly byte DEFAULT_GIEN = 0;       // Disable gesture interrupts
-
-        /* Direction definitions */
-        public enum Direction
-        {
-            NONE,
-            LEFT,
-            RIGHT,
-            UP,
-            DOWN,
-            NEAR,
-            FAR,
-            ALL //huh?
-        };
-
-        /* State definitions */
-        public enum State
-        {
-            NA_STATE,
-            NEAR_STATE,
-            FAR_STATE,
-            ALL_STATE
-        };
+        //==== ctors
 
         /// <summary>
         /// Create a new instance of the APDS9960 communicating over the I2C interface.
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">SI2C bus object</param>
-        public Apds9960(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin, byte address = 0x39)
+        public Apds9960(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin)
+            : base(i2cBus, 0x39)
         {
-            apds9960 = new I2cPeripheral(i2cBus, address);
-
             if (interruptPin != null)
             {
                 interruptPort = device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled);
-
                 interruptPort.Changed += InterruptPort_Changed;
             }
 
@@ -244,6 +70,48 @@ namespace Meadow.Foundation.Sensors.Motion
             Initialize();
         }
 
+        //==== Sensor overrides
+
+        protected override Task<(Color? Color, Illuminance? AmbientLight)> ReadSensor()
+        {
+            return Task.Run(() => {
+
+                (Color? Color, Illuminance? AmbientLight) conditions;
+
+                //---- ambient light
+                // TODO: someone needs to verify this
+                // have no idea if this conversion is correct. the exten of the datasheet documentation is:
+                // "RGBC results can be used to calculate ambient light levels (i.e. Lux) and color temperature (i.e. Kelvin)."
+                var ambient = ReadAmbientLight();
+                conditions.AmbientLight = new Illuminance(ambient, Illuminance.UnitType.Lux);
+
+                //---- color
+                // TODO: someone needs to verify this.
+                var rgbDivisor = 65536 / 256; // come back as 16-bit values (ushorts). need to be byte.
+                var r = (int)(ReadRedLight() / rgbDivisor);
+                var g = (int)(ReadGreenLight() / rgbDivisor);
+                var b = (int)(ReadBlueLight() / rgbDivisor);
+                var a = (int)(ambient / rgbDivisor);
+
+                conditions.Color = Foundation.Color.FromRgba(r, g, b, a);
+
+                return conditions;
+            });
+        }
+
+        protected override void RaiseEventsAndNotify(IChangeResult<(Color? Color, Illuminance? AmbientLight)> changeResult)
+        {
+            if (changeResult.New.AmbientLight is { } ambient) {
+                AmbientLightUpdated?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
+            }
+            if (changeResult.New.Color is { } color) {
+                ColorUpdated?.Invoke(this, new ChangeResult<Color>(color, changeResult.Old?.Color));
+            }
+            base.RaiseEventsAndNotify(changeResult);
+        }
+
+        //==== methods
+
         private void InterruptPort_Changed(object sender, DigitalPortResult e)
         {
         //    throw new NotImplementedException();
@@ -251,7 +119,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         void Initialize()
         {
-            var id = apds9960.ReadRegister(APDS9960_ID);
+            var id = Peripheral.ReadRegister(Registers.APDS9960_ID);
 
          //  if ((id != APDS9960_ID) && (id != APDS9960_ID_1) && (id != APDS9960_ID_2))
        //     if(id == 0)
@@ -260,53 +128,53 @@ namespace Meadow.Foundation.Sensors.Motion
        //     }
 
             Console.WriteLine("SetMode");
-            SetMode(ALL, OFF);
+            SetMode(OperatingModes.ALL, BooleanValues.OFF);
 
             /* Set default values for ambient light and proximity registers */
-            apds9960.WriteRegister(APDS9960_ATIME, DEFAULT_ATIME);
-            apds9960.WriteRegister(APDS9960_WTIME, DEFAULT_WTIME);
-            apds9960.WriteRegister(APDS9960_PPULSE, DEFAULT_PROX_PPULSE);
-            apds9960.WriteRegister(APDS9960_POFFSET_UR, DEFAULT_POFFSET_UR);
-            apds9960.WriteRegister(APDS9960_POFFSET_DL, DEFAULT_POFFSET_DL);
-            apds9960.WriteRegister(APDS9960_CONFIG1, DEFAULT_CONFIG1);
-            SetLEDDrive(DEFAULT_LDRIVE);
+            Peripheral.WriteRegister(Registers.APDS9960_ATIME, DefaultValues.DEFAULT_ATIME);
+            Peripheral.WriteRegister(Registers.APDS9960_WTIME, DefaultValues.DEFAULT_WTIME);
+            Peripheral.WriteRegister(Registers.APDS9960_PPULSE, DefaultValues.DEFAULT_PROX_PPULSE);
+            Peripheral.WriteRegister(Registers.APDS9960_POFFSET_UR, DefaultValues.DEFAULT_POFFSET_UR);
+            Peripheral.WriteRegister(Registers.APDS9960_POFFSET_DL, DefaultValues.DEFAULT_POFFSET_DL);
+            Peripheral.WriteRegister(Registers.APDS9960_CONFIG1, DefaultValues.DEFAULT_CONFIG1);
+            SetLEDDrive(DefaultValues.DEFAULT_LDRIVE);
 
             Console.WriteLine("SetProximityGain");
-            SetProximityGain(DEFAULT_PGAIN);
-            SetAmbientLightGain(DEFAULT_AGAIN);
-            SetProxIntLowThresh(DEFAULT_PILT);
-            SetProxIntHighThresh(DEFAULT_PIHT);
+            SetProximityGain(DefaultValues.DEFAULT_PGAIN);
+            SetAmbientLightGain(DefaultValues.DEFAULT_AGAIN);
+            SetProxIntLowThresh(DefaultValues.DEFAULT_PILT);
+            SetProxIntHighThresh(DefaultValues.DEFAULT_PIHT);
 
-            SetLightIntLowThreshold(DEFAULT_AILT);
+            SetLightIntLowThreshold(DefaultValues.DEFAULT_AILT);
 
-            SetLightIntHighThreshold(DEFAULT_AIHT);
+            SetLightIntHighThreshold(DefaultValues.DEFAULT_AIHT);
 
-            apds9960.WriteRegister(APDS9960_PERS, DEFAULT_PERS);
+            Peripheral.WriteRegister(Registers.APDS9960_PERS, DefaultValues.DEFAULT_PERS);
 
-            apds9960.WriteRegister(APDS9960_CONFIG2, DEFAULT_CONFIG2);
+            Peripheral.WriteRegister(Registers.APDS9960_CONFIG2, DefaultValues.DEFAULT_CONFIG2);
 
-            apds9960.WriteRegister(APDS9960_CONFIG3, DEFAULT_CONFIG3);
+            Peripheral.WriteRegister(Registers.APDS9960_CONFIG3, DefaultValues.DEFAULT_CONFIG3);
 
             Console.WriteLine("SetGestureEnterThresh");
-            SetGestureEnterThresh(DEFAULT_GPENTH);
+            SetGestureEnterThresh(DefaultValues.DEFAULT_GPENTH);
             
-            SetGestureExitThresh(DEFAULT_GEXTH);
+            SetGestureExitThresh(DefaultValues.DEFAULT_GEXTH);
             
-            apds9960.WriteRegister(APDS9960_GCONF1, DEFAULT_GCONF1);
+            Peripheral.WriteRegister(Registers.APDS9960_GCONF1, DefaultValues.DEFAULT_GCONF1);
             
-            SetGestureGain(DEFAULT_GGAIN);
+            SetGestureGain(DefaultValues.DEFAULT_GGAIN);
             
-            SetGestureLEDDrive(DEFAULT_GLDRIVE);
+            SetGestureLEDDrive(DefaultValues.DEFAULT_GLDRIVE);
             
-            SetGestureWaitTime(DEFAULT_GWTIME);
+            SetGestureWaitTime(DefaultValues.DEFAULT_GWTIME);
             
-            apds9960.WriteRegister(APDS9960_GOFFSET_U, DEFAULT_GOFFSET);
-            apds9960.WriteRegister(APDS9960_GOFFSET_D, DEFAULT_GOFFSET);
-            apds9960.WriteRegister(APDS9960_GOFFSET_L, DEFAULT_GOFFSET);
-            apds9960.WriteRegister(APDS9960_GOFFSET_R, DEFAULT_GOFFSET);
-            apds9960.WriteRegister(APDS9960_GPULSE, DEFAULT_GPULSE);
-            apds9960.WriteRegister(APDS9960_GCONF3, DEFAULT_GCONF3);
-            SetGestureIntEnable(DEFAULT_GIEN);
+            Peripheral.WriteRegister(Registers.APDS9960_GOFFSET_U, DefaultValues.DEFAULT_GOFFSET);
+            Peripheral.WriteRegister(Registers.APDS9960_GOFFSET_D, DefaultValues.DEFAULT_GOFFSET);
+            Peripheral.WriteRegister(Registers.APDS9960_GOFFSET_L, DefaultValues.DEFAULT_GOFFSET);
+            Peripheral.WriteRegister(Registers.APDS9960_GOFFSET_R, DefaultValues.DEFAULT_GOFFSET);
+            Peripheral.WriteRegister(Registers.APDS9960_GPULSE, DefaultValues.DEFAULT_GPULSE);
+            Peripheral.WriteRegister(Registers.APDS9960_GCONF3, DefaultValues.DEFAULT_GCONF3);
+            SetGestureIntEnable(DefaultValues.DEFAULT_GIEN);
         }
 
         /**
@@ -316,7 +184,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetMode()
         {
-             return apds9960.ReadRegister(APDS9960_ENABLE);
+             return Peripheral.ReadRegister(Registers.APDS9960_ENABLE);
         }
 
         /**
@@ -351,7 +219,7 @@ namespace Meadow.Foundation.Sensors.Motion
                     reg_val &= (byte)(~(1 << mode));
                 }
             }
-            else if (mode == ALL)
+            else if (mode == OperatingModes.ALL)
             {
                 if (enable > 0)
                 {
@@ -364,31 +232,31 @@ namespace Meadow.Foundation.Sensors.Motion
             }
 
             /* Write value back to ENABLE register */
-            apds9960.WriteRegister(APDS9960_ENABLE, reg_val);
+            Peripheral.WriteRegister(Registers.APDS9960_ENABLE, reg_val);
         }
 
         public void EnableLightSensor(bool interrupts)
         {
             /* Set default gain, interrupts, enable power, and enable sensor */
-            SetAmbientLightGain(DEFAULT_AGAIN);
+            SetAmbientLightGain(DefaultValues.DEFAULT_AGAIN);
     
             SetAmbientLightIntEnable(interrupts);
     
             EnablePower(true);
-            SetMode(AMBIENT_LIGHT, 1);
+            SetMode(OperatingModes.AMBIENT_LIGHT, 1);
         }
 
         public void DisableLightSensor()
         {
             SetAmbientLightIntEnable(false);
-            SetMode(AMBIENT_LIGHT, 0);
+            SetMode(OperatingModes.AMBIENT_LIGHT, 0);
         }
 
         public void EnableProximitySensor(bool interrupts)
         {
             /* Set default gain, LED, interrupts, enable power, and enable sensor */
-            SetProximityGain(DEFAULT_PGAIN);
-            SetLEDDrive(DEFAULT_LDRIVE);
+            SetProximityGain(DefaultValues.DEFAULT_PGAIN);
+            SetLEDDrive(DefaultValues.DEFAULT_LDRIVE);
 
             if (interrupts)
             {
@@ -399,13 +267,13 @@ namespace Meadow.Foundation.Sensors.Motion
                 SetProximityIntEnable(0);
             }
             EnablePower(true);
-            SetMode(PROXIMITY, 1);
+            SetMode(OperatingModes.PROXIMITY, 1);
         }
 
         public void DisableProximitySensor()
         {
             SetProximityIntEnable(0);
-            SetMode(PROXIMITY, 0);
+            SetMode(OperatingModes.PROXIMITY, 0);
         }
 
         /**
@@ -425,11 +293,11 @@ namespace Meadow.Foundation.Sensors.Motion
             */
             Console.WriteLine("ResetGestureParameters");
             ResetGestureParameters();
-            apds9960.WriteRegister(APDS9960_WTIME, 0xFF);
-            apds9960.WriteRegister(APDS9960_PPULSE, DEFAULT_GESTURE_PPULSE);
+            Peripheral.WriteRegister(Registers.APDS9960_WTIME, 0xFF);
+            Peripheral.WriteRegister(Registers.APDS9960_PPULSE, DefaultValues.DEFAULT_GESTURE_PPULSE);
 
             Console.WriteLine("SetLEDBoost");
-            SetLEDBoost(LED_BOOST_100);
+            SetLEDBoost(GainValues.LED_BOOST_100);
 
             Console.WriteLine("SetGestureIntEnable");
             SetGestureIntEnable((byte)(interrupts?1:0));
@@ -437,9 +305,9 @@ namespace Meadow.Foundation.Sensors.Motion
             Console.WriteLine("SetGestureMode");
             SetGestureMode(1);
             EnablePower(true);
-            SetMode(WAIT, 1);
-            SetMode(PROXIMITY, 1);
-            SetMode(GESTURE, 1);
+            SetMode(OperatingModes.WAIT, 1);
+            SetMode(OperatingModes.PROXIMITY, 1);
+            SetMode(OperatingModes.GESTURE, 1);
 
             return true;
         }
@@ -449,15 +317,15 @@ namespace Meadow.Foundation.Sensors.Motion
             ResetGestureParameters();
             SetGestureIntEnable(0);
             SetGestureMode(0);
-            SetMode(GESTURE, 0);
+            SetMode(OperatingModes.GESTURE, 0);
         }
 
         public bool IsGestureAvailable()
         {
-            byte val = apds9960.ReadRegister(APDS9960_GSTATUS);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GSTATUS);
 
             /* Shift and mask out GVALID bit */
-            val &= APDS9960_GVALID;
+            val &= BitFields.APDS9960_GVALID;
 
             /* Return true/false based on GVALID bit */
             return val == 1;
@@ -484,21 +352,21 @@ namespace Meadow.Foundation.Sensors.Motion
                 Thread.Sleep(FIFO_PAUSE_TIME);
 
                 Console.WriteLine("Read: APDS9960_GSTATUS");
-                var gstatus = apds9960.ReadRegister(APDS9960_GSTATUS);
+                var gstatus = Peripheral.ReadRegister(Registers.APDS9960_GSTATUS);
 
                 /* If we have valid data, read in FIFO */
                 Console.WriteLine("Read: APDS9960_GVALID");
-                if ((gstatus & APDS9960_GVALID) == APDS9960_GVALID)
+                if ((gstatus & BitFields.APDS9960_GVALID) == BitFields.APDS9960_GVALID)
                 {
                     Console.WriteLine("Read: APDS9960_GFLVL");
-                    fifo_level = apds9960.ReadRegister(APDS9960_GFLVL);
+                    fifo_level = Peripheral.ReadRegister(Registers.APDS9960_GFLVL);
 
                     /* If there's stuff in the FIFO, read it into our data block */
                     if (fifo_level > 0)
                     {
                         Console.WriteLine($"fifo level {fifo_level}");
 
-                        byte[] fifo_data = apds9960.ReadRegisters(APDS9960_GFIFO_U, (ushort)(fifo_level * 4));
+                        byte[] fifo_data = Peripheral.ReadRegisters(Registers.APDS9960_GFIFO_U, (ushort)(fifo_level * 4));
 
                         Console.WriteLine(BitConverter.ToString(fifo_data));
 
@@ -557,44 +425,44 @@ namespace Meadow.Foundation.Sensors.Motion
 
         public void EnablePower(bool enable)
         {
-            SetMode(POWER, (byte)(enable ? 1 : 0));
+            SetMode(OperatingModes.POWER, (byte)(enable ? 1 : 0));
         }
 
         /*******************************************************************************
          * Ambient light and color sensor controls
          ******************************************************************************/
-        public ushort ReadAmbientLight()
+        protected ushort ReadAmbientLight()
         {
-            byte val = apds9960.ReadRegister(APDS9960_CDATAL);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CDATAL);
 
-            byte val_byte = apds9960.ReadRegister(APDS9960_CDATAH);
+            byte val_byte = Peripheral.ReadRegister(Registers.APDS9960_CDATAH);
 
             return (ushort)(val + (val_byte << 8));
         }
 
-        public ushort ReadRedLight()
+        protected ushort ReadRedLight()
         {
-            byte val = apds9960.ReadRegister(APDS9960_RDATAL);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_RDATAL);
 
-            byte val_byte = apds9960.ReadRegister(APDS9960_RDATAH);
+            byte val_byte = Peripheral.ReadRegister(Registers.APDS9960_RDATAH);
 
             return (ushort)(val + (val_byte << 8));
         }
 
-        public ushort ReadGreenLight()
+        protected ushort ReadGreenLight()
         {
-            byte val = apds9960.ReadRegister(APDS9960_GDATAL);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GDATAL);
 
-            byte val_byte = apds9960.ReadRegister(APDS9960_GDATAH);
+            byte val_byte = Peripheral.ReadRegister(Registers.APDS9960_GDATAH);
 
             return (ushort)(val + (val_byte << 8));
         }
 
-        public ushort ReadBlueLight()
+        protected ushort ReadBlueLight()
         {
-            byte val = apds9960.ReadRegister(APDS9960_BDATAL);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_BDATAL);
 
-            byte val_byte = apds9960.ReadRegister(APDS9960_BDATAH);
+            byte val_byte = Peripheral.ReadRegister(Registers.APDS9960_BDATAH);
 
             return (ushort)(val + (val_byte << 8));
         }
@@ -604,7 +472,7 @@ namespace Meadow.Foundation.Sensors.Motion
          ******************************************************************************/
         public byte ReadProximity()
         {
-            return apds9960.ReadRegister(APDS9960_PDATA);
+            return Peripheral.ReadRegister(Registers.APDS9960_PDATA);
         }
 
         /*******************************************************************************
@@ -668,10 +536,10 @@ namespace Meadow.Foundation.Sensors.Motion
                 /* Find the first value in U/D/L/R above the threshold */
                 for (i = 0; i < gestureData.TotalGestures; i++)
                 {
-                    if ((gestureData.UData[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gestureData.DData[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gestureData.LData[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gestureData.RData[i] > GESTURE_THRESHOLD_OUT))
+                    if ((gestureData.UData[i] > GestureParameters.GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.DData[i] > GestureParameters.GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.LData[i] > GestureParameters.GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.RData[i] > GestureParameters.GESTURE_THRESHOLD_OUT))
                     {
 
                         u_first = gestureData.UData[i];
@@ -691,10 +559,10 @@ namespace Meadow.Foundation.Sensors.Motion
                 /* Find the last value in U/D/L/R above the threshold */
                 for (i = gestureData.TotalGestures - 1; i >= 0; i--)
                 {
-                    if ((gestureData.UData[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gestureData.DData[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gestureData.LData[i] > GESTURE_THRESHOLD_OUT) &&
-                        (gestureData.RData[i] > GESTURE_THRESHOLD_OUT))
+                    if ((gestureData.UData[i] > GestureParameters.GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.DData[i] > GestureParameters.GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.LData[i] > GestureParameters.GESTURE_THRESHOLD_OUT) &&
+                        (gestureData.RData[i] > GestureParameters.GESTURE_THRESHOLD_OUT))
                     {
 
                         u_last = gestureData.UData[i];
@@ -721,11 +589,11 @@ namespace Meadow.Foundation.Sensors.Motion
             gestureLrDelta += lr_delta;
 
             /* Determine U/D gesture */
-            if (gestureUdDelta >= GESTURE_SENSITIVITY_1)
+            if (gestureUdDelta >= GestureParameters.GESTURE_SENSITIVITY_1)
             {
                 gestureUdCount = 1;
             }
-            else if (gestureUdDelta <= -GESTURE_SENSITIVITY_1)
+            else if (gestureUdDelta <= -GestureParameters.GESTURE_SENSITIVITY_1)
             {
                 gestureUdCount = -1;
             }
@@ -735,11 +603,11 @@ namespace Meadow.Foundation.Sensors.Motion
             }
 
             /* Determine L/R gesture */
-            if (gestureLrDelta >= GESTURE_SENSITIVITY_1)
+            if (gestureLrDelta >= GestureParameters.GESTURE_SENSITIVITY_1)
             {
                 gestureLrCount = 1;
             }
-            else if (gestureLrDelta <= -GESTURE_SENSITIVITY_1)
+            else if (gestureLrDelta <= -GestureParameters.GESTURE_SENSITIVITY_1)
             {
                 gestureLrCount = -1;
             }
@@ -751,8 +619,8 @@ namespace Meadow.Foundation.Sensors.Motion
             /* Determine Near/Far gesture */
             if ((gestureUdCount == 0) && (gestureLrCount == 0))
             {
-                if ((Math.Abs(ud_delta) < GESTURE_SENSITIVITY_2) && 
-                    (Math.Abs(lr_delta) < GESTURE_SENSITIVITY_2) )
+                if ((Math.Abs(ud_delta) < GestureParameters.GESTURE_SENSITIVITY_2) && 
+                    (Math.Abs(lr_delta) < GestureParameters.GESTURE_SENSITIVITY_2) )
                 {
 
                     if ((ud_delta == 0) && (lr_delta == 0))
@@ -768,11 +636,11 @@ namespace Meadow.Foundation.Sensors.Motion
                     {
                         if ((ud_delta == 0) && (lr_delta == 0))
                         {
-                            gestureState =State.NEAR_STATE;
+                            gestureState =States.NEAR_STATE;
                         }
                         else if ((ud_delta != 0) && (lr_delta != 0))
                         {
-                            gestureState = State.FAR_STATE;
+                            gestureState = States.FAR_STATE;
                         }
                         return true;
                     }
@@ -780,7 +648,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             else
             {
-                if ((Math.Abs(ud_delta) < GESTURE_SENSITIVITY_2) && (Math.Abs(lr_delta) < GESTURE_SENSITIVITY_2) ) {
+                if ((Math.Abs(ud_delta) < GestureParameters.GESTURE_SENSITIVITY_2) && (Math.Abs(lr_delta) < GestureParameters.GESTURE_SENSITIVITY_2) ) {
 
                     if ((ud_delta == 0) && (lr_delta == 0))
                     {
@@ -808,12 +676,12 @@ namespace Meadow.Foundation.Sensors.Motion
         bool DecodeGesture()
         {
             /* Return if near or far event is detected */
-            if (gestureState == State.NEAR_STATE)
+            if (gestureState == States.NEAR_STATE)
             {
                 gestureDirection = Direction.NEAR;
                 return true;
             }
-            if (gestureState == State.FAR_STATE)
+            if (gestureState == States.FAR_STATE)
             {
                 gestureDirection = Direction.FAR;
                 return true;
@@ -899,7 +767,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         public byte GetProxIntLowThresh()
         {
-            return apds9960.ReadRegister(APDS9960_PILT);
+            return Peripheral.ReadRegister(Registers.APDS9960_PILT);
         }
 
         /**
@@ -910,7 +778,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         public void SetProxIntLowThresh(byte threshold)
         {
-            apds9960.WriteRegister(APDS9960_PILT, threshold);
+            Peripheral.WriteRegister(Registers.APDS9960_PILT, threshold);
         }
 
         /**
@@ -920,7 +788,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         public byte GetProxIntHighThresh()
         {
-            return apds9960.ReadRegister(APDS9960_PIHT);
+            return Peripheral.ReadRegister(Registers.APDS9960_PIHT);
         }
 
         /**
@@ -931,7 +799,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         public void SetProxIntHighThresh(byte threshold)
         {
-            apds9960.WriteRegister(APDS9960_PIHT, threshold);
+            Peripheral.WriteRegister(Registers.APDS9960_PIHT, threshold);
         }
 
         /**
@@ -947,7 +815,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         public byte GetLEDDrive()
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONTROL);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONTROL);
 
             /* Shift and mask out LED drive bits */
             val = (byte)((val >> 6) & 0b00000011);
@@ -969,7 +837,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         public bool SetLEDDrive(byte drive)
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONTROL);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONTROL);
 
             /* Set bits in register to given value */
             drive &= 0b00000011;
@@ -978,7 +846,7 @@ namespace Meadow.Foundation.Sensors.Motion
             val |= drive;
 
             /* Write register value back into CONTROL register */
-            apds9960.WriteRegister(APDS9960_CONTROL, val);
+            Peripheral.WriteRegister(Registers.APDS9960_CONTROL, val);
 
             return true;
         }
@@ -996,7 +864,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         public byte GetProximityGain()
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONTROL);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONTROL);
 
             /* Shift and mask out PDRIVE bits */
             val = (byte)((val >> 2) & 0b00000011);
@@ -1018,7 +886,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         public void SetProximityGain(byte drive)
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONTROL);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONTROL);
 
             /* Set bits in register to given value */
             drive &= 0b00000011;
@@ -1027,7 +895,7 @@ namespace Meadow.Foundation.Sensors.Motion
             val |= drive;
 
             /* Write register value back into CONTROL register */
-            apds9960.WriteRegister(APDS9960_CONTROL, val);
+            Peripheral.WriteRegister(Registers.APDS9960_CONTROL, val);
         }
 
         /**
@@ -1043,7 +911,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetAmbientLightGain()
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONTROL);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONTROL);
 
             /* Shift and mask out ADRIVE bits */
             val &= 0b00000011;
@@ -1065,7 +933,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetAmbientLightGain(byte drive)
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONTROL);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONTROL);
 
             /* Set bits in register to given value */
             drive &= 0b00000011;
@@ -1073,7 +941,7 @@ namespace Meadow.Foundation.Sensors.Motion
             val |= drive;
 
             /* Write register value back into CONTROL register */
-            apds9960.WriteRegister(APDS9960_CONTROL, val);
+            Peripheral.WriteRegister(Registers.APDS9960_CONTROL, val);
         }
 
         /**
@@ -1089,7 +957,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetLEDBoost()
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONTROL);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONTROL);
 
             /* Shift and mask out LED_BOOST bits */
             val = (byte)((val >> 4) & 0b00000011);
@@ -1111,7 +979,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetLEDBoost(byte boost)
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONFIG2);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONFIG2);
 
             /* Set bits in register to given value */
             boost &= 0b00000011;
@@ -1119,7 +987,7 @@ namespace Meadow.Foundation.Sensors.Motion
             val &= 0b11001111;
             val |= boost;
 
-            apds9960.WriteRegister(APDS9960_CONFIG2, val);
+            Peripheral.WriteRegister(Registers.APDS9960_CONFIG2, val);
         }
 
         /**
@@ -1129,7 +997,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetProxGainCompEnable()
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONFIG3);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONFIG3);
 
             /* Shift and mask out PCMP bits */
             val = (byte)((val >> 5) & 0b00000001);
@@ -1145,7 +1013,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetProxGainCompEnable(byte enable)
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONFIG3);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONFIG3);
 
             /* Set bits in register to given value */
             enable &= 0b00000001;
@@ -1154,7 +1022,7 @@ namespace Meadow.Foundation.Sensors.Motion
             val |= enable;
 
             /* Write register value back into CONFIG3 register */
-            apds9960.WriteRegister(APDS9960_CONFIG3, val);
+            Peripheral.WriteRegister(Registers.APDS9960_CONFIG3, val);
         }
 
         /**
@@ -1171,7 +1039,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetProxPhotoMask()
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONFIG3);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONFIG3);
 
             /* Mask out photodiode enable mask bits */
             val &= 0b00001111;
@@ -1194,14 +1062,14 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetProxPhotoMask(byte mask)
         {
-            byte val = apds9960.ReadRegister(APDS9960_CONFIG3);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_CONFIG3);
 
             /* Set bits in register to given value */
             mask &= 0b00001111;
             val &= 0b11110000;
             val |= mask;
 
-            apds9960.WriteRegister(APDS9960_CONFIG3, val);
+            Peripheral.WriteRegister(Registers.APDS9960_CONFIG3, val);
         }
 
         /**
@@ -1211,7 +1079,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetGestureEnterThresh()
         {
-            byte val = apds9960.ReadRegister(APDS9960_GPENTH);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GPENTH);
 
             return val;
         }
@@ -1224,7 +1092,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetGestureEnterThresh(byte threshold)
         {
-            apds9960.WriteRegister(APDS9960_GPENTH, threshold);
+            Peripheral.WriteRegister(Registers.APDS9960_GPENTH, threshold);
         }
 
         /**
@@ -1234,7 +1102,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetGestureExitThresh()
         {
-            byte val = apds9960.ReadRegister(APDS9960_GEXTH);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GEXTH);
 
             return val;
         }
@@ -1247,7 +1115,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetGestureExitThresh(byte threshold)
         {
-            apds9960.WriteRegister(APDS9960_GEXTH, threshold);
+            Peripheral.WriteRegister(Registers.APDS9960_GEXTH, threshold);
         }
 
         /**
@@ -1263,7 +1131,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetGestureGain()
         {
-            byte val = apds9960.ReadRegister(APDS9960_GCONF2);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GCONF2);
 
             /* Shift and mask out GGAIN bits */
             val = (byte)((val >> 5) & 0b00000011);
@@ -1285,7 +1153,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetGestureGain(byte gain)
         {
-            byte val = apds9960.ReadRegister(APDS9960_GCONF2);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GCONF2);
 
             /* Set bits in register to given value */
             gain &= 0b00000011;
@@ -1294,7 +1162,7 @@ namespace Meadow.Foundation.Sensors.Motion
             val |= gain;
 
             /* Write register value back into GCONF2 register */
-            apds9960.WriteRegister(APDS9960_GCONF2, val);
+            Peripheral.WriteRegister(Registers.APDS9960_GCONF2, val);
         }
 
         /**
@@ -1311,7 +1179,7 @@ namespace Meadow.Foundation.Sensors.Motion
         byte GetGestureLEDDrive()
         {
             /* Read value from GCONF2 register */
-            byte val = apds9960.ReadRegister(APDS9960_GCONF2);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GCONF2);
 
             /* Shift and mask out GLDRIVE bits */
             val = (byte)((val >> 3) & 0b00000011);
@@ -1333,7 +1201,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetGestureLEDDrive(byte drive)
         {
-            byte val = apds9960.ReadRegister(APDS9960_GCONF2);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GCONF2);
 
             /* Set bits in register to given value */
             drive &= 0b00000011;
@@ -1341,7 +1209,7 @@ namespace Meadow.Foundation.Sensors.Motion
             val &= 0b11100111;
             val |= drive;
 
-            apds9960.WriteRegister(APDS9960_GCONF2, val);
+            Peripheral.WriteRegister(Registers.APDS9960_GCONF2, val);
         }
 
         /**
@@ -1361,7 +1229,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetGestureWaitTime()
         {
-            byte val = apds9960.ReadRegister(APDS9960_GCONF2);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GCONF2);
 
             /* Mask out GWTIME bits */
             val &= 0b00000111;
@@ -1387,14 +1255,14 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetGestureWaitTime(byte time)
         {
-            byte val = apds9960.ReadRegister(APDS9960_GCONF2);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GCONF2);
 
             /* Set bits in register to given value */
             time &= 0b00000111;
             val &= 0b11111000;
             val |= time;
 
-            apds9960.WriteRegister(APDS9960_GCONF2, val);
+            Peripheral.WriteRegister(Registers.APDS9960_GCONF2, val);
         }
 
         /**
@@ -1405,9 +1273,9 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         ushort GetLightIntLowThreshold()
         {
-            var threshold = apds9960.ReadRegister(APDS9960_AILTL);
+            var threshold = Peripheral.ReadRegister(Registers.APDS9960_AILTL);
 
-            var val_byte = apds9960.ReadRegister(APDS9960_AILTH);
+            var val_byte = Peripheral.ReadRegister(Registers.APDS9960_AILTH);
       
             return (byte)(threshold + ((ushort)val_byte << 8));
         }
@@ -1427,8 +1295,8 @@ namespace Meadow.Foundation.Sensors.Motion
             val_low = (byte)(threshold & 0x00FF);
             val_high = (byte)((threshold & 0xFF00) >> 8);
 
-            apds9960.WriteRegister(APDS9960_AILTL, val_low);
-            apds9960.WriteRegister(APDS9960_AILTL, val_high);
+            Peripheral.WriteRegister(Registers.APDS9960_AILTL, val_low);
+            Peripheral.WriteRegister(Registers.APDS9960_AILTL, val_high);
         }
 
         /**
@@ -1439,9 +1307,9 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         ushort GetLightIntHighThreshold()
         {
-            var threshold = apds9960.ReadRegister(APDS9960_AIHTL);
+            var threshold = Peripheral.ReadRegister(Registers.APDS9960_AIHTL);
 
-            var val_byte = apds9960.ReadRegister(APDS9960_AIHTH);
+            var val_byte = Peripheral.ReadRegister(Registers.APDS9960_AIHTH);
 
             return (byte)(threshold + ((ushort)val_byte << 8));
         }
@@ -1458,8 +1326,8 @@ namespace Meadow.Foundation.Sensors.Motion
             byte val_low = (byte)(threshold & 0x00FF);
             byte val_high = (byte)((threshold & 0xFF00) >> 8);
 
-            apds9960.WriteRegister(APDS9960_AIHTL, val_low);
-            apds9960.WriteRegister(APDS9960_AIHTH, val_high);
+            Peripheral.WriteRegister(Registers.APDS9960_AIHTL, val_low);
+            Peripheral.WriteRegister(Registers.APDS9960_AIHTH, val_high);
         }
 
         /**
@@ -1470,7 +1338,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetProximityIntLowThreshold()
         {
-            return apds9960.ReadRegister(APDS9960_PILT);
+            return Peripheral.ReadRegister(Registers.APDS9960_PILT);
         }
 
         /**
@@ -1481,7 +1349,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetProximityIntLowThreshold(byte threshold)
         {
-            apds9960.WriteRegister(APDS9960_PILT, threshold);
+            Peripheral.WriteRegister(Registers.APDS9960_PILT, threshold);
         }
 
         /**
@@ -1492,7 +1360,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetProximityIntHighThreshold()
         {
-            return apds9960.ReadRegister(APDS9960_PIHT);
+            return Peripheral.ReadRegister(Registers.APDS9960_PIHT);
         }
 
         /**
@@ -1503,7 +1371,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetProximityIntHighThreshold(byte threshold)
         {
-            apds9960.WriteRegister(APDS9960_PIHT, threshold);
+            Peripheral.WriteRegister(Registers.APDS9960_PIHT, threshold);
         }
 
         /**
@@ -1513,7 +1381,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetAmbientLightIntEnable()
         {
-            byte val = apds9960.ReadRegister(APDS9960_ENABLE);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_ENABLE);
 
             /* Shift and mask out AIEN bit */
             val = (byte)((val >> 4) & 0b00000001);
@@ -1529,7 +1397,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetAmbientLightIntEnable(bool enable)
         {
-            byte val = apds9960.ReadRegister(APDS9960_ENABLE);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_ENABLE);
 
             /* Set bits in register to given value */
             byte data = (byte)(enable ? 0x1 : 0x0);
@@ -1538,7 +1406,7 @@ namespace Meadow.Foundation.Sensors.Motion
             val &= 0b11101111;
             val |= data;
 
-            apds9960.WriteRegister(APDS9960_ENABLE, val);
+            Peripheral.WriteRegister(Registers.APDS9960_ENABLE, val);
         }
 
         /**
@@ -1548,7 +1416,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetProximityIntEnable()
         {
-            byte val = apds9960.ReadRegister(APDS9960_ENABLE);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_ENABLE);
 
             /* Shift and mask out PIEN bit */
             val = (byte)((val >> 5) & 0b00000001);
@@ -1564,7 +1432,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetProximityIntEnable(byte enable)
         {
-            byte val = apds9960.ReadRegister(APDS9960_ENABLE);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_ENABLE);
 
             /* Set bits in register to given value */
             enable &= 0b00000001;
@@ -1572,7 +1440,7 @@ namespace Meadow.Foundation.Sensors.Motion
             val &= 0b11011111;
             val |= enable;
 
-            apds9960.WriteRegister(APDS9960_ENABLE, val);
+            Peripheral.WriteRegister(Registers.APDS9960_ENABLE, val);
         }
 
         /**
@@ -1582,7 +1450,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetGestureIntEnable()
         {
-            byte val = apds9960.ReadRegister(APDS9960_GCONF4);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GCONF4);
 
             /* Shift and mask out GIEN bit */
             val = (byte)((val >> 1) & 0b00000001);
@@ -1598,7 +1466,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetGestureIntEnable(byte enable)
         {
-            byte val = apds9960.ReadRegister(APDS9960_GCONF4);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GCONF4);
 
             /* Set bits in register to given value */
             enable &= 0b00000001;
@@ -1606,7 +1474,7 @@ namespace Meadow.Foundation.Sensors.Motion
             val &= 0b11111101;
             val |= enable;
 
-            apds9960.WriteRegister(APDS9960_GCONF4, val);
+            Peripheral.WriteRegister(Registers.APDS9960_GCONF4, val);
         }
 
         /**
@@ -1616,7 +1484,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void ClearAmbientLightInt()
         {
-            apds9960.WriteRegister(APDS9960_AICLEAR, 0);
+            Peripheral.WriteRegister(Registers.APDS9960_AICLEAR, 0);
         }
 
         /**
@@ -1626,7 +1494,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void ClearProximityInt()
         {
-            apds9960.WriteRegister(APDS9960_PICLEAR, 0);
+            Peripheral.WriteRegister(Registers.APDS9960_PICLEAR, 0);
         }
 
         /**
@@ -1636,7 +1504,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetGestureMode()
         {
-            byte val = apds9960.ReadRegister(APDS9960_GCONF4);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GCONF4);
 
             /* Mask out GMODE bit */
             val &= 0b00000001;
@@ -1652,14 +1520,14 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         void SetGestureMode(byte mode)
         {
-            byte val = apds9960.ReadRegister(APDS9960_GCONF4);
+            byte val = Peripheral.ReadRegister(Registers.APDS9960_GCONF4);
 
             /* Set bits in register to given value */
             mode &= 0b00000001;
             val &= 0b11111110;
             val |= mode;
 
-            apds9960.WriteRegister(APDS9960_GCONF4, val);
+            Peripheral.WriteRegister(Registers.APDS9960_GCONF4, val);
         }
 
         /* Container for gesture data */

@@ -13,9 +13,10 @@
     <Version>0.1.3</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>APDS9960 I2C proximity, light, color and gesture sensor</Description>
+    <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath=""/>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>
