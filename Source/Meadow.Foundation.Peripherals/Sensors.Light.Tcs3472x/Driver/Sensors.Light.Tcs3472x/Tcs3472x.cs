@@ -17,6 +17,7 @@ namespace Meadow.Foundation.Sensors.Light
         : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>,
             ILightSensor//, IColorSensor
     {
+        // TODO: missing event for ColorUpdated
         //==== events
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 

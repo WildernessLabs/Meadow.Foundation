@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
@@ -16,10 +15,9 @@ namespace Sensors.Light.Tsl2591_Sample
         {
             Console.WriteLine("Initializing...");
 
-            // configure our BME280 on the I2C Bus
+            // configure our sensor on the I2C Bus
             var i2c = Device.CreateI2cBus();
             sensor = new Tsl2591(i2c);
-
 
             //==== IObservable 
             // Example that uses an IObersvable subscription to only be notified
@@ -66,6 +64,5 @@ namespace Sensors.Light.Tsl2591_Sample
             Console.WriteLine($"  Visible Light: {result.VisibleLight?.Lux:N2}Lux");
             Console.WriteLine($"  Integrated Light: {result.Integrated?.Lux:N2}Lux");
         }
-
     }
 }
