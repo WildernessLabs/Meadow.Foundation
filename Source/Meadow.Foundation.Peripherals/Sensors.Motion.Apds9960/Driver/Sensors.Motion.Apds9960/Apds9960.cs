@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
+    // TODO: the light stuff seems to work. not sure on the RGB conversion though.
+    //  haven't tested any of the gesture stuff.
+    //  need to add distance
+
     public partial class Apds9960 : ByteCommsSensorBase<(Color? Color, Illuminance? AmbientLight)>
     {
         //==== events
@@ -78,10 +82,15 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 (Color? Color, Illuminance? AmbientLight) conditions;
 
+                // TODO: before each of these readings, we need to check to see
+                // if that feature is enabled, and if it's not, skip it and set
+                // the `conditions.[feature] = null;`
+
                 //---- ambient light
                 // TODO: someone needs to verify this
                 // have no idea if this conversion is correct. the exten of the datasheet documentation is:
                 // "RGBC results can be used to calculate ambient light levels (i.e. Lux) and color temperature (i.e. Kelvin)."
+                // NOTE: looks correct, actually. reading ~600 lux in my office and went to 4k LUX when i moved the sensor to the window
                 var ambient = ReadAmbientLight();
                 conditions.AmbientLight = new Illuminance(ambient, Illuminance.UnitType.Lux);
 
