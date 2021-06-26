@@ -27,10 +27,11 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// by setting the sensor type to <i>SensorType.Custom</i> and providing the settings for
     /// the linear calculations.
     /// The default sensors have the following settings:
-    /// Sensor              Millivolts at 25C    Millivolts per degree C   VoltageOffset
-    /// TMP35, LM35, LM45       250                     10                      0
-    /// TMP36, LM50             750                     10                      0.5
-    /// TMP37                   500                     20                      0
+    /// Sensor              Millivolts at 25C    Millivolts per degree C  
+    /// TMP35, LM35, LM45       250                     10                    
+    /// TMP23x, TMP36, LM50     750                     10                   
+    /// TMP37                   500                     20                
+    /// TMP236                  887.5                   19.5                    
     /// </remarks>
     public partial class AnalogTemperature : SensorBase<Units.Temperature>, ITemperatureSensor
     {
@@ -49,6 +50,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         public enum KnownSensorType
         {
             Custom,
+            TMP235,
+            TMP236,
             TMP35,
             TMP36,
             TMP37,
@@ -104,6 +107,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                         millivoltsPerDegreeCentigrade: 10);
                     break;
                 case KnownSensorType.LM50:
+                case KnownSensorType.TMP235:
                 case KnownSensorType.TMP36:
                     calibration = new Calibration(
                         degreesCelciusSampleReading: 25,
@@ -113,8 +117,14 @@ namespace Meadow.Foundation.Sensors.Temperature
                 case KnownSensorType.TMP37:
                     calibration = new Calibration(
                         degreesCelciusSampleReading: 25,
-                        millivoltsAtSampleReading: 750,
-                        millivoltsPerDegreeCentigrade: 10);
+                        millivoltsAtSampleReading: 500,
+                        millivoltsPerDegreeCentigrade: 20);
+                    break;
+                case KnownSensorType.TMP236:
+                    calibration = new Calibration(
+                        degreesCelciusSampleReading: 25,
+                        millivoltsAtSampleReading: 887.5,
+                        millivoltsPerDegreeCentigrade: 19.5);
                     break;
                 case KnownSensorType.Custom:
                     //user provided calibration
@@ -216,12 +226,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <returns>temperature in celcius</returns>
         protected Units.Temperature VoltageToTemperature(Voltage voltage)
         {
-            return new Units.Temperature(
-                SensorCalibration.SampleReading
-                +
-                (voltage.Millivolts - SensorCalibration.MillivoltsAtSampleReading)
-                /
-                SensorCalibration.MillivoltsPerDegreeCentigrade,
+            return new Units.Temperature(SensorCalibration.SampleReading +
+                (voltage.Millivolts - SensorCalibration.MillivoltsAtSampleReading) / SensorCalibration.MillivoltsPerDegreeCentigrade,
                 Units.Temperature.UnitType.Celsius);
         }
     }
