@@ -13,7 +13,7 @@ using Meadow.Peripherals.Sensors;
 namespace Meadow.Foundation.Sensors.Motion
 {
     // TODO: BC: this sensor is fully converted, but returns bad data for me:
-    //   Accel: [X:-0.15, Y:-3.79, Z:2.51 (mps^2)] <- that shouls be like 9.8 for Z (gravity)
+    //   Accel: [X:-0.15, Y:-3.79, Z:2.51 (m/s^2)] <- that shouls be like 9.8 for Z (gravity)
     //   Temp: 627.00C <- wth
 
     /// <summary>

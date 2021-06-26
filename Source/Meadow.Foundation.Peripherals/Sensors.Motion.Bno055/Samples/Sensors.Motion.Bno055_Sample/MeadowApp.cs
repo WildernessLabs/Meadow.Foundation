@@ -94,7 +94,7 @@ namespace MeadowApp
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"Accel: [X:{result.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
                 $"Y:{result.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
-                $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (mps^2)]");
+                $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
 
             Console.WriteLine($"Gyro: [X:{result.AngularVelocity3D?.X.DegreesPerSecond:N2}," +
                 $"Y:{result.AngularVelocity3D?.Y.DegreesPerSecond:N2}," +

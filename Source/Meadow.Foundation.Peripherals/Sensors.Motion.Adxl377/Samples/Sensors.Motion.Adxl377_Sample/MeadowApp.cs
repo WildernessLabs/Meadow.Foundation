@@ -25,7 +25,7 @@ namespace MeadowApp
             sensor.Updated += (sender, result) => {
                 Console.WriteLine($"Accel: [X:{result.New.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.Y.MetersPerSecondSquared:N2}," +
-                    $"Z:{result.New.Z.MetersPerSecondSquared:N2} (mps^2)]");
+                    $"Z:{result.New.Z.MetersPerSecondSquared:N2} (m/s^2)]");
             };
 
             //==== IObservable 
@@ -60,7 +60,7 @@ namespace MeadowApp
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"Accel: [X:{result.X.MetersPerSecondSquared:N2}," +
                 $"Y:{result.Y.MetersPerSecondSquared:N2}," +
-                $"Z:{result.Z.MetersPerSecondSquared:N2} (mps^2)]");
+                $"Z:{result.Z.MetersPerSecondSquared:N2} (m/s^2)]");
         }
     }
 }

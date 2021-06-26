@@ -82,7 +82,7 @@ namespace Meadow.Foundation.Sensors.Motion
             //
             XVoltsPerG = 0.325f;
             YVoltsPerG = 0.325f;
-            ZVoltsPerG = 0.550f;
+            ZVoltsPerG = 0.325f;
             SupplyVoltage = 3.3f;
         }
 
