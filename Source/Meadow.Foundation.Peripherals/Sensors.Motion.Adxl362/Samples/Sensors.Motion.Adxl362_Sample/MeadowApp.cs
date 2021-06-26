@@ -24,7 +24,7 @@ namespace MeadowApp
             sensor.Updated += (sender, result) => {
                 Console.WriteLine($"Accel: [X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
-                    $"Z:{result.New.Acceleration3D?.Z.MetersPerSecondSquared:N2} (mps^2)]");
+                    $"Z:{result.New.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
 
                 Console.WriteLine($"Temp: {result.New.Temperature?.Celsius:N2}C");
             };
@@ -64,7 +64,7 @@ namespace MeadowApp
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"Accel: [X:{result.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
                 $"Y:{result.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
-                $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (mps^2)]");
+                $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
 
             Console.WriteLine($"Angular Accel: [X:{result.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
                 $"Y:{result.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +

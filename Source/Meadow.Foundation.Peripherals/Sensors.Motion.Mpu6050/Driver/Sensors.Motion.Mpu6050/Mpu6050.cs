@@ -10,7 +10,7 @@ using TU = Meadow.Units.Temperature.UnitType;
 namespace Meadow.Foundation.Sensors.Motion
 {
     // Sample reading:
-    // Accel: [X:0.24,Y:-0.74,Z:10.49 (mps^2)]
+    // Accel: [X:0.24,Y:-0.74,Z:10.49 (m/s^2)]
     // Angular Velocity: [X:-0.90, Y:-1.24, Z:-0.52 (dps)]
     // Temp: 33.33C
 

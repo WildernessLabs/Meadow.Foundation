@@ -29,7 +29,7 @@ namespace Sensors.Motion.mpu5060_Sample
             sensor.Updated += (sender, result) => {
                 Console.WriteLine($"Accel: [X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
-                    $"Z:{result.New.Acceleration3D?.Z.MetersPerSecondSquared:N2} (mps^2)]");
+                    $"Z:{result.New.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
 
                 Console.WriteLine($"Angular Velocity: [X:{result.New.AngularVelocity3D?.X.DegreesPerSecond:N2}," +
                     $"Y:{result.New.AngularVelocity3D?.Y.DegreesPerSecond:N2}," +
@@ -70,7 +70,7 @@ namespace Sensors.Motion.mpu5060_Sample
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"Accel: [X:{result.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
                 $"Y:{result.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
-                $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (mps^2)]");
+                $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
 
             Console.WriteLine($"Angular Accel: [X:{result.AngularVelocity3D?.X.DegreesPerSecond:N2}," +
                 $"Y:{result.AngularVelocity3D?.Y.DegreesPerSecond:N2}," +
