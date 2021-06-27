@@ -7,7 +7,7 @@
     <AssemblyName>ServoCore</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Servo</PackageId>
+    <PackageId>Meadow.Foundation.ServoCore</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Servo, Meadow.Foundation.Servo</PackageTags>
     <Version>0.8.38</Version>
