@@ -110,12 +110,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin">Interrupt pin used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
         /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>        
-        public Mag3110(
-            IMeadowDevice device, II2cBus i2cBus,
-            IPin interruptPin = null,
-            byte address = Addresses.Mag3110, ushort speed = 400) :
-                this (i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled),
-                    address)
+        public Mag3110(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = Addresses.Mag3110, ushort speed = 400) :
+                this (i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address)
         { }
 
         /// <summary>
@@ -169,7 +165,8 @@ namespace Meadow.Foundation.Sensors.Motion
 
         protected override Task<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> ReadSensor()
         {
-            return Task.Run(() => {
+            return Task.Run(() => 
+            {
                 (MagneticField3D? MagneticField3D, Units.Temperature? Temperature) conditions;
 
                 var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
