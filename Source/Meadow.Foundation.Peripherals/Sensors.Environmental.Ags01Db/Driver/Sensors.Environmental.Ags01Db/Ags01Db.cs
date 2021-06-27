@@ -1,6 +1,8 @@
 using System;
 using System.Buffers.Binary;
+using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Environmental
 {
@@ -10,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// Pinout (left to right, label side down): VDD, SDA, GND, SCL
     /// Note: requires pullup resistors on SDA/SCL
     /// </summary>
-    public class Ags01Db
+    public class Ags01Db : ByteCommsSensorBase<Units.Concentration>
     {
         private const byte CRC_POLYNOMIAL = 0x31;
         private const byte CRC_INIT = 0xFF;
@@ -20,28 +22,42 @@ namespace Meadow.Foundation.Sensors.Environmental
         private const byte ASG_VERSION_MSB = 0x0A;
         private const byte ASG_VERSION_LSB = 0x01;
 
-        private readonly II2cPeripheral sensor;
+        //==== events
+        public event EventHandler<IChangeResult<Units.Concentration>> ConcentrationUpdated = delegate { };
+
+        public Concentration? Concentration { get; private set; }
 
 
         public Ags01Db(II2cBus i2cBus, byte address = 0x11)
+            : base(i2cBus, address, readBufferSize: 3, writeBufferSize: 3)
         {
-            sensor = new I2cPeripheral(i2cBus, address);
+
         }
 
         /// <summary>
-        /// Get ASG01DB VOC Gas Concentration
+        /// Get ASG01DB VOC Gas Concentration and
+        /// Update the Concentration property.
         /// </summary>
-        /// <returns>Concentration (ppm)</returns>
-        public double GetConcentration()
+        protected override Task<Units.Concentration> ReadSensor()
         {
-            var data = new byte[] { ASG_DATA_MSB, ASG_DATA_LSB };
+            return Task.Run(() =>
+            {
+                WriteBuffer.Span[0] = ASG_DATA_MSB;
+                WriteBuffer.Span[1] = ASG_DATA_LSB;
 
-            sensor.WriteBytes(data);
-            var readBuffer = sensor.ReadBytes(3);
+                Peripheral.Exchange(WriteBuffer.Span[0..1], ReadBuffer.Span);
 
-            ushort res = BinaryPrimitives.ReadUInt16BigEndian(readBuffer.AsSpan(0, 2));
+                // sensor.WriteBytes(data);
+                // var readBuffer = sensor.ReadBytes(3);
 
-            return res / 10.0;
+                var value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
+
+                var voc = value / 10.0;//should be ppm
+
+                Concentration = new Concentration(voc, Units.Concentration.UnitType.PartsPerMillion);
+
+                return Concentration.Value;
+            });
         }
 
         /// <summary>
@@ -52,19 +68,24 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             // Details in the Datasheet P5
             // Write command MSB, LSB
-            var data = new byte[] { ASG_VERSION_MSB, ASG_VERSION_LSB };
+            WriteBuffer.Span[0] = ASG_VERSION_MSB;
+            WriteBuffer.Span[1] = ASG_VERSION_LSB;
 
-            sensor.WriteBytes(data);
-
-            var readBuffer = sensor.ReadBytes(2);
+            Peripheral.Exchange(WriteBuffer.Span[0..1], ReadBuffer.Span[0..1]);
 
             // CRC check
-            if (!CheckCrc8(readBuffer, 1, readBuffer[1]))
+            if (!CheckCrc8(ReadBuffer.Slice(0, 1).ToArray(), 1, ReadBuffer.Span[1]))
             {
                 return unchecked((byte)-1);
             }
 
-            return readBuffer[0];
+            return ReadBuffer.Span[0];
+        }
+
+        protected void RaiseChangedAndNotify(IChangeResult<Units.Concentration> changeResult)
+        {
+            ConcentrationUpdated?.Invoke(this, changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

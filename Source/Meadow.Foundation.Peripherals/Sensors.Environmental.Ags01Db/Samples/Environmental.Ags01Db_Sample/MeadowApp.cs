@@ -8,27 +8,52 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Ags01Db sensor;
+        Ags01Db ags10Db;
 
         public MeadowApp()
         {
-            Initialize();
+            Console.WriteLine("Initialize ...");
+            ags10Db = new Ags01Db(Device.CreateI2cBus());
 
-            Console.WriteLine($"Version: v{sensor.GetVersion()}");
+            Console.WriteLine($"Version: v{ags10Db.GetVersion()}");
+
+            TestUpdating();
+            //TestRead();
+        }
+
+        void TestUpdating()
+        {
+            Console.WriteLine("Test Updating...");
+
+            var consumer = Ags01Db.CreateObserver(
+                handler: result =>
+                {
+                    Console.WriteLine($"Concentration New Value { result.New.PartsPerMillion}ppm");
+                    Console.WriteLine($"Concentration Old Value { result.Old?.PartsPerMillion}ppm");
+                },
+                filter: null
+            );
+            ags10Db.Subscribe(consumer);
+
+            ags10Db.ConcentrationUpdated += (object sender, IChangeResult<Meadow.Units.Concentration> e) =>
+            {
+                Console.WriteLine($"Concentration Updated: {e.New.PartsPerMillion:N2}ppm");
+            };
+
+            ags10Db.StartUpdating(TimeSpan.FromSeconds(1));
+        }
+
+        void TestRead()
+        {
+            Console.WriteLine("TestAgs10DbSensor...");
 
             while (true)
             {
-                Console.WriteLine($"VOC gas concentration: {sensor.GetConcentration()}ppm");
+                var temp = ags10Db.Read().Result;
 
-                Thread.Sleep(2000);
+                Console.WriteLine($"Concentration New Value { temp.PartsPerMillion}ppm");
+                Thread.Sleep(1000);
             }
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
-
-            sensor = new Ags01Db(Device.CreateI2cBus());
         }
     }
 }
