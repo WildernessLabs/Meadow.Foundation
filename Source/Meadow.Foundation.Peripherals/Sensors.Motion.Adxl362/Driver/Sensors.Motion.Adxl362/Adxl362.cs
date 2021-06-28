@@ -300,14 +300,14 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 // 9.0 comes in as 900, so have to divide by 100
                 conditions.Acceleration3D = new Acceleration3D(
-                    new Acceleration((short)((ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0]) / 100, AU.MetersPerSecondSquared),
-                    new Acceleration((short)((ReadBuffer.Span[3] << 8) | ReadBuffer.Span[2]) / 100, AU.MetersPerSecondSquared),
-                    new Acceleration((short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4]) / 100, AU.MetersPerSecondSquared)
+                    new Acceleration((short)((ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0]) / 100d, AU.MetersPerSecondSquared),
+                    new Acceleration((short)((ReadBuffer.Span[3] << 8) | ReadBuffer.Span[2]) / 100d, AU.MetersPerSecondSquared),
+                    new Acceleration((short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4]) / 100d, AU.MetersPerSecondSquared)
                     );
 
                 double rawTemp = (short)((ReadBuffer.Span[7] << 8) | ReadBuffer.Span[6]);
                 // decimal doesn't come in, so 20.0C comes in as `200`. and also have to remove the bias.
-                double tempC = (rawTemp - AVERAGE_TEMPERATURE_BIAS) / 10;
+                double tempC = (rawTemp - AVERAGE_TEMPERATURE_BIAS) / 10d;
                 conditions.Temperature = new Units.Temperature(tempC, TU.Celsius);
 
                 return conditions;
