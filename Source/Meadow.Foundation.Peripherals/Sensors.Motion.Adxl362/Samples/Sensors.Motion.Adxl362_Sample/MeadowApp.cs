@@ -66,10 +66,6 @@ namespace MeadowApp
                 $"Y:{result.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
                 $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
 
-            Console.WriteLine($"Angular Accel: [X:{result.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
-                $"Y:{result.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
-                $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (dps^2)]");
-
             Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
         }
 

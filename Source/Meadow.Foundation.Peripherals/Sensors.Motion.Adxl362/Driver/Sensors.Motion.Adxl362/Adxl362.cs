@@ -12,9 +12,11 @@ using Meadow.Peripherals.Sensors;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    // TODO: BC: this sensor is fully converted, but returns bad data for me:
-    //   Accel: [X:-0.15, Y:-3.79, Z:2.51 (m/s^2)] <- that shouls be like 9.8 for Z (gravity)
-    //   Temp: 627.00C <- wth
+    // Sample Reading
+    //   Accel: [X:-1.04,Y:-0.29,Z:-9.44 (m/s^2)]
+    //   Temp: 21.10C
+
+    // Todo:
 
     /// <summary>
     /// Driver for the ADXL362 triple axis accelerometer.
@@ -298,11 +300,13 @@ namespace Meadow.Foundation.Sensors.Motion
                 WriteBuffer.Span[1] = Registers.X_AXIS_LSB;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..8]);
 
-                // 9.0 comes in as 900, so have to divide by 100
+                Console.WriteLine($"Z: {(short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4])}");
+
+                // milli-gravity (1/1000 G)
                 conditions.Acceleration3D = new Acceleration3D(
-                    new Acceleration((short)((ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0]) / 100d, AU.MetersPerSecondSquared),
-                    new Acceleration((short)((ReadBuffer.Span[3] << 8) | ReadBuffer.Span[2]) / 100d, AU.MetersPerSecondSquared),
-                    new Acceleration((short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4]) / 100d, AU.MetersPerSecondSquared)
+                    new Acceleration((short)((ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0]) / 1000d, AU.Gravity),
+                    new Acceleration((short)((ReadBuffer.Span[3] << 8) | ReadBuffer.Span[2]) / 1000d, AU.Gravity),
+                    new Acceleration((short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4]) / 1000d, AU.Gravity)
                     );
 
                 double rawTemp = (short)((ReadBuffer.Span[7] << 8) | ReadBuffer.Span[6]);
