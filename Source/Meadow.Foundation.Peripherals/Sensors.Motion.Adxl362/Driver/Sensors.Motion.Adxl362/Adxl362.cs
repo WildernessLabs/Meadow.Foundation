@@ -293,20 +293,19 @@ namespace Meadow.Foundation.Sensors.Motion
             return Task.Run(() => {
                 (Acceleration3D? Acceleration3D, Units.Temperature? Temperature) conditions;
 
-                // new methods
+                // read the XYZ and Temp registers in one go
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.X_AXIS_LSB;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..8]);
 
+                // 9.0 comes in as 900, so have to divide by 100
                 conditions.Acceleration3D = new Acceleration3D(
-                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[3] << 8) | ReadBuffer.Span[2]), AU.MetersPerSecondSquared),
-                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4]), AU.MetersPerSecondSquared),
-                    new Acceleration(ADXL362_MG2G_MULTIPLIER * (short)((ReadBuffer.Span[7] << 8) | ReadBuffer.Span[6]), AU.MetersPerSecondSquared)
+                    new Acceleration((short)((ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0]) / 100, AU.MetersPerSecondSquared),
+                    new Acceleration((short)((ReadBuffer.Span[3] << 8) | ReadBuffer.Span[2]) / 100, AU.MetersPerSecondSquared),
+                    new Acceleration((short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4]) / 100, AU.MetersPerSecondSquared)
                     );
 
-                WriteBuffer.Span[1] = Registers.TEMPERATURE_LSB;
-                Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..2]);
-                double rawTemp = (short)((ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0]);
+                double rawTemp = (short)((ReadBuffer.Span[7] << 8) | ReadBuffer.Span[6]);
                 // decimal doesn't come in, so 20.0C comes in as `200`. and also have to remove the bias.
                 double tempC = (rawTemp - AVERAGE_TEMPERATURE_BIAS) / 10;
                 conditions.Temperature = new Units.Temperature(tempC, TU.Celsius);
