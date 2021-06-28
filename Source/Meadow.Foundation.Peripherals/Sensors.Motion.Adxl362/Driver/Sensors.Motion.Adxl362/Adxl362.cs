@@ -28,7 +28,8 @@ namespace Meadow.Foundation.Sensors.Motion
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
 
         //==== internals
-        static double ADXL362_MG2G_MULTIPLIER = (0.004);
+        const double ADXL362_MG2G_MULTIPLIER = (0.004);
+        const double AVERAGE_TEMPERATURE_BIAS = 350;
 
         /// <summary>
         /// Digital input port attached to interrupt pin 1 on the ADXL362.
@@ -305,8 +306,10 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 WriteBuffer.Span[1] = Registers.TEMPERATURE_LSB;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..2]);
-
-                conditions.Temperature = new Units.Temperature((short)((ReadBuffer.Span[1] << 8) + ReadBuffer.Span[0]), TU.Celsius);
+                double rawTemp = (short)((ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0]);
+                // decimal doesn't come in, so 20.0C comes in as `200`. and also have to remove the bias.
+                double tempC = (rawTemp - AVERAGE_TEMPERATURE_BIAS) / 10;
+                conditions.Temperature = new Units.Temperature(tempC, TU.Celsius);
 
                 return conditions;
             });
