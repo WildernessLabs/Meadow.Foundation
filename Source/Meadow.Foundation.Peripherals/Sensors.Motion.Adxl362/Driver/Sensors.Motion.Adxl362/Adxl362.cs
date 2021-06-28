@@ -16,7 +16,9 @@ namespace Meadow.Foundation.Sensors.Motion
     //   Accel: [X:-1.04,Y:-0.29,Z:-9.44 (m/s^2)]
     //   Temp: 21.10C
 
-    // Todo:
+    // Todo: right now, the sensor default to +-2G sensitivity. that can be
+    // changed in software. it would be good to expose that. note that the
+    // conversion will be different based on sensitivity range.
 
     /// <summary>
     /// Driver for the ADXL362 triple axis accelerometer.
