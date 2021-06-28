@@ -46,10 +46,14 @@ namespace Meadow.Foundation.Sensors.Light
                 //  A code of 1110 1110 calculates to be 165,151 lux.
                 Peripheral.ReadRegister(0x03, ReadBuffer.Span[0..2]);
 
-                int exponent = ((ReadBuffer.Span[0] & 0xF0) >> 4);
+                //int exponent = ((ReadBuffer.Span[0] & 0xF0) >> 4);
+                var exponent = (ReadBuffer.Span[0] >> 4);
+                if (exponent == 0x0f) throw new Exception("Out of range");
+
                 int mantissa = ((ReadBuffer.Span[0] & 0x0F) >> 4) | (ReadBuffer.Span[1] & 0x0F);
 
-                var luminance = Math.Pow(2, exponent) * mantissa * 0.045;
+                //var luminance = Math.Pow(2, exponent) * mantissa * 0.045;
+                var luminance = Math.Pow(2, exponent) * mantissa * 0.72;
 
                 return new Illuminance(luminance, Illuminance.UnitType.Lux);
             });
