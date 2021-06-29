@@ -68,6 +68,7 @@ namespace Meadow.Foundation.Sensors.Motion
         protected double SupplyVoltage { get; }
 
         public Acceleration3D? Acceleration3D => Conditions;
+        protected double range;
 
         /// <summary>
         /// Create a new ADXL337 sensor object.
@@ -81,15 +82,11 @@ namespace Meadow.Foundation.Sensors.Motion
             xPort = device.CreateAnalogInputPort(xPin);
             yPort = device.CreateAnalogInputPort(yPin);
             zPort = device.CreateAnalogInputPort(zPin);
-            //
-            //  Now set the default calibration data.
-            //
-            //XVoltsPerG = 0.00825f;
-            //YVoltsPerG = 0.00825f;
-            //ZVoltsPerG = 0.00825f;
-            SupplyVoltage = 3.3f;
 
-            XVoltsPerG = YVoltsPerG = ZVoltsPerG = 1.0d / (400d / SupplyVoltage);
+            range = 400d; // +- 200G
+            //range = 6d; // +- 6G
+
+            SupplyVoltage = 3.3f;
         }
 
 
@@ -106,17 +103,10 @@ namespace Meadow.Foundation.Sensors.Motion
                 var y = await yPort.Read();
                 var z = await zPort.Read();
 
-                //Console.WriteLine($"x.Volts: {x.Volts}mV, XVoltsPerG: {XVoltsPerG}.");
-                //Console.WriteLine($"y.Volts: {y.Volts}mV, YVoltsPerG: {YVoltsPerG}.");
-                //Console.WriteLine($"z.Volts: {z.Volts}mV, ZVoltsPerG: {ZVoltsPerG}.");
-
                 return new Acceleration3D(
-                    new Acceleration(x.Volts * XVoltsPerG, Acceleration.UnitType.Gravity),
-                    new Acceleration(y.Volts * YVoltsPerG, Acceleration.UnitType.Gravity),
-                    new Acceleration(z.Volts * ZVoltsPerG, Acceleration.UnitType.Gravity)
-                    //new Acceleration((x.Volts - ZeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
-                    //new Acceleration((y.Volts - ZeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
-                    //new Acceleration((z.Volts - ZeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity)
+                    new Acceleration((x.Volts - (SupplyVoltage / 2)) / (SupplyVoltage / range), Acceleration.UnitType.Gravity),
+                    new Acceleration((y.Volts - (SupplyVoltage / 2)) / (SupplyVoltage / range), Acceleration.UnitType.Gravity),
+                    new Acceleration((z.Volts - (SupplyVoltage / 2)) / (SupplyVoltage / range), Acceleration.UnitType.Gravity)
                     );
             });
         }
