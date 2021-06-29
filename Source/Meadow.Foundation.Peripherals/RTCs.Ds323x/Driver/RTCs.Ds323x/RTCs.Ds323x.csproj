@@ -15,7 +15,7 @@
     <Description>Ds323x I2C real time clock (DS3231)</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath=""/>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>

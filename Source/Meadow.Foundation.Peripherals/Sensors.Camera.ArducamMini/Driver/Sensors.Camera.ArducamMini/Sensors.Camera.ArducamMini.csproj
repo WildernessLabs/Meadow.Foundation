@@ -15,7 +15,7 @@
     <Description>ArducamMini I2C + SPI high definition 2MP camera controller</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath=""/>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>

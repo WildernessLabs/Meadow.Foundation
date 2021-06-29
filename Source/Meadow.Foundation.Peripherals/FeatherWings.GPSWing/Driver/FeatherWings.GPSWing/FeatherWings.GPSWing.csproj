@@ -15,7 +15,7 @@
     <Description>AdaFruit GPSWing GPS FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath=""/>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Sensors.Gnss.Mt3339\Driver\Sensors.Gnss.Mt3339\Sensors.Gnss.Mt3339.csproj" />
   </ItemGroup>
 </Project>

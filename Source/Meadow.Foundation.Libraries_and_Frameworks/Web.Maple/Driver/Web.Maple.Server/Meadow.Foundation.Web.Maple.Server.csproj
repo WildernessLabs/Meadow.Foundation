@@ -18,7 +18,7 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath=""/>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <PackageReference Include="System.Text.Json" Version="5.0.1" />
   </ItemGroup>
 </Project>

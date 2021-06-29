@@ -16,7 +16,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
-    <None Include="..\..\..\..\..\icon.png" Pack="true" PackagePath=""/>
+    <None Include="..\..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
     <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>

@@ -8,7 +8,7 @@ using AU = Meadow.Units.Acceleration.UnitType;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         Adxl335 sensor;
 
@@ -17,8 +17,7 @@ namespace MeadowApp
             Console.WriteLine("Initializing");
 
             // create the sensor driver
-            sensor = new Adxl335(
-                Device, Device.Pins.A00, Device.Pins.A01, Device.Pins.A02);
+            sensor = new Adxl335(Device, Device.Pins.A00, Device.Pins.A01, Device.Pins.A02, null);
 
             //==== Events
             // classical .NET events can also be used:

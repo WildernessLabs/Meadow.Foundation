@@ -15,7 +15,7 @@
     <Description>AdaFruit DotstarWing LED FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath=""/>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Leds.Apa102\Driver\Leds.Apa102\Leds.Apa102.csproj" />
   </ItemGroup>
 </Project>
