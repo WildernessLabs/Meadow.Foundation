@@ -41,28 +41,30 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Voltage that represents 0g.  This is the supply voltage / 2.
         /// </summary>
-        protected float ZeroGVoltage => SupplyVoltage / 2f;
+        protected double ZeroGVoltage => SupplyVoltage / 2f;
 
         /// <summary>
         /// Volts per G for the X axis.
         /// </summary>
-        public float XVoltsPerG { get; set; }
+        protected double XVoltsPerG { get; set; }
 
         /// <summary>
         /// Volts per G for the X axis.
         /// </summary>
-        public float YVoltsPerG { get; set; }
+        protected double YVoltsPerG { get; set; }
 
         /// <summary>
         /// Volts per G for the X axis.
         /// </summary>
-        public float ZVoltsPerG { get; set; }
+        protected double ZVoltsPerG { get; set; }
 
         /// <summary>
         /// Power supply voltage applied to the sensor.  This will be set (in the constructor)
         /// to 3.3V by default.
         /// </summary>
-        public float SupplyVoltage { get; set; }
+        protected double SupplyVoltage { get; set; }
+
+        protected double range;
 
         public Acceleration3D? Acceleration3D => Conditions;
 
@@ -80,10 +82,16 @@ namespace Meadow.Foundation.Sensors.Motion
             //
             //  Now set the default calibration data.
             //
-            XVoltsPerG = 0.325f;
-            YVoltsPerG = 0.325f;
-            ZVoltsPerG = 0.325f;
+            //XVoltsPerG = 0.325f;
+            //YVoltsPerG = 0.325f;
+            //ZVoltsPerG = 0.325f;
+
+            //range = 400d; // +- 200G
+            range = 6d; // +- 6G
+
             SupplyVoltage = 3.3f;
+
+            //XVoltsPerG = YVoltsPerG = ZVoltsPerG = 1.0d / (range / SupplyVoltage);
         }
 
         protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
@@ -98,10 +106,21 @@ namespace Meadow.Foundation.Sensors.Motion
                 var x = await xPort.Read();
                 var y = await yPort.Read();
                 var z = await zPort.Read();
+                //Console.WriteLine($"x.Volts: {x.Volts}mV, XVoltsPerG: {XVoltsPerG}.");
+                //Console.WriteLine($"y.Volts: {y.Volts}mV, YVoltsPerG: {YVoltsPerG}.");
+                //Console.WriteLine($"z.Volts: {z.Volts}mV, ZVoltsPerG: {ZVoltsPerG}.");
+
+                //(analog.Volts - (Vref / 2)) / (Vref / range);
+
+                //new Acceleration((x.Volts - (SupplyVoltage / 2)) / (SupplyVoltage / range), Acceleration.UnitType.Gravity);
+
                 return new Acceleration3D(
-                    new Acceleration((x.Volts - ZeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
-                    new Acceleration((y.Volts - ZeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
-                    new Acceleration((z.Volts - ZeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity)
+                    new Acceleration((x.Volts - (SupplyVoltage / 2)) / (SupplyVoltage / range), Acceleration.UnitType.Gravity),
+                    new Acceleration((y.Volts - (SupplyVoltage / 2)) / (SupplyVoltage / range), Acceleration.UnitType.Gravity),
+                    new Acceleration((z.Volts - (SupplyVoltage / 2)) / (SupplyVoltage / range), Acceleration.UnitType.Gravity)
+                    //new Acceleration((x.Volts - ZeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
+                    //new Acceleration((y.Volts - ZeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
+                    //new Acceleration((z.Volts - ZeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity)
                     );
             });
         }
