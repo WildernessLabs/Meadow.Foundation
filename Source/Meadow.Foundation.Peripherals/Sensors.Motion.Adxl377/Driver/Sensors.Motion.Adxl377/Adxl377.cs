@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Voltage that represents 0g.  This is the supply voltage / 2.
         /// </summary>
-        protected float ZeroGVoltage => SupplyVoltage / 2f;
+        //protected float ZeroGVoltage => SupplyVoltage / 2f;
 
         //==== properties
         /// <summary>
@@ -49,23 +49,23 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Volts per G for the X axis.
         /// </summary>
-        public float XVoltsPerG { get; set; }
+        protected double XVoltsPerG { get; }
 
         /// <summary>
         /// Volts per G for the X axis.
         /// </summary>
-        public float YVoltsPerG { get; set; }
+        protected double YVoltsPerG { get; }
 
         /// <summary>
         /// Volts per G for the X axis.
         /// </summary>
-        public float ZVoltsPerG { get; set; }
+        protected double ZVoltsPerG { get; }
 
         /// <summary>
         /// Power supply voltage applied to the sensor.  This will be set (in the constructor)
         /// to 3.3V by default.
         /// </summary>
-        public float SupplyVoltage { get; set; }
+        protected double SupplyVoltage { get; }
 
         public Acceleration3D? Acceleration3D => Conditions;
 
@@ -75,7 +75,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="xPin">Analog pin connected to the X axis output from the ADXL337 sensor.</param>
         /// <param name="yPin">Analog pin connected to the Y axis output from the ADXL337 sensor.</param>
         /// <param name="zPin">Analog pin connected to the Z axis output from the ADXL337 sensor.</param>
-        public Adxl377(IAnalogInputController device, IPin xPin, IPin yPin, IPin zPin)
+        public Adxl377(IAnalogInputController device,
+            IPin xPin, IPin yPin, IPin zPin)
         {
             xPort = device.CreateAnalogInputPort(xPin);
             yPort = device.CreateAnalogInputPort(yPin);
@@ -83,10 +84,12 @@ namespace Meadow.Foundation.Sensors.Motion
             //
             //  Now set the default calibration data.
             //
-            XVoltsPerG = 0.00825f;
-            YVoltsPerG = 0.00825f;
-            ZVoltsPerG = 0.00825f;
+            //XVoltsPerG = 0.00825f;
+            //YVoltsPerG = 0.00825f;
+            //ZVoltsPerG = 0.00825f;
             SupplyVoltage = 3.3f;
+
+            XVoltsPerG = YVoltsPerG = ZVoltsPerG = 1.0d / (400d / SupplyVoltage);
         }
 
 
@@ -103,10 +106,17 @@ namespace Meadow.Foundation.Sensors.Motion
                 var y = await yPort.Read();
                 var z = await zPort.Read();
 
+                //Console.WriteLine($"x.Volts: {x.Volts}mV, XVoltsPerG: {XVoltsPerG}.");
+                //Console.WriteLine($"y.Volts: {y.Volts}mV, YVoltsPerG: {YVoltsPerG}.");
+                //Console.WriteLine($"z.Volts: {z.Volts}mV, ZVoltsPerG: {ZVoltsPerG}.");
+
                 return new Acceleration3D(
-                    new Acceleration((x.Volts - ZeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
-                    new Acceleration((y.Volts - ZeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
-                    new Acceleration((z.Volts - ZeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity)
+                    new Acceleration(x.Volts * XVoltsPerG, Acceleration.UnitType.Gravity),
+                    new Acceleration(y.Volts * YVoltsPerG, Acceleration.UnitType.Gravity),
+                    new Acceleration(z.Volts * ZVoltsPerG, Acceleration.UnitType.Gravity)
+                    //new Acceleration((x.Volts - ZeroGVoltage) / XVoltsPerG, Acceleration.UnitType.Gravity),
+                    //new Acceleration((y.Volts - ZeroGVoltage) / YVoltsPerG, Acceleration.UnitType.Gravity),
+                    //new Acceleration((z.Volts - ZeroGVoltage) / ZVoltsPerG, Acceleration.UnitType.Gravity)
                     );
             });
         }
