@@ -12,7 +12,7 @@
     <PackageTags>Meadow.Foundation, ADXL335, Accelerometer</PackageTags>
     <Version>0.2.32</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>ADXL335 analog 3 axis accelerometer motion sensor</Description>
+    <Description>Driver for the ADXL335, ADXL337, and ADXL377 analog 3 axis accelerometer motion sensors.</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
