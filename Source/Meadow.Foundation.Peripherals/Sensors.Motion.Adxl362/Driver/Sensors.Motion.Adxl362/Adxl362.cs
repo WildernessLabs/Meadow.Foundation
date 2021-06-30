@@ -302,8 +302,6 @@ namespace Meadow.Foundation.Sensors.Motion
                 WriteBuffer.Span[1] = Registers.X_AXIS_LSB;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..8]);
 
-                Console.WriteLine($"Z: {(short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4])}");
-
                 // milli-gravity (1/1000 G)
                 conditions.Acceleration3D = new Acceleration3D(
                     new Acceleration((short)((ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0]) / 1000d, AU.Gravity),
