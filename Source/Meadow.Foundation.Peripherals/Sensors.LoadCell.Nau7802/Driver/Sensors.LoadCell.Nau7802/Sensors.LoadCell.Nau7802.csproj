@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Sensors.LoadCell.Nau7802</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow,Meadow.Foundation,LoadCell, Nau7802</PackageTags>
-    <Version>0.1.4</Version>
+    <Version>0.1.5-beta01</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>NAU7802 I2C 24-Bit dual channel analog to digital converter</Description>
     <Nullable>enable</Nullable>
@@ -23,6 +23,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.26.0-beta01" />
   </ItemGroup>
 </Project>
