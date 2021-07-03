@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Sensors.Motion.Adxl362</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Motion, Adxl362</PackageTags>
-    <Version>0.2.32</Version>
+    <Version>0.2.36</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>ADXL362 SPI 3 axis accelerometer motion sensor</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>
