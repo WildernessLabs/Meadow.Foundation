@@ -10,7 +10,7 @@
    <PackageIcon>icon.png</PackageIcon>
    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
    <PackageTags>Meadow, Meadow.Foundation</PackageTags>
-   <Version>0.25.0-beta01</Version>
+   <Version>0.26.0-beta01</Version>
    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
    <RootNamespace>Meadow.Foundation</RootNamespace>
    <IncludeSymbols>true</IncludeSymbols>
