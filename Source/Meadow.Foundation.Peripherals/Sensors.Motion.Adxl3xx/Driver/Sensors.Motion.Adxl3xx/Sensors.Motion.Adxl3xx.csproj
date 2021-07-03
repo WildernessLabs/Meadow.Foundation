@@ -4,16 +4,15 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Adxl335</AssemblyName>
+    <AssemblyName>Adxl3xx</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Motion.Adxl335</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Motion.Adxl3xx</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, ADXL335, Accelerometer</PackageTags>
-    <Version>0.2.32</Version>
+    <PackageTags>Meadow.Foundation, ADXL335, ADXL337, ADXL377, Accelerometer, Motion</PackageTags>
+    <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for the ADXL335, ADXL337, and ADXL377 analog 3 axis accelerometer motion sensors.</Description>
-    <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>
+    <Description>Driver for the ADXL335, ADXL337 and ADXL377 analog three axis accelerometer motion sensors.</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
