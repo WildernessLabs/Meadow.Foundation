@@ -15,6 +15,7 @@
     <Description>AdaFruit CharlieWing Matrix LED FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Is31fl3731" Version="0.1.37-beta01" />
   </ItemGroup>
 </Project>
