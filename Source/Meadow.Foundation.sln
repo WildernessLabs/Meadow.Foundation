@@ -87,7 +87,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Bno055", "Se
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{07F59EFA-8D03-489D-BB05-905C3B0A7699}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Bno055", "Meadow.Foundation.Peripherals\Sensors.Motion.Bno055\Driver\Sensors.Motion.Bno055\Sensors.Motion.Bno055.csproj", "{94A3A79A-3614-426C-A99C-F1F5CCDC4305}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Bno055", "Meadow.Foundation.Peripherals\Sensors.Motion.Bno055\Driver\Sensors.Motion.Bno055\Sensors.Motion.Bno055.csproj", "{94A3A79A-3614-426C-A99C-F1F5CCDC4305}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Apds9960", "Sensors.Motion.Apds9960", "{58CE81BF-8BBD-4840-A8D0-DC5C19E23100}"
 EndProject
@@ -251,10 +251,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.Ssd130x", "Display
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{FAD4D2B5-D578-413A-B776-5AE1F43D6CFE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.SerialLcd", "Displays.SerialLcd", "{57DA2155-A4F4-46C0-B888-E1E424739050}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{DE5A7D8B-9378-4807-8E70-588B9106E1A8}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.Pcd8544", "Displays.Pcd8544", "{0CD6A482-3CA0-4627-969E-7E27C1AE9352}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{6F6FFBD9-7326-4C38-A4A6-C0052212645F}"
@@ -324,7 +320,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Meadow.Foundation.sln = Meadow.Foundation.sln
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Bno055_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Bno055\Samples\Sensors.Motion.Bno055_Sample\Sensors.Motion.Bno055_Sample.csproj", "{20861022-699D-4FA2-A92A-05BC0188D25A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Bno055_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Bno055\Samples\Sensors.Motion.Bno055_Sample\Sensors.Motion.Bno055_Sample.csproj", "{20861022-699D-4FA2-A92A-05BC0188D25A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Adxl345_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl345\Samples\Sensors.Motion.Adxl345_Sample\Sensors.Motion.Adxl345_Sample.csproj", "{AC51A097-82B7-4916-8919-32B7BFE3AA9B}"
 EndProject
@@ -367,8 +363,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd1306_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd130x\Samples\Displays.Ssd1306_Sample\Displays.Ssd1306_Sample.csproj", "{16CFD509-CEA6-4038-B504-5C026C2A464F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd130x", "Meadow.Foundation.Peripherals\Displays.Ssd130x\Driver\Displays.Ssd130x\Displays.Ssd130x.csproj", "{7F69F8CB-5C1A-461B-90FC-360367CD65CF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.SerialLcd", "Meadow.Foundation.Peripherals\Displays.SerialLcd\Driver\Displays.SerialLcd\Displays.SerialLcd.csproj", "{BBF3CB03-A56D-4B8D-88CD-0F69355AC17B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Pcd8544_Sample", "Meadow.Foundation.Peripherals\Displays.Pcd8544\Samples\Displays.Pcd8544_Sample\Displays.Pcd8544_Sample.csproj", "{E7AD5BC4-5CC0-44EB-BD3B-D6F93E59EF4F}"
 EndProject
@@ -445,8 +439,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Environmental.Ags01Db_Sample", "Meadow.Foundation.Peripherals\Sensors.Environmental.Ags01Db\Samples\Environmental.Ags01Db_Sample\Environmental.Ags01Db_Sample.csproj", "{0722E9DF-04ED-416B-B3D7-24104A3B3FA7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Max7219_8x8x4_Sample", "Meadow.Foundation.Peripherals\Displays.Max7219\Samples\Displays.Max7219_8x8x4_Sample\Displays.Max7219_8x8x4_Sample.csproj", "{AD8951D6-7AF1-40DB-92FE-4517E538E57C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.SerialLcd_Sample", "Meadow.Foundation.Peripherals\Displays.SerialLcd\Samples\Displays.SerialLcd_Sample\Displays.SerialLcd_Sample.csproj", "{F90B33E0-99FF-4D89-98CE-E23B742C15DF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Light.Bh1750", "Sensors.Light.Bh1750", "{048BE18B-E895-459D-8041-6DADD6FAB130}"
 EndProject
@@ -906,11 +898,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Foundation.Web.Maple
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.Server_UDP_Listener", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Utilities\Maple.Server_UDP_Listener\Maple.Server_UDP_Listener.csproj", "{6B545252-7BC0-4FF2-B6FB-F37C27C87B73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.ServerConsole_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.ServerConsole_Sample\Maple.ServerConsole_Sample.csproj", "{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maple.ServerConsole_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.ServerConsole_Sample\Maple.ServerConsole_Sample.csproj", "{CA7F131B-7AC9-49B7-99EA-FE7B9EA8F1D1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maple.ServerSimpleMeadow_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.ServerSimpleMeadow_Sample\Maple.ServerSimpleMeadow_Sample.csproj", "{8FE67462-2C13-49AF-AAFF-6E67583F666E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.ClientConsole_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.ClientConsole_Sample\Maple.ClientConsole_Sample.csproj", "{3FEE6DE3-0AC6-474D-B83A-8DC615B23ECB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maple.ClientConsole_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Samples\Maple.ClientConsole_Sample\Maple.ClientConsole_Sample.csproj", "{3FEE6DE3-0AC6-474D-B83A-8DC615B23ECB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Foundation.Web.Maple.Client", "Meadow.Foundation.Libraries_and_Frameworks\Web.Maple\Driver\Web.Maple.Client\Meadow.Foundation.Web.Maple.Client.csproj", "{D0C81101-242E-4621-ABBB-444C93F5A4EB}"
 EndProject
@@ -972,25 +964,25 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Units", "..\..\Meado
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Light.AnalogSolarIntensityGauge", "Sensors.Light.AnalogSolarIntensityGauge", "{A4871FEF-60ED-4BB1-B03C-C149D297A2D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Light.AnalogSolarIntensityGauge", "Meadow.Foundation.Peripherals\Sensors.Light.AnalogSolarIntensityGauge\Driver\Sensors.Light.AnalogSolarIntensityGauge\Sensors.Light.AnalogSolarIntensityGauge.csproj", "{91D22CEA-4C96-4643-B486-6ED49FA1124D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.AnalogSolarIntensityGauge", "Meadow.Foundation.Peripherals\Sensors.Light.AnalogSolarIntensityGauge\Driver\Sensors.Light.AnalogSolarIntensityGauge\Sensors.Light.AnalogSolarIntensityGauge.csproj", "{91D22CEA-4C96-4643-B486-6ED49FA1124D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICs.IOExpanders.Tca9548a_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Tca9548a\Samples\ICs.IOExpanders.Tca9548a_Sample\ICs.IOExpanders.Tca9548a_Sample.csproj", "{223CF15A-83B8-4E43-9645-50D45D9470A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Tca9548a_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Tca9548a\Samples\ICs.IOExpanders.Tca9548a_Sample\ICs.IOExpanders.Tca9548a_Sample.csproj", "{223CF15A-83B8-4E43-9645-50D45D9470A5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{40E200ED-D7B8-4FFD-B4FC-753E56DA831E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalogSolarIntensityGauge_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.AnalogSolarIntensityGauge\Samples\AnalogSolarIntensityGauge_Sample\AnalogSolarIntensityGauge_Sample.csproj", "{0B04C0F8-204C-496D-B48D-51017DF99DB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnalogSolarIntensityGauge_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.AnalogSolarIntensityGauge\Samples\AnalogSolarIntensityGauge_Sample\AnalogSolarIntensityGauge_Sample.csproj", "{0B04C0F8-204C-496D-B48D-51017DF99DB4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Adxl3xx", "Sensors.Motion.Adxl3xx", "{4E23D21F-8827-4F6B-BA35-C8FE4457027C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{4660F8A6-3E4A-47D3-BBFE-5CC06AEE7E4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl3xx", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl3xx\Driver\Sensors.Motion.Adxl3xx\Sensors.Motion.Adxl3xx.csproj", "{2F78C85C-A670-4795-8435-5B4CAF5C05F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Adxl3xx", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl3xx\Driver\Sensors.Motion.Adxl3xx\Sensors.Motion.Adxl3xx.csproj", "{2F78C85C-A670-4795-8435-5B4CAF5C05F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl335_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl3xx\Samples\Sensors.Motion.Adxl335_Sample\Sensors.Motion.Adxl335_Sample.csproj", "{0FA5F6D1-73F8-464F-9DDA-4C7F9EDAC016}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Adxl335_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl3xx\Samples\Sensors.Motion.Adxl335_Sample\Sensors.Motion.Adxl335_Sample.csproj", "{0FA5F6D1-73F8-464F-9DDA-4C7F9EDAC016}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl337_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl3xx\Samples\Sensors.Motion.Adxl337_Sample\Sensors.Motion.Adxl337_Sample.csproj", "{7661723C-6B9E-4F89-B075-954A502ADC90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Adxl337_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl3xx\Samples\Sensors.Motion.Adxl337_Sample\Sensors.Motion.Adxl337_Sample.csproj", "{7661723C-6B9E-4F89-B075-954A502ADC90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Motion.Adxl377_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl3xx\Samples\Sensors.Motion.Adxl377_Sample\Sensors.Motion.Adxl377_Sample.csproj", "{C8E28858-B157-4B6D-943B-E2BB33128760}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Adxl377_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl3xx\Samples\Sensors.Motion.Adxl377_Sample\Sensors.Motion.Adxl377_Sample.csproj", "{C8E28858-B157-4B6D-943B-E2BB33128760}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1342,10 +1334,6 @@ Global
 		{7F69F8CB-5C1A-461B-90FC-360367CD65CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F69F8CB-5C1A-461B-90FC-360367CD65CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F69F8CB-5C1A-461B-90FC-360367CD65CF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BBF3CB03-A56D-4B8D-88CD-0F69355AC17B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BBF3CB03-A56D-4B8D-88CD-0F69355AC17B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BBF3CB03-A56D-4B8D-88CD-0F69355AC17B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BBF3CB03-A56D-4B8D-88CD-0F69355AC17B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E7AD5BC4-5CC0-44EB-BD3B-D6F93E59EF4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E7AD5BC4-5CC0-44EB-BD3B-D6F93E59EF4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7AD5BC4-5CC0-44EB-BD3B-D6F93E59EF4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -1474,10 +1462,6 @@ Global
 		{AD8951D6-7AF1-40DB-92FE-4517E538E57C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD8951D6-7AF1-40DB-92FE-4517E538E57C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD8951D6-7AF1-40DB-92FE-4517E538E57C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F90B33E0-99FF-4D89-98CE-E23B742C15DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F90B33E0-99FF-4D89-98CE-E23B742C15DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F90B33E0-99FF-4D89-98CE-E23B742C15DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F90B33E0-99FF-4D89-98CE-E23B742C15DF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5E7E1C26-2260-4E32-BABB-0083DE286AC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5E7E1C26-2260-4E32-BABB-0083DE286AC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E7E1C26-2260-4E32-BABB-0083DE286AC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -2320,8 +2304,6 @@ Global
 		{5574FE78-17B0-4295-9F27-2E4782554102} = {94E618B0-5BA2-4436-B1F5-90CE0E0D2293}
 		{BF341B80-8763-482E-9AF7-5E8DE369ECE1} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{FAD4D2B5-D578-413A-B776-5AE1F43D6CFE} = {BF341B80-8763-482E-9AF7-5E8DE369ECE1}
-		{57DA2155-A4F4-46C0-B888-E1E424739050} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
-		{DE5A7D8B-9378-4807-8E70-588B9106E1A8} = {57DA2155-A4F4-46C0-B888-E1E424739050}
 		{0CD6A482-3CA0-4627-969E-7E27C1AE9352} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{6F6FFBD9-7326-4C38-A4A6-C0052212645F} = {0CD6A482-3CA0-4627-969E-7E27C1AE9352}
 		{E3EE5C6F-BAD2-4F28-8659-839B0EA7FA21} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
@@ -2376,7 +2358,6 @@ Global
 		{24568129-061F-4A1E-B1CF-81B9F197EE58} = {8CE083A7-B966-4EB5-B139-C3EEF2D53585}
 		{16CFD509-CEA6-4038-B504-5C026C2A464F} = {FAD4D2B5-D578-413A-B776-5AE1F43D6CFE}
 		{7F69F8CB-5C1A-461B-90FC-360367CD65CF} = {BF341B80-8763-482E-9AF7-5E8DE369ECE1}
-		{BBF3CB03-A56D-4B8D-88CD-0F69355AC17B} = {57DA2155-A4F4-46C0-B888-E1E424739050}
 		{E7AD5BC4-5CC0-44EB-BD3B-D6F93E59EF4F} = {6F6FFBD9-7326-4C38-A4A6-C0052212645F}
 		{2F25E1D4-D167-4681-9C27-161FB18A895D} = {0CD6A482-3CA0-4627-969E-7E27C1AE9352}
 		{5F66B4E0-6BDE-490C-8B7E-15E4F1CFFEFF} = {6E6E1F6E-8689-4D5C-814F-2A92E63B365F}
@@ -2415,7 +2396,6 @@ Global
 		{EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5} = {0479C1FF-33D0-4315-9846-8031661C6707}
 		{0722E9DF-04ED-416B-B3D7-24104A3B3FA7} = {EDFF7A1C-8512-4F29-B8CC-C00D7720E5A5}
 		{AD8951D6-7AF1-40DB-92FE-4517E538E57C} = {8AA8CB22-1E97-463D-863F-484236E1C24C}
-		{F90B33E0-99FF-4D89-98CE-E23B742C15DF} = {DE5A7D8B-9378-4807-8E70-588B9106E1A8}
 		{048BE18B-E895-459D-8041-6DADD6FAB130} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{5E7E1C26-2260-4E32-BABB-0083DE286AC4} = {048BE18B-E895-459D-8041-6DADD6FAB130}
 		{6252AD84-1611-4B1B-BD3D-2D970D51461A} = {048BE18B-E895-459D-8041-6DADD6FAB130}
