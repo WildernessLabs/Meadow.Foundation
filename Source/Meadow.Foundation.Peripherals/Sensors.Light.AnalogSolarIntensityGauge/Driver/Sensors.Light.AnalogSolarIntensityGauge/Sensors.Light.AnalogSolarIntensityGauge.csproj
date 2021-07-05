@@ -1,19 +1,22 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <Company>Wilderness Labs, Inc</Company>
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Sensors.Light.AnalogSolarIntensityGauge</AssemblyName>
+    <AssemblyName>AnalogSolarIntensityGauge</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
     <Nullable>enable</Nullable>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.Sensors.Light.AnalogSolarIntensityGauge</PackageId>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation, Light, AnalogSolarIntensityGauge</PackageTags>
+    <Version>0.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Analog solar intensity</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Light</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
