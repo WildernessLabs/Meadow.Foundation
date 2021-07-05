@@ -84,13 +84,13 @@ namespace MeadowApp
 
             menu = new Menu(display, menuData, false);
 
-            next = new PushButton(Device, Device.Pins.D10, ResistorMode.Disabled);
+            next = new PushButton(Device, Device.Pins.D10);
             next.Clicked += (s, e) => { menu.Next(); };
 
-            select = new PushButton(Device, Device.Pins.D11, ResistorMode.Disabled);
+            select = new PushButton(Device, Device.Pins.D11);
             select.Clicked += (s, e) => { menu.Select(); };
 
-            previous = new PushButton(Device, Device.Pins.D12, ResistorMode.Disabled);
+            previous = new PushButton(Device, Device.Pins.D12);
             previous.Clicked += (s, e) => { menu.Previous(); };
 
             Console.WriteLine("Enable menu...");
@@ -101,7 +101,7 @@ namespace MeadowApp
         byte[] LoadResource(string filename)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = $"Displays.TextDisplayMenu_Sample.{filename}";
+            var resourceName = $"Graphics.TextDisplayMenu_Sample.{filename}";
 
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             {
