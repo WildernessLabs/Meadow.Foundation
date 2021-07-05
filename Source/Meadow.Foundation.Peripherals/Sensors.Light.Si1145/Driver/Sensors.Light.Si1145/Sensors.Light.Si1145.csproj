@@ -9,9 +9,9 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Light.Si1145</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, Max44009, Light</PackageTags>
+    <PackageTags>Meadow.Foundation, Si1145, Light</PackageTags>
     <Version>0.1.32</Version>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>SI1145 I2C ultraviolet and ambient light sensor</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Light</RootNamespace>
   </PropertyGroup>
