@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Net;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Web.Maple.Server
@@ -44,7 +43,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                         FormFields = ParseUrlPairs(ReadInputStream());
                         break;
                     case ContentTypes.Application_Json:
-                        Body = JsonSerializer.Deserialize<Hashtable>(ReadInputStream());
+                        Body = SimpleJsonSerializer.JsonSerializer.DeserializeString(ReadInputStream()) as Hashtable;
                         break;
                 }
             }
@@ -74,11 +73,13 @@ namespace Meadow.Foundation.Web.Maple.Server
 
         protected async Task Send(object output)
         {
-            if (Context.Response.ContentType == ContentTypes.Application_Json) {
-                var json = JsonSerializer.Serialize(output);
+            if (Context.Response.ContentType == ContentTypes.Application_Json) 
+            {
+                var json = SimpleJsonSerializer.JsonSerializer.SerializeObject(output);
                 await WriteOutputStream(Encoding.UTF8.GetBytes(json));
-            } else {
-                // default is to process output as a string
+            } 
+            else 
+            {            
                 await WriteOutputStream(Encoding.UTF8.GetBytes(output != null ? output.ToString() : string.Empty));
             }
         }
@@ -93,7 +94,6 @@ namespace Meadow.Foundation.Web.Maple.Server
             Context.Response.Close();
         }
 
-        //private Hashtable ParseUrlPairs(string s)
         private StringDictionary ParseUrlPairs(string s)
         {
             if (string.IsNullOrEmpty(s)) {
