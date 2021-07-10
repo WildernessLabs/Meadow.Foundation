@@ -11,6 +11,25 @@ using HU = Meadow.Units.RelativeHumidity.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
+    // TODO: for standby durations of 1,000ms and less, the sensor
+    // will actually handle the reading loop. you put it into `Normal`
+    // mode and set it to one of the known `StandbyDuration`s.
+    //
+    // So perhaps this should be an option. From a method signature
+    // standpoint, i think that we would add an overload that took
+    // a known `StandbyDuration` instead of an int.
+    //
+    // With that said, however, as far as I can tell, the sensor won't
+    // send an interrupt when a new reading is taken, so i'm not sure
+    // how we would synchronize with it, since the time that each read
+    // takes is determined by the samples, filter, etc. -b
+    //
+    // TODO: for longer standby durations, we should put the sensor into
+    // Modes.Sleep to save power. Need to figure out what the stanby
+    // duration threshold is for that. i'm guessing 5 seconds might be a
+    // good value.
+
+
     /// <summary>
     /// BME280 Temperature, Pressure and Humidity Sensor.
     /// </summary>
@@ -19,24 +38,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// from the Bosch BME280 sensor.
     /// </remarks>
     public partial class Bme280 :
-        FilterableChangeObservableBase<(Units.Temperature?, RelativeHumidity?, Pressure?)>,
+        SamplingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         //==== events
         /// <summary>
         /// </summary>
-        public event EventHandler<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>> Updated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         //==== internals
+        protected Memory<byte> readBuffer = new byte[32];
+        protected Memory<byte> writeBuffer = new byte[32];
 
         //==== properties
-        ///// <summary>
-        /////     Minimum value that should be used for the polling frequency.
-        ///// </summary>
-        //public const ushort MinimumPollingPeriod = 100;
+        public Oversample TemperatureSampleCount { get; set; } = Oversample.OversampleX8;
+        public Oversample PressureSampleCount { get; set; } = Oversample.OversampleX8;
+        public Oversample HumiditySampleCount { get; set; } = Oversample.OversampleX8;
 
         /// <summary>
         ///     Communication bus used to read and write to the BME280 sensor.
@@ -59,17 +78,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected Configuration configuration;
 
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        /// <summary>
-        /// Gets a value indicating whether the analog input port is currently
-        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
-
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
@@ -86,8 +94,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
-        public (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) Conditions;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
         /// </summary>
@@ -96,12 +102,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Bme280(II2cBus i2c, I2cAddress busAddress = I2cAddress.Adddress0x77)
         {
             bme280Comms = new Bme280I2C(i2c, (byte)busAddress);
+            configuration = new Configuration(); // here to avoid the warning
             Init();
         }
 
         public Bme280(ISpiBus spi, IDigitalOutputPort chipSelect)
         {
             bme280Comms = new Bme280Spi(spi, chipSelect);
+            configuration = new Configuration(); // here to avoid the warning
             Init();
         }
 
@@ -113,105 +121,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // these are basically calibrations burned into the chip.
             ReadCompensationData();
 
-            //
-            //  Update the configuration information and start sampling.
-            //
-            configuration = new Configuration();
+            // set to sleep until we're ready to start sampling 
             configuration.Mode = Modes.Sleep;
             configuration.Filter = FilterCoefficient.Off;
             UpdateConfiguration(configuration);
         }
 
-        /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        /// <param name="temperatureSampleCount">The number of sample readings to take. 
-        /// Must be greater than 0. These samples are automatically averaged.</param>
-        public async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> Read(
-            Oversample temperatureSampleCount = Oversample.OversampleX8,
-            Oversample pressureSampleCount = Oversample.OversampleX8,
-            Oversample humiditySampleCount = Oversample.OversampleX8)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
         {
-            // update confiruation for a one-off read
-            configuration.TemperatureOverSampling = temperatureSampleCount;
-            configuration.PressureOversampling = pressureSampleCount;
-            configuration.HumidityOverSampling = humiditySampleCount;
-            configuration.Mode = Modes.Forced;
-            configuration.Filter = FilterCoefficient.Off;
-            UpdateConfiguration(configuration);
-
-            Conditions = await Update();
-
-            return Conditions;
-        }
-
-        public void StartUpdating(
-            Oversample temperatureSampleCount = Oversample.OversampleX8,
-            Oversample pressureSampleCount = Oversample.OversampleX8,
-            Oversample humiditySampleCount = Oversample.OversampleX1,
-            int standbyDuration = 1000)
-        {
-            // TODO: for standby durations of 1,000ms and less, the sensor
-            // will actually handle the reading loop. you put it into `Normal`
-            // mode and set it to one of the known `StandbyDuration`s.
-            //
-            // So perhaps this should be an option. From a method signature
-            // standpoint, i think that we would add an overload that took
-            // a known `StandbyDuration` instead of an int.
-            //
-            // With that said, however, as far as I can tell, the sensor won't
-            // send an interrupt when a new reading is taken, so i'm not sure
-            // how we would synchronize with it, since the time that each read
-            // takes is determined by the samples, filter, etc. -b
-            //
-            // TODO: for longer standby durations, we should put the sensor into
-            // Modes.Sleep to save power. Need to figure out what the stanby
-            // duration threshold is for that. i'm guessing 5 seconds might be a
-            // good value.
-
-            // thread safety
-            lock (_lock) {
-                if (IsSampling) { return; }
-
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) oldConditions;
-                ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)> result;
-
-                Task.Factory.StartNew(async () => {
-                    while (true) {
-                        if (ct.IsCancellationRequested) {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = (Conditions.Temperature, Conditions.Humidity, Conditions.Pressure);
-
-                        // read
-                        await Read(temperatureSampleCount, pressureSampleCount, humiditySampleCount);
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<(Units.Temperature?, RelativeHumidity?, Pressure?)>(Conditions, oldConditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
             if (changeResult.New.Temperature is { } temp) {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
@@ -221,24 +138,159 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             if (changeResult.New.Pressure is { } pressure) {
                 PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
             }
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
-        /// Stops sampling the temperature.
+        /// Update the sensor information from the BME280.
         /// </summary>
-        public void StopUpdating()
+        /// <remarks>
+        ///     Reads the raw temperature, pressure and humidity data from the BME280 and applies
+        ///     the compensation data to get the actual readings.  These are made available through the
+        ///     Temperature, Pressure and Humidity properties.
+        ///     All three readings are taken at once to ensure that the three readings are consistent.
+        ///     Register locations and formulas taken from the Bosch BME280 datasheet revision 1.1, May 2015.
+        ///     Register locations - section 5.3 Memory Map
+        ///     Formulas - section 4.2.3 Compensation Formulas
+        ///     The integer formulas have been used to try and keep the calculations performant.
+        /// </remarks>
+        protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
         {
-            lock (_lock) {
-                if (!IsSampling) return;
+            return await Task.Run(() => {
 
-                SamplingTokenSource?.Cancel();
+                //TODO: set an update flag on the oversample properties and set
+                // these once, unless the update flag has been set.
 
-                // state muh-cheen
-                IsSampling = false;
-            }
+                // update configuration
+                configuration.TemperatureOverSampling = TemperatureSampleCount;
+                configuration.PressureOversampling = PressureSampleCount;
+                configuration.HumidityOverSampling = HumiditySampleCount;
+                // TODO: do we need this?
+                //configuration.Mode = Modes.Forced;
+                configuration.Filter = FilterCoefficient.Off;
+                UpdateConfiguration(configuration);
+
+
+                (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
+
+                // readily read the readings from the reading register into the read buffer
+                bme280Comms.ReadRegisters(0xf7, readBuffer.Span[0..8]);
+                //
+                //  Temperature calculation from section 4.2.3 of the datasheet.
+                //
+                // Returns temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC.
+                // t_fine carries fine temperature as global value:
+                //
+                // BME280_S32_t t_fine;
+                // BME280_S32_t BME280_compensate_T_int32(BME280_S32_t adc_T)
+                // {
+                //     BME280_S32_t var1, var2, T;
+                //     var1 = ((((adc_T>>3) - ((BME280_S32_t)dig_T1<<1))) * ((BME280_S32_t)dig_T2)) >> 11;
+                //     var2 = (((((adc_T>>4) - ((BME280_S32_t)dig_T1)) * ((adc_T>>4) - ((BME280_S32_t)dig_T1))) >> 12) *
+                //     ((BME280_S32_t)dig_T3)) >> 14;
+                //     t_fine = var1 + var2;
+                //     T = (t_fine * 5 + 128) >> 8;
+                //     return T;
+                // }
+                //
+                var adcTemperature = (readBuffer.Span[3] << 12) | (readBuffer.Span[4] << 4) | ((readBuffer.Span[5] >> 4) & 0x0f);
+                var tvar1 = (((adcTemperature >> 3) - (compensationData.T1 << 1)) * compensationData.T2) >> 11;
+                var tvar2 = (((((adcTemperature >> 4) - compensationData.T1) *
+                               ((adcTemperature >> 4) - compensationData.T1)) >> 12) * compensationData.T3) >> 14;
+                var tfine = tvar1 + tvar2;
+                //
+                conditions.Temperature = new Units.Temperature((float)(((tfine * 5) + 128) >> 8) / 100, TU.Celsius);
+                //
+                // Pressure calculation from section 4.2.3 of the datasheet.
+                //
+                // Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
+                // Output value of “24674867” represents 24674867/256 = 96386.2 Pa = 963.862 hPa
+                //
+                // BME280_U32_t BME280_compensate_P_int64(BME280_S32_t adc_P)
+                // {
+                //     BME280_S64_t var1, var2, p;
+                //     var1 = ((BME280_S64_t)t_fine) - 128000;
+                //     var2 = var1 * var1 * (BME280_S64_t)dig_P6;
+                //     var2 = var2 + ((var1*(BME280_S64_t)dig_P5)<<17);
+                //     var2 = var2 + (((BME280_S64_t)dig_P4)<<35);
+                //     var1 = ((var1 * var1 * (BME280_S64_t)dig_P3)>>8) + ((var1 * (BME280_S64_t)dig_P2)<<12);
+                //     var1 = (((((BME280_S64_t)1)<<47)+var1))*((BME280_S64_t)dig_P1)>>33;
+                //     if (var1 == 0)
+                //     {
+                //         return 0; // avoid exception caused by division by zero
+                //     }
+                //     p = 1048576-adc_P;
+                //     p = (((p<<31)-var2)*3125)/var1;
+                //     var1 = (((BME280_S64_t)dig_P9) * (p>>13) * (p>>13)) >> 25;
+                //     var2 = (((BME280_S64_t)dig_P8) * p) >> 19;
+                //     p = ((p + var1 + var2) >> 8) + (((BME280_S64_t)dig_P7)<<4);
+                //     return (BME280_U32_t)p;
+                // }
+                //
+                long pvar1 = tfine - 128000;
+                var pvar2 = pvar1 * pvar1 * compensationData.P6;
+                pvar2 += (pvar1 * compensationData.P5) << 17;
+                pvar2 += (long)compensationData.P4 << 35;
+                pvar1 = ((pvar1 * pvar1 * compensationData.P8) >> 8) + ((pvar1 * compensationData.P2) << 12);
+                pvar1 = ((((long)1 << 47) + pvar1) * compensationData.P1) >> 33;
+                if (pvar1 == 0) {
+                    conditions.Pressure = new Pressure(0, PU.Pascal);
+                } else {
+                    var adcPressure = (readBuffer.Span[0] << 12) | (readBuffer.Span[1] << 4) | ((readBuffer.Span[2] >> 4) & 0x0f);
+                    long pressure = 1048576 - adcPressure;
+                    pressure = (((pressure << 31) - pvar2) * 3125) / pvar1;
+                    pvar1 = (compensationData.P9 * (pressure >> 13) * (pressure >> 13)) >> 25;
+                    pvar2 = (compensationData.P8 * pressure) >> 19;
+                    pressure = ((pressure + pvar1 + pvar2) >> 8) + ((long)compensationData.P7 << 4);
+                    //
+                    conditions.Pressure = new Pressure((double)pressure / 256, PU.Pascal);
+                }
+                //
+                // Humidity calculations from section 4.2.3 of the datasheet.
+                //
+                // Returns humidity in %RH as unsigned 32 bit integer in Q22.10 format (22 integer and 10 fractional bits).
+                // Output value of “47445” represents 47445/1024 = 46.333 %RH
+                //
+                // BME280_U32_t bme280_compensate_H_int32(BME280_S32_t adc_H)
+                // {
+                //     BME280_S32_t v_x1_u32r;
+                //     v_x1_u32r = (t_fine - ((BME280_S32_t)76800));
+                //     v_x1_u32r = (((((adc_H << 14) - (((BME280_S32_t)dig_H4) << 20) - (((BME280_S32_t)dig_H5) * v_x1_u32r)) +
+                //         ((BME280_S32_t)16384)) >> 15) * (((((((v_x1_u32r * ((BME280_S32_t)dig_H6)) >> 10) * (((v_x1_u32r *
+                //         ((BME280_S32_t)dig_H3)) >> 11) + ((BME280_S32_t)32768))) >> 10) + ((BME280_S32_t)2097152)) *
+                //         ((BME280_S32_t)dig_H2) + 8192) >> 14));
+                //     v_x1_u32r = (v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * ((BME280_S32_t)dig_H1)) >> 4));
+                //     v_x1_u32r = (v_x1_u32r < 0 ? 0 : v_x1_u32r);
+                //     v_x1_u32r = (v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r);
+                //     return (BME280_U32_t)(v_x1_u32r>>12);
+                // }
+                //
+                var adcHumidity = (readBuffer.Span[6] << 8) | readBuffer.Span[7];
+                var v_x1_u32r = tfine - 76800;
+
+                v_x1_u32r = ((((adcHumidity << 14) - (compensationData.H4 << 20) - (compensationData.H5 * v_x1_u32r)) +
+                              16384) >> 15) *
+                            ((((((((v_x1_u32r * compensationData.H6) >> 10) *
+                                  (((v_x1_u32r * compensationData.H3) >> 11) + 32768)) >> 10) + 2097152) *
+                               compensationData.H2) + 8192) >> 14);
+                v_x1_u32r = v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * compensationData.H1) >> 4);
+
+                //v_x1_u32r = (((((adcHumidity << 14) - (((int) _compensationData.H4) << 20) - (((int) _compensationData.H5) * v_x1_u32r)) +
+                //            ((int) 16384)) >> 15) * (((((((v_x1_u32r * ((int) _compensationData.H6)) >> 10) * (((v_x1_u32r *
+                //            ((int) _compensationData.H3)) >> 11) + ((int) 32768))) >> 10) + ((int) 2097152)) *
+                //            ((int) _compensationData.H2) + 8192) >> 14));
+                //v_x1_u32r = (v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * ((int) _compensationData.H1)) >> 4));
+                //
+                //  Makes sure the humidity reading is in the range [0..100].
+                //
+                v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
+                v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
+                //
+                conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024, HU.Percent);
+
+                return conditions;
+            });
         }
-
         /// <summary>
         ///     Update the configuration for the BME280.
         /// </summary>
@@ -295,196 +347,43 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </remarks>
         protected void ReadCompensationData()
         {
-            var temperatureAndPressureData = bme280Comms.ReadRegisters(0x88, 24);
-            var humidityData1 = bme280Comms.ReadRegisters(0xa1, 1);
-            var humidityData2To6 = bme280Comms.ReadRegisters(0xe1, 7);
+            // read the temperature and pressure data into the internal read buffer
+            bme280Comms.ReadRegisters(0x88, readBuffer.Span[0..24]);
 
-            compensationData.T1 = (ushort)(temperatureAndPressureData[0] + (temperatureAndPressureData[1] << 8));
-            compensationData.T2 = (short)(temperatureAndPressureData[2] + (temperatureAndPressureData[3] << 8));
-            compensationData.T3 = (short)(temperatureAndPressureData[4] + (temperatureAndPressureData[5] << 8));
-            //
-            compensationData.P1 = (ushort)(temperatureAndPressureData[6] + (temperatureAndPressureData[7] << 8));
-            compensationData.P2 = (short)(temperatureAndPressureData[8] + (temperatureAndPressureData[9] << 8));
-            compensationData.P3 = (short)(temperatureAndPressureData[10] + (temperatureAndPressureData[11] << 8));
-            compensationData.P4 = (short)(temperatureAndPressureData[12] + (temperatureAndPressureData[13] << 8));
-            compensationData.P5 = (short)(temperatureAndPressureData[14] + (temperatureAndPressureData[15] << 8));
-            compensationData.P6 = (short)(temperatureAndPressureData[16] + (temperatureAndPressureData[17] << 8));
-            compensationData.P7 = (short)(temperatureAndPressureData[18] + (temperatureAndPressureData[19] << 8));
-            compensationData.P8 = (short)(temperatureAndPressureData[20] + (temperatureAndPressureData[21] << 8));
-            compensationData.P9 = (short)(temperatureAndPressureData[22] + (temperatureAndPressureData[23] << 8));
-            //
-            compensationData.H1 = humidityData1[0];
-            compensationData.H2 = (short)(humidityData2To6[0] + (humidityData2To6[1] << 8));
-            compensationData.H3 = humidityData2To6[2];
-            compensationData.H4 = (short)((humidityData2To6[3] << 4) + (humidityData2To6[4] & 0xf));
-            compensationData.H5 = (short)(((humidityData2To6[4] & 0xf) >> 4) + (humidityData2To6[5] << 4));
-            compensationData.H6 = (sbyte)humidityData2To6[6];
-        }
+            // Temperature
+            compensationData.T1 = (ushort)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
+            compensationData.T2 = (short)(readBuffer.Span[2] + (readBuffer.Span[3] << 8));
+            compensationData.T3 = (short)(readBuffer.Span[4] + (readBuffer.Span[5] << 8));
+            // Pressure
+            compensationData.P1 = (ushort)(readBuffer.Span[6] + (readBuffer.Span[7] << 8));
+            compensationData.P2 = (short)(readBuffer.Span[8] + (readBuffer.Span[9] << 8));
+            compensationData.P3 = (short)(readBuffer.Span[10] + (readBuffer.Span[11] << 8));
+            compensationData.P4 = (short)(readBuffer.Span[12] + (readBuffer.Span[13] << 8));
+            compensationData.P5 = (short)(readBuffer.Span[14] + (readBuffer.Span[15] << 8));
+            compensationData.P6 = (short)(readBuffer.Span[16] + (readBuffer.Span[17] << 8));
+            compensationData.P7 = (short)(readBuffer.Span[18] + (readBuffer.Span[19] << 8));
+            compensationData.P8 = (short)(readBuffer.Span[20] + (readBuffer.Span[21] << 8));
+            compensationData.P9 = (short)(readBuffer.Span[22] + (readBuffer.Span[23] << 8));
 
-        /// <summary>
-        /// Update the sensor information from the BME280.
-        /// </summary>
-        /// <remarks>
-        ///     Reads the raw temperature, pressure and humidity data from the BME280 and applies
-        ///     the compensation data to get the actual readings.  These are made available through the
-        ///     Temperature, Pressure and Humidity properties.
-        ///     All three readings are taken at once to ensure that the three readings are consistent.
-        ///     Register locations and formulas taken from the Bosch BME280 datasheet revision 1.1, May 2015.
-        ///     Register locations - section 5.3 Memory Map
-        ///     Formulas - section 4.2.3 Compensation Formulas
-        ///     The integer formulas have been used to try and keep the calculations performant.
-        /// </remarks>
-        protected async Task<(Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure)> Update()
-        {
-            return await Task.Run(() => {
-                (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
+            // read the humidity data. have to read twice because they're in different,
+            // non-sequential registers
 
-                var readings = bme280Comms.ReadRegisters(0xf7, 8);
-                //
-                //  Temperature calculation from section 4.2.3 of the datasheet.
-                //
-                // Returns temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC.
-                // t_fine carries fine temperature as global value:
-                //
-                // BME280_S32_t t_fine;
-                // BME280_S32_t BME280_compensate_T_int32(BME280_S32_t adc_T)
-                // {
-                //     BME280_S32_t var1, var2, T;
-                //     var1 = ((((adc_T>>3) - ((BME280_S32_t)dig_T1<<1))) * ((BME280_S32_t)dig_T2)) >> 11;
-                //     var2 = (((((adc_T>>4) - ((BME280_S32_t)dig_T1)) * ((adc_T>>4) - ((BME280_S32_t)dig_T1))) >> 12) *
-                //     ((BME280_S32_t)dig_T3)) >> 14;
-                //     t_fine = var1 + var2;
-                //     T = (t_fine * 5 + 128) >> 8;
-                //     return T;
-                // }
-                //
-                var adcTemperature = (readings[3] << 12) | (readings[4] << 4) | ((readings[5] >> 4) & 0x0f);
-                var tvar1 = (((adcTemperature >> 3) - (compensationData.T1 << 1)) * compensationData.T2) >> 11;
-                var tvar2 = (((((adcTemperature >> 4) - compensationData.T1) *
-                               ((adcTemperature >> 4) - compensationData.T1)) >> 12) * compensationData.T3) >> 14;
-                var tfine = tvar1 + tvar2;
-                //
-                conditions.Temperature = new Units.Temperature((float)(((tfine * 5) + 128) >> 8) / 100, Units.Temperature.UnitType.Celsius);
-                //
-                // Pressure calculation from section 4.2.3 of the datasheet.
-                //
-                // Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
-                // Output value of “24674867” represents 24674867/256 = 96386.2 Pa = 963.862 hPa
-                //
-                // BME280_U32_t BME280_compensate_P_int64(BME280_S32_t adc_P)
-                // {
-                //     BME280_S64_t var1, var2, p;
-                //     var1 = ((BME280_S64_t)t_fine) - 128000;
-                //     var2 = var1 * var1 * (BME280_S64_t)dig_P6;
-                //     var2 = var2 + ((var1*(BME280_S64_t)dig_P5)<<17);
-                //     var2 = var2 + (((BME280_S64_t)dig_P4)<<35);
-                //     var1 = ((var1 * var1 * (BME280_S64_t)dig_P3)>>8) + ((var1 * (BME280_S64_t)dig_P2)<<12);
-                //     var1 = (((((BME280_S64_t)1)<<47)+var1))*((BME280_S64_t)dig_P1)>>33;
-                //     if (var1 == 0)
-                //     {
-                //         return 0; // avoid exception caused by division by zero
-                //     }
-                //     p = 1048576-adc_P;
-                //     p = (((p<<31)-var2)*3125)/var1;
-                //     var1 = (((BME280_S64_t)dig_P9) * (p>>13) * (p>>13)) >> 25;
-                //     var2 = (((BME280_S64_t)dig_P8) * p) >> 19;
-                //     p = ((p + var1 + var2) >> 8) + (((BME280_S64_t)dig_P7)<<4);
-                //     return (BME280_U32_t)p;
-                // }
-                //
-                long pvar1 = tfine - 128000;
-                var pvar2 = pvar1 * pvar1 * compensationData.P6;
-                pvar2 += (pvar1 * compensationData.P5) << 17;
-                pvar2 += (long)compensationData.P4 << 35;
-                pvar1 = ((pvar1 * pvar1 * compensationData.P8) >> 8) + ((pvar1 * compensationData.P2) << 12);
-                pvar1 = ((((long)1 << 47) + pvar1) * compensationData.P1) >> 33;
-                if (pvar1 == 0) {
-                    conditions.Pressure = new Pressure(0, PU.Pascal);
-                } else {
-                    var adcPressure = (readings[0] << 12) | (readings[1] << 4) | ((readings[2] >> 4) & 0x0f);
-                    long pressure = 1048576 - adcPressure;
-                    pressure = (((pressure << 31) - pvar2) * 3125) / pvar1;
-                    pvar1 = (compensationData.P9 * (pressure >> 13) * (pressure >> 13)) >> 25;
-                    pvar2 = (compensationData.P8 * pressure) >> 19;
-                    pressure = ((pressure + pvar1 + pvar2) >> 8) + ((long)compensationData.P7 << 4);
-                    //
-                    conditions.Pressure = new Pressure((double)pressure / 256, PU.Pascal);
-                }
-                //
-                // Humidity calculations from section 4.2.3 of the datasheet.
-                //
-                // Returns humidity in %RH as unsigned 32 bit integer in Q22.10 format (22 integer and 10 fractional bits).
-                // Output value of “47445” represents 47445/1024 = 46.333 %RH
-                //
-                // BME280_U32_t bme280_compensate_H_int32(BME280_S32_t adc_H)
-                // {
-                //     BME280_S32_t v_x1_u32r;
-                //     v_x1_u32r = (t_fine - ((BME280_S32_t)76800));
-                //     v_x1_u32r = (((((adc_H << 14) - (((BME280_S32_t)dig_H4) << 20) - (((BME280_S32_t)dig_H5) * v_x1_u32r)) +
-                //         ((BME280_S32_t)16384)) >> 15) * (((((((v_x1_u32r * ((BME280_S32_t)dig_H6)) >> 10) * (((v_x1_u32r *
-                //         ((BME280_S32_t)dig_H3)) >> 11) + ((BME280_S32_t)32768))) >> 10) + ((BME280_S32_t)2097152)) *
-                //         ((BME280_S32_t)dig_H2) + 8192) >> 14));
-                //     v_x1_u32r = (v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * ((BME280_S32_t)dig_H1)) >> 4));
-                //     v_x1_u32r = (v_x1_u32r < 0 ? 0 : v_x1_u32r);
-                //     v_x1_u32r = (v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r);
-                //     return (BME280_U32_t)(v_x1_u32r>>12);
-                // }
-                //
-                var adcHumidity = (readings[6] << 8) | readings[7];
-                var v_x1_u32r = tfine - 76800;
-
-                v_x1_u32r = ((((adcHumidity << 14) - (compensationData.H4 << 20) - (compensationData.H5 * v_x1_u32r)) +
-                              16384) >> 15) *
-                            ((((((((v_x1_u32r * compensationData.H6) >> 10) *
-                                  (((v_x1_u32r * compensationData.H3) >> 11) + 32768)) >> 10) + 2097152) *
-                               compensationData.H2) + 8192) >> 14);
-                v_x1_u32r = v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * compensationData.H1) >> 4);
-
-                //v_x1_u32r = (((((adcHumidity << 14) - (((int) _compensationData.H4) << 20) - (((int) _compensationData.H5) * v_x1_u32r)) +
-                //            ((int) 16384)) >> 15) * (((((((v_x1_u32r * ((int) _compensationData.H6)) >> 10) * (((v_x1_u32r *
-                //            ((int) _compensationData.H3)) >> 11) + ((int) 32768))) >> 10) + ((int) 2097152)) *
-                //            ((int) _compensationData.H2) + 8192) >> 14));
-                //v_x1_u32r = (v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * ((int) _compensationData.H1)) >> 4));
-                //
-                //  Makes sure the humidity reading is in the range [0..100].
-                //
-                v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
-                v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
-                //
-                conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024, RelativeHumidity.UnitType.Percent);
-
-                return conditions;
-            });
+            // first one
+            bme280Comms.ReadRegisters(0xa1, readBuffer.Span[0..1]);
+            compensationData.H1 = readBuffer.Span[0];
+            // 2-6
+            bme280Comms.ReadRegisters(0xe1, readBuffer.Span[0..7]);
+            compensationData.H2 = (short)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
+            compensationData.H3 = readBuffer.Span[2];
+            compensationData.H4 = (short)((readBuffer.Span[3] << 4) + (readBuffer.Span[4] & 0xf));
+            compensationData.H5 = (short)(((readBuffer.Span[4] & 0xf) >> 4) + (readBuffer.Span[5] << 4));
+            compensationData.H6 = (sbyte)readBuffer.Span[6];
         }
 
         public byte GetChipID()
         {
-            return bme280Comms.ReadRegisters((byte)Bme280Comms.Register.ChipID, 1).First();
-        }
-
-        /// <summary>
-        /// Creates a `FilterableChangeObserver` that has a handler and a filter.
-        /// </summary>
-        /// <param name="handler">The action that is invoked when the filter is satisifed.</param>
-        /// <param name="filter">An optional filter that determines whether or not the
-        /// consumer should be notified.</param>
-        /// <returns></returns>
-        /// <returns></returns>
-        // Implementor Notes:
-        //  This is a convenience method that provides named tuple elements. It's not strictly
-        //  necessary, as the `FilterableChangeObservableBase` class provides a default implementation,
-        //  but if you use it, then the parameters are named `Item1`, `Item2`, etc. instead of
-        //  `Temperature`, `Pressure`, etc.
-        public static new
-            FilterableChangeObserver<(Units.Temperature?, RelativeHumidity?, Pressure?)>
-            CreateObserver(
-                Action<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>> handler,
-                Predicate<IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>>? filter = null
-            )
-        {
-            return new FilterableChangeObserver<(Units.Temperature?, RelativeHumidity?, Pressure?)>(
-                handler: handler, filter: filter
-                );
+            bme280Comms.ReadRegisters((byte)Bme280Comms.Register.ChipID, readBuffer.Span[0..1]);
+            return readBuffer.Span[0];
         }
     }
 }

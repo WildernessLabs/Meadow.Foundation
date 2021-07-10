@@ -7,7 +7,8 @@ using Meadow.Units;
 
 namespace BasicSensors.Atmospheric.SI7021_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp
+        :App<F7Micro, MeadowApp>
     {
         Si70xx sensor;
 
@@ -17,20 +18,13 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
             // configure our sensor on the I2C Bus
             var i2cBus = Device.CreateI2cBus();
-
             sensor = new Si70xx(i2cBus);
 
             Console.WriteLine($"Chip Serial: {sensor.SerialNumber}");
 
-            // get an initial reading
-            ReadConditions().Wait();
-
-            // start updating continuously
-            sensor.StartUpdating();
-
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity)> result) => {
+            sensor.Updated += (sender, result) => {
                 Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:F1}C");
                 Console.WriteLine($"  Relative Humidity: {result.New.Humidity:F1}%");
             };
@@ -58,6 +52,12 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
                 //filter: null
                 );
             sensor.Subscribe(consumer);
+
+            // get an initial reading
+            ReadConditions().Wait();
+
+            // start updating continuously
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         protected async Task ReadConditions()

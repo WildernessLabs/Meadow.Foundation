@@ -1,9 +1,11 @@
-﻿namespace Meadow.Foundation.Spatial
+﻿using System.Diagnostics.Contracts;
+
+namespace Meadow.Foundation.Spatial
 {
     /// <summary>
     ///     Vector in three dimensional space.
     /// </summary>
-    public class Vector
+    public struct Vector
     {
         /// <summary>
         ///     X component of the vector.
@@ -32,5 +34,27 @@
             Y = y;
             Z = z;
         }
+
+        [Pure]
+        public static Vector operator +(Vector lvalue, Vector rvalue)
+        {
+            var x = lvalue.X + rvalue.X;
+            var y = lvalue.Y + rvalue.Y;
+            var z = lvalue.Z + rvalue.Z;
+
+            return new Vector(x, y, z);
+        }
+
+        [Pure]
+        public static Vector operator -(Vector lvalue, Vector rvalue)
+        {
+            var x = lvalue.X - rvalue.X;
+            var y = lvalue.Y - rvalue.Y;
+            var z = lvalue.Z - rvalue.Z;
+
+            return new Vector(x, y, z);
+        }
+
+
     }
 }

@@ -3,6 +3,7 @@ using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Hid;
 using Meadow.Units;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using VU = Meadow.Units.Voltage.UnitType;
 
@@ -12,13 +13,13 @@ namespace Meadow.Foundation.Sensors.Hid
     /// 2-axis analog joystick
     /// </summary>
     public partial class AnalogJoystick
-        : FilterableChangeObservableBase<JoystickPosition>
+        : SensorBase<JoystickPosition>
     {
         //==== events
-        /// <summary>
-        /// Raised when the value of the reading changes.
-        /// </summary>
-        public event EventHandler<ChangeResult<JoystickPosition>> Updated = delegate { };
+
+        //==== internals
+        protected int sampleCount;
+        protected int sampleIntervalMs;
 
         //==== properties
         protected IAnalogInputPort HorizontalInputPort { get; set; }
@@ -51,15 +52,27 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="device"></param>
+        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="horizontalPin"></param>
         /// <param name="verticalPin"></param>
-        /// <param name="calibration"></param>
-        /// <param name="isInverted"></param>
+        /// <param name="calibration">Calibration for the joystick.</param>
+        /// <param name="isInverted">Whether or not the vertical component is inverted.</param>
+        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
+        /// between sets of sample readings. This value determines how often
+        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
+        /// <param name="sampleCount">How many samples to take during a given
+        /// reading. These are automatically averaged to reduce noise.</param>
+        /// <param name="sampleIntervalMs">The time, in milliseconds,
+        /// to wait in between samples during a reading.</param>
         public AnalogJoystick(
             IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
-            JoystickCalibration? calibration = null, bool isInverted = false)
-                : this(device.CreateAnalogInputPort(horizontalPin), device.CreateAnalogInputPort(verticalPin), calibration, isInverted)
+            JoystickCalibration? calibration = null, bool isInverted = false,
+            int updateIntervalMs = 1000,
+            int sampleCount = 5, int sampleIntervalMs = 40)
+                : this(
+                      device.CreateAnalogInputPort(horizontalPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+                      device.CreateAnalogInputPort(verticalPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+                      calibration, isInverted)
         { }
 
         public AnalogJoystick(
@@ -109,7 +122,7 @@ namespace Meadow.Foundation.Sensors.Hid
                         Position = newPosition;
 
                         var result = new ChangeResult<JoystickPosition>(newPosition, oldPosition);
-                        RaiseEventsAndNotify(result);
+                        base.RaiseEventsAndNotify(result);
                         
                     }
                 )
@@ -143,7 +156,7 @@ namespace Meadow.Foundation.Sensors.Hid
                         Position = newPosition;
 
                         var result = new ChangeResult<JoystickPosition>(newPosition, oldPosition);
-                        RaiseEventsAndNotify(result);
+                        base.RaiseEventsAndNotify(result);
                     }
                 )
            );
@@ -159,8 +172,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <returns></returns>
         public async Task SetCenterPosition()
         {
-            var hCenter = await HorizontalInputPort.Read(2, 20);
-            var vCenter = await VerticalInputPort.Read(2, 20);
+            var hCenter = await HorizontalInputPort.Read();
+            var vCenter = await VerticalInputPort.Read();
 
             Calibration = new JoystickCalibration(
                 hCenter, Calibration.HorizontalMin, Calibration.HorizontalMax,
@@ -230,10 +243,10 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        public async Task<JoystickPosition> Read(int sampleCount = 2, int sampleIntervalDuration = 20)
+        protected override async Task<JoystickPosition> ReadSensor()
         {
-            var h = await HorizontalInputPort.Read(sampleCount, sampleIntervalDuration);
-            var v = await VerticalInputPort.Read(sampleCount, sampleIntervalDuration);
+            var h = await HorizontalInputPort.Read();
+            var v = await VerticalInputPort.Read();
 
             JoystickPosition position = new JoystickPosition( GetNormalizedPosition(h, true), GetNormalizedPosition(v, false));
             return position;
@@ -246,19 +259,23 @@ namespace Meadow.Foundation.Sensors.Hid
         /// subscribers getting notified. Use the `readIntervalDuration` parameter
         /// to specify how often events and notifications are raised/sent.
         /// </summary>
-        /// <param name="sampleCount">How many samples to take during a given
-        /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalDuration">The time, in milliseconds,
-        /// to wait in between samples during a reading.</param>
-        /// <param name="standbyDuration">The time, in milliseconds, to wait
-        /// between sets of sample readings. This value determines how often
-        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
-        public void StartUpdating(int sampleCount = 3,
-            int sampleIntervalDuration = 40,
-            int standbyDuration = 100)
+        /// <param name="updateInterval">A `TimeSpan` that specifies how long to
+        /// wait between readings. This value influences how often `*Updated`
+        /// events are raised and `IObservable` consumers are notified.
+        /// The default is 5 seconds.</param>
+        public void StartUpdating(TimeSpan? updateInterval)
         {
-            HorizontalInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
-            VerticalInputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
+            // thread safety
+            lock (samplingLock) {
+                if (IsSampling) return;
+                IsSampling = true;
+
+                base.SamplingTokenSource = new CancellationTokenSource();
+                CancellationToken ct = SamplingTokenSource.Token;
+
+                HorizontalInputPort.StartUpdating(updateInterval);
+                VerticalInputPort.StartUpdating(updateInterval);
+            }
         }
 
         /// <summary>
@@ -266,18 +283,17 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public void StopUpdating()
         {
-            HorizontalInputPort.StopUpdating();
-            VerticalInputPort.StopUpdating();
-        }
+            lock (samplingLock) {
+                if (!IsSampling) return;
 
-        /// <summary>
-        /// Inheritance safe way to raise events.
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected void RaiseEventsAndNotify(ChangeResult<JoystickPosition> changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+                HorizontalInputPort.StopUpdating();
+                VerticalInputPort.StopUpdating();
+
+                SamplingTokenSource?.Cancel();
+
+                // state muh-cheen
+                IsSampling = false;
+            }
         }
 
         /// <summary>

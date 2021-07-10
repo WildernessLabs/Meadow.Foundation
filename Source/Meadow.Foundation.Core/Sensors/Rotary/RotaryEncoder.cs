@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Rotary;
 
@@ -7,9 +8,7 @@ namespace Meadow.Foundation.Sensors.Rotary
     /// <summary>
     /// Digital rotary encoder that uses two-bit Gray Code to encode rotation.
     /// </summary>
-    public class RotaryEncoder :
-        FilterableChangeObservableBase<RotationDirection>,
-        IRotaryEncoder
+    public class RotaryEncoder : ObservableBase<RotationDirection>, IRotaryEncoder
     {
         //==== events
         /// <summary>
@@ -21,12 +20,12 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <summary>
         /// Returns the pin connected to the A-phase output on the rotary encoder.
         /// </summary>
-        public IDigitalInputPort APhasePort { get; }
+        protected IDigitalInputPort APhasePort { get; }
 
         /// <summary>
         /// Returns the pin connected to the B-phase output on the rotary encoder.
         /// </summary>
-        public IDigitalInputPort BPhasePort { get; }
+        protected IDigitalInputPort BPhasePort { get; }
 
         /// <summary>
         /// Gets the last direction of rotation

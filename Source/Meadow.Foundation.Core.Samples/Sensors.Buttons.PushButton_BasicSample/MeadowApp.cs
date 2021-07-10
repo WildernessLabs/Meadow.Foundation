@@ -61,8 +61,8 @@ namespace MeadowApp
                 onboardLed.IsOn = false;
             };
             // `LongPressClicked`
-            pushButton.LongPressClicked += (s, e) => {
-                Console.WriteLine("pushButton.LongPressClicked.");
+            pushButton.LongClicked += (s, e) => {
+                Console.WriteLine("pushButton.LongClicked.");
                 onboardLed.SetColor(WildernessLabsColors.ChileanFire);
                 Thread.Sleep(1000);
                 onboardLed.IsOn = false;

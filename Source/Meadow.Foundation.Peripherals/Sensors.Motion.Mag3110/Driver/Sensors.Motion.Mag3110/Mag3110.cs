@@ -1,5 +1,6 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
 using System;
@@ -8,65 +9,33 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class Mag3110:
-        FilterableChangeObservableBase<MagneticField3D>
-       // IMagnetometer
+    // TODO: Sensor is fully converted but data isn't right:
+    // Accel: [X:429.00,Y:-45.00,Z:-1,682.00 (m/s^2)]
+    // Temp: 16.00C
+
+    // TODO: Interrupt handling is commented out
+    public partial class Mag3110 :
+        ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
+        ITemperatureSensor
+        //IMagnetometer
     {
-        /// <summary>
-        /// Register addresses in the sensor.
-        /// </summary>
-        private static class Registers
-        {
-            public static readonly byte DRStatus = 0x00;
-            public static readonly byte XMSB = 0x01;
-            public static readonly byte XLSB = 0x02;
-            public static readonly byte YMSB = 0x03;
-            public static readonly byte YLSB = 0x04;
-            public static readonly byte ZMSB = 0x05;
-            public static readonly byte ZLSB = 0x06;
-            public static readonly byte WhoAmI = 0x07;
-            public static readonly byte SystemMode = 0x08;
-            public static readonly byte XOffsetMSB = 0x09;
-            public static readonly byte XOffsetLSB = 0x0a;
-            public static readonly byte YOffsetMSB = 0x0b;
-            public static readonly byte YOffsetLSB = 0x0c;
-            public static readonly byte ZOffsetMSB = 0x0d;
-            public static readonly byte ZOffsetLSB = 0x0e;
-            public static readonly byte Temperature = 0x0f;
-            public static readonly byte Control1 = 0x10;
-            public static readonly byte Control2 = 0x11;
-        }
+        //==== events
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
-        public MagneticField3D MagneticField3d { get; protected set; } = new MagneticField3D();
-
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        /// <summary>
-        /// Gets a value indicating whether the analog input port is currently
-        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
-
-        public event EventHandler<IChangeResult<MagneticField3D>> Updated;
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated;
-
-        /// <summary>
-        /// MAG3110 object.
-        /// </summary>
-        private readonly II2cPeripheral i2cPeripheral;
-
+        //==== internals
         /// <summary>
         /// Interrupt port used to detect then end of a conversion.
         /// </summary>
-        private readonly IDigitalInputPort interruptPort;
+        protected readonly IDigitalInputPort interruptPort;
+
+        //==== properties
+        public MagneticField3D? MagneticField3d => Conditions.MagneticField3D;
 
         /// <summary>
         /// Temperature of the sensor die.
         /// </summary>
-        public Units.Temperature Temperature => new Units.Temperature((sbyte)i2cPeripheral.ReadRegister(Registers.Temperature), Units.Temperature.UnitType.Celsius);
+        public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
         /// Change or get the standby status of the sensor.
@@ -75,12 +44,12 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             get
             {
-                var controlRegister = i2cPeripheral.ReadRegister((byte) Registers.Control1);
+                var controlRegister = Peripheral.ReadRegister((byte) Registers.CONTROL_1);
                 return (controlRegister & 0x03) == 0;
             }
             set
             {
-                var controlRegister = i2cPeripheral.ReadRegister(Registers.Control1);
+                var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
                 if (value)
                 {
                     controlRegister &= 0xfc; // ~0x03
@@ -89,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     controlRegister |= 0x01;
                 }
-                i2cPeripheral.WriteRegister(Registers.Control1, controlRegister);
+                Peripheral.WriteRegister(Registers.CONTROL_1, controlRegister);
             }
         }
 
@@ -101,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public bool IsDataReady
         {
-            get { return(i2cPeripheral.ReadRegister(Registers.DRStatus) & 0x08) > 0; }
+            get { return(Peripheral.ReadRegister(Registers.DR_STATUS) & 0x08) > 0; }
         }
 
         /// <summary>
@@ -112,15 +81,13 @@ namespace Meadow.Foundation.Sensors.Motion
         /// of the datasheet).  The interrupts are tied to the ZYXDR bit in the DR Status
         /// register.
         /// </remarks>
-        private bool _digitalInputsEnabled;
-
         public bool DigitalInputsEnabled
         {
-            get { return _digitalInputsEnabled; }
+            get { return digitalInputsEnabled; }
             set
             {
                 Standby = true;
-                var cr2 = i2cPeripheral.ReadRegister(Registers.Control2);
+                var cr2 = Peripheral.ReadRegister(Registers.CONTROL_2);
                 if (value)
                 {
                     cr2 |= 0x80;
@@ -129,10 +96,12 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     cr2 &= 0x7f;
                 }
-                i2cPeripheral.WriteRegister(Registers.Control2, cr2);
-                _digitalInputsEnabled = value;
+                Peripheral.WriteRegister(Registers.CONTROL_2, cr2);
+                digitalInputsEnabled = value;
             }
-        }
+        } protected bool digitalInputsEnabled;
+
+        //==== ctors
 
         /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component.
@@ -141,8 +110,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin">Interrupt pin used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
         /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>        
-        public Mag3110(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = 0x0e, ushort speed = 400) :
-            this (i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address) { }
+        public Mag3110(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = Addresses.Mag3110, ushort speed = 400) :
+                this (i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address)
+        { }
 
         /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component.
@@ -150,11 +120,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPort">Interrupt port used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
         /// <param name="i2cBus">I2C bus object - default = 400 KHz).</param>        
-        public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = 0x0e)
+        public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = Addresses.Mag3110)
+            : base (i2cBus, address)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
-
-            var deviceID = i2cPeripheral.ReadRegister((byte) Registers.WhoAmI);
+            var deviceID = Peripheral.ReadRegister((byte) Registers.WHO_AM_I);
             if (deviceID != 0xc4)
             {
                 throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
@@ -174,93 +143,48 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Reset()
         {
             Standby = true;
-            i2cPeripheral.WriteRegister(Registers.Control1, 0x00);
-            i2cPeripheral.WriteRegister(Registers.Control2, 0x80);
-            i2cPeripheral.WriteRegisters(Registers.XOffsetMSB, new byte[] { 0, 0, 0, 0, 0, 0 });
+            Peripheral.WriteRegister(Registers.CONTROL_1, 0x00);
+            Peripheral.WriteRegister(Registers.CONTROL_2, 0x80);
+            WriteBuffer.Span[0] = Registers.X_OFFSET_MSB;
+            WriteBuffer.Span[1] = WriteBuffer.Span[2] = WriteBuffer.Span[3] = 0;
+            WriteBuffer.Span[4] = WriteBuffer.Span[5] = WriteBuffer.Span[6] = 0;
+            //Peripheral.WriteRegisters(Registers.X_OFFSET_MSB, new byte[] { 0, 0, 0, 0, 0, 0 });
+            Peripheral.Write(WriteBuffer.Span[0..7]);
         }
 
-        ///// <summary>
-        ///// Convenience method to get the current temperature. For frequent reads, use
-        ///// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        ///// </summary>
-        public MagneticField3D Read()
+        protected override void RaiseEventsAndNotify(IChangeResult<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> changeResult)
         {
-            Update();
-
-            return MagneticField3d;
-        }
-
-        ///// <summary>
-        ///// Starts continuously sampling the sensor.
-        /////
-        ///// This method also starts raising `Changed` events and IObservable
-        ///// subscribers getting notified.
-        ///// </summary>
-        public void StartUpdating(int standbyDuration = 1000)
-        {
-            // thread safety
-            lock (_lock)
-            {
-                if (IsSampling) { return; }
-
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                MagneticField3D oldConditions;
-                ChangeResult<MagneticField3D> result;
-                Task.Factory.StartNew(async () =>
-                {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {   // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = MagneticField3d;
-
-                        // read
-                        Update();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<MagneticField3D>(MagneticField3d, oldConditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
+            if (changeResult.New.MagneticField3D is { } mag) {
+                MagneticField3dUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag, changeResult.Old?.MagneticField3D));
             }
+            if (changeResult.New.Temperature is { } temp) {
+                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+            }
+            base.RaiseEventsAndNotify(changeResult);
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<MagneticField3D> changeResult)
+        protected override Task<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> ReadSensor()
         {
-            Updated?.Invoke(this, changeResult);
-            MagneticField3dUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
-        }
+            return Task.Run(() => 
+            {
+                (MagneticField3D? MagneticField3D, Units.Temperature? Temperature) conditions;
 
-        /// <summary>
-        /// Read data from the sensor 
-        /// </summary>
-        public void Update()
-        {
-            var controlRegister = i2cPeripheral.ReadRegister(Registers.Control1);
-            controlRegister |= 0x02;
-            i2cPeripheral.WriteRegister(Registers.Control1, controlRegister);
-            var data = i2cPeripheral.ReadRegisters(Registers.XMSB, 6);
+                var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
+                controlRegister |= 0x02;
+                Peripheral.WriteRegister(Registers.CONTROL_1, controlRegister);
+                //var data = Peripheral.ReadRegisters(Registers.X_MSB, 6);
+                Peripheral.ReadRegister(Registers.X_MSB, ReadBuffer.Span[0..6]);
 
-            MagneticField3d = new MagneticField3D(
-                new MagneticField((short)((data[0] << 8) | data[1]), MagneticField.UnitType.MicroTesla),
-                new MagneticField((short)((data[2] << 8) | data[3]), MagneticField.UnitType.MicroTesla),
-                new MagneticField((short)((data[4] << 8) | data[5]), MagneticField.UnitType.MicroTesla)
-                );
+                conditions.MagneticField3D = new MagneticField3D(
+                    new MagneticField((short)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]), MagneticField.UnitType.MicroTesla),
+                    new MagneticField((short)((ReadBuffer.Span[2] << 8) | ReadBuffer.Span[3]), MagneticField.UnitType.MicroTesla),
+                    new MagneticField((short)((ReadBuffer.Span[4] << 8) | ReadBuffer.Span[5]), MagneticField.UnitType.MicroTesla)
+                    );
+
+                conditions.Temperature = new Units.Temperature((sbyte)Peripheral.ReadRegister(Registers.TEMPERATURE), Units.Temperature.UnitType.Celsius);
+
+                return conditions;
+            });
         }
 
         /// <summary>

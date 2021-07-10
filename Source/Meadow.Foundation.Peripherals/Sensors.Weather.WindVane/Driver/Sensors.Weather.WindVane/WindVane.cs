@@ -18,26 +18,31 @@ namespace Meadow.Foundation.Sensors.Weather
     /// Labs Clima Pro board.
     /// </summary>
     public partial class WindVane
-        : FilterableChangeObservableBase<Azimuth>, IWindVane
+        : SensorBase<Azimuth>, IWindVane
     {
-        //==== events
-        /// <summary>
-        /// Raised when the azimuth of the wind changes.
-        /// </summary>
-        public event EventHandler<IChangeResult<Azimuth>> Updated = delegate { };
+        //==== internals
+        protected IAnalogInputPort inputPort;
 
+        //==== Properties
         /// <summary>
         /// The last recorded azimuth of the wind.
         /// </summary>
         public Azimuth? WindAzimuth { get; protected set; }
+
+        /// <summary>
+        /// Number of samples to take per reading. Default is 2.
+        /// </summary>
+        public int SampleCount { get; set; } = 2;
+        /// <summary>
+        /// Duration of time between samples. Default is 40ms.
+        /// </summary>
+        public TimeSpan SampleInterval { get; set; } = TimeSpan.FromMilliseconds(40);
 
         // TODO: consider making an `ImmutableDictionary` (need to add package
         /// <summary>
         /// Voltage -> wind azimuth lookup dictionary.
         /// </summary>
         public IDictionary<Voltage, Azimuth> AzimuthVoltages { get; protected set; }
-
-        protected IAnalogInputPort inputPort;
 
         /// <summary>
         /// Creates a new `WindVane` on the specified IO Device's analog input.
@@ -46,8 +51,13 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="device">The IO Device.</param>
         /// <param name="analogInputPin">The analog input pin.</param>
         /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages.</param>
-        public WindVane(IAnalogInputController device, IPin analogInputPin, IDictionary<Voltage, Azimuth> azimuthVoltages = null)
-            : this(device.CreateAnalogInputPort(analogInputPin), azimuthVoltages)
+        public WindVane(
+            IAnalogInputController device, IPin analogInputPin,
+            IDictionary<Voltage, Azimuth> azimuthVoltages = null,
+            int updateIntervalMs = 1000,
+            int sampleCount = 1, int sampleIntervalMs = 40)
+            : this(device.CreateAnalogInputPort(analogInputPin, updateIntervalMs, sampleCount, sampleIntervalMs)
+                  , azimuthVoltages)
         {
         }
 
@@ -83,27 +93,32 @@ namespace Meadow.Foundation.Sensors.Weather
         /// subscribers getting notified. Use the `standbyDuration` parameter
         /// to specify how often events and notifications are raised/sent.
         /// </summary>
-        /// <param name="sampleCount">How many samples to take during a given
-        /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalDuration">The time, in milliseconds,
-        /// to wait in between samples during a reading.</param>
-        /// <param name="standbyDuration">The time, in milliseconds, to wait
-        /// between sets of sample readings. This value determines how often
-        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
-        public void StartUpdating(
-            int sampleCount = 5,
-            int sampleIntervalDuration = 20,
-            int standbyDuration = 500)
+        /// <param name="updateInterval">A `TimeSpan` that specifies how long to
+        /// wait between readings. This value influences how often `*Updated`
+        /// events are raised and `IObservable` consumers are notified.
+        /// The default is 5 seconds.</param>
+        public void StartUpdating(TimeSpan updateInterval)
         {
-            inputPort.StartUpdating(sampleCount, sampleIntervalDuration, standbyDuration);
+            // thread safety
+            lock (samplingLock) {
+                if (IsSampling) return;
+
+                IsSampling = true;
+                inputPort.StartUpdating(updateInterval);
+            }
         }
 
         /// <summary>
-        /// Stops sampling the temperature.
+        /// Stops sampling the sensor.
         /// </summary>
         public void StopUpdating()
         {
-            inputPort.StopUpdating();
+            lock (samplingLock) {
+                if (!IsSampling) return;
+
+                base.IsSampling = false;
+                inputPort.StopUpdating();
+            }
         }
 
         /// <summary>
@@ -115,10 +130,10 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="sampleIntervalDuration">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
-        public async Task<Azimuth> Read(int sampleCount = 5, int sampleIntervalDuration = 20)
+        protected override async Task<Azimuth> ReadSensor()
         {
             // read the voltage
-            Voltage voltage = await inputPort.Read(sampleCount, sampleIntervalDuration);
+            Voltage voltage = await inputPort.Read();
             // get the azimuth
             return LookupWindDirection(voltage);
         }
@@ -130,25 +145,13 @@ namespace Meadow.Foundation.Sensors.Weather
         protected void HandleAnalogUpdate(IChangeResult<Voltage> result)
         {
             var windAzimuth = LookupWindDirection(result.New);
-            ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>()
-            //WindVaneChangeResult windChangeResult = new WindVaneChangeResult()
-            {
+            ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>() {
                 Old = this.WindAzimuth,
                 New = windAzimuth
             };
-            RaiseUpdated(windChangeResult);
+            // save state
             this.WindAzimuth = windAzimuth;
-        }
-
-        /// <summary>
-        /// Thread and inheritance safe way to raise the event and notify subs
-        /// </summary>
-        /// <param name="windAzimuth"></param>
-        //protected void RaiseUpdated(WindVaneChangeResult changeResult)
-        protected void RaiseUpdated(IChangeResult<Azimuth> changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(windChangeResult);
         }
 
         /// <summary>
@@ -204,5 +207,6 @@ namespace Meadow.Foundation.Sensors.Weather
                 { new Voltage(2.74f), new Azimuth(Azimuth16PointCardinalNames.NNW) },
             };
         }
+
     }
 }

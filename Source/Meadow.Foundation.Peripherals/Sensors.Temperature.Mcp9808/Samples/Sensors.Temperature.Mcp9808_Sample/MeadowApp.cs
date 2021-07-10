@@ -20,13 +20,13 @@ namespace Sensors.Temperature.Mcp9808_Sample
 
         void TestUpdating()
         {
-            Console.WriteLine("TestFC28Updating...");
+            Console.WriteLine("TestUpdating...");
 
             var consumer = Mcp9808.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Temperature New Value { result.New.Celsius}");
-                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}");
+                    Console.WriteLine($"Temperature New Value { result.New.Celsius}C");
+                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}C");
                 },
                 filter: null
             );
@@ -37,18 +37,18 @@ namespace Sensors.Temperature.Mcp9808_Sample
                 Console.WriteLine($"Temperature Updated: {e.New.Celsius:N2}C");
             };
 
-            mcp9808.StartUpdating();
+            mcp9808.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         void TestRead()
         {
-            Console.WriteLine("TestFC28Sensor...");
+            Console.WriteLine("TestMcp9808Sensor...");
 
             while (true)
             {
-                var temp = mcp9808.Read();
+                var temp = mcp9808.Read().Result;
 
-                Console.WriteLine($"Temperature New Value { temp.Celsius}");
+                Console.WriteLine($"Temperature New Value {temp.Celsius}C");
                 Thread.Sleep(1000);
             }
         }

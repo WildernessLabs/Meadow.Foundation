@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
@@ -10,113 +11,44 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// High Accuracy Ambient Light Sensor 
     /// </summary>
-    public class Veml7700 :
-        FilterableChangeObservableBase<Illuminance>,
-        ILightSensor, 
-        IDisposable
+    public partial class Veml7700 : ByteCommsSensorBase<Illuminance>, ILightSensor,  IDisposable
     {
         //==== events
-        public event EventHandler<IChangeResult<Illuminance>> Updated = delegate { };
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
         //==== internals
         private ushort _config;
-        private II2cBus Device { get; set; }
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
 
         //==== properties
-
-        // TODo: move these enums into their own files e.g. `Veml7700.Addresses.cs`
-        /// <summary>
-        ///     Valid addresses for the sensor.
-        /// </summary>
-        public enum Addresses : byte
-        {
-            Address0 = 0x10,
-            Default = Address0
-        }
-
-        public enum LightSensorType
-        {
-            Ambient,
-            White
-        }
-
-        [Flags]
-        private enum Register : byte
-        {
-            AlsConf0 = 0x00,
-            AlsWH = 0x01,
-            AlsWL = 0x02,
-            PowerSaving = 0x03,
-            Als = 0x04,
-            White = 0x05,
-            AlsInt = 0x06
-        }
         /// <summary>
         /// Luminosity reading from the TSL2561 sensor.
         /// </summary>
         public Illuminance? Illuminance { get; protected set; }
 
-        public int ChangeThreshold { get; set; }
-        public byte Address { get; private set; }
+        public SensorTypes DataSource { get; set; } = SensorTypes.White;
 
-        public LightSensorType DataSource { get; set; } = LightSensorType.Ambient;
-
-        public Veml7700(II2cBus bus)
+        public Veml7700(II2cBus i2cBus)
+            : base(i2cBus, (byte)Addresses.Default)
         {
-            Device = bus;
-            Initialize((byte)Addresses.Default);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected async override Task<Illuminance> ReadSensor()
         {
-            IsSampling = false;
-        }
-
-        /// <summary>
-        /// Dispose managed resources
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        bool IsSampling = false;
-
-        ///// <summary>
-        ///// Starts continuously sampling the sensor.
-        /////
-        ///// This method also starts raising `Changed` events and IObservable
-        ///// subscribers getting notified.
-        ///// </summary>
-        public void StartUpdating()
-        {
-            // thread safety
-            lock (_lock)
-            {
-                if (IsSampling) { return; }
-
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                Illuminance? oldConditions;
-
-                int integrationTime;
-                int gain;
+            return await Task.Run(async () => {
+                Illuminance illuminance = new Illuminance(0);
+                
+                int integrationTime = 0;
+                int gain = 1;
                 int scaleA;
                 int scaleB;
 
-                Task.Factory.StartNew(async () =>
-                {
-                    gain = 1;
-                    integrationTime = 0;
-
-                    WriteRegister(Register.AlsConf0, 0);
+                // this loop will tune the integration time (effectively shutter speed)
+                // of the sensor until it gets to a place where the data is good.
+                // once the data coming is good, then the actual reading is multiplied
+                // by the integration time scale factor.
+                // see the Application Note pdf for more information
+                while (true) {
+                    WriteRegister(Registers.AlsConf0, 0);
 
                     // wait > 2.5ms
                     await Task.Delay(5);
@@ -126,81 +58,67 @@ namespace Meadow.Foundation.Sensors.Light
                     scaleB = SetIntegrationTime(integrationTime);
                     SetPower(true);
 
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {   // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = Illuminance;
+                    // read data
+                    var data = Peripheral.ReadRegisterAsUShort(DataSource == SensorTypes.Ambient ? (byte)Registers.Als : (byte)Registers.White);
 
-                        // read data
-                        var data = ReadRegister(DataSource == LightSensorType.Ambient ? Register.Als : Register.White);
+                    // manually looking:
+                    //Peripheral.ReadRegister((byte)Registers.Als, ReadBuffer.Span[0..2]);
+                    //Console.WriteLine($"1: {ReadBuffer.Span[0]}, 2: {ReadBuffer.Span[1]}");
+                    //ushort data = (ushort)(ReadBuffer.Span[0] | (ReadBuffer.Span[1] << 8));
 
-                        if (data < 100)
-                        {
-                            // increase gain
-                            if (++gain > 4)
-                            {
-                                gain = 4;
+                    //Console.WriteLine($"Gain: {gain}, integrationTime: {integrationTime}");
 
-                                // increase integration time
-                                if (++integrationTime >= 4)
-                                {
-                                    Illuminance = new Illuminance(scaleA * scaleB * 0.0036f * (float)data);
-                                }
-                                else
-                                {
-                                    // power down (we're changing config)
-                                    SetPower(false);
-                                    scaleB = SetIntegrationTime(integrationTime);
-                                    SetPower(true);
-                                }
-                            }
-                            else
-                            {
-                                // power down (we're changing config)
-                                SetPower(false);
-                                scaleA = SetGain(gain);
-                                SetPower(true);
-                            }
-                        }
-                        else if (data > 10000)
-                        {
-                            // decrease integration time
-                            if (--integrationTime <= -2)
-                            {
-                                Illuminance = CalculateCorrectedLux(scaleA * scaleB * 0.0036f * (float)data);
-                            }
-                            else
-                            {
+                    if (data < 100) { // Too dark!
+                        //Console.WriteLine("Too dark");
+                        // increase gain
+                        if (++gain > 4) {
+                            gain = 4;
+
+                            // increase integration time
+                            if (++integrationTime >= 4) {
+                                // everything is maxed out, so return the value.
+                                //Console.WriteLine("Maxed out.");
+                                return(new Illuminance(scaleA * scaleB * 0.0036f * (float)data));
+                            } else {
+                                //Console.WriteLine("Increasing integration time.");
                                 // power down (we're changing config)
                                 SetPower(false);
                                 scaleB = SetIntegrationTime(integrationTime);
                                 SetPower(true);
                             }
+                        } else {
+                            //Console.WriteLine("Increasing gain.");
+                            // power down (we're changing config)
+                            SetPower(false);
+                            scaleA = SetGain(gain);
+                            SetPower(true);
                         }
-                        else
-                        {
-                            Illuminance = CalculateCorrectedLux(0.0036f * scaleA * scaleB * (float)data);
+                    } else if (data > 10000) { // Too bright!
+                        //Console.WriteLine("Too bright.");
+                        // decrease integration time
+                        if (--integrationTime <= -2) {
+                            // can't go lower
+                            return CalculateCorrectedLux(scaleA * scaleB * 0.0036f * (float)data);
+                        } else {
+                            //Console.WriteLine("Decreasing integration time.");
+                            // power down (we're changing config)
+                            SetPower(false);
+                            scaleB = SetIntegrationTime(integrationTime);
+                            SetPower(true);
                         }
-
-                        // let everyone know
-                        RaiseChangedAndNotify(new ChangeResult<Illuminance>(Illuminance.Value, oldConditions));
-
-                        await Task.Delay(GetDelayTime(integrationTime));
+                    } else { // Just right!
+                        return (CalculateCorrectedLux(0.0036f * scaleA * scaleB * (float)data));
                     }
-                });
-            }      
+                    // give some time for the sensor to accumulate light
+                    await Task.Delay(GetDelayTime(integrationTime));
+                }
+            });
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<Illuminance> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
             LuminosityUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         private Illuminance CalculateCorrectedLux(float lux)
@@ -222,7 +140,7 @@ namespace Meadow.Foundation.Sensors.Light
                 cfg = (ushort)(_config | 0x0001);
             }
 
-            WriteRegister(Register.AlsConf0, cfg);
+            WriteRegister(Registers.AlsConf0, cfg);
             _config = cfg;
         }
 
@@ -232,8 +150,8 @@ namespace Meadow.Foundation.Sensors.Light
             ushort cfg;
 
             // bits 11 & 12
-
             cfg = (ushort)(_config & ~0x1800); // clear bits
+
             switch (gain)
             {
                 case 1: // 1/8
@@ -255,7 +173,7 @@ namespace Meadow.Foundation.Sensors.Light
                     return 1;
             }
 
-            WriteRegister(Register.AlsConf0, cfg);
+            WriteRegister(Registers.AlsConf0, cfg);
             _config = cfg;
             return scale;
         }
@@ -298,7 +216,7 @@ namespace Meadow.Foundation.Sensors.Light
                     return scale;
             }
 
-            WriteRegister(Register.AlsConf0, cfg);
+            WriteRegister(Registers.AlsConf0, cfg);
             _config = cfg;
 
             return scale;
@@ -334,47 +252,18 @@ namespace Meadow.Foundation.Sensors.Light
             return delay;
         }
 
-        private void Initialize(byte address)
-        {
-            switch (address)
-            {
-                case 0x10:
-                    // valid;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("VEML7700 device supports only address 0x29");
-            }
-
-            Address = address;
-        }
-
-
-        private void WriteRegister(Register register, ushort value)
+        private void WriteRegister(Registers register, ushort value)
         {
             // VEML registers are LSB|MSB
-            lock (_lock)
+            lock (samplingLock)
             {
-                Span<byte> buffer = stackalloc byte[3];
+                WriteBuffer.Span[0] = (byte)register;
+                WriteBuffer.Span[1] = (byte)(value & 0x00ff);
+                WriteBuffer.Span[2] = (byte)((value & 0xff00) >> 8);
 
-                buffer[0] = (byte)register;
-                buffer[1] = (byte)(value & 0x00ff);
-                buffer[2] = (byte)((value & 0xff00) >> 8);
-
-                Device.WriteData(Address, buffer);
+                Peripheral.Write(WriteBuffer.Span[0..3]);
             }
         }
 
-        private ushort ReadRegister(Register register)
-        {
-            lock (_lock)
-            {
-                var read = Device.WriteReadData(Address, 2, new byte[] { (byte)register });
-
-                unchecked
-                {
-                    return (ushort)((read[1] << 8) | read[0]);
-                }
-            }
-        }
     }
 }

@@ -19,7 +19,7 @@ namespace MeadowApp
             Console.WriteLine($"Initial azimuth: {azi.Compass16PointCardinalName}");
 
             // start updating
-            windVane.StartUpdating();
+            windVane.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         void Initialize()
@@ -30,8 +30,8 @@ namespace MeadowApp
             windVane = new WindVane(Device, Device.Pins.A00);
 
             //==== Classic event example:
-            windVane.Updated += (object sender, IChangeResult<Azimuth> e) => {
-                Console.WriteLine($"Updated event {e.New.DecimalDegrees}");
+            windVane.Updated += (sender, result) => {
+                Console.WriteLine($"Updated event {result.New.DecimalDegrees}");
             };
 
             //==== IObservable Pattern

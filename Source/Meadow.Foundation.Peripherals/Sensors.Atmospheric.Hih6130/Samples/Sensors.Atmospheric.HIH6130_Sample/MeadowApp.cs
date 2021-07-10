@@ -19,15 +19,9 @@ namespace MeadowApp
             var i2cBus = Device.CreateI2cBus();
             sensor = new Hih6130(i2cBus);
 
-            // get an initial reading
-            ReadConditions().Wait();
-
-            // start updating continuously
-            sensor.StartUpdating();
-
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity)> result) => {
+            sensor.Updated += (sender, result) => {
                 Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:F1}°C");
                 Console.WriteLine($"  Relative Humidity: {result.New.Humidity.Value:F1}%");
             };
@@ -55,6 +49,12 @@ namespace MeadowApp
                 //filter: null
                 );
             sensor.Subscribe(consumer);
+
+            // get an initial reading
+            ReadConditions().Wait();
+
+            // start updating continuously
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         protected async Task ReadConditions()

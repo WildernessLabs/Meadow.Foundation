@@ -237,7 +237,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
                 Span<byte> writeBuffer = new Span<byte>(cmd);
                 Span<byte> tempBuf = new Span<byte>(new byte[toRead16 * 2]);
-                i2CPeripheral.WriteRead(writeBuffer, tempBuf);
+                i2CPeripheral.Exchange(writeBuffer, tempBuf);
 
                 // we now have to swap every two bytes
                 int index = 0;

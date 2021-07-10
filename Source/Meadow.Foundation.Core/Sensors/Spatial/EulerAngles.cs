@@ -1,9 +1,10 @@
 ﻿namespace Meadow.Foundation.Spatial
 {
+    //TODO: are these in degrees?? should be unitized
     /// <summary>
     ///     Euler angles to define the orientation.
     /// </summary>
-    public class EulerAngles
+    public struct EulerAngles
     {
         /// <summary>
         ///     Heading.

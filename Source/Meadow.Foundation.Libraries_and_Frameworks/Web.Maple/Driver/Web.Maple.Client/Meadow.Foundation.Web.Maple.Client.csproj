@@ -6,12 +6,14 @@
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Web.Maple.Client</PackageId>
-    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
+    <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Web, Maple</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Maple is an ultra-lightweight RESTful web API Server, built specifically for Meadow. It provides an easy to extend architecture, and has integrated JSON support via System.Text.Json.</Description>
   </PropertyGroup>
-
+  <ItemGroup>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
 </Project>

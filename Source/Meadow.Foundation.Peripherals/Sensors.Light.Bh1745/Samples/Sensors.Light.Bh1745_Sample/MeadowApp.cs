@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Light;
+using Meadow.Units;
 using static Meadow.Peripherals.Leds.IRgbLed;
 
 namespace MeadowApp
@@ -12,57 +14,66 @@ namespace MeadowApp
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         Bh1745 sensor;
-
         RgbPwmLed rgbLed;
-
-        public double GetQuantizedValue(double value)
-        {
-            if (value < 0.3)
-                return 0;
-            if (value < 0.8)
-                return 0.5;
-            return 1;
-        }
 
         public MeadowApp()
         {
-            Init();
+            Console.WriteLine("Initializing...");
 
-            Thread.Sleep((int)sensor.MeasurementTime);
+            // configure our sensor on the I2C Bus
+            var i2c = Device.CreateI2cBus();
+            sensor = new Bh1745(i2c);
 
-            Console.WriteLine("Read color values");
-
-            Color color;
-
-            while (true)
-            {
-                color = sensor.GetColor();
-
-                Console.WriteLine($"Color: {color.R}, {color.G}, {color.B}");
-
-                //quantize color for RGB to make color detection more obvious
-                color = new Color(GetQuantizedValue(color.R),
-                                  GetQuantizedValue(color.G),
-                                  GetQuantizedValue(color.B));
-                
-                rgbLed.SetColor(color);
-
-                Thread.Sleep(100);
-            }
-        }
-
-        public void Init()
-        {
-            Console.WriteLine("Init...");
-
-            sensor = new Bh1745(Device.CreateI2cBus());
-
+            // instantiate our onboard LED that we'll show the color with
             rgbLed = new RgbPwmLed(
                 Device,
                 Device.Pins.OnboardLedRed,
                 Device.Pins.OnboardLedGreen,
                 Device.Pins.OnboardLedBlue,
                 commonType: CommonType.CommonAnode);
+
+            //==== IObservable 
+            // Example that uses an IObersvable subscription to only be notified
+            // when the filter is satisfied
+            var consumer = Bh1745.CreateObserver(
+                handler: result => {
+                    Console.WriteLine($"Observer: filter satisifed: {result.New.AmbientLight?.Lux:N2}Lux, old: {result.Old?.AmbientLight?.Lux:N2}Lux");
+                },
+                // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
+                filter: result => {
+                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                        // returns true if > 100lux change
+                        return ((result.New.AmbientLight.Value - old.AmbientLight.Value).Abs().Lux > 100);
+                    }
+                    return false;
+                }
+                // if you want to always get notified, pass null for the filter:
+                //filter: null
+                );
+            sensor.Subscribe(consumer);
+
+            //==== Events
+            // classical .NET events can also be used:
+            sensor.Updated += (sender, result) => {
+                Console.WriteLine($"  Ambient Light: {result.New.AmbientLight?.Lux:N2}Lux");
+                Console.WriteLine($"  Color: {result.New.Color}");
+                if(result.New.Color is { } color) { rgbLed.SetColor(color); }
+            };
+
+            //==== one-off read
+            ReadConditions().Wait();
+
+            // start updating continuously
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
+        }
+
+        protected async Task ReadConditions()
+        {
+            var result = await sensor.Read();
+            Console.WriteLine("Initial Readings:");
+            Console.WriteLine($"  Visible Light: {result.AmbientLight?.Lux:N2}Lux");
+            Console.WriteLine($"  Color: {result.Color}");
+            if (result.Color is { } color) { rgbLed.SetColor(color); }
         }
     }
 }

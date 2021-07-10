@@ -9,7 +9,7 @@ namespace BasicSensors.Motion.Apds9960_Sample
         public static void Main(string[] args)
         {
             // instantiate and run new meadow app
-            app = new App();
+            app = new MeadowApp();
 
             Thread.Sleep(Timeout.Infinite);
         }

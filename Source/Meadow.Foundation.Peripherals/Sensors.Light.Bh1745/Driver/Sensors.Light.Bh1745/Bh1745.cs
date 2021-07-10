@@ -1,112 +1,105 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Light;
+using Meadow.Units;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
-    public class Bh1745
+    // TODO: The chip can drive LEDs which will help to identify colors more
+    // accurately by lighting them up. I found this documentation from the
+    // pimoroni site (https://shop.pimoroni.com/products/bh1745-luminance-and-colour-sensor-breakout)
+    // which makes a breakout that has LEDs:
+    //
+    // The LEDs are connected to the BH1745 Interrupt line. This is activated by
+    // a threshold mechanism that is fully documented in the BH1745 chip manual.
+    // You can select which of the four light sensor channels to use and you can
+    // set a high and a low threshold. The Interrupt is enabled when the light
+    // is above the high level or below the low level. Write 0x1D to register
+    // 0x60 to enable Interrupts and select the unfiltered light sensor. Write
+    // 0xFF to the four registers starting at 0x62 to force the LEDs on. With
+    // the default settings in these registers, the LEDS will be off.
+
+    public partial class Bh1745
+        : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>, ILightSensor
     {
-        /// <summary>
-        /// The primary I2c address of the BH1745
-        /// </summary>
-        public static byte PrimaryI2cAddress => 0x38;
+        //==== events
+        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
+        //==== properties
         /// <summary>
-        /// The secondary I2c address of the BH1745
+        /// 
         /// </summary>
-        public static byte SecondaryI2cAddress => 0x39;
+        public Illuminance? Illuminance => Conditions.AmbientLight;
 
-        public InterruptStatus InterruptReset
-        {
-            get
-            {
-                var intReset = bh1745.ReadRegister(SYSTEM_CONTROL);
-                intReset = (byte)((intReset & INT_RESET) >> 6);
+        public InterruptStatus InterruptReset {
+            get {
+                var intReset = Peripheral.ReadRegister(Registers.SYSTEM_CONTROL);
+                intReset = (byte)((intReset & MaskValues.INT_RESET) >> 6);
                 return (InterruptStatus)intReset;
             }
-            set
-            {
-                if (!Enum.IsDefined(typeof(InterruptStatus), value))
-                {
+            set {
+                if (!Enum.IsDefined(typeof(InterruptStatus), value)) {
                     throw new ArgumentOutOfRangeException();
                 }
-
-                var intReset = bh1745.ReadRegister(SYSTEM_CONTROL);
-                intReset = (byte)((intReset & ~INT_RESET) | (byte)value << 6);
-
-                bh1745?.WriteRegister(SYSTEM_CONTROL, intReset);
+                var intReset = Peripheral.ReadRegister(Registers.SYSTEM_CONTROL);
+                intReset = (byte)((intReset & ~MaskValues.INT_RESET) | (byte)value << 6);
+                Peripheral?.WriteRegister(Registers.SYSTEM_CONTROL, intReset);
             }
         }
 
         /// <summary>
         /// Gets or sets the currently set measurement time.
         /// </summary>
-        public MeasurementTimeType MeasurementTime
-        {
-            get => _measurementTime;
-            set
-            {
-                if (!Enum.IsDefined(typeof(MeasurementTimeType), value))
-                {
+        public MeasurementTimeType MeasurementTime {
+            get => measurementTime;
+            set {
+                if (!Enum.IsDefined(typeof(MeasurementTimeType), value)) {
                     throw new ArgumentOutOfRangeException();
                 }
-
-                var time = bh1745.ReadRegister(MODE_CONTROL1);
-                time = (byte)((time & ~MEASUREMENT_TIME) | (byte)value);
-
-                bh1745?.WriteRegister(MODE_CONTROL1, time);
-                _measurementTime = value;
+                var time = Peripheral.ReadRegister(Registers.MODE_CONTROL1);
+                time = (byte)((time & ~MaskValues.MEASUREMENT_TIME) | (byte)value);
+                Peripheral?.WriteRegister(Registers.MODE_CONTROL1, time);
+                measurementTime = value;
             }
-        }
-        private MeasurementTimeType _measurementTime;
+        } protected MeasurementTimeType measurementTime;
 
         /// <summary>
         /// Is the sensor actively measuring
         /// </summary>
-        public bool IsMeasurementActive
-        {
-            get => _isMeasurementActive;
-            set
-            {
-                var active = bh1745.ReadRegister(MODE_CONTROL2);
-                active = (byte)((active & ~RGBC_EN) | Convert.ToByte(value) << 4);
-
-                bh1745?.WriteRegister(MODE_CONTROL2, active);
-                _isMeasurementActive = value;
+        public bool IsMeasurementActive {
+            get => isMeasurementActive;
+            set {
+                var active = Peripheral.ReadRegister(Registers.MODE_CONTROL2);
+                active = (byte)((active & ~MaskValues.RGBC_EN) | Convert.ToByte(value) << 4);
+                Peripheral?.WriteRegister(Registers.MODE_CONTROL2, active);
+                isMeasurementActive = value;
             }
-        }
-        private bool _isMeasurementActive;
+        } protected bool isMeasurementActive;
 
         /// <summary>
         /// Gets or sets the ADC gain of the sensor
         /// </summary>
-        public AdcGainType AdcGain
-        {
-            get => _adcGain;
-            set
-            {
-                if (!Enum.IsDefined(typeof(AdcGainType), value))
-                {
+        public AdcGainTypes AdcGain {
+            get => adcGain;
+            set {
+                if (!Enum.IsDefined(typeof(AdcGainTypes), value)) {
                     throw new ArgumentOutOfRangeException();
                 }
-
-                var adcGain = bh1745.ReadRegister(MODE_CONTROL2);
-                adcGain = (byte)((adcGain & ~ADC_GAIN) | (byte)value);
-
-                bh1745?.WriteRegister(MODE_CONTROL2, adcGain);
-                _adcGain = value;
+                var adcGain = Peripheral.ReadRegister(Registers.MODE_CONTROL2);
+                adcGain = (byte)((adcGain & ~MaskValues.ADC_GAIN) | (byte)value);
+                Peripheral?.WriteRegister(Registers.MODE_CONTROL2, adcGain);
+                this.adcGain = value;
             }
-        }
-        private AdcGainType _adcGain;
+        } protected AdcGainTypes adcGain;
 
         /// <summary>
         /// Is the interrupt active
         /// </summary>
-        public bool InterruptSignalIsActive
-        {
-            get
-            {
-                var intStatus = bh1745.ReadRegister(INTERRUPT);
-                intStatus = (byte)((intStatus & INT_STATUS) >> 7);
+        public bool InterruptSignalIsActive {
+            get {
+                var intStatus = Peripheral.ReadRegister(Registers.INTERRUPT);
+                intStatus = (byte)((intStatus & MaskValues.INT_STATUS) >> 7);
                 return Convert.ToBoolean(intStatus);
             }
         }
@@ -114,206 +107,98 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Gets or sets how the interrupt pin latches
         /// </summary>
-        public LatchBehaviorType LatchBehavior
-        {
-            get => _latchBehavior;
-            set
-            {
-                if (!Enum.IsDefined(typeof(LatchBehaviorType), value))
-                {
+        public LatchBehaviorTypes LatchBehavior {
+            get => latchBehavior;
+            set {
+                if (!Enum.IsDefined(typeof(LatchBehaviorTypes), value)) {
                     throw new ArgumentOutOfRangeException();
                 }
-
-                var intLatch = bh1745.ReadRegister(INTERRUPT);
-                intLatch = (byte)((intLatch & ~INT_LATCH) | (byte)value << 4);
-
-                bh1745?.WriteRegister(INTERRUPT, intLatch);
-                _latchBehavior = value;
+                var intLatch = Peripheral.ReadRegister(Registers.INTERRUPT);
+                intLatch = (byte)((intLatch & ~MaskValues.INT_LATCH) | (byte)value << 4);
+                Peripheral?.WriteRegister(Registers.INTERRUPT, intLatch);
+                latchBehavior = value;
             }
-        }
-        private LatchBehaviorType _latchBehavior;
+        } protected LatchBehaviorTypes latchBehavior;
 
         /// <summary>
         /// Gets or sets the source channel that triggers the interrupt
         /// </summary>
-        public InterruptChannel InterruptSource
-        {
-            get => _interruptSource;
-            set
-            {
-                if (!Enum.IsDefined(typeof(InterruptChannel), value)) { throw new ArgumentOutOfRangeException(); }
-
-                var intSource = bh1745.ReadRegister(INTERRUPT);
-                intSource = (byte)((intSource & ~INT_SOURCE) | (byte)value << 2);
-
-                bh1745?.WriteRegister(INTERRUPT, intSource);
-                _interruptSource = value;
+        public InterruptChannels InterruptSource {
+            get => interruptSource;
+            set {
+                if (!Enum.IsDefined(typeof(InterruptChannels), value)) { throw new ArgumentOutOfRangeException(); }
+                var intSource = Peripheral.ReadRegister(Registers.INTERRUPT);
+                intSource = (byte)((intSource & ~MaskValues.INT_SOURCE) | (byte)value << 2);
+                Peripheral?.WriteRegister(Registers.INTERRUPT, intSource);
+                interruptSource = value;
             }
-        }
-        InterruptChannel _interruptSource;
+        } protected InterruptChannels interruptSource;
 
         /// <summary>
         /// Gets or sets whether the interrupt pin is enabled
         /// </summary>
-        public bool InterruptIsEnabled
-        {
-            get => _isInterruptEnabled;
-            set
-            {
-                var intPin = bh1745.ReadRegister(INTERRUPT);
-                intPin = (byte)((intPin & ~INT_ENABLE) | Convert.ToByte(value));
-
-                bh1745?.WriteRegister(INTERRUPT, intPin);
-                _isInterruptEnabled = value;
+        public bool InterruptIsEnabled {
+            get => isInterruptEnabled;
+            set {
+                var intPin = Peripheral.ReadRegister(Registers.INTERRUPT);
+                intPin = (byte)((intPin & ~MaskValues.INT_ENABLE) | Convert.ToByte(value));
+                Peripheral?.WriteRegister(Registers.INTERRUPT, intPin);
+                isInterruptEnabled = value;
             }
-        }
-        private bool _isInterruptEnabled;
+        } protected bool isInterruptEnabled;
 
         /// <summary>
         /// Gets or sets the persistence function of the interrupt
         /// </summary>
-        public InterruptType InterruptPersistence
-        {
-            get => _interruptPersistence;
-            set
-            {
-                if (!Enum.IsDefined(typeof(InterruptType), value))
-                {
+        public InterruptTypes InterruptPersistence {
+            get => interruptPersistence;
+            set {
+                if (!Enum.IsDefined(typeof(InterruptTypes), value)) {
                     throw new ArgumentOutOfRangeException();
                 }
-
-                var intPersistence = bh1745.ReadRegister(PERSISTENCE);
-                intPersistence = (byte)((intPersistence & ~PERSISTENCE_MASK) | (byte)value);
-
-                bh1745?.WriteRegister(PERSISTENCE, intPersistence);
-                _interruptPersistence = value;
+                var intPersistence = Peripheral.ReadRegister(Registers.PERSISTENCE);
+                intPersistence = (byte)((intPersistence & ~MaskValues.PERSISTENCE_MASK) | (byte)value);
+                Peripheral?.WriteRegister(Registers.PERSISTENCE, intPersistence);
+                interruptPersistence = value;
             }
-        }
-        private InterruptType _interruptPersistence;
+        } protected InterruptTypes interruptPersistence;
 
         /// <summary>
         /// Gets or sets the lower interrupt threshold
         /// </summary>
-        public ushort LowerInterruptThreshold
-        {
-            get => _lowerInterruptThreshold;
-            set
-            {
-                bh1745.WriteUShort(TL, value);
-                _lowerInterruptThreshold = value;
+        public ushort LowerInterruptThreshold {
+            get => lowerInterruptThreshold;
+            set {
+                Peripheral.WriteRegister(Registers.TL, value);
+                lowerInterruptThreshold = value;
             }
-        }
-        private ushort _lowerInterruptThreshold;
+        } protected ushort lowerInterruptThreshold;
 
         /// <summary>
         /// Gets or sets the upper interrupt threshold
         /// </summary>
-        public ushort UpperInterruptThreshold
-        {
-            get => _upperInterruptThreshold;
-            set
-            {
-                bh1745.WriteUShort(TH, value);
-                _upperInterruptThreshold = value;
+        public ushort UpperInterruptThreshold {
+            get => upperInterruptThreshold;
+            set {
+                Peripheral.WriteRegister(Registers.TH, value);
+                upperInterruptThreshold = value;
             }
-        }
-        private ushort _upperInterruptThreshold;
+        } protected ushort upperInterruptThreshold;
 
         /// <summary>
         /// Gets or sets the channel compensation multipliers which are used to scale the channel measurements
         /// </summary>
         public ChannelMultipliers CompensationMultipliers { get; set; }
 
-        I2cPeripheral bh1745;
-
-        //masks
-        private readonly byte PART_ID = 0x3F;
-        private readonly byte SW_RESET = 0x80;
-        private readonly byte INT_RESET = 0x40;
-        private readonly byte MEASUREMENT_TIME = 0x07;
-        private readonly byte VALID = 0x80;
-        private readonly byte RGBC_EN = 0x10;
-        private readonly byte ADC_GAIN = 0x03;
-        private readonly byte INT_STATUS = 0x80;
-        private readonly byte INT_LATCH = 0x10;
-        private readonly byte INT_SOURCE = 0x0C;
-        private readonly byte INT_ENABLE = 0x01;
-        private readonly byte PERSISTENCE_MASK = 0x03;
-
-        // control registers
-        private readonly byte SYSTEM_CONTROL = 0x40;
-        private readonly byte MODE_CONTROL1 = 0x41;
-        private readonly byte MODE_CONTROL2 = 0x42;
-        private readonly byte MODE_CONTROL3 = 0x44;
-
-        private readonly byte RED_DATA = 0x50;
-        private readonly byte GREEN_DATA = 0x52;
-        private readonly byte BLUE_DATA = 0x54;
-        private readonly byte CLEAR_DATA = 0x56;
-        private readonly byte DINT_DATA = 0x58;
-        private readonly byte INTERRUPT = 0x60;
-        private readonly byte PERSISTENCE = 0x61;
-        private readonly byte TH = 0x62;
-        private readonly byte TL = 0x64;
-        private readonly byte MANUFACTURER_ID = 0x92;
-
-        /// <summary>
-        /// The available ADC gain scaling options for the Bh1745
-        /// </summary>
-        public enum AdcGainType : byte
-        {
-            X1 = 0x0,
-            X2 = 0x1,
-            X16 = 0x2
-        }
-        
-        public enum InterruptType : byte
-        {
-            ToggleMeasurementEnd = 0x0,
-            UpdateMeasurementEnd = 0x1,
-            UpdateConsecutiveX4 = 0x2,
-            UpdateConsecutiveX8 = 0x3 
-        }
-
-        public enum InterruptChannel : byte
-        {
-            Red = 0x0,
-            Green = 0x1,
-            Blue = 0x2,
-            Clear = 0x3
-        }
-
-        public enum LatchBehaviorType : byte
-        {
-            LatchUntilReadOrInitialized = 0,
-            LatchEachMeasurement = 1
-        }
-
-        public enum InterruptStatus
-        {
-            Active,
-            Inactive
-        }
-
-        public enum MeasurementTimeType
-        {
-            Ms160 = 160,
-            Ms320 = 320,
-            Ms640 = 640,
-            Ms1280 = 1280,
-            Ms2560 = 2560,
-            Ms5120 = 5120
-        }
+        //==== ctors
 
         /// <summary>
         ///     Create a new BH17545 color sensor object
         /// </summary>
-        public Bh1745(II2cBus i2cBus, byte address = 0x38)
+        public Bh1745(II2cBus i2cBus, byte address = Addresses.Low)
+            : base(i2cBus, address)
         {
-            bh1745 = new I2cPeripheral(i2cBus, address);
-
-            CompensationMultipliers = new ChannelMultipliers
-            {
+            CompensationMultipliers = new ChannelMultipliers {
                 Red = 1.0, //2.2,
                 Green = 1.0,
                 Blue = 1.0, //1.8,
@@ -323,44 +208,89 @@ namespace Meadow.Foundation.Sensors.Light
             Reset();
         }
 
+        //==== internal methods
+
+        protected override Task<(Illuminance? AmbientLight, Color? Color, bool Valid)> ReadSensor()
+        {
+            return Task.Run(() => {
+                (Illuminance? AmbientLight, Color? Color, bool Valid) conditions;
+
+                // get the ambient light
+                var clearData = ReadClearDataRegister();
+
+                if (clearData == 0) { conditions.Color = Color.Black; }
+
+                // apply channel multipliers and normalize
+                double compensatedRed = ReadRedDataRegister() * CompensationMultipliers.Red / (int)MeasurementTime * 360;
+                double compensatedGreen = ReadGreenDataRegister() * CompensationMultipliers.Green / (int)MeasurementTime * 360;
+                double compensatedBlue = ReadBlueDataRegister() * CompensationMultipliers.Blue / (int)MeasurementTime * 360;
+                double compensatedClear = clearData * CompensationMultipliers.Clear / (int)MeasurementTime * 360;
+
+                // scale relative to clear
+                int red = (int)Math.Min(255, compensatedRed / compensatedClear * 255);
+                int green = (int)Math.Min(255, compensatedGreen / compensatedClear * 255);
+                int blue = (int)Math.Min(255, compensatedBlue / compensatedClear * 255);
+
+                conditions.Color = Color.FromRgb(red, green, blue);
+
+                // TODO: honestly, no idea what this comes back as
+                // need to test when i get a sensor and compare to other light
+                // sensors
+                conditions.AmbientLight = new Illuminance(compensatedClear, Units.Illuminance.UnitType.Lux);
+
+                // WTH
+                conditions.Valid = ReadMeasurementIsValid();
+
+                return conditions;
+            });
+        }
+
+        protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> changeResult)
+        {
+            if (changeResult.New.AmbientLight is { } ambient) {
+                LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
+            }
+            base.RaiseEventsAndNotify(changeResult);
+        }
+
         /// <summary>
         /// Resets the device to the default configuration
         /// On reset the sensor goes to power down mode
         /// </summary>
-        public void Reset()
+        protected void Reset()
         {
             Console.WriteLine("Reset");
 
-            var status = bh1745.ReadRegister(SYSTEM_CONTROL);
-            status = (byte)((status & ~SW_RESET) | 0x01 << 7);
+            var status = Peripheral.ReadRegister(Registers.SYSTEM_CONTROL);
+            status = (byte)((status & ~MaskValues.SW_RESET) | 0x01 << 7);
 
-            bh1745?.WriteRegister(SYSTEM_CONTROL, status);
+            Peripheral.WriteRegister(Registers.SYSTEM_CONTROL, status);
 
             // set default measurement configuration
             MeasurementTime = MeasurementTimeType.Ms160;
-            AdcGain = AdcGainType.X1;
+            AdcGain = AdcGainTypes.X1;
             IsMeasurementActive = true;
             InterruptIsEnabled = true;
 
             // set fields to reset state
-            _interruptPersistence = InterruptType.UpdateMeasurementEnd;
-            _latchBehavior = LatchBehaviorType.LatchUntilReadOrInitialized;
-            _interruptSource = InterruptChannel.Blue;
-            _isInterruptEnabled = false;
-            _lowerInterruptThreshold = 0x0000;
-            _upperInterruptThreshold = 0xFFFF;
+            interruptPersistence = InterruptTypes.UpdateMeasurementEnd;
+            latchBehavior = LatchBehaviorTypes.LatchUntilReadOrInitialized;
+            interruptSource = InterruptChannels.Blue;
+            isInterruptEnabled = false;
+            lowerInterruptThreshold = 0x0000;
+            upperInterruptThreshold = 0xFFFF;
 
             // write default value to Mode_Control3
-            bh1745?.WriteRegister(MODE_CONTROL3, 0x02);
+            Peripheral.WriteRegister(Registers.MODE_CONTROL3, 0x02);
         }
 
         /// <summary>
         /// Reads whether the last measurement is valid
         /// </summary>
-        public bool ReadMeasurementIsValid()
+        protected bool ReadMeasurementIsValid()
         {
-            var valid = bh1745.ReadRegister(MODE_CONTROL2);
-            valid = (byte)(valid & VALID);
+            var valid = Peripheral.ReadRegister(Registers.MODE_CONTROL2);
+            valid = (byte)(valid & MaskValues.VALID);
             return Convert.ToBoolean(valid);
         }
 
@@ -368,71 +298,25 @@ namespace Meadow.Foundation.Sensors.Light
         /// Reads the red data register of the sensor
         /// </summary>
         /// <returns></returns>
-        public ushort ReadRedDataRegister() => bh1745.ReadUShort(RED_DATA);
+        protected ushort ReadRedDataRegister() => Peripheral.ReadRegisterAsUShort(Registers.RED_DATA);
 
         /// <summary>
         /// Reads the green data register of the sensor
         /// </summary>
         /// <returns></returns>
-        public ushort ReadGreenDataRegister() => bh1745.ReadUShort(GREEN_DATA);
+        protected ushort ReadGreenDataRegister() => Peripheral.ReadRegisterAsUShort(Registers.GREEN_DATA);
 
         /// <summary>
         /// Reads the blue data register of the sensor
         /// </summary>
         /// <returns></returns>
-        public ushort ReadBlueDataRegister() => bh1745.ReadUShort(BLUE_DATA);
+        protected ushort ReadBlueDataRegister() => Peripheral.ReadRegisterAsUShort(Registers.BLUE_DATA);
 
         /// <summary>
         /// Reads the clear data register of the sensor
         /// </summary>
         /// <returns></returns>
-        public ushort ReadClearDataRegister() => bh1745.ReadUShort(CLEAR_DATA);
+        protected ushort ReadClearDataRegister() => Peripheral.ReadRegisterAsUShort(Registers.CLEAR_DATA);
 
-        /// <summary>
-        /// Gets the compensated color reading from the sensor
-        /// </summary>
-        /// <returns></returns>
-        public Color GetColor()
-        {
-            var clearData = ReadClearDataRegister();
-
-            if (clearData == 0) { return Color.Black; }
-
-            // apply channel multipliers and normalize
-            double compensatedRed = ReadRedDataRegister() * CompensationMultipliers.Red / (int)MeasurementTime * 360;
-            double compensatedGreen = ReadGreenDataRegister() * CompensationMultipliers.Green / (int)MeasurementTime * 360;
-            double compensatedBlue = ReadBlueDataRegister() * CompensationMultipliers.Blue / (int)MeasurementTime * 360;
-            double compensatedClear = clearData * CompensationMultipliers.Clear / (int)MeasurementTime * 360;
-
-            // scale relative to clear
-            int red = (int)Math.Min(255, compensatedRed / compensatedClear * 255);
-            int green = (int)Math.Min(255, compensatedGreen / compensatedClear * 255);
-            int blue = (int)Math.Min(255, compensatedBlue / compensatedClear * 255);
-
-            return Color.FromRgb(red, green, blue);
-        }
-
-        /// <summary>
-        /// Channel compensation multipliers used to compensate the four (4) color channels of the Bh1745
-        /// </summary>
-        public class ChannelMultipliers
-        {
-            /// <summary>
-            /// Multiplier for the red color channel
-            /// </summary>
-            public double Red { get; set; } = 1;
-            /// <summary>
-            /// Multiplier for the green color channel
-            /// </summary>
-            public double Green { get; set; } = 1;
-            /// <summary>
-            /// Multiplier for the blue color channel
-            /// </summary>
-            public double Blue { get; set; } = 1;
-            /// <summary>
-            /// Multiplier for the clear color channel.
-            /// </summary>
-            public double Clear { get; set; } = 1;
-        }
     }
 }

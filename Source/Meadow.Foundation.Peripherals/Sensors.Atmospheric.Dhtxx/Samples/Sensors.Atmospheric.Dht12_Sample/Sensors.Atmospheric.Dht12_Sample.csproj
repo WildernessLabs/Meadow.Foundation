@@ -1,6 +1,10 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <Company>Wilderness Labs, Inc</Company>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Exe</OutputType>
     <AssemblyName>App</AssemblyName>
     <Nullable>enable</Nullable>
@@ -12,6 +16,7 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+   <PackageReference Include="Meadow.F7" Version="0.*" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Dhtxx\Driver\Sensors.Atmospheric.Dhtxx\Sensors.Atmospheric.Dhtxx.csproj" />
   </ItemGroup>
 </Project>

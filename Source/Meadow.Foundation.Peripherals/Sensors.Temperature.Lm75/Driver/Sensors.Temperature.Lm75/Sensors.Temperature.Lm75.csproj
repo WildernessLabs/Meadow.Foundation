@@ -1,19 +1,20 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Lm75</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Temperature.Lm75</PackageId>
-    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Temperature, Lm75</PackageTags>
     <Version>0.1.34</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Lm75 I2C temperature sensor</Description>
     <Nullable>enable</Nullable>
+    <RootNamespace>Meadow.Foundation.Sensors.Temperature</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <LangVersion>8.0</LangVersion>
@@ -22,6 +23,7 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>

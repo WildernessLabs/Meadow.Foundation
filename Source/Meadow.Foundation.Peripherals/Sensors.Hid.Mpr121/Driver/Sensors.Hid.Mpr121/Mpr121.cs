@@ -184,7 +184,7 @@ namespace Meadow.Foundation.Sensors.Hid
             var period = RefreshPeriod;
             RefreshPeriod = 0;
 
-            var rawStatus = i2cPeripheral.ReadUShort(0x00, ByteOrder.LittleEndian);
+            var rawStatus = i2cPeripheral.ReadRegisterAsUShort(0x00, ByteOrder.LittleEndian);
 
             bool isStatusChanged = false;
 

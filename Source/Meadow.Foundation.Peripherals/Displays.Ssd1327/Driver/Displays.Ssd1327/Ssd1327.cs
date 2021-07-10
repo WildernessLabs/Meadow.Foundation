@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Displays
 
         public override int Height => 128;
 
-        protected SpiBus spiBus;
+        protected ISpiBus spiBus;
         protected ISpiPeripheral spiPeripheral;
 
         protected IDigitalOutputPort dataCommandPort;
@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Displays
 
         public Ssd1327(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
-            this.spiBus = (SpiBus)spiBus;
+            this.spiBus = spiBus;
 
             spiBuffer = new byte[Width * Height / 2]; 
             spiReceive = new byte[Width * Height / 2];
@@ -192,7 +192,7 @@ namespace Meadow.Foundation.Displays
 
         protected void Write(byte value)
         {
-            spiPeripheral.WriteByte(value);
+            spiPeripheral.Write(value);
         }
 
         protected void Write(byte[] data)

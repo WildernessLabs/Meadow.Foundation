@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Units;
 
@@ -7,32 +8,55 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     ///     Driver for the Max44009 light-to-digital converter.
     /// </summary>
-    public class Max44009
+    public partial class Max44009 : ByteCommsSensorBase<Illuminance>
     {
-        /// <summary>
-        ///     Valid addresses for the sensor.
-        /// </summary>
-        public static byte DefaultI2cAddress = 0x4A; //alt is 0x4B
-
-        private static II2cPeripheral i2cPeripheral;
-
-        public Max44009(II2cBus i2cBus, byte address = 0x4a)
+        public Max44009(II2cBus i2cBus, byte address = Addresses.Low)
+            : base (i2cBus, address)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
-
-            i2cPeripheral.WriteRegister(0x02, 0x00);
+            Initialize();
         }
 
-        public Illuminance GetIlluminance()
+        protected void Initialize()
         {
-            var data = i2cPeripheral.ReadRegisters(0x03, 2);
+            Peripheral.WriteRegister(0x02, 0x00);
+        }
 
-            int exponent = ((data[0] & 0xF0) >> 4);
-            int mantissa = ((data[0] & 0x0F) >> 4) | (data[1] & 0x0F);
+        protected override Task<Illuminance> ReadSensor()
+        {
+            return Task.Run(() => {
+                // from the datasheet:
+                //  Bits in Lux High-Byte register 0x03 give the 4 bits of
+                //  exponent E3:E0 and 4 most significant bits of the mantissa
+                //  byte M7:M4, and represent the lux reading of ambient light.
+                //  The remaining 4 bits of the mantissa byte M3:M0 are in the
+                //  Lux Low - Byte register 0x04 and enhance resolution of the
+                //  lux reading from the IC.
+                //
+                //  Exponent(E[3:0]): Exponent bits of the lux reading(0000 to
+                //  1110).Note: A reading of 1111 represents an overrange
+                //  condition.
+                //
+                //  Mantissa(M[7:4]): Four most significant bits of mantissa
+                //  byte of the lux reading
+                //    (0000 to 1111).Lux = 2(exponent) x mantissa x 0.72
+                //  Exponent = 8xE3 + 4xE2 + 2xE1 + E0
+                //  Mantissa = 8xM7 + 4xM6 + 2xM5 + M4
+                //  A code of 0000 0001 calculates to be 0.72 lux.
+                //  A code of 1110 1111 calculates to be 176,947 lux.
+                //  A code of 1110 1110 calculates to be 165,151 lux.
+                Peripheral.ReadRegister(0x03, ReadBuffer.Span[0..2]);
 
-            var luminance = Math.Pow(2, exponent) * mantissa * 0.045;
+                //int exponent = ((ReadBuffer.Span[0] & 0xF0) >> 4);
+                var exponent = (ReadBuffer.Span[0] >> 4);
+                if (exponent == 0x0f) throw new Exception("Out of range");
 
-            return new Illuminance(luminance, Illuminance.UnitType.Lux);
+                int mantissa = ((ReadBuffer.Span[0] & 0x0F) >> 4) | (ReadBuffer.Span[1] & 0x0F);
+
+                //var luminance = Math.Pow(2, exponent) * mantissa * 0.045;
+                var luminance = Math.Pow(2, exponent) * mantissa * 0.72;
+
+                return new Illuminance(luminance, Illuminance.UnitType.Lux);
+            });
         }
     }
 }

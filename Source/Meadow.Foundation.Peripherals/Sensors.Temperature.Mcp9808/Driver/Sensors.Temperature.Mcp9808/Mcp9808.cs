@@ -6,19 +6,10 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
-    public class Mcp9808 :
-        FilterableChangeObservableBase<Units.Temperature>,
-        ITemperatureSensor
+    public class Mcp9808 : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
     {
-        //==== events
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
-        //==== internals
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        // TODO: move these into an `Mcp9808.Commands.cs` class?
         const ushort MCP_CONFIG_SHUTDOWN = 0x0100;   // shutdown config
         const ushort MCP_CONFIG_CRITLOCKED = 0x0080; // critical trip lock
         const ushort MCP_CONFIG_WINLOCKED = 0x0040; // alarm window lock
@@ -38,10 +29,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         const byte MCP_DEVICE_ID = 0x07;    // device ID
         const byte MCP_RESOLUTION = 0x08;     // resolution
 
-        II2cPeripheral i2CPeripheral;
-
-
-        //==== properties
         public const byte DefaultAddress = 0x18;
 
         // <summary>
@@ -49,18 +36,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
 
-        public bool IsSampling { get; protected set; } = false;
-
         public Mcp9808(II2cBus i2CBus, byte address = DefaultAddress)
+            : base(i2CBus, address, readBufferSize: 8, writeBufferSize: 8)
         {
-            i2CPeripheral = new I2cPeripheral(i2CBus, address);
-
-            Init();
-        }
-
-        void Init()
-        {
-            i2CPeripheral.WriteUShort(MCP_REG_CONFIG, 0x0);
+            Peripheral.WriteRegister(MCP_REG_CONFIG, (ushort)0x0);
         }
 
         /// <summary>
@@ -69,11 +48,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         public void Wake()
         {
             ushort conf_shutdown;
-            ushort config = i2CPeripheral.ReadUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
+            ushort config = Peripheral.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
 
             config = (ushort)(config & (~MCP_CONFIG_SHUTDOWN));
 
-            i2CPeripheral.WriteUShort(MCP_REG_CONFIG, config);
+            Peripheral.WriteRegister(MCP_REG_CONFIG, config);
         }
 
         /// <summary>
@@ -82,9 +61,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         public void Sleep()
         {
             ushort conf_shutdown;
-            ushort config = i2CPeripheral.ReadUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
+            ushort config = Peripheral.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
 
-            i2CPeripheral.WriteUShort(MCP_REG_CONFIG, (ushort)(config | MCP_CONFIG_SHUTDOWN));
+            Peripheral.WriteRegister(MCP_REG_CONFIG, (ushort)(config | MCP_CONFIG_SHUTDOWN));
          }
 
         /// <summary>
@@ -92,7 +71,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public ushort GetDeviceId()
         {
-            return i2CPeripheral.ReadUShort(MCP_DEVICE_ID, ByteOrder.BigEndian);
+            return Peripheral.ReadRegisterAsUShort(MCP_DEVICE_ID, ByteOrder.BigEndian);
         }
 
         /// <summary>
@@ -100,7 +79,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public ushort GetManufactureId()
         {
-            return i2CPeripheral.ReadUShort(MCP_MANUFACTURER_ID, ByteOrder.BigEndian);
+            return Peripheral.ReadRegisterAsUShort(MCP_MANUFACTURER_ID, ByteOrder.BigEndian);
         }
 
         /// <summary>
@@ -108,7 +87,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public byte GetResolution()
         {
-            return i2CPeripheral.ReadRegister(MCP_RESOLUTION);
+            return Peripheral.ReadRegister(MCP_RESOLUTION);
         }
 
         /// <summary>
@@ -116,114 +95,34 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public void SetResolution(byte resolution)
         {
-            i2CPeripheral.WriteRegister(MCP_RESOLUTION, resolution);
+            Peripheral.WriteRegister(MCP_RESOLUTION, resolution);
         }
 
-        /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        // TODO: Make this async?
-        public Units.Temperature Read()
+        protected override async Task<Units.Temperature> ReadSensor()
         {
-            Update();
-            return Temperature.Value;
+            return await Task.Run(() =>
+            {
+                ushort value = Peripheral.ReadRegisterAsUShort(MCP_AMBIENT_TEMP, ByteOrder.BigEndian);
+                double temp = value & 0x0FFF;
+
+                temp /= 16.0;
+
+                if ((value & 0x1000) != 0)
+                {
+                    temp -= 256;
+                }
+
+                var newTemp = new Units.Temperature(temp);
+                Temperature = newTemp;
+
+                return newTemp;
+            });
         }
 
-        /// <summary>
-		/// Begin reading temperature data
-		/// </summary>
-        public void StartUpdating(int standbyDuration = 1000)
-        {
-            Console.WriteLine("Start updating");
-
-            // thread safety
-            lock (_lock)
-            {
-                if (IsSampling) { return; }
-
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                Units.Temperature? oldtemperature;
-                ChangeResult<Units.Temperature> result;
-                Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-
-                        Console.WriteLine("history");
-
-                        // capture history
-                        oldtemperature = Temperature;
-
-                        // read
-                        Update(); //syncrhnous for this driver 
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<Units.Temperature>(Temperature.Value, oldtemperature);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        /// <summary>
-        /// Stops sampling the temperature.
-        /// </summary>
-        public void StopUpdating()
-        {
-            lock (_lock)
-            {
-                if (!IsSampling) { return; }
-
-                SamplingTokenSource?.Cancel();
-
-                IsSampling = false;
-            }
-        }
-
-        /// <summary>
-        ///     Update the Temperature property.
-        /// </summary>
-        public void Update()
-        {
-            ushort value = i2CPeripheral.ReadUShort(MCP_AMBIENT_TEMP, ByteOrder.BigEndian);
-
-            if (value == 0xFFFF)
-            {
-                return; 
-            }
-
-            double temp = value & 0x0FFF;
-
-            temp /= 16.0;
-
-            if ((value & 0x1000) != 0)
-            {
-                temp -= 256;
-            }
-
-            Temperature = new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius);
-        }
-
-        protected void RaiseChangedAndNotify(IChangeResult<Units.Temperature> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
         {
             TemperatureUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }

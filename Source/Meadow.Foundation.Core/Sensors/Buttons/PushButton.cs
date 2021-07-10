@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         event EventHandler clickDelegate = delegate { };
         event EventHandler pressStartDelegate = delegate { };
         event EventHandler pressEndDelegate = delegate { };
-        event EventHandler longPressDelegate = delegate { };
+        event EventHandler longClickDelegate = delegate { };
 
         /// <summary>
         /// Returns the sanitized state of the switch. If the switch 
@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// The minimum duration for a long press.
         /// </summary>
-        public TimeSpan LongPressThreshold { get; set; } = TimeSpan.Zero;
+        public TimeSpan LongClickedThreshold { get; set; } = TimeSpan.Zero;
 
         /// <summary>
         /// Returns digital input port.
@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Raised when the button circuit is pressed for at least 500ms.
         /// </summary>
-        public event EventHandler LongPressClicked
+        public event EventHandler LongClicked
         {
             add
             {
@@ -116,9 +116,9 @@ namespace Meadow.Foundation.Sensors.Buttons
                     throw new DeviceConfigurationException("LongPressClicked event requires InteruptMode to be anything but None");
                 }
 
-                longPressDelegate += value;
+                longClickDelegate += value;
             }
-            remove => longPressDelegate -= value;
+            remove => longClickDelegate -= value;
         }
 
         /// <summary>
@@ -171,12 +171,7 @@ namespace Meadow.Foundation.Sensors.Buttons
             //Console.WriteLine($"PB: InputChanged. State == {State}. result.New.State: {result.New.State}.  DI State: {DigitalIn.State}");
 
             if (state)
-            {
-                // TODO: BC 2021.05.21 - I don't think this is right. Clicked
-                // shouldn't raise until the press is released, and only if it's
-                // not a long clicked
-                RaiseClicked();
-
+            {                
                 // save our press start time (for long press event)
                 buttonPressStart = DateTime.Now;
                 // raise our event in an inheritance friendly way
@@ -191,9 +186,13 @@ namespace Meadow.Foundation.Sensors.Buttons
                 buttonPressStart = DateTime.MaxValue;
 
                 // if it's a long press, raise our long press event
-                if (LongPressThreshold > TimeSpan.Zero && pressDuration > LongPressThreshold)
+                if (LongClickedThreshold > TimeSpan.Zero && pressDuration > LongClickedThreshold)
                 {
-                    RaiseLongPress();
+                    RaiseLongClicked();
+                }
+                else 
+                {
+                    RaiseClicked();
                 }
 
                 if (pressDuration.TotalMilliseconds > 0)
@@ -231,9 +230,9 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Raised when the button circuit is pressed for at least 500ms.
         /// </summary>
-        protected virtual void RaiseLongPress()
+        protected virtual void RaiseLongClicked()
         {
-            longPressDelegate?.Invoke(this, new EventArgs());
+            longClickDelegate?.Invoke(this, new EventArgs());
         }
 
         public void Dispose()

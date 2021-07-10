@@ -1,13 +1,13 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Tea5767</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Audio.Radio.Tea5767</PackageId>
-    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Audio, TEA5767</PackageTags>
     <Version>0.6.38</Version>
@@ -15,6 +15,7 @@
     <Description>TEA5767 I2C FM radio module</Description>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>

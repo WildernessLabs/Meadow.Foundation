@@ -75,16 +75,16 @@ namespace MeadowApp
 
             Console.WriteLine("Create buttons...");
 
-            up = new PushButton(Device, Device.Pins.D14, ResistorMode.Disabled);
+            up = new PushButton(Device, Device.Pins.D09, ResistorMode.InternalPullDown);
             up.Clicked += Up_Clicked;
 
-            left = new PushButton(Device, Device.Pins.D11, ResistorMode.Disabled);
+            left = new PushButton(Device, Device.Pins.D11, ResistorMode.InternalPullDown);
             left.Clicked += Left_Clicked;
 
-            right = new PushButton(Device, Device.Pins.D10, ResistorMode.Disabled);
+            right = new PushButton(Device, Device.Pins.D10, ResistorMode.InternalPullDown);
             right.Clicked += Right_Clicked;
 
-            down = new PushButton(Device, Device.Pins.D12, ResistorMode.Disabled);
+            down = new PushButton(Device, Device.Pins.D12, ResistorMode.InternalPullDown);
             down.Clicked += Down_Clicked;
 
             menu.Enable();
@@ -187,7 +187,7 @@ namespace MeadowApp
         byte[] LoadResource(string filename)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = $"Displays.TextDisplayMenu_GameMenu_Sample.{filename}";
+            var resourceName = $"Graphics.TextDisplayMenu_GameMenu_Sample.{filename}";
 
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             {

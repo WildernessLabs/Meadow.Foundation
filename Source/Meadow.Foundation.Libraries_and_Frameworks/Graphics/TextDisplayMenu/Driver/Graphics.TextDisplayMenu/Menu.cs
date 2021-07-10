@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.Json;
+using System.IO;
 using Meadow.Foundation.Displays.TextDisplayMenu.InputTypes;
 using Meadow.Peripherals.Displays;
+using Newtonsoft.Json;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu
 {
@@ -42,7 +43,13 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
 
         private MenuItem[] ParseMenuData(byte[] menuJson)
         {
-            return JsonSerializer.Deserialize<MenuItem[]>(menuJson);
+            var menuString = System.Text.Encoding.Default.GetString(menuJson);
+
+            return JsonConvert.DeserializeObject<MenuItem[]>(menuString);
+
+            //   old System.Text.Json 
+            //   return JsonSerializer.Deserialize<MenuItem[]>(menuJson);
+            //   JsonSerializer.Create().Deserialize(new JsonTextReader()
         }
 
         private void Init(ITextDisplay display, MenuPage menuPage)

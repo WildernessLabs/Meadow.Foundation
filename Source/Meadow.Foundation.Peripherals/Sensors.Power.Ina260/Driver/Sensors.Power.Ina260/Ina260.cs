@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,12 +7,10 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Power
 {
     public partial class Ina260
-        : FilterableChangeObservableI2CPeripheral<(Units.Power?, Units.Voltage?, Units.Current?)>
+        : ByteCommsSensorBase<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)>
     {
         public delegate void ValueChangedHandler(float previousValue, float newValue);
 
-
-        public event EventHandler<IChangeResult<(Units.Power?, Units.Voltage?, Units.Current?)>> Updated = delegate { };
         public event EventHandler<IChangeResult<Units.Power>> PowerUpdated = delegate { };
         public event EventHandler<IChangeResult<Units.Voltage>> VoltageUpdated = delegate { };
         public event EventHandler<IChangeResult<Units.Current>> CurrentUpdated = delegate { };
@@ -20,10 +19,6 @@ namespace Meadow.Foundation.Sensors.Power
         private TimeSpan _samplePeriod;
 
         private Register RegisterPointer { get; set; }
-        private object SyncRoot { get; } = new object();
-        private CancellationTokenSource SamplingTokenSource { get; set; }
-
-        public bool IsSampling { get; private set; }
 
         /// <summary>
         /// The value of the current (in Amps) flowing through the shunt resistor from the last reading
@@ -40,13 +35,8 @@ namespace Meadow.Foundation.Sensors.Power
         /// </summary>
         public Units.Power? Power => Conditions.Power;
 
-        /// <summary>
-        /// The last read conditions.
-        /// </summary>
-        public (Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current) Conditions;
-
-        public Ina260(II2cBus i2cBus, byte address = (byte)Addresses.Default)
-            : base(i2cBus, address)
+        public Ina260(II2cBus i2cBus, byte address = (byte)Addresses.Default, int updateIntervalMs = 1000)
+            : base(i2cBus, address, updateIntervalMs)
         {
             switch (address)
             {
@@ -59,97 +49,29 @@ namespace Meadow.Foundation.Sensors.Power
             }
         }
 
-        public Ina260(II2cBus i2cBus, Addresses address)
-            : this(i2cBus, (byte)address)
+        public Ina260(II2cBus i2cBus, Addresses address, int updateIntervalMs = 1000)
+            : this(i2cBus, (byte)address, updateIntervalMs)
         {
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if(disposing)
-            {
-                StopSampling();
-            }
-        }
-
-        public void StartUpdating(TimeSpan samplePeriod)
-        {
-            lock (SyncRoot)
-            {
-                // allow subsequent calls to StartSampling to just change the sample period
-                _samplePeriod = samplePeriod;
-
-                if (IsSampling)
-                {
-                    return;
-                }
-
-                SamplingTokenSource = new CancellationTokenSource();
-                var ct = SamplingTokenSource.Token;
-
-                Task.Factory.StartNew(async () =>
-                {
-                    IsSampling = true;
-
-                    (Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current) oldConditions;
-                    ChangeResult<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)> result;
-
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            IsSampling = false;
-                            break;
-                        }
-
-                        // capture history
-                        oldConditions = (Conditions.Power, Conditions.Voltage, Conditions.Current);
-
-                        // read
-                        Conditions = await Update();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<(Units.Power?, Units.Voltage?, Units.Current?)>(oldConditions, Conditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        await Task.Delay(_samplePeriod);
-                    }
-
-                    IsSampling = false;
-                });
-            }
-        }
-
-
-        protected async Task<(Units.Power?, Units.Voltage?, Units.Current?)> Update()
+        protected override async Task<(Units.Power? Power, Voltage? Voltage, Current? Current)> ReadSensor()
         {
             return await Task.Run(() =>
             {
                 (Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current) conditions;
-                conditions.Voltage = new Units.Voltage(Bus.ReadRegisterShort((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
-                conditions.Current = new Units.Current(Bus.ReadRegisterShort((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
-                conditions.Power = new Units.Power(Bus.ReadRegisterShort((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
+                //conditions.Voltage = new Units.Voltage(Bus.ReadRegisterShort((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
+                conditions.Voltage = new Units.Voltage(Peripheral.ReadRegister((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
+                //conditions.Current = new Units.Current(Bus.ReadRegisterShort((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
+                conditions.Current = new Units.Current(Peripheral.ReadRegister((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
+                //conditions.Power = new Units.Power(Bus.ReadRegisterShort((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
+                conditions.Power = new Units.Power(Peripheral.ReadRegister((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
 
                 return conditions;
             });
         }
 
-        public void StopSampling()
+        protected override void RaiseEventsAndNotify(IChangeResult<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)> changeResult)
         {
-            lock (SyncRoot)
-            {
-                if (!IsSampling) return;
-                SamplingTokenSource.Cancel();
-            }
-        }
-
-        protected void RaiseChangedAndNotify(IChangeResult<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)> changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
             if (changeResult.New.Power is { } power)
             {
                 PowerUpdated?.Invoke(this, new ChangeResult<Units.Power>(power, changeResult.Old?.Power));
@@ -162,7 +84,8 @@ namespace Meadow.Foundation.Sensors.Power
             {
                 CurrentUpdated?.Invoke(this, new ChangeResult<Units.Current>(amps, changeResult.Old?.Current));
             }
-            base.NotifyObservers(changeResult);
+
+            base.RaiseEventsAndNotify(changeResult);
         }
 
 
@@ -171,7 +94,8 @@ namespace Meadow.Foundation.Sensors.Power
         /// </summary>
         public int ManufacturerID
         {
-            get => Bus.ReadRegisterShort((byte)Register.ManufacturerID);
+            //get => Bus.ReadRegisterShort((byte)Register.ManufacturerID);
+            get => Peripheral.ReadRegister((byte)Register.ManufacturerID);
         }
 
         /// <summary>
@@ -179,7 +103,8 @@ namespace Meadow.Foundation.Sensors.Power
         /// </summary>
         public int DieID
         {
-            get => Bus.ReadRegisterShort((byte)Register.ManufacturerID);
+            //get => Bus.ReadRegisterShort((byte)Register.ManufacturerID);
+            get => Peripheral.ReadRegister((byte)Register.ManufacturerID);
         }
     }
 }

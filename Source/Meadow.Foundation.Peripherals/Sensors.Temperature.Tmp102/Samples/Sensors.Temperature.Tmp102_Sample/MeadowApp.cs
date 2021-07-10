@@ -6,6 +6,9 @@ using Meadow.Foundation.Sensors.Temperature;
 
 namespace Sensors.Temperature.Tmp102_Sample
 {
+    // TODO: This sample needs a rewrite. See the other atmospheric samples for
+    // an example of the sample pattern.
+
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         Tmp102 tmp102;
@@ -20,13 +23,13 @@ namespace Sensors.Temperature.Tmp102_Sample
 
         void TestUpdating()
         {
-            Console.WriteLine("TestFC28Updating...");
+            Console.WriteLine("Test Updating...");
 
             var consumer = Tmp102.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Temperature New Value { result.New.Celsius}");
-                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}");
+                    Console.WriteLine($"Temperature New Value { result.New.Celsius}C");
+                    Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}C");
                     //Console.WriteLine($"Temperature Delta Value { result.Delta?.Celsius}");
                 },
                 filter: null
@@ -38,18 +41,18 @@ namespace Sensors.Temperature.Tmp102_Sample
                 Console.WriteLine($"Temperature Updated: {e.New.Celsius:N2}C");
             };
 
-            tmp102.StartUpdating();
+            tmp102.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         void TestRead()
         {
-            Console.WriteLine("TestFC28Sensor...");
+            Console.WriteLine("TestTmp102Sensor...");
 
             while (true)
             {
-                var temp = tmp102.Read();
+                var temp = tmp102.Read().Result;
 
-                Console.WriteLine($"Temperature New Value { temp.Celsius}");
+                Console.WriteLine($"Temperature New Value { temp.Celsius}C");
                 Thread.Sleep(1000);
             }
         }

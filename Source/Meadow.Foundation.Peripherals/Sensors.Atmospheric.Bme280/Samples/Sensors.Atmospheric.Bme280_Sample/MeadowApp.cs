@@ -12,23 +12,16 @@ namespace Sensors.Atmospheric.BME280_Sample
     {
         Bme280 sensor;
 
-        IDigitalOutputPort trigger;
-
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
-
-            // create a trigger for the LA
-            trigger = Device.CreateDigitalOutputPort(Device.Pins.D13);
-            Console.WriteLine("Trigger on D02");
-            trigger.State = true;
 
             // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus();
             sensor = new Bme280 (
                 i2c,
-                Bme280.I2cAddress.Adddress0x76 //default
-                //Bme280.I2cAddress.Adddress0x77 //default
+                Bme280.I2cAddress.Adddress0x76 // SDA pulled up
+                //Bme280.I2cAddress.Adddress0x77 // SDA pulled down
             );
 
             // TODO: SPI version
@@ -59,10 +52,10 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> e) => {
-                Console.WriteLine($"  Temperature: {e.New.Temperature?.Celsius:N2}C");
-                Console.WriteLine($"  Relative Humidity: {e.New.Humidity:N2}%");
-                Console.WriteLine($"  Pressure: {e.New.Pressure?.Millibar:N2}mbar ({e.New.Pressure?.Pascal:N2}Pa)");
+            sensor.Updated += (sender, result) => {
+                Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
+                Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
+                Console.WriteLine($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
             };
 
             // just for funsies.
@@ -72,7 +65,7 @@ namespace Sensors.Atmospheric.BME280_Sample
             ReadConditions().Wait();
 
             // start updating continuously
-            sensor.StartUpdating();
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         protected async Task ReadConditions()

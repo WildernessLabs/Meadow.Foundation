@@ -10,10 +10,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// <summary>
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
-    public class Hx711 :
-        FilterableChangeObservableBase<Mass>,
-        IMassSensor,
-        IDisposable
+    public class Hx711 : SamplingSensorBase<Mass>, IMassSensor, IDisposable
     {
         //==== events
         public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
@@ -44,7 +41,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private IDigitalOutputPort SCK { get; }
         private IDigitalInputPort DOUT { get; }
-        private object SyncRoot { get; } = new object();
+        //private object SyncRoot { get; } = new object();
 
 
         //==== properties
@@ -96,7 +93,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         {
             if (IsSleeping) return;
 
-            lock (SyncRoot)
+            lock (samplingLock)
             {
                 ClockHigh();
                 IsSleeping = true;
@@ -110,7 +107,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         {
             if (!IsSleeping) return;
 
-            lock (SyncRoot)
+            lock (samplingLock)
             {
                 ClockHigh();
                 IsSleeping = false;
@@ -158,7 +155,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// Gets the current sensor weight
         /// </summary>
         /// <returns></returns>
-        private Mass GetWeight()
+        protected override Task<Mass> ReadSensor()
         {
             if (_gramsPerAdcUnit == 0)
             {
@@ -185,7 +182,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             var grams = value * _gramsPerAdcUnit;
 
             // convert to desired units
-            return new Mass(grams, Units.Mass.UnitType.Grams);
+            return Task.FromResult(new Mass(grams, Units.Mass.UnitType.Grams));
         }
 
         private void CalculateRegisterValues(IPin sck, IPin dout)
@@ -232,7 +229,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         {
             uint count = 0;
 
-            lock (SyncRoot)
+            lock (samplingLock)
             {
                 // data line low indicates ready
                 while((*(uint*)_dout_address & _dout_mask) != 0)
@@ -264,92 +261,28 @@ namespace Meadow.Foundation.Sensors.LoadCell
             return count;
         }
 
-        private CancellationTokenSource SamplingTokenSource { get; set; }
-
         public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
-        public bool IsSampling { get; private set; }
 
         /// <summary>
         /// The last read Mass.
         /// </summary>
         public Mass? Mass { get; private set; }
 
-        public void StartUpdating()
-        {
-            StartUpdating(DefaultSamplePeriod);
-        }
-
-        public void StartUpdating(TimeSpan period)
-        {
-            // thread safety
-            lock (SyncRoot)
-            {
-                if (IsSampling) return;
-
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                Mass? oldConditions;
-                ChangeResult<Mass> result;
-
-                Task.Factory.StartNew(async () => {
-                    while (true)
-                    {
-                        // cleanup
-                        if (ct.IsCancellationRequested)
-                        {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = Mass;
-
-                        // read
-                        Mass = GetWeight();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<Mass>(Mass.Value, oldConditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(period);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
         /// <summary>
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(IChangeResult<Mass> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<Mass> changeResult)
         {
             try
             {
                 MassUpdated?.Invoke(this, changeResult);
-                base.NotifyObservers(changeResult);
+                base.RaiseEventsAndNotify(changeResult);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"HX711 event handler threw: {ex.Message}");
                 throw;
-            }
-        }
-
-        /// <summary>
-        /// Stops sampling the mass.
-        /// </summary>
-        public void StopUpdating()
-        {
-            lock (SyncRoot)
-            {
-                if (!IsSampling) return;
-                SamplingTokenSource.Cancel();
             }
         }
 

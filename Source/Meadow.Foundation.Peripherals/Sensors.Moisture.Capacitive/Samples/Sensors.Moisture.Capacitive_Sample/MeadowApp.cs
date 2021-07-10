@@ -38,7 +38,7 @@ namespace Sensors.Moisture.Capacitive_Sample
 
             //==== Classic Events
             // classical .NET events can also be used:
-            capacitive.HumidityUpdated += (object sender, IChangeResult<double> result) =>
+            capacitive.HumidityUpdated += (sender, result) =>
             {
                 // the first time through, old will be null.
                 string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
@@ -50,13 +50,13 @@ namespace Sensors.Moisture.Capacitive_Sample
 
             // Spin up the sampling thread so that events are raised and
             // IObservable notifications are sent.
-            capacitive.StartUpdating();
+            capacitive.StartUpdating(TimeSpan.FromSeconds(5));
         }
 
         protected async Task ReadMoisture()
         {
             var moisture = await capacitive.Read();
-            Console.WriteLine($"Moisture New Value { moisture.New}");            
+            Console.WriteLine($"Moisture New Value { moisture }");            
         }
     }
 }

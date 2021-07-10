@@ -1,12 +1,13 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <PackageIcon>icon.png</PackageIcon>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Tca9548a</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.ICs.IOExpanders.Tca9548a</PackageId>
-    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, TCA9548A, i2c, io, expander</PackageTags>
     <Version>0.1.0</Version>
@@ -14,6 +15,7 @@
     <Description>TCA9548A I2C IO expander</Description>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>

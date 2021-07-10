@@ -1,13 +1,13 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <Authors>Wilderness Labs, Inc</Authors>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>GraphicsLibrary</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Displays.GraphicsLibrary</PackageId>
-    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
+    <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Display, Graphics</PackageTags>
     <Version>0.9.38</Version>
@@ -15,9 +15,7 @@
     <Description>Lightweight integer accurate 2d graphics drawing system designed for embedded systems</Description>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Fonts\" />
   </ItemGroup>
 </Project>

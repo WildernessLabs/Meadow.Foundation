@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Sound
 
             digitalInputPort.Changed += DigitalInputPort_Changed;
 
-            analogPort.StartUpdating();
+            analogPort.StartUpdating(TimeSpan.FromSeconds(1));
 
             while (true)
             {

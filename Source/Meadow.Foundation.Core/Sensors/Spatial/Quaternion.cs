@@ -3,7 +3,7 @@
     /// <summary>
     ///     Quaternion coordinates object.
     /// </summary>
-    public class Quaternion
+    public struct Quaternion
     {
         /// <summary>
         ///     W component of the quaternion.

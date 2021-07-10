@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Displays.Lcd
 
         void ExpanderWrite(byte value)
         {
-            i2cPeripheral.WriteByte((byte)(value | backlightValue));
+            i2cPeripheral.Write((byte)(value | backlightValue));
         }
 
         void Send(byte value, byte mode)
@@ -298,13 +298,13 @@ namespace Meadow.Foundation.Displays.Lcd
         // Turn the (optional) backlight off/on
         public void BacklightOn()
         {
-            backlightValue = LCD_NOBACKLIGHT;
+            backlightValue = LCD_BACKLIGHT;
             ExpanderWrite(0);
         }
 
         public void BacklightOff()
         {
-            backlightValue = LCD_BACKLIGHT;
+            backlightValue = LCD_NOBACKLIGHT;
             ExpanderWrite(0);
         }
         public bool IsBacklightOn()

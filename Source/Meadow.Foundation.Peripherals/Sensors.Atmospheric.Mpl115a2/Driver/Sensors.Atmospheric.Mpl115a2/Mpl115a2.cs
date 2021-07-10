@@ -4,40 +4,17 @@ using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using TU = Meadow.Units.Temperature.UnitType;
+using PU = Meadow.Units.Pressure.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    public class Mpl115a2 :
-        FilterableChangeObservableBase<(Units.Temperature?, Pressure?)>,
+    public partial class Mpl115a2 :
+        ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
-        /// <summary>
-        /// </summary>
-        public event EventHandler<IChangeResult<(Units.Temperature?, Pressure?)>> Updated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
-
-
-        // TODO: move this into an `Mpl115a2.Registers.cs` file.
-        /// <summary>
-        ///     Device registers.
-        /// </summary>
-        private static class Registers
-        {
-            public static readonly byte PressureMSB = 0x00;
-            public static readonly byte PressureLSB = 0x01;
-            public static readonly byte TemperatureMSB = 0x02;
-            public static readonly byte TemperatureLSB = 0x03;
-            public static readonly byte A0MSB = 0x04;
-            public static readonly byte A0LSB = 0x05;
-            public static readonly byte B1MSB = 0x06;
-            public static readonly byte B1LSB = 0x07;
-            public static readonly byte B2MSB = 0x08;
-            public static readonly byte B2LSB = 0x09;
-            public static readonly byte C12MSB = 0x0a;
-            public static readonly byte C12LSB = 0x0b;
-            public static readonly byte StartConversion = 0x12;
-        }
 
         /// <summary>
         /// Structure holding the doubleing point equivalent of the compensation
@@ -62,49 +39,30 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Pressure? Pressure => Conditions.Pressure;
 
-        public (Units.Temperature? Temperature, Pressure? Pressure) Conditions;
-
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-        /// <summary>
-        /// Gets a value indicating whether the analog input port is currently
-        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
-
-        private readonly II2cPeripheral mpl115a2;
-
         /// <summary>
         /// doubling point variants of the compensation coefficients from the sensor.
         /// </summary>
         private Coefficients coefficients;
 
         /// <summary>
-        /// Update interval in milliseconds
-        /// </summary>
-        private readonly ushort _updateInterval = 100;
-
-        /// <summary>
         /// Create a new MPL115A2 temperature and humidity sensor object.
         /// </summary>
         /// <param name="address">Sensor address (default to 0x60).</param>
         /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
-        public Mpl115a2(II2cBus i2cBus, byte address = 0x60)
+        public Mpl115a2(II2cBus i2cBus, byte address = 0x60, int updateIntervalMs = 1000)
+            : base(i2cBus, address, updateIntervalMs)
         {
-            var device = new I2cPeripheral(i2cBus, address);
-            mpl115a2 = device;
+            //var device = new I2cPeripheral(i2cBus, address);
+            //mpl115a2 = device;
             //
             //  Update the compensation data from the sensor.  The location and format of the
             //  compensation data can be found on pages 5 and 6 of the datasheet.
             //
-            var data = mpl115a2.ReadRegisters(Registers.A0MSB, 8);
-            var a0 = (short)(ushort)((data[0] << 8) | data[1]);
-            var b1 = (short)(ushort)((data[2] << 8) | data[3]);
-            var b2 = (short)(ushort)((data[4] << 8) | data[5]);
-            var c12 = (short)(ushort)(((data[6] << 8) | data[7]) >> 2);
+            Peripheral.ReadRegister(Registers.A0MSB, ReadBuffer.Span);
+            var a0 = (short)(ushort)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
+            var b1 = (short)(ushort)((ReadBuffer.Span[2] << 8) | ReadBuffer.Span[3]);
+            var b2 = (short)(ushort)((ReadBuffer.Span[4] << 8) | ReadBuffer.Span[5]);
+            var c12 = (short)(ushort)(((ReadBuffer.Span[6] << 8) | ReadBuffer.Span[7]) >> 2);
             //
             //  Convert the raw compensation coefficients from the sensor into the
             //  doubleing point equivalents to speed up the calculations when readings
@@ -137,91 +95,25 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        public async Task<(Units.Temperature? Temperature, Pressure? Pressure)> Read()
-        {
-            this.Conditions = await GetSensorData();
-            return Conditions;
-        }
-
-        public void StartUpdating(int standbyDuration = 1000)
-        {
-            // thread safety
-            lock (_lock) {
-                if (IsSampling) return;
-
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                (Units.Temperature? Temperature, Pressure? Pressure) oldConditions;
-                ChangeResult<(Units.Temperature?, Pressure?)> result;
-
-                Task.Factory.StartNew(async () => {
-                    while (true) {
-                        if (ct.IsCancellationRequested) {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = (Conditions.Temperature, Conditions.Pressure);
-
-                        // read
-                        await Read();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<(Units.Temperature?, Pressure?)>(Conditions, oldConditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        /// <summary>
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
         /// <param name="changeResult"></param>
-        protected void RaiseChangedAndNotify(IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
+            //Updated?.Invoke(this, changeResult);
             if (changeResult.New.Temperature is { } temp) {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             if (changeResult.New.Pressure is { } pressure) {
                 PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
             }
-            base.NotifyObservers(changeResult);
-        }
-
-        /// <summary>
-        /// Stops sampling the temperature.
-        /// </summary>
-        public void StopUpdating()
-        {
-            lock (_lock) {
-                if (!IsSampling) return;
-
-                SamplingTokenSource?.Cancel();
-
-                // state muh-cheen
-                IsSampling = false;
-            }
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
         /// Update the temperature and pressure from the sensor and set the Pressure property.
         /// </summary>
-        protected async Task<(Units.Temperature Temperature, Pressure Pressure)> GetSensorData()
+        protected override async Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
         {
             return await Task.Run(async () => {
                 (Units.Temperature Temperature, Pressure Pressure) conditions;
@@ -230,55 +122,44 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //  Tell the sensor to take a temperature and pressure reading, wait for
                 //  3ms (see section 2.2 of the datasheet) and then read the ADC values.
                 //
-                mpl115a2.WriteBytes(new byte[] { Registers.StartConversion, 0x00 });
+                WriteBuffer.Span[0] = Registers.StartConversion;
+                WriteBuffer.Span[1] = 0x00;
+                Peripheral.Write(WriteBuffer.Span[0..2]);
+                //Peripheral.WriteBytes(new byte[] { Registers.StartConversion, 0x00 });
 
                 await Task.Delay(5);
 
-                var data = mpl115a2.ReadRegisters(Registers.PressureMSB, 4);
+                //var data = Peripheral.ReadRegisters(Registers.PressureMSB, 4);
+                Peripheral.ReadRegister(Registers.PressureMSB, ReadBuffer.Span[0..4]);
                 //
                 //  Extract the sensor data, note that this is a 10-bit reading so move
                 //  the data right 6 bits (see section 3.1 of the datasheet).
                 //
-                var pressure = (ushort)(((data[0] << 8) + data[1]) >> 6);
-                var temperature = (ushort)(((data[2] << 8) + data[3]) >> 6);
-                conditions.Temperature = new Units.Temperature((float)((temperature - 498.0) / -5.35) + 25, Units.Temperature.UnitType.Celsius);
+                var pAdc = (ushort)(((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]) >> 6);
+                var tAdc = (ushort)(((ReadBuffer.Span[2] << 8) + ReadBuffer.Span[3]) >> 6);
+                conditions.Temperature = new Units.Temperature((float)((tAdc - 498.0) / -5.35) + 25, TU.Celsius);
                 //
                 //  Now use the calculations in section 3.2 to determine the
                 //  current pressure reading.
                 //
                 const double PRESSURE_CONSTANT = 65.0 / 1023.0;
-                var compensatedPressure = coefficients.A0 + ((coefficients.B1 + (coefficients.C12 * temperature))
-                                                              * pressure) + (coefficients.B2 * temperature);
-                conditions.Pressure = new Pressure((float)(PRESSURE_CONSTANT * compensatedPressure) + 50, Units.Pressure.UnitType.Pascal);
+
+                // from section 3.2
+                // The 10-bit compensated pressure output, Pcomp, is calculated as follows:
+                // Pcomp = a0 + ((b1 + (c12 * Tadc)) * Padc) + (b2 * Tadc)
+                // where:
+                //   Padc is the raw pressure reading
+                //   Tadc is the raw temperature reading
+                var compensatedPressure = coefficients.A0 + ((coefficients.B1 + (coefficients.C12 * (double)tAdc))
+                                                              * (double)pAdc) + (coefficients.B2 * (double)tAdc);
+
+                // Pcomp will produce a value of 0 with an input pressure of 50
+                // kPa and will produce a full-scale value of 1023 with an input pressure of 115 kPa.
+                // kPa = Pcom * (65/1023) + 50
+                conditions.Pressure = new Pressure(((float)(PRESSURE_CONSTANT * compensatedPressure) + 50d), PU.KiloPascal);
 
                 return conditions;
             });
         }
-
-        /// <summary>
-        /// Creates a `FilterableChangeObserver` that has a handler and a filter.
-        /// </summary>
-        /// <param name="handler">The action that is invoked when the filter is satisifed.</param>
-        /// <param name="filter">An optional filter that determines whether or not the
-        /// consumer should be notified.</param>
-        /// <returns></returns>
-        /// <returns></returns>
-        // Implementor Notes:
-        //  This is a convenience method that provides named tuple elements. It's not strictly
-        //  necessary, as the `FilterableChangeObservableBase` class provides a default implementation,
-        //  but if you use it, then the parameters are named `Item1`, `Item2`, etc. instead of
-        //  `Temperature`, `Pressure`, etc.
-        public static new
-            FilterableChangeObserver<(Units.Temperature?, Pressure?)>
-            CreateObserver(
-                Action<IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)>> handler,
-                Predicate<IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)>>? filter = null
-            )
-        {
-            return new FilterableChangeObserver<(Units.Temperature?, Pressure?)>(
-                handler: handler, filter: filter
-                );
-        }
-
     }
 }

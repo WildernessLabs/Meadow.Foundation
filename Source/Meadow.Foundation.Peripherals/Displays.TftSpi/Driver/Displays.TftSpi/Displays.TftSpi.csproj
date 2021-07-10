@@ -1,13 +1,13 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>TftSpi</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Displays.TftSpi</PackageId>
-    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow,Meadow.Foundation,Display,TFT,ILI9163,ILI9341,S6D02A1,SSD1331,SSD1351,ST7735,ST7789</PackageTags>
     <Version>0.7.40</Version>
@@ -16,6 +16,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
   </ItemGroup>
 </Project>

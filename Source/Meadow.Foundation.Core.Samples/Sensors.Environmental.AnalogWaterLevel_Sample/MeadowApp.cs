@@ -29,7 +29,7 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
             ));
 
             // classical .NET events can also be used:
-            analogWaterLevel.Updated += (object sender, ChangeResult<float> e) => {
+            analogWaterLevel.Updated += (object sender, IChangeResult<float> e) => {
                 Console.WriteLine($"Level Changed, level: {e.New}cm");
             };
 
@@ -38,7 +38,7 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
 
             // Spin up the sampling thread so that events are raised and
             // IObservable notifications are sent.
-            analogWaterLevel.StartUpdating();
+            analogWaterLevel.StartUpdating(TimeSpan.FromSeconds(5));
         }
 
         protected async Task ReadLevel()

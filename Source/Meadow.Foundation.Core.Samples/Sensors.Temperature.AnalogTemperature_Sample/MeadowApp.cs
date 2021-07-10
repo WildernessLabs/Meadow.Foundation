@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sensors.Temperature.AnalogTemperature_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         AnalogTemperature analogTemperature;
 
@@ -17,7 +17,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             // configure our AnalogTemperature sensor
             analogTemperature = new AnalogTemperature (
                 device: Device,
-                analogPin: Device.Pins.A00,
+                analogPin: Device.Pins.A03,
                 sensorType: AnalogTemperature.KnownSensorType.LM35
             );
 
@@ -41,7 +41,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
             //==== Classic Events Pattern
             // classical .NET events can also be used:
-            analogTemperature.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> result) => {
+            analogTemperature.TemperatureUpdated += (sender, result) => {
                 Console.WriteLine($"Temp Changed, temp: {result.New.Celsius:N2}C, old: {result.Old?.Celsius:N2}C");
             };
 
@@ -50,13 +50,13 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
 
             // Spin up the sampling thread so that events are raised and
             // IObservable notifications are sent.
-            analogTemperature.StartUpdating();
+            analogTemperature.StartUpdating(TimeSpan.FromMilliseconds(1000));
         }
 
         protected async Task ReadTemp()
         {
             var temperature = await analogTemperature.Read();
-            Console.WriteLine($"Initial temp: {temperature.New.Celsius:N2}C");
+            Console.WriteLine($"Initial temp: {temperature.Celsius:N2}C");
         }
     }
 }

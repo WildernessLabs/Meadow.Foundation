@@ -8,275 +8,125 @@ using IU = Meadow.Units.Illuminance.UnitType;
 
 namespace Meadow.Foundation.Sensors.Light
 {
+    // TODO: This sensor has an interr
+
     /// <summary>
     ///     Driver for the TSL2591 light-to-digital converter.
     /// </summary>
-    public class Tsl2591 :
-        FilterableChangeObservableBase<Illuminance>,
+    public partial class Tsl2591 :
+        ByteCommsSensorBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,
         ILightSensor,
         IDisposable
     {
         //==== events
-        public event EventHandler<IChangeResult<Illuminance>> Updated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> FullSpectrumUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> InfraredUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> VisibleLightUpdated = delegate { };
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
-        // TODO: delete this after doing next todo.
-        public delegate void ValueChangedHandler(int previousValue, int newValue);
-        // TODO: should these be EventHandler<IChangeResult<int>>??
-        public event ValueChangedHandler Channel0Changed = delegate { };
-        public event ValueChangedHandler Channel1Changed = delegate { };
-
         //==== internals
-        private int _ch0;
-        private int _ch1;
-        private int? _lastCh0;
-        private int? _lastCh1;
-        private TimeSpan _samplePeriod;
         private IntegrationTimes _integrationTime;
         private GainFactor _gain;
 
-        private II2cBus i2cBus { get; set; }
-        private object SyncRoot { get; } = new object();
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
-
-        //==== properties
-
-        // TODO: move these into their own files, e.g. `Tsl2591.Addresses.cs`
-        // TODO: standardize pluarls. e.g. `Register` -> `Registers`
-
-        /// <summary>
-        ///     Valid addresses for the sensor.
-        /// </summary>
-        public enum Addresses : byte
-        {
-            Address0 = 0x29,
-            Default = Address0
-        }
-
-        [Flags]
-        private enum Register : byte
-        {
-            Command = 0xA0,
-            Enable = 0x00,
-            Config = 0x01,
-            ALSInterruptLowL = 0x04,
-            ALSInterruptLowH = 0x05,
-            ALSInterruptHighL = 0x06,
-            ALSInterruptHighH = 0x07,
-            NPAILTL = 0x08,
-            NPAILTH = 0x09,
-            NPAIHTL = 0x0A,
-            NPAIHTH = 0x0B,
-            Persist = 0x0C,
-            PackageID = 0x11,
-            DeviceID = 0x12,
-            Status = 0x13,
-            CH0DataL = 0x14,
-            CH0DataH = 0x15,
-            CH1DataL = 0x16,
-            CH1DataH = 0x17
-        }
-
-        [Flags]
-        public enum IntegrationTimes : byte
-        {
-            Time_100Ms = 0x00, // 100 milliseconds
-            Time_200Ms = 0x01, // 200 milliseconds
-            Time_300Ms = 0x02, // 300 milliseconds
-            Time_400Ms = 0x03, // 400 milliseconds
-            Time_500Ms = 0x04, // 500 milliseconds
-            Time_600Ms = 0x05  // 600 milliseconds
-        }
-
-        [Flags]
-        public enum GainFactor : byte
-        {
-            Low = 0x00,     /// Low gain (1x)
-            Medium = 0x10,  /// Medium gain (25x)
-            High = 0x20,    /// High gain (428x)
-            Maximum = 0x30  /// Maximum gain (9876x)
-        }
-
-        [Flags]
-        public enum EnableStates : byte
-        {
-            PowerOff = 0x00,
-            PowerOn = 0x01,
-            Aen = 0x02,
-            Aien = 0x10,
-            Npien = 0x80
-        }
-        public int ChangeThreshold { get; set; }
-
-        public bool IsSampling { get; private set; }
-        public byte Address { get; private set; }
 
         /// <summary>
         /// Full spectrum luminosity (visible and infrared light combined).
         /// </summary>
-        public Illuminance FullSpectrumLuminosity { get; private set; }
+        public Illuminance? FullSpectrumLuminosity => Conditions.FullSpectrum;
 
         /// <summary>
         /// Infrared light luminosity.
         /// </summary>
-        public Illuminance InfraredLuminosity { get; private set; }
+        public Illuminance? InfraredLuminosity => Conditions.Infrared;
 
         /// <summary>
         /// Visible light luminosity.
         /// </summary>
-        public Illuminance VisibleLightLuminosity { get; private set; }
+        public Illuminance? VisibleLightLuminosity => Conditions.VisibleLight;
 
         /// <summary>
         /// Visible lux.
         /// </summary>
-        public Illuminance? Illuminance { get; private set; }
+        public Illuminance? Illuminance => Conditions.Integrated;
 
-        /// <summary>
-        /// Reads the value of ADC Channel 0
-        /// </summary>
-        public int Channel0
+        public Tsl2591(II2cBus bus, byte address = (byte) Addresses.Default, int updateIntervalMs = 1000)
+            : base(bus, address, updateIntervalMs)
         {
-            private set => _ch0 = value;
-            get
-            {
-                if (!IsSampling)
-                {
-                    Update();
-                }
-                return _ch0;
-            }
-        }
-
-        /// <summary>
-        /// Reads the value of ADC Channel 1
-        /// </summary>
-        public int Channel1
-        {
-            private set => _ch1 = value;
-            get
-            {
-                if (!IsSampling)
-                {
-                    Update();
-                }
-                return _ch1;
-            }
-        }
-
-        public Tsl2591(II2cBus bus, byte address = (byte) Addresses.Default)
-        {
-            i2cBus = bus;
-            Address = address;
             Gain = GainFactor.Medium;
             IntegrationTime = IntegrationTimes.Time_100Ms;
             PowerOn();
         }
-
-        protected virtual void Dispose(bool disposing)
+        
+        protected override async Task<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> ReadSensor()
         {
-            if (disposing)
+            (Illuminance FullSpectrum, Illuminance Infrared, Illuminance VisibleLight, Illuminance Integrated) conditions;
+
+            return await Task.Run(() =>
             {
-                StopSampling();
-            }
-        }
+                // data sheet indicates you should always read all 4 bytes, in order, for valid data
+                var channel0 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH0DataL | Register.Command));
+                var channel1 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH1DataL | Register.Command));
 
-        /// <summary>
-        /// Dispose managed resources
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+                conditions.FullSpectrum = new Illuminance(channel0, IU.Lux);
+                conditions.Infrared = new Illuminance(channel1, IU.Lux);
+                conditions.VisibleLight = new Illuminance(channel0 - channel1, IU.Lux);
 
-        /// <summary>
-        /// Start sampling from the sensor.
-        /// </summary>
-        /// <remarks>
-        /// If the requested sampling period is less than the minimum sampling period as defined by the
-        /// <seealso cref="IntegrationPeriod"/> then the sampling period will be set to a period based
-        /// upon the <seealso cref="IntegrationPeriod"/>.
-        /// </remarks>
-        /// <param name="samplePeriod">Requested sampling period.</param>
-        public void StartUpdating(int standbyDuration = 1000)
-        {
-            // thread safety
-            lock (_lock)
-            {
-                if (IsSampling) { return; }
+                double countsPerLux;
 
-                // state muh-cheen
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                Illuminance? oldConditions;
-                ChangeResult<Illuminance> result;
-                Task.Factory.StartNew(async () =>
+                if ((channel0 == 0xffff) || (channel1 == 0xffff))
                 {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {   // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = Illuminance;
+                    conditions.Integrated = new Illuminance(-1, IU.Lux);
+                }
+                else
+                {
+                    countsPerLux = (IntegrationTimeInMilliseconds(IntegrationTime) * GainMultiplier(Gain)) / 408.0;
+                    conditions.Integrated = new Illuminance((channel0 - channel1) * (1 - (channel1 / channel0)) / countsPerLux, IU.Lux);
+                }
 
-                        // read
-                        Update();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<Illuminance>(Illuminance.Value, oldConditions);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
+                return conditions;
+            });
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<Illuminance> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> changeResult)
         {
-            Updated?.Invoke(this, changeResult);
-            LuminosityUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
-        }
-
-        public void StopSampling()
-        {
-            lock (SyncRoot)
+            if (changeResult.New.FullSpectrum is { } ill)
             {
-                if (!IsSampling) return;
-                SamplingTokenSource.Cancel();
+                FullSpectrumUpdated?.Invoke(this, new ChangeResult<Illuminance>(ill, changeResult.Old?.FullSpectrum));
             }
+            if (changeResult.New.Infrared is { } infra)
+            {
+                InfraredUpdated?.Invoke(this, new ChangeResult<Illuminance>(infra, changeResult.Old?.Infrared));
+            }
+            if (changeResult.New.VisibleLight is { } vis)
+            {
+                VisibleLightUpdated?.Invoke(this, new ChangeResult<Illuminance>(vis, changeResult.Old?.VisibleLight));
+            }
+            if (changeResult.New.Integrated is { } integrated)
+            {
+                LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.Integrated));
+            }
+
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         public void PowerOn()
         {
-            WriteRegister(Register.Enable | Register.Command, 3);
+            Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 3);
         }
 
         public void PowerOff()
         {
-            WriteRegister(Register.Enable | Register.Command, 0);
+            Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 0);
         }
 
         public int PackageID
         {
-            get => ReadRegisterByte(Register.PackageID | Register.Command);
+            get => Peripheral.ReadRegister((byte)(Register.PackageID | Register.Command));
         }
 
         public int DeviceID
         {
-            get => ReadRegisterByte(Register.DeviceID | Register.Command);
+            get => Peripheral.ReadRegister((byte)(Register.DeviceID | Register.Command));
         }
 
         /// <summary>
@@ -289,7 +139,7 @@ namespace Meadow.Foundation.Sensors.Light
             {
                 PowerOff();
                 _gain = value;
-                WriteRegister(Register.Command | Register.Config, (byte) ((byte) _integrationTime | (byte) _gain));
+                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte) ((byte) _integrationTime | (byte) _gain));
                 PowerOn();
             }
         }
@@ -304,7 +154,7 @@ namespace Meadow.Foundation.Sensors.Light
             {
                 PowerOff();
                 _integrationTime = value;
-                WriteRegister(Register.Command | Register.Config, (byte) ((byte) _integrationTime | (byte) _gain));
+                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte) ((byte) _integrationTime | (byte) _gain));
                 PowerOn();
             }
         }
@@ -367,103 +217,6 @@ namespace Meadow.Foundation.Sensors.Light
 
             }
             return (g);
-        }
-
-        private void CalculateSensorValues()
-        {
-            FullSpectrumLuminosity = new Illuminance(Channel0, IU.Lux);
-            InfraredLuminosity = new Illuminance(Channel1, IU.Lux);
-            VisibleLightLuminosity = new Illuminance(Channel0 - Channel1, IU.Lux);
-
-            double countsPerLux;
-
-            if ((Channel0 == 0xffff) || (Channel1 == 0xffff))
-            {
-                Illuminance = new Illuminance(-1, IU.Lux);
-                return;
-            }
-            countsPerLux = (IntegrationTimeInMilliseconds(IntegrationTime) * GainMultiplier(Gain)) / 408.0;
-            Illuminance = new Illuminance((Channel0 - Channel1) * (1 - (Channel1 / Channel0)) / countsPerLux);
-        }
-
-        public void Update(bool raiseEvents = false)
-        {
-            // data sheet indicates you should always read all 4 bytes, in order, for valid data
-            Channel0 = ReadRegisterUInt16(Register.CH0DataL | Register.Command);
-            Channel1 = ReadRegisterUInt16(Register.CH1DataL | Register.Command);
-            CalculateSensorValues();
-
-            if (raiseEvents)
-            {
-                if (!_lastCh0.HasValue)
-                {
-                    // raise event
-                    Channel0Changed?.Invoke(0, Channel0);
-
-                    _lastCh0 = Channel0;
-                }
-                else
-                {
-                    var delta = Math.Abs(Channel0 - _lastCh0.Value);
-                    if (delta > ChangeThreshold)
-                    {
-                        // raise event
-                        Channel0Changed?.Invoke(_lastCh0.Value, Channel0);
-
-                        _lastCh0 = Channel0;
-                    }
-                }
-
-                if (!_lastCh1.HasValue)
-                {
-                    // raise event
-                    Channel1Changed?.Invoke(1, Channel1);
-
-                    _lastCh1 = Channel1;
-                }
-                else
-                {
-                    var delta = Math.Abs(Channel1 - _lastCh1.Value);
-                    if (delta > ChangeThreshold)
-                    {
-                        // raise event
-                        Channel1Changed?.Invoke(_lastCh1.Value, Channel1);
-
-                        _lastCh1 = Channel1;
-                    }
-                }
-            }
-        }
-
-        private void WriteRegister(Register register, byte value)
-        {
-            lock (SyncRoot)
-            {
-                i2cBus.WriteData(Address, 2, (byte) register, value);
-            }
-        }
-
-        private byte ReadRegisterByte(Register register)
-        {
-            lock (SyncRoot)
-            {
-                var data = i2cBus.WriteReadData(Address, 1, (byte) register);
-
-                return data[0];
-            }
-        }
-
-        private ushort ReadRegisterUInt16(Register register)
-        {
-            lock (SyncRoot)
-            {
-                var data = i2cBus.WriteReadData(Address, 2, (byte) register);
-
-                unchecked
-                {
-                    return (ushort)((data[0] << 8) | data[1]);
-                }
-            }
         }
     }
 }

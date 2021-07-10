@@ -37,7 +37,7 @@ namespace Sensors.Buttons.PushButton_Sample
             pushButtons = new List<PushButton>();
 
             var inputInternalPullUp = Device.CreateDigitalInputPort(
-                Device.Pins.MOSI,
+                Device.Pins.MISO,
                 InterruptMode.EdgeBoth,
                 ResistorMode.InternalPullUp, 20);
             var buttonInternalPullUp = new PushButton(inputInternalPullUp);
@@ -90,10 +90,12 @@ namespace Sensors.Buttons.PushButton_Sample
 
             foreach (var pushButton in pushButtons)
             {
+                pushButton.LongClickedThreshold = new TimeSpan(0,0,1);
+
                 pushButton.Clicked += PushButtonClicked;
                 pushButton.PressStarted += PushButtonPressStarted;
                 pushButton.PressEnded += PushButtonPressEnded;
-                pushButton.LongPressClicked += PushButtonLongPressClicked;
+                pushButton.LongClicked += PushButtonLongClicked;
             }
 
             led.SetColor(Color.Green);
@@ -151,7 +153,7 @@ namespace Sensors.Buttons.PushButton_Sample
                 pushButton.Clicked += PushButtonClicked;
                 pushButton.PressStarted += PushButtonPressStarted;
                 pushButton.PressEnded += PushButtonPressEnded;
-                pushButton.LongPressClicked += PushButtonLongPressClicked;
+                pushButton.LongClicked += PushButtonLongClicked;
             }
 
             led.SetColor(Color.Green);
@@ -177,9 +179,9 @@ namespace Sensors.Buttons.PushButton_Sample
             led.SetColor(Color.Green);
         }
 
-        void PushButtonLongPressClicked(object sender, EventArgs e)
+        void PushButtonLongClicked(object sender, EventArgs e)
         {
-            Console.WriteLine($"PushButton Clicked!");
+            Console.WriteLine($"PushButton LongClicked!");
             led.SetColor(Color.Blue);
             Thread.Sleep(500);
             led.SetColor(Color.Green);

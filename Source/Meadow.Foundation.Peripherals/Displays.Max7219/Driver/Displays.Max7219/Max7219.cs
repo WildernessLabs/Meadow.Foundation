@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Displays
         private readonly byte[] writeBuffer;
         private readonly byte[] readBuffer;
 
-        private readonly SpiBus spi;
+        private readonly ISpiBus spi;
         private readonly IDigitalOutputPort chipSelectPort;
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Meadow.Foundation.Displays
 
         public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceRows, int deviceColumns, Max7219Type maxMode = Max7219Type.Display)
         {
-            spi = (SpiBus)spiBus;
+            spi = spiBus;
             chipSelectPort = csPort;
 
             max7219 = new SpiPeripheral(spiBus, csPort);

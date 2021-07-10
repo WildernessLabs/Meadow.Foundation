@@ -10,16 +10,13 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// HCSR04 Distance Sensor
     /// </summary>
-    public class Hcsr04:
-        FilterableChangeObservableBase<Length>, 
-        IRangeFinder
+    public class Hcsr04: SensorBase<Length>, IRangeFinder
     {
 
 		/// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
         public event EventHandler<IChangeResult<Length>> DistanceUpdated;
-        public event EventHandler<IChangeResult<Length>> Updated;
 
         /// <summary>
         /// Returns current distance
@@ -116,14 +113,19 @@ namespace Meadow.Foundation.Sensors.Distance
 
             var result = new ChangeResult<Length>(newDistance, oldDistance);
 
-            RaiseChangedAndNotify(result);
+            RaiseEventsAndNotify(result);
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<Length> result)
+        protected override Task<Length> ReadSensor()
         {
-            Updated?.Invoke(this, result);
-            DistanceUpdated?.Invoke(this, result);
+            // TODO:
+            throw new NotImplementedException();
+        }
 
+        protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
+        {
+            DistanceUpdated?.Invoke(this, changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }

@@ -6,134 +6,99 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Light
 {
-    public class Alspt19315C :
-        FilterableChangeObservableBase<Voltage>
+    public class Alspt19315C : SensorBase<Voltage>
     {
-        //==== Events
-        public event EventHandler<IChangeResult<Voltage>> Updated;
-
         //==== internals
-        // internal thread lock
-        private object _lock = new object();
-        private CancellationTokenSource SamplingTokenSource;
-
         /// <summary>
-        ///     Analog port connected to the sensor.
+        /// Analog port connected to the sensor.
         /// </summary>
-        private readonly IAnalogInputPort sensor;
+        private readonly IAnalogInputPort AnalogInputPort;
 
         //==== Properties
-        public Voltage Voltage { get; protected set; } = new Voltage(0);
-
-        /// <summary>
-        /// Gets a value indicating whether the analog input port is currently
-        /// sampling the ADC. Call StartSampling() to spin up the sampling process.
-        /// </summary>
-        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
-        public bool IsSampling { get; protected set; } = false;
+        public Voltage Voltage { get; protected set; }
 
         //==== constructors
-
-        // TODO: we are missing a constructor here that takes a port
 
         /// <summary>
         ///     Create a new light sensor object using a static reference voltage.
         /// </summary>
         /// <param name="pin">AnalogChannel connected to the sensor.</param>
         public Alspt19315C(IAnalogInputController device, IPin pin)
+            : this(device.CreateAnalogInputPort(pin))
         {
-            sensor = device.CreateAnalogInputPort(pin);
+        }
+
+        public Alspt19315C(IAnalogInputPort port)
+        {
+            AnalogInputPort = port;
+
+            // wire up our observable
+            // have to convert from voltage to temp units for our consumers
+            // this is where the magic is: this allows us to extend the IObservable
+            // pattern through the sensor driver
+            AnalogInputPort.Subscribe
+            (
+                IAnalogInputPort.CreateObserver(
+                    result => {
+                        // create a new change result from the new value
+                        ChangeResult<Voltage> changeResult = new ChangeResult<Voltage>() {
+                            New = result.New,
+                            Old = Voltage
+                        };
+                        // save state
+                        Voltage = changeResult.New;
+                        // notify
+                        RaiseEventsAndNotify(changeResult);
+                    }
+                )
+           );
         }
 
         //==== methods
 
         /// <summary>
-        ///     Voltage being output by the sensor.
+        /// Starts continuously sampling the sensor.
+        ///
+        /// This method also starts raising `Changed` events and IObservable
+        /// subscribers getting notified. Use the `readIntervalDuration` parameter
+        /// to specify how often events and notifications are raised/sent.
         /// </summary>
-        public async Task<Voltage> Read()
-        {
-            await Update();
-
-            return Voltage;
-        }
-
-        ///// <summary>
-        ///// Starts continuously sampling the sensor.
-        /////
-        ///// This method also starts raising `Changed` events and IObservable
-        ///// subscribers getting notified.
-        ///// </summary>
-        public void StartUpdating(int standbyDuration = 1000)
+        /// <param name="updateInterval">A `TimeSpan` that specifies how long to
+        /// wait between readings. This value influences how often `*Updated`
+        /// events are raised and `IObservable` consumers are notified.
+        /// The default is 5 seconds.</param>
+        public void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety
-            lock (_lock)
-            {
-                if (IsSampling) { return; }
-
-                // state muh-cheen
+            lock (samplingLock) {
+                if (IsSampling) return;
                 IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                Voltage oldConditions;
-                ChangeResult<Voltage> result;
-                Task.Factory.StartNew(async () =>
-                {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {   // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        // capture history
-                        oldConditions = Voltage;
-
-                        // read
-                        await Update();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<Voltage>(oldConditions, Voltage);
-
-                        // let everyone know
-                        RaiseChangedAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(standbyDuration);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        protected void RaiseChangedAndNotify(IChangeResult<Voltage> changeResult)
-        {
-            Updated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
-        }
-
-        ///// <summary>
-        ///// Stops sampling the acceleration.
-        ///// </summary>
-        public void StopUpdating()
-        {
-            lock (_lock)
-            {
-                if (!IsSampling) { return; }
-
-                SamplingTokenSource?.Cancel();
-
-                // state muh-cheen
-                IsSampling = false;
+                AnalogInputPort.StartUpdating(updateInterval);
             }
         }
 
         /// <summary>
-        /// Read the sensor output and convert the sensor readings into acceleration values.
+        /// Stops sampling the temperature.
         /// </summary>
-        public async Task Update()
+        public void StopUpdating()
         {
-            Voltage = await sensor.Read();
+            lock (samplingLock) {
+                if (!IsSampling) return;
+                base.IsSampling = false;
+                AnalogInputPort.StopUpdating();
+            }
+        }
+
+        /// <summary>
+        /// Convenience method to get the current temperature. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        /// </summary>
+        /// <returns>A float value that's ann average value of all the samples taken.</returns>
+        protected override async Task<Voltage> ReadSensor()
+        {
+            // read the voltage
+            Voltage = await AnalogInputPort.Read();
+            return Voltage;
         }
     }
 }
