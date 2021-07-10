@@ -13,7 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
+   <PackageReference Include="Meadow.F7" Version="0.*" />
     <ProjectReference Include="..\..\Driver\Web.Maple.Server\Meadow.Foundation.Web.Maple.Server.csproj" />
   </ItemGroup>
 </Project>
