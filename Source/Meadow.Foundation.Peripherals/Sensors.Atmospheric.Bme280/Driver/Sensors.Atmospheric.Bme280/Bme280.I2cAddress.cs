@@ -6,8 +6,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     {
         public enum I2cAddress : byte
         {
-            Adddress0x76 = 0x76,
-            Adddress0x77 = 0x77
+            Address0x76 = 0x76,
+            Address0x77 = 0x77
         }
     }
 }
