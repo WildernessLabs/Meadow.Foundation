@@ -18,7 +18,7 @@
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Sensors.Motion.Mpu6050\Driver\Sensors.Motion.Mpu6050\Sensors.Motion.Mpu6050.csproj" />
   </ItemGroup>
   <ItemGroup>
-   <PackageReference Include="Meadow.F7" Version="0.*" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\Driver\Sensors.Motion.Mpu6050\Sensors.Motion.Mpu6050.csproj" />
   </ItemGroup>
 </Project>
