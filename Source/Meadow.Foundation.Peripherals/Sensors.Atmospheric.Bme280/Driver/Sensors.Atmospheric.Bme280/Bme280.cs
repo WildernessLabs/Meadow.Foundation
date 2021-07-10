@@ -99,7 +99,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="i2c">I2C Bus to use for communicating with the sensor</param>
         /// <param name="busAddress">I2C address of the sensor (default = 0x77).</param>
-        public Bme280(II2cBus i2c, I2cAddress busAddress = I2cAddress.Adddress0x77)
+        public Bme280(II2cBus i2c, I2cAddress busAddress = I2cAddress.Address0x77)
         {
             bme280Comms = new Bme280I2C(i2c, (byte)busAddress);
             configuration = new Configuration(); // here to avoid the warning
