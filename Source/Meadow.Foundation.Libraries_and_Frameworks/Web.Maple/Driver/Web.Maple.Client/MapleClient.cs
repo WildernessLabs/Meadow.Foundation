@@ -110,11 +110,6 @@ namespace Meadow.Foundation.Maple.Web.Client
             return new UdpReceiveResult();
         }
 
-        protected Task<bool> PostAsync(string hostAddress, string param)
-        {
-            return SendCommandAsync(param, hostAddress);
-        }
-
         protected async Task<bool> SendCommandAsync(string command, string hostAddress)
         {
             var client = new HttpClient
@@ -170,11 +165,16 @@ namespace Meadow.Foundation.Maple.Web.Client
         }
         */
 
-        protected async Task<string> GetAsync(string hostAddress, string endpoint, string param, string value)
+        public Task<bool> PostAsync(string hostAddress, int port, string param)
+        {
+            return SendCommandAsync(param, $"{hostAddress}:{port}");
+        }
+
+        public async Task<string> GetAsync(string hostAddress, int port, string endpoint, string param, string value)
         {
             var client = new HttpClient
             {
-                BaseAddress = new Uri("http://" + hostAddress + "/"),
+                BaseAddress = new Uri($"http://{hostAddress}:{port}/"),
                 Timeout = TimeSpan.FromSeconds(ListenTimeout)
             };
 
@@ -182,7 +182,7 @@ namespace Meadow.Foundation.Maple.Web.Client
             {
                 var uri = $"{endpoint}?{param}={value}";
 
-                var response = await client.GetAsync(param);
+                var response = await client.GetAsync(uri);
 
                 var msg = await response.Content.ReadAsStringAsync();
                 return msg;

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 
 namespace Maple.ClientConsole_Sample
 {
@@ -21,8 +22,19 @@ namespace Maple.ClientConsole_Sample
         public App()
         {
             Initialize();
+
             Console.WriteLine("Listening for server, press any key to exit.");
-            Console.ReadKey();
+
+            _ = GetTest();
+
+            var key = Console.ReadKey();
+        }
+
+        async Task GetTest()
+        {
+            var data = await mapleClient.GetAsync("127.0.0.1", 5417, "Hello", "Name", "Meadow 5.1");
+
+            Console.WriteLine($"GET: {data}");
         }
 
         void Initialize()
