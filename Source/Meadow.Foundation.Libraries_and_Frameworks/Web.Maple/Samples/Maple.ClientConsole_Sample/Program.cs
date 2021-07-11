@@ -14,7 +14,8 @@ namespace Maple.ClientConsole_Sample
         }
     }
 
-    public class App {
+    public class App
+    {
         MapleClient mapleClient;
 
         public App()
@@ -27,17 +28,22 @@ namespace Maple.ClientConsole_Sample
         void Initialize()
         {
             mapleClient = new MapleClient();
-            mapleClient.StartScanningForAdvertisingServers();
+            
             mapleClient.Servers.CollectionChanged += Servers_CollectionChanged;
+
+            _ = mapleClient.StartScanningForAdvertisingServers();
         }
 
         private void Servers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            switch (e.Action) {
+            switch (e.Action)
+            {
                 case NotifyCollectionChangedAction.Add:
                     //TODO: should be able to do this with linq, no?
-                    List<string> servers = new List<string>();
-                    foreach (var server in e.NewItems) {
+                    var servers = new List<string>();
+
+                    foreach (var server in e.NewItems)
+                    {
                         servers.Add($"'{((ServerModel)server).Name}' @ ip:[{((ServerModel)server).IpAddress}]");
                     }
                     Console.WriteLine($"New server(s) found: {string.Join(", ", servers)}");
