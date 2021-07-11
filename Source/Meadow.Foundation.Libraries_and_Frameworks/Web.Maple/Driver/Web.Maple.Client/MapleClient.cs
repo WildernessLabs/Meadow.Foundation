@@ -130,12 +130,11 @@ namespace Meadow.Foundation.Maple.Web.Client
             }
         }
 
-        /*
-        protected async Task<string> GetAsync(string hostAddress, string endpoint, IDictionary<string, string> parameters)
+        public async Task<string> GetAsync(string hostAddress, int port, string endpoint, IDictionary<string, string> parameters)
         {
             var client = new HttpClient
             {
-                BaseAddress = new Uri("http://" + hostAddress + "/"),
+                BaseAddress = new Uri($"http://{hostAddress}:{port}/"),
                 Timeout = TimeSpan.FromSeconds(ListenTimeout)
             };
 
@@ -163,7 +162,6 @@ namespace Meadow.Foundation.Maple.Web.Client
                 return string.Empty;
             }
         }
-        */
 
         public Task<bool> PostAsync(string hostAddress, int port, string param)
         {

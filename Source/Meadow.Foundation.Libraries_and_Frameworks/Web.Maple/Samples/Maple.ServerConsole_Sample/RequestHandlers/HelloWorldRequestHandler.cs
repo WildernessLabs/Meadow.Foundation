@@ -12,11 +12,24 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
         {
             Console.WriteLine("GET::Hello");
 
-            string name = base.QueryString["name"] as string;
+            //example of multiple params 
+            if(QueryString.Count == 1)
+            {
+                string name = QueryString["name"];
 
-            this.Context.Response.ContentType = ContentTypes.Application_Text;
-            this.Context.Response.StatusCode = 200;
-            this.Send($"hello, {name}").Wait();
+                Context.Response.ContentType = ContentTypes.Application_Text;
+                Context.Response.StatusCode = 200;
+                Send($"hello, {name}").Wait();
+            }
+            else //assume more than one -- could definitely use more defensive coding
+            {
+                string name = QueryString["name"];
+                string nickname = QueryString["nickname"];
+
+                Context.Response.ContentType = ContentTypes.Application_Text;
+                Context.Response.StatusCode = 200;
+                Send($"hello, {name} aka {nickname}").Wait();
+            }
         }
 
         [HttpGet]
@@ -24,17 +37,16 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
         {
             Console.WriteLine("GET::JsonSample");
 
-            List<string> names = new List<string> {
+            var names = new List<string> {
                 "johnny",
                 "deedee",
                 "joey",
                 "tommy"
             };
 
-
-            this.Context.Response.ContentType = ContentTypes.Application_Json;
-            this.Context.Response.StatusCode = 200;
-            this.Send(names).Wait();
+            Context.Response.ContentType = ContentTypes.Application_Json;
+            Context.Response.StatusCode = 200;
+            Send(names).Wait();
         }
     }
 }

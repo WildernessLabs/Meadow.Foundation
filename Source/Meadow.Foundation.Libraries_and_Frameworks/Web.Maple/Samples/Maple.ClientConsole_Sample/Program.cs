@@ -35,6 +35,14 @@ namespace Maple.ClientConsole_Sample
             var data = await mapleClient.GetAsync("127.0.0.1", 5417, "Hello", "Name", "Meadow 5.1");
 
             Console.WriteLine($"GET: {data}");
+
+            var parameters = new Dictionary<string, string>();
+            parameters.Add("Name", "Meadow");
+            parameters.Add("NickName", "Tiny .NET");
+
+            data = await mapleClient.GetAsync("127.0.0.1", 5417, "Hello", parameters);
+
+            Console.WriteLine($"GET: {data}");
         }
 
         void Initialize()
