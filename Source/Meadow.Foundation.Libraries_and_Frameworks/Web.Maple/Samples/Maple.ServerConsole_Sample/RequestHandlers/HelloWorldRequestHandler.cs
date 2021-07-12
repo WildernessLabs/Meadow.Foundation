@@ -48,5 +48,17 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
             Context.Response.StatusCode = 200;
             Send(names).Wait();
         }
+
+        [HttpPost]
+        public void HelloPost() 
+        {
+            string name = Body;
+
+            Console.WriteLine($"/HelloPost - name:{name}");
+
+            Context.Response.ContentType = ContentTypes.Application_Text;
+            Context.Response.StatusCode = 200;
+            Send($"hello, {name}").Wait();
+        }
     }
 }

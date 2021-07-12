@@ -25,9 +25,19 @@ namespace Maple.ClientConsole_Sample
 
             Console.WriteLine("Listening for server, press any key to exit.");
 
-            _ = GetTest();
+            //_ = GetTest();
+            _ = PostTest();
 
             var key = Console.ReadKey();
+        }
+
+        void Initialize()
+        {
+            mapleClient = new MapleClient();
+
+            mapleClient.Servers.CollectionChanged += ServersCollectionChanged;
+
+            _ = mapleClient.StartScanningForAdvertisingServers();
         }
 
         async Task GetTest()
@@ -45,16 +55,13 @@ namespace Maple.ClientConsole_Sample
             Console.WriteLine($"GET: {data}");
         }
 
-        void Initialize()
+        async Task PostTest() 
         {
-            mapleClient = new MapleClient();
-            
-            mapleClient.Servers.CollectionChanged += Servers_CollectionChanged;
-
-            _ = mapleClient.StartScanningForAdvertisingServers();
+            var data = await mapleClient.PostAsync("127.0.0.1", 5417, "HelloPost", "Meadow");
+            Console.WriteLine($"POST: {data}");
         }
 
-        private void Servers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        void ServersCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {

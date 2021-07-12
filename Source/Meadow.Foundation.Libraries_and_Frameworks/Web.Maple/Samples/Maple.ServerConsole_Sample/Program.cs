@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Meadow.Foundation.Web.Maple.Server;
+using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using Meadow.Foundation.Web.Maple.Server;
-using Meadow.Foundation.Web.Maple;
 
 namespace Maple.ServerBasic_Sample
 {

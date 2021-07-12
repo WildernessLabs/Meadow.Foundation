@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -130,42 +131,25 @@ namespace Meadow.Foundation.Maple.Web.Client
             }
         }
 
-        public async Task<string> GetAsync(string hostAddress, int port, string endpoint, IDictionary<string, string> parameters)
+        public async Task<bool> PostAsync(string hostAddress, int port, string endPoint, string data, string contentType = "text/plain")
         {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri($"http://{hostAddress}:{port}/"),
-                Timeout = TimeSpan.FromSeconds(ListenTimeout)
-            };
+            var client = new HttpClient();
+            client.BaseAddress = new Uri($"http://{hostAddress}:{port}/{endPoint}");
+            client.Timeout = TimeSpan.FromSeconds(ListenTimeout);
+            client.DefaultRequestHeaders
+                .Accept
+                .Add(new MediaTypeWithQualityHeaderValue(contentType));
 
             try
             {
-                var uri = $"{endpoint}?";
-
-                bool isFirst = true;
-                foreach(var param in parameters)
-                {
-                    if (isFirst) isFirst = false;
-                    else uri += "&";
-
-                    uri += $"{param.Key}={param.Value}";
-                }
-
-                var response = await client.GetAsync(uri);
-
-                var msg = await response.Content.ReadAsStringAsync();
-                return msg;
+                var response = await client.PostAsync(endPoint, new StringContent(data));
+                return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
-                return string.Empty;
+                return false;
             }
-        }
-
-        public Task<bool> PostAsync(string hostAddress, int port, string param)
-        {
-            return SendCommandAsync(param, $"{hostAddress}:{port}");
         }
 
         public async Task<string> GetAsync(string hostAddress, int port, string endpoint, string param, string value)
@@ -191,6 +175,38 @@ namespace Meadow.Foundation.Maple.Web.Client
                 return string.Empty;
             }
         }
-    
+
+        public async Task<string> GetAsync(string hostAddress, int port, string endpoint, IDictionary<string, string> parameters)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri($"http://{hostAddress}:{port}/"),
+                Timeout = TimeSpan.FromSeconds(ListenTimeout)
+            };
+
+            try
+            {
+                var uri = $"{endpoint}?";
+
+                bool isFirst = true;
+                foreach (var param in parameters)
+                {
+                    if (isFirst) isFirst = false;
+                    else uri += "&";
+
+                    uri += $"{param.Key}={param.Value}";
+                }
+
+                var response = await client.GetAsync(uri);
+
+                var msg = await response.Content.ReadAsStringAsync();
+                return msg;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return string.Empty;
+            }
+        }
     }
 }
