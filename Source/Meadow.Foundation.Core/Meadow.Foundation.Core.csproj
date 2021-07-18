@@ -10,7 +10,11 @@
    <PackageIcon>icon.png</PackageIcon>
    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
    <PackageTags>Meadow, Meadow.Foundation</PackageTags>
+<<<<<<< HEAD
    <Version>0.24.0</Version>
+=======
+   <Version>0.19.0</Version>
+>>>>>>> master
    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
    <RootNamespace>Meadow.Foundation</RootNamespace>
    <IncludeSymbols>true</IncludeSymbols>
@@ -20,9 +24,13 @@
    <LangVersion>8.0</LangVersion>
  </PropertyGroup>
  <ItemGroup>
+<<<<<<< HEAD
    <None Include="..\..\Source\icon.png" Pack="true" PackagePath="" />
  </ItemGroup>
  <ItemGroup>
    <PackageReference Include="Meadow" Version="0.25.0" />
+=======
+   <PackageReference Include="Meadow" Version="0.17.0" />
+>>>>>>> master
  </ItemGroup>
 </Project>
