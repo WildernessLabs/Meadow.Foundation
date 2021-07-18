@@ -10,13 +10,21 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, DataLoggers, ThingSpeak</PackageTags>
+<<<<<<< HEAD:Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers/DataLoggers.ThingSpeak/Driver/DataLoggers.ThingSpeak/DataLoggers.ThingSpeak.csproj
     <Version>0.5.36</Version>
+=======
+    <Version>0.5.16</Version>
+>>>>>>> master:Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.ThingSpeak/DataLoggers.ThingSpeak.csproj
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for the ThingSpeak data logging system</Description>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD:Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers/DataLoggers.ThingSpeak/Driver/DataLoggers.ThingSpeak/DataLoggers.ThingSpeak.csproj
     <None Include="..\..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
     <ProjectReference Include="..\..\..\DataLoggers.Core\Driver\DataLoggers.Core\DataLoggers.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master:Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.ThingSpeak/DataLoggers.ThingSpeak.csproj
   </ItemGroup>
 </Project>
