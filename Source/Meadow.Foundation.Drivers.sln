@@ -383,6 +383,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Bme680"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Bme680", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme680\Driver\Sensors.Atmospheric.BME680\Sensors.Atmospheric.Bme680.csproj", "{12449481-3CDD-446F-8968-5816E65F62F6}"
 EndProject
+<<<<<<< HEAD
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.AdafruitMPRLS", "Sensors.Atmospheric.AdafruitMPRLS", "{203EF7C7-F76D-4004-9472-A7AAAA581C6E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.AdafruitMPRLS", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.AdafruitMPRLS\Driver\Sensors.Atmospheric.AdafruitMPRLS\Sensors.Atmospheric.AdafruitMPRLS.csproj", "{BADF052D-108C-4E33-A96F-B4F8B42B8F5B}"
@@ -443,6 +444,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.Tca9548A", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.TCA9548A", "Meadow.Foundation.Peripherals\ICs.IOExpanders.TCA9548A\Driver\ICs.IOExpanders.TCA9548A\ICs.IOExpanders.TCA9548A.csproj", "{C4A929A1-3EFC-4985-BF83-2F2052ADEA4F}"
 EndProject
+=======
+>>>>>>> master
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -859,6 +862,7 @@ Global
 		{12449481-3CDD-446F-8968-5816E65F62F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12449481-3CDD-446F-8968-5816E65F62F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12449481-3CDD-446F-8968-5816E65F62F6}.Release|Any CPU.Build.0 = Release|Any CPU
+<<<<<<< HEAD
 		{BADF052D-108C-4E33-A96F-B4F8B42B8F5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BADF052D-108C-4E33-A96F-B4F8B42B8F5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BADF052D-108C-4E33-A96F-B4F8B42B8F5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -905,6 +909,8 @@ Global
 		{C4A929A1-3EFC-4985-BF83-2F2052ADEA4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4A929A1-3EFC-4985-BF83-2F2052ADEA4F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C4A929A1-3EFC-4985-BF83-2F2052ADEA4F}.Release|Any CPU.Deploy.0 = Release|Any CPU
+=======
+>>>>>>> master
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1095,6 +1101,7 @@ Global
 		{D0B2BD03-8C10-46FE-85A4-2CF0FD34632B} = {36D998D7-9685-497E-8B92-2FD429D27B99}
 		{10C3DA72-29FA-4BF7-B2D5-EABF25879E92} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{12449481-3CDD-446F-8968-5816E65F62F6} = {10C3DA72-29FA-4BF7-B2D5-EABF25879E92}
+<<<<<<< HEAD
 		{203EF7C7-F76D-4004-9472-A7AAAA581C6E} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{BADF052D-108C-4E33-A96F-B4F8B42B8F5B} = {203EF7C7-F76D-4004-9472-A7AAAA581C6E}
 		{3AA645B9-E544-480F-9765-6634AC1A2786} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
@@ -1125,6 +1132,8 @@ Global
 		{8225D4DA-F0E2-4AA5-A657-EC3F34182EC9} = {C6103552-7010-4353-9369-F6545D6A4E7B}
 		{31FCE896-026C-4A88-89EC-08107B7518D0} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{C4A929A1-3EFC-4985-BF83-2F2052ADEA4F} = {31FCE896-026C-4A88-89EC-08107B7518D0}
+=======
+>>>>>>> master
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
