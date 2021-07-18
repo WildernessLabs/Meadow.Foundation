@@ -1,0 +1,26 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>TextDisplayMenu</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.Displays.TextDisplayMenu</PackageId>
+    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow, Meadow.Foundation, Display, Text, Menu</PackageTags>
+    <Version>0.1.12</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Interactive text menu for Meadow</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SimpleJsonSerializer" Version="0.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="BaseClasses\" />
+  </ItemGroup>
+</Project>
