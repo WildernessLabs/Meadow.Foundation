@@ -10,12 +10,20 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.x74595</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, IOExpanders, x74595</PackageTags>
+<<<<<<< HEAD
     <Version>0.1.35</Version>
+=======
+    <Version>0.1.15</Version>
+>>>>>>> master
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>x74595 I2C shift register digital output expander</Description>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master
   </ItemGroup>
 </Project>

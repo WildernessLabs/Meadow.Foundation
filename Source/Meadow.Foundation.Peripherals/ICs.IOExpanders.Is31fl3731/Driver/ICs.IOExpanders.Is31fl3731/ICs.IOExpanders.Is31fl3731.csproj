@@ -10,12 +10,20 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.Is31fl3731</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, IS31FL3731, LED driver</PackageTags>
+<<<<<<< HEAD:Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Is31fl3731/Driver/ICs.IOExpanders.Is31fl3731/ICs.IOExpanders.Is31fl3731.csproj
     <Version>0.1.32</Version>
+=======
+    <Version>0.1.12</Version>
+>>>>>>> master:Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.IS31FL3731/Driver/ICs.IOExpanders.IS31FL3731/ICs.IOExpanders.IS31FL3731.csproj
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>IS31FL3731 I2C matrix led driver</Description>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD:Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Is31fl3731/Driver/ICs.IOExpanders.Is31fl3731/ICs.IOExpanders.Is31fl3731.csproj
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master:Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.IS31FL3731/Driver/ICs.IOExpanders.IS31FL3731/ICs.IOExpanders.IS31FL3731.csproj
   </ItemGroup>
 </Project>

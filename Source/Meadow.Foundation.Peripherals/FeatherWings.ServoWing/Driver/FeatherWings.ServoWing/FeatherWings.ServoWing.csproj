@@ -10,13 +10,22 @@
     <PackageId>Meadow.Foundation.FeatherWings.ServoWing</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, FeatherWing, ServoWing, servo, servo motor</PackageTags>
+<<<<<<< HEAD
     <Version>0.1.32</Version>
+=======
+    <Version>0.1.12</Version>
+>>>>>>> master
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>AdaFruit ServoWing servo controller FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ProjectReference Include="..\..\..\Servos.ServoCore\Driver\Servos.ServoCore\Servos.ServoCore.csproj" />
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\ICs.IOExpanders.Pca9685\Driver\ICs.IOExpanders.Pca9685\ICs.IOExpanders.Pca9685.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.PCA9685" Version="0.1.12" />
+    <PackageReference Include="Meadow.Foundation.Servo" Version="0.8.18" />
+>>>>>>> master
   </ItemGroup>
 </Project>

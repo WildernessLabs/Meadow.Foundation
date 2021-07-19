@@ -11,11 +11,18 @@
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, VC0706, Camera</PackageTags>
     <Version>0.1.12</Version>
+<<<<<<< HEAD:Source/Meadow.Foundation.Peripherals/Sensors.Camera.Vc0706/Driver/Sensors.Camera.Vc0706/Sensors.Camera.Vc0706.csproj
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>VC0706 serial VGA CMOS camera</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <Description>Driver for VC0706 camera</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master:Source/Meadow.Foundation.Peripherals/Sensors.Camera.VC0706/Driver/Sensors.Camera.VC0706/Sensors.Camera.VC0706.csproj
   </ItemGroup>
 </Project>

@@ -10,7 +10,11 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Si70xx</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Atmospheric, Si70xx, Si7013, Si7020, Si7021</PackageTags>
+<<<<<<< HEAD
     <Version>0.1.37</Version>
+=======
+    <Version>0.1.17</Version>
+>>>>>>> master
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Si70xx I2C humidity and temperature sensors</Description>
     <Nullable>enable</Nullable>
@@ -23,7 +27,11 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master
   </ItemGroup>
 </Project>

@@ -10,12 +10,20 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Display, Graphics</PackageTags>
+<<<<<<< HEAD:Source/Meadow.Foundation.Libraries_and_Frameworks/Graphics/MicroGraphics/Driver/Graphics.MicroGraphics/MicroGraphics.csproj
     <Version>0.9.38</Version>
+=======
+    <Version>0.9.18</Version>
+>>>>>>> master:Source/Meadow.Foundation.Libraries_and_Frameworks/Displays.GraphicsLibrary/Displays.GraphicsLibrary.csproj
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Lightweight integer accurate 2d graphics drawing system designed for embedded systems</Description>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD:Source/Meadow.Foundation.Libraries_and_Frameworks/Graphics/MicroGraphics/Driver/Graphics.MicroGraphics/MicroGraphics.csproj
     <None Include="..\..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master:Source/Meadow.Foundation.Libraries_and_Frameworks/Displays.GraphicsLibrary/Displays.GraphicsLibrary.csproj
   </ItemGroup>
 </Project>

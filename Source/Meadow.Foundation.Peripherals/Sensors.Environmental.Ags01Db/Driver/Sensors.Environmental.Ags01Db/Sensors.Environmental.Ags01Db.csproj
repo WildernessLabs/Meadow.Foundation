@@ -10,12 +10,20 @@
     <PackageId>Meadow.Foundation.Sensors.Environmental.Ags01Db</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Environmental, Ags01Db</PackageTags>
+<<<<<<< HEAD
     <Version>0.1.35</Version>
+=======
+    <Version>0.1.15</Version>
+>>>>>>> master
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Ags01Db I2C digital MEMS VOC gas sensor</Description>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master
   </ItemGroup>
 </Project>

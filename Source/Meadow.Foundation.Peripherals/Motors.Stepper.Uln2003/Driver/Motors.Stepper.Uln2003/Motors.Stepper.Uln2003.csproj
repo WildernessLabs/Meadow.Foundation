@@ -10,12 +10,20 @@
     <PackageId>Meadow.Foundation.Motors.Stepper.Uln2003</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Motor, Stepper</PackageTags>
+<<<<<<< HEAD
     <Version>0.1.36</Version>
+=======
+    <Version>0.1.16</Version>
+>>>>>>> master
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>ULN2003 digital input stepper motor controller</Description>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master
   </ItemGroup>
 </Project>

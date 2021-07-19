@@ -10,6 +10,7 @@
     <PackageId>Meadow.Foundation.Sensors.Camera.ArducamMini</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Arducam, ArducamMini, Camera</PackageTags>
+<<<<<<< HEAD
     <Version>0.1.37</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>ArducamMini I2C + SPI high definition 2MP camera controller</Description>
@@ -17,5 +18,13 @@
   <ItemGroup>
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <Version>0.1.17</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Driver for ArducamMini camera controller</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master
   </ItemGroup>
 </Project>

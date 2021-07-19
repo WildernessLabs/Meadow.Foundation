@@ -1,0 +1,11 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing" Version="0.1.15" />
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+  </ItemGroup>
+</Project>

@@ -10,12 +10,20 @@
     <PackageId>Meadow.Foundation.Displays.Lcd.CharacterDisplay</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Character Display</PackageTags>
+<<<<<<< HEAD
     <Version>0.8.28</Version>
+=======
+    <Version>0.8.8</Version>
+>>>>>>> master
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Digital and I2C LCD character displays</Description>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master
   </ItemGroup>
 </Project>

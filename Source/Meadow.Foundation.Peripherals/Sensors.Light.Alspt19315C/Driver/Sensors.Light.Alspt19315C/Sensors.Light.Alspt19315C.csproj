@@ -10,12 +10,20 @@
     <PackageId>Meadow.Foundation.Sensors.Light.Alspt19315C</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, ALS-PT19, ALSPT19315C, Light</PackageTags>
+<<<<<<< HEAD
     <Version>0.1.35</Version>
+=======
+    <Version>0.1.15</Version>
+>>>>>>> master
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>ALS-PT19-315C analog light sensor</Description>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master
   </ItemGroup>
 </Project>

@@ -10,7 +10,11 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Dhtxx</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Atmospheric, DHT10, DHT12, Dhtxx</PackageTags>
+<<<<<<< HEAD
     <Version>0.1.35</Version>
+=======
+    <Version>0.1.15</Version>
+>>>>>>> master
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>DHTxx I2C temperature and humidity sensors (DHT10, DHT12)</Description>
     <Nullable>enable</Nullable>
@@ -22,7 +26,11 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master
   </ItemGroup>
 </Project>

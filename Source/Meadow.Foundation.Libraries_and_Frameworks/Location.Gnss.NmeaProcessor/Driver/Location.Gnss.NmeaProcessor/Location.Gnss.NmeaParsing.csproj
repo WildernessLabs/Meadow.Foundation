@@ -10,7 +10,11 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, NmeaParsing, Gnss</PackageTags>
+<<<<<<< HEAD:Source/Meadow.Foundation.Libraries_and_Frameworks/Location.Gnss.NmeaProcessor/Driver/Location.Gnss.NmeaProcessor/Location.Gnss.NmeaParsing.csproj
     <Version>0.1.35</Version>
+=======
+    <Version>0.1.15</Version>
+>>>>>>> master:Source/Meadow.Foundation.Libraries_and_Frameworks/Sensors.GPS.NMEA/Sensors.Location.Gnss.NmeaParsing.csproj
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for Nmea Parsing</Description>
   </PropertyGroup>
@@ -18,7 +22,11 @@
     <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD:Source/Meadow.Foundation.Libraries_and_Frameworks/Location.Gnss.NmeaProcessor/Driver/Location.Gnss.NmeaProcessor/Location.Gnss.NmeaParsing.csproj
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master:Source/Meadow.Foundation.Libraries_and_Frameworks/Sensors.GPS.NMEA/Sensors.Location.Gnss.NmeaParsing.csproj
   </ItemGroup>
 </Project>

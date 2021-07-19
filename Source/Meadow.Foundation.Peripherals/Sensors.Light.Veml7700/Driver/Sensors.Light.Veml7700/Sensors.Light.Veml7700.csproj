@@ -10,13 +10,21 @@
     <PackageId>Meadow.Foundation.Sensors.Light.Veml7700</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Light, Veml7700</PackageTags>
+<<<<<<< HEAD
     <Version>0.1.32</Version>
+=======
+    <Version>0.1.12</Version>
+>>>>>>> master
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Veml7700 I2C high accuracy ambient light sensor</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Light</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master
   </ItemGroup>
 </Project>

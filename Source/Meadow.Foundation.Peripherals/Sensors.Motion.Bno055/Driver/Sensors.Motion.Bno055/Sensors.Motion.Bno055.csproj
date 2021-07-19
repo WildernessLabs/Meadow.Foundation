@@ -10,13 +10,21 @@
     <PackageId>Meadow.Foundation.Sensors.Motion.Bno055</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, BNO055, Motion</PackageTags>
+<<<<<<< HEAD:Source/Meadow.Foundation.Peripherals/Sensors.Motion.Bno055/Driver/Sensors.Motion.Bno055/Sensors.Motion.Bno055.csproj
     <Version>0.1.37</Version>
+=======
+    <Version>0.1.17</Version>
+>>>>>>> master:Source/Meadow.Foundation.Peripherals/Sensors.Motion.Bno055/Driver/Sensors.Motion.BNO055/Sensors.Motion.BNO055.csproj
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Bosch BNO055 9 axis absolute orientation sensor</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD:Source/Meadow.Foundation.Peripherals/Sensors.Motion.Bno055/Driver/Sensors.Motion.Bno055/Sensors.Motion.Bno055.csproj
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master:Source/Meadow.Foundation.Peripherals/Sensors.Motion.Bno055/Driver/Sensors.Motion.BNO055/Sensors.Motion.BNO055.csproj
   </ItemGroup>
 </Project>

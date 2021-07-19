@@ -10,12 +10,20 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.Mcp23x08</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, IOExpanders, Mcp23x08</PackageTags>
+<<<<<<< HEAD:Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23x08/Driver/ICs.IOExpanders.Mcp23x08/ICs.IOExpanders.Mcp23x08.csproj
     <Version>0.1.35</Version>
+=======
+    <Version>0.1.15</Version>
+>>>>>>> master:Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23x08/Driver/ICs.IOExpanders.MCP23x08/ICs.IOExpanders.MCP23x08.csproj
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Mcp23x08 I2C digital output expander</Description>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD:Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23x08/Driver/ICs.IOExpanders.Mcp23x08/ICs.IOExpanders.Mcp23x08.csproj
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+=======
+    <PackageReference Include="Meadow.Foundation" Version="0.19.0" />
+>>>>>>> master:Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23x08/Driver/ICs.IOExpanders.MCP23x08/ICs.IOExpanders.MCP23x08.csproj
   </ItemGroup>
 </Project>
