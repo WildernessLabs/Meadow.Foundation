@@ -34,14 +34,14 @@ namespace Sensors.Atmospheric.BME280_Sample
                 handler: result => {
                     Console.WriteLine($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
                 },
-                // only notify if the change is greater than 0.5°C
+                // only notify if the change is greater than 0.5°C or 5% humidity
                 filter: result => {
                     if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
                         return (
                         (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5 // returns true if > 0.5°C change.
                         &&
-                        (result.New.Humidity.Value - old.Humidity.Value).Percent > 0.05 // 5% humidity change
-                        ); // returns true if > 0.5°C change.
+                        (result.New.Humidity.Value - old.Humidity.Value).Percent > 0.05 // returns true if > 5% humidity change.
+                        );
                     }
                     return false;
                 }
