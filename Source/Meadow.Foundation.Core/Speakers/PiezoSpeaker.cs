@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Audio
     /// <summary>
     /// Represents a 2 pin piezo-electric speaker capable of generating tones
     /// </summary>
-    public class PiezoSpeaker// : IToneGenerator
+    public class PiezoSpeaker : IToneGenerator
     {
         /// <summary>
         /// Gets the port that is driving the Piezo Speaker
