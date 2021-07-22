@@ -1,7 +1,6 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Speakers;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Audio
 {
