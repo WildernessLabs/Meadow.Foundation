@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Displays
         }
 
         //bool since it's on/off 
-        private bool currentPen;
+        private bool currentPen = true;
 
         public enum Max7219Type
         {

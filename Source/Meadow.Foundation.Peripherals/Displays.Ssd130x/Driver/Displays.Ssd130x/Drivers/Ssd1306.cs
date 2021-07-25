@@ -125,7 +125,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         //bool since it's on/off 
-        private bool currentPen;
+        private bool currentPen = true;
 
         /// <summary>
         ///     Buffer holding the pixels in the display.
