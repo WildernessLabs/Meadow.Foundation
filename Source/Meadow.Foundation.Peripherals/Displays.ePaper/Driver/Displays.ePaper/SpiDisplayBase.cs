@@ -24,11 +24,6 @@ namespace Meadow.Foundation.Displays
             spi.WriteBytes(spiBOneByteBuffer);
         }
 
-        public override void SetPenColor(Color pen)
-        {
-            currentPen = pen;
-        }
-
         protected void Reset()
         {
             resetPort.State = (false);

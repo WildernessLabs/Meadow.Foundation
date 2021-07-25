@@ -36,7 +36,7 @@ namespace FeatherWings.DotstarWing_Sample
             graphics = new GraphicsLibrary(dotStarWing);
             graphics.CurrentFont = new Font4x8();
             
-            dotStarWing.SetPenColor(Color.Blue);
+            dotStarWing.PenColor = Color.Blue;
             dotStarWing.Brightness = 0.1f;
         }
 

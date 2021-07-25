@@ -109,7 +109,23 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// </summary>
         private int yOffset = 0;
 
-        private Color currentPen;
+        /// <summary>
+        ///      The pen color used for DrawPixel calls
+        /// </summary>
+        public override Color PenColor
+        {
+            get => currentPen ? Color.White : Color.Black;
+            set
+            {
+                if (value == Color.Black)
+                    currentPen = false;
+                else
+                    currentPen = true;
+            }
+        }
+
+        //bool since it's on/off 
+        private bool currentPen;
 
         /// <summary>
         ///     Buffer holding the pixels in the display.
@@ -275,7 +291,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         private void InitSSD1306 (DisplayType displayType)
-        { 
+        {
             switch (displayType)
             {
                 case DisplayType.OLED128x64:
@@ -415,14 +431,6 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Set the pen color, black is off, any other color is on
-        /// </summary>   
-        public override void SetPenColor(Color pen)
-        {
-            currentPen = pen;
-        }
-
-        /// <summary>
         ///     Draw a pixel to the display using the pen
         /// </summary>    
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
@@ -440,9 +448,9 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="color">Black - pixel off, any color - turn on pixel</param>
         public override void DrawPixel(int x, int y, Color color)
         {
-            var colored = (color == Color.Black) ? false : true;
+            currentPen = (color == Color.Black) ? false : true;
 
-            DrawPixel(x, y, colored);
+            DrawPixel(x, y);
         }
 
         /// <summary>

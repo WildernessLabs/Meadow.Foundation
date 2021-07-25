@@ -158,11 +158,6 @@ namespace Meadow.Foundation.Displays
             DrawPixel(x, y, color);
         }
 
-        public override void SetPenColor(Color color)
-        {
-            currentPen = GetGrayScaleFromColor(color);
-        }
-
         public override void Show()
         {
             //  SetAddressWindow(0, 0, (byte)(Width - 1), (byte)(Height - 1));

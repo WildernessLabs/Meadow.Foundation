@@ -110,11 +110,6 @@ namespace Meadow.Foundation.FeatherWings
             throw new NotImplementedException();
         }
 
-        public override void SetPenColor(Color pen)
-        {
-            this.pen = pen;
-        }
-
         public override void Show()
         {
             iS31FL3731.DisplayFrame(Frame);

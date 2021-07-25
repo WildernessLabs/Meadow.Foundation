@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
         public override DisplayColorMode ColorMode => colorMode;
-        protected DisplayColorMode colorMode ;
+        protected DisplayColorMode colorMode;
 
         public abstract DisplayColorMode DefautColorMode { get; }
         public override int Width => width;
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         public virtual bool IsColorModeSupported(DisplayColorMode mode)
         {
-            if(mode == DisplayColorMode.Format12bppRgb444 || 
+            if (mode == DisplayColorMode.Format12bppRgb444 ||
                 mode == DisplayColorMode.Format16bppRgb565)
             {
                 return true;
@@ -101,12 +101,12 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         public void SetColorMode(DisplayColorMode mode)
         {
-            if(IsColorModeSupported(mode) == false)
+            if (IsColorModeSupported(mode) == false)
             {
                 throw new ArgumentException($"Mode {mode} not supported");
             }
 
-            if(mode == DisplayColorMode.Format16bppRgb565)
+            if (mode == DisplayColorMode.Format16bppRgb565)
             {
                 spiWriteBuffer = new byte[width * height * sizeof(ushort)];
                 spiReadBuffer = new byte[width * height * sizeof(ushort)];
@@ -130,7 +130,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             //Array.Clear(spiBuffer, 0, spiBuffer.Length);
             spiWriteBuffer.Span.Clear();
 
-            if(updateDisplay) { Show(); }
+            if (updateDisplay) { Show(); }
 
             //Clear(0, updateDisplay);
         }
@@ -151,14 +151,14 @@ namespace Meadow.Foundation.Displays.TftSpi
         }
 
         /// <summary>
-        ///     Sets the pen color used for DrawPixel calls
-        ///     <param name="pen">Pen color</param>
+        ///      The pen color used for DrawPixel calls
         /// </summary>
-        public override void SetPenColor(Color pen)
+        public override Color PenColor
         {
-            currentPen = GetUShortFromColor(pen);
+            get => GetColorFromUShort(currentPen);
+            set => currentPen = GetUShortFromColor(value);
         }
-
+   
         /// <summary>
         ///     Draw a single pixel using the current pen
         /// </summary>
@@ -213,7 +213,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="b">8 bit blue value</param>
         public void DrawPixel(int x, int y, byte r, byte g, byte b)
         {
-            SetPixel(x, y, GetColorFromRGB(r, g, b));
+            SetPixel(x, y, GetUShortColorFromRGB(r, g, b));
         }
 
         /// <summary>
@@ -342,7 +342,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 //1st byte     RRRR
                 //2nd byte GGGGBBBB
-                index = (int)((x - 1 + y * Width) * 3 / 2) + 1;
+                index = ((x - 1 + y * Width) * 3 / 2) + 1;
                 spiWriteBuffer.Span[index] = (byte)((spiWriteBuffer.Span[index] & 0xF0) | (color >> 8));
                 spiWriteBuffer.Span[++index] = (byte)color; //just the lower 8 bits
             }
@@ -368,11 +368,11 @@ namespace Meadow.Foundation.Displays.TftSpi
             int len;
             if (colorMode == DisplayColorMode.Format16bppRgb565)
             { 
-                len = (int)((Height + 1) * Width * 2);
+                len = ((Height + 1) * Width * 2);
             }
             else
             {
-                len = (int)((Height + 1) * Width * 3 / 2);
+                len = ((Height + 1) * Width * 3 / 2);
             }
 
             dataCommandPort.State = Data;
@@ -432,7 +432,26 @@ namespace Meadow.Foundation.Displays.TftSpi
             return (ushort)(red << 11 | green << 5 | blue);
         }
 
-        private ushort GetColorFromRGB(byte red, byte green, byte blue)
+        private Color GetColorFromUShort(ushort color)
+        {
+            double r, g, b;
+            if (colorMode == DisplayColorMode.Format16bppRgb565)
+            {
+                r = (color >> 11) / 31.0;
+                g = ((color >> 5) & 0x3F) / 63.0;
+                b = (color & 0x1F) / 31.0;
+
+            }
+            else
+            {
+                r = (color >> 8) / 15.0;
+                g = ((color >> 4) & 0x0F) / 15.0;
+                b = (color & 0x0F) / 15.0;
+            }
+            return new Color(r, g, b);
+        }
+
+        private ushort GetUShortColorFromRGB(byte red, byte green, byte blue)
         {
             if (colorMode == DisplayColorMode.Format16bppRgb565)
             {
@@ -451,7 +470,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             byte green = (byte)(color.G * 255.0);
             byte blue = (byte)(color.B * 255.0);
 
-            return GetColorFromRGB(red, green, blue);
+            return GetUShortColorFromRGB(red, green, blue);
         }
 
         protected void Write(byte value)

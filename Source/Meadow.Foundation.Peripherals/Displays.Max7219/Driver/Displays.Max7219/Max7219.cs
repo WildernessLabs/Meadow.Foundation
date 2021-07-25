@@ -54,10 +54,26 @@ namespace Meadow.Foundation.Displays
         /// A Buffer that contains the values of the digits registers per device
         /// </summary>
         private readonly byte[,] buffer;
-
-        private Color currentPen;
-
+        
         private readonly byte DECIMAL = 0b10000000;
+
+        /// <summary>
+        ///      The pen color used for DrawPixel calls
+        /// </summary>
+        public override Color PenColor
+        {
+            get => currentPen ? Color.White : Color.Black;
+            set
+            {
+                if (value == Color.Black)
+                    currentPen = false;
+                else
+                    currentPen = true;
+            }
+        }
+
+        //bool since it's on/off 
+        private bool currentPen;
 
         public enum Max7219Type
         {
@@ -374,7 +390,8 @@ namespace Meadow.Foundation.Displays
 
         public override void DrawPixel(int x, int y, Color color)
         {
-            DrawPixel(x, y, color != Color.Black);
+            currentPen = color != Color.Black;
+            DrawPixel(x, y);
         }
 
         public override void DrawPixel(int x, int y, bool colored)
@@ -402,11 +419,6 @@ namespace Meadow.Foundation.Displays
         public override void DrawPixel(int x, int y)
         {
             DrawPixel(x, y, currentPen);
-        }
-
-        public override void SetPenColor(Color pen)
-        {
-            currentPen = pen;
         }
 
         public override void InvertPixel(int x, int y)

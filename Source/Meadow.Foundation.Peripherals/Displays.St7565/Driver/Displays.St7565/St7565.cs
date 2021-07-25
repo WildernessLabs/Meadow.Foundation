@@ -230,11 +230,6 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void SetPenColor(Color pen)
-        {
-            currentPen = pen;
-        }
-
         /// <summary>
         ///     Draw pixel using current pen
         /// </summary>

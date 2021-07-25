@@ -74,11 +74,6 @@ namespace Meadow.Foundation.FeatherWings
             DrawPixel(x, y, penColor);
         }
 
-        public override void SetPenColor(Color pen)
-        {
-            penColor = pen;
-        }
-
         public override void Show()
         {
             ledMatrix.Show();

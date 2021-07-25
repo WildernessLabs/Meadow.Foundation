@@ -72,7 +72,7 @@ namespace Displays.Tft.Hx8357b_Sample
 
         void Benchmark()
         {
-            display.SetPenColor(Color.BlueViolet);
+            display.PenColor = Color.BlueViolet;
 
             var sw = new Stopwatch();
             sw.Start();

@@ -92,11 +92,6 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void SetPenColor(Color pen)
-        {
-            currentPen = pen;
-        }
-
         /// <summary>
         ///     Coordinates start with index 0
         /// </summary>

@@ -70,11 +70,6 @@ namespace Meadow.Foundation.FeatherWings
             ht16k33.ToggleLed((byte)(y * Width + x));
         }
 
-        public override void SetPenColor(Color pen)
-        {
-            this.pen = pen;
-        }
-
         public override void Show()
         {
             ht16k33.UpdateDisplay();

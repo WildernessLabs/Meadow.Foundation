@@ -14,6 +14,7 @@ namespace Meadow.Foundation.Graphics
             public FontBase CurrentFont { get; set; }
             public int Stroke { get; set; }
             public RotationType Rotation { get; set; }
+            public Color PenColor { get; set; }
         }
 
         private readonly DisplayBase display;
@@ -51,6 +52,15 @@ namespace Meadow.Foundation.Graphics
         /// Stroke / line thickness when drawing lines or shape outlines
         /// </summary>
         public int Stroke { get; set; } = 1;
+
+        /// <summary>
+        /// Current pen color 
+        /// </summary>
+        public Color PenColor
+        {
+            get => display.PenColor;
+            set => display.PenColor = value;
+        }
 
         /// <summary>
         /// Display rotation 
@@ -260,7 +270,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawLine(int x0, int y0, int x1, int y1, Color color)
         {
-            display.SetPenColor(color);
+            display.PenColor = color;
 
             if (Stroke == 1)
             {
@@ -372,7 +382,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawHorizontalLine(int x, int y, int length, Color color)
         {
-            display.SetPenColor(color);
+            display.PenColor = color;
 
             if (Stroke == 1)
             {
@@ -424,7 +434,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawVerticalLine(int x, int y, int length, Color color)
         {
-            display.SetPenColor(color);
+            display.PenColor = color;
 
             if (Stroke == 1)
             {
@@ -633,7 +643,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Draw a filled circle?</param>
         public void DrawCircle(int centerX, int centerY, int radius, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
-            display.SetPenColor(color);
+            display.PenColor = color;
 
             if (filled)
             {
@@ -659,7 +669,7 @@ namespace Meadow.Foundation.Graphics
         {
             if (quadrant < 0 || quadrant > 3) { throw new ArgumentOutOfRangeException("DrawCircleQuadrant: quadrant must be between 0 & 3 inclusive"); }
 
-            display.SetPenColor(color);
+            display.PenColor = color;
 
             if (filled)
             {
@@ -905,7 +915,7 @@ namespace Meadow.Foundation.Graphics
                 return;
             }
 
-            display.SetPenColor(color);
+            display.PenColor = color;
 
             if (filled)
             {
@@ -1246,7 +1256,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the bitmap.</param>
         public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
-            display.SetPenColor(color);
+            display.PenColor = color;
 
             DrawBitmap(x, y, width, height, bitmap, DisplayBase.BitmapMode.Copy, scaleFactor);
         }

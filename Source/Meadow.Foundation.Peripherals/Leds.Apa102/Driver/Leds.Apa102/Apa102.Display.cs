@@ -67,10 +67,5 @@ namespace Meadow.Foundation.Leds
             buffer[index + 1] ^= 0xFF;
             buffer[index + 2] ^= 0xFF;
         }
-
-        public override void SetPenColor(Color pen)
-        {
-            this.pen = pen;
-        }
     }
 }
