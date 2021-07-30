@@ -12,6 +12,7 @@
    <PackageTags>Meadow, Meadow.Foundation</PackageTags>
    <Version>0.24.0</Version>
    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+   <GenerateDocumentationFile>true</GenerateDocumentationFile>
    <RootNamespace>Meadow.Foundation</RootNamespace>
    <IncludeSymbols>true</IncludeSymbols>
    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
