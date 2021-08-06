@@ -4,8 +4,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     public partial class AnalogTemperature
     {
         /// <summary>
-        ///     Calibration class for new sensor types.  This allows new sensors
-        ///     to be used with this class.
+        ///     Calibration class for AnalogTemperature.  
         /// </summary>
         /// <remarks>
         ///     The default settings for this object are correct for the TMP35.
@@ -45,7 +44,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             /// <param name="degreesCelciusSampleReading">Sample reading from the data sheet.</param>
             /// <param name="millivoltsAtSampleReading">Millivolts output at the sample reading (from the data sheet).</param>
             /// <param name="millivoltsPerDegreeCentigrade">Millivolt change per degree centigrade (from the data sheet).</param>
-            /// <param name="millivoltsOffset">Millovolts offset (from the data sheet).</param>
             public Calibration(double degreesCelciusSampleReading,
                                double millivoltsAtSampleReading,
                                double millivoltsPerDegreeCentigrade)
