@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Displays.ePaper
         public void Clear(Color color, bool updateDisplay = false)
         {
             bool colored = false;
-            
+
             if (color.B > 0 || color.R > 0 || color.G > 0)
             {
                 colored = true;

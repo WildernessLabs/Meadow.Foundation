@@ -138,7 +138,7 @@ namespace Meadow.Foundation.Displays.ePaper
                 {
                     SendData(buffer[i]);
                 }
-                    
+
                 DelayMs(2);
             }
         }
@@ -158,14 +158,14 @@ namespace Meadow.Foundation.Displays.ePaper
             WaitUntilIdle();
         }
 
-        void DisplayFrame(byte[] frame_buffer) 
+        void DisplayFrame(byte[] frame_buffer)
         {
             if (frame_buffer == null)
                 return;
-            
+
             SendCommand(DATA_START_TRANSMISSION_1);
             DelayMs(2);
-            for(int i = 0; i< Width / 8 * Height; i++)
+            for (int i = 0; i < Width / 8 * Height; i++)
                 SendData(0xFF);
 
             DelayMs(2);
@@ -173,13 +173,13 @@ namespace Meadow.Foundation.Displays.ePaper
             DelayMs(2);
 
             SendData(frame_buffer);
-  
+
             DelayMs(2);
             SendCommand(DISPLAY_REFRESH);
             WaitUntilIdle();
         }
 
-        public override void DisplayFrame ()
+        public override void DisplayFrame()
         {
             SendCommand(DISPLAY_REFRESH);
             WaitUntilIdle();
@@ -206,43 +206,43 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         // EPD2IN7 commands
-        protected static byte PANEL_SETTING                               = 0x00;
-        protected static byte POWER_SETTING                               = 0x01;
-        protected static byte POWER_OFF                                   = 0x02;
-        protected static byte POWER_OFF_SEQUENCE_SETTING                  = 0x03;
-        protected static byte POWER_ON                                    = 0x04;
-        protected static byte POWER_ON_MEASURE                            = 0x05;
-        protected static byte BOOSTER_SOFT_START                          = 0x06;
-        protected static byte DEEP_SLEEP                                  = 0x07;
-        protected static byte DATA_START_TRANSMISSION_1                   = 0x10;
-        protected static byte DATA_STOP                                   = 0x11;
-        protected static byte DISPLAY_REFRESH                             = 0x12;
-        protected static byte DATA_START_TRANSMISSION_2                   = 0x13;
-        protected static byte PARTIAL_DATA_START_TRANSMISSION_1           = 0x14; 
-        protected static byte PARTIAL_DATA_START_TRANSMISSION_2           = 0x15; 
-        protected static byte PARTIAL_DISPLAY_REFRESH                     = 0x16;
-        protected static byte LUT_FOR_VCOM                                = 0x20; 
-        protected static byte LUT_WHITE_TO_WHITE                          = 0x21;
-        protected static byte LUT_BLACK_TO_WHITE                          = 0x22;
-        protected static byte LUT_WHITE_TO_BLACK                          = 0x23;
-        protected static byte LUT_BLACK_TO_BLACK                          = 0x24;
-        protected static byte PLL_CONTROL                                 = 0x30;
-        protected static byte TEMPERATURE_SENSOR_COMMAND                  = 0x40;
-        protected static byte TEMPERATURE_SENSOR_CALIBRATION              = 0x41;
-        protected static byte TEMPERATURE_SENSOR_WRITE                    = 0x42;
-        protected static byte TEMPERATURE_SENSOR_READ                     = 0x43;
-        protected static byte VCOM_AND_DATA_INTERVAL_SETTING              = 0x50;
-        protected static byte LOW_POWER_DETECTION                         = 0x51;
-        protected static byte TCON_SETTING                                = 0x60;
-        protected static byte TCON_RESOLUTION                             = 0x61;
-        protected static byte SOURCE_AND_GATE_START_SETTING               = 0x62;
-        protected static byte GET_STATUS                                  = 0x71;
-        protected static byte AUTO_MEASURE_VCOM                           = 0x80;
-        protected static byte VCOM_VALUE                                  = 0x81;
-        protected static byte VCM_DC_SETTING_REGISTER                     = 0x82;
-        protected static byte PROGRAM_MODE                                = 0xA0;
-        protected static byte ACTIVE_PROGRAM                              = 0xA1;
-        protected static byte READ_OTP_DATA                               = 0xA2;
+        protected static byte PANEL_SETTING = 0x00;
+        protected static byte POWER_SETTING = 0x01;
+        protected static byte POWER_OFF = 0x02;
+        protected static byte POWER_OFF_SEQUENCE_SETTING = 0x03;
+        protected static byte POWER_ON = 0x04;
+        protected static byte POWER_ON_MEASURE = 0x05;
+        protected static byte BOOSTER_SOFT_START = 0x06;
+        protected static byte DEEP_SLEEP = 0x07;
+        protected static byte DATA_START_TRANSMISSION_1 = 0x10;
+        protected static byte DATA_STOP = 0x11;
+        protected static byte DISPLAY_REFRESH = 0x12;
+        protected static byte DATA_START_TRANSMISSION_2 = 0x13;
+        protected static byte PARTIAL_DATA_START_TRANSMISSION_1 = 0x14;
+        protected static byte PARTIAL_DATA_START_TRANSMISSION_2 = 0x15;
+        protected static byte PARTIAL_DISPLAY_REFRESH = 0x16;
+        protected static byte LUT_FOR_VCOM = 0x20;
+        protected static byte LUT_WHITE_TO_WHITE = 0x21;
+        protected static byte LUT_BLACK_TO_WHITE = 0x22;
+        protected static byte LUT_WHITE_TO_BLACK = 0x23;
+        protected static byte LUT_BLACK_TO_BLACK = 0x24;
+        protected static byte PLL_CONTROL = 0x30;
+        protected static byte TEMPERATURE_SENSOR_COMMAND = 0x40;
+        protected static byte TEMPERATURE_SENSOR_CALIBRATION = 0x41;
+        protected static byte TEMPERATURE_SENSOR_WRITE = 0x42;
+        protected static byte TEMPERATURE_SENSOR_READ = 0x43;
+        protected static byte VCOM_AND_DATA_INTERVAL_SETTING = 0x50;
+        protected static byte LOW_POWER_DETECTION = 0x51;
+        protected static byte TCON_SETTING = 0x60;
+        protected static byte TCON_RESOLUTION = 0x61;
+        protected static byte SOURCE_AND_GATE_START_SETTING = 0x62;
+        protected static byte GET_STATUS = 0x71;
+        protected static byte AUTO_MEASURE_VCOM = 0x80;
+        protected static byte VCOM_VALUE = 0x81;
+        protected static byte VCM_DC_SETTING_REGISTER = 0x82;
+        protected static byte PROGRAM_MODE = 0xA0;
+        protected static byte ACTIVE_PROGRAM = 0xA1;
+        protected static byte READ_OTP_DATA = 0xA2;
 
         protected static byte[] lut_vcom_dc = {
             0x00, 0x00,

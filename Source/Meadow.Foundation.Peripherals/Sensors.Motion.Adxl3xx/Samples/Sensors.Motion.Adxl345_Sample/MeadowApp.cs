@@ -15,15 +15,12 @@ namespace MeadowApp
             Console.WriteLine("Initializing");
 
             // Mpu5060 I2C address could be 0x68 or 0x69
-            sensor = new Adxl345(
-                Device.CreateI2cBus(),
-                Adxl345.Addresses.Low // Address pin pulled low.
-                //Adxl345.Addresses.High // Address pin pulled high
-                );
+            sensor = new Adxl345(Device.CreateI2cBus());
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (sender, result) => {
+            sensor.Updated += (sender, result) =>
+            {
                 Console.WriteLine($"Accel: [X:{result.New.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.Y.MetersPerSecondSquared:N2}," +
                     $"Z:{result.New.Z.MetersPerSecondSquared:N2} (m/s^2)]");

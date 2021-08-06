@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         //==== internals
 
         //==== properties
-        public byte DEFAULT_ADDRESS => 0x48;
+        public const byte DEFAULT_ADDRESS = 0x48;
 
         /// <summary>
         /// The Temperature value from the last reading.
@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>
-        public Lm75(II2cBus i2cBus, byte address = 0x48)
+        public Lm75(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
             : base(i2cBus, address)
         {
         }
@@ -42,7 +42,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         protected override Task<Units.Temperature> ReadSensor()
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
 
                 Peripheral.Write((byte)Registers.LM_TEMP);
 
@@ -51,10 +52,13 @@ namespace Meadow.Foundation.Sensors.Temperature
                 // Details in Datasheet P10
                 double temp = 0;
                 ushort raw = (ushort)((ReadBuffer.Span[0] << 3) | (ReadBuffer.Span[1] >> 5));
-                if ((ReadBuffer.Span[0] & 0x80) == 0) {
+                if ((ReadBuffer.Span[0] & 0x80) == 0)
+                {
                     // temperature >= 0
                     temp = raw * 0.125;
-                } else {
+                }
+                else
+                {
                     raw |= 0xF800;
                     raw = (ushort)(~raw + 1);
 
@@ -62,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                 }
 
                 //only accurate to +/- 0.1 degrees
-                return(new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius));
+                return (new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius));
 
             });
         }

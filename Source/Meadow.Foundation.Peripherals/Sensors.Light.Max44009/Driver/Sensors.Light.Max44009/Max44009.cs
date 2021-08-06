@@ -10,7 +10,16 @@ namespace Meadow.Foundation.Sensors.Light
     /// </summary>
     public partial class Max44009 : ByteCommsSensorBase<Illuminance>
     {
-        public Max44009(II2cBus i2cBus, byte address = Addresses.Low)
+        /// <summary>
+        /// Address of the peripheral when the address pin is pulled low.
+        /// </summary>
+        public const byte DEFAULT_ADDRESS = 0x4A;
+        /// <summary>
+        /// Address of the peripheral when the address pin is pulled high.
+        /// </summary>
+        public const byte ALTERNATE_ADDRESS = 0x4B;
+
+        public Max44009(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
             : base (i2cBus, address)
         {
             Initialize();

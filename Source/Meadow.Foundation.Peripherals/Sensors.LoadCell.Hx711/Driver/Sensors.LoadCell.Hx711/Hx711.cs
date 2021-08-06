@@ -43,7 +43,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
         private IDigitalInputPort DOUT { get; }
         //private object SyncRoot { get; } = new object();
 
-
         //==== properties
         public bool IsDisposed { get; private set; }
         public bool IsSleeping { get; private set; }
@@ -55,8 +54,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <param name="bus"></param>
         public Hx711(IDigitalInputOutputController device, IPin sck, IPin dout)
         {
-            this.SCK = device.CreateDigitalOutputPort(sck);
-            this.DOUT = device.CreateDigitalInputPort(dout);
+            SCK = device.CreateDigitalOutputPort(sck);
+            DOUT = device.CreateDigitalInputPort(dout);
             _createdPorts = true; // we need to dispose what we create
 
             CalculateRegisterValues(sck, dout);
@@ -69,8 +68,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <param name="bus"></param>
         public Hx711(IDigitalOutputPort sck, IDigitalInputPort dout)
         {
-            this.SCK = sck;
-            this.DOUT = dout;
+            SCK = sck;
+            DOUT = dout;
 
             CalculateRegisterValues(sck.Pin, dout.Pin);
             Start();
@@ -212,7 +211,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             for (int i = 0; i < timing_iterations; i++)
             {
                 var val = 1u << (16 + _sck_pin); // low
-                * (uint*)_sck_address = val;
+                *(uint*)_sck_address = val;
             }
         }
 
@@ -232,7 +231,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             lock (samplingLock)
             {
                 // data line low indicates ready
-                while((*(uint*)_dout_address & _dout_mask) != 0)
+                while ((*(uint*)_dout_address & _dout_mask) != 0)
                 {
                     Thread.Sleep(0);
                 }

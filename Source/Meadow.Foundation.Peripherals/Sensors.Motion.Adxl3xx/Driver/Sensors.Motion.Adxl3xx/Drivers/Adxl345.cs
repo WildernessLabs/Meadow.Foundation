@@ -35,8 +35,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
-        public sbyte OffsetX 
-		{
+        public sbyte OffsetX
+        {
             get { return (sbyte)Peripheral.ReadRegister(Registers.OFFSET_X); }
             set { Peripheral.WriteRegister(Registers.OFFSET_X, (byte)value); }
         }
@@ -47,8 +47,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
-        public sbyte OffsetY 
-		{
+        public sbyte OffsetY
+        {
             get { return (sbyte)Peripheral.ReadRegister(Registers.OFFSET_Y); }
             set { Peripheral.WriteRegister(Registers.OFFSET_Y, (byte)value); }
         }
@@ -59,11 +59,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
-        public sbyte OffsetZ 
-		{
+        public sbyte OffsetZ
+        {
             get { return (sbyte)Peripheral.ReadRegister(Registers.OFFSET_Z); }
             set { Peripheral.WriteRegister(Registers.OFFSET_Z, (byte)value); }
         }
+
+        public const byte DEFAULT_ADDRESS = 0x53;
+        public const byte ALTERNATE_ADDRESS = 0x1D;
 
         //==== ctors
 
@@ -72,20 +75,21 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
-        public Adxl345(II2cBus i2cBus, byte address = Addresses.Low)
+        public Adxl345(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
             : base(i2cBus, address)
         {
             var deviceID = Peripheral.ReadRegister(Registers.DEVICE_ID);
 
-            if (deviceID != 0xe5) 
-			{
+            if (deviceID != 0xe5)
+            {
                 throw new Exception("Invalid device ID.");
             }
         }
 
         protected override Task<Acceleration3D> ReadSensor()
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
                 // read the data from the sensor starting at the X0 register
                 Peripheral.ReadRegister(Registers.X0, ReadBuffer.Span[0..6]);
 
@@ -115,16 +119,20 @@ namespace Meadow.Foundation.Sensors.Motion
         public void SetPowerState(bool linkActivityAndInactivity, bool autoASleep, bool measuring, bool sleep, Frequencies frequency)
         {
             byte data = 0;
-            if (linkActivityAndInactivity) {
+            if (linkActivityAndInactivity)
+            {
                 data |= 0x20;
             }
-            if (autoASleep) {
+            if (autoASleep)
+            {
                 data |= 0x10;
             }
-            if (measuring) {
+            if (measuring)
+            {
                 data |= 0x08;
             }
-            if (sleep) {
+            if (sleep)
+            {
                 data |= 0x40;
             }
             data |= (byte)frequency;
@@ -153,16 +161,20 @@ namespace Meadow.Foundation.Sensors.Motion
         public void SetDataFormat(bool selfTest, bool spiMode, bool fullResolution, bool justification, GForceRanges range)
         {
             byte data = 0;
-            if (selfTest) {
+            if (selfTest)
+            {
                 data |= 0x80;
             }
-            if (spiMode) {
+            if (spiMode)
+            {
                 data |= 0x40;
             }
-            if (fullResolution) {
+            if (fullResolution)
+            {
                 data |= 0x04;
             }
-            if (justification) {
+            if (justification)
+            {
                 data |= 0x02;
             }
             data |= (byte)range;
@@ -180,13 +192,15 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </param>
         public void SetDataRate(byte dataRate, bool lowPower)
         {
-            if (dataRate > 0xff) {
+            if (dataRate > 0xff)
+            {
                 throw new ArgumentOutOfRangeException(nameof(dataRate), "Data rate should be in the range 0-15 inclusive");
             }
 
             var data = dataRate;
 
-            if (lowPower) {
+            if (lowPower)
+            {
                 data |= 0x10;
             }
 

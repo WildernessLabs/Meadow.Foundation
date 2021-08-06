@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Audio.Mp3
             VolumeUp = 0x04,
             VolumeDown = 0x05,
             SetVolume = 0x06,
-            
+
             Loop = 0x08,
             SelectDevice = 0x09,
             Sleep = 0x0A,
@@ -50,7 +50,7 @@ namespace Meadow.Foundation.Audio.Mp3
             PlayFolder = 0x17,
             Shuffle = 0x18, //might not work
             PlayWithVolume = 0x22,
-   
+
             GetCurrentFile = 0x4C,
             GetStatus = 0x42,
             GetVolume = 0x43,
@@ -175,9 +175,9 @@ namespace Meadow.Foundation.Audio.Mp3
 
             var data = ParseResponse(response);
 
-            if(data.Item1 == Responses.DataReceived)
+            if (data.Item1 == Responses.DataReceived)
             {
-                switch(command)
+                switch (command)
                 {
                     case Commands.GetCurrentFile:
                     case Commands.GetNumberOfFolders:
@@ -188,11 +188,11 @@ namespace Meadow.Foundation.Audio.Mp3
                         {
                             await Task.Delay(500);
                             response = ReadResponse();
-                            if(response.Length > 0)
+                            if (response.Length > 0)
                             {
                                 data = ParseResponse(response);
                             }
-                               
+
                         }
                         break;
                 }
@@ -227,7 +227,7 @@ namespace Meadow.Foundation.Audio.Mp3
 
             do
             {
-                if(serialPort.BytesToRead == 0)
+                if (serialPort.BytesToRead == 0)
                 {
                     Console.WriteLine("No data available");
                     Thread.Sleep(50);
@@ -236,7 +236,7 @@ namespace Meadow.Foundation.Audio.Mp3
 
                 value = (byte)serialPort.ReadByte();
 
-                if(value == 0x7E) //new response
+                if (value == 0x7E) //new response
                 {
                     index = 0;
                 }

@@ -72,7 +72,12 @@ namespace Meadow.Foundation.Sensors.Camera
 
         float emissivity;
 
-        public Mlx90640(II2cBus i2cBus, byte address = 0x33, Units measurementUnit = Units.Celsius, float emissivity = 0.95f)
+        public const byte DEFAULT_ADDRESS = 0x33;
+
+        public Mlx90640(II2cBus i2cBus,
+            byte address = DEFAULT_ADDRESS,
+            Units measurementUnit = Units.Celsius,
+            float emissivity = 0.95f)
         {
             i2CPeripheral = new I2cPeripheral(i2cBus, address);
             Emissivity = emissivity;

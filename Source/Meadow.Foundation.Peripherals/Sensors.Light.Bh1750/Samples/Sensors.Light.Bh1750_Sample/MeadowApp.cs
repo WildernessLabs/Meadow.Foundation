@@ -18,7 +18,7 @@ namespace MeadowApp
             // configure our BME280 on the I2C Bus
             var i2c = Device.CreateI2cBus();
             sensor = new Bh1750(
-                i2c, Bh1750.Addresses.Low, // `Low` if address pin is pulled low.
+                i2c,
                 measuringMode: Mode.ContinuouslyHighResolutionMode, // the various modes take differing amounts of time.
                 lightTransmittance: 1 // lower this to increase sensitivity, for instance, if it's behind a semi opaque window
                 ); 

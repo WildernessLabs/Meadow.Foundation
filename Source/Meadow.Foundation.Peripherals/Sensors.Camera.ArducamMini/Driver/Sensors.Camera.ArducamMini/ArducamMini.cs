@@ -33,9 +33,9 @@ namespace Meadow.Foundation.Sensors.Camera
         const byte ARDUCHIP_GPIO = 0x06;
         const byte SINGLE_FIFO_READ = 0x3D;
 
-        readonly byte Address = 0x30;
+        public const byte DEFAULT_ADDRESS = 0x30;
 
-        public int DEFAULT_SPEED => 8000; // in khz
+        public int DEFAULT_SPEED = 8000; // in khz
 
         protected II2cPeripheral i2cDevice;
 
@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
         protected IDigitalOutputPort chipSelectPort;
 
-        public ArducamMini(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus, byte address = 0x30)
+        public ArducamMini(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
         {
             i2cDevice = new I2cPeripheral(i2cBus, address);
 

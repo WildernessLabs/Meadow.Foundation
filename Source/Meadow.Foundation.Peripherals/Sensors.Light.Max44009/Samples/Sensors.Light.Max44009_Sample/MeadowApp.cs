@@ -16,8 +16,8 @@ namespace Sensors.Light.Max44009_Sample
             Console.WriteLine("Initializing...");
 
             // configure our sensor on the I2C Bus
-            var i2c = Device.CreateI2cBus();
-            sensor = new Max44009(i2c, Max44009.Addresses.Low);
+            var i2cBus = Device.CreateI2cBus();
+            sensor = new Max44009(i2cBus);
 
             //==== IObservable 
             // Example that uses an IObersvable subscription to only be notified

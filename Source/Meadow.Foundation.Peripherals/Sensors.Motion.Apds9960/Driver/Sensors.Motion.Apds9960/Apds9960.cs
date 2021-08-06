@@ -41,6 +41,8 @@ namespace Meadow.Foundation.Sensors.Motion
         public Color? Color => Conditions.Color;
         public Illuminance? AmbientLight => Conditions.AmbientLight;
 
+        public const byte DEFAULT_ADDRESS = 0x39;
+
         //==== ctors
 
         /// <summary>
@@ -49,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">SI2C bus object</param>
         public Apds9960(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin)
-            : base(i2cBus, 0x39)
+            : base(i2cBus, DEFAULT_ADDRESS)
         {
             if (interruptPin != null)
             {

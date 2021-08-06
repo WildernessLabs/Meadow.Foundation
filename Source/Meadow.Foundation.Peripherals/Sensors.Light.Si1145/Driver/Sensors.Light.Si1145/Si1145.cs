@@ -14,6 +14,8 @@ namespace Meadow.Foundation.Sensors.Light
     public partial class Si1145
         : ByteCommsSensorBase<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)>
     {
+        public const byte DEFAULT_ADDRESS = 0x60;
+
         /// <summary>
         ///     Create a new SI1145 sensor object.
         /// </summary>
@@ -22,7 +24,8 @@ namespace Meadow.Foundation.Sensors.Light
         public Si1145(II2cBus i2cBus)
             : base(i2cBus, 0x60)
         {
-            if (Peripheral.ReadRegister(Registers.REG_PARTID) != 0x45) {
+            if (Peripheral.ReadRegister(Registers.REG_PARTID) != 0x45)
+            {
                 throw new Exception("Invalid part ID");
             }
             Initialize();
@@ -30,7 +33,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         protected async override Task<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)> ReadSensor()
         {
-            return await Task.Run(() => {
+            return await Task.Run(() =>
+            {
                 (Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared) conditions;
 
                 // ultraviolet (UV) index
@@ -126,7 +130,7 @@ namespace Meadow.Foundation.Sensors.Light
             return Peripheral.ReadRegister(Registers.REG_PARAMRD);
         }
 
-        private void Reset ()
+        private void Reset()
         {
             Peripheral.WriteRegister(Registers.REG_MEASRATE0, 0);
             Peripheral.WriteRegister(Registers.REG_MEASRATE1, 0);

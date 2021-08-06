@@ -18,14 +18,12 @@ namespace MeadowApp
 
             // create the sensor driver
             sensor = new Bno055(
-                Device.CreateI2cBus(),
-                Bno055.Addresses.LOW // use this if the address pin is pulled low
-                //Bno055.Addresses.HIGH // use this if the address pin is pulled high
-                );
+                Device.CreateI2cBus());
 
             //==== Events
             // classical .NET events can also be used:
-            sensor.Updated += (sender, result) => {
+            sensor.Updated += (sender, result) =>
+            {
                 Console.WriteLine($"Accel: [X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
                     $"Z:{result.New.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
@@ -63,12 +61,15 @@ namespace MeadowApp
             // Example that uses an IObersvable subscription to only be notified
             // when the filter is satisfied
             var consumer = Bno055.CreateObserver(
-                handler: result => {
+                handler: result =>
+                {
                     Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}, old: X:{result.Old?.Acceleration3D?.X.MetersPerSecondSquared:N2}");
                 },
                 // only notify if there's a greater than 1 micro tesla on the Y axis
-                filter: result => {
-                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                filter: result =>
+                {
+                    if (result.Old is { } old)
+                    { //c# 8 pattern match syntax. checks for !null and assigns var.
                         return ((result.New.Acceleration3D - old.Acceleration3D)?.Y > new Acceleration(1, AU.MetersPerSecondSquared));
                     }
                     return false;

@@ -8,7 +8,9 @@ namespace Meadow.Foundation.Sensors.Motion
 {
     public class Qmc5883 :  Hmc5883
     {
-        public Qmc5883(II2cBus i2cBus, byte address = Addresses.QMC5883_ADDRESS,
+        new public const byte DEFAULT_ADDRESS = 0x0D;
+
+        public Qmc5883(II2cBus i2cBus, byte address = DEFAULT_ADDRESS,
             GainLevels gain = GainLevels.Gain1090,
             MeasuringModes measuringMode = MeasuringModes.Continuous,
             DataOutputRates outputRate = DataOutputRates.Rate15,

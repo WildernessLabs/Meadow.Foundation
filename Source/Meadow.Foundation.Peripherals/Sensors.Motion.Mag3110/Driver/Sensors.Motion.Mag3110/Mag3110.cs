@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Motion
     public partial class Mag3110 :
         ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
         ITemperatureSensor
-        //IMagnetometer
+    //IMagnetometer
     {
         //==== events
         public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated = delegate { };
@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             get
             {
-                var controlRegister = Peripheral.ReadRegister((byte) Registers.CONTROL_1);
+                var controlRegister = Peripheral.ReadRegister((byte)Registers.CONTROL_1);
                 return (controlRegister & 0x03) == 0;
             }
             set
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public bool IsDataReady
         {
-            get { return(Peripheral.ReadRegister(Registers.DR_STATUS) & 0x08) > 0; }
+            get { return (Peripheral.ReadRegister(Registers.DR_STATUS) & 0x08) > 0; }
         }
 
         /// <summary>
@@ -99,7 +99,11 @@ namespace Meadow.Foundation.Sensors.Motion
                 Peripheral.WriteRegister(Registers.CONTROL_2, cr2);
                 digitalInputsEnabled = value;
             }
-        } protected bool digitalInputsEnabled;
+        }
+        protected bool digitalInputsEnabled;
+
+        public const byte DEFAULT_ADDRESS = 0x0E; //Mag3110
+        public const byte ALTERNATE_ADDRESS = 0x0F; //Fxms3110
 
         //==== ctors
 
@@ -110,8 +114,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin">Interrupt pin used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
         /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>        
-        public Mag3110(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = Addresses.Mag3110, ushort speed = 400) :
-                this (i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address)
+        public Mag3110(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = DEFAULT_ADDRESS, ushort speed = 400) :
+                this(i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address)
         { }
 
         /// <summary>
@@ -120,15 +124,15 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPort">Interrupt port used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
         /// <param name="i2cBus">I2C bus object - default = 400 KHz).</param>        
-        public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = Addresses.Mag3110)
-            : base (i2cBus, address)
+        public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = DEFAULT_ADDRESS)
+            : base(i2cBus, address)
         {
-            var deviceID = Peripheral.ReadRegister((byte) Registers.WHO_AM_I);
+            var deviceID = Peripheral.ReadRegister((byte)Registers.WHO_AM_I);
             if (deviceID != 0xc4)
             {
                 throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
             }
- 
+
             if (interruptPort != null)
             {
                 this.interruptPort = interruptPort;
@@ -154,10 +158,12 @@ namespace Meadow.Foundation.Sensors.Motion
 
         protected override void RaiseEventsAndNotify(IChangeResult<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> changeResult)
         {
-            if (changeResult.New.MagneticField3D is { } mag) {
+            if (changeResult.New.MagneticField3D is { } mag)
+            {
                 MagneticField3dUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag, changeResult.Old?.MagneticField3D));
             }
-            if (changeResult.New.Temperature is { } temp) {
+            if (changeResult.New.Temperature is { } temp)
+            {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             base.RaiseEventsAndNotify(changeResult);
@@ -165,7 +171,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         protected override Task<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> ReadSensor()
         {
-            return Task.Run(() => 
+            return Task.Run(() =>
             {
                 (MagneticField3D? MagneticField3D, Units.Temperature? Temperature) conditions;
 

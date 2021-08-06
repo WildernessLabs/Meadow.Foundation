@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Distance
             inches
         }
 
-        public const byte DefaultI2cAddress = 0x29;
+        public const byte DEFAULT_ADDRESS = 0x29;
 
         public bool IsShutdown
         {
@@ -123,7 +123,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
         public Vl53l0x(
             IDigitalOutputController device, II2cBus i2cBus,
-            byte address = DefaultI2cAddress)
+            byte address = DEFAULT_ADDRESS)
                 : this (device, i2cBus, null, address)
         {
         }
@@ -133,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="units">Unit of measure</param>
         public Vl53l0x(
             IDigitalOutputController device, II2cBus i2cBus, IPin shutdownPin,
-            byte address = DefaultI2cAddress)
+            byte address = DEFAULT_ADDRESS)
                 : base(i2cBus, address)
         {
             if(shutdownPin != null) {

@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// MPR121 Default I2C Address.
         /// </summary>
-        public const byte DefaultI2cAddress = 0x5A;
+        public const byte DEFAULT_ADDRESS = 0x5A;
 
         private static readonly int NumberOfChannels = Enum.GetValues(typeof(Channels)).Length;
 
@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         ///     Create a new MPR121 keypad object.
         /// </summary>
-        public Mpr121(II2cBus i2cBus, byte address = DefaultI2cAddress, int refreshPeriod = -1, Mpr121Configuration configuration = null)
+        public Mpr121(II2cBus i2cBus, byte address = DEFAULT_ADDRESS, int refreshPeriod = -1, Mpr121Configuration configuration = null)
         {
             this.refreshPeriod = refreshPeriod;
 
