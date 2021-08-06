@@ -80,6 +80,8 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
+        public const byte DEFAULT_ADDRESS = 0x29;
+
         //==== ctors
 
         /// <summary>
@@ -90,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <remarks>
         /// <param name="i2cBus">I2C bus.</param>
         public Tcs3472x(
-            II2cBus i2cBus, byte address = 0x29,
+            II2cBus i2cBus, byte address = DEFAULT_ADDRESS,
             double integrationTime = 0.700, GainType gain = GainType.Gain60X)
                 : base(i2cBus, address)
         {

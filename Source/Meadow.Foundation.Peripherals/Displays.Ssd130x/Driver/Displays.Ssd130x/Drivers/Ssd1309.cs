@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         ///     property to true.
         /// </remarks>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public Ssd1309(II2cBus i2cBus, byte address = 0x3c) : base(i2cBus, address, DisplayType.OLED128x64)
+        public Ssd1309(II2cBus i2cBus, byte address = DEFAULT_ADDRESS) : base(i2cBus, address, DisplayType.OLED128x64)
         {
         }
     }
