@@ -126,13 +126,13 @@ namespace Displays.Tft.ST7789_Sample
 
             display = new St7789(device: Device, spiBus: spiBus,
                 // AISU:
-                //chipSelectPin: Device.Pins.D15,//D14,
-                //dcPin: Device.Pins.D11,//D03,
-                //resetPin: Device.Pins.D14, //D04,
+                chipSelectPin: Device.Pins.D15,//D14,
+                dcPin: Device.Pins.D11,//D03,
+                resetPin: Device.Pins.D14, //D04,
                 // JUEGO:
-                chipSelectPin: Device.Pins.D14,
-                dcPin: Device.Pins.D03,
-                resetPin: Device.Pins.D04,
+                //chipSelectPin: Device.Pins.D14,
+                //dcPin: Device.Pins.D03,
+                //resetPin: Device.Pins.D04,
                 width: 240, height: 240, displayColorMode: DisplayColorMode.Format12bppRgb444);
 
             Console.WriteLine("Create graphics lib");
