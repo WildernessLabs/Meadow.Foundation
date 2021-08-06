@@ -30,9 +30,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         protected readonly II2cPeripheral i2cPeripheral;
 
+        public const byte DEFAULT_ADDRESS = 0x74;
+
         public byte Frame { get; private set; }
        
-        public Is31fl3731(II2cBus i2cBus, byte address)
+        public Is31fl3731(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
             Frame = 0;

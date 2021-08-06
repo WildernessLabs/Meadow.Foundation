@@ -16,6 +16,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public class AdafruitMPRLS : ByteCommsSensorBase<(Pressure? Pressure, Pressure? RawPsiMeasurement)>, IBarometricPressureSensor
     {
+        public const byte DEFAULT_ADDRESS = 0x18;
+
         //==== events
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
@@ -25,9 +27,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private int psiMin => 0;
         private int psiMax => 25;
-
-        //This value is set by the manufacturer and can't be changed.
-        public const byte Address = 0x18;
 
         //==== properties
         /// <summary>
@@ -55,7 +54,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         //Tells us that the sensor has reached its pressure limit.
         public bool InternalMathSaturated { get; set; }
 
-
         protected override void RaiseEventsAndNotify(IChangeResult<(Pressure? Pressure, Pressure? RawPsiMeasurement)> changeResult)
         {
             if (changeResult.New.Pressure is { } pressure) {
@@ -65,7 +63,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         public AdafruitMPRLS(II2cBus i2cbus, int psiMin = 0, int psiMax = 25)
-            : base(i2cbus, Address)
+            : base(i2cbus, DEFAULT_ADDRESS)
         {
         }
 

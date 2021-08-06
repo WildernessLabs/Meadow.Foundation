@@ -6,11 +6,11 @@ namespace Meadow.Foundation.RTCs
 {
     public class Ds1307
     {
+        public const byte DEFAULT_ADDRESS = 0x68;
+
         private const int OriginYear = 1980;
 
         private II2cBus _bus;
-
-        public byte Address { get; } = 0x68;
 
         public Ds1307(II2cBus bus)
         {
@@ -25,13 +25,13 @@ namespace Meadow.Foundation.RTCs
             get
             {
                 // read 1 byte starting from 0x00
-                var reg = _bus.WriteReadData(Address, 0x01, 0x00);
+                var reg = _bus.WriteReadData(DEFAULT_ADDRESS, 0x01, 0x00);
                 return (reg[0] & (1 << 7)) != 0;
             }
             set
             {
                 // read the seconds register
-                var reg = _bus.WriteReadData(Address, 0x01, 0x00);
+                var reg = _bus.WriteReadData(DEFAULT_ADDRESS, 0x01, 0x00);
                 var current = (reg[0] & (1 << 7)) != 0;
                 if ((value && current) || (!value && !current)) return;
 
@@ -46,14 +46,14 @@ namespace Meadow.Foundation.RTCs
                 }
 
                 // and write it back to register 0x00
-                _bus.WriteData(Address, 0x00, reg[0]);
+                _bus.WriteData(DEFAULT_ADDRESS, 0x00, reg[0]);
             }
         }
 
         public DateTime GetTime()
         {
             // read 7 bytes starting from 0x00
-            var data = _bus.WriteReadData(Address, 0x07, 0x00);
+            var data = _bus.WriteReadData(DEFAULT_ADDRESS, 0x07, 0x00);
             return FromRTCTime(data);
         }
 
@@ -63,7 +63,7 @@ namespace Meadow.Foundation.RTCs
             data.Add(0); // target start register offset
             data.AddRange(ToRTCTime(time));
 
-            _bus.WriteData(Address, data.ToArray());
+            _bus.WriteData(DEFAULT_ADDRESS, data.ToArray());
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Meadow.Foundation.RTCs
         public byte[] ReadRAM(int offset, int count)
         {
             // RAM starts at register offset 8
-            return _bus.WriteReadData(Address, count, (byte)(0x08 + offset));
+            return _bus.WriteReadData(DEFAULT_ADDRESS, count, (byte)(0x08 + offset));
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Meadow.Foundation.RTCs
             d.Add((byte)(0x08 + offset)); // target start register offset
             d.AddRange(data);
 
-            _bus.WriteData(Address, d.ToArray());
+            _bus.WriteData(DEFAULT_ADDRESS, d.ToArray());
         }
 
         public void SquareWaveOutput(SquareWaveFrequency freq)
@@ -121,7 +121,7 @@ namespace Meadow.Foundation.RTCs
             }
 
             // control register is at 0x07
-            _bus.WriteData(Address, 0x07, registerData);
+            _bus.WriteData(DEFAULT_ADDRESS, 0x07, registerData);
         }
 
         private static byte ToBCD(ushort i)

@@ -45,6 +45,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         private readonly II2cPeripheral i2cPeripheral;
 
+        public const byte DEFAULT_ADDRESS = 0x70;
+
         //display buffer for 16x8 LEDs
         private byte[] displayBuffer = new byte[16];
         //key buffer for 39 keys
@@ -62,7 +64,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="i2cBus">I2C bus instance</param>
-        public Ht16k33(II2cBus i2cBus, byte address = 0x70)
+        public Ht16k33(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 

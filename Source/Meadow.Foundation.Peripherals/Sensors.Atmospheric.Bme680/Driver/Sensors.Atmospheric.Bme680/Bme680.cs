@@ -6,13 +6,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Bme680 : I2cPeripheral
     {
+        public const byte DEFAULT_ADDRESS = 0x77;
+
         private SensorSettings _settings;
         private readonly object _lock;
         private bool _initialized;
         public bool IsSampling { get; private set; }
-        
 
-        public Bme680(II2cBus bus, byte address = 0x77, SensorSettings sensorSettings = null) : base(bus, address)
+        public Bme680(II2cBus bus, byte address = DEFAULT_ADDRESS, SensorSettings sensorSettings = null) : base(bus, address)
         {
             if (sensorSettings == null)
                 sensorSettings = new SensorSettings();

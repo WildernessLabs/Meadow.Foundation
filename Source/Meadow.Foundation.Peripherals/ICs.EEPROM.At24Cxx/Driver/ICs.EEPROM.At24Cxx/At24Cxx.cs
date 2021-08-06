@@ -9,6 +9,8 @@ namespace Meadow.Foundation.ICs.EEPROM
     /// </summary>
     public class At24Cxx
     {
+        public const byte DEFAULT_ADDRESS = 0x50;
+
         /// <summary>
         ///     Communication bus used to communicate with the EEPEOM.
         /// </summary>
@@ -23,8 +25,6 @@ namespace Meadow.Foundation.ICs.EEPROM
         ///     Number of bytes in the EEPROM module.
         /// </summary>
         private readonly ushort _memorySize;
-
-        public const byte DEFAULT_ADDRESS = 0x50;
 
         /// <summary>
         ///     Create a new AT24Cxx object using the default parameters for the component.
