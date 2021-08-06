@@ -20,8 +20,8 @@ namespace Sensors.Atmospheric.BME280_Sample
             var i2c = Device.CreateI2cBus();
             sensor = new Bme280 (
                 i2c,
-                Bme280.I2cAddress.Address0x76 // SDA pulled up
-                //Bme280.I2cAddress.Adddress0x77 // SDA pulled down
+                Bme280.DEFAULT_ADDRESS // SDA pulled up
+                //Bme280.ALTERNATE_ADDRESS // SDA pulled down
             );
 
             // TODO: SPI version
