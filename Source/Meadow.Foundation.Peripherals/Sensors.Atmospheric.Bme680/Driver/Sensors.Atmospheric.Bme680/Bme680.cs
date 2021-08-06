@@ -1,6 +1,5 @@
 ﻿using System;
 using Meadow.Hardware;
-using Meadow.Utilities;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -31,13 +30,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 Console.WriteLine("Initializing Temperature and Pressure");
                 // Init the temp and pressure registers
                 // Clear the registers so they're in a known state.
-                var status = (byte) ((((byte) _settings.TemperatureOversample << 5) & 0xe0) |
-                                     (((byte) _settings.PressureOversample << 2) & 0x1c));
+                var status = (byte)((((byte)_settings.TemperatureOversample << 5) & 0xe0) |
+                                     (((byte)_settings.PressureOversample << 2) & 0x1c));
                 WriteRegister(RegisterAddresses.ControlTemperatureAndPressure, status);
 
                 // Init the humidity registers
                 Console.WriteLine("Initializing Humidity");
-                status = (byte) ((byte)_settings.HumidityOversample & 0x07);
+                status = (byte)((byte)_settings.HumidityOversample & 0x07);
                 WriteRegister(RegisterAddresses.ControlHumidity, status);
 
                 Console.WriteLine("Finished initializing.");

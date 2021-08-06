@@ -30,22 +30,27 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
+        public const byte DEFAULT_ADDRESS = 0x44;
+        public const byte ALTERNATE_ADDRESS = 0x45;
+
         /// <summary>
         ///     Create a new SHT31D object.
         /// </summary>
         /// <param name="address">Sensor address (should be 0x44 or 0x45).</param>
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
-        public Sht31d(II2cBus i2cBus, byte address = 0x44)
+        public Sht31d(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
             : base(i2cBus, address, readBufferSize: 6, writeBufferSize: 2)
-        {            
+        {
         }
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
-            if (changeResult.New.Temperature is { } temp) {
+            if (changeResult.New.Temperature is { } temp)
+            {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
-            if (changeResult.New.Humidity is { } humidity) {
+            if (changeResult.New.Humidity is { } humidity)
+            {
                 HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
             base.RaiseEventsAndNotify(changeResult);

@@ -56,7 +56,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Pressure? Pressure, Pressure? RawPsiMeasurement)> changeResult)
         {
-            if (changeResult.New.Pressure is { } pressure) {
+            if (changeResult.New.Pressure is { } pressure)
+            {
                 PressureUpdated?.Invoke(this, new ChangeResult<Pressure>(pressure, changeResult.Old?.Pressure));
             }
             base.RaiseEventsAndNotify(changeResult);
@@ -69,14 +70,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected override async Task<(Pressure? Pressure, Pressure? RawPsiMeasurement)> ReadSensor()
         {
-            return await Task.Run(async () => {
+            return await Task.Run(async () =>
+            {
                 //Send the command to the sensor to tell it to do the thing.
                 Peripheral.Write(mprlsMeasurementCommand);
 
                 //Datasheet says wait 5 ms.
                 await Task.Delay(5);
 
-                while (true) {
+                while (true)
+                {
                     Peripheral.Read(ReadBuffer.Span[0..1]);
 
                     //From section 6.5 of the datasheet.
@@ -85,15 +88,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     HasMemoryIntegrityFailed = BitHelpers.GetBitValue(ReadBuffer.Span[0], 2);
                     InternalMathSaturated = BitHelpers.GetBitValue(ReadBuffer.Span[0], 0);
 
-                    if (InternalMathSaturated) {
+                    if (InternalMathSaturated)
+                    {
                         throw new InvalidOperationException("Sensor pressure has exceeded max value!");
                     }
 
-                    if (HasMemoryIntegrityFailed) {
+                    if (HasMemoryIntegrityFailed)
+                    {
                         throw new InvalidOperationException("Sensor internal memory integrity check failed!");
                     }
 
-                    if (!(IsDeviceBusy)) {
+                    if (!(IsDeviceBusy))
+                    {
                         break;
                     }
                 }
