@@ -16,6 +16,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
+        public const byte DEFAULT_ADDRESS = 0x5C;
+
         //==== events
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
@@ -52,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// Create a DHT sensor through I2C (Only DHT12)
         /// </summary>
         /// <param name="i2cDevice">The I2C device used for communication.</param>
-        public DhtBase(II2cBus i2cBus, byte address = 0x5C)
+        public DhtBase(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
             : base(i2cBus, address, writeBufferSize: 8, readBufferSize: 6)
         {
             protocol = BusType.I2C;

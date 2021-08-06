@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 default:
                     throw new ArgumentOutOfRangeException("Address must be 0x76 or 0x77");
             }
-            
+
             ms5611 = new Ms5611I2c(i2c, address, resolution);
         }
 
