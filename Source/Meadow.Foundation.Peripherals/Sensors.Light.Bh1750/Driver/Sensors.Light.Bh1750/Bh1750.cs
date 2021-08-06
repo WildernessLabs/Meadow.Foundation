@@ -20,7 +20,8 @@ namespace Meadow.Foundation.Sensors.Light
         {
             get => lightTransmittance;
             set => SetLightTransmittance(lightTransmittance = value);
-        } private double lightTransmittance;
+        }
+        private double lightTransmittance;
 
         /// <summary>
         /// BH1750 Measuring Mode
@@ -33,12 +34,21 @@ namespace Meadow.Foundation.Sensors.Light
         private const float MaxTransmittance = 2.225f;
         private const float MinTransmittance = 0.272f;
 
+        /// <summary>
+        /// I2C address when address pin is high
+        /// </summary>
+        public const byte DEFAULT_ADDRESS = 0x5C;
+
+        /// <summary>
+        /// I2C address when address pin is low
+        /// </summary>
+        public const byte ALTERNATE_ADDRESS = 0x23;
 
         /// <summary>
         /// Create a new BH1750 light sensor object using a static reference voltage.
         /// </summary>
         public Bh1750(
-            II2cBus i2cBus, byte address,
+            II2cBus i2cBus, byte address = DEFAULT_ADDRESS,
             MeasuringModes measuringMode = MeasuringModes.ContinuouslyHighResolutionMode,
             double lightTransmittance = 1)
                 : base(i2cBus, address)
@@ -57,10 +67,12 @@ namespace Meadow.Foundation.Sensors.Light
 
         protected override Task<Illuminance> ReadSensor()
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
                 if (MeasuringMode == MeasuringModes.OneTimeHighResolutionMode ||
                     MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2 ||
-                    MeasuringMode == MeasuringModes.OneTimeLowResolutionMode) {
+                    MeasuringMode == MeasuringModes.OneTimeLowResolutionMode)
+                {
                     Peripheral.Write((byte)Commands.PowerOn);
                 }
 
@@ -72,7 +84,8 @@ namespace Meadow.Foundation.Sensors.Light
                 double result = raw / (1.2 * lightTransmittance);
 
                 if (MeasuringMode == MeasuringModes.ContinuouslyHighResolutionMode2 ||
-                    MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2) {
+                    MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2)
+                {
                     result *= 2;
                 }
 

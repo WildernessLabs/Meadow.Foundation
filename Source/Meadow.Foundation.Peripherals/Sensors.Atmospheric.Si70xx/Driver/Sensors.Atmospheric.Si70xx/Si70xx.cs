@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
-        public int DEFAULT_SPEED => 400;
+        public int DEFAULT_SPEED = 400;
 
         /// <summary>
         /// The temperature, from the last reading.
@@ -49,12 +49,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public byte FirmwareRevision { get; private set; }
 
+        public const byte DEFAULT_ADDRESS = 0x40;
+
         /// <summary>
         ///     Create a new SI7021 temperature and humidity sensor.
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40).</param>
-        /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
-        public Si70xx(II2cBus i2cBus, byte address = 0x40)
+        /// <param name="i2cBus">I2CBus.</param>
+        public Si70xx(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
             : base(i2cBus, address, 8, 3)
         {
             Initialize();

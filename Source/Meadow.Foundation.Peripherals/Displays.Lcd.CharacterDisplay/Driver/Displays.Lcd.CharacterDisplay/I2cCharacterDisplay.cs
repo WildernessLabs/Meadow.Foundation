@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Displays.Lcd
         private byte cursorLine = 0;
         private byte cursorColumn = 0;
 
-        public const byte DefaultI2cAddress = 0x27;
+        public const byte DEFAULT_ADDRESS = 0x27;
 
         // commands
         static byte LCD_CLEARDISPLAY = 0x01;
@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Displays.Lcd
 
         public TextDisplayConfig DisplayConfig { get; protected set; }
 
-        public I2cCharacterDisplay(II2cBus i2cBus, byte address = DefaultI2cAddress, byte rows = 4, byte columns = 20)
+        public I2cCharacterDisplay(II2cBus i2cBus, byte address = DEFAULT_ADDRESS, byte rows = 4, byte columns = 20)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
             DisplayConfig = new TextDisplayConfig() { Width = columns, Height = rows };

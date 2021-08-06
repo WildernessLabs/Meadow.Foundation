@@ -12,6 +12,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// </summary>
     public partial class Mcp23x08 : IDigitalInputController, IDigitalOutputController
     {
+        public const byte DEFAULT_ADDRESS = 0x20;
+
         /// <summary>
         /// Raised when the value of a pin configured for input changes. Use in
         /// conjunction with parallel port reads via ReadFromPorts(). When using
@@ -68,7 +70,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="i2cBus"></param>
         /// <param name="address"></param>
-        public Mcp23x08(II2cBus i2cBus, byte address = 0x20,
+        public Mcp23x08(II2cBus i2cBus, byte address = DEFAULT_ADDRESS,
             IDigitalInputPort interruptPort = null) :
             // use the internal constructor that takes an IMcpDeviceComms
             this(new I2cMcpDeviceComms(i2cBus, address), interruptPort)

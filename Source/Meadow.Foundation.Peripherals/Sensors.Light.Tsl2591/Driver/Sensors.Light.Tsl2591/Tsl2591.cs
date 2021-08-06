@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Light;
@@ -49,14 +48,18 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public Illuminance? Illuminance => Conditions.Integrated;
 
-        public Tsl2591(II2cBus bus, byte address = (byte) Addresses.Default, int updateIntervalMs = 1000)
+        public const byte DEFAULT_ADDRESS = 0x29;
+
+        public Tsl2591(II2cBus bus,
+            byte address = DEFAULT_ADDRESS,
+            int updateIntervalMs = 1000)
             : base(bus, address, updateIntervalMs)
         {
             Gain = GainFactor.Medium;
             IntegrationTime = IntegrationTimes.Time_100Ms;
             PowerOn();
         }
-        
+
         protected override async Task<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> ReadSensor()
         {
             (Illuminance FullSpectrum, Illuminance Infrared, Illuminance VisibleLight, Illuminance Integrated) conditions;
@@ -139,7 +142,7 @@ namespace Meadow.Foundation.Sensors.Light
             {
                 PowerOff();
                 _gain = value;
-                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte) ((byte) _integrationTime | (byte) _gain));
+                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)_integrationTime | (byte)_gain));
                 PowerOn();
             }
         }
@@ -154,7 +157,7 @@ namespace Meadow.Foundation.Sensors.Light
             {
                 PowerOff();
                 _integrationTime = value;
-                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte) ((byte) _integrationTime | (byte) _gain));
+                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)_integrationTime | (byte)_gain));
                 PowerOn();
             }
         }

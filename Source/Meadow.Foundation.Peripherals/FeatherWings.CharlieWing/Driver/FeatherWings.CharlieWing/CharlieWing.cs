@@ -12,12 +12,9 @@ namespace Meadow.Foundation.FeatherWings
     {
         Color pen;
 
-        public enum I2cAddress : byte
-        {
-            Address0x74 = 0x74,
-            Address0x77 = 0x77
-        }
-        
+        public const byte DEFAULT_ADDRESS = 0x74;
+        public const byte ALTERNATE_ADDRESS = 0x77;
+
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
         public override int Width => 15;
@@ -30,7 +27,7 @@ namespace Meadow.Foundation.FeatherWings
 
         protected readonly Is31fl3731 iS31FL3731;
 
-        public CharlieWing(II2cBus i2cBus, I2cAddress address = I2cAddress.Address0x74)
+        public CharlieWing(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
         {
             Brightness = 255;
             pen = Color.White;

@@ -52,8 +52,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Indicate of data is ready to be read.
         /// </summary>
-        public bool DataReady {
-            get {
+        public bool DataReady
+        {
+            get
+            {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
@@ -64,8 +66,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Indicate if there is any data in the FIFO buffer.
         /// </summary>
-        public bool FIFOReady {
-            get {
+        public bool FIFOReady
+        {
+            get
+            {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
@@ -77,8 +81,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Indicate if there are at least the desired number
         /// of samples in the FIFO buffer.
         /// </summary>
-        public bool FIFOWatermark {
-            get {
+        public bool FIFOWatermark
+        {
+            get
+            {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
@@ -90,8 +96,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Indicate if the FIFO buffer has overrun (newly generated data
         /// is overwriting data already stored in the FIFO buffer.
         /// </summary>
-        public bool FIFOOverrun {
-            get {
+        public bool FIFOOverrun
+        {
+            get
+            {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
@@ -103,8 +111,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Indicate if any activity has been detected over the
         /// specified threshold.
         /// </summary>
-        public bool ActivityDetected {
-            get {
+        public bool ActivityDetected
+        {
+            get
+            {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
@@ -116,8 +126,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Indicate if the sensor has detected inactivity or a
         /// free fall condition.
         /// </summary>
-        public bool InactivityDetected {
-            get {
+        public bool InactivityDetected
+        {
+            get
+            {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
@@ -128,8 +140,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Indicate if the sensor is awake or inactive.
         /// </summary>
-        public bool IsAwake {
-            get {
+        public bool IsAwake
+        {
+            get
+            {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
@@ -141,8 +155,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Read the device ID, MEMS ID, Part ID and silicon revision ID and
         /// encode the value in a 32-bit integer.
         /// </summary>
-        public int DeviceID {
-            get {
+        public int DeviceID
+        {
+            get
+            {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..6]);
@@ -157,8 +173,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Read the status register.
         /// </summary>
-        public byte Status {
-            get {
+        public byte Status
+        {
+            get
+            {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
@@ -169,14 +187,17 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Activity / Inactivity control register (see page 29 of the data sheet).
         /// </summary>
-        public byte ActivityInactivityControl {
-            get {
+        public byte ActivityInactivityControl
+        {
+            get
+            {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.ACTIVITY_INACTIVITY_CONTROL;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return ReadBuffer.Span[0];
             }
-            set {
+            set
+            {
                 Peripheral.WriteRegister(Commands.WRITE_REGISTER, value);
             }
         }
@@ -186,10 +207,13 @@ namespace Meadow.Foundation.Sensors.Motion
         /// the device into self test mode, setting this to false will turn off the
         /// self test.
         /// </summary>
-        public bool SelfTest {
-            set {
+        public bool SelfTest
+        {
+            set
+            {
                 byte selfTest = 0;
-                if (value) {
+                if (value)
+                {
                     selfTest = 1;
                 }
                 Peripheral.WriteRegister(Commands.WRITE_REGISTER, selfTest);
@@ -199,14 +223,17 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         ///  Get / set the filter control register (see page 33 of the data sheet).   
         /// </summary>
-        public byte FilterControl {
-            get {
+        public byte FilterControl
+        {
+            get
+            {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.FILTER_CONTROL;
                 Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return ReadBuffer.Span[0];
             }
-            set {
+            set
+            {
                 Peripheral.WriteRegister(Commands.WRITE_REGISTER, value);
             }
         }
@@ -217,7 +244,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="spiBus">Spi Bus object</param>
         /// <param name="chipSelect">Chip select pin.</param>
         public Adxl362(IDigitalOutputController device, ISpiBus spiBus, IPin chipSelect)
-            : base (spiBus, device.CreateDigitalOutputPort(chipSelect))
+            : base(spiBus, device.CreateDigitalOutputPort(chipSelect))
         {
             //
             //  ADXL362 works in SPI mode 0 (CPOL = 0, CPHA = 0).
@@ -228,10 +255,12 @@ namespace Meadow.Foundation.Sensors.Motion
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> changeResult)
         {
-            if (changeResult.New.Temperature is { } temp) {
+            if (changeResult.New.Temperature is { } temp)
+            {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
-            if (changeResult.New.Acceleration3D is { } accel) {
+            if (changeResult.New.Acceleration3D is { } accel)
+            {
                 Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
             }
             base.RaiseEventsAndNotify(changeResult);
@@ -294,7 +323,8 @@ namespace Meadow.Foundation.Sensors.Motion
 
         protected override Task<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> ReadSensor()
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
                 (Acceleration3D? Acceleration3D, Units.Temperature? Temperature) conditions;
 
                 // read the XYZ and Temp registers in one go
@@ -339,7 +369,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="numberOfSamples">Number of consecutive samples that must exceed the threshold</param>
         public void ConfigureActivityThreshold(ushort threshold, byte numberOfSamples)
         {
-            if ((threshold & 0xf800) != 0) {
+            if ((threshold & 0xf800) != 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(threshold), "Activity threshold should be in the range 0-0x7ff");
             }
             //
@@ -373,7 +404,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="numberOfSamples">Number of consecutive samples that must exceed the threshold</param>
         public void ConfigureInactivityThreshold(ushort threshold, ushort numberOfSamples)
         {
-            if ((threshold & 0xf8) != 0) {
+            if ((threshold & 0xf8) != 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(threshold), "Inactivity threshold should be in the range 0-0x7ff");
             }
             //
@@ -396,9 +428,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Resistor mode mapping based upon the active low state.</returns>
         private ResistorMode MapResistorMode(bool activeLow)
         {
-            if (activeLow) {
+            if (activeLow)
+            {
                 return (ResistorMode.InternalPullUp);
-            } else {
+            }
+            else
+            {
                 return (ResistorMode.InternalPullDown);
             }
         }
@@ -411,9 +446,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Interrupt mode mapping based upon the active low state.</returns>
         private InterruptMode MapInterruptMode(bool activeLow)
         {
-            if (activeLow) {
+            if (activeLow)
+            {
                 return (InterruptMode.EdgeFalling);
-            } else {
+            }
+            else
+            {
                 return (InterruptMode.EdgeRising);
             }
         }
@@ -441,17 +479,23 @@ namespace Meadow.Foundation.Sensors.Motion
             WriteBuffer.Span[2] = interruptMap2;
             Peripheral.Write(WriteBuffer.Span[0..3]);
 
-            if (interruptPin1 != null) {
+            if (interruptPin1 != null)
+            {
                 _digitalInputPort1 = device.CreateDigitalInputPort(interruptPin1, InterruptMode.EdgeRising, MapResistorMode((interruptMap1 & 0xf0) > 0));
                 _digitalInputPort1.Changed += InterruptChanged;
-            } else {
+            }
+            else
+            {
                 _digitalInputPort1 = null;
             }
 
-            if (interruptPin2 != null) {
+            if (interruptPin2 != null)
+            {
                 _digitalInputPort2 = device.CreateDigitalInputPort(interruptPin2, InterruptMode.EdgeRising, MapResistorMode((interruptMap2 & 0xf0) > 0));
                 _digitalInputPort2.Changed += InterruptChanged;
-            } else {
+            }
+            else
+            {
                 _digitalInputPort2 = null;
             }
         }
@@ -462,7 +506,8 @@ namespace Meadow.Foundation.Sensors.Motion
         private void InterruptChanged(object sender, DigitalPortResult e)
         {
             var status = Status;
-            if ((status & StatusBitsMasks.ACTIVITY_DETECTED) != 0) {
+            if ((status & StatusBitsMasks.ACTIVITY_DETECTED) != 0)
+            {
                 //TODO: shouldn't this actually do something? why is it commented out?
                 // AccelerationChanged(this, new SensorVectorEventArgs(lastNotifiedReading, currentReading));
             }

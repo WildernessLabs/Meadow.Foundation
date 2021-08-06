@@ -6,6 +6,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public class Ms5611
     {
+        public const byte DEFAULT_ADDRESS = 0x5C;
+
         private Ms5611Base ms5611;
 
         public enum Resolution
@@ -23,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2c"></param>
         /// <param name="address">0x76 is CSB is pulled low, 0x77 if CSB is pulled high</param>
         /// <param name="resolution"></param>
-        public Ms5611(II2cBus i2c, byte address = 0x76, Resolution resolution = Resolution.OSR_1024)
+        public Ms5611(II2cBus i2c, byte address = DEFAULT_ADDRESS, Resolution resolution = Resolution.OSR_1024)
         {
             switch (address)
             {
@@ -34,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 default:
                     throw new ArgumentOutOfRangeException("Address must be 0x76 or 0x77");
             }
-            
+
             ms5611 = new Ms5611I2c(i2c, address, resolution);
         }
 

@@ -71,12 +71,16 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Get true if RGBC is clear channel interrupt
         /// </summary>
-        public bool IsClearInterrupt {
-            get {
+        public bool IsClearInterrupt
+        {
+            get
+            {
                 var status = Peripheral.ReadRegister((byte)(Registers.COMMAND_BIT | Registers.STATUS));
                 return ((Registers)(status & (byte)Registers.STATUS_AINT) == Registers.STATUS_AINT);
             }
         }
+
+        public const byte DEFAULT_ADDRESS = 0x29;
 
         //==== ctors
 
@@ -88,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <remarks>
         /// <param name="i2cBus">I2C bus.</param>
         public Tcs3472x(
-            II2cBus i2cBus, byte address = 0x29,
+            II2cBus i2cBus, byte address = DEFAULT_ADDRESS,
             double integrationTime = 0.700, GainType gain = GainType.Gain60X)
                 : base(i2cBus, address)
         {
@@ -96,7 +100,7 @@ namespace Meadow.Foundation.Sensors.Light
             Device = (DeviceType)Peripheral.ReadRegister((byte)(Registers.COMMAND_BIT | Registers.ID));
 
             Console.WriteLine($"Device: {Device}");
-            
+
             isLongTime = false;
             IntegrationTime = Math.Clamp(integrationTime, 0.0024, 0.7);
 
@@ -111,7 +115,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         protected override Task<(Illuminance? AmbientLight, Color? Color, bool Valid)> ReadSensor()
         {
-            return Task.Run(async () => {
+            return Task.Run(async () =>
+            {
                 (Illuminance? AmbientLight, Color? Color, bool Valid) conditions;
 
 
@@ -122,7 +127,8 @@ namespace Meadow.Foundation.Sensors.Light
                 var divide = (256 - integrationTimeByte) * 1024.0;
 
                 // If we are in long wait, we'll need to divide even more
-                if (isLongTime) {
+                if (isLongTime)
+                {
                     divide *= 12.0;
                 }
 
@@ -148,7 +154,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> changeResult)
         {
-            if (changeResult.New.AmbientLight is { } ambient) {
+            if (changeResult.New.AmbientLight is { } ambient)
+            {
                 LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
             }
             base.RaiseEventsAndNotify(changeResult);

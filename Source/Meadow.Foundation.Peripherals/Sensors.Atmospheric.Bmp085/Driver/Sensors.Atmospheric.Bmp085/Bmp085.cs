@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Bosch BMP085 digital pressure and temperature sensor.
     /// </summary>
-    public class Bmp085 : 
+    public class Bmp085 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Pressure? Pressure => Conditions.Pressure;
 
-        public static int DEFAULT_SPEED => 40000; // BMP085 clock rate
+        public static int DEFAULT_SPEED = 40000; // BMP085 clock rate
 
         public enum DeviceMode
         {
@@ -64,11 +64,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             UltraHighResolution = 3
         }
 
+        public const byte DEFAULT_ADDRESS = 0x77;
+
         /// <summary>
         /// Provide a mechanism for reading the temperature and humidity from
         /// a Bmp085 temperature / humidity sensor.
         /// </summary>
-        public Bmp085(II2cBus i2cBus, byte address = 0x77,
+        public Bmp085(II2cBus i2cBus, byte address = DEFAULT_ADDRESS,
             DeviceMode deviceMode = DeviceMode.Standard)
                 : base(i2cBus, address)
         {
@@ -80,10 +82,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)> changeResult)
         {
-            if (changeResult.New.Temperature is { } temp) {
+            if (changeResult.New.Temperature is { } temp)
+            {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
-            if (changeResult.New.Pressure is { } pressure) {
+            if (changeResult.New.Pressure is { } pressure)
+            {
                 PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
             }
             base.RaiseEventsAndNotify(changeResult);

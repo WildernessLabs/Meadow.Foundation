@@ -1,4 +1,3 @@
-using System;
 using Meadow.Devices;
 using Meadow.Hardware;
 

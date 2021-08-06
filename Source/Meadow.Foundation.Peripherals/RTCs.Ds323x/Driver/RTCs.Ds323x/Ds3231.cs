@@ -7,6 +7,8 @@ namespace Meadow.Foundation.RTCs
     /// </summary>
     public class Ds3231 : Ds323x
     {
+        public const byte DEFAULT_ADDRESS = 0x68;
+
         /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component.
         /// </summary>
@@ -18,7 +20,7 @@ namespace Meadow.Foundation.RTCs
             IDigitalInputController device,
             II2cBus i2cBus,
             IPin interruptPin = null,
-            byte address = 0x68)
+            byte address = DEFAULT_ADDRESS)
             : base(new I2cPeripheral(i2cBus, address), device, interruptPin)
         {
         }
@@ -33,7 +35,7 @@ namespace Meadow.Foundation.RTCs
         public Ds3231(
            II2cBus i2cBus,
            IDigitalInputPort interruptPort = null,
-           byte address = 0x68)
+           byte address = DEFAULT_ADDRESS)
            : base(new I2cPeripheral(i2cBus, address), interruptPort)
         {
         }

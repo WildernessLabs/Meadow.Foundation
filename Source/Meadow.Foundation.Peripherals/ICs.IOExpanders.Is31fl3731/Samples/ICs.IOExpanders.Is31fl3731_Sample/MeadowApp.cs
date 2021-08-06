@@ -35,7 +35,7 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
             Console.WriteLine("Initialize hardware...");
             
             _i2cBus= Device.CreateI2cBus();
-            _iS31FL3731 = new Is31fl3731(_i2cBus, 0x74);
+            _iS31FL3731 = new Is31fl3731(_i2cBus);
             
             _iS31FL3731.Initialize();
 

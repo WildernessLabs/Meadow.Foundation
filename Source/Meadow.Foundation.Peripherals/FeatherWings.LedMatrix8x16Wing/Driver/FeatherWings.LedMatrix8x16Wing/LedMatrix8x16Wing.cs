@@ -9,10 +9,12 @@ namespace Meadow.Foundation.FeatherWings
     /// </summary>
     public class LedMatrix8x16Wing : DisplayBase
     {
+        public const byte DEFAULT_ADDRESS = 0x70;
+
         private Ht16k33 ht16k33;
         private Color pen;
 
-        public LedMatrix8x16Wing(II2cBus i2cBus, byte address = 0x70)
+        public LedMatrix8x16Wing(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
         {
             ht16k33 = new Ht16k33(i2cBus, address);
         }

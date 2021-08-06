@@ -22,13 +22,15 @@ namespace Meadow.Foundation.Sensors.Environmental
         private const byte ASG_VERSION_MSB = 0x0A;
         private const byte ASG_VERSION_LSB = 0x01;
 
+        public const byte DEFAULT_ADDRESS = 0x11;
+
         //==== events
         public event EventHandler<IChangeResult<Units.Concentration>> ConcentrationUpdated = delegate { };
 
         public Concentration? Concentration { get; private set; }
 
 
-        public Ags01Db(II2cBus i2cBus, byte address = 0x11)
+        public Ags01Db(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
             : base(i2cBus, address, readBufferSize: 3, writeBufferSize: 3)
         {
 

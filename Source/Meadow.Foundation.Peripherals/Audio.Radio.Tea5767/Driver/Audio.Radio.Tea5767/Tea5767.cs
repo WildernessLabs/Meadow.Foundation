@@ -11,7 +11,8 @@ namespace Meadow.Foundation.Audio.Radio
         /// </summary>
         private readonly II2cPeripheral i2cPeripheral;
 
-        const byte TEA5767_ADDRESS = 0x60;
+        public const byte DEFAULT_ADDRESS = 0x60;
+
         static byte FIRST_DATA = 0;
         static byte SECOND_DATA = 1;
         static byte THIRD_DATA = 2;
@@ -45,7 +46,6 @@ namespace Meadow.Foundation.Audio.Radio
             static byte SEARCH_INDICATOR_ON = 1;
             static byte SEARCH_INDICATOR_OFF = 0;*/
 
-        float frequency;
         byte hiInjection;
         byte[] transmissionData = new byte[5];
         byte[] reception_data = new byte[5];
@@ -56,7 +56,7 @@ namespace Meadow.Foundation.Audio.Radio
         ///     Create a new TEA5767 object using the default parameters
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public Tea5767(II2cBus i2cBus, byte address = TEA5767_ADDRESS)
+        public Tea5767(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
@@ -112,7 +112,6 @@ namespace Meadow.Foundation.Audio.Radio
 
         public void SetFrequency(float frequency)
         {
-            this.frequency = frequency;
             uint frequencyW;
 
             if (hiInjection > 0)

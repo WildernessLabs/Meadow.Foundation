@@ -1,18 +1,18 @@
 ﻿using System;
 using Meadow.Hardware;
-using Meadow.Utilities;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Bme680 : I2cPeripheral
     {
+        public const byte DEFAULT_ADDRESS = 0x77;
+
         private SensorSettings _settings;
         private readonly object _lock;
         private bool _initialized;
         public bool IsSampling { get; private set; }
-        
 
-        public Bme680(II2cBus bus, byte address = 0x77, SensorSettings sensorSettings = null) : base(bus, address)
+        public Bme680(II2cBus bus, byte address = DEFAULT_ADDRESS, SensorSettings sensorSettings = null) : base(bus, address)
         {
             if (sensorSettings == null)
                 sensorSettings = new SensorSettings();
@@ -30,13 +30,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 Console.WriteLine("Initializing Temperature and Pressure");
                 // Init the temp and pressure registers
                 // Clear the registers so they're in a known state.
-                var status = (byte) ((((byte) _settings.TemperatureOversample << 5) & 0xe0) |
-                                     (((byte) _settings.PressureOversample << 2) & 0x1c));
+                var status = (byte)((((byte)_settings.TemperatureOversample << 5) & 0xe0) |
+                                     (((byte)_settings.PressureOversample << 2) & 0x1c));
                 WriteRegister(RegisterAddresses.ControlTemperatureAndPressure, status);
 
                 // Init the humidity registers
                 Console.WriteLine("Initializing Humidity");
-                status = (byte) ((byte)_settings.HumidityOversample & 0x07);
+                status = (byte)((byte)_settings.HumidityOversample & 0x07);
                 WriteRegister(RegisterAddresses.ControlHumidity, status);
 
                 Console.WriteLine("Finished initializing.");

@@ -21,7 +21,7 @@ namespace ICs.IOExpanders.Pca9685_Sample
             Console.WriteLine("Initialize hardware...");
             var i2CBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
 
-            pca9685 = new Pca9685(i2CBus, 0x40, 50);
+            pca9685 = new Pca9685(i2CBus, Pca9685.DEFAULT_ADDRESS, 50);
             pca9685.Initialize();
         }
 

@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// High Accuracy Ambient Light Sensor 
     /// </summary>
-    public partial class Veml7700 : ByteCommsSensorBase<Illuminance>, ILightSensor,  IDisposable
+    public partial class Veml7700 : ByteCommsSensorBase<Illuminance>, ILightSensor, IDisposable
     {
         //==== events
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
@@ -27,16 +27,19 @@ namespace Meadow.Foundation.Sensors.Light
 
         public SensorTypes DataSource { get; set; } = SensorTypes.White;
 
+        public const byte DEFAULT_ADDRESS = 0x10;
+
         public Veml7700(II2cBus i2cBus)
-            : base(i2cBus, (byte)Addresses.Default)
+            : base(i2cBus, DEFAULT_ADDRESS)
         {
         }
 
         protected async override Task<Illuminance> ReadSensor()
         {
-            return await Task.Run(async () => {
+            return await Task.Run(async () =>
+            {
                 Illuminance illuminance = new Illuminance(0);
-                
+
                 int integrationTime = 0;
                 int gain = 1;
                 int scaleA;
@@ -47,7 +50,8 @@ namespace Meadow.Foundation.Sensors.Light
                 // once the data coming is good, then the actual reading is multiplied
                 // by the integration time scale factor.
                 // see the Application Note pdf for more information
-                while (true) {
+                while (true)
+                {
                     WriteRegister(Registers.AlsConf0, 0);
 
                     // wait > 2.5ms
@@ -68,45 +72,59 @@ namespace Meadow.Foundation.Sensors.Light
 
                     //Console.WriteLine($"Gain: {gain}, integrationTime: {integrationTime}");
 
-                    if (data < 100) { // Too dark!
+                    if (data < 100)
+                    { // Too dark!
                         //Console.WriteLine("Too dark");
                         // increase gain
-                        if (++gain > 4) {
+                        if (++gain > 4)
+                        {
                             gain = 4;
 
                             // increase integration time
-                            if (++integrationTime >= 4) {
+                            if (++integrationTime >= 4)
+                            {
                                 // everything is maxed out, so return the value.
                                 //Console.WriteLine("Maxed out.");
-                                return(new Illuminance(scaleA * scaleB * 0.0036f * (float)data));
-                            } else {
+                                return (new Illuminance(scaleA * scaleB * 0.0036f * (float)data));
+                            }
+                            else
+                            {
                                 //Console.WriteLine("Increasing integration time.");
                                 // power down (we're changing config)
                                 SetPower(false);
                                 scaleB = SetIntegrationTime(integrationTime);
                                 SetPower(true);
                             }
-                        } else {
+                        }
+                        else
+                        {
                             //Console.WriteLine("Increasing gain.");
                             // power down (we're changing config)
                             SetPower(false);
                             scaleA = SetGain(gain);
                             SetPower(true);
                         }
-                    } else if (data > 10000) { // Too bright!
+                    }
+                    else if (data > 10000)
+                    { // Too bright!
                         //Console.WriteLine("Too bright.");
                         // decrease integration time
-                        if (--integrationTime <= -2) {
+                        if (--integrationTime <= -2)
+                        {
                             // can't go lower
                             return CalculateCorrectedLux(scaleA * scaleB * 0.0036f * (float)data);
-                        } else {
+                        }
+                        else
+                        {
                             //Console.WriteLine("Decreasing integration time.");
                             // power down (we're changing config)
                             SetPower(false);
                             scaleB = SetIntegrationTime(integrationTime);
                             SetPower(true);
                         }
-                    } else { // Just right!
+                    }
+                    else
+                    { // Just right!
                         return (CalculateCorrectedLux(0.0036f * scaleA * scaleB * (float)data));
                     }
                     // give some time for the sensor to accumulate light

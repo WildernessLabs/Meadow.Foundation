@@ -104,7 +104,7 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             SendCommand(WRITE_BWRAM);
 
-        
+
         }
 
         public void PowerDown()

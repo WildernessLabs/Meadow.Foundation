@@ -20,8 +20,8 @@ namespace Sensors.Motion.mpu5060_Sample
             // Mpu5060 I2C address could be 0x68 or 0x69
             sensor = new Mpu6050(
                 Device.CreateI2cBus(),
-                Mpu6050.Addresses.High // Address pin pulled high
-                //Mpu6050.Addresses.Low // Address pin pulled low.
+                Mpu6050.DEFAULT_ADDRESS // Address pin pulled high
+                //Mpu6050.ALTERNATE_ADDRESS // Address pin pulled low.
                 );
 
             //==== Events

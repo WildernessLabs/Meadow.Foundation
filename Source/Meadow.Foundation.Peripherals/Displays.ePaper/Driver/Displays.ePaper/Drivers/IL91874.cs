@@ -1,5 +1,4 @@
-﻿using System;
-using Meadow.Devices;
+﻿using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
@@ -107,7 +106,7 @@ namespace Meadow.Foundation.Displays.ePaper
                 RefreshPartial(xRefreshStart, yRefreshStart,
                     xRefreshEnd - xRefreshStart, yRefreshEnd - yRefreshStart);
 
-               // DisplayFrame();
+                // DisplayFrame();
             }
 
             xRefreshStart = yRefreshStart = xRefreshEnd = yRefreshEnd = -1;
@@ -234,10 +233,10 @@ namespace Meadow.Foundation.Displays.ePaper
                 SendCommand(DATA_START_TRANSMISSION_1);
                 DelayMs(2);
 
-                for (int i = 0; i < Width * Height / 8; i++) 
+                for (int i = 0; i < Width * Height / 8; i++)
                 {   //I bet we can optimize this .... seems silly to send a byte at a time
-                     SendData(bufferBlack[i]);
-                } 
+                    SendData(bufferBlack[i]);
+                }
                 DelayMs(2);
             }
 
@@ -246,10 +245,10 @@ namespace Meadow.Foundation.Displays.ePaper
                 SendCommand(DATA_START_TRANSMISSION_2);
                 DelayMs(2);
 
-                for(int i = 0; i < Width * Height / 8; i++) 
+                for (int i = 0; i < Width * Height / 8; i++)
                 {
-                    SendData(bufferRed[i]);  
-                }  
+                    SendData(bufferRed[i]);
+                }
                 DelayMs(2);
             }
 
@@ -275,7 +274,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
-               // SendData(0x00);//black?
+                // SendData(0x00);//black?
                 SendData(0xFF);//white
             }
 
@@ -286,7 +285,7 @@ namespace Meadow.Foundation.Displays.ePaper
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(0x00);//nothing?
-              //  SendData(0xFF); //red 
+                               //  SendData(0xFF); //red 
             }
             DelayMs(2);
         }

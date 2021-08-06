@@ -29,14 +29,14 @@ namespace Meadow.Foundation.Sensors.Temperature
         const byte MCP_DEVICE_ID = 0x07;    // device ID
         const byte MCP_RESOLUTION = 0x08;     // resolution
 
-        public const byte DefaultAddress = 0x18;
+        public const byte DEFAULT_ADDRESS = 0x18;
 
         // <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
 
-        public Mcp9808(II2cBus i2CBus, byte address = DefaultAddress)
+        public Mcp9808(II2cBus i2CBus, byte address = DEFAULT_ADDRESS)
             : base(i2CBus, address, readBufferSize: 8, writeBufferSize: 8)
         {
             Peripheral.WriteRegister(MCP_REG_CONFIG, (ushort)0x0);
