@@ -15,6 +15,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
+        public const byte DEFAULT_ADDRESS = 0x27;
+
         /// <summary>
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
@@ -35,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Address of the HIH6130 (default = 0x27).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
-        public Hih6130(II2cBus i2cBus, byte address = 0x27)
+        public Hih6130(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
             : base(i2cBus, address, readBufferSize: 4, writeBufferSize: 4)
         {
         }
