@@ -24,13 +24,18 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// </summary>
         private readonly ushort _memorySize;
 
+        public const byte DEFAULT_ADDRESS = 0x50;
+
         /// <summary>
         ///     Create a new AT24Cxx object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the At24Cxx (default = 0x50).</param>
         /// <param name="pageSize">Number of bytes in a page (default = 32 - AT24C32).</param>
         /// <param name="memorySize">Total number of bytes in the EEPROM (default = 8192 - AT24C32).</param>
-        public At24Cxx(II2cBus i2cBus, byte address = 0x50, ushort pageSize = 32, ushort memorySize = 8192)
+        public At24Cxx(II2cBus i2cBus,
+            byte address = DEFAULT_ADDRESS,
+            ushort pageSize = 32,
+            ushort memorySize = 8192)
         {
             var device = new I2cPeripheral(i2cBus, address);
             _eeprom = device;

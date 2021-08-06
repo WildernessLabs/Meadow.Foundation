@@ -34,6 +34,8 @@ namespace Meadow.Foundation.Displays.Ssd130x
             InitSSD1306(displayType);
         }
 
+        public const byte DEFAULT_ADDRESS = 0x3C;
+
         /// <summary>
         ///     Create a new SSD1306 object using the default parameters for
         /// </summary>
@@ -45,7 +47,8 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
         public Ssd1306(II2cBus i2cBus,
-            byte address = 0x3c, DisplayType displayType = DisplayType.OLED128x64)
+            byte address = DEFAULT_ADDRESS,
+            DisplayType displayType = DisplayType.OLED128x64)
         {
             this.displayType = displayType;
 

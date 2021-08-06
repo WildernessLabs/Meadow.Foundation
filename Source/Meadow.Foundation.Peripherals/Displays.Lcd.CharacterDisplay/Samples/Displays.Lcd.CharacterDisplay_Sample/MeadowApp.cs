@@ -87,7 +87,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
             display = new CharacterDisplay
             (
                 i2cBus: Device.CreateI2cBus(I2cBusSpeed.Standard),
-                address: I2cCharacterDisplay.DefaultI2cAddress,
+                address: I2cCharacterDisplay.DEFAULT_ADDRESS,
                 rows: 4, columns: 20
             );
         }
