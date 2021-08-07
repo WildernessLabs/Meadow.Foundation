@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationMode.Default);
         }
 
         public override bool IsColorModeSupported(DisplayColorMode mode)
@@ -148,22 +148,22 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand((byte)LcdCommand.RAMWR);  // write to RAM
         }
 
-        public void SetRotation(Rotation rotation)
+        public void SetRotation(RotationMode rotation)
         {
             SendCommand(MADCTL);
 
             switch (rotation)
             {
-                case Rotation.Normal:
+                case RotationMode.Default:
                     SendData(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
                     break;
-                case Rotation.Rotate_90:
+                case RotationMode._90Degrees:
                     SendData(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
                     break;
-                case Rotation.Rotate_180:
+                case RotationMode._180Degrees:
                     SendData(MADCTL_RGB);
                     break;
-                case Rotation.Rotate_270:
+                case RotationMode._270Degrees:
                     SendData(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
                     break;
             }

@@ -3,6 +3,7 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Distance;
@@ -50,7 +51,7 @@ namespace MeadowApp
 
             graphics = new GraphicsLibrary(display);
             graphics.CurrentFont = new Font12x20();
-            graphics.Rotation = GraphicsLibrary.RotationType._90Degrees;
+            graphics.Rotation = RotationMode._90Degrees;
 
             Console.WriteLine("Create time of flight sensor");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);

@@ -23,8 +23,8 @@ namespace Meadow.Foundation.Graphics
                 if(currentFont == null) { return; }
                 DisplayConfig = new TextDisplayConfig()
                 {
-                    Width = (ushort)(Width / currentFont.Width),
-                    Height = (ushort)(Height / CurrentFont.Height)
+                    Width = Width / currentFont.Width,
+                    Height = Height / CurrentFont.Height
                 };
             }
         }
@@ -33,12 +33,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Current color mode
         /// </summary>
-        public DisplayBase.DisplayColorMode ColorMode => display.ColorMode;
+        public DisplayColorMode ColorMode => display.ColorMode;
 
         /// <summary>
-        /// Current rotation used for drawing pixels to the display
+        /// Current RotationMode used for drawing pixels to the display
         /// </summary>
-        public RotationType Rotation { get; set; } = RotationType.Default;
+        public RotationMode Rotation { get; set; } = RotationMode.Default;
 
         /// <summary>
         /// Stroke / line thickness when drawing lines or shape outlines
@@ -57,12 +57,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Return the height of the display after accounting for the rotation.
         /// </summary>
-        public int Height => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Height : display.Width;
+        public int Height => Rotation == RotationMode.Default || Rotation == RotationMode._180Degrees ? display.Height : display.Width;
 
         /// <summary>
         /// Return the width of the display after accounting for the rotation.
         /// </summary>
-        public int Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Width : display.Height;
+        public int Width => Rotation == RotationMode.Default || Rotation == RotationMode._180Degrees ? display.Width : display.Height;
 
         public TextDisplayConfig DisplayConfig { get; private set; }
 
@@ -1197,13 +1197,13 @@ namespace Meadow.Foundation.Graphics
         {
             switch(Rotation)
             {
-                case RotationType._90Degrees:
+                case RotationMode._90Degrees:
                     return (int)display.Width - y - 1;
-                case RotationType._180Degrees:
+                case RotationMode._180Degrees:
                     return (int)display.Width - x - 1;
-                case RotationType._270Degrees:
+                case RotationMode._270Degrees:
                     return (int)y;
-                case RotationType.Default:
+                case RotationMode.Default:
                 default:
                     return x;
             }
@@ -1213,13 +1213,13 @@ namespace Meadow.Foundation.Graphics
         {
             switch (Rotation)
             {
-                case RotationType._90Degrees:
+                case RotationMode._90Degrees:
                     return x; 
-                case RotationType._180Degrees:
+                case RotationMode._180Degrees:
                     return (int)display.Height - y - 1;
-                case RotationType._270Degrees:
+                case RotationMode._270Degrees:
                     return (int)display.Height - x - 1;
-                case RotationType.Default:
+                case RotationMode.Default:
                 default:
                     return y;
             }

@@ -28,7 +28,7 @@ namespace Displays.Pcd8854_Sample
             );
 
             graphics = new GraphicsLibrary(display);
-            graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
+            graphics.Rotation = RotationMode._180Degrees;
 
             TestPCD8544();
 

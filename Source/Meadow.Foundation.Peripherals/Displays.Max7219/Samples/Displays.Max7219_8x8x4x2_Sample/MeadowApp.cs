@@ -72,7 +72,7 @@ namespace MeadowApp
 
             graphics = new GraphicsLibrary(display);
 
-            graphics.Rotation = GraphicsLibrary.RotationType._90Degrees;
+            graphics.Rotation = RotationMode._90Degrees;
 
             Console.WriteLine("Max7219 instantiated");
         }

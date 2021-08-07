@@ -1,6 +1,7 @@
 ﻿using System;
 using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Hid;
@@ -42,7 +43,7 @@ namespace Sensors.Distance.Mpr121_Sample
             Console.WriteLine("Create graphics lib");
 
             graphics = new GraphicsLibrary(display);
-            graphics.Rotation = GraphicsLibrary.RotationType._90Degrees;
+            graphics.Rotation = RotationMode._90Degrees;
             graphics.CurrentFont = new Font12x16();
         }
 

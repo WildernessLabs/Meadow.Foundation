@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Foundation.Displays;
+using System;
 
 namespace Meadow.Foundation.Graphics
 {
@@ -8,7 +9,7 @@ namespace Meadow.Foundation.Graphics
         {
             public FontBase CurrentFont { get; set; }
             public int Stroke { get; set; }
-            public RotationType Rotation { get; set; }
+            public RotationMode Rotation { get; set; }
             public Color PenColor { get; set; }
         }
 

@@ -1,5 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
@@ -113,7 +114,7 @@ namespace Displays.Ssd1309_3DCube_Sample
             Console.WriteLine("Create Graphics Library...");
 
             graphics = new GraphicsLibrary(display);
-            graphics.Rotation = GraphicsLibrary.RotationType._270Degrees;
+            graphics.Rotation = RotationMode._270Degrees;
             graphics.CurrentFont = new Font8x12();
 
             graphics.Clear();

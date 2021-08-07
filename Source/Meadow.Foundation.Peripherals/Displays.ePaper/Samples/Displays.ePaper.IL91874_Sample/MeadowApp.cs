@@ -2,6 +2,7 @@
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.ePaper;
 using Meadow.Foundation.Graphics;
 
@@ -29,7 +30,7 @@ namespace Displays.ePaper.IL91874_Sample
                 height: 264);
 
             var graphics = new GraphicsLibrary(display);
-            graphics.Rotation = GraphicsLibrary.RotationType._270Degrees;
+            graphics.Rotation = RotationMode._270Degrees;
 
             graphics.CurrentFont = new Font12x16();
 

@@ -4,10 +4,10 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using static Meadow.Foundation.Displays.DisplayBase;
 
 namespace Displays.Tft.Hx8357b_Sample
 {
@@ -285,15 +285,15 @@ namespace Displays.Tft.Hx8357b_Sample
 
             graphics.Clear();
 
-            graphics.DrawText(0, 0, "2x Scale", Color.Blue, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 0, "2x Scale", Color.Blue, ScaleFactor.X2);
 
-            graphics.DrawText(0, 48, "12x20 Font", Color.Green, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 48, "12x20 Font", Color.Green, ScaleFactor.X2);
 
-            graphics.DrawText(0, 96, "0123456789", Color.Yellow, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 96, "0123456789", Color.Yellow, ScaleFactor.X2);
 
-            graphics.DrawText(0, 144, "!@#$%^&*()", Color.Orange, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 144, "!@#$%^&*()", Color.Orange, ScaleFactor.X2);
 
-            graphics.DrawText(0, 192, "3x!", Color.OrangeRed, GraphicsLibrary.ScaleFactor.X3);
+            graphics.DrawText(0, 192, "3x!", Color.OrangeRed, ScaleFactor.X3);
 
             graphics.Show();
         }

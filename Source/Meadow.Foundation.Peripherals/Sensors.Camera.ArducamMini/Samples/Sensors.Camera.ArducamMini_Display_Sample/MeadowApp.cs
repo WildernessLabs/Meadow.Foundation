@@ -7,6 +7,7 @@ using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics;
 using NanoJpeg;
+using Meadow.Foundation.Displays;
 
 namespace MeadowApp
 {
@@ -95,7 +96,7 @@ namespace MeadowApp
 
             graphics = new GraphicsLibrary(display);
             graphics.CurrentFont = new Font12x20();
-            graphics.Rotation = GraphicsLibrary.RotationType._90Degrees;
+            graphics.Rotation = RotationMode._90Degrees;
 
         }
 

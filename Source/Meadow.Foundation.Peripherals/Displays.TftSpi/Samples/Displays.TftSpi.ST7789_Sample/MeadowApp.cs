@@ -4,6 +4,7 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
@@ -138,7 +139,7 @@ namespace Displays.Tft.ST7789_Sample
             Console.WriteLine("Create graphics lib");
 
             canvas = new GraphicsLibrary(display);
-            canvas.Rotation = GraphicsLibrary.RotationType._180Degrees;
+            canvas.Rotation = RotationMode._180Degrees;
 
             Console.WriteLine("Init complete");
         }
@@ -176,12 +177,12 @@ namespace Displays.Tft.ST7789_Sample
             canvas.Clear();
 
             canvas.DrawText(120, 0, "Left aligned", Color.Blue);
-            canvas.DrawText(120, 16, "Center aligned", Color.Green, GraphicsLibrary.ScaleFactor.X1, GraphicsLibrary.TextAlignment.Center);
-            canvas.DrawText(120, 32, "Right aligned", Color.Red, GraphicsLibrary.ScaleFactor.X1, GraphicsLibrary.TextAlignment.Right);
+            canvas.DrawText(120, 16, "Center aligned", Color.Green, ScaleFactor.X1, TextAlignment.Center);
+            canvas.DrawText(120, 32, "Right aligned", Color.Red, ScaleFactor.X1, TextAlignment.Right);
 
-            canvas.DrawText(120, 64, "Left aligned", Color.Blue, GraphicsLibrary.ScaleFactor.X2);
-            canvas.DrawText(120, 96, "Center aligned", Color.Green, GraphicsLibrary.ScaleFactor.X2, GraphicsLibrary.TextAlignment.Center);
-            canvas.DrawText(120, 128, "Right aligned", Color.Red, GraphicsLibrary.ScaleFactor.X2, GraphicsLibrary.TextAlignment.Right);
+            canvas.DrawText(120, 64, "Left aligned", Color.Blue, ScaleFactor.X2);
+            canvas.DrawText(120, 96, "Center aligned", Color.Green, ScaleFactor.X2, TextAlignment.Center);
+            canvas.DrawText(120, 128, "Right aligned", Color.Red, ScaleFactor.X2, TextAlignment.Right);
 
             canvas.Show();
         }
@@ -403,19 +404,19 @@ namespace Displays.Tft.ST7789_Sample
 
             canvas.Clear();
 
-            canvas.DrawText(0, 0, "2x Scale", Color.Blue, GraphicsLibrary.ScaleFactor.X2);
+            canvas.DrawText(0, 0, "2x Scale", Color.Blue, ScaleFactor.X2);
 
-            canvas.DrawText(0, 48, "12x20 Font", Color.Green, GraphicsLibrary.ScaleFactor.X2);
+            canvas.DrawText(0, 48, "12x20 Font", Color.Green, ScaleFactor.X2);
 
-            canvas.DrawText(0, 96, "0123456789", Color.Yellow, GraphicsLibrary.ScaleFactor.X2);
+            canvas.DrawText(0, 96, "0123456789", Color.Yellow, ScaleFactor.X2);
 
-            canvas.DrawText(0, 144, "!@#$%^&*()", Color.Orange, GraphicsLibrary.ScaleFactor.X2);
+            canvas.DrawText(0, 144, "!@#$%^&*()", Color.Orange, ScaleFactor.X2);
 
-            canvas.DrawText(0, 192, "3x!", Color.OrangeRed, GraphicsLibrary.ScaleFactor.X3);
+            canvas.DrawText(0, 192, "3x!", Color.OrangeRed, ScaleFactor.X3);
 
-            canvas.DrawText(0, 240, "Meadow!", Color.Red, GraphicsLibrary.ScaleFactor.X2);
+            canvas.DrawText(0, 240, "Meadow!", Color.Red, ScaleFactor.X2);
 
-            canvas.DrawText(0, 288, "B4.2", Color.Violet, GraphicsLibrary.ScaleFactor.X2);
+            canvas.DrawText(0, 288, "B4.2", Color.Violet, ScaleFactor.X2);
 
             canvas.Show();
         }

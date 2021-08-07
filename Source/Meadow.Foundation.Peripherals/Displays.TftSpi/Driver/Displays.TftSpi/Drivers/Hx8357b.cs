@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationMode.Default);
         }
 
         protected override void Initialize()

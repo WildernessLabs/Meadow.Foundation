@@ -29,15 +29,6 @@ namespace Meadow.Foundation.Displays.TftSpi
             RADRD = 0x2E
         };
 
-        // TODO: @Adrian - should this use the graphics rotation?
-        public enum Rotation
-        {
-            Normal, //zero
-            Rotate_90, //in degrees
-            Rotate_180,
-            Rotate_270,
-        }
-
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
         public override DisplayColorMode ColorMode => colorMode;

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Hid;
@@ -73,6 +74,7 @@ namespace MeadowApp
                 Console.WriteLine("Create graphics lib");
                 canvas = new GraphicsLibrary(display);
                 canvas.Rotation = GraphicsLibrary.RotationType._90Degrees;
+                canvas.Rotation = RotationMode._90Degrees;
             }
 
             Console.WriteLine("Hardware initialization complete.");

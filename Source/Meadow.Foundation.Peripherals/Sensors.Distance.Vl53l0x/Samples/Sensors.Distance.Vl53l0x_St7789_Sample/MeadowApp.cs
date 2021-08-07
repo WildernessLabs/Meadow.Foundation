@@ -2,6 +2,7 @@
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Distance;
@@ -63,7 +64,7 @@ namespace Sensors.Distance.Vl53l0x_St7789_Sample
             Console.WriteLine($"{result.New.Millimeters}mm");
 
             graphics.DrawRectangle(0, 0, 135, 33, Color.Black, true);
-            graphics.DrawText(0, 0, $"{result.New.Millimeters}mm", Color.White, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 0, $"{result.New.Millimeters}mm", Color.White, ScaleFactor.X2);
             graphics.Show();
         }
     }

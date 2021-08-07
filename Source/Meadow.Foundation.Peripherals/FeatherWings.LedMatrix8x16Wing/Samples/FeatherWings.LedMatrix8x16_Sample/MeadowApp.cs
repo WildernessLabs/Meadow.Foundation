@@ -2,6 +2,7 @@
 using System.Threading;
 using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.FeatherWings;
 using Meadow.Foundation.Graphics;
 
@@ -22,7 +23,7 @@ namespace FeatherWings.LedMatrix8x16_Sample
        
             Thread.Sleep(2000);
 
-            graphics.Rotation = GraphicsLibrary.RotationType._90Degrees;
+            graphics.Rotation = RotationMode._90Degrees;
             graphics.Clear();
             graphics.DrawText(0, 0, "M F7");
             graphics.Show();
