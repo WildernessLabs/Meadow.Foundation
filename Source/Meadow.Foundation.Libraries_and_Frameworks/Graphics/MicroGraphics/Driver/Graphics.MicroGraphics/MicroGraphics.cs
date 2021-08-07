@@ -125,6 +125,7 @@ namespace Meadow.Foundation.Graphics
             canvasState.CurrentFont = currentFont;
             canvasState.Stroke = Stroke;
             canvasState.Rotation = Rotation;
+            canvasState.PenColor = PenColor;
         }
 
         /// <summary>
@@ -141,6 +142,7 @@ namespace Meadow.Foundation.Graphics
             currentFont = canvasState.CurrentFont;
             Stroke = canvasState.Stroke;
             Rotation = canvasState.Rotation;
+            PenColor = canvasState.PenColor;
         }
 
         /// <summary>
