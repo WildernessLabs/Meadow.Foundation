@@ -56,7 +56,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             Thread.Sleep(120);
             SendCommand(ILI9341_DISPON, null);
 
-            SetAddressWindow(0, 0, width - 1,  height - 1);
+            SetAddressWindow(0, 0, Width - 1,  Height - 1);
 
             dataCommandPort.State = (Data);
         }

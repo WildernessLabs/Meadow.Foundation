@@ -28,7 +28,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             resetPort.State = true;
             Thread.Sleep(50);
 
-            if(width == 135)
+            if(Width == 135)
             {   //unknown if this is consistant across all displays with this res
                 xOffset = 52;
                 yOffset = 40;
@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(DISPON); //display on
             DelayMs(500);
 
-            SetAddressWindow(0, 0, (width - 1), (height - 1));
+            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }

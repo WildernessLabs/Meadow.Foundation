@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Displays.TftSpi
 
             SendCommand(CMD_DISPLAYON);	//--turn on oled panel   
 
-            SetAddressWindow(0, 0, (width - 1), (height - 1));
+            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }

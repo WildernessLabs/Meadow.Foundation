@@ -35,8 +35,8 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected DisplayColorMode colorMode;
 
         public abstract DisplayColorMode DefautColorMode { get; }
-        public int Width => width;
-        public int Height => height;
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
         public bool IgnoreOutOfBoundsPixels { get; set; } = true;
 
@@ -46,15 +46,11 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected ISpiBus spi;
         protected ISpiPeripheral spiDisplay;
 
-        //protected byte[] spiBuffer;
-        //protected byte[] spiReceive;
         protected Memory<byte> spiWriteBuffer;
         protected Memory<byte> spiReadBuffer;
 
         protected ushort currentPen;
 
-        protected int width;
-        protected int height;
         protected int xMin, xMax, yMin, yMax;
 
         protected const bool Data = true;
@@ -68,8 +64,8 @@ namespace Meadow.Foundation.Displays.TftSpi
         public TftSpiBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height, DisplayColorMode mode = DisplayColorMode.Format16bppRgb565)
         {
-            this.width = width;
-            this.height = height;
+            Width = width;
+            Height = height;
 
             spi = spiBus;
 
@@ -99,16 +95,9 @@ namespace Meadow.Foundation.Displays.TftSpi
                 throw new ArgumentException($"Mode {mode} not supported");
             }
 
-            if (mode == DisplayColorMode.Format16bppRgb565)
-            {
-                spiWriteBuffer = new byte[width * height * sizeof(ushort)];
-                spiReadBuffer = new byte[width * height * sizeof(ushort)];
-            }
-            else //Rgb444
-            {
-                spiWriteBuffer = new byte[width * height * 3 / 2];
-                spiReadBuffer = new byte[width * height * 3 / 2];
-            }
+            spiWriteBuffer = new Bitmap(Width, Height, mode).Buffer;
+            spiReadBuffer = new Bitmap(Width, Height, mode).Buffer;
+
             colorMode = mode;
         }
 
@@ -214,7 +203,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="y">y location</param>
         public void InvertPixel(int x, int y)
         {
-            if (x < 0 || y < 0 || x >= width || y >= height)
+            if (x < 0 || y < 0 || x >= Width || y >= Height)
             { return; }
 
             if(colorMode == DisplayColorMode.Format16bppRgb565)
@@ -230,7 +219,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         void InvertPixelRgb565(int x, int y)
         {
             //get current color
-            var index = ((y * width) + x) * sizeof(ushort);
+            var index = ((y * Width) + x) * sizeof(ushort);
 
             ushort color = (ushort)(spiWriteBuffer.Span[index] << 8| spiWriteBuffer.Span[++index]);
 
@@ -283,7 +272,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="color">16bpp (565) encoded color value</param>
         private void SetPixel565(int x, int y, ushort color)
         {
-            var index = ((y * width) + x) * sizeof(ushort);
+            var index = ((y * Width) + x) * sizeof(ushort);
 
             spiWriteBuffer.Span[index] = (byte)(color >> 8);
             spiWriteBuffer.Span[++index] = (byte)(color);
@@ -291,7 +280,7 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         private void SetPixel(int x, int y, ushort color)
         {
-            if (x < 0 || y < 0 || x >= width || y >= height)
+            if (x < 0 || y < 0 || x >= Width || y >= Height)
             { return; }
 
             if (colorMode == DisplayColorMode.Format16bppRgb565)
@@ -394,13 +383,13 @@ namespace Meadow.Foundation.Displays.TftSpi
             int sourceIndex;
             for (int y = y0; y <= y1; y++)
             {
-                sourceIndex = ((y * width) + x0) * sizeof(ushort);
+                sourceIndex = ((y * Width) + x0) * sizeof(ushort);
 
                 spi.Exchange(chipSelectPort, spiWriteBuffer.Span.Slice(sourceIndex, len), spiReadBuffer.Span.Slice(sourceIndex, len));
             }
 
-            xMin = width;
-            yMin = height;
+            xMin = Width;
+            yMin = Height;
             xMax = 0;
             yMax = 0;
         }

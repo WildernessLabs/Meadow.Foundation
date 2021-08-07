@@ -84,7 +84,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             if (displayType == DisplayType.ST7735B)
             {
                 Init7735B();
-                SetAddressWindow(0, 0, (width - 1), (height - 1));
+                SetAddressWindow(0, 0, (Width - 1), (Height - 1));
                 return;
             }
 
@@ -108,7 +108,7 @@ namespace Meadow.Foundation.Displays.TftSpi
                 SendCommand(INVOFF);
             }
 
-            SetAddressWindow(0, 0, (width - 1), (height - 1));
+            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }
