@@ -8,17 +8,6 @@ namespace Meadow.Foundation.Displays
     public abstract class DisplayBase : IDisplay
     {
         /// <summary>
-        /// Mode for copying 1 bit bitmaps
-        /// </summary>
-        public enum BitmapMode
-        {
-            And,
-            Or,
-            XOr,
-            Copy
-        };
-
-        /// <summary>
         /// Enum for Display color mode, defines bit depth and RGB order
         /// </summary>
         public enum DisplayColorMode

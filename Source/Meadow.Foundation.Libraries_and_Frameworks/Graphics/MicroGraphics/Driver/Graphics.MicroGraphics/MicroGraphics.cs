@@ -9,14 +9,6 @@ namespace Meadow.Foundation.Graphics
     /// </summary>
     public partial class GraphicsLibrary 
     {
-        protected class CanvasState
-        {
-            public FontBase CurrentFont { get; set; }
-            public int Stroke { get; set; }
-            public RotationType Rotation { get; set; }
-            public Color PenColor { get; set; }
-        }
-
         private readonly DisplayBase display;
 
         /// <summary>
@@ -63,32 +55,6 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Display rotation 
-        /// </summary>
-        public enum RotationType
-        {
-            Default,
-            _90Degrees,
-            _180Degrees,
-            _270Degrees
-        }
-
-        public enum ScaleFactor : int
-        {
-            X1 = 1,
-            X2 = 2,
-            X3 = 3,
-            X4 = 4,
-        }
-
-        public enum TextAlignment
-        {
-            Left,
-            Center,
-            Right
-        }
-
-        /// <summary>
         /// Return the height of the display after accounting for the rotation.
         /// </summary>
         public int Height => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Height : display.Width;
@@ -100,8 +66,6 @@ namespace Meadow.Foundation.Graphics
 
         public TextDisplayConfig DisplayConfig { get; private set; }
 
-        protected CanvasState canvasState;
-
         /// <summary>
         /// </summary>
         /// <param name="display"></param>
@@ -109,40 +73,6 @@ namespace Meadow.Foundation.Graphics
         {
             this.display = display;
             CurrentFont = null;
-        }
-
-        /// <summary>
-        /// Save any state variables
-        /// Includes: CurrentFont, Stroke, & Rotation
-        /// </summary>
-        public void SaveState()
-        {
-            if (canvasState == null)
-            {
-                canvasState = new CanvasState();
-            }
-
-            canvasState.CurrentFont = currentFont;
-            canvasState.Stroke = Stroke;
-            canvasState.Rotation = Rotation;
-            canvasState.PenColor = PenColor;
-        }
-
-        /// <summary>
-        /// Restore saved state variables and apply them to the GraphicsLibrary instance 
-        /// Includes: CurrentFont, Stroke, & Rotation
-        /// </summary>
-        public void RestoreState()
-        {
-            if (canvasState == null)
-            {
-                throw new NullReferenceException("GraphicsLibary: State not saved, no state to restore.");
-            }
-
-            currentFont = canvasState.CurrentFont;
-            Stroke = canvasState.Stroke;
-            Rotation = canvasState.Rotation;
-            PenColor = canvasState.PenColor;
         }
 
         /// <summary>
@@ -995,7 +925,7 @@ namespace Meadow.Foundation.Graphics
                 x = x - MeasureText(text, scaleFactor).Width;
             }
 
-            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, DisplayBase.BitmapMode.And, scaleFactor);
+            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, BitmapMode.And, scaleFactor);
         }
 
         /// <summary>
@@ -1202,7 +1132,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="height">Height of the bitmap in pixels.</param>
         /// <param name="bitmap">Bitmap to display.</param>
         /// <param name="bitmapMode">How should the bitmap be transferred to the display?</param>
-        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, DisplayBase.BitmapMode bitmapMode, ScaleFactor scaleFactor = ScaleFactor.X1)
+        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             width /= 8;
 
@@ -1260,7 +1190,7 @@ namespace Meadow.Foundation.Graphics
         {
             display.PenColor = color;
 
-            DrawBitmap(x, y, width, height, bitmap, DisplayBase.BitmapMode.Copy, scaleFactor);
+            DrawBitmap(x, y, width, height, bitmap, BitmapMode.Copy, scaleFactor);
         }
 
         public int GetXForRotation(int x, int y)
