@@ -7,20 +7,24 @@ namespace Meadow.Foundation.Displays.ePaper
     /// <summary>
     ///     Provide an interface for ePaper 3 color displays
     /// </summary>
-    public abstract class EpdColorBase : SpiDisplayBase
+    public abstract class EpdColorBase : SpiDisplayBase, IPixelDisplay
     {
         protected abstract bool IsBlackInverted { get; }
         protected abstract bool IsColorInverted { get; }
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format2bpp;
+        public DisplayColorMode ColorMode => DisplayColorMode.Format2bpp;
+
+        public Color PenColor { get; set; } = Color.White;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
 
         protected readonly byte[] blackImageBuffer;
         protected readonly byte[] colorImageBuffer;
 
         protected int xRefreshStart, yRefreshStart, xRefreshEnd, yRefreshEnd;
 
-        public override int Width => width;
-        public override int Height => height;
+        public int Width => width;
+        public int Height => height;
 
         int width;
         int height;
@@ -56,12 +60,12 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected abstract void Refresh();
 
-        public override void Show()
+        public void Show()
         {
             Refresh();
         }
 
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             Clear(false, updateDisplay);
         }
@@ -93,12 +97,12 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
-            DrawPixel(x, y, currentPen);
+            DrawPixel(x, y, PenColor);
         }
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             if (xRefreshStart == -1)
             { xRefreshStart = x; }
@@ -127,7 +131,7 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             if (xRefreshStart == -1)
             { xRefreshStart = x; }
@@ -159,7 +163,7 @@ namespace Meadow.Foundation.Displays.ePaper
             blackImageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             bool colored = false;
             if (color.B == 0 && color.G == 0 && color.R > 0.5)

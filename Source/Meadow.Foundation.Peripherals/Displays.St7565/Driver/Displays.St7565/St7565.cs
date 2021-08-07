@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     ///     Provide an interface to the ST7565 family of displays.
     /// </summary>
-    public class St7565 : DisplayBase
+    public class St7565 : IPixelDisplay
     {
         /// <summary>
         ///     Allow the programmer to set the scroll direction.
@@ -61,11 +61,13 @@ namespace Meadow.Foundation.Displays
             NoOperation = 0xE3
         }
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override int Width { get; }
+        public int Width { get; }
 
-        public override int Height { get; }
+        public int Height { get; }
+
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
 
         /// <summary>
         ///     SPI object
@@ -79,7 +81,7 @@ namespace Meadow.Foundation.Displays
         protected const bool Data = true;
         protected const bool Command = false;
 
-        protected Color currentPen = Color.White;
+        public Color PenColor { get; set; } = Color.White;
 
         /// <summary>
         ///     Buffer holding the pixels in the display.
@@ -201,7 +203,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Send the internal pixel buffer to display.
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             for (int page = 0; page < 8; page++)
             {
@@ -220,7 +222,7 @@ namespace Meadow.Foundation.Displays
         ///     Clear the display buffer.
         /// </summary>
         /// <param name="updateDisplay">Immediately update the display when true.</param>
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             Array.Clear(buffer, 0, buffer.Length);
 
@@ -235,9 +237,9 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
-            DrawPixel(x, y, currentPen);
+            DrawPixel(x, y, PenColor);
         }
 
         /// <summary>
@@ -246,7 +248,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="color">Any color = turn on pixel, black = turn off pixel</param>
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             var colored = (color == Color.Black) ? false : true;
 
@@ -259,7 +261,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             if ((x >= Width) || (y >= Height))
             {
@@ -282,7 +284,7 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             if ((x >= Width) || (y >= Height))
             {

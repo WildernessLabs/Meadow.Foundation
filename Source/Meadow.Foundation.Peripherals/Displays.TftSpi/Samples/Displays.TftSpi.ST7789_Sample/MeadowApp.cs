@@ -8,7 +8,7 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using static Meadow.Foundation.Displays.DisplayBase;
+using static Meadow.Foundation.Displays.IPixelDisplay;
 
 namespace Displays.Tft.ST7789_Sample
 {

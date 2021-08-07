@@ -7,16 +7,26 @@ namespace Meadow.Foundation.Displays.ePaper
     /// <summary>
     ///     Provide an interface for ePaper monochrome displays
     /// </summary>
-    public abstract class EpdBase : SpiDisplayBase
+    public abstract class EpdBase : SpiDisplayBase, IPixelDisplay
     {
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
 
         protected readonly byte[] imageBuffer;
 
         int xRefreshStart, yRefreshStart, xRefreshEnd, yRefreshEnd;
 
-        public override int Width { get; }
-        public override int Height { get; }
+        public int Width { get; }
+        public int Height { get; }
+
+        public Color PenColor
+        {
+            get => isColored ? Color.White : Color.Black;
+            set => isColored = (value == Color.Black) ? false : true;
+        }
+
+        bool isColored = true;
 
         private EpdBase()
         { }
@@ -45,7 +55,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected abstract void Initialize();
 
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             Clear(false, updateDisplay);
         }
@@ -57,14 +67,14 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
         public void Clear(Color color, bool updateDisplay = false)
         {
-            bool colored = false;
+            isColored = false;
 
             if (color.B > 0 || color.R > 0 || color.G > 0)
             {
-                colored = true;
+                isColored = true;
             }
 
-            Clear(colored, updateDisplay);
+            Clear(isColored, updateDisplay);
         }
 
         /// <summary>
@@ -94,12 +104,14 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             xRefreshStart = Math.Min(x, xRefreshStart);
             xRefreshEnd = Math.Max(x, xRefreshEnd);
             yRefreshStart = Math.Min(y, yRefreshStart);
             yRefreshEnd = Math.Max(y, yRefreshEnd);
+
+            isColored = colored;
 
             if (colored)
             {
@@ -111,9 +123,9 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
-            DrawPixel(x, y, currentPen);
+            DrawPixel(x, y, PenColor);
         }
 
         /// <summary>
@@ -122,18 +134,18 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
         /// <param name="color">Color of pixel.</param>
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
-            bool colored = false;
+            isColored = false;
             if (color.B > 0 || color.G > 0 || color.R > 0)
             {
-                colored = true;
+                isColored = true;
             }
 
-            DrawPixel(x, y, colored);
+            DrawPixel(x, y, isColored);
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             xRefreshStart = Math.Min(x, xRefreshStart);
             xRefreshEnd = Math.Max(x, xRefreshEnd);
@@ -184,7 +196,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <summary>
         ///     Draw the display buffer to screen
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             Refresh();
         }

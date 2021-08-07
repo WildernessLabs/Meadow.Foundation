@@ -9,7 +9,7 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Hid;
-using static Meadow.Foundation.Displays.DisplayBase;
+using static Meadow.Foundation.Displays.IPixelDisplay;
 
 namespace MeadowApp
 {
@@ -73,7 +73,6 @@ namespace MeadowApp
                 // graphics library
                 Console.WriteLine("Create graphics lib");
                 canvas = new GraphicsLibrary(display);
-                canvas.Rotation = GraphicsLibrary.RotationType._90Degrees;
                 canvas.Rotation = RotationMode._90Degrees;
             }
 

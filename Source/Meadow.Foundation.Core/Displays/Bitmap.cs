@@ -7,6 +7,8 @@ namespace Meadow.Foundation.Displays
     public class Bitmap
     {
         public int Width { get; private set; }
+        public int Height { get; private set; }
+
         public DisplayColorMode ColorMode { get; private set; }
 
         byte[] buffer;

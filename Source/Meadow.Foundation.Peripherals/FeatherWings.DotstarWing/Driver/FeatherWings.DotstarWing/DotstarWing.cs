@@ -8,10 +8,14 @@ namespace Meadow.Foundation.FeatherWings
     /// <summary>
     /// Represents Adafruit's Dotstar feather wing 12x6
     /// </summary>
-    public class DotstarWing : DisplayBase
+    public class DotstarWing : IPixelDisplay
     {
-        Color penColor;
         Apa102 ledMatrix;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
+
+        public Color PenColor { get; set; } = Color.White;
+
 
         public float Brightness
         {
@@ -25,22 +29,21 @@ namespace Meadow.Foundation.FeatherWings
 
         public DotstarWing(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
         {
-            penColor = Color.White;
             ledMatrix = new Apa102(spiBus, numberOfLeds, pixelOrder, autoWrite);
         }
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format12bppRgb444;
+        public DisplayColorMode ColorMode => DisplayColorMode.Format12bppRgb444;
 
-        public override int Width => 12;
+        public int Width => 12;
 
-        public override int Height => 6;
+        public int Height => 6;
 
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             ledMatrix.Clear(updateDisplay);
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             int minor = x;
             int major = y;
@@ -57,11 +60,11 @@ namespace Meadow.Foundation.FeatherWings
             }
         } 
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             if (colored)
             {
-                DrawPixel(x, y, penColor);
+                DrawPixel(x, y, PenColor);
             }
             else
             {
@@ -69,17 +72,17 @@ namespace Meadow.Foundation.FeatherWings
             }
         }
 
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
-            DrawPixel(x, y, penColor);
+            DrawPixel(x, y, PenColor);
         }
 
-        public override void Show()
+        public void Show()
         {
             ledMatrix.Show();
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             throw new System.NotImplementedException();
         }

@@ -3,15 +3,19 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {
-    public class Pcd8544 : DisplayBase
+    public class Pcd8544 : IPixelDisplay
     {
         public static int DEFAULT_SPEED = 4000;
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override int Height => 48;
+        public int Height => 48;
 
-        public override int Width => 84;
+        public int Width => 84;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
+
+        public Color PenColor { get; set; } = Color.White;
 
         public bool InvertDisplay
         {
@@ -19,8 +23,6 @@ namespace Meadow.Foundation.Displays
             set { Invert(value); }
         }
         protected bool _invertDisplay = false;
-
-        protected Color currentPen = Color.White;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
@@ -77,7 +79,7 @@ namespace Meadow.Foundation.Displays
         ///     Clears the internal memory buffer 
         /// </remarks>
         /// <param name="updateDisplay">If true, it will force a display update</param>
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             displayBuffer = new byte[Width * Height / 8];
 
@@ -97,9 +99,9 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
-            DrawPixel(x, y, currentPen);
+            DrawPixel(x, y, PenColor);
         }
 
         /// <summary>
@@ -108,7 +110,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
             { return; } // out of the range! return true to indicate failure.
@@ -127,7 +129,7 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
             { return; } // out of the range! return true to indicate failure.
@@ -145,14 +147,14 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="color">any value other than black will make the pixel visible</param>
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             var colored = color != Color.Black;
 
             DrawPixel(x, y, colored);
         }
 
-        public override void Show()
+        public void Show()
         {
           //  spiDisplay.WriteBytes(spiBuffer);
 

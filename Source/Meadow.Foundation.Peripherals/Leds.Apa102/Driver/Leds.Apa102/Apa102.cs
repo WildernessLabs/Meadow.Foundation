@@ -55,7 +55,6 @@ namespace Meadow.Foundation.Leds
         float brightness;
 
         /// <param name="spiBus">The SPI bus</param>
-        /// <param name="chipSelect">THe SPI chip select pin. Not used but need for creating the  SPI Peripheral</param>
         /// <param name="numberOfLeds">The number of APA102 LEDs to control</param>
         /// <param name="pixelOrder">Set the pixel order on the LEDs - different strips implement this differently</param>
         /// <param name="autoWrite">Transmit any LED changes right away</param>
@@ -190,7 +189,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Turn off all the Leds
         /// </summary>
-        public override void Clear(bool autoWrite = false)
+        public void Clear(bool autoWrite = false)
         {
             byte[] off = {0, 0, 0};
 
@@ -208,7 +207,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Transmit the changes to the LEDs 
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             spiPeripheral.WriteBytes(buffer);
         }

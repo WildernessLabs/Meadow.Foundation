@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
     /// <summary>
     /// Provide an interface to the SSD1306 family of OLED displays.
     /// </summary>
-    public abstract class Ssd130xBase : DisplayBase
+    public abstract class Ssd130xBase : IPixelDisplay
     {
         /// <summary>
         ///     Allow the programmer to set the scroll direction.
@@ -65,11 +65,13 @@ namespace Meadow.Foundation.Displays.Ssd130x
             I2C,
         }
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override int Width => width;
+        public int Width => width;
 
-        public override int Height => height;
+        public int Height => height;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
 
         /// <summary>
         ///     SSD1306 SPI display
@@ -112,7 +114,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <summary>
         ///      The pen color used for DrawPixel calls
         /// </summary>
-        public override Color PenColor
+        public Color PenColor
         {
             get => currentPen ? Color.White : Color.Black;
             set
@@ -286,7 +288,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <summary>
         ///     Send the internal pixel buffer to display.
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             SendCommands(showPreamble);
             //
@@ -318,7 +320,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         ///     Clear the display buffer.
         /// </summary>
         /// <param name="updateDisplay">Immediately update the display when true.</param>
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             Array.Clear(buffer, 0, buffer.Length);
 
@@ -333,7 +335,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// </summary>    
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
             DrawPixel(x, y, currentPen);
         }
@@ -344,7 +346,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="color">Black - pixel off, any color - turn on pixel</param>
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             currentPen = (color == Color.Black) ? false : true;
 
@@ -357,7 +359,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             /*  if(_displayType == DisplayType.OLED64x48)
               {
@@ -389,7 +391,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             x += xOffset;
             y += yOffset;

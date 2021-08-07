@@ -7,35 +7,37 @@ namespace Meadow.Foundation.FeatherWings
     /// <summary>
     /// Represents an Adafruit Led Matrix 8x16 feather wing (HT16K33)
     /// </summary>
-    public class LedMatrix8x16Wing : DisplayBase
+    public class LedMatrix8x16Wing : IPixelDisplay
     {
         public const byte DEFAULT_ADDRESS = 0x70;
 
         private Ht16k33 ht16k33;
-        private Color pen;
+        public Color PenColor { get; set; } = Color.White;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
 
         public LedMatrix8x16Wing(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
         {
             ht16k33 = new Ht16k33(i2cBus, address);
         }
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override int Width => 8;
+        public int Width => 8;
 
-        public override int Height => 16;
+        public int Height => 16;
 
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             ht16k33.ClearDisplay();
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color == Color.Black ? false : true);
         }
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
            if(x >= Width || x < 0 || y >= Height || y < 0)
             {
@@ -53,12 +55,12 @@ namespace Meadow.Foundation.FeatherWings
             ht16k33.SetLed((byte)(y * Width + x), colored);
         }
 
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
-            DrawPixel(x, y, pen == Color.Black ? false : true);
+            DrawPixel(x, y, PenColor == Color.Black ? false : true);
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             if (y < 8)
             {
@@ -72,7 +74,7 @@ namespace Meadow.Foundation.FeatherWings
             ht16k33.ToggleLed((byte)(y * Width + x));
         }
 
-        public override void Show()
+        public void Show()
         {
             ht16k33.UpdateDisplay();
         }

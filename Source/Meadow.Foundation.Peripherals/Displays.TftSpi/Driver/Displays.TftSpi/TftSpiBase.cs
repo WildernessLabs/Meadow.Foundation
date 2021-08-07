@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
-    public abstract class TftSpiBase : DisplayBase, IDisposable
+    public abstract class TftSpiBase : IPixelDisplay, IDisposable
     {
         //TODO: move these into their own class?
         protected const byte NO_OP = 0x0;
@@ -31,12 +31,14 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
-        public override DisplayColorMode ColorMode => colorMode;
+        public DisplayColorMode ColorMode => colorMode;
         protected DisplayColorMode colorMode;
 
         public abstract DisplayColorMode DefautColorMode { get; }
-        public override int Width => width;
-        public override int Height => height;
+        public int Width => width;
+        public int Height => height;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
@@ -116,14 +118,12 @@ namespace Meadow.Foundation.Displays.TftSpi
         ///     Clear the display.
         /// </summary>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             //Array.Clear(spiBuffer, 0, spiBuffer.Length);
             spiWriteBuffer.Span.Clear();
 
             if (updateDisplay) { Show(); }
-
-            //Clear(0, updateDisplay);
         }
 
         public void Clear(Color color, bool updateDisplay = false)
@@ -144,7 +144,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <summary>
         ///      The pen color used for DrawPixel calls
         /// </summary>
-        public override Color PenColor
+        public Color PenColor
         {
             get => GetColorFromUShort(currentPen);
             set => currentPen = GetUShortFromColor(value);
@@ -155,7 +155,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
             SetPixel(x, y, currentPen);
         }
@@ -166,7 +166,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             //this works for now but it's a bit of a hack for 444
             SetPixel(x, y, (colored ? (ushort)(0xFFFF) : (ushort)0));
@@ -189,7 +189,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
         /// <param name="color">Color of pixel.</param>
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             SetPixel(x, y, GetUShortFromColor(color));
         }
@@ -212,7 +212,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// </summary>
         /// <param name="x">x location</param>
         /// <param name="y">y location</param>
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             if (x < 0 || y < 0 || x >= width || y >= height)
             { return; }
@@ -342,7 +342,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <summary>
         ///     Draw the display buffer to screen
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             /*    if (xMax == 0 || yMax == 0)
                 { return; }

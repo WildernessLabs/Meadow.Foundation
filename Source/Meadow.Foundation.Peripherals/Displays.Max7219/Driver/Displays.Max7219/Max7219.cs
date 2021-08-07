@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Max7219 LED matrix driver
     /// </summary>
-    public class Max7219 : DisplayBase
+    public class Max7219 : IPixelDisplay
     {
         /// <summary>
         /// MAX7219 Spi Clock Frequency
@@ -33,11 +33,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public int Length => DeviceCount * NumDigits;
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override int Width => 8 * DeviceColumns;
+        public int Width => 8 * DeviceColumns;
 
-        public override int Height => 8 * DeviceRows;
+        public int Height => 8 * DeviceRows;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
 
         private ISpiPeripheral max7219;
 
@@ -60,16 +62,10 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///      The pen color used for DrawPixel calls
         /// </summary>
-        public override Color PenColor
+        public Color PenColor
         {
             get => currentPen ? Color.White : Color.Black;
-            set
-            {
-                if (value == Color.Black)
-                    currentPen = false;
-                else
-                    currentPen = true;
-            }
+            set => currentPen = (value == Color.Black) ? false : true;
         }
 
         //bool since it's on/off 
@@ -305,7 +301,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Writes all the Values to the devices.
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             WriteBuffer(buffer);
         }
@@ -378,7 +374,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Clears the buffer from the given start to end and flushes
         /// </summary>
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             Clear(0, DeviceCount);
 
@@ -388,13 +384,13 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             currentPen = color != Color.Black;
             DrawPixel(x, y);
         }
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             var index = x % 8;
 
@@ -416,12 +412,12 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
             DrawPixel(x, y, currentPen);
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             var index = x % 8;
 

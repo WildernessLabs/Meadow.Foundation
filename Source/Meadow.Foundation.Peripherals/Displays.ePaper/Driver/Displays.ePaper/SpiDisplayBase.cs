@@ -1,10 +1,9 @@
-using Meadow;
 using Meadow.Hardware;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract class SpiDisplayBase : DisplayBase
+    public abstract class SpiDisplayBase
     {
         protected readonly byte[] spiBOneByteBuffer = new byte[1];
 
@@ -12,8 +11,6 @@ namespace Meadow.Foundation.Displays
         protected IDigitalOutputPort resetPort;
         protected IDigitalInputPort busyPort;
         protected ISpiPeripheral spi;
-
-        protected Color currentPen = Color.White;
 
         protected const bool Data = true;
         protected const bool Command = false;

@@ -3,17 +3,19 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Leds
 {
-    public partial class Apa102 : DisplayBase
+    public partial class Apa102 : IPixelDisplay
     {
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format24bppRgb888;
+        public DisplayColorMode ColorMode => DisplayColorMode.Format24bppRgb888;
 
-        public override int Width => width;
+        public int Width => width;
         int width;
 
-        public override int Height => height;
+        public int Height => height;
         int height;
 
-        Color pen = Color.White;
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
+
+        public Color PenColor { get; set; } = Color.White;
 
         public Apa102(ISpiBus spiBus,
                      PixelOrder pixelOrder = PixelOrder.BGR,
@@ -41,25 +43,25 @@ namespace Meadow.Foundation.Leds
             return index;
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
-            pen = color;
+            PenColor = color;
 
             SetLed(GetIndexForCoordinate(x, y), color);
     
         }
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             DrawPixel(0, 0, colored ? Color.White : Color.Black);
         }
 
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
-            DrawPixel(x, y, pen);
+            DrawPixel(x, y, PenColor);
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             var index = 3 * GetIndexForCoordinate(x, y);
 

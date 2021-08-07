@@ -5,13 +5,21 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {
-    public class Ssd1327 : DisplayBase
+    public class Ssd1327 : IPixelDisplay
     {
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format4bpp;
+        public DisplayColorMode ColorMode => DisplayColorMode.Format4bpp;
 
-        public override int Width => 128;
+        public int Width => 128;
 
-        public override int Height => 128;
+        public int Height => 128;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
+
+        public Color PenColor
+        {
+            get => new Color(currentPen/255.0, currentPen/255.0, currentPen/255.0);
+            set => currentPen = (byte)((value.R + value.G + value.B) * 16 / 3);
+        }
 
         protected ISpiBus spiBus;
         protected ISpiPeripheral spiPeripheral;
@@ -82,7 +90,7 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             for(int i = 0; i < spiBuffer.Length; i++)
             {
@@ -107,17 +115,17 @@ namespace Meadow.Foundation.Displays
             return (byte)(gray >> 4);
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, GetGrayScaleFromColor(color));
         }
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             DrawPixel(x, y, (byte)(colored ? 0x0F : 0));
         }
 
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
             DrawPixel(x, y, currentPen);
         }
@@ -138,7 +146,7 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             int index = GetBufferLocation(x, y);
 
@@ -158,7 +166,7 @@ namespace Meadow.Foundation.Displays
             DrawPixel(x, y, color);
         }
 
-        public override void Show()
+        public void Show()
         {
             //  SetAddressWindow(0, 0, (byte)(Width - 1), (byte)(Height - 1));
             SetAddressWindow(0, 0, 127, 127);

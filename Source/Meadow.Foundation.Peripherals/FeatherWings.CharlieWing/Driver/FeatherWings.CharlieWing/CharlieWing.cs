@@ -8,18 +8,20 @@ namespace Meadow.Foundation.FeatherWings
     /// <summary>
     /// Represents an Adafruit CharliePlex 15x7 feather wing
     /// </summary>
-    public class CharlieWing : DisplayBase
+    public class CharlieWing : IPixelDisplay
     {
-        Color pen;
+        public Color PenColor { get; set; } = Color.White;
 
         public const byte DEFAULT_ADDRESS = 0x74;
         public const byte ALTERNATE_ADDRESS = 0x77;
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override int Width => 15;
+        public int Width => 15;
 
-        public override int Height => 7;
+        public int Height => 7;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; } = true;
 
         public byte Frame { get; set; }
 
@@ -30,7 +32,6 @@ namespace Meadow.Foundation.FeatherWings
         public CharlieWing(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
         {
             Brightness = 255;
-            pen = Color.White;
             iS31FL3731 = new Is31fl3731(i2cBus, (byte)address);
             iS31FL3731.Initialize();
 
@@ -41,12 +42,12 @@ namespace Meadow.Foundation.FeatherWings
             }
         }
 
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             iS31FL3731.Clear(Frame);
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             byte brightness = (byte)(color.Brightness * 255.0);
 
@@ -80,11 +81,11 @@ namespace Meadow.Foundation.FeatherWings
             }
         }
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             if (colored)
             {
-                DrawPixel(x, y, pen);
+                DrawPixel(x, y, PenColor);
             }
             else
             {
@@ -92,22 +93,22 @@ namespace Meadow.Foundation.FeatherWings
             }
         }
 
-        public override void DrawPixel(int x, int y)
+        public void DrawPixel(int x, int y)
         {
-            DrawPixel(x, y, pen);
+            DrawPixel(x, y, PenColor);
         }
 
         public virtual void DrawPixel(int x, int y, byte brightness)
         {
-            DrawPixel(x, y, pen, brightness);
+            DrawPixel(x, y, PenColor, brightness);
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             throw new NotImplementedException();
         }
 
-        public override void Show()
+        public void Show()
         {
             iS31FL3731.DisplayFrame(Frame);
         }
