@@ -7,6 +7,13 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
 {
     public class HelloRequestHandler : RequestHandlerBase
     {
+        public override bool IsReusable => true;
+
+        public HelloRequestHandler()
+        {
+            Console.WriteLine("HelloRequestHandler created");
+        }
+
         [HttpGet]
         public void Hello()
         {

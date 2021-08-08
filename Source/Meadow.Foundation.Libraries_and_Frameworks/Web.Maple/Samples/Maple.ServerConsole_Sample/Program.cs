@@ -10,10 +10,10 @@ namespace Maple.ServerBasic_Sample
         public static void Main(string[] args)
         {
             MapleServer server = new MapleServer(
-                IPAddress.Parse("127.0.0.1"),
+                IPAddress.Parse("0.0.0.0"),
                 // OR:
                 //GetLocalIP(),
-                advertise: true,
+                advertise: false,
                 processMode: RequestProcessMode.Parallel
                 );
 

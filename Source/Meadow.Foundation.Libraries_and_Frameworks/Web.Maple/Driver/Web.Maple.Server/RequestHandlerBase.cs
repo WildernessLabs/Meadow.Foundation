@@ -15,15 +15,21 @@ namespace Meadow.Foundation.Web.Maple.Server
     {
         private const int bufferSize = 4096;
 
-        protected bool disposedValue;
+        private HttpListenerContext _context;
+        private bool _disposedValue;
 
         protected StringDictionary QueryString { get; private set; }
-
         protected StringDictionary FormFields { get; set; }
-
         protected string Body { get; set; }
-        
-        HttpListenerContext _context;
+        public virtual bool IsReusable { get; } = false;
+
+        protected RequestHandlerBase()
+        {
+            Body = string.Empty;
+            QueryString = new StringDictionary();
+            FormFields = new StringDictionary();
+        }
+
         public HttpListenerContext Context
         {
             get => _context;
@@ -55,19 +61,12 @@ namespace Meadow.Foundation.Web.Maple.Server
             }
         }
 
-        protected RequestHandlerBase()
-        {
-            Body = string.Empty;
-            QueryString = new StringDictionary();
-            FormFields = new StringDictionary();
-        }
-
-        int Min(int a, int b)
+        private int Min(int a, int b)
         {
             return ((a <= b) ? a : b);
         }
 
-        string ReadInputStream()
+        private string ReadInputStream()
         {
             var len = (int)Context.Request.ContentLength64;
             var buffer = new byte[bufferSize];
@@ -85,7 +84,7 @@ namespace Meadow.Foundation.Web.Maple.Server
             return result;
         }
 
-        async Task WriteOutputStream(byte[] data)
+        private async Task WriteOutputStream(byte[] data)
         {
             Context.Response.ContentEncoding = Encoding.UTF8;
             Context.Response.ContentLength64 = data.LongLength;
@@ -94,7 +93,7 @@ namespace Meadow.Foundation.Web.Maple.Server
             Context.Response.Close();
         }
 
-        StringDictionary ParseUrlPairs(string s)
+        private StringDictionary ParseUrlPairs(string s)
         {
             if (string.IsNullOrEmpty(s))
             {
@@ -131,7 +130,7 @@ namespace Meadow.Foundation.Web.Maple.Server
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
@@ -140,7 +139,7 @@ namespace Meadow.Foundation.Web.Maple.Server
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 
