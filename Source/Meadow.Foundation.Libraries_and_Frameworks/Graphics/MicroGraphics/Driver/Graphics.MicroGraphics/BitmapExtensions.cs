@@ -26,7 +26,11 @@ namespace Meadow.Foundation.Displays
 
         static Bitmap Convert888BitmapTo565Bitmap(Bitmap bitmap, DisplayColorMode convertTo)
         {
+            Console.WriteLine("Convert888BitmapTo565Bitmap");
+
             var buffer = new byte[Bitmap.GetBufferSize(bitmap.Width, bitmap.Height, convertTo)];
+
+            Console.WriteLine($"Buffer created: len of {buffer.Length} should be {bitmap.Width * bitmap.Height * 2}");
 
             int x = 0;
             int y = 0;
@@ -36,7 +40,7 @@ namespace Meadow.Foundation.Displays
             int index;
 
             //888 to 565
-            for (int i = 0; i < bitmap.Buffer.Length; i+= 3)
+            for (int i = 0; i < bitmap.Buffer.Length; i += 3)
             {
                 r = bitmap.Buffer.Span[i];
                 g = bitmap.Buffer.Span[i + 1];
@@ -44,7 +48,7 @@ namespace Meadow.Foundation.Displays
 
                 color = Get16BitColorFromRGB(r, g, b);
 
-                index = ((y * bitmap.Width) + x) * sizeof(ushort);
+                index = ((y * bitmap.Width) + x) * 2;
 
                 buffer[index] = (byte)(color >> 8);
                 buffer[++index] = (byte)(color);
@@ -57,6 +61,8 @@ namespace Meadow.Foundation.Displays
                     x = 0;
                 }
             }
+
+            Console.WriteLine("return");
 
             return new Bitmap(bitmap.Width, bitmap.Height, convertTo, buffer);
         }
@@ -141,11 +147,11 @@ namespace Meadow.Foundation.Displays
 
         public static ushort Get16BitColorFromRGB(byte red, byte green, byte blue)
         {
-            red >>= 3;
-            green >>= 2;
-            blue >>= 3;
+            byte r = (byte)(red >> 3);
+            byte g = (byte)(green >> 2);
+            byte b = (byte)(blue >> 3);
 
-            return (ushort)(red << 11 | green << 5 | blue);
+            return (ushort)(r << 11 | g << 5 | b);
         }
     }
 }

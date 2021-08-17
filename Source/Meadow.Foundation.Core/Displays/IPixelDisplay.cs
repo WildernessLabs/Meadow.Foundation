@@ -83,6 +83,8 @@ namespace Meadow.Foundation.Displays
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="bitmap">bitmap containing the data to display</param>
-        public void DrawBitmap(int x, int y, Bitmap bitmap);
+     //   public void DrawBitmap(int x, int y, Bitmap bitmap);
+
+       // public bool IsColorModeSupported(DisplayColorMode colorMode);
     }
 }

@@ -15,9 +15,9 @@ namespace Meadow.Foundation.Displays
 
         public Bitmap(int width, int height, DisplayColorMode colorMode, byte[] bitmapData)
         {
-            if(GetBufferSize(width, height, colorMode) != bitmapData.Length)
+            if (GetBufferSize(width, height, colorMode) != bitmapData.Length)
             {
-                throw new ArgumentException($"Bitmap width: {width} and hieght {height} do not match bitmapData length: {bitmapData.Length} for colorMode: {colorMode}");
+                throw new ArgumentException($"Bitmap width: {width} and height {height} do not match bitmapData length: {bitmapData.Length} for colorMode: {colorMode}");
             }
 
             Height = height;
