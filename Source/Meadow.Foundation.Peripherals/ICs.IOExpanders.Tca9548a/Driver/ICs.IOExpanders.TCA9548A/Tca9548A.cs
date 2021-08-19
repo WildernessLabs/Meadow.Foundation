@@ -251,5 +251,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             throw new NotImplementedException();
         }
+
+        public void WriteRegister(byte address, Span<byte> writeBuffer, ByteOrder order = ByteOrder.LittleEndian)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
