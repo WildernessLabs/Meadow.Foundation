@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Max7219 LED matrix driver
     /// </summary>
-    public class Max7219 : IPixelDisplay
+    public class Max7219 : IGraphicsDisplay
     {
         /// <summary>
         /// MAX7219 Spi Clock Frequency

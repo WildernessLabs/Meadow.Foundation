@@ -3,7 +3,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {
-    public class Pcd8544 : IPixelDisplay
+    public class Pcd8544 : IGraphicsDisplay
     {
         public static int DEFAULT_SPEED = 4000;
 

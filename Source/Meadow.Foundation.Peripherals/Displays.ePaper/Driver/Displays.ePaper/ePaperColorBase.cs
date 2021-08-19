@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// <summary>
     ///     Provide an interface for ePaper 3 color displays
     /// </summary>
-    public abstract class EpdColorBase : SpiDisplayBase, IPixelDisplay
+    public abstract class EpdColorBase : SpiDisplayBase, IGraphicsDisplay
     {
         protected abstract bool IsBlackInverted { get; }
         protected abstract bool IsColorInverted { get; }

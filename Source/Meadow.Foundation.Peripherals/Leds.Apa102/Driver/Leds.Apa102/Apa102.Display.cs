@@ -3,7 +3,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Leds
 {
-    public partial class Apa102 : IPixelDisplay
+    public partial class Apa102 : IGraphicsDisplay
     {
         public DisplayColorMode ColorMode => DisplayColorMode.Format24bppRgb888;
 

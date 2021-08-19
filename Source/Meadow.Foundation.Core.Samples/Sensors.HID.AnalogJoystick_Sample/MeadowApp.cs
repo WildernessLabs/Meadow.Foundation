@@ -9,7 +9,7 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Hid;
-using static Meadow.Foundation.Displays.IPixelDisplay;
+using static Meadow.Foundation.Displays.IGraphicsDisplay;
 
 namespace MeadowApp
 {

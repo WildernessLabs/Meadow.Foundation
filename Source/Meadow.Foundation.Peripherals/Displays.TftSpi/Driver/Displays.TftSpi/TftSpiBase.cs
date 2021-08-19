@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
-    public abstract class TftSpiBase : IPixelDisplay, IDisposable
+    public abstract class TftSpiBase : IGraphicsDisplay, IDisposable
     {
         //TODO: move these into their own class?
         protected const byte NO_OP = 0x0;

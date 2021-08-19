@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     ///     Provide an interface to the ST7565 family of displays.
     /// </summary>
-    public class St7565 : IPixelDisplay
+    public class St7565 : IGraphicsDisplay
     {
         /// <summary>
         ///     Allow the programmer to set the scroll direction.

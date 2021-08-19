@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
     /// <summary>
     /// Provide an interface to the SSD1306 family of OLED displays.
     /// </summary>
-    public abstract class Ssd130xBase : IPixelDisplay
+    public abstract class Ssd130xBase : IGraphicsDisplay
     {
         /// <summary>
         ///     Allow the programmer to set the scroll direction.

@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Abstract hardware display class 
     /// </summary>
-    public interface IPixelDisplay : IDisplay
+    public interface IGraphicsDisplay : IDisplay
     {
         /// <summary>
         /// The DisplayColorMode for the current display

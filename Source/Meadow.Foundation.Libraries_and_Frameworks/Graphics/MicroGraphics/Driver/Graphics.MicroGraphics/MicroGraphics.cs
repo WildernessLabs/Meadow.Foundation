@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Graphics
     /// </summary>
     public partial class GraphicsLibrary 
     {
-        private readonly IPixelDisplay display;
+        private readonly IGraphicsDisplay display;
 
         /// <summary>
         ///     Current font used for displaying text on the display.
@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// </summary>
         /// <param name="display"></param>
-        public GraphicsLibrary(IPixelDisplay display)
+        public GraphicsLibrary(IGraphicsDisplay display)
         {
             this.display = display;
             CurrentFont = null;

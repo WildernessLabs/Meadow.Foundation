@@ -8,7 +8,7 @@ namespace Meadow.Foundation.FeatherWings
     /// <summary>
     /// Represents an Adafruit CharliePlex 15x7 feather wing
     /// </summary>
-    public class CharlieWing : IPixelDisplay
+    public class CharlieWing : IGraphicsDisplay
     {
         public Color PenColor { get; set; } = Color.White;
 

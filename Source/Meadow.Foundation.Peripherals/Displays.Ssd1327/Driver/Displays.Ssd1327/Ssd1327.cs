@@ -5,7 +5,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {
-    public class Ssd1327 : IPixelDisplay
+    public class Ssd1327 : IGraphicsDisplay
     {
         public DisplayColorMode ColorMode => DisplayColorMode.Format4bpp;
 
