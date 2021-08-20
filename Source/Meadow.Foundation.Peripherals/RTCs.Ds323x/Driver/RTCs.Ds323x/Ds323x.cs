@@ -191,7 +191,7 @@ namespace Meadow.Foundation.RTCs
         {
             if (interruptPort != null)
             {
-                switch (InterruptPort.InterruptMode)
+                switch (interruptPort.InterruptMode)
                 {
                     case InterruptMode.EdgeFalling:
                     case InterruptMode.EdgeBoth:
