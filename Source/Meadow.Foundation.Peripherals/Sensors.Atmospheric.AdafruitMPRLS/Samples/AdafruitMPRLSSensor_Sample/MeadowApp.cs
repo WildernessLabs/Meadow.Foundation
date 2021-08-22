@@ -6,32 +6,22 @@ using System;
 
 namespace AdafruitMPRLSSensorExample
 {
-    // TODO: this app needs rewritten
-    /// <summary>
-    /// Connect VIN to 3.3v
-    /// Connect GND to ground
-    /// Connect SCL to pin D08
-    /// Connect SDA to pin D07
-    /// </summary>
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        AdafruitMPRLS PressureSensor;
+        //<!—SNIP—>
 
         public MeadowApp()
         {
-            Initialize();
-        }
+            Console.WriteLine("Initializing...");
 
-        void Initialize()
-        {
-            PressureSensor = new AdafruitMPRLS(Device.CreateI2cBus());
+            var PressureSensor = new AdafruitMPRLS(Device.CreateI2cBus());
 
             PressureSensor.StartUpdating(TimeSpan.FromSeconds(1));
 
             PressureSensor.Updated += PressureSensor_Updated;
         }
 
-        private void PressureSensor_Updated(object sender, IChangeResult<(Pressure? Pressure, Pressure? RawPsiMeasurement)> result)
+        void PressureSensor_Updated(object sender, IChangeResult<(Pressure? Pressure, Pressure? RawPsiMeasurement)> result)
         {
             Console.WriteLine($"New pressure PSI: {result.New.Pressure?.Psi}, Old pressure PSI: {result.Old?.Pressure?.Psi}");
 
@@ -39,5 +29,7 @@ namespace AdafruitMPRLSSensorExample
 
             Console.WriteLine($"Raw sensor value: {result.New.RawPsiMeasurement?.Psi}");
         }
+
+        //<!—SNOP—>
     }
 }

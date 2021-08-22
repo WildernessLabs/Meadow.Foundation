@@ -8,21 +8,16 @@ namespace Ms5611_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
+        Ms5611 sensor;
+
         public MeadowApp()
         {
-            Console.WriteLine("Ms5611App");
+            Console.WriteLine("Initializing...");
 
-            Ms5611I2cTest();
-         //   Ms5611SpiTest();
-        }
-
-        private void Ms5611I2cTest()
-        {
-            Console.WriteLine("MS5611 I2C Test");
-
-            var i2c = Device.CreateI2cBus();
-
-            var sensor = new Ms5611(i2c);
+            //CreateSpiSensor();
+            CreateI2CSensor();
 
             while (true)
             {
@@ -35,25 +30,25 @@ namespace Ms5611_Sample
                 Console.WriteLine(" Reading Pressure...");
 
                 sensor.ReadPressure();
-                
+
                 Thread.Sleep(1000);
             }
         }
 
-        private void Ms5611SpiTest()
+        void CreateI2CSensor()
+        {
+            Console.WriteLine("MS5611 I2C Test");
+
+            sensor = new Ms5611(Device.CreateI2cBus());
+        }
+
+        void CreateSpiSensor()
         {
             Console.WriteLine("MS5611 SPI Test");
 
-            var spi = Device.CreateSpiBus();
-
-            var sensor = new Ms5611(spi, Device.Pins.D00);
-
-            while (true)
-            {
-                Console.WriteLine(" Reading...");
-
-                Thread.Sleep(2000);
-            }
+            sensor = new Ms5611(Device.CreateSpiBus(), Device.Pins.D00);
         }
+
+        //<!—SNOP—>
     }
 }
