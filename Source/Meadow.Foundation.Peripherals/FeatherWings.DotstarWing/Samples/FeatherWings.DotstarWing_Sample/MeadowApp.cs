@@ -10,35 +10,36 @@ using Meadow.Hardware;
 
 namespace FeatherWings.DotstarWing_Sample
 {
+    /// <remarks>NOTE: The dotstar feather by default is not connected to the SPI MOSI or SCK pins. 
+    /// https://learn.adafruit.com/adafruit-dotstar-featherwing-adafruit/pinouts
+    /// </remarks>
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         DotstarWing dotStarWing;
         GraphicsLibrary graphics;
-
         public MeadowApp()
         {
-            Initialize();
-            DrawPixels();
-            GoThroughEachPixel();
-            ScrollText();
-        }
-
-        /// <remarks>NOTE: The dotstar feather by default is not connected to the SPI MOSI or SCK pins. 
-        /// https://learn.adafruit.com/adafruit-dotstar-featherwing-adafruit/pinouts
-        /// </remarks>
-        void Initialize()
-        {
             Console.WriteLine("Initialize hardware...");
-            ISpiBus spiBus = Device.CreateSpiBus();            
-            
+            ISpiBus spiBus = Device.CreateSpiBus();
+
             dotStarWing = new DotstarWing(spiBus);
-            
-            graphics = new GraphicsLibrary(dotStarWing);
-            graphics.CurrentFont = new Font4x8();
-            
+
             dotStarWing.PenColor = Color.Blue;
             dotStarWing.Brightness = 0.1f;
+
+            graphics = new GraphicsLibrary(dotStarWing);
+            graphics.CurrentFont = new Font4x6();
+
+            graphics.DrawRectangle(0, 0, 8, 4, Color.LawnGreen, true);
+            graphics.DrawRectangle(2, 2, 8, 4, Color.Cyan, true);
+            graphics.DrawText(0, 0, "F7", Color.White);
+
+            graphics.Show();
         }
+
+        //<!—SNIP—>
 
         void DrawPixels()
         {
@@ -56,7 +57,6 @@ namespace FeatherWings.DotstarWing_Sample
 
         void GoThroughEachPixel()
         {
-            Thread.Sleep(2000);
             Console.WriteLine("Go Through Each Pixel...");
             dotStarWing.Clear(true);
 
@@ -84,7 +84,6 @@ namespace FeatherWings.DotstarWing_Sample
 
         void ScrollText()
         {
-            Thread.Sleep(2000);
             Console.WriteLine("ScrollText...");
 
             dotStarWing.Clear();
@@ -128,7 +127,6 @@ namespace FeatherWings.DotstarWing_Sample
 
                 Thread.Sleep(175);
             }
-
         }
     }
 }

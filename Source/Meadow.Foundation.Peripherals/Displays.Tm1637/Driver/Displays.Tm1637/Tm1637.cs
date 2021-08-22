@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents Tm1637 segment display
     /// </summary>
-    public sealed class Tm1637
+    public class Tm1637
     {
         /// <summary>
         /// Max segments for a TM1637 controller

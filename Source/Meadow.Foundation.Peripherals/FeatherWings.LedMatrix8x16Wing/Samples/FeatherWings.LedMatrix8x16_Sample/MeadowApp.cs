@@ -9,18 +9,20 @@ namespace FeatherWings.LedMatrix8x16_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         LedMatrix8x16Wing ledMatrixWing;
         GraphicsLibrary graphics;
 
         public MeadowApp()
         {
-            Initialize();
+            Console.WriteLine("Initializing ..");
 
-            PixelWalk();
+            ledMatrixWing = new LedMatrix8x16Wing(Device.CreateI2cBus());
+            ledMatrixWing.Clear();
 
-            FourCorners();
-       
-            Thread.Sleep(2000);
+            graphics = new GraphicsLibrary(ledMatrixWing);
+            graphics.CurrentFont = new Font4x8();
 
             graphics.Rotation = GraphicsLibrary.RotationType._90Degrees;
             graphics.Clear();
@@ -28,16 +30,7 @@ namespace FeatherWings.LedMatrix8x16_Sample
             graphics.Show();
         }
 
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
-
-            ledMatrixWing = new LedMatrix8x16Wing(Device.CreateI2cBus());
-            ledMatrixWing.Clear();
-   
-            graphics = new GraphicsLibrary(ledMatrixWing);
-            graphics.CurrentFont = new Font4x8();
-        }
+        //<!—SNOP—>
 
         void PixelWalk()
         {

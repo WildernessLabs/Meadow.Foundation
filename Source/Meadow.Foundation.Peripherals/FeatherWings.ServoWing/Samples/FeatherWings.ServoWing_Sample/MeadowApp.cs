@@ -12,28 +12,18 @@ namespace FeatherWings.ServoWing_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         ServoWing servoWing;
 
         public MeadowApp()
         {
-            Initialize();
-            Run();
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initializng ...");
 
             var i2CBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
             servoWing = new ServoWing(i2CBus);
 
-            Console.WriteLine("Initialize wing...");
             servoWing.Initialize();
-        }
-
-        void Run()
-        {
-            Console.WriteLine("Run...");
 
             var servo = servoWing.GetServo(0, NamedServoConfigs.SG90);
 
@@ -56,5 +46,7 @@ namespace FeatherWings.ServoWing_Sample
                 Thread.Sleep(1000);
             }
         }
+
+        //<!—SNOP—>
     }
 }

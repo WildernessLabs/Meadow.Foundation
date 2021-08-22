@@ -9,41 +9,26 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         Tm1637 display;
 
         public MeadowApp()
         {
-            ConfigurePorts();
+            Console.WriteLine("Initializing ...");
+
+            display = new Tm1637(Device, Device.Pins.D02, Device.Pins.D01);
+
+            display.Brightness = 7;
+            display.ScreenOn = true;
+
+            display.Clear();
 
             var chars = new Character[] { Character.A, Character.B, Character.C, Character.D };
 
             display.Show(chars);
-
-            /*
-            Console.WriteLine("0");
-            display.Display(0, Character.Digit0);
-            Console.WriteLine("1");
-            display.Display(1, Character.Digit1);
-            Console.WriteLine("B");
-            display.Display(2, Character.B);
-            Console.WriteLine("A");
-            display.Display(3, Character.A); */
         }
 
-        public void ConfigurePorts()
-        {
-            Console.WriteLine("Creating output ports...");
-
-            display = new Tm1637(Device, Device.Pins.D02, Device.Pins.D01);
-
-            Console.WriteLine("Set brightness");
-            display.Brightness = 7;
-
-            Console.WriteLine("Turn screen on");
-            display.ScreenOn = true;
-
-            Console.WriteLine("Clear display");
-            display.Clear();
-        }
+        //<!—SNOP—>
     }
 }

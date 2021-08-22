@@ -4,41 +4,34 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.FeatherWings;
 using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
 
 namespace FeatherWings.CharlieWing_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         CharlieWing charlieWing;
         GraphicsLibrary graphics;
 
         public MeadowApp()
         {
-            Initialize();
+            Console.WriteLine("Initializing ...");
 
-            FourCorners();
-
-            Thread.Sleep(2000);
-            Face();
-
-            Thread.Sleep(2000);
-            ScrollText();
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
-     
             charlieWing = new CharlieWing(Device.CreateI2cBus());
             charlieWing.Clear();
             charlieWing.Brightness = 128;
 
             graphics = new GraphicsLibrary(charlieWing);
             graphics.CurrentFont = new Font4x8();
+
+            graphics.DrawText(0, 0, "F7");
+            graphics.Show();
         }
 
-        void FourCorners()
+        //<!—SNOP—>
+
+        void LightCorners()
         {
             charlieWing.Frame = 0;
             charlieWing.Clear();
@@ -86,7 +79,7 @@ namespace FeatherWings.CharlieWing_Sample
             }
         }
 
-        void Face()
+        void DrawFace()
         {
             Console.WriteLine("Face...");
             charlieWing.Clear();

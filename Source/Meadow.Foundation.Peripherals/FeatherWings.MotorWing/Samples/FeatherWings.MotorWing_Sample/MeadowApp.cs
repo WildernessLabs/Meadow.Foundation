@@ -12,20 +12,18 @@ namespace FeatherWings.MotorWing_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         MotorWing motorWing;
 
         public MeadowApp()
         {
-            Initialize();
-            Run();
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initializing ...");
             var i2CBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
             motorWing = new MotorWing(i2CBus, 0x61);
             motorWing.Initialize();
+
+            Run();
         }
 
         void Run()
@@ -68,7 +66,8 @@ namespace FeatherWings.MotorWing_Sample
 
                 Thread.Sleep(500);
             }
-
         }
+
+        //<!—SNOP—>
     }
 }
