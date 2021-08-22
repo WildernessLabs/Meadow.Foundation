@@ -6,20 +6,17 @@ using Meadow.Foundation.Graphics;
 
 namespace Displays.ePaper.IL0376F_Sample
 {
-    /* Driver in development */
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Il0376F display;
+        #region DocsSnippet
 
         public MeadowApp()
         {
-            Console.WriteLine("ePaper sample");
-            Console.WriteLine("Create Spi bus");
-
-            var spiBus = Device.CreateSpiBus();// Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, 2000);
-
+            Console.WriteLine("Initialize ...");
+ 
             Console.WriteLine("Create display driver instance");
-            display = new Il0376F(device: Device, spiBus: spiBus,
+            var display = new Il0376F(device: Device,
+                spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
@@ -33,24 +30,14 @@ namespace Displays.ePaper.IL0376F_Sample
             graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Red, false);
 
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(2, 2, "IL0376F");
-            graphics.DrawText(2, 20, "Meadow F7");
-
-            int ySpacing = 6;
-
-            for (int i = 0; i < 3; i++)
-            {
-                graphics.DrawLine(2, 70 + ySpacing * i, 22, 50 + ySpacing * i, true);
-                graphics.DrawLine(22, 50 + ySpacing * i, 42, 70 + ySpacing * i, true);
-                graphics.DrawLine(44, 70 + ySpacing * i, 64, 50 + ySpacing * i, true);
-                graphics.DrawLine(64, 50 + ySpacing * i, 84, 70 + ySpacing * i, true);
-                graphics.DrawLine(86, 70 + ySpacing * i, 106, 50 + ySpacing * i, true);
-                graphics.DrawLine(106, 50 + ySpacing * i, 126, 70 + ySpacing * i, true);
-            }
+            graphics.DrawText(2, 2, "IL0376F", Meadow.Foundation.Color.Black);
+            graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
 
             Console.WriteLine("Show");
 
             graphics.Show();
         }
+
+        #endregion
     }
 }

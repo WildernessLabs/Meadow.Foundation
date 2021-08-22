@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
@@ -9,8 +8,7 @@ namespace Displays.Pcd8854_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Pcd8544 display;
-        GraphicsLibrary graphics;
+        #region DocsSnippet
 
         public MeadowApp()
         {
@@ -18,7 +16,7 @@ namespace Displays.Pcd8854_Sample
 
             var config = new Meadow.Hardware.SpiClockConfiguration(Pcd8544.DEFAULT_SPEED, Meadow.Hardware.SpiClockConfiguration.Mode.Mode0);
 
-            display = new Pcd8544
+            var display = new Pcd8544
             (
                 device: Device,
                 spiBus: Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config),
@@ -27,17 +25,19 @@ namespace Displays.Pcd8854_Sample
                 resetPin: Device.Pins.D02
             );
 
-            graphics = new GraphicsLibrary(display);
-            graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
+            var graphics = new GraphicsLibrary(display);
 
-            TestPCD8544();
+            graphics.Clear(true);
+            graphics.CurrentFont = new Font8x12();
+            graphics.DrawText(0, 0, "PCD8544");
+            graphics.DrawRectangle(5, 14, 30, 10, true);
 
-            Thread.Sleep(10000);
-
-            CounterDemo();
+            graphics.Show();
         }
 
-        void CounterDemo()
+        #endregion
+
+        void CounterDemo(GraphicsLibrary graphics)
         {
             int count = 0;
 
@@ -51,19 +51,6 @@ namespace Displays.Pcd8854_Sample
                 graphics.Show();
                 count++;
             }
-        }
-        
-        void TestPCD8544() 
-        {
-            Console.WriteLine("TestPCD8544...");
-
-            // Drawing with Display Graphics Library
-            graphics.Clear(true);
-            graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(0, 0, "PCD8544");
-            graphics.DrawRectangle(5, 14, 30, 10, true);
-
-            graphics.Show();
         }
     }
 }

@@ -8,6 +8,8 @@ namespace Audio.Radio.Tea5767_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        #region DocsSnippet
+
         protected Tea5767 radio;
 
         public MeadowApp()
@@ -16,13 +18,9 @@ namespace Audio.Radio.Tea5767_Sample
             
             radio = new Tea5767(Device.CreateI2cBus());
 
-            Scan();
-        }
+            Console.WriteLine("Test TEA5767...");
 
-        protected void Scan() 
-        {
-            Console.WriteLine("TestTEA5767...");
-
+            //scan through avaliable stations
             for (int i = 0; i < 8; i++)
             {
                 Thread.Sleep(1000);
@@ -32,7 +30,10 @@ namespace Audio.Radio.Tea5767_Sample
                 Console.WriteLine($"Current frequency: {radio.GetFrequency()}");
             }
 
+            //set a known station
             radio.SelectFrequency(94.5f);
         }
+
+        #endregion
     }
 }

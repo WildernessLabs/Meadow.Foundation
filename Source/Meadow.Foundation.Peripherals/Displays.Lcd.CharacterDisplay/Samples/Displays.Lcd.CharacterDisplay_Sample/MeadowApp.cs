@@ -9,6 +9,8 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        #region DocsSnippet
+
         CharacterDisplay display;
 
         public MeadowApp()
@@ -25,18 +27,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
         void InitGpio() 
         {
             Console.WriteLine("InitGpio...");
-
-            //display = new CharacterDisplay
-            //(
-            //    portRS: Device.CreateDigitalOutputPort(Device.Pins.D10),
-            //    portE: Device.CreateDigitalOutputPort(Device.Pins.D09),
-            //    portD4: Device.CreateDigitalOutputPort(Device.Pins.D08),
-            //    portD5: Device.CreateDigitalOutputPort(Device.Pins.D07),
-            //    portD6: Device.CreateDigitalOutputPort(Device.Pins.D06),
-            //    portD7: Device.CreateDigitalOutputPort(Device.Pins.D05),
-            //    rows: 4, columns: 20
-            //);
-
+            
             display = new CharacterDisplay
             (
                 device: Device,
@@ -53,18 +44,6 @@ namespace Displays.Lcd.CharacterDisplay_Sample
         void InitGpioWithPWM()
         {
             Console.WriteLine("InitGpioWithPWM...");
-
-            //display = new CharacterDisplay
-            //(
-            //    portV0: Device.CreatePwmPort(Device.Pins.D11, 100, 0.5f, true),
-            //    portRS: Device.CreateDigitalOutputPort(Device.Pins.D10),
-            //    portE:  Device.CreateDigitalOutputPort(Device.Pins.D09),
-            //    portD4: Device.CreateDigitalOutputPort(Device.Pins.D08),
-            //    portD5: Device.CreateDigitalOutputPort(Device.Pins.D07),
-            //    portD6: Device.CreateDigitalOutputPort(Device.Pins.D06),
-            //    portD7: Device.CreateDigitalOutputPort(Device.Pins.D05),
-            //    rows: 4, columns: 20    // Adjust dimensions to fit your display
-            //);
 
             display = new CharacterDisplay
             (
@@ -127,5 +106,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
             display.ClearLines();
             display.WriteLine("Complete!", 0);
         }
+
+        #endregion
     }
 }

@@ -9,6 +9,8 @@ namespace Displays.Ssd1306_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        #region DocsSnippet
+
         GraphicsLibrary graphics;
         Ssd1306 display;
 
@@ -17,10 +19,51 @@ namespace Displays.Ssd1306_Sample
             //CreateSpiDisplay();
             CreateI2CDisplay();
 
+            graphics = new GraphicsLibrary(display);
+
+            graphics.Clear();
+            graphics.CurrentFont = new Font8x12();
+            graphics.DrawText(0, 0, "Meadow F7", Meadow.Foundation.Color.White);
+            graphics.DrawRectangle(5, 14, 30, 10, true);
+
+            graphics.Show();
+        }
+
+        void CreateSpiDisplay()
+        {
+            Console.WriteLine("Create Display with SPI...");
+
+            display = new Ssd1306
+            (
+                device: Device,
+                spiBus: Device.CreateSpiBus(),
+                chipSelectPin: Device.Pins.D02,
+                dcPin: Device.Pins.D01,
+                resetPin: Device.Pins.D00,
+                displayType: Ssd1306.DisplayType.OLED128x64
+            );
+        }
+
+        void CreateI2CDisplay()
+        {
+            Console.WriteLine("Create Display with I2C...");
+
+            display = new Ssd1306
+            (
+                i2cBus: Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.FastPlus),
+                address: 60,
+                displayType: Ssd1306.DisplayType.OLED128x32
+            );
+        }
+
+        #endregion
+
+        void AdditionalTests()
+        {
             Console.WriteLine("Fill display");
-            for(int x = 0; x < display.Width; x++)
+            for (int x = 0; x < display.Width; x++)
             {
-                for(int y = 0; y < display.Height; y++)
+                for (int y = 0; y < display.Height; y++)
                 {
                     display.DrawPixel(x, y, true);
 
@@ -29,19 +72,10 @@ namespace Displays.Ssd1306_Sample
             display.Show();
             Thread.Sleep(2000);
 
-         /*   Console.WriteLine("Test display API");
-            TestRawDisplayAPI();
-            Thread.Sleep(3000); */
-           
-
-            Console.WriteLine("Create Graphics Library");
-            TestDisplayGraphicsAPI();
-            Thread.Sleep(2000);
-
             Console.WriteLine("Test Inversion");
-            for(int x = 0; x < 64; x++)
+            for (int x = 0; x < 64; x++)
             {
-                for(int y = 0; y < 12; y++)
+                for (int y = 0; y < 12; y++)
                 {
                     display.InvertPixel(x, y);
                 }
@@ -59,7 +93,7 @@ namespace Displays.Ssd1306_Sample
 
             for (int x = 0; x < display.Width; x++)
             {
-               
+
                 Console.WriteLine($"X: {x}");
                 graphics.Clear();
 
@@ -82,36 +116,6 @@ namespace Displays.Ssd1306_Sample
                 Thread.Sleep(50);
             }
 
-            Console.WriteLine("Finished.");
-
-            Thread.Sleep(Timeout.Infinite);
-        }
-
-        void CreateSpiDisplay()
-        {
-            Console.WriteLine("Create Display with SPI...");
-
-            display = new Ssd1306
-            (
-                device: Device, 
-                spiBus: Device.CreateSpiBus(),
-                chipSelectPin: Device.Pins.D02,
-                dcPin: Device.Pins.D01,
-                resetPin: Device.Pins.D00,
-                displayType: Ssd1306.DisplayType.OLED128x64
-            );
-        }
-
-        void CreateI2CDisplay()
-        {
-            Console.WriteLine("Create Display with I2C...");
-
-            display = new Ssd1306
-            (
-                i2cBus: Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.FastPlus), 
-                address: 60, 
-                displayType: Ssd1306.DisplayType.OLED128x32
-            );
         }
 
         void TestRawDisplayAPI()
@@ -126,18 +130,6 @@ namespace Displays.Ssd1306_Sample
             }
 
             display.Show();
-        }
-
-        void TestDisplayGraphicsAPI() 
-        {
-            graphics = new GraphicsLibrary(display);
-
-            graphics.Clear();
-            graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(0, 0, "Meadow F7", Meadow.Foundation.Color.White);
-            graphics.DrawRectangle(5, 14, 30, 10, true);
-
-            graphics.Show();
         }
     }
 }

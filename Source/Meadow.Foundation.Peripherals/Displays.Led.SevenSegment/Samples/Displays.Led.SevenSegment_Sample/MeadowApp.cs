@@ -8,13 +8,13 @@ namespace Displays.Led.SevenSegment_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        SevenSegment sevenSegment;
+        #region DocsSnippet
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            sevenSegment = new SevenSegment
+            var sevenSegment = new SevenSegment
             (
                 portA: Device.CreateDigitalOutputPort(Device.Pins.D14),
                 portB: Device.CreateDigitalOutputPort(Device.Pins.D15),
@@ -27,10 +27,12 @@ namespace Displays.Led.SevenSegment_Sample
                 isCommonCathode: false
             );
 
-            TestSevenSegment();
+            sevenSegment.SetDisplay(character: '1', showDecimal: true);
         }
 
-        void TestSevenSegment()
+        #endregion
+
+        void TestSevenSegment(SevenSegment sevenSegment)
         {
             Console.WriteLine("TestSevenSegment...");
 

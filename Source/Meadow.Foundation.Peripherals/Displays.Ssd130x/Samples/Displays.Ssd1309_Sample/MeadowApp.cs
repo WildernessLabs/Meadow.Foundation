@@ -9,6 +9,8 @@ namespace Displays.Ssd1309_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        #region DocsSnippet
+
         GraphicsLibrary graphics;
         Ssd1309 display;
 
@@ -17,25 +19,14 @@ namespace Displays.Ssd1309_Sample
             CreateSpiDisplay();
             //CreateI2CDisplay();
 
-            display.Clear(true);
+            graphics = new GraphicsLibrary(display);
 
-            Console.WriteLine("Test display API");
-            TestRawDisplayAPI();
-            Thread.Sleep(5000);
+            graphics.Clear();
+            graphics.CurrentFont = new Font8x12();
+            graphics.DrawText(0, 0, "Meadow F7", Meadow.Foundation.Color.White);
+            graphics.DrawRectangle(5, 14, 30, 10, true);
 
-            Console.WriteLine("Create Graphics Library");
-            TestDisplayGraphicsAPI();
-            Thread.Sleep(5000);
-
-            Console.WriteLine("Test circles");
-            TestCircles();
-            Thread.Sleep(5000);
-
-            Grid();
-
-            Count();
-
-            Bounce();
+            graphics.Show();
         }
 
         void CreateSpiDisplay()
@@ -66,6 +57,9 @@ namespace Displays.Ssd1309_Sample
                 address: 60
             );
         }
+		
+		#endregion
+
 
         void TestCircles()
         {

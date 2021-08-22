@@ -8,14 +8,15 @@ namespace Displays.ST7565_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        St7565 sT7565;
+        #region DocsSnippet
+
         GraphicsLibrary graphics;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            sT7565 = new St7565
+            var sT7565 = new St7565
             (
                 device: Device, 
                 spiBus: Device.CreateSpiBus(),
@@ -28,14 +29,6 @@ namespace Displays.ST7565_Sample
 
             graphics = new GraphicsLibrary(sT7565);
 
-            TestST7565();
-        }
-
-        void TestST7565()
-        {
-            Console.WriteLine("TestST7565...");
-
-            // Drawing with Display Graphics Library
             graphics.CurrentFont = new Font8x8();
             graphics.Clear();
             graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
@@ -43,5 +36,7 @@ namespace Displays.ST7565_Sample
             graphics.DrawText(5, 5, "ST7565");
             graphics.Show();
         }
+
+        #endregion
     }
 }

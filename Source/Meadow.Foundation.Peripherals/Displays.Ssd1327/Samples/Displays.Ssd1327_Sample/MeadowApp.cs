@@ -11,46 +11,34 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        RgbPwmLed onboardLed;
+        #region DocsSnippet
 
-        Ssd1327 display;
         GraphicsLibrary graphics;
 
         public MeadowApp()
         {
-            Initialize();
+            Console.WriteLine("Initialize display...");
 
-            Console.WriteLine("Init complete");
+            var spiBus = Device.CreateSpiBus();
 
-            onboardLed.SetColor(Color.Green);
+            var display = new Ssd1327(Device, spiBus, Device.Pins.D02, Device.Pins.D01, Device.Pins.D00);
 
-            display.Clear();
-            for (int i = 0; i < 32; i++)
-            {
-                display.DrawPixel(i, i, true);
-            }
-            Console.WriteLine("Simple line");
-            display.Show();
+            display.SetContrast(60);
 
-            Thread.Sleep(2000);
+            graphics = new GraphicsLibrary(display);
+            graphics.CurrentFont = new Font8x12();
 
             graphics.Clear();
 
             for(int i = 10; i > 0; i--)
-            {
+            {   //interate across different brightnesses
                 graphics.DrawText(0, i * 12, "SSD1327", Color.FromRgb(i * 0.1, i * 0.1, i * 0.1));
             }
 
-            Console.WriteLine("Show Text");
             graphics.Show();
-
-            Thread.Sleep(5000);
-
-            TestDisplay();
-
-            Console.WriteLine("Finished");
-
         }
+
+        #endregion
 
         void TestDisplay()
         { 
@@ -69,30 +57,6 @@ namespace MeadowApp
                 Thread.Sleep(5000);
             }
 
-            onboardLed.SetColor(Color.Red);
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize display...");
-
-            var spiBus = Device.CreateSpiBus();
-
-            display = new Ssd1327(Device, spiBus, Device.Pins.D02, Device.Pins.D01, Device.Pins.D00);
-
-            display.SetContrast(60);
-
-            graphics = new GraphicsLibrary(display);
-            graphics.CurrentFont = new Font8x12();
-
-            Console.WriteLine("Initialize led...");
-
-            onboardLed = new RgbPwmLed(device: Device,
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                3.3f, 3.3f, 3.3f,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
         }
 
         void PolarLineTest()

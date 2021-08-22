@@ -11,8 +11,7 @@ namespace MeadowApp
     {
         GraphicsLibrary graphics;
         Max7219 display;
-
-        public MeadowApp()
+                public MeadowApp()
         {
             Init();
 

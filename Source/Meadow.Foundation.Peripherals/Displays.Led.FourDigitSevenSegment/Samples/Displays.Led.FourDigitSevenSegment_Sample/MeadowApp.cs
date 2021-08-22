@@ -8,6 +8,8 @@ namespace Displays.Led.SevenSegment_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        #region DocsSnippet
+
         FourDigitSevenSegment sevenSegment;
 
         public MeadowApp()
@@ -31,15 +33,10 @@ namespace Displays.Led.SevenSegment_Sample
                 isCommonCathode: true
             );
 
-            int number = 0;
-            while (true)
-            {
-                string stringNumber = number.ToString("D4");
-                sevenSegment.SetDisplay(stringNumber.ToCharArray());
-                Thread.Sleep(1000);
-                number++;
-            }
+            sevenSegment.SetDisplay("1234");
         }
+
+        #endregion
 
         protected void Test() 
         {
