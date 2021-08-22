@@ -9,7 +9,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        #region DocsSnippet
+        //<!—SNIP—>
 
         CharacterDisplay display;
 
@@ -107,6 +107,6 @@ namespace Displays.Lcd.CharacterDisplay_Sample
             display.WriteLine("Complete!", 0);
         }
 
-        #endregion
+        //<!—SNOP—>
     }
 }

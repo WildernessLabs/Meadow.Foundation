@@ -8,7 +8,7 @@ namespace Displays.ST7565_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        #region DocsSnippet
+        //<!—SNIP—>
 
         GraphicsLibrary graphics;
 
@@ -37,6 +37,6 @@ namespace Displays.ST7565_Sample
             graphics.Show();
         }
 
-        #endregion
+        //<!—SNOP—>
     }
 }

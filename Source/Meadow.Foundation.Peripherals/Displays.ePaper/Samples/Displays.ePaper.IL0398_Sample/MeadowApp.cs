@@ -8,7 +8,7 @@ namespace Displays.ePaper.IL0398_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        #region DocsSnippet
+        //<!—SNIP—>
 
         public MeadowApp()
         {
@@ -40,6 +40,6 @@ namespace Displays.ePaper.IL0398_Sample
             Console.WriteLine("Show Complete.");
         }
 
-        #endregion
+        //<!—SNOP—>
     }
 }

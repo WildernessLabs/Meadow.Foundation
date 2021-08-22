@@ -9,7 +9,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        #region DocsSnippet
+        //<!—SNIP—>
 
         Yx5300 mp3Player;
 
@@ -40,6 +40,6 @@ namespace MeadowApp
             });
         }
 
-        #endregion
+        //<!—SNOP—>
     }
 }

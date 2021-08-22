@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
 using System;
 using System.Threading;
 
@@ -11,7 +10,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        #region DocsSnippet
+        //<!—SNIP—>
 
         GraphicsLibrary graphics;
 
@@ -38,7 +37,7 @@ namespace MeadowApp
             graphics.Show();
         }
 
-        #endregion
+        //<!—SNOP—>
 
         void TestDisplay()
         { 

@@ -9,7 +9,7 @@ namespace Displays.Ssd1306_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        #region DocsSnippet
+        //<!—SNIP—>
 
         GraphicsLibrary graphics;
         Ssd1306 display;
@@ -56,7 +56,7 @@ namespace Displays.Ssd1306_Sample
             );
         }
 
-        #endregion
+        //<!—SNOP—>
 
         void AdditionalTests()
         {

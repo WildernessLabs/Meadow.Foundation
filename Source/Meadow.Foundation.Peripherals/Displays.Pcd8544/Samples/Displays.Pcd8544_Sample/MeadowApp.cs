@@ -8,7 +8,7 @@ namespace Displays.Pcd8854_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        #region DocsSnippet
+        //<!—SNIP—>
 
         public MeadowApp()
         {
@@ -35,7 +35,7 @@ namespace Displays.Pcd8854_Sample
             graphics.Show();
         }
 
-        #endregion
+        //<!—SNOP—>
 
         void CounterDemo(GraphicsLibrary graphics)
         {

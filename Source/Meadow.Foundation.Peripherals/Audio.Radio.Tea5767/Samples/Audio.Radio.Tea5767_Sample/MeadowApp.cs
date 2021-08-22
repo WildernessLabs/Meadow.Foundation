@@ -8,7 +8,7 @@ namespace Audio.Radio.Tea5767_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        #region DocsSnippet
+        //<!—SNIP—>
 
         protected Tea5767 radio;
 
@@ -34,6 +34,6 @@ namespace Audio.Radio.Tea5767_Sample
             radio.SelectFrequency(94.5f);
         }
 
-        #endregion
+        //<!—SNOP—>
     }
 }

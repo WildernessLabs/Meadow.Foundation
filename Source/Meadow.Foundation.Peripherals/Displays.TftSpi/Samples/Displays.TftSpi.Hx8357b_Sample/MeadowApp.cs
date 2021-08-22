@@ -13,31 +13,46 @@ namespace Displays.Tft.Hx8357b_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         GraphicsLibrary graphics;
-        TftSpiBase display;
 
         public MeadowApp()
         {
-            Console.WriteLine("TftSpi sample");
+            Console.WriteLine("Initalize");
 
-            Initialize();
+            var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode0);
+            var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-            Benchmark();
+            Console.WriteLine("Create display driver instance");
+
+            var display = new Hx8357b(device: Device, spiBus: spiBus,
+                resetPin: Device.Pins.D00,
+                dcPin: Device.Pins.D01,
+                chipSelectPin: Device.Pins.D02,
+                width: 320, height: 480, displayColorMode: DisplayColorMode.Format16bppRgb565);
+
+            Console.WriteLine("Create graphics lib");
+
+            graphics = new GraphicsLibrary(display);
 
             graphics.Clear();
-            
+
             graphics.DrawRectangle(120, 0, 120, 220, Color.White, true);
             graphics.DrawRectangle(0, 0, 120, 20, Color.Red, true);
             graphics.DrawRectangle(0, 20, 120, 20, Color.Purple, true);
             graphics.DrawRectangle(0, 40, 120, 20, Color.Blue, true);
             graphics.DrawRectangle(0, 60, 120, 20, Color.Green, true);
             graphics.DrawRectangle(0, 80, 120, 20, Color.Yellow, true);
-            graphics.DrawRectangle(0, 120, 120, 20, Color.Orange, true); 
-
-            Console.WriteLine("Show");
+            graphics.DrawRectangle(0, 120, 120, 20, Color.Orange, true);
 
             graphics.Show();
+        }
 
+        //<!—SNOP—>
+
+        void RunTests()
+        { 
             Thread.Sleep(2000);
 
             while (true)
@@ -70,7 +85,7 @@ namespace Displays.Tft.Hx8357b_Sample
             }
         }
 
-        void Benchmark()
+        void Benchmark(TftSpiBase display)
         {
             display.PenColor = Color.BlueViolet;
 
@@ -92,28 +107,6 @@ namespace Displays.Tft.Hx8357b_Sample
             sw.Stop();
 
             Console.WriteLine("Elapsed={0}", sw.Elapsed);
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Create Spi bus");
-
-            var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode0);
-            var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
-
-            Console.WriteLine("Create display driver instance");
-
-            display = new Hx8357b(device: Device, spiBus: spiBus,
-                resetPin: Device.Pins.D00,
-                dcPin: Device.Pins.D01,
-                chipSelectPin: Device.Pins.D02,
-                width: 320, height: 480, displayColorMode: DisplayColorMode.Format16bppRgb565);
-
-            Console.WriteLine("Create graphics lib");
-
-            graphics = new GraphicsLibrary(display);
-
-            Console.WriteLine("Init complete");
         }
 
         void InvertTest()

@@ -8,7 +8,7 @@ namespace Displays.Led.SevenSegment_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        #region DocsSnippet
+        //<!—SNIP—>
 
         public MeadowApp()
         {
@@ -30,7 +30,7 @@ namespace Displays.Led.SevenSegment_Sample
             sevenSegment.SetDisplay(character: '1', showDecimal: true);
         }
 
-        #endregion
+        //<!—SNOP—>
 
         void TestSevenSegment(SevenSegment sevenSegment)
         {

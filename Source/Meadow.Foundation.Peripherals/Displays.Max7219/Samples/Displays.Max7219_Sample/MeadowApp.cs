@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        #region DocsSnippet
+        //<!—SNIP—>
 
         Max7219 display;
 
@@ -55,7 +55,7 @@ namespace MeadowApp
             }
         }
 
-        #endregion
+        //<!—SNOP—>
 
         void CharacterDemo()
         {
