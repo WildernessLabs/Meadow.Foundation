@@ -3,70 +3,54 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
 
 namespace BasicDisplays.Tft.Ssd1351_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        TftSpiBase display;
-        ISpiBus spiBus;
+        //<!—SNIP—>
 
         public MeadowApp()
         {
-            Console.WriteLine("TftSpi sample");
-            Console.WriteLine("Create Spi bus");
+            Console.WriteLine("Initializing ...");
+  
+            var spiBus = Device.CreateSpiBus(12000);
 
-            spiBus = Device.CreateSpiBus(3000);
-
-            Console.WriteLine("Create display driver instance");
-
-            display = new Ssd1351(device: Device, spiBus: spiBus,
+            var display = new Ssd1351(
+                       device: Device, 
+                       spiBus: spiBus,
                        chipSelectPin: Device.Pins.D02,
                        dcPin: Device.Pins.D01,
                        resetPin: Device.Pins.D00,
                        width: 128, height: 128); 
 
-            Console.WriteLine("Create graphics lib");
+            var graphics = new GraphicsLibrary(display);
+            graphics.CurrentFont = new Font8x12();
 
-            var graphicsLib = new GraphicsLibrary(display);
-            graphicsLib.CurrentFont = new Font8x12();
+            graphics.Clear();
 
-            graphicsLib.Clear();
-
-            graphicsLib.DrawCircle(80, 80, 40, Meadow.Foundation.Color.Cyan, false);
+            graphics.DrawCircle(80, 80, 40, Meadow.Foundation.Color.Cyan, false);
 
             int indent = 0;
             int spacing = 10;
             int y = indent;
 
-            graphicsLib.DrawText(indent, y, "Meadow F7 (SSD1351)");
+            graphics.DrawText(indent, y, "Meadow F7 (SSD1351)");
 
-            graphicsLib.DrawText(indent, y += spacing, "Red", Meadow.Foundation.Color.Red);
+            graphics.DrawText(indent, y += spacing, "Red", Meadow.Foundation.Color.Red);
+            graphics.DrawText(indent, y += spacing, "Purple", Meadow.Foundation.Color.Purple);
+            graphics.DrawText(indent, y += spacing, "BlueViolet", Meadow.Foundation.Color.BlueViolet);
+            graphics.DrawText(indent, y += spacing, "Blue", Meadow.Foundation.Color.Blue);
+            graphics.DrawText(indent, y += spacing, "Cyan", Meadow.Foundation.Color.Cyan);
+            graphics.DrawText(indent, y += spacing, "LawnGreen", Meadow.Foundation.Color.LawnGreen);
+            graphics.DrawText(indent, y += spacing, "GreenYellow", Meadow.Foundation.Color.GreenYellow);
+            graphics.DrawText(indent, y += spacing, "Yellow", Meadow.Foundation.Color.Yellow);
+            graphics.DrawText(indent, y += spacing, "Orange", Meadow.Foundation.Color.Orange);
+            graphics.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
 
-            graphicsLib.DrawText(indent, y += spacing, "Purple", Meadow.Foundation.Color.Purple);
-
-            graphicsLib.DrawText(indent, y += spacing, "BlueViolet", Meadow.Foundation.Color.BlueViolet);
-
-            graphicsLib.DrawText(indent, y += spacing, "Blue", Meadow.Foundation.Color.Blue);
-
-            graphicsLib.DrawText(indent, y += spacing, "Cyan", Meadow.Foundation.Color.Cyan);
-
-            graphicsLib.DrawText(indent, y += spacing, "LawnGreen", Meadow.Foundation.Color.LawnGreen);
-
-            graphicsLib.DrawText(indent, y += spacing, "GreenYellow", Meadow.Foundation.Color.GreenYellow);
-
-            graphicsLib.DrawText(indent, y += spacing, "Yellow", Meadow.Foundation.Color.Yellow);
-
-            graphicsLib.DrawText(indent, y += spacing, "Orange", Meadow.Foundation.Color.Orange);
-
-            graphicsLib.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
-
-            Console.WriteLine("Show");
-
-            graphicsLib.Show();
-            
-            Console.WriteLine("Show complete");
+            graphics.Show();
         }
+
+        //<!—SNOP—>
     }
 }

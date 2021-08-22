@@ -5,19 +5,25 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
+using Meadow.Hardware;
 
 namespace Displays.Tft.Ili9341_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         Ili9341 display;
         GraphicsLibrary graphics;
 
         public MeadowApp()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("Initializing ...");
 
-            var spiBus = Device.CreateSpiBus();
+            var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode0);
+            var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
+
+            Console.WriteLine("Create display driver instance");
 
             display = new Ili9341
             (
@@ -30,7 +36,18 @@ namespace Displays.Tft.Ili9341_Sample
             );
 
             graphics = new GraphicsLibrary(display);
-
+			
+			graphics.CurrentFont = new Font12x16();
+            graphics.Clear();
+            graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
+            graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, false);
+            graphics.DrawCircle(50, 50, 40, Meadow.Foundation.Color.Blue, false);
+            graphics.DrawText(5, 5, "Meadow F7");
+            graphics.Show();
+	   }
+			
+	   void DisplayTest()
+	   {
             while (true)
             {
                 //   PartialUpdate();

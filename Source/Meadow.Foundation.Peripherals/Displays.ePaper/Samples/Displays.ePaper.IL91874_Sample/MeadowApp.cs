@@ -9,12 +9,11 @@ namespace Displays.ePaper.IL91874_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         //<!—SNIP—>
-
+        
         public MeadowApp()
         {
             Console.WriteLine("Initialize ...");
  
-            Console.WriteLine("Create display driver instance");
             var display = new Il91874(device: Device,
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
@@ -32,8 +31,6 @@ namespace Displays.ePaper.IL91874_Sample
             graphics.CurrentFont = new Font8x12();
             graphics.DrawText(2, 2, "IL91874", Meadow.Foundation.Color.Black);
             graphics.DrawText(2, 20, "Hello, Honeybees!", Meadow.Foundation.Color.Black);
-
-            Console.WriteLine("Show");
 
             graphics.Show();
         }

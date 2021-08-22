@@ -11,37 +11,60 @@ using static Meadow.Foundation.Displays.DisplayBase;
 
 namespace Displays.Tft.ST7789_Sample
 {
+    /* 
+       AISU:
+        chipSelectPin: Device.Pins.D15,
+        dcPin: Device.Pins.D11,
+        resetPin: Device.Pins.D14, 
+       JUEGO:
+        chipSelectPin: Device.Pins.D14,
+        dcPin: Device.Pins.D03,
+        resetPin: Device.Pins.D04,
+    */
+
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        GraphicsLibrary canvas;
-        TftSpiBase display;
-        int sleepDuration = 500;
+        //<!—SNIP—>
+
+        GraphicsLibrary graphics;
+        St7789 display;
 
         public MeadowApp()
         {
-            Console.WriteLine("TftSpi sample");
+            Console.WriteLine("Initializing ...");
 
-            Initialize();
+            var config = new SpiClockConfiguration(48000, SpiClockConfiguration.Mode.Mode3);
+            var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-            //Benchmark();
+            var display = new St7789(
+                device: Device,
+                spiBus: spiBus,
+                chipSelectPin: Device.Pins.D14,
+                dcPin: Device.Pins.D03,
+                resetPin: Device.Pins.D04,
+                width: 240, height: 240, displayColorMode: DisplayColorMode.Format12bppRgb444);
 
-            display.ClearScreen(0xFF);
-            display.Show();
-            Thread.Sleep(sleepDuration);
+            graphics = new GraphicsLibrary(display);
+            graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
 
-            canvas.Clear(true);
-            
-            canvas.DrawRectangle(120, 0, 120, 220, Color.White, true);
-            canvas.DrawRectangle(0, 0, 120, 20, Color.Red, true);
-            canvas.DrawRectangle(0, 20, 120, 20, Color.Purple, true);
-            canvas.DrawRectangle(0, 40, 120, 20, Color.Blue, true);
-            canvas.DrawRectangle(0, 60, 120, 20, Color.Green, true);
-            canvas.DrawRectangle(0, 80, 120, 20, Color.Yellow, true);
-            canvas.DrawRectangle(0, 120, 120, 20, Color.Orange, true); 
+            graphics.Clear(true);
 
-            Console.WriteLine("Show");
+            graphics.DrawRectangle(120, 0, 120, 220, Color.White, true);
+            graphics.DrawRectangle(0, 0, 120, 20, Color.Red, true);
+            graphics.DrawRectangle(0, 20, 120, 20, Color.Purple, true);
+            graphics.DrawRectangle(0, 40, 120, 20, Color.Blue, true);
+            graphics.DrawRectangle(0, 60, 120, 20, Color.Green, true);
+            graphics.DrawRectangle(0, 80, 120, 20, Color.Yellow, true);
+            graphics.DrawRectangle(0, 120, 120, 20, Color.Orange, true);
 
-            canvas.Show();
+            graphics.Show();
+        }
+
+        //<!—SNOP—>
+
+        int sleepDuration = 500;
+        void DisplayTest()
+        { 
 
             Thread.Sleep(sleepDuration);
 
@@ -115,34 +138,6 @@ namespace Displays.Tft.ST7789_Sample
             Thread.Sleep(1000);
         }
 
-        void Initialize()
-        {
-            Console.WriteLine("Create Spi bus");
-
-            var config = new SpiClockConfiguration(48000, SpiClockConfiguration.Mode.Mode3);
-            var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
-
-            Console.WriteLine("Create display driver instance");
-
-            display = new St7789(device: Device, spiBus: spiBus,
-                // AISU:
-                chipSelectPin: Device.Pins.D15,//D14,
-                dcPin: Device.Pins.D11,//D03,
-                resetPin: Device.Pins.D14, //D04,
-                // JUEGO:
-                //chipSelectPin: Device.Pins.D14,
-                //dcPin: Device.Pins.D03,
-                //resetPin: Device.Pins.D04,
-                width: 240, height: 240, displayColorMode: DisplayColorMode.Format12bppRgb444);
-
-            Console.WriteLine("Create graphics lib");
-
-            canvas = new GraphicsLibrary(display);
-            canvas.Rotation = GraphicsLibrary.RotationType._180Degrees;
-
-            Console.WriteLine("Init complete");
-        }
-
         void PathTest()
         {
             var pathSin = new GraphicsPath();
@@ -161,50 +156,50 @@ namespace Displays.Tft.ST7789_Sample
                 pathCos.LineTo(i * 5, 120 + (int)(Math.Cos(i * 10 * Math.PI / 180) * 100));
             }
 
-            canvas.Clear();
+            graphics.Clear();
 
-            canvas.Stroke = 3;
-            canvas.DrawLine(0, 120, 240, 120, Color.White);
-            canvas.DrawPath(pathSin, Color.Cyan);
-            canvas.DrawPath(pathCos, Color.LawnGreen);
+            graphics.Stroke = 3;
+            graphics.DrawLine(0, 120, 240, 120, Color.White);
+            graphics.DrawPath(pathSin, Color.Cyan);
+            graphics.DrawPath(pathCos, Color.LawnGreen);
 
-            canvas.Show();
+            graphics.Show();
         }
 
         void FontAlignmentTest()
         {
-            canvas.Clear();
+            graphics.Clear();
 
-            canvas.DrawText(120, 0, "Left aligned", Color.Blue);
-            canvas.DrawText(120, 16, "Center aligned", Color.Green, GraphicsLibrary.ScaleFactor.X1, GraphicsLibrary.TextAlignment.Center);
-            canvas.DrawText(120, 32, "Right aligned", Color.Red, GraphicsLibrary.ScaleFactor.X1, GraphicsLibrary.TextAlignment.Right);
+            graphics.DrawText(120, 0, "Left aligned", Color.Blue);
+            graphics.DrawText(120, 16, "Center aligned", Color.Green, GraphicsLibrary.ScaleFactor.X1, GraphicsLibrary.TextAlignment.Center);
+            graphics.DrawText(120, 32, "Right aligned", Color.Red, GraphicsLibrary.ScaleFactor.X1, GraphicsLibrary.TextAlignment.Right);
 
-            canvas.DrawText(120, 64, "Left aligned", Color.Blue, GraphicsLibrary.ScaleFactor.X2);
-            canvas.DrawText(120, 96, "Center aligned", Color.Green, GraphicsLibrary.ScaleFactor.X2, GraphicsLibrary.TextAlignment.Center);
-            canvas.DrawText(120, 128, "Right aligned", Color.Red, GraphicsLibrary.ScaleFactor.X2, GraphicsLibrary.TextAlignment.Right);
+            graphics.DrawText(120, 64, "Left aligned", Color.Blue, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(120, 96, "Center aligned", Color.Green, GraphicsLibrary.ScaleFactor.X2, GraphicsLibrary.TextAlignment.Center);
+            graphics.DrawText(120, 128, "Right aligned", Color.Red, GraphicsLibrary.ScaleFactor.X2, GraphicsLibrary.TextAlignment.Right);
 
-            canvas.Show();
+            graphics.Show();
         }
 
         void InvertTest()
         {
-            canvas.CurrentFont = new Font12x16();
-            canvas.Clear();
+            graphics.CurrentFont = new Font12x16();
+            graphics.Clear();
 
             string msg = "Cursor test";
             string msg2 = "$123.456";
 
-            canvas.DrawText(0, 1, msg, WildernessLabsColors.AzureBlue);
-            canvas.DrawRectangle(0, 16, 12 * msg2.Length, 16, WildernessLabsColors.AzureBlueDark, true);
-            canvas.DrawText(0, 16, msg2, WildernessLabsColors.ChileanFire);
+            graphics.DrawText(0, 1, msg, WildernessLabsColors.AzureBlue);
+            graphics.DrawRectangle(0, 16, 12 * msg2.Length, 16, WildernessLabsColors.AzureBlueDark, true);
+            graphics.DrawText(0, 16, msg2, WildernessLabsColors.ChileanFire);
 
             for (int i = 0; i < 4; i++)
             {
                 for(int j = 0; j < 6; j++)
                 {
-                    canvas.InvertRectangle(i * 12, 0, 12, 16);
+                    graphics.InvertRectangle(i * 12, 0, 12, 16);
           
-                    canvas.Show();
+                    graphics.Show();
                     Thread.Sleep(50);
                 }
             }
@@ -213,9 +208,9 @@ namespace Displays.Tft.ST7789_Sample
             {
                 for (int j = 0; j < 6; j++)
                 {
-                    canvas.InvertRectangle(i * 12, 16, 12, 16);
+                    graphics.InvertRectangle(i * 12, 16, 12, 16);
 
-                    canvas.Show();
+                    graphics.Show();
                     Thread.Sleep(50);
                 }
             }
@@ -225,240 +220,240 @@ namespace Displays.Tft.ST7789_Sample
         {
             Console.WriteLine("Horizonal lines");
 
-            canvas.Clear();
+            graphics.Clear();
 
             for (int i = 1; i < 10; i++)
             {
-                canvas.Stroke = i;
-                canvas.DrawHorizontalLine(5, 20 * i, (int)(display.Width - 10), Color.Red);
+                graphics.Stroke = i;
+                graphics.DrawHorizontalLine(5, 20 * i, (int)(display.Width - 10), Color.Red);
             }
-            canvas.Show();
+            graphics.Show();
             Thread.Sleep(1500);
 
-            canvas.Clear();
+            graphics.Clear();
             Console.WriteLine("Horizonal lines (negative)");
             for (int i = 1; i < 10; i++)
             {
-                canvas.Stroke = i;
-                canvas.DrawHorizontalLine((int)canvas.Width - 5, 20 * i, (int)(10 - canvas.Width), Color.Green);
+                graphics.Stroke = i;
+                graphics.DrawHorizontalLine((int)graphics.Width - 5, 20 * i, (int)(10 - graphics.Width), Color.Green);
             }
-            canvas.Show();
+            graphics.Show();
             Thread.Sleep(1500);
-            canvas.Clear();
+            graphics.Clear();
 
             Console.WriteLine("Vertical lines");
 
-            canvas.Clear();
+            graphics.Clear();
 
             for (int i = 1; i < 10; i++)
             {
-                canvas.Stroke = i;
-                canvas.DrawVerticalLine(20 * i, 5, (int)(canvas.Height - 10), Color.Orange);
+                graphics.Stroke = i;
+                graphics.DrawVerticalLine(20 * i, 5, (int)(graphics.Height - 10), Color.Orange);
             }
-            canvas.Show();
+            graphics.Show();
             Thread.Sleep(1500);
-            canvas.Clear();
+            graphics.Clear();
 
             Console.WriteLine("Vertical lines (negative)");
             for (int i = 1; i < 10; i++)
             {
-                canvas.Stroke = i;
-                canvas.DrawVerticalLine(20 * i, (int)(canvas.Height - 5), (int)(10 - canvas.Width), Color.Blue);
+                graphics.Stroke = i;
+                graphics.DrawVerticalLine(20 * i, (int)(graphics.Height - 5), (int)(10 - graphics.Width), Color.Blue);
             }
-            canvas.Show();
+            graphics.Show();
             Thread.Sleep(1500);
         }
 
         void PolarLineTest()
         {
-            canvas.Clear();
-            canvas.Stroke = 3;
+            graphics.Clear();
+            graphics.Stroke = 3;
 
             for (int i = 0; i < 270; i+= 12)
             {
-                canvas.DrawLine(120, 120, 80, (float)(i * Math.PI / 180), Color.White);
+                graphics.DrawLine(120, 120, 80, (float)(i * Math.PI / 180), Color.White);
             }
 
-            canvas.Show();
+            graphics.Show();
         }
 
         void RoundRectTest()
         {
-            canvas.Clear();
+            graphics.Clear();
 
-            canvas.Stroke = 1;
+            graphics.Stroke = 1;
 
-            canvas.DrawRoundedRectangle(10, 10, 200, 200, 20, WildernessLabsColors.ChileanFire, false);
+            graphics.DrawRoundedRectangle(10, 10, 200, 200, 20, WildernessLabsColors.ChileanFire, false);
 
-            canvas.DrawRoundedRectangle(40, 40, 100, 60, 20, WildernessLabsColors.AzureBlue, true);
+            graphics.DrawRoundedRectangle(40, 40, 100, 60, 20, WildernessLabsColors.AzureBlue, true);
 
-            canvas.DrawRoundedRectangle(100, 70, 60, 60, 20, WildernessLabsColors.PearGreen, true);
+            graphics.DrawRoundedRectangle(100, 70, 60, 60, 20, WildernessLabsColors.PearGreen, true);
 
-            canvas.Show();
+            graphics.Show();
         }
 
         void QuadrantTest()
         {
-            canvas.Clear();
+            graphics.Clear();
 
-            canvas.DrawCircleQuadrant(120, 120, 110, 0, Color.Yellow, true);
-            canvas.DrawCircleQuadrant(120, 120, 110, 1, Color.Blue, true);
-            canvas.DrawCircleQuadrant(120, 120, 110, 2, Color.Cyan, true);
-            canvas.DrawCircleQuadrant(120, 120, 110, 3, Color.LawnGreen, true);
+            graphics.DrawCircleQuadrant(120, 120, 110, 0, Color.Yellow, true);
+            graphics.DrawCircleQuadrant(120, 120, 110, 1, Color.Blue, true);
+            graphics.DrawCircleQuadrant(120, 120, 110, 2, Color.Cyan, true);
+            graphics.DrawCircleQuadrant(120, 120, 110, 3, Color.LawnGreen, true);
 
-            canvas.Show();
+            graphics.Show();
         }
 
         void CircleTest()
         {
-            canvas.Clear();
+            graphics.Clear();
 
-            canvas.Stroke = 1;
-            canvas.DrawCircle(120, 120, 20, Color.Purple);
+            graphics.Stroke = 1;
+            graphics.DrawCircle(120, 120, 20, Color.Purple);
 
-            canvas.Stroke = 2;
-            canvas.DrawCircle(120, 120, 30, Color.Red);
+            graphics.Stroke = 2;
+            graphics.DrawCircle(120, 120, 30, Color.Red);
 
-            canvas.Stroke = 3;
-            canvas.DrawCircle(120, 120, 40, Color.Orange);
+            graphics.Stroke = 3;
+            graphics.DrawCircle(120, 120, 40, Color.Orange);
 
-            canvas.Stroke = 4;
-            canvas.DrawCircle(120, 120, 50, Color.Yellow);
+            graphics.Stroke = 4;
+            graphics.DrawCircle(120, 120, 50, Color.Yellow);
 
-            canvas.Stroke = 5;
-            canvas.DrawCircle(120, 120, 60, Color.LawnGreen);
+            graphics.Stroke = 5;
+            graphics.DrawCircle(120, 120, 60, Color.LawnGreen);
 
-            canvas.Stroke = 6;
-            canvas.DrawCircle(120, 120, 70, Color.Cyan);
+            graphics.Stroke = 6;
+            graphics.DrawCircle(120, 120, 70, Color.Cyan);
 
-            canvas.Stroke = 7;
-            canvas.DrawCircle(120, 120, 80, Color.Blue);
+            graphics.Stroke = 7;
+            graphics.DrawCircle(120, 120, 80, Color.Blue);
 
-            canvas.Show();
+            graphics.Show();
         }
 
         void ShapeTest()
         {
-            canvas.Clear();
+            graphics.Clear();
 
-            canvas.DrawCircle(60, 60, 20, Color.Purple);
-            canvas.DrawRectangle(10, 10, 30, 60, Color.Red);
-            canvas.DrawTriangle(20, 20, 10, 70, 60, 60, Color.Green);
+            graphics.DrawCircle(60, 60, 20, Color.Purple);
+            graphics.DrawRectangle(10, 10, 30, 60, Color.Red);
+            graphics.DrawTriangle(20, 20, 10, 70, 60, 60, Color.Green);
 
-            canvas.DrawCircle(90, 60, 20, Color.Cyan, true);
-            canvas.DrawRectangle(100, 100, 30, 10, Color.Yellow, true);
-            canvas.DrawTriangle(120, 20, 110, 70, 160, 60, Color.Pink, true);
+            graphics.DrawCircle(90, 60, 20, Color.Cyan, true);
+            graphics.DrawRectangle(100, 100, 30, 10, Color.Yellow, true);
+            graphics.DrawTriangle(120, 20, 110, 70, 160, 60, Color.Pink, true);
 
-            canvas.DrawLine(10, 120, 110, 130, Color.SlateGray);
+            graphics.DrawLine(10, 120, 110, 130, Color.SlateGray);
 
-            canvas.Show();
+            graphics.Show();
         }
 
         void StrokeTest()
         {
-            canvas.Clear();
+            graphics.Clear();
 
-            canvas.Stroke = 1;
-            canvas.DrawLine(5, 5,  115, 5,  Color.SteelBlue);
-            canvas.Stroke = 2;
-            canvas.DrawLine(5, 25, 115, 25, Color.SteelBlue);
-            canvas.Stroke = 3;
-            canvas.DrawLine(5, 45, 115, 45, Color.SteelBlue);
-            canvas.Stroke = 4;
-            canvas.DrawLine(5, 65, 115, 65, Color.SteelBlue);
-            canvas.Stroke = 5;
-            canvas.DrawLine(5, 85, 115, 85, Color.SteelBlue);
+            graphics.Stroke = 1;
+            graphics.DrawLine(5, 5,  115, 5,  Color.SteelBlue);
+            graphics.Stroke = 2;
+            graphics.DrawLine(5, 25, 115, 25, Color.SteelBlue);
+            graphics.Stroke = 3;
+            graphics.DrawLine(5, 45, 115, 45, Color.SteelBlue);
+            graphics.Stroke = 4;
+            graphics.DrawLine(5, 65, 115, 65, Color.SteelBlue);
+            graphics.Stroke = 5;
+            graphics.DrawLine(5, 85, 115, 85, Color.SteelBlue);
 
-            canvas.Stroke = 1;
-            canvas.DrawLine(135, 5, 135, 115, Color.SlateGray);
-            canvas.Stroke = 2;
-            canvas.DrawLine(155, 5, 155, 115, Color.SlateGray);
-            canvas.Stroke = 3;
-            canvas.DrawLine(175, 5, 175, 115, Color.SlateGray);
-            canvas.Stroke = 4;
-            canvas.DrawLine(195, 5, 195, 115, Color.SlateGray);
-            canvas.Stroke = 5;
-            canvas.DrawLine(215, 5, 215, 115, Color.SlateGray);
+            graphics.Stroke = 1;
+            graphics.DrawLine(135, 5, 135, 115, Color.SlateGray);
+            graphics.Stroke = 2;
+            graphics.DrawLine(155, 5, 155, 115, Color.SlateGray);
+            graphics.Stroke = 3;
+            graphics.DrawLine(175, 5, 175, 115, Color.SlateGray);
+            graphics.Stroke = 4;
+            graphics.DrawLine(195, 5, 195, 115, Color.SlateGray);
+            graphics.Stroke = 5;
+            graphics.DrawLine(215, 5, 215, 115, Color.SlateGray);
 
-            canvas.Stroke = 1;
-            canvas.DrawLine(5,  125, 115, 235, Color.Silver);
-            canvas.Stroke = 2;
-            canvas.DrawLine(25, 125, 135, 235, Color.Silver);
-            canvas.Stroke = 3;
-            canvas.DrawLine(45, 125, 155, 235, Color.Silver);
-            canvas.Stroke = 4;
-            canvas.DrawLine(65, 125, 175, 235, Color.Silver);
-            canvas.Stroke = 5;
-            canvas.DrawLine(85, 125, 195, 235, Color.Silver);
+            graphics.Stroke = 1;
+            graphics.DrawLine(5,  125, 115, 235, Color.Silver);
+            graphics.Stroke = 2;
+            graphics.DrawLine(25, 125, 135, 235, Color.Silver);
+            graphics.Stroke = 3;
+            graphics.DrawLine(45, 125, 155, 235, Color.Silver);
+            graphics.Stroke = 4;
+            graphics.DrawLine(65, 125, 175, 235, Color.Silver);
+            graphics.Stroke = 5;
+            graphics.DrawLine(85, 125, 195, 235, Color.Silver);
 
-            canvas.Stroke = 2;
-            canvas.DrawRectangle(2, 2, (int)(canvas.Width - 4), (int)(canvas.Height - 4), Color.DimGray, false);
+            graphics.Stroke = 2;
+            graphics.DrawRectangle(2, 2, (int)(graphics.Width - 4), (int)(graphics.Height - 4), Color.DimGray, false);
 
-            canvas.Show();
+            graphics.Show();
         }
 
         void FontScaleTest()
         {
-            canvas.CurrentFont = new Font12x20();
+            graphics.CurrentFont = new Font12x20();
 
-            canvas.Clear();
+            graphics.Clear();
 
-            canvas.DrawText(0, 0, "2x Scale", Color.Blue, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 0, "2x Scale", Color.Blue, GraphicsLibrary.ScaleFactor.X2);
 
-            canvas.DrawText(0, 48, "12x20 Font", Color.Green, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 48, "12x20 Font", Color.Green, GraphicsLibrary.ScaleFactor.X2);
 
-            canvas.DrawText(0, 96, "0123456789", Color.Yellow, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 96, "0123456789", Color.Yellow, GraphicsLibrary.ScaleFactor.X2);
 
-            canvas.DrawText(0, 144, "!@#$%^&*()", Color.Orange, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 144, "!@#$%^&*()", Color.Orange, GraphicsLibrary.ScaleFactor.X2);
 
-            canvas.DrawText(0, 192, "3x!", Color.OrangeRed, GraphicsLibrary.ScaleFactor.X3);
+            graphics.DrawText(0, 192, "3x!", Color.OrangeRed, GraphicsLibrary.ScaleFactor.X3);
 
-            canvas.DrawText(0, 240, "Meadow!", Color.Red, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 240, "Meadow!", Color.Red, GraphicsLibrary.ScaleFactor.X2);
 
-            canvas.DrawText(0, 288, "B4.2", Color.Violet, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 288, "B4.2", Color.Violet, GraphicsLibrary.ScaleFactor.X2);
 
-            canvas.Show();
+            graphics.Show();
         }
 
         void ColorFontTest()
         {
-            canvas.CurrentFont = new Font8x12();
+            graphics.CurrentFont = new Font8x12();
 
-            canvas.Clear();
+            graphics.Clear();
 
-            canvas.DrawTriangle(120, 20, 200, 100, 120, 100, Meadow.Foundation.Color.Red, false);
+            graphics.DrawTriangle(120, 20, 200, 100, 120, 100, Meadow.Foundation.Color.Red, false);
 
-            canvas.DrawRectangle(140, 30, 40, 90, Meadow.Foundation.Color.Yellow, false);
+            graphics.DrawRectangle(140, 30, 40, 90, Meadow.Foundation.Color.Yellow, false);
 
-            canvas.DrawCircle(160, 80, 40, Meadow.Foundation.Color.Cyan, false);
+            graphics.DrawCircle(160, 80, 40, Meadow.Foundation.Color.Cyan, false);
 
             int indent = 5;
             int spacing = 14;
             int y = indent;
 
-            canvas.DrawText(indent, y, "Meadow F7 SPI ST7789!!");
+            graphics.DrawText(indent, y, "Meadow F7 SPI ST7789!!");
 
-            canvas.DrawText(indent, y += spacing, "Red", Meadow.Foundation.Color.Red);
+            graphics.DrawText(indent, y += spacing, "Red", Meadow.Foundation.Color.Red);
 
-            canvas.DrawText(indent, y += spacing, "Purple", Meadow.Foundation.Color.Purple);
+            graphics.DrawText(indent, y += spacing, "Purple", Meadow.Foundation.Color.Purple);
 
-            canvas.DrawText(indent, y += spacing, "BlueViolet", Meadow.Foundation.Color.BlueViolet);
+            graphics.DrawText(indent, y += spacing, "BlueViolet", Meadow.Foundation.Color.BlueViolet);
 
-            canvas.DrawText(indent, y += spacing, "Blue", Meadow.Foundation.Color.Blue);
+            graphics.DrawText(indent, y += spacing, "Blue", Meadow.Foundation.Color.Blue);
 
-            canvas.DrawText(indent, y += spacing, "Cyan", Meadow.Foundation.Color.Cyan);
+            graphics.DrawText(indent, y += spacing, "Cyan", Meadow.Foundation.Color.Cyan);
 
-            canvas.DrawText(indent, y += spacing, "LawnGreen", Meadow.Foundation.Color.LawnGreen);
+            graphics.DrawText(indent, y += spacing, "LawnGreen", Meadow.Foundation.Color.LawnGreen);
 
-            canvas.DrawText(indent, y += spacing, "GreenYellow", Meadow.Foundation.Color.GreenYellow);
+            graphics.DrawText(indent, y += spacing, "GreenYellow", Meadow.Foundation.Color.GreenYellow);
 
-            canvas.DrawText(indent, y += spacing, "Yellow", Meadow.Foundation.Color.Yellow);
+            graphics.DrawText(indent, y += spacing, "Yellow", Meadow.Foundation.Color.Yellow);
 
-            canvas.DrawText(indent, y += spacing, "Orange", Meadow.Foundation.Color.Orange);
+            graphics.DrawText(indent, y += spacing, "Orange", Meadow.Foundation.Color.Orange);
 
-            canvas.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
+            graphics.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
 
-            canvas.Show();
+            graphics.Show();
 
             Console.WriteLine("Show complete");
         }

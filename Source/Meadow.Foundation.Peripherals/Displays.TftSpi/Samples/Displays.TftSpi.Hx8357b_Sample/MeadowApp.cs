@@ -19,17 +19,19 @@ namespace Displays.Tft.Hx8357b_Sample
 
         public MeadowApp()
         {
-            Console.WriteLine("Initalize");
+            Console.WriteLine("Initializing ...");
 
             var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode0);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             Console.WriteLine("Create display driver instance");
 
-            var display = new Hx8357b(device: Device, spiBus: spiBus,
+            var display = new Hx8357b(
+			    device: Device, 
+				spiBus: spiBus,
                 resetPin: Device.Pins.D00,
-                dcPin: Device.Pins.D01,
                 chipSelectPin: Device.Pins.D02,
+                dcPin: Device.Pins.D01,
                 width: 320, height: 480, displayColorMode: DisplayColorMode.Format16bppRgb565);
 
             Console.WriteLine("Create graphics lib");
@@ -51,10 +53,8 @@ namespace Displays.Tft.Hx8357b_Sample
 
         //<!—SNOP—>
 
-        void RunTests()
+        void DisplayTests()
         { 
-            Thread.Sleep(2000);
-
             while (true)
             {
                 InvertTest();
@@ -142,6 +142,34 @@ namespace Displays.Tft.Hx8357b_Sample
                     Thread.Sleep(50);
                 }
             }
+        }
+
+        void OverviewScreen()
+        {
+            Console.WriteLine("Show overview");
+
+            graphics.CurrentFont = new Font12x16();
+            graphics.Clear();
+            graphics.Stroke = 1;
+
+            graphics.DrawText(0, 0, "HX8357B controller", Color.White, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 30, "320x480 resolution", Color.LawnGreen, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 60, "12 or 16 bit color", Color.AliceBlue, GraphicsLibrary.ScaleFactor.X2);
+
+            for(int i = 0; i < 16; i++)
+            {
+                graphics.DrawRectangle( 90, i * 20, 20, 30, Color.FromRgb(i * 16, 0, 0));
+                graphics.DrawRectangle(120, i * 20, 20, 30, Color.FromRgb(i * 16, i * 16, 0));
+                graphics.DrawRectangle(150, i * 20, 20, 30, Color.FromRgb(0,  i * 16, 0));
+                graphics.DrawRectangle(180, i * 20, 20, 30, Color.FromRgb(0, i * 16, i * 16));
+                graphics.DrawRectangle(210, i * 20, 20, 30, Color.FromRgb(0, 0, i * 16));
+                graphics.DrawRectangle(240, i * 20, 20, 30, Color.FromRgb(i * 16, 0, i * 16));
+                graphics.DrawRectangle(270, i * 20, 20, 30, Color.FromRgb(i * 16, i * 16, i * 16));
+            }
+
+            graphics.Show();
+
+            Console.WriteLine("Show overview complete");
         }
 
         void PolarLineTest()

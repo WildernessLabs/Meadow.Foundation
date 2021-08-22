@@ -14,7 +14,6 @@ namespace Displays.ePaper.IL91874V03_Sample
         {
             Console.WriteLine("Initialize ...");
  
-            Console.WriteLine("Create display driver instance");
             var display = new Il91874V03(device: Device,
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
@@ -32,8 +31,6 @@ namespace Displays.ePaper.IL91874V03_Sample
             graphics.CurrentFont = new Font8x12();
             graphics.DrawText(2, 2, "IL91874V03", Meadow.Foundation.Color.Black);
             graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
-
-            Console.WriteLine("Show");
 
             graphics.Show();
         }

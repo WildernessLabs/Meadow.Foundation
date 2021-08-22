@@ -14,7 +14,6 @@ namespace Displays.ePaper.IL3897_Sample
         {
             Console.WriteLine("Initialize ...");
  
-            Console.WriteLine("Create display driver instance");
             var display = new Il3897(device: Device,
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
@@ -31,8 +30,6 @@ namespace Displays.ePaper.IL3897_Sample
             graphics.CurrentFont = new Font8x12();
             graphics.DrawText(2, 2, "IL3897", Meadow.Foundation.Color.Black);
             graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
-
-            Console.WriteLine("Show");
 
             graphics.Show();
         }

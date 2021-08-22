@@ -1,55 +1,32 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
 
 namespace Displays.TftSpi.St7735_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        St7735 display;
-        GraphicsLibrary graphics;
+        //<!—SNIP—>
 
         public MeadowApp()
         {
-            Initialize();
+            Console.WriteLine("Initializing ...");
 
-            ShapeTest();
-        }
+            var spiBus = Device.CreateSpiBus(12000);
 
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
-
-            var spiBus = Device.CreateSpiBus();
-
-            Console.WriteLine("Create display driver instance");
-
-            
-            /*display = new St7735(device: Device, spiBus: spiBus,
-                chipSelectPin: Device.Pins.D10,
-                dcPin: Device.Pins.D09,
-                resetPin: Device.Pins.D05,
-                width: 160, height: 80, St7735.DisplayType.ST7735R_80x160); */
-
-            display = new St7735(device: Device, spiBus: spiBus,
+            //note - you may need to adjust the DisplayType for your specific St7735
+            var display = new St7735(
+                device: Device, 
+                spiBus: Device.CreateSpiBus(),
               chipSelectPin: Device.Pins.D02,
               dcPin: Device.Pins.D01,
               resetPin: Device.Pins.D00,
               width: 128, height: 160, St7735.DisplayType.ST7735R);
 
-            Console.WriteLine("Create graphics lib");
-
-            graphics = new GraphicsLibrary(display);
-        }
-
-        void ShapeTest()
-        {
-            Console.WriteLine("Shape test");
+            var graphics = new GraphicsLibrary(display);
 
             graphics.Clear();
 
@@ -64,8 +41,8 @@ namespace Displays.TftSpi.St7735_Sample
             graphics.DrawLine(10, 120, 110, 130, Color.SlateGray);
 
             graphics.Show();
-
-            Console.WriteLine("Shape test complete");
         }
+
+        //<!—SNOP—>
     }
 }

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Audio.Mp3;
 
 namespace MeadowApp
@@ -11,13 +10,11 @@ namespace MeadowApp
     {
         //<!—SNIP—>
 
-        Yx5300 mp3Player;
-
         public MeadowApp()
         {
             Console.WriteLine("Initialize hardware...");
 
-            mp3Player = new Yx5300(Device, Device.SerialPortNames.Com4);
+            var mp3Player = new Yx5300(Device, Device.SerialPortNames.Com4);
 
             //using an async task - this code would likely go in an async method
             Task.Run(async () =>

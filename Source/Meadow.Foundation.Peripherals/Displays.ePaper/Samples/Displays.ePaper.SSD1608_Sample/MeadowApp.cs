@@ -14,7 +14,6 @@ namespace Displays.ePaper.SSD1608_Sample
         {
             Console.WriteLine("Initialize ...");
  
-            Console.WriteLine("Create display driver instance");
             var display = new Ssd1608(device: Device,
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
@@ -31,8 +30,6 @@ namespace Displays.ePaper.SSD1608_Sample
             graphics.CurrentFont = new Font8x12();
             graphics.DrawText(2, 2, "SSD1608", Meadow.Foundation.Color.Black);
             graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
-
-            Console.WriteLine("Show");
 
             graphics.Show();
         }
