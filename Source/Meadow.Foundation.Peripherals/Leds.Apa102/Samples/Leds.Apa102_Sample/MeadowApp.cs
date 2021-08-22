@@ -1,24 +1,41 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
-using Meadow.Hardware;
+using System;
+using System.Threading;
 
 namespace Leds.APA102_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         Apa102 apa102;
         int numberOfLeds = 8;
         float maxBrightness = 0.25f;
 
         public MeadowApp()
         {
-            Initialize();
+            Console.WriteLine("Initialize hardware...");
+            apa102 = new Apa102(Device.CreateSpiBus(48000), numberOfLeds, Apa102.PixelOrder.BGR);
 
-            while(true){
+            apa102.Clear();
+
+            apa102.SetLed(index: 0, color: Color.Red, brightness: 0.5f);
+            apa102.SetLed(index: 1, color: Color.Purple, brightness: 0.6f);
+            apa102.SetLed(index: 2, color: Color.Blue, brightness: 0.7f);
+            apa102.SetLed(index: 2, color: Color.Green, brightness: 0.8f);
+            apa102.SetLed(index: 2, color: Color.Yellow, brightness: 0.9f);
+            apa102.SetLed(index: 2, color: Color.Orange, brightness: 1.0f);
+
+            apa102.Show();
+        }
+
+        void Apa102Tests()
+        {
+            while (true)
+            {
                 SetColor(Colors.ChileanFire, maxBrightness);
                 Thread.Sleep(1000);
                 SetColor(Colors.PearGreen, maxBrightness);
@@ -26,13 +43,6 @@ namespace Leds.APA102_Sample
                 Pulse(Colors.AzureBlue, 10);
                 WalkTheStrip(Colors.ChileanFire, 10);
             }
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
-            apa102 = new Apa102(Device.CreateSpiBus(48000), numberOfLeds, Apa102.PixelOrder.BGR);
-            Console.WriteLine("Hardware initialized.");
         }
 
         /// <summary>
@@ -118,14 +128,6 @@ namespace Leds.APA102_Sample
 
                 Thread.Sleep(50);
             }
-
-            //for (int i = 0; i < apa102.NumberOfLeds; i++)
-            //{
-            //    if(last != 9999) { apa102.SetLed(last, Color.Black); }
-            //    apa102.SetLed(i, Color.Turquoise);
-            //    last = i;
-            //    apa102.Show();
-            //}
         }
 
         void Run()

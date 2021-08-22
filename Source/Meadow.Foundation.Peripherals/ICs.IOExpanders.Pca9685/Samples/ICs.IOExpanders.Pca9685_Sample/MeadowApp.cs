@@ -8,31 +8,23 @@ namespace ICs.IOExpanders.Pca9685_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Pca9685 pca9685;
+        //<!—SNIP—>
 
         public MeadowApp()
-        {
-            Initialize();
-            Run();
-        }
-
-        void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
             var i2CBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
 
-            pca9685 = new Pca9685(i2CBus, Pca9685.DEFAULT_ADDRESS, 50);
+            var pca9685 = new Pca9685(i2CBus, Pca9685.DEFAULT_ADDRESS, 50);
             pca9685.Initialize();
-        }
-
-        public void Run()
-        {
-            var port0 = pca9685.CreatePwmPort(0, 0.05f);
+        
+              var port0 = pca9685.CreatePwmPort(0, 0.05f);
             var port7 = pca9685.CreatePwmPort(7);
 
             port0.Start();
             port7.Start();
-
         }
+
+        //<!—SNOP—>
     }
 }
