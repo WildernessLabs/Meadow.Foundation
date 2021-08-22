@@ -8,11 +8,15 @@ namespace Sensors.Distance.Mb10x0_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         Mb10x0 sensor;
 
         public MeadowApp()
         {
-            Initialize();
+            Console.WriteLine("Initialize hardware...");
+
+            sensor = new Mb10x0(Device, Device.SerialPortNames.Com4);
 
             while (true)
             {
@@ -22,11 +26,6 @@ namespace Sensors.Distance.Mb10x0_Sample
             }
         }
 
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
-
-            sensor = new Mb10x0(Device, Device.SerialPortNames.Com4);
-        }
+        //<!—SNOP—>
     }
 }

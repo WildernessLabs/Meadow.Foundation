@@ -9,18 +9,13 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        ArducamMini camera;
+        //<!—SNIP—>
 
         public MeadowApp()
         {
-            Initialize();
-        }
-
-        public void Initialize()
-        {
             Console.WriteLine("Creating output ports...");
 
-            camera = new ArducamMini(Device, Device.CreateSpiBus(), Device.Pins.D00, Device.CreateI2cBus());
+            var camera = new ArducamMini(Device, Device.CreateSpiBus(), Device.Pins.D00, Device.CreateI2cBus());
 
             Thread.Sleep(1000);
 
@@ -42,5 +37,7 @@ namespace MeadowApp
                 Console.WriteLine($"Jpeg captured {data.Length}");
             }
         }
+
+        //<!—SNOP—>
     }
 }

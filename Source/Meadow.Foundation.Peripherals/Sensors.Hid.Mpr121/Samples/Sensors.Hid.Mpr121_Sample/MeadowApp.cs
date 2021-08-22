@@ -7,19 +7,13 @@ namespace Sensors.Distance.Mpr121_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Mpr121 sensor;
+        //<!—SNIP—>
 
         public MeadowApp()
         {
-            Init();
+            Console.WriteLine("Initializing...");
 
-        }
-
-        public void Init()
-        {
-            Console.WriteLine("Init...");
-
-            sensor = new Mpr121(Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Standard), 90, 100);
+            var sensor = new Mpr121(Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Standard), 90, 100);
             sensor.ChannelStatusesChanged += Sensor_ChannelStatusesChanged;
         }
 
@@ -35,14 +29,10 @@ namespace Sensors.Distance.Mpr121_Sample
                 }
             }
 
-            if (string.IsNullOrEmpty(pads))
-            {
-                Console.WriteLine("none");
-            }
-            else
-            {
-                Console.WriteLine(pads + "touched");
-            }
+            var msg = string.IsNullOrEmpty(pads) ? "none" : (pads + "touched");
+            Console.WriteLine(msg);
         }
+
+        //<!—SNOP—>
     }
 }

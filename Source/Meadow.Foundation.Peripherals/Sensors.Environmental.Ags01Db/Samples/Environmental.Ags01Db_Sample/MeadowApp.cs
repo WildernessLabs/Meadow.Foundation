@@ -8,6 +8,8 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         Ags01Db ags10Db;
 
         public MeadowApp()
@@ -16,14 +18,6 @@ namespace MeadowApp
             ags10Db = new Ags01Db(Device.CreateI2cBus());
 
             Console.WriteLine($"Version: v{ags10Db.GetVersion()}");
-
-            TestUpdating();
-            //TestRead();
-        }
-
-        void TestUpdating()
-        {
-            Console.WriteLine("Test Updating...");
 
             var consumer = Ags01Db.CreateObserver(
                 handler: result =>
@@ -42,6 +36,8 @@ namespace MeadowApp
 
             ags10Db.StartUpdating(TimeSpan.FromSeconds(1));
         }
+
+        //<!—SNOP—>
 
         void TestRead()
         {

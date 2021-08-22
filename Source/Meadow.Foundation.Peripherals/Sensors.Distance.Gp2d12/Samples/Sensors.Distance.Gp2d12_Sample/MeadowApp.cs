@@ -3,24 +3,22 @@ using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
-using Meadow.Units;
 
 namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         Gp2d12 sensor;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing...");
 
-            // configure our  sensor
             sensor = new Gp2d12(Device, Device.Pins.A03);
 
             //==== IObservable Pattern with an optional notification filter.
-            // Example that uses an IObersvable subscription to only be notified
-            // when the filter is satisfied
             var consumer = Gp2d12.CreateObserver(
                 handler: result => {
                     Console.WriteLine($"Observer filter satisfied: {result.New.Centimeters:N2}cm, old: {result.Old?.Centimeters:N2}cm");
@@ -32,13 +30,10 @@ namespace MeadowApp
                     }
                     return false;
                 }
-                // if you want to always get notified, pass null for the filter:
-                //filter: null
             );
             sensor.Subscribe(consumer);
 
-            //==== Classic Events Pattern
-            // classical .NET events can also be used:
+            // classical .NET events can also be used
             sensor.DistanceUpdated += (sender, result) => {
                 Console.WriteLine($"Temp Changed, temp: {result.New.Centimeters:N2}cm, old: {result.Old?.Centimeters:N2}cm");
             };
@@ -46,8 +41,6 @@ namespace MeadowApp
             //==== One-off reading use case/pattern
             ReadSensor().Wait();
 
-            // Spin up the sampling thread so that events are raised and
-            // IObservable notifications are sent.
             sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
         }
 
@@ -56,5 +49,7 @@ namespace MeadowApp
             var temperature = await sensor.Read();
             Console.WriteLine($"Initial temp: {temperature.Centimeters:N2}cm");
         }
+
+        //<!—SNOP—>
     }
 }

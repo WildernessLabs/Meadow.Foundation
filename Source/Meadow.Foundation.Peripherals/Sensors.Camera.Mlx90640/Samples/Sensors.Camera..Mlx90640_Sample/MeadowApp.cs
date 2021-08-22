@@ -9,26 +9,20 @@ namespace Sensors.Temperature.MLX90640_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         Mlx90640 sensor;
 
         public MeadowApp()
-        {
-            Initialize();
-
-            //View sensor data as temperature values
-            Run(false);
-
-            //View sensor data as ascii art. It is easier to see shapes, like your fingers.
-            //Run(true);
-        }
-
-        void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
 
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Fast);
             sensor = new Mlx90640(i2cBus, measurementUnit: Mlx90640.Units.Celsius);
             sensor.Initialize();
+
+            //View sensor data as temperature values
+            Run(showTempArrayAsAsciiArt: false);
         }
 
         void Run(bool showTempArrayAsAsciiArt)
@@ -70,7 +64,7 @@ namespace Sensors.Temperature.MLX90640_Sample
                     for (byte w = 0; w < 32; w++)
                     {
                         float t = frame[h * 32 + w];
-
+                        //View sensor data as ascii art. It is easier to see shapes, like your fingers.
                         if (!showTempArrayAsAsciiArt)
                         {
                             //Write the Temp value
@@ -97,5 +91,7 @@ namespace Sensors.Temperature.MLX90640_Sample
                 }
            }
         }
+
+        //<!—SNOP—>
     }
 }

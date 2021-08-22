@@ -9,6 +9,8 @@ namespace Sensors.Distance.SFSR02_Sample
     /* Driver in development */
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         Sfsr02 sFSR02;
 
         public MeadowApp()
@@ -30,5 +32,7 @@ namespace Sensors.Distance.SFSR02_Sample
         {
             Console.WriteLine($"{e.New.Centimeters}cm");
         }
+
+        //<!—SNOP—>
     }
 }
