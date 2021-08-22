@@ -8,11 +8,11 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Uln2003 stepperController;
+        //<!—SNIP—>
 
         public MeadowApp()
         {
-            stepperController = new Uln2003(
+            var stepperController = new Uln2003(
                 device: Device, 
                 pin1: Device.Pins.D01, 
                 pin2: Device.Pins.D02, 
@@ -21,7 +21,7 @@ namespace MeadowApp
 
             stepperController.Step(1024);
 
-         /*   for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 100; i++)
             {
                 Console.WriteLine($"Step forward {i}");
                 stepperController.Step(50);
@@ -33,7 +33,8 @@ namespace MeadowApp
                 Console.WriteLine($"Step backwards {i}");
                 stepperController.Step(-50);
                 Thread.Sleep(10);
-            } */
+            } 
         }
+        //<!—SNOP—>
     }
 }

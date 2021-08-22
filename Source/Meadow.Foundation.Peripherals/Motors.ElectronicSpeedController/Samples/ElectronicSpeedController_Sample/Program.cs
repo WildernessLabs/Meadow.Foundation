@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Meadow;
 
-namespace MeadowApp
+namespace ElectronicSpeedController_Sample
 {
     class Program
     {
