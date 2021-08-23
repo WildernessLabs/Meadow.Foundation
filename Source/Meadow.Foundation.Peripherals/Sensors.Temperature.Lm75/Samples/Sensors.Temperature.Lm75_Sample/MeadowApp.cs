@@ -10,6 +10,8 @@ namespace Sensors.Temperature.Lm75_Sample
     // TODO: this sample needs to be updated.
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SIPP—>
+
         Lm75 lm75;
 
         public MeadowApp()
@@ -18,20 +20,14 @@ namespace Sensors.Temperature.Lm75_Sample
 
             TestRead().Wait();
 
-            TestUpdating();
-        }
-
-        void TestUpdating()
-        {
-            Console.WriteLine("TestUpdating...");
+              Console.WriteLine("TestUpdating...");
 
             var consumer = Lm75.CreateObserver(
                 handler: result =>
                 {
                     Console.WriteLine($"Temperature New Value { result.New.Celsius}C");
                     Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}C");
-                    //Console.WriteLine($"Temperature Delta Value { result.Delta?.Celsius}");
-                },
+                      },
                 filter: null
             );
             lm75.Subscribe(consumer);
@@ -43,6 +39,8 @@ namespace Sensors.Temperature.Lm75_Sample
 
             lm75.StartUpdating();
         }
+
+        //<!—SOPP—>
 
         async Task TestRead()
         {

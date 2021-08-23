@@ -10,6 +10,8 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SIPP—>
+
         Bno055 sensor;
 
         public MeadowApp()
@@ -17,10 +19,8 @@ namespace MeadowApp
             Console.WriteLine("Initializing");
 
             // create the sensor driver
-            sensor = new Bno055(
-                Device.CreateI2cBus());
+            sensor = new Bno055(Device.CreateI2cBus());
 
-            //==== Events
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) =>
             {
@@ -57,15 +57,11 @@ namespace MeadowApp
                 Console.WriteLine($"Temp: {result.New.Temperature?.Celsius:N2}C");
             };
 
-            //==== IObservable 
-            // Example that uses an IObersvable subscription to only be notified
-            // when the filter is satisfied
+            // Example that uses an IObersvable subscription to only be notified when the filter is satisfied
             var consumer = Bno055.CreateObserver(
-                handler: result =>
-                {
-                    Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}, old: X:{result.Old?.Acceleration3D?.X.MetersPerSecondSquared:N2}");
-                },
+                handler: result => Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}, old: X:{result.Old?.Acceleration3D?.X.MetersPerSecondSquared:N2}"),
                 // only notify if there's a greater than 1 micro tesla on the Y axis
+                
                 filter: result =>
                 {
                     if (result.Old is { } old)
@@ -73,17 +69,11 @@ namespace MeadowApp
                         return ((result.New.Acceleration3D - old.Acceleration3D)?.Y > new Acceleration(1, AU.MetersPerSecondSquared));
                     }
                     return false;
-                }
-                // if you want to always get notified, pass null for the filter:
-                //filter: null
-                );
+                });
             sensor.Subscribe(consumer);
 
             //==== one-off read
             ReadConditions().Wait();
-
-            // for debugging, you can print out the registers:
-            //sensor.DisplayRegisters();
 
             // start updating
             sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
@@ -125,6 +115,6 @@ namespace MeadowApp
 
             Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
         }
-
+        //<!—SOPP—>
     }
 }

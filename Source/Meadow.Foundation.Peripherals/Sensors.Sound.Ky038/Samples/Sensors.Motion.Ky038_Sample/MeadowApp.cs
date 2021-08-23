@@ -11,14 +11,9 @@ namespace MeadowApp
 
         public MeadowApp()
         {
-            InitHardware();
-        }
-
-        public void InitHardware()
-        {
             Console.WriteLine("Initialize...");
 
-            sensor = new Ky038(Device, Device.Pins.A00, Device.Pins.D10);
+            var sensor = new Ky038(Device, Device.Pins.A00, Device.Pins.D10);
         }
     }
 }

@@ -6,7 +6,9 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        private readonly IRfidReader rfidReader;
+        //<!—SIPP—>
+
+        readonly IRfidReader rfidReader;
 
         public MeadowApp()
         {
@@ -41,10 +43,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
             {
                 Console.WriteLine("From IObserver - RfidReader has terminated, no more events will be emitted.");
             }
-
-            /// <remarks>
-            /// Parameter '<see cref="error" />' can optionally be cast to <see cref="RfidValidationException" />.
-            /// </remarks>
+     
             public void OnError(Exception error)
             {
                 Console.WriteLine($"From IObserver - {error}");
@@ -55,5 +54,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
                 Console.WriteLine($"From IObserver - Tag value is {DebugInformation.Hexadecimal(value)}");
             }
         }
+
+        //<!—SOPP—>
     }
 }

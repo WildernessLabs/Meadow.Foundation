@@ -8,12 +8,9 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        public MeadowApp()
-        {
-            InitHardware();
-        }
+        //<!—SIPP—>
 
-        public void InitHardware()
+        public MeadowApp()
         {
             Console.WriteLine("Initialize...");
             var bus = Device.CreateI2cBus();
@@ -29,5 +26,7 @@ namespace MeadowApp
 
             ina.StartUpdating(TimeSpan.FromSeconds(2));
         }
+
+        //<!—SOPP—>
     }
 }

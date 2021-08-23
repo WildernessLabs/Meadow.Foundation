@@ -11,26 +11,21 @@ namespace Sensors.Temperature.Tmp102_Sample
 
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SIPP—>
+
         Tmp102 tmp102;
 
         public MeadowApp()
         {
+            Console.WriteLine("Initializing...");
+
             tmp102 = new Tmp102(Device.CreateI2cBus());
-
-            TestUpdating();
-            //TestRead();
-        }
-
-        void TestUpdating()
-        {
-            Console.WriteLine("Test Updating...");
 
             var consumer = Tmp102.CreateObserver(
                 handler: result =>
                 {
                     Console.WriteLine($"Temperature New Value { result.New.Celsius}C");
                     Console.WriteLine($"Temperature Old Value { result.Old?.Celsius}C");
-                    //Console.WriteLine($"Temperature Delta Value { result.Delta?.Celsius}");
                 },
                 filter: null
             );
@@ -43,6 +38,8 @@ namespace Sensors.Temperature.Tmp102_Sample
 
             tmp102.StartUpdating(TimeSpan.FromSeconds(1));
         }
+
+        //<!—SOPP—>
 
         void TestRead()
         {

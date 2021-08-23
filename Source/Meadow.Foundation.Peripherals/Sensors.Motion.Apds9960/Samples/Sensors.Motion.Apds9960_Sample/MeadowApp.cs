@@ -8,6 +8,8 @@ namespace BasicSensors.Motion.Apds9960_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SIPP—>
+
         Apds9960 sensor;
 
         public MeadowApp()
@@ -17,28 +19,7 @@ namespace BasicSensors.Motion.Apds9960_Sample
             // configure our sensor on the I2C Bus
             var i2c = Device.CreateI2cBus();
             sensor = new Apds9960(Device, i2c, Device.Pins.D00);
-
-            ////==== IObservable 
-            //// Example that uses an IObersvable subscription to only be notified
-            //// when the filter is satisfied
-            //var consumer = Apds9960.CreateObserver(
-            //    handler: result => {
-            //        Console.WriteLine($"Observer: filter satisifed: {result.New.VisibleLight?.Lux:N2}Lux, old: {result.Old?.VisibleLight?.Lux:N2}Lux");
-            //    },
-            //    // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
-            //    filter: result => {
-            //        if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
-            //            // returns true if > 100lux change
-            //            return ((result.New.VisibleLight.Value - old.VisibleLight.Value).Abs().Lux > 100);
-            //        }
-            //        return false;
-            //    }
-            //    // if you want to always get notified, pass null for the filter:
-            //    //filter: null
-            //    );
-            //sensor.Subscribe(consumer);
-
-            //==== Events
+            
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) => {
                 Console.WriteLine($"  Ambient Light: {result.New.AmbientLight?.Lux:N2}Lux");
@@ -62,8 +43,32 @@ namespace BasicSensors.Motion.Apds9960_Sample
             Console.WriteLine($"  Ambient Light: {result.AmbientLight?.Lux:N2}Lux");
             Console.WriteLine($"  Color: {result.Color:N2}Lux");
         }
+
+        //<!—SOPP—>
     }
 }
+
+////==== IObservable 
+//// Example that uses an IObersvable subscription to only be notified
+//// when the filter is satisfied
+//var consumer = Apds9960.CreateObserver(
+//    handler: result => {
+//        Console.WriteLine($"Observer: filter satisifed: {result.New.VisibleLight?.Lux:N2}Lux, old: {result.Old?.VisibleLight?.Lux:N2}Lux");
+//    },
+//    // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
+//    filter: result => {
+//        if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+//            // returns true if > 100lux change
+//            return ((result.New.VisibleLight.Value - old.VisibleLight.Value).Abs().Lux > 100);
+//        }
+//        return false;
+//    }
+//    // if you want to always get notified, pass null for the filter:
+//    //filter: null
+//    );
+//sensor.Subscribe(consumer);
+
+
 
 //                Console.WriteLine($"Prox: {sensor.ReadProximity()}");
 //                Thread.Sleep(2000);

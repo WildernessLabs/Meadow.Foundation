@@ -8,19 +8,15 @@ namespace Sensors.Temperature.Mcp9808_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SIPP—>
+
         Mcp9808 mcp9808;
 
         public MeadowApp()
         {
+            Console.WriteLine("Initializing...");
+
             mcp9808 = new Mcp9808(Device.CreateI2cBus());
-
-            TestUpdating();
-            //TestRead();
-        }
-
-        void TestUpdating()
-        {
-            Console.WriteLine("TestUpdating...");
 
             var consumer = Mcp9808.CreateObserver(
                 handler: result =>
@@ -39,6 +35,8 @@ namespace Sensors.Temperature.Mcp9808_Sample
 
             mcp9808.StartUpdating(TimeSpan.FromSeconds(1));
         }
+
+        //<!—SOPP—>
 
         void TestRead()
         {
