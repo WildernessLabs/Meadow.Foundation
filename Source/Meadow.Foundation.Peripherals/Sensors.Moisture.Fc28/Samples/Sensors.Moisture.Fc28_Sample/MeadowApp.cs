@@ -9,9 +9,10 @@ using VU = Meadow.Units.Voltage.UnitType;
 
 namespace Sensors.Moisture.FC28_Sample
 {
-    // TODO: this needs a better sample.
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         Fc28 fc28;
 
         public MeadowApp()
@@ -25,18 +26,14 @@ namespace Sensors.Moisture.FC28_Sample
                 maximumVoltageCalibration: new Voltage(2.25f, VU.Volts)
             );
 
-            TestFC28Updating();
-        }
-
-        void TestFC28Updating() 
-        {
-            Console.WriteLine("TestFC28Updating...");
-
             var consumer = Fc28.CreateObserver(
-                handler: result => 
-                { 
-                
-                }, 
+                handler: result => {
+                    // the first time through, old will be null.
+                    string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
+                    Console.WriteLine($"Subscribed - " +
+                        $"new: {result.New}, " +
+                        $"old: {oldValue}");
+                },
                 filter: null
             );
             fc28.Subscribe(consumer);
@@ -48,6 +45,8 @@ namespace Sensors.Moisture.FC28_Sample
 
             fc28.StartUpdating();
         }
+
+        //<!—SOPP—>
 
         async Task TestFC28Read()
         {

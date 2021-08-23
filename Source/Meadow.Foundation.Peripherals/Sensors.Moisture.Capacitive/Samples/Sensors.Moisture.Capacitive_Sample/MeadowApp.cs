@@ -9,6 +9,8 @@ namespace Sensors.Moisture.Capacitive_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         Capacitive capacitive;
 
         public MeadowApp()
@@ -21,9 +23,7 @@ namespace Sensors.Moisture.Capacitive_Sample
                 maximumVoltageCalibration: new Voltage(1.63f)
             );
 
-            //==== IObservable Pattern
-            // Example that uses an IObservable subscription to only be notified
-            // when the humidity changes by filter defined.
+            // Example that uses an IObservable subscription to only be notified when the humidity changes by filter defined.
             var consumer = Capacitive.CreateObserver(
                 handler: result => {
                     // the first time through, old will be null.
@@ -36,11 +36,9 @@ namespace Sensors.Moisture.Capacitive_Sample
             );
             capacitive.Subscribe(consumer);
 
-            //==== Classic Events
             // classical .NET events can also be used:
             capacitive.HumidityUpdated += (sender, result) =>
-            {
-                // the first time through, old will be null.
+            {   // the first time through, old will be null.
                 string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
                 Console.WriteLine($"Updated - New: {result.New}, Old: {oldValue}");
             };
@@ -48,8 +46,7 @@ namespace Sensors.Moisture.Capacitive_Sample
             // Get an initial reading.
             ReadMoisture().Wait();
 
-            // Spin up the sampling thread so that events are raised and
-            // IObservable notifications are sent.
+            // Spin up the sampling thread so that events are raised and IObservable notifications are sent.
             capacitive.StartUpdating(TimeSpan.FromSeconds(5));
         }
 
@@ -58,5 +55,6 @@ namespace Sensors.Moisture.Capacitive_Sample
             var moisture = await capacitive.Read();
             Console.WriteLine($"Moisture New Value { moisture }");            
         }
+        //<!—SNOP—>
     }
 }
