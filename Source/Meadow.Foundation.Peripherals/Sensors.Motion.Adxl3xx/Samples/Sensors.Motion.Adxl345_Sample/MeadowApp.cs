@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        //<!—SIPP—>
+        //<!—SNIP—>
 
         Adxl345 sensor;
 
@@ -42,7 +42,7 @@ namespace MeadowApp
                 $"Z:{result.Z.MetersPerSecondSquared:N2} (m/s^2)]");
         }
 
-        //<!—SOPP—>
+        //<!—SNOP—>
 
         //==== IObservable 
         // Example that uses an IObersvable subscription to only be notified

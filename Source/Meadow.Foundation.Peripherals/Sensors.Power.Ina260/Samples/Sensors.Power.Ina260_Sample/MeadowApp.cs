@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        //<!—SIPP—>
+        //<!—SNIP—>
 
         public MeadowApp()
         {
@@ -27,6 +27,6 @@ namespace MeadowApp
             ina.StartUpdating(TimeSpan.FromSeconds(2));
         }
 
-        //<!—SOPP—>
+        //<!—SNOP—>
     }
 }

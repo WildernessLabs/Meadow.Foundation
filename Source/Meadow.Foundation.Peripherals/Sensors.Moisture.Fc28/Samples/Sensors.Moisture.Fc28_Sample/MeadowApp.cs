@@ -46,7 +46,7 @@ namespace Sensors.Moisture.FC28_Sample
             fc28.StartUpdating();
         }
 
-        //<!—SOPP—>
+        //<!—SNOP—>
 
         async Task TestFC28Read()
         {

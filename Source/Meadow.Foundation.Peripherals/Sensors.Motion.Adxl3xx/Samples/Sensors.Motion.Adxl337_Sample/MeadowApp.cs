@@ -10,7 +10,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        //<!—SIPP—>
+        //<!—SNIP—>
 
         Adxl337 sensor;
 
@@ -56,6 +56,6 @@ namespace MeadowApp
                 $"Z:{result.Z.MetersPerSecondSquared:N2} (m/s^2)]");
         }
 
-        //<!—SOPP—>
+        //<!—SNOP—>
     }
 }

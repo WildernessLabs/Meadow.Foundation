@@ -10,7 +10,7 @@ namespace Servos.Servo_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        //<!—SIPP—>
+        //<!—SNIP—>
 
         protected Servo servo;
 
