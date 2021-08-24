@@ -972,6 +972,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.F7", "..\..\Meadow.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Units", "..\..\Meadow.Core\source\Meadow.Units\Meadow.Units.csproj", "{E6A40CE3-4995-450A-8CCF-327A87A8A495}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.ePaper.SSD1681_Sample", "Meadow.Foundation.Peripherals\Displays.ePaper\Samples\Displays.ePaper.SSD1681_Sample\Displays.ePaper.SSD1681_Sample.csproj", "{B7A42999-EA3D-4A03-BFB6-72CBEDD42266}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2162,6 +2164,12 @@ Global
 		{E6A40CE3-4995-450A-8CCF-327A87A8A495}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6A40CE3-4995-450A-8CCF-327A87A8A495}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6A40CE3-4995-450A-8CCF-327A87A8A495}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B7A42999-EA3D-4A03-BFB6-72CBEDD42266}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7A42999-EA3D-4A03-BFB6-72CBEDD42266}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7A42999-EA3D-4A03-BFB6-72CBEDD42266}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{B7A42999-EA3D-4A03-BFB6-72CBEDD42266}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7A42999-EA3D-4A03-BFB6-72CBEDD42266}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7A42999-EA3D-4A03-BFB6-72CBEDD42266}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2645,6 +2653,7 @@ Global
 		{77B32370-BC64-4C68-925C-BDE09360F694} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 		{6DAB0421-4F17-477C-B171-6AF2336C8B04} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 		{E6A40CE3-4995-450A-8CCF-327A87A8A495} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
+		{B7A42999-EA3D-4A03-BFB6-72CBEDD42266} = {06BFC6F2-9D39-46B2-8E9B-A2204481EED2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
