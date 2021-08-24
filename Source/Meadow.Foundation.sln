@@ -346,7 +346,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TftSpi.ST7789_Samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.TftSpi", "Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TftSpi\Displays.TftSpi.csproj", "{24568129-061F-4A1E-B1CF-81B9F197EE58}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd1306_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd130x\Samples\Displays.Ssd1306_Sample\Displays.Ssd1306_Sample.csproj", "{16CFD509-CEA6-4038-B504-5C026C2A464F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd130x.Ssd1306_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd130x\Samples\Displays.Ssd130x.Ssd1306_Sample\Displays.Ssd130x.Ssd1306_Sample.csproj", "{16CFD509-CEA6-4038-B504-5C026C2A464F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd130x", "Meadow.Foundation.Peripherals\Displays.Ssd130x\Driver\Displays.Ssd130x\Displays.Ssd130x.csproj", "{7F69F8CB-5C1A-461B-90FC-360367CD65CF}"
 EndProject
@@ -470,7 +470,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Hcsens0040",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Hcsens0040_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Hcsens0040\Samples\Sensors.Motion.Hcsens0040_Sample\Sensors.Motion.Hcsens0040_Sample.csproj", "{DA828BA9-E57F-4579-B6B0-55910247408F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd1309_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd130x\Samples\Displays.Ssd1309_Sample\Displays.Ssd1309_Sample.csproj", "{E892BB59-C15A-4B60-A891-61DA944D56DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd130x.Ssd1309_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd130x\Samples\Displays.Ssd1309_Sample\Displays.Ssd130x.Ssd1309_Sample.csproj", "{E892BB59-C15A-4B60-A891-61DA944D56DA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Power.Ina260", "Sensors.Power.Ina260", "{18BD90D6-3D88-44A4-A366-134D12F3F823}"
 EndProject
@@ -496,7 +496,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{E96F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transceivers.SX127x_Sample", "Meadow.Foundation.Peripherals\Transceivers.SX127x\Samples\Transceivers.SX127x_Sample\Transceivers.SX127x_Sample.csproj", "{D9AE3936-204E-4FE7-84BD-5684B2172C37}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd1309_Game_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd130x\Samples\Displays.Ssd1309_Game_Sample\Displays.Ssd1309_Game_Sample.csproj", "{F5596859-93D3-41D0-8988-FFA24F4A2152}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd130x.Ssd1309_Game_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd130x\Samples\Displays.Ssd130x.Ssd1309_Game_Sample\Displays.Ssd130x.Ssd1309_Game_Sample.csproj", "{F5596859-93D3-41D0-8988-FFA24F4A2152}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Hmc5883", "Sensors.Motion.Hmc5883", "{ED862B12-EBF8-49BB-8F2A-01760F6D60E7}"
 EndProject
@@ -516,7 +516,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{3BB4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.Max44009_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.Max44009\Samples\Sensors.Light.Max44009_Sample\Sensors.Light.Max44009_Sample.csproj", "{466BAAFF-79D5-47D0-8A61-71EED9E94B17}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd1039_3DCube_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd130x\Samples\Displays.Ssd1039_3DCube_Sample\Displays.Ssd1039_3DCube_Sample.csproj", "{2B3D4217-C4E9-42C0-853F-0181BC75CE55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Ssd130x.Ssd1039_3DCube_Sample", "Meadow.Foundation.Peripherals\Displays.Ssd130x\Samples\Displays.Ssd130x.Ssd1039_3DCube_Sample\Displays.Ssd130x.Ssd1039_3DCube_Sample.csproj", "{2B3D4217-C4E9-42C0-853F-0181BC75CE55}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Temperature.Lm75", "Sensors.Temperature.Lm75", "{28CDEEE6-8998-4ADE-98D0-863CE249B5CF}"
 EndProject

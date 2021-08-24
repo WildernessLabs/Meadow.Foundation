@@ -5,7 +5,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Graphics;
 
-namespace Displays.Ssd1309_Sample
+namespace Displays.Ssd130x.Ssd1309_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
