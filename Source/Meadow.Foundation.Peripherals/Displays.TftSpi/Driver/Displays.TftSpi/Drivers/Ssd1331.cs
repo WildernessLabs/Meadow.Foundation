@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
 
         public Ssd1331(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-           int width, int height) 
+           int width = 96, int height = 64) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, DisplayColorMode.Format16bppRgb565)
         {
             Initialize();
