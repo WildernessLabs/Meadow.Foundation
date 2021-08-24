@@ -42,5 +42,7 @@ namespace Displays.Tft.Ili9163_Sample
             graphics.DrawText(5, 5, "Meadow F7");
             graphics.Show();
         }
+
+        //<!—SNOP—>
     }
 }

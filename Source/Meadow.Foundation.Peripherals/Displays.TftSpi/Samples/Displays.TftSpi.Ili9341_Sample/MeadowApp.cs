@@ -45,8 +45,10 @@ namespace Displays.Tft.Ili9341_Sample
             graphics.DrawText(5, 5, "Meadow F7");
             graphics.Show();
 	   }
-			
-	   void DisplayTest()
+
+        //<!—SNOP—>
+
+        void DisplayTest()
 	   {
             while (true)
             {
