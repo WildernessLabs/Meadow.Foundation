@@ -62,6 +62,6 @@ namespace Sensors.Gnss.Mt3339_Sample
                 Console.WriteLine("*********************************************");
             };
         }
-        //<!—SNIP—>
+        //<!—SNOP—>
     }
 }

@@ -39,7 +39,7 @@ namespace FeatherWings.DotstarWing_Sample
             graphics.Show();
         }
 
-        //<!—SNIP—>
+        //<!—SNOP—>
 
         void DrawPixels()
         {

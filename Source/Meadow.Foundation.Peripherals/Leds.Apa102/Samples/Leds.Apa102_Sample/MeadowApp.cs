@@ -32,6 +32,8 @@ namespace Leds.APA102_Sample
             apa102.Show();
         }
 
+        //<!—SNOP—>
+
         void Apa102Tests()
         {
             while (true)
