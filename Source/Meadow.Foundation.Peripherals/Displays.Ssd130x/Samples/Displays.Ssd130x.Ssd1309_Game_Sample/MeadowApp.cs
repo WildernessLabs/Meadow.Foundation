@@ -6,7 +6,7 @@ using Meadow.Hardware;
 using System;
 using System.Threading;
 
-namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
+namespace Displays.Ssd130x.Ssd1309_Game_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {

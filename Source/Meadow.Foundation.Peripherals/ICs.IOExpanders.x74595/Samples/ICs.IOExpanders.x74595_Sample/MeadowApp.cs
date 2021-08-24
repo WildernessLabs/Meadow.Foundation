@@ -8,13 +8,15 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
+        //<!—SNIP—>
+
         x74595 shiftRegister;
 
         public MeadowApp()
         {
-            Initialize();
+            Console.WriteLine("Initialize hardware...");
 
-            Console.WriteLine("Clear");
+            shiftRegister = new x74595(Device, Device.CreateSpiBus(), Device.Pins.D00, 8);
 
             shiftRegister.Clear(true);
 
@@ -48,11 +50,6 @@ namespace MeadowApp
             }
         }
 
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
-
-            shiftRegister = new x74595(Device, Device.CreateSpiBus(), Device.Pins.D00, 8);
-        }
+        //<!—SNOP—>
     }
 }

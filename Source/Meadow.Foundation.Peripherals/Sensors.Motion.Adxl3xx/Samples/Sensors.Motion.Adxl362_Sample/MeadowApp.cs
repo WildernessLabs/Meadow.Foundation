@@ -6,7 +6,7 @@ using AU = Meadow.Units.Acceleration.UnitType;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
 
-namespace MeadowApp
+namespace Sensors.Motion.Adxl362_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
