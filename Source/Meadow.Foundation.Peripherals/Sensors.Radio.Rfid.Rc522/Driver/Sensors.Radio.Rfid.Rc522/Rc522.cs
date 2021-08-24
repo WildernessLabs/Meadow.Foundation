@@ -5,7 +5,7 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 
-namespace MeadowApp
+namespace Meadow.Foundation.Rfid
 {
    /* public class Mfrc522
     {
