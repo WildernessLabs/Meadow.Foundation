@@ -2,7 +2,7 @@
 using Meadow;
 using Meadow.Devices;
 
-namespace MeadowApp
+namespace Meadow.Foundation.Sensors.Rfid_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {

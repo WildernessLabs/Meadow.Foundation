@@ -5,7 +5,7 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 
-namespace Meadow.Foundation.Rfid
+namespace Meadow.Foundation.Sensors.Rfid
 {
    /* public class Mfrc522
     {
