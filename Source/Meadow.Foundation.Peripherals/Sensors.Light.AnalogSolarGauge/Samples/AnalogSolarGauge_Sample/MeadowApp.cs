@@ -11,18 +11,18 @@ namespace MeadowApp
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         //<!—SNIP—>
-        AnalogSolarIntensityGauge solarGauge;
+        AnalogSolarGauge solarGauge;
 
         public MeadowApp()
         {
             Console.WriteLine("Initialize hardware...");
-            solarGauge = new AnalogSolarIntensityGauge(Device, Device.Pins.A02, updateIntervalMs: 1000);
+            solarGauge = new AnalogSolarGauge(Device, Device.Pins.A02, updateIntervalMs: 1000);
 
             //==== classic .NET Event
             solarGauge.SolarIntensityUpdated += (s, result) => Console.WriteLine($"SolarIntensityUpdated: {result.New * 100:n2}%");
             
             //==== Filterable observer
-            var observer = AnalogSolarIntensityGauge.CreateObserver(
+            var observer = AnalogSolarGauge.CreateObserver(
                 handler: result => Console.WriteLine($"Observer filter satisifed, new intensity: {result.New * 100:n2}%"),
                 filter: result => {
                     if (result.Old is { } old)

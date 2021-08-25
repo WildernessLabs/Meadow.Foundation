@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -8,6 +8,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Sensors.Light.AnalogSolarIntensityGauge\Sensors.Light.AnalogSolarIntensityGauge.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Light.AnalogSolarGauge\Sensors.Light.AnalogSolarGauge.csproj" />
   </ItemGroup>
 </Project>

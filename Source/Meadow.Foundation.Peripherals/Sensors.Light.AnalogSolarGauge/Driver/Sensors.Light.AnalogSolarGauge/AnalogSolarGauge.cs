@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// Driver to measure solar panel input. 
     /// </summary>
-    public class AnalogSolarIntensityGauge : SensorBase<float>,
+    public class AnalogSolarGauge : SensorBase<float>,
         ISolarIntensityGauge, ISensor
     {
         //==== events
@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// reading. These are automatically averaged to reduce noise.</param>
         /// <param name="sampleIntervalMs">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
-        public AnalogSolarIntensityGauge(
+        public AnalogSolarGauge(
             IAnalogInputController device, IPin analogPin,
             Voltage? minVoltageReference = null, Voltage? maxVoltageReference = null,
             int updateIntervalMs = 10000,
@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="analogIn">The `IAnalogInputPort` connected to the solar panel.</param>
         /// <param name="minVoltageReference">The minimum voltage expected when the solar panel isn't receiving light. Default is 0.</param>
         /// <param name="maxVoltageReference">The maxmimu voltage expected when the solar panel is in full sun. Default is 3.3V.</param>
-        public AnalogSolarIntensityGauge(
+        public AnalogSolarGauge(
             IAnalogInputPort analogIn,
             Voltage? minVoltageReference = null, Voltage? maxVoltageReference = null)
         {
