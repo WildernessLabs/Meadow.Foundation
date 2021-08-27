@@ -13,7 +13,7 @@
     <PackageTags>Meadow.Foundation, Light, AnalogSolarIntensityGauge</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Analog solar intensity</Description>
+    <Description>Analog solar intensity sensor</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Light</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
