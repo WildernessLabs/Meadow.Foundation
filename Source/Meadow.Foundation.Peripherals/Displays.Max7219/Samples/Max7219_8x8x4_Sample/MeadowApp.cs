@@ -17,13 +17,16 @@ namespace MeadowApp
 
             while (true)
             {
+                ShowText();
+                Thread.Sleep(2000);
+
+                ScrollText();
+                Thread.Sleep(2000);
+
                 Counter();
                 Thread.Sleep(2000);
 
                 DrawPixels();
-                Thread.Sleep(2000);
-
-                ShowText();
                 Thread.Sleep(2000);
             }
         }
@@ -32,15 +35,47 @@ namespace MeadowApp
         {
             Console.WriteLine("Init...");
 
-            var spiBus = Device.CreateSpiBus(Max7219.SpiClockFrequency);
+            display =new Max7219(
+                Device, Device.CreateSpiBus(12000),
+                Device.Pins.D00, deviceCount: 4,
+                maxMode: Max7219.Max7219Type.Display);
 
-            display = new Max7219(Device, spiBus, Device.Pins.D01, 4, Max7219.Max7219Type.Display);
+            display.IgnoreOutOfBoundsPixels = true;
 
             graphics = new GraphicsLibrary(display);
-            
+            graphics.CurrentFont = new Font4x8();
+
+            Console.WriteLine($"Display W: {display.Width}, H: {display.Height}");
+
             graphics.Rotation = GraphicsLibrary.RotationType._90Degrees;
 
+            Console.WriteLine($"Graphics W: {graphics.Width}, H: {graphics.Height}");
+
             Console.WriteLine("Max7219 instantiated");
+
+            graphics.Clear();
+            graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height);
+            graphics.Show();
+
+            Thread.Sleep(2500);
+        }
+
+        void ScrollText()
+        {
+            graphics.CurrentFont = new Font6x8();
+
+            //string message = "MEADOW F7 BY WILDERNESS LABS";
+            string message = "Meadow F7 by Wildeness Labs";
+
+            int delta = graphics.MeasureText(message).Width - graphics.Width;
+
+            for(int i = 0; i < delta; i++)
+            {
+                graphics.Clear();
+                graphics.DrawText(0 - i, 0, message);
+                graphics.Show();
+                Thread.Sleep(50);
+            }
         }
 
         void DrawPixels()
@@ -75,7 +110,6 @@ namespace MeadowApp
             {
                 graphics.Clear();
                 graphics.DrawText(0, 0, $"{i}");
-                Console.WriteLine("Show");
                 graphics.Show();
             }
         }

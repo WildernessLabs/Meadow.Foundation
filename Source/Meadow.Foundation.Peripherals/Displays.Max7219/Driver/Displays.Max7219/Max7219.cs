@@ -63,13 +63,7 @@ namespace Meadow.Foundation.Displays
         public override Color PenColor
         {
             get => currentPen ? Color.White : Color.Black;
-            set
-            {
-                if (value == Color.Black)
-                    currentPen = false;
-                else
-                    currentPen = true;
-            }
+            set => currentPen = value != Color.Black;
         }
 
         //bool since it's on/off 
@@ -396,6 +390,15 @@ namespace Meadow.Foundation.Displays
 
         public override void DrawPixel(int x, int y, bool colored)
         {
+            if (IgnoreOutOfBoundsPixels == true)
+            {
+                if (x < 0 || y < 0 || x >= Width || y >= Height)
+                {
+                   // Console.WriteLine($"x:{x}, y:{y}, w:{Width}, h:{Height}");
+                    return;
+                }
+            }
+
             var index = x % 8;
 
             var display = y / 8 + (x / 8) * DeviceRows;
