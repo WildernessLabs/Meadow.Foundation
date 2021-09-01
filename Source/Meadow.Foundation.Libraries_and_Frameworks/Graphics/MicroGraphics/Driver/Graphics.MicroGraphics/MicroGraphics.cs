@@ -23,8 +23,8 @@ namespace Meadow.Foundation.Graphics
                 if(currentFont == null) { return; }
                 DisplayConfig = new TextDisplayConfig()
                 {
-                    Width = Width / currentFont.Width,
-                    Height = Height / CurrentFont.Height
+                    Width = (ushort)(Width / currentFont.Width),
+                    Height = (ushort)(Height / CurrentFont.Height)
                 };
             }
         }
