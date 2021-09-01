@@ -23,8 +23,8 @@ namespace Meadow.Foundation.Graphics
                 if(currentFont == null) { return; }
                 DisplayConfig = new TextDisplayConfig()
                 {
-                    Width = (ushort)(Width / currentFont.Width),
-                    Height = (ushort)(Height / CurrentFont.Height)
+                    Width = Width / currentFont.Width,
+                    Height = Height / CurrentFont.Height
                 };
             }
         }
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="index">pixel location in buffer</param>
         public void DrawPixel(int index)
         {   //need to move this to the display driver TODO
-            display.DrawPixel((int)(index % display.Width), (int)(index / display.Width));
+            display.DrawPixel((index % display.Width), (index / display.Width));
         }
 
         /// <summary>
