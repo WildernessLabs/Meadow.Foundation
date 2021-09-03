@@ -9,7 +9,7 @@ variables:
   solution: "**/Meadow.Foundation.Drivers.sln"
   buildPlatform: "Any CPU"
   buildConfiguration: "Release"
-  internalFeedName: "Meadow02"
+  internalFeedName: "Meadow.Staging"
 
 pool:
   vmImage: windows-2019
