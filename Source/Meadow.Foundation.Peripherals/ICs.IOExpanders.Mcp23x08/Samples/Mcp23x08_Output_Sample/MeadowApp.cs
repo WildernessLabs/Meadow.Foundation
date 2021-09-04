@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Hardware;
 using Meadow.Foundation.ICs.IOExpanders;
+using Meadow.Hardware;
 using System.Collections.Generic;
+using System.Threading;
 
-namespace ICs.IOExpanders.Mcp23x08_Output_Sample
+namespace ICs.IOExpanders.Mcp23x08_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
@@ -14,16 +13,21 @@ namespace ICs.IOExpanders.Mcp23x08_Output_Sample
 
         public MeadowApp()
         {
-            ConfigurePeripherals();
-
-            while (true) {
-                TestBulkPinWrites(20);
-                TestDigitalOutputPorts(2);
-            }
-
+            TestOutputs();            
         }
 
-        public void ConfigurePeripherals()
+        void TestOutputs() 
+        {
+            InitializeOutputs();
+
+            while (true)
+            {
+                TestBulkDigitalOutputPortWrites(20);
+                TestDigitalOutputPorts(2);
+            }
+        }
+
+        void InitializeOutputs()
         {
             IDigitalInputPort interruptPort =
                 Device.CreateDigitalInputPort(
@@ -71,7 +75,7 @@ namespace ICs.IOExpanders.Mcp23x08_Output_Sample
             }
         }
 
-        void TestBulkPinWrites(int loopCount)
+        void TestBulkDigitalOutputPortWrites(int loopCount)
         {
             byte mask = 0x0;
 
