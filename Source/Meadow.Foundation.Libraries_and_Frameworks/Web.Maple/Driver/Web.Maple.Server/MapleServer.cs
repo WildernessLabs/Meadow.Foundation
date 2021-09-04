@@ -23,11 +23,11 @@ namespace Meadow.Foundation.Web.Maple.Server
         private bool _printDebugOutput = true;
         private Dictionary<string, MethodInfo> _methodCache = new Dictionary<string, MethodInfo>(StringComparer.OrdinalIgnoreCase);
         private Dictionary<MethodInfo, IRequestHandler> _handlerCache = new Dictionary<MethodInfo, IRequestHandler>();
-        private readonly HttpListener _httpListener;
+        private readonly HttpListener _httpListener = new HttpListener();
         private readonly IList<Type> _requestHandlers = new List<Type>();
 
-        public IPAddress IPAddress { get; protected set; }
-        public int Port { get; }
+        public IPAddress IPAddress { get; private set; }
+        public int Port { get; private set; }
 
         /// <summary>
         /// Whether or not the server is listening for requests.
@@ -55,6 +55,15 @@ namespace Meadow.Foundation.Web.Maple.Server
         /// </summary>
         public string DeviceName { get; set; } = "Meadow";
 
+        public MapleServer(
+            string ipAddress,
+            int port = DefaultPort,
+            bool advertise = false,
+            RequestProcessMode processMode = RequestProcessMode.Serial)
+        {
+            Create(IPAddress.Parse(ipAddress), port, advertise, processMode);
+        }
+
         /// <summary>
         /// Creates a new MapleServer that listens on the specified IP Address
         /// and Port.
@@ -66,18 +75,24 @@ namespace Meadow.Foundation.Web.Maple.Server
         /// requests in parallel or serial. For Meadow, only Serial works
         /// reliably today.</param>
         public MapleServer(
-            IPAddress ipAddress,
-            int port = DefaultPort,
-            bool advertise = false,
-            RequestProcessMode processMode = RequestProcessMode.Serial)
+        IPAddress ipAddress,
+        int port = DefaultPort,
+        bool advertise = false,
+        RequestProcessMode processMode = RequestProcessMode.Serial)
+        {
+            Create(ipAddress, port, advertise, processMode);
+        }
+
+        private void Create(IPAddress ipAddress,
+        int port,
+        bool advertise,
+        RequestProcessMode processMode)
         {
             IPAddress = ipAddress ?? throw new ArgumentNullException(nameof(ipAddress));
             Port = port;
 
             Advertise = advertise;
             ThreadingMode = processMode;
-
-            _httpListener = new HttpListener();
 
             if (IPAddress.Equals(IPAddress.Any))
             {
@@ -107,12 +122,14 @@ namespace Meadow.Foundation.Web.Maple.Server
                 _httpListener.Prefixes.Add($"http://{IPAddress}:{port}/");
             }
 
+            LoadRequestHandlers();
+
             Initialize();
         }
 
         protected void Initialize()
         {
-            LoadRequestHandlers();
+            
         }
 
         /// <summary>
@@ -307,48 +324,49 @@ namespace Meadow.Foundation.Web.Maple.Server
             {
                 string[] urlQuery = context.Request.RawUrl.Substring(1).Split('?');
                 string[] urlParams = urlQuery[0].Split('/');
-                string methodName = urlParams[0].ToLower();
+                string requestedMethodName = urlParams[0].ToLower();
 
                 if (_printDebugOutput)
                 {
-                    Console.WriteLine("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + methodName);
+                    Console.WriteLine("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + requestedMethodName);
                 }
 
                 MethodInfo method = null;
 
-                if (_methodCache.ContainsKey(methodName))
+                // has this method already been called and cached?
+                if (_methodCache.ContainsKey(requestedMethodName))
                 {
-                    method = _methodCache[methodName];
+                    method = _methodCache[requestedMethodName];
                 }
                 else
                 {
                     // look in all the known request handlers
                     foreach (var handler in _requestHandlers)
                     {
-                        // look in all the methods in the request handler for a match
+                        // look in all the methods in the request handler for a matching name or *path*
                         var methods = handler.GetMethods();
                         foreach (var m in methods)
                         {
                             //first, let's see if the method has the correct http verb
-                            List<string> supportedVerbs = new List<string>();
+                            Dictionary<string, string> supportedVerbs = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
                             foreach (var attr in m.GetCustomAttributes())
                             {
                                 switch (attr)
                                 {
                                     case HttpGetAttribute a:
-                                        supportedVerbs.Add("GET");
+                                        supportedVerbs.Add("GET", a.Template ?? m.Name);
                                         break;
                                     case HttpPutAttribute a:
-                                        supportedVerbs.Add("PUT");
+                                        supportedVerbs.Add("PUT", a.Template ?? m.Name);
                                         break;
                                     case HttpPatchAttribute a:
-                                        supportedVerbs.Add("PATCH");
+                                        supportedVerbs.Add("PATCH", a.Template ?? m.Name);
                                         break;
                                     case HttpPostAttribute a:
-                                        supportedVerbs.Add("POST");
+                                        supportedVerbs.Add("POST", a.Template ?? m.Name);
                                         break;
                                     case HttpDeleteAttribute a:
-                                        supportedVerbs.Add("DELETE");
+                                        supportedVerbs.Add("DELETE", a.Template ?? m.Name);
                                         break;
                                     default:
                                         break;
@@ -356,16 +374,16 @@ namespace Meadow.Foundation.Web.Maple.Server
                             }
 
                             // if the verb does't match the context method, then move to the next method to examine it
-                            if (!supportedVerbs.Contains(context.Request.HttpMethod))
+                            if (!supportedVerbs.ContainsKey(context.Request.HttpMethod))
                             {
                                 continue;
                             }
 
-                            // match the method name:
-                            if (m.Name.ToLower() == methodName)
+                            // match the method or route template name:
+                            if (supportedVerbs[context.Request.HttpMethod].Contains(requestedMethodName, StringComparison.InvariantCultureIgnoreCase))
                             {
                                 method = m;
-                                _methodCache.Add(methodName, method);
+                                _methodCache.Add(requestedMethodName, method);
 
                                 break;
                             }
