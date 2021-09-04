@@ -512,7 +512,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lm75_Sample", "Meadow.Found
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp23x08_Input_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23x08\Samples\Mcp23x08_Input_Sample\Mcp23x08_Input_Sample.csproj", "{1411913F-2E8D-4BF2-BBAB-D02AE78BFE50}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp23x08_Output_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23x08\Samples\Mcp23x08_Output_Sample\Mcp23x08_Output_Sample.csproj", "{98D0E7F6-830E-4FF7-B7AB-ECC3A6D15E42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp23x08_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23x08\Samples\Mcp23x08_Output_Sample\Mcp23x08_Sample.csproj", "{98D0E7F6-830E-4FF7-B7AB-ECC3A6D15E42}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Light.Veml7700", "Sensors.Light.Veml7700", "{A7FC5090-631A-4580-8E00-06A658482C23}"
 EndProject
