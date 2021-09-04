@@ -9,8 +9,9 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        Mcp23x08 _mcp;
+        //<!—SNIP—>
 
+        Mcp23x08 _mcp;
         public MeadowApp()
         {
             TestOutputs();            
@@ -88,5 +89,7 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
                 }
             }
         }
+
+        //<!—SNOP—>
     }
 }
