@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="index">pixel location in buffer</param>
         public void DrawPixel(int index)
         {   //need to move this to the display driver TODO
-            display.DrawPixel((int)(index % display.Width), (int)(index / display.Width));
+            display.DrawPixel((index % display.Width), (index / display.Width));
         }
 
         /// <summary>

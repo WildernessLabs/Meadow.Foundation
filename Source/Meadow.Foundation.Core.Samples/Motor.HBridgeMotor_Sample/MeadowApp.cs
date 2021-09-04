@@ -16,9 +16,9 @@ namespace Motor.HBridgeMotor_Sample
 
             motor1 = new HBridgeMotor
             (
-                a1Pin: Device.CreatePwmPort(Device.Pins.D07),
-                a2Pin: Device.CreatePwmPort(Device.Pins.D08),
-                enablePin: Device.CreateDigitalOutputPort(Device.Pins.D09)
+                a1Port: Device.CreatePwmPort(Device.Pins.D07),
+                a2Port: Device.CreatePwmPort(Device.Pins.D08),
+                enablePort: Device.CreateDigitalOutputPort(Device.Pins.D09)
             );
             
             TestMotor();
