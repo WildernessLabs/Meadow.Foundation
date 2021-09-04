@@ -110,12 +110,12 @@ namespace Meadow.Foundation.Web.Maple.Server
             return result;
         }
 
-        protected async void Send()
+        public async void Send()
         {
             await Send(null);
         }
 
-        protected async Task Send(object output)
+        public async Task Send(object output)
         {
             if (Context.Response.ContentType == ContentTypes.Application_Json)
             {
