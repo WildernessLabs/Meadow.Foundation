@@ -15,7 +15,7 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
         }
 
         [HttpGet]
-        public void Hello()
+        public OkObjectResult Hello()
         {
             Console.WriteLine("GET::Hello");
 
@@ -23,24 +23,18 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
             if(QueryString.Count == 1)
             {
                 string name = QueryString["name"];
-
-                Context.Response.ContentType = ContentTypes.Application_Text;
-                Context.Response.StatusCode = 200;
-                Send($"hello, {name}").Wait();
+                return new OkObjectResult($"hello, {name}");
             }
             else //assume more than one -- could definitely use more defensive coding
             {
                 string name = QueryString["name"];
                 string nickname = QueryString["nickname"];
-
-                Context.Response.ContentType = ContentTypes.Application_Text;
-                Context.Response.StatusCode = 200;
-                Send($"hello, {name} aka {nickname}").Wait();
+                return new OkObjectResult($"hello, {name} aka {nickname}");
             }
         }
 
         [HttpGet]
-        public void JsonSample()
+        public IActionResult JsonSample()
         {
             Console.WriteLine("GET::JsonSample");
 
@@ -51,21 +45,17 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
                 "tommy"
             };
 
-            Context.Response.ContentType = ContentTypes.Application_Json;
-            Context.Response.StatusCode = 200;
-            Send(names).Wait();
+            return new JsonResult(names);
         }
 
-        [HttpPost]
-        public void HelloPost() 
+        [HttpPost("hello")]
+        public IActionResult HelloPost() 
         {
             string name = Body;
 
             Console.WriteLine($"/HelloPost - name:{name}");
 
-            Context.Response.ContentType = ContentTypes.Application_Text;
-            Context.Response.StatusCode = 200;
-            Send($"hello, {name}").Wait();
+            return new OkResult();
         }
     }
 }

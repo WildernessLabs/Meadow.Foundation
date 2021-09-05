@@ -431,7 +431,15 @@ namespace Meadow.Foundation.Web.Maple.Server
                 target.Context = context;
                 try
                 {
-                    method.Invoke(target, null);
+                    if(typeof(IActionResult).IsAssignableFrom(method.ReturnType))
+                    {
+                        var result = method.Invoke(target, null) as IActionResult;
+                        await result.ExecuteResultAsync(context);
+                    }
+                    else
+                    {
+                        method.Invoke(target, null);
+                    }
                 }
                 catch (Exception ex)
                 {
