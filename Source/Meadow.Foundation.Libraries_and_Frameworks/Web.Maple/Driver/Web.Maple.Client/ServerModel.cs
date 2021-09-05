@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Meadow.Foundation.Maple.Web.Client
+namespace Meadow.Foundation.Web.Maple.Client
 {
     public class ServerModel
     {

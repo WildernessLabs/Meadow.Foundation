@@ -14,6 +14,12 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
             Console.WriteLine("HelloRequestHandler created");
         }
 
+        [HttpGet("")]
+        public void GetRoot()
+        {
+            this.Ok("Root Request").Wait();
+        }
+
         [HttpGet]
         public OkObjectResult Hello()
         {
