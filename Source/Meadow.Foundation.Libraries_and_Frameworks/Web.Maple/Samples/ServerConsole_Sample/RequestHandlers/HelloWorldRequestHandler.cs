@@ -20,7 +20,7 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
             this.Ok("Root Request").Wait();
         }
 
-        [HttpGet]
+        [HttpGet("hello")]
         public OkObjectResult Hello()
         {
             Console.WriteLine("GET::Hello");

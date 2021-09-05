@@ -21,7 +21,8 @@ namespace Meadow.Foundation.Web.Maple.Server
         public const int DefaultPort = 5417;
 
         private bool _printDebugOutput = true;
-        private Dictionary<string, MethodInfo> _methodCache = new Dictionary<string, MethodInfo>(StringComparer.OrdinalIgnoreCase);
+        private RequestMethodCache _methodCache = new RequestMethodCache();
+
         private Dictionary<MethodInfo, IRequestHandler> _handlerCache = new Dictionary<MethodInfo, IRequestHandler>();
         private readonly HttpListener _httpListener = new HttpListener();
         private readonly IList<Type> _requestHandlers = new List<Type>();
@@ -334,9 +335,9 @@ namespace Meadow.Foundation.Web.Maple.Server
                 MethodInfo method = null;
 
                 // has this method already been called and cached?
-                if (_methodCache.ContainsKey(requestedMethodName))
+                if (_methodCache.Contains(context.Request.HttpMethod, requestedMethodName))
                 {
-                    method = _methodCache[requestedMethodName];
+                    method = _methodCache.GetMethod(context.Request.HttpMethod, requestedMethodName);
                 }
                 else
                 {
@@ -383,7 +384,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                             if (supportedVerbs[context.Request.HttpMethod].Contains(requestedMethodName, StringComparison.InvariantCultureIgnoreCase))
                             {
                                 method = m;
-                                _methodCache.Add(requestedMethodName, method);
+                                _methodCache.Add(context.Request.HttpMethod, requestedMethodName, method);
 
                                 break;
                             }
