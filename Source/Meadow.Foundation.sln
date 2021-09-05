@@ -53,7 +53,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{C31B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Temperature.Ds18B20", "Sensors.Temperature.Ds18B20", "{EFA988EC-5FA0-4DA6-9603-36DCD500ADA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.DS18B20", "Meadow.Foundation.Peripherals\Sensors.Temperature.DS18B20\Driver\Sensors.Temperature.DS18B20\Sensors.Temperature.DS18B20.csproj", "{936DE47C-EA8E-4514-80C6-10C85345033B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Ds18B20", "Meadow.Foundation.Peripherals\Sensors.Temperature.Ds18B20\Driver\Sensors.Temperature.Ds18B20\Sensors.Temperature.Ds18B20.csproj", "{936DE47C-EA8E-4514-80C6-10C85345033B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{F800CF20-C75C-4626-9876-769D9650C781}"
 EndProject
@@ -987,6 +987,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apa102_Display_Sample", "Meadow.Foundation.Peripherals\Leds.Apa102\Samples\Apa102_Display_Sample\Apa102_Display_Sample.csproj", "{64BA87CF-7A11-4715-8EDF-45AFE7D73EBF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dht10_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Dhtxx\Samples\Dht10_Sample\Dht10_Sample.csproj", "{903369E3-E454-42DB-8939-70C64049D1C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ds18B20_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Ds18B20\Samples\Ds18B20_Sample\Ds18B20_Sample.csproj", "{2459199F-D443-4869-9BEB-FDE163489FBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2274,6 +2276,12 @@ Global
 		{903369E3-E454-42DB-8939-70C64049D1C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{903369E3-E454-42DB-8939-70C64049D1C2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{903369E3-E454-42DB-8939-70C64049D1C2}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{2459199F-D443-4869-9BEB-FDE163489FBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2459199F-D443-4869-9BEB-FDE163489FBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2459199F-D443-4869-9BEB-FDE163489FBB}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{2459199F-D443-4869-9BEB-FDE163489FBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2459199F-D443-4869-9BEB-FDE163489FBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2459199F-D443-4869-9BEB-FDE163489FBB}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2765,6 +2773,7 @@ Global
 		{B6D877AB-69DA-4E4D-BCB4-24B85B88C821} = {D07E813A-1685-444B-8DB1-6FFD71B53E21}
 		{64BA87CF-7A11-4715-8EDF-45AFE7D73EBF} = {CAC3EB01-B0FB-4B42-AA55-F23B4EC38DBA}
 		{903369E3-E454-42DB-8939-70C64049D1C2} = {109B0BE9-7083-4473-B528-25425CA84E76}
+		{2459199F-D443-4869-9BEB-FDE163489FBB} = {F800CF20-C75C-4626-9876-769D9650C781}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

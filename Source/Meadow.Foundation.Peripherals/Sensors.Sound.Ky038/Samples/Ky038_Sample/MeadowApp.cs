@@ -3,7 +3,7 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Sound;
 
-namespace MeadowApp
+namespace Sensors.Sound.Ky038_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
