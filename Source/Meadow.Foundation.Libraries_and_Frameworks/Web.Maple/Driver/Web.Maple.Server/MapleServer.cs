@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Web.Maple.Server
         private bool _printDebugOutput = true;
         private RequestMethodCache _methodCache = new RequestMethodCache();
 
-        private Dictionary<MethodInfo, IRequestHandler> _handlerCache = new Dictionary<MethodInfo, IRequestHandler>();
+        private Dictionary<Type, IRequestHandler> _handlerCache = new Dictionary<Type, IRequestHandler>();
         private readonly HttpListener _httpListener = new HttpListener();
         private readonly IList<Type> _requestHandlers = new List<Type>();
 
@@ -409,9 +409,9 @@ namespace Meadow.Foundation.Web.Maple.Server
                 IRequestHandler target;
                 var shouldDispose = false;
 
-                if (_handlerCache.ContainsKey(method))
+                if (_handlerCache.ContainsKey(method.DeclaringType))
                 {
-                    target = _handlerCache[method];
+                    target = _handlerCache[method.DeclaringType];
                 }
                 else
                 {
@@ -421,7 +421,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                     if (target.IsReusable)
                     {
                         // cache for later use
-                        _handlerCache.Add(method, target);
+                        _handlerCache.Add(method.DeclaringType, target);
                     }
                     else
                     {
