@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Sensors.Weather.WindVane</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Wind, WindVane</PackageTags>
-    <Version>0.1.5</Version>
+    <Version>0.1.12</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Driver for wind vanes that outputs variable voltage, based on the azimuth of the wind.</Description>
   </PropertyGroup>

@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Displays.St7565</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, ST7565</PackageTags>
-    <Version>0.1.38</Version>
+    <Version>0.1.45</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>ST7565 SPI color display</Description>
   </PropertyGroup>

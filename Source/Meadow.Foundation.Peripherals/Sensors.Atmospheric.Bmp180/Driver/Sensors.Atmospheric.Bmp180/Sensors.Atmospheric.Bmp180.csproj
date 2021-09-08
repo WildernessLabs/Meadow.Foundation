@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Bmp180</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Atmospheric, BMP180</PackageTags>
-    <Version>0.1.35</Version>
+    <Version>0.1.42</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>BMP180 I2C barometric pressure, temperature, and altitude sensor</Description>
     <Nullable>enable</Nullable>

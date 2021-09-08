@@ -10,8 +10,8 @@
     <PackageId>Meadow.Foundation.Sensors.Light.Tcs3472x</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Tcs3472x, Light, Color</PackageTags>
-    <Version>0.1.32</Version>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>    
+    <Version>0.1.39</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Tcs3472x I2C ambient light and color sensor</Description>
   </PropertyGroup>
   <ItemGroup>

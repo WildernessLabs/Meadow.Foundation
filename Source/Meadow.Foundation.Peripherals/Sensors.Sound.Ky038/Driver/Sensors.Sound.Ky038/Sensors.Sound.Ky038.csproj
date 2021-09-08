@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Sensors.Sound.Ky038</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, KY-038, Sound, KY038</PackageTags>
-    <Version>0.1.32</Version>
+    <Version>0.1.39</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>KY-038 analog sound sensor</Description>
   </PropertyGroup>
