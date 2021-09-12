@@ -35,7 +35,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
         private uint _sck_set;
         private uint _sck_clear;
         private uint _dout_mask;
-        private uint _tareValue = 0;
         private double _gramsPerAdcUnit;
         private bool _createdPorts = false;
 
@@ -47,12 +46,13 @@ namespace Meadow.Foundation.Sensors.LoadCell
         public bool IsDisposed { get; private set; }
         public bool IsSleeping { get; private set; }
         public AdcGain Gain { get; private set; } = AdcGain.Gain128;
+        public uint TareValue { get; set; } = 0;
 
         /// <summary>
-        /// Creates an instance of the NAU7802 Driver class
+        /// Creates an instance of the Hx711 Driver class
         /// </summary>
         /// <param name="bus"></param>
-        public Hx711(IDigitalInputOutputController device, IPin sck, IPin dout)
+        public Hx711(IDigitalInputOutputController device, IPin sck, IPin dout, uint? tareValue = null)
         {
             SCK = device.CreateDigitalOutputPort(sck);
             DOUT = device.CreateDigitalInputPort(dout);
@@ -60,29 +60,47 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
             CalculateRegisterValues(sck, dout);
             Start();
+
+            if (tareValue.HasValue)
+            {
+                TareValue = tareValue.Value;
+            }
+            else
+            {
+                // auto-tare
+                Thread.Sleep(20);
+                Tare();
+            }
         }
 
         /// <summary>
-        /// Creates an instance of the NAU7802 Driver class
+        /// Creates an instance of the Hx711 Driver class
         /// </summary>
         /// <param name="bus"></param>
-        public Hx711(IDigitalOutputPort sck, IDigitalInputPort dout)
+        public Hx711(IDigitalOutputPort sck, IDigitalInputPort dout, uint? tareValue = null)
         {
             SCK = sck;
             DOUT = dout;
 
             CalculateRegisterValues(sck.Pin, dout.Pin);
             Start();
+
+            if (tareValue.HasValue)
+            {
+                TareValue = tareValue.Value;
+            }
+            else
+            {
+                // auto-tare
+                Thread.Sleep(20);
+                Tare();
+            }
         }
 
         private void Start()
         {
             ClockLow(); // this resets the chip
             IsSleeping = false;
-
-            // auto-tare
-            Thread.Sleep(20);
-            Tare();
         }
 
         /// <summary>
@@ -118,8 +136,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// </summary>
         public void Tare()
         {
-            _tareValue = ReadADC();
-            Console.WriteLine($"Tare base = {_tareValue}");
+            TareValue = ReadADC();
+            Console.WriteLine($"Tare base = {TareValue}");
         }
 
         /// <summary>
@@ -137,7 +155,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 sum += ReadADC();
             }
 
-            return (int)((sum / reads) - _tareValue);
+            return (int)((sum / reads) - TareValue);
         }
 
         /// <summary>
@@ -164,7 +182,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             // get an ADC conversion
             var raw = ReadADC();
             // subtract the tare
-            var adc = raw - _tareValue;
+            var adc = raw - TareValue;
 
             // two's complement
             int value;

@@ -10,9 +10,9 @@
     <PackageId>Meadow.Foundation.Sensors.Gnss.Mt3339</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Mt3339, GPS, Adafruit Ultimate GPS, GNSS</PackageTags>
-    <Version>0.1.33</Version>
+    <Version>0.1.40</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>MediaTek MT3339 serial GNSS / GPS controller</Description>    
+    <Description>MediaTek MT3339 serial GNSS / GPS controller</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

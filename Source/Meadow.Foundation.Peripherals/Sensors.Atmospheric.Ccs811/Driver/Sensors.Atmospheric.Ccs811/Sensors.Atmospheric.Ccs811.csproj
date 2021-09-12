@@ -9,7 +9,7 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Ccs811</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, VOC, Air, Ccs811</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>0.1.7</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Ccs811 I2C VOC Air Quality Sensor</Description>
     <Nullable>enable</Nullable>

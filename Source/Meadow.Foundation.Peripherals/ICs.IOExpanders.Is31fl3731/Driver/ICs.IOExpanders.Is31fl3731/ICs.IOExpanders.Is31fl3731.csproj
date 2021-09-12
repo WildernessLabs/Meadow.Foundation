@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.Is31fl3731</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, IS31FL3731, LED driver</PackageTags>
-    <Version>0.1.32</Version>
+    <Version>0.1.39</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>IS31FL3731 I2C matrix led driver</Description>
   </PropertyGroup>

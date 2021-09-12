@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Sensors.Distance.Gp2d12</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Gp2d12, Distance, Sensor</PackageTags>
-    <Version>0.1.12</Version>
+    <Version>0.1.19</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Sharp GP2D12 analog distance sensor with integrated signal processing</Description>
   </PropertyGroup>

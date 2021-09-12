@@ -17,6 +17,7 @@ namespace Sensors.Motion.Adxl345_Sample
             Console.WriteLine("Initializing");
 
             sensor = new Adxl345(Device.CreateI2cBus());
+            sensor.SetPowerState(false, false, true, false, Adxl345.Frequencies.TwoHz);
 
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) =>

@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Displays.Max7219</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, MAX7219</PackageTags>
-    <Version>0.1.39</Version>
+    <Version>0.1.46</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>MAX7219 SPI LED driver</Description>
   </PropertyGroup>

@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Bme280</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Atmospheric, BME280</PackageTags>
-    <Version>0.5.39</Version>
+    <Version>0.5.46</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Bosch BME280 SPI and I2C absolute barometric pressure sensor</Description>
     <Nullable>enable</Nullable>
