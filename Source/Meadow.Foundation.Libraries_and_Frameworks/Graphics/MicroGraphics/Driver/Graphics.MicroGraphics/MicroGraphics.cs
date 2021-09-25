@@ -314,7 +314,12 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawHorizontalLine(int x, int y, int length, Color color)
         {
+            Console.WriteLine("1");
+
             display.PenColor = color;
+
+            Console.WriteLine("2");
+
 
             if (Stroke == 1)
             {
@@ -328,7 +333,10 @@ namespace Meadow.Foundation.Graphics
                 {
                     DrawHorizontalLine(x, y - yOffset + i, length);
                 }
-            } 
+            }
+
+            Console.WriteLine("3");
+
         }
 
         private void DrawHorizontalLine(int x, int y, int length)

@@ -465,12 +465,7 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         private ushort GetUShortFromColor(Color color)
         {
-            //this seems heavy
-            byte red = (byte)(color.R * 255.0);
-            byte green = (byte)(color.G * 255.0);
-            byte blue = (byte)(color.B * 255.0);
-
-            return GetUShortColorFromRGB(red, green, blue);
+            return GetUShortColorFromRGB(color.R, color.G, color.B);
         }
 
         protected void Write(byte value)

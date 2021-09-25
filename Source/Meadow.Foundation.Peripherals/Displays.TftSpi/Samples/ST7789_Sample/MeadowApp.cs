@@ -39,9 +39,9 @@ namespace Displays.Tft.ST7789_Sample
             var display = new St7789(
                 device: Device,
                 spiBus: spiBus,
-                chipSelectPin: Device.Pins.D14,
-                dcPin: Device.Pins.D03,
-                resetPin: Device.Pins.D04,
+                chipSelectPin: Device.Pins.D02,
+                dcPin: Device.Pins.D01,
+                resetPin: Device.Pins.D00,
                 width: 240, height: 240, displayColorMode: DisplayColorMode.Format12bppRgb444);
 
             graphics = new GraphicsLibrary(display);
@@ -58,6 +58,8 @@ namespace Displays.Tft.ST7789_Sample
             graphics.DrawRectangle(0, 120, 120, 20, Color.Orange, true);
 
             graphics.Show();
+
+            DisplayTest();
         }
 
         //<!—SNOP—>
@@ -225,7 +227,7 @@ namespace Displays.Tft.ST7789_Sample
             for (int i = 1; i < 10; i++)
             {
                 graphics.Stroke = i;
-                graphics.DrawHorizontalLine(5, 20 * i, (int)(display.Width - 10), Color.Red);
+                graphics.DrawHorizontalLine(5, 20 * i, (graphics.Width - 10), Color.Red);
             }
             graphics.Show();
             Thread.Sleep(1500);
