@@ -23,8 +23,6 @@ namespace Meadow.Foundation.Displays
         protected readonly byte[] spiBuffer;
         protected readonly byte[] spiReceive;
 
-        protected byte currentPen;
-
         protected int xMin, xMax, yMin, yMax;
 
         protected const bool Data = true;
@@ -100,16 +98,9 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        byte GetGrayScaleFromColor(Color color)
-        {   //0.21, 0.71, 0.071
-            var gray = (byte)(53.55 * color.R + 181.05 * color.G + 18.105 * color.B);
-
-            return (byte)(gray >> 4);
-        }
-
         public override void DrawPixel(int x, int y, Color color)
         {
-            DrawPixel(x, y, GetGrayScaleFromColor(color));
+            DrawPixel(x, y, color.Color4bppGray);
         }
 
         public override void DrawPixel(int x, int y, bool colored)
@@ -117,15 +108,8 @@ namespace Meadow.Foundation.Displays
             DrawPixel(x, y, (byte)(colored ? 0x0F : 0));
         }
 
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, currentPen);
-        }
-
         public void DrawPixel(int x, int y, byte gray)
         {
-            currentPen = gray;
-
             int index = GetBufferLocation(x, y);
 
             if ((x % 2) == 0)

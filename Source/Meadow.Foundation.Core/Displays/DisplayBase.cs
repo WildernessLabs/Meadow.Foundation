@@ -46,12 +46,6 @@ namespace Meadow.Foundation.Displays
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
         /// <summary>
-        /// Set the pen color
-        /// </summary>
-        /// <param name="pen">The Meadow.Foundation.Color currently used for drawing</param>
-        public virtual Color PenColor { get; set; }
-
-        /// <summary>
         /// Transfer the contents of the buffer to the display.
         /// </summary>
         public abstract void Show();
@@ -64,7 +58,6 @@ namespace Meadow.Foundation.Displays
 
         /// <summary>
         /// Draw a single pixel at the specified color
-        /// For performance, set the pen and then use the overload without a color value
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -73,19 +66,11 @@ namespace Meadow.Foundation.Displays
 
         /// <summary>
         /// Draw a single pixel at the specified color
-        /// For performance, set the pen and then use the overload without a color value
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="colored"></param>
         public abstract void DrawPixel(int x, int y, bool colored);
-
-        /// <summary>
-        /// Draw a single pixel using the pen color
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        public abstract void DrawPixel(int x, int y);
 
         /// <summary>
         /// Invert the color of a single pixel

@@ -93,11 +93,6 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, currentPen);
-        }
-
         public override void DrawPixel(int x, int y, bool colored)
         {
             if (xRefreshStart == -1)
@@ -161,17 +156,13 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void DrawPixel(int x, int y, Color color)
         {
-            bool colored = false;
             if (color.B == 0 && color.G == 0 && color.R > 0.5)
             {
                 DrawColoredPixel(x, y, true);
             }
             else
             {
-                if (color.B > 0 || color.G > 0 || color.R > 0)
-                    colored = true;
-
-                DrawPixel(x, y, colored);
+                DrawPixel(x, y, color.Color1bpp);
             }
         }
 
@@ -183,11 +174,7 @@ namespace Meadow.Foundation.Displays.ePaper
             }
             else
             {
-                bool colored = false;
-                if (r > 0 || g > 0 || b > 0)
-                    colored = true;
-
-                DrawPixel(x, y, colored);
+                DrawPixel(x, y, r > 0 || g > 0 || b > 0);
             }
         }
 

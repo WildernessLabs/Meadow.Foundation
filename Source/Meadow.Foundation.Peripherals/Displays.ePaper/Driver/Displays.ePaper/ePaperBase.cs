@@ -111,11 +111,6 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, currentPen);
-        }
-
         /// <summary>
         ///     Draw a single pixel 
         /// </summary>
@@ -124,13 +119,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="color">Color of pixel.</param>
         public override void DrawPixel(int x, int y, Color color)
         {
-            bool colored = false;
-            if (color.B > 0 || color.G > 0 || color.R > 0)
-            {
-                colored = true;
-            }
-
-            DrawPixel(x, y, colored);
+            DrawPixel(x, y, color.Color1bpp);
         }
 
         public override void InvertPixel(int x, int y)
@@ -153,13 +142,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="b">y location</param>
         public void DrawPixel(int x, int y, byte r, byte g, byte b)
         {
-            bool colored = false;
-            if (r > 0 || g > 0 || b > 0)
-            {
-                colored = true;
-            }
-
-            DrawPixel(x, y, colored);
+            DrawPixel(x, y, r > 0 || g > 0 || b > 0);
         }
 
         /// <summary>

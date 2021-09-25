@@ -13,8 +13,6 @@ namespace Meadow.Foundation.Displays
         protected IDigitalInputPort busyPort;
         protected ISpiPeripheral spi;
 
-        protected Color currentPen = Color.White;
-
         protected const bool Data = true;
         protected const bool Command = false;
 

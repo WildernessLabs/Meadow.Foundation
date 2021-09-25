@@ -87,8 +87,6 @@ namespace Displays.Tft.Hx8357d_Sample
 
         void Benchmark(TftSpiBase display)
         {
-            display.PenColor = Color.BlueViolet;
-
             var sw = new Stopwatch();
             sw.Start();
 
@@ -98,7 +96,7 @@ namespace Displays.Tft.Hx8357d_Sample
                 {
                     for (int y = 0; y < 240; y++)
                     {
-                        display.DrawPixel(x, y);
+                        display.DrawPixel(x, y, Color.BlueViolet);
                     }
                 }
                 display.Show();

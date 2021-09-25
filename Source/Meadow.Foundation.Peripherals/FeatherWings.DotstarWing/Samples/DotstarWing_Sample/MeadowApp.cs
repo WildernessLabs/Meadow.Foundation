@@ -26,7 +26,6 @@ namespace FeatherWings.DotstarWing_Sample
 
             dotStarWing = new DotstarWing(spiBus);
 
-            dotStarWing.PenColor = Color.Blue;
             dotStarWing.Brightness = 0.1f;
 
             graphics = new GraphicsLibrary(dotStarWing);

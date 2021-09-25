@@ -79,8 +79,6 @@ namespace Meadow.Foundation.Displays
         protected const bool Data = true;
         protected const bool Command = false;
 
-        protected Color currentPen = Color.White;
-
         /// <summary>
         ///     Buffer holding the pixels in the display.
         /// </summary>
@@ -231,16 +229,6 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Draw pixel using current pen
-        /// </summary>
-        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
-        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, currentPen);
-        }
-
-        /// <summary>
         ///     Coordinates start with index 0
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
@@ -248,9 +236,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="color">Any color = turn on pixel, black = turn off pixel</param>
         public override void DrawPixel(int x, int y, Color color)
         {
-            var colored = (color == Color.Black) ? false : true;
-
-            DrawPixel(x, y, colored);
+            DrawPixel(x, y, color.Color1bpp);
         }
 
         /// <summary>

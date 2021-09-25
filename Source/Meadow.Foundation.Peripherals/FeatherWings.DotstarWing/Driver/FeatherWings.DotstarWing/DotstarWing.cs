@@ -10,7 +10,6 @@ namespace Meadow.Foundation.FeatherWings
     /// </summary>
     public class DotstarWing : DisplayBase
     {
-        Color penColor;
         Apa102 ledMatrix;
 
         public float Brightness
@@ -25,7 +24,6 @@ namespace Meadow.Foundation.FeatherWings
 
         public DotstarWing(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
         {
-            penColor = Color.White;
             ledMatrix = new Apa102(spiBus, numberOfLeds, pixelOrder, autoWrite);
         }
 
@@ -59,19 +57,7 @@ namespace Meadow.Foundation.FeatherWings
 
         public override void DrawPixel(int x, int y, bool colored)
         {
-            if (colored)
-            {
-                DrawPixel(x, y, penColor);
-            }
-            else
-            {
-                DrawPixel(x, y, Color.Black);
-            }
-        }
-
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, penColor);
+            DrawPixel(x, y, colored ? Color.White : Color.Black);
         }
 
         public override void Show()
@@ -81,7 +67,7 @@ namespace Meadow.Foundation.FeatherWings
 
         public override void InvertPixel(int x, int y)
         {
-            throw new System.NotImplementedException();
+            ledMatrix.InvertPixel(x, y);
         }
     }
 }

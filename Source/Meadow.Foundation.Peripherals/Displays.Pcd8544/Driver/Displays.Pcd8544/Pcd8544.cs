@@ -20,8 +20,6 @@ namespace Meadow.Foundation.Displays
         }
         protected bool _invertDisplay = false;
 
-        protected Color currentPen = Color.White;
-
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
         protected IDigitalOutputPort chipSelectPort;
@@ -97,16 +95,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, currentPen);
-        }
-
-        /// <summary>
-        ///     Coordinates start with index 0
-        /// </summary>
-        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
-        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
         public override void DrawPixel(int x, int y, bool colored)
         {
@@ -147,9 +135,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="color">any value other than black will make the pixel visible</param>
         public override void DrawPixel(int x, int y, Color color)
         {
-            var colored = color != Color.Black;
-
-            DrawPixel(x, y, colored);
+            DrawPixel(x, y, color.Color1bpp);
         }
 
         public override void Show()

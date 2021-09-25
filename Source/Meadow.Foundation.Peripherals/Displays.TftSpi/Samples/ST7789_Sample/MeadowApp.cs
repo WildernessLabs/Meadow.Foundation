@@ -191,7 +191,7 @@ namespace Displays.Tft.ST7789_Sample
             string msg = "Cursor test";
             string msg2 = "$123.456";
 
-            graphics.DrawText(0, 1, msg, WildernessLabsColors.AzureBlue);
+            graphics.DrawText(0, 0, msg, WildernessLabsColors.AzureBlue);
             graphics.DrawRectangle(0, 16, 12 * msg2.Length, 16, WildernessLabsColors.AzureBlueDark, true);
             graphics.DrawText(0, 16, msg2, WildernessLabsColors.ChileanFire);
 

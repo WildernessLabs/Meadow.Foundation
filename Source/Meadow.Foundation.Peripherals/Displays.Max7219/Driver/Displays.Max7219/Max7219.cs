@@ -57,18 +57,6 @@ namespace Meadow.Foundation.Displays
         
         private readonly byte DECIMAL = 0b10000000;
 
-        /// <summary>
-        ///      The pen color used for DrawPixel calls
-        /// </summary>
-        public override Color PenColor
-        {
-            get => currentPen ? Color.White : Color.Black;
-            set => currentPen = value != Color.Black;
-        }
-
-        //bool since it's on/off 
-        private bool currentPen = true;
-
         public enum Max7219Type
         {
             Character, 
@@ -384,8 +372,7 @@ namespace Meadow.Foundation.Displays
 
         public override void DrawPixel(int x, int y, Color color)
         {
-            currentPen = color != Color.Black;
-            DrawPixel(x, y);
+            DrawPixel(x, y, color.Color1bpp);
         }
 
         public override void DrawPixel(int x, int y, bool colored)
@@ -417,11 +404,6 @@ namespace Meadow.Foundation.Displays
             {
                 buffer[display, index] = (byte)(buffer[display, index] & ~(byte)(1 << (y % 8)));
             }
-        }
-
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, currentPen);
         }
 
         public override void InvertPixel(int x, int y)

@@ -58,8 +58,6 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected Memory<byte> spiWriteBuffer;
         protected Memory<byte> spiReadBuffer;
 
-        protected ushort currentPen;
-
         protected int width;
         protected int height;
         protected int xMin, xMax, yMin, yMax;
@@ -149,26 +147,7 @@ namespace Meadow.Foundation.Displays.TftSpi
                 Show();
             }
         }
-
-        /// <summary>
-        ///      The pen color used for DrawPixel calls
-        /// </summary>
-        public override Color PenColor
-        {
-            get => GetColorFromUShort(currentPen);
-            set => currentPen = GetUShortFromColor(value);
-        }
    
-        /// <summary>
-        ///     Draw a single pixel using the current pen
-        /// </summary>
-        /// <param name="x">x location </param>
-        /// <param name="y">y location</param>
-        public override void DrawPixel(int x, int y)
-        {
-            SetPixel(x, y, currentPen);
-        }
-
         /// <summary>
         ///     Draw a single pixel 
         /// </summary>
@@ -213,7 +192,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="b">8 bit blue value</param>
         public void DrawPixel(int x, int y, byte r, byte g, byte b)
         {
-            SetPixel(x, y, GetUShortColorFromRGB(r, g, b));
+            SetPixel(x, y, GetUShortFromColor(new Color(r, g, b)));
         }
 
         /// <summary>
@@ -414,24 +393,6 @@ namespace Meadow.Foundation.Displays.TftSpi
             yMax = 0;
         }
 
-        private ushort Get12BitColorFromRGB(byte red, byte green, byte blue)
-        {
-            red >>= 4;
-            green >>= 4;
-            blue >>= 4;
-
-            return (ushort)(red << 8 | green << 4 | blue);
-        }
-
-        private ushort Get16BitColorFromRGB(byte red, byte green, byte blue)
-        {
-            red >>= 3;
-            green >>= 2;
-            blue >>= 3;
-
-            return (ushort)(red << 11 | green << 5 | blue);
-        }
-
         private Color GetColorFromUShort(ushort color)
         {
             double r, g, b;
@@ -451,21 +412,12 @@ namespace Meadow.Foundation.Displays.TftSpi
             return new Color(r, g, b);
         }
 
-        private ushort GetUShortColorFromRGB(byte red, byte green, byte blue)
-        {
-            if (colorMode == DisplayColorMode.Format16bppRgb565)
-            {
-                return Get16BitColorFromRGB(red, green, blue);
-            }
-            else
-            {
-                return Get12BitColorFromRGB(red, green, blue);
-            }
-        }
-
         private ushort GetUShortFromColor(Color color)
         {
-            return GetUShortColorFromRGB(color.R, color.G, color.B);
+            if (colorMode == DisplayColorMode.Format16bppRgb565)
+                return color.Color16bppRgb565;
+            else
+                return color.Color12bppRgb444;
         }
 
         protected void Write(byte value)

@@ -131,8 +131,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, Color color, float brightness = 1f)
         {
-            byte[] bColor = new byte[] { (byte)(color.R * 255), (byte)(color.G * 255), (byte)(color.B * 255) };
-            SetLed(index, bColor, brightness);
+            SetLed(index, new byte[]{ color.R, color.G, color.B }, brightness);
         }
 
         /// <summary>

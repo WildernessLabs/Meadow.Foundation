@@ -9,21 +9,37 @@ namespace Meadow.Foundation
             get { return new Color(0, 0, 0, 0); }
         }
 
-        public ushort ColorRGB565
+        public byte Color4bppGray => (byte)((byte)(0.2989 * R + 0.5870 * G + 0.114 * B) >> 4);
+
+        public byte Color8bppGray => (byte)(0.2989 * R + 0.5870 * G + 0.114 * B);
+
+        public ushort Color12bppRgb444
         {
             get
             {
-                return ushort.MaxValue;
+                byte red = (byte)(R >> 4);
+                byte green = (byte)(G >> 4);
+                byte blue = (byte)(B >> 4);
+
+                return (ushort)(red << 8 | green << 4 | blue);
             }
         }
 
-        public bool ColorBinary
+        public ushort Color16bppRgb565
         {
             get
             {
-                return true;
+                byte red = (byte)(R >> 3);
+                byte green = (byte)(G >> 2);
+                byte blue = (byte)(B >> 3);
+
+                return (ushort)(red << 11 | green << 5 | blue);
             }
         }
+
+
+        public bool Color1bpp => R > 0 || G > 0 || B > 0;
+     
 
         public byte A { get; private set; }
   

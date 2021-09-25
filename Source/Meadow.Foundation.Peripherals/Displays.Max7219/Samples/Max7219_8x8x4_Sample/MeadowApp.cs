@@ -85,7 +85,7 @@ namespace MeadowApp
             Console.WriteLine("Draw");
             for (int i = 0; i < 8; i++)
             {
-                display.DrawPixel(i, i);
+                display.DrawPixel(i, i, true);
             }
             display.Show();
         }
