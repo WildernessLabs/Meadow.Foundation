@@ -186,9 +186,9 @@ namespace Meadow.Foundation.Leds
             Color = color;
             Brightness = brightness;
 
-            RedPwm.DutyCycle = (float)(Color.R * maxRedDutyCycle * brightness);
-            GreenPwm.DutyCycle = (float)(Color.G * maxGreenDutyCycle * brightness);
-            BluePwm.DutyCycle = (float)(Color.B * maxBlueDutyCycle * brightness);
+            RedPwm.DutyCycle = (float)(Color.R / 255.0 * maxRedDutyCycle * brightness);
+            GreenPwm.DutyCycle = (float)(Color.G / 255.0 * maxGreenDutyCycle * brightness);
+            BluePwm.DutyCycle = (float)(Color.B / 255.0 * maxBlueDutyCycle * brightness);
         }
 
         /// <summary>

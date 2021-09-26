@@ -55,14 +55,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
         public void Clear(Color color, bool updateDisplay = false)
         {
-            bool colored = false;
-
-            if (color.B > 0 || color.R > 0 || color.G > 0)
-            {
-                colored = true;
-            }
-
-            Clear(colored, updateDisplay);
+            Clear(color.Color1bpp, updateDisplay);
         }
 
         /// <summary>
