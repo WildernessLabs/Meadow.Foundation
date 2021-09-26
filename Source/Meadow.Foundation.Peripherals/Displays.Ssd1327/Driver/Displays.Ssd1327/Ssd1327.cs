@@ -20,8 +20,8 @@ namespace Meadow.Foundation.Displays
         protected IDigitalOutputPort resetPort;
         protected IDigitalOutputPort chipSelectPort;
 
-        protected readonly byte[] spiBuffer;
-        protected readonly byte[] spiReceive;
+        protected readonly Memory<byte> spiWrite;
+        protected readonly Memory<byte> spiReceive;
 
         protected int xMin, xMax, yMin, yMax;
 
@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Displays
         {
             this.spiBus = spiBus;
 
-            spiBuffer = new byte[Width * Height / 2]; 
+            spiWrite = new byte[Width * Height / 2]; 
             spiReceive = new byte[Width * Height / 2];
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
@@ -65,7 +65,10 @@ namespace Meadow.Foundation.Displays
             Console.WriteLine("Initialize");
 
             dataCommandPort.State = Command;
-            spiPeripheral.WriteBytes(init_128x128);
+
+            spiPeripheral.Bus.Exchange(chipSelectPort,
+                init_128x128,
+                spiReceive.Span.Slice(0, init_128x128.Length));
 
             Thread.Sleep(100);              // 100ms delay recommended
             SendCommand(SSD1327_DISPLAYON); // 0xaf
@@ -74,17 +77,17 @@ namespace Meadow.Foundation.Displays
 
         public void FillBuffer()
         {
-            for (int i = 0; i < spiBuffer.Length; i++)
+            for (int i = 0; i < spiWrite.Length; i++)
             {
-                spiBuffer[i] = 0xFF;
+                spiWrite.Span[i] = 0xFF;
             }
         }
 
         public override void Clear(bool updateDisplay = false)
         {
-            for(int i = 0; i < spiBuffer.Length; i++)
+            for(int i = 0; i < spiWrite.Length; i++)
             {
-                spiBuffer[i] = 0;
+                spiWrite.Span[i] = 0;
             }
 
             xMin = 0;
@@ -114,11 +117,11 @@ namespace Meadow.Foundation.Displays
 
             if ((x % 2) == 0)
             {   //even pixel - shift to the significant nibble
-                spiBuffer[index] = (byte)((spiBuffer[index] & 0x0f) | (gray << 4));
+                spiWrite.Span[index] = (byte)((spiWrite.Span[index] & 0x0f) | (gray << 4));
             }
             else
             {   //odd pixel
-                spiBuffer[index] = (byte)((spiBuffer[index] & 0xf0) | (gray));
+                spiWrite.Span[index] = (byte)((spiWrite.Span[index] & 0xf0) | (gray));
             }
         }
 
@@ -130,11 +133,11 @@ namespace Meadow.Foundation.Displays
 
             if ((x % 2) == 0)
             {   //even pixel - shift to the significant nibble
-                color = (byte)((spiBuffer[index] & 0x0f) >> 4);
+                color = (byte)((spiWrite.Span[index] & 0x0f) >> 4);
             }
             else
             {   //odd pixel
-                color = (byte)((spiBuffer[index] & 0xf0));
+                color = (byte)((spiWrite.Span[index] & 0xf0));
             }
 
             color = (byte)((color = (byte)~color) & 0x0f);
@@ -142,20 +145,21 @@ namespace Meadow.Foundation.Displays
             DrawPixel(x, y, color);
         }
 
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            // SetAddressWindow(left, top, (byte)(right - left), (byte)(top - bottom));
+            //ToDo this should be pretty easy to implement with Memory<byte>
+            Show();
+        }
+
         public override void Show()
         {
-            //  SetAddressWindow(0, 0, (byte)(Width - 1), (byte)(Height - 1));
             SetAddressWindow(0, 0, 127, 127);
 
-            int len = spiBuffer.Length;
-
             dataCommandPort.State = Data;
-            spiBus.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, spiBuffer, spiReceive, len);
-
-         /*   xMin = Width;
-            yMin = Height;
-            xMax = 0;
-            yMax = 0; */
+            spiBus.Exchange(chipSelectPort,
+                spiWrite.Span,
+                spiReceive.Span);
         }
 
         void SetAddressWindow(byte x0, byte y0, byte x1, byte y1)

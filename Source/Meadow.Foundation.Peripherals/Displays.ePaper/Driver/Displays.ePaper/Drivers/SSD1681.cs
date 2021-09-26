@@ -100,11 +100,14 @@ namespace Meadow.Foundation.Displays.ePaper
             WaitUntilIdle();
         }
 
-        protected override void Refresh()
+        public override void Show()
         {
             SendCommand(WRITE_BWRAM);
+        }
 
-
+        public override void Show(int left, int top, int right, int bottom)
+        {   //ToDo check if this display supports partial updates (don't think it does)
+            Show();
         }
 
         public void PowerDown()

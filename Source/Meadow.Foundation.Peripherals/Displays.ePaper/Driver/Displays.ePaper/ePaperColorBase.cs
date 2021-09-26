@@ -17,8 +17,6 @@ namespace Meadow.Foundation.Displays.ePaper
         protected readonly byte[] blackImageBuffer;
         protected readonly byte[] colorImageBuffer;
 
-        protected int xRefreshStart, yRefreshStart, xRefreshEnd, yRefreshEnd;
-
         public override int Width => width;
         public override int Height => height;
 
@@ -54,13 +52,6 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected abstract void Initialize();
 
-        protected abstract void Refresh();
-
-        public override void Show()
-        {
-            Refresh();
-        }
-
         public override void Clear(bool updateDisplay = false)
         {
             Clear(false, updateDisplay);
@@ -89,20 +80,12 @@ namespace Meadow.Foundation.Displays.ePaper
 
             if (updateDisplay)
             {
-                Refresh();
+                Show();
             }
         }
 
         public override void DrawPixel(int x, int y, bool colored)
         {
-            if (xRefreshStart == -1)
-            { xRefreshStart = x; }
-
-            xRefreshStart = Math.Min(x, xRefreshStart);
-            xRefreshEnd = Math.Max(x, xRefreshEnd);
-            yRefreshStart = Math.Min(y, yRefreshStart);
-            yRefreshEnd = Math.Max(y, yRefreshEnd);
-
             if (colored)
             {   //0x80 = 128 = 0b_10000000
                 blackImageBuffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
@@ -124,24 +107,11 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void InvertPixel(int x, int y)
         {
-            if (xRefreshStart == -1)
-            { xRefreshStart = x; }
-
-            xRefreshStart = Math.Min(x, xRefreshStart);
-            xRefreshEnd = Math.Max(x, xRefreshEnd);
-            yRefreshStart = Math.Min(y, yRefreshStart);
-            yRefreshEnd = Math.Max(y, yRefreshEnd);
-
             blackImageBuffer[(x + y * Width) / 8] ^= (byte)~(0x80 >> (x % 8));
         }
 
         public void DrawColoredPixel(int x, int y, bool colored)
         {
-            xRefreshStart = Math.Min(x, xRefreshStart);
-            xRefreshEnd = Math.Max(x, xRefreshEnd);
-            yRefreshStart = Math.Min(y, yRefreshStart);
-            yRefreshEnd = Math.Max(y, yRefreshEnd);
-
             if ((colored && !IsColorInverted) ||
                 (!colored && IsColorInverted))
             {

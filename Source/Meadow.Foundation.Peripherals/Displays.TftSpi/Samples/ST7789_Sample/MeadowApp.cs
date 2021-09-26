@@ -42,7 +42,7 @@ namespace Displays.Tft.ST7789_Sample
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                width: 240, height: 240, displayColorMode: DisplayColorMode.Format12bppRgb444);
+                width: 240, height: 240, displayColorMode: DisplayColorMode.Format16bppRgb565);
 
             graphics = new GraphicsLibrary(display);
             graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
@@ -55,7 +55,7 @@ namespace Displays.Tft.ST7789_Sample
             graphics.DrawRectangle(0, 40, 120, 20, Color.Blue, true);
             graphics.DrawRectangle(0, 60, 120, 20, Color.Green, true);
             graphics.DrawRectangle(0, 80, 120, 20, Color.Yellow, true);
-            graphics.DrawRectangle(0, 120, 120, 20, Color.Orange, true);
+            graphics.DrawRectangle(0, 100, 120, 20, Color.Orange, true);
 
             graphics.Show();
 
@@ -72,6 +72,9 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
+                PartialUpdateTest();
+                Thread.Sleep(sleepDuration);
+
                 PathTest();
                 Thread.Sleep(sleepDuration);
 
@@ -138,6 +141,27 @@ namespace Displays.Tft.ST7789_Sample
             Console.WriteLine($"fps: {10.0/sw.Elapsed.TotalSeconds}");
 
             Thread.Sleep(1000);
+        }
+
+        void PartialUpdateTest()
+        {
+            var rand = new Random();
+            int x, y;
+
+            graphics.Clear(true);
+
+            for(int i = 0; i < 200; i++)
+            {
+                if(i == 0) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Blue, true);
+                if (i == 50) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.LawnGreen, true);
+                if (i == 100) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Cyan, true);
+                if (i == 150) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Yellow, true);
+
+                x = rand.Next() % 23 * 10;
+                y = rand.Next() % 23 * 10;
+
+                graphics.Show(x, y, x + 10, y + 10);
+            }
         }
 
         void PathTest()

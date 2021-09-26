@@ -13,8 +13,6 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected readonly byte[] imageBuffer;
 
-        int xRefreshStart, yRefreshStart, xRefreshEnd, yRefreshEnd;
-
         public override int Width { get; }
         public override int Height { get; }
 
@@ -84,7 +82,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
             if (updateDisplay)
             {
-                Refresh();
+                Show();
             }
         }
 
@@ -96,11 +94,6 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public override void DrawPixel(int x, int y, bool colored)
         {
-            xRefreshStart = Math.Min(x, xRefreshStart);
-            xRefreshEnd = Math.Max(x, xRefreshEnd);
-            yRefreshStart = Math.Min(y, yRefreshStart);
-            yRefreshEnd = Math.Max(y, yRefreshEnd);
-
             if (colored)
             {
                 imageBuffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
@@ -124,11 +117,6 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void InvertPixel(int x, int y)
         {
-            xRefreshStart = Math.Min(x, xRefreshStart);
-            xRefreshEnd = Math.Max(x, xRefreshEnd);
-            yRefreshStart = Math.Min(y, yRefreshStart);
-            yRefreshEnd = Math.Max(y, yRefreshEnd);
-
             imageBuffer[(x + y * Width) / 8] ^= (byte)(0x80 >> (x % 8));
         }
 
@@ -148,20 +136,10 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <summary>
         ///     Draw the display buffer to screen
         /// </summary>
-        public void Refresh()
+        public override void Show(int left, int top, int right, int bottom)
         {
-            if (xRefreshStart == -1)
-            {
-                SetFrameMemory(imageBuffer);
-            }
-            else
-            {
-                SetFrameMemory(imageBuffer, xRefreshStart, yRefreshStart, xRefreshEnd - xRefreshStart, yRefreshEnd - yRefreshStart);
-            }
-
-            DisplayFrame();
-
-            xRefreshStart = yRefreshStart = xRefreshEnd = yRefreshEnd = -1;
+            SetFrameMemory(imageBuffer, left, top, right - left, top - bottom);
+            DisplayFrame(); 
         }
 
         /// <summary>
@@ -169,7 +147,8 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         public override void Show()
         {
-            Refresh();
+            SetFrameMemory(imageBuffer);
+            DisplayFrame();
         }
 
         public virtual void SetFrameMemory(byte[] image_buffer,

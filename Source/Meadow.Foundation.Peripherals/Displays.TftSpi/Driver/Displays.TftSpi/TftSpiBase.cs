@@ -53,8 +53,6 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected ISpiBus spi;
         protected ISpiPeripheral spiDisplay;
 
-        //protected byte[] spiBuffer;
-        //protected byte[] spiReceive;
         protected Memory<byte> spiWriteBuffer;
         protected Memory<byte> spiReadBuffer;
 
@@ -129,8 +127,6 @@ namespace Meadow.Foundation.Displays.TftSpi
             spiWriteBuffer.Span.Clear();
 
             if (updateDisplay) { Show(); }
-
-            //Clear(0, updateDisplay);
         }
 
         public void Clear(Color color, bool updateDisplay = false)
@@ -279,8 +275,8 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         private void SetPixel(int x, int y, ushort color)
         {
-            if (x < 0 || y < 0 || x >= width || y >= height)
-            { return; }
+          //  if (x < 0 || y < 0 || x >= width || y >= height)
+          //  { return; }
 
             if (colorMode == DisplayColorMode.Format16bppRgb565)
             {
@@ -290,12 +286,6 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 SetPixel444(x, y, color);
             }
-
-            //will skip for now for performance 
-            /*  xMin = Math.Min(xMin, x);
-              xMax = Math.Max(xMax, x);
-              yMin = Math.Min(yMin, y);
-              yMax = Math.Max(yMax, y);  */
         }
 
         /// <summary>
@@ -364,35 +354,38 @@ namespace Meadow.Foundation.Displays.TftSpi
         }
 
         /// <summary>
-        /// Draw the display buffer to screen from x0,y0 to x1,y1
+        /// Transfer part of the contents of the buffer to the display
+        /// bounded by left, top, right and bottom
+        /// Only supported in 16Bpp565 mode
         /// </summary>
-        public void Show(int x0, int y0, int x1, int y1)
+        public override void Show(int left, int top, int right, int bottom)
         {
-            if(x1 < x0 || y1 < y0)
+            if(colorMode != DisplayColorMode.Format16bppRgb565)
+            {   //only supported in 565 mode 
+                Show();
+            }
+
+            if(right < left || bottom < top)
             {   //could throw an exception
                 return;
             }
 
-            SetAddressWindow(x0, y0, x1, y1);
+            SetAddressWindow(left, top, right, bottom);
 
-            var len = (x1 - x0 + 1) * sizeof(ushort);
+            var len = (right - left + 1) * sizeof(ushort);
 
             dataCommandPort.State = Data;
 
             int sourceIndex;
-            for (int y = y0; y <= y1; y++)
+            for (int y = top; y <= bottom; y++)
             {
-                sourceIndex = ((y * width) + x0) * sizeof(ushort);
+                sourceIndex = ((y * width) + left) * sizeof(ushort);
 
                 spi.Exchange(chipSelectPort, spiWriteBuffer.Span.Slice(sourceIndex, len), spiReadBuffer.Span.Slice(sourceIndex, len));
             }
-
-            xMin = width;
-            yMin = height;
-            xMax = 0;
-            yMax = 0;
         }
 
+        //probably move this to color struct
         private Color GetColorFromUShort(ushort color)
         {
             double r, g, b;
@@ -416,7 +409,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         {
             if (colorMode == DisplayColorMode.Format16bppRgb565)
                 return color.Color16bppRgb565;
-            else
+            else //asume 12BppRgb444
                 return color.Color12bppRgb444;
         }
 

@@ -159,22 +159,17 @@ namespace Meadow.Foundation.Displays.ePaper
             SendData(PARTIAL_OUT);
         }
 
-        protected override void Refresh()
+        public override void Show(int left, int top, int right, int bottom)
         {
-            xRefreshStart = -1;
-            if (xRefreshStart == -1)
-            {
-                DisplayFrame(blackImageBuffer, colorImageBuffer);
-            }
-            else
-            {
-                SetPartialWindow(blackImageBuffer, colorImageBuffer,
-                        xRefreshStart, yRefreshStart, xRefreshEnd - xRefreshStart, yRefreshEnd - yRefreshStart);
+            SetPartialWindow(blackImageBuffer, colorImageBuffer,
+                left, top, right - left, top - bottom);
 
-                DisplayFrame();
-            }
+            DisplayFrame();
+        }
 
-            xRefreshStart = yRefreshStart = xRefreshEnd = yRefreshEnd = -1;
+        public override void Show()
+        {
+            DisplayFrame(blackImageBuffer, colorImageBuffer);
         }
 
         //clear the frame data from the SRAM, this doesn't update the display

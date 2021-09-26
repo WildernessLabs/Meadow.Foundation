@@ -140,9 +140,13 @@ namespace Meadow.Foundation.Displays
 
         public override void Show()
         {
-          //  spiDisplay.WriteBytes(spiBuffer);
-
             spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, displayBuffer, spiReceive);
+        }
+
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            //ToDo implement partial screen updates for PCD8544
+            Show();
         }
 
         private void Invert(bool inverse)

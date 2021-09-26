@@ -51,6 +51,12 @@ namespace Meadow.Foundation.Displays
         public abstract void Show();
 
         /// <summary>
+        /// Transfer part of the contents of the buffer to the display
+        /// bounded by left, top, right and bottom
+        /// </summary>
+        public abstract void Show(int left, int top, int right, int bottom);
+
+        /// <summary>
         /// Clear the display.
         /// </summary>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>

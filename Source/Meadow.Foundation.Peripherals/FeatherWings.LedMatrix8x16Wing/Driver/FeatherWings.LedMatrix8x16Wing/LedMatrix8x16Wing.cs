@@ -70,5 +70,11 @@ namespace Meadow.Foundation.FeatherWings
         {
             ht16k33.UpdateDisplay();
         }
+
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            //ToDo - should be possible - check UpdateDisplay and adjust starting address
+            Show();
+        }
     }
 }

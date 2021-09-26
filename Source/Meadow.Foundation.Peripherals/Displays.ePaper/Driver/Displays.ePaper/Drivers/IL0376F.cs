@@ -132,11 +132,16 @@ namespace Meadow.Foundation.Displays.ePaper
             SendCommand(POWER_OFF);         //power off
         }
 
-        protected override void Refresh()
+        public override void Show()
         {
             DisplayFrame();
         }
-   
+
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            DisplayFrame();
+        }
+
         byte[] lut_vcom0 =
         {
             0x0E, 0x14, 0x01, 0x0A, 0x06, 0x04, 0x0A, 0x0A,

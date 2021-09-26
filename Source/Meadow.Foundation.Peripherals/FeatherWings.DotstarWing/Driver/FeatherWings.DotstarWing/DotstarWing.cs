@@ -65,6 +65,11 @@ namespace Meadow.Foundation.FeatherWings
             ledMatrix.Show();
         }
 
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            ledMatrix.Show(left, top, right, bottom);
+        }
+
         public override void InvertPixel(int x, int y)
         {
             ledMatrix.InvertPixel(x, y);

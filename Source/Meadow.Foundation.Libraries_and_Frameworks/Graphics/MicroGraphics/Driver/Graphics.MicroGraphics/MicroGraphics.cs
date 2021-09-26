@@ -1089,11 +1089,29 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Show the changes on the display.
+        ///     Show changes on the display
         /// </summary>
         public void Show()
         {
             display.Show();
+        }
+
+        /// <summary>
+        ///     Update a region of the display
+        ///     Note: not all displays support partial updates
+        /// </summary>
+        public void Show(int left, int top, int right, int bottom)
+        {
+            display.Show(left, top, right, bottom);
+        }
+
+        /// <summary>
+        ///     Update a region of the display
+        ///     Note: not all displays support partial updates
+        /// </summary>
+        public void Show(Rect rect)
+        {
+            display.Show(rect.Left, rect.Top, rect.Right, rect.Bottom);
         }
 
         /// <summary>

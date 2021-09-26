@@ -161,20 +161,9 @@ namespace Meadow.Foundation.Leds
             if(brightness>1) { brightness = 1; }
             if(brightness<0) { brightness = 0; }
 
-            //if (brightness < 0 || brightness > 1f)
-            //{
-            //    throw new ArgumentOutOfRangeException("brightness must be between 0.0 and 1.0");
-            //}
-
             var offset = index * 4 + StartHeaderSize;
-            //var rgb = value;
-            byte brightnessByte;
 
-            //rgb[0] = value[0];
-            //rgb[1] = value[1];
-            //rgb[2] = value[2];
-
-            brightnessByte = (byte)(32 - (32 - (int)(brightness * 31)) & 0b00011111);
+            byte brightnessByte = (byte)(32 - (32 - (int)(brightness * 31)) & 0b00011111);
             buffer[offset] = (byte)(brightnessByte | LedStart);
             buffer[offset + 1] = rgb[pixelOrder[0]];
             buffer[offset + 2] = rgb[pixelOrder[1]];
@@ -189,7 +178,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Turn off all the Leds
         /// </summary>
-        public override void Clear(bool autoWrite = false)
+        public override void Clear(bool update = false)
         {
             byte[] off = {0, 0, 0};
 
@@ -198,7 +187,7 @@ namespace Meadow.Foundation.Leds
                 SetLed(i, off);
             }
 
-            if (!AutoWrite && autoWrite)
+            if (!AutoWrite && update)
             {
                 Show();
             }
@@ -210,6 +199,11 @@ namespace Meadow.Foundation.Leds
         public override void Show()
         {
             spiPeripheral.WriteBytes(buffer);
+        }
+
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            Show();
         }
     }
 }

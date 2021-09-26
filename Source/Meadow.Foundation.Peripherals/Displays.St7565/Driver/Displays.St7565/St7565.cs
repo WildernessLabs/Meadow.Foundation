@@ -79,10 +79,8 @@ namespace Meadow.Foundation.Displays
         protected const bool Data = true;
         protected const bool Command = false;
 
-        /// <summary>
-        ///     Buffer holding the pixels in the display.
-        /// </summary>
-        private byte[] buffer;
+        protected Memory<byte> spiWriteBuffer;
+        protected Memory<byte> spiReadBuffer;
 
         /// <summary>
         ///     Invert the entire display (true) or return to normal mode (false).
@@ -130,7 +128,8 @@ namespace Meadow.Foundation.Displays
 
         private void InitST7565()
         {
-            buffer = new byte[Width * Height / 8];
+            spiWriteBuffer = new byte[Width * Height / 8];
+            spiReadBuffer = new byte[PageSize];
 
             IgnoreOutOfBoundsPixels = false;
 
@@ -192,9 +191,7 @@ namespace Meadow.Foundation.Displays
         }
 
         protected const int StartColumnOffset = 0; // 1;
-        protected const int pageSize = 128;
-        protected int[] pageReference = { 4, 5, 6, 7, 0, 1, 2, 3 };
-        protected byte[] pageBuffer = new byte[pageSize];
+        protected const int PageSize = 128;
 
         /// <summary>
         ///     Send the internal pixel buffer to display.
@@ -209,8 +206,36 @@ namespace Meadow.Foundation.Displays
                 SendCommand(DisplayCommand.EnterReadModifyWriteMode);
 
                 dataCommandPort.State = Data;
-                Array.Copy(buffer, (int)(Width * page), pageBuffer, 0, pageSize);
-                spiPerihperal.WriteBytes(pageBuffer);
+
+                spiPerihperal.Bus.Exchange(chipSelectPort,
+                    spiWriteBuffer.Span.Slice(PageSize * page, page),
+                    spiReadBuffer.Span);
+            }
+        }
+
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            const int pageHeight = 8;
+
+            //must update in pages (area of 128x8 pixels)
+            //so interate over all 8 pages and check if they're in range
+            for (int page = 0; page < 8; page++)
+            {
+                if(top > pageHeight*page || bottom < (page + 1) * pageHeight)
+                {
+                    continue;
+                }
+
+                SendCommand((byte)((int)(DisplayCommand.PageAddress) | page));
+                SendCommand((DisplayCommand.ColumnAddressLow) | (StartColumnOffset & 0x0F));
+                SendCommand((int)(DisplayCommand.ColumnAddressHigh) | 0);
+                SendCommand(DisplayCommand.EnterReadModifyWriteMode);
+
+                dataCommandPort.State = Data;
+
+                spiPerihperal.Bus.Exchange(chipSelectPort,
+                    spiWriteBuffer.Span.Slice(PageSize * page, page),
+                    spiReadBuffer.Span);
             }
         }
 
@@ -220,12 +245,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="updateDisplay">Immediately update the display when true.</param>
         public override void Clear(bool updateDisplay = false)
         {
-            Array.Clear(buffer, 0, buffer.Length);
+            spiWriteBuffer.Span.Clear();
 
-            if (updateDisplay)
-            {
-                Show();
-            }
+            if (updateDisplay) { Show(); }
         }
 
         /// <summary>
@@ -260,11 +282,11 @@ namespace Meadow.Foundation.Displays
 
             if (colored)
             {
-                buffer[index] = (byte)(buffer[index] | (byte)(1 << (y % 8)));
+                spiWriteBuffer.Span[index] = (byte)(spiWriteBuffer.Span[index] | (byte)(1 << (y % 8)));
             }
             else
             {
-                buffer[index] = (byte)(buffer[index] & ~(byte)(1 << (y % 8)));
+                spiWriteBuffer.Span[index] = (byte)(spiWriteBuffer.Span[index] & ~(byte)(1 << (y % 8)));
             }
         }
 
@@ -281,7 +303,7 @@ namespace Meadow.Foundation.Displays
             }
             var index = (y / 8 * Width) + x;
 
-            buffer[index] = (buffer[index] ^= (byte)(1 << y % 8));
+            spiWriteBuffer.Span[index] = (spiWriteBuffer.Span[index] ^= (byte)(1 << y % 8));
         }
 
         /// <summary>

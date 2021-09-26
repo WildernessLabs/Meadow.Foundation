@@ -296,6 +296,11 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
         }
 
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         ///     Clear the display buffer.
         /// </summary>

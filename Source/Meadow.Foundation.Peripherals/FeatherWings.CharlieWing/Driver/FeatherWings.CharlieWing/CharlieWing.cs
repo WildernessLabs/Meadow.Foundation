@@ -83,9 +83,14 @@ namespace Meadow.Foundation.FeatherWings
             iS31FL3731.DisplayFrame(Frame);
         }
 
-        public virtual void Show(byte frame)
+        public override void Show(int left, int top, int right, int bottom)
         {
-            iS31FL3731.DisplayFrame(frame);
+            throw new NotImplementedException();
+        }
+
+        public virtual void Show(byte frame)
+        {   //ToDo
+            iS31FL3731.DisplayFrame(Frame);
         }
     }
 }

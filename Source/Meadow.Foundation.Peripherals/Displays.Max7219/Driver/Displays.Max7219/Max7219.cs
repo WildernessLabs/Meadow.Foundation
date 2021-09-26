@@ -292,6 +292,12 @@ namespace Meadow.Foundation.Displays
             WriteBuffer(buffer);
         }
 
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            //ToDo Check if partial updates are possible (although it's pretty fast as is)
+            Show();
+        }
+
         /// <summary>
         /// Writes a two dimensional buffer containing all the values to the devices.
         /// </summary>

@@ -89,27 +89,21 @@ namespace Meadow.Foundation.Displays.ePaper
             /* EPD hardware init end */
         }
 
-        protected override void Refresh()
+        public override void Show(int left, int top, int right, int bottom)
         {
-            xRefreshStart = -1;
-            if (xRefreshStart == -1)
-            {
-                DisplayFrame(blackImageBuffer, colorImageBuffer);
-            }
-            else
-            {
-                TransmitPartial(blackImageBuffer, colorImageBuffer,
-                        xRefreshStart, yRefreshStart,
-                        xRefreshEnd - xRefreshStart,
-                        yRefreshEnd - yRefreshStart);
+            TransmitPartial(blackImageBuffer, colorImageBuffer,
+                        left, top,
+                        right - left,
+                        top - bottom);
 
-                RefreshPartial(xRefreshStart, yRefreshStart,
-                    xRefreshEnd - xRefreshStart, yRefreshEnd - yRefreshStart);
+            RefreshPartial(left, top,
+                        right - left,
+                        top - bottom);
+        }
 
-                // DisplayFrame();
-            }
-
-            xRefreshStart = yRefreshStart = xRefreshEnd = yRefreshEnd = -1;
+        public override void Show()
+        {
+            DisplayFrame(blackImageBuffer, colorImageBuffer);
         }
 
         void SetLut()
