@@ -1,4 +1,4 @@
-﻿namespace Audio.Mp3.Yx5300
+﻿namespace Meadow.Foundation.Audio.Mp3
 {
     public partial class Yx5300
     {

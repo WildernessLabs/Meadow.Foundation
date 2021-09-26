@@ -16,55 +16,6 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected override bool IsColorInverted => false;
 
-        static byte DRIVER_CONTROL = 0x01;
-        static byte GATE_VOLTAGE = 0x03;
-        static byte SOURCE_VOLTAGE = 0x04;
-        static byte INIT_SETTING = 0x08;
-        static byte INIT_WRITE_REG = 0x09;
-        static byte INIT_READ_REG = 0x0A;
-        new static byte BOOSTER_SOFT_START = 0x0C;
-        new static byte DEEP_SLEEP = 0x10;
-        static byte DATA_MODE = 0x11;
-        static byte SW_RESET = 0x12;
-        static byte HV_DETECT = 0x14;
-        static byte VCI_DETECT = 0x15;
-        static byte TEMP_CONTROL = 0x18;
-        static byte TEMP_WRITE = 0x1A;
-        static byte TEMP_READ = 0x1B;
-        static byte EXTTEMP_WRITE = 0x1C;
-        static byte MASTER_ACTIVATE = 0x20;
-        static byte DISP_CTRL1 = 0x21;
-        static byte DISP_CTRL2 = 0x22;
-        static byte WRITE_BWRAM = 0x24;
-        static byte WRITE_REDRAM = 0x26;
-        static byte READ_RAM = 0x27;
-        static byte VCOM_SENSE = 0x28;
-        static byte VCOM_DURATION = 0x29;
-        static byte WRITE_VCOM_OTP = 0x2A;
-        static byte WRITE_VCOM_CTRL = 0x2B;
-        static byte WRITE_VCOM_REG = 0x2C;
-        static byte READ_OTP = 0x2D;
-        static byte READ_USERID = 0x2E;
-        static byte READ_STATUS = 0x2F;
-        static byte WRITE_WS_OTP = 0x30;
-        static byte LOAD_WS_OTP = 0x31;
-        static byte WRITE_LUT = 0x32;
-        static byte CRC_CALC = 0x34;
-        static byte CRC_READ = 0x35;
-        static byte PROG_OTP = 0x36;
-        static byte WRITE_DISPLAY_OPT = 0x37;
-        static byte WRITE_USERID = 0x38;
-        static byte OTP_PROGMODE = 0x39;
-        static byte WRITE_BORDER = 0x3C;
-        static byte END_OPTION = 0x3F;
-        static byte SET_RAMXPOS = 0x44;
-        static byte SET_RAMYPOS = 0x45;
-        static byte AUTOWRITE_RED = 0x46;
-        static byte AUTOWRITE_BW = 0x47;
-        static byte SET_RAMXCOUNT = 0x4E;
-        static byte SET_RAMYCOUNT = 0x4F;
-        static byte NOP = 0xFF;
-
         public static byte[] LutData = { 0x02, 0x02, 0x01, 0x11, 0x12, 0x12 }; //""fiiYX\x99\x99\x88\x00\x00\x00\x00\xf8\xb4\x13Q5QQ\x19\x01\x00' };
         //_LUT_DATA = b'\x02\x02\x01\x11\x12\x12""fiiYX\x99\x99\x88\x00\x00\x00\x00\xf8\xb4\x13Q5QQ\x19\x01\x00'
 
@@ -78,23 +29,23 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             Reset();
 
-            SendCommand(SW_RESET);
-            SendCommand(DRIVER_CONTROL);
+            SendCommand(CommandSsd1681.SW_RESET);
+            SendCommand(CommandSsd1681.DRIVER_CONTROL);
             SendData(new byte[] { (byte)(Width - 1), (byte)((Height - 1) >> 8), 0x0 });
 
-            SendCommand(DATA_MODE);
+            SendCommand(CommandSsd1681.DATA_MODE);
             SendData(0x03);
 
-            SendCommand(SET_RAMXPOS);
+            SendCommand(CommandSsd1681.SET_RAMXPOS);
             SendData(new byte[] { 0x0, (byte)(Height / 8 - 1) });
 
-            SendCommand(SET_RAMYPOS);
+            SendCommand(CommandSsd1681.SET_RAMYPOS);
             SendData(new byte[] { 0x0, 0x0, (byte)(Height - 1), (byte)((Height - 1) >> 8) });
 
-            SendCommand(WRITE_BORDER);
+            SendCommand(CommandSsd1681.WRITE_BORDER);
             SendData(0x05);
 
-            SendCommand(TEMP_CONTROL);
+            SendCommand(CommandSsd1681.TEMP_CONTROL);
             SendData(0x80);
 
             WaitUntilIdle();
@@ -102,7 +53,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void Show()
         {
-            SendCommand(WRITE_BWRAM);
+            SendCommand(CommandSsd1681.WRITE_BWRAM);
         }
 
         public override void Show(int left, int top, int right, int bottom)
@@ -112,17 +63,73 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public void PowerDown()
         {
-            SendCommand(DEEP_SLEEP);
+            SendCommand(CommandSsd1681.DEEP_SLEEP);
             SendData(0x01);
         }
 
         public void Update()
         {
-            SendCommand(DISP_CTRL2);
+            SendCommand(CommandSsd1681.DISP_CTRL2);
             SendData(0x07);
-            SendCommand(MASTER_ACTIVATE);
+            SendCommand(CommandSsd1681.MASTER_ACTIVATE);
             WaitUntilIdle();
+        }
 
+        protected enum CommandSsd1681 : byte
+        {
+            DRIVER_CONTROL = 0x01,
+            GATE_VOLTAGE = 0x03,
+            SOURCE_VOLTAGE = 0x04,
+            INIT_SETTING = 0x08,
+            INIT_WRITE_REG = 0x09,
+            INIT_READ_REG = 0x0A,
+            BOOSTER_SOFT_START = 0x0C,
+            DEEP_SLEEP = 0x10,
+            DATA_MODE = 0x11,
+            SW_RESET = 0x12,
+            HV_DETECT = 0x14,
+            VCI_DETECT = 0x15,
+            TEMP_CONTROL = 0x18,
+            TEMP_WRITE = 0x1A,
+            TEMP_READ = 0x1B,
+            EXTTEMP_WRITE = 0x1C,
+            MASTER_ACTIVATE = 0x20,
+            DISP_CTRL1 = 0x21,
+            DISP_CTRL2 = 0x22,
+            WRITE_BWRAM = 0x24,
+            WRITE_REDRAM = 0x26,
+            READ_RAM = 0x27,
+            VCOM_SENSE = 0x28,
+            VCOM_DURATION = 0x29,
+            WRITE_VCOM_OTP = 0x2A,
+            WRITE_VCOM_CTRL = 0x2B,
+            WRITE_VCOM_REG = 0x2C,
+            READ_OTP = 0x2D,
+            READ_USERID = 0x2E,
+            READ_STATUS = 0x2F,
+            WRITE_WS_OTP = 0x30,
+            LOAD_WS_OTP = 0x31,
+            WRITE_LUT = 0x32,
+            CRC_CALC = 0x34,
+            CRC_READ = 0x35,
+            PROG_OTP = 0x36,
+            WRITE_DISPLAY_OPT = 0x37,
+            WRITE_USERID = 0x38,
+            OTP_PROGMODE = 0x39,
+            WRITE_BORDER = 0x3C,
+            END_OPTION = 0x3F,
+            SET_RAMXPOS = 0x44,
+            SET_RAMYPOS = 0x45,
+            AUTOWRITE_RED = 0x46,
+            AUTOWRITE_BW = 0x47,
+            SET_RAMXCOUNT = 0x4E,
+            SET_RAMYCOUNT = 0x4F,
+            NOP = 0xFF,
+        }
+
+        void SendCommand(CommandSsd1681 command)
+        {
+            SendCommand((byte)command);
         }
     }
 }
