@@ -459,10 +459,11 @@ namespace Meadow.Foundation.Displays.TftSpi
         {
             // split the color in to two byte values
             var high = (byte)(color >> 8);
-            var low = (byte)(color);
+            var low = (byte)color;
 
             int index = 0;
-            while (index < spiWriteBuffer.Length) {
+            while (index < spiWriteBuffer.Length)
+            {
                 spiWriteBuffer.Span[index] = high;
                 spiWriteBuffer.Span[index + 1] = low;
                 index += 2;

@@ -533,7 +533,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a dircle.
+        ///     Draw a circle
         /// </summary>
         /// <remarks>
         ///     This algorithm draws the circle by splitting the full circle into eight
@@ -554,7 +554,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a dircle.
+        ///     Draw a circle
         /// </summary>
         /// <remarks>
         ///     This algorithm draws the circle by splitting the full circle into eight
