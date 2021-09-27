@@ -231,17 +231,12 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        public const byte DEFAULT_ADDRESS = 0x28;
-        public const byte ALTERNATE_ADDRESS = 0x29;
-
-        //==== ctors
-
         /// <summary>
         ///     Create a new BNO055 object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the BNO055 (default = 0x28).</param>
         /// <param name="i2cBus">I2C bus (default = 400 KHz).</param>
-        public Bno055(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public Bno055(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 256)
         {
             if (Peripheral.ReadRegister(Registers.ChipID) != 0xa0)

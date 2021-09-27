@@ -10,9 +10,6 @@ namespace Meadow.Foundation.FeatherWings
     /// </summary>
     public class CharlieWing : DisplayBase
     {
-        public const byte DEFAULT_ADDRESS = 0x74;
-        public const byte ALTERNATE_ADDRESS = 0x77;
-
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
         public override int Width => 15;
@@ -25,7 +22,7 @@ namespace Meadow.Foundation.FeatherWings
 
         protected readonly Is31fl3731 iS31FL3731;
 
-        public CharlieWing(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public CharlieWing(II2cBus i2cBus, byte address = (byte)Is31fl3731.Addresses.Default)
         {
             Brightness = 255;
             iS31FL3731 = new Is31fl3731(i2cBus, (byte)address);

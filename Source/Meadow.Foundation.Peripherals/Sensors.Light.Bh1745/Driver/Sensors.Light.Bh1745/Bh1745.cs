@@ -23,25 +23,13 @@ namespace Meadow.Foundation.Sensors.Light
     public partial class Bh1745
         : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>, ILightSensor
     {
-        //==== events
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
-        //==== properties
         /// <summary>
         /// 
         /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
-
-        /// <summary>
-        /// Address of the peripheral when the address pin is pulled low.
-        /// </summary>
-        public const byte DEFAULT_ADDRESS = 0x38;
-
-        /// <summary>
-        /// Address of the peripheral when the address pin is pulled high.
-        /// </summary>
-        public const byte ALTERNATE_ADDRESS = 0x39;
-
+        
         public InterruptStatus InterruptReset
         {
             get
@@ -242,7 +230,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         ///     Create a new BH17545 color sensor object
         /// </summary>
-        public Bh1745(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public Bh1745(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
             CompensationMultipliers = new ChannelMultipliers

@@ -30,10 +30,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Concentration? Voc => Conditions.Voc;
 
-        public const byte DEFAULT_ADDRESS = 0x5a;
-        public const byte ALTERNATE_ADDRESS = 0x5b;
-
-        public Ccs811(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public Ccs811(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, 10, 8)
         {
             switch (address)
