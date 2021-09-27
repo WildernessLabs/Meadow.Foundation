@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(0x36, new byte[] { 0xC8 }); // Memory access data control
             SendCommand(0x35, new byte[] { 0x00 }); // Tearing effect line on
          
-            SendCommand(COLOR_MODE);
+            SendCommand((byte)Register.COLOR_MODE);
             if (ColorMode == DisplayColorMode.Format16bppRgb565)
                 SendData(0x05); //16 bit RGB565
             else
@@ -99,21 +99,21 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         public void SetRotation(Rotation rotation)
         {
-            SendCommand(MADCTL);
+            SendCommand((byte)Register.MADCTL);
 
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_90:
-                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MY | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_180:
-                    SendData(MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_270:
-                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
             }
         }

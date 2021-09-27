@@ -109,10 +109,10 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendData(0x00);
             SendData(0x01);
 
-            SendCommand(COLOR_MODE);
+            SendCommand(Register.COLOR_MODE);
             SendData(0x55); // 16 bit
 
-            SendCommand(MADCTL);
+            SendCommand(Register.MADCTL);
             SendData(0xC0);
 
             SendCommand(HX8357_TEON);  // TE off
@@ -150,21 +150,21 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         public void SetRotation(Rotation rotation)
         {
-            SendCommand(MADCTL);
+            SendCommand(Register.MADCTL);
 
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
+                    SendData((byte)(Register.MADCTL_MX | Register.MADCTL_MY | Register.MADCTL_RGB));
                     break;
                 case Rotation.Rotate_90:
-                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
+                    SendData((byte)(Register.MADCTL_MY | Register.MADCTL_MV | Register.MADCTL_RGB));
                     break;
                 case Rotation.Rotate_180:
-                    SendData(MADCTL_RGB);
+                    SendData((byte)(Register.MADCTL_RGB));
                     break;
                 case Rotation.Rotate_270:
-                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
+                    SendData((byte)(Register.MADCTL_MX | Register.MADCTL_MV | Register.MADCTL_RGB));
                     break;
             }
         }

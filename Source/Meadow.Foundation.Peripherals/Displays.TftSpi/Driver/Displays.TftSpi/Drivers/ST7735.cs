@@ -104,7 +104,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             if (displayType == DisplayType.ST7735R_80x160 ||
                 displayType == DisplayType.ST7735R_BlackTab)
             {
-                SendCommand(MADCTL, new byte[] { 0xC0 });
+                SendCommand((byte)Register.MADCTL, new byte[] { 0xC0 });
                 SendCommand(INVOFF);
             }
 
@@ -161,10 +161,10 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(VMCTR1);  // power control
             SendData(0x0E);
 
-            SendCommand(MADCTL);  // memory access control (directions)
+            SendCommand(Register.MADCTL);  // memory access control (directions)
             SendData(0xC8);  // row address/col address, bottom to top refresh
 
-            SendCommand(COLOR_MODE);  // set color mode
+            SendCommand(Register.COLOR_MODE);  // set color mode
             if (ColorMode == DisplayColorMode.Format16bppRgb565)
                 SendData(0x05);  // 16-bit color RGB565
             else
@@ -178,7 +178,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(SLPOUT);
             DelayMs(150);
 
-            SendCommand(COLOR_MODE);  // set color mode
+            SendCommand(Register.COLOR_MODE);  // set color mode
             if (ColorMode == DisplayColorMode.Format16bppRgb565)
                 SendData(0x05);  // 16-bit color RGB565
             else
@@ -187,7 +187,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(FRMCTR1);  // frame rate control - normal mode
             SendData(new byte[] { 0x00, 0x06, 0x03, 10 });// frame rate = fosc / (1 x 2 + 40) * (LINE + 2C + 2D)
 
-            SendCommand(MADCTL);  // memory access control (directions)
+            SendCommand(Register.MADCTL);  // memory access control (directions)
             SendData(0xC8);  // row address/col address, bottom to top refresh
 
             SendCommand(DISSET5);

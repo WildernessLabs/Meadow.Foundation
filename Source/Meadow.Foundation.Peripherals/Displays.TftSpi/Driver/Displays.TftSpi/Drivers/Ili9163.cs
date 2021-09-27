@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(0x01);
             SendCommand(0x11);
 
-            SendCommand(COLOR_MODE);
+            SendCommand(Register.COLOR_MODE);
             if (ColorMode == DisplayColorMode.Format16bppRgb565)
             {
                 SendData(0x05);//16 bit 565

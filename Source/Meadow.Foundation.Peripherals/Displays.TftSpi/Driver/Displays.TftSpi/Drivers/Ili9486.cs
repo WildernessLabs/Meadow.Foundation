@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(0x11); // Sleep out, also SW reset
             Thread.Sleep(120);
 
-            SendCommand(COLOR_MODE);
+            SendCommand(Register.COLOR_MODE);
             if (ColorMode == DisplayColorMode.Format16bppRgb565)
                 SendData(0x55);
             else
@@ -101,21 +101,21 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         public void SetRotation(Rotation rotation)
         {
-            SendCommand(MADCTL);
+            SendCommand(Register.MADCTL);
 
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(MADCTL_MX | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_90:
-                    SendData(MADCTL_MV | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_180:
-                    SendData(MADCTL_BGR | MADCTL_MY);
+                    SendData((byte)Register.MADCTL_BGR | (byte)Register.MADCTL_MY);
                     break;
                 case Rotation.Rotate_270:
-                    SendData(MADCTL_BGR | MADCTL_MV | MADCTL_MX | MADCTL_MY);
+                    SendData((byte)Register.MADCTL_BGR | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY);
                     break;
             }
         }

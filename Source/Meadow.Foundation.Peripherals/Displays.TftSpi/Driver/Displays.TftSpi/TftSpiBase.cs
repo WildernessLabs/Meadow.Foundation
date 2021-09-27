@@ -5,39 +5,8 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
-    public abstract class TftSpiBase : DisplayBase, IDisposable
+    public abstract partial class TftSpiBase : DisplayBase, IDisposable
     {
-        //TODO: move these into their own class?
-        protected const byte NO_OP = 0x0;
-        protected const byte MADCTL = 0x36;
-        protected const byte MADCTL_MY = 0x80;
-        protected const byte MADCTL_MX = 0x40;
-        protected const byte MADCTL_MV = 0x20;
-        protected const byte MADCTL_ML = 0x10;
-        protected const byte MADCTL_RGB = 0x00;
-        protected const byte MADCTL_BGR = 0X08;
-        protected const byte MADCTL_MH = 0x04;
-        protected const byte MADCTL_SS = 0x02;
-        protected const byte MADCTL_GS = 0x01;
-        protected const byte COLOR_MODE = 0x3A;
-
-        protected enum LcdCommand
-        {
-            CASET = 0x2A,
-            RASET = 0x2B,
-            RAMWR = 0x2C,
-            RADRD = 0x2E
-        };
-
-        // TODO: @Adrian - should this use the graphics rotation?
-        public enum Rotation
-        {
-            Normal, //zero
-            Rotate_90, //in degrees
-            Rotate_180,
-            Rotate_270,
-        }
-
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
         public override DisplayColorMode ColorMode => colorMode;
@@ -426,6 +395,11 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected void DelayMs(int millseconds)
         {
             Thread.Sleep(millseconds);
+        }
+
+        protected void SendCommand(Register command)
+        {
+            SendCommand((byte)command);
         }
 
         protected void SendCommand(byte command)

@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(SLPOUT);
             DelayMs(500);
 
-            SendCommand(COLOR_MODE);  // set color mode - 16 bit color (x55), 12 bit color (x53), 18 bit color (x56)
+            SendCommand(Register.COLOR_MODE);  // set color mode - 16 bit color (x55), 12 bit color (x53), 18 bit color (x56)
             if (ColorMode == DisplayColorMode.Format16bppRgb565)
                 SendData(0x55);  // 16-bit color RGB565
             else
@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Displays.TftSpi
            
             DelayMs(10);
 
-            SendCommand(MADCTL);
+            SendCommand(Register.MADCTL);
             SendData(0x00); //some variants use 0x08
 
             SendCommand((byte)LcdCommand.CASET);
@@ -100,21 +100,21 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         public void SetRotation(Rotation rotation)
         {
-            SendCommand(MADCTL);
+            SendCommand(Register.MADCTL);
 
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_RGB);
                     break;
                 case Rotation.Rotate_90:
-                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
+                    SendData((byte)Register.MADCTL_MY | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_RGB);
                     break;
                 case Rotation.Rotate_180:
-                    SendData(MADCTL_RGB);
+                    SendData((byte)Register.MADCTL_RGB);
                     break;
                 case Rotation.Rotate_270:
-                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_RGB);
                     break;
             }
         }
