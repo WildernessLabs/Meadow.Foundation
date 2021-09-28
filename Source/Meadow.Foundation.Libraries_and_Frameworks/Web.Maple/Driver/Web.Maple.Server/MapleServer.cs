@@ -20,8 +20,7 @@ namespace Meadow.Foundation.Web.Maple.Server
         public const int MAPLE_SERVER_BROADCASTPORT = 17756;
         public const int DefaultPort = 5417;
 
-        private Router Router { get; }
-        private RequestMethodCache _methodCache;
+        private RequestMethodCache MethodCache { get; }
 
         private Dictionary<Type, IRequestHandler> _handlerCache = new Dictionary<Type, IRequestHandler>();
         private readonly HttpListener _httpListener = new HttpListener();
@@ -82,8 +81,7 @@ namespace Meadow.Foundation.Web.Maple.Server
             RequestProcessMode processMode = RequestProcessMode.Serial)
         {
             Logger = new ConsoleLogger();
-            _methodCache = new RequestMethodCache(Logger);
-            Router = new Router(_methodCache, Logger);
+            MethodCache = new RequestMethodCache(Logger);
 
             Create(ipAddress, port, advertise, processMode);
         }
@@ -224,7 +222,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                     {
                         if (t.BaseType.GetInterfaces().Contains(typeof(IRequestHandler)))
                         {
-                            _methodCache.AddType(t);
+                            MethodCache.AddType(t);
                             typesAdded++;
                         }
                     }
@@ -345,7 +343,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                 Logger?.Info("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + requestedMethodName);
 
                 //------
-                var handlerInfo = _methodCache.Match(context.Request.HttpMethod, context.Request.RawUrl, out object param);
+                var handlerInfo = MethodCache.Match(context.Request.HttpMethod, context.Request.RawUrl, out object param);
                 if (handlerInfo == null)
                 {
                     await Return404(context);

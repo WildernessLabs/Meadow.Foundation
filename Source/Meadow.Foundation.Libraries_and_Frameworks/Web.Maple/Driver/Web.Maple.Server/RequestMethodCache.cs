@@ -89,30 +89,28 @@ namespace Meadow.Foundation.Web.Maple.Server
             {
                 url = url.Substring(0, qsi);
             }
-            url = url.Trim('/');
+            url = url.TrimEnd('/');
 
             if (_templateToTypeMap.ContainsKey(verb))
             {
                 foreach (var template in _templateToTypeMap[verb].Keys)
                 {
-                    if (template.Contains("(.*?)"))
-                    {
-                        var m = Regex.Match(url, template);
-                        if (m.Success)
-                        {
-                            // get the parameter value
-                            // is there stuff after the param?
-                            var tailIndex = url.IndexOf('/', m.Index + m.Length);
-                            var tailLength = url.Length - tailIndex - 2;
+                    var regexIndex = template.IndexOf("(.*?)");
 
+                    if (regexIndex >= 0)
+                    {
+                        var s = Regex.Split(url, template, RegexOptions.IgnoreCase);
+                        if (s.Length > 1)
+                        {
                             string paramString;
-                            if (tailIndex >= 0)
+
+                            paramString = s.FirstOrDefault(m => m != string.Empty);
+
+                            // if the match contains a slash, we've matched but with a non-matching tail
+                            // TODO: improve the regex to do proper matching
+                            if (paramString.Contains('/'))
                             {
-                                paramString = url.Substring(m.Length, tailIndex - m.Length);
-                            }
-                            else
-                            {
-                                paramString = url.Substring(m.Length);
+                                return null;
                             }
 
                             var info = _templateToTypeMap[verb][template];
@@ -157,7 +155,8 @@ namespace Meadow.Foundation.Web.Maple.Server
                 // generate the regex to test against urls
                 var rgx = template
                     .Replace(match.Value, "(.*?)", StringComparison.OrdinalIgnoreCase)
-                    .Replace("/", "\\/");
+                    .Replace("/", "\\/");                
+                rgx += "$";
 
                 if (!_templateToTypeMap.ContainsKey(verb))
                 {
