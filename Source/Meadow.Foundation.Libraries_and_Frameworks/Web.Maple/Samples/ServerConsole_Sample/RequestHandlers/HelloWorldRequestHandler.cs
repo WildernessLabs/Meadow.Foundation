@@ -63,5 +63,21 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
 
             return new OkResult();
         }
+
+        [HttpPost("foo/{name}")]
+        public IActionResult ParameterPost(string name)
+        {
+            Console.WriteLine($"/HelloPost - name:{name}");
+
+            return new OkResult();
+        }
+
+        [HttpPost("bar/{id}")]
+        public IActionResult ParameterPost(int id)
+        {
+            Console.WriteLine($"/HelloPost - id:{id}");
+
+            return new OkResult();
+        }
     }
 }

@@ -20,13 +20,13 @@ namespace Meadow.Foundation.Web.Maple.Server
         public const int MAPLE_SERVER_BROADCASTPORT = 17756;
         public const int DefaultPort = 5417;
 
-        private bool _printDebugOutput = true;
-        private RequestMethodCache _methodCache = new RequestMethodCache();
+        private Router Router { get; }
+        private RequestMethodCache _methodCache;
 
         private Dictionary<Type, IRequestHandler> _handlerCache = new Dictionary<Type, IRequestHandler>();
         private readonly HttpListener _httpListener = new HttpListener();
-        private readonly IList<Type> _requestHandlers = new List<Type>();
 
+        public ILogger Logger { get; }
         public IPAddress IPAddress { get; private set; }
         public int Port { get; private set; }
 
@@ -61,8 +61,8 @@ namespace Meadow.Foundation.Web.Maple.Server
             int port = DefaultPort,
             bool advertise = false,
             RequestProcessMode processMode = RequestProcessMode.Serial)
+            : this(IPAddress.Parse(ipAddress), port, advertise, processMode)
         {
-            Create(IPAddress.Parse(ipAddress), port, advertise, processMode);
         }
 
         /// <summary>
@@ -76,18 +76,22 @@ namespace Meadow.Foundation.Web.Maple.Server
         /// requests in parallel or serial. For Meadow, only Serial works
         /// reliably today.</param>
         public MapleServer(
-        IPAddress ipAddress,
-        int port = DefaultPort,
-        bool advertise = false,
-        RequestProcessMode processMode = RequestProcessMode.Serial)
+            IPAddress ipAddress,
+            int port = DefaultPort,
+            bool advertise = false,
+            RequestProcessMode processMode = RequestProcessMode.Serial)
         {
+            Logger = new ConsoleLogger();
+            _methodCache = new RequestMethodCache(Logger);
+            Router = new Router(_methodCache, Logger);
+
             Create(ipAddress, port, advertise, processMode);
         }
 
         private void Create(IPAddress ipAddress,
-        int port,
-        bool advertise,
-        RequestProcessMode processMode)
+            int port,
+            bool advertise,
+            RequestProcessMode processMode)
         {
             IPAddress = ipAddress ?? throw new ArgumentNullException(nameof(ipAddress));
             Port = port;
@@ -105,10 +109,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                     if (ni.Address.AddressFamily == AddressFamily.InterNetwork)
                     {
                         // for now, just use IPv4
-                        if (_printDebugOutput)
-                        {
-                            Console.WriteLine($"Listening on http://{ni.Address}:{port}/");
-                        }
+                        Console.WriteLine($"Listening on http://{ni.Address}:{port}/");
 
                         _httpListener.Prefixes.Add($"http://{ni.Address}:{port}/");
                     }
@@ -116,10 +117,8 @@ namespace Meadow.Foundation.Web.Maple.Server
             }
             else
             {
-                if (_printDebugOutput)
-                {
-                    Console.WriteLine($"Listening on http://{IPAddress}:{port}/");
-                }
+                Console.WriteLine($"Listening on http://{IPAddress}:{port}/");
+
                 _httpListener.Prefixes.Add($"http://{IPAddress}:{port}/");
             }
 
@@ -130,7 +129,7 @@ namespace Meadow.Foundation.Web.Maple.Server
 
         protected void Initialize()
         {
-            
+
         }
 
         /// <summary>
@@ -196,10 +195,8 @@ namespace Meadow.Foundation.Web.Maple.Server
                     while (Running)
                     {
                         socket.SendTo(UTF8Encoding.UTF8.GetBytes(broadcastData), remoteEndPoint);
-                        if (_printDebugOutput)
-                        {
-                            Console.WriteLine("UDP Broadcast: " + broadcastData + ", port: " + MAPLE_SERVER_BROADCASTPORT);
-                        }
+                        Logger?.Info("UDP Broadcast: " + broadcastData + ", port: " + MAPLE_SERVER_BROADCASTPORT);
+
                         Thread.Sleep(AdvertiseIntervalMs);
                     }
                 }
@@ -212,42 +209,35 @@ namespace Meadow.Foundation.Web.Maple.Server
         /// </summary>
         protected void LoadRequestHandlers()
         {
-            // look through all the assemblies in the app for IRequestHandlers
-            // and add them to the `requestHandlers` collection
-            if (_requestHandlers.Count == 0)
-            {
-                // Get classes that implement IRequestHandler
-                var type = typeof(IRequestHandler);
-                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            // Get classes that implement IRequestHandler
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var typesAdded = 0;
 
-                // loop through each assembly in the app and all the classes in it
-                foreach (var assembly in assemblies)
+            // loop through each assembly in the app and all the classes in it
+            foreach (var assembly in assemblies)
+            {
+                var types = assembly.GetTypes();
+                foreach (var t in types)
                 {
-                    var types = assembly.GetTypes();
-                    foreach (var t in types)
+                    // if it inherits `IRequestHandler`, add it to the list
+                    if (t.BaseType != null)
                     {
-                        // if it inherits `IRequestHandler`, add it to the list
-                        if (t.BaseType != null)
+                        if (t.BaseType.GetInterfaces().Contains(typeof(IRequestHandler)))
                         {
-                            if (t.BaseType.GetInterfaces().Contains(typeof(IRequestHandler)))
-                            {
-                                _requestHandlers.Add(t);
-                            }
+                            _methodCache.AddType(t);
+                            typesAdded++;
                         }
                     }
                 }
+            }
 
-                if (_requestHandlers.Count == 0)
-                {
-                    Console.WriteLine("Warning: No Maple Server `IRequestHandler`s found. Server will not operate.");
-                }
-                else
-                {
-                    if (_printDebugOutput)
-                    {
-                        Console.WriteLine($"requestHandlers.Count: {_requestHandlers.Count}");
-                    }
-                }
+            if (typesAdded == 0)
+            {
+                Console.WriteLine("Warning: No Maple Server `IRequestHandler`s found. Server will not operate.");
+            }
+            else
+            {
+                Logger?.Info($"requestHandlers.Count: {typesAdded}");
             }
         }
 
@@ -261,10 +251,7 @@ namespace Meadow.Foundation.Web.Maple.Server
         {
             if (Running)
             {
-                if (_printDebugOutput)
-                {
-                    Console.WriteLine("Already running.");
-                }
+                Logger.Error("Already running.");
                 return;
             }
 
@@ -272,10 +259,7 @@ namespace Meadow.Foundation.Web.Maple.Server
 
             await Task.Run(async () =>
             {
-                if (_printDebugOutput)
-                {
-                    Console.WriteLine("starting up listener.");
-                }
+                Logger?.Info("starting up listener.");
 
                 while (Running)
                 {
@@ -283,10 +267,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                     {
                         // wait for a request to come in
                         HttpListenerContext context = await _httpListener.GetContextAsync();
-                        if (_printDebugOutput)
-                        {
-                            Console.WriteLine("got one!");
-                        }
+                        Logger?.Info("got one!");
 
                         // depending on our processing mode, process either
                         // synchronously, or spin off a thread and immediately
@@ -303,20 +284,54 @@ namespace Meadow.Foundation.Web.Maple.Server
                     }
                     catch (SocketException e)
                     {
-                        if (_printDebugOutput)
-                        {
-                            Console.WriteLine("Socket Exception: " + e.ToString());
-                        }
+                        Logger?.Error("Socket Exception: " + e.ToString());
                     }
                     catch (Exception ex)
                     {
-                        if (_printDebugOutput)
-                        {
-                            Console.WriteLine(ex.ToString());
-                        }
+                        Logger?.Error(ex.ToString());
                     }
                 }
             });
+        }
+
+        public virtual async Task Return404(HttpListenerContext context)
+        {
+            // TODO: potentially load content from a file?
+            byte[] data = Encoding.UTF8.GetBytes("<head><body>404. Not found.</body><head>");
+            context.Response.ContentType = "text/html";
+            context.Response.ContentEncoding = Encoding.UTF8;
+            context.Response.ContentLength64 = data.LongLength;
+            context.Response.StatusCode = 404;
+            await context.Response.OutputStream.WriteAsync(data, 0, data.Length);
+            context.Response.Close();
+        }
+
+        private IRequestHandler GetHandlerInstance(Type handlerType, out bool shouldDispose)
+        {
+            IRequestHandler target;
+            shouldDispose = false;
+
+            if (_handlerCache.ContainsKey(handlerType))
+            {
+                target = _handlerCache[handlerType];
+            }
+            else
+            {
+                // instantiate the handler, set the context (which contains all the request info)
+                target = Activator.CreateInstance(handlerType) as IRequestHandler;
+
+                if (target.IsReusable)
+                {
+                    // cache for later use
+                    _handlerCache.Add(handlerType, target);
+                }
+                else
+                {
+                    shouldDispose = true;
+                }
+            }
+
+            return target;
         }
 
         protected Task ProcessRequest(HttpListenerContext context)
@@ -327,134 +342,55 @@ namespace Meadow.Foundation.Web.Maple.Server
                 string[] urlParams = urlQuery[0].Split('/');
                 string requestedMethodName = urlParams[0].ToLower();
 
-                if (_printDebugOutput)
+                Logger?.Info("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + requestedMethodName);
+
+                //------
+                var handlerInfo = _methodCache.Match(context.Request.HttpMethod, context.Request.RawUrl, out object param);
+                if (handlerInfo == null)
                 {
-                    Console.WriteLine("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + requestedMethodName);
-                }
-
-                MethodInfo method = null;
-
-                // has this method already been called and cached?
-                if (_methodCache.Contains(context.Request.HttpMethod, requestedMethodName))
-                {
-                    method = _methodCache.GetMethod(context.Request.HttpMethod, requestedMethodName);
-                }
-                else
-                {
-                    // look in all the known request handlers
-                    foreach (var handler in _requestHandlers)
-                    {
-                        // look in all the methods in the request handler for a matching name or *path*
-                        var methods = handler.GetMethods();
-                        foreach (var m in methods)
-                        {
-                            //first, let's see if the method has the correct http verb
-                            Dictionary<string, string> supportedVerbs = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-                            foreach (var attr in m.GetCustomAttributes())
-                            {
-                                switch (attr)
-                                {
-                                    case HttpGetAttribute a:
-                                        supportedVerbs.Add("GET", a.Template ?? m.Name);
-                                        break;
-                                    case HttpPutAttribute a:
-                                        supportedVerbs.Add("PUT", a.Template ?? m.Name);
-                                        break;
-                                    case HttpPatchAttribute a:
-                                        supportedVerbs.Add("PATCH", a.Template ?? m.Name);
-                                        break;
-                                    case HttpPostAttribute a:
-                                        supportedVerbs.Add("POST", a.Template ?? m.Name);
-                                        break;
-                                    case HttpDeleteAttribute a:
-                                        supportedVerbs.Add("DELETE", a.Template ?? m.Name);
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-
-                            // if the verb does't match the context method, then move to the next method to examine it
-                            if (!supportedVerbs.ContainsKey(context.Request.HttpMethod))
-                            {
-                                continue;
-                            }
-
-                            // match the method or route template name:
-                            if (supportedVerbs[context.Request.HttpMethod].Contains(requestedMethodName, StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                method = m;
-                                _methodCache.Add(context.Request.HttpMethod, requestedMethodName, method);
-
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                // if we couldn't find the method, return 404.
-                if (method == null)
-                {
-                    // TODO: potentially load content from a file?
-                    byte[] data = Encoding.UTF8.GetBytes("<head><body>404. Not found.</body><head>");
-                    context.Response.ContentType = "text/html";
-                    context.Response.ContentEncoding = Encoding.UTF8;
-                    context.Response.ContentLength64 = data.LongLength;
-                    context.Response.StatusCode = 404;
-                    await context.Response.OutputStream.WriteAsync(data, 0, data.Length);
-                    context.Response.Close();
+                    await Return404(context);
                     return;
                 }
-
-                IRequestHandler target;
-                var shouldDispose = false;
-
-                if (_handlerCache.ContainsKey(method.DeclaringType))
-                {
-                    target = _handlerCache[method.DeclaringType];
-                }
                 else
                 {
-                    // instantiate the handler, set the context (which contains all the request info)
-                    target = Activator.CreateInstance(method.DeclaringType) as IRequestHandler;
+                    var handlerInstance = GetHandlerInstance(handlerInfo.HandlerType, out bool shouldDispose);
+                    handlerInstance.Context = context;
 
-                    if (target.IsReusable)
-                    {
-                        // cache for later use
-                        _handlerCache.Add(method.DeclaringType, target);
-                    }
-                    else
-                    {
-                        shouldDispose = true;
-                    }
-                }
+                    object[] paramObjects = null;
 
-                target.Context = context;
-                try
-                {
-                    if(typeof(IActionResult).IsAssignableFrom(method.ReturnType))
+                    if (handlerInfo.Parameter != null)
                     {
-                        var result = method.Invoke(target, null) as IActionResult;
-                        await result.ExecuteResultAsync(context);
+                        paramObjects = new object[]
+                        {
+                            param
+                        };
                     }
-                    else
-                    {
-                        method.Invoke(target, null);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (_printDebugOutput) { Console.WriteLine(ex.Message); }
-                    context.Response.StatusCode = 500;
-                    context.Response.Close();
-                }
 
-                if (shouldDispose)
-                {
-                    target.Dispose();
-                    target = null;
+                    try
+                    {
+                        if (typeof(IActionResult).IsAssignableFrom(handlerInfo.Method.ReturnType))
+                        {
+                            var result = handlerInfo.Method.Invoke(handlerInstance, paramObjects) as IActionResult;
+                            await result.ExecuteResultAsync(context);
+                        }
+                        else
+                        {
+                            handlerInfo.Method.Invoke(handlerInstance, paramObjects);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger?.Error(ex.Message);
+                        context.Response.StatusCode = 500;
+                        context.Response.Close();
+                    }
+
+                    // if the handler is not reusable, clean up
+                    if (shouldDispose)
+                    {
+                        handlerInstance.Dispose();
+                    }
                 }
-                
             });
         }
     }
