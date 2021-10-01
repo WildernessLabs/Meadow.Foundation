@@ -1,4 +1,3 @@
-using Meadow;
 using Meadow.Hardware;
 using System.Threading;
 
@@ -13,10 +12,8 @@ namespace Meadow.Foundation.Displays
         protected IDigitalInputPort busyPort;
         protected ISpiPeripheral spi;
 
-        protected Color currentPen = Color.White;
-
-        protected const bool Data = true;
-        protected const bool Command = false;
+        protected const bool DataState = true;
+        protected const bool CommandState = false;
 
         protected void Write(byte value)
         {
@@ -39,7 +36,7 @@ namespace Meadow.Foundation.Displays
 
         protected void SendCommand(byte command)
         {
-            dataCommandPort.State = (Command);
+            dataCommandPort.State = (false);
             Write(command);
         }
 
@@ -50,13 +47,13 @@ namespace Meadow.Foundation.Displays
 
         protected void SendData(byte data)
         {
-            dataCommandPort.State = (Data);
+            dataCommandPort.State = (DataState);
             Write(data);
         }
 
         protected void SendData(byte[] data)
         {
-            dataCommandPort.State = (Data);
+            dataCommandPort.State = (DataState);
             spi.WriteBytes(data);
         }
 

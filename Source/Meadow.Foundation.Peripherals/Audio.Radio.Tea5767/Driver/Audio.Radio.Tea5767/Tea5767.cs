@@ -4,47 +4,12 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Audio.Radio
 {
-    public class Tea5767
+    public partial class Tea5767
     {
         /// <summary>
         ///     TEA5767 radio.
         /// </summary>
         private readonly II2cPeripheral i2cPeripheral;
-
-        public const byte DEFAULT_ADDRESS = 0x60;
-
-        static byte FIRST_DATA = 0;
-        static byte SECOND_DATA = 1;
-        static byte THIRD_DATA = 2;
-        static byte FOURTH_DATA = 3;
-        static byte FIFTH_DATA = 4;
-        static byte LOW_STOP_LEVEL = 1;
-        static byte MID_STOP_LEVEL = 2;
-        static byte HIGH_STOP_LEVEL = 3;
-        /*    static byte HIGH_SIDE_INJECTION           = 1;
-            static byte LOW_SIDE_INJECTION            = 0;
-            static byte STEREO_ON                     = 0;
-            static byte STEREO_OFF                    = 1;
-            static byte MUTE_RIGHT_ON                 = 1;
-            static byte MUTE_RIGHT_OFF                = 0;
-            static byte MUTE_LEFT_ON                  = 1;
-            static byte MUTE_LEFT_OFF = 0;
-            static byte SWP1_HIGH                     = 1;
-            static byte SWP1_LOW                      = 0;
-            static byte SWP2_HIGH                     = 1;
-            static byte SWP2_LOW                      = 0;
-            static byte STBY_ON                       = 1;
-            static byte STBY_OFF                      = 0;
-            static byte JAPANESE_FM_BAND              = 1;
-            static byte US_EUROPE_FM_BAND = 0;
-            static byte SOFT_MUTE_ON = 1;
-            static byte SOFT_MUTE_OFF = 0;
-            static byte HIGH_CUT_CONTROL_ON = 1;
-            static byte HIGH_CUT_CONTROL_OFF = 0;
-            static byte STEREO_NOISE_CANCELLING_ON = 1;
-            static byte STEREO_NOISE_CANCELLING_OFF = 0;
-            static byte SEARCH_INDICATOR_ON = 1;
-            static byte SEARCH_INDICATOR_OFF = 0;*/
 
         byte hiInjection;
         byte[] transmissionData = new byte[5];
@@ -56,7 +21,7 @@ namespace Meadow.Foundation.Audio.Radio
         ///     Create a new TEA5767 object using the default parameters
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public Tea5767(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public Tea5767(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
@@ -65,11 +30,11 @@ namespace Meadow.Foundation.Audio.Radio
 
         void InitTEA5767()
         {
-            transmissionData[FIRST_DATA] = 0;            //MUTE: 0 - not muted
+            transmissionData[(byte)Command.FIRST_DATA] = 0;            //MUTE: 0 - not muted
             //SEARCH MODE: 0 - not in search mode
 
-            transmissionData[SECOND_DATA] = 0;           //No frequency defined yet
-            transmissionData[THIRD_DATA] = 0xB0;         //10110000
+            transmissionData[(byte)Command.SECOND_DATA] = 0;           //No frequency defined yet
+            transmissionData[(byte)Command.THIRD_DATA] = 0xB0;         //10110000
             //SUD: 1 - search up
             //SSL[1:0]: 01 - low; level ADC output = 5
             //HLSI: 1 - high side LO injection
@@ -78,7 +43,7 @@ namespace Meadow.Foundation.Audio.Radio
             //ML: 0 - left audio channel is not muted
             //SWP1: 0 - port 1 is LOW
 
-            transmissionData[FOURTH_DATA] = 0x10;        //00010000
+            transmissionData[(byte)Command.FOURTH_DATA] = 0x10;        //00010000
             //SWP2: 0 - port 2 is LOW
             //STBY: 0 - not in Standby mode
             //BL: 0 - US/Europe FM band
@@ -88,7 +53,7 @@ namespace Meadow.Foundation.Audio.Radio
             //SNC: 0 - stereo noise cancelling is OFF
             //SI: 0 - pin SWPORT1 is software programmable port 1
 
-            transmissionData[FIFTH_DATA] = 0x00;         //PLLREF: 0 - the 6.5 MHz reference frequency for the PLL is disabled
+            transmissionData[(byte)Command.FIFTH_DATA] = 0x00;         //PLLREF: 0 - the 6.5 MHz reference frequency for the PLL is disabled
             //DTC: 0 - the de-emphasis time constant is 50 ms
         }
 
@@ -125,8 +90,8 @@ namespace Meadow.Foundation.Audio.Radio
                 frequencyW = (uint)(4 * ((frequency * 1000000) - 225000) / 32768);
             }
 
-            transmissionData[FIRST_DATA] = (byte)((transmissionData[FIRST_DATA] & 0xC0) | ((frequencyW >> 8) & 0x3F));
-            transmissionData[SECOND_DATA] = (byte)(frequencyW & 0xFF);
+            transmissionData[(byte)Command.FIRST_DATA] = (byte)((transmissionData[(byte)Command.FIRST_DATA] & 0xC0) | ((frequencyW >> 8) & 0x3F));
+            transmissionData[(byte)Command.SECOND_DATA] = (byte)(frequencyW & 0xFF);
 
             TransmitData();
         }
@@ -147,7 +112,7 @@ namespace Meadow.Foundation.Audio.Radio
 
         void SetSoundOff()
         {
-            transmissionData[FIRST_DATA] |= 128;
+            transmissionData[(byte)Command.FIRST_DATA] |= 128;
         }
 
         void SetSoundBackOn()
@@ -159,7 +124,7 @@ namespace Meadow.Foundation.Audio.Radio
 
         void SetSoundOn()
         {
-            transmissionData[FIRST_DATA] &= 127;
+            transmissionData[(byte)Command.FIRST_DATA] &= 127;
         }
 
         public void SelectFrequency(float frequency)
@@ -186,7 +151,7 @@ namespace Meadow.Foundation.Audio.Radio
         {
             LoadFrequency();
 
-            uint frequencyW = (uint)(((reception_data[FIRST_DATA] & 0x3F) * 256) + reception_data[SECOND_DATA]);
+            uint frequencyW = (uint)(((reception_data[(byte)Command.FIRST_DATA] & 0x3F) * 256) + reception_data[(byte)Command.SECOND_DATA]);
 
             if (hiInjection > 0)
             {
@@ -204,46 +169,46 @@ namespace Meadow.Foundation.Audio.Radio
 
             //Stores the read frequency that can be the result of a search and it�s not yet in transmission data
             //and is necessary to subsequent calls to search.
-            transmissionData[FIRST_DATA] = (byte)((transmissionData[FIRST_DATA] & 0xC0) | (reception_data[FIRST_DATA] & 0x3F));
-            transmissionData[SECOND_DATA] = reception_data[SECOND_DATA];
+            transmissionData[(byte)Command.FIRST_DATA] = (byte)((transmissionData[(byte)Command.FIRST_DATA] & 0xC0) | (reception_data[(byte)Command.FIRST_DATA] & 0x3F));
+            transmissionData[(byte)Command.SECOND_DATA] = reception_data[(byte)Command.SECOND_DATA];
         }
 
         void SetSearchUp()
         {
-            transmissionData[THIRD_DATA] |= 128;
+            transmissionData[(byte)Command.THIRD_DATA] |= 128;
         }
 
         void SetSearchDown()
         {
-            transmissionData[THIRD_DATA] &= 127;
+            transmissionData[(byte)Command.THIRD_DATA] &= 127;
         }
 
         void setSearchLowStopLevel()
         {
-            transmissionData[THIRD_DATA] &= 237;
-            transmissionData[THIRD_DATA] |= (byte)(LOW_STOP_LEVEL << 5);
+            transmissionData[(byte)Command.THIRD_DATA] &= 237;
+            transmissionData[(byte)Command.THIRD_DATA] |= ((byte)Command.LOW_STOP_LEVEL << 5);
         }
 
         void SetSearchMidStopLevel()
         {
-            transmissionData[THIRD_DATA] &= 237;
-            transmissionData[THIRD_DATA] |= (byte)(MID_STOP_LEVEL << 5);
+            transmissionData[(byte)Command.THIRD_DATA] &= 237;
+            transmissionData[(byte)Command.THIRD_DATA] |= ((byte)Command.MID_STOP_LEVEL << 5);
         }
 
         void SetSearchHighStopLevel()
         {
-            transmissionData[THIRD_DATA] &= 237;
-            transmissionData[THIRD_DATA] |= (byte)(HIGH_STOP_LEVEL << 5);
+            transmissionData[(byte)Command.THIRD_DATA] &= 237;
+            transmissionData[(byte)Command.THIRD_DATA] |= ((byte)Command.HIGH_STOP_LEVEL << 5);
         }
 
         void SetHighSideLOInjection()
         {
-            transmissionData[THIRD_DATA] |= 16;
+            transmissionData[(byte)Command.THIRD_DATA] |= 16;
         }
 
         void SetLowSideLOInjection()
         {
-            transmissionData[THIRD_DATA] &= 239;
+            transmissionData[(byte)Command.THIRD_DATA] &= 239;
         }
 
         public byte SearchNextSilent()
@@ -271,7 +236,7 @@ namespace Meadow.Foundation.Audio.Radio
             }
 
             //Turns the search on
-            transmissionData[FIRST_DATA] |= 64;
+            transmissionData[(byte)Command.FIRST_DATA] |= 64;
             TransmitData();
 
             while (IsReady())
@@ -285,7 +250,7 @@ namespace Meadow.Foundation.Audio.Radio
             LoadFrequency();
 
             //Turns de search off
-            transmissionData[FIRST_DATA] &= 191;
+            transmissionData[(byte)Command.FIRST_DATA] &= 191;
             TransmitData();
 
             return bandLimitReached;
@@ -337,122 +302,122 @@ namespace Meadow.Foundation.Audio.Radio
             TransmitData();
             //Read updated status
             ReadStatus();
-            return (byte)(reception_data[FOURTH_DATA] >> 4);
+            return (byte)(reception_data[(byte)Command.FOURTH_DATA] >> 4);
         }
 
         public bool IsStereo()
         {
             ReadStatus();
-            return (reception_data[THIRD_DATA] >> 7) > 0;
+            return (reception_data[(byte)Command.THIRD_DATA] >> 7) > 0;
         }
 
         public bool IsReady()
         {
             ReadStatus();
-            return (reception_data[FIRST_DATA] >> 7) > 0;
+            return (reception_data[(byte)Command.FIRST_DATA] >> 7) > 0;
         }
 
         byte IsBandLimitReached()
         {
             ReadStatus();
-            return (byte)((reception_data[FIRST_DATA] >> 6) & 1);
+            return (byte)((reception_data[(byte)Command.FIRST_DATA] >> 6) & 1);
         }
 
         bool IsSearchUp()
         {
-            return ((transmissionData[THIRD_DATA] & 128) != 0);
+            return ((transmissionData[(byte)Command.THIRD_DATA] & 128) != 0);
         }
 
         bool IsSearchDown()
         {
-            return ((transmissionData[THIRD_DATA] & 128) == 0);
+            return ((transmissionData[(byte)Command.THIRD_DATA] & 128) == 0);
         }
 
         bool IsStandby()
         {
             ReadStatus();
-            return (transmissionData[FOURTH_DATA] & 64) != 0;
+            return (transmissionData[(byte)Command.FOURTH_DATA] & 64) != 0;
         }
 
         public void EnableStereo(bool enable)
         {
             if (enable)
             {
-                transmissionData[THIRD_DATA] &= 247;
+                transmissionData[(byte)Command.THIRD_DATA] &= 247;
             }
             else
             {
-                transmissionData[THIRD_DATA] |= 8;
+                transmissionData[(byte)Command.THIRD_DATA] |= 8;
             }
             TransmitData();
         }
 
         void SetSoftMuteOn()
         {
-            transmissionData[FOURTH_DATA] |= 8;
+            transmissionData[(byte)Command.FOURTH_DATA] |= 8;
             TransmitData();
         }
 
         void SetSoftMuteOff()
         {
-            transmissionData[FOURTH_DATA] &= 247;
+            transmissionData[(byte)Command.FOURTH_DATA] &= 247;
             TransmitData();
         }
 
         void MuteRight()
         {
-            transmissionData[THIRD_DATA] |= 4;
+            transmissionData[(byte)Command.THIRD_DATA] |= 4;
             TransmitData();
         }
 
         void TurnTheRightSoundBackOn()
         {
-            transmissionData[THIRD_DATA] &= 251;
+            transmissionData[(byte)Command.THIRD_DATA] &= 251;
             TransmitData();
         }
 
         void MuteLeft()
         {
-            transmissionData[THIRD_DATA] |= 2;
+            transmissionData[(byte)Command.THIRD_DATA] |= 2;
             TransmitData();
         }
 
         void TurnTheLeftSoundBackOn()
         {
-            transmissionData[THIRD_DATA] &= 253;
+            transmissionData[(byte)Command.THIRD_DATA] &= 253;
             TransmitData();
         }
 
         void EnableStandby(bool enable)
         {
             if (enable)
-                transmissionData[FOURTH_DATA] |= 64;
+                transmissionData[(byte)Command.FOURTH_DATA] |= 64;
             else
-                transmissionData[FOURTH_DATA] &= 191;
+                transmissionData[(byte)Command.FOURTH_DATA] &= 191;
             TransmitData();
         }
 
         void SetHighCutControlOn()
         {
-            transmissionData[FOURTH_DATA] |= 4;
+            transmissionData[(byte)Command.FOURTH_DATA] |= 4;
             TransmitData();
         }
 
         void SetHighCutControlOff()
         {
-            transmissionData[FOURTH_DATA] &= 251;
+            transmissionData[(byte)Command.FOURTH_DATA] &= 251;
             TransmitData();
         }
 
         void SetStereoNoiseCancellingOn()
         {
-            transmissionData[FOURTH_DATA] |= 2;
+            transmissionData[(byte)Command.FOURTH_DATA] |= 2;
             TransmitData();
         }
 
         void SetStereoNoiseCancellingOff()
         {
-            transmissionData[FOURTH_DATA] &= 253;
+            transmissionData[(byte)Command.FOURTH_DATA] &= 253;
             TransmitData();
         }
     }

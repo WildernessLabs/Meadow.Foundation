@@ -14,13 +14,10 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public partial class Adxl345 : ByteCommsSensorBase<Acceleration3D>, IAccelerometer
     {
-        //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
-        //==== internals
         static double ADXL345_MG2G_MULTIPLIER = (0.004);
 
-        //==== properties
         /// <summary>
         /// Minimum value that can be used for the update interval when the
         /// sensor is being configured to generate interrupts.
@@ -65,17 +62,12 @@ namespace Meadow.Foundation.Sensors.Motion
             set { WriteRegister(Register.OFFSET_Z, (byte)value); }
         }
 
-        public const byte DEFAULT_ADDRESS = 0x53;
-        public const byte ALTERNATE_ADDRESS = 0x1D;
-
-        //==== ctors
-
         /// <summary>
         ///     Create a new instance of the ADXL345 communicating over the I2C interface.
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
-        public Adxl345(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public Adxl345(II2cBus i2cBus, byte address = (byte)Addresses.Address0)
             : base(i2cBus, address)
         {
             var deviceID = ReadRegister(Register.DEVICE_ID);

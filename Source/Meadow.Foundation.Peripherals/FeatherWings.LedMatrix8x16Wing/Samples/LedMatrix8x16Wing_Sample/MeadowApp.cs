@@ -39,7 +39,7 @@ namespace FeatherWings.LedMatrix8x16_Sample
                 for (byte i = 0; i < 8; i++)
                 {
                     ledMatrixWing.Clear();
-                    ledMatrixWing.DrawPixel(i, j);
+                    ledMatrixWing.DrawPixel(i, j, true);
                     ledMatrixWing.Show();
                     Thread.Sleep(50);
                 }
@@ -49,10 +49,10 @@ namespace FeatherWings.LedMatrix8x16_Sample
         void FourCorners()
         {
             ledMatrixWing.Clear();
-            ledMatrixWing.DrawPixel(0, 0);
-            ledMatrixWing.DrawPixel(7, 0);
-            ledMatrixWing.DrawPixel(0, 7);
-            ledMatrixWing.DrawPixel(7, 7);
+            ledMatrixWing.DrawPixel(0, 0, true);
+            ledMatrixWing.DrawPixel(7, 0, true);
+            ledMatrixWing.DrawPixel(0, 7, true);
+            ledMatrixWing.DrawPixel(7, 7, true);
             ledMatrixWing.Show();
         }
     }

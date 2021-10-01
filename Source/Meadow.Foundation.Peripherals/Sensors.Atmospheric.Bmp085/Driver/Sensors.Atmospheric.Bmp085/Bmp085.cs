@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    // TODO: BC: this driver needs testing after updating to the new stuff,
-    // I don't have a BMP085
     /// <summary>
     /// Bosch BMP085 digital pressure and temperature sensor.
     /// </summary>
-    public class Bmp085 :
+    public partial class Bmp085 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
@@ -56,21 +53,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         public static int DEFAULT_SPEED = 40000; // BMP085 clock rate
 
-        public enum DeviceMode
-        {
-            UltraLowPower = 0,
-            Standard = 1,
-            HighResolution = 2,
-            UltraHighResolution = 3
-        }
-
-        public const byte DEFAULT_ADDRESS = 0x77;
-
         /// <summary>
         /// Provide a mechanism for reading the temperature and humidity from
         /// a Bmp085 temperature / humidity sensor.
         /// </summary>
-        public Bmp085(II2cBus i2cBus, byte address = DEFAULT_ADDRESS,
+        public Bmp085(II2cBus i2cBus, byte address = (byte)Addresses.Default,
             DeviceMode deviceMode = DeviceMode.Standard)
                 : base(i2cBus, address)
         {

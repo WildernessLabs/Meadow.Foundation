@@ -31,9 +31,9 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(0x72);				// RGB Color
             //SendCommand(0x76);             // BGR Color
             SendCommand(CMD_STARTLINE);    // 0xA1
-            SendCommand(0x0);
+            SendCommand((byte)0x0);
             SendCommand(CMD_DISPLAYOFFSET);    // 0xA2
-            SendCommand(0x0);
+            SendCommand((byte)0x0);
             SendCommand(CMD_NORMALDISPLAY);    // 0xA4
             SendCommand(CMD_SETMULTIPLEX);     // 0xA8
             SendCommand(0x3F);             // 0x3F 1/64 duty

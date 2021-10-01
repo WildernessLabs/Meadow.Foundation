@@ -13,6 +13,15 @@ namespace Meadow.Foundation.Sensors.Light
     /// </summary>
     public partial class Tsl2591
     {
+        /// <summary>
+		///     Valid addresses for the sensor.
+		/// </summary>
+		public enum Addresses : byte
+        {
+            Address0 = 0x29,
+            Default = Address0
+        }
+
         [Flags]
         private enum Register : byte
         {

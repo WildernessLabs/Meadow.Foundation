@@ -94,15 +94,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
-        public const byte DEFAULT_ADDRESS = 0x76;
-        public const byte ALTERNATE_ADDRESS = 0x77;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
         /// </summary>
         /// <param name="i2c">I2C Bus to use for communicating with the sensor</param>
         /// <param name="address">I2C address of the sensor (default = 0x77).</param>
-        public Bme280(II2cBus i2c, byte address = DEFAULT_ADDRESS)
+        public Bme280(II2cBus i2c, byte address = (byte)Addresses.Default)
         {
             bme280Comms = new Bme280I2C(i2c, address);
             configuration = new Configuration(); // here to avoid the warning

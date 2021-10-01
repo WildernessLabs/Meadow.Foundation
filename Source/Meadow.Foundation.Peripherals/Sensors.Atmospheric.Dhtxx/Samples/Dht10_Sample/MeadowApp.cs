@@ -10,11 +10,6 @@ namespace Dht10_Sample
 
         public MeadowApp()
         {
-            Initialize();            
-        }
-
-        void Initialize()
-        {
             dht10 = new Dht10(Device.CreateI2cBus());
         }
     }

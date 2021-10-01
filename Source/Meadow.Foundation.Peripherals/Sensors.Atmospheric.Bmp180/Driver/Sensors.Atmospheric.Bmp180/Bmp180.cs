@@ -7,15 +7,13 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    public class Bmp180 :
+    public partial class Bmp180 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
-        //==== events
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
-        //==== internals
         // Oversampling for measurements.  Please see the datasheet for this sensor for more information.
         private byte oversamplingSetting;
 
@@ -36,7 +34,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private short _mc;
         private short _md;
 
-        //==== properties
         /// <summary>
         /// Last value read from the Pressure sensor.
         /// </summary>
@@ -47,22 +44,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Pressure? Pressure => Conditions.Pressure;
 
-        public const int DEFAULT_SPEED = 40000; // BMP085 clock rate
+        public const int DEFAULT_SPEED = 40000; //clock rate
 
-        public const byte DEFAULT_ADDRESS = 0x77;
-
-        public enum DeviceMode
-        {
-            UltraLowPower = 0,
-            Standard = 1,
-            HighResolution = 2,
-            UltraHighResolution = 3
-        }
         /// <summary>
         /// Provide a mechanism for reading the temperature and humidity from
         /// a Bmp085 temperature / humidity sensor.
         /// </summary>
-        public Bmp180(II2cBus i2cBus, byte address = DEFAULT_ADDRESS,
+        public Bmp180(II2cBus i2cBus, byte address = (byte)Addresses.Default,
             DeviceMode deviceMode = DeviceMode.Standard)
                 : base(i2cBus, address)
         {

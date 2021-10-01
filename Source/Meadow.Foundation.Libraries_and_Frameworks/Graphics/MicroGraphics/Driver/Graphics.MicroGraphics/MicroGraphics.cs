@@ -48,11 +48,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Current pen color 
         /// </summary>
-        public Color PenColor
-        {
-            get => display.PenColor;
-            set => display.PenColor = value;
-        }
+        public Color PenColor { get; set; } = Color.White;
 
         /// <summary>
         /// Return the height of the display after accounting for the rotation.
@@ -82,7 +78,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">y location</param>
         public void DrawPixel(int x, int y)
         {
-            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y));
+            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor);
         }
 
         /// <summary>
@@ -90,8 +86,8 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="index">pixel location in buffer</param>
         public void DrawPixel(int index)
-        {   //need to move this to the display driver TODO
-            display.DrawPixel((index % display.Width), (index / display.Width));
+        {   
+            display.DrawPixel(index % display.Width, index / display.Width, PenColor);
         }
 
         /// <summary>
@@ -202,7 +198,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawLine(int x0, int y0, int x1, int y1, Color color)
         {
-            display.PenColor = color;
+            PenColor = color;
 
             if (Stroke == 1)
             {
@@ -314,7 +310,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawHorizontalLine(int x, int y, int length, Color color)
         {
-            display.PenColor = color;
+            PenColor = color;
 
             if (Stroke == 1)
             {
@@ -328,7 +324,7 @@ namespace Meadow.Foundation.Graphics
                 {
                     DrawHorizontalLine(x, y - yOffset + i, length);
                 }
-            } 
+            }
         }
 
         private void DrawHorizontalLine(int x, int y, int length)
@@ -366,7 +362,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line.</param>
         public void DrawVerticalLine(int x, int y, int length, Color color)
         {
-            display.PenColor = color;
+            PenColor = color;
 
             if (Stroke == 1)
             {
@@ -537,7 +533,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a dircle.
+        ///     Draw a circle
         /// </summary>
         /// <remarks>
         ///     This algorithm draws the circle by splitting the full circle into eight
@@ -558,7 +554,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a dircle.
+        ///     Draw a circle
         /// </summary>
         /// <remarks>
         ///     This algorithm draws the circle by splitting the full circle into eight
@@ -575,7 +571,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Draw a filled circle?</param>
         public void DrawCircle(int centerX, int centerY, int radius, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
-            display.PenColor = color;
+            PenColor = color;
 
             if (filled)
             {
@@ -601,7 +597,7 @@ namespace Meadow.Foundation.Graphics
         {
             if (quadrant < 0 || quadrant > 3) { throw new ArgumentOutOfRangeException("DrawCircleQuadrant: quadrant must be between 0 & 3 inclusive"); }
 
-            display.PenColor = color;
+            PenColor = color;
 
             if (filled)
             {
@@ -847,7 +843,7 @@ namespace Meadow.Foundation.Graphics
                 return;
             }
 
-            display.PenColor = color;
+            PenColor = color;
 
             if (filled)
             {
@@ -1093,11 +1089,29 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Show the changes on the display.
+        ///     Show changes on the display
         /// </summary>
         public void Show()
         {
             display.Show();
+        }
+
+        /// <summary>
+        ///     Update a region of the display
+        ///     Note: not all displays support partial updates
+        /// </summary>
+        public void Show(int left, int top, int right, int bottom)
+        {
+            display.Show(left, top, right, bottom);
+        }
+
+        /// <summary>
+        ///     Update a region of the display
+        ///     Note: not all displays support partial updates
+        /// </summary>
+        public void Show(Rect rect)
+        {
+            display.Show(rect.Left, rect.Top, rect.Right, rect.Bottom);
         }
 
         /// <summary>
@@ -1188,7 +1202,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the bitmap.</param>
         public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
-            display.PenColor = color;
+            PenColor = color;
 
             DrawBitmap(x, y, width, height, bitmap, BitmapMode.Copy, scaleFactor);
         }

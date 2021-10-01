@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Camera
 {
-    public class ArducamMini
+    public partial class ArducamMini
     {
         const byte ADDRESS_READ = 0x60;
         const byte ADDRESS_WRITE = 0x61;
@@ -33,8 +33,6 @@ namespace Meadow.Foundation.Sensors.Camera
         const byte ARDUCHIP_GPIO = 0x06;
         const byte SINGLE_FIFO_READ = 0x3D;
 
-        public const byte DEFAULT_ADDRESS = 0x30;
-
         public int DEFAULT_SPEED = 8000; // in khz
 
         protected II2cPeripheral i2cDevice;
@@ -43,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
         protected IDigitalOutputPort chipSelectPort;
 
-        public ArducamMini(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public ArducamMini(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cDevice = new I2cPeripheral(i2cBus, address);
 

@@ -1,5 +1,7 @@
 using System;
 
+/*
+
 namespace Meadow.Foundation
 {
     public struct Color
@@ -535,3 +537,5 @@ namespace Meadow.Foundation
         #endregion
     }
 }
+
+*/

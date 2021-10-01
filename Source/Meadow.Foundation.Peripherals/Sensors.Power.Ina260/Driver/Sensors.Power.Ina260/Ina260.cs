@@ -34,18 +34,15 @@ namespace Meadow.Foundation.Sensors.Power
         /// </summary>
         public Units.Power? Power => Conditions.Power;
 
-        public const byte DEFAULT_ADDRESS = 0x40;
-        public const byte ALTERNATE_ADDRESS = 0x41;
-
         public Ina260(II2cBus i2cBus,
-            byte address = DEFAULT_ADDRESS,
+            byte address = (byte)Addresses.Default,
             int updateIntervalMs = 1000)
             : base(i2cBus, address, updateIntervalMs)
         {
             switch (address)
             {
-                case DEFAULT_ADDRESS:
-                case ALTERNATE_ADDRESS:
+                case (byte)Addresses.Address0:
+                case (byte)Addresses.Address1:
                     // valid;
                     break;
                 default:

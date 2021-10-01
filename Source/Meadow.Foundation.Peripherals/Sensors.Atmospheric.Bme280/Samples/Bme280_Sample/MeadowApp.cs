@@ -64,9 +64,8 @@ namespace Sensors.Atmospheric.BME280_Sample
             Console.WriteLine("Create BME280 sensor with I2C...");
 
             var i2c = Device.CreateI2cBus();
-            sensor = new Bme280(i2c, Bme280.DEFAULT_ADDRESS // SDA pulled up
-                //Bme280.ALTERNATE_ADDRESS                  // SDA pulled down
-            );
+            sensor = new Bme280(i2c, (byte)Bme280.Addresses.Default); // SDA pulled up
+            
         }
 
         async Task ReadConditions()

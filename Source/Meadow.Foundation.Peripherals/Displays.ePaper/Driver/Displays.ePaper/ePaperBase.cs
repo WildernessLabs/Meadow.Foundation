@@ -13,8 +13,6 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected readonly byte[] imageBuffer;
 
-        int xRefreshStart, yRefreshStart, xRefreshEnd, yRefreshEnd;
-
         public override int Width { get; }
         public override int Height { get; }
 
@@ -57,14 +55,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
         public void Clear(Color color, bool updateDisplay = false)
         {
-            bool colored = false;
-
-            if (color.B > 0 || color.R > 0 || color.G > 0)
-            {
-                colored = true;
-            }
-
-            Clear(colored, updateDisplay);
+            Clear(color.Color1bpp, updateDisplay);
         }
 
         /// <summary>
@@ -84,7 +75,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
             if (updateDisplay)
             {
-                Refresh();
+                Show();
             }
         }
 
@@ -96,11 +87,6 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public override void DrawPixel(int x, int y, bool colored)
         {
-            xRefreshStart = Math.Min(x, xRefreshStart);
-            xRefreshEnd = Math.Max(x, xRefreshEnd);
-            yRefreshStart = Math.Min(y, yRefreshStart);
-            yRefreshEnd = Math.Max(y, yRefreshEnd);
-
             if (colored)
             {
                 imageBuffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
@@ -111,11 +97,6 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, currentPen);
-        }
-
         /// <summary>
         ///     Draw a single pixel 
         /// </summary>
@@ -124,22 +105,11 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="color">Color of pixel.</param>
         public override void DrawPixel(int x, int y, Color color)
         {
-            bool colored = false;
-            if (color.B > 0 || color.G > 0 || color.R > 0)
-            {
-                colored = true;
-            }
-
-            DrawPixel(x, y, colored);
+            DrawPixel(x, y, color.Color1bpp);
         }
 
         public override void InvertPixel(int x, int y)
         {
-            xRefreshStart = Math.Min(x, xRefreshStart);
-            xRefreshEnd = Math.Max(x, xRefreshEnd);
-            yRefreshStart = Math.Min(y, yRefreshStart);
-            yRefreshEnd = Math.Max(y, yRefreshEnd);
-
             imageBuffer[(x + y * Width) / 8] ^= (byte)(0x80 >> (x % 8));
         }
 
@@ -153,32 +123,16 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="b">y location</param>
         public void DrawPixel(int x, int y, byte r, byte g, byte b)
         {
-            bool colored = false;
-            if (r > 0 || g > 0 || b > 0)
-            {
-                colored = true;
-            }
-
-            DrawPixel(x, y, colored);
+            DrawPixel(x, y, r > 0 || g > 0 || b > 0);
         }
 
         /// <summary>
         ///     Draw the display buffer to screen
         /// </summary>
-        public void Refresh()
+        public override void Show(int left, int top, int right, int bottom)
         {
-            if (xRefreshStart == -1)
-            {
-                SetFrameMemory(imageBuffer);
-            }
-            else
-            {
-                SetFrameMemory(imageBuffer, xRefreshStart, yRefreshStart, xRefreshEnd - xRefreshStart, yRefreshEnd - yRefreshStart);
-            }
-
+            SetFrameMemory(imageBuffer, left, top, right - left, top - bottom);
             DisplayFrame();
-
-            xRefreshStart = yRefreshStart = xRefreshEnd = yRefreshEnd = -1;
         }
 
         /// <summary>
@@ -186,7 +140,8 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         public override void Show()
         {
-            Refresh();
+            SetFrameMemory(imageBuffer);
+            DisplayFrame();
         }
 
         public virtual void SetFrameMemory(byte[] image_buffer,
@@ -228,7 +183,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
             SetMemoryArea(x, y, x_end, y_end);
             SetMemoryPointer(x, y);
-            SendCommand(WRITE_RAM);
+            SendCommand(Command.WRITE_RAM);
             /* send the image data */
             for (int j = 0; j < y_end - y + 1; j++)
             {
@@ -243,7 +198,7 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             SetMemoryArea(0, 0, (int)Width - 1, (int)Height - 1);
             SetMemoryPointer(0, 0);
-            SendCommand(WRITE_RAM);
+            SendCommand(Command.WRITE_RAM);
             /* send the image data */
             for (int i = 0; i < Width / 8 * Height; i++)
             {
@@ -255,7 +210,7 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             SetMemoryArea(0, 0, (int)Width - 1, (int)Height - 1);
             SetMemoryPointer(0, 0);
-            SendCommand(WRITE_RAM);
+            SendCommand(Command.WRITE_RAM);
             /* send the color data */
             for (int i = 0; i < Width / 8 * Height; i++)
             {
@@ -265,20 +220,20 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public virtual void DisplayFrame()
         {
-            SendCommand(DISPLAY_UPDATE_CONTROL_2);
+            SendCommand(Command.DISPLAY_UPDATE_CONTROL_2);
             SendData(0xC4);
-            SendCommand(MASTER_ACTIVATION);
-            SendCommand(TERMINATE_FRAME_READ_WRITE);
+            SendCommand(Command.MASTER_ACTIVATION);
+            SendCommand(Command.TERMINATE_FRAME_READ_WRITE);
             WaitUntilIdle();
         }
 
         void SetMemoryArea(int x_start, int y_start, int x_end, int y_end)
         {
-            SendCommand(SET_RAM_X_ADDRESS_START_END_POSITION);
+            SendCommand(Command.SET_RAM_X_ADDRESS_START_END_POSITION);
             /* x point must be the multiple of 8 or the last 3 bits will be ignored */
             SendData((x_start >> 3) & 0xFF);
             SendData((x_end >> 3) & 0xFF);
-            SendCommand(SET_RAM_Y_ADDRESS_START_END_POSITION);
+            SendCommand(Command.SET_RAM_Y_ADDRESS_START_END_POSITION);
             SendData(y_start & 0xFF);
             SendData((y_start >> 8) & 0xFF);
             SendData(y_end & 0xFF);
@@ -287,10 +242,10 @@ namespace Meadow.Foundation.Displays.ePaper
 
         void SetMemoryPointer(int x, int y)
         {
-            SendCommand(SET_RAM_X_ADDRESS_COUNTER);
+            SendCommand(Command.SET_RAM_X_ADDRESS_COUNTER);
             /* x point must be the multiple of 8 or the last 3 bits will be ignored */
             SendData((x >> 3) & 0xFF);
-            SendCommand(SET_RAM_Y_ADDRESS_COUNTER);
+            SendCommand(Command.SET_RAM_Y_ADDRESS_COUNTER);
             SendData(y & 0xFF);
             SendData((y >> 8) & 0xFF);
             WaitUntilIdle();
@@ -298,31 +253,39 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected void Sleep()
         {
-            SendCommand(DEEP_SLEEP_MODE);
+            SendCommand(Command.DEEP_SLEEP_MODE);
             WaitUntilIdle();
         }
 
-        // EPD1IN54 commands
-        protected static byte DRIVER_OUTPUT_CONTROL = 0x01;
-        protected static byte BOOSTER_SOFT_START_CONTROL = 0x0C;
-        protected static byte GATE_SCAN_START_POSITION = 0x0F;
-        protected static byte DEEP_SLEEP_MODE = 0x10;
-        protected static byte DATA_ENTRY_MODE_SETTING = 0x11;
-        protected static byte SW_RESET = 0x12;
-        protected static byte TEMPERATURE_SENSOR_CONTROL = 0x1A;
-        protected static byte MASTER_ACTIVATION = 0x20;
-        protected static byte DISPLAY_UPDATE_CONTROL_1 = 0x21;
-        protected static byte DISPLAY_UPDATE_CONTROL_2 = 0x22;
-        protected static byte WRITE_RAM = 0x24;
-        protected static byte WRITE_VCOM_REGISTER = 0x2C;
-        protected static byte WRITE_LUT_REGISTER = 0x32;
-        protected static byte SET_DUMMY_LINE_PERIOD = 0x3A;
-        protected static byte SET_GATE_TIME = 0x3B;
-        protected static byte BORDER_WAVEFORM_CONTROL = 0x3C;
-        protected static byte SET_RAM_X_ADDRESS_START_END_POSITION = 0x44;
-        protected static byte SET_RAM_Y_ADDRESS_START_END_POSITION = 0x45;
-        protected static byte SET_RAM_X_ADDRESS_COUNTER = 0x4E;
-        protected static byte SET_RAM_Y_ADDRESS_COUNTER = 0x4F;
-        protected static byte TERMINATE_FRAME_READ_WRITE = 0xFF;
+        protected void SendCommand(Command command)
+        {
+            SendCommand((byte)command);
+        }
+
+        public enum Command : byte
+        {
+            DRIVER_OUTPUT_CONTROL = 0x01,
+            BOOSTER_SOFT_START_CONTROL = 0x0C,
+            GATE_SCAN_START_POSITION = 0x0F,
+            DEEP_SLEEP_MODE = 0x10,
+            DATA_ENTRY_MODE_SETTING = 0x11,
+            SW_RESET = 0x12,
+            TEMPERATURE_SENSOR_CONTROL = 0x1A,
+            MASTER_ACTIVATION = 0x20,
+            DISPLAY_UPDATE_CONTROL_1 = 0x21,
+            DISPLAY_UPDATE_CONTROL_2 = 0x22,
+            WRITE_RAM = 0x24,
+            WRITE_VCOM_REGISTER = 0x2C,
+            WRITE_LUT_REGISTER = 0x32,
+            SET_DUMMY_LINE_PERIOD = 0x3A,
+            SET_GATE_TIME = 0x3B,
+            BORDER_WAVEFORM_CONTROL = 0x3C,
+            SET_RAM_X_ADDRESS_START_END_POSITION = 0x44,
+            SET_RAM_Y_ADDRESS_START_END_POSITION = 0x45,
+            SET_RAM_X_ADDRESS_COUNTER = 0x4E,
+            SET_RAM_Y_ADDRESS_COUNTER = 0x4F,
+            TERMINATE_FRAME_READ_WRITE = 0xFF,
+        }
     }
+
 }

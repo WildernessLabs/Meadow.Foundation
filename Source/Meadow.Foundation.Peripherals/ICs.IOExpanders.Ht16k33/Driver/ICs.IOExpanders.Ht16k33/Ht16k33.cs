@@ -5,47 +5,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     //128 LED driver
     //39 key input
-    public class Ht16k33
+    public partial class Ht16k33
     {
-        public enum BlinkRate : byte
-        {
-            Off = 0,
-            Fast = 2, //2hz
-            Medium = 4, //1hz
-            Slow = 8, //0.5hz
-        }
-
-        public enum Brightness : byte
-        {
-            _0,
-            _1,
-            _2,
-            _3,
-            _4,
-            _5,
-            _6,
-            _7,
-            _8,
-            _9,
-            _10,
-            _11,
-            _12,
-            _13,
-            _14,
-            _15,
-            Off = 0,
-            Low = 4,
-            Medium = 8,
-            High = 12,
-            Maximum = 15,
-        }
-
         /// <summary>
         ///     HT16K33 LED driver and key scan
         /// </summary>
         private readonly II2cPeripheral i2cPeripheral;
-
-        public const byte DEFAULT_ADDRESS = 0x70;
 
         //display buffer for 16x8 LEDs
         private byte[] displayBuffer = new byte[16];
@@ -64,7 +29,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="i2cBus">I2C bus instance</param>
-        public Ht16k33(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public Ht16k33(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 

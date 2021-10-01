@@ -1,5 +1,4 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Light
+﻿namespace Meadow.Foundation.Sensors.Light
 {
 	public partial class Bh1750
 	{

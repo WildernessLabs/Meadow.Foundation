@@ -12,7 +12,6 @@ namespace Meadow.Foundation.FeatherWings
         public const byte DEFAULT_ADDRESS = 0x70;
 
         private Ht16k33 ht16k33;
-        private Color pen;
 
         public LedMatrix8x16Wing(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
         {
@@ -32,7 +31,7 @@ namespace Meadow.Foundation.FeatherWings
 
         public override void DrawPixel(int x, int y, Color color)
         {
-            DrawPixel(x, y, color == Color.Black ? false : true);
+            DrawPixel(x, y, color.Color1bpp);
         }
 
         public override void DrawPixel(int x, int y, bool colored)
@@ -53,11 +52,6 @@ namespace Meadow.Foundation.FeatherWings
             ht16k33.SetLed((byte)(y * Width + x), colored);
         }
 
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, pen == Color.Black ? false : true);
-        }
-
         public override void InvertPixel(int x, int y)
         {
             if (y < 8)
@@ -75,6 +69,12 @@ namespace Meadow.Foundation.FeatherWings
         public override void Show()
         {
             ht16k33.UpdateDisplay();
+        }
+
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            //ToDo - should be possible - check UpdateDisplay and adjust starting address
+            Show();
         }
     }
 }
