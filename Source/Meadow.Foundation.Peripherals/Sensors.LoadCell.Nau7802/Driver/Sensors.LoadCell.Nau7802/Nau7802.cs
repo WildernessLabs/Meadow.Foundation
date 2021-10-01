@@ -33,27 +33,25 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// </summary>
         public Mass? Mass { get; private set; }
 
-        public const int DEFAULT_ADDRESS = 0x2A;
-
         /// <summary>
         /// Creates an instance of the NAU7802 Driver class
         /// </summary>
         /// <param name="bus"></param>
         public Nau7802(II2cBus bus, int updateIntervalMs = 1000)
-            : base(bus, DEFAULT_ADDRESS, updateIntervalMs)
+            : base(bus, (byte)Addresses.Default, updateIntervalMs)
         {
-            Initialize(DEFAULT_ADDRESS);
+            Initialize((byte)Addresses.Default);
         }
 
         private void Initialize(byte address)
         {
             switch (address)
             {
-                case DEFAULT_ADDRESS:
+                case (byte)Addresses.Default:
                     // valid;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException($"NAU7802 device supports only address {DEFAULT_ADDRESS}");
+                    throw new ArgumentOutOfRangeException($"NAU7802 device supports only address {(byte)Addresses.Default}");
             }
 
             PowerOn();

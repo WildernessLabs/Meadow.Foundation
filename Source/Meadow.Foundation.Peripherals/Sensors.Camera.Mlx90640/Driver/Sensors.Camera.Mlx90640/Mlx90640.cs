@@ -12,41 +12,8 @@ namespace Meadow.Foundation.Sensors.Camera
     /// <remarks>
     /// Based on https://github.com/adafruit/Adafruit_MLX90640 and https://github.com/melexis/mlx90640-library/tree/master/functions
     /// </remarks>
-    public class Mlx90640
+    public partial class Mlx90640
     {
-        public enum Mode
-        {
-            Interleaved,
-            Chess
-        }
-
-        public enum Resolution
-        {
-            SixteenBit,
-            SeventeenBit,
-            EighteenBit,
-            NineteenBit
-        }
-
-        public enum RefreshRate
-        {
-            HalfHZ,
-            OneHZ,
-            TwoHZ,
-            FourHZ,
-            EightHZ,
-            SixteenHZ,
-            ThirtyTwoHZ,
-            SixtyFourHZ
-        }
-
-        public enum Units
-        {
-            Celsius,
-            Fahrenheit,
-            Kelvin
-        }
-
         public string SerialNumber { get; private set; }
         public float Emissivity { get => emissivity; 
             set
@@ -72,10 +39,8 @@ namespace Meadow.Foundation.Sensors.Camera
 
         float emissivity;
 
-        public const byte DEFAULT_ADDRESS = 0x33;
-
         public Mlx90640(II2cBus i2cBus,
-            byte address = DEFAULT_ADDRESS,
+            byte address = (byte)Addresses.Default,
             Units measurementUnit = Units.Celsius,
             float emissivity = 0.95f)
         {

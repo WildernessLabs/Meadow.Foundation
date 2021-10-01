@@ -4,6 +4,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Htu21d
     {
+        /// <summary>
+        ///     Valid addresses for the sensor.
+        /// </summary>
+        public enum Addresses : byte
+        {
+            Address0 = 0x40,
+            Default = Address0
+        }
+
         private const byte SOFT_RESET = 0xFE;
 
         private const byte TEMPERATURE_MEASURE_NOHOLD = 0xF3;

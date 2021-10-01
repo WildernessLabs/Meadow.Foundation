@@ -17,8 +17,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
-        public const byte DEFAULT_ADDRESS = 0x60;
-
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
@@ -67,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Address of the sensor (default = 0x60).</param>
         /// <param name="i2cBus">I2cBus (Maximum is 400 kHz).</param>
-        public Mpl3115a2(II2cBus i2cBus, byte address = DEFAULT_ADDRESS, int updateIntervalMs = 1000)
+        public Mpl3115a2(II2cBus i2cBus, byte address = (byte)Addresses.Default, int updateIntervalMs = 1000)
             : base(i2cBus, address, updateIntervalMs, 5)
         {
             if (Peripheral.ReadRegister(Registers.WhoAmI) != 0xc4)

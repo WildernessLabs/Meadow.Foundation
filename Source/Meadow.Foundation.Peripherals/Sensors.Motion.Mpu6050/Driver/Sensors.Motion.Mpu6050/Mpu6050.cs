@@ -3,7 +3,6 @@ using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using TU = Meadow.Units.Temperature.UnitType;
 
@@ -22,27 +21,20 @@ namespace Meadow.Foundation.Sensors.Motion
         ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
         IAccelerometer, IGyroscope, ITemperatureSensor
     {
-        //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
         public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
-        //==== internals
         private const float GyroScaleBase = 131f;
         private const float AccelScaleBase = 16384f; // pg.13, scale for sensitivity scale AFS_SEL=0 (+- 2G)
         private int GyroScale { get; set; }
         private int AccelerometerScale { get; set; }
 
-        //==== properties
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
         public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
         public Units.Temperature? Temperature => Conditions.Temperature;
 
-        public const byte DEFAULT_ADDRESS = 0x68;
-        public const byte ALTERNATE_ADDRESS = 0x69;
-
-        //==== ctors
-        public Mpu6050(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public Mpu6050(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 14)
         {
             Initialize(address);
