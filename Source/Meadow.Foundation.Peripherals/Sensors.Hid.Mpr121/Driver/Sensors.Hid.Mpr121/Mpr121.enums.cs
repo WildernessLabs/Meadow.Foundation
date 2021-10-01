@@ -4,6 +4,15 @@ namespace Meadow.Foundation.Sensors.Hid
     public partial class Mpr121
     {
         /// <summary>
+        ///     Valid addresses for the sensor.
+        /// </summary>
+        public enum Addresses : byte
+        {
+            Address0 = 0x5A,
+            Default = Address0
+        }
+
+        /// <summary>
         /// Mpr121 channels
         /// </summary>
         public enum Channels

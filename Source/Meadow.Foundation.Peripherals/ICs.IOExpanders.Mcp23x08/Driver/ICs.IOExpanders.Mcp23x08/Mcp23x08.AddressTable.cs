@@ -1,6 +1,5 @@
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-
     public partial class Mcp23x08
     {
         public static class McpAddressTable

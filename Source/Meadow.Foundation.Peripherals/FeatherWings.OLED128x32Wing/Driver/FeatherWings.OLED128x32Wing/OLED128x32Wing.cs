@@ -25,7 +25,7 @@ namespace Meadow.Foundation.FeatherWings
 
         public OLED128x32Wing(II2cBus i2cBus, IDigitalInputPort portA, IDigitalInputPort portB, IDigitalInputPort portC)
         {
-            Display = new Ssd1306(i2cBus, Ssd1306.DEFAULT_ADDRESS, Ssd1306.DisplayType.OLED128x32);
+            Display = new Ssd1306(i2cBus, (byte)Ssd1306.Addresses.Default, Ssd1306.DisplayType.OLED128x32);
             Display.IgnoreOutOfBoundsPixels = true;
 
             ButtonA = new PushButton(portA);
