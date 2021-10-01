@@ -3,6 +3,15 @@
     public partial class Tcs3472x
     {
         /// <summary>
+		///     Valid addresses for the sensor.
+		/// </summary>
+		public enum Addresses : byte
+        {
+            Address0 = 0x29,
+            Default = Address0
+        }
+
+        /// <summary>
         /// Type of TCS3472X
         /// </summary>
         public enum DeviceType

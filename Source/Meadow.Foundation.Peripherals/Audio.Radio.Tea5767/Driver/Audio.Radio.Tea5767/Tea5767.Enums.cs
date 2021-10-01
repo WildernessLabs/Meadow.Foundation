@@ -2,6 +2,15 @@
 {
     public partial class Tea5767
     {
+        /// <summary>
+        ///     Valid addresses for the sensor.
+        /// </summary>
+        public enum Addresses : byte
+        {
+            Address0 = 0x60,
+            Default = Address0
+        }
+
         public enum Command : byte
         {
             FIRST_DATA = 0,

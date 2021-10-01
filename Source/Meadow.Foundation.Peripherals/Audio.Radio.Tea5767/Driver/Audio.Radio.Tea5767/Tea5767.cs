@@ -11,8 +11,6 @@ namespace Meadow.Foundation.Audio.Radio
         /// </summary>
         private readonly II2cPeripheral i2cPeripheral;
 
-        public const byte DEFAULT_ADDRESS = 0x60;
-
         byte hiInjection;
         byte[] transmissionData = new byte[5];
         byte[] reception_data = new byte[5];
@@ -23,7 +21,7 @@ namespace Meadow.Foundation.Audio.Radio
         ///     Create a new TEA5767 object using the default parameters
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public Tea5767(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public Tea5767(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 

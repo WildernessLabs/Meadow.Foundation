@@ -10,10 +10,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// A TCA9548A i2c multiplexer
     /// </summary>
-    public class Tca9548a : II2cPeripheral
+    public partial class Tca9548a : II2cPeripheral
     {
-        public const byte DEFAULT_ADDRESS = 0x70;
-
         private readonly IReadOnlyDictionary<byte, II2cBus> _buses;
         private byte _selectedBus = 0xff;
         internal SemaphoreSlim BusSelectorSemaphore = new SemaphoreSlim(1, 1);
@@ -25,7 +23,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="address">The address of the device on the specified <paramref name="bus"/></param>
         /// <exception cref="ArgumentOutOfRangeException">The device address was invalid</exception>
         /// <exception cref="ArgumentNullException">The bus was null</exception>
-        public Tca9548a(II2cBus bus, byte address = DEFAULT_ADDRESS)
+        public Tca9548a(II2cBus bus, byte address = (byte)Addresses.Default)
         {
             Address = TcaAddressTable.IsValidAddress(address)
                           ? address

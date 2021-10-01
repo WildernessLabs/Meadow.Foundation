@@ -10,8 +10,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <remarks>All PWM channels run at the same Frequency</remarks>
     public partial class Pca9685
     {
-        public const byte DEFAULT_ADDRESS = 0x40;
-
         private readonly II2cPeripheral i2cPeripheral;
         private readonly int frequency;
 
@@ -42,7 +40,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public II2cBus i2CBus { get; protected set; }
         public byte Address { get; protected set; }
 
-        public Pca9685(II2cBus i2cBus, byte address = DEFAULT_ADDRESS, int frequency = 100)
+        public Pca9685(II2cBus i2cBus, byte address = (byte)Addresses.Default, int frequency = 100)
         {
             i2CBus = i2cBus;
             Address = address;

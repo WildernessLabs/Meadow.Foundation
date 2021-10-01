@@ -5,10 +5,8 @@ namespace Meadow.Foundation.RTCs
     /// <summary>
     /// Create a new DS3231 Real Time Clock object.
     /// </summary>
-    public class Ds3231 : Ds323x
+    public partial class Ds3231 : Ds323x
     {
-        public const byte DEFAULT_ADDRESS = 0x68;
-
         /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component.
         /// </summary>
@@ -20,7 +18,7 @@ namespace Meadow.Foundation.RTCs
             IDigitalInputController device,
             II2cBus i2cBus,
             IPin interruptPin = null,
-            byte address = DEFAULT_ADDRESS)
+            byte address = (byte)Addresses.Default)
             : base(new I2cPeripheral(i2cBus, address), device, interruptPin)
         {
         }
@@ -35,7 +33,7 @@ namespace Meadow.Foundation.RTCs
         public Ds3231(
            II2cBus i2cBus,
            IDigitalInputPort interruptPort = null,
-           byte address = DEFAULT_ADDRESS)
+           byte address = (byte)Addresses.Default)
            : base(new I2cPeripheral(i2cBus, address), interruptPort)
         {
         }
