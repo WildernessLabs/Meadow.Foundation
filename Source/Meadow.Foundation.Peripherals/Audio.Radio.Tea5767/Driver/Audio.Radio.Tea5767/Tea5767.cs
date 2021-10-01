@@ -261,7 +261,7 @@ namespace Meadow.Foundation.Audio.Radio
             byte bandLimitReached;
 
             Mute();
-            bandLimitReached = startsSearchFromBeginning();
+            bandLimitReached = StartSearchFromBeginning();
             SetSoundBackOn();
 
             return bandLimitReached;
@@ -272,25 +272,25 @@ namespace Meadow.Foundation.Audio.Radio
             byte bandLimitReached;
 
             Mute();
-            bandLimitReached = startsSearchFromEnd();
+            bandLimitReached = StartSearchFromEnd();
             SetSoundBackOn();
 
             return bandLimitReached;
         }
 
-        byte startsSearchFromBeginning()
+        byte StartSearchFromBeginning()
         {
             SetSearchUp();
-            return startsSearchFrom(87.0f);
+            return StartSearchFrom(87.0f);
         }
 
-        byte startsSearchFromEnd()
+        byte StartSearchFromEnd()
         {
             SetSearchDown();
-            return startsSearchFrom(108.0f);
+            return StartSearchFrom(108.0f);
         }
 
-        byte startsSearchFrom(float frequency)
+        byte StartSearchFrom(float frequency)
         {
             SelectFrequency(frequency);
             return SearchNext();
@@ -317,7 +317,7 @@ namespace Meadow.Foundation.Audio.Radio
             return (reception_data[(byte)Command.FIRST_DATA] >> 7) > 0;
         }
 
-        byte IsBandLimitReached()
+        public byte IsBandLimitReached()
         {
             ReadStatus();
             return (byte)((reception_data[(byte)Command.FIRST_DATA] >> 6) & 1);
@@ -333,7 +333,7 @@ namespace Meadow.Foundation.Audio.Radio
             return ((transmissionData[(byte)Command.THIRD_DATA] & 128) == 0);
         }
 
-        bool IsStandby()
+        public bool IsStandby()
         {
             ReadStatus();
             return (transmissionData[(byte)Command.FOURTH_DATA] & 64) != 0;
@@ -352,48 +352,52 @@ namespace Meadow.Foundation.Audio.Radio
             TransmitData();
         }
 
-        void SetSoftMuteOn()
+        public void SetSoftMuteOn()
         {
             transmissionData[(byte)Command.FOURTH_DATA] |= 8;
             TransmitData();
         }
 
-        void SetSoftMuteOff()
+        public void SetSoftMuteOff()
         {
             transmissionData[(byte)Command.FOURTH_DATA] &= 247;
             TransmitData();
         }
 
-        void MuteRight()
+        public void MuteRight()
         {
             transmissionData[(byte)Command.THIRD_DATA] |= 4;
             TransmitData();
         }
 
-        void TurnTheRightSoundBackOn()
+        public void UnuteRight()
         {
             transmissionData[(byte)Command.THIRD_DATA] &= 251;
             TransmitData();
         }
 
-        void MuteLeft()
+        public void MuteLeft()
         {
             transmissionData[(byte)Command.THIRD_DATA] |= 2;
             TransmitData();
         }
 
-        void TurnTheLeftSoundBackOn()
+        public void UnmuteLeft()
         {
             transmissionData[(byte)Command.THIRD_DATA] &= 253;
             TransmitData();
         }
 
-        void EnableStandby(bool enable)
+        public void EnableStandby(bool enable)
         {
             if (enable)
+            {
                 transmissionData[(byte)Command.FOURTH_DATA] |= 64;
+            }
             else
+            {
                 transmissionData[(byte)Command.FOURTH_DATA] &= 191;
+            }
             TransmitData();
         }
 
@@ -409,13 +413,13 @@ namespace Meadow.Foundation.Audio.Radio
             TransmitData();
         }
 
-        void SetStereoNoiseCancellingOn()
+        public void SetStereoNoiseCancellingOn()
         {
             transmissionData[(byte)Command.FOURTH_DATA] |= 2;
             TransmitData();
         }
 
-        void SetStereoNoiseCancellingOff()
+        public void SetStereoNoiseCancellingOff()
         {
             transmissionData[(byte)Command.FOURTH_DATA] &= 253;
             TransmitData();
