@@ -15,49 +15,43 @@ namespace Meadow.Foundation.Web.Maple.Server
     {
         private const int bufferSize = 4096;
 
-        private HttpListenerContext _context;
         private bool _disposedValue;
 
         protected StringDictionary QueryString { get; private set; }
-        protected StringDictionary FormFields { get; set; }
-        protected string Body { get; set; }
+        public HttpListenerContext Context { get; set; }
         public virtual bool IsReusable { get; } = false;
 
         protected RequestHandlerBase()
         {
-            Body = string.Empty;
             QueryString = new StringDictionary();
-            FormFields = new StringDictionary();
         }
 
-        public HttpListenerContext Context
+        protected string Body 
         {
-            get => _context;
-            set
+            get
             {
-                _context = value;
-
-                if (_context.Request.RawUrl.Split(new char[] { '?' }).Length > 1)
-                {
-                    var q = _context.Request.RawUrl.Split(new char[] { '?' })[1];
-                    QueryString = ParseUrlPairs(q);
-                }
-
-                switch (_context.Request.ContentType)
+                switch (Context.Request.ContentType)
                 {
                     case ContentTypes.Application_Text:
-                        Body = ReadInputStream();
-                        break;
-                    case ContentTypes.Application_Form_UrlEncoded:
-                        FormFields = ParseUrlPairs(ReadInputStream());
-                        break;
                     case ContentTypes.Application_Json:
-                        Body = ReadInputStream();
-                        break;
-                    default:
-                        Body = ReadInputStream();
-                        break;
+                        return ReadInputStream();
                 }
+
+                return null;
+            }
+        }
+
+        protected StringDictionary FormFields 
+        {
+            get
+            {
+                switch (Context.Request.ContentType)
+                {
+                    case ContentTypes.Application_Form_UrlEncoded:
+                        return ParseUrlPairs(ReadInputStream());
+                }
+
+                return null;
             }
         }
 

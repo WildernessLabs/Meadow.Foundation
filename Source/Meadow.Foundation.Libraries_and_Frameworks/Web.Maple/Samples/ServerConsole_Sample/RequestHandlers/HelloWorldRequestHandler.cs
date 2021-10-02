@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Meadow.Foundation.Web.Maple.Server;
 using Meadow.Foundation.Web.Maple.Server.Routing;
 
@@ -76,6 +77,27 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
         public IActionResult ParameterPost(int id)
         {
             Console.WriteLine($"/HelloPost - id:{id}");
+
+            return new OkResult();
+        }
+
+        [HttpPost("file/{name}")]
+        public IActionResult FilePost(string name)
+        {
+            var buffer = new byte[4096];
+
+            var fi = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), name));
+
+            using (var reader = new BinaryReader(Context.Request.InputStream))
+            using (var writer = fi.OpenWrite())
+            {
+                int read = 0;
+                do
+                {
+                    read = reader.Read(buffer, 0, buffer.Length);
+                    writer.Write(buffer, 0, read);
+                } while (read > 0);
+            }
 
             return new OkResult();
         }

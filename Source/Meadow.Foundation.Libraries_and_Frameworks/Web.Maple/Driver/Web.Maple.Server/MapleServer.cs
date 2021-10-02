@@ -264,7 +264,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                     try
                     {
                         // wait for a request to come in
-                        HttpListenerContext context = await _httpListener.GetContextAsync();
+                        var context = await _httpListener.GetContextAsync();
                         Logger?.Info("got one!");
 
                         // depending on our processing mode, process either
@@ -342,7 +342,6 @@ namespace Meadow.Foundation.Web.Maple.Server
 
                 Logger?.Info("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + requestedMethodName);
 
-                //------
                 var handlerInfo = MethodCache.Match(context.Request.HttpMethod, context.Request.RawUrl, out object param);
                 if (handlerInfo == null)
                 {
@@ -352,6 +351,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                 else
                 {
                     var handlerInstance = GetHandlerInstance(handlerInfo.HandlerType, out bool shouldDispose);
+
                     handlerInstance.Context = context;
 
                     object[] paramObjects = null;

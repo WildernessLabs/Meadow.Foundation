@@ -104,7 +104,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                         {
                             string paramString;
 
-                            paramString = s.FirstOrDefault(m => m != string.Empty);
+                            paramString = s.FirstOrDefault(m => m != string.Empty && m != "/");
 
                             // if the match contains a slash, we've matched but with a non-matching tail
                             // TODO: improve the regex to do proper matching
