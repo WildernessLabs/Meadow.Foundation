@@ -59,8 +59,9 @@ namespace Meadow.Foundation.Web.Maple.Server
             string ipAddress,
             int port = DefaultPort,
             bool advertise = false,
-            RequestProcessMode processMode = RequestProcessMode.Serial)
-            : this(IPAddress.Parse(ipAddress), port, advertise, processMode)
+            RequestProcessMode processMode = RequestProcessMode.Serial,
+            ILogger logger = null)
+            : this(IPAddress.Parse(ipAddress), port, advertise, processMode, logger)
         {
         }
 
@@ -78,9 +79,10 @@ namespace Meadow.Foundation.Web.Maple.Server
             IPAddress ipAddress,
             int port = DefaultPort,
             bool advertise = false,
-            RequestProcessMode processMode = RequestProcessMode.Serial)
+            RequestProcessMode processMode = RequestProcessMode.Serial,
+            ILogger logger = null)
         {
-            Logger = new ConsoleLogger();
+            Logger =  logger ?? new ConsoleLogger();
             MethodCache = new RequestMethodCache(Logger);
 
             Create(ipAddress, port, advertise, processMode);
