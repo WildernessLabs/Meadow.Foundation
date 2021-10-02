@@ -88,6 +88,31 @@
 			"response": []
 		},
 		{
+			"name": "Post File",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/C:/Repos/hypergiant/HG_Rocket Logo_Black.png"
+					}
+				},
+				"url": {
+					"raw": "{{maple-address}}:{{maple-port}}/file/test.png",
+					"host": [
+						"{{maple-address}}"
+					],
+					"port": "{{maple-port}}",
+					"path": [
+						"file",
+						"test.png"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Post String Param End",
 			"request": {
 				"method": "POST",
