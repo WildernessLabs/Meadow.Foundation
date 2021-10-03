@@ -90,6 +90,10 @@ namespace Meadow.Foundation.Web.Maple.Server
                 url = url.Substring(0, qsi);
             }
             url = url.TrimEnd('/');
+            if (!url.StartsWith('/'))
+            {
+                url = $"/{url}";
+            }
 
             if (_templateToTypeMap.ContainsKey(verb))
             {
@@ -122,7 +126,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                         }
                     }
                     else if (string.Compare(template, url, true) == 0)
-                    {                        
+                    {
                         return _templateToTypeMap[verb][template];
                     }
                 }
@@ -138,6 +142,20 @@ namespace Meadow.Foundation.Web.Maple.Server
 
         private void AddMethod(string verb, string template, MethodInfo method)
         {
+            // is the template reelative (no leading slash) or absolute?
+            if (!template.StartsWith('/'))
+            {
+                // absolute.  Prefix with handler type name
+                var prefix = method.DeclaringType.Name;
+                if (prefix.EndsWith("Handler"))
+                {
+                    // crop "Handler" suffix
+                    prefix = prefix.Substring(0, prefix.Length - 7);
+                }
+
+                template = $"{prefix}/{template}";
+            }
+
             // does the url contain a parameter?
             var match = ParamRegex.Match(template);
             if (match.Success)
