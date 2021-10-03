@@ -8,6 +8,22 @@ namespace Maple.Unit.Tests
     public class RequestMethodCacheRelativePathTests
     {
         [TestMethod]
+        public void TestGetRelativeRoot()
+        {
+            RequestMethodCache cache = new RequestMethodCache(null);
+
+            cache.AddType(typeof(FooHandler));
+
+            var info = cache.Match("GET", $"/foo", out object param);
+
+            Assert.IsNotNull(info);
+
+            info = cache.Match("GET", $"/foo/", out param);
+
+            Assert.IsNotNull(info);
+        }
+
+        [TestMethod]
         public void TestStringMidParameterPositive()
         {
             RequestMethodCache cache = new RequestMethodCache(null);

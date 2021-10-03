@@ -142,7 +142,7 @@ namespace Meadow.Foundation.Web.Maple.Server
 
         private void AddMethod(string verb, string template, MethodInfo method)
         {
-            // is the template reelative (no leading slash) or absolute?
+            // is the template relative (no leading slash) or absolute?
             if (!template.StartsWith('/'))
             {
                 // absolute.  Prefix with handler type name
@@ -153,7 +153,14 @@ namespace Meadow.Foundation.Web.Maple.Server
                     prefix = prefix.Substring(0, prefix.Length - 7);
                 }
 
-                template = $"{prefix}/{template}";
+                if (template.Length > 0)
+                {
+                    template = $"{prefix}/{template}";
+                }
+                else
+                {
+                    template = prefix;
+                }
             }
 
             // does the url contain a parameter?
@@ -189,32 +196,14 @@ namespace Meadow.Foundation.Web.Maple.Server
                         Parameter = parm
                     });
                 }
-
-
-                //------
-                //var url = "/foo/bar/stuff/a";
-                //var m = Regex.Match(url, rgx);
-                //string pval;
-                //if (m.Success)
-                //{
-                //    // get the parameter value
-                //    // is there stuff after the param?
-                //    var tailIndex = url.IndexOf('/', m.Index + m.Length);
-                //    var tailLength = url.Length - tailIndex - 2;
-
-                //    if (tailIndex >= 0)
-                //    {
-                //        pval = url.Substring(m.Length, tailIndex - m.Length);
-                //    }
-                //    else
-                //    {
-                //        pval = url.Substring(m.Length);
-                //    }
-                //}
-                //------
             }
             else
             {
+                if (!template.StartsWith('/'))
+                {
+                    template = $"/{template}";
+                }
+
                 if (!_templateToTypeMap.ContainsKey(verb))
                 {
                     _templateToTypeMap.Add(verb, new Dictionary<string, HandlerInfo>(StringComparer.OrdinalIgnoreCase));
@@ -244,7 +233,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                         switch (attr)
                         {
                             case HttpGetAttribute a:
-                                AddMethod("GET", a.Template ?? m.Name, m);
+                                AddMethod("GET", a.Template ?? string.Empty, m);
                                 break;
                             case HttpPutAttribute a:
                                 AddMethod("PUT", a.Template ?? m.Name, m);

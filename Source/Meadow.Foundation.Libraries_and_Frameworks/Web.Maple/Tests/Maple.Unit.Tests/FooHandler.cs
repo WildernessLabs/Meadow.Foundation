@@ -16,6 +16,11 @@ namespace Maple.Unit.Tests
         {
         }
 
+        [HttpGet]
+        public void GetFooRoot()
+        {
+        }
+
         [HttpGet("gid/{paramName}")]
         public void MethodWithGuidParamEnd(Guid paramName)
         {
