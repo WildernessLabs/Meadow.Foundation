@@ -236,16 +236,16 @@ namespace Meadow.Foundation.Web.Maple.Server
                                 AddMethod("GET", a.Template ?? string.Empty, m);
                                 break;
                             case HttpPutAttribute a:
-                                AddMethod("PUT", a.Template ?? m.Name, m);
+                                AddMethod("PUT", a.Template ?? string.Empty, m);
                                 break;
                             case HttpPatchAttribute a:
-                                AddMethod("PATCH", a.Template ?? m.Name, m);
+                                AddMethod("PATCH", a.Template ?? string.Empty, m);
                                 break;
                             case HttpPostAttribute a:
-                                AddMethod("POST", a.Template ?? m.Name, m);
+                                AddMethod("POST", a.Template ?? string.Empty, m);
                                 break;
                             case HttpDeleteAttribute a:
-                                AddMethod("DELETE", a.Template ?? m.Name, m);
+                                AddMethod("DELETE", a.Template ?? string.Empty, m);
                                 break;
                             default:
                                 break;
