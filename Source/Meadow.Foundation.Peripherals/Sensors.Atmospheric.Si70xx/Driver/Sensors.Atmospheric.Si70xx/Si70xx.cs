@@ -49,14 +49,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public byte FirmwareRevision { get; private set; }
 
-        public const byte DEFAULT_ADDRESS = 0x40;
-
         /// <summary>
         ///     Create a new SI7021 temperature and humidity sensor.
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40).</param>
         /// <param name="i2cBus">I2CBus.</param>
-        public Si70xx(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public Si70xx(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, 8, 3)
         {
             Initialize();

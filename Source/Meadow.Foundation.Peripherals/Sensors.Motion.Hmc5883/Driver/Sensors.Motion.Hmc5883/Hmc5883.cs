@@ -42,9 +42,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Statuses DeviceStatus => GetStatus();
 
-        public const byte DEFAULT_ADDRESS = 0x1E;
-
-        public Hmc5883(II2cBus i2cBus, byte address = DEFAULT_ADDRESS,
+        public Hmc5883(II2cBus i2cBus, byte address = (byte)Addresses.Default,
             GainLevels gain = GainLevels.Gain1090,
             MeasuringModes measuringMode = MeasuringModes.Continuous,
             DataOutputRates outputRate = DataOutputRates.Rate15,

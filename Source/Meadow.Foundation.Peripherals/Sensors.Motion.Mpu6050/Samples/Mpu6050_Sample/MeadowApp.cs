@@ -19,7 +19,7 @@ namespace Sensors.Motion.mpu5060_Sample
         {
             Console.WriteLine("Initializing");
 
-            sensor = new Mpu6050(Device.CreateI2cBus(), Mpu6050.DEFAULT_ADDRESS);
+            sensor = new Mpu6050(Device.CreateI2cBus());
 
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) => {

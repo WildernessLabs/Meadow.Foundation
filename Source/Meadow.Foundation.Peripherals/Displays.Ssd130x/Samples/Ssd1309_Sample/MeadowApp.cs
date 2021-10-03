@@ -132,7 +132,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
             while (true)
             {
                 display.Clear();
-                display.DrawPixel(x, y);
+                display.DrawPixel(x, y, true);
 
                 display.Show();
 

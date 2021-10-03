@@ -102,11 +102,6 @@ namespace Meadow.Foundation.Sensors.Motion
         }
         protected bool digitalInputsEnabled;
 
-        public const byte DEFAULT_ADDRESS = 0x0E; //Mag3110
-        public const byte ALTERNATE_ADDRESS = 0x0F; //Fxms3110
-
-        //==== ctors
-
         /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component.
         /// </summary>
@@ -114,7 +109,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin">Interrupt pin used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
         /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>        
-        public Mag3110(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = DEFAULT_ADDRESS, ushort speed = 400) :
+        public Mag3110(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default, ushort speed = 400) :
                 this(i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address)
         { }
 
@@ -124,7 +119,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPort">Interrupt port used to detect end of conversions.</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
         /// <param name="i2cBus">I2C bus object - default = 400 KHz).</param>        
-        public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = DEFAULT_ADDRESS)
+        public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
             var deviceID = Peripheral.ReadRegister((byte)Registers.WHO_AM_I);

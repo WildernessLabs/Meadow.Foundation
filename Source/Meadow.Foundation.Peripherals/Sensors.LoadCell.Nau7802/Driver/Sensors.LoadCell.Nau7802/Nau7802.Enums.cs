@@ -3,6 +3,15 @@ namespace Meadow.Foundation.Sensors.LoadCell
 {
     public partial class Nau7802
     {
+        /// <summary>
+        ///     Valid addresses for the sensor.
+        /// </summary>
+        public enum Addresses : byte
+        {
+            Address0 = 0x2A,
+            Default = Address0
+        }
+
         private enum CTRL2_BITS : byte
         {
             CALMOD = 1 << 0,

@@ -110,24 +110,6 @@ namespace Meadow.Foundation.Displays.Ssd130x
         protected int yOffset = 0;
 
         /// <summary>
-        ///      The pen color used for DrawPixel calls
-        /// </summary>
-        public override Color PenColor
-        {
-            get => currentPen ? Color.White : Color.Black;
-            set
-            {
-                if (value == Color.Black)
-                    currentPen = false;
-                else
-                    currentPen = true;
-            }
-        }
-
-        //bool since it's on/off 
-        private bool currentPen = true;
-
-        /// <summary>
         ///     Buffer holding the pixels in the display.
         /// </summary>
         protected byte[] buffer;
@@ -314,6 +296,11 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
         }
 
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         ///     Clear the display buffer.
         /// </summary>
@@ -329,16 +316,6 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Draw a pixel to the display using the pen
-        /// </summary>    
-        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
-        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, currentPen);
-        }
-
-        /// <summary>
         ///     Draw a pixel to the display - coordinates start with index 0
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
@@ -346,9 +323,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="color">Black - pixel off, any color - turn on pixel</param>
         public override void DrawPixel(int x, int y, Color color)
         {
-            currentPen = (color == Color.Black) ? false : true;
-
-            DrawPixel(x, y);
+            DrawPixel(x, y, color.Color1bpp);
         }
 
         /// <summary>

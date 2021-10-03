@@ -36,15 +36,15 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(ILI9341_PWCTR2, new byte[] { 0x10 });
             SendCommand(ILI9341_VMCTR1, new byte[] { 0x3e, 0x28 });
             SendCommand(ILI9341_VMCTR2, new byte[] { 0x86 });
-            SendCommand(MADCTL, new byte[] { (byte)(MADCTL_MX | MADCTL_BGR) }); //13
+            SendCommand((byte)Register.MADCTL, new byte[] { (byte)(Register.MADCTL_MX | Register.MADCTL_BGR) }); //13
 
             if (ColorMode == DisplayColorMode.Format16bppRgb565)
             { 
-                SendCommand(COLOR_MODE, new byte[] { 0x55 }); //color mode - 16bpp  
+                SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x55 }); //color mode - 16bpp  
             }
             else
             {      
-                SendCommand(COLOR_MODE, new byte[] { 0x53 }); //color mode - 12bpp 
+                SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x53 }); //color mode - 12bpp 
             }
             SendCommand(ILI9341_FRMCTR1, new byte[] { 0x00, 0x18 });
             SendCommand(ILI9341_DFUNCTR, new byte[] { 0x08, 0x82, 0x27 });

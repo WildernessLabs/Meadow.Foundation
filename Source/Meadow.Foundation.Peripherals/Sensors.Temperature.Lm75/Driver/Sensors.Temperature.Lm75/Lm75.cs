@@ -1,8 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Units;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
@@ -12,16 +10,10 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// </summary>    
     public partial class Lm75 : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
     {
-        //==== Events
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-
-        //==== internals
-
-        //==== properties
-        public const byte DEFAULT_ADDRESS = 0x48;
 
         /// <summary>
         /// The Temperature value from the last reading.
@@ -32,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>
-        public Lm75(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public Lm75(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
         }
@@ -44,7 +36,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             return Task.Run(() =>
             {
-
                 Peripheral.Write((byte)Registers.LM_TEMP);
 
                 Peripheral.ReadRegister((byte)Registers.LM_TEMP, ReadBuffer.Span[0..2]);

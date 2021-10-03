@@ -51,13 +51,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
 
-        public const byte DEFAULT_ADDRESS = 0x48;
-
         /// <summary>
         ///     Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>
-        public Tmp102(II2cBus i2cBus, byte address = DEFAULT_ADDRESS)
+        public Tmp102(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 2, writeBufferSize: 2)
         {
             // TODO: Delete after testing

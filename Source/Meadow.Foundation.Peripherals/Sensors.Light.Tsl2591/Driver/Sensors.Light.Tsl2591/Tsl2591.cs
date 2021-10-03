@@ -48,10 +48,8 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public Illuminance? Illuminance => Conditions.Integrated;
 
-        public const byte DEFAULT_ADDRESS = 0x29;
-
         public Tsl2591(II2cBus bus,
-            byte address = DEFAULT_ADDRESS,
+            byte address = (byte)Addresses.Default,
             int updateIntervalMs = 1000)
             : base(bus, address, updateIntervalMs)
         {

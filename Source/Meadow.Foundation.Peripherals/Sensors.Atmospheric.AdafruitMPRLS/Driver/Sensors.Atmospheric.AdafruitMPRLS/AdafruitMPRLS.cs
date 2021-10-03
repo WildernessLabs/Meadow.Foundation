@@ -14,10 +14,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// https://www.adafruit.com/product/3965
     /// Device datasheets also available here: https://sensing.honeywell.com/micropressure-mpr-series
     /// </summary>
-    public class AdafruitMPRLS : ByteCommsSensorBase<(Pressure? Pressure, Pressure? RawPsiMeasurement)>, IBarometricPressureSensor
+    public partial class AdafruitMPRLS : ByteCommsSensorBase<(Pressure? Pressure, Pressure? RawPsiMeasurement)>, IBarometricPressureSensor
     {
-        public const byte DEFAULT_ADDRESS = 0x18;
-
         //==== events
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
@@ -64,7 +62,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         public AdafruitMPRLS(II2cBus i2cbus, int psiMin = 0, int psiMax = 25)
-            : base(i2cbus, DEFAULT_ADDRESS)
+            : base(i2cbus, (byte)Addresses.Default)
         {
         }
 

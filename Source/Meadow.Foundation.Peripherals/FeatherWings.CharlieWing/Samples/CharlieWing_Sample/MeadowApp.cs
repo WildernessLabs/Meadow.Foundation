@@ -35,10 +35,10 @@ namespace FeatherWings.CharlieWing_Sample
         {
             charlieWing.Frame = 0;
             charlieWing.Clear();
-            charlieWing.DrawPixel(0, 0);
-            charlieWing.DrawPixel(14, 0);
-            charlieWing.DrawPixel(0, 6);
-            charlieWing.DrawPixel(14, 6);
+            charlieWing.DrawPixel(0, 0, true);
+            charlieWing.DrawPixel(14, 0, true);
+            charlieWing.DrawPixel(0, 6, true);
+            charlieWing.DrawPixel(14, 6, true);
             charlieWing.Show(0);
         }
 

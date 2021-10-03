@@ -39,10 +39,10 @@ namespace Displays.Tft.ST7789_Sample
             var display = new St7789(
                 device: Device,
                 spiBus: spiBus,
-                chipSelectPin: Device.Pins.D14,
-                dcPin: Device.Pins.D03,
-                resetPin: Device.Pins.D04,
-                width: 240, height: 240, displayColorMode: DisplayColorMode.Format12bppRgb444);
+                chipSelectPin: Device.Pins.D02,
+                dcPin: Device.Pins.D01,
+                resetPin: Device.Pins.D00,
+                width: 240, height: 240, displayColorMode: DisplayColorMode.Format16bppRgb565);
 
             graphics = new GraphicsLibrary(display);
             graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
@@ -55,9 +55,11 @@ namespace Displays.Tft.ST7789_Sample
             graphics.DrawRectangle(0, 40, 120, 20, Color.Blue, true);
             graphics.DrawRectangle(0, 60, 120, 20, Color.Green, true);
             graphics.DrawRectangle(0, 80, 120, 20, Color.Yellow, true);
-            graphics.DrawRectangle(0, 120, 120, 20, Color.Orange, true);
+            graphics.DrawRectangle(0, 100, 120, 20, Color.Orange, true);
 
             graphics.Show();
+
+            DisplayTest();
         }
 
         //<!—SNOP—>
@@ -70,6 +72,9 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
+                PartialUpdateTest();
+                Thread.Sleep(sleepDuration);
+
                 PathTest();
                 Thread.Sleep(sleepDuration);
 
@@ -138,6 +143,27 @@ namespace Displays.Tft.ST7789_Sample
             Thread.Sleep(1000);
         }
 
+        void PartialUpdateTest()
+        {
+            var rand = new Random();
+            int x, y;
+
+            graphics.Clear(true);
+
+            for(int i = 0; i < 200; i++)
+            {
+                if(i == 0) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Blue, true);
+                if (i == 50) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.LawnGreen, true);
+                if (i == 100) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Cyan, true);
+                if (i == 150) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Yellow, true);
+
+                x = rand.Next() % 23 * 10;
+                y = rand.Next() % 23 * 10;
+
+                graphics.Show(x, y, x + 10, y + 10);
+            }
+        }
+
         void PathTest()
         {
             var pathSin = new GraphicsPath();
@@ -189,7 +215,7 @@ namespace Displays.Tft.ST7789_Sample
             string msg = "Cursor test";
             string msg2 = "$123.456";
 
-            graphics.DrawText(0, 1, msg, WildernessLabsColors.AzureBlue);
+            graphics.DrawText(0, 0, msg, WildernessLabsColors.AzureBlue);
             graphics.DrawRectangle(0, 16, 12 * msg2.Length, 16, WildernessLabsColors.AzureBlueDark, true);
             graphics.DrawText(0, 16, msg2, WildernessLabsColors.ChileanFire);
 
@@ -225,7 +251,7 @@ namespace Displays.Tft.ST7789_Sample
             for (int i = 1; i < 10; i++)
             {
                 graphics.Stroke = i;
-                graphics.DrawHorizontalLine(5, 20 * i, (int)(display.Width - 10), Color.Red);
+                graphics.DrawHorizontalLine(5, 20 * i, (graphics.Width - 10), Color.Red);
             }
             graphics.Show();
             Thread.Sleep(1500);

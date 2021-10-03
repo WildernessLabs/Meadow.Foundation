@@ -35,20 +35,10 @@ namespace Meadow.Foundation.Sensors.Light
         private const float MinTransmittance = 0.272f;
 
         /// <summary>
-        /// I2C address when address pin is high
-        /// </summary>
-        public const byte DEFAULT_ADDRESS = 0x5C;
-
-        /// <summary>
-        /// I2C address when address pin is low
-        /// </summary>
-        public const byte ALTERNATE_ADDRESS = 0x23;
-
-        /// <summary>
         /// Create a new BH1750 light sensor object using a static reference voltage.
         /// </summary>
         public Bh1750(
-            II2cBus i2cBus, byte address = DEFAULT_ADDRESS,
+            II2cBus i2cBus, byte address = (byte)Addresses.Default,
             MeasuringModes measuringMode = MeasuringModes.ContinuouslyHighResolutionMode,
             double lightTransmittance = 1)
                 : base(i2cBus, address)

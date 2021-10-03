@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
     /// <summary>
     /// Provide an interface to the SSD1306 family of OLED displays.
     /// </summary>
-    public class Ssd1306 : Ssd130xBase
+    public partial class Ssd1306 : Ssd130xBase
     {
         /// <summary>
         ///     Create a new SSD1306 object using the default parameters for
@@ -34,8 +34,6 @@ namespace Meadow.Foundation.Displays.Ssd130x
             InitSSD1306(displayType);
         }
 
-        public const byte DEFAULT_ADDRESS = 0x3C;
-
         /// <summary>
         ///     Create a new SSD1306 object using the default parameters for
         /// </summary>
@@ -47,7 +45,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
         public Ssd1306(II2cBus i2cBus,
-            byte address = DEFAULT_ADDRESS,
+            byte address = (byte)Addresses.Default,
             DisplayType displayType = DisplayType.OLED128x64)
         {
             this.displayType = displayType;

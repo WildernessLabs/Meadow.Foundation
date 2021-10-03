@@ -13,8 +13,6 @@ namespace Meadow.Foundation.Leds
         public override int Height => height;
         int height;
 
-        Color pen = Color.White;
-
         public Apa102(ISpiBus spiBus,
                      PixelOrder pixelOrder = PixelOrder.BGR,
                      bool autoWrite = false,
@@ -43,8 +41,6 @@ namespace Meadow.Foundation.Leds
 
         public override void DrawPixel(int x, int y, Color color)
         {
-            pen = color;
-
             SetLed(GetIndexForCoordinate(x, y), color);
     
         }
@@ -52,11 +48,6 @@ namespace Meadow.Foundation.Leds
         public override void DrawPixel(int x, int y, bool colored)
         {
             DrawPixel(0, 0, colored ? Color.White : Color.Black);
-        }
-
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, pen);
         }
 
         public override void InvertPixel(int x, int y)

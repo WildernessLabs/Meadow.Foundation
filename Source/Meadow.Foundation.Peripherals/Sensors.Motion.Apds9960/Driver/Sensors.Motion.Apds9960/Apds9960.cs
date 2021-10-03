@@ -13,11 +13,9 @@ namespace Meadow.Foundation.Sensors.Motion
 
     public partial class Apds9960 : ByteCommsSensorBase<(Color? Color, Illuminance? AmbientLight)>
     {
-        //==== events
         public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = delegate { };
         public event EventHandler<IChangeResult<Color>> ColorUpdated = delegate { };
 
-        //==== internals
         IDigitalInputPort interruptPort;
 
         GestureData gestureData;
@@ -30,20 +28,12 @@ namespace Meadow.Foundation.Sensors.Motion
         States gestureState;
         Direction gestureDirection;
 
-        /* Error code for returned values */
         static readonly byte ERROR = 0xFF;
 
-        /* Misc parameters */
         static readonly byte FIFO_PAUSE_TIME = 30;      // Wait period (ms) between FIFO reads
-
-        //==== properties
 
         public Color? Color => Conditions.Color;
         public Illuminance? AmbientLight => Conditions.AmbientLight;
-
-        public const byte DEFAULT_ADDRESS = 0x39;
-
-        //==== ctors
 
         /// <summary>
         /// Create a new instance of the APDS9960 communicating over the I2C interface.
@@ -51,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">SI2C bus object</param>
         public Apds9960(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin)
-            : base(i2cBus, DEFAULT_ADDRESS)
+            : base(i2cBus, (byte)Addresses.Default)
         {
             if (interruptPin != null)
             {

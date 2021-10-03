@@ -5,39 +5,8 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
-    public abstract class TftSpiBase : DisplayBase, IDisposable
+    public abstract partial class TftSpiBase : DisplayBase, IDisposable
     {
-        //TODO: move these into their own class?
-        protected const byte NO_OP = 0x0;
-        protected const byte MADCTL = 0x36;
-        protected const byte MADCTL_MY = 0x80;
-        protected const byte MADCTL_MX = 0x40;
-        protected const byte MADCTL_MV = 0x20;
-        protected const byte MADCTL_ML = 0x10;
-        protected const byte MADCTL_RGB = 0x00;
-        protected const byte MADCTL_BGR = 0X08;
-        protected const byte MADCTL_MH = 0x04;
-        protected const byte MADCTL_SS = 0x02;
-        protected const byte MADCTL_GS = 0x01;
-        protected const byte COLOR_MODE = 0x3A;
-
-        protected enum LcdCommand
-        {
-            CASET = 0x2A,
-            RASET = 0x2B,
-            RAMWR = 0x2C,
-            RADRD = 0x2E
-        };
-
-        // TODO: @Adrian - should this use the graphics rotation?
-        public enum Rotation
-        {
-            Normal, //zero
-            Rotate_90, //in degrees
-            Rotate_180,
-            Rotate_270,
-        }
-
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
         public override DisplayColorMode ColorMode => colorMode;
@@ -53,12 +22,8 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected ISpiBus spi;
         protected ISpiPeripheral spiDisplay;
 
-        //protected byte[] spiBuffer;
-        //protected byte[] spiReceive;
         protected Memory<byte> spiWriteBuffer;
         protected Memory<byte> spiReadBuffer;
-
-        protected ushort currentPen;
 
         protected int width;
         protected int height;
@@ -131,8 +96,6 @@ namespace Meadow.Foundation.Displays.TftSpi
             spiWriteBuffer.Span.Clear();
 
             if (updateDisplay) { Show(); }
-
-            //Clear(0, updateDisplay);
         }
 
         public void Clear(Color color, bool updateDisplay = false)
@@ -149,26 +112,7 @@ namespace Meadow.Foundation.Displays.TftSpi
                 Show();
             }
         }
-
-        /// <summary>
-        ///      The pen color used for DrawPixel calls
-        /// </summary>
-        public override Color PenColor
-        {
-            get => GetColorFromUShort(currentPen);
-            set => currentPen = GetUShortFromColor(value);
-        }
    
-        /// <summary>
-        ///     Draw a single pixel using the current pen
-        /// </summary>
-        /// <param name="x">x location </param>
-        /// <param name="y">y location</param>
-        public override void DrawPixel(int x, int y)
-        {
-            SetPixel(x, y, currentPen);
-        }
-
         /// <summary>
         ///     Draw a single pixel 
         /// </summary>
@@ -213,7 +157,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="b">8 bit blue value</param>
         public void DrawPixel(int x, int y, byte r, byte g, byte b)
         {
-            SetPixel(x, y, GetUShortColorFromRGB(r, g, b));
+            SetPixel(x, y, GetUShortFromColor(new Color(r, g, b)));
         }
 
         /// <summary>
@@ -300,8 +244,8 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         private void SetPixel(int x, int y, ushort color)
         {
-            if (x < 0 || y < 0 || x >= width || y >= height)
-            { return; }
+          //  if (x < 0 || y < 0 || x >= width || y >= height)
+          //  { return; }
 
             if (colorMode == DisplayColorMode.Format16bppRgb565)
             {
@@ -311,12 +255,6 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 SetPixel444(x, y, color);
             }
-
-            //will skip for now for performance 
-            /*  xMin = Math.Min(xMin, x);
-              xMax = Math.Max(xMax, x);
-              yMin = Math.Min(yMin, y);
-              yMax = Math.Max(yMax, y);  */
         }
 
         /// <summary>
@@ -385,53 +323,38 @@ namespace Meadow.Foundation.Displays.TftSpi
         }
 
         /// <summary>
-        /// Draw the display buffer to screen from x0,y0 to x1,y1
+        /// Transfer part of the contents of the buffer to the display
+        /// bounded by left, top, right and bottom
+        /// Only supported in 16Bpp565 mode
         /// </summary>
-        public void Show(int x0, int y0, int x1, int y1)
+        public override void Show(int left, int top, int right, int bottom)
         {
-            if(x1 < x0 || y1 < y0)
+            if(colorMode != DisplayColorMode.Format16bppRgb565)
+            {   //only supported in 565 mode 
+                Show();
+            }
+
+            if(right < left || bottom < top)
             {   //could throw an exception
                 return;
             }
 
-            SetAddressWindow(x0, y0, x1, y1);
+            SetAddressWindow(left, top, right, bottom);
 
-            var len = (x1 - x0 + 1) * sizeof(ushort);
+            var len = (right - left + 1) * sizeof(ushort);
 
             dataCommandPort.State = Data;
 
             int sourceIndex;
-            for (int y = y0; y <= y1; y++)
+            for (int y = top; y <= bottom; y++)
             {
-                sourceIndex = ((y * width) + x0) * sizeof(ushort);
+                sourceIndex = ((y * width) + left) * sizeof(ushort);
 
                 spi.Exchange(chipSelectPort, spiWriteBuffer.Span.Slice(sourceIndex, len), spiReadBuffer.Span.Slice(sourceIndex, len));
             }
-
-            xMin = width;
-            yMin = height;
-            xMax = 0;
-            yMax = 0;
         }
 
-        private ushort Get12BitColorFromRGB(byte red, byte green, byte blue)
-        {
-            red >>= 4;
-            green >>= 4;
-            blue >>= 4;
-
-            return (ushort)(red << 8 | green << 4 | blue);
-        }
-
-        private ushort Get16BitColorFromRGB(byte red, byte green, byte blue)
-        {
-            red >>= 3;
-            green >>= 2;
-            blue >>= 3;
-
-            return (ushort)(red << 11 | green << 5 | blue);
-        }
-
+        //probably move this to color struct
         private Color GetColorFromUShort(ushort color)
         {
             double r, g, b;
@@ -451,26 +374,12 @@ namespace Meadow.Foundation.Displays.TftSpi
             return new Color(r, g, b);
         }
 
-        private ushort GetUShortColorFromRGB(byte red, byte green, byte blue)
-        {
-            if (colorMode == DisplayColorMode.Format16bppRgb565)
-            {
-                return Get16BitColorFromRGB(red, green, blue);
-            }
-            else
-            {
-                return Get12BitColorFromRGB(red, green, blue);
-            }
-        }
-
         private ushort GetUShortFromColor(Color color)
         {
-            //this seems heavy
-            byte red = (byte)(color.R * 255.0);
-            byte green = (byte)(color.G * 255.0);
-            byte blue = (byte)(color.B * 255.0);
-
-            return GetUShortColorFromRGB(red, green, blue);
+            if (colorMode == DisplayColorMode.Format16bppRgb565)
+                return color.Color16bppRgb565;
+            else //asume 12BppRgb444
+                return color.Color12bppRgb444;
         }
 
         protected void Write(byte value)
@@ -486,6 +395,11 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected void DelayMs(int millseconds)
         {
             Thread.Sleep(millseconds);
+        }
+
+        protected void SendCommand(Register command)
+        {
+            SendCommand((byte)command);
         }
 
         protected void SendCommand(byte command)
@@ -519,10 +433,11 @@ namespace Meadow.Foundation.Displays.TftSpi
         {
             // split the color in to two byte values
             var high = (byte)(color >> 8);
-            var low = (byte)(color);
+            var low = (byte)color;
 
             int index = 0;
-            while (index < spiWriteBuffer.Length) {
+            while (index < spiWriteBuffer.Length)
+            {
                 spiWriteBuffer.Span[index] = high;
                 spiWriteBuffer.Span[index + 1] = low;
                 index += 2;

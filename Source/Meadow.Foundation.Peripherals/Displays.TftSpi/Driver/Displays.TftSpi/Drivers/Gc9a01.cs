@@ -283,16 +283,16 @@ namespace Meadow.Foundation.Displays.TftSpi
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_90:
-                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MY | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_180:
-                    SendData(MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_270:
-                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
             }
         }

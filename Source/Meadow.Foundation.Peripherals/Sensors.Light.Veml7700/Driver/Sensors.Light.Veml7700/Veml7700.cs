@@ -29,12 +29,11 @@ namespace Meadow.Foundation.Sensors.Light
 
         public SensorTypes DataSource { get; set; } = SensorTypes.White;
 
-        public const byte DEFAULT_ADDRESS = 0x10;
         private const ushort DATA_FLOOR = 100;
         private const ushort DATA_CEILING = 10000;
 
         public Veml7700(II2cBus i2cBus)
-            : base(i2cBus, DEFAULT_ADDRESS)
+            : base(i2cBus, (byte)Addresses.Default)
         {
         }
 

@@ -1,12 +1,11 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
-    public class Mcp9808 : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
+    public partial class Mcp9808 : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
     {
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
@@ -29,14 +28,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         const byte MCP_DEVICE_ID = 0x07;    // device ID
         const byte MCP_RESOLUTION = 0x08;     // resolution
 
-        public const byte DEFAULT_ADDRESS = 0x18;
-
         // <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
 
-        public Mcp9808(II2cBus i2CBus, byte address = DEFAULT_ADDRESS)
+        public Mcp9808(II2cBus i2CBus, byte address = (byte)Addresses.Default)
             : base(i2CBus, address, readBufferSize: 8, writeBufferSize: 8)
         {
             Peripheral.WriteRegister(MCP_REG_CONFIG, (ushort)0x0);

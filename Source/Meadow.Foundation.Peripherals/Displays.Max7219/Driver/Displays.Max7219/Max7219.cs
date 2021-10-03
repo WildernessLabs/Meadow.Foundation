@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Max7219 LED matrix driver
     /// </summary>
-    public class Max7219 : DisplayBase
+    public partial class Max7219 : DisplayBase
     {
         /// <summary>
         /// MAX7219 Spi Clock Frequency
@@ -56,65 +56,6 @@ namespace Meadow.Foundation.Displays
         private readonly byte[,] buffer;
         
         private readonly byte DECIMAL = 0b10000000;
-
-        /// <summary>
-        ///      The pen color used for DrawPixel calls
-        /// </summary>
-        public override Color PenColor
-        {
-            get => currentPen ? Color.White : Color.Black;
-            set => currentPen = value != Color.Black;
-        }
-
-        //bool since it's on/off 
-        private bool currentPen = true;
-
-        public enum Max7219Type
-        {
-            Character, 
-            Digital,
-            Display, 
-        }
-
-        public enum CharacterType : byte
-        {
-            _0     = 0x00,
-            _1     = 0x01,
-            _2     = 0x02,
-            _3     = 0x03,
-            _4     = 0x04,
-            _5     = 0x05,
-            _6     = 0x06,
-            _7     = 0x07,
-            _8     = 0x08,
-            _9     = 0x09,
-            Hyphen = 0x0A,
-            E      = 0x0B,
-            H      = 0x0C,
-            L      = 0x0D,
-            P      = 0x0E,
-            Blank  = 0x0F,
-            count
-
-        }
-
-        internal enum Register : byte
-        {
-            NoOp        = 0x00,
-            Digit0      = 0x01,
-            Digit1      = 0x02,
-            Digit2      = 0x03,
-            Digit3      = 0x04,
-            Digit4      = 0x05,
-            Digit5      = 0x06,
-            Digit6      = 0x07,
-            Digit7      = 0x08,
-            DecodeMode  = 0x09,
-            Intensity   = 0x0A,
-            ScanLimit   = 0x0B,
-            ShutDown    = 0x0C,
-            DisplayTest = 0x0F
-        }
 
         public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceCount = 1, Max7219Type maxMode = Max7219Type.Display)
             :this(spiBus, csPort, 8, 1, maxMode)
@@ -304,6 +245,12 @@ namespace Meadow.Foundation.Displays
             WriteBuffer(buffer);
         }
 
+        public override void Show(int left, int top, int right, int bottom)
+        {
+            //ToDo Check if partial updates are possible (although it's pretty fast as is)
+            Show();
+        }
+
         /// <summary>
         /// Writes a two dimensional buffer containing all the values to the devices.
         /// </summary>
@@ -384,8 +331,7 @@ namespace Meadow.Foundation.Displays
 
         public override void DrawPixel(int x, int y, Color color)
         {
-            currentPen = color != Color.Black;
-            DrawPixel(x, y);
+            DrawPixel(x, y, color.Color1bpp);
         }
 
         public override void DrawPixel(int x, int y, bool colored)
@@ -417,11 +363,6 @@ namespace Meadow.Foundation.Displays
             {
                 buffer[display, index] = (byte)(buffer[display, index] & ~(byte)(1 << (y % 8)));
             }
-        }
-
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, currentPen);
         }
 
         public override void InvertPixel(int x, int y)
