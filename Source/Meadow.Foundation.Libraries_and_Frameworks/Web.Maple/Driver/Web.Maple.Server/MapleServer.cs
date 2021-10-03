@@ -267,7 +267,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                     {
                         // wait for a request to come in
                         var context = await _httpListener.GetContextAsync();
-                        Logger?.Info("got one!");
+                        Logger?.Info($"Request received from {context.Request.RemoteEndPoint}");
 
                         // depending on our processing mode, process either
                         // synchronously, or spin off a thread and immediately
@@ -347,6 +347,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                 var handlerInfo = MethodCache.Match(context.Request.HttpMethod, context.Request.RawUrl, out object param);
                 if (handlerInfo == null)
                 {
+                    Logger?.Info("No handler found");
                     await Return404(context);
                     return;
                 }
