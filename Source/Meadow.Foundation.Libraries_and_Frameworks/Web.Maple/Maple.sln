@@ -10,7 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerConsole_Sample", "Samples\ServerConsole_Sample\ServerConsole_Sample.csproj", "{B081A0A9-CF8F-4471-B091-88D5B5225F40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerConsole_Sample", "Samples\ServerConsole_Sample\ServerConsole_Sample.csproj", "{B081A0A9-CF8F-4471-B091-88D5B5225F40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maple.Unit.Tests", "Tests\Maple.Unit.Tests\Maple.Unit.Tests.csproj", "{14027A23-9F6D-4646-8D08-60AA2A0AC7A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +30,10 @@ Global
 		{B081A0A9-CF8F-4471-B091-88D5B5225F40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B081A0A9-CF8F-4471-B091-88D5B5225F40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B081A0A9-CF8F-4471-B091-88D5B5225F40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14027A23-9F6D-4646-8D08-60AA2A0AC7A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14027A23-9F6D-4646-8D08-60AA2A0AC7A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14027A23-9F6D-4646-8D08-60AA2A0AC7A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14027A23-9F6D-4646-8D08-60AA2A0AC7A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

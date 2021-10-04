@@ -1,0 +1,186 @@
+{
+	"info": {
+		"_postman_id": "975ad4e0-35ad-4410-9e23-5e60c4079032",
+		"name": "Maple",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Root",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{maple-address}}:{{maple-port}}/",
+					"host": [
+						"{{maple-address}}"
+					],
+					"port": "{{maple-port}}",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Hello",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{maple-address}}:{{maple-port}}/hello?name=Dame%20Judy",
+					"host": [
+						"{{maple-address}}"
+					],
+					"port": "{{maple-port}}",
+					"path": [
+						"hello"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Dame%20Judy"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get JSON",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{maple-address}}:{{maple-port}}/JsonSample",
+					"host": [
+						"{{maple-address}}"
+					],
+					"port": "{{maple-port}}",
+					"path": [
+						"JsonSample"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Hello",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "Sir William"
+				},
+				"url": {
+					"raw": "{{maple-address}}:{{maple-port}}/hello",
+					"host": [
+						"{{maple-address}}"
+					],
+					"port": "{{maple-port}}",
+					"path": [
+						"hello"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post File",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/C:/Repos/hypergiant/HG_Rocket Logo_Black.png"
+					}
+				},
+				"url": {
+					"raw": "{{maple-address}}:{{maple-port}}/file/test.png",
+					"host": [
+						"{{maple-address}}"
+					],
+					"port": "{{maple-port}}",
+					"path": [
+						"file",
+						"test.png"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post String Param End",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "Sir William"
+				},
+				"url": {
+					"raw": "{{maple-address}}:{{maple-port}}/foo/information",
+					"host": [
+						"{{maple-address}}"
+					],
+					"port": "{{maple-port}}",
+					"path": [
+						"foo",
+						"information"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post String Param mid",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "Sir William"
+				},
+				"url": {
+					"raw": "{{maple-address}}:{{maple-port}}/foo/information/test",
+					"host": [
+						"{{maple-address}}"
+					],
+					"port": "{{maple-port}}",
+					"path": [
+						"foo",
+						"information",
+						"test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Int Param",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "Sir William"
+				},
+				"url": {
+					"raw": "{{maple-address}}:{{maple-port}}/bar/42",
+					"host": [
+						"{{maple-address}}"
+					],
+					"port": "{{maple-port}}",
+					"path": [
+						"bar",
+						"42"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
