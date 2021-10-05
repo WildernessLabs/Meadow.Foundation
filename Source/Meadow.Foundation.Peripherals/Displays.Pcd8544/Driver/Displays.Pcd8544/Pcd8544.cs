@@ -1,5 +1,6 @@
 using Meadow.Devices;
 using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Displays
 {
@@ -13,32 +14,27 @@ namespace Meadow.Foundation.Displays
 
         public override int Width => 84;
 
-        public bool InvertDisplay
-        {
-            get { return _invertDisplay; }
-            set { Invert(value); }
-        }
-        protected bool _invertDisplay = false;
+        public bool IsDisplayInverted { get; private set; } = false;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
         protected IDigitalOutputPort chipSelectPort;
         protected ISpiPeripheral spiDisplay;
-        protected ISpiBus spi;
 
-        protected byte[] displayBuffer;
-        protected readonly byte[] spiReceive;
+        protected Memory<byte> writeBuffer;
+        protected Memory<byte> readBuffer;
+        protected Memory<byte> commandBuffer;
 
         public Pcd8544(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
-            displayBuffer = new byte[Width * Height / 8];
-            spiReceive = new byte[Width * Height / 8];
+            writeBuffer = new byte[Width * Height / 8];
+            readBuffer = new byte[Width * Height / 8];
+            commandBuffer = new byte[1];
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, true);
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
 
-            spi = spiBus;
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
 
             Initialize();
@@ -46,23 +42,22 @@ namespace Meadow.Foundation.Displays
 
         private void Initialize()
         {
-            resetPort.State = (false);
-            resetPort.State = (true);
+            resetPort.State = false;
+            resetPort.State = true;
 
-            dataCommandPort.State = (false);
+            dataCommandPort.State = false;
 
-            spiDisplay.WriteBytes(new byte[]
-            {
-                0x21, // LCD Extended Commands.
-                0xBF, // Set LCD Vop (Contrast). //0xB0 for 5V, 0XB1 for 3.3v, 0XBF if screen too dark
-                0x04, // Set Temp coefficient. //0x04
-                0x14, // LCD bias mode 1:48. //0x13 or 0X14
-                0x0D, // LCD in normal mode. 0x0d for inverse
-                0x20, // We must send 0x20 before modifying the display control mode
-                0x0C // Set display control, normal mode. 0x0D for inverse, 0x0C for normal
-            });
+            writeBuffer.Span[0] = 0x21;
+            writeBuffer.Span[1] = 0xBF;
+            writeBuffer.Span[2] = 0x04;
+            writeBuffer.Span[3] = 0x14;
+            writeBuffer.Span[4] = 0x0D;
+            writeBuffer.Span[5] = 0x20;
+            writeBuffer.Span[6] = 0x0C;
 
-            dataCommandPort.State = (true);
+            spiDisplay.Exchange(writeBuffer.Span[0..6], readBuffer.Span[0..6]);
+
+            dataCommandPort.State = true;
 
             Clear();
             Show();
@@ -77,14 +72,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="updateDisplay">If true, it will force a display update</param>
         public override void Clear(bool updateDisplay = false)
         {
-            displayBuffer = new byte[Width * Height / 8];
+            Array.Clear(writeBuffer.Span.ToArray(), 0, writeBuffer.Length);
 
-            for(int i = 0; i < displayBuffer.Length; i++)
-            {
-                displayBuffer[i] = 0;
-            }
-
-            if(updateDisplay)
+            if (updateDisplay)
             {
                 Show();
             }
@@ -107,11 +97,11 @@ namespace Meadow.Foundation.Displays
 
             if (colored)
             {
-                displayBuffer[index] |= bitMask;
+                writeBuffer.Span[index] |= bitMask;
             }
             else
             {
-                displayBuffer[index] &= (byte)~bitMask;
+                writeBuffer.Span[index] &= (byte)~bitMask;
             }
         }
 
@@ -124,7 +114,7 @@ namespace Meadow.Foundation.Displays
 
             byte bitMask = (byte)(1 << (y % 8));
 
-            displayBuffer[index] = (displayBuffer[index] ^= bitMask);
+            writeBuffer.Span[index] = (writeBuffer.Span[index] ^= bitMask);
         }
 
         /// <summary>
@@ -140,7 +130,7 @@ namespace Meadow.Foundation.Displays
 
         public override void Show()
         {
-            spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, displayBuffer, spiReceive);
+            spiDisplay.Exchange(writeBuffer.Span, readBuffer.Span);
         }
 
         public override void Show(int left, int top, int right, int bottom)
@@ -149,11 +139,13 @@ namespace Meadow.Foundation.Displays
             Show();
         }
 
-        private void Invert(bool inverse)
+        public void InvertDisplay(bool inverse)
         {
-            _invertDisplay = inverse;
-            dataCommandPort.State = (false);
-            spiDisplay.WriteBytes(inverse ? new byte[] { 0x0D } : new byte[] { 0x0C });
+            IsDisplayInverted = inverse;
+            dataCommandPort.State = false;
+            commandBuffer.Span[0] = inverse ? (byte)0x0D : (byte)0x0C;
+
+            spiDisplay.Exchange(commandBuffer.Span, readBuffer.Span[0..0]);
             dataCommandPort.State = (true);
         }
     }
