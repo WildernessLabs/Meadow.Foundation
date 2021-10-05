@@ -46,5 +46,15 @@
             Maximum = 15,
         }
 
+        enum Register : byte
+        {
+            HT16K33_DSP = 128,
+            HT16K33_SS = 32, // System setup register
+            HT16K33_KDAP = 64, // Key Address Data Pointer
+            HT16K33_IFAP = 96, // Read INT flag status
+            HT16K33_DIM = 0xE0, // Set brightness / dimmer
+            HT16K33_DDAP = 0, //display address pointer
+        }
+
     }
 }

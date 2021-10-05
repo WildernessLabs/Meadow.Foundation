@@ -41,6 +41,8 @@ namespace Meadow.Foundation.Sensors.Camera
 
         protected IDigitalOutputPort chipSelectPort;
 
+        Memory<byte> readBuffer = new byte[1];
+
         public ArducamMini(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cDevice = new I2cPeripheral(i2cBus, address);
@@ -66,8 +68,10 @@ namespace Meadow.Foundation.Sensors.Camera
         {
             // return spiDevice.WriteRead(new byte[] { address, 0 }, 2)[1];
             //return spiDevice.ReadRegister(address);
+
             spiDevice.Write(address);
-            return spiDevice.ReadBytes(1)[0];
+            spiDevice.Read(readBuffer.Span);
+            return readBuffer[0];
         }
 
         protected void WriteSpiRegister(byte address, byte value)

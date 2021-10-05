@@ -122,7 +122,7 @@ namespace Meadow.Foundation.Displays
         private void SendCommand(byte command)
         {
             dataCommandPort.State = Command;
-            spiPerihperal.WriteBytes(new byte[] { command });
+            spiPerihperal.Write(command);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Meadow.Foundation.Displays
             Array.Copy(commands, 0, data, 1, commands.Length);
 
             dataCommandPort.State = Command;
-            spiPerihperal.WriteBytes(commands);
+            spiPerihperal.Write(commands);
         }
 
         protected const int StartColumnOffset = 0; // 1;
