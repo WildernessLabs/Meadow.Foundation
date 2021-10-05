@@ -1,5 +1,4 @@
 ﻿using System;
-using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.Ssd130x
@@ -7,64 +6,8 @@ namespace Meadow.Foundation.Displays.Ssd130x
     /// <summary>
     /// Provide an interface to the SSD1306 family of OLED displays.
     /// </summary>
-    public abstract class Ssd130xBase : DisplayBase
+    public abstract partial class Ssd130xBase : DisplayBase
     {
-        /// <summary>
-        ///     Allow the programmer to set the scroll direction.
-        /// </summary>
-        public enum ScrollDirection
-        {
-            /// <summary>
-            ///     Scroll the display to the left.
-            /// </summary>
-            Left,
-            /// <summary>
-            ///     Scroll the display to the right.
-            /// </summary>
-            Right,
-            /// <summary>
-            ///     Scroll the display from the bottom left and vertically.
-            /// </summary>
-            RightAndVertical,
-            /// <summary>
-            ///     Scroll the display from the bottom right and vertically.
-            /// </summary>
-            LeftAndVertical
-        }
-
-        /// <summary>
-        ///     Supported display types.
-        /// </summary>
-        public enum DisplayType
-        {
-            /// <summary>
-            ///     0.96 128x64 pixel display.
-            /// </summary>
-            OLED128x64,
-            /// <summary>
-            ///     0.91 128x32 pixel display.
-            /// </summary>
-            OLED128x32,
-            /// <summary>
-            ///     64x48 pixel display.
-            /// </summary>
-            OLED64x48,
-            /// <summary>
-            ///     96x16 pixel display.
-            /// </summary>
-            OLED96x16,
-            /// <summary>
-            ///     70x40 pixel display.
-            /// </summary>
-            OLED72x40,
-        }
-
-        public enum ConnectionType
-        {
-            SPI,
-            I2C,
-        }
-
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
         public override int Width => width;
@@ -75,7 +18,6 @@ namespace Meadow.Foundation.Displays.Ssd130x
         ///     SSD1306 SPI display
         /// </summary>
         protected ISpiPeripheral spiPeripheral;
-        protected ISpiBus spi;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
@@ -112,63 +54,15 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <summary>
         ///     Buffer holding the pixels in the display.
         /// </summary>
-        protected byte[] buffer;
-        protected byte[] spiReceive;
+        protected Memory<byte> writeBuffer;
+        protected Memory<byte> readBuffer;
+        protected Memory<byte> commandBuffer;
 
         /// <summary>
         ///     Sequence of command bytes that must be sent to the display before
         ///     the Show method can send the data buffer.
         /// </summary>
         protected byte[] showPreamble;
-
-        /// <summary>
-        ///     Sequence of bytes that should be sent to a 128x64 OLED display to setup the device.
-        /// </summary>
-        protected readonly byte[] oled128x64SetupSequence =
-        {
-            0xae, 0xd5, 0x80, 0xa8, 0x3f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
-            0xda, 0x12, 0x81, 0xcf, 0xd9, 0xf1, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
-        };
-
-        /// <summary>
-        ///     Sequence of bytes that should be sent to a 128x32 OLED display to setup the device.
-        /// </summary>
-        protected readonly byte[] oled128x32SetupSequence =
-        {
-            0xae, 0xd5, 0x80, 0xa8, 0x1f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
-            0xda, 0x02, 0x81, 0x8f, 0xd9, 0x1f, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
-        };
-
-        /// <summary>
-        ///     Sequence of bytes that should be sent to a 72x40 OLED display to setup the device.
-        /// </summary>
-        protected readonly byte[] oled72x40SetupSequence =
-        {
-            0xae, 0xd5, 0x80, 0xa8, 0x27, 0xd3, 0x00, 0xad, 0x30, 0x40, 0x8d, 0x14, 0x20, 0x00, 0xa1, 0xc8,
-            0xda, 0x12, 0x81, 0xcf, 0xd9, 0xf1, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
-        };
-
-        /// <summary>
-        ///     Sequence of bytes that should be sent to a 96x16 OLED display to setup the device.
-        /// </summary>
-        protected readonly byte[] oled96x16SetupSequence =
-        {
-            0xae, 0xd5, 0x80, 0xa8, 0x1f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
-            0xda, 0x02, 0x81, 0xaf, 0xd9, 0x1f, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
-        };
-        /// <summary>
-        ///     Sequence of bytes that should be sent to a 64x48 OLED display to setup the device.
-        /// </summary>
-        protected readonly byte[] oled64x48SetupSequence =
-        {
-            0xae, 0xd5, 0x80, 0xa8, 0x3f, 0xd3, 0x00, 0x40 | 0x0, 0x8d, 0x14, 0x20, 0x00, 0xa0 | 0x1, 0xc8,
-            0xda, 0x12, 0x81, 0xcf, 0xd9, 0xf1, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
-        };
-
-        /// <summary>
-        ///     Backing variable for the InvertDisplay property.
-        /// </summary>
-        private bool invertDisplay;
 
         /// <summary>
         ///     Invert the entire display (true) or return to normal mode (false).
@@ -185,11 +79,10 @@ namespace Meadow.Foundation.Displays.Ssd130x
                 SendCommand((byte)(value ? 0xa7 : 0xa6));
             }
         }
-
         /// <summary>
-        ///     Backing variable for the Contrast property.
+        ///     Backing variable for the InvertDisplay property.
         /// </summary>
-        private byte contrast;
+        private bool invertDisplay;
 
         /// <summary>
         ///     Get / Set the contrast of the display.
@@ -204,6 +97,10 @@ namespace Meadow.Foundation.Displays.Ssd130x
                 SendCommands(new byte[] { 0x81, contrast });
             }
         }
+        /// <summary>
+        ///     Backing variable for the Contrast property.
+        /// </summary>
+        private byte contrast;
 
         /// <summary>
         ///     Put the display to sleep (turns the display off).
@@ -225,8 +122,6 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
         protected DisplayType displayType;
 
-        
-
         /// <summary>
         ///     Send a command to the display.
         /// </summary>
@@ -240,7 +135,9 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
             else
             {
-                i2cPeripheral.WriteBytes(new byte[] { 0x00, command });
+                commandBuffer.Span[0] = 0x00;
+                commandBuffer.Span[1] = command;
+                i2cPeripheral.Exchange(commandBuffer.Span, readBuffer.Span[0..1]);
             }
         }
 
@@ -248,20 +145,21 @@ namespace Meadow.Foundation.Displays.Ssd130x
         ///     Send a sequence of commands to the display.
         /// </summary>
         /// <param name="commands">List of commands to send.</param>
-        protected void SendCommands(byte[] commands)
+        protected void SendCommands(Span<byte> commands)
         {
-            var data = new byte[commands.Length + 1];
-            data[0] = 0x00;
-            Array.Copy(commands, 0, data, 1, commands.Length);
+         //   var data = new byte[commands.Length + 1];
+         //   data[0] = 0x00;
+         //   Array.Copy(commands, 0, data, 1, commands.Length);
 
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                spiPeripheral.WriteBytes(commands);
+                spiPeripheral.Exchange(commands, readBuffer.Span);
             }
             else
             {
-                i2cPeripheral.WriteBytes(data);
+                i2cPeripheral.Write(0x00);
+                i2cPeripheral.Exchange(commands, readBuffer.Span);
             }
         }
 
@@ -270,35 +168,33 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// </summary>
         public override void Show()
         {
-            SendCommands(showPreamble);
-            //
-            //  Send the buffer page by page.
-            //
-            const int PAGE_SIZE = 16;
-            var data = new byte[PAGE_SIZE + 1];
-            data[0] = 0x40;
+            SendCommands(showPreamble); //ToDo - pull this apart to do partial show
 
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Data;
-                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, buffer, spiReceive);
+                spiPeripheral.Exchange(writeBuffer.Span, readBuffer.Span);
             }
-            else
+            else //I2C
             {
-                for (ushort index = 0; index < buffer.Length; index += PAGE_SIZE)
-                {
-                    if (buffer.Length - index < PAGE_SIZE) { break; }
+                //
+                //  Send the buffer page by page.
+                //
+                const int PAGE_SIZE = 16;
 
-                    Array.Copy(buffer, index, data, 1, PAGE_SIZE);
+                for (int index = 0; index < writeBuffer.Length; index += PAGE_SIZE)
+                {
+                    if (writeBuffer.Length - index < PAGE_SIZE) { break; }
+
                     SendCommand(0x40);
-                    i2cPeripheral.WriteBytes(data);
+                    i2cPeripheral.Exchange(writeBuffer.Span[index..(index + PAGE_SIZE)], readBuffer.Span);
                 }
             }
         }
 
         public override void Show(int left, int top, int right, int bottom)
         {
-            throw new NotImplementedException();
+            Show();
         }
 
         /// <summary>
@@ -307,7 +203,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="updateDisplay">Immediately update the display when true.</param>
         public override void Clear(bool updateDisplay = false)
         {
-            Array.Clear(buffer, 0, buffer.Length);
+            Array.Clear(writeBuffer.Span.ToArray(), 0, writeBuffer.Length);
 
             if (updateDisplay)
             {
@@ -346,8 +242,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             if (IgnoreOutOfBoundsPixels)
             {
                 if ((x >= width) || (y >= height) || x < 0 || y < 0)
-                {
-                    //  pixels to be thrown away if out of bounds of the display
+                {   //  pixels to be thrown away if out of bounds of the display
                     return;
                 }
             }
@@ -356,11 +251,11 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
             if (colored)
             {
-                buffer[index] = (byte)(buffer[index] | (byte)(1 << (y % 8)));
+                writeBuffer.Span[index] = (byte)(writeBuffer.Span[index] | (byte)(1 << (y % 8)));
             }
             else
             {
-                buffer[index] = (byte)(buffer[index] & ~(byte)(1 << (y % 8)));
+                writeBuffer.Span[index] = (byte)(writeBuffer.Span[index] & ~(byte)(1 << (y % 8)));
             }
         }
 
@@ -378,7 +273,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
             var index = (y >> 8) * width + x;
 
-            buffer[index] = (buffer[index] ^= (byte)(1 << y % 8));
+            writeBuffer.Span[index] = (writeBuffer.Span[index] ^= (byte)(1 << y % 8));
         }
 
         private void DrawPixel64x48(int x, int y, bool colored)
@@ -401,11 +296,11 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
             if (colored)
             {
-                buffer[index] = (byte)(buffer[index] | (byte)(1 << (y % 8)));
+                writeBuffer.Span[index] = (byte)(writeBuffer.Span[index] | (byte)(1 << (y % 8)));
             }
             else
             {
-                buffer[index] = (byte)(buffer[index] & ~(byte)(1 << (y % 8)));
+                writeBuffer.Span[index] = (byte)(writeBuffer.Span[index] & ~(byte)(1 << (y % 8)));
             }
         }
 

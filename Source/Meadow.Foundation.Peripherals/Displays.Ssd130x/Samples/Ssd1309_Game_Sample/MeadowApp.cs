@@ -97,7 +97,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
             Console.WriteLine("Create Display with SPI...");
 
-            var config = new Meadow.Hardware.SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode0);
+            var config = new Meadow.Hardware.SpiClockConfiguration(3000, SpiClockConfiguration.Mode.Mode0);
 
             var bus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 

@@ -13,7 +13,6 @@ namespace Meadow.Foundation.Displays
 
         public override int Height => 128;
 
-        protected ISpiBus spiBus;
         protected ISpiPeripheral spiPeripheral;
 
         protected IDigitalOutputPort dataCommandPort;
@@ -23,15 +22,11 @@ namespace Meadow.Foundation.Displays
         protected readonly Memory<byte> spiWrite;
         protected readonly Memory<byte> spiReceive;
 
-        protected int xMin, xMax, yMin, yMax;
-
         protected const bool DataState = true;
         protected const bool CommandState = false;
 
         public Ssd1327(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
-            this.spiBus = spiBus;
-
             spiWrite = new byte[Width * Height / 2]; 
             spiReceive = new byte[Width * Height / 2];
 
@@ -85,15 +80,7 @@ namespace Meadow.Foundation.Displays
 
         public override void Clear(bool updateDisplay = false)
         {
-            for(int i = 0; i < spiWrite.Length; i++)
-            {
-                spiWrite.Span[i] = 0;
-            }
-
-            xMin = 0;
-            yMin = 0;
-            xMax = Width - 1;
-            yMax = Height - 1;
+            spiWrite.Span.Fill(0);
 
             if(updateDisplay == true)
             {
@@ -157,9 +144,8 @@ namespace Meadow.Foundation.Displays
             SetAddressWindow(0, 0, 127, 127);
 
             dataCommandPort.State = DataState;
-            spiBus.Exchange(chipSelectPort,
-                spiWrite.Span,
-                spiReceive.Span);
+
+            spiPeripheral.Exchange(spiWrite.Span, spiReceive.Span);
         }
 
         void SetAddressWindow(byte x0, byte y0, byte x1, byte y1)
