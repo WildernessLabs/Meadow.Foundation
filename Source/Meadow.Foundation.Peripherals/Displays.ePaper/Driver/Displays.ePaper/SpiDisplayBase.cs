@@ -5,20 +5,20 @@ namespace Meadow.Foundation.Displays
 {
     public abstract class SpiDisplayBase : DisplayBase
     {
-        protected readonly byte[] spiBOneByteBuffer = new byte[1];
+        protected readonly byte[] commandBuffer = new byte[1];
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
         protected IDigitalInputPort busyPort;
-        protected ISpiPeripheral spi;
+        protected ISpiPeripheral spiPeripheral;
 
         protected const bool DataState = true;
         protected const bool CommandState = false;
 
         protected void Write(byte value)
         {
-            spiBOneByteBuffer[0] = value;
-            spi.WriteBytes(spiBOneByteBuffer);
+            commandBuffer[0] = value;
+            spiPeripheral.Write(commandBuffer);
         }
 
         protected void Reset()
@@ -47,14 +47,14 @@ namespace Meadow.Foundation.Displays
 
         protected void SendData(byte data)
         {
-            dataCommandPort.State = (DataState);
+            dataCommandPort.State = DataState;
             Write(data);
         }
 
         protected void SendData(byte[] data)
         {
-            dataCommandPort.State = (DataState);
-            spi.WriteBytes(data);
+            dataCommandPort.State = DataState;
+            spiPeripheral.Write(data);
         }
 
         protected virtual void WaitUntilIdle()

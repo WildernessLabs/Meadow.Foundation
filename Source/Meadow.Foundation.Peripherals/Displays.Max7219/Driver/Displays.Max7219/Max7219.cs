@@ -44,8 +44,8 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// internal buffer used to write to registers for all devices.
         /// </summary>
-        private readonly Memory<byte> writeBuffer;
-        private readonly Memory<byte> readBuffer;
+        private readonly byte[] writeBuffer;
+        private readonly byte[] readBuffer;
 
         private readonly ISpiBus spi;
         private readonly IDigitalOutputPort chipSelectPort;
@@ -161,10 +161,10 @@ namespace Meadow.Foundation.Displays
 
             for (byte deviceId = 0; deviceId < DeviceCount; deviceId++)
             {
-                writeBuffer.Span[i++] = (byte)register;
-                writeBuffer.Span[i++] = data;
+                writeBuffer[i++] = (byte)register;
+                writeBuffer[i++] = data;
             }
-            max7219.Exchange(writeBuffer.Span, readBuffer.Span);
+            max7219.Exchange(writeBuffer, readBuffer);
         }
 
         /// <summary>
@@ -172,12 +172,12 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         internal void SetRegister(int deviceId, Register register, byte data)
         {
-            Array.Clear(writeBuffer.Span.ToArray(), 0, writeBuffer.Length);
+            Array.Clear(writeBuffer, 0, writeBuffer.Length);
 
-            writeBuffer.Span[deviceId * 2] = (byte)register;
-            writeBuffer.Span[deviceId * 2 + 1] = data;
+            writeBuffer[deviceId * 2] = (byte)register;
+            writeBuffer[deviceId * 2 + 1] = data;
 
-            max7219.Exchange(writeBuffer.Span, readBuffer.Span);
+            max7219.Exchange(writeBuffer, readBuffer);
         }
 
         /// <summary>
@@ -264,10 +264,10 @@ namespace Meadow.Foundation.Displays
 
                 for (var deviceId = DeviceCount - 1; deviceId >= 0; deviceId--)
                 {
-                    writeBuffer.Span[i++] = (byte)((int)Register.Digit0 + digit);
-                    writeBuffer.Span[i++] = buffer[deviceId, digit];
+                    writeBuffer[i++] = (byte)((int)Register.Digit0 + digit);
+                    writeBuffer[i++] = buffer[deviceId, digit];
                 }
-                max7219.Exchange(writeBuffer.Span, readBuffer.Span);
+                max7219.Exchange(writeBuffer, readBuffer);
             }
         }
 

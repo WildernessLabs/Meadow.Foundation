@@ -18,6 +18,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         ///     SSD1306 SPI display
         /// </summary>
         protected ISpiPeripheral spiPeripheral;
+        protected ISpiBus spi;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
@@ -54,8 +55,8 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <summary>
         ///     Buffer holding the pixels in the display.
         /// </summary>
-        protected Memory<byte> writeBuffer;
-        protected Memory<byte> readBuffer;
+        protected byte[] writeBuffer;
+        protected byte[] readBuffer;
         protected Memory<byte> commandBuffer;
 
         /// <summary>
@@ -137,7 +138,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             {
                 commandBuffer.Span[0] = 0x00;
                 commandBuffer.Span[1] = command;
-                i2cPeripheral.Exchange(commandBuffer.Span, readBuffer.Span[0..1]);
+                i2cPeripheral.Exchange(commandBuffer.Span, readBuffer[0..1]);
             }
         }
 
@@ -154,12 +155,12 @@ namespace Meadow.Foundation.Displays.Ssd130x
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                spiPeripheral.Exchange(commands, readBuffer.Span);
+                spiPeripheral.Exchange(commands, readBuffer);
             }
             else
             {
                 i2cPeripheral.Write(0x00);
-                i2cPeripheral.Exchange(commands, readBuffer.Span);
+                i2cPeripheral.Exchange(commands, readBuffer);
             }
         }
 
@@ -173,7 +174,10 @@ namespace Meadow.Foundation.Displays.Ssd130x
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Data;
-                spiPeripheral.Exchange(writeBuffer.Span, readBuffer.Span);
+             //   spi.Exchange(chipSelectPort, writeBuffer, readBuffer, ChipSelectMode.ActiveLow); //slower
+             //   spiPeripheral.Exchange(writeBuffer, readBuffer); //flickers
+
+                spiPeripheral.Write(writeBuffer);
             }
             else //I2C
             {
@@ -187,7 +191,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
                     if (writeBuffer.Length - index < PAGE_SIZE) { break; }
 
                     SendCommand(0x40);
-                    i2cPeripheral.Exchange(writeBuffer.Span[index..(index + PAGE_SIZE)], readBuffer.Span);
+                    i2cPeripheral.Exchange(writeBuffer[index..(index + PAGE_SIZE)], readBuffer);
                 }
             }
         }
@@ -203,7 +207,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="updateDisplay">Immediately update the display when true.</param>
         public override void Clear(bool updateDisplay = false)
         {
-            Array.Clear(writeBuffer.Span.ToArray(), 0, writeBuffer.Length);
+            Array.Clear(writeBuffer, 0, writeBuffer.Length);
 
             if (updateDisplay)
             {
@@ -251,11 +255,11 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
             if (colored)
             {
-                writeBuffer.Span[index] = (byte)(writeBuffer.Span[index] | (byte)(1 << (y % 8)));
+                writeBuffer[index] = (byte)(writeBuffer[index] | (byte)(1 << (y % 8)));
             }
             else
             {
-                writeBuffer.Span[index] = (byte)(writeBuffer.Span[index] & ~(byte)(1 << (y % 8)));
+                writeBuffer[index] = (byte)(writeBuffer[index] & ~(byte)(1 << (y % 8)));
             }
         }
 
@@ -273,7 +277,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
             var index = (y >> 8) * width + x;
 
-            writeBuffer.Span[index] = (writeBuffer.Span[index] ^= (byte)(1 << y % 8));
+            writeBuffer[index] = (writeBuffer[index] ^= (byte)(1 << y % 8));
         }
 
         private void DrawPixel64x48(int x, int y, bool colored)
@@ -296,11 +300,11 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
             if (colored)
             {
-                writeBuffer.Span[index] = (byte)(writeBuffer.Span[index] | (byte)(1 << (y % 8)));
+                writeBuffer[index] = (byte)(writeBuffer[index] | (byte)(1 << (y % 8)));
             }
             else
             {
-                writeBuffer.Span[index] = (byte)(writeBuffer.Span[index] & ~(byte)(1 << (y % 8)));
+                writeBuffer[index] = (byte)(writeBuffer[index] & ~(byte)(1 << (y % 8)));
             }
         }
 

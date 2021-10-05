@@ -29,11 +29,11 @@ namespace Meadow.Foundation.Displays.ePaper
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             busyPort = device.CreateDigitalInputPort(busyPin);
 
-            spi = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(chipSelectPin));
+            spiPeripheral = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(chipSelectPin));
 
             imageBuffer = new byte[Width * Height / 8];
 
-            for (int i = 0; i < Width * Height / 8; i++)
+            for(int i = 0; i < imageBuffer.Length; i++)
             {
                 imageBuffer[i] = 0xff;
             }
@@ -65,9 +65,6 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
         public void Clear(bool colored, bool updateDisplay = false)
         {
-            //   ClearFrameMemory((byte)(colored ? 0 : 0xFF));
-            //   DisplayFrame();
-
             for (int i = 0; i < imageBuffer.Length; i++)
             {
                 imageBuffer[i] = colored ? (byte)0 : (byte)255;

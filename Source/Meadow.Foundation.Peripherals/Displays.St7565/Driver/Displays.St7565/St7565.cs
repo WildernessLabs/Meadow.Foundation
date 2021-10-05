@@ -28,8 +28,8 @@ namespace Meadow.Foundation.Displays
         protected const bool Data = true;
         protected const bool Command = false;
 
-        protected Memory<byte> spiWriteBuffer;
-        protected Memory<byte> spiReadBuffer;
+        protected Memory<byte> writeBuffer;
+        protected Memory<byte> readBuffer;
 
         /// <summary>
         ///     Invert the entire display (true) or return to normal mode (false).
@@ -77,8 +77,8 @@ namespace Meadow.Foundation.Displays
 
         private void InitST7565()
         {
-            spiWriteBuffer = new byte[Width * Height / 8];
-            spiReadBuffer = new byte[PageSize];
+            writeBuffer = new byte[Width * Height / 8];
+            readBuffer = new byte[PageSize];
 
             IgnoreOutOfBoundsPixels = false;
 
@@ -157,8 +157,8 @@ namespace Meadow.Foundation.Displays
                 dataCommandPort.State = Data;
 
                 spiPerihperal.Bus.Exchange(chipSelectPort,
-                    spiWriteBuffer.Span.Slice(PageSize * page, page),
-                    spiReadBuffer.Span);
+                    writeBuffer.Span.Slice(PageSize * page, page),
+                    readBuffer.Span);
             }
         }
 
@@ -183,8 +183,8 @@ namespace Meadow.Foundation.Displays
                 dataCommandPort.State = Data;
 
                 spiPerihperal.Bus.Exchange(chipSelectPort,
-                    spiWriteBuffer.Span.Slice(PageSize * page, page),
-                    spiReadBuffer.Span);
+                    writeBuffer.Span.Slice(PageSize * page, page),
+                    readBuffer.Span);
             }
         }
 
@@ -194,7 +194,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="updateDisplay">Immediately update the display when true.</param>
         public override void Clear(bool updateDisplay = false)
         {
-            spiWriteBuffer.Span.Clear();
+            writeBuffer.Span.Clear();
 
             if (updateDisplay) { Show(); }
         }
@@ -231,11 +231,11 @@ namespace Meadow.Foundation.Displays
 
             if (colored)
             {
-                spiWriteBuffer.Span[index] = (byte)(spiWriteBuffer.Span[index] | (byte)(1 << (y % 8)));
+                writeBuffer.Span[index] = (byte)(writeBuffer.Span[index] | (byte)(1 << (y % 8)));
             }
             else
             {
-                spiWriteBuffer.Span[index] = (byte)(spiWriteBuffer.Span[index] & ~(byte)(1 << (y % 8)));
+                writeBuffer.Span[index] = (byte)(writeBuffer.Span[index] & ~(byte)(1 << (y % 8)));
             }
         }
 
@@ -252,7 +252,7 @@ namespace Meadow.Foundation.Displays
             }
             var index = (y / 8 * Width) + x;
 
-            spiWriteBuffer.Span[index] = (spiWriteBuffer.Span[index] ^= (byte)(1 << y % 8));
+            writeBuffer.Span[index] = (writeBuffer.Span[index] ^= (byte)(1 << y % 8));
         }
 
         /// <summary>

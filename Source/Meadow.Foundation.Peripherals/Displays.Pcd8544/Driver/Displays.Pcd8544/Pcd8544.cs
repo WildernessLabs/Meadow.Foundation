@@ -21,8 +21,8 @@ namespace Meadow.Foundation.Displays
         protected IDigitalOutputPort chipSelectPort;
         protected ISpiPeripheral spiDisplay;
 
-        protected Memory<byte> writeBuffer;
-        protected Memory<byte> readBuffer;
+        protected byte[] writeBuffer;
+        protected byte[] readBuffer;
         protected Memory<byte> commandBuffer;
 
         public Pcd8544(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
@@ -47,15 +47,15 @@ namespace Meadow.Foundation.Displays
 
             dataCommandPort.State = false;
 
-            writeBuffer.Span[0] = 0x21;
-            writeBuffer.Span[1] = 0xBF;
-            writeBuffer.Span[2] = 0x04;
-            writeBuffer.Span[3] = 0x14;
-            writeBuffer.Span[4] = 0x0D;
-            writeBuffer.Span[5] = 0x20;
-            writeBuffer.Span[6] = 0x0C;
+            writeBuffer[0] = 0x21;
+            writeBuffer[1] = 0xBF;
+            writeBuffer[2] = 0x04;
+            writeBuffer[3] = 0x14;
+            writeBuffer[4] = 0x0D;
+            writeBuffer[5] = 0x20;
+            writeBuffer[6] = 0x0C;
 
-            spiDisplay.Exchange(writeBuffer.Span[0..6], readBuffer.Span[0..6]);
+            spiDisplay.Exchange(writeBuffer[0..6], readBuffer[0..6]);
 
             dataCommandPort.State = true;
 
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="updateDisplay">If true, it will force a display update</param>
         public override void Clear(bool updateDisplay = false)
         {
-            Array.Clear(writeBuffer.Span.ToArray(), 0, writeBuffer.Length);
+            Array.Clear(writeBuffer, 0, writeBuffer.Length);
 
             if (updateDisplay)
             {
@@ -97,11 +97,11 @@ namespace Meadow.Foundation.Displays
 
             if (colored)
             {
-                writeBuffer.Span[index] |= bitMask;
+                writeBuffer[index] |= bitMask;
             }
             else
             {
-                writeBuffer.Span[index] &= (byte)~bitMask;
+                writeBuffer[index] &= (byte)~bitMask;
             }
         }
 
@@ -114,7 +114,7 @@ namespace Meadow.Foundation.Displays
 
             byte bitMask = (byte)(1 << (y % 8));
 
-            writeBuffer.Span[index] = (writeBuffer.Span[index] ^= bitMask);
+            writeBuffer[index] = (writeBuffer[index] ^= bitMask);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace Meadow.Foundation.Displays
 
         public override void Show()
         {
-            spiDisplay.Exchange(writeBuffer.Span, readBuffer.Span);
+            spiDisplay.Exchange(writeBuffer, readBuffer);
         }
 
         public override void Show(int left, int top, int right, int bottom)
@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = false;
             commandBuffer.Span[0] = inverse ? (byte)0x0D : (byte)0x0C;
 
-            spiDisplay.Exchange(commandBuffer.Span, readBuffer.Span[0..0]);
+            spiDisplay.Exchange(commandBuffer.Span, readBuffer[0..0]);
             dataCommandPort.State = (true);
         }
     }

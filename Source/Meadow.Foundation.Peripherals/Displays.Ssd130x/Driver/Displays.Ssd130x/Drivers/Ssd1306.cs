@@ -26,6 +26,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false);
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spi = spiBus;
 
             connectionType = ConnectionType.SPI;
 
