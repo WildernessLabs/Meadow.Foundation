@@ -10,6 +10,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private bool _initialized;
         public bool IsSampling { get; private set; }
 
+        protected Memory<byte> readBuffer = new byte[25];
+
         public Bme680(II2cBus bus, byte address = (byte)Addresses.Default, SensorSettings sensorSettings = null) : base(bus, address)
         {
             if (sensorSettings == null)
@@ -48,7 +50,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Initialize();
         }
 
-        public SensorReading Read()
+        public SensorReading? Read()
         {
             Initialize();
             try
@@ -67,9 +69,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return ReadRegister(register.Address);
         }
 
-        private byte[] ReadRegisters(Register register)
-        {
-            return ReadRegisters(register.Address, register.Length);
+        private Span<byte> ReadRegisters(Register register)
+        {   
+            ReadRegister(register.Address, readBuffer.Span[0..register.Length]);
+            return readBuffer.Slice(0, register.Length).Span;
         }
 
         private void WriteRegister(Register register, byte data)

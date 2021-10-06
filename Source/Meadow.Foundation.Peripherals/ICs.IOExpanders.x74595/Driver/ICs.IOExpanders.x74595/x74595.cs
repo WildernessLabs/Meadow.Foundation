@@ -21,14 +21,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         ///     Number of chips required to implement this ShiftRegister.
         /// </summary>
-        private readonly int _numberOfChips;
+        private readonly int numberOfChips;
 
-        private byte[] _latchData;
+        private byte[] latchData;
 
         /// <summary>
         ///     SPI interface used to communicate with the shift registers.
         /// </summary>
-        private readonly ISpiPeripheral _spi;
+        private readonly ISpiPeripheral spiPeripheral;
 
         /// <summary>
         ///     Default constructor.
@@ -50,11 +50,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
            // if ((pins > 0) && ((pins % 8) == 0))
             if(pins == 8)
             {
-                _numberOfChips = pins / 8;
+                numberOfChips = pins / 8;
 
-                _latchData = new byte[_numberOfChips];
+                latchData = new byte[numberOfChips];
 
-                _spi = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(pinChipSelect));
+                spiPeripheral = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(pinChipSelect));
             }
             else
             {
@@ -82,11 +82,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public void Clear(bool update = true)
         {
-            _latchData = new byte[_numberOfChips];
+            latchData = new byte[numberOfChips];
 
             if(update)
             {
-                _spi.WriteBytes(_latchData);
+                spiPeripheral.Write(latchData);
             }
         }
 
@@ -100,13 +100,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (IsValidPin(pin))
             {
                 //ToDo multichip logic
-                _latchData[0] =  BitHelpers.SetBit(_latchData[0], (byte)pin.Key, value);
+                latchData[0] =  BitHelpers.SetBit(latchData[0], (byte)pin.Key, value);
             }
             else
             {
                 throw new Exception("Pin is out of range");
             }
-            _spi.WriteBytes(_latchData);
+            spiPeripheral.Write(latchData);
         }
 
         /// <summary>
