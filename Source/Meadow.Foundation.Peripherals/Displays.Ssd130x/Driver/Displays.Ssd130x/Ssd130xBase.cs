@@ -138,7 +138,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             {
                 commandBuffer.Span[0] = 0x00;
                 commandBuffer.Span[1] = command;
-                i2cPeripheral.Exchange(commandBuffer.Span, readBuffer[0..1]);
+                i2cPeripheral.Write(commandBuffer.Span);
             }
         }
 
@@ -148,19 +148,18 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="commands">List of commands to send.</param>
         protected void SendCommands(Span<byte> commands)
         {
-         //   var data = new byte[commands.Length + 1];
-         //   data[0] = 0x00;
-         //   Array.Copy(commands, 0, data, 1, commands.Length);
-
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
                 spiPeripheral.Exchange(commands, readBuffer);
             }
             else
-            {
-                i2cPeripheral.Write(0x00);
-                i2cPeripheral.Exchange(commands, readBuffer);
+            {   //a little heavy but this is only used a couple of times
+                //we can optimize when we switch writeBuffer to Memory<byte>
+                Span<byte> data = new byte[commands.Length + 1];
+                data[0] = 0x00;
+                commands.CopyTo(data.Slice(1, commands.Length));
+                i2cPeripheral.Write(data);
             }
         }
 
@@ -174,24 +173,24 @@ namespace Meadow.Foundation.Displays.Ssd130x
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Data;
-             //   spi.Exchange(chipSelectPort, writeBuffer, readBuffer, ChipSelectMode.ActiveLow); //slower
+              //  spi.Exchange(chipSelectPort, writeBuffer, readBuffer, ChipSelectMode.ActiveLow); //slower
              //   spiPeripheral.Exchange(writeBuffer, readBuffer); //flickers
-
                 spiPeripheral.Write(writeBuffer);
             }
             else //I2C
             {
-                //
-                //  Send the buffer page by page.
-                //
+                //  Send the buffer page by page
+                //  This can be optimized when we move to Memory<byte>
                 const int PAGE_SIZE = 16;
+                var data = new byte[PAGE_SIZE + 1];
+                data[0] = 0x40;
 
-                for (int index = 0; index < writeBuffer.Length; index += PAGE_SIZE)
+                for (ushort index = 0; index < writeBuffer.Length; index += PAGE_SIZE)
                 {
                     if (writeBuffer.Length - index < PAGE_SIZE) { break; }
 
-                    SendCommand(0x40);
-                    i2cPeripheral.Exchange(writeBuffer[index..(index + PAGE_SIZE)], readBuffer);
+                    Array.Copy(writeBuffer, index, data, 1, PAGE_SIZE);
+                    i2cPeripheral.Write(data);
                 }
             }
         }

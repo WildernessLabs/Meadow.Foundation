@@ -13,11 +13,11 @@ namespace Meadow.Foundation
 
         public byte Color8bppGray => (byte)(0.2989 * R + 0.5870 * G + 0.114 * B);
 
-        public ushort Color12bppRgb444 =>
-            (ushort)(((R & 0b11110000) << 8) | ((G & 0b11110000) << 4) | (B >> 4));
+        public ushort Color12bppRgb444 =>// 0xFF;
+            (ushort)(((R & 0b11110000) << 4) | (G & 0b11110000) | (B >> 4));
 
-        public ushort Color16bppRgb565 =>
-            (ushort)(((R & 0b1111100) << 8) | ((G & 0b11111100) << 3) | (B >> 3));
+        public ushort Color16bppRgb565 => 
+            (ushort)(((R & 0b11111000) << 8) | ((G & 0b11111100) << 3) | (B >> 3));
 
         public bool Color1bpp => R > 0 || G > 0 || B > 0;
 
