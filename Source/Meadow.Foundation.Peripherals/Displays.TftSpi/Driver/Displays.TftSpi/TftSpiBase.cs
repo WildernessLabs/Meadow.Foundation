@@ -122,7 +122,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         public override void DrawPixel(int x, int y, bool colored)
         {
             //this works for now but it's a bit of a hack for 444
-            SetPixel(x, y, (colored ? (ushort)(0xFFFF) : (ushort)0));
+            SetPixel(x, y, colored ? (ushort)0xFF : (ushort)0);
         }
 
         /// <summary>

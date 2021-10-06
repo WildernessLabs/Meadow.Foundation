@@ -75,7 +75,7 @@ namespace Meadow.Foundation.ICs.EEPROM
         public byte[] Read(ushort startAddress, ushort amount)
         {
             CheckAddress(startAddress, amount);
-            Span<byte> data = writeBuffer.Span[0..1];
+            Span<byte> data = writeBuffer.Span[0..2];
             data[0] = (byte) ((startAddress >> 8) & 0xff);
             data[1] = (byte) (startAddress & 0xff);
 
@@ -84,7 +84,7 @@ namespace Meadow.Foundation.ICs.EEPROM
             _eeprom.Write(data);
             _eeprom.Read(results);
 
-            return data.ToArray();
+            return results;
         }
 
         /// <summary>
