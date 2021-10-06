@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.Threading;
 using Meadow.Hardware;
 using Meadow.Utilities;
 
@@ -47,6 +46,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 return $"Temperature: {Temperature}, Pressure: {Pressure}, Humidity: {Humidity}, VOC: {VOC}";
             }
 
+            static Memory<byte> readBuffer = new byte[25];
+
             public static SensorReading CreateFromDevice(I2cPeripheral device, SensorSettings sensorSettings)
             {
                 // Read the current control register
@@ -59,19 +60,22 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     status = device.ReadRegister(RegisterAddresses.ControlTemperatureAndPressure.Address);
                 } while (BitHelpers.GetBitValue(status, 0x00));
 
-                var sensorData = device.ReadRegisters(
-                    RegisterAddresses.AllSensors.Address,
-                    RegisterAddresses.AllSensors.Length)
-                    .AsSpan();
+                var sensorData = readBuffer.Span[0..RegisterAddresses.AllSensors.Length];
+                device.ReadRegister(RegisterAddresses.AllSensors.Address, sensorData);
+
+                
 
                 var rawPressure = GetRawValue(sensorData.Slice(0, 3));
                 var rawTemperature = GetRawValue(sensorData.Slice(3, 3));
                 var rawHumidity = GetRawValue(sensorData.Slice(6, 2));
                 //var rawVoc = GetRawValue(sensorData.Slice(8, 2));
-                var compensationData1 = device.ReadRegisters(RegisterAddresses.CompensationData1.Address,
-                    RegisterAddresses.CompensationData1.Length);
-                var compensationData2 = device.ReadRegisters(RegisterAddresses.CompensationData2.Address,
-                    RegisterAddresses.CompensationData2.Length);
+                
+                device.ReadRegister(RegisterAddresses.CompensationData1.Address, readBuffer.Span[0..RegisterAddresses.CompensationData1.Length]);
+                var compensationData1 = readBuffer.Span[0..RegisterAddresses.CompensationData1.Length].ToArray();
+
+                device.ReadRegister(RegisterAddresses.CompensationData2.Address, readBuffer.Span[0..RegisterAddresses.CompensationData2.Length]);
+                var compensationData2 = readBuffer.Span[0..RegisterAddresses.CompensationData2.Length].ToArray();
+
                 var compensationData = ArrayPool<byte>.Shared.Rent(64);
                 try {
                     Array.Copy(compensationData1, 0, compensationData, 0, compensationData1.Length);

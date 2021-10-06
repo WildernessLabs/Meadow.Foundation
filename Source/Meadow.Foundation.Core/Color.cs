@@ -1,196 +1,138 @@
-using System;
-
-/*
+﻿using System;
 
 namespace Meadow.Foundation
 {
     public struct Color
     {
-        readonly Mode _mode;
-
-        enum Mode
-        {
-            Default,
-            Rgb,
-            Hsb
-        }
-
         public static Color Default
         {
-            get { return new Color(-1f, -1f, -1f, -1f, Mode.Default); }
+            get { return new Color(0, 0, 0, 0); }
         }
 
-        public bool IsDefault
-        {
-            get { return _mode == Mode.Default; }
-        }
-        
-        public double A
-        {
-            get { return a; }
-        } readonly double a;
+        public byte Color4bppGray => (byte)((byte)(0.2989 * R + 0.5870 * G + 0.114 * B) >> 4);
 
-        public double R
-        {
-            get { return r; }
-        } readonly double r;
+        public byte Color8bppGray => (byte)(0.2989 * R + 0.5870 * G + 0.114 * B);
 
-        public double G
-        {
-            get { return g; }
-        } readonly double g;
-        
-        public double B
-        {
-            get { return b; }
-        } readonly double b;
-        
+        public ushort Color12bppRgb444 =>
+            (ushort)(((R & 0b11110000) << 8) | ((G & 0b11110000) << 4) | (B >> 4));
+
+        public ushort Color16bppRgb565 =>
+            (ushort)(((R & 0b1111100) << 8) | ((G & 0b11111100) << 3) | (B >> 3));
+
+        public bool Color1bpp => R > 0 || G > 0 || B > 0;
+
+        public byte A { get; private set; }
+  
+        public byte R { get; private set; }
+
+        public byte G { get; private set; }
+
+        public byte B { get; private set; }
+
         public double Hue
         {
-            get { return hue; }
-        } readonly double hue;
-        
+            get
+            {
+                if(hue == -1)
+                {
+                    ConvertToHsb(R, G, B, out hue, out saturation, out brightness);
+                }
+                return hue;
+            }
+        }
+        double hue;
+
         public double Saturation
         {
-            get { return saturation; }
-        } readonly double saturation;
-        
+            get
+            {
+                if (saturation == -1)
+                {
+                    ConvertToHsb(R, G, B, out hue, out saturation, out brightness);
+                }
+                return saturation;
+            }
+        }
+        double saturation;
+
         public double Brightness
         {
-            get { return brightness; }
-        } readonly double brightness;
-
-        public Color(double r, double g, double b, double a) : this(r, g, b, a, Mode.Rgb)
-        {
-        }
-
-        Color(double w, double x, double y, double z, Mode mode)
-        {
-            _mode = mode;
-            switch (mode)
+            get
             {
-                default:
-                case Mode.Default:
-                    r = g = b = a = -1;
-                    hue = saturation = brightness = -1;
-                    break;
-                case Mode.Rgb:
-                    r = w.Clamp(0, 1);
-                    g = (double)x.Clamp(0, 1);
-                    b = (double)y.Clamp(0, 1);
-                    a = (double)z.Clamp(0, 1);
-                    ConvertToHsb(r, g, b, mode, out hue, out saturation, out brightness);
-                    break;
-                case Mode.Hsb:
-                    hue = (double)w.Clamp(0, 1);
-                    saturation = (double)x.Clamp(0, 1);
-                    brightness = (double)y.Clamp(0, 1);
-                    a = (double)z.Clamp(0, 1);
-                    ConvertToRgb(hue, saturation, brightness, mode, out r, out g, out b);
-                    break;
+                if (brightness == -1)
+                {
+                    ConvertToHsb(R, G, B, out hue, out saturation, out brightness);
+                }
+                return brightness;
             }
         }
+        double brightness;
 
-        public Color(double r, double g, double b) : this(r, g, b, 1)
+
+        public Color(byte red, byte green, byte blue, byte alpha = 255) 
+        {
+            R = red;
+            G = green;
+            B = blue;
+            A = alpha;
+
+            hue = saturation = brightness = -1;
+        }
+
+        public Color(double red, double green, double blue) :
+            this((byte)(red*255), (byte)(green*255), (byte)(blue*255), 1)
         {
         }
 
-        public Color(double value) : this(value, value, value, 1)
+        public Color(double hue, double brightness, double saturation, byte alpha = 255)
         {
-        }
+            double red, green, blue;
 
-        public Color MultiplyAlpha(double alpha)
-        {
-            switch (_mode)
-            {
-                default:
-                case Mode.Default:
-                    throw new InvalidOperationException("Invalid on Color.Default");
-                case Mode.Rgb:
-                    return new Color(r, g, b, a * alpha, Mode.Rgb);
-                case Mode.Hsb:
-                    return new Color(hue, saturation, brightness, a * alpha, Mode.Hsb);
-            }
-        }
+            Converters.HsvToRgb(hue * 360, saturation, brightness, out red, out green, out blue);
 
-        public Color AddBrightness(double delta)
-        {
-            if (_mode == Mode.Default)
-                throw new InvalidOperationException("Invalid on Color.Default");
+            R = (byte)(255 * red);
+            G = (byte)(255 * green);
+            B = (byte)(255 * blue);
+            A = alpha;
 
-            return new Color(hue, saturation, brightness + delta, a, Mode.Hsb);
-        }
-
-        public Color WithHue(double hue)
-        {
-            if (_mode == Mode.Default)
-                throw new InvalidOperationException("Invalid on Color.Default");
-            return new Color(hue, saturation, brightness, a, Mode.Hsb);
-        }
-
-        public Color WithSaturation(double saturation)
-        {
-            if (_mode == Mode.Default)
-                throw new InvalidOperationException("Invalid on Color.Default");
-            return new Color(hue, saturation, brightness, a, Mode.Hsb);
+            this.hue = hue;
+            this.saturation = saturation;
+            this.brightness = brightness;
         }
 
         public Color WithBrightness(double brightness)
         {
-            if (_mode == Mode.Default)
-                throw new InvalidOperationException("Invalid on Color.Default");
-            return new Color(hue, saturation, brightness, a, Mode.Hsb);
+            return new Color(hue, saturation, brightness, A);
         }
 
-        static void ConvertToRgb(double hue, double saturation, double brightness, Mode mode, out double r, out double g, out double b)
+        public Color WithHue(double hue)
         {
-            Converters.HsvToRgb(hue * 360, saturation, brightness, out r, out g, out b);
-
-
-            // below implementation failed on netduino, so had to resort to the one i wrote above.
-            //if (mode != Mode.Hsb)
-            //    throw new InvalidOperationException();
-
-            //if (brightness == 0)
-            //{
-            //    r = g = b = 0;
-            //    return;
-            //}
-
-            //if (saturation == 0)
-            //{
-            //    r = g = b = brightness;
-            //    return;
-            //}
-            //double temp2 = brightness <= 0.5f ? brightness * (1.0f + saturation) : brightness + saturation - brightness * saturation;
-            //double temp1 = 2.0f * brightness - temp2;
-
-            //var t3 = new[] { hue + 1.0f / 3.0f, hue, hue - 1.0f / 3.0f };
-            //var clr = new double[] { 0, 0, 0 };
-            //for (var i = 0; i < 3; i++)
-            //{
-            //    if (t3[i] < 0)
-            //        t3[i] += 1.0f;
-            //    if (t3[i] > 1)
-            //        t3[i] -= 1.0f;
-            //    if (6.0 * t3[i] < 1.0)
-            //        clr[i] = temp1 + (temp2 - temp1) * t3[i] * 6.0f;
-            //    else if (2.0 * t3[i] < 1.0)
-            //        clr[i] = temp2;
-            //    else if (3.0 * t3[i] < 2.0)
-            //        clr[i] = temp1 + (temp2 - temp1) * (2.0f / 3.0f - t3[i]) * 6.0f;
-            //    else
-            //        clr[i] = temp1;
-            //}
-
-            //r = clr[0];
-            //g = clr[1];
-            //b = clr[2];
+            return new Color(hue, saturation, brightness, A);
         }
 
-        static void ConvertToHsb(double r, double g, double b, Mode mode, out double h, out double s, out double l)
+        public Color WithSaturation(double saturation)
         {
-            
+            return new Color(hue, saturation, brightness, A);
+        }
+
+        static void ConvertToRgb(double hue, double saturation, double brightness, out byte r, out byte g, out byte b)
+        {
+            double red, green, blue;
+
+            Converters.HsvToRgb(hue * 360, saturation, brightness, out red, out green, out blue);
+
+            r = (byte)(255 * red);
+            g = (byte)(255 * green);
+            b = (byte)(255 * blue);
+        }
+
+        static void ConvertToHsb(byte r, byte g, byte b, out double h, out double s, out double l)
+        {
+            ConvertToHsb(r / 255.0, g / 255.0, b / 255.0, out h, out s, out l);
+        }
+
+        static void ConvertToHsb(double r, double g, double b, out double h, out double s, out double l)
+        {
             double v = (double)Math.Max(r, g);
             v = (double)Math.Max(v, b);
 
@@ -250,10 +192,10 @@ namespace Meadow.Foundation
         {
             unchecked
             {
-                int hashcode = r.GetHashCode();
-                hashcode = (hashcode * 397) ^ g.GetHashCode();
-                hashcode = (hashcode * 397) ^ b.GetHashCode();
-                hashcode = (hashcode * 397) ^ a.GetHashCode();
+                int hashcode = R.GetHashCode();
+                hashcode = (hashcode * 397) ^ G.GetHashCode();
+                hashcode = (hashcode * 397) ^ B.GetHashCode();
+                hashcode = (hashcode * 397) ^ A.GetHashCode();
                 return hashcode;
             }
         }
@@ -269,13 +211,7 @@ namespace Meadow.Foundation
 
         static bool EqualsInner(Color color1, Color color2)
         {
-            if (color1._mode == Mode.Default && color2._mode == Mode.Default)
-                return true;
-            if (color1._mode == Mode.Default || color2._mode == Mode.Default)
-                return false;
-            if (color1._mode == Mode.Hsb && color2._mode == Mode.Hsb)
-                return color1.hue == color2.hue && color1.saturation == color2.saturation && color1.brightness == color2.brightness && color1.a == color2.a;
-            return color1.r == color2.r && color1.g == color2.g && color1.b == color2.b && color1.a == color2.a;
+             return color1.R == color2.R && color1.G == color2.G && color1.B == color2.B && color1.A == color2.A;
         }
 
         public override string ToString()
@@ -285,13 +221,17 @@ namespace Meadow.Foundation
 
         static uint ToHex(char c)
         {
-            ushort x = (ushort)c;
+            ushort x = c;
             if (x >= '0' && x <= '9')
+            {
                 return (uint)(x - '0');
+            }
 
             x |= 0x20;
             if (x >= 'a' && x <= 'f')
+            {
                 return (uint)(x - 'a' + 10);
+            }
             return 0;
         }
 
@@ -305,7 +245,9 @@ namespace Meadow.Foundation
         {
             // Undefined
             if (hex.Length < 3)
+            {
                 return Default;
+            }
             int idx = (hex[0] == '#') ? 1 : 0;
 
             switch (hex.Length - idx)
@@ -346,48 +288,30 @@ namespace Meadow.Foundation
             return FromRgba((byte)((argb & 0x00ff0000) >> 0x10), (byte)((argb & 0x0000ff00) >> 0x8), (byte)(argb & 0x000000ff), (byte)((argb & 0xff000000) >> 0x18));
         }
 
-        public static Color FromRgba(int r, int g, int b, int a)
+        public static Color FromRgba(byte r, byte g, byte b, byte a)
         {
-            double red = (double)r / 255;
-            double green = (double)g / 255;
-            double blue = (double)b / 255;
-            double alpha = (double)a / 255;
-            return new Color(red, green, blue, alpha, Mode.Rgb);
+            return new Color(r, g, b, a);
         }
 
-        public static Color FromRgb(int r, int g, int b)
+        public static Color FromRgb(byte r, byte g, byte b)
         {
             return FromRgba(r, g, b, 255);
         }
 
         public static Color FromRgba(double r, double g, double b, double a)
         {
-            return new Color(r, g, b, a);
+            return new Color((byte)(r*255), (byte)(g * 255), (byte)(b * 255), (byte)(a * 255));
         }
 
         public static Color FromRgb(double r, double g, double b)
         {
-            return new Color(r, g, b, 1f, Mode.Rgb);
+            return FromRgba(r, g, b, 1f);
         }
 
-        public static Color FromHsba(double h, double s, double b, double a = 1F)
+        public static Color FromHsba(double h, double s, double b, double a = 1.0)
         {
-            return new Color(h, s, b, a, Mode.Hsb);
+            return new Color(h, s, b, (byte)(a*255));
         }
-
-        //public static implicit operator System.Drawing.Color(Color color)
-        //{
-        //    if (color.IsDefault)
-        //        return System.Drawing.Color.Empty;
-        //    return System.Drawing.Color.FromArgb((byte)(color._a * 255), (byte)(color._r * 255), (byte)(color._g * 255), (byte)(color._b * 255));
-        //}
-
-        //public static implicit operator Color(System.Drawing.Color color)
-        //{
-        //    if (color.IsEmpty)
-        //        return Color.Default;
-        //    return FromRgba(color.R, color.G, color.B, color.A);
-        //}
 
         #region Color Definitions
 
@@ -537,5 +461,3 @@ namespace Meadow.Foundation
         #endregion
     }
 }
-
-*/

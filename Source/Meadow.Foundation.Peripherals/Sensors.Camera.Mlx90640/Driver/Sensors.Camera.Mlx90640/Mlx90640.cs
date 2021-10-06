@@ -233,7 +233,7 @@ namespace Meadow.Foundation.Sensors.Camera
             cmd[2] = (byte)(data >> 8);
             cmd[3] = (byte)(data & 0x00FF);
 
-            i2CPeripheral.WriteBytes(cmd);
+            i2CPeripheral.Write(cmd);
 
             Thread.Sleep(1);
 

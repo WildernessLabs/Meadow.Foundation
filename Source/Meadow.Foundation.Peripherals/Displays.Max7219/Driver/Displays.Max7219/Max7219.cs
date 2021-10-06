@@ -164,7 +164,7 @@ namespace Meadow.Foundation.Displays
                 writeBuffer[i++] = (byte)register;
                 writeBuffer[i++] = data;
             }
-            max7219.WriteBytes(writeBuffer);
+            max7219.Exchange(writeBuffer, readBuffer);
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace Meadow.Foundation.Displays
             writeBuffer[deviceId * 2] = (byte)register;
             writeBuffer[deviceId * 2 + 1] = data;
 
-            max7219.WriteBytes(writeBuffer);
+            max7219.Exchange(writeBuffer, readBuffer);
         }
 
         /// <summary>
@@ -267,8 +267,7 @@ namespace Meadow.Foundation.Displays
                     writeBuffer[i++] = (byte)((int)Register.Digit0 + digit);
                     writeBuffer[i++] = buffer[deviceId, digit];
                 }
-                //max7219.WriteBytes(_writeBuffer);
-                spi.ExchangeData(chipSelectPort, ChipSelectMode.ActiveLow, writeBuffer, readBuffer);
+                max7219.Exchange(writeBuffer, readBuffer);
             }
         }
 

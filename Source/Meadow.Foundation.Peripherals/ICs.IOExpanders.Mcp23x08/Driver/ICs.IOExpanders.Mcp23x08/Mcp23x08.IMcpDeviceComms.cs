@@ -20,6 +20,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 : base(bus, peripheralAddress)
             {
             }
+
+            public byte[] ReadRegisters(byte address, ushort length)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void WriteRegisters(byte address, byte[] data)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

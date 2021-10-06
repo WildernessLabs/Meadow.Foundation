@@ -13,16 +13,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private readonly II2cPeripheral i2cPeripheral;
 
         //display buffer for 16x8 LEDs
-        private byte[] displayBuffer = new byte[16];
+        private Memory<byte> displayBuffer = new byte[16];
+
         //key buffer for 39 keys
         private byte[] keyBuffer = new byte[6];
-
-        readonly byte HT16K33_DSP = 128;
-        readonly byte HT16K33_SS = 32; // System setup register
-        readonly byte HT16K33_KDAP = 64; // Key Address Data Pointer
-        readonly byte HT16K33_IFAP = 96; // Read INT flag status
-        readonly byte HT16K33_DIM = 0xE0; // Set brightness / dimmer
-        readonly byte HT16K33_DDAP = 0; //display address pointer
 
         /// <summary>
         ///     Create a new HT16K33 object using the default parameters
@@ -52,28 +46,28 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public void SetIsAwake(bool awake)
         {
-            byte value = (byte)(HT16K33_SS | (byte)(awake ? 1 : 0));
+            byte value = (byte)((byte)Register.HT16K33_SS | (byte)(awake ? 1 : 0));
 
             i2cPeripheral.Write(value);
         }
 
         public void SetDisplayOn(bool isOn)
         {
-            byte value = (byte)(HT16K33_DSP | (byte)(isOn ? 1 : 0));
+            byte value = (byte)((byte)Register.HT16K33_DSP | (byte)(isOn ? 1 : 0));
 
             i2cPeripheral.Write(value);
         }
 
         public void SetBlinkRate(BlinkRate blinkRate)
         {
-            byte value = (byte)(HT16K33_DSP | (byte)blinkRate);
+            byte value = (byte)((byte)Register.HT16K33_DSP | (byte)blinkRate);
 
             i2cPeripheral.Write(value);
         }
 
         public void SetBrightness(Brightness brightness)
         {
-            byte value = (byte)(HT16K33_DIM | (byte)brightness);
+            byte value = (byte)((byte)Register.HT16K33_DIM | (byte)brightness);
 
             i2cPeripheral.Write(value);
         }
@@ -81,14 +75,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public void ClearDisplay()
         {
             for (int i = 0; i < displayBuffer.Length; i++)
-                displayBuffer[i] = 0;
+                displayBuffer.Span[i] = 0;
 
             UpdateDisplay();
         }
 
         public void UpdateDisplay()
         {
-            i2cPeripheral.WriteRegisters(0x0, displayBuffer);
+            i2cPeripheral.WriteRegister(0x0, displayBuffer.Span);
         }
 
         public void SetLed(byte ledIndex, bool ledOn)
@@ -102,11 +96,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             if (ledOn)
             {
-                displayBuffer[index] = (byte)(displayBuffer[index] | (byte)(1 << (ledIndex % 8)));
+                displayBuffer.Span[index] = (byte)(displayBuffer.Span[index] | (byte)(1 << (ledIndex % 8)));
             }
             else
             {
-                displayBuffer[index] = (byte)(displayBuffer[index] & ~(byte)(1 << (ledIndex % 8)));
+                displayBuffer.Span[index] = (byte)(displayBuffer.Span[index] & ~(byte)(1 << (ledIndex % 8)));
             }
         }
 
@@ -114,7 +108,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             var index = ledIndex / 8;
 
-            displayBuffer[index] = (displayBuffer[index] ^= (byte)(1 << ledIndex % 8));
+            displayBuffer.Span[index] = (displayBuffer.Span[index] ^= (byte)(1 << ledIndex % 8));
         }
 
         public bool IsLedOn(int ledIndex)
@@ -123,7 +117,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             var index = ledIndex / 8;
 
             //untested
-            return displayBuffer[index] >> ledIndex != 0;
+            return displayBuffer.Span[index] >> ledIndex != 0;
         }
     }
 }

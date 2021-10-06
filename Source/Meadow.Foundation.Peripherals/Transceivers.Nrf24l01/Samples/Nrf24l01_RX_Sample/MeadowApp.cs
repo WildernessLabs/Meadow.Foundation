@@ -3,6 +3,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Transceivers;
 using Meadow.Hardware;
+using System;
 using System.Text;
 using System.Threading;
 
@@ -13,6 +14,8 @@ namespace Transceivers.Nrf24l01_RX_Sample
         RgbLed led;
         Nrf24l01 radio;
         string address = "00001";
+
+        Memory<byte> readBuffer;
 
         public MeadowApp()
         {
@@ -36,13 +39,11 @@ namespace Transceivers.Nrf24l01_RX_Sample
 
             led.SetColor(RgbLed.Colors.Green);
 
-            byte[] text = new byte[32];
-
             while (true)
             {
                 if (radio.IsAvailable())
                 {
-                    radio.Read(text, (byte) text.Length);
+                    readBuffer = radio.Read(32);
 
                     Thread.Sleep(1000);
                 }

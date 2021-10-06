@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Displays.ePaper
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             busyPort = device.CreateDigitalInputPort(busyPin);
 
-            spi = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(chipSelectPin));
+            spiPeripheral = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(chipSelectPin));
 
             blackImageBuffer = new byte[Width * Height / 8];
             colorImageBuffer = new byte[Width * Height / 8];

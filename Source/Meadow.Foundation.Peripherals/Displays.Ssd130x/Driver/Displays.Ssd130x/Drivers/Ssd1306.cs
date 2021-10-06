@@ -1,5 +1,4 @@
-﻿using System;
-using Meadow.Devices;
+﻿using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.Ssd130x
@@ -26,8 +25,8 @@ namespace Meadow.Foundation.Displays.Ssd130x
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false);
 
-            spi = spiBus;
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spi = spiBus;
 
             connectionType = ConnectionType.SPI;
 
@@ -64,29 +63,29 @@ namespace Meadow.Foundation.Displays.Ssd130x
                 case DisplayType.OLED128x64:
                     width = 128;
                     height = 64;
-                    SendCommands(oled128x64SetupSequence);
+                    SendCommands(Oled128x64SetupSequence);
                     break;
                 case DisplayType.OLED64x48:
                     width = 128;
                     height = 64;
                     xOffset = 32;
                     yOffset = 16;
-                    SendCommands(oled128x64SetupSequence);
+                    SendCommands(Oled128x64SetupSequence);
                     break;
                 case DisplayType.OLED72x40:
                     width = 72;
                     height = 40;
-                    SendCommands(oled72x40SetupSequence);
+                    SendCommands(Oled72x40SetupSequence);
                     break;
                 case DisplayType.OLED128x32:
                     width = 128;
                     height = 32;
-                    SendCommands(oled128x32SetupSequence);
+                    SendCommands(Oled128x32SetupSequence);
                     break;
                 case DisplayType.OLED96x16:
                     width = 96;
                     height = 16;
-                    SendCommands(oled96x16SetupSequence);
+                    SendCommands(Oled96x16SetupSequence);
                     break;
             }
 
@@ -94,12 +93,10 @@ namespace Meadow.Foundation.Displays.Ssd130x
             int bufferSize = width * height / 8;
             bufferSize += bufferSize % 16;
 
-            buffer = new byte[bufferSize];
-
-            if (connectionType == ConnectionType.SPI)
-            {
-                spiReceive = new byte[width * height / 8];
-            }
+            //create buffers
+            writeBuffer = new byte[bufferSize];
+            readBuffer = new byte[bufferSize];
+            commandBuffer = new byte[2];
 
             showPreamble = new byte[] { 0x21, 0x00, (byte)(width - 1), 0x22, 0x00, (byte)(height / 8 - 1) };
 

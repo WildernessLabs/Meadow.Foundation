@@ -13,27 +13,22 @@ namespace Meadow.Foundation.Displays
 
         public override int Height => 128;
 
-        protected ISpiBus spiBus;
         protected ISpiPeripheral spiPeripheral;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
         protected IDigitalOutputPort chipSelectPort;
 
-        protected readonly Memory<byte> spiWrite;
-        protected readonly Memory<byte> spiReceive;
-
-        protected int xMin, xMax, yMin, yMax;
+        protected readonly byte[] writeBuffer;
+        protected readonly byte[] readBuffer;
 
         protected const bool DataState = true;
         protected const bool CommandState = false;
 
         public Ssd1327(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
-            this.spiBus = spiBus;
-
-            spiWrite = new byte[Width * Height / 2]; 
-            spiReceive = new byte[Width * Height / 2];
+            writeBuffer = new byte[Width * Height / 2]; 
+            readBuffer = new byte[Width * Height / 2];
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }
@@ -67,8 +62,7 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = CommandState;
 
             spiPeripheral.Bus.Exchange(chipSelectPort,
-                init_128x128,
-                spiReceive.Span.Slice(0, init_128x128.Length));
+                init_128x128, readBuffer);
 
             Thread.Sleep(100);              // 100ms delay recommended
             SendCommand(Command.SSD1327_DISPLAYON); // 0xaf
@@ -77,23 +71,15 @@ namespace Meadow.Foundation.Displays
 
         public void FillBuffer()
         {
-            for (int i = 0; i < spiWrite.Length; i++)
+            for (int i = 0; i < writeBuffer.Length; i++)
             {
-                spiWrite.Span[i] = 0xFF;
+                writeBuffer[i] = 0xFF;
             }
         }
 
         public override void Clear(bool updateDisplay = false)
         {
-            for(int i = 0; i < spiWrite.Length; i++)
-            {
-                spiWrite.Span[i] = 0;
-            }
-
-            xMin = 0;
-            yMin = 0;
-            xMax = Width - 1;
-            yMax = Height - 1;
+            Array.Clear(writeBuffer, 0, writeBuffer.Length);
 
             if(updateDisplay == true)
             {
@@ -117,11 +103,11 @@ namespace Meadow.Foundation.Displays
 
             if ((x % 2) == 0)
             {   //even pixel - shift to the significant nibble
-                spiWrite.Span[index] = (byte)((spiWrite.Span[index] & 0x0f) | (gray << 4));
+                writeBuffer[index] = (byte)((writeBuffer[index] & 0x0f) | (gray << 4));
             }
             else
             {   //odd pixel
-                spiWrite.Span[index] = (byte)((spiWrite.Span[index] & 0xf0) | (gray));
+                writeBuffer[index] = (byte)((writeBuffer[index] & 0xf0) | (gray));
             }
         }
 
@@ -133,11 +119,11 @@ namespace Meadow.Foundation.Displays
 
             if ((x % 2) == 0)
             {   //even pixel - shift to the significant nibble
-                color = (byte)((spiWrite.Span[index] & 0x0f) >> 4);
+                color = (byte)((writeBuffer[index] & 0x0f) >> 4);
             }
             else
             {   //odd pixel
-                color = (byte)((spiWrite.Span[index] & 0xf0));
+                color = (byte)((writeBuffer[index] & 0xf0));
             }
 
             color = (byte)((color = (byte)~color) & 0x0f);
@@ -157,9 +143,8 @@ namespace Meadow.Foundation.Displays
             SetAddressWindow(0, 0, 127, 127);
 
             dataCommandPort.State = DataState;
-            spiBus.Exchange(chipSelectPort,
-                spiWrite.Span,
-                spiReceive.Span);
+
+            spiPeripheral.Exchange(writeBuffer, readBuffer);
         }
 
         void SetAddressWindow(byte x0, byte y0, byte x1, byte y1)
@@ -173,16 +158,6 @@ namespace Meadow.Foundation.Displays
             SendCommand(y1); //End
         }
 
-        protected void Write(byte value)
-        {
-            spiPeripheral.Write(value);
-        }
-
-        protected void Write(byte[] data)
-        {
-            spiPeripheral.WriteBytes(data);
-        }
-
         protected void SendCommand(Command command)
         {
             SendCommand((byte)command);
@@ -191,7 +166,7 @@ namespace Meadow.Foundation.Displays
         protected void SendCommand(byte command)
         {
             dataCommandPort.State = CommandState;
-            Write(command);
+            spiPeripheral.Write(command);
         }
 
         protected void SendData(int data)
@@ -202,16 +177,14 @@ namespace Meadow.Foundation.Displays
         protected void SendData(byte data)
         {
             dataCommandPort.State = DataState;
-            Write(data);
+            spiPeripheral.Write(data);
         }
 
         protected void SendData(byte[] data)
         {
             dataCommandPort.State = DataState;
-            spiPeripheral.WriteBytes(data);
+            spiPeripheral.Write(data);
         }
-
-        
 
         // Init sequence, make sure its under 32 bytes, or split into multiples
         byte[] init_128x128 = {

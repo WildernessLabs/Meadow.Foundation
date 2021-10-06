@@ -61,7 +61,7 @@ namespace Meadow.Foundation.RTCs
             data.Add(0); // target start register offset
             data.AddRange(ToRTCTime(time));
 
-            i2cBus.WriteData((byte)Addresses.Default, data.ToArray());
+            i2cBus.Write((byte)Addresses.Default, data.ToArray());
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Meadow.Foundation.RTCs
             d.Add((byte)(0x08 + offset)); // target start register offset
             d.AddRange(data);
 
-            i2cBus.WriteData((byte)Addresses.Default, d.ToArray());
+            i2cBus.Write((byte)Addresses.Default, d.ToArray());
         }
 
         public void SquareWaveOutput(SquareWaveFrequency freq)
