@@ -4,11 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Foundation.Web.Maple.Server.Routing;
 
 namespace Meadow.Foundation.Web.Maple.Server
 {
@@ -24,6 +22,7 @@ namespace Meadow.Foundation.Web.Maple.Server
 
         private Dictionary<Type, IRequestHandler> _handlerCache = new Dictionary<Type, IRequestHandler>();
         private readonly HttpListener _httpListener = new HttpListener();
+        private ErrorPageGenerator ErrorPageGenerator { get; }
 
         public ILogger Logger { get; }
         public IPAddress IPAddress { get; private set; }
@@ -84,6 +83,7 @@ namespace Meadow.Foundation.Web.Maple.Server
         {
             Logger =  logger ?? new ConsoleLogger();
             MethodCache = new RequestMethodCache(Logger);
+            ErrorPageGenerator = new ErrorPageGenerator();
 
             Create(ipAddress, port, advertise, processMode);
         }
@@ -167,16 +167,6 @@ namespace Meadow.Foundation.Web.Maple.Server
         {
             Running = false;
         }
-
-        //public void AddHandler(IRequestHandler handler)
-        //{
-        //    requestHandlers.Add(handler);
-        //}
-
-        //public void RemoveHandler(IRequestHandler handler)
-        //{
-        //    requestHandlers.Remove(handler);
-        //}
 
         /// <summary>
         /// Begins advertising the server name and IP via UDP.
@@ -294,18 +284,6 @@ namespace Meadow.Foundation.Web.Maple.Server
             });
         }
 
-        public virtual async Task Return404(HttpListenerContext context)
-        {
-            // TODO: potentially load content from a file?
-            byte[] data = Encoding.UTF8.GetBytes("<head><body>404. Not found.</body><head>");
-            context.Response.ContentType = "text/html";
-            context.Response.ContentEncoding = Encoding.UTF8;
-            context.Response.ContentLength64 = data.LongLength;
-            context.Response.StatusCode = 404;
-            await context.Response.OutputStream.WriteAsync(data, 0, data.Length);
-            context.Response.Close();
-        }
-
         private IRequestHandler GetHandlerInstance(Type handlerType, out bool shouldDispose)
         {
             IRequestHandler target;
@@ -348,7 +326,7 @@ namespace Meadow.Foundation.Web.Maple.Server
                 if (handlerInfo == null)
                 {
                     Logger?.Info("No handler found");
-                    await Return404(context);
+                    await ErrorPageGenerator.SendErrorPage(context, 404, "Not Found");
                     return;
                 }
                 else
@@ -378,12 +356,13 @@ namespace Meadow.Foundation.Web.Maple.Server
                         {
                             handlerInfo.Method.Invoke(handlerInstance, paramObjects);
                         }
+
+                        context.Response.Close();
                     }
                     catch (Exception ex)
                     {
                         Logger?.Error(ex.Message);
-                        context.Response.StatusCode = 500;
-                        context.Response.Close();
+                        await ErrorPageGenerator.SendErrorPage(context, 500, ex);
                     }
 
                     // if the handler is not reusable, clean up
