@@ -137,7 +137,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">Color of pixel.</param>
         public void DrawPixel (int x, int y, Color color)
         {
-            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), color);
+            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor = color);
         }
 
         private bool IsPixelInBounds(int x, int y)
@@ -774,23 +774,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default).</param>
         public void DrawRectangle(int x, int y, int width, int height, bool colored = true, bool filled = false)
         {
-            width--;
-            height--;
-
-            if (filled)
-            {
-                for (var i = 0; i <= height; i++)
-                {
-                    DrawLine(x, y + i, x + width, y + i, colored);
-                }
-            }
-            else
-            {
-                DrawLine(x, y, x + width, y, colored);
-                DrawLine(x + width, y, x + width, y + height, colored);
-                DrawLine(x + width, y + height, x, y + height, colored);
-                DrawLine(x, y, x, y + height, colored);
-            }
+            DrawRectangle(x, y, width, height, colored ? Color.White : Color.Black, filled);
         }
 
         /// <summary>
@@ -842,8 +826,6 @@ namespace Meadow.Foundation.Graphics
                 DrawRectangle(x, y, width, height, color, filled);
                 return;
             }
-
-            PenColor = color;
 
             if (filled)
             {

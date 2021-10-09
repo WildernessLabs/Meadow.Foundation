@@ -22,8 +22,8 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected ISpiBus spi;
         protected ISpiPeripheral spiDisplay;
 
-        protected Memory<byte> spiWriteBuffer;
-        protected Memory<byte> spiReadBuffer;
+        protected Memory<byte> writeBuffer;
+        protected Memory<byte> readBuffer;
 
         protected int width;
         protected int height;
@@ -73,13 +73,13 @@ namespace Meadow.Foundation.Displays.TftSpi
 
             if (mode == DisplayColorMode.Format16bppRgb565)
             {
-                spiWriteBuffer = new byte[width * height * sizeof(ushort)];
-                spiReadBuffer = new byte[width * height * sizeof(ushort)];
+                writeBuffer = new byte[width * height * sizeof(ushort)];
+                readBuffer = new byte[width * height * sizeof(ushort)];
             }
             else //Rgb444
             {
-                spiWriteBuffer = new byte[width * height * 3 / 2];
-                spiReadBuffer = new byte[width * height * 3 / 2];
+                writeBuffer = new byte[width * height * 3 / 2];
+                readBuffer = new byte[width * height * 3 / 2];
             }
             colorMode = mode;
         }
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         public override void Clear(bool updateDisplay = false)
         {
             //Array.Clear(spiBuffer, 0, spiBuffer.Length);
-            spiWriteBuffer.Span.Clear();
+            writeBuffer.Span.Clear();
 
             if (updateDisplay) { Show(); }
         }
@@ -185,7 +185,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             //get current color
             var index = ((y * width) + x) * sizeof(ushort);
 
-            ushort color = (ushort)(spiWriteBuffer.Span[index] << 8| spiWriteBuffer.Span[++index]);
+            ushort color = (ushort)(writeBuffer.Span[index] << 8| writeBuffer.Span[++index]);
 
             //split into R,G,B & invert
             byte r = (byte)(0x1F - ((color >> 11) & 0x1F));
@@ -206,16 +206,16 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 index = (int)((x + y * Width) * 3 / 2);
 
-                r = (byte)(spiWriteBuffer.Span[index] >> 4);
-                g = (byte)(spiWriteBuffer.Span[index] & 0x0F);
-                b = (byte)(spiWriteBuffer.Span[index + 1] >> 4);
+                r = (byte)(writeBuffer.Span[index] >> 4);
+                g = (byte)(writeBuffer.Span[index] & 0x0F);
+                b = (byte)(writeBuffer.Span[index + 1] >> 4);
             }
             else
             {
                 index = (int)((x - 1 + y * Width) * 3 / 2) + 1;
-                r = (byte)(spiWriteBuffer.Span[index] & 0x0F);
-                g = (byte)(spiWriteBuffer.Span[index + 1] >> 4);
-                b = (byte)(spiWriteBuffer.Span[index + 1] & 0x0F);
+                r = (byte)(writeBuffer.Span[index] & 0x0F);
+                g = (byte)(writeBuffer.Span[index + 1] >> 4);
+                b = (byte)(writeBuffer.Span[index + 1] & 0x0F);
             }
 
             r = (byte)(~r & 0x0F);
@@ -238,8 +238,8 @@ namespace Meadow.Foundation.Displays.TftSpi
         {
             var index = ((y * width) + x) * sizeof(ushort);
 
-            spiWriteBuffer.Span[index] = (byte)(color >> 8);
-            spiWriteBuffer.Span[++index] = (byte)(color);
+            writeBuffer.Span[index] = (byte)(color >> 8);
+            writeBuffer.Span[++index] = (byte)(color);
         }
 
         private void SetPixel(int x, int y, ushort color)
@@ -272,17 +272,17 @@ namespace Meadow.Foundation.Displays.TftSpi
                 //1st byte RRRRGGGG
                 //2nd byte BBBB
                 index = (int)((x + y * Width) * 3 / 2);
-                spiWriteBuffer.Span[index] = (byte)(color >> 4); //think this is correct - grab the r & g values
+                writeBuffer.Span[index] = (byte)(color >> 4); //think this is correct - grab the r & g values
                 index++;
-                spiWriteBuffer.Span[index] = (byte)((spiWriteBuffer.Span[index] & 0x0F) | (color << 4));
+                writeBuffer.Span[index] = (byte)((writeBuffer.Span[index] & 0x0F) | (color << 4));
             }
             else 
             {
                 //1st byte     RRRR
                 //2nd byte GGGGBBBB
                 index = ((x - 1 + y * Width) * 3 / 2) + 1;
-                spiWriteBuffer.Span[index] = (byte)((spiWriteBuffer.Span[index] & 0xF0) | (color >> 8));
-                spiWriteBuffer.Span[++index] = (byte)color; //just the lower 8 bits
+                writeBuffer.Span[index] = (byte)((writeBuffer.Span[index] & 0xF0) | (color >> 8));
+                writeBuffer.Span[++index] = (byte)color; //just the lower 8 bits
             }
         }
 
@@ -314,7 +314,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             }
 
             dataCommandPort.State = Data;
-            spi.Exchange(chipSelectPort, spiWriteBuffer.Span, spiReadBuffer.Span);
+            spi.Exchange(chipSelectPort, writeBuffer.Span, readBuffer.Span);
 
           /*  xMin = width;
             yMin = height;
@@ -350,7 +350,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 sourceIndex = ((y * width) + left) * sizeof(ushort);
 
-                spi.Exchange(chipSelectPort, spiWriteBuffer.Span.Slice(sourceIndex, len), spiReadBuffer.Span.Slice(sourceIndex, len));
+                spi.Exchange(chipSelectPort, writeBuffer.Span.Slice(sourceIndex, len), readBuffer.Span.Slice(sourceIndex, len));
             }
         }
 
@@ -436,10 +436,10 @@ namespace Meadow.Foundation.Displays.TftSpi
             var low = (byte)color;
 
             int index = 0;
-            while (index < spiWriteBuffer.Length)
+            while (index < writeBuffer.Length)
             {
-                spiWriteBuffer.Span[index] = high;
-                spiWriteBuffer.Span[index + 1] = low;
+                writeBuffer.Span[index] = high;
+                writeBuffer.Span[index + 1] = low;
                 index += 2;
             }
         }

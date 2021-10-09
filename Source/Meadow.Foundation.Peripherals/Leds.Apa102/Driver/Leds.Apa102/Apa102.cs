@@ -9,17 +9,6 @@ namespace Meadow.Foundation.Leds
     /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_DotStar/blob/master/adafruit_dotstar.py </remarks>
     public partial class Apa102
     {
-        //ToDo this could probably move into Meadow.Foundation.Core
-        public enum PixelOrder
-        {
-            RGB,
-            RBG,
-            GRB,
-            GBR,
-            BRG,
-            BGR
-        }
-
         protected ISpiPeripheral spiPeripheral;
 
         const short StartHeaderSize = 4;
@@ -198,7 +187,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public override void Show()
         {
-            spiPeripheral.WriteBytes(buffer);
+            spiPeripheral.Write(buffer);
         }
 
         public override void Show(int left, int top, int right, int bottom)

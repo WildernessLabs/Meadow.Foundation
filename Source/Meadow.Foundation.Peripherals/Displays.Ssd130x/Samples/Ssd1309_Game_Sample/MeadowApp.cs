@@ -37,6 +37,8 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
         void StartBreakoutLoop()
         {
+            Console.WriteLine("Start breakout");
+
             while (true)
             {
                 breakoutGame.Update();
@@ -97,7 +99,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
             Console.WriteLine("Create Display with SPI...");
 
-            var config = new Meadow.Hardware.SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode0);
+            var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode0);
 
             var bus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
@@ -131,16 +133,18 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
             portLeft.Changed += PortLeft_Changed;
             portUp.Changed += PortUp_Changed;
             portDown.Changed += PortDown_Changed;
-        
-           /*     btnUp = new PushButton(Device, Device.Pins.D13);
-                btnLeft = new PushButton(Device, Device.Pins.D12);
-                btnDown = new PushButton(Device, Device.Pins.D11);
-                btnRight = new PushButton(Device, Device.Pins.D10);
 
-                btnUp.Clicked += BtnUp_Clicked;
-                btnLeft.Clicked += BtnLeft_Clicked;
-                btnDown.Clicked += BtnDown_Clicked;
-                btnRight.Clicked += BtnRight_Clicked;  */
+            /*     btnUp = new PushButton(Device, Device.Pins.D13);
+                 btnLeft = new PushButton(Device, Device.Pins.D12);
+                 btnDown = new PushButton(Device, Device.Pins.D11);
+                 btnRight = new PushButton(Device, Device.Pins.D10);
+
+                 btnUp.Clicked += BtnUp_Clicked;
+                 btnLeft.Clicked += BtnLeft_Clicked;
+                 btnDown.Clicked += BtnDown_Clicked;
+                 btnRight.Clicked += BtnRight_Clicked;  */
+
+            Console.WriteLine("Initialize complete");
 
         }
 

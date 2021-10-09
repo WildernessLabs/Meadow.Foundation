@@ -24,6 +24,9 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// </summary>
         private readonly ushort _memorySize;
 
+        Memory<byte> readBuffer;
+        Memory<byte> writeBuffer;
+
         /// <summary>
         ///     Create a new AT24Cxx object using the default parameters for the component.
         /// </summary>
@@ -39,6 +42,9 @@ namespace Meadow.Foundation.ICs.EEPROM
             _eeprom = device;
             _pageSize = pageSize;
             _memorySize = memorySize;
+
+            readBuffer = new byte[3];
+            writeBuffer = new byte[3];
         }
 
         /// <summary>
@@ -69,11 +75,16 @@ namespace Meadow.Foundation.ICs.EEPROM
         public byte[] Read(ushort startAddress, ushort amount)
         {
             CheckAddress(startAddress, amount);
-            var address = new byte[2];
-            address[0] = (byte) ((startAddress >> 8) & 0xff);
-            address[1] = (byte) (startAddress & 0xff);
-            _eeprom.WriteBytes(address);
-            return _eeprom.ReadBytes(amount);
+            Span<byte> data = writeBuffer.Span[0..1];
+            data[0] = (byte) ((startAddress >> 8) & 0xff);
+            data[1] = (byte) (startAddress & 0xff);
+
+            var results = new byte[amount];
+
+            _eeprom.Write(data);
+            _eeprom.Read(results);
+
+            return data.ToArray();
         }
 
         /// <summary>
@@ -94,7 +105,7 @@ namespace Meadow.Foundation.ICs.EEPROM
                 addressAndData[0] = (byte) ((address >> 8) & 0xff);
                 addressAndData[1] = (byte) (address & 0xff);
                 addressAndData[2] = data[index];
-                _eeprom.WriteBytes(addressAndData);
+                _eeprom.Write(addressAndData);
                 Thread.Sleep(10);
             }
         }

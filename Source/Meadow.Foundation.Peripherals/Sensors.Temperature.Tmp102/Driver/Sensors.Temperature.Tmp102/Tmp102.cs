@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                     ReadBuffer.Span[1] |= 0x10;
                 }
                 // @CTACKE: is there a better way here? do we need a WriteRegisters that takes a Span<byte>?
-                Peripheral.WriteRegisters(0x01, ReadBuffer.Span.ToArray());
+                Peripheral.WriteRegister(0x01, ReadBuffer.Span);
                 _sensorResolution = value;
             }
         }
