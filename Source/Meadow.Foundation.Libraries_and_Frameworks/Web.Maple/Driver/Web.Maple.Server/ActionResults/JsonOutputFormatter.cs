@@ -6,7 +6,8 @@ namespace Meadow.Foundation.Web.Maple.Server
     {
         public byte[] FormatContent(object content)
         {
-            var json = SimpleJsonSerializer.JsonSerializer.SerializeObject(content);
+            // TODO: creating the strategy on every call seems like bad form
+            var json = SimpleJson.SimpleJson.SerializeObject(content, new MapleSerializationStrategy());
             return Encoding.UTF8.GetBytes(json);
         }
     }

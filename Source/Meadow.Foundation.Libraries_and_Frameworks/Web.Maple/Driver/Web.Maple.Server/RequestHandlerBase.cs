@@ -113,7 +113,8 @@ namespace Meadow.Foundation.Web.Maple.Server
         {
             if (Context.Response.ContentType == ContentTypes.Application_Json)
             {
-                var json = SimpleJsonSerializer.JsonSerializer.SerializeObject(output);
+                // TODO: creating the strategy on every call seems like bad form
+                var json = SimpleJson.SimpleJson.SerializeObject(output, new MapleSerializationStrategy());
                 await WriteOutputStream(Encoding.UTF8.GetBytes(json));
             }
             else

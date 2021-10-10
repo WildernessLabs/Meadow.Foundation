@@ -1,19 +1,26 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Web.Maple.Server
 {
+    internal class MapleSerializationStrategy : SimpleJson.PocoJsonSerializerStrategy
+    {
+        protected override object SerializeEnum(Enum p)
+        {
+            return p.ToString();
+        }
+    }
+
     public class JsonResult : ActionResult
     {
         public int? StatusCode { get; set; }
         public object Value { get; set; }
-        public SimpleJsonSerializer.DateTimeFormat DateTimeFormat { get; }
-
-        public JsonResult(object value, SimpleJsonSerializer.DateTimeFormat dateTimeFormat = SimpleJsonSerializer.DateTimeFormat.Default)
+        
+        public JsonResult(object value)
         {
             Value = value;
-            DateTimeFormat = dateTimeFormat;
         }
 
         public override void ExecuteResult(HttpListenerContext context)
@@ -26,7 +33,8 @@ namespace Meadow.Foundation.Web.Maple.Server
             context.Response.StatusCode = StatusCode ?? 200;
             context.Response.ContentType = ContentTypes.Application_Json;
 
-            var json = SimpleJsonSerializer.JsonSerializer.SerializeObject(Value, DateTimeFormat);
+            // TODO: creating the strategy on every call seems like bad form
+            var json = SimpleJson.SimpleJson.SerializeObject(Value, new MapleSerializationStrategy());
             var binaryContent = Encoding.UTF8.GetBytes(json);
             await WriteOutputStream(context, binaryContent);
         }

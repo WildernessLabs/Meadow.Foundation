@@ -19,14 +19,15 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="ActionResults\" />
+    <None Remove="SimpleJson" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SimpleJsonSerializer" Version="0.0.2" />
+    <Folder Include="ActionResults\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ActionResults\" />
+    <PackageReference Include="SimpleJson" Version="0.38.0" />
   </ItemGroup>
 </Project>
