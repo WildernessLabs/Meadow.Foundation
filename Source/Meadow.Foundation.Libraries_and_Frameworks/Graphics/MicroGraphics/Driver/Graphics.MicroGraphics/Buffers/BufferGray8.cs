@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation;
+﻿using System;
+using Meadow.Foundation;
 using Meadow.Foundation.Graphics;
 
 namespace MicroGraphics.Buffers
@@ -42,6 +43,11 @@ namespace MicroGraphics.Buffers
         public void SetPixel(int x, int y, Color color)
         {
             SetPixel(x, y, color.Color8bppGray);
+        }
+
+        public void Clear()
+        {
+            Array.Clear(Buffer, 0, Buffer.Length);
         }
     }
 }

@@ -161,7 +161,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void Show(int left, int top, int right, int bottom)
         {
-            SetPartialWindow(blackImageBuffer, colorImageBuffer,
+            SetPartialWindow(blackImageBuffer.Buffer, colorImageBuffer.Buffer,
                 left, top, right - left, top - bottom);
 
             DisplayFrame();
@@ -169,7 +169,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void Show()
         {
-            DisplayFrame(blackImageBuffer, colorImageBuffer);
+            DisplayFrame(blackImageBuffer.Buffer, colorImageBuffer.Buffer);
         }
 
         //clear the frame data from the SRAM, this doesn't update the display

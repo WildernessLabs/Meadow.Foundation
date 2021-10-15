@@ -1,6 +1,7 @@
 using System;
 using Meadow.Devices;
 using Meadow.Hardware;
+using MicroGraphics.Buffers;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
@@ -14,14 +15,11 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override DisplayColorMode ColorMode => DisplayColorMode.Format2bpp;
 
-        protected readonly byte[] blackImageBuffer;
-        protected readonly byte[] colorImageBuffer;
+        protected readonly Buffer1 blackImageBuffer;
+        protected readonly Buffer1 colorImageBuffer;
 
-        public override int Width => width;
-        public override int Height => height;
-
-        int width;
-        int height;
+        public override int Width => blackImageBuffer.Width;
+        public override int Height => blackImageBuffer.Height;
 
         private EpdColorBase()
         { }
@@ -29,23 +27,17 @@ namespace Meadow.Foundation.Displays.ePaper
         public EpdColorBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height)
         {
-            this.width = width;
-            this.height = height;
-
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             busyPort = device.CreateDigitalInputPort(busyPin);
 
             spiPeripheral = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(chipSelectPin));
 
-            blackImageBuffer = new byte[Width * Height / 8];
-            colorImageBuffer = new byte[Width * Height / 8];
+            blackImageBuffer = new Buffer1(width, height);
+            colorImageBuffer = new Buffer1(width, height);
 
-            for (int i = 0; i < blackImageBuffer.Length; i++)
-            {
-                blackImageBuffer[i] = 0xFF;
-                colorImageBuffer[i] = 0xFF;
-            }
+            blackImageBuffer.Clear(true);
+            colorImageBuffer.Clear(true);
 
             Initialize();
         }
@@ -68,15 +60,8 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public void Clear(bool colored, bool updateDisplay = false)
         {
-            //   ClearFrameMemory((byte)(colored ? 0 : 0xFF));
-            //   DisplayFrame();
-
-            for (int i = 0; i < blackImageBuffer.Length; i++)
-            {
-                blackImageBuffer[i] = colored ? (byte)0 : (byte)255;
-
-                colorImageBuffer[i] = IsColorInverted ? (byte)0 : (byte)255;//first val should be 0
-            }
+            blackImageBuffer.Clear(IsBlackInverted);
+            colorImageBuffer.Clear(IsColorInverted);
 
             if (updateDisplay)
             {
@@ -86,28 +71,29 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void DrawPixel(int x, int y, bool colored)
         {
+            //could move this to the buffer
             if (colored)
             {   //0x80 = 128 = 0b_10000000
-                blackImageBuffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
+                blackImageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
             }
             else
             {
-                blackImageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
+                blackImageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
             }
 
             if (IsColorInverted)
             {
-                colorImageBuffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
+                colorImageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
             }
             else
             {
-                colorImageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
+                colorImageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
             }
         }
 
         public override void InvertPixel(int x, int y)
         {
-            blackImageBuffer[(x + y * Width) / 8] ^= (byte)~(0x80 >> (x % 8));
+            blackImageBuffer.Buffer[(x + y * Width) / 8] ^= (byte)~(0x80 >> (x % 8));
         }
 
         public void DrawColoredPixel(int x, int y, bool colored)
@@ -115,13 +101,13 @@ namespace Meadow.Foundation.Displays.ePaper
             if ((colored && !IsColorInverted) ||
                 (!colored && IsColorInverted))
             {
-                colorImageBuffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
+                colorImageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
             }
             else
             {
-                colorImageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
+                colorImageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
             }
-            blackImageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
+            blackImageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
         }
 
         public override void DrawPixel(int x, int y, Color color)

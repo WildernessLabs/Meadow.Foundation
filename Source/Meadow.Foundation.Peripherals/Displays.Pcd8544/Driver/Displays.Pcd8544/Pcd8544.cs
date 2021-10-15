@@ -1,5 +1,6 @@
 using Meadow.Devices;
 using Meadow.Hardware;
+using MicroGraphics.Buffers;
 using System;
 
 namespace Meadow.Foundation.Displays
@@ -21,15 +22,14 @@ namespace Meadow.Foundation.Displays
         protected IDigitalOutputPort chipSelectPort;
         protected ISpiPeripheral spiDisplay;
 
-        protected byte[] writeBuffer;
-        protected byte[] readBuffer;
+        protected Buffer1 imageBuffer;
+
         protected Memory<byte> commandBuffer;
 
         public Pcd8544(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
-            writeBuffer = new byte[Width * Height / 8];
-            readBuffer = new byte[Width * Height / 8];
-            commandBuffer = new byte[1];
+            imageBuffer = new Buffer1(Width, Height);
+            commandBuffer = new byte[7];
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, true);
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
@@ -47,15 +47,15 @@ namespace Meadow.Foundation.Displays
 
             dataCommandPort.State = false;
 
-            writeBuffer[0] = 0x21;
-            writeBuffer[1] = 0xBF;
-            writeBuffer[2] = 0x04;
-            writeBuffer[3] = 0x14;
-            writeBuffer[4] = 0x0D;
-            writeBuffer[5] = 0x20;
-            writeBuffer[6] = 0x0C;
+            commandBuffer.Span[0] = 0x21;
+            commandBuffer.Span[1] = 0xBF;
+            commandBuffer.Span[2] = 0x04;
+            commandBuffer.Span[3] = 0x14;
+            commandBuffer.Span[4] = 0x0D;
+            commandBuffer.Span[5] = 0x20;
+            commandBuffer.Span[6] = 0x0C;
 
-            spiDisplay.Exchange(writeBuffer[0..6], readBuffer[0..6]);
+            spiDisplay.Write(commandBuffer.Span[0..6]);
 
             dataCommandPort.State = true;
 
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="updateDisplay">If true, it will force a display update</param>
         public override void Clear(bool updateDisplay = false)
         {
-            Array.Clear(writeBuffer, 0, writeBuffer.Length);
+            Array.Clear(imageBuffer.Buffer, 0, imageBuffer.ByteCount);
 
             if (updateDisplay)
             {
@@ -88,33 +88,12 @@ namespace Meadow.Foundation.Displays
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
         public override void DrawPixel(int x, int y, bool colored)
         {
-            if (x < 0 || x >= Width || y < 0 || y >= Height)
-            { return; } // out of the range! return true to indicate failure.
-
-            ushort index = (ushort)((x % 84) + (int)(y * 0.125) * 84);
-
-            byte bitMask = (byte)(1 << (y % 8));
-
-            if (colored)
-            {
-                writeBuffer[index] |= bitMask;
-            }
-            else
-            {
-                writeBuffer[index] &= (byte)~bitMask;
-            }
+            imageBuffer.SetPixel(x, y, colored);
         }
 
         public override void InvertPixel(int x, int y)
         {
-            if (x < 0 || x >= Width || y < 0 || y >= Height)
-            { return; } // out of the range! return true to indicate failure.
-
-            ushort index = (ushort)((x % 84) + (int)(y * 0.125) * 84);
-
-            byte bitMask = (byte)(1 << (y % 8));
-
-            writeBuffer[index] = (writeBuffer[index] ^= bitMask);
+            imageBuffer.SetPixel(x, y, !imageBuffer.GetPixelBool(x, y));
         }
 
         /// <summary>
@@ -130,7 +109,7 @@ namespace Meadow.Foundation.Displays
 
         public override void Show()
         {
-            spiDisplay.Exchange(writeBuffer, readBuffer);
+            spiDisplay.Write(imageBuffer.Buffer);
         }
 
         public override void Show(int left, int top, int right, int bottom)
@@ -145,8 +124,8 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = false;
             commandBuffer.Span[0] = inverse ? (byte)0x0D : (byte)0x0C;
 
-            spiDisplay.Exchange(commandBuffer.Span, readBuffer[0..0]);
-            dataCommandPort.State = (true);
+            spiDisplay.Write(commandBuffer.Span[0]);
+            dataCommandPort.State = true;
         }
     }
 }

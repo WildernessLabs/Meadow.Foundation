@@ -17,11 +17,11 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         protected override void Initialize()
         {
-            resetPort.State = (true);
+            resetPort.State = true;
             Thread.Sleep(50);
-            resetPort.State = (false);
+            resetPort.State = false;
             Thread.Sleep(50);
-            resetPort.State = (true);
+            resetPort.State = true;
             Thread.Sleep(50);
 
             SendCommand(0xEF, new byte[] { 0x03, 0x80, 0x02 });
@@ -56,7 +56,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             Thread.Sleep(120);
             SendCommand(ILI9341_DISPON, null);
 
-            SetAddressWindow(0, 0, width - 1,  height - 1);
+            SetAddressWindow(0, 0, Width - 1,  Height - 1);
 
             dataCommandPort.State = (Data);
         }
@@ -77,18 +77,18 @@ namespace Meadow.Foundation.Displays.TftSpi
             Write((byte)(y1 >> 8));
             Write((byte)(y1 & 0xff));    // YEND
 
-            dataCommandPort.State = (Command);
+            dataCommandPort.State = Command;
             Write((byte)LcdCommand.RAMWR);  // write to RAM */
         }
 
         void SendCommand(byte command, byte[] data)
         {
-            dataCommandPort.State = (Command);
+            dataCommandPort.State = Command;
             Write(command);
 
             if (data != null)
             {
-                dataCommandPort.State = (Data);
+                dataCommandPort.State = Data;
                 Write(data);
             }
         }

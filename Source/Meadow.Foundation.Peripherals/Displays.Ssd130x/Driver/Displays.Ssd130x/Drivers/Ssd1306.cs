@@ -1,5 +1,6 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
+using MicroGraphics.Buffers;
 
 namespace Meadow.Foundation.Displays.Ssd130x
 {
@@ -26,7 +27,6 @@ namespace Meadow.Foundation.Displays.Ssd130x
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false);
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
-            spi = spiBus;
 
             connectionType = ConnectionType.SPI;
 
@@ -58,6 +58,8 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
         private void InitSSD1306(DisplayType displayType)
         {
+            int width = 0, height = 0, xOffset, yOffset;
+
             switch (displayType)
             {
                 case DisplayType.OLED128x64:
@@ -89,13 +91,9 @@ namespace Meadow.Foundation.Displays.Ssd130x
                     break;
             }
 
-            //align buffer to PAGE_SIZE
-            int bufferSize = width * height / 8;
-            bufferSize += bufferSize % 16;
-
             //create buffers
-            writeBuffer = new byte[bufferSize];
-            readBuffer = new byte[bufferSize];
+            imageBuffer = new Buffer1(width, height, 16);
+
             commandBuffer = new byte[2];
 
             showPreamble = new byte[] { 0x21, 0x00, (byte)(width - 1), 0x22, 0x00, (byte)(height / 8 - 1) };

@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation;
+﻿using System;
+using Meadow.Foundation;
 using Meadow.Foundation.Graphics;
 
 namespace MicroGraphics.Buffers
@@ -20,6 +21,17 @@ namespace MicroGraphics.Buffers
 
             Width = width;
             Height = height;
+        }
+
+        public Buffer1(int width, int height, int pageSize)
+        {
+            Width = width;
+            Height = height;
+
+            int bufferSize = width * height / 8;
+            bufferSize += bufferSize % pageSize;
+
+            Buffer = new byte[bufferSize];
         }
 
         public bool GetPixelBool(int x, int y)
@@ -51,6 +63,20 @@ namespace MicroGraphics.Buffers
         public void SetPixel(int x, int y, Color color)
         {
             SetPixel(x, y, color.Color1bpp);
+        }
+
+        public void Clear(bool colored)
+        {
+            for (int i = 0; i < ByteCount; i++)
+            {
+                Buffer[i] = (byte)(colored ? 0xFF : 0);
+                Buffer[i] = (byte)(colored ? 0xFF : 0);
+            }
+        }
+
+        public void Clear()
+        {
+            Array.Clear(Buffer, 0, Buffer.Length);
         }
     }
 }

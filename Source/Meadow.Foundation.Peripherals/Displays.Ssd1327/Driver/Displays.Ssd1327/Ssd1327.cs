@@ -2,6 +2,7 @@
 using System.Threading;
 using Meadow.Devices;
 using Meadow.Hardware;
+using MicroGraphics.Buffers;
 
 namespace Meadow.Foundation.Displays
 {
@@ -19,16 +20,14 @@ namespace Meadow.Foundation.Displays
         protected IDigitalOutputPort resetPort;
         protected IDigitalOutputPort chipSelectPort;
 
-        protected readonly byte[] writeBuffer;
-        protected readonly byte[] readBuffer;
+        protected readonly BufferGray4 imageBuffer;
 
         protected const bool DataState = true;
         protected const bool CommandState = false;
 
         public Ssd1327(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
-            writeBuffer = new byte[Width * Height / 2]; 
-            readBuffer = new byte[Width * Height / 2];
+            imageBuffer = new BufferGray4(Width, Height);
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }
@@ -61,8 +60,7 @@ namespace Meadow.Foundation.Displays
 
             dataCommandPort.State = CommandState;
 
-            spiPeripheral.Bus.Exchange(chipSelectPort,
-                init_128x128, readBuffer);
+            spiPeripheral.Write(init128x128);
 
             Thread.Sleep(100);              // 100ms delay recommended
             SendCommand(Command.SSD1327_DISPLAYON); // 0xaf
@@ -71,15 +69,15 @@ namespace Meadow.Foundation.Displays
 
         public void FillBuffer()
         {
-            for (int i = 0; i < writeBuffer.Length; i++)
+            for (int i = 0; i < imageBuffer.ByteCount; i++)
             {
-                writeBuffer[i] = 0xFF;
+                imageBuffer.Buffer[i] = 0xFF;
             }
         }
 
         public override void Clear(bool updateDisplay = false)
         {
-            Array.Clear(writeBuffer, 0, writeBuffer.Length);
+            Array.Clear(imageBuffer.Buffer, 0, imageBuffer.ByteCount);
 
             if(updateDisplay == true)
             {
@@ -99,34 +97,16 @@ namespace Meadow.Foundation.Displays
 
         public void DrawPixel(int x, int y, byte gray)
         {
-            int index = GetBufferLocation(x, y);
-
-            if ((x % 2) == 0)
-            {   //even pixel - shift to the significant nibble
-                writeBuffer[index] = (byte)((writeBuffer[index] & 0x0f) | (gray << 4));
-            }
-            else
-            {   //odd pixel
-                writeBuffer[index] = (byte)((writeBuffer[index] & 0xf0) | (gray));
-            }
+            imageBuffer.SetPixel(x, y, gray);
         }
 
         public override void InvertPixel(int x, int y)
         {
             int index = GetBufferLocation(x, y);
 
-            byte color;
+            byte color = imageBuffer.GetPixelByte(x, y);
 
-            if ((x % 2) == 0)
-            {   //even pixel - shift to the significant nibble
-                color = (byte)((writeBuffer[index] & 0x0f) >> 4);
-            }
-            else
-            {   //odd pixel
-                color = (byte)((writeBuffer[index] & 0xf0));
-            }
-
-            color = (byte)((color = (byte)~color) & 0x0f);
+            color = (byte)(((byte)~color) & 0x0f);
 
             DrawPixel(x, y, color);
         }
@@ -144,7 +124,7 @@ namespace Meadow.Foundation.Displays
 
             dataCommandPort.State = DataState;
 
-            spiPeripheral.Exchange(writeBuffer, readBuffer);
+            spiPeripheral.Write(imageBuffer.Buffer);
         }
 
         void SetAddressWindow(byte x0, byte y0, byte x1, byte y1)
@@ -187,7 +167,7 @@ namespace Meadow.Foundation.Displays
         }
 
         // Init sequence, make sure its under 32 bytes, or split into multiples
-        byte[] init_128x128 = {
+        byte[] init128x128 = {
               // Init sequence for 128x32 OLED module
               (byte)Command.SSD1327_DISPLAYOFF, // 0xAE
               (byte)Command.SSD1327_SETCONTRAST,

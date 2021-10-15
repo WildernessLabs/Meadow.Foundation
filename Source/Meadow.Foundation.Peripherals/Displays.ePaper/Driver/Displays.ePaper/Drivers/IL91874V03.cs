@@ -117,8 +117,8 @@ namespace Meadow.Foundation.Displays.ePaper
             //code expects the buffer to be the exact size we need
             x = 0;
             y = 0;
-            width = (int)Width;
-            height = (int)Height;
+            width = (int)base.Width;
+            height = (int)base.Height;
 
             if (buffer != null)
             {

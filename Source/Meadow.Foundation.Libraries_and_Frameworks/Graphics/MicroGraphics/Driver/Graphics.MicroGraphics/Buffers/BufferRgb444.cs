@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation;
+﻿using System;
+using Meadow.Foundation;
 using Meadow.Foundation.Graphics;
 
 namespace MicroGraphics.Buffers
@@ -96,6 +97,11 @@ namespace MicroGraphics.Buffers
                 Buffer[index] = (byte)((Buffer[index] & 0xF0) | (color >> 8));
                 Buffer[++index] = (byte)color; //just the lower 8 bits
             }
+        }
+
+        public void Clear()
+        {
+            Array.Clear(Buffer, 0, Buffer.Length);
         }
     }
 }
