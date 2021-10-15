@@ -17,10 +17,10 @@ namespace MicroGraphics.Buffers
 
         public BufferRgb888(int width, int height)
         {
-            Buffer = new byte[ByteCount];
-
             Width = width;
             Height = height;
+
+            Buffer = new byte[ByteCount];
         }
 
         public int GetPixelInt(int x, int y)

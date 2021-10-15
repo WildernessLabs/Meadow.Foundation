@@ -2,6 +2,7 @@
 using System.Threading;
 using Meadow.Devices;
 using Meadow.Hardware;
+using MicroGraphics.Buffers;
 
 namespace Meadow.Foundation.Displays
 {
@@ -45,9 +46,7 @@ namespace Meadow.Foundation.Displays
         /// internal buffer used to write to registers for all devices.
         /// </summary>
         private readonly byte[] writeBuffer;
-        private readonly byte[] readBuffer;
 
-        private readonly ISpiBus spi;
         private readonly IDigitalOutputPort chipSelectPort;
 
         /// <summary>
@@ -64,7 +63,6 @@ namespace Meadow.Foundation.Displays
 
         public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceRows, int deviceColumns, Max7219Type maxMode = Max7219Type.Display)
         {
-            spi = spiBus;
             chipSelectPort = csPort;
 
             max7219 = new SpiPeripheral(spiBus, csPort);
@@ -73,8 +71,8 @@ namespace Meadow.Foundation.Displays
             DeviceColumns = deviceColumns;
 
             buffer = new byte[DeviceCount, NumDigits];
+
             writeBuffer = new byte[2 * DeviceCount];
-            readBuffer = new byte[2 * DeviceCount];
 
             Initialize(maxMode);
         }
@@ -164,7 +162,7 @@ namespace Meadow.Foundation.Displays
                 writeBuffer[i++] = (byte)register;
                 writeBuffer[i++] = data;
             }
-            max7219.Exchange(writeBuffer, readBuffer);
+            max7219.Write(writeBuffer);
         }
 
         /// <summary>
@@ -177,7 +175,7 @@ namespace Meadow.Foundation.Displays
             writeBuffer[deviceId * 2] = (byte)register;
             writeBuffer[deviceId * 2 + 1] = data;
 
-            max7219.Exchange(writeBuffer, readBuffer);
+            max7219.Write(writeBuffer);
         }
 
         /// <summary>
@@ -267,7 +265,7 @@ namespace Meadow.Foundation.Displays
                     writeBuffer[i++] = (byte)((int)Register.Digit0 + digit);
                     writeBuffer[i++] = buffer[deviceId, digit];
                 }
-                max7219.Exchange(writeBuffer, readBuffer);
+                max7219.Write(writeBuffer);
             }
         }
 
@@ -376,7 +374,7 @@ namespace Meadow.Foundation.Displays
                 return;
             }
 
-            buffer[display, index] = (byte)(buffer[display, index] ^= (byte)(1 << y % 8));
+            buffer[display, index] = (buffer[display, index] ^= (byte)(1 << y % 8));
         }
     }
 }

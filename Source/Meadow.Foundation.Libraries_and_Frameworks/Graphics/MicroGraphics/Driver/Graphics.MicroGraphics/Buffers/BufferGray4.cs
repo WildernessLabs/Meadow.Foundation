@@ -17,10 +17,10 @@ namespace MicroGraphics.Buffers
 
         public BufferGray4(int width, int height)
         {
-            Buffer = new byte[ByteCount];
-
             Width = width;
             Height = height;
+
+            Buffer = new byte[ByteCount];
         }
 
         public byte GetPixelByte(int x, int y)

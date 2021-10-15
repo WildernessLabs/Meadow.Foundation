@@ -1,5 +1,6 @@
 ﻿using System;
 using Meadow.Hardware;
+using MicroGraphics.Buffers;
 
 namespace Meadow.Foundation.Displays.Ssd130x
 {
@@ -10,15 +11,14 @@ namespace Meadow.Foundation.Displays.Ssd130x
     {
         public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
 
-        public override int Width => width;
+        public override int Width => imageBuffer.Width;
 
-        public override int Height => height;
+        public override int Height => imageBuffer.Height;
 
         /// <summary>
         ///     SSD1306 SPI display
         /// </summary>
         protected ISpiPeripheral spiPeripheral;
-        protected ISpiBus spi;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
@@ -27,37 +27,19 @@ namespace Meadow.Foundation.Displays.Ssd130x
         protected const bool Data = true;
         protected const bool Command = false;
 
+        protected const int PAGE_SIZE = 16;
+
         /// <summary>
         ///     SSD1306 I2C display
         /// </summary>
         protected II2cPeripheral i2cPeripheral;
 
         /// <summary>
-        ///     Width of the display in pixels.
-        /// </summary>
-        protected int width;
-
-        /// <summary>
-        ///     Height of the display in pixels.
-        /// </summary>
-        protected int height;
-
-        /// <summary>
-        ///     X offset for non-standard displays.
-        /// </summary>
-        protected int xOffset = 0;
-
-        /// <summary>
-        ///     X offset for non-standard displays.
-        /// </summary>
-        protected int yOffset = 0;
-
-        /// <summary>
         ///     Buffer holding the pixels in the display.
         /// </summary>
-        protected byte[] writeBuffer;
-        protected byte[] readBuffer;
+        protected Buffer1 imageBuffer;
         protected Memory<byte> commandBuffer;
+        protected byte[] pageBuffer;
 
         /// <summary>
         ///     Sequence of command bytes that must be sent to the display before
@@ -151,7 +133,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                spiPeripheral.Exchange(commands, readBuffer);
+                spiPeripheral.Write(commands);
             }
             else
             {   //a little heavy but this is only used a couple of times
@@ -173,24 +155,19 @@ namespace Meadow.Foundation.Displays.Ssd130x
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Data;
-              //  spi.Exchange(chipSelectPort, writeBuffer, readBuffer, ChipSelectMode.ActiveLow); //slower
-             //   spiPeripheral.Exchange(writeBuffer, readBuffer); //flickers
-                spiPeripheral.Write(writeBuffer);
+                spiPeripheral.Write(imageBuffer.Buffer); //happy path
             }
-            else //I2C
-            {
-                //  Send the buffer page by page
+            else//  I2C
+            {   //  Send the buffer page by page
                 //  This can be optimized when we move to Memory<byte>
-                const int PAGE_SIZE = 16;
-                var data = new byte[PAGE_SIZE + 1];
-                data[0] = 0x40;
+                pageBuffer[0] = 0x40;
 
-                for (ushort index = 0; index < writeBuffer.Length; index += PAGE_SIZE)
+                for (ushort index = 0; index < imageBuffer.ByteCount; index += PAGE_SIZE)
                 {
-                    if (writeBuffer.Length - index < PAGE_SIZE) { break; }
+                    if (imageBuffer.ByteCount - index < PAGE_SIZE) { break; }
 
-                    Array.Copy(writeBuffer, index, data, 1, PAGE_SIZE);
-                    i2cPeripheral.Write(data);
+                    Array.Copy(imageBuffer.Buffer, index, pageBuffer, 1, PAGE_SIZE);
+                    i2cPeripheral.Write(pageBuffer);
                 }
             }
         }
@@ -206,7 +183,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="updateDisplay">Immediately update the display when true.</param>
         public override void Clear(bool updateDisplay = false)
         {
-            Array.Clear(writeBuffer, 0, writeBuffer.Length);
+            Array.Clear(imageBuffer.Buffer, 0, imageBuffer.ByteCount);
 
             if (updateDisplay)
             {
@@ -233,78 +210,29 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
         public override void DrawPixel(int x, int y, bool colored)
         {
-            /*  if(_displayType == DisplayType.OLED64x48)
-              {
-                  DrawPixel64x48(x, y, colored);
-                  return;
-              } */
-
-            x += xOffset;
-            y += yOffset;
-
             if (IgnoreOutOfBoundsPixels)
             {
-                if ((x >= width) || (y >= height) || x < 0 || y < 0)
+                if ((x >= Width) || (y >= Height) || x < 0 || y < 0)
                 {   //  pixels to be thrown away if out of bounds of the display
                     return;
                 }
             }
 
-            var index = (y >> 3) * width + x; //divide by 8
-
-            if (colored)
-            {
-                writeBuffer[index] = (byte)(writeBuffer[index] | (byte)(1 << (y % 8)));
-            }
-            else
-            {
-                writeBuffer[index] = (byte)(writeBuffer[index] & ~(byte)(1 << (y % 8)));
-            }
+            imageBuffer.SetPixel(x, y, colored);
         }
 
         public override void InvertPixel(int x, int y)
         {
-            x += xOffset;
-            y += yOffset;
-
             if (IgnoreOutOfBoundsPixels)
             {
-                if ((x >= width) || (y >= height))
+                if ((x >= Width) || (y >= Height))
                 {
                     return;
                 }
             }
-            var index = (y >> 8) * width + x;
+            var index = (y >> 8) * Width + x;
 
-            writeBuffer[index] = (writeBuffer[index] ^= (byte)(1 << y % 8));
-        }
-
-        private void DrawPixel64x48(int x, int y, bool colored)
-        {
-            if ((x >= 64) || (y >= 48))
-            {
-                if (!IgnoreOutOfBoundsPixels)
-                {
-                    throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
-                }
-                //  pixels to be thrown away if out of bounds of the display
-                return;
-            }
-
-            //offsets for landscape
-            x += 32;
-            y += 16;
-
-            var index = (y / 8 * width) + x;
-
-            if (colored)
-            {
-                writeBuffer[index] = (byte)(writeBuffer[index] | (byte)(1 << (y % 8)));
-            }
-            else
-            {
-                writeBuffer[index] = (byte)(writeBuffer[index] & ~(byte)(1 << (y % 8)));
-            }
+            imageBuffer.Buffer[index] = (imageBuffer.Buffer[index] ^= (byte)(1 << y % 8));
         }
 
         /// <summary>
@@ -350,7 +278,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
                     scrollDirection = 0x29;
                 }
                 commands = new byte[]
-                    { 0xa3, 0x00, (byte) height, scrollDirection, 0x00, startPage, 0x00, endPage, 0x01, 0x2f };
+                    { 0xa3, 0x00, (byte) Height, scrollDirection, 0x00, startPage, 0x00, endPage, 0x01, 0x2f };
             }
             SendCommands(commands);
         }
