@@ -275,26 +275,6 @@ namespace Meadow.Foundation.Displays.TftSpi
             }
         }
 
-        //probably move this to color struct
-        private Color GetColorFromUShort(ushort color)
-        {
-            double r, g, b;
-            if (colorMode == DisplayColorMode.Format16bppRgb565)
-            {
-                r = (color >> 11) / 31.0;
-                g = ((color >> 5) & 0x3F) / 63.0;
-                b = (color & 0x1F) / 31.0;
-
-            }
-            else
-            {
-                r = (color >> 8) / 15.0;
-                g = ((color >> 4) & 0x0F) / 15.0;
-                b = (color & 0x0F) / 15.0;
-            }
-            return new Color(r, g, b);
-        }
-
         private ushort GetUShortFromColor(Color color)
         {
             if (colorMode == DisplayColorMode.Format16bppRgb565)
