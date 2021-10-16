@@ -9,17 +9,20 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="house.jpg" />
     <None Remove="meadow-logo.jpg" />
     <None Remove="meadow.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TFTSPI\Displays.TftSpi.csproj" />
-    <PackageReference Include="SimpleJpegDecoder" Version="0.*" />
+    <PackageReference Include="SimpleJpegDecoder" Version="0.4.0" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="meadow-logo.jpg" />
-    <EmbeddedResource Include="meadow.jpg" />
+    <EmbeddedResource Include="meadow-logo.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="meadow.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

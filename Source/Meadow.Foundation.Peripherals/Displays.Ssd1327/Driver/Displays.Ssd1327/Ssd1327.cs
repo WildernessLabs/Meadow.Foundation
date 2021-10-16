@@ -36,11 +36,6 @@ namespace Meadow.Foundation.Displays
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
             Initialize();
-
-            Thread.Sleep(300);
-
-            FillBuffer();
-            Show();
         }
 
         int GetBufferLocation(int x, int y)

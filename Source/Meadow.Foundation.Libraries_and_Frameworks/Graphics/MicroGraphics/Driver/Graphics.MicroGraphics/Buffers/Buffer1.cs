@@ -17,10 +17,10 @@ namespace MicroGraphics.Buffers
 
         public Buffer1(int width, int height)
         {
-            Buffer = new byte[ByteCount];
-
             Width = width;
             Height = height;
+
+            Buffer = new byte[ByteCount];
         }
 
         public Buffer1(int width, int height, int pageSize)

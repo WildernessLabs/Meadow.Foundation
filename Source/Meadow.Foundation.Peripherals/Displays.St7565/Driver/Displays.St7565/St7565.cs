@@ -30,6 +30,7 @@ namespace Meadow.Foundation.Displays
         protected const bool Command = false;
 
         protected Buffer1 imageBuffer;
+        protected byte[] pageBuffer;
 
         /// <summary>
         ///     Invert the entire display (true) or return to normal mode (false).
@@ -65,6 +66,7 @@ namespace Meadow.Foundation.Displays
             spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
 
             imageBuffer = new Buffer1(width, height);
+            pageBuffer = new byte[PageSize];
 
             InitST7565();
         }
@@ -152,7 +154,8 @@ namespace Meadow.Foundation.Displays
 
                 dataCommandPort.State = Data;
 
-                spiPerihperal.Write(imageBuffer.Buffer[(PageSize * page)..(PageSize * page + PageSize)]);
+                Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
+                spiPerihperal.Write(pageBuffer);
             }
         }
 
@@ -176,7 +179,8 @@ namespace Meadow.Foundation.Displays
 
                 dataCommandPort.State = Data;
 
-                spiPerihperal.Write(imageBuffer.Buffer[(PageSize * page)..(PageSize * page + PageSize)]);
+                Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
+                spiPerihperal.Write(pageBuffer);
             }
         }
 
