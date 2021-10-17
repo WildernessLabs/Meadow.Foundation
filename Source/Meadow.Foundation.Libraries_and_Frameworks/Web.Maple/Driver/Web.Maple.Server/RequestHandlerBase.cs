@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Specialized;
 using System.Net;
 using System.Text;
@@ -16,14 +15,28 @@ namespace Meadow.Foundation.Web.Maple.Server
         private const int bufferSize = 4096;
 
         private bool _disposedValue;
+        private HttpListenerContext _context;
 
         protected StringDictionary QueryString { get; private set; }
-        public HttpListenerContext Context { get; set; }
         public virtual bool IsReusable { get; } = false;
 
         protected RequestHandlerBase()
         {
-            QueryString = new StringDictionary();
+        }
+
+        public HttpListenerContext Context
+        {
+            get => _context;
+            set
+            {
+                _context = value;
+                var i = _context.Request.RawUrl.IndexOf('?');
+                if(i >= 0)
+                {
+                    var q = _context.Request.RawUrl.Substring(i + 1);
+                    QueryString = ParseUrlPairs(q);
+                }
+            }
         }
 
         protected string Body 
@@ -99,7 +112,7 @@ namespace Meadow.Foundation.Web.Maple.Server
             foreach (var pair in pairs)
             {
                 var keyValue = pair.Split(new char[] { '=' });
-                result.Add(keyValue[0], keyValue[1]);
+                result.Add(HttpUtility.UrlDecode(keyValue[0]), HttpUtility.UrlDecode(keyValue[1]));
             }
             return result;
         }

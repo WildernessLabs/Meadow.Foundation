@@ -5,22 +5,6 @@ using System;
 namespace Maple.Unit.Tests
 {
     [TestClass]
-    public class PostHandlerTests
-    {
-        [TestMethod]
-        public void TestRootHandlerEmptyStringToSlash()
-        {
-            RequestMethodCache cache = new RequestMethodCache(null);
-
-            cache.AddType(typeof(TestHandler));
-
-            var info = cache.Match("POST", $"long.test.name", out object param);
-
-            Assert.IsNotNull(info);
-        }
-    }
-
-    [TestClass]
     public class RootHandlerTests
     {
         [TestMethod]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Meadow.Foundation.Web.Maple.Server;
 using Meadow.Foundation.Web.Maple.Server.Routing;
 
@@ -15,13 +16,13 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
             Console.WriteLine("HelloRequestHandler created");
         }
 
-        [HttpGet("")]
+        [HttpGet("/")]
         public void GetRoot()
         {
             this.Ok("Root Request").Wait();
         }
 
-        [HttpGet("hello")]
+        [HttpGet("/hello")]
         public OkObjectResult Hello()
         {
             Console.WriteLine("GET::Hello");
@@ -40,7 +41,7 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
             }
         }
 
-        [HttpGet]
+        [HttpGet("/JsonSample")]
         public IActionResult JsonSample()
         {
             Console.WriteLine("GET::JsonSample");
@@ -55,7 +56,7 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
             return new JsonResult(names);
         }
 
-        [HttpPost("hello")]
+        [HttpPost("/hello")]
         public IActionResult HelloPost() 
         {
             string name = Body;
@@ -65,7 +66,7 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
             return new OkResult();
         }
 
-        [HttpPost("foo/{name}")]
+        [HttpPost("/foo/{name}")]
         public IActionResult ParameterPost(string name)
         {
             Console.WriteLine($"/HelloPost - name:{name}");
@@ -73,7 +74,7 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
             return new OkResult();
         }
 
-        [HttpPost("bar/{id}")]
+        [HttpPost("/bar/{id}")]
         public IActionResult ParameterPost(int id)
         {
             Console.WriteLine($"/HelloPost - id:{id}");
@@ -81,7 +82,7 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
             return new OkResult();
         }
 
-        [HttpPost("file/{name}")]
+        [HttpPost("/file/{name}")]
         public IActionResult FilePost(string name)
         {
             var buffer = new byte[4096];
