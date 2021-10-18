@@ -41,15 +41,17 @@ namespace Displays.Tft.Ili9341_Sample
             graphics.Clear();
             graphics.DrawTriangle(10, 30, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
             graphics.DrawRectangle(20, 45, 40, 20, Meadow.Foundation.Color.Yellow, false);
-            graphics.DrawCircle(50, 50, 70, Meadow.Foundation.Color.Blue, false);
+            graphics.DrawCircle(50, 50, 40, Meadow.Foundation.Color.Blue, false);
             graphics.DrawText(5, 5, "Meadow F7", Meadow.Foundation.Color.White);
             graphics.Show();
-	   }
+
+            DisplayTest();
+       }
 
         //<!—SNOP—>
 
         void DisplayTest()
-	   {
+	    {
             while (true)
             {
                 //   PartialUpdate();

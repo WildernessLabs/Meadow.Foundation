@@ -1,27 +1,14 @@
-﻿using System;
-using Meadow.Foundation;
-using Meadow.Foundation.Graphics;
-
-namespace MicroGraphics.Buffers
+﻿namespace Meadow.Foundation.Graphics.Buffers
 {
-    public class BufferRgb565 : IDisplayBuffer
+    public class BufferRgb565 : BufferBase
     {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        public override int ByteCount => Width * Height * 2;
 
-        public int ByteCount => Width * Height * 2;
+        public override GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format16bppRgb565;
 
-        public GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format16bppRgb565;
+        public BufferRgb565(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
-        public byte[] Buffer { get; protected set; }
-
-        public BufferRgb565(int width, int height)
-        {
-            Width = width;
-            Height = height;
-
-            Buffer = new byte[ByteCount];
-        }
+        public BufferRgb565(int width, int height) : base(width, height) { }
 
         public ushort GetPixelUShort(int x, int y)
         {
@@ -31,7 +18,7 @@ namespace MicroGraphics.Buffers
             return (ushort)(Buffer[index] << 8 | Buffer[++index]);
         }
 
-        public Color GetPixel(int x, int y)
+        public override Color GetPixel(int x, int y)
         {
             ushort color = GetPixelUShort(x, y);
 
@@ -51,14 +38,9 @@ namespace MicroGraphics.Buffers
             Buffer[++index] = (byte)color;
         }
 
-        public void SetPixel(int x, int y, Color color)
+        public override void SetPixel(int x, int y, Color color)
         {
             SetPixel(x, y, color.Color16bppRgb565);
-        }
-
-        public void Clear()
-        {
-            Array.Clear(Buffer, 0, Buffer.Length);
         }
     }
 }

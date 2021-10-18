@@ -1,27 +1,16 @@
 ﻿using System;
-using Meadow.Foundation;
-using Meadow.Foundation.Graphics;
 
-namespace MicroGraphics.Buffers
+namespace Meadow.Foundation.Graphics.Buffers
 {
-    public class Buffer1 : IDisplayBuffer
+    public class Buffer1 : BufferBase
     {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        public override int ByteCount => Width * Height / 8;
 
-        public int ByteCount => Width * Height / 8;
+        public override GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format1bpp;
 
-        public GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format1bpp;
+        public Buffer1(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
-        public byte[] Buffer { get; protected set; }
-
-        public Buffer1(int width, int height)
-        {
-            Width = width;
-            Height = height;
-
-            Buffer = new byte[ByteCount];
-        }
+        public Buffer1(int width, int height) : base(width, height) { }
 
         public Buffer1(int width, int height, int pageSize)
         {
@@ -41,7 +30,7 @@ namespace MicroGraphics.Buffers
             return (Buffer[index] & (1 << y % 8)) != 0;
         }
 
-        public Color GetPixel(int x, int y)
+        public override Color GetPixel(int x, int y)
         {
             return GetPixelBool(x, y) ? Color.White : Color.Black;
         }
@@ -60,7 +49,7 @@ namespace MicroGraphics.Buffers
             }
         }
 
-        public void SetPixel(int x, int y, Color color)
+        public override void SetPixel(int x, int y, Color color)
         {
             SetPixel(x, y, color.Color1bpp);
         }
@@ -72,11 +61,6 @@ namespace MicroGraphics.Buffers
                 Buffer[i] = (byte)(colored ? 0xFF : 0);
                 Buffer[i] = (byte)(colored ? 0xFF : 0);
             }
-        }
-
-        public void Clear()
-        {
-            Array.Clear(Buffer, 0, Buffer.Length);
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using Meadow.Foundation;
-using static Meadow.Foundation.Graphics.GraphicsLibrary;
+﻿using static Meadow.Foundation.Graphics.GraphicsLibrary;
 
-namespace MicroGraphics
+namespace Meadow.Foundation.Graphics.Buffers
 {
     public interface IDisplayBuffer
     {

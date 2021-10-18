@@ -1,6 +1,6 @@
 ﻿using System;
 using Meadow.Hardware;
-using MicroGraphics.Buffers;
+using Meadow.Foundation.Graphics.Buffers;
 
 namespace Meadow.Foundation.Displays.Ssd130x
 {

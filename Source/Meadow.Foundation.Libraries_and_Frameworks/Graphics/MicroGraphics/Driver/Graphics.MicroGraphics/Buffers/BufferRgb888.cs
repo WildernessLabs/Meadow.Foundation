@@ -1,27 +1,14 @@
-﻿using System;
-using Meadow.Foundation;
-using Meadow.Foundation.Graphics;
-
-namespace MicroGraphics.Buffers
+﻿namespace Meadow.Foundation.Graphics.Buffers
 {
-    public class BufferRgb888 : IDisplayBuffer
+    public class BufferRgb888 : BufferBase
     {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        public override int ByteCount => Width * Height * 3;
 
-        public int ByteCount => Width * Height * 3;
+        public override GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format24bppRgb888;
 
-        public GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format24bppRgb888;
+        public BufferRgb888(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
-        public byte[] Buffer { get; protected set; }
-
-        public BufferRgb888(int width, int height)
-        {
-            Width = width;
-            Height = height;
-
-            Buffer = new byte[ByteCount];
-        }
+        public BufferRgb888(int width, int height) : base(width, height) { }
 
         public int GetPixelInt(int x, int y)
         {
@@ -31,7 +18,7 @@ namespace MicroGraphics.Buffers
             return (ushort)(Buffer[index] << 16 | Buffer[++index] << 8 | Buffer[++index]);
         }
 
-        public Color GetPixel(int x, int y)
+        public override Color GetPixel(int x, int y)
         {
             var index = ((y * Width) + x) * 3;
 
@@ -43,18 +30,13 @@ namespace MicroGraphics.Buffers
             return new Color(r, g, b);
         }
 
-        public void SetPixel(int x, int y, Color color)
+        public override void SetPixel(int x, int y, Color color)
         {
             var index = ((y * Width) + x) * 3;
 
             Buffer[index] = color.R;
             Buffer[index + 1] = color.G;
             Buffer[index + 2] = color.B;
-        }
-
-        public void Clear()
-        {
-            Array.Clear(Buffer, 0, Buffer.Length);
         }
     }
 }

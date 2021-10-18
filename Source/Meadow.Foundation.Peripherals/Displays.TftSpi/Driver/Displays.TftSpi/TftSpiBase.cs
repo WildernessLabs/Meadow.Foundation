@@ -1,7 +1,6 @@
 using Meadow.Devices;
+using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
-using MicroGraphics;
-using MicroGraphics.Buffers;
 using System;
 using System.Threading;
 

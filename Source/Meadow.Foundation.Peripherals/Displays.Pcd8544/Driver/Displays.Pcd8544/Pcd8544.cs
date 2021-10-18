@@ -1,6 +1,6 @@
-using Meadow.Devices;
+﻿using Meadow.Devices;
 using Meadow.Hardware;
-using MicroGraphics.Buffers;
+using Meadow.Foundation.Graphics.Buffers;
 using System;
 
 namespace Meadow.Foundation.Displays

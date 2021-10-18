@@ -2,7 +2,7 @@
 using System.Threading;
 using Meadow.Devices;
 using Meadow.Hardware;
-using MicroGraphics.Buffers;
+using Meadow.Foundation.Graphics.Buffers;
 
 namespace Meadow.Foundation.Displays
 {

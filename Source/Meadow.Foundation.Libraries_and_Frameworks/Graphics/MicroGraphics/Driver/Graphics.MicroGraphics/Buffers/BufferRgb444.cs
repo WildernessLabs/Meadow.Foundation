@@ -1,28 +1,14 @@
-﻿using System;
-using Meadow.Foundation;
-using Meadow.Foundation.Graphics;
-
-namespace MicroGraphics.Buffers
+﻿namespace Meadow.Foundation.Graphics.Buffers
 {
-    public class BufferRgb444 : IDisplayBuffer
+    public class BufferRgb444 : BufferBase
     {
-        public BufferRgb444(int width, int height)
-        {
-            Width = width;
-            Height = height;
+        public override int ByteCount => Width * Height * 3 / 2;
 
-            Buffer = new byte[ByteCount];
-        }
+        public override GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format12bppRgb444;
 
-        public int Width { get; protected set; }
+        public BufferRgb444(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
-        public int Height { get; protected set; }
-
-        public int ByteCount => Width * Height * 3 / 2;
-
-        public GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format12bppRgb444;
-
-        public byte[] Buffer { get; protected set; }
+        public BufferRgb444(int width, int height) : base(width, height) { }
 
         public ushort GetPixelUShort(int x, int y)
         {
@@ -47,7 +33,7 @@ namespace MicroGraphics.Buffers
             return (ushort)(r << 8 | g << 4 | b);
         }
 
-        public Color GetPixel(int x, int y)
+        public override Color GetPixel(int x, int y)
         {
             byte r, g, b;
             int index;
@@ -71,7 +57,7 @@ namespace MicroGraphics.Buffers
 
         }
 
-        public void SetPixel(int x, int y, Color color)
+        public override void SetPixel(int x, int y, Color color)
         {
             SetPixel(x, y, color.Color12bppRgb444);
         }
@@ -97,11 +83,6 @@ namespace MicroGraphics.Buffers
                 Buffer[index] = (byte)((Buffer[index] & 0xF0) | (color >> 8));
                 Buffer[++index] = (byte)color; //just the lower 8 bits
             }
-        }
-
-        public void Clear()
-        {
-            Array.Clear(Buffer, 0, Buffer.Length);
         }
     }
 }

@@ -1,27 +1,14 @@
-﻿using System;
-using Meadow.Foundation;
-using Meadow.Foundation.Graphics;
-
-namespace MicroGraphics.Buffers
+﻿namespace Meadow.Foundation.Graphics.Buffers
 {
-    public class BufferGray4 : IDisplayBuffer
+    public class BufferGray4 : BufferBase
     {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        public override int ByteCount => Width * Height / 2;
 
-        public int ByteCount => Width * Height / 2;
+        public override GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format8bppGray;
 
-        public GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format8bppGray;
+        public BufferGray4(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
-        public byte[] Buffer { get; protected set; }
-
-        public BufferGray4(int width, int height)
-        {
-            Width = width;
-            Height = height;
-
-            Buffer = new byte[ByteCount];
-        }
+        public BufferGray4(int width, int height) : base(width, height) { }
 
         public byte GetPixelByte(int x, int y)
         {
@@ -39,7 +26,7 @@ namespace MicroGraphics.Buffers
             return color; 
         }
 
-        public Color GetPixel(int x, int y)
+        public override Color GetPixel(int x, int y)
         {   //comes back as a 4bit value
             var gray = GetPixelByte(x, y);
 
@@ -60,14 +47,9 @@ namespace MicroGraphics.Buffers
             }
         }
 
-        public void SetPixel(int x, int y, Color color)
+        public override void SetPixel(int x, int y, Color color)
         {
             SetPixel(x, y, color.Color4bppGray);
-        }
-
-        public void Clear()
-        {
-            Array.Clear(Buffer, 0, Buffer.Length);
         }
     }
 }
