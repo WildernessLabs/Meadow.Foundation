@@ -1,5 +1,7 @@
 ﻿using System;
 using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
 
@@ -10,7 +12,7 @@ namespace Meadow.Foundation.FeatherWings
     /// </summary>
     public class CharlieWing : DisplayBase
     {
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public override ColorType ColorMode => ColorType.Format8bppGray;
 
         public override int Width => 15;
 
@@ -18,14 +20,11 @@ namespace Meadow.Foundation.FeatherWings
 
         public byte Frame { get; set; }
 
-        public byte Brightness { get; set; }
-
         protected readonly Is31fl3731 iS31FL3731;
 
         public CharlieWing(II2cBus i2cBus, byte address = (byte)Is31fl3731.Addresses.Default)
         {
-            Brightness = 255;
-            iS31FL3731 = new Is31fl3731(i2cBus, (byte)address);
+            iS31FL3731 = new Is31fl3731(i2cBus, address);
             iS31FL3731.Initialize();
 
             for (byte i = 0; i <= 7; i++)
@@ -82,12 +81,22 @@ namespace Meadow.Foundation.FeatherWings
 
         public override void Show(int left, int top, int right, int bottom)
         {
-            throw new NotImplementedException();
+            Show();
         }
 
         public virtual void Show(byte frame)
         {   //ToDo
             iS31FL3731.DisplayFrame(Frame);
+        }
+
+        public override void Clear(Color clearColor, bool updateDisplay = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

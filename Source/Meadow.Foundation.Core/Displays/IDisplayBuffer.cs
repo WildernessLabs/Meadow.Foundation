@@ -1,5 +1,4 @@
-﻿using static Meadow.Foundation.Graphics.GraphicsLibrary;
-
+﻿
 namespace Meadow.Foundation.Graphics.Buffers
 {
     public interface IDisplayBuffer
@@ -10,7 +9,7 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         int ByteCount { get; }
 
-        ColorType ColorType { get; }
+        ColorType displayColorMode { get; }
 
         byte[] Buffer { get; }
 
@@ -18,6 +17,10 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         Color GetPixel(int x, int y);
 
+        bool WriteBuffer(int x, int y, IDisplayBuffer buffer);
+
         void Clear();
+
+        void Clear(Color color);
     }
 }

@@ -42,7 +42,7 @@ namespace Displays.Tft.ST7789_Sample
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                width: 240, height: 240, displayColorMode: DisplayColorMode.Format16bppRgb565);
+                width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565);
 
             graphics = new GraphicsLibrary(display);
             graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;

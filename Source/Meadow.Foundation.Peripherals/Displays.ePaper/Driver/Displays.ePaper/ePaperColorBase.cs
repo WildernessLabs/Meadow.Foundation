@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
@@ -13,7 +14,7 @@ namespace Meadow.Foundation.Displays.ePaper
         protected abstract bool IsBlackInverted { get; }
         protected abstract bool IsColorInverted { get; }
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format2bpp;
+        public override ColorType ColorMode => ColorType.Format2bpp;
 
         protected readonly Buffer1 blackImageBuffer;
         protected readonly Buffer1 colorImageBuffer;
@@ -49,7 +50,7 @@ namespace Meadow.Foundation.Displays.ePaper
             Clear(false, updateDisplay);
         }
 
-        public void Clear(Color color, bool updateDisplay = false)
+        public override void Clear(Color color, bool updateDisplay = false)
         {
             bool colored = false;
             if (color.B > 0 || color.R > 0 || color.G > 0)
@@ -132,6 +133,11 @@ namespace Meadow.Foundation.Displays.ePaper
             {
                 DrawPixel(x, y, r > 0 || g > 0 || b > 0);
             }
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            blackImageBuffer.WriteBuffer(x, y, displayBuffer);
         }
 
         protected void SendCommand(Command command)

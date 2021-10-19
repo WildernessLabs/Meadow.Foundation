@@ -109,5 +109,20 @@ namespace Meadow.Foundation.Displays.Ssd130x
             Contrast = 0xff;
             StopScrolling();
         }
+
+        public override void Clear(Color clearColor, bool updateDisplay = false)
+        {
+            imageBuffer.Clear(clearColor);
+
+            if(updateDisplay)
+            {
+                Show();
+            }
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
     }
 }

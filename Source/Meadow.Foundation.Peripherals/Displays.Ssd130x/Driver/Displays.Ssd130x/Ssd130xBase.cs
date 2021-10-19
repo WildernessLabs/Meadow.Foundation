@@ -1,6 +1,7 @@
 ﻿using System;
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays.Ssd130x
 {
@@ -9,7 +10,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
     /// </summary>
     public abstract partial class Ssd130xBase : DisplayBase
     {
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public override ColorType ColorMode => ColorType.Format1bpp;
 
         public override int Width => imageBuffer.Width;
 

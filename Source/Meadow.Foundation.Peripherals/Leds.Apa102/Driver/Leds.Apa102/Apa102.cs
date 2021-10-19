@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Hardware;
 using System;
 
 namespace Meadow.Foundation.Leds
@@ -62,7 +63,7 @@ namespace Meadow.Foundation.Leds
             }
 
             buffer = new byte[this.numberOfLeds * 4 + StartHeaderSize + endHeaderSize];
-            endHeaderIndex = (buffer.Length - endHeaderSize);
+            endHeaderIndex = buffer.Length - endHeaderSize;
 
             switch (pixelOrder)
             {
@@ -171,7 +172,7 @@ namespace Meadow.Foundation.Leds
         {
             byte[] off = {0, 0, 0};
 
-            for(int i=0; i< NumberOfLeds; i++)
+            for(int i = 0; i < NumberOfLeds; i++)
             {
                 SetLed(i, off);
             }
@@ -193,6 +194,26 @@ namespace Meadow.Foundation.Leds
         public override void Show(int left, int top, int right, int bottom)
         {
             Show();
+        }
+
+        public override void Clear(Color clearColor, bool updateDisplay = false)
+        {
+            byte[] color = { clearColor.R, clearColor.G, clearColor.B };
+
+            for (int i = 0; i < NumberOfLeds; i++)
+            {
+                SetLed(i, color);
+            }
+
+            if (!AutoWrite && updateDisplay)
+            {
+                Show();
+            }
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

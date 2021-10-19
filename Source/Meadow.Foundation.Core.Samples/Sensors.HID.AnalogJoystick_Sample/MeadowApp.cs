@@ -8,7 +8,6 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Hid;
-using static Meadow.Foundation.Displays.DisplayBase;
 
 namespace MeadowApp
 {
@@ -67,7 +66,7 @@ namespace MeadowApp
                     chipSelectPin: Device.Pins.D14,
                     dcPin: Device.Pins.D03,
                     resetPin: Device.Pins.D04,
-                    width: displayWidth, height: displayHeight, displayColorMode: DisplayColorMode.Format12bppRgb444);
+                    width: displayWidth, height: displayHeight, displayColorMode: ColorType.Format12bppRgb444);
 
                 // graphics library
                 Console.WriteLine("Create graphics lib");

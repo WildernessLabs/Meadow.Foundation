@@ -3,6 +3,7 @@ using System.Threading;
 using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays
 {
@@ -34,7 +35,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public int Length => DeviceCount * NumDigits;
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public override ColorType ColorMode => ColorType.Format1bpp;
 
         public override int Width => 8 * DeviceColumns;
 
@@ -375,6 +376,16 @@ namespace Meadow.Foundation.Displays
             }
 
             buffer[display, index] = (buffer[display, index] ^= (byte)(1 << y % 8));
+        }
+
+        public override void Clear(Color clearColor, bool updateDisplay = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {   //need to refactor to use a proper buffer
+            throw new NotImplementedException();
         }
     }
 }

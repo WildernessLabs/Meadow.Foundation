@@ -3,6 +3,7 @@ using System.Threading;
 using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays
 {
@@ -11,7 +12,7 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public partial class St7565 : DisplayBase
     {
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public override ColorType ColorMode => ColorType.Format1bpp;
 
         public override int Width => imageBuffer.Width;
 
@@ -303,6 +304,18 @@ namespace Meadow.Foundation.Displays
         public void StopScrolling()
         {
             SendCommand(0x2e);
+        }
+
+        public override void Clear(Color clearColor, bool updateDisplay = false)
+        {
+            imageBuffer.Clear(clearColor);
+
+            if (updateDisplay) Show();
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
     }
 }

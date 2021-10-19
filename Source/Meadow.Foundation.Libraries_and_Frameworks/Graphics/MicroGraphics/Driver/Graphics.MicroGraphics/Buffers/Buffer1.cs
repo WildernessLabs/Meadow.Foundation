@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Graphics.Buffers
     {
         public override int ByteCount => Width * Height / 8;
 
-        public override GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format1bpp;
+        public override ColorType displayColorMode => ColorType.Format1bpp;
 
         public Buffer1(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
@@ -54,12 +54,58 @@ namespace Meadow.Foundation.Graphics.Buffers
             SetPixel(x, y, color.Color1bpp);
         }
 
-        public void Clear(bool colored)
+        public override void Clear(Color color)
         {
-            for (int i = 0; i < ByteCount; i++)
+            Clear(color.Color1bpp);
+        }
+
+        public void Clear(bool isColored)
+        {
+            // split the color in to two byte values
+            Buffer[0] = (byte)(isColored ? 0xFF : 0);
+
+            int arrayMidPoint = Buffer.Length / 2;
+            int copyLength;
+
+            for (copyLength = 1; copyLength < arrayMidPoint; copyLength <<= 1)
             {
-                Buffer[i] = (byte)(colored ? 0xFF : 0);
-                Buffer[i] = (byte)(colored ? 0xFF : 0);
+                Array.Copy(Buffer, 0, Buffer, copyLength, copyLength);
+            }
+
+            Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
+        }
+
+        public new void WriteBuffer(int x, int y, IDisplayBuffer buffer)
+        {
+            if (base.WriteBuffer(x, y, buffer))
+            {   //call the base for validation
+                //and to handle the slow path when buffers don't match
+                return;
+            }
+
+            //we have a happy path - whole bytes can be copied
+            if (x % 8 == 0 && buffer.Width % 8 == 0)
+            {
+                int sourceIndex, destinationIndex;
+                int length = buffer.Width / 8;
+
+                for (int i = 0; i < buffer.Height; i++)
+                {
+                    sourceIndex = length * i;
+                    destinationIndex = (Width * (y + i) + x) >> 4; //divide by 8
+
+                    Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length); ;
+                }
+            }
+            else //buffers don't align, brute-force
+            {
+                for (int i = 0; i < buffer.Width; i++)
+                {
+                    for (int j = 0; j < buffer.Height; j++)
+                    {
+                        SetPixel(x + i, y + j, (buffer as Buffer1).GetPixelBool(i, j));
+                    }
+                }
             }
         }
     }

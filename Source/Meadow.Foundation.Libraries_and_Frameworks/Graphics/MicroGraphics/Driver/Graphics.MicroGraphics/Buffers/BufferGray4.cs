@@ -1,10 +1,12 @@
-﻿namespace Meadow.Foundation.Graphics.Buffers
+﻿using System;
+
+namespace Meadow.Foundation.Graphics.Buffers
 {
     public class BufferGray4 : BufferBase
     {
         public override int ByteCount => Width * Height / 2;
 
-        public override GraphicsLibrary.ColorType ColorType => GraphicsLibrary.ColorType.Format8bppGray;
+        public override ColorType displayColorMode => ColorType.Format8bppGray;
 
         public BufferGray4(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
@@ -50,6 +52,56 @@
         public override void SetPixel(int x, int y, Color color)
         {
             SetPixel(x, y, color.Color4bppGray);
+        }
+
+        public override void Clear(Color color)
+        {
+            // split the color in to two byte values
+            Buffer[0] = (byte)(color.Color4bppGray | color.Color4bppGray << 4);
+
+            int arrayMidPoint = Buffer.Length / 2;
+            int copyLength;
+
+            for (copyLength = 1; copyLength < arrayMidPoint; copyLength <<= 1)
+            {
+                Array.Copy(Buffer, 0, Buffer, copyLength, copyLength);
+            }
+
+            Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
+        }
+
+        public new void WriteBuffer(int x, int y, IDisplayBuffer buffer)
+        {
+            if (base.WriteBuffer(x, y, buffer))
+            {   //call the base for validation
+                //and to handle the slow path when buffers don't match
+                return;
+            }
+
+            //we have a happy path
+            if (x%2 == 0 && buffer.Width%2 == 0)
+            {
+                int sourceIndex, destinationIndex;
+                int length = buffer.Width / 2;
+
+                for (int i = 0; i < buffer.Height; i++)
+                {
+                    sourceIndex = length * i;
+                    destinationIndex = (Width * (y + i) + x) >> 2; //divide by 2
+
+                    Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length); ;
+                }
+            }
+            else //buffers don't align, brute-force
+            {
+                for (int i = 0; i < buffer.Width; i++)
+                {
+                    for (int j = 0; j < buffer.Height; j++)
+                    {
+                        SetPixel(x + i, y + j, (buffer as BufferGray4).GetPixelByte(i, j));
+                    }
+                }
+            }
         }
     }
 }

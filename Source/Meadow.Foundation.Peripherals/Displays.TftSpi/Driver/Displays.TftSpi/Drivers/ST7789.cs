@@ -1,4 +1,5 @@
-using Meadow.Devices;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using System;
 using System.Threading;
@@ -10,10 +11,10 @@ namespace Meadow.Foundation.Displays.TftSpi
         private byte xOffset;
         private byte yOffset;
 
-        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
         public St7789(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444) 
+            int width, int height, ColorType displayColorMode = ColorType.Format12bppRgb444) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
@@ -44,7 +45,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             DelayMs(500);
 
             SendCommand(Register.COLOR_MODE);  // set color mode - 16 bit color (x55), 12 bit color (x53), 18 bit color (x56)
-            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+            if (ColorMode == ColorType.Format16bppRgb565)
                 SendData(0x55);  // 16-bit color RGB565
             else
                 SendData(0x53); //12-bit color RGB444

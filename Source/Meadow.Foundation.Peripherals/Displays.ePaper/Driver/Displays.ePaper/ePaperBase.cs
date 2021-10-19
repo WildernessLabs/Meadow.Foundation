@@ -2,6 +2,7 @@
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using System;
+using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
@@ -10,7 +11,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// </summary>
     public abstract class EpdBase : SpiDisplayBase
     {
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public override ColorType ColorMode => ColorType.Format1bpp;
 
         protected readonly Buffer1 imageBuffer;
 
@@ -48,7 +49,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         /// <param name="color">Color to set the display (not used on ePaper displays)</param>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
-        public void Clear(Color color, bool updateDisplay = false)
+        public override void Clear(Color color, bool updateDisplay = false)
         {
             Clear(color.Color1bpp, updateDisplay);
         }
@@ -125,6 +126,11 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             SetFrameMemory(imageBuffer.Buffer, left, top, right - left, top - bottom);
             DisplayFrame();
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
 
         /// <summary>

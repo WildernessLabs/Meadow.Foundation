@@ -1,4 +1,5 @@
-using Meadow.Devices;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using System.Threading;
 
@@ -6,11 +7,11 @@ namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Ssd1351 : TftSpiBase
     {
-        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
+        public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
 
         public Ssd1351(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height)
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, DisplayColorMode.Format16bppRgb565)
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorType.Format16bppRgb565)
         {
             Initialize();
         }
@@ -85,9 +86,9 @@ namespace Meadow.Foundation.Displays.TftSpi
             dataCommandPort.State = Data;
         }
 
-        public override bool IsColorModeSupported(DisplayColorMode mode)
+        public override bool IsColorModeSupported(ColorType mode)
         {
-            if (mode == DisplayColorMode.Format16bppRgb565)
+            if (mode == ColorType.Format16bppRgb565)
             {
                 return true;
             }

@@ -2,6 +2,7 @@
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using System;
+using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays
 {
@@ -9,7 +10,7 @@ namespace Meadow.Foundation.Displays
     {
         public static int DEFAULT_SPEED = 4000;
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public override ColorType ColorMode => ColorType.Format1bpp;
 
         public override int Height => 48;
 
@@ -126,6 +127,18 @@ namespace Meadow.Foundation.Displays
 
             spiDisplay.Write(commandBuffer.Span[0]);
             dataCommandPort.State = true;
+        }
+
+        public override void Clear(Color clearColor, bool updateDisplay = false)
+        {
+            imageBuffer.Clear(clearColor);
+
+            if(updateDisplay) { Show(); }
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
     }
 }

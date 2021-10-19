@@ -1,4 +1,5 @@
 using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 using System;
@@ -10,10 +11,10 @@ namespace Meadow.Foundation.Displays.TftSpi
     {
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
-        public override DisplayColorMode ColorMode => colorMode;
-        protected DisplayColorMode colorMode;
+        public override ColorType ColorMode => colorMode;
+        protected ColorType colorMode;
 
-        public abstract DisplayColorMode DefautColorMode { get; }
+        public abstract ColorType DefautColorMode { get; }
         public override int Width => imageBuffer.Width;
         public override int Height => imageBuffer.Height;
 
@@ -23,6 +24,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected ISpiPeripheral spiDisplay;
 
         protected IDisplayBuffer imageBuffer;
+        protected Memory<byte> readBuffer;
 
        // protected int xMin, xMax, yMin, yMax;
 
@@ -35,7 +37,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         { }
 
         public TftSpiBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, DisplayColorMode mode = DisplayColorMode.Format16bppRgb565)
+            int width, int height, ColorType mode = ColorType.Format16bppRgb565)
         {
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }
@@ -46,24 +48,24 @@ namespace Meadow.Foundation.Displays.TftSpi
             CreateBuffer(mode, width, height);
         }
 
-        public virtual bool IsColorModeSupported(DisplayColorMode mode)
+        public virtual bool IsColorModeSupported(ColorType mode)
         {
-            if (mode == DisplayColorMode.Format12bppRgb444 ||
-                mode == DisplayColorMode.Format16bppRgb565)
+            if (mode == ColorType.Format12bppRgb444 ||
+                mode == ColorType.Format16bppRgb565)
             {
                 return true;
             }
             return false;
         }
 
-        public void CreateBuffer(DisplayColorMode mode, int width, int height)
+        protected void CreateBuffer(ColorType mode, int width, int height)
         {
             if (IsColorModeSupported(mode) == false)
             {
                 throw new ArgumentException($"Mode {mode} not supported");
             }
 
-            if (mode == DisplayColorMode.Format16bppRgb565)
+            if (mode == ColorType.Format16bppRgb565)
             {
                 imageBuffer = new BufferRgb565(width, height);
             }
@@ -71,6 +73,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 imageBuffer = new BufferRgb444(width, height);
             }
+            readBuffer = new byte[imageBuffer.ByteCount];
             colorMode = mode;
         }
 
@@ -87,7 +90,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             if (updateDisplay) { Show(); }
         }
 
-        public void Clear(Color color, bool updateDisplay = false)
+        public override void Clear(Color color, bool updateDisplay = false)
         {
             Clear(GetUShortFromColor(color), updateDisplay);
         }
@@ -100,6 +103,11 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 Show();
             }
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer buffer)
+        {
+            imageBuffer.WriteBuffer(x, y, buffer);
         }
    
         /// <summary>
@@ -159,7 +167,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             if (x < 0 || y < 0 || x >= Width || y >= Height)
             { return; }
 
-            if(colorMode == DisplayColorMode.Format16bppRgb565)
+            if(colorMode == ColorType.Format16bppRgb565)
             {
                 InvertPixelRgb565(x, y);
             }
@@ -220,7 +228,7 @@ namespace Meadow.Foundation.Displays.TftSpi
           //  if (x < 0 || y < 0 || x >= width || y >= height)
           //  { return; }
 
-            if (colorMode == DisplayColorMode.Format16bppRgb565)
+            if (colorMode == ColorType.Format16bppRgb565)
             {
                 (imageBuffer as BufferRgb565).SetPixel(x, y, color);
             }
@@ -239,7 +247,8 @@ namespace Meadow.Foundation.Displays.TftSpi
 
             dataCommandPort.State = Data;
 
-            spiDisplay.Write(imageBuffer.Buffer);
+            // spiDisplay.Write(imageBuffer.Buffer);
+            spiDisplay.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer.Span);
         }
 
         /// <summary>
@@ -249,7 +258,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// </summary>
         public override void Show(int left, int top, int right, int bottom)
         {
-            if(colorMode != DisplayColorMode.Format16bppRgb565)
+            if(colorMode != ColorType.Format16bppRgb565)
             {   //only supported in 565 mode 
                 Show();
             }
@@ -270,13 +279,17 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 sourceIndex = ((y * Width) + left) * sizeof(ushort);
 
-                spiDisplay.Write(imageBuffer.Buffer[sourceIndex..(sourceIndex + len)]);
+                //  spiDisplay.Write(imageBuffer.Buffer[sourceIndex..(sourceIndex + len)]);
+                spiDisplay.Bus.Exchange(
+                    chipSelectPort,
+                    imageBuffer.Buffer[sourceIndex..(sourceIndex + len)],
+                    readBuffer.Span[0..len]);
             }
         }
 
         private ushort GetUShortFromColor(Color color)
         {
-            if (colorMode == DisplayColorMode.Format16bppRgb565)
+            if (colorMode == ColorType.Format16bppRgb565)
                 return color.Color16bppRgb565;
             else //asume 12BppRgb444
                 return color.Color12bppRgb444;
@@ -342,6 +355,11 @@ namespace Meadow.Foundation.Displays.TftSpi
                 imageBuffer.Buffer[index + 1] = low;
                 index += 2;
             }
+        }
+
+        public void Clear(Color color)
+        {
+            imageBuffer.Clear(color);
         }
 
         public void Dispose()

@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Current color mode
         /// </summary>
-        public DisplayBase.DisplayColorMode ColorMode => display.ColorMode;
+        public ColorType ColorMode => display.ColorMode;
 
         /// <summary>
         /// Current rotation used for drawing pixels to the display

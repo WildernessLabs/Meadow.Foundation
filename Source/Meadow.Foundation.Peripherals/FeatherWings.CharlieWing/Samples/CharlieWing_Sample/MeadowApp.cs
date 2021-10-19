@@ -20,7 +20,6 @@ namespace FeatherWings.CharlieWing_Sample
 
             charlieWing = new CharlieWing(Device.CreateI2cBus());
             charlieWing.Clear();
-            charlieWing.Brightness = 128;
 
             graphics = new GraphicsLibrary(charlieWing);
             graphics.CurrentFont = new Font4x8();
