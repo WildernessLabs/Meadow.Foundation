@@ -50,9 +50,15 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Clear the display.
         /// </summary>
-        /// <param name="clearColor">The color used to fill the display buffer.</param>
+        /// <param name="fillColor">The color used to fill the display buffer.</param>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
-        public abstract void Clear(Color clearColor, bool updateDisplay = false);
+        public abstract void Fill(Color fillColor, bool updateDisplay = false);
+
+        /// <summary>
+        /// Clear the display.
+        /// </summary>
+        /// <param name="fillColor">The color used to fill the display buffer.</param>
+        public abstract void Fill(int x, int y, int width, int height, Color fillColor);
 
         /// <summary>
         /// Draw a single pixel at the specified color

@@ -90,7 +90,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             if (updateDisplay) { Show(); }
         }
 
-        public override void Clear(Color color, bool updateDisplay = false)
+        public override void Fill(Color color, bool updateDisplay = false)
         {
             Clear(GetUShortFromColor(color), updateDisplay);
         }
@@ -223,10 +223,15 @@ namespace Meadow.Foundation.Displays.TftSpi
             (imageBuffer as BufferRgb444).SetPixel(x, y, color);
         }
 
+        public override void Fill(int x, int y, int width, int height, Color color)
+        {
+            imageBuffer.Fill(color, x, y, width, height);
+        }
+
         private void SetPixel(int x, int y, ushort color)
         {
-          //  if (x < 0 || y < 0 || x >= width || y >= height)
-          //  { return; }
+            //  if (x < 0 || y < 0 || x >= width || y >= height)
+            //  { return; }
 
             if (colorMode == ColorType.Format16bppRgb565)
             {
@@ -247,7 +252,7 @@ namespace Meadow.Foundation.Displays.TftSpi
 
             dataCommandPort.State = Data;
 
-            // spiDisplay.Write(imageBuffer.Buffer);
+            //spiDisplay.Write(imageBuffer.Buffer);
             spiDisplay.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer.Span);
         }
 
@@ -359,7 +364,7 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         public void Clear(Color color)
         {
-            imageBuffer.Clear(color);
+            imageBuffer.Fill(color);
         }
 
         public void Dispose()

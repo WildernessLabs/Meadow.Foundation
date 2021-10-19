@@ -89,7 +89,12 @@ namespace Meadow.Foundation.FeatherWings
             iS31FL3731.DisplayFrame(Frame);
         }
 
-        public override void Clear(Color clearColor, bool updateDisplay = false)
+        public override void Fill(Color clearColor, bool updateDisplay = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color fillColor)
         {
             throw new NotImplementedException();
         }

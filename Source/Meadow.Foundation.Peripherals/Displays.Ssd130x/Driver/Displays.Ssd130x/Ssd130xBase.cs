@@ -39,6 +39,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         ///     Buffer holding the pixels in the display.
         /// </summary>
         protected Buffer1 imageBuffer;
+        protected byte[] readBuffer;
         protected Memory<byte> commandBuffer;
         protected byte[] pageBuffer;
 
@@ -156,7 +157,8 @@ namespace Meadow.Foundation.Displays.Ssd130x
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Data;
-                spiPeripheral.Write(imageBuffer.Buffer); //happy path
+                spiPeripheral.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer);
+               // spiPeripheral.Write(imageBuffer.Buffer); //happy path
             }
             else//  I2C
             {   //  Send the buffer page by page

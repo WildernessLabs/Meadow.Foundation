@@ -49,9 +49,14 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         /// <param name="color">Color to set the display (not used on ePaper displays)</param>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
-        public override void Clear(Color color, bool updateDisplay = false)
+        public override void Fill(Color color, bool updateDisplay = false)
         {
             Clear(color.Color1bpp, updateDisplay);
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color color)
+        {
+            imageBuffer.Fill(color, x, y, width, height);
         }
 
         /// <summary>

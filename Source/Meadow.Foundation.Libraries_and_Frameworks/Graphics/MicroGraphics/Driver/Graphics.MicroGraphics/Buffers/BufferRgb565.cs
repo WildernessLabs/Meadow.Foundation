@@ -45,16 +45,45 @@ namespace Meadow.Foundation.Graphics.Buffers
             SetPixel(x, y, color.Color16bppRgb565);
         }
 
-        public override void Clear(Color color)
+        public override void Fill(Color color)
         {
             Clear(color.Color16bppRgb565);
+        }
+
+        public override void Fill(Color color, int x, int y, int width, int height)
+        {
+            if(x < 0 || x + width > Width ||
+                y < 0 || y + height > Height)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            byte[] value = { (byte)(color.Color16bppRgb565 >> 8), (byte)color.Color16bppRgb565 };
+            int index = (y * Width + x) * 2 - 1;
+
+            //fill the first line
+            for(int i = 0; i < width; i++)
+            {
+                Buffer[++index] = value[0];
+                Buffer[++index] = value[1];
+            }
+
+            //array copy the rest
+            for(int j = 0; j < height - 1; j++)
+            {
+                Array.Copy(Buffer,
+                    (y + j) * Width * 2 + x * 2,
+                    Buffer,
+                    (y + j + 1) * Width * 2 + x * 2,
+                    width * 2);
+            }
         }
 
         public void Clear(ushort color)
         { 
             // split the color in to two byte values
             Buffer[0] = (byte)(color >> 8);
-            Buffer[0] = (byte)color;
+            Buffer[1] = (byte)color;
 
             int arrayMidPoint = Buffer.Length / 2;
             int copyLength;
@@ -63,7 +92,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             {
                 Array.Copy(Buffer, 0, Buffer, copyLength, copyLength);
             }
-
+            //copy whatever is remaining
             Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
         }
 

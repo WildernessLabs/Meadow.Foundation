@@ -378,9 +378,23 @@ namespace Meadow.Foundation.Displays
             buffer[display, index] = (buffer[display, index] ^= (byte)(1 << y % 8));
         }
 
-        public override void Clear(Color clearColor, bool updateDisplay = false)
+        public override void Fill(Color fillColor, bool updateDisplay = false)
         {
-            throw new NotImplementedException();
+            Fill(0, 0, Width, Height, fillColor);
+
+            if (updateDisplay) Show();
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            bool isColored = fillColor.Color1bpp;
+            for(int i = 0; i < width; i++)
+            {
+                for(int j = 0; j < height; j++)
+                {
+                    DrawPixel(i, j, isColored);
+                }
+            }
         }
 
         public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)

@@ -87,7 +87,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
-        public override void Clear(Color color)
+        public override void Fill(Color color)
         {
             // could do a minor optimization by caching the ushort 444 value 
             Buffer[0] = (byte)  (color.Color12bppRgb444 >> 4);
@@ -103,6 +103,26 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
 
             Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
+        }
+
+        public override void Fill(Color color, int x, int y, int width, int height)
+        {
+            if (x < 0 || x + width > Width ||
+                y < 0 || y + height > Height)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            //TODO optimize
+            var uColor = color.Color12bppRgb444;
+
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    SetPixel(x + i, y + j, uColor);
+                }
+            }
         }
 
         public new void WriteBuffer(int x, int y, IDisplayBuffer buffer)

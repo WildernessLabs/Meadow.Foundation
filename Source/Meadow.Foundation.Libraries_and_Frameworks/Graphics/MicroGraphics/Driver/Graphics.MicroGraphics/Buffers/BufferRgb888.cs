@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             Buffer[index + 2] = color.B;
         }
 
-        public override void Clear(Color color)
+        public override void Fill(Color color)
         {
             // split the color in to two byte values
             Buffer[0] = color.R;
@@ -57,6 +57,36 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
 
             Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
+        }
+
+        public override void Fill(Color color, int x, int y, int width, int height)
+        {
+            if (x < 0 || x + width > Width ||
+                   y < 0 || y + height > Height)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            byte[] value = { color.R, color.G, color.B };
+            int index = y * Width * 3 + x * 3 - 1;
+
+            //fill the first line
+            for (int i = 0; i < width; i++)
+            {
+                Buffer[++index] = value[0];
+                Buffer[++index] = value[1];
+                Buffer[++index] = value[2];
+            }
+
+            //array copy the rest
+            for (int j = 0; j < height - 1; j++)
+            {
+                Array.Copy(Buffer,
+                    (y + j) * Width * 3 + x * 3,
+                    Buffer,
+                    (y + j + 1) * Width * 3 + x * 3,
+                    width);
+            }
         }
 
         public new void WriteBuffer(int x, int y, IDisplayBuffer buffer)

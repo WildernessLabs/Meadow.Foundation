@@ -155,9 +155,14 @@ namespace Meadow.Foundation.Displays
             spiPeripheral.Write(data);
         }
 
-        public override void Clear(Color clearColor, bool updateDisplay = false)
+        public override void Fill(Color fillColor, bool updateDisplay = false)
         {
-            imageBuffer.Clear(clearColor);
+            imageBuffer.Fill(fillColor);
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            imageBuffer.Fill(fillColor, x, y, width, height);
         }
 
         public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)

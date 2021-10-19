@@ -46,6 +46,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             Array.Clear(Buffer, 0, Buffer.Length);
         }
 
+        //return true if the write has been handled
         public bool WriteBuffer(int x, int y, IDisplayBuffer buffer)
         {
             if (x < 0 || x + buffer.Width > Width ||
@@ -62,12 +63,11 @@ namespace Meadow.Foundation.Graphics.Buffers
             return false;
         }
 
-        public abstract void Clear(Color color);
+        public abstract void Fill(Color color);
+        public abstract void Fill(Color color, int x, int y, int width, int height);
 
         protected void WriteBufferSlow(int x, int y, IDisplayBuffer buffer)
         {
-            Console.WriteLine($"WriteSlow: x:{x}, y:{y}, buffer.Width:{buffer.Width}, buffer.Height:{buffer.Height}");
-
             Color color;
 
             for (int i = 0; i < buffer.Width; i++)
@@ -75,8 +75,6 @@ namespace Meadow.Foundation.Graphics.Buffers
                 for (int j = 0; j < buffer.Height; j++)
                 {   //uses Color as the intermediary
                     color = buffer.GetPixel(i, j);
-
-                    //  Console.WriteLine(color);
 
                     SetPixel(x + i, y + j, color);
                 }

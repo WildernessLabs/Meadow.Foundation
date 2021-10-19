@@ -54,9 +54,29 @@ namespace Meadow.Foundation.Graphics.Buffers
             SetPixel(x, y, color.Color1bpp);
         }
 
-        public override void Clear(Color color)
+        public override void Fill(Color color)
         {
             Clear(color.Color1bpp);
+        }
+
+        public override void Fill(Color color, int x, int y, int width, int height)
+        {
+            if (x < 0 || x + width > Width ||
+                y < 0 || y + height > Height)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            //TODO optimize
+            var bColor = color.Color1bpp;
+
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    SetPixel(x + i, y + j, bColor);
+                }
+            }
         }
 
         public void Clear(bool isColored)

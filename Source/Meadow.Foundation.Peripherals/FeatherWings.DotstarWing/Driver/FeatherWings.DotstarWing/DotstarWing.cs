@@ -77,9 +77,14 @@ namespace Meadow.Foundation.FeatherWings
             ledMatrix.InvertPixel(x, y);
         }
 
-        public override void Clear(Color clearColor, bool updateDisplay = false)
+        public override void Fill(Color fillColor, bool updateDisplay = false)
         {
-            ledMatrix.Clear(clearColor, updateDisplay);
+            ledMatrix.Fill(fillColor, updateDisplay);
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            ledMatrix.Fill(x, y, width, height, fillColor);
         }
 
         public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)

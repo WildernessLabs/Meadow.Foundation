@@ -196,7 +196,7 @@ namespace Meadow.Foundation.Leds
             Show();
         }
 
-        public override void Clear(Color clearColor, bool updateDisplay = false)
+        public override void Fill(Color clearColor, bool updateDisplay = false)
         {
             byte[] color = { clearColor.R, clearColor.G, clearColor.B };
 
@@ -208,6 +208,18 @@ namespace Meadow.Foundation.Leds
             if (!AutoWrite && updateDisplay)
             {
                 Show();
+            }
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            bool isColored = fillColor.Color1bpp;
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    DrawPixel(i, j, fillColor);
+                }
             }
         }
 

@@ -129,11 +129,16 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = true;
         }
 
-        public override void Clear(Color clearColor, bool updateDisplay = false)
+        public override void Fill(Color clearColor, bool updateDisplay = false)
         {
-            imageBuffer.Clear(clearColor);
+            imageBuffer.Clear(clearColor.Color1bpp);
 
             if(updateDisplay) { Show(); }
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color color)
+        {
+            imageBuffer.Fill(color, x, y, width, height);
         }
 
         public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)

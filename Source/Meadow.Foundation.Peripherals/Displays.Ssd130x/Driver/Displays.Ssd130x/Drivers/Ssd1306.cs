@@ -93,6 +93,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
             //create buffers
             imageBuffer = new Buffer1(width, height, PAGE_SIZE);
+            readBuffer = new byte[imageBuffer.ByteCount];
             pageBuffer = new byte[PAGE_SIZE + 1];
 
             commandBuffer = new byte[2];
@@ -110,14 +111,19 @@ namespace Meadow.Foundation.Displays.Ssd130x
             StopScrolling();
         }
 
-        public override void Clear(Color clearColor, bool updateDisplay = false)
+        public override void Fill(Color clearColor, bool updateDisplay = false)
         {
-            imageBuffer.Clear(clearColor);
+            imageBuffer.Clear(clearColor.Color1bpp);
 
             if(updateDisplay)
             {
                 Show();
             }
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color color)
+        {
+            imageBuffer.Fill(color, x, y, width, height);
         }
 
         public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)

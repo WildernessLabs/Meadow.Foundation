@@ -788,18 +788,35 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default).</param>
         public void DrawRectangle(int x, int y, int width, int height, Color color, bool filled = false)
         {
-            width--;
-            height--;
-
             if (filled)
             {
+                switch(Rotation)
+                {
+                    case RotationType.Default:
+                        display.Fill(x, y, width, height, color);
+                        break;
+                    case RotationType._90Degrees:
+                        display.Fill(GetXForRotation(x, y) - height, GetYForRotation(x, y), height, width, color);
+                        break;
+                    case RotationType._180Degrees:
+                        display.Fill(GetXForRotation(x, y) - width, GetYForRotation(x, y) - height, width, height, color);
+                        break;
+                    case RotationType._270Degrees:
+                        display.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width, height, width, color);
+                        break;
+                }
+
+                /*
                 for (var i = 0; i <= height; i++)
                 {
                     DrawLine(x, y + i, x + width, y + i, color);
-                }
+                } */
             }
             else
             {
+                width--;
+                height--;
+
                 DrawLine(x, y, x + width, y, color);
                 DrawLine(x + width, y, x + width, y + height, color);
                 DrawLine(x + width, y + height, x, y + height, color);
@@ -1194,11 +1211,11 @@ namespace Meadow.Foundation.Graphics
             switch(Rotation)
             {
                 case RotationType._90Degrees:
-                    return (int)display.Width - y - 1;
+                    return display.Width - y - 1;
                 case RotationType._180Degrees:
-                    return (int)display.Width - x - 1;
+                    return display.Width - x - 1;
                 case RotationType._270Degrees:
-                    return (int)y;
+                    return y;
                 case RotationType.Default:
                 default:
                     return x;
@@ -1212,9 +1229,9 @@ namespace Meadow.Foundation.Graphics
                 case RotationType._90Degrees:
                     return x; 
                 case RotationType._180Degrees:
-                    return (int)display.Height - y - 1;
+                    return display.Height - y - 1;
                 case RotationType._270Degrees:
-                    return (int)display.Height - x - 1;
+                    return display.Height - x - 1;
                 case RotationType.Default:
                 default:
                     return y;

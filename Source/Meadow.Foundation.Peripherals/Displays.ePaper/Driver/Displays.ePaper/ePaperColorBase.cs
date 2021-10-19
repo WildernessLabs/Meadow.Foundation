@@ -50,13 +50,25 @@ namespace Meadow.Foundation.Displays.ePaper
             Clear(false, updateDisplay);
         }
 
-        public override void Clear(Color color, bool updateDisplay = false)
+        public override void Fill(Color color, bool updateDisplay = false)
         {
             bool colored = false;
             if (color.B > 0 || color.R > 0 || color.G > 0)
                 colored = true;
 
             Clear(colored, updateDisplay);
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color color)
+        {
+            if(color == Color.Black)
+            {
+                blackImageBuffer.Fill(color, x, y, width, height);
+            }
+            else if(color != Color.White)
+            {
+                colorImageBuffer.Fill(color, x, y, width, height);
+            }
         }
 
         public void Clear(bool colored, bool updateDisplay = false)

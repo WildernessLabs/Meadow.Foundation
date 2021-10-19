@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             SetPixel(x, y, color.Color8bppGray);
         }
 
-        public override void Clear(Color color)
+        public override void Fill(Color color)
         {
             // split the color in to two byte values
             Buffer[0] = color.Color8bppGray;
@@ -48,6 +48,34 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
 
             Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
+        }
+
+        public override void Fill(Color color, int x, int y, int width, int height)
+        {
+            if (x < 0 || x + width > Width ||
+                   y < 0 || y + height > Height)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            byte value = color.Color8bppGray;
+            int index = y * Width + x - 1;
+
+            //fill the first line
+            for (int i = 0; i < width; i++)
+            {
+                Buffer[++index] = value;
+            }
+
+            //array copy the rest
+            for (int j = 0; j < height - 1; j++)
+            {
+                Array.Copy(Buffer,
+                    (y + j) * Width + x,
+                    Buffer,
+                    (y + j + 1) * Width + x,
+                    width);
+            }
         }
 
         public new void WriteBuffer(int x, int y, IDisplayBuffer buffer)

@@ -21,6 +21,8 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         void Clear();
 
-        void Clear(Color color);
+        void Fill(Color color);
+
+        void Fill(Color color, int x, int y, int width, int height);
     }
 }
