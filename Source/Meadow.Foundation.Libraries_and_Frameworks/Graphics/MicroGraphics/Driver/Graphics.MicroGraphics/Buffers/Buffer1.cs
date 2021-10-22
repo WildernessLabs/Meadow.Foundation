@@ -128,7 +128,69 @@ namespace Meadow.Foundation.Graphics.Buffers
                     }
                 }
             }
-            
+        }
+
+        public Buffer1 Rotate(RotationType rotation)
+        {
+            Buffer1 newBuffer;
+
+            switch(rotation)
+            {
+                case RotationType._90Degrees:
+                    newBuffer = new Buffer1(Height, Width);
+                    for(int i = 0; i < Width; i++)
+                    {
+                        for(int j = 0; j < Height; j++)
+                        {   
+                            newBuffer.SetPixel(Height - j - 1, i, GetPixel(i, j));
+                        }
+                    }
+                    break;
+                case RotationType._270Degrees:
+                    newBuffer = new Buffer1(Height, Width);
+                    for (int i = 0; i < Width; i++)
+                    {
+                        for (int j = 0; j < Height; j++)
+                        {   
+                            newBuffer.SetPixel(j, Width - i - 1, GetPixel(i, j));
+                        }
+                    }
+                    break;
+                case RotationType._180Degrees:
+                    newBuffer = new Buffer1(Width, Height);
+                    for (int i = 0; i < Width; i++)
+                    {
+                        for (int j = 0; j < Height; j++)
+                        {   
+                            newBuffer.SetPixel(Width - i - 1, Height - j - 1, GetPixel(i, j));
+                        }
+                    }
+                    break;
+                case RotationType.Default:
+                default:
+                    newBuffer = new Buffer1(Width, Height);
+                    Array.Copy(Buffer, newBuffer.Buffer, ByteCount);
+                    break;
+
+            }
+
+            return newBuffer;
+
+
+
+
+
+
+            if(rotation == RotationType.Default ||
+               rotation == RotationType._180Degrees)
+            {
+                
+            }
+            else //90 & 270
+            {
+                newBuffer = new Buffer1(Height, Width);
+            }
+
         }
     }
 }

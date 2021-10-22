@@ -15,13 +15,7 @@
     <Description>Lightweight integer accurate 2d graphics drawing system designed for embedded systems</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Contracts\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\..\..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Contracts\" />
   </ItemGroup>
 </Project>
