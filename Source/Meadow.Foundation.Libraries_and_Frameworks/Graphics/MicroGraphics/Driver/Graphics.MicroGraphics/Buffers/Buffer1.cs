@@ -67,14 +67,22 @@ namespace Meadow.Foundation.Graphics.Buffers
                 throw new ArgumentOutOfRangeException();
             }
 
-            //TODO optimize
-            var bColor = color.Color1bpp;
-
+            var isColored = color.Color1bpp;
+            
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
-                {
-                    SetPixel(x + i, y + j, bColor);
+                {   //byte aligned and at least 8 rows to go
+                    if((j + y) % 8 == 0 && j + y + 8 <= height)
+                    {
+                        //set an entire byte - fast
+                        Buffer[((j + y) >> 3) * Width + x + i] = (byte)(isColored ? 0xFF : 0);
+                        j += 7; //the main loop will add 1 to make it 8
+                    }
+                    else
+                    {
+                        SetPixel(x + i, y + j, isColored);
+                    }
                 }
             }
         }
@@ -103,30 +111,24 @@ namespace Meadow.Foundation.Graphics.Buffers
                 return;
             }
 
-            //we have a happy path - whole bytes can be copied
-            if (x % 8 == 0 && buffer.Width % 8 == 0)
+            for (int i = 0; i < buffer.Width; i++)
             {
-                int sourceIndex, destinationIndex;
-                int length = buffer.Width / 8;
-
-                for (int i = 0; i < buffer.Height; i++)
+                for (int j = 0; j < buffer.Height; j++)
                 {
-                    sourceIndex = length * i;
-                    destinationIndex = (Width * (y + i) + x) >> 4; //divide by 8
-
-                    Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length); ;
-                }
-            }
-            else //buffers don't align, brute-force
-            {
-                for (int i = 0; i < buffer.Width; i++)
-                {
-                    for (int j = 0; j < buffer.Height; j++)
+                    //if we got really clever we could find other alignment points but this is a good start
+                    if(y%8 == 0 && j + 8 <= buffer.Height)
                     {
+                        //copy an entire byte - fast
+                        Buffer[((y + j) >> 3) * Width + x + i] = buffer.Buffer[(j >> 3) * buffer.Width + i];
+                        j += 7; //the main loop will add 1 to make it 8
+                    }
+                    else
+                    {   //else 1 bit at a time 
                         SetPixel(x + i, y + j, (buffer as Buffer1).GetPixelBool(i, j));
                     }
                 }
             }
+            
         }
     }
 }
