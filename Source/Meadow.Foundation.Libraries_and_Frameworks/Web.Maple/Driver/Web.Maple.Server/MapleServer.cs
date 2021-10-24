@@ -253,10 +253,12 @@ namespace Meadow.Foundation.Web.Maple.Server
 
                 while (Running)
                 {
+                    HttpListenerContext context = null;
+
                     try
                     {
                         // wait for a request to come in
-                        var context = await _httpListener.GetContextAsync();
+                        context = await _httpListener.GetContextAsync();
                         Logger?.Info($"Request received from {context.Request.RemoteEndPoint}");
 
                         // depending on our processing mode, process either
@@ -279,6 +281,10 @@ namespace Meadow.Foundation.Web.Maple.Server
                     catch (Exception ex)
                     {
                         Logger?.Error(ex.ToString());
+                    }
+                    finally
+                    {
+                        context?.Response.Close();                        
                     }
                 }
             });
