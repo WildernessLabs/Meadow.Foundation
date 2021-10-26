@@ -71,7 +71,7 @@ namespace MeadowApp
                 // graphics library
                 Console.WriteLine("Create graphics lib");
                 canvas = new GraphicsLibrary(display);
-                canvas.Rotation = GraphicsLibrary.RotationType._90Degrees;
+                canvas.Rotation = RotationType._90Degrees;
             }
 
             Console.WriteLine("Hardware initialization complete.");

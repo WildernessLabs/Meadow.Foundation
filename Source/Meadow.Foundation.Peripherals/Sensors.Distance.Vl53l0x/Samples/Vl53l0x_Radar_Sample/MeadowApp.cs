@@ -50,7 +50,7 @@ namespace MeadowApp
 
             graphics = new GraphicsLibrary(display);
             graphics.CurrentFont = new Font12x20();
-            graphics.Rotation = GraphicsLibrary.RotationType._90Degrees;
+            graphics.Rotation = RotationType._90Degrees;
 
             Console.WriteLine("Create time of flight sensor");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);

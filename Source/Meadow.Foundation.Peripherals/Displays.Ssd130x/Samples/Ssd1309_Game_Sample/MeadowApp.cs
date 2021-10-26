@@ -115,7 +115,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
             Console.WriteLine("Create Graphics Library...");
 
             graphics = new GraphicsLibrary(display);
-            graphics.Rotation = GraphicsLibrary.RotationType._270Degrees;
+            graphics.Rotation = RotationType._270Degrees;
             graphics.CurrentFont = new Font8x12();
 
             graphics.Clear();

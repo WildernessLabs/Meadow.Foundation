@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Displays
 
         public override void InvertPixel(int x, int y)
         {
-            byte color = imageBuffer.GetPixelByte(x, y);
+            byte color = imageBuffer.GetPixel4bpp(x, y);
 
             color = (byte)(((byte)~color) & 0x0f);
 

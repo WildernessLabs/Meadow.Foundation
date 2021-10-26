@@ -24,7 +24,7 @@ namespace FeatherWings.LedMatrix8x16_Sample
             graphics = new GraphicsLibrary(ledMatrixWing);
             graphics.CurrentFont = new Font4x8();
 
-            graphics.Rotation = GraphicsLibrary.RotationType._90Degrees;
+            graphics.Rotation = RotationType._90Degrees;
             graphics.Clear();
             graphics.DrawText(0, 0, "M F7");
             graphics.Show();

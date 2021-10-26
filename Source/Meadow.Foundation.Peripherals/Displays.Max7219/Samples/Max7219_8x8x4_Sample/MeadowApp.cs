@@ -48,7 +48,7 @@ namespace MeadowApp
 
             Console.WriteLine($"Display W: {display.Width}, H: {display.Height}");
 
-            graphics.Rotation = GraphicsLibrary.RotationType._90Degrees;
+            graphics.Rotation = RotationType._90Degrees;
 
             Console.WriteLine($"Graphics W: {graphics.Width}, H: {graphics.Height}");
 

@@ -180,7 +180,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         void InvertPixelRgb565(int x, int y)
         {
             //get current color
-            ushort color = (imageBuffer as BufferRgb565).GetPixelUShort(x, y);
+            ushort color = (imageBuffer as BufferRgb565).GetPixel16bpp(x, y);
 
             //split into R,G,B & invert
             byte r = (byte)(0x1F - ((color >> 11) & 0x1F));

@@ -12,14 +12,14 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public BufferGray8(int width, int height) : base(width, height) { }
 
-        public byte GetPixelByte(int x, int y)
+        public byte GetPixel8bpp(int x, int y)
         {
             return Buffer[y * Width + x];
         }
 
         public override Color GetPixel(int x, int y)
         {
-            var gray = GetPixelByte(x, y);
+            var gray = GetPixel8bpp(x, y);
 
             return new Color(gray, gray, gray);
         }
