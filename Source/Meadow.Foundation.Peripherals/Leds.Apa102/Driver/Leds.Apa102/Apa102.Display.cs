@@ -1,17 +1,20 @@
 ﻿using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Leds
 {
     public partial class Apa102 : DisplayBase
     {
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format24bppRgb888;
+        public override ColorType ColorMode => ColorType.Format24bppRgb888;
 
         public override int Width => width;
-        int width;
+
+        readonly int width;
 
         public override int Height => height;
-        int height;
+
+        readonly int height;
 
         public Apa102(ISpiBus spiBus,
                      PixelOrder pixelOrder = PixelOrder.BGR,

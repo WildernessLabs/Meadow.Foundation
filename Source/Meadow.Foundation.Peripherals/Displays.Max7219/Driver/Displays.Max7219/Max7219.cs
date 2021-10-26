@@ -2,6 +2,8 @@
 using System.Threading;
 using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays
 {
@@ -33,7 +35,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public int Length => DeviceCount * NumDigits;
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public override ColorType ColorMode => ColorType.Format1bpp;
 
         public override int Width => 8 * DeviceColumns;
 
@@ -45,9 +47,7 @@ namespace Meadow.Foundation.Displays
         /// internal buffer used to write to registers for all devices.
         /// </summary>
         private readonly byte[] writeBuffer;
-        private readonly byte[] readBuffer;
 
-        private readonly ISpiBus spi;
         private readonly IDigitalOutputPort chipSelectPort;
 
         /// <summary>
@@ -64,7 +64,6 @@ namespace Meadow.Foundation.Displays
 
         public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceRows, int deviceColumns, Max7219Type maxMode = Max7219Type.Display)
         {
-            spi = spiBus;
             chipSelectPort = csPort;
 
             max7219 = new SpiPeripheral(spiBus, csPort);
@@ -73,8 +72,8 @@ namespace Meadow.Foundation.Displays
             DeviceColumns = deviceColumns;
 
             buffer = new byte[DeviceCount, NumDigits];
+
             writeBuffer = new byte[2 * DeviceCount];
-            readBuffer = new byte[2 * DeviceCount];
 
             Initialize(maxMode);
         }
@@ -164,7 +163,7 @@ namespace Meadow.Foundation.Displays
                 writeBuffer[i++] = (byte)register;
                 writeBuffer[i++] = data;
             }
-            max7219.Exchange(writeBuffer, readBuffer);
+            max7219.Write(writeBuffer);
         }
 
         /// <summary>
@@ -177,7 +176,7 @@ namespace Meadow.Foundation.Displays
             writeBuffer[deviceId * 2] = (byte)register;
             writeBuffer[deviceId * 2 + 1] = data;
 
-            max7219.Exchange(writeBuffer, readBuffer);
+            max7219.Write(writeBuffer);
         }
 
         /// <summary>
@@ -267,7 +266,7 @@ namespace Meadow.Foundation.Displays
                     writeBuffer[i++] = (byte)((int)Register.Digit0 + digit);
                     writeBuffer[i++] = buffer[deviceId, digit];
                 }
-                max7219.Exchange(writeBuffer, readBuffer);
+                max7219.Write(writeBuffer);
             }
         }
 
@@ -376,7 +375,31 @@ namespace Meadow.Foundation.Displays
                 return;
             }
 
-            buffer[display, index] = (byte)(buffer[display, index] ^= (byte)(1 << y % 8));
+            buffer[display, index] = (buffer[display, index] ^= (byte)(1 << y % 8));
+        }
+
+        public override void Fill(Color fillColor, bool updateDisplay = false)
+        {
+            Fill(0, 0, Width, Height, fillColor);
+
+            if (updateDisplay) Show();
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            bool isColored = fillColor.Color1bpp;
+            for(int i = 0; i < width; i++)
+            {
+                for(int j = 0; j < height; j++)
+                {
+                    DrawPixel(i, j, isColored);
+                }
+            }
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {   //need to refactor to use a proper buffer
+            throw new NotImplementedException();
         }
     }
 }

@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void Show(int left, int top, int right, int bottom)
         {
-            TransmitPartial(blackImageBuffer, colorImageBuffer,
+            TransmitPartial(blackImageBuffer.Buffer, colorImageBuffer.Buffer,
                         left, top,
                         right - left,
                         top - bottom);
@@ -103,7 +103,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void Show()
         {
-            DisplayFrame(blackImageBuffer, colorImageBuffer);
+            DisplayFrame(blackImageBuffer.Buffer, colorImageBuffer.Buffer);
         }
 
         void SetLut()

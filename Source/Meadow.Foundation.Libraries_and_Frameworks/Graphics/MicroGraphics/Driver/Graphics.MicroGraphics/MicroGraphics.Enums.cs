@@ -2,17 +2,6 @@
 {
     public partial class GraphicsLibrary
     {
-        /// <summary>
-        /// Display rotation 
-        /// </summary>
-        public enum RotationType
-        {
-            Default,
-            _90Degrees,
-            _180Degrees,
-            _270Degrees
-        }
-
         public enum ScaleFactor : int
         {
             X1 = 1,

@@ -1,4 +1,5 @@
-using Meadow.Devices;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using System.Threading;
 
@@ -6,11 +7,11 @@ namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Ssd1351 : TftSpiBase
     {
-        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
+        public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
 
         public Ssd1351(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height)
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, DisplayColorMode.Format16bppRgb565)
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorType.Format16bppRgb565)
         {
             Initialize();
         }
@@ -38,10 +39,10 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendData(0x7F);
 
             SendCommand(CMD_SETCOLUMN); //column address
-            SendData(new byte[] { 0x00, (byte)(width - 1) });
+            SendData(new byte[] { 0x00, (byte)(Width - 1) });
 
             SendCommand(CMD_SETROW); //row address
-            SendData(new byte[] { 0x00, (byte)(height - 1) });
+            SendData(new byte[] { 0x00, (byte)(Height - 1) });
 
             SendCommand(CMD_SETREMAP);
             SendData(new byte[] { 0x70, 0x04 }); //change 2nd value to 0x04 for BGR
@@ -80,14 +81,14 @@ namespace Meadow.Foundation.Displays.TftSpi
 
             SendCommand(CMD_DISPLAYON);
             
-            SetAddressWindow(0, 0, (width - 1), (height - 1));
+            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }
 
-        public override bool IsColorModeSupported(DisplayColorMode mode)
+        public override bool IsColorModeSupported(ColorType mode)
         {
-            if (mode == DisplayColorMode.Format16bppRgb565)
+            if (mode == ColorType.Format16bppRgb565)
             {
                 return true;
             }

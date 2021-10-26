@@ -1,6 +1,8 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Foundation.Graphics.Buffers;
 using System;
+using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
@@ -9,12 +11,12 @@ namespace Meadow.Foundation.Displays.ePaper
     /// </summary>
     public abstract class EpdBase : SpiDisplayBase
     {
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public override ColorType ColorMode => ColorType.Format1bpp;
 
-        protected readonly byte[] imageBuffer;
+        protected readonly Buffer1 imageBuffer;
 
-        public override int Width { get; }
-        public override int Height { get; }
+        public override int Width => imageBuffer.Width;
+        public override int Height => imageBuffer.Height;
 
         private EpdBase()
         { }
@@ -22,21 +24,15 @@ namespace Meadow.Foundation.Displays.ePaper
         public EpdBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height)
         {
-            Width = width;
-            Height = height;
-
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             busyPort = device.CreateDigitalInputPort(busyPin);
 
             spiPeripheral = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(chipSelectPin));
 
-            imageBuffer = new byte[Width * Height / 8];
+            imageBuffer = new Buffer1(width, height);
 
-            for(int i = 0; i < imageBuffer.Length; i++)
-            {
-                imageBuffer[i] = 0xff;
-            }
+            imageBuffer.Clear(true);
 
             Initialize();
         }
@@ -53,9 +49,14 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         /// <param name="color">Color to set the display (not used on ePaper displays)</param>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
-        public void Clear(Color color, bool updateDisplay = false)
+        public override void Fill(Color color, bool updateDisplay = false)
         {
             Clear(color.Color1bpp, updateDisplay);
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color color)
+        {
+            imageBuffer.Fill(color, x, y, width, height);
         }
 
         /// <summary>
@@ -65,9 +66,9 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
         public void Clear(bool colored, bool updateDisplay = false)
         {
-            for (int i = 0; i < imageBuffer.Length; i++)
+            for (int i = 0; i < imageBuffer.ByteCount; i++)
             {
-                imageBuffer[i] = colored ? (byte)0 : (byte)255;
+                imageBuffer.Buffer[i] = colored ? (byte)0 : (byte)255;
             }
 
             if (updateDisplay)
@@ -86,11 +87,11 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             if (colored)
             {
-                imageBuffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
+                imageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
             }
             else
             {
-                imageBuffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
+                imageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
             }
         }
 
@@ -107,7 +108,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void InvertPixel(int x, int y)
         {
-            imageBuffer[(x + y * Width) / 8] ^= (byte)(0x80 >> (x % 8));
+            imageBuffer.Buffer[(x + y * Width) / 8] ^= (byte)(0x80 >> (x % 8));
         }
 
         /// <summary>
@@ -128,8 +129,13 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         public override void Show(int left, int top, int right, int bottom)
         {
-            SetFrameMemory(imageBuffer, left, top, right - left, top - bottom);
+            SetFrameMemory(imageBuffer.Buffer, left, top, right - left, top - bottom);
             DisplayFrame();
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
 
         /// <summary>
@@ -137,7 +143,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         public override void Show()
         {
-            SetFrameMemory(imageBuffer);
+            SetFrameMemory(imageBuffer.Buffer);
             DisplayFrame();
         }
 

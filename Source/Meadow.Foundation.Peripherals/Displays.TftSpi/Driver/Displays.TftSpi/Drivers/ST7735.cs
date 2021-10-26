@@ -1,4 +1,5 @@
-using Meadow.Devices;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using System.Threading;
 
@@ -11,11 +12,11 @@ namespace Meadow.Foundation.Displays.TftSpi
         private byte xOffset;
         private byte yOffset;
 
-        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
         public St7735(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height,
-            DisplayType displayType = DisplayType.ST7735R, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+            DisplayType displayType = DisplayType.ST7735R, ColorType displayColorMode = ColorType.Format12bppRgb444)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             this.displayType = displayType;
@@ -84,7 +85,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             if (displayType == DisplayType.ST7735B)
             {
                 Init7735B();
-                SetAddressWindow(0, 0, (width - 1), (height - 1));
+                SetAddressWindow(0, 0, (Width - 1), (Height - 1));
                 return;
             }
 
@@ -108,7 +109,7 @@ namespace Meadow.Foundation.Displays.TftSpi
                 SendCommand(INVOFF);
             }
 
-            SetAddressWindow(0, 0, (width - 1), (height - 1));
+            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }
@@ -165,7 +166,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendData(0xC8);  // row address/col address, bottom to top refresh
 
             SendCommand(Register.COLOR_MODE);  // set color mode
-            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+            if (ColorMode == ColorType.Format16bppRgb565)
                 SendData(0x05);  // 16-bit color RGB565
             else
                 SendData(0x03); //12-bit color RGB444
@@ -179,7 +180,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             DelayMs(150);
 
             SendCommand(Register.COLOR_MODE);  // set color mode
-            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+            if (ColorMode == ColorType.Format16bppRgb565)
                 SendData(0x05);  // 16-bit color RGB565
             else
                 SendData(0x03); //12-bit color RGB444

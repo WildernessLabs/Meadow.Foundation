@@ -1,4 +1,5 @@
 ﻿using Meadow.Devices;
+using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.Ssd130x
@@ -26,7 +27,6 @@ namespace Meadow.Foundation.Displays.Ssd130x
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false);
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
-            spi = spiBus;
 
             connectionType = ConnectionType.SPI;
 
@@ -58,6 +58,8 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
         private void InitSSD1306(DisplayType displayType)
         {
+            int width = 0, height = 0, xOffset, yOffset;
+
             switch (displayType)
             {
                 case DisplayType.OLED128x64:
@@ -89,13 +91,11 @@ namespace Meadow.Foundation.Displays.Ssd130x
                     break;
             }
 
-            //align buffer to PAGE_SIZE
-            int bufferSize = width * height / 8;
-            bufferSize += bufferSize % 16;
-
             //create buffers
-            writeBuffer = new byte[bufferSize];
-            readBuffer = new byte[bufferSize];
+            imageBuffer = new Buffer1(width, height, PAGE_SIZE);
+            readBuffer = new byte[imageBuffer.ByteCount];
+            pageBuffer = new byte[PAGE_SIZE + 1];
+
             commandBuffer = new byte[2];
 
             showPreamble = new byte[] { 0x21, 0x00, (byte)(width - 1), 0x22, 0x00, (byte)(height / 8 - 1) };
@@ -109,6 +109,26 @@ namespace Meadow.Foundation.Displays.Ssd130x
             Sleep = false;
             Contrast = 0xff;
             StopScrolling();
+        }
+
+        public override void Fill(Color clearColor, bool updateDisplay = false)
+        {
+            imageBuffer.Clear(clearColor.Color1bpp);
+
+            if(updateDisplay)
+            {
+                Show();
+            }
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color color)
+        {
+            imageBuffer.Fill(color, x, y, width, height);
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
     }
 }

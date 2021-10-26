@@ -1,4 +1,6 @@
 ﻿using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Leds;
 using Meadow.Hardware;
 using static Meadow.Foundation.Leds.Apa102;
@@ -18,7 +20,7 @@ namespace Meadow.Foundation.FeatherWings
             set => ledMatrix.Brightness = value;  
         }
 
-        public DotstarWing(ISpiBus spiBus) : this(spiBus,72)
+        public DotstarWing(ISpiBus spiBus) : this(spiBus, 72)
         {
         }
 
@@ -27,7 +29,7 @@ namespace Meadow.Foundation.FeatherWings
             ledMatrix = new Apa102(spiBus, numberOfLeds, pixelOrder, autoWrite);
         }
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format12bppRgb444;
+        public override ColorType ColorMode => ColorType.Format12bppRgb444;
 
         public override int Width => 12;
 
@@ -73,6 +75,21 @@ namespace Meadow.Foundation.FeatherWings
         public override void InvertPixel(int x, int y)
         {
             ledMatrix.InvertPixel(x, y);
+        }
+
+        public override void Fill(Color fillColor, bool updateDisplay = false)
+        {
+            ledMatrix.Fill(fillColor, updateDisplay);
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            ledMatrix.Fill(x, y, width, height, fillColor);
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            ledMatrix.DrawBuffer(x, y, displayBuffer);
         }
     }
 }

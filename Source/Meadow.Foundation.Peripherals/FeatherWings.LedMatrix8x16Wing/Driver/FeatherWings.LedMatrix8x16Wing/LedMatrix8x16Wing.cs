@@ -1,4 +1,6 @@
 ﻿using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
 
@@ -16,7 +18,7 @@ namespace Meadow.Foundation.FeatherWings
             ht16k33 = new Ht16k33(i2cBus, address);
         }
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public override ColorType ColorMode => ColorType.Format1bpp;
 
         public override int Width => 8;
 
@@ -25,6 +27,30 @@ namespace Meadow.Foundation.FeatherWings
         public override void Clear(bool updateDisplay = false)
         {
             ht16k33.ClearDisplay();
+        }
+
+        public override void Fill(Color fillColor, bool updateDisplay = false)
+        {
+            Fill(0, 0, Width, Height, fillColor);
+
+            if (updateDisplay) Show();
+        }
+
+        public override void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            bool isColored = fillColor.Color1bpp;
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    DrawPixel(i, j, isColored);
+                }
+            }
+        }
+
+        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            throw new System.NotImplementedException();
         }
 
         public override void DrawPixel(int x, int y, Color color)

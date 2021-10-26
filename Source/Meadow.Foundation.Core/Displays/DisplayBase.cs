@@ -1,33 +1,18 @@
-﻿using Meadow.Peripherals.Displays;
+﻿using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Abstract hardware display class 
     /// </summary>
-    public abstract class DisplayBase : IDisplay
+    public abstract class DisplayBase : IGraphicsDisplay
     {
         /// <summary>
-        /// Enum for Display color mode, defines bit depth and RGB order
+        /// The ColorType for the current display
         /// </summary>
-        public enum DisplayColorMode
-        {
-            Format1bpp, //single color 
-            Format2bpp, //for 2 color ePaper or 4 color gray scale
-            Format4bpp, //for 16 color gray scale
-            Format8bppMonochome,
-            Format8bppRgb332, //Some TFT displays support this mode
-            Format12bppRgb444, //TFT in 12 bit mode
-            Format16bppRgb555, //not currently used
-            Format16bppRgb565, //TFT in 16 bit mode
-            Format18bppRgb666, //TFT in 18 bit mode
-            Format24bppRgb888  //not currently used
-        }
-
-        /// <summary>
-        /// The DisplayColorMode for the current display
-        /// </summary>
-        public abstract DisplayColorMode ColorMode { get; }
+        public abstract ColorType ColorMode { get; }
 
         /// <summary>
         /// Width of the display in pixels
@@ -63,6 +48,19 @@ namespace Meadow.Foundation.Displays
         public abstract void Clear(bool updateDisplay = false);
 
         /// <summary>
+        /// Clear the display.
+        /// </summary>
+        /// <param name="fillColor">The color used to fill the display buffer.</param>
+        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
+        public abstract void Fill(Color fillColor, bool updateDisplay = false);
+
+        /// <summary>
+        /// Clear the display.
+        /// </summary>
+        /// <param name="fillColor">The color used to fill the display buffer.</param>
+        public abstract void Fill(int x, int y, int width, int height, Color fillColor);
+
+        /// <summary>
         /// Draw a single pixel at the specified color
         /// </summary>
         /// <param name="x"></param>
@@ -84,5 +82,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="x"></param>
         /// <param name="y"></param>
         public abstract void InvertPixel(int x, int y);
+
+        public abstract void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer);
     }
 }
