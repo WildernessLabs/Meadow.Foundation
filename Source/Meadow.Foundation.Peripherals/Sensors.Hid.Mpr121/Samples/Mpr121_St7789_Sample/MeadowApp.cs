@@ -42,7 +42,7 @@ namespace Sensors.Distance.Mpr121_Sample
             Console.WriteLine("Create graphics lib");
 
             graphics = new GraphicsLibrary(display);
-            graphics.Rotation = GraphicsLibrary.RotationType._90Degrees;
+            graphics.Rotation = RotationType._90Degrees;
             graphics.CurrentFont = new Font12x16();
         }
 

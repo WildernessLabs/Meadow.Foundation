@@ -94,7 +94,7 @@ namespace Meadow.Foundation.Displays
 
         public override void InvertPixel(int x, int y)
         {
-            imageBuffer.SetPixel(x, y, !imageBuffer.GetPixelBool(x, y));
+            imageBuffer.SetPixel(x, y, !imageBuffer.GetPixelIsColored(x, y));
         }
 
         /// <summary>

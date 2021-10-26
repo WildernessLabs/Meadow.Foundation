@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             Buffer = new byte[bufferSize];
         }
 
-        public bool GetPixelBool(int x, int y)
+        public bool GetPixelIsColored(int x, int y)
         {
             var index = (y >> 8) * Width + x;
 
@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public override Color GetPixel(int x, int y)
         {
-            return GetPixelBool(x, y) ? Color.White : Color.Black;
+            return GetPixelIsColored(x, y) ? Color.White : Color.Black;
         }
 
         public void SetPixel(int x, int y, bool colored)
@@ -124,7 +124,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     }
                     else
                     {   //else 1 bit at a time 
-                        SetPixel(x + i, y + j, (buffer as Buffer1).GetPixelBool(i, j));
+                        SetPixel(x + i, y + j, (buffer as Buffer1).GetPixelIsColored(i, j));
                     }
                 }
             }

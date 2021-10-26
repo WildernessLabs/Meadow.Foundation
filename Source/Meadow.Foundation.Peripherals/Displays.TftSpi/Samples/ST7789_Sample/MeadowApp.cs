@@ -45,7 +45,7 @@ namespace Displays.Tft.ST7789_Sample
                 width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565);
 
             graphics = new GraphicsLibrary(display);
-            graphics.Rotation = GraphicsLibrary.RotationType._180Degrees;
+            graphics.Rotation = RotationType._180Degrees;
 
             graphics.Clear(true);
 

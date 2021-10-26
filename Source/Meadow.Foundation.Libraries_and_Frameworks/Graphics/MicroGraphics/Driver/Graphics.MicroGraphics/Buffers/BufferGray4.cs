@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public BufferGray4(int width, int height) : base(width, height) { }
 
-        public byte GetPixelByte(int x, int y)
+        public byte GetPixel4bpp(int x, int y)
         {
             int index = y * Width / 2 + x / 2;
             byte color;
@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public override Color GetPixel(int x, int y)
         {   //comes back as a 4bit value
-            var gray = GetPixelByte(x, y);
+            var gray = GetPixel4bpp(x, y);
 
             return new Color(gray << 4, gray << 4, gray << 4);
         }
@@ -118,7 +118,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                 {
                     for (int j = 0; j < buffer.Height; j++)
                     {
-                        SetPixel(x + i, y + j, (buffer as BufferGray4).GetPixelByte(i, j));
+                        SetPixel(x + i, y + j, (buffer as BufferGray4).GetPixel4bpp(i, j));
                     }
                 }
             }

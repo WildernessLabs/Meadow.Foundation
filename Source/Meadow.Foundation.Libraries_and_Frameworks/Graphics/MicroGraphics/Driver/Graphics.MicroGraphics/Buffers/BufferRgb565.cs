@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public BufferRgb565(int width, int height) : base(width, height) { }
 
-        public ushort GetPixelUShort(int x, int y)
+        public ushort GetPixel16bpp(int x, int y)
         {
             //get current color
             var index = ((y * Width) + x) * sizeof(ushort);
@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public override Color GetPixel(int x, int y)
         {
-            ushort color = GetPixelUShort(x, y);
+            ushort color = GetPixel16bpp(x, y);
 
             //split into R,G,B & invert
             byte r = (byte)((color >> 11) & 0x1F);
