@@ -1,4 +1,5 @@
 ﻿using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Peripherals.Displays;
 using System;
 
@@ -805,7 +806,6 @@ namespace Meadow.Foundation.Graphics
                         display.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width, height, width, color);
                         break;
                 }
-
                 /*
                 for (var i = 0; i <= height; i++)
                 {
@@ -814,6 +814,7 @@ namespace Meadow.Foundation.Graphics
             }
             else
             {
+                //because we include the starting pixel 
                 width--;
                 height--;
 
@@ -921,6 +922,20 @@ namespace Meadow.Foundation.Graphics
             }
 
             DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, BitmapMode.And, scaleFactor);
+        }
+
+        /// <summary>
+        ///     Draw a buffer onto the display buffer at the given localation
+        ///
+        ///     For best performance, source buffer should be the same color depth as the target display
+        ///     Note: DrawBuffer will not rotate the source buffer, it will always be oriented relative to base display rotation
+        /// </summary>
+        /// <param name="x">x location of target to draw buffer</param>
+        /// <param name="y">x location of target to draw buffer</param>
+        /// <param name="buffer">the source buffer to write to the display buffer</param>
+        public void DrawBuffer(int x, int y, IDisplayBuffer buffer)
+        {
+            display.DrawBuffer(GetXForRotation(x, y), GetYForRotation(x, y), buffer);
         }
 
         /// <summary>
