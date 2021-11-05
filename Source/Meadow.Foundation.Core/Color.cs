@@ -257,26 +257,26 @@ namespace Meadow.Foundation
                     var t2 = ToHexD(hex[idx++]);
                     var t3 = ToHexD(hex[idx]);
 
-                    return FromRgb((int)t1, (int)t2, (int)t3);
+                    return FromRgb((byte)t1, (byte)t2, (byte)t3);
 
                 case 4: //#argb => aarrggbb
                     var f1 = ToHexD(hex[idx++]);
                     var f2 = ToHexD(hex[idx++]);
                     var f3 = ToHexD(hex[idx++]);
                     var f4 = ToHexD(hex[idx]);
-                    return FromRgba((int)f2, (int)f3, (int)f4, (int)f1);
+                    return FromRgba((byte)f2, (byte)f3, (byte)f4, (byte)f1);
 
                 case 6: //#rrggbb => ffrrggbb
-                    return FromRgb((int)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx++])),
-                            (int)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx++])),
-                            (int)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx])));
+                    return FromRgb((byte)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx++])),
+                            (byte)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx++])),
+                            (byte)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx])));
 
                 case 8: //#aarrggbb
                     var a1 = ToHex(hex[idx++]) << 4 | ToHex(hex[idx++]);
-                    return FromRgba((int)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx++])),
-                            (int)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx++])),
-                            (int)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx])),
-                            (int)a1);
+                    return FromRgba((byte)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx++])),
+                            (byte)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx++])),
+                            (byte)(ToHex(hex[idx++]) << 4 | ToHex(hex[idx])),
+                            (byte)a1);
 
                 default: //everything else will result in unexpected results
                     return Default;
@@ -298,6 +298,7 @@ namespace Meadow.Foundation
             return FromRgba(r, g, b, 255);
         }
 
+        /*
         public static Color FromRgba(double r, double g, double b, double a)
         {
             return new Color((byte)(r*255), (byte)(g * 255), (byte)(b * 255), (byte)(a * 255));
@@ -307,6 +308,7 @@ namespace Meadow.Foundation
         {
             return FromRgba(r, g, b, 1f);
         }
+        */
 
         public static Color FromHsba(double h, double s, double b, double a = 1.0)
         {

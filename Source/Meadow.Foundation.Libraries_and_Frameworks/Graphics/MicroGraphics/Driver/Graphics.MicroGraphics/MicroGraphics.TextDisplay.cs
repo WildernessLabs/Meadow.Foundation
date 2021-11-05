@@ -11,7 +11,11 @@ namespace Meadow.Foundation.Graphics
             {
                 throw new Exception("GraphicsLibrary.Write requires CurrentFont to be set");
             }
-            DrawText(CurrentFont.Width * CursorColumn, CurrentFont.Height * CursorLine, text, Color.White);
+
+            DrawText(CurrentFont.Width * CursorColumn * DisplayConfig.FontScale,
+                CurrentFont.Height * CursorLine * DisplayConfig.FontScale,
+                text,
+                Color.White);
         }
 
         public void WriteLine(string text, byte lineNumber, bool showCursor = false)
@@ -20,7 +24,8 @@ namespace Meadow.Foundation.Graphics
             {
                 throw new Exception("GraphicsLibrary.WriteLine requires CurrentFont to be set");
             }
-            DrawText(0, lineNumber * CurrentFont.Height, text, Color.White);
+            DrawText(0, lineNumber * CurrentFont.Height * DisplayConfig.FontScale,
+                text, Color.White, (ScaleFactor)DisplayConfig.FontScale);
 
             if (CursorLine == lineNumber && showCursor == true)
             {
@@ -30,7 +35,8 @@ namespace Meadow.Foundation.Graphics
 
         void DrawCursor()
         {
-            InvertRectangle(CursorColumn * currentFont.Width, CursorLine * currentFont.Height,
+            InvertRectangle(CursorColumn * currentFont.Width * DisplayConfig.FontScale,
+                CursorLine * currentFont.Height * DisplayConfig.FontScale,
                 currentFont.Width, currentFont.Height);
         }
 
@@ -41,7 +47,10 @@ namespace Meadow.Foundation.Graphics
 
         public void ClearLine(byte lineNumber)
         {
-            DrawRectangle(0, CurrentFont.Height * lineNumber, (int)Width, CurrentFont.Height, false, true);
+            DrawRectangle(0, CurrentFont.Height * lineNumber * DisplayConfig.FontScale,
+                Width,
+                CurrentFont.Height * DisplayConfig.FontScale,
+                false, true);
         }
 
         public byte CursorColumn { get; private set; } = 0;
