@@ -1144,7 +1144,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">Color to set display.</param>
         public void Clear(Color color, bool updateDisplay = false)
         {
-            DrawRectangle(0, 0, (int)Width, (int)Height, color);
+            DrawRectangle(0, 0, Width, Height, color, true);
 
             if(updateDisplay) { Show(); }
         }
