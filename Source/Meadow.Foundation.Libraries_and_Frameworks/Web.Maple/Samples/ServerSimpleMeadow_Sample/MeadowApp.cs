@@ -24,11 +24,6 @@ namespace Maple.ServerSimpleMeadow_Sample
         {
             Console.WriteLine("Initialize hardware...");
 
-            // initialize the wifi adpater
-            if (!Device.InitWiFiAdapter().Result) {
-                throw new Exception("Could not initialize the WiFi adapter.");
-            }
-
             // connnect to the wifi network.
             Console.WriteLine($"Connecting to WiFi Network {Secrets.WIFI_NAME}");
             var connectionResult = await Device.WiFiAdapter.Connect(Secrets.WIFI_NAME, Secrets.WIFI_PASSWORD);
