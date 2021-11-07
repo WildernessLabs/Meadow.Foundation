@@ -254,5 +254,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             throw new NotImplementedException();
         }
+
+        public void Exchange(Span<byte> writeBuffer, Span<byte> readBuffer, DuplexType duplex)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -298,7 +298,6 @@ namespace Meadow.Foundation
             return FromRgba(r, g, b, 255);
         }
 
-        /*
         public static Color FromRgba(double r, double g, double b, double a)
         {
             return new Color((byte)(r*255), (byte)(g * 255), (byte)(b * 255), (byte)(a * 255));
@@ -308,7 +307,6 @@ namespace Meadow.Foundation
         {
             return FromRgba(r, g, b, 1f);
         }
-        */
 
         public static Color FromHsba(double h, double s, double b, double a = 1.0)
         {
