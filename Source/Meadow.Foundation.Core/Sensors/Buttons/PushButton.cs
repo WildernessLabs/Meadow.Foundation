@@ -9,6 +9,8 @@ namespace Meadow.Foundation.Sensors.Buttons
     /// </summary>
     public class PushButton : IButton, IDisposable
     {
+        private bool _shouldDisposeInput = false;
+
         /// <summary>
         /// This duration controls the debounce filter. It also has the effect
         /// of rate limiting clicks. Decrease this time to allow users to click
@@ -136,47 +138,43 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected ResistorMode resistorMode;
 
         /// <summary>
-        /// Creates PushButton with a digital input pin connected on a IIOdevice, especifying if its using an Internal or External PullUp/PullDown resistor.
+        /// Creates PushButton with a digital input pin connected on a IIOdevice, specifying if its using an Internal or External PullUp/PullDown resistor.
         /// </summary>
         /// <param name="device"></param>
         /// <param name="inputPin"></param>
         /// <param name="resistorMode"></param>
-        public PushButton(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp) 
-            : this(device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistorMode, 50, 25)) { }
+        public PushButton(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
+            : this(device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistorMode, 50, 25)) 
+        {
+            // only Dispose the input if we created it
+            _shouldDisposeInput = true;
+        }
 
         /// <summary>
-        /// Creates PushButton with a digital input port, especifying if its using an Internal or External PullUp/PullDown resistor.
+        /// Creates PushButton with a pre-configured interrupt port
         /// </summary>
         /// <param name="interruptPort"></param>
-        /// <param name="resistorMode"></param>
         public PushButton(IDigitalInputPort interruptPort)
         {
-            if (interruptPort.Resistor == ResistorMode.Disabled)
-            {
-                throw new Exception("PushButton requires ResistorMode to be != Disabled");
-            }
-
             resistorMode = interruptPort.Resistor;
 
-            DigitalIn = interruptPort;            
+            DigitalIn = interruptPort;
             DigitalIn.Changed += DigitalInChanged;
         }
 
         void DigitalInChanged(object sender, DigitalPortResult result)
         {
-            bool state = (resistorMode == ResistorMode.InternalPullUp || 
+            bool state = (resistorMode == ResistorMode.InternalPullUp ||
                           resistorMode == ResistorMode.ExternalPullUp) ? !result.New.State : result.New.State;
 
-            //Console.WriteLine($"PB: InputChanged. State == {State}. result.New.State: {result.New.State}.  DI State: {DigitalIn.State}");
-
             if (state)
-            {                
+            {
                 // save our press start time (for long press event)
                 buttonPressStart = DateTime.Now;
                 // raise our event in an inheritance friendly way
                 RaisePressStarted();
             }
-            else 
+            else
             {
                 // calculate the press duration
                 TimeSpan pressDuration = DateTime.Now - buttonPressStart;
@@ -189,7 +187,7 @@ namespace Meadow.Foundation.Sensors.Buttons
                 {
                     RaiseLongClicked();
                 }
-                else 
+                else
                 {
                     RaiseClicked();
                 }
@@ -234,9 +232,15 @@ namespace Meadow.Foundation.Sensors.Buttons
             longClickDelegate?.Invoke(this, new EventArgs());
         }
 
+        /// <summary>
+        /// Disposes the Digital Input resources
+        /// </summary>
         public void Dispose()
         {
-            DigitalIn.Dispose();
+            if (_shouldDisposeInput)
+            {
+                DigitalIn.Dispose();
+            }
         }
     }
 }
