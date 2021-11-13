@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
@@ -156,20 +154,23 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </remarks>
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
         {
-            return await Task.Run(() => {
+            //TODO: set an update flag on the oversample properties and set
+            // these once, unless the update flag has been set.
+            // update configuration
+            configuration.TemperatureOverSampling = TemperatureSampleCount;
+            configuration.PressureOversampling = PressureSampleCount;
+            configuration.HumidityOverSampling = HumiditySampleCount;
 
-                //TODO: set an update flag on the oversample properties and set
-                // these once, unless the update flag has been set.
-
-                // update configuration
-                configuration.TemperatureOverSampling = TemperatureSampleCount;
-                configuration.PressureOversampling = PressureSampleCount;
-                configuration.HumidityOverSampling = HumiditySampleCount;
-                // TODO: do we need this?
-                //configuration.Mode = Modes.Forced;
+            //if we're not in normal mode, set up the BME280 for a one-time read
+            if (configuration.Mode != Modes.Normal)
+            {
+                configuration.Mode = Modes.Forced;
                 configuration.Filter = FilterCoefficient.Off;
                 UpdateConfiguration(configuration);
+                await Task.Delay(100); //give the BME280 time to read new values
+            }
 
+            return await Task.Run(() => {
 
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
 
@@ -384,6 +385,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             bme280Comms.ReadRegisters((byte)Bme280Comms.Register.ChipID, readBuffer.Span[0..1]);
             return readBuffer.Span[0];
+        }
+
+        public override void StartUpdating(TimeSpan? updateInterval = null)
+        {
+            // wake up the sensor
+            configuration.Mode = Modes.Normal;
+            UpdateConfiguration(configuration);
+
+            base.StartUpdating(updateInterval);
         }
     }
 }
