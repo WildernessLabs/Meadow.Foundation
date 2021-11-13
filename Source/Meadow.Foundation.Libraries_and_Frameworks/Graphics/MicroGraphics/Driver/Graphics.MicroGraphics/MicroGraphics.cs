@@ -797,13 +797,13 @@ namespace Meadow.Foundation.Graphics
                         display.Fill(x, y, width, height, color);
                         break;
                     case RotationType._90Degrees:
-                        display.Fill(GetXForRotation(x, y) - height, GetYForRotation(x, y), height, width, color);
+                        display.Fill(GetXForRotation(x, y) - height + 1, GetYForRotation(x, y), height, width, color);
                         break;
                     case RotationType._180Degrees:
-                        display.Fill(GetXForRotation(x, y) - width, GetYForRotation(x, y) - height, width, height, color);
+                        display.Fill(GetXForRotation(x, y) - width + 1, GetYForRotation(x, y) - height + 1, width, height, color);
                         break;
                     case RotationType._270Degrees:
-                        display.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width, height, width, color);
+                        display.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width, color);
                         break;
                 }
                 /*
