@@ -230,8 +230,9 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         private void SetPixel(int x, int y, ushort color)
         {
-            //  if (x < 0 || y < 0 || x >= width || y >= height)
-            //  { return; }
+            if (IgnoreOutOfBoundsPixels &&
+                x < 0 || y < 0 || x >= Width || y >= Height)
+            { return; }
 
             if (colorMode == ColorType.Format16bppRgb565)
             {
