@@ -58,8 +58,6 @@ namespace Displays.Tft.ST7789_Sample
             graphics.DrawRectangle(0, 100, 120, 20, Color.Orange, true);
 
             graphics.Show();
-
-            DisplayTest();
         }
 
         //<!—SNOP—>
