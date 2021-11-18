@@ -7,6 +7,13 @@ develop:
 
 Meadow.Foundation greatly simplifies the task of building connected things with Meadow, by providing a unified driver and library framework that includes drivers and abstractions for common peripherals such as sensors, displays, motors, and more. Additionally, it includes utility functions and helpers for common tasks when building connected things.
 
+## Requesting New Drivers
+
+If you have a need for a driver that we don't yet support, you have a couple options:
+
+- Use an existing, similar driver as a template for your new driver.  We accept pull requests, but don't require them.
+- Open a new item on the [Issues Tab](https://github.com/WildernessLabs/Meadow.Foundation/issues) and request the driver so we can prioritize it.
+
 # Documentation
 
 You can read more Meadow.Foundation and how to get started in our [beta developer site](http://beta-developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
