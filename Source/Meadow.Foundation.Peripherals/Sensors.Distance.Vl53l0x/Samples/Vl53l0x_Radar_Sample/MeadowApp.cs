@@ -15,7 +15,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
         St7789 display;
         Vl53l0x sensor;
         Servo servo;
@@ -48,7 +48,7 @@ namespace MeadowApp
 
             Console.WriteLine("Create graphics lib");
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
             graphics.CurrentFont = new Font12x20();
             graphics.Rotation = RotationType._90Degrees;
 

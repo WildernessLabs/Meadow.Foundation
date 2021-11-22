@@ -8,7 +8,7 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
         Ssd1309 display;
 
         //needs cleanup - quick port from c code
@@ -56,7 +56,7 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
                    { -20,  20, back_depth}
               };  */
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
 
             Show3dCube();
 
@@ -197,7 +197,7 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
 
         void TestDisplayGraphicsAPI()
         {
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
 
             graphics.Clear();
             graphics.CurrentFont = new Font12x16();

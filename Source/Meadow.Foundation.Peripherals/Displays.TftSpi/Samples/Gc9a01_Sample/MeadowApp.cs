@@ -11,7 +11,7 @@ namespace Displays.Tft.Gc9a01_Sample
     {
         //<!—SNIP—>
 
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
 
         public MeadowApp()
         {
@@ -31,7 +31,7 @@ namespace Displays.Tft.Gc9a01_Sample
                 dcPin: Device.Pins.D01
             );
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
 
             graphics.CurrentFont = new Font12x20();
             graphics.Clear();

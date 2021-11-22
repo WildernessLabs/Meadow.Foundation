@@ -23,7 +23,7 @@ namespace Displays.ePaper.IL3897_Sample
                 width: 122,
                 height: 250);
 
-            var graphics = new GraphicsLibrary(display);
+            var graphics = new MicroGraphics(display);
 
             graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Black, false);
 

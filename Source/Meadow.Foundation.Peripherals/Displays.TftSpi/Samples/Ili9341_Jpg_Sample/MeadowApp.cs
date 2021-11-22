@@ -14,7 +14,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         Ili9341 display;
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
 
         public MeadowApp()
         {
@@ -32,7 +32,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
                 width: 240, height: 320
             );
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
 
             int delay = 5000;
 

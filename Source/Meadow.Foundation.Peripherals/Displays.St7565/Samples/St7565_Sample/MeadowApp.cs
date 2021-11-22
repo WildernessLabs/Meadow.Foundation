@@ -10,7 +10,7 @@ namespace Displays.ST7565_Sample
     {
         //<!—SNIP—>
 
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
 
         public MeadowApp()
         {
@@ -27,7 +27,7 @@ namespace Displays.ST7565_Sample
                 height: 64
             );
 
-            graphics = new GraphicsLibrary(sT7565);
+            graphics = new MicroGraphics(sT7565);
 
             graphics.CurrentFont = new Font8x8();
             graphics.Clear();

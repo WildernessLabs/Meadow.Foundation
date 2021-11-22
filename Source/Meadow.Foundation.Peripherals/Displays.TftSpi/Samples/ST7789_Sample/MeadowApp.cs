@@ -26,7 +26,7 @@ namespace Displays.Tft.ST7789_Sample
     {
         //<!—SNIP—>
 
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
         St7789 display;
 
         public MeadowApp()
@@ -44,7 +44,7 @@ namespace Displays.Tft.ST7789_Sample
                 resetPin: Device.Pins.D00,
                 width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565);
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
             graphics.Rotation = RotationType._180Degrees;
 
             graphics.Clear(true);
@@ -195,12 +195,12 @@ namespace Displays.Tft.ST7789_Sample
             graphics.Clear();
 
             graphics.DrawText(120, 0, "Left aligned", Color.Blue);
-            graphics.DrawText(120, 16, "Center aligned", Color.Green, GraphicsLibrary.ScaleFactor.X1, GraphicsLibrary.TextAlignment.Center);
-            graphics.DrawText(120, 32, "Right aligned", Color.Red, GraphicsLibrary.ScaleFactor.X1, GraphicsLibrary.TextAlignment.Right);
+            graphics.DrawText(120, 16, "Center aligned", Color.Green, MicroGraphics.ScaleFactor.X1, MicroGraphics.TextAlignment.Center);
+            graphics.DrawText(120, 32, "Right aligned", Color.Red, MicroGraphics.ScaleFactor.X1, MicroGraphics.TextAlignment.Right);
 
-            graphics.DrawText(120, 64, "Left aligned", Color.Blue, GraphicsLibrary.ScaleFactor.X2);
-            graphics.DrawText(120, 96, "Center aligned", Color.Green, GraphicsLibrary.ScaleFactor.X2, GraphicsLibrary.TextAlignment.Center);
-            graphics.DrawText(120, 128, "Right aligned", Color.Red, GraphicsLibrary.ScaleFactor.X2, GraphicsLibrary.TextAlignment.Right);
+            graphics.DrawText(120, 64, "Left aligned", Color.Blue, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(120, 96, "Center aligned", Color.Green, MicroGraphics.ScaleFactor.X2, MicroGraphics.TextAlignment.Center);
+            graphics.DrawText(120, 128, "Right aligned", Color.Red, MicroGraphics.ScaleFactor.X2, MicroGraphics.TextAlignment.Right);
 
             graphics.Show();
         }
@@ -422,19 +422,19 @@ namespace Displays.Tft.ST7789_Sample
 
             graphics.Clear();
 
-            graphics.DrawText(0, 0, "2x Scale", Color.Blue, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 0, "2x Scale", Color.Blue, MicroGraphics.ScaleFactor.X2);
 
-            graphics.DrawText(0, 48, "12x20 Font", Color.Green, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 48, "12x20 Font", Color.Green, MicroGraphics.ScaleFactor.X2);
 
-            graphics.DrawText(0, 96, "0123456789", Color.Yellow, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 96, "0123456789", Color.Yellow, MicroGraphics.ScaleFactor.X2);
 
-            graphics.DrawText(0, 144, "!@#$%^&*()", Color.Orange, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 144, "!@#$%^&*()", Color.Orange, MicroGraphics.ScaleFactor.X2);
 
-            graphics.DrawText(0, 192, "3x!", Color.OrangeRed, GraphicsLibrary.ScaleFactor.X3);
+            graphics.DrawText(0, 192, "3x!", Color.OrangeRed, MicroGraphics.ScaleFactor.X3);
 
-            graphics.DrawText(0, 240, "Meadow!", Color.Red, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 240, "Meadow!", Color.Red, MicroGraphics.ScaleFactor.X2);
 
-            graphics.DrawText(0, 288, "B4.2", Color.Violet, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 288, "B4.2", Color.Violet, MicroGraphics.ScaleFactor.X2);
 
             graphics.Show();
         }

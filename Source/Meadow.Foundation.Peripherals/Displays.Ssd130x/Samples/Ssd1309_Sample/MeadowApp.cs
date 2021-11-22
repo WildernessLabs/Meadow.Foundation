@@ -11,7 +11,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
     {
         //<!—SNIP—>
 
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
         Ssd1309 display;
 
         public MeadowApp()
@@ -20,7 +20,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
             //CreateI2CDisplay();
 
             Console.WriteLine("Create canvas...");
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
 
             graphics.Clear();
             graphics.CurrentFont = new Font8x12();
@@ -105,7 +105,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
         {
             var stopwatch = new System.Diagnostics.Stopwatch();
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
             graphics.CurrentFont = new Font8x12();
 
             stopwatch.Start();
@@ -172,7 +172,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
 
         void TestDisplayGraphicsAPI()
         {
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
 
             graphics.Clear();
             graphics.CurrentFont = new Font12x16();

@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation.Graphics
 {
-    public partial class GraphicsLibrary
+    public partial class MicroGraphics
     {
         protected class CanvasState
         {
@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Restore saved state variables and apply them to the GraphicsLibrary instance 
+        /// Restore saved state variables and apply them to the MicroGraphics instance 
         /// Includes: CurrentFont, Stroke, & Rotation
         /// </summary>
         public void RestoreState()

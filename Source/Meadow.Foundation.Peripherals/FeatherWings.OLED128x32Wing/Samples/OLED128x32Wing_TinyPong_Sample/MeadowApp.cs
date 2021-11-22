@@ -11,7 +11,7 @@ namespace FeatherWings.OLED128x32_TinyPong_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         OLED128x32Wing oledWing;
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
 
         PongGame pongGame;
 
@@ -32,7 +32,7 @@ namespace FeatherWings.OLED128x32_TinyPong_Sample
             oledWing.ButtonB.Clicked += (sender, e) => pongGame?.PlayerUp();
             oledWing.ButtonC.Clicked += (sender, e) => pongGame?.PlayerDown();
 
-            graphics = new GraphicsLibrary(oledWing.Display);
+            graphics = new MicroGraphics(oledWing.Display);
             graphics.CurrentFont = new Font8x12();
         }
 

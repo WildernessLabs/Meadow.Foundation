@@ -17,7 +17,7 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
         byte[] data = new byte[512];
 
         Ssd1309 display;
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
 
         public MeadowApp()
         {
@@ -31,7 +31,7 @@ namespace Sensors.GPS.NMEA_SSD1309_Sample
             display = new Ssd1309(Device.CreateI2cBus());
             Console.WriteLine("Display created");
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
             graphics.CurrentFont = new Font8x8();
             Console.WriteLine("Graphics library created");
 

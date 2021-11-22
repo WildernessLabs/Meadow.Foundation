@@ -10,7 +10,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
         Ssd1309 display;
 
      //   PushButton btnUp, btnDown, btnLeft, btnRight;
@@ -114,7 +114,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
             Console.WriteLine("Create Graphics Library...");
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
             graphics.Rotation = RotationType._270Degrees;
             graphics.CurrentFont = new Font8x12();
 
