@@ -102,17 +102,17 @@ namespace Meadow.Foundation
 
         public Color WithBrightness(double brightness)
         {
-            return new Color(hue, saturation, brightness, A);
+            return new Color(Hue, Saturation, brightness, A);
         }
 
         public Color WithHue(double hue)
         {
-            return new Color(hue, saturation, brightness, A);
+            return new Color(hue, Saturation, Brightness, A);
         }
 
         public Color WithSaturation(double saturation)
         {
-            return new Color(hue, saturation, brightness, A);
+            return new Color(Hue, saturation, Brightness, A);
         }
 
         static void ConvertToRgb(double hue, double saturation, double brightness, out byte r, out byte g, out byte b)
