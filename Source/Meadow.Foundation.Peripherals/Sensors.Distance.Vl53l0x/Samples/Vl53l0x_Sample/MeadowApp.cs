@@ -18,7 +18,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
         {
             Console.WriteLine("Initializing hardware...");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
-            sensor = new Vl53l0x(Device, i2cBus, 250);
+            sensor = new Vl53l0x(Device, i2cBus, (byte)Vl53l0x.Addresses.Default);
 
             sensor.DistanceUpdated += Sensor_Updated;
             sensor.StartUpdating(TimeSpan.FromMilliseconds(250));
