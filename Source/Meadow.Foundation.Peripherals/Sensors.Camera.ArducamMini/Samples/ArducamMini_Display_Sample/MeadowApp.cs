@@ -16,7 +16,7 @@ namespace MeadowApp
 
         St7789 display;
 
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
         
 
         public MeadowApp()
@@ -93,7 +93,7 @@ namespace MeadowApp
         //    display = new ST7789(Device, spiBus,
         //        Device.Pins.D04, Device.Pins.D03, Device.Pins.D02, 135, 240);
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
             graphics.CurrentFont = new Font12x20();
             graphics.Rotation = RotationType._90Degrees;
 

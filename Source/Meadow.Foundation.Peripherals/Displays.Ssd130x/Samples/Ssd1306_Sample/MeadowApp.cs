@@ -11,7 +11,7 @@ namespace Displays.Ssd130x.Ssd1306_Sample
     {
         //<!—SNIP—>
 
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
         Ssd1306 display;
 
         public MeadowApp()
@@ -19,7 +19,7 @@ namespace Displays.Ssd130x.Ssd1306_Sample
             //CreateSpiDisplay();
             CreateI2CDisplay();
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
 
             graphics.Clear();
             graphics.CurrentFont = new Font8x12();

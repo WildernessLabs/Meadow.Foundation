@@ -3,13 +3,13 @@ using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Graphics
 {
-    public partial class GraphicsLibrary : ITextDisplay
+    public partial class MicroGraphics : ITextDisplay
     {
         public void Write(string text)
         {
             if (CurrentFont == null)
             {
-                throw new Exception("GraphicsLibrary.Write requires CurrentFont to be set");
+                throw new Exception("MicroGraphics.Write requires CurrentFont to be set");
             }
 
             DrawText(CurrentFont.Width * CursorColumn * DisplayConfig.FontScale,
@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Graphics
         {
             if (CurrentFont == null)
             {
-                throw new Exception("GraphicsLibrary.WriteLine requires CurrentFont to be set");
+                throw new Exception("MicroGraphics.WriteLine requires CurrentFont to be set");
             }
             DrawText(0, lineNumber * CurrentFont.Height * DisplayConfig.FontScale,
                 text, Color.White, (ScaleFactor)DisplayConfig.FontScale);

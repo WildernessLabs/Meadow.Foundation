@@ -59,9 +59,9 @@ namespace MeadowApp
                 resetPin: Device.Pins.D00
             );
 
-            Console.WriteLine("Create GraphicsLibrary...");
+            Console.WriteLine("Create MicroGraphics...");
 
-            var gl = new GraphicsLibrary(ssd1309)
+            var gl = new MicroGraphics(ssd1309)
             {
                 CurrentFont = new Font8x12(),
             };

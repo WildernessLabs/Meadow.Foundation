@@ -15,7 +15,7 @@ namespace MeadowApp
     {
         //==== peripherals
         AnalogJoystick joystick;
-        GraphicsLibrary canvas;
+        MicroGraphics canvas;
         TftSpiBase display;
 
         //==== internals
@@ -70,7 +70,7 @@ namespace MeadowApp
 
                 // graphics library
                 Console.WriteLine("Create graphics lib");
-                canvas = new GraphicsLibrary(display);
+                canvas = new MicroGraphics(display);
                 canvas.Rotation = RotationType._90Degrees;
             }
 

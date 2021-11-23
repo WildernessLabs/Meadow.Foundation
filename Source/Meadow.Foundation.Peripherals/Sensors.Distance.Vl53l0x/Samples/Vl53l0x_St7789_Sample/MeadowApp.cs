@@ -13,7 +13,7 @@ namespace Sensors.Distance.Vl53l0x_St7789_Sample
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
         St7789 display;
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
         Vl53l0x sensor;
 
         public MeadowApp()
@@ -40,7 +40,7 @@ namespace Sensors.Distance.Vl53l0x_St7789_Sample
 
             Console.WriteLine("Create graphics lib");
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
             graphics.CurrentFont = new Font12x16();
             graphics.Clear();
 
@@ -63,7 +63,7 @@ namespace Sensors.Distance.Vl53l0x_St7789_Sample
             Console.WriteLine($"{result.New.Millimeters}mm");
 
             graphics.DrawRectangle(0, 0, 135, 33, Color.Black, true);
-            graphics.DrawText(0, 0, $"{result.New.Millimeters}mm", Color.White, GraphicsLibrary.ScaleFactor.X2);
+            graphics.DrawText(0, 0, $"{result.New.Millimeters}mm", Color.White, MicroGraphics.ScaleFactor.X2);
             graphics.Show();
         }
     }

@@ -9,7 +9,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
         Max7219 display;
 
         public MeadowApp()
@@ -43,7 +43,7 @@ namespace MeadowApp
 
             display.IgnoreOutOfBoundsPixels = true;
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
             graphics.CurrentFont = new Font4x8();
 
             Console.WriteLine($"Display W: {display.Width}, H: {display.Height}");

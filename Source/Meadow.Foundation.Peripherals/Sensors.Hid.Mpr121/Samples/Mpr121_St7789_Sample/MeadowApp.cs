@@ -12,7 +12,7 @@ namespace Sensors.Distance.Mpr121_Sample
     {
         Mpr121 sensor;
         St7789 display;
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
 
         public MeadowApp()
         {
@@ -41,7 +41,7 @@ namespace Sensors.Distance.Mpr121_Sample
 
             Console.WriteLine("Create graphics lib");
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
             graphics.Rotation = RotationType._90Degrees;
             graphics.CurrentFont = new Font12x16();
         }

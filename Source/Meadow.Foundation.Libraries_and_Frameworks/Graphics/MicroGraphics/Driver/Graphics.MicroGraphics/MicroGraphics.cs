@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Graphics
     /// <summary>
     ///     Provide high level graphics functions
     /// </summary>
-    public partial class GraphicsLibrary 
+    public partial class MicroGraphics 
     {
         private readonly DisplayBase display;
 
@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// </summary>
         /// <param name="display"></param>
-        public GraphicsLibrary(DisplayBase display)
+        public MicroGraphics(DisplayBase display)
         {
             this.display = display;
             CurrentFont = null;

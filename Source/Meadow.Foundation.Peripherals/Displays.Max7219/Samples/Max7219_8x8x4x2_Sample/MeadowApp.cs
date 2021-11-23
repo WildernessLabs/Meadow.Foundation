@@ -9,7 +9,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
         Max7219 display;
 
         //needs cleanup - quick port from c code
@@ -70,7 +70,7 @@ namespace MeadowApp
 
             display = new Max7219(Device, Device.CreateSpiBus(), Device.Pins.D01, 4, 2, Max7219.Max7219Type.Display);
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
 
             graphics.Rotation = RotationType._90Degrees;
 

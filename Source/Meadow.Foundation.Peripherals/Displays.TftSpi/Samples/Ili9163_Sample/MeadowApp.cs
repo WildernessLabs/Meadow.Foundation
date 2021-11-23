@@ -11,7 +11,7 @@ namespace Displays.Tft.Ili9163_Sample
     {
         //<!—SNIP—>
 
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
 
         public MeadowApp()
         {
@@ -32,7 +32,7 @@ namespace Displays.Tft.Ili9163_Sample
                 width: 128, height: 160
             );
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
 
             graphics.CurrentFont = new Font8x8();
             graphics.Clear();

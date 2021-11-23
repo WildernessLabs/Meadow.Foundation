@@ -12,7 +12,7 @@ namespace Leds.Apa102_Display_Sample
     {
         Apa102 display;
 
-        GraphicsLibrary canvas;
+        MicroGraphics canvas;
 
         public MeadowApp()
         {
@@ -41,7 +41,7 @@ namespace Leds.Apa102_Display_Sample
             Console.WriteLine("Initialize hardware...");
 
             display = new Apa102(Device.CreateSpiBus(48000), Apa102.PixelOrder.BGR, false, 32, 8);
-            canvas = new GraphicsLibrary(display);
+            canvas = new MicroGraphics(display);
 
             Console.WriteLine("Hardware intitialized.");
         }

@@ -24,7 +24,7 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
                        resetPin: Device.Pins.D00,
                        width: 128, height: 128); 
 
-            var graphics = new GraphicsLibrary(display);
+            var graphics = new MicroGraphics(display);
             graphics.CurrentFont = new Font8x12();
 
             graphics.Clear();

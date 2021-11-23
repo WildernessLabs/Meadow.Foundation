@@ -21,7 +21,7 @@ namespace MeadowApp
 
         Menu menu;
 
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
         Ssd1309 ssd1309;
 
         IButton up = null;
@@ -60,9 +60,9 @@ namespace MeadowApp
                 resetPin: Device.Pins.D00
             );
 
-            Console.WriteLine("Create GraphicsLibrary...");
+            Console.WriteLine("Create MicroGraphics...");
 
-            graphics = new GraphicsLibrary(ssd1309)
+            graphics = new MicroGraphics(ssd1309)
             {
                 CurrentFont = new Font8x12(),
             };

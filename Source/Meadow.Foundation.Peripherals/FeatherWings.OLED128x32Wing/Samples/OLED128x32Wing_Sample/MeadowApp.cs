@@ -11,7 +11,7 @@ namespace FeatherWings.OLED128x32_Sample
     {
         //<!—SNIP—>
 
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
 
         public MeadowApp()
         {
@@ -20,7 +20,7 @@ namespace FeatherWings.OLED128x32_Sample
 
             var oledWing = new OLED128x32Wing(i2cBus, Device, Device.Pins.D11, Device.Pins.D10, Device.Pins.D09);
 
-            graphics = new GraphicsLibrary(oledWing.Display);
+            graphics = new MicroGraphics(oledWing.Display);
             graphics.CurrentFont = new Font12x16();
 
             oledWing.ButtonA.Clicked += (sender, e) => UpdateDisplay("A pressed");
