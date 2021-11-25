@@ -1,88 +1,66 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
-using Meadow.Peripherals.Displays;
+using System;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Abstract hardware display class 
     /// </summary>
+    [Obsolete]
     public abstract class DisplayBase : IGraphicsDisplay
     {
-        /// <summary>
-        /// The ColorType for the current display
-        /// </summary>
-        public abstract ColorType ColorMode { get; }
+        public ColorType ColorMode => throw new NotImplementedException();
 
-        /// <summary>
-        /// Width of the display in pixels
-        /// </summary>
-        public abstract int Width { get; }
+        public int Width => throw new NotImplementedException();
 
-        /// <summary>
-        /// Height of the display in pixels
-        /// </summary>
-        public abstract int Height { get; }
+        public int Height => throw new NotImplementedException();
 
-        /// <summary>
-        /// Indicate of the hardware driver should ignore out of bounds pixels
-        /// or if the driver should generate an exception.
-        /// </summary>
-        public bool IgnoreOutOfBoundsPixels { get; set; }
+        public bool IgnoreOutOfBoundsPixels { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        /// <summary>
-        /// Transfer the contents of the buffer to the display.
-        /// </summary>
-        public abstract void Show();
+        public void Clear(bool updateDisplay = false)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Transfer part of the contents of the buffer to the display
-        /// bounded by left, top, right and bottom
-        /// </summary>
-        public abstract void Show(int left, int top, int right, int bottom);
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Clear the display.
-        /// </summary>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
-        public abstract void Clear(bool updateDisplay = false);
+        public void DrawPixel(int x, int y, Color color)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Clear the display.
-        /// </summary>
-        /// <param name="fillColor">The color used to fill the display buffer.</param>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
-        public abstract void Fill(Color fillColor, bool updateDisplay = false);
+        public void DrawPixel(int x, int y, bool colored)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Clear the display.
-        /// </summary>
-        /// <param name="fillColor">The color used to fill the display buffer.</param>
-        public abstract void Fill(int x, int y, int width, int height, Color fillColor);
+        public void Fill(Color fillColor, bool updateDisplay = false)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Draw a single pixel at the specified color
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="color">The Meadow.Foundation color of the pixel</param>
-        public abstract void DrawPixel(int x, int y, Color color);
+        public void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Draw a single pixel at the specified color
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="colored"></param>
-        public abstract void DrawPixel(int x, int y, bool colored);
+        public void InvertPixel(int x, int y)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Invert the color of a single pixel
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        public abstract void InvertPixel(int x, int y);
+        public void Show()
+        {
+            throw new NotImplementedException();
+        }
 
-        public abstract void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer);
+        public void Show(int left, int top, int right, int bottom)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

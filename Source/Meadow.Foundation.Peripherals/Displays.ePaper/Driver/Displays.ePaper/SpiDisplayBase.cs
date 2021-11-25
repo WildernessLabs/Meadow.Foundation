@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract class SpiDisplayBase : DisplayBase
+    public abstract class SpiDisplayBase
     {
         protected readonly byte[] commandBuffer = new byte[1];
 

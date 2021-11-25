@@ -7,16 +7,17 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
-    public abstract partial class TftSpiBase : DisplayBase, IDisposable
+    public abstract partial class TftSpiBase : IGraphicsDisplay
     {
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
-        public override ColorType ColorMode => colorMode;
+        public ColorType ColorMode => colorMode;
         protected ColorType colorMode;
 
         public abstract ColorType DefautColorMode { get; }
-        public override int Width => imageBuffer.Width;
-        public override int Height => imageBuffer.Height;
+        public int Width => imageBuffer.Width;
+        public int Height => imageBuffer.Height;
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
@@ -83,14 +84,14 @@ namespace Meadow.Foundation.Displays.TftSpi
         ///     Clear the display.
         /// </summary>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             imageBuffer.Clear();
 
             if (updateDisplay) { Show(); }
         }
 
-        public override void Fill(Color color, bool updateDisplay = false)
+        public void Fill(Color color, bool updateDisplay = false)
         {
             Clear(GetUShortFromColor(color), updateDisplay);
         }
@@ -105,7 +106,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             }
         }
 
-        public override void DrawBuffer(int x, int y, IDisplayBuffer buffer)
+        public void DrawBuffer(int x, int y, IDisplayBuffer buffer)
         {
             imageBuffer.WriteBuffer(x, y, buffer);
         }
@@ -116,7 +117,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             //this works for now but it's a bit of a hack for 444
             SetPixel(x, y, colored ? (ushort)0xFF : (ushort)0);
@@ -139,7 +140,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
         /// <param name="color">Color of pixel.</param>
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             SetPixel(x, y, GetUShortFromColor(color));
         }
@@ -162,12 +163,15 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// </summary>
         /// <param name="x">x location</param>
         /// <param name="y">y location</param>
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
-            if (x < 0 || y < 0 || x >= Width || y >= Height)
-            { return; }
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
 
-            if(colorMode == ColorType.Format16bppRgb565)
+            if (colorMode == ColorType.Format16bppRgb565)
             {
                 InvertPixelRgb565(x, y);
             }
@@ -223,16 +227,26 @@ namespace Meadow.Foundation.Displays.TftSpi
             (imageBuffer as BufferRgb444).SetPixel(x, y, color);
         }
 
-        public override void Fill(int x, int y, int width, int height, Color color)
+        public void Fill(int x, int y, int width, int height, Color color)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                if (x > width - 1) x = width - 1;
+                if (y > height - 1) y = height - 1;
+            }
+
             imageBuffer.Fill(color, x, y, width, height);
         }
 
         private void SetPixel(int x, int y, ushort color)
         {
-            if (IgnoreOutOfBoundsPixels &&
-                (x < 0 || y < 0 || x >= Width || y >= Height))
-            { return; }
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
 
             if (colorMode == ColorType.Format16bppRgb565)
             {
@@ -247,7 +261,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <summary>
         ///     Draw the display buffer to screen
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             SetAddressWindow(0, 0, Width - 1, Height);
 
@@ -262,7 +276,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// bounded by left, top, right and bottom
         /// Only supported in 16Bpp565 mode
         /// </summary>
-        public override void Show(int left, int top, int right, int bottom)
+        public void Show(int left, int top, int right, int bottom)
         {
             if(colorMode != ColorType.Format16bppRgb565)
             {   //only supported in 565 mode 
@@ -366,12 +380,6 @@ namespace Meadow.Foundation.Displays.TftSpi
         public void Clear(Color color)
         {
             imageBuffer.Fill(color);
-        }
-
-        public void Dispose()
-        {
-            dataCommandPort = null;
-            resetPort = null;
         }
     }
 }

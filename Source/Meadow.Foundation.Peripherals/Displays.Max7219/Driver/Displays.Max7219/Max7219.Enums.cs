@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Displays
 {
-    public partial class Max7219 : DisplayBase
+    public partial class Max7219
     {
         public enum Max7219Type
         {

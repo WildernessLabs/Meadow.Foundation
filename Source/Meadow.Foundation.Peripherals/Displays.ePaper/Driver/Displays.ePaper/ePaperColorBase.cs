@@ -9,18 +9,20 @@ namespace Meadow.Foundation.Displays.ePaper
     /// <summary>
     ///     Provide an interface for ePaper 3 color displays
     /// </summary>
-    public abstract class EpdColorBase : SpiDisplayBase
+    public abstract class EpdColorBase : SpiDisplayBase, IGraphicsDisplay
     {
         protected abstract bool IsBlackInverted { get; }
         protected abstract bool IsColorInverted { get; }
 
-        public override ColorType ColorMode => ColorType.Format2bpp;
+        public ColorType ColorMode => ColorType.Format2bpp;
 
         protected readonly Buffer1 blackImageBuffer;
         protected readonly Buffer1 colorImageBuffer;
 
-        public override int Width => blackImageBuffer.Width;
-        public override int Height => blackImageBuffer.Height;
+        public int Width => blackImageBuffer.Width;
+        public int Height => blackImageBuffer.Height;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         private EpdColorBase()
         { }
@@ -45,12 +47,12 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected abstract void Initialize();
 
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             Clear(false, updateDisplay);
         }
 
-        public override void Fill(Color color, bool updateDisplay = false)
+        public void Fill(Color color, bool updateDisplay = false)
         {
             bool colored = false;
             if (color.B > 0 || color.R > 0 || color.G > 0)
@@ -59,13 +61,21 @@ namespace Meadow.Foundation.Displays.ePaper
             Clear(colored, updateDisplay);
         }
 
-        public override void Fill(int x, int y, int width, int height, Color color)
+        public void Fill(int x, int y, int width, int height, Color color)
         {
-            if(color == Color.Black)
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                if (x > width - 1) x = width - 1;
+                if (y > height - 1) y = height - 1;
+            }
+
+            if (color == Color.Black)
             {
                 blackImageBuffer.Fill(color, x, y, width, height);
             }
-            else if(color != Color.White)
+            else if (color != Color.White)
             {
                 colorImageBuffer.Fill(color, x, y, width, height);
             }
@@ -82,8 +92,14 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
+
             //could move this to the buffer
             if (colored)
             {   //0x80 = 128 = 0b_10000000
@@ -104,13 +120,25 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
+
             blackImageBuffer.Buffer[(x + y * Width) / 8] ^= (byte)~(0x80 >> (x % 8));
         }
 
         public void DrawColoredPixel(int x, int y, bool colored)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
+
             if ((colored && !IsColorInverted) ||
                 (!colored && IsColorInverted))
             {
@@ -123,7 +151,7 @@ namespace Meadow.Foundation.Displays.ePaper
             blackImageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             if (color.B == 0 && color.G == 0 && color.R > 0.5)
             {
@@ -147,7 +175,7 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
         {
             blackImageBuffer.WriteBuffer(x, y, displayBuffer);
         }
@@ -157,6 +185,16 @@ namespace Meadow.Foundation.Displays.ePaper
             SendCommand((byte)command);
         }
 
+        public virtual void Show()
+        {
+            throw new NotImplementedException("Show must be implimented in the ePaper display driver");
+        }
+
+        public virtual void Show(int left, int top, int right, int bottom)
+        {
+            throw new NotImplementedException("Show must be implimented in the ePaper display driver");
+        }
+        
         // 2.13b + 2.7b (red) commands
 
         public enum Command : byte

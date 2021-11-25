@@ -10,13 +10,15 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     ///     Provide an interface to the ST7565 family of displays.
     /// </summary>
-    public partial class St7565 : DisplayBase
+    public partial class St7565 : IGraphicsDisplay
     {
-        public override ColorType ColorMode => ColorType.Format1bpp;
+        public ColorType ColorMode => ColorType.Format1bpp;
 
-        public override int Width => imageBuffer.Width;
+        public int Width => imageBuffer.Width;
 
-        public override int Height => imageBuffer.Height;
+        public int Height => imageBuffer.Height;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         /// <summary>
         ///     SPI object
@@ -79,8 +81,6 @@ namespace Meadow.Foundation.Displays
 
         private void InitST7565()
         {
-            IgnoreOutOfBoundsPixels = false;
-
             resetPort.State = false;
             Thread.Sleep(50);
             resetPort.State = true;
@@ -144,13 +144,13 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         ///     Send the internal pixel buffer to display.
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             for (int page = 0; page < 8; page++)
             {
                 SendCommand((byte)((int)DisplayCommand.PageAddress | page));
                 SendCommand((DisplayCommand.ColumnAddressLow) | (StartColumnOffset & 0x0F));
-                SendCommand((int)(DisplayCommand.ColumnAddressHigh) | 0);
+                SendCommand((int)DisplayCommand.ColumnAddressHigh | 0);
                 SendCommand(DisplayCommand.EnterReadModifyWriteMode);
 
                 dataCommandPort.State = Data;
@@ -160,7 +160,7 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void Show(int left, int top, int right, int bottom)
+        public void Show(int left, int top, int right, int bottom)
         {
             const int pageHeight = 8;
 
@@ -175,7 +175,7 @@ namespace Meadow.Foundation.Displays
 
                 SendCommand((byte)((int)(DisplayCommand.PageAddress) | page));
                 SendCommand((DisplayCommand.ColumnAddressLow) | (StartColumnOffset & 0x0F));
-                SendCommand((int)(DisplayCommand.ColumnAddressHigh) | 0);
+                SendCommand((int)DisplayCommand.ColumnAddressHigh | 0);
                 SendCommand(DisplayCommand.EnterReadModifyWriteMode);
 
                 dataCommandPort.State = Data;
@@ -189,7 +189,7 @@ namespace Meadow.Foundation.Displays
         ///     Clear the display buffer.
         /// </summary>
         /// <param name="updateDisplay">Immediately update the display when true.</param>
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             imageBuffer.Clear();
 
@@ -202,7 +202,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="color">Any color = turn on pixel, black = turn off pixel</param>
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color.Color1bpp);
         }
@@ -213,32 +213,25 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
-            if ((x >= Width) || (y >= Height))
+            if (IgnoreOutOfBoundsPixels)
             {
-                if (!IgnoreOutOfBoundsPixels)
-                {
-                    throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
-                }
-                //  pixels to be thrown away if out of bounds of the display
-                return;
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
             }
 
             imageBuffer.SetPixel(x, y, colored);
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
-            if ((x >= Width) || (y >= Height))
+            if (IgnoreOutOfBoundsPixels)
             {
-                if (!IgnoreOutOfBoundsPixels)
-                {
-                    throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
-                }
-                //  pixels to be thrown away if out of bounds of the display
-                return;
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
             }
+
             var index = (y / 8 * Width) + x;
 
             imageBuffer.Buffer[index] = (imageBuffer.Buffer[index] ^= (byte)(1 << y % 8));
@@ -306,19 +299,27 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x2e);
         }
 
-        public override void Fill(Color clearColor, bool updateDisplay = false)
+        public void Fill(Color clearColor, bool updateDisplay = false)
         {
             imageBuffer.Clear(clearColor.Color1bpp);
 
             if (updateDisplay) Show();
         }
 
-        public override void Fill(int x, int y, int width, int height, Color color)
+        public void Fill(int x, int y, int width, int height, Color color)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                if (x > width - 1) x = width - 1;
+                if (y > height - 1) y = height - 1;
+            }
+
             imageBuffer.Fill(color, x, y, width, height);
         }
 
-        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }

@@ -1,5 +1,4 @@
-﻿using Meadow.Foundation.Displays;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Peripherals.Displays;
 using System;
 
@@ -10,7 +9,7 @@ namespace Meadow.Foundation.Graphics
     /// </summary>
     public partial class MicroGraphics 
     {
-        private readonly DisplayBase display;
+        private readonly IGraphicsDisplay display;
 
         /// <summary>
         ///     Current font used for displaying text on the display.
@@ -66,7 +65,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// </summary>
         /// <param name="display"></param>
-        public MicroGraphics(DisplayBase display)
+        public MicroGraphics(IGraphicsDisplay display)
         {
             this.display = display;
             CurrentFont = null;
