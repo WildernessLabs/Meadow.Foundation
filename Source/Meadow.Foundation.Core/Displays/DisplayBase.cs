@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Abstract hardware display class 
     /// </summary>
-    [Obsolete]
+    [Obsolete("This class is obsolete, use IGraphicsDislay instead")]
     public abstract class DisplayBase : IGraphicsDisplay
     {
         public ColorType ColorMode => throw new NotImplementedException();

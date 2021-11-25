@@ -1,5 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 
 namespace Meadow.Foundation.Graphics
 {
@@ -69,7 +68,7 @@ namespace Meadow.Foundation.Graphics
         public abstract void DrawPixel(int x, int y, Color color);
 
         /// <summary>
-        /// Draw a single pixel at the specified color
+        /// Enable or disable a single pixel (used for 1bpp displays)
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>

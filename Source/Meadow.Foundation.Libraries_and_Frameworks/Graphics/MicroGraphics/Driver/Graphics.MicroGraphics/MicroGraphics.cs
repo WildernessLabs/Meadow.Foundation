@@ -140,15 +140,6 @@ namespace Meadow.Foundation.Graphics
             display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor = color);
         }
 
-        private bool IsPixelInBounds(int x, int y)
-        {
-            if (x < 0 || y < 0 || x >= Width || y >= Height)
-            {
-                return false;
-            }
-            return true;
-        }
-
         /// <summary>
         ///     Draw a line using Bresenhams line drawing algorithm.
         /// </summary>
