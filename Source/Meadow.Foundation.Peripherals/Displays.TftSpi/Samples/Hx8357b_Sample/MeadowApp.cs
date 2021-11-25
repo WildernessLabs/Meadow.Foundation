@@ -149,9 +149,9 @@ namespace Displays.Tft.Hx8357b_Sample
             graphics.Clear();
             graphics.Stroke = 1;
 
-            graphics.DrawText(0, 0, "HX8357B controller", Color.White, MicroGraphics.ScaleFactor.X2);
-            graphics.DrawText(0, 30, "320x480 resolution", Color.LawnGreen, MicroGraphics.ScaleFactor.X2);
-            graphics.DrawText(0, 60, "12 or 16 bit color", Color.AliceBlue, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(0, 0, "HX8357B controller", Color.White, ScaleFactor.X2);
+            graphics.DrawText(0, 30, "320x480 resolution", Color.LawnGreen, ScaleFactor.X2);
+            graphics.DrawText(0, 60, "12 or 16 bit color", Color.AliceBlue, ScaleFactor.X2);
 
             for(int i = 0; i < 16; i++)
             {
@@ -303,15 +303,15 @@ namespace Displays.Tft.Hx8357b_Sample
 
             graphics.Clear();
 
-            graphics.DrawText(0, 0, "2x Scale", Color.Blue, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(0, 0, "2x Scale", Color.Blue, ScaleFactor.X2);
 
-            graphics.DrawText(0, 48, "12x20 Font", Color.Green, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(0, 48, "12x20 Font", Color.Green, ScaleFactor.X2);
 
-            graphics.DrawText(0, 96, "0123456789", Color.Yellow, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(0, 96, "0123456789", Color.Yellow, ScaleFactor.X2);
 
-            graphics.DrawText(0, 144, "!@#$%^&*()", Color.Orange, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(0, 144, "!@#$%^&*()", Color.Orange, ScaleFactor.X2);
 
-            graphics.DrawText(0, 192, "3x!", Color.OrangeRed, MicroGraphics.ScaleFactor.X3);
+            graphics.DrawText(0, 192, "3x!", Color.OrangeRed, ScaleFactor.X3);
 
             graphics.Show();
         }

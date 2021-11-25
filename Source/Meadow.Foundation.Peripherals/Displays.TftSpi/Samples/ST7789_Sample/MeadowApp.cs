@@ -194,12 +194,12 @@ namespace Displays.Tft.ST7789_Sample
             graphics.Clear();
 
             graphics.DrawText(120, 0, "Left aligned", Color.Blue);
-            graphics.DrawText(120, 16, "Center aligned", Color.Green, MicroGraphics.ScaleFactor.X1, MicroGraphics.TextAlignment.Center);
-            graphics.DrawText(120, 32, "Right aligned", Color.Red, MicroGraphics.ScaleFactor.X1, MicroGraphics.TextAlignment.Right);
+            graphics.DrawText(120, 16, "Center aligned", Color.Green, ScaleFactor.X1, TextAlignment.Center);
+            graphics.DrawText(120, 32, "Right aligned", Color.Red, ScaleFactor.X1, TextAlignment.Right);
 
-            graphics.DrawText(120, 64, "Left aligned", Color.Blue, MicroGraphics.ScaleFactor.X2);
-            graphics.DrawText(120, 96, "Center aligned", Color.Green, MicroGraphics.ScaleFactor.X2, MicroGraphics.TextAlignment.Center);
-            graphics.DrawText(120, 128, "Right aligned", Color.Red, MicroGraphics.ScaleFactor.X2, MicroGraphics.TextAlignment.Right);
+            graphics.DrawText(120, 64, "Left aligned", Color.Blue, ScaleFactor.X2);
+            graphics.DrawText(120, 96, "Center aligned", Color.Green, ScaleFactor.X2, TextAlignment.Center);
+            graphics.DrawText(120, 128, "Right aligned", Color.Red, ScaleFactor.X2, TextAlignment.Right);
 
             graphics.Show();
         }
@@ -421,19 +421,19 @@ namespace Displays.Tft.ST7789_Sample
 
             graphics.Clear();
 
-            graphics.DrawText(0, 0, "2x Scale", Color.Blue, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(0, 0, "2x Scale", Color.Blue, ScaleFactor.X2);
 
-            graphics.DrawText(0, 48, "12x20 Font", Color.Green, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(0, 48, "12x20 Font", Color.Green, ScaleFactor.X2);
 
-            graphics.DrawText(0, 96, "0123456789", Color.Yellow, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(0, 96, "0123456789", Color.Yellow, ScaleFactor.X2);
 
-            graphics.DrawText(0, 144, "!@#$%^&*()", Color.Orange, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(0, 144, "!@#$%^&*()", Color.Orange, ScaleFactor.X2);
 
-            graphics.DrawText(0, 192, "3x!", Color.OrangeRed, MicroGraphics.ScaleFactor.X3);
+            graphics.DrawText(0, 192, "3x!", Color.OrangeRed, ScaleFactor.X3);
 
-            graphics.DrawText(0, 240, "Meadow!", Color.Red, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(0, 240, "Meadow!", Color.Red, ScaleFactor.X2);
 
-            graphics.DrawText(0, 288, "B4.2", Color.Violet, MicroGraphics.ScaleFactor.X2);
+            graphics.DrawText(0, 288, "B4.2", Color.Violet, ScaleFactor.X2);
 
             graphics.Show();
         }
