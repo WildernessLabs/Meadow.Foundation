@@ -9,14 +9,16 @@ namespace Meadow.Foundation.Displays.ePaper
     /// <summary>
     ///     Provide an interface for ePaper monochrome displays
     /// </summary>
-    public abstract class EpdBase : SpiDisplayBase
+    public abstract class EpdBase : SpiDisplayBase, IGraphicsDisplay
     {
-        public override ColorType ColorMode => ColorType.Format1bpp;
+        public ColorType ColorMode => ColorType.Format1bpp;
 
         protected readonly Buffer1 imageBuffer;
 
-        public override int Width => imageBuffer.Width;
-        public override int Height => imageBuffer.Height;
+        public int Width => imageBuffer.Width;
+        public int Height => imageBuffer.Height;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         private EpdBase()
         { }
@@ -39,7 +41,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected abstract void Initialize();
 
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             Clear(false, updateDisplay);
         }
@@ -49,13 +51,21 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         /// <param name="color">Color to set the display (not used on ePaper displays)</param>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
-        public override void Fill(Color color, bool updateDisplay = false)
+        public void Fill(Color color, bool updateDisplay = false)
         {
             Clear(color.Color1bpp, updateDisplay);
         }
 
-        public override void Fill(int x, int y, int width, int height, Color color)
+        public void Fill(int x, int y, int width, int height, Color color)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                if (x > width - 1) x = width - 1;
+                if (y > height - 1) y = height - 1;
+            }
+
             imageBuffer.Fill(color, x, y, width, height);
         }
 
@@ -83,8 +93,14 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
+
             if (colored)
             {
                 imageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
@@ -101,13 +117,19 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
         /// <param name="color">Color of pixel.</param>
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color.Color1bpp);
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
+
             imageBuffer.Buffer[(x + y * Width) / 8] ^= (byte)(0x80 >> (x % 8));
         }
 
@@ -127,13 +149,13 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <summary>
         ///     Draw the display buffer to screen
         /// </summary>
-        public override void Show(int left, int top, int right, int bottom)
+        public void Show(int left, int top, int right, int bottom)
         {
             SetFrameMemory(imageBuffer.Buffer, left, top, right - left, top - bottom);
             DisplayFrame();
         }
 
-        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
@@ -141,7 +163,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <summary>
         ///     Draw the display buffer to screen
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             SetFrameMemory(imageBuffer.Buffer);
             DisplayFrame();

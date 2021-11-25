@@ -168,7 +168,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Turn off all the Leds
         /// </summary>
-        public override void Clear(bool update = false)
+        public void Clear(bool update = false)
         {
             byte[] off = {0, 0, 0};
 
@@ -186,17 +186,17 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Transmit the changes to the LEDs 
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             spiPeripheral.Write(buffer);
         }
 
-        public override void Show(int left, int top, int right, int bottom)
+        public void Show(int left, int top, int right, int bottom)
         {
             Show();
         }
 
-        public override void Fill(Color clearColor, bool updateDisplay = false)
+        public void Fill(Color clearColor, bool updateDisplay = false)
         {
             byte[] color = { clearColor.R, clearColor.G, clearColor.B };
 
@@ -211,7 +211,7 @@ namespace Meadow.Foundation.Leds
             }
         }
 
-        public override void Fill(int x, int y, int width, int height, Color fillColor)
+        public void Fill(int x, int y, int width, int height, Color fillColor)
         {
             bool isColored = fillColor.Color1bpp;
             for (int i = 0; i < width; i++)
@@ -223,9 +223,15 @@ namespace Meadow.Foundation.Leds
             }
         }
 
-        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
         {
-            throw new NotImplementedException();
+            for(int i = 0; i < displayBuffer.Width; i++)
+            {
+                for (int j = 0; j < displayBuffer.Height; j++)
+                {
+                    DrawPixel(x + i, j + y, displayBuffer.GetPixel(i, j));
+                }
+            }
         }
     }
 }

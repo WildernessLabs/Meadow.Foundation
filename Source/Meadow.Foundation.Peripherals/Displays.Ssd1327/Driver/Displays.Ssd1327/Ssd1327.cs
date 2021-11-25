@@ -7,13 +7,15 @@ using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays
 {
-    public partial class Ssd1327 : DisplayBase
+    public partial class Ssd1327 : IGraphicsDisplay
     {
-        public override ColorType ColorMode => ColorType.Format4bppGray;
+        public ColorType ColorMode => ColorType.Format4bppGray;
 
-        public override int Width => 128;
+        public int Width => 128;
 
-        public override int Height => 128;
+        public int Height => 128;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         protected ISpiPeripheral spiPeripheral;
 
@@ -66,7 +68,7 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             Array.Clear(imageBuffer.Buffer, 0, imageBuffer.ByteCount);
 
@@ -76,22 +78,28 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color.Color4bppGray);
         }
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             DrawPixel(x, y, (byte)(colored ? 0x0F : 0));
         }
 
         public void DrawPixel(int x, int y, byte gray)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
+
             imageBuffer.SetPixel(x, y, gray);
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             byte color = imageBuffer.GetPixel4bpp(x, y);
 
@@ -100,14 +108,14 @@ namespace Meadow.Foundation.Displays
             DrawPixel(x, y, color);
         }
 
-        public override void Show(int left, int top, int right, int bottom)
+        public void Show(int left, int top, int right, int bottom)
         {
             // SetAddressWindow(left, top, (byte)(right - left), (byte)(top - bottom));
             //ToDo this should be pretty easy to implement with Memory<byte>
             Show();
         }
 
-        public override void Show()
+        public void Show()
         {
             SetAddressWindow(0, 0, 127, 127);
 
@@ -155,17 +163,25 @@ namespace Meadow.Foundation.Displays
             spiPeripheral.Write(data);
         }
 
-        public override void Fill(Color fillColor, bool updateDisplay = false)
+        public void Fill(Color fillColor, bool updateDisplay = false)
         {
             imageBuffer.Fill(fillColor);
         }
 
-        public override void Fill(int x, int y, int width, int height, Color fillColor)
+        public void Fill(int x, int y, int width, int height, Color fillColor)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                if (x > width - 1) x = width - 1;
+                if (y > height - 1) y = height - 1;
+            }
+
             imageBuffer.Fill(fillColor, x, y, width, height);
         }
 
-        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }

@@ -123,6 +123,14 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
         public override void Fill(int x, int y, int width, int height, Color color)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                if (x > width - 1) x = width - 1;
+                if (y > height - 1) y = height - 1;
+            }
+
             imageBuffer.Fill(color, x, y, width, height);
         }
 

@@ -8,13 +8,15 @@ namespace Meadow.Foundation.Displays.Ssd130x
     /// <summary>
     /// Provide an interface to the SSD1306 family of OLED displays.
     /// </summary>
-    public abstract partial class Ssd130xBase : DisplayBase
+    public abstract partial class Ssd130xBase : IGraphicsDisplay
     {
-        public override ColorType ColorMode => ColorType.Format1bpp;
+        public ColorType ColorMode => ColorType.Format1bpp;
 
-        public override int Width => imageBuffer.Width;
+        public int Width => imageBuffer.Width;
 
-        public override int Height => imageBuffer.Height;
+        public int Height => imageBuffer.Height;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         /// <summary>
         ///     SSD1306 SPI display
@@ -150,7 +152,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <summary>
         ///     Send the internal pixel buffer to display.
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             SendCommands(showPreamble); //ToDo - pull this apart to do partial show
 
@@ -175,7 +177,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
         }
 
-        public override void Show(int left, int top, int right, int bottom)
+        public void Show(int left, int top, int right, int bottom)
         {
             Show();
         }
@@ -184,7 +186,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         ///     Clear the display buffer.
         /// </summary>
         /// <param name="updateDisplay">Immediately update the display when true.</param>
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             Array.Clear(imageBuffer.Buffer, 0, imageBuffer.ByteCount);
 
@@ -200,7 +202,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="color">Black - pixel off, any color - turn on pixel</param>
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color.Color1bpp);
         }
@@ -211,28 +213,25 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             if (IgnoreOutOfBoundsPixels)
             {
-                if ((x >= Width) || (y >= Height) || x < 0 || y < 0)
-                {   //  pixels to be thrown away if out of bounds of the display
-                    return;
-                }
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
             }
 
             imageBuffer.SetPixel(x, y, colored);
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if(IgnoreOutOfBoundsPixels)
             {
-                if ((x >= Width) || (y >= Height))
-                {
-                    return;
-                }
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
             }
+
             var index = (y >> 8) * Width + x;
 
             imageBuffer.Buffer[index] = (imageBuffer.Buffer[index] ^= (byte)(1 << y % 8));
@@ -296,6 +295,21 @@ namespace Meadow.Foundation.Displays.Ssd130x
         public void StopScrolling()
         {
             SendCommand(0x2e);
+        }
+
+        public virtual void Fill(Color fillColor, bool updateDisplay = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

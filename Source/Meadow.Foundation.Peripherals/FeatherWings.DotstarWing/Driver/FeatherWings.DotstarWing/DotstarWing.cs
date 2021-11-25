@@ -1,5 +1,4 @@
-﻿using Meadow.Foundation.Displays;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Leds;
 using Meadow.Hardware;
@@ -10,7 +9,7 @@ namespace Meadow.Foundation.FeatherWings
     /// <summary>
     /// Represents Adafruit's Dotstar feather wing 12x6
     /// </summary>
-    public class DotstarWing : DisplayBase
+    public class DotstarWing : IGraphicsDisplay
     {
         Apa102 ledMatrix;
 
@@ -29,19 +28,31 @@ namespace Meadow.Foundation.FeatherWings
             ledMatrix = new Apa102(spiBus, numberOfLeds, pixelOrder, autoWrite);
         }
 
-        public override ColorType ColorMode => ColorType.Format12bppRgb444;
+        public ColorType ColorMode => ColorType.Format12bppRgb444;
 
-        public override int Width => 12;
+        public int Width => 12;
 
-        public override int Height => 6;
+        public int Height => 6;
 
-        public override void Clear(bool updateDisplay = false)
+        public bool IgnoreOutOfBoundsPixels
+        {
+            get => ledMatrix.IgnoreOutOfBoundsPixels;
+            set => ledMatrix.IgnoreOutOfBoundsPixels = value;
+        }
+
+        public void Clear(bool updateDisplay = false)
         {
             ledMatrix.Clear(updateDisplay);
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
+
             int minor = x;
             int major = y;
             int majorScale;
@@ -57,37 +68,43 @@ namespace Meadow.Foundation.FeatherWings
             }
         } 
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             DrawPixel(x, y, colored ? Color.White : Color.Black);
         }
 
-        public override void Show()
+        public void Show()
         {
             ledMatrix.Show();
         }
 
-        public override void Show(int left, int top, int right, int bottom)
+        public void Show(int left, int top, int right, int bottom)
         {
             ledMatrix.Show(left, top, right, bottom);
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
+
             ledMatrix.InvertPixel(x, y);
         }
 
-        public override void Fill(Color fillColor, bool updateDisplay = false)
+        public void Fill(Color fillColor, bool updateDisplay = false)
         {
             ledMatrix.Fill(fillColor, updateDisplay);
         }
 
-        public override void Fill(int x, int y, int width, int height, Color fillColor)
+        public void Fill(int x, int y, int width, int height, Color fillColor)
         {
             ledMatrix.Fill(x, y, width, height, fillColor);
         }
 
-        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
         {
             ledMatrix.DrawBuffer(x, y, displayBuffer);
         }

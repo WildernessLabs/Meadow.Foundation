@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Max7219 LED matrix driver
     /// </summary>
-    public partial class Max7219 : DisplayBase
+    public partial class Max7219 : IGraphicsDisplay
     {
         /// <summary>
         /// MAX7219 Spi Clock Frequency
@@ -35,11 +35,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public int Length => DeviceCount * NumDigits;
 
-        public override ColorType ColorMode => ColorType.Format1bpp;
+        public ColorType ColorMode => ColorType.Format1bpp;
 
-        public override int Width => 8 * DeviceColumns;
+        public int Width => 8 * DeviceColumns;
 
-        public override int Height => 8 * DeviceRows;
+        public int Height => 8 * DeviceRows;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         private ISpiPeripheral max7219;
 
@@ -239,12 +241,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Writes all the Values to the devices.
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             WriteBuffer(buffer);
         }
 
-        public override void Show(int left, int top, int right, int bottom)
+        public void Show(int left, int top, int right, int bottom)
         {
             //ToDo Check if partial updates are possible (although it's pretty fast as is)
             Show();
@@ -317,7 +319,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Clears the buffer from the given start to end and flushes
         /// </summary>
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             Clear(0, DeviceCount);
 
@@ -327,20 +329,17 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color.Color1bpp);
         }
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBoundsPixels == true)
+            if (IgnoreOutOfBoundsPixels)
             {
-                if (x < 0 || y < 0 || x >= Width || y >= Height)
-                {
-                   // Console.WriteLine($"x:{x}, y:{y}, w:{Width}, h:{Height}");
-                    return;
-                }
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
             }
 
             var index = x % 8;
@@ -363,8 +362,14 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
+
             var index = x % 8;
 
             var display = y / 8 + (x / 8) * DeviceRows;
@@ -378,28 +383,42 @@ namespace Meadow.Foundation.Displays
             buffer[display, index] = (buffer[display, index] ^= (byte)(1 << y % 8));
         }
 
-        public override void Fill(Color fillColor, bool updateDisplay = false)
+        public void Fill(Color fillColor, bool updateDisplay = false)
         {
             Fill(0, 0, Width, Height, fillColor);
 
             if (updateDisplay) Show();
         }
 
-        public override void Fill(int x, int y, int width, int height, Color fillColor)
+        public void Fill(int x, int y, int width, int height, Color fillColor)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                if (x > width - 1) x = width - 1;
+                if (y > height - 1) y = height - 1;
+            }
+
             bool isColored = fillColor.Color1bpp;
             for(int i = 0; i < width; i++)
             {
                 for(int j = 0; j < height; j++)
                 {
-                    DrawPixel(i, j, isColored);
+                    DrawPixel(i + x, j + y, isColored);
                 }
             }
         }
 
-        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
         {   //need to refactor to use a proper buffer
-            throw new NotImplementedException();
+            for (int i = 0; i < displayBuffer.Width; i++)
+            {
+                for (int j = 0; j < displayBuffer.Height; j++)
+                {
+                    DrawPixel(x + i, j + y, displayBuffer.GetPixel(i, j).Color1bpp);
+                }
+            }
         }
     }
 }
