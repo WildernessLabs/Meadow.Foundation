@@ -225,7 +225,13 @@ namespace Meadow.Foundation.Leds
 
         public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
         {
-            throw new NotImplementedException();
+            for(int i = 0; i < displayBuffer.Width; i++)
+            {
+                for (int j = 0; j < displayBuffer.Height; j++)
+                {
+                    DrawPixel(x + i, j + y, displayBuffer.GetPixel(i, j));
+                }
+            }
         }
     }
 }
