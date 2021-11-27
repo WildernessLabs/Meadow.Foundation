@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected override bool IsBlackInverted => true;
 
-        protected override bool IsColorInverted => true;
+        protected override bool IsColorInverted => false; //is this backwards??
 
         protected override void Initialize()
         {
@@ -79,10 +79,10 @@ namespace Meadow.Foundation.Displays.ePaper
             SetLut();
 
             SendCommand(Command.RESOLUTION_SETTING);
-            SendData((int)Width >> 8);
-            SendData((int)Width & 0xff);        //176      
-            SendData((int)Height >> 8);
-            SendData((int)Height & 0xff);         //264
+            SendData(Width >> 8);
+            SendData(Width & 0xff);        //176      
+            SendData(Height >> 8);
+            SendData(Height & 0xff);         //264
 
             SendCommand(Command.PARTIAL_DISPLAY_REFRESH);
             SendData(0x00);
@@ -115,25 +115,25 @@ namespace Meadow.Foundation.Displays.ePaper
                 SendData(LUT_VCOM_DC[i]);
             }
 
-            SendCommand(Command.LUT_WHITE_TO_WHITE);                      //ww --
+            SendCommand(Command.LUT_WHITE_TO_WHITE);               //ww --
             for (int i = 0; i < 42; i++)
             {
                 SendData(LUT_WW[i]);
             }
 
-            SendCommand(Command.LUT_BLACK_TO_WHITE);                      //bw r
+            SendCommand(Command.LUT_BLACK_TO_WHITE);               //bw r
             for (int i = 0; i < 42; i++)
             {
                 SendData(LUT_BW[i]);
             }
             //data for WB & BB are swapped here in the arduino driver
-            SendCommand(Command.LUT_WHITE_TO_BLACK);                      //wb w
+            SendCommand(Command.LUT_WHITE_TO_BLACK);               //wb w
             for (int i = 0; i < 42; i++)
             {
                 SendData(LUT_WB[i]);
             }
 
-            SendCommand(Command.LUT_BLACK_TO_BLACK);                      //bb b
+            SendCommand(Command.LUT_BLACK_TO_BLACK);               //bb b
             for (int i = 0; i < 42; i++)
             {
                 SendData(LUT_BB[i]);
@@ -258,10 +258,10 @@ namespace Meadow.Foundation.Displays.ePaper
         public void ClearFrame()
         {
             SendCommand(Command.RESOLUTION_SETTING);
-            SendData((int)Width >> 8);
-            SendData((int)Width & 0xff);        //176      
-            SendData((int)Height >> 8);
-            SendData((int)Height & 0xff);         //264
+            SendData(Width >> 8);
+            SendData(Width & 0xff);        //176      
+            SendData(Height >> 8);
+            SendData(Height & 0xff);         //264
 
             SendCommand(Command.DATA_START_TRANSMISSION_1);
             DelayMs(2);
@@ -299,7 +299,7 @@ namespace Meadow.Foundation.Displays.ePaper
          *         check code, the command would be executed if check code = 0xA5. 
          *         You can use Epd::Reset() to awaken and use Epd::Init() to initialize.
          */
-        void Sleep()
+        public void Sleep()
         {
             SendCommand(Command.DEEP_SLEEP);
             SendData(0xa5);

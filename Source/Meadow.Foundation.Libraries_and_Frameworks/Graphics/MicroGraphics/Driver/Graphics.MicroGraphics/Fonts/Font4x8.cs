@@ -1,50 +1,22 @@
 namespace Meadow.Foundation.Graphics
 {
-    public class Font4x8 : FontBase
+    public class Font4x8 : IFont
     {
-        #region Constants
-
-        /// <summary>
-        ///     Width of the font in pixels.
-        /// </summary>
-        private const int WIDTH = 4;
-
-        /// <summary>
-        ///     Height of the font in pixels.
-        /// </summary>
-        private const int HEIGHT = 8;
-
-        #endregion Constants
-
-        #region Properties
-
         /// <summary>
         ///     Width of a character in the font.
         /// </summary>
-        public override int Width
-        {
-            get { return WIDTH; }
-        }
+        public int Width => 4;
 
         /// <summary>
         ///     /   Height of a character in the font.
         /// </summary>
-        public override int Height
-        {
-            get { return HEIGHT; }
-        }
-
-        #endregion Properties
-
-        #region Member variables / fields
+        public int Height => 8;
 
         /// <summary>
         ///     Font table containing the binary representation of ASCII characters.
         /// </summary>
         private static readonly byte[][] _fontTable =
         {
-            #region Font codes
-
             new byte[] {0x00, 0x00, 0x00, 0x00, }, // U+0020 (space)
             new byte[] {0x22, 0x22, 0x20, 0x00, }, // U+0021 (!)
             new byte[] {0x55, 0x00, 0x00, 0x00, }, // U+0022 (")
@@ -141,13 +113,7 @@ namespace Meadow.Foundation.Graphics
             new byte[] {0x23, 0x62, 0x32, 0x00, }, // U+007D (})
             new byte[] {0x5a, 0x00, 0x00, 0x00, }, // U+007E (~)
             new byte[] {0x00, 0x00, 0x00, 0x00, }, // U+007F
-
-            #endregion Font codes
         };
-
-        #endregion Member variables / fields
-
-        #region Methods
 
         /// <summary>
         ///     Get the binary representation of an ASCII character from the
@@ -158,7 +124,7 @@ namespace Meadow.Foundation.Graphics
         ///     Byte array containing the rows of pixels in the character.  Unknown byte codes will result in a space being
         ///     returned.
         /// </returns>
-        public override byte[] this[char character]
+        public byte[] this[char character]
         {
             get
             {
@@ -170,7 +136,5 @@ namespace Meadow.Foundation.Graphics
                 return _fontTable[(byte)character - 0x20];
             }
         }
-
-        #endregion Methods
     }
 }

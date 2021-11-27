@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Graphics
     {
         protected class CanvasState
         {
-            public FontBase CurrentFont { get; set; }
+            public IFont CurrentFont { get; set; }
             public int Stroke { get; set; }
             public RotationType Rotation { get; set; }
             public Color PenColor { get; set; }
