@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Graphics
     /// <summary>
     ///     Abstract class for a Font.
     /// </summary>
-    [Obsolete("FontBase is depricated, use IFont instead")]
+    [Obsolete("FontBase is deprecated, use IFont instead")]
     public abstract class FontBase : IFont
     {
         public byte[] this[char character] => throw new System.NotImplementedException();
