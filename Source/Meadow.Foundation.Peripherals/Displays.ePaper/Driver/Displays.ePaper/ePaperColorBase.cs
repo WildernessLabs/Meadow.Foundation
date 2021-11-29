@@ -100,7 +100,9 @@ namespace Meadow.Foundation.Displays.ePaper
                 { return; }
             }
 
-            //could move this to the buffer
+            if(IsBlackInverted) { colored = !colored; }
+
+            //could move this to the buffer but need to support horizonal bit storage 
             if (colored)
             {   //0x80 = 128 = 0b_10000000
                 blackImageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
@@ -110,7 +112,8 @@ namespace Meadow.Foundation.Displays.ePaper
                 blackImageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
             }
 
-            if (IsColorInverted)
+            //clear the pixels in the color buffer regardless of colored state
+            if (!IsColorInverted)
             {
                 colorImageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
             }
@@ -138,6 +141,8 @@ namespace Meadow.Foundation.Displays.ePaper
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
             }
+
+            if (IsBlackInverted) { colored = !colored; }
 
             if ((colored && !IsColorInverted) ||
                 (!colored && IsColorInverted))
