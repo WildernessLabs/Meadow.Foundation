@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected override bool IsBlackInverted => true;
 
-        protected override bool IsColorInverted => false; //is this backwards??
+        protected override bool IsColorInverted => false;
 
         protected override void Initialize()
         {
@@ -227,10 +227,13 @@ namespace Meadow.Foundation.Displays.ePaper
                 SendCommand(Command.DATA_START_TRANSMISSION_1);
                 DelayMs(2);
 
+                dataCommandPort.State = DataState;
+
                 for (int i = 0; i < Width * Height / 8; i++)
                 {   //I bet we can optimize this .... seems silly to send a byte at a time
-                    SendData(bufferBlack[i]);
+                    spiPeripheral.Write(bufferBlack[i]);
                 }
+
                 DelayMs(2);
             }
 
@@ -239,9 +242,11 @@ namespace Meadow.Foundation.Displays.ePaper
                 SendCommand(Command.DATA_START_TRANSMISSION_2);
                 DelayMs(2);
 
+                dataCommandPort.State = DataState;
+
                 for (int i = 0; i < Width * Height / 8; i++)
                 {
-                    SendData(bufferRed[i]);
+                    spiPeripheral.Write(bufferRed[i]);
                 }
                 DelayMs(2);
             }

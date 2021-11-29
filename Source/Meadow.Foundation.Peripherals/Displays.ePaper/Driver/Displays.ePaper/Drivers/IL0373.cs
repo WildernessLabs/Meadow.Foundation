@@ -58,35 +58,39 @@ namespace Meadow.Foundation.Displays.ePaper
             DelayMs(2);
             SendCommand(Command.DATA_START_TRANSMISSION_1);
 
+            dataCommandPort.State = DataState;
+
             if (bufferBlack != null)
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    SendData(bufferBlack[i]);
+                    spiPeripheral.Write(bufferBlack[i]);
                 }
             }
             else
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    SendData(0x00);
+                    spiPeripheral.Write(0x00);
                 }
             }
             DelayMs(2);
             SendCommand(Command.DATA_START_TRANSMISSION_2);
 
+            dataCommandPort.State = DataState;
+
             if (bufferColor != null)
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    SendData(bufferColor[i]);
+                    spiPeripheral.Write(bufferColor[i]);
                 }
             }
             else
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    SendData(0x00);
+                    spiPeripheral.Write(0x00);
                 }
             }
             DelayMs(2);

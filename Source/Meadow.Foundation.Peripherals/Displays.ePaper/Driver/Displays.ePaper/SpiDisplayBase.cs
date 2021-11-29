@@ -9,6 +9,7 @@ namespace Meadow.Foundation.Displays
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort chipSelectPort;
         protected IDigitalInputPort busyPort;
         protected ISpiPeripheral spiPeripheral;
 
