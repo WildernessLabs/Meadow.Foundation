@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Displays.ePaper
             resetPort = device.CreateDigitalOutputPort(resetPin, true);
             busyPort = device.CreateDigitalInputPort(busyPin);
 
-            spiPeripheral = new SpiPeripheral(spiBus, device.CreateDigitalOutputPort(chipSelectPin));
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin));
 
             imageBuffer = new Buffer1(width, height);
 
@@ -225,9 +225,11 @@ namespace Meadow.Foundation.Displays.ePaper
             SetMemoryPointer(0, 0);
             SendCommand(Command.WRITE_RAM);
             /* send the image data */
+
+            dataCommandPort.State = DataState;
             for (int i = 0; i < Width / 8 * Height; i++)
             {
-                SendData(image_buffer[i]);
+                spiPeripheral.Write(image_buffer[i]);
             }
         }
 
