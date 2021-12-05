@@ -18,12 +18,19 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         protected override void Initialize()
         {
-            resetPort.State = true;
-            Thread.Sleep(50);
-            resetPort.State = false;
-            Thread.Sleep(50);
-            resetPort.State = true;
-            Thread.Sleep(50);
+            if (resetPort != null)
+            {
+                resetPort.State = true;
+                Thread.Sleep(50);
+                resetPort.State = false;
+                Thread.Sleep(50);
+                resetPort.State = true;
+                Thread.Sleep(50);
+            }
+            else
+            {
+                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+            }
 
             SendCommand(0xEF, new byte[] { 0x03, 0x80, 0x02 });
             SendCommand(0xCF, new byte[] { 0x00, 0xC1, 0x30 });

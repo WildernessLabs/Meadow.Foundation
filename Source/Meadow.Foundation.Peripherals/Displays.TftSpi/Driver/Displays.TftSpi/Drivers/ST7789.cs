@@ -22,14 +22,21 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         protected override void Initialize()
         {
-            resetPort.State = true;
-            Thread.Sleep(50);
-            resetPort.State = false;
-            Thread.Sleep(50);
-            resetPort.State = true;
-            Thread.Sleep(50);
+            if (resetPort != null)
+            {
+                resetPort.State = true;
+                Thread.Sleep(50);
+                resetPort.State = false;
+                Thread.Sleep(50);
+                resetPort.State = true;
+                Thread.Sleep(50);
+            }
+            else
+            {
+                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+            }
 
-            if(Width == 135)
+            if (Width == 135)
             {   //unknown if this is consistant across all displays with this res
                 xOffset = 52;
                 yOffset = 40;
