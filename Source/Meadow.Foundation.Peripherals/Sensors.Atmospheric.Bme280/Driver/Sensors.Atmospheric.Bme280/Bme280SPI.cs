@@ -6,8 +6,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     internal class Bme280Spi : Bme280Comms
     {
-        private IDigitalOutputPort _chipSelect;
-
         ISpiPeripheral spiPeripheral;
 
         internal Bme280Spi(ISpiBus spi, IDigitalOutputPort? chipSelect = null)

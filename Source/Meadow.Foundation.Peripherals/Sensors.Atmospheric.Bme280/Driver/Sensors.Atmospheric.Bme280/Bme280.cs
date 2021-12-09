@@ -6,6 +6,7 @@ using Meadow.Units;
 using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
+using Meadow.Devices;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -97,24 +98,29 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="i2c">I2C Bus to use for communicating with the sensor</param>
         /// <param name="address">I2C address of the sensor (default = 0x77).</param>
-        public Bme280(II2cBus i2c, byte address = (byte)Addresses.Default)
+        public Bme280(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
-            bme280Comms = new Bme280I2C(i2c, address);
+            bme280Comms = new Bme280I2C(i2cBus, address);
             configuration = new Configuration(); // here to avoid the warning
-            Init();
+            Initialize();
         }
 
-        public Bme280(ISpiBus spi, IDigitalOutputPort chipSelect)
+        public Bme280(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
+            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
         {
-            bme280Comms = new Bme280Spi(spi, chipSelect);
+        }
+
+        public Bme280(ISpiBus spiBus, IDigitalOutputPort chipSelect)
+        {
+            bme280Comms = new Bme280Spi(spiBus, chipSelect);
             configuration = new Configuration(); // here to avoid the warning
-            Init();
+            Initialize();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        protected void Init()
+        protected void Initialize()
         {
             // these are basically calibrations burned into the chip.
             ReadCompensationData();
