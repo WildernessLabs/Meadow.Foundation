@@ -12,7 +12,7 @@
 			Default = Address0
 		}
 
-		class RegisterAddresses
+		internal class RegisterAddresses
 		{
 			public static readonly Register Status = new Register(0x73, 1);
 			public const byte Reset = 0xE0;

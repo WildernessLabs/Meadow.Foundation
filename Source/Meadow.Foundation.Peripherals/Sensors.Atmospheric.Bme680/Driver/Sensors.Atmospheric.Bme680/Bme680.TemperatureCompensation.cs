@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Bme680
     {
-        public class TemperatureCompensation
+        protected class TemperatureCompensation
         {
             public TemperatureCompensation(IReadOnlyList<byte> rawCompData)
             {
