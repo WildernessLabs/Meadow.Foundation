@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Meadow.Foundation.Sensors.Hid
+﻿namespace Meadow.Foundation.Sensors.Hid
 {
     public partial class BBQ10Keyboard
     {

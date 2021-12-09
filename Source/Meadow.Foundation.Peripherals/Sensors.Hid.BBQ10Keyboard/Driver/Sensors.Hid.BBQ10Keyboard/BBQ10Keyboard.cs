@@ -1,8 +1,6 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Hid

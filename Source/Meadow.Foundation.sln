@@ -994,6 +994,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Hid.Bbq10Keyboard",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Bbq10Keyboard", "Meadow.Foundation.Peripherals\Sensors.Hid.BBQ10Keyboard\Driver\Sensors.Hid.BBQ10Keyboard\Sensors.Hid.Bbq10Keyboard.csproj", "{C4BA8BCA-19F8-41F5-8253-03EC1B63694A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{30EB23E4-D3FD-4FDF-9A26-70DFDB3D134A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bbq10Keyboard_Sample", "Meadow.Foundation.Peripherals\Sensors.Hid.BBQ10Keyboard\Samples\Bbq10Keyboard_Sample\Bbq10Keyboard_Sample.csproj", "{CCDF251E-DF74-4623-93F9-301B96F14182}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2292,6 +2296,12 @@ Global
 		{C4BA8BCA-19F8-41F5-8253-03EC1B63694A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4BA8BCA-19F8-41F5-8253-03EC1B63694A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C4BA8BCA-19F8-41F5-8253-03EC1B63694A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{CCDF251E-DF74-4623-93F9-301B96F14182}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCDF251E-DF74-4623-93F9-301B96F14182}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCDF251E-DF74-4623-93F9-301B96F14182}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{CCDF251E-DF74-4623-93F9-301B96F14182}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCDF251E-DF74-4623-93F9-301B96F14182}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCDF251E-DF74-4623-93F9-301B96F14182}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2786,6 +2796,8 @@ Global
 		{2459199F-D443-4869-9BEB-FDE163489FBB} = {F800CF20-C75C-4626-9876-769D9650C781}
 		{C7FF3B3D-9475-4A3D-8C1A-CF8945672B6B} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{C4BA8BCA-19F8-41F5-8253-03EC1B63694A} = {C7FF3B3D-9475-4A3D-8C1A-CF8945672B6B}
+		{30EB23E4-D3FD-4FDF-9A26-70DFDB3D134A} = {C7FF3B3D-9475-4A3D-8C1A-CF8945672B6B}
+		{CCDF251E-DF74-4623-93F9-301B96F14182} = {30EB23E4-D3FD-4FDF-9A26-70DFDB3D134A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
