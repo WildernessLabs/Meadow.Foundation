@@ -8,7 +8,7 @@ using Meadow.Foundation.Leds;
 
 namespace Leds.PwmLed_Onboard_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         PwmLed _redPwmLed;
         PwmLed _greenPwmLed;

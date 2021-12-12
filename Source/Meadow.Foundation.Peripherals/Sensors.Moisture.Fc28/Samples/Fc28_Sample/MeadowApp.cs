@@ -9,7 +9,7 @@ using VU = Meadow.Units.Voltage.UnitType;
 
 namespace Sensors.Moisture.FC28_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

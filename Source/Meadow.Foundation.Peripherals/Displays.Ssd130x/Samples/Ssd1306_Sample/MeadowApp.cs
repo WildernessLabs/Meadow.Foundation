@@ -7,7 +7,7 @@ using Meadow.Foundation.Graphics;
 
 namespace Displays.Ssd130x.Ssd1306_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

@@ -5,7 +5,7 @@ using Meadow.Foundation.Sensors.Hid;
 
 namespace Sensors.Distance.Mpr121_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

@@ -6,7 +6,7 @@ using Meadow.Units;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

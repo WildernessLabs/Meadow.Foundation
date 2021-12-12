@@ -8,7 +8,7 @@ using Meadow.Hardware;
 
 namespace FeatherWings.OLED128x32_TinyPong_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         OLED128x32Wing oledWing;
         MicroGraphics graphics;

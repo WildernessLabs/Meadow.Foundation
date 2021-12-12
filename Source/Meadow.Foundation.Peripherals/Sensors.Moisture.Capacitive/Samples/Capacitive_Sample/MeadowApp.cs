@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sensors.Moisture.Capacitive_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

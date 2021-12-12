@@ -11,7 +11,7 @@ using SimpleJpegDecoder;
 
 namespace Displays.TftSpi.Ili9341_Jpg_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         Ili9341 display;
         MicroGraphics graphics;

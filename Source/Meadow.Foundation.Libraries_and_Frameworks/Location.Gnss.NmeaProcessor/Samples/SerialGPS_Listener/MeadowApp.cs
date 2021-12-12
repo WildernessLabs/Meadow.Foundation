@@ -17,7 +17,7 @@ namespace MeadowApp
     /// A simple app that listens to a serial GPS for NMEA sentences, parses
     /// them, and writes them to the console.
     /// </summary>
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         ISerialMessagePort serialPort;
         NmeaSentenceProcessor nmeaProcessor;

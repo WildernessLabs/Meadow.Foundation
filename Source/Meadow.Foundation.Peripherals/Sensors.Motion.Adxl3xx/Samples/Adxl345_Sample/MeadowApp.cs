@@ -6,7 +6,7 @@ using Meadow.Foundation.Sensors.Motion;
 
 namespace Sensors.Motion.Adxl345_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

@@ -8,7 +8,7 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

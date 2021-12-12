@@ -7,7 +7,7 @@ using Meadow.Peripherals.Switches;
 
 namespace Sensors.Switches.DipSwitch_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         protected DipSwitch dipSwitch;
 

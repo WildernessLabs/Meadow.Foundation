@@ -6,7 +6,7 @@ using Meadow.Foundation.ICs.IOExpanders;
 
 namespace ICs.IOExpanders.HT16K33_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

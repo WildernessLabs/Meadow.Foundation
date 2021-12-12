@@ -13,7 +13,7 @@ using LU = Meadow.Units.Length.UnitType;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         MicroGraphics graphics;
         St7789 display;

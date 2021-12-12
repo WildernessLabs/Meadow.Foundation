@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Sensors.LoadCell.Nau7802_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

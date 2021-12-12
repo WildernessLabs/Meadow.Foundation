@@ -8,7 +8,7 @@ using Meadow.Units;
 
 namespace Sensors.Light.Veml7700_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

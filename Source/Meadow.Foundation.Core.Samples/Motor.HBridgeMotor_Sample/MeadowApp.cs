@@ -6,7 +6,7 @@ using Meadow.Foundation.Motors;
 
 namespace Motor.HBridgeMotor_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         protected HBridgeMotor motor1;
 

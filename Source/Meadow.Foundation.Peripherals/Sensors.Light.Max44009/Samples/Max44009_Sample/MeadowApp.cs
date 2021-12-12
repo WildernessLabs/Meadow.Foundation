@@ -7,7 +7,7 @@ using Meadow.Foundation.Sensors.Light;
 
 namespace Sensors.Light.Max44009_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

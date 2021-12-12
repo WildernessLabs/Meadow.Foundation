@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Sensors.Temperature.Lm75_Sample
 {
     // TODO: this sample needs to be updated.
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

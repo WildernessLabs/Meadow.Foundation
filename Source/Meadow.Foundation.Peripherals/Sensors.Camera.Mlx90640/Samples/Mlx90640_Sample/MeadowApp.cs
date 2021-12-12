@@ -7,7 +7,7 @@ using Meadow.Hardware;
 
 namespace Sensors.Temperature.MLX90640_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 

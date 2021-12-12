@@ -8,7 +8,7 @@ namespace Sensors.Distance.HCSR04_Sample
 {
     // Driver in development - not currently working
     // Meadow is currently not reading timing deltas smaller than 10,000 ticks (10ms) in b3.7
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 
