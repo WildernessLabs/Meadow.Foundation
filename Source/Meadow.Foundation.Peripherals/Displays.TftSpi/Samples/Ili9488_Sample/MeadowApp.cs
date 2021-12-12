@@ -30,7 +30,10 @@ namespace Displays.Tft.Ili9488_Sample
 				chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 width: 320, height: 480
-            );
+            )
+            {
+                IgnoreOutOfBoundsPixels = true
+            };
 
             graphics = new MicroGraphics(display);
 
