@@ -31,7 +31,10 @@ namespace Displays.Tft.S6D02A1_Sample
 				chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 width: 128, height: 160
-            );
+            )
+            {
+                IgnoreOutOfBoundsPixels = true
+            };
 
             graphics = new MicroGraphics(display);
 

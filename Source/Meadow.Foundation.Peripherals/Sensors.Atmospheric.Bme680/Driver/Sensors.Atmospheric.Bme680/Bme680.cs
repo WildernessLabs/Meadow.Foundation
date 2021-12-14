@@ -183,7 +183,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     Array.Copy(compensationData1, 0, compensationData, 0, compensationData1.Length);
                     Array.Copy(compensationData2, 0, compensationData, 25, compensationData2.Length);
 
-                    var temp = RawToTemp(rawTemperature,
+                    var temp = RawToTemperature(rawTemperature,
                         new TemperatureCompensation(compensationData));
 
                     var pressure = RawToPressure(temp, rawPressure,
@@ -209,7 +209,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             if (data.Length == 3)
             {
-                return (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0f);
+                return (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
             }
             if (data.Length == 2)
             {
@@ -218,35 +218,52 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return 0;
         }
 
-        private static double RawToTemp(int adcTemperature, TemperatureCompensation temperatureCompensation)
+        //In celcius
+        private static double RawToTemperature(int adcTemperature, TemperatureCompensation temperatureCompensation)
         {
-            var var1 = ((adcTemperature / 16384.0M) - (temperatureCompensation.T1 / 1024.0M)) *
+            var var1 = ((adcTemperature / 16384.0) - (temperatureCompensation.T1 / 1024.0)) *
                        temperatureCompensation.T2;
-            var var2 = ((adcTemperature / 131072M) - (temperatureCompensation.T1 / 8192.0M));
-            var var3 = var2 * ((adcTemperature / 131072.0M) - (temperatureCompensation.T1 / 8192.0M));
-            var var4 = var3 * (temperatureCompensation.T3 * 16.0M);
+            var var2 = ((adcTemperature / 131072) - (temperatureCompensation.T1 / 8192.0));
+            var var3 = var2 * ((adcTemperature / 131072.0) - (temperatureCompensation.T1 / 8192.0));
+            var var4 = var3 * (temperatureCompensation.T3 * 16.0);
             var tFine = var1 + var4;
-            return Convert.ToDouble(tFine / 5120.0M);
+            return tFine / 5120.0;
         }
 
-        private static double RawToPressure(double temp, int adcPressure, PressureCompensation pressureCompensation)
+        private static double RawToPressure(double temperature, int adcPressure, PressureCompensation pressureCompensation)
         {
-            var tFine = temp * 5120;
-            var var1 = (tFine / 2.0) - 64000.0;
-            var var2 = var1 * var1 * (pressureCompensation.P6 / 131072.0);
-            var2 += (var1 * pressureCompensation.P5 * 2.0);
-            var2 = (var2 / 4.0) + (pressureCompensation.P4 * 65536.0);
-            var1 = (((pressureCompensation.P3 * var1 * var1) / 16384.0) +
-                    (pressureCompensation.P2 * var1)) / 524288.0;
-            var1 = (1.0 + (var1 / 32768.0)) * pressureCompensation.P1;
-            var calcPress = 1048576.0 - adcPressure;
-            calcPress = ((calcPress - (var2 / 4096.0)) * 6250.0) / var1;
-            var1 = (pressureCompensation.P9 * calcPress * calcPress) / 2147483648.0;
-            var2 = calcPress * (pressureCompensation.P8 / 32768.0);
-            var var3 = (calcPress / 256.0) * (calcPress / 256.0) * (calcPress / 256.0) *
-                       (pressureCompensation.P10 / 131072.0);
-            calcPress += (var1 + var2 + var3 + (pressureCompensation.P7 * 128.0)) / 16.0;
-            return calcPress;
+            double var1;
+            double var2;
+            double var3;
+            double calc_pres;
+
+            var PC = pressureCompensation;
+
+            var tFine = temperature * 5120;
+
+            var1 = ((tFine / 2.0) - 64000.0);
+            var2 = var1 * var1 * ((PC.P6) / (131072.0));
+            var2 = var2 + (var1 * (PC.P5) * 2.0);
+            var2 = (var2 / 4.0) + ((PC.P4) * 65536.0);
+            var1 = ((((PC.P3 * var1 * var1) / 16384.0) + (PC.P2 * var1)) / 524288.0);
+            var1 = ((1.0f + (var1 / 32768.0)) * (PC.P1));
+            calc_pres = (1048576.0 - ((float)adcPressure));
+
+            /* Avoid exception caused by division by zero */
+            if ((int)var1 != 0)
+            {
+                calc_pres = (((calc_pres - (var2 / 4096.0)) * 6250.0) / var1);
+                var1 = ((PC.P9) * calc_pres * calc_pres) / 2147483648.0f;
+                var2 = calc_pres * ((PC.P8) / 32768.0);
+                var3 = ((calc_pres / 256.0) * (calc_pres / 256.0) * (calc_pres / 256.0) * (PC.P10 / 131072.0));
+                calc_pres = (calc_pres + (var1 + var2 + var3 + (PC.P7 * 128.0)) / 16.0);
+            }
+            else
+            {
+                calc_pres = 0;
+            }
+
+            return calc_pres;
         }
 
         private static double RawToHumidity(double temp, int adcHumidity, HumidityCompensation humidityCompensation)

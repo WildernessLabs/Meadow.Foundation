@@ -39,10 +39,13 @@ namespace Displays.Tft.ST7789_Sample
             var display = new St7789(
                 device: Device,
                 spiBus: spiBus,
-                chipSelectPin: Device.Pins.D02,
-                dcPin: Device.Pins.D01,
-                resetPin: Device.Pins.D00,
-                width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565);
+                chipSelectPin: Device.Pins.D15,
+                dcPin: Device.Pins.D11,
+                resetPin: Device.Pins.D14,
+                width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
+            {
+                IgnoreOutOfBoundsPixels = true
+            };
 
             graphics = new MicroGraphics(display);
             graphics.Rotation = RotationType._180Degrees;

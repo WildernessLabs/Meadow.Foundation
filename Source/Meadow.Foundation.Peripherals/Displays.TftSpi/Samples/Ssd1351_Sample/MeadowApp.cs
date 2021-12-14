@@ -22,7 +22,10 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
                        chipSelectPin: Device.Pins.D02,
                        dcPin: Device.Pins.D01,
                        resetPin: Device.Pins.D00,
-                       width: 128, height: 128); 
+                       width: 128, height: 128)
+            {
+                IgnoreOutOfBoundsPixels = true
+            };
 
             var graphics = new MicroGraphics(display);
             graphics.CurrentFont = new Font8x12();

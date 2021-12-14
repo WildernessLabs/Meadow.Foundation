@@ -34,7 +34,10 @@ namespace Displays.Tft.Ili9341_Sample
                 dcPin: Device.Pins.D14,
                 resetPin: Device.Pins.D15,
                 width: 240, height: 320
-            );
+            )
+            {
+                IgnoreOutOfBoundsPixels = true
+            };
 
             graphics = new MicroGraphics(display);
 			

@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         public override void WriteRegister(Register register, byte value)
         {
-            throw new NotImplementedException();
+            i2CPeripheral.WriteRegister((byte)register, value);
         }
     }
 }

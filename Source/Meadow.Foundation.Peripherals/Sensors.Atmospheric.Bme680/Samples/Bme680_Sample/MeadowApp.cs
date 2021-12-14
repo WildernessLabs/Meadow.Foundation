@@ -16,8 +16,8 @@ namespace Sensors.Atmospheric.BME680_Sample
         {
             Console.WriteLine("Initializing...");
 
-            CreateSpiSensor();
-            //CreateI2CSensor();
+            //CreateSpiSensor();
+            CreateI2CSensor();
 
             Console.WriteLine("A");
 
