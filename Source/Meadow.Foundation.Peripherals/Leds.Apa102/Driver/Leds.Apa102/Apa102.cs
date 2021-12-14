@@ -1,5 +1,6 @@
 ﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.Leds
@@ -10,6 +11,8 @@ namespace Meadow.Foundation.Leds
     /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_DotStar/blob/master/adafruit_dotstar.py </remarks>
     public partial class Apa102
     {
+        public static Frequency DefaultSpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz);
+
         protected ISpiPeripheral spiPeripheral;
 
         const short StartHeaderSize = 4;

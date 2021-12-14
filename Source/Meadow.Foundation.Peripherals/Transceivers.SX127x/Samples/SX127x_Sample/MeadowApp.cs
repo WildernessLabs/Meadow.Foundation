@@ -33,7 +33,7 @@ namespace MeadowApp
                     {
 //                        bus.Configuration.SpeedKHz = spd;
 
-                        Console.WriteLine($" @{bus.Configuration.SpeedKHz} Silicon Revision: 0x{radio.GetVersion():x2}");
+                        Console.WriteLine($" @{bus.Configuration.Speed} Silicon Revision: 0x{radio.GetVersion():x2}");
                     }
                     catch(Exception ex)
                     {

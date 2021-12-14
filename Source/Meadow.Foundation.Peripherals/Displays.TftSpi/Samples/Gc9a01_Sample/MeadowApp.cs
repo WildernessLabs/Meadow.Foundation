@@ -1,5 +1,6 @@
 ﻿using System;
 using Meadow;
+using Meadow.Units;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
@@ -17,7 +18,7 @@ namespace Displays.Tft.Gc9a01_Sample
         {
             Console.WriteLine("Initializing ...");
 
-            var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode0);
+            var config = new SpiClockConfiguration(new Frequency(12000,Frequency.UnitType.Kilohertz) , SpiClockConfiguration.Mode.Mode0);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             Console.WriteLine("Create display driver instance");

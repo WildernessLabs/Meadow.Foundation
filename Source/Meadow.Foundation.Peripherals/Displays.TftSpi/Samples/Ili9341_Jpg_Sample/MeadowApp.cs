@@ -20,7 +20,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
         {
             Console.WriteLine("Initializing...");
 
-            var spiBus = Device.CreateSpiBus(24000);
+            var spiBus = Device.CreateSpiBus(Ili9341.DefaultSpiBusSpeed);
 
             display = new Ili9341
             (

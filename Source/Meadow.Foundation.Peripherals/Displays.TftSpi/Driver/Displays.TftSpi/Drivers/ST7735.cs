@@ -1,12 +1,15 @@
 ﻿using Meadow.Devices;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
+using Meadow.Units;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
     public class St7735 : TftSpiBase
     {
+        public static Frequency DefaultSpiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz);
+
         private DisplayType displayType;
 
         private byte xOffset;

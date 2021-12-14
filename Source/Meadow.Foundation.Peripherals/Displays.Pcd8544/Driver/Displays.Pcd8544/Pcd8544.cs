@@ -3,12 +3,13 @@ using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using System;
 using Meadow.Foundation.Graphics;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Displays
 {
     public class Pcd8544 : IGraphicsDisplay
     {
-        public static int DEFAULT_SPEED = 4000;
+        public static Frequency DEFAULT_SPEED = new Frequency(4000, Frequency.UnitType.Kilohertz);
 
         public ColorType ColorMode => ColorType.Format1bpp;
 

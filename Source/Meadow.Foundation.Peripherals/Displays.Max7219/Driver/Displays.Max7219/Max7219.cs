@@ -4,6 +4,7 @@ using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Displays
 {
@@ -15,7 +16,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// MAX7219 Spi Clock Frequency
         /// </summary>
-        public static int SpiClockFrequency => 10000000;
+        public static Frequency DefaultSpiBusSpeed = new Frequency(10000000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// Number of digits Register per Module

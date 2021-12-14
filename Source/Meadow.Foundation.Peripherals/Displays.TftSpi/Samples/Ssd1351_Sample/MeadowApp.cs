@@ -14,7 +14,7 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
         {
             Console.WriteLine("Initializing ...");
   
-            var spiBus = Device.CreateSpiBus(12000);
+            var spiBus = Device.CreateSpiBus(Ssd1351.DefaultSpiBusSpeed);
 
             var display = new Ssd1351(
                        device: Device, 
