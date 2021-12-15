@@ -35,7 +35,7 @@ namespace MeadowApp
 
             Console.WriteLine("Create Spi bus");
 
-            var config = new SpiClockConfiguration(24000, SpiClockConfiguration.Mode.Mode3);
+            var config = new SpiClockConfiguration(new Frequency(24000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode3);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             Console.WriteLine("Create display driver instance");

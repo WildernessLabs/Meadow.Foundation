@@ -1,12 +1,15 @@
 ﻿using Meadow.Devices;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
+using Meadow.Units;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Ssd1351 : TftSpiBase
     {
+        public static Frequency DefaultSpiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz);
+
         public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
 
         public Ssd1351(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,

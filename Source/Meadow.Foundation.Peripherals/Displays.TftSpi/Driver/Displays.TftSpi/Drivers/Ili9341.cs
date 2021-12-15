@@ -2,11 +2,13 @@
 using Meadow.Devices;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Ili9341 : TftSpiBase
     {
+        public static Frequency DefaultSpiBusSpeed = new Frequency(24000, Frequency.UnitType.Kilohertz);
         public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
         public Ili9341(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,

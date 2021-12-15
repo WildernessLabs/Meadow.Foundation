@@ -7,6 +7,7 @@ using Meadow.Foundation;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Displays.Tft.Hx8357b_Sample
 {
@@ -20,7 +21,7 @@ namespace Displays.Tft.Hx8357b_Sample
         {
             Console.WriteLine("Initializing ...");
 
-            var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode0);
+            var config = new SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode0);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             Console.WriteLine("Create display driver instance");
