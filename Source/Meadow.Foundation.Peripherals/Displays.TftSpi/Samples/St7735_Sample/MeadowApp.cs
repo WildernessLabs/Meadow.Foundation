@@ -15,16 +15,18 @@ namespace Displays.TftSpi.St7735_Sample
         {
             Console.WriteLine("Initializing ...");
 
-            var spiBus = Device.CreateSpiBus(12000);
+            var spiBus = Device.CreateSpiBus(St7735.DefaultSpiBusSpeed);
 
             //note - you may need to adjust the DisplayType for your specific St7735
             var display = new St7735(
-                device: Device, 
-                spiBus: Device.CreateSpiBus(),
-              chipSelectPin: Device.Pins.D02,
-              dcPin: Device.Pins.D01,
-              resetPin: Device.Pins.D00,
-              width: 128, height: 160, St7735.DisplayType.ST7735R);
+                device: Device,
+                spiBus: spiBus,
+                chipSelectPin: Device.Pins.D02,
+                dcPin: Device.Pins.D01,
+                resetPin: Device.Pins.D00,
+                width: 128, 
+                height: 160, 
+                St7735.DisplayType.ST7735R);
 
             var graphics = new MicroGraphics(display);
 

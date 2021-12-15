@@ -1,10 +1,14 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Displays.Ssd130x
 {
     public class Ssd1309 : Ssd1306
     {
+        public static SpiClockConfiguration.Mode DefaultSpiClockMode = SpiClockConfiguration.Mode.Mode0;
+        public static Frequency DefaultSpiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz);
+
         /// <summary>
         ///     Create a new SSD1309 object using the default parameters for
         /// </summary>

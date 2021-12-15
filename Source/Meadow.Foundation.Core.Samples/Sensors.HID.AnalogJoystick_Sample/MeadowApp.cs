@@ -8,6 +8,7 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Hid;
+using Meadow.Units;
 
 namespace MeadowApp
 {
@@ -57,12 +58,13 @@ namespace MeadowApp
             if (hasDisplay) {
                 // SPI Bus
                 Console.WriteLine("Create Spi bus");
-                var config = new SpiClockConfiguration(48000, SpiClockConfiguration.Mode.Mode3);
+                var config = new SpiClockConfiguration(St7789.DefaultSpiBusSpeed, SpiClockConfiguration.Mode.Mode3);
                 var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
                 // Display. Make sure to change the pins here to match your display wireup
                 Console.WriteLine("Create display driver instance");
-                display = new St7789(device: Device, spiBus: spiBus,
+                display = new St7789(device: Device, 
+                    spiBus: spiBus,
                     chipSelectPin: Device.Pins.D14,
                     dcPin: Device.Pins.D03,
                     resetPin: Device.Pins.D04,

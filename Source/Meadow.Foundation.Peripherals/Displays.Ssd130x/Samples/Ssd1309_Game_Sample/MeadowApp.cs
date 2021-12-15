@@ -3,6 +3,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 
@@ -99,7 +100,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
             Console.WriteLine("Create Display with SPI...");
 
-            var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode0);
+            var config = new SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode0);
 
             var bus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 

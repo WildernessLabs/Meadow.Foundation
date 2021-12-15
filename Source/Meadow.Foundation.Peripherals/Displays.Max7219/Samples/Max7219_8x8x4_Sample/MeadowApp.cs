@@ -37,7 +37,7 @@ namespace MeadowApp
             Console.WriteLine("Init...");
 
             display =new Max7219(
-                Device, Device.CreateSpiBus(12000),
+                Device, Device.CreateSpiBus(Max7219.DefaultSpiBusSpeed),
                 Device.Pins.D00, deviceCount: 4,
                 maxMode: Max7219.Max7219Type.Display);
 

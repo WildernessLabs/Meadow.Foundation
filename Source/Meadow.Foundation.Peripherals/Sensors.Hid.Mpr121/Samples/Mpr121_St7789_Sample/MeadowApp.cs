@@ -5,6 +5,7 @@ using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Sensors.Distance.Mpr121_Sample
 {
@@ -28,7 +29,7 @@ namespace Sensors.Distance.Mpr121_Sample
 
             Console.WriteLine("Create Spi bus");
 
-            var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode3);
+            var config = new SpiClockConfiguration(new Frequency(6000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode3);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             Console.WriteLine("Create display driver instance");
