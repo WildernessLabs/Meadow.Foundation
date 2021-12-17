@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// MAX7219 Spi Clock Frequency
         /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(10000000, Frequency.UnitType.Kilohertz);
+        public static Frequency DefaultSpiBusSpeed = new Frequency(24000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// Number of digits Register per Module
