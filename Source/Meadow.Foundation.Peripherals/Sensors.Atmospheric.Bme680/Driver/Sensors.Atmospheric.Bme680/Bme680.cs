@@ -94,6 +94,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             bme680Comms = new Bme680SPI(spiBus, chipSelectPort);
             configuration = new Configuration(); // here to avoid the warning
+            //https://github.com/Zanduino/BME680/blob/master/src/Zanshin_BME680.cpp
+            bme680Comms.WriteRegister(0x73, bme680Comms.ReadRegister(0x73));
+
             Initialize();
         }
 
