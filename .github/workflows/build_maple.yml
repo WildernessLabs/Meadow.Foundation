@@ -21,6 +21,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore Source/Meadow.Foundation.Libraries_and_Frameworks/Web.Maple/Maple.sln
     - name: Build
-      run: dotnet build -c  Source/Meadow.Foundation.Libraries_and_Frameworks/Web.Maple/Maple.sln --no-restore
+      run: dotnet build -c Release Source/Meadow.Foundation.Libraries_and_Frameworks/Web.Maple/Maple.sln --no-restore
     - name: Unit Tests
       run: dotnet test -c Release  Source/Meadow.Foundation.Libraries_and_Frameworks/Web.Maple/Maple.sln --no-restore --verbosity normal
