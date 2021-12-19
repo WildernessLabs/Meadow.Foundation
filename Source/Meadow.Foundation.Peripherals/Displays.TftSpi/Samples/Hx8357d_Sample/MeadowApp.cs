@@ -27,9 +27,9 @@ namespace Displays.Tft.Hx8357d_Sample
             Console.WriteLine("Create display driver instance");
 
             var display = new Hx8357d(device: Device, spiBus: spiBus,
-                resetPin: Device.Pins.D00,
-                dcPin: Device.Pins.D01,
                 chipSelectPin: Device.Pins.D02,
+                dcPin: Device.Pins.D01,
+                resetPin: Device.Pins.D00,
                 width: 320, height: 480)
             {
                 IgnoreOutOfBoundsPixels = true

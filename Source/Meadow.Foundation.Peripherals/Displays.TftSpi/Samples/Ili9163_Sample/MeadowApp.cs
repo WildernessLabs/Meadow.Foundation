@@ -27,9 +27,9 @@ namespace Displays.Tft.Ili9163_Sample
             (
                 device: Device, 
                 spiBus: spiBus,
-                resetPin: Device.Pins.D00,
-				chipSelectPin: Device.Pins.D02,
+                chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
+                resetPin: Device.Pins.D00,
                 width: 128, height: 160
             )
             {

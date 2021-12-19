@@ -18,7 +18,7 @@ namespace Displays.Tft.Gc9a01_Sample
         {
             Console.WriteLine("Initializing ...");
 
-            var config = new SpiClockConfiguration(new Frequency(12000,Frequency.UnitType.Kilohertz) , SpiClockConfiguration.Mode.Mode0);
+            var config = new SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode0);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             Console.WriteLine("Create display driver instance");
@@ -27,9 +27,9 @@ namespace Displays.Tft.Gc9a01_Sample
             (
                 device: Device, 
                 spiBus: spiBus,
-                resetPin: Device.Pins.D00,
-				chipSelectPin: Device.Pins.D02,
-                dcPin: Device.Pins.D01
+                chipSelectPin: Device.Pins.D02,
+                dcPin: Device.Pins.D01,
+                resetPin: Device.Pins.D00
             )
             {
                 IgnoreOutOfBoundsPixels = true
