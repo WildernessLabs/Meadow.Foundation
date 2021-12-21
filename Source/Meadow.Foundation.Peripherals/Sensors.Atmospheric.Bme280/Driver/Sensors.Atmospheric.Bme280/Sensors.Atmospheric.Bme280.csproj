@@ -25,9 +25,6 @@
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Contracts\Meadow.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Units\Meadow.Units.csproj" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>

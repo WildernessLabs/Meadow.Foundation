@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29326.143
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meadow.Foundation.Core.Samples", "Meadow.Foundation.Core.Samples", "{7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}"
 EndProject
@@ -298,11 +298,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.AnalogJoystick_Sample", "Meadow.Foundation.Core.Samples\Sensors.Hid.AnalogJoystick_Sample\Sensors.Hid.AnalogJoystick_Sample.csproj", "{50D09365-81F0-4313-A7AF-F2CD76DE4998}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Lcd.CharacterDisplay", "Meadow.Foundation.Peripherals\Displays.Lcd.CharacterDisplay\Driver\Displays.Lcd.CharacterDisplay\Displays.Lcd.CharacterDisplay.csproj", "{C6178701-C96F-4929-A255-396A7F7F8483}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65C50059-6C22-43E9-88DE-AD73F7F108C8}"
-	ProjectSection(SolutionItems) = preProject
-		Meadow.Foundation.sln = Meadow.Foundation.sln
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bno055_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Bno055\Samples\Bno055_Sample\Bno055_Sample.csproj", "{20861022-699D-4FA2-A92A-05BC0188D25A}"
 EndProject
@@ -900,14 +895,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{4660
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Adxl3xx", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl3xx\Driver\Sensors.Motion.Adxl3xx\Sensors.Motion.Adxl3xx.csproj", "{2F78C85C-A670-4795-8435-5B4CAF5C05F2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Contracts", "..\..\Meadow.Core\source\Meadow.Contracts\Meadow.Contracts.csproj", "{2806F336-22CB-4107-A793-03E682C5AD90}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{77B32370-BC64-4C68-925C-BDE09360F694}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.F7", "..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj", "{6DAB0421-4F17-477C-B171-6AF2336C8B04}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Units", "..\..\Meadow.Core\source\Meadow.Units\Meadow.Units.csproj", "{E6A40CE3-4995-450A-8CCF-327A87A8A495}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSD1681_Sample", "Meadow.Foundation.Peripherals\Displays.ePaper\Samples\SSD1681_Sample\SSD1681_Sample.csproj", "{B7A42999-EA3D-4A03-BFB6-72CBEDD42266}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gc9a01_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Gc9a01_Sample\Gc9a01_Sample.csproj", "{3BA0E0BE-4AB4-4A1E-9E51-F36DA9BCD5FF}"
@@ -996,7 +983,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Bbq10Keyboard",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{30EB23E4-D3FD-4FDF-9A26-70DFDB3D134A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bbq10Keyboard_Sample", "Meadow.Foundation.Peripherals\Sensors.Hid.BBQ10Keyboard\Samples\Bbq10Keyboard_Sample\Bbq10Keyboard_Sample.csproj", "{CCDF251E-DF74-4623-93F9-301B96F14182}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bbq10Keyboard_Sample", "Meadow.Foundation.Peripherals\Sensors.Hid.BBQ10Keyboard\Samples\Bbq10Keyboard_Sample\Bbq10Keyboard_Sample.csproj", "{CCDF251E-DF74-4623-93F9-301B96F14182}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2024,30 +2011,6 @@ Global
 		{2F78C85C-A670-4795-8435-5B4CAF5C05F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F78C85C-A670-4795-8435-5B4CAF5C05F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F78C85C-A670-4795-8435-5B4CAF5C05F2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2806F336-22CB-4107-A793-03E682C5AD90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2806F336-22CB-4107-A793-03E682C5AD90}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2806F336-22CB-4107-A793-03E682C5AD90}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{2806F336-22CB-4107-A793-03E682C5AD90}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2806F336-22CB-4107-A793-03E682C5AD90}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2806F336-22CB-4107-A793-03E682C5AD90}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{77B32370-BC64-4C68-925C-BDE09360F694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{77B32370-BC64-4C68-925C-BDE09360F694}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{77B32370-BC64-4C68-925C-BDE09360F694}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{77B32370-BC64-4C68-925C-BDE09360F694}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{77B32370-BC64-4C68-925C-BDE09360F694}.Release|Any CPU.Build.0 = Release|Any CPU
-		{77B32370-BC64-4C68-925C-BDE09360F694}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{6DAB0421-4F17-477C-B171-6AF2336C8B04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6DAB0421-4F17-477C-B171-6AF2336C8B04}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6DAB0421-4F17-477C-B171-6AF2336C8B04}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{6DAB0421-4F17-477C-B171-6AF2336C8B04}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6DAB0421-4F17-477C-B171-6AF2336C8B04}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6DAB0421-4F17-477C-B171-6AF2336C8B04}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{E6A40CE3-4995-450A-8CCF-327A87A8A495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E6A40CE3-4995-450A-8CCF-327A87A8A495}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E6A40CE3-4995-450A-8CCF-327A87A8A495}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{E6A40CE3-4995-450A-8CCF-327A87A8A495}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E6A40CE3-4995-450A-8CCF-327A87A8A495}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E6A40CE3-4995-450A-8CCF-327A87A8A495}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{B7A42999-EA3D-4A03-BFB6-72CBEDD42266}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B7A42999-EA3D-4A03-BFB6-72CBEDD42266}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7A42999-EA3D-4A03-BFB6-72CBEDD42266}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -2749,10 +2712,6 @@ Global
 		{4E23D21F-8827-4F6B-BA35-C8FE4457027C} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{4660F8A6-3E4A-47D3-BBFE-5CC06AEE7E4D} = {4E23D21F-8827-4F6B-BA35-C8FE4457027C}
 		{2F78C85C-A670-4795-8435-5B4CAF5C05F2} = {4E23D21F-8827-4F6B-BA35-C8FE4457027C}
-		{2806F336-22CB-4107-A793-03E682C5AD90} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
-		{77B32370-BC64-4C68-925C-BDE09360F694} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
-		{6DAB0421-4F17-477C-B171-6AF2336C8B04} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
-		{E6A40CE3-4995-450A-8CCF-327A87A8A495} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 		{B7A42999-EA3D-4A03-BFB6-72CBEDD42266} = {06BFC6F2-9D39-46B2-8E9B-A2204481EED2}
 		{3BA0E0BE-4AB4-4A1E-9E51-F36DA9BCD5FF} = {8FB70D12-1111-480B-B64C-B8EB65977F58}
 		{CD2D9129-08F4-4B97-91E9-DBA857EAFE63} = {8FB70D12-1111-480B-B64C-B8EB65977F58}
