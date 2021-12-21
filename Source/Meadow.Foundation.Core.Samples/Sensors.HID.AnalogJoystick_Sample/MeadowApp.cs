@@ -8,15 +8,15 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Hid;
-using static Meadow.Foundation.Displays.DisplayBase;
+using Meadow.Units;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //==== peripherals
         AnalogJoystick joystick;
-        GraphicsLibrary canvas;
+        MicroGraphics canvas;
         TftSpiBase display;
 
         //==== internals
@@ -58,21 +58,22 @@ namespace MeadowApp
             if (hasDisplay) {
                 // SPI Bus
                 Console.WriteLine("Create Spi bus");
-                var config = new SpiClockConfiguration(48000, SpiClockConfiguration.Mode.Mode3);
+                var config = new SpiClockConfiguration(St7789.DefaultSpiBusSpeed, SpiClockConfiguration.Mode.Mode3);
                 var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
                 // Display. Make sure to change the pins here to match your display wireup
                 Console.WriteLine("Create display driver instance");
-                display = new St7789(device: Device, spiBus: spiBus,
+                display = new St7789(device: Device, 
+                    spiBus: spiBus,
                     chipSelectPin: Device.Pins.D14,
                     dcPin: Device.Pins.D03,
                     resetPin: Device.Pins.D04,
-                    width: displayWidth, height: displayHeight, displayColorMode: DisplayColorMode.Format12bppRgb444);
+                    width: displayWidth, height: displayHeight, displayColorMode: ColorType.Format12bppRgb444);
 
                 // graphics library
                 Console.WriteLine("Create graphics lib");
-                canvas = new GraphicsLibrary(display);
-                canvas.Rotation = GraphicsLibrary.RotationType._90Degrees;
+                canvas = new MicroGraphics(display);
+                canvas.Rotation = RotationType._90Degrees;
             }
 
             Console.WriteLine("Hardware initialization complete.");

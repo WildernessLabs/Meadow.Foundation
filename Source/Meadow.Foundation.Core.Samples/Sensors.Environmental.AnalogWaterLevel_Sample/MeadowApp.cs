@@ -6,7 +6,7 @@ using Meadow.Foundation.Sensors.Environmental;
 
 namespace Sensors.Temperature.AnalogWaterLevel_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         AnalogWaterLevel analogWaterLevel;
 

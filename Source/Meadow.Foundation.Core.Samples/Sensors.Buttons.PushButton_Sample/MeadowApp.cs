@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Sensors.Buttons.PushButton_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         RgbPwmLed led;
         List<PushButton> pushButtons;
