@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Driver\Motors.Tb67h420ftg\Motors.Tb67h420ftg.csproj" />
-   <PackageReference Include="Meadow.F7" Version="0.*" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\..\Displays.Ssd130x\Driver\Displays.Ssd130x\Displays.Ssd130x.csproj" />
   </ItemGroup>
 </Project>

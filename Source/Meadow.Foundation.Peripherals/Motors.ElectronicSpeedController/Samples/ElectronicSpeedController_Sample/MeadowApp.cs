@@ -7,19 +7,18 @@ using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Peripherals.Sensors.Rotary;
 
-namespace MeadowApp
+namespace ElectronicSpeedController_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
-        //==== peripherals
-        RgbPwmLed onboardLed;
-        ElectronicSpeedController esc;
-        RotaryEncoderWithButton rotary;
+        //<!—SNIP—>
 
-        //==== ESC settings
         float frequency = 50f;
         const float armMs = 0.5f;
         const float powerIncrement = 0.05f;
+
+        ElectronicSpeedController esc;
+        RotaryEncoderWithButton rotary;
 
         public MeadowApp()
         {
@@ -30,14 +29,6 @@ namespace MeadowApp
         void Initialize()
         {
             Console.WriteLine("Initialize hardware...");
-
-            //==== onboard LED
-            onboardLed = new RgbPwmLed(device: Device,
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                3.3f, 3.3f, 3.3f,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
 
             //==== rotary encoder
             rotary = new RotaryEncoderWithButton(Device, Device.Pins.D07, Device.Pins.D08, Device.Pins.D06);
@@ -73,12 +64,13 @@ namespace MeadowApp
             int b = (int)Map(power, 0f, 1f, 255f, 0f);
 
             var color = Color.FromRgb(r, 0, b);
-            onboardLed.SetColor(color);
         }
 
         float Map(float value, float fromSource, float toSource, float fromTarget, float toTarget)
         {
             return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
         }
+
+        //<!—SNOP—>
     }
 }

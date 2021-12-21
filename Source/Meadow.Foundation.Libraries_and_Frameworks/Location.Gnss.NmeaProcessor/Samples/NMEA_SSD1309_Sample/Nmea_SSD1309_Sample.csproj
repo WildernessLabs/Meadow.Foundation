@@ -11,7 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Driver\Location.Gnss.NmeaProcessor\Location.Gnss.NmeaParsing.csproj" />
     <ProjectReference Include="..\..\..\Graphics\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
-    <PackageReference Include="Meadow.F7" Version="0.*" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd130x\Driver\Displays.Ssd130x\Displays.Ssd130x.csproj" />
   </ItemGroup>
 </Project>

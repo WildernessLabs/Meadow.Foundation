@@ -10,12 +10,12 @@ using System;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //RgbPwmLed onboardLed;
         Tb67h420ftg motorDriver;
         RotaryEncoder encoder;
-        GraphicsLibrary display;
+        MicroGraphics display;
 
         PushButton button1;
         PushButton button2;
@@ -60,7 +60,7 @@ namespace MeadowApp
 
             Console.WriteLine("Init display");
             var ssd1306 = new Ssd1306(Device.CreateI2cBus(), 60, Ssd1306.DisplayType.OLED128x32);
-            display = new GraphicsLibrary(ssd1306);
+            display = new MicroGraphics(ssd1306);
             display.CurrentFont = new Font8x12();
 
             Console.WriteLine("Initialization complete.");

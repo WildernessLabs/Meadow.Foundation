@@ -1,0 +1,15 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <Company>Wilderness Labs, Inc</Company>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Camera.Mlx90640\Sensors.Camera.Mlx90640.csproj" />
+  </ItemGroup>
+</Project>

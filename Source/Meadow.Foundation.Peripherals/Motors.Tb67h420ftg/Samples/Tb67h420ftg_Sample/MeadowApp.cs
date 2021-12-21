@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
-        //RgbPwmLed onboardLed;
+        //<!—SNIP—>
+
         Tb67h420ftg motorDriver;
 
         PushButton button1;
@@ -20,19 +18,7 @@ namespace MeadowApp
 
         public MeadowApp()
         {
-            Initialize();
-        }
-
-        void Initialize()
-        {
             Console.WriteLine("Initialize hardware...");
-
-            // this causes unterrupts to fail, for some reason:
-            //IDigitalInputPort test = Device.CreateDigitalInputPort(Device.Pins.D07);
-            // this does not.
-            IDigitalOutputPort test = Device.CreateDigitalOutputPort(Device.Pins.D07);
-
-            Console.WriteLine("Made it here.");
 
             button1 = new PushButton(Device, Device.Pins.D12, Meadow.Hardware.ResistorMode.InternalPullDown);
             button2 =  new PushButton(Device, Device.Pins.D13, Meadow.Hardware.ResistorMode.InternalPullDown);
@@ -54,7 +40,6 @@ namespace MeadowApp
 
             Console.WriteLine("Initialization complete.");
         }
-
 
         private void Button1_PressStarted(object sender, EventArgs e)
         {
@@ -78,5 +63,6 @@ namespace MeadowApp
             motorDriver.Motor2.Power = 0f;
         }
 
+        //<!—SNOP—>
     }
 }
