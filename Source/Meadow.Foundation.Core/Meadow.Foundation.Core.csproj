@@ -21,14 +21,8 @@
    <LangVersion>8.0</LangVersion>
  </PropertyGroup>
  <ItemGroup>
-   <None Remove="Displays\" />
- </ItemGroup>
- <ItemGroup>
    <None Include="..\..\Source\icon.png" Pack="true" PackagePath="" />
    <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
    <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Contracts\Meadow.Contracts.csproj" />
- </ItemGroup>
- <ItemGroup>
-   <Folder Include="Displays\" />
  </ItemGroup>
 </Project>
