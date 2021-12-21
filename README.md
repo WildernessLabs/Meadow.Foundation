@@ -1,11 +1,20 @@
 # Meadow.Foundation
 
-main:
-[![Build Status](https://dev.azure.com/WildernessLabs/Meadow/_apis/build/status/WildernessLabs.Meadow.Foundation?repoName=WildernessLabs%2FMeadow.Foundation&branchName=main)](https://dev.azure.com/WildernessLabs/Meadow/_build/latest?definitionId=6&repoName=WildernessLabs%2FMeadow.Foundation&branchName=main)
-develop:
-[![Build Status](https://dev.azure.com/WildernessLabs/Meadow/_apis/build/status/WildernessLabs.Meadow.Foundation?repoName=WildernessLabs%2FMeadow.Foundation&branchName=develop)](https://dev.azure.com/WildernessLabs/Meadow/_build/latest?definitionId=6&repoName=WildernessLabs%2FMeadow.Foundation&branchName=develop)
-
 Meadow.Foundation greatly simplifies the task of building connected things with Meadow, by providing a unified driver and library framework that includes drivers and abstractions for common peripherals such as sensors, displays, motors, and more. Additionally, it includes utility functions and helpers for common tasks when building connected things.
+
+## Repository Status
+
+| Feature | Branch | Status |
+| --- | --- | --- |
+| Drivers | `develop` | [![Build Status](https://dev.azure.com/WildernessLabs/Meadow/_apis/build/status/WildernessLabs.Meadow.Foundation?repoName=WildernessLabs%2FMeadow.Foundation&branchName=develop)](https://dev.azure.com/WildernessLabs/Meadow/_build/latest?definitionId=6&repoName=WildernessLabs%2FMeadow.Foundation&branchName=develop) |
+| Maple | `develop` | [![Maple Build](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/build_maple.yml/badge.svg?branch=develop)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/build_maple.yml) |
+
+## Requesting New Drivers
+
+If you have a need for a driver that we don't yet support, you have a couple options:
+
+- Use an existing, similar driver as a template for your new driver.  We accept pull requests, but don't require them.
+- Open a new item on the [Issues Tab](https://github.com/WildernessLabs/Meadow.Foundation/issues) and request the driver so we can prioritize it.
 
 # Documentation
 
@@ -72,7 +81,7 @@ Make sure the script is executable by running `chmod u+x nugetize.sh`
 # Publishing Nuget Packages
 
 To trigger a new build:  
-- Go to project properties in VS 2017  
+- Go to project properties in VS 2019 / 2022 
 - in the `Package` tab, increment either the MAJOR or MINOR `Package version`.  
 
 The CI job will pick up the changes, pack, and push the Nuget package.
