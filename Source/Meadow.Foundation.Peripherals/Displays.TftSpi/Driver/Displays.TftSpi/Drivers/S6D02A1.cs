@@ -1,4 +1,5 @@
-using Meadow.Devices;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using System;
 using System.Threading;
@@ -8,10 +9,10 @@ namespace Meadow.Foundation.Displays.TftSpi
     //Samsung S6D02A1 controller
     public class S6D02A1 : TftSpiBase
     {
-        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
         public S6D02A1(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+            int width = 128, int height = 160, ColorType displayColorMode = ColorType.Format12bppRgb444)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
@@ -19,12 +20,19 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         protected override void Initialize()
         {
-            resetPort.State = (true);
-            Thread.Sleep(50);
-            resetPort.State = (false);
-            Thread.Sleep(50);
-            resetPort.State = (true);
-            Thread.Sleep(50);
+            if (resetPort != null)
+            {
+                resetPort.State = true;
+                Thread.Sleep(50);
+                resetPort.State = false;
+                Thread.Sleep(50);
+                resetPort.State = true;
+                Thread.Sleep(50);
+            }
+            else
+            {
+                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+            }
 
             SendCommand(0xf0, new byte[] { 0x5a, 0x5a });             // Excommand2
             SendCommand(0xfc, new byte[] { 0x5a, 0x5a });             // Excommand3
@@ -62,8 +70,8 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(0x36, new byte[] { 0xC8 }); // Memory access data control
             SendCommand(0x35, new byte[] { 0x00 }); // Tearing effect line on
          
-            SendCommand(COLOR_MODE);
-            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+            SendCommand((byte)Register.COLOR_MODE);
+            if (ColorMode == ColorType.Format16bppRgb565)
                 SendData(0x05); //16 bit RGB565
             else
                 SendData(0x33); //12 bit RGB444
@@ -72,7 +80,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(0x29, null);                // Display on
             SendCommand(0x2c, null);				// Memory write
 
-            SetAddressWindow(0, 0, (width - 1), (height - 1));
+            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = (Data);
         }
@@ -99,21 +107,21 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         public void SetRotation(Rotation rotation)
         {
-            SendCommand(MADCTL);
+            SendCommand((byte)Register.MADCTL);
 
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_90:
-                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MY | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_180:
-                    SendData(MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_270:
-                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
             }
         }

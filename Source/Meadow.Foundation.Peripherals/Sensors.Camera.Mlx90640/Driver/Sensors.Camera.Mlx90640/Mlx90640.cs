@@ -12,41 +12,8 @@ namespace Meadow.Foundation.Sensors.Camera
     /// <remarks>
     /// Based on https://github.com/adafruit/Adafruit_MLX90640 and https://github.com/melexis/mlx90640-library/tree/master/functions
     /// </remarks>
-    public class Mlx90640
+    public partial class Mlx90640
     {
-        public enum Mode
-        {
-            Interleaved,
-            Chess
-        }
-
-        public enum Resolution
-        {
-            SixteenBit,
-            SeventeenBit,
-            EighteenBit,
-            NineteenBit
-        }
-
-        public enum RefreshRate
-        {
-            HalfHZ,
-            OneHZ,
-            TwoHZ,
-            FourHZ,
-            EightHZ,
-            SixteenHZ,
-            ThirtyTwoHZ,
-            SixtyFourHZ
-        }
-
-        public enum Units
-        {
-            Celsius,
-            Fahrenheit,
-            Kelvin
-        }
-
         public string SerialNumber { get; private set; }
         public float Emissivity { get => emissivity; 
             set
@@ -72,7 +39,10 @@ namespace Meadow.Foundation.Sensors.Camera
 
         float emissivity;
 
-        public Mlx90640(II2cBus i2cBus, byte address = 0x33, Units measurementUnit = Units.Celsius, float emissivity = 0.95f)
+        public Mlx90640(II2cBus i2cBus,
+            byte address = (byte)Addresses.Default,
+            Units measurementUnit = Units.Celsius,
+            float emissivity = 0.95f)
         {
             i2CPeripheral = new I2cPeripheral(i2cBus, address);
             Emissivity = emissivity;
@@ -263,7 +233,7 @@ namespace Meadow.Foundation.Sensors.Camera
             cmd[2] = (byte)(data >> 8);
             cmd[3] = (byte)(data & 0x00FF);
 
-            i2CPeripheral.WriteBytes(cmd);
+            i2CPeripheral.Write(cmd);
 
             Thread.Sleep(1);
 

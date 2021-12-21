@@ -1,4 +1,6 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Hardware;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.Leds
@@ -9,16 +11,7 @@ namespace Meadow.Foundation.Leds
     /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_DotStar/blob/master/adafruit_dotstar.py </remarks>
     public partial class Apa102
     {
-        //ToDo this could probably move into Meadow.Foundation.Core
-        public enum PixelOrder
-        {
-            RGB,
-            RBG,
-            GRB,
-            GBR,
-            BRG,
-            BGR
-        }
+        public static Frequency DefaultSpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz);
 
         protected ISpiPeripheral spiPeripheral;
 
@@ -73,7 +66,7 @@ namespace Meadow.Foundation.Leds
             }
 
             buffer = new byte[this.numberOfLeds * 4 + StartHeaderSize + endHeaderSize];
-            endHeaderIndex = (buffer.Length - endHeaderSize);
+            endHeaderIndex = buffer.Length - endHeaderSize;
 
             switch (pixelOrder)
             {
@@ -131,8 +124,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, Color color, float brightness = 1f)
         {
-            byte[] bColor = new byte[] { (byte)(color.R * 255), (byte)(color.G * 255), (byte)(color.B * 255) };
-            SetLed(index, bColor, brightness);
+            SetLed(index, new byte[]{ color.R, color.G, color.B }, brightness);
         }
 
         /// <summary>
@@ -162,20 +154,9 @@ namespace Meadow.Foundation.Leds
             if(brightness>1) { brightness = 1; }
             if(brightness<0) { brightness = 0; }
 
-            //if (brightness < 0 || brightness > 1f)
-            //{
-            //    throw new ArgumentOutOfRangeException("brightness must be between 0.0 and 1.0");
-            //}
-
             var offset = index * 4 + StartHeaderSize;
-            //var rgb = value;
-            byte brightnessByte;
 
-            //rgb[0] = value[0];
-            //rgb[1] = value[1];
-            //rgb[2] = value[2];
-
-            brightnessByte = (byte)(32 - (32 - (int)(brightness * 31)) & 0b00011111);
+            byte brightnessByte = (byte)(32 - (32 - (int)(brightness * 31)) & 0b00011111);
             buffer[offset] = (byte)(brightnessByte | LedStart);
             buffer[offset + 1] = rgb[pixelOrder[0]];
             buffer[offset + 2] = rgb[pixelOrder[1]];
@@ -190,16 +171,16 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Turn off all the Leds
         /// </summary>
-        public override void Clear(bool autoWrite = false)
+        public void Clear(bool update = false)
         {
             byte[] off = {0, 0, 0};
 
-            for(int i=0; i< NumberOfLeds; i++)
+            for(int i = 0; i < NumberOfLeds; i++)
             {
                 SetLed(i, off);
             }
 
-            if (!AutoWrite && autoWrite)
+            if (!AutoWrite && update)
             {
                 Show();
             }
@@ -208,9 +189,52 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Transmit the changes to the LEDs 
         /// </summary>
-        public override void Show()
+        public void Show()
         {
-            spiPeripheral.WriteBytes(buffer);
+            spiPeripheral.Write(buffer);
+        }
+
+        public void Show(int left, int top, int right, int bottom)
+        {
+            Show();
+        }
+
+        public void Fill(Color clearColor, bool updateDisplay = false)
+        {
+            byte[] color = { clearColor.R, clearColor.G, clearColor.B };
+
+            for (int i = 0; i < NumberOfLeds; i++)
+            {
+                SetLed(i, color);
+            }
+
+            if (!AutoWrite && updateDisplay)
+            {
+                Show();
+            }
+        }
+
+        public void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            bool isColored = fillColor.Color1bpp;
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    DrawPixel(i, j, fillColor);
+                }
+            }
+        }
+
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            for(int i = 0; i < displayBuffer.Width; i++)
+            {
+                for (int j = 0; j < displayBuffer.Height; j++)
+                {
+                    DrawPixel(x + i, j + y, displayBuffer.GetPixel(i, j));
+                }
+            }
         }
     }
 }

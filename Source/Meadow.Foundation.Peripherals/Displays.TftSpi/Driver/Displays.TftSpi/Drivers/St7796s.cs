@@ -1,15 +1,16 @@
 ﻿using System.Threading;
 using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
     public class St7796s : TftSpiBase
     {
-		public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+		public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
 		public St7796s(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+            int width = 320, int height = 480, ColorType displayColorMode = ColorType.Format12bppRgb444)
 			: base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
@@ -36,8 +37,8 @@ namespace Meadow.Foundation.Displays.TftSpi
 			SendCommand(0x36); //Memory Data Access Control MX, MY, RGB mode                                    
 			SendData(0x48);    //X-Mirror, Top-Left to right-Buttom, RGB  
 
-			SendCommand(COLOR_MODE);  // set color mode
-			if (ColorMode == DisplayColorMode.Format16bppRgb565)
+			SendCommand((byte)Register.COLOR_MODE);  // set color mode
+			if (ColorMode == ColorType.Format16bppRgb565)
 				SendData(0x05);  // 16-bit color RGB565
 			else
 				SendData(0x03); //12-bit color RGB444
@@ -140,21 +141,21 @@ namespace Meadow.Foundation.Displays.TftSpi
 
 		public void SetRotation(Rotation rotation)
         {
-            SendCommand(MADCTL);
+            SendCommand((byte)Register.MADCTL);
 
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(MADCTL_MX | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_90:
-                    SendData(MADCTL_MV | MADCTL_BGR);
+                    SendData((byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
                 case Rotation.Rotate_180:
-                    SendData(MADCTL_BGR | MADCTL_MY);
+                    SendData((byte)Register.MADCTL_BGR | (byte)Register.MADCTL_MY);
                     break;
                 case Rotation.Rotate_270:
-                    SendData(MADCTL_BGR | MADCTL_MV | MADCTL_MX | MADCTL_MY);
+                    SendData((byte)Register.MADCTL_BGR | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY);
                     break;
             }
         }

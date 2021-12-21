@@ -1,17 +1,16 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Motion
+﻿namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Hmc5883
     {
-        public static class Addresses
+        /// <summary>
+        ///     Valid addresses for the sensor.
+        /// </summary>
+        public enum Addresses : byte
         {
-            public const byte DEFAULT_ADDRESS = 0x0D;
-            // Note BC: when i found this driver the address was 0x1E, but
-            // everything i've read is that it's 0x0D
-
-            public const byte HMC5883_ADDRESS = 0x1E;
-
-            public const byte QMC5883_ADDRESS = 0x0D;
+            Address0 = 0x1E,
+            Address1 = 0x0D,
+            Default = Address0,
+            Amc5883 = Address1,
         }
     }
 }

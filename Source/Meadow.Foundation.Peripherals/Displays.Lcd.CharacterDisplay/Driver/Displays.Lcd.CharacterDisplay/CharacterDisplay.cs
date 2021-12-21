@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Displays.Lcd
             characterDisplay = new GpioCharacterDisplay(portV0, portRS, portE, portD4, portD5, portD6, portD7, rows, columns);
         }
 
-        public CharacterDisplay(II2cBus i2cBus, byte address = I2cCharacterDisplay.DefaultI2cAddress, byte rows = 4, byte columns = 20)
+        public CharacterDisplay(II2cBus i2cBus, byte address = (byte)I2cCharacterDisplay.Addresses.Default, byte rows = 4, byte columns = 20)
         {
             characterDisplay = new I2cCharacterDisplay(i2cBus, address, rows, columns);
         }

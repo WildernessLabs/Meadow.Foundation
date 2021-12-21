@@ -81,7 +81,7 @@ Make sure the script is executable by running `chmod u+x nugetize.sh`
 # Publishing Nuget Packages
 
 To trigger a new build:  
-- Go to project properties in VS 2019  
+- Go to project properties in VS 2019 / 2022 
 - in the `Package` tab, increment either the MAJOR or MINOR `Package version`.  
 
 The CI job will pick up the changes, pack, and push the Nuget package.

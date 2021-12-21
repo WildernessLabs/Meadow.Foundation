@@ -8,7 +8,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// Represents PCA9685 IC
     /// </summary>
     /// <remarks>All PWM channels run at the same Frequency</remarks>
-    public class Pca9685
+    public partial class Pca9685
     {
         private readonly II2cPeripheral i2cPeripheral;
         private readonly int frequency;
@@ -40,9 +40,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public II2cBus i2CBus { get; protected set; }
         public byte Address { get; protected set; }
 
-        public Pca9685(II2cBus i2cBus, byte address, int frequency = 100)
+        public Pca9685(II2cBus i2cBus, byte address = (byte)Addresses.Default, int frequency = 100)
         {
-            this.i2CBus = i2cBus;
+            i2CBus = i2cBus;
             Address = address;
             i2cPeripheral = new I2cPeripheral(i2CBus, Address);
             this.frequency = frequency;
@@ -79,7 +79,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new ArgumentException("Value must be between 0 and 15", "portNumber");
             }
 
-            var pwmPort = new PwmPortPca9685(i2CBus, Address, Led0OnL, frequency, portNumber, dutyCycle);
+            var pwmPort = new PwmPort(i2CBus, Address, Led0OnL, frequency, portNumber, dutyCycle);
 
             return pwmPort;
         }

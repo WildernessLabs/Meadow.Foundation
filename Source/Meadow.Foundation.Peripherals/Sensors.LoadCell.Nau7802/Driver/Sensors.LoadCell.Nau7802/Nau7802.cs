@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                     // valid;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException($"NAU7802 device supports only address {(int)Addresses.Default}");
+                    throw new ArgumentOutOfRangeException($"NAU7802 device supports only address {(byte)Addresses.Default}");
             }
 
             PowerOn();
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// </summary>
         public void Tare()
         {
-            while(!IsConversionComplete())
+            while (!IsConversionComplete())
             {
                 Thread.Sleep(1);
             }
@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             var timeout = 100;
             do
             {
-                if(timeout-- <= 0)
+                if (timeout-- <= 0)
                 {
                     Output.WriteLine("Timeout powering up");
                     throw new Exception("Timeout powering up");
@@ -239,7 +239,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             var reads = 5;
             var sum = 0;
 
-            for(int i = 0; i < reads; i++)
+            for (int i = 0; i < reads; i++)
             {
                 sum += DoConversion();
                 Thread.Sleep(200);
@@ -261,7 +261,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private int DoConversion()
         {
-            if(!IsConversionComplete())
+            if (!IsConversionComplete())
             {
                 Output.WriteLine("ADC is busy");
                 return 0;
@@ -278,7 +278,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         protected override async Task<Mass> ReadSensor()
         {
-            return await Task.Run(() => {
+            return await Task.Run(() =>
+            {
                 if (_gramsPerAdcUnit == 0)
                 {
                     throw new Exception("Calibration factor has not been set");
@@ -307,7 +308,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 MassUpdated?.Invoke(this, changeResult);
                 base.RaiseEventsAndNotify(changeResult);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"NAU7802 event handler threw: {ex.Message}");
                 throw;

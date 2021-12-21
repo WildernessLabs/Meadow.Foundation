@@ -37,13 +37,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Changes the SBYB bit in Control register 1 to put the device to sleep
         /// or to allow measurements to be made.
         /// </remarks>
-        public bool Standby {
+        public bool Standby
+        {
             get => (Peripheral.ReadRegister(Registers.Control1) & 0x01) > 0;
-            set {
+            set
+            {
                 var status = Peripheral.ReadRegister(Registers.Control1);
-                if (value) {
+                if (value)
+                {
                     status &= (byte)~ControlRegisterBits.Active;
-                } else {
+                }
+                else
+                {
                     status |= ControlRegisterBits.Active;
                 }
                 Peripheral.WriteRegister(Registers.Control1, status);
@@ -60,10 +65,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Address of the sensor (default = 0x60).</param>
         /// <param name="i2cBus">I2cBus (Maximum is 400 kHz).</param>
-        public Mpl3115a2(II2cBus i2cBus, byte address = 0x60, int updateIntervalMs = 1000)
+        public Mpl3115a2(II2cBus i2cBus, byte address = (byte)Addresses.Default, int updateIntervalMs = 1000)
             : base(i2cBus, address, updateIntervalMs, 5)
         {
-            if (Peripheral.ReadRegister(Registers.WhoAmI) != 0xc4) {
+            if (Peripheral.ReadRegister(Registers.WhoAmI) != 0xc4)
+            {
                 throw new Exception("Unexpected device ID, expected 0xc4");
             }
             Peripheral.WriteRegister(Registers.Control1,
@@ -81,7 +87,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected override async Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
         {
-            return await Task.Run(() => {
+            return await Task.Run(() =>
+            {
                 (Units.Temperature? Temperature, Pressure? Pressure) conditions;
                 //
                 //  Force the sensor to make a reading by setting the OST bit in Control
@@ -91,7 +98,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //
                 //  Pause until both temperature and pressure readings are available.
                 //            
-                while ((Status & 0x06) != 0x06) {
+                while ((Status & 0x06) != 0x06)
+                {
                     Thread.Sleep(5);
                 }
 
@@ -111,10 +119,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)> changeResult)
         {
             //Updated?.Invoke(this, changeResult);
-            if (changeResult.New.Temperature is { } temp) {
+            if (changeResult.New.Temperature is { } temp)
+            {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
-            if (changeResult.New.Pressure is { } pressure) {
+            if (changeResult.New.Pressure is { } pressure)
+            {
                 PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
             }
             base.RaiseEventsAndNotify(changeResult);

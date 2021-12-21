@@ -26,7 +26,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             MultimpleDevices
         }
         
-
         /// <summary>
         ///     Constants representing the various commands that can be issued to
         ///     the DS18B20.
@@ -528,7 +527,5 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             throw new NotImplementedException();
         }
-
-        
     }
 } */

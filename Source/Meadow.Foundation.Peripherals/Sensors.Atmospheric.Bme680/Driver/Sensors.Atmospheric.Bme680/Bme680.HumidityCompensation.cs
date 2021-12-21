@@ -4,7 +4,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Bme680
     {
-        internal class HumidityCompensation
+        protected class HumidityCompensation
         {
             public HumidityCompensation(byte[] rawCompData1)
             {

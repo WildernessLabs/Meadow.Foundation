@@ -1,18 +1,16 @@
 using System;
-using System.Buffers.Binary;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Environmental
 {
-
     /// <summary>
     /// Represents an AGS01DB MEMS VOC gas / air quality sensor
     /// Pinout (left to right, label side down): VDD, SDA, GND, SCL
     /// Note: requires pullup resistors on SDA/SCL
     /// </summary>
-    public class Ags01Db : ByteCommsSensorBase<Units.Concentration>
+    public partial class Ags01Db : ByteCommsSensorBase<Units.Concentration>
     {
         private const byte CRC_POLYNOMIAL = 0x31;
         private const byte CRC_INIT = 0xFF;
@@ -22,16 +20,14 @@ namespace Meadow.Foundation.Sensors.Environmental
         private const byte ASG_VERSION_MSB = 0x0A;
         private const byte ASG_VERSION_LSB = 0x01;
 
-        //==== events
         public event EventHandler<IChangeResult<Units.Concentration>> ConcentrationUpdated = delegate { };
 
         public Concentration? Concentration { get; private set; }
 
 
-        public Ags01Db(II2cBus i2cBus, byte address = 0x11)
+        public Ags01Db(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 3, writeBufferSize: 3)
         {
-
         }
 
         /// <summary>
@@ -46,9 +42,6 @@ namespace Meadow.Foundation.Sensors.Environmental
                 WriteBuffer.Span[1] = ASG_DATA_LSB;
 
                 Peripheral.Exchange(WriteBuffer.Span[0..1], ReadBuffer.Span);
-
-                // sensor.WriteBytes(data);
-                // var readBuffer = sensor.ReadBytes(3);
 
                 var value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
 

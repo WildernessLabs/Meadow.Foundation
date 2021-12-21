@@ -1,19 +1,22 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Light
+﻿namespace Meadow.Foundation.Sensors.Light
 {
     public partial class Bh1750
     {
-        public class Addresses
+        /// <summary>
+        ///     Valid addresses for the sensor.
+        /// </summary>
+        public enum Addresses : byte
         {
             /// <summary>
-            /// I2C address when address pin is high
+            /// Address of the peripheral when the address pin is pulled low.
             /// </summary>
-            public static byte High => 0x5c;
-
+            Address0 = 0x5C,
             /// <summary>
-            /// I2C address when address pin is low
+            /// Address of the peripheral when the address pin is pulled high.
             /// </summary>
-            public static byte Low => 0x23;
+            Address1 = 0x23,
+            Default = Address0
         }
+
     }
 }

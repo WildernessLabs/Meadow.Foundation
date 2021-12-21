@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Htu21d</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Atmospheric, Htu21d</PackageTags>
-    <Version>0.1.38</Version>
+    <Version>0.1.45</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>HTU21D(F) I2C temperature and humidity sensor</Description>
     <Nullable>enable</Nullable>

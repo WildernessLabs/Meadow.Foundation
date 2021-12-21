@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Sensors.Light.Alspt19315C</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, ALS-PT19, ALSPT19315C, Light</PackageTags>
-    <Version>0.1.35</Version>
+    <Version>0.1.42</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>ALS-PT19-315C analog light sensor</Description>
   </PropertyGroup>

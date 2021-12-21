@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// A TCA9548A i2c multiplexer
     /// </summary>
-    public class Tca9548a : II2cPeripheral
+    public partial class Tca9548a : II2cPeripheral
     {
         private readonly IReadOnlyDictionary<byte, II2cBus> _buses;
         private byte _selectedBus = 0xff;
@@ -23,7 +23,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="address">The address of the device on the specified <paramref name="bus"/></param>
         /// <exception cref="ArgumentOutOfRangeException">The device address was invalid</exception>
         /// <exception cref="ArgumentNullException">The bus was null</exception>
-        public Tca9548a(II2cBus bus, byte address = 0x70)
+        public Tca9548a(II2cBus bus, byte address = (byte)Addresses.Default)
         {
             Address = TcaAddressTable.IsValidAddress(address)
                           ? address
@@ -246,6 +246,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         /// <exception cref="NotSupportedException">This method is not supported for this device</exception>
         public void ReadRegister(byte address, Span<byte> buffer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteRegister(byte address, Span<byte> writeBuffer, ByteOrder order = ByteOrder.LittleEndian)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Exchange(Span<byte> writeBuffer, Span<byte> readBuffer, DuplexType duplex)
         {
             throw new NotImplementedException();
         }

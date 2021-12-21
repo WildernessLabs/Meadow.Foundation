@@ -9,7 +9,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// The Is31fl3731 is a compact LED driver for 144 single LEDs
     /// </summary>
     /// <remarks>Based on https://github.com/adafruit/Adafruit_IS31FL3731 </remarks>
-    public class Is31fl3731
+    public partial class Is31fl3731
     {
         protected const byte RegConfig = 0x00;
         protected const byte RegConfigPictureMode = 0x00;
@@ -32,7 +32,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public byte Frame { get; private set; }
        
-        public Is31fl3731(II2cBus i2cBus, byte address)
+        public Is31fl3731(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
             Frame = 0;
@@ -151,6 +151,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
             for (byte i = 0; i <= 144; i++)
             {
                 SetLedPwm(frame, i, 0);
+            }
+        }
+
+        /// <summary>
+        /// Turn off all LEDs
+        /// </summary>
+        /// <param name="frame">the frame to clear</param>
+        public virtual void ClearAllFrames()
+        {
+            for(byte i = 0; i < 7; i++)
+            {
+                Clear(i);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
-using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
 
@@ -8,33 +9,23 @@ namespace Meadow.Foundation.FeatherWings
     /// <summary>
     /// Represents an Adafruit CharliePlex 15x7 feather wing
     /// </summary>
-    public class CharlieWing : DisplayBase
+    public class CharlieWing : IGraphicsDisplay
     {
-        Color pen;
+        public ColorType ColorMode => ColorType.Format8bppGray;
 
-        public enum I2cAddress : byte
-        {
-            Adddress0x74 = 0x74,
-            Adddress0x77 = 0x77
-        }
-        
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public int Width => 15;
 
-        public override int Width => 15;
-
-        public override int Height => 7;
+        public int Height => 7;
 
         public byte Frame { get; set; }
-
-        public byte Brightness { get; set; }
+        
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         protected readonly Is31fl3731 iS31FL3731;
 
-        public CharlieWing(II2cBus i2cBus, I2cAddress address = I2cAddress.Adddress0x74)
+        public CharlieWing(II2cBus i2cBus, byte address = (byte)Is31fl3731.Addresses.Default)
         {
-            Brightness = 255;
-            pen = Color.White;
-            iS31FL3731 = new Is31fl3731(i2cBus, (byte)address);
+            iS31FL3731 = new Is31fl3731(i2cBus, address);
             iS31FL3731.Initialize();
 
             for (byte i = 0; i <= 7; i++)
@@ -44,20 +35,24 @@ namespace Meadow.Foundation.FeatherWings
             }
         }
 
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
             iS31FL3731.Clear(Frame);
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
-            byte brightness = (byte)(color.Brightness * 255.0);
-
-            DrawPixel(x, y, color, brightness);
+            DrawPixel(x, y, color.Color8bppGray);
         }
 
-        public virtual void DrawPixel(int x, int y, Color color, byte brightness)
+        public virtual void DrawPixel(int x, int y, byte brightness)
         {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
+
             if (x > 7)
             {
                 x = 15 - x;
@@ -72,57 +67,48 @@ namespace Meadow.Foundation.FeatherWings
             var temp = x;
             x = y;
             y = temp;
-
-            if (color == Color.Black)
-            {
-                iS31FL3731.SetLedPwm(Frame, (byte)(x + y * 16), 0);
-            }
-            else
-            {
-                iS31FL3731.SetLedPwm(Frame, (byte)(x + y * 16), brightness);
-            }
+      
+            iS31FL3731.SetLedPwm(Frame, (byte)(x + y * 16), brightness);
         }
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
-            if (colored)
-            {
-                DrawPixel(x, y, pen);
-            }
-            else
-            {
-                DrawPixel(x, y, Color.Black);
-            }
+            DrawPixel(x, y, colored?Color.White:Color.Black);
         }
 
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, pen);
-        }
-
-        public virtual void DrawPixel(int x, int y, byte brightness)
-        {
-            DrawPixel(x, y, pen, brightness);
-        }
-
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
             throw new NotImplementedException();
         }
 
-        public override void SetPenColor(Color pen)
-        {
-            this.pen = pen;
-        }
-
-        public override void Show()
+        public void Show()
         {
             iS31FL3731.DisplayFrame(Frame);
         }
 
-        public virtual void Show(byte frame)
+        public void Show(int left, int top, int right, int bottom)
         {
-            iS31FL3731.DisplayFrame(frame);
+            Show();
+        }
+
+        public virtual void Show(byte frame)
+        {   //ToDo
+            iS31FL3731.DisplayFrame(Frame);
+        }
+
+        public void Fill(Color clearColor, bool updateDisplay = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Provide a mechanism for reading the Temperature and Humidity from
     /// a HIH6130 temperature and Humidity sensor.
     /// </summary>
-    public class Hih6130 :
+    public partial class Hih6130 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Address of the HIH6130 (default = 0x27).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
-        public Hih6130(II2cBus i2cBus, byte address = 0x27)
+        public Hih6130(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 4, writeBufferSize: 4)
         {
         }

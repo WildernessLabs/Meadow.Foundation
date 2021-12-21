@@ -1,5 +1,4 @@
-﻿using System;
-using Meadow.Devices;
+﻿using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
@@ -18,30 +17,30 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected override bool IsBlackInverted => true;
 
-        protected override bool IsColorInverted => true;
+        protected override bool IsColorInverted => false;
 
         protected override void Initialize()
         {
             /* EPD hardware init start */
             Reset();
 
-            SendCommand(POWER_ON);
+            SendCommand(Command.POWER_ON);
             WaitUntilIdle();
 
-            SendCommand(PANEL_SETTING);
+            SendCommand(Command.PANEL_SETTING);
             SendData(0xaf);        //KW-BF   KWR-AF    BWROTP 0f
 
-            SendCommand(PLL_CONTROL);
+            SendCommand(Command.PLL_CONTROL);
             SendData(0x3a);       //3A 100HZ   29 150Hz 39 200HZ    31 171HZ
 
-            SendCommand(POWER_SETTING);
+            SendCommand(Command.POWER_SETTING);
             SendData(0x03);                  // VDS_EN, VDG_EN
             SendData(0x00);                  // VCOM_HV, VGHL_LV[1], VGHL_LV[0]
             SendData(0x2b);                  // VDH
             SendData(0x2b);                  // VDL
             SendData(0x09);                  // VDHR
 
-            SendCommand(BOOSTER_SOFT_START);
+            SendCommand(Command.BOOSTER_SOFT_START);
             SendData(0x07);
             SendData(0x07);
             SendData(0x17);
@@ -71,76 +70,70 @@ namespace Meadow.Foundation.Displays.ePaper
             SendData(0x73);
             SendData(0x41);
 
-            SendCommand(VCM_DC_SETTING);
+            SendCommand(Command.VCM_DC_SETTING);
             SendData(0x12);
 
-            SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
+            SendCommand(Command.VCOM_AND_DATA_INTERVAL_SETTING);
             SendData(0x87);        // define by OTP
 
             SetLut();
 
-            SendCommand(RESOLUTION_SETTING);
-            SendData((int)Width >> 8);
-            SendData((int)Width & 0xff);        //176      
-            SendData((int)Height >> 8);
-            SendData((int)Height & 0xff);         //264
+            SendCommand(Command.RESOLUTION_SETTING);
+            SendData(Width >> 8);
+            SendData(Width & 0xff);        //176      
+            SendData(Height >> 8);
+            SendData(Height & 0xff);         //264
 
-            SendCommand(PARTIAL_DISPLAY_REFRESH);
+            SendCommand(Command.PARTIAL_DISPLAY_REFRESH);
             SendData(0x00);
             /* EPD hardware init end */
         }
 
-        protected override void Refresh()
+        public override void Show(int left, int top, int right, int bottom)
         {
-            xRefreshStart = -1;
-            if (xRefreshStart == -1)
-            {
-                DisplayFrame(blackImageBuffer, colorImageBuffer);
-            }
-            else
-            {
-                TransmitPartial(blackImageBuffer, colorImageBuffer,
-                        xRefreshStart, yRefreshStart,
-                        xRefreshEnd - xRefreshStart,
-                        yRefreshEnd - yRefreshStart);
+            TransmitPartial(blackImageBuffer.Buffer, colorImageBuffer.Buffer,
+                        left, top,
+                        right - left,
+                        top - bottom);
 
-                RefreshPartial(xRefreshStart, yRefreshStart,
-                    xRefreshEnd - xRefreshStart, yRefreshEnd - yRefreshStart);
+            RefreshPartial(left, top,
+                        right - left,
+                        top - bottom);
+        }
 
-               // DisplayFrame();
-            }
-
-            xRefreshStart = yRefreshStart = xRefreshEnd = yRefreshEnd = -1;
+        public override void Show()
+        {
+            DisplayFrame(blackImageBuffer.Buffer, colorImageBuffer.Buffer);
         }
 
         void SetLut()
         {   //should probably just loop over the array length
             //or transmit the data in one SendData call
-            SendCommand(LUT_FOR_VCOM);                     //vcom
+            SendCommand(Command.LUT_FOR_VCOM);                     //vcom
             for (int i = 0; i < 44; i++)
             {
                 SendData(LUT_VCOM_DC[i]);
             }
 
-            SendCommand(LUT_WHITE_TO_WHITE);                      //ww --
+            SendCommand(Command.LUT_WHITE_TO_WHITE);               //ww --
             for (int i = 0; i < 42; i++)
             {
                 SendData(LUT_WW[i]);
             }
 
-            SendCommand(LUT_BLACK_TO_WHITE);                      //bw r
+            SendCommand(Command.LUT_BLACK_TO_WHITE);               //bw r
             for (int i = 0; i < 42; i++)
             {
                 SendData(LUT_BW[i]);
             }
             //data for WB & BB are swapped here in the arduino driver
-            SendCommand(LUT_WHITE_TO_BLACK);                      //wb w
+            SendCommand(Command.LUT_WHITE_TO_BLACK);               //wb w
             for (int i = 0; i < 42; i++)
             {
                 SendData(LUT_WB[i]);
             }
 
-            SendCommand(LUT_BLACK_TO_BLACK);                      //bb b
+            SendCommand(Command.LUT_BLACK_TO_BLACK);               //bb b
             for (int i = 0; i < 42; i++)
             {
                 SendData(LUT_BB[i]);
@@ -161,7 +154,7 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             if (bufferBlack != null)
             {
-                SendCommand(PARTIAL_DATA_START_TRANSMISSION_1);
+                SendCommand(Command.PARTIAL_DATA_START_TRANSMISSION_1);
                 SendData(x >> 8);
                 SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
                 SendData(y >> 8);
@@ -187,7 +180,7 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             if (bufferRed != null)
             {
-                SendCommand(PARTIAL_DATA_START_TRANSMISSION_2);
+                SendCommand(Command.PARTIAL_DATA_START_TRANSMISSION_2);
                 SendData(x >> 8);
                 SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
                 SendData(y >> 8);
@@ -211,7 +204,7 @@ namespace Meadow.Foundation.Displays.ePaper
          */
         void RefreshPartial(int x, int y, int width, int height)
         {
-            SendCommand(PARTIAL_DISPLAY_REFRESH);
+            SendCommand(Command.PARTIAL_DISPLAY_REFRESH);
             SendData(x >> 8);
             SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
             SendData(y >> 8);
@@ -231,29 +224,34 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             if (bufferBlack != null)
             {
-                SendCommand(DATA_START_TRANSMISSION_1);
+                SendCommand(Command.DATA_START_TRANSMISSION_1);
                 DelayMs(2);
 
-                for (int i = 0; i < Width * Height / 8; i++) 
+                dataCommandPort.State = DataState;
+
+                for (int i = 0; i < Width * Height / 8; i++)
                 {   //I bet we can optimize this .... seems silly to send a byte at a time
-                     SendData(bufferBlack[i]);
-                } 
+                    spiPeripheral.Write(bufferBlack[i]);
+                }
+
                 DelayMs(2);
             }
 
             if (bufferRed != null)
             {
-                SendCommand(DATA_START_TRANSMISSION_2);
+                SendCommand(Command.DATA_START_TRANSMISSION_2);
                 DelayMs(2);
 
-                for(int i = 0; i < Width * Height / 8; i++) 
+                dataCommandPort.State = DataState;
+
+                for (int i = 0; i < Width * Height / 8; i++)
                 {
-                    SendData(bufferRed[i]);  
-                }  
+                    spiPeripheral.Write(bufferRed[i]);
+                }
                 DelayMs(2);
             }
 
-            SendCommand(DISPLAY_REFRESH);
+            SendCommand(Command.DISPLAY_REFRESH);
 
             WaitUntilIdle();
         }
@@ -264,29 +262,29 @@ namespace Meadow.Foundation.Displays.ePaper
          */
         public void ClearFrame()
         {
-            SendCommand(RESOLUTION_SETTING);
-            SendData((int)Width >> 8);
-            SendData((int)Width & 0xff);        //176      
-            SendData((int)Height >> 8);
-            SendData((int)Height & 0xff);         //264
+            SendCommand(Command.RESOLUTION_SETTING);
+            SendData(Width >> 8);
+            SendData(Width & 0xff);        //176      
+            SendData(Height >> 8);
+            SendData(Height & 0xff);         //264
 
-            SendCommand(DATA_START_TRANSMISSION_1);
+            SendCommand(Command.DATA_START_TRANSMISSION_1);
             DelayMs(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
-               // SendData(0x00);//black?
+                // SendData(0x00);//black?
                 SendData(0xFF);//white
             }
 
             DelayMs(2);
-            SendCommand(DATA_START_TRANSMISSION_2);
+            SendCommand(Command.DATA_START_TRANSMISSION_2);
             DelayMs(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(0x00);//nothing?
-              //  SendData(0xFF); //red 
+                               //  SendData(0xFF); //red 
             }
             DelayMs(2);
         }
@@ -296,7 +294,7 @@ namespace Meadow.Foundation.Displays.ePaper
          */
         public void DisplayFrame()
         {
-            SendCommand(DISPLAY_REFRESH);
+            SendCommand(Command.DISPLAY_REFRESH);
             WaitUntilIdle();
         }
 
@@ -306,9 +304,9 @@ namespace Meadow.Foundation.Displays.ePaper
          *         check code, the command would be executed if check code = 0xA5. 
          *         You can use Epd::Reset() to awaken and use Epd::Init() to initialize.
          */
-        void Sleep()
+        public void Sleep()
         {
-            SendCommand(DEEP_SLEEP);
+            SendCommand(Command.DEEP_SLEEP);
             SendData(0xa5);
         }
 

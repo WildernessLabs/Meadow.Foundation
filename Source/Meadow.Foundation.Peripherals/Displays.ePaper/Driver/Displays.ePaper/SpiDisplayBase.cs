@@ -1,32 +1,25 @@
-using Meadow;
 using Meadow.Hardware;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract class SpiDisplayBase : DisplayBase
+    public abstract class SpiDisplayBase
     {
-        protected readonly byte[] spiBOneByteBuffer = new byte[1];
+        protected readonly byte[] commandBuffer = new byte[1];
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort chipSelectPort;
         protected IDigitalInputPort busyPort;
-        protected ISpiPeripheral spi;
+        protected ISpiPeripheral spiPeripheral;
 
-        protected Color currentPen = Color.White;
-
-        protected const bool Data = true;
-        protected const bool Command = false;
+        protected const bool DataState = true;
+        protected const bool CommandState = false;
 
         protected void Write(byte value)
         {
-            spiBOneByteBuffer[0] = value;
-            spi.WriteBytes(spiBOneByteBuffer);
-        }
-
-        public override void SetPenColor(Color pen)
-        {
-            currentPen = pen;
+            commandBuffer[0] = value;
+            spiPeripheral.Write(commandBuffer);
         }
 
         protected void Reset()
@@ -44,7 +37,7 @@ namespace Meadow.Foundation.Displays
 
         protected void SendCommand(byte command)
         {
-            dataCommandPort.State = (Command);
+            dataCommandPort.State = (false);
             Write(command);
         }
 
@@ -55,14 +48,14 @@ namespace Meadow.Foundation.Displays
 
         protected void SendData(byte data)
         {
-            dataCommandPort.State = (Data);
+            dataCommandPort.State = DataState;
             Write(data);
         }
 
         protected void SendData(byte[] data)
         {
-            dataCommandPort.State = (Data);
-            spi.WriteBytes(data);
+            dataCommandPort.State = DataState;
+            spiPeripheral.Write(data);
         }
 
         protected virtual void WaitUntilIdle()

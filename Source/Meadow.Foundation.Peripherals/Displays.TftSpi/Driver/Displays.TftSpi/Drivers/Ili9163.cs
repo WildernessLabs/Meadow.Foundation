@@ -1,4 +1,5 @@
 ﻿using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using System.Threading;
 
@@ -6,10 +7,10 @@ namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Ili9163 : TftSpiBase
     {
-        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
         public Ili9163(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444) 
+            int width, int height, ColorType displayColorMode = ColorType.Format12bppRgb444) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
@@ -17,18 +18,25 @@ namespace Meadow.Foundation.Displays.TftSpi
         
         protected override void Initialize()
         {
-            resetPort.State = (true);
-            Thread.Sleep(50);
-            resetPort.State = (false);
-            Thread.Sleep(50);
-            resetPort.State = (true);
-            Thread.Sleep(50);
-
+            if(resetPort != null)
+            {
+                resetPort.State = true;
+                Thread.Sleep(50);
+                resetPort.State = false;
+                Thread.Sleep(50);
+                resetPort.State = true;
+                Thread.Sleep(50);
+            }
+            else
+            {
+                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+            }
+            
             SendCommand(0x01);
             SendCommand(0x11);
 
-            SendCommand(COLOR_MODE);
-            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+            SendCommand(Register.COLOR_MODE);
+            if (ColorMode == ColorType.Format16bppRgb565)
             {
                 SendData(0x05);//16 bit 565
             }
@@ -138,7 +146,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             Write(0x29);           // Set display on
             Thread.Sleep(10);
 
-            SetAddressWindow(0, 0, (width - 1), (height - 1));
+            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = (Data);
         }

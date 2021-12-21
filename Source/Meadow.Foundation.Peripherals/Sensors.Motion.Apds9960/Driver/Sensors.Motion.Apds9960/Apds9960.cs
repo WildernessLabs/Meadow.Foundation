@@ -13,11 +13,9 @@ namespace Meadow.Foundation.Sensors.Motion
 
     public partial class Apds9960 : ByteCommsSensorBase<(Color? Color, Illuminance? AmbientLight)>
     {
-        //==== events
         public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = delegate { };
         public event EventHandler<IChangeResult<Color>> ColorUpdated = delegate { };
 
-        //==== internals
         IDigitalInputPort interruptPort;
 
         GestureData gestureData;
@@ -30,18 +28,14 @@ namespace Meadow.Foundation.Sensors.Motion
         States gestureState;
         Direction gestureDirection;
 
-        /* Error code for returned values */
         static readonly byte ERROR = 0xFF;
 
-        /* Misc parameters */
         static readonly byte FIFO_PAUSE_TIME = 30;      // Wait period (ms) between FIFO reads
-
-        //==== properties
 
         public Color? Color => Conditions.Color;
         public Illuminance? AmbientLight => Conditions.AmbientLight;
 
-        //==== ctors
+        Memory<byte> readBuffer = new byte[256]; 
 
         /// <summary>
         /// Create a new instance of the APDS9960 communicating over the I2C interface.
@@ -49,7 +43,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">SI2C bus object</param>
         public Apds9960(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin)
-            : base(i2cBus, 0x39)
+            : base(i2cBus, (byte)Addresses.Default)
         {
             if (interruptPin != null)
             {
@@ -375,11 +369,13 @@ namespace Meadow.Foundation.Sensors.Motion
                     {
                         Console.WriteLine($"fifo level {fifo_level}");
 
-                        byte[] fifo_data = Peripheral.ReadRegisters(Registers.APDS9960_GFIFO_U, (ushort)(fifo_level * 4));
+                        byte len = (byte)(fifo_level * 4);
 
-                        Console.WriteLine(BitConverter.ToString(fifo_data));
+                        Peripheral.ReadRegister(Registers.APDS9960_GFIFO_U, readBuffer.Span[0..len]);
 
-                        bytes_read = (byte)fifo_data.Length;
+                        Console.WriteLine(BitConverter.ToString(readBuffer.Span[0..len].ToArray()));
+
+                        bytes_read = len; //ToDo should we have a check> (byte)fifo_data.Length;
 
                         Console.WriteLine($"Fifo bytes read {bytes_read}");
 
@@ -393,10 +389,10 @@ namespace Meadow.Foundation.Sensors.Motion
                         {
                             for (int i = 0; i < bytes_read; i += 4)
                             {
-                                gestureData.UData[gestureData.Index] = fifo_data[i + 0];
-                                gestureData.DData[gestureData.Index] = fifo_data[i + 1];
-                                gestureData.LData[gestureData.Index] = fifo_data[i + 2];
-                                gestureData.RData[gestureData.Index] = fifo_data[i + 3];
+                                gestureData.UData[gestureData.Index] = readBuffer.Span[i + 0];
+                                gestureData.DData[gestureData.Index] = readBuffer.Span[i + 1];
+                                gestureData.LData[gestureData.Index] = readBuffer.Span[i + 2];
+                                gestureData.RData[gestureData.Index] = readBuffer.Span[i + 3];
                                 gestureData.Index++;
                                 gestureData.TotalGestures++;
                             }

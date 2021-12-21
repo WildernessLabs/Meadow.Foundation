@@ -1,15 +1,18 @@
-using System.Threading;
+﻿using System.Threading;
 using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Ili9341 : TftSpiBase
     {
-        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+        public static Frequency DefaultSpiBusSpeed = new Frequency(24000, Frequency.UnitType.Kilohertz);
+        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
         public Ili9341(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+            int width, int height, ColorType displayColorMode = ColorType.Format12bppRgb444)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
@@ -17,12 +20,19 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         protected override void Initialize()
         {
-            resetPort.State = (true);
-            Thread.Sleep(50);
-            resetPort.State = (false);
-            Thread.Sleep(50);
-            resetPort.State = (true);
-            Thread.Sleep(50);
+            if (resetPort != null)
+            {
+                resetPort.State = true;
+                Thread.Sleep(50);
+                resetPort.State = false;
+                Thread.Sleep(50);
+                resetPort.State = true;
+                Thread.Sleep(50);
+            }
+            else
+            {
+                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+            }
 
             SendCommand(0xEF, new byte[] { 0x03, 0x80, 0x02 });
             SendCommand(0xCF, new byte[] { 0x00, 0xC1, 0x30 });
@@ -36,15 +46,15 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(ILI9341_PWCTR2, new byte[] { 0x10 });
             SendCommand(ILI9341_VMCTR1, new byte[] { 0x3e, 0x28 });
             SendCommand(ILI9341_VMCTR2, new byte[] { 0x86 });
-            SendCommand(MADCTL, new byte[] { (byte)(MADCTL_MX | MADCTL_BGR) }); //13
+            SendCommand((byte)Register.MADCTL, new byte[] { (byte)(Register.MADCTL_MX | Register.MADCTL_BGR) }); //13
 
-            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+            if (ColorMode == ColorType.Format16bppRgb565)
             { 
-                SendCommand(COLOR_MODE, new byte[] { 0x55 }); //color mode - 16bpp  
+                SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x55 }); //color mode - 16bpp  
             }
             else
             {      
-                SendCommand(COLOR_MODE, new byte[] { 0x53 }); //color mode - 12bpp 
+                SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x53 }); //color mode - 12bpp 
             }
             SendCommand(ILI9341_FRMCTR1, new byte[] { 0x00, 0x18 });
             SendCommand(ILI9341_DFUNCTR, new byte[] { 0x08, 0x82, 0x27 });
@@ -56,7 +66,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             Thread.Sleep(120);
             SendCommand(ILI9341_DISPON, null);
 
-            SetAddressWindow(0, 0, width - 1,  height - 1);
+            SetAddressWindow(0, 0, Width - 1,  Height - 1);
 
             dataCommandPort.State = (Data);
         }
@@ -77,18 +87,18 @@ namespace Meadow.Foundation.Displays.TftSpi
             Write((byte)(y1 >> 8));
             Write((byte)(y1 & 0xff));    // YEND
 
-            dataCommandPort.State = (Command);
+            dataCommandPort.State = Command;
             Write((byte)LcdCommand.RAMWR);  // write to RAM */
         }
 
         void SendCommand(byte command, byte[] data)
         {
-            dataCommandPort.State = (Command);
+            dataCommandPort.State = Command;
             Write(command);
 
             if (data != null)
             {
-                dataCommandPort.State = (Data);
+                dataCommandPort.State = Data;
                 Write(data);
             }
         }

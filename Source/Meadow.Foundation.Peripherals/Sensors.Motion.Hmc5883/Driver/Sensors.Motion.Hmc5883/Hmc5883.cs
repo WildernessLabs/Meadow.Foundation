@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public event EventHandler<IChangeResult<Vector>> DirectionUpdated = delegate { };
 
-        //==== internas
+        //==== internals
         protected byte measuringMode;
         protected byte outputRate;
         protected byte gain;
@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Statuses DeviceStatus => GetStatus();
 
-        public Hmc5883(II2cBus i2cBus, byte address = Addresses.HMC5883_ADDRESS,
+        public Hmc5883(II2cBus i2cBus, byte address = (byte)Addresses.Default,
             GainLevels gain = GainLevels.Gain1090,
             MeasuringModes measuringMode = MeasuringModes.Continuous,
             DataOutputRates outputRate = DataOutputRates.Rate15,
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             Initialize();
         }
-        
+
 
         protected virtual void Initialize()
         {
@@ -79,7 +79,8 @@ namespace Meadow.Foundation.Sensors.Motion
 
         protected override Task<Vector> ReadSensor()
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
                 ushort x = Peripheral.ReadRegisterAsUShort(Registers.HMC_X_MSB_REG_ADDR, ByteOrder.BigEndian);
                 ushort y = Peripheral.ReadRegisterAsUShort(Registers.HMC_Y_MSB_REG_ADDR, ByteOrder.BigEndian);
                 ushort z = Peripheral.ReadRegisterAsUShort(Registers.HMC_Z_MSB_REG_ADDR, ByteOrder.BigEndian);
@@ -96,7 +97,8 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             double deg = Math.Atan2(direction.Y, direction.X) * 180 / Math.PI;
 
-            if (deg < 0) {
+            if (deg < 0)
+            {
                 deg += 360;
             }
 

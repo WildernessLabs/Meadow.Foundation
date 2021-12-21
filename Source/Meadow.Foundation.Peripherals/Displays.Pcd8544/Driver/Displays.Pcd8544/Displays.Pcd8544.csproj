@@ -10,7 +10,7 @@
     <PackageId>Meadow.Foundation.Displays.Pcd8544</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Displays, PCD8544, Nokia, 5110</PackageTags>
-    <Version>0.6.37</Version>
+    <Version>0.6.44</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>PCD8544 SPI monochrome display (Nokia 5110)</Description>
   </PropertyGroup>

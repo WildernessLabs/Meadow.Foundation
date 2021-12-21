@@ -1,21 +1,25 @@
-using Meadow.Devices;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
+using Meadow.Units;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
     public class St7735 : TftSpiBase
     {
+        public static Frequency DefaultSpiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz);
+
         private DisplayType displayType;
 
         private byte xOffset;
         private byte yOffset;
 
-        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
         public St7735(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height,
-            DisplayType displayType = DisplayType.ST7735R, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444)
+            DisplayType displayType = DisplayType.ST7735R, ColorType displayColorMode = ColorType.Format12bppRgb444)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             this.displayType = displayType;
@@ -72,19 +76,26 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         protected override void Initialize()
         {
-            resetPort.State = true;
-            Thread.Sleep(50);
-            resetPort.State = false;
-            Thread.Sleep(50);
-            resetPort.State = true;
-            Thread.Sleep(50);
+            if (resetPort != null)
+            {
+                resetPort.State = true;
+                Thread.Sleep(50);
+                resetPort.State = false;
+                Thread.Sleep(50);
+                resetPort.State = true;
+                Thread.Sleep(50);
+            }
+            else
+            {
+                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+            }
 
             xOffset = yOffset = 0;
 
             if (displayType == DisplayType.ST7735B)
             {
                 Init7735B();
-                SetAddressWindow(0, 0, (width - 1), (height - 1));
+                SetAddressWindow(0, 0, (Width - 1), (Height - 1));
                 return;
             }
 
@@ -104,11 +115,11 @@ namespace Meadow.Foundation.Displays.TftSpi
             if (displayType == DisplayType.ST7735R_80x160 ||
                 displayType == DisplayType.ST7735R_BlackTab)
             {
-                SendCommand(MADCTL, new byte[] { 0xC0 });
+                SendCommand((byte)Register.MADCTL, new byte[] { 0xC0 });
                 SendCommand(INVOFF);
             }
 
-            SetAddressWindow(0, 0, (width - 1), (height - 1));
+            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }
@@ -161,11 +172,11 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(VMCTR1);  // power control
             SendData(0x0E);
 
-            SendCommand(MADCTL);  // memory access control (directions)
+            SendCommand(Register.MADCTL);  // memory access control (directions)
             SendData(0xC8);  // row address/col address, bottom to top refresh
 
-            SendCommand(COLOR_MODE);  // set color mode
-            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+            SendCommand(Register.COLOR_MODE);  // set color mode
+            if (ColorMode == ColorType.Format16bppRgb565)
                 SendData(0x05);  // 16-bit color RGB565
             else
                 SendData(0x03); //12-bit color RGB444
@@ -178,8 +189,8 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(SLPOUT);
             DelayMs(150);
 
-            SendCommand(COLOR_MODE);  // set color mode
-            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+            SendCommand(Register.COLOR_MODE);  // set color mode
+            if (ColorMode == ColorType.Format16bppRgb565)
                 SendData(0x05);  // 16-bit color RGB565
             else
                 SendData(0x03); //12-bit color RGB444
@@ -187,7 +198,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(FRMCTR1);  // frame rate control - normal mode
             SendData(new byte[] { 0x00, 0x06, 0x03, 10 });// frame rate = fosc / (1 x 2 + 40) * (LINE + 2C + 2D)
 
-            SendCommand(MADCTL);  // memory access control (directions)
+            SendCommand(Register.MADCTL);  // memory access control (directions)
             SendData(0xC8);  // row address/col address, bottom to top refresh
 
             SendCommand(DISSET5);

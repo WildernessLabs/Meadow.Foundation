@@ -1,15 +1,15 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Motion
+﻿namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Adxl345
     {
         /// <summary>
-        /// Valid I2C addresses for the sensor.
+        ///     Valid addresses for the sensor.
         /// </summary>
-        public static class Addresses
+        public enum Addresses : byte
         {
-            public const byte Low = 0x53;
-            public const byte High = 0x1D;
+            Address0 = 0x53,
+            Address1 = 0x1D,
+            Default = Address0
         }
     }
 }

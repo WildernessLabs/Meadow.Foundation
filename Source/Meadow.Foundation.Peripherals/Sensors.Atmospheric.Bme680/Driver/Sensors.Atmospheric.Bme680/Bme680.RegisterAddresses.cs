@@ -1,10 +1,18 @@
-﻿using Meadow.Hardware;
-
-namespace Meadow.Foundation.Sensors.Atmospheric
+﻿namespace Meadow.Foundation.Sensors.Atmospheric
 {
 	public partial class Bme680
 	{
-		class RegisterAddresses
+		/// <summary>
+		///     Valid addresses for the sensor.
+		/// </summary>
+		public enum Addresses : byte
+		{
+			Address0 = 0x77,
+			Address1 = 0x76,
+			Default = Address0
+		}
+
+		internal class RegisterAddresses
 		{
 			public static readonly Register Status = new Register(0x73, 1);
 			public const byte Reset = 0xE0;

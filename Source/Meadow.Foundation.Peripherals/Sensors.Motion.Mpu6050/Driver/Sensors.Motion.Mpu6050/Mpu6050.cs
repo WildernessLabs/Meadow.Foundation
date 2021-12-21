@@ -3,7 +3,6 @@ using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using TU = Meadow.Units.Temperature.UnitType;
 
@@ -22,32 +21,29 @@ namespace Meadow.Foundation.Sensors.Motion
         ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
         IAccelerometer, IGyroscope, ITemperatureSensor
     {
-        //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
         public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
-        //==== internals
         private const float GyroScaleBase = 131f;
         private const float AccelScaleBase = 16384f; // pg.13, scale for sensitivity scale AFS_SEL=0 (+- 2G)
         private int GyroScale { get; set; }
         private int AccelerometerScale { get; set; }
 
-        //==== properties
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
         public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
         public Units.Temperature? Temperature => Conditions.Temperature;
 
-        //==== ctors
-        public Mpu6050(II2cBus i2cBus, byte address = Addresses.Low)
-            : base(i2cBus, address, readBufferSize:14)
+        public Mpu6050(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+            : base(i2cBus, address, readBufferSize: 14)
         {
             Initialize(address);
         }
 
         protected void Initialize(byte address)
         {
-            switch (address) {
+            switch (address)
+            {
                 case 0x68:
                 case 0x69:
                     // valid;
@@ -78,13 +74,16 @@ namespace Meadow.Foundation.Sensors.Motion
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> changeResult)
         {
-            if (changeResult.New.AngularVelocity3D is { } angular) {
+            if (changeResult.New.AngularVelocity3D is { } angular)
+            {
                 AngularVelocity3DUpdated?.Invoke(this, new ChangeResult<AngularVelocity3D>(angular, changeResult.Old?.AngularVelocity3D));
             }
-            if (changeResult.New.Acceleration3D is { } accel) {
+            if (changeResult.New.Acceleration3D is { } accel)
+            {
                 Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
             }
-            if (changeResult.New.Temperature is { } temp) {
+            if (changeResult.New.Temperature is { } temp)
+            {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             base.RaiseEventsAndNotify(changeResult);
@@ -92,7 +91,8 @@ namespace Meadow.Foundation.Sensors.Motion
 
         protected override Task<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> ReadSensor()
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
                 (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature) conditions;
 
                 // we'll just read 14 bytes (7 registers), starting at 0x3b
@@ -131,7 +131,8 @@ namespace Meadow.Foundation.Sensors.Motion
         private float ScaleAndOffset(Span<byte> data, int index, float scale, float offset = 0)
         {
             // convert to a signed number
-            unchecked {
+            unchecked
+            {
                 var s = (short)(data[index] << 8 | data[index + 1]);
                 return (s * scale) + offset;
             }

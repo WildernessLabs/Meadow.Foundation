@@ -14,13 +14,10 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public partial class Adxl345 : ByteCommsSensorBase<Acceleration3D>, IAccelerometer
     {
-        //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
-        //==== internals
         static double ADXL345_MG2G_MULTIPLIER = (0.004);
 
-        //==== properties
         /// <summary>
         /// Minimum value that can be used for the update interval when the
         /// sensor is being configured to generate interrupts.
@@ -35,10 +32,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
-        public sbyte OffsetX 
-		{
-            get { return (sbyte)Peripheral.ReadRegister(Registers.OFFSET_X); }
-            set { Peripheral.WriteRegister(Registers.OFFSET_X, (byte)value); }
+        public sbyte OffsetX
+        {
+            get { return (sbyte)ReadRegister(Register.OFFSET_X); }
+            set { WriteRegister(Register.OFFSET_X, (byte)value); }
         }
 
         /// <summary>
@@ -47,10 +44,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
-        public sbyte OffsetY 
-		{
-            get { return (sbyte)Peripheral.ReadRegister(Registers.OFFSET_Y); }
-            set { Peripheral.WriteRegister(Registers.OFFSET_Y, (byte)value); }
+        public sbyte OffsetY
+        {
+            get { return (sbyte)ReadRegister(Register.OFFSET_Y); }
+            set { WriteRegister(Register.OFFSET_Y, (byte)value); }
         }
 
         /// <summary>
@@ -59,35 +56,34 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
-        public sbyte OffsetZ 
-		{
-            get { return (sbyte)Peripheral.ReadRegister(Registers.OFFSET_Z); }
-            set { Peripheral.WriteRegister(Registers.OFFSET_Z, (byte)value); }
+        public sbyte OffsetZ
+        {
+            get { return (sbyte)ReadRegister(Register.OFFSET_Z); }
+            set { WriteRegister(Register.OFFSET_Z, (byte)value); }
         }
-
-        //==== ctors
 
         /// <summary>
         ///     Create a new instance of the ADXL345 communicating over the I2C interface.
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
-        public Adxl345(II2cBus i2cBus, byte address = Addresses.Low)
+        public Adxl345(II2cBus i2cBus, byte address = (byte)Addresses.Address0)
             : base(i2cBus, address)
         {
-            var deviceID = Peripheral.ReadRegister(Registers.DEVICE_ID);
+            var deviceID = ReadRegister(Register.DEVICE_ID);
 
-            if (deviceID != 0xe5) 
-			{
+            if (deviceID != 0xe5)
+            {
                 throw new Exception("Invalid device ID.");
             }
         }
 
         protected override Task<Acceleration3D> ReadSensor()
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
                 // read the data from the sensor starting at the X0 register
-                Peripheral.ReadRegister(Registers.X0, ReadBuffer.Span[0..6]);
+                Peripheral.ReadRegister((byte)Register.X0, ReadBuffer.Span[0..6]);
 
                 return new Acceleration3D(
                     new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
@@ -108,28 +104,32 @@ namespace Meadow.Foundation.Sensors.Motion
         ///     Set the PowerControl register (see pages 25 and 26 of the data sheet)
         /// </summary>
         /// <param name="linkActivityAndInactivity">Link the activity and inactivity events.</param>
-        /// <param name="autoASleep">Enable / disable auto sleep when the activity and inactivity are linked.</param>
+        /// <param name="autoSleep">Enable / disable auto sleep when the activity and inactivity are linked.</param>
         /// <param name="measuring">Enable or disable measurements (turn on or off).</param>
         /// <param name="sleep">Put the part to sleep (true) or run in normal more (false).</param>
         /// <param name="frequency">Frequency of measurements when the part is in sleep mode.</param>
-        public void SetPowerState(bool linkActivityAndInactivity, bool autoASleep, bool measuring, bool sleep, Frequencies frequency)
+        public void SetPowerState(bool linkActivityAndInactivity, bool autoSleep, bool measuring, bool sleep, Frequencies frequency)
         {
             byte data = 0;
-            if (linkActivityAndInactivity) {
+            if (linkActivityAndInactivity)
+            {
                 data |= 0x20;
             }
-            if (autoASleep) {
+            if (autoSleep)
+            {
                 data |= 0x10;
             }
-            if (measuring) {
+            if (measuring)
+            {
                 data |= 0x08;
             }
-            if (sleep) {
+            if (sleep)
+            {
                 data |= 0x40;
             }
             data |= (byte)frequency;
 
-            Peripheral.WriteRegister(Registers.POWER_CONTROL, data);
+            WriteRegister(Register.POWER_CONTROL, data);
         }
 
         /// <summary>
@@ -153,21 +153,25 @@ namespace Meadow.Foundation.Sensors.Motion
         public void SetDataFormat(bool selfTest, bool spiMode, bool fullResolution, bool justification, GForceRanges range)
         {
             byte data = 0;
-            if (selfTest) {
+            if (selfTest)
+            {
                 data |= 0x80;
             }
-            if (spiMode) {
+            if (spiMode)
+            {
                 data |= 0x40;
             }
-            if (fullResolution) {
+            if (fullResolution)
+            {
                 data |= 0x04;
             }
-            if (justification) {
+            if (justification)
+            {
                 data |= 0x02;
             }
             data |= (byte)range;
 
-            Peripheral.WriteRegister(Registers.DATA_FORMAT, data);
+            WriteRegister(Register.DATA_FORMAT, data);
         }
 
         /// <summary>
@@ -180,19 +184,30 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </param>
         public void SetDataRate(byte dataRate, bool lowPower)
         {
-            if (dataRate > 0xff) {
+            if (dataRate > 0xff)
+            {
                 throw new ArgumentOutOfRangeException(nameof(dataRate), "Data rate should be in the range 0-15 inclusive");
             }
 
             var data = dataRate;
 
-            if (lowPower) {
+            if (lowPower)
+            {
                 data |= 0x10;
             }
 
-            Peripheral.WriteRegister(Registers.DATA_RATE, data);
+            WriteRegister(Register.DATA_RATE, data);
         }
 
+        private void WriteRegister(Register register, byte value)
+        {
+            Peripheral.WriteRegister((byte)register, value);
+        }
+
+        private byte ReadRegister(Register register)
+        {
+            return Peripheral.ReadRegister((byte)register);
+        }
 
         /// <summary>
         ///     Dump the registers to the debug output stream.
@@ -200,8 +215,8 @@ namespace Meadow.Foundation.Sensors.Motion
         public void DisplayRegisters()
         {
             byte[] registerData = new byte[29];
-            Peripheral.ReadRegister(Registers.TAP_THRESHOLD, registerData);
-            DebugInformation.DisplayRegisters(Registers.TAP_THRESHOLD, registerData);
+            Peripheral.ReadRegister((byte)Register.TAP_THRESHOLD, registerData);
+            DebugInformation.DisplayRegisters((byte)Register.TAP_THRESHOLD, registerData);
         }
     }
 }

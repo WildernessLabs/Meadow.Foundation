@@ -10,12 +10,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public partial class Ccs811
     {
         /// <summary>
-        ///     Valid addresses for the sensor.
-        /// </summary>
-        public enum Addresses : byte
+		///     Valid addresses for the sensor.
+		/// </summary>
+		public enum Addresses : byte
         {
-            Address0 = 0x5a,
-            Address1 = 0x5b,
+            Address0 = 0x5A,
+            Address1 = 0x5B,
             Default = Address0
         }
 

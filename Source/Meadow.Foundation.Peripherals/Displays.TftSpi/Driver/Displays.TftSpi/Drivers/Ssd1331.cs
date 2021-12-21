@@ -1,4 +1,5 @@
-using Meadow.Devices;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using System.Threading;
 
@@ -7,11 +8,11 @@ namespace Meadow.Foundation.Displays.TftSpi
     public class Ssd1331 : TftSpiBase
     {
         //the SSD1331 also supports 8 bit RGB332 color but this isn't currently supported (but should be quick to add if anyone wants it
-        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format16bppRgb565;
+        public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
 
         public Ssd1331(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-           int width, int height) 
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, DisplayColorMode.Format16bppRgb565)
+           int width = 96, int height = 64) 
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorType.Format16bppRgb565)
         {
             Initialize();
         }
@@ -19,21 +20,28 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected override void Initialize()
         {
             // Initialization Sequence
-            resetPort.State = true;
-            Thread.Sleep(50);
-            resetPort.State = false;
-            Thread.Sleep(50);
-            resetPort.State = true;
-            Thread.Sleep(50);
+            if (resetPort != null)
+            {
+                resetPort.State = true;
+                Thread.Sleep(50);
+                resetPort.State = false;
+                Thread.Sleep(50);
+                resetPort.State = true;
+                Thread.Sleep(50);
+            }
+            else
+            {
+                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+            }
 
             SendCommand(CMD_DISPLAYOFF);   // 0xAE
             SendCommand(CMD_SETREMAP);     // 0xA0
             SendCommand(0x72);				// RGB Color
             //SendCommand(0x76);             // BGR Color
             SendCommand(CMD_STARTLINE);    // 0xA1
-            SendCommand(0x0);
+            SendCommand((byte)0x0);
             SendCommand(CMD_DISPLAYOFFSET);    // 0xA2
-            SendCommand(0x0);
+            SendCommand((byte)0x0);
             SendCommand(CMD_NORMALDISPLAY);    // 0xA4
             SendCommand(CMD_SETMULTIPLEX);     // 0xA8
             SendCommand(0x3F);             // 0x3F 1/64 duty
@@ -74,14 +82,14 @@ namespace Meadow.Foundation.Displays.TftSpi
 
             SendCommand(CMD_DISPLAYON);	//--turn on oled panel   
 
-            SetAddressWindow(0, 0, (width - 1), (height - 1));
+            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }
 
-        public override bool IsColorModeSupported(DisplayColorMode mode)
+        public override bool IsColorModeSupported(ColorType mode)
         {
-            if (mode == DisplayColorMode.Format16bppRgb565)
+            if (mode == ColorType.Format16bppRgb565)
             {
                 return true;
             }

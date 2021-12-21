@@ -2,70 +2,23 @@
 using System.Threading;
 using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
     ///     Provide an interface to the ST7565 family of displays.
     /// </summary>
-    public class St7565 : DisplayBase
+    public partial class St7565 : IGraphicsDisplay
     {
-        /// <summary>
-        ///     Allow the programmer to set the scroll direction.
-        /// </summary>
-        public enum ScrollDirection
-        {
-            /// <summary>
-            ///     Scroll the display to the left.
-            /// </summary>
-            Left,
-            /// <summary>
-            ///     Scroll the display to the right.
-            /// </summary>
-            Right,
-            /// <summary>
-            ///     Scroll the display from the bottom left and vertically.
-            /// </summary>
-            RightAndVertical,
-            /// <summary>
-            ///     Scroll the display from the bottom right and vertically.
-            /// </summary>
-            LeftAndVertical
-        }
+        public ColorType ColorMode => ColorType.Format1bpp;
 
-        enum DisplayCommand : byte
-        {
-            DisplayOff = 0xAE,
-            DisplayOn = 0xAF,
-            DisplayStartLine = 0x40,
-            PageAddress = 0xB0,
-            ColumnAddressHigh = 0x10,
-            ColumnAddressLow = 0x00,
-            AdcSelectNormal = 0xA0, // X axis flip OFF
-            AdcSelectReverse = 0xA1, // X axis flip ON
-            DisplayVideoNormal = 0xA6,
-            DisplayVideoReverse = 0xA7,
-            AllPixelsOff = 0xA4,
-            AllPixelsOn = 0xA5,
-            LcdVoltageBias9 = 0xA2,
-            LcdVoltageBias7 = 0xA3,
-            EnterReadModifyWriteMode = 0xE0,
-            ClearReadModifyWriteMode = 0xEE,
-            ResetLcdModule = 0xE2,
-            ShlSelectNormal = 0xC0, // Y axis flip OFF
-            ShlSelectReverse = 0xC8, // Y axis flip ON
-            PowerControl = 0x28,
-            RegulatorResistorRatio = 0x20,
-            ContrastRegister = 0x81,
-            ContrastValue = 0x00,
-            NoOperation = 0xE3
-        }
+        public int Width => imageBuffer.Width;
 
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format1bpp;
+        public int Height => imageBuffer.Height;
 
-        public override int Width { get; }
-
-        public override int Height { get; }
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         /// <summary>
         ///     SPI object
@@ -79,12 +32,8 @@ namespace Meadow.Foundation.Displays
         protected const bool Data = true;
         protected const bool Command = false;
 
-        protected Color currentPen = Color.White;
-
-        /// <summary>
-        ///     Buffer holding the pixels in the display.
-        /// </summary>
-        private byte[] buffer;
+        protected Buffer1 imageBuffer;
+        protected byte[] pageBuffer;
 
         /// <summary>
         ///     Invert the entire display (true) or return to normal mode (false).
@@ -119,8 +68,8 @@ namespace Meadow.Foundation.Displays
 
             spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
 
-            Width = width;
-            Height = height;
+            imageBuffer = new Buffer1(width, height);
+            pageBuffer = new byte[PageSize];
 
             InitST7565();
         }
@@ -132,10 +81,6 @@ namespace Meadow.Foundation.Displays
 
         private void InitST7565()
         {
-            buffer = new byte[Width * Height / 8];
-
-            IgnoreOutOfBoundsPixels = false;
-
             resetPort.State = false;
             Thread.Sleep(50);
             resetPort.State = true;
@@ -176,7 +121,7 @@ namespace Meadow.Foundation.Displays
         private void SendCommand(byte command)
         {
             dataCommandPort.State = Command;
-            spiPerihperal.WriteBytes(new byte[] { command });
+            spiPerihperal.Write(command);
         }
 
         /// <summary>
@@ -190,29 +135,53 @@ namespace Meadow.Foundation.Displays
             Array.Copy(commands, 0, data, 1, commands.Length);
 
             dataCommandPort.State = Command;
-            spiPerihperal.WriteBytes(commands);
+            spiPerihperal.Write(commands);
         }
 
         protected const int StartColumnOffset = 0; // 1;
-        protected const int pageSize = 128;
-        protected int[] pageReference = { 4, 5, 6, 7, 0, 1, 2, 3 };
-        protected byte[] pageBuffer = new byte[pageSize];
+        protected const int PageSize = 128;
 
         /// <summary>
         ///     Send the internal pixel buffer to display.
         /// </summary>
-        public override void Show()
+        public void Show()
         {
             for (int page = 0; page < 8; page++)
             {
-                SendCommand((byte)((int)(DisplayCommand.PageAddress) | page));
+                SendCommand((byte)((int)DisplayCommand.PageAddress | page));
                 SendCommand((DisplayCommand.ColumnAddressLow) | (StartColumnOffset & 0x0F));
-                SendCommand((int)(DisplayCommand.ColumnAddressHigh) | 0);
+                SendCommand((int)DisplayCommand.ColumnAddressHigh | 0);
                 SendCommand(DisplayCommand.EnterReadModifyWriteMode);
 
                 dataCommandPort.State = Data;
-                Array.Copy(buffer, (int)(Width * page), pageBuffer, 0, pageSize);
-                spiPerihperal.WriteBytes(pageBuffer);
+
+                Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
+                spiPerihperal.Write(pageBuffer);
+            }
+        }
+
+        public void Show(int left, int top, int right, int bottom)
+        {
+            const int pageHeight = 8;
+
+            //must update in pages (area of 128x8 pixels)
+            //so interate over all 8 pages and check if they're in range
+            for (int page = 0; page < 8; page++)
+            {
+                if(top > pageHeight*page || bottom < (page + 1) * pageHeight)
+                {
+                    continue;
+                }
+
+                SendCommand((byte)((int)(DisplayCommand.PageAddress) | page));
+                SendCommand((DisplayCommand.ColumnAddressLow) | (StartColumnOffset & 0x0F));
+                SendCommand((int)DisplayCommand.ColumnAddressHigh | 0);
+                SendCommand(DisplayCommand.EnterReadModifyWriteMode);
+
+                dataCommandPort.State = Data;
+
+                Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
+                spiPerihperal.Write(pageBuffer);
             }
         }
 
@@ -220,29 +189,11 @@ namespace Meadow.Foundation.Displays
         ///     Clear the display buffer.
         /// </summary>
         /// <param name="updateDisplay">Immediately update the display when true.</param>
-        public override void Clear(bool updateDisplay = false)
+        public void Clear(bool updateDisplay = false)
         {
-            Array.Clear(buffer, 0, buffer.Length);
+            imageBuffer.Clear();
 
-            if (updateDisplay)
-            {
-                Show();
-            }
-        }
-
-        public override void SetPenColor(Color pen)
-        {
-            currentPen = pen;
-        }
-
-        /// <summary>
-        ///     Draw pixel using current pen
-        /// </summary>
-        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
-        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
-        public override void DrawPixel(int x, int y)
-        {
-            DrawPixel(x, y, currentPen);
+            if (updateDisplay) { Show(); }
         }
 
         /// <summary>
@@ -251,11 +202,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="color">Any color = turn on pixel, black = turn off pixel</param>
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
-            var colored = (color == Color.Black) ? false : true;
-
-            DrawPixel(x, y, colored);
+            DrawPixel(x, y, color.Color1bpp);
         }
 
         /// <summary>
@@ -264,43 +213,28 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
-            if ((x >= Width) || (y >= Height))
+            if (IgnoreOutOfBoundsPixels)
             {
-                if (!IgnoreOutOfBoundsPixels)
-                {
-                    throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
-                }
-                //  pixels to be thrown away if out of bounds of the display
-                return;
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
             }
-            var index = (y / 8 * Width) + x;
 
-            if (colored)
-            {
-                buffer[index] = (byte)(buffer[index] | (byte)(1 << (y % 8)));
-            }
-            else
-            {
-                buffer[index] = (byte)(buffer[index] & ~(byte)(1 << (y % 8)));
-            }
+            imageBuffer.SetPixel(x, y, colored);
         }
 
-        public override void InvertPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
-            if ((x >= Width) || (y >= Height))
+            if (IgnoreOutOfBoundsPixels)
             {
-                if (!IgnoreOutOfBoundsPixels)
-                {
-                    throw new ArgumentException("DisplayPixel: co-ordinates out of bounds");
-                }
-                //  pixels to be thrown away if out of bounds of the display
-                return;
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
             }
+
             var index = (y / 8 * Width) + x;
 
-            buffer[index] = (buffer[index] ^= (byte)(1 << y % 8));
+            imageBuffer.Buffer[index] = (imageBuffer.Buffer[index] ^= (byte)(1 << y % 8));
         }
 
         /// <summary>
@@ -363,6 +297,31 @@ namespace Meadow.Foundation.Displays
         public void StopScrolling()
         {
             SendCommand(0x2e);
+        }
+
+        public void Fill(Color clearColor, bool updateDisplay = false)
+        {
+            imageBuffer.Clear(clearColor.Color1bpp);
+
+            if (updateDisplay) Show();
+        }
+
+        public void Fill(int x, int y, int width, int height, Color color)
+        {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                if (x > width - 1) x = width - 1;
+                if (y > height - 1) y = height - 1;
+            }
+
+            imageBuffer.Fill(color, x, y, width, height);
+        }
+
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
     }
 }

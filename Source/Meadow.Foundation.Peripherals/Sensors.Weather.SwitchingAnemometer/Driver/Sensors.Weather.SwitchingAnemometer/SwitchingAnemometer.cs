@@ -93,12 +93,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="inputPort"></param>
         public SwitchingAnemometer(IDigitalInputPort inputPort)
         {
-            this.inputPort = inputPort;
-            this.Init();
-        }
-
-        protected void Init()
-        {
+            this.inputPort = inputPort;         
         }
 
         protected void SubscribeToinputPortEvents()
@@ -196,12 +191,11 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="noWindTimeout">The time, in milliseconds in which to
         /// wait for events from the anemometer. If no events come in by the time
         /// this elapses, then an event of `0` wind will be raised.</param>
-        public void StartUpdating(
-            )
+        public void StartUpdating()
         {
-            if(running) { return; }
+            if (running) { return; }
 
-            this.SampleCount = sampleCount;
+            SampleCount = sampleCount;
 
             running = true;
 
@@ -262,6 +256,5 @@ namespace Meadow.Foundation.Sensors.Weather
             // state machine
             running = false;
         }
-
     }
 }

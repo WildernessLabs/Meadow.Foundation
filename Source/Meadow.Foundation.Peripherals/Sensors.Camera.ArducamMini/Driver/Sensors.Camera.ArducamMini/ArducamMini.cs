@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Camera
 {
-    public class ArducamMini
+    public partial class ArducamMini
     {
         const byte ADDRESS_READ = 0x60;
         const byte ADDRESS_WRITE = 0x61;
@@ -33,9 +33,7 @@ namespace Meadow.Foundation.Sensors.Camera
         const byte ARDUCHIP_GPIO = 0x06;
         const byte SINGLE_FIFO_READ = 0x3D;
 
-        readonly byte Address = 0x30;
-
-        public int DEFAULT_SPEED => 8000; // in khz
+        public int DEFAULT_SPEED = 8000; // in khz
 
         protected II2cPeripheral i2cDevice;
 
@@ -43,7 +41,9 @@ namespace Meadow.Foundation.Sensors.Camera
 
         protected IDigitalOutputPort chipSelectPort;
 
-        public ArducamMini(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus, byte address = 0x30)
+        Memory<byte> readBuffer = new byte[1];
+
+        public ArducamMini(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cDevice = new I2cPeripheral(i2cBus, address);
 
@@ -62,14 +62,6 @@ namespace Meadow.Foundation.Sensors.Camera
         private void Sbi(ref int reg, int bitmask)
         {
             reg |= bitmask;
-        }
-
-        protected byte ReadSpiRegister(byte address)
-        {
-            // return spiDevice.WriteRead(new byte[] { address, 0 }, 2)[1];
-            //return spiDevice.ReadRegister(address);
-            spiDevice.Write(address);
-            return spiDevice.ReadBytes(1)[0];
         }
 
         protected void WriteSpiRegister(byte address, byte value)
@@ -143,9 +135,9 @@ namespace Meadow.Foundation.Sensors.Camera
 
         public int ReadFifoLength()
         {
-            var len1 = ReadSpiRegister(FIFO_SIZE1);
-            var len2 = ReadSpiRegister(FIFO_SIZE2);
-            var len3 = ReadSpiRegister(FIFO_SIZE3);
+            var len1 = spiDevice.ReadRegister(FIFO_SIZE1);
+            var len2 = spiDevice.ReadRegister(FIFO_SIZE2);
+            var len3 = spiDevice.ReadRegister(FIFO_SIZE3);
 
             var length = ((len3 << 16) | (len2 << 8) | len1) & 0x07fffff;
             return length;
@@ -182,19 +174,19 @@ namespace Meadow.Foundation.Sensors.Camera
 
         int GetBit(byte address, byte bit)
         {
-            var temp = ReadSpiRegister(address);
+            var temp = spiDevice.ReadRegister(address);
             return (byte)(temp & bit);
         }
 
         void SetBit(byte address, byte bit)
         {
-            var temp = ReadSpiRegister(address);
+            var temp = spiDevice.ReadRegister(address);
             WriteSpiRegister(address, (byte)(temp | bit));
         }
 
         void ClearBit(byte address, byte bit)
         {
-            var temp = ReadSpiRegister(address);
+            var temp = spiDevice.ReadRegister(address);
             WriteSpiRegister(address, (byte)(temp & (~bit)));
         }
     }

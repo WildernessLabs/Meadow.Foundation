@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Bme680
     {
-        public class PressureCompensation
+        protected class PressureCompensation
         {
             public PressureCompensation(IReadOnlyList<byte> rawCompensationData)
             {

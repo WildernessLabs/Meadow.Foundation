@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <remarks>
     /// Readings from the sensor are made in Single-shot mode.
     /// </remarks>
-    public class Sht31d :
+    public partial class Sht31d :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
@@ -35,17 +35,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (should be 0x44 or 0x45).</param>
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
-        public Sht31d(II2cBus i2cBus, byte address = 0x44)
+        public Sht31d(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 6, writeBufferSize: 2)
-        {            
+        {
         }
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
-            if (changeResult.New.Temperature is { } temp) {
+            if (changeResult.New.Temperature is { } temp)
+            {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
-            if (changeResult.New.Humidity is { } humidity) {
+            if (changeResult.New.Humidity is { } humidity)
+            {
                 HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
             base.RaiseEventsAndNotify(changeResult);

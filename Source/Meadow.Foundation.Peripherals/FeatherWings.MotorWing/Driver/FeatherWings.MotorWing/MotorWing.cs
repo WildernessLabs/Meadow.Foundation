@@ -17,7 +17,7 @@ namespace Meadow.Foundation.FeatherWings
         /// <param name="i2cBus">i2c bus</param>
         /// <param name="address">The address of the i2c Peripheral</param>
         /// <param name="freq">The PWM frequency for the PCA9685 IC</param>
-        public MotorWing(II2cBus i2cBus, byte address = 0x60, int frequency = 1600)
+        public MotorWing(II2cBus i2cBus, byte address = (byte)Pca9685.Addresses.Default, int frequency = 1600)
         {
             if (i2cBus == null)
             {

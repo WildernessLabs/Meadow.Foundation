@@ -1,5 +1,4 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Temperature
+﻿namespace Meadow.Foundation.Sensors.Temperature
 {
     public partial class Lm75
     {

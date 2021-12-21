@@ -20,9 +20,10 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="address">Address of the chip on the I2C bus (default to 0x60).</param>
         /// <param name="i2cBus">I2cBus (default to 400 KHz).</param>
         public Si1145(II2cBus i2cBus)
-            : base(i2cBus, 0x60)
+            : base(i2cBus, (byte)Addresses.Default)
         {
-            if (Peripheral.ReadRegister(Registers.REG_PARTID) != 0x45) {
+            if (Peripheral.ReadRegister(Registers.REG_PARTID) != 0x45)
+            {
                 throw new Exception("Invalid part ID");
             }
             Initialize();
@@ -30,7 +31,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         protected async override Task<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)> ReadSensor()
         {
-            return await Task.Run(() => {
+            return await Task.Run(() =>
+            {
                 (Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared) conditions;
 
                 // ultraviolet (UV) index
@@ -126,7 +128,7 @@ namespace Meadow.Foundation.Sensors.Light
             return Peripheral.ReadRegister(Registers.REG_PARAMRD);
         }
 
-        private void Reset ()
+        private void Reset()
         {
             Peripheral.WriteRegister(Registers.REG_MEASRATE0, 0);
             Peripheral.WriteRegister(Registers.REG_MEASRATE1, 0);

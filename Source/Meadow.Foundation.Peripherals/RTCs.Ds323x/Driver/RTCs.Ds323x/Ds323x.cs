@@ -4,7 +4,7 @@ using System;
 
 namespace Meadow.Foundation.RTCs
 {
-    public class Ds323x : IDisposable
+    public partial class Ds323x : IDisposable
     {
         /// <summary>
         ///     Register addresses in the sensor.
@@ -77,86 +77,12 @@ namespace Meadow.Foundation.RTCs
         /// </summary>
         private const byte ALARM2_INTERRUPT_OFF = 0xfd;
 
-        /// <summary>
-        ///     Possible values for the alarm that can be set or alarm that has been raised.
-        /// </summary>
-        public enum Alarm
-        {
-            Alarm1Raised,
-            Alarm2Raised,
-            BothAlarmsRaised,
-            Unknown
-        }
-
-        /// <summary>
-        ///     Registers bits in the control register.
-        /// </summary>
-        private enum ControlRegisterBits
-        {
-            A1IE = 0x01,
-            A2IE = 0x02,
-            INTCON = 0x04,
-            RS1 = 0x08,
-            RS2 = 0x10,
-            Conv = 0x20,
-            BBSQW = 0x40,
-            NotEOSC = 0x80
-        }
-
-        /// <summary>
-        ///     Register bits in the control / status register.
-        /// </summary>
-        private enum StatusRegisterBits
-        {
-            A1F = 0x02,
-            A2F = 0x02,
-            BSY = 0x04,
-            EN32Khz = 0x08,
-            Crate0 = 0x10,
-            Crate1 = 0x20,
-            BB32kHz = 0x40,
-            OSF = 0x80
-        }
-
-        /// <summary>
-        ///     Possible frequency for the square wave output.
-        /// </summary>
-        public enum RateSelect
-        {
-            OneHz = 0,
-            OnekHz = 1,
-            FourkHz = 2,
-            EightkHz = 3
-        }
-
-        /// <summary>
-        ///     Determine which alarm should be raised.
-        /// </summary>
-        public enum AlarmType
-        {
-            //
-            //  Alarm 1 options.
-            //
-            OncePerSecond,
-            WhenSecondsMatch,
-            WhenMinutesSecondsMatch,
-            WhenHoursMinutesSecondsMatch,
-            WhenDateHoursMinutesSecondsMatch,
-            WhenDayHoursMinutesSecondsMatch,
-
-            //
-            //  Alarm 2 options.
-            //
-            OncePerMinute,
-            WhenMinutesMatch,
-            WhenHoursMinutesMatch,
-            WhenDateHoursMinutesMatch,
-            WhenDayHoursMinutesMatch
-        }
-
         private AlarmRaised _alarm1Delegate;
         private AlarmRaised _alarm2Delegate;
         private bool _interruptCreatedInternally;
+
+        protected Memory<byte> readBuffer;
+
 
         protected Ds323x(I2cPeripheral peripheral, IDigitalInputController device, IPin interruptPin)
         {
@@ -169,6 +95,8 @@ namespace Meadow.Foundation.RTCs
 
                 Initialize(interruptPort);
             }
+
+            readBuffer = new byte[0x12];
         }
 
         protected Ds323x(I2cPeripheral peripheral, IDigitalInputPort interruptPort)
@@ -191,7 +119,7 @@ namespace Meadow.Foundation.RTCs
         {
             if (interruptPort != null)
             {
-                switch (InterruptPort.InterruptMode)
+                switch (interruptPort.InterruptMode)
                 {
                     case InterruptMode.EdgeFalling:
                     case InterruptMode.EdgeBoth:
@@ -261,10 +189,14 @@ namespace Meadow.Foundation.RTCs
         {
             get
             {
-                var data = ds323x.ReadRegisters(Registers.Seconds, DATE_TIME_REGISTERS_SIZE);
+                var data = readBuffer.Span[0..DATE_TIME_REGISTERS_SIZE];
+                ds323x.ReadRegister(Registers.Seconds, data);
                 return DecodeDateTimeRegisters(data);
             }
-            set { ds323x.WriteRegisters(Registers.Seconds, EncodeDateTimeRegisters(value)); }
+            set 
+            { 
+                ds323x.WriteRegister(Registers.Seconds, EncodeDateTimeRegisters(value)); 
+            }
         }
 
         /// <summary>
@@ -274,7 +206,8 @@ namespace Meadow.Foundation.RTCs
         {
             get
             {
-                var data = ds323x.ReadRegisters(Registers.TemperatureMSB, 2);
+                var data = readBuffer.Span[0..2];
+                ds323x.ReadRegister(Registers.TemperatureMSB, data);
                 var temperature = (ushort)((data[0] << 2) | (data[1] >> 6));
                 return new Units.Temperature(temperature * 0.25, Units.Temperature.UnitType.Celsius);
             }
@@ -348,7 +281,7 @@ namespace Meadow.Foundation.RTCs
         /// </summary>
         /// <param name="data">Register contents.</param>
         /// <returns>DateTime object version of the data.</returns>
-        protected DateTime DecodeDateTimeRegisters(byte[] data)
+        protected DateTime DecodeDateTimeRegisters(Span<byte> data)
         {
             var seconds = Converters.BCDToByte(data[0]);
             var minutes = Converters.BCDToByte(data[1]);
@@ -520,7 +453,7 @@ namespace Meadow.Foundation.RTCs
                     data[2] |= 0x40;
                     break;
             }
-            ds323x.WriteRegisters(register, data);
+            ds323x.WriteRegister(register, data);
             //
             //  Turn the relevant alarm on.
             //
@@ -596,7 +529,8 @@ namespace Meadow.Foundation.RTCs
         /// </summary>
         public void DisplayRegisters()
         {
-            var data = ds323x.ReadRegisters(0, 0x12);
+            var data = readBuffer.Span[0..0x12];
+            ds323x.ReadRegister(0, data);
             DebugInformation.DisplayRegisters(0, data);
         }
     }

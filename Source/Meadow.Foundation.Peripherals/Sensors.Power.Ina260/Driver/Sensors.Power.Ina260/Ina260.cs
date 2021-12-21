@@ -1,7 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Power
@@ -35,23 +34,20 @@ namespace Meadow.Foundation.Sensors.Power
         /// </summary>
         public Units.Power? Power => Conditions.Power;
 
-        public Ina260(II2cBus i2cBus, byte address = (byte)Addresses.Default, int updateIntervalMs = 1000)
+        public Ina260(II2cBus i2cBus,
+            byte address = (byte)Addresses.Default,
+            int updateIntervalMs = 1000)
             : base(i2cBus, address, updateIntervalMs)
         {
             switch (address)
             {
-                case 0x40:
-                case 0x41:
+                case (byte)Addresses.Address0:
+                case (byte)Addresses.Address1:
                     // valid;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("INA260 device address must be either 0x40 or 0x41");
             }
-        }
-
-        public Ina260(II2cBus i2cBus, Addresses address, int updateIntervalMs = 1000)
-            : this(i2cBus, (byte)address, updateIntervalMs)
-        {
         }
 
         protected override async Task<(Units.Power? Power, Voltage? Voltage, Current? Current)> ReadSensor()
@@ -88,23 +84,14 @@ namespace Meadow.Foundation.Sensors.Power
             base.RaiseEventsAndNotify(changeResult);
         }
 
-
         /// <summary>
         /// Reads the unique manufacturer identification number
         /// </summary>
-        public int ManufacturerID
-        {
-            //get => Bus.ReadRegisterShort((byte)Register.ManufacturerID);
-            get => Peripheral.ReadRegister((byte)Register.ManufacturerID);
-        }
+        public int ManufacturerID => Peripheral.ReadRegister((byte)Register.ManufacturerID);
 
         /// <summary>
         /// Reads the unique die identification number
         /// </summary>
-        public int DieID
-        {
-            //get => Bus.ReadRegisterShort((byte)Register.ManufacturerID);
-            get => Peripheral.ReadRegister((byte)Register.ManufacturerID);
-        }
+        public int DieID => Peripheral.ReadRegister((byte)Register.ManufacturerID);
     }
 }

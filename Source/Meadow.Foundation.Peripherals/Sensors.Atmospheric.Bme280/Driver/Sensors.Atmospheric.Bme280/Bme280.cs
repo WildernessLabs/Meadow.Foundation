@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
@@ -8,6 +6,7 @@ using Meadow.Units;
 using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
+using Meadow.Devices;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -98,25 +97,30 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
         /// </summary>
         /// <param name="i2c">I2C Bus to use for communicating with the sensor</param>
-        /// <param name="busAddress">I2C address of the sensor (default = 0x77).</param>
-        public Bme280(II2cBus i2c, I2cAddress busAddress = I2cAddress.Adddress0x77)
+        /// <param name="address">I2C address of the sensor (default = 0x77).</param>
+        public Bme280(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
-            bme280Comms = new Bme280I2C(i2c, (byte)busAddress);
+            bme280Comms = new Bme280I2C(i2cBus, address);
             configuration = new Configuration(); // here to avoid the warning
-            Init();
+            Initialize();
         }
 
-        public Bme280(ISpiBus spi, IDigitalOutputPort chipSelect)
+        public Bme280(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
+            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
         {
-            bme280Comms = new Bme280Spi(spi, chipSelect);
+        }
+
+        public Bme280(ISpiBus spiBus, IDigitalOutputPort chipSelect)
+        {
+            bme280Comms = new Bme280Spi(spiBus, chipSelect);
             configuration = new Configuration(); // here to avoid the warning
-            Init();
+            Initialize();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        protected void Init()
+        protected void Initialize()
         {
             // these are basically calibrations burned into the chip.
             ReadCompensationData();
@@ -156,20 +160,23 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </remarks>
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
         {
-            return await Task.Run(() => {
+            //TODO: set an update flag on the oversample properties and set
+            // these once, unless the update flag has been set.
+            // update configuration
+            configuration.TemperatureOverSampling = TemperatureSampleCount;
+            configuration.PressureOversampling = PressureSampleCount;
+            configuration.HumidityOverSampling = HumiditySampleCount;
 
-                //TODO: set an update flag on the oversample properties and set
-                // these once, unless the update flag has been set.
-
-                // update configuration
-                configuration.TemperatureOverSampling = TemperatureSampleCount;
-                configuration.PressureOversampling = PressureSampleCount;
-                configuration.HumidityOverSampling = HumiditySampleCount;
-                // TODO: do we need this?
-                //configuration.Mode = Modes.Forced;
+            //if we're not in normal mode, set up the BME280 for a one-time read
+            if (configuration.Mode != Modes.Normal)
+            {
+                configuration.Mode = Modes.Forced;
                 configuration.Filter = FilterCoefficient.Off;
                 UpdateConfiguration(configuration);
+                await Task.Delay(100); //give the BME280 time to read new values
+            }
 
+            return await Task.Run(() => {
 
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
 
@@ -384,6 +391,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             bme280Comms.ReadRegisters((byte)Bme280Comms.Register.ChipID, readBuffer.Span[0..1]);
             return readBuffer.Span[0];
+        }
+
+        public override void StartUpdating(TimeSpan? updateInterval = null)
+        {
+            // wake up the sensor
+            configuration.Mode = Modes.Normal;
+            UpdateConfiguration(configuration);
+
+            base.StartUpdating(updateInterval);
         }
     }
 }

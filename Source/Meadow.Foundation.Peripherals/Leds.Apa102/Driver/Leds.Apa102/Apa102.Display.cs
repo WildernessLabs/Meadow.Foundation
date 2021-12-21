@@ -1,19 +1,21 @@
-﻿using Meadow.Foundation.Displays;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Leds
 {
-    public partial class Apa102 : DisplayBase
+    public partial class Apa102 : IGraphicsDisplay
     {
-        public override DisplayColorMode ColorMode => DisplayColorMode.Format24bppRgb888;
+        public ColorType ColorMode => ColorType.Format24bppRgb888;
 
-        public override int Width => width;
-        int width;
+        public int Width => width;
 
-        public override int Height => height;
-        int height;
+        readonly int width;
 
-        Color pen = Color.White;
+        public int Height => height;
+
+        public bool IgnoreOutOfBoundsPixels { get; set; }
+
+        readonly int height;
 
         public Apa102(ISpiBus spiBus,
                      PixelOrder pixelOrder = PixelOrder.BGR,
@@ -41,36 +43,36 @@ namespace Meadow.Foundation.Leds
             return index;
         }
 
-        public override void DrawPixel(int x, int y, Color color)
+        public void DrawPixel(int x, int y, Color color)
         {
-            pen = color;
+            if(IgnoreOutOfBoundsPixels)
+            {
+                if(x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
 
             SetLed(GetIndexForCoordinate(x, y), color);
     
         }
 
-        public override void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool colored)
         {
             DrawPixel(0, 0, colored ? Color.White : Color.Black);
         }
 
-        public override void DrawPixel(int x, int y)
+        public void InvertPixel(int x, int y)
         {
-            DrawPixel(x, y, pen);
-        }
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
 
-        public override void InvertPixel(int x, int y)
-        {
             var index = 3 * GetIndexForCoordinate(x, y);
 
             buffer[index] ^= 0xFF;
             buffer[index + 1] ^= 0xFF;
             buffer[index + 2] ^= 0xFF;
-        }
-
-        public override void SetPenColor(Color pen)
-        {
-            this.pen = pen;
         }
     }
 }

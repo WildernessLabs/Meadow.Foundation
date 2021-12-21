@@ -12,26 +12,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
     /// Provide a mechanism for reading the Temperature and Humidity from
     /// a DHT temperature and Humidity sensor.
     /// </summary>
-    public abstract class DhtBase : 
+    public abstract partial class DhtBase : 
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
-        //==== events
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
-        //==== internals
         private readonly BusType protocol;
         private int lastMeasurement = 0;
-
-        // TODO: move into another file? `DhtBase.BusType.cs`?
-        private enum BusType
-        {
-            I2C,
-            OneWire,
-        }
-
-        //==== properties
 
         /// <summary>
         /// The temperature
@@ -52,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// Create a DHT sensor through I2C (Only DHT12)
         /// </summary>
         /// <param name="i2cDevice">The I2C device used for communication.</param>
-        public DhtBase(II2cBus i2cBus, byte address = 0x5C)
+        public DhtBase(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, writeBufferSize: 8, readBufferSize: 6)
         {
             protocol = BusType.I2C;

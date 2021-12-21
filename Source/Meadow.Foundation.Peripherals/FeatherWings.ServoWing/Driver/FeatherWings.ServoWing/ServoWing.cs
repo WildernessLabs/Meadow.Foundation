@@ -14,8 +14,8 @@ namespace Meadow.Foundation.FeatherWings
         readonly short portCount;
 
         protected Pca9685 pca9685;
-        
-        public ServoWing(II2cBus i2cBus, byte address = 0x40, int frequency = 50, short portCount = 8)
+
+        public ServoWing(II2cBus i2cBus, byte address = (byte)Pca9685.Addresses.Default, int frequency = 50, short portCount = 8)
         {
             if (portCount != 8 && portCount != 16)
             {

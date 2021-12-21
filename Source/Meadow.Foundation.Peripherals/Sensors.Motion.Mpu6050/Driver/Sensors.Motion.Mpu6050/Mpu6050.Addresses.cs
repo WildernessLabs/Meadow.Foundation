@@ -1,15 +1,15 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Motion
+﻿namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Mpu6050
     {
         /// <summary>
-        /// Valid addresses for the sensor.
+        ///     Valid addresses for the sensor.
         /// </summary>
-        public static class Addresses
+        public enum Addresses : byte
         {
-            public const byte Low = 0x68;
-            public const byte High = 0x69;
+            Address0 = 0x68,
+            Address1 = 0x69,
+            Default = Address0
         }
     }
 }

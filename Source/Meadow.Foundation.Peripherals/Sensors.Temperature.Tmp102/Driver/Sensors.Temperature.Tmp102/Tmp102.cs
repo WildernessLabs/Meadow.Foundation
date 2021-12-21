@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
@@ -25,22 +24,24 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         ///     Get / set the resolution of the sensor.
         /// </summary>
-        public Resolution SensorResolution 
+        public Resolution SensorResolution
         {
-            get => _sensorResolution; 
-            set 
+            get => _sensorResolution;
+            set
             {
                 Peripheral.ReadRegister(0x01, ReadBuffer.Span);
                 // TODO: Delete after testing
                 //var configuration = Peripheral.ReadRegisters(0x01, 2);
-                if (value == Resolution.Resolution12Bits) 
+                if (value == Resolution.Resolution12Bits)
                 {
                     ReadBuffer.Span[1] &= 0xef;
-                } else {
+                }
+                else
+                {
                     ReadBuffer.Span[1] |= 0x10;
                 }
                 // @CTACKE: is there a better way here? do we need a WriteRegisters that takes a Span<byte>?
-                Peripheral.WriteRegisters(0x01, ReadBuffer.Span.ToArray());
+                Peripheral.WriteRegister(0x01, ReadBuffer.Span);
                 _sensorResolution = value;
             }
         }
@@ -54,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///     Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>
-        public Tmp102(II2cBus i2cBus, byte address = 0x48)
+        public Tmp102(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 2, writeBufferSize: 2)
         {
             // TODO: Delete after testing
@@ -76,9 +77,12 @@ namespace Meadow.Foundation.Sensors.Temperature
             //var temperatureData = Peripheral.ReadRegisters(0x00, 2);
 
             var sensorReading = 0;
-            if (SensorResolution == Resolution.Resolution12Bits) {
+            if (SensorResolution == Resolution.Resolution12Bits)
+            {
                 sensorReading = (ReadBuffer.Span[0] << 4) | (ReadBuffer.Span[1] >> 4);
-            } else {
+            }
+            else
+            {
                 sensorReading = (ReadBuffer.Span[0] << 5) | (ReadBuffer.Span[1] >> 3);
             }
 

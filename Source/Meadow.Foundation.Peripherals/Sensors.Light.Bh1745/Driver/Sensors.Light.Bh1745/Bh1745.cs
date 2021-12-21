@@ -23,23 +23,25 @@ namespace Meadow.Foundation.Sensors.Light
     public partial class Bh1745
         : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>, ILightSensor
     {
-        //==== events
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
-        //==== properties
         /// <summary>
         /// 
         /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
-
-        public InterruptStatus InterruptReset {
-            get {
+        
+        public InterruptStatus InterruptReset
+        {
+            get
+            {
                 var intReset = Peripheral.ReadRegister(Registers.SYSTEM_CONTROL);
                 intReset = (byte)((intReset & MaskValues.INT_RESET) >> 6);
                 return (InterruptStatus)intReset;
             }
-            set {
-                if (!Enum.IsDefined(typeof(InterruptStatus), value)) {
+            set
+            {
+                if (!Enum.IsDefined(typeof(InterruptStatus), value))
+                {
                     throw new ArgumentOutOfRangeException();
                 }
                 var intReset = Peripheral.ReadRegister(Registers.SYSTEM_CONTROL);
@@ -51,10 +53,13 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Gets or sets the currently set measurement time.
         /// </summary>
-        public MeasurementTimeType MeasurementTime {
+        public MeasurementTimeType MeasurementTime
+        {
             get => measurementTime;
-            set {
-                if (!Enum.IsDefined(typeof(MeasurementTimeType), value)) {
+            set
+            {
+                if (!Enum.IsDefined(typeof(MeasurementTimeType), value))
+                {
                     throw new ArgumentOutOfRangeException();
                 }
                 var time = Peripheral.ReadRegister(Registers.MODE_CONTROL1);
@@ -62,28 +67,35 @@ namespace Meadow.Foundation.Sensors.Light
                 Peripheral?.WriteRegister(Registers.MODE_CONTROL1, time);
                 measurementTime = value;
             }
-        } protected MeasurementTimeType measurementTime;
+        }
+        protected MeasurementTimeType measurementTime;
 
         /// <summary>
         /// Is the sensor actively measuring
         /// </summary>
-        public bool IsMeasurementActive {
+        public bool IsMeasurementActive
+        {
             get => isMeasurementActive;
-            set {
+            set
+            {
                 var active = Peripheral.ReadRegister(Registers.MODE_CONTROL2);
                 active = (byte)((active & ~MaskValues.RGBC_EN) | Convert.ToByte(value) << 4);
                 Peripheral?.WriteRegister(Registers.MODE_CONTROL2, active);
                 isMeasurementActive = value;
             }
-        } protected bool isMeasurementActive;
+        }
+        protected bool isMeasurementActive;
 
         /// <summary>
         /// Gets or sets the ADC gain of the sensor
         /// </summary>
-        public AdcGainTypes AdcGain {
+        public AdcGainTypes AdcGain
+        {
             get => adcGain;
-            set {
-                if (!Enum.IsDefined(typeof(AdcGainTypes), value)) {
+            set
+            {
+                if (!Enum.IsDefined(typeof(AdcGainTypes), value))
+                {
                     throw new ArgumentOutOfRangeException();
                 }
                 var adcGain = Peripheral.ReadRegister(Registers.MODE_CONTROL2);
@@ -91,13 +103,16 @@ namespace Meadow.Foundation.Sensors.Light
                 Peripheral?.WriteRegister(Registers.MODE_CONTROL2, adcGain);
                 this.adcGain = value;
             }
-        } protected AdcGainTypes adcGain;
+        }
+        protected AdcGainTypes adcGain;
 
         /// <summary>
         /// Is the interrupt active
         /// </summary>
-        public bool InterruptSignalIsActive {
-            get {
+        public bool InterruptSignalIsActive
+        {
+            get
+            {
                 var intStatus = Peripheral.ReadRegister(Registers.INTERRUPT);
                 intStatus = (byte)((intStatus & MaskValues.INT_STATUS) >> 7);
                 return Convert.ToBoolean(intStatus);
@@ -107,10 +122,13 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Gets or sets how the interrupt pin latches
         /// </summary>
-        public LatchBehaviorTypes LatchBehavior {
+        public LatchBehaviorTypes LatchBehavior
+        {
             get => latchBehavior;
-            set {
-                if (!Enum.IsDefined(typeof(LatchBehaviorTypes), value)) {
+            set
+            {
+                if (!Enum.IsDefined(typeof(LatchBehaviorTypes), value))
+                {
                     throw new ArgumentOutOfRangeException();
                 }
                 var intLatch = Peripheral.ReadRegister(Registers.INTERRUPT);
@@ -118,42 +136,52 @@ namespace Meadow.Foundation.Sensors.Light
                 Peripheral?.WriteRegister(Registers.INTERRUPT, intLatch);
                 latchBehavior = value;
             }
-        } protected LatchBehaviorTypes latchBehavior;
+        }
+        protected LatchBehaviorTypes latchBehavior;
 
         /// <summary>
         /// Gets or sets the source channel that triggers the interrupt
         /// </summary>
-        public InterruptChannels InterruptSource {
+        public InterruptChannels InterruptSource
+        {
             get => interruptSource;
-            set {
+            set
+            {
                 if (!Enum.IsDefined(typeof(InterruptChannels), value)) { throw new ArgumentOutOfRangeException(); }
                 var intSource = Peripheral.ReadRegister(Registers.INTERRUPT);
                 intSource = (byte)((intSource & ~MaskValues.INT_SOURCE) | (byte)value << 2);
                 Peripheral?.WriteRegister(Registers.INTERRUPT, intSource);
                 interruptSource = value;
             }
-        } protected InterruptChannels interruptSource;
+        }
+        protected InterruptChannels interruptSource;
 
         /// <summary>
         /// Gets or sets whether the interrupt pin is enabled
         /// </summary>
-        public bool InterruptIsEnabled {
+        public bool InterruptIsEnabled
+        {
             get => isInterruptEnabled;
-            set {
+            set
+            {
                 var intPin = Peripheral.ReadRegister(Registers.INTERRUPT);
                 intPin = (byte)((intPin & ~MaskValues.INT_ENABLE) | Convert.ToByte(value));
                 Peripheral?.WriteRegister(Registers.INTERRUPT, intPin);
                 isInterruptEnabled = value;
             }
-        } protected bool isInterruptEnabled;
+        }
+        protected bool isInterruptEnabled;
 
         /// <summary>
         /// Gets or sets the persistence function of the interrupt
         /// </summary>
-        public InterruptTypes InterruptPersistence {
+        public InterruptTypes InterruptPersistence
+        {
             get => interruptPersistence;
-            set {
-                if (!Enum.IsDefined(typeof(InterruptTypes), value)) {
+            set
+            {
+                if (!Enum.IsDefined(typeof(InterruptTypes), value))
+                {
                     throw new ArgumentOutOfRangeException();
                 }
                 var intPersistence = Peripheral.ReadRegister(Registers.PERSISTENCE);
@@ -161,29 +189,36 @@ namespace Meadow.Foundation.Sensors.Light
                 Peripheral?.WriteRegister(Registers.PERSISTENCE, intPersistence);
                 interruptPersistence = value;
             }
-        } protected InterruptTypes interruptPersistence;
+        }
+        protected InterruptTypes interruptPersistence;
 
         /// <summary>
         /// Gets or sets the lower interrupt threshold
         /// </summary>
-        public ushort LowerInterruptThreshold {
+        public ushort LowerInterruptThreshold
+        {
             get => lowerInterruptThreshold;
-            set {
+            set
+            {
                 Peripheral.WriteRegister(Registers.TL, value);
                 lowerInterruptThreshold = value;
             }
-        } protected ushort lowerInterruptThreshold;
+        }
+        protected ushort lowerInterruptThreshold;
 
         /// <summary>
         /// Gets or sets the upper interrupt threshold
         /// </summary>
-        public ushort UpperInterruptThreshold {
+        public ushort UpperInterruptThreshold
+        {
             get => upperInterruptThreshold;
-            set {
+            set
+            {
                 Peripheral.WriteRegister(Registers.TH, value);
                 upperInterruptThreshold = value;
             }
-        } protected ushort upperInterruptThreshold;
+        }
+        protected ushort upperInterruptThreshold;
 
         /// <summary>
         /// Gets or sets the channel compensation multipliers which are used to scale the channel measurements
@@ -195,10 +230,11 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         ///     Create a new BH17545 color sensor object
         /// </summary>
-        public Bh1745(II2cBus i2cBus, byte address = Addresses.Low)
+        public Bh1745(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
-            CompensationMultipliers = new ChannelMultipliers {
+            CompensationMultipliers = new ChannelMultipliers
+            {
                 Red = 1.0, //2.2,
                 Green = 1.0,
                 Blue = 1.0, //1.8,
@@ -212,7 +248,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         protected override Task<(Illuminance? AmbientLight, Color? Color, bool Valid)> ReadSensor()
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
                 (Illuminance? AmbientLight, Color? Color, bool Valid) conditions;
 
                 // get the ambient light
@@ -247,7 +284,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> changeResult)
         {
-            if (changeResult.New.AmbientLight is { } ambient) {
+            if (changeResult.New.AmbientLight is { } ambient)
+            {
                 LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
             }
             base.RaiseEventsAndNotify(changeResult);

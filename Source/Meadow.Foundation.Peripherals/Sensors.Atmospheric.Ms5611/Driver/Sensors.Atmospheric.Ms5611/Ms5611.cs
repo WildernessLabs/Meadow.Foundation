@@ -4,37 +4,18 @@ using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    public class Ms5611
+    public partial class Ms5611
     {
         private Ms5611Base ms5611;
 
-        public enum Resolution
-        {
-            OSR_256 = 0,
-            OSR_412 = 1,
-            OSR_1024 = 2,
-            OSR_2048 = 3,
-            OSR_4096 = 4
-        }
-
         /// <summary>
-        /// Connect to the GY63 using I2C (PS must be pulled high)
+        /// Connect to the Ms5611 using I2C
         /// </summary>
         /// <param name="i2c"></param>
-        /// <param name="address">0x76 is CSB is pulled low, 0x77 if CSB is pulled high</param>
+        /// <param name="address">i2c address - default is 0x5c</param>
         /// <param name="resolution"></param>
-        public Ms5611(II2cBus i2c, byte address = 0x76, Resolution resolution = Resolution.OSR_1024)
+        public Ms5611(II2cBus i2c, byte address = (byte)Addresses.Default, Resolution resolution = Resolution.OSR_1024)
         {
-            switch (address)
-            {
-                case 0x76:
-                case 0x77:
-                    // valid address is either 0x76 or 0x77
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("Address must be 0x76 or 0x77");
-            }
-            
             ms5611 = new Ms5611I2c(i2c, address, resolution);
         }
 

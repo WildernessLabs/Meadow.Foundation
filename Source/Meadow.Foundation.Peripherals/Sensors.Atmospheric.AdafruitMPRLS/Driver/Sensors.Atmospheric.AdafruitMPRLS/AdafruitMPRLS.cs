@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// https://www.adafruit.com/product/3965
     /// Device datasheets also available here: https://sensing.honeywell.com/micropressure-mpr-series
     /// </summary>
-    public class AdafruitMPRLS : ByteCommsSensorBase<(Pressure? Pressure, Pressure? RawPsiMeasurement)>, IBarometricPressureSensor
+    public partial class AdafruitMPRLS : ByteCommsSensorBase<(Pressure? Pressure, Pressure? RawPsiMeasurement)>, IBarometricPressureSensor
     {
         //==== events
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
@@ -25,9 +25,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private int psiMin => 0;
         private int psiMax => 25;
-
-        //This value is set by the manufacturer and can't be changed.
-        public const byte Address = 0x18;
 
         //==== properties
         /// <summary>
@@ -55,30 +52,32 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         //Tells us that the sensor has reached its pressure limit.
         public bool InternalMathSaturated { get; set; }
 
-
         protected override void RaiseEventsAndNotify(IChangeResult<(Pressure? Pressure, Pressure? RawPsiMeasurement)> changeResult)
         {
-            if (changeResult.New.Pressure is { } pressure) {
+            if (changeResult.New.Pressure is { } pressure)
+            {
                 PressureUpdated?.Invoke(this, new ChangeResult<Pressure>(pressure, changeResult.Old?.Pressure));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
 
         public AdafruitMPRLS(II2cBus i2cbus, int psiMin = 0, int psiMax = 25)
-            : base(i2cbus, Address)
+            : base(i2cbus, (byte)Addresses.Default)
         {
         }
 
         protected override async Task<(Pressure? Pressure, Pressure? RawPsiMeasurement)> ReadSensor()
         {
-            return await Task.Run(async () => {
+            return await Task.Run(async () =>
+            {
                 //Send the command to the sensor to tell it to do the thing.
                 Peripheral.Write(mprlsMeasurementCommand);
 
                 //Datasheet says wait 5 ms.
                 await Task.Delay(5);
 
-                while (true) {
+                while (true)
+                {
                     Peripheral.Read(ReadBuffer.Span[0..1]);
 
                     //From section 6.5 of the datasheet.
@@ -87,15 +86,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     HasMemoryIntegrityFailed = BitHelpers.GetBitValue(ReadBuffer.Span[0], 2);
                     InternalMathSaturated = BitHelpers.GetBitValue(ReadBuffer.Span[0], 0);
 
-                    if (InternalMathSaturated) {
+                    if (InternalMathSaturated)
+                    {
                         throw new InvalidOperationException("Sensor pressure has exceeded max value!");
                     }
 
-                    if (HasMemoryIntegrityFailed) {
+                    if (HasMemoryIntegrityFailed)
+                    {
                         throw new InvalidOperationException("Sensor internal memory integrity check failed!");
                     }
 
-                    if (!(IsDeviceBusy)) {
+                    if (!(IsDeviceBusy))
+                    {
                         break;
                     }
                 }

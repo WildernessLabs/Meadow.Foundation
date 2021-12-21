@@ -1,5 +1,7 @@
-using Meadow.Devices;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 
@@ -10,10 +12,11 @@ namespace Meadow.Foundation.Displays.TftSpi
         private byte xOffset;
         private byte yOffset;
 
-        public override DisplayColorMode DefautColorMode => DisplayColorMode.Format12bppRgb444;
+        public static Frequency DefaultSpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz);
+        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
         public St7789(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, DisplayColorMode displayColorMode = DisplayColorMode.Format12bppRgb444) 
+            int width, int height, ColorType displayColorMode = ColorType.Format12bppRgb444) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
@@ -21,14 +24,21 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         protected override void Initialize()
         {
-            resetPort.State = true;
-            Thread.Sleep(50);
-            resetPort.State = false;
-            Thread.Sleep(50);
-            resetPort.State = true;
-            Thread.Sleep(50);
+            if (resetPort != null)
+            {
+                resetPort.State = true;
+                Thread.Sleep(50);
+                resetPort.State = false;
+                Thread.Sleep(50);
+                resetPort.State = true;
+                Thread.Sleep(50);
+            }
+            else
+            {
+                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+            }
 
-            if(width == 135)
+            if (Width == 135)
             {   //unknown if this is consistant across all displays with this res
                 xOffset = 52;
                 yOffset = 40;
@@ -43,15 +53,15 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(SLPOUT);
             DelayMs(500);
 
-            SendCommand(COLOR_MODE);  // set color mode - 16 bit color (x55), 12 bit color (x53), 18 bit color (x56)
-            if (ColorMode == DisplayColorMode.Format16bppRgb565)
+            SendCommand(Register.COLOR_MODE);  // set color mode - 16 bit color (x55), 12 bit color (x53), 18 bit color (x56)
+            if (ColorMode == ColorType.Format16bppRgb565)
                 SendData(0x55);  // 16-bit color RGB565
             else
                 SendData(0x53); //12-bit color RGB444
            
             DelayMs(10);
 
-            SendCommand(MADCTL);
+            SendCommand(Register.MADCTL);
             SendData(0x00); //some variants use 0x08
 
             SendCommand((byte)LcdCommand.CASET);
@@ -68,7 +78,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(DISPON); //display on
             DelayMs(500);
 
-            SetAddressWindow(0, 0, (width - 1), (height - 1));
+            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }
@@ -100,21 +110,21 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         public void SetRotation(Rotation rotation)
         {
-            SendCommand(MADCTL);
+            SendCommand(Register.MADCTL);
 
             switch (rotation)
             {
                 case Rotation.Normal:
-                    SendData(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_RGB);
                     break;
                 case Rotation.Rotate_90:
-                    SendData(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
+                    SendData((byte)Register.MADCTL_MY | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_RGB);
                     break;
                 case Rotation.Rotate_180:
-                    SendData(MADCTL_RGB);
+                    SendData((byte)Register.MADCTL_RGB);
                     break;
                 case Rotation.Rotate_270:
-                    SendData(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
+                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_RGB);
                     break;
             }
         }

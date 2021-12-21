@@ -39,9 +39,11 @@ namespace Meadow.Foundation.Sensors.Light
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    result => {
+                    result =>
+                    {
                         // create a new change result from the new value
-                        ChangeResult<Voltage> changeResult = new ChangeResult<Voltage>() {
+                        ChangeResult<Voltage> changeResult = new ChangeResult<Voltage>()
+                        {
                             New = result.New,
                             Old = Voltage
                         };
@@ -70,7 +72,8 @@ namespace Meadow.Foundation.Sensors.Light
         public void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety
-            lock (samplingLock) {
+            lock (samplingLock)
+            {
                 if (IsSampling) return;
                 IsSampling = true;
                 AnalogInputPort.StartUpdating(updateInterval);
@@ -82,7 +85,8 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public void StopUpdating()
         {
-            lock (samplingLock) {
+            lock (samplingLock)
+            {
                 if (!IsSampling) return;
                 base.IsSampling = false;
                 AnalogInputPort.StopUpdating();

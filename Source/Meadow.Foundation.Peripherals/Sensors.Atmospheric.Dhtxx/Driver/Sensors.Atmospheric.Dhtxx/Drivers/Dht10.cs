@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// </summary>
         /// <param name="address">Address of the Dht12 (default = 0x27).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
-        public Dht10(II2cBus i2cBus, byte address = 0x5C)
+        public Dht10(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
             Peripheral.Write(CMD_SOFTRESET);

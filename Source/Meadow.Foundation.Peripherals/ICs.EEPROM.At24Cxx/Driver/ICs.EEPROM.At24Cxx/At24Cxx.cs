@@ -7,7 +7,7 @@ namespace Meadow.Foundation.ICs.EEPROM
     /// <summary>
     /// Encapsulation for EEPROMs based upon the AT24Cxx family of chips.
     /// </summary>
-    public class At24Cxx
+    public partial class At24Cxx
     {
         /// <summary>
         ///     Communication bus used to communicate with the EEPEOM.
@@ -24,18 +24,27 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// </summary>
         private readonly ushort _memorySize;
 
+        Memory<byte> readBuffer;
+        Memory<byte> writeBuffer;
+
         /// <summary>
         ///     Create a new AT24Cxx object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the At24Cxx (default = 0x50).</param>
         /// <param name="pageSize">Number of bytes in a page (default = 32 - AT24C32).</param>
         /// <param name="memorySize">Total number of bytes in the EEPROM (default = 8192 - AT24C32).</param>
-        public At24Cxx(II2cBus i2cBus, byte address = 0x50, ushort pageSize = 32, ushort memorySize = 8192)
+        public At24Cxx(II2cBus i2cBus,
+            byte address = (byte)Addresses.Default,
+            ushort pageSize = 32,
+            ushort memorySize = 8192)
         {
             var device = new I2cPeripheral(i2cBus, address);
             _eeprom = device;
             _pageSize = pageSize;
             _memorySize = memorySize;
+
+            readBuffer = new byte[3];
+            writeBuffer = new byte[3];
         }
 
         /// <summary>
@@ -66,11 +75,16 @@ namespace Meadow.Foundation.ICs.EEPROM
         public byte[] Read(ushort startAddress, ushort amount)
         {
             CheckAddress(startAddress, amount);
-            var address = new byte[2];
-            address[0] = (byte) ((startAddress >> 8) & 0xff);
-            address[1] = (byte) (startAddress & 0xff);
-            _eeprom.WriteBytes(address);
-            return _eeprom.ReadBytes(amount);
+            Span<byte> data = writeBuffer.Span[0..2];
+            data[0] = (byte) ((startAddress >> 8) & 0xff);
+            data[1] = (byte) (startAddress & 0xff);
+
+            var results = new byte[amount];
+
+            _eeprom.Write(data);
+            _eeprom.Read(results);
+
+            return results;
         }
 
         /// <summary>
@@ -91,7 +105,7 @@ namespace Meadow.Foundation.ICs.EEPROM
                 addressAndData[0] = (byte) ((address >> 8) & 0xff);
                 addressAndData[1] = (byte) (address & 0xff);
                 addressAndData[2] = data[index];
-                _eeprom.WriteBytes(addressAndData);
+                _eeprom.Write(addressAndData);
                 Thread.Sleep(10);
             }
         }

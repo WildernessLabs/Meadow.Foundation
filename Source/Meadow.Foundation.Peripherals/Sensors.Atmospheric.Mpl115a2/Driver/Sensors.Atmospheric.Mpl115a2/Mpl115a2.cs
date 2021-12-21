@@ -49,7 +49,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (default to 0x60).</param>
         /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
-        public Mpl115a2(II2cBus i2cBus, byte address = 0x60, int updateIntervalMs = 1000)
+        public Mpl115a2(II2cBus i2cBus, byte address = (byte)Addresses.Default, int updateIntervalMs = 1000)
             : base(i2cBus, address, updateIntervalMs)
         {
             //var device = new I2cPeripheral(i2cBus, address);

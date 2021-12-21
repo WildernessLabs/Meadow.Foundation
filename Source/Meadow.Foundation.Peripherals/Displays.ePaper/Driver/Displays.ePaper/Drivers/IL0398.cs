@@ -24,16 +24,16 @@ namespace Meadow.Foundation.Displays.ePaper
         {
             Reset();
 
-            SendCommand(BOOSTER_SOFT_START);
+            SendCommand(Command.BOOSTER_SOFT_START);
             SendData(0x17);
             SendData(0x17);
             SendData(0x17);
-            SendCommand(POWER_ON);
+            SendCommand(Command.POWER_ON);
 
             WaitUntilIdle();
             SendCommand(0x0F);
 
-            SendCommand(RESOLUTION_SETTING);
+            SendCommand(Command.RESOLUTION_SETTING);
             SendData((byte)(Height >> 8) & 0xFF);
             SendData((byte)(Height & 0xFF));
             SendData((byte)(Width >> 8) & 0xFF);
@@ -42,8 +42,8 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected void SetPartialWindow(byte[] bufferBlack, byte[] bufferColor, int x, int y, int width, int height)
         {
-            SendCommand(PARTIAL_IN);
-            SendCommand(PARTIAL_WINDOW);
+            SendCommand(Command.PARTIAL_IN);
+            SendCommand(Command.PARTIAL_WINDOW);
             SendData(x >> 8);
             SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
             SendData(((x & 0x1f8) + width - 1) >> 8);
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Displays.ePaper
             SendData((y + height - 1) & 0xff);
             SendData(0x01);         // Gates scan both inside and outside of the partial window. (default) 
             DelayMs(2);
-            SendCommand(DATA_START_TRANSMISSION_1);
+            SendCommand(Command.DATA_START_TRANSMISSION_1);
 
             if (bufferBlack != null)
             {
@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Displays.ePaper
             }
 
             DelayMs(2);
-            SendCommand(DATA_START_TRANSMISSION_2);
+            SendCommand(Command.DATA_START_TRANSMISSION_2);
 
             if (bufferColor != null)
             {
@@ -76,13 +76,13 @@ namespace Meadow.Foundation.Displays.ePaper
             }
 
             DelayMs(2);
-            SendCommand(PARTIAL_OUT);
+            SendCommand(Command.PARTIAL_OUT);
         }
 
         protected void SetPartialWindowBlack(byte[] bufferBlack, int x, int y, int width, int height)
         {
-            SendCommand(PARTIAL_IN);
-            SendCommand(PARTIAL_WINDOW);
+            SendCommand(Command.PARTIAL_IN);
+            SendCommand(Command.PARTIAL_WINDOW);
             SendData(x >> 8);
             SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
             SendData(((x & 0x1f8) + width - 1) >> 8);
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Displays.ePaper
             SendData((y + height - 1) & 0xff);
             SendData(0x01);         // Gates scan both inside and outside of the partial window. (default) 
             DelayMs(2);
-            SendCommand(DATA_START_TRANSMISSION_1);
+            SendCommand(Command.DATA_START_TRANSMISSION_1);
 
             if (bufferBlack != null)
             {
@@ -104,13 +104,13 @@ namespace Meadow.Foundation.Displays.ePaper
             }
 
             DelayMs(2);
-            SendCommand(PARTIAL_OUT);
+            SendCommand(Command.PARTIAL_OUT);
         }
 
         protected void SetPartialWindowColor(byte[] bufferColor, int x, int y, int width, int height)
         {
-            SendCommand(PARTIAL_IN);
-            SendCommand(PARTIAL_WINDOW);
+            SendCommand(Command.PARTIAL_IN);
+            SendCommand(Command.PARTIAL_WINDOW);
             SendData(x >> 8);
             SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
             SendData(((x & 0x1f8) + width - 1) >> 8);
@@ -121,7 +121,7 @@ namespace Meadow.Foundation.Displays.ePaper
             SendData((y + height - 1) & 0xff);
             SendData(0x01);         // Gates scan both inside and outside of the partial window. (default) 
             DelayMs(2);
-            SendCommand(DATA_START_TRANSMISSION_2);
+            SendCommand(Command.DATA_START_TRANSMISSION_2);
 
             if (bufferColor != null)
             {
@@ -132,31 +132,26 @@ namespace Meadow.Foundation.Displays.ePaper
             }
 
             DelayMs(2);
-            SendData(PARTIAL_OUT);
+            SendData((byte)Command.PARTIAL_OUT);
         }
 
-        protected override void Refresh()
+        public override void Show(int left, int top, int right, int bottom)
         {
-            xRefreshStart = -1;
-            if (xRefreshStart == -1)
-            {
-                DisplayFrame(blackImageBuffer, colorImageBuffer);
-            }
-            else
-            {
-                SetPartialWindow(blackImageBuffer, colorImageBuffer,
-                        xRefreshStart, yRefreshStart, xRefreshEnd - xRefreshStart, yRefreshEnd - yRefreshStart);
+            SetPartialWindow(blackImageBuffer.Buffer, colorImageBuffer.Buffer,
+                left, top, right - left, top - bottom);
 
-                DisplayFrame();
-            }
+            DisplayFrame();
+        }
 
-            xRefreshStart = yRefreshStart = xRefreshEnd = yRefreshEnd = -1;
+        public override void Show()
+        {
+            DisplayFrame(blackImageBuffer.Buffer, colorImageBuffer.Buffer);
         }
 
         //clear the frame data from the SRAM, this doesn't update the display
         protected virtual void ClearFrame()
         {
-            SendCommand(DATA_START_TRANSMISSION_1);
+            SendCommand(Command.DATA_START_TRANSMISSION_1);
             Thread.Sleep(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
@@ -165,7 +160,7 @@ namespace Meadow.Foundation.Displays.ePaper
             }
             Thread.Sleep(2);
 
-            SendCommand(DATA_START_TRANSMISSION_2);
+            SendCommand(Command.DATA_START_TRANSMISSION_2);
             Thread.Sleep(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
@@ -176,7 +171,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         void DisplayFrame(byte[] blackBuffer, byte[] colorBuffer)
         {
-            SendCommand(DATA_START_TRANSMISSION_1);
+            SendCommand(Command.DATA_START_TRANSMISSION_1);
             Thread.Sleep(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
@@ -185,7 +180,7 @@ namespace Meadow.Foundation.Displays.ePaper
             }
             Thread.Sleep(2);
 
-            SendCommand(DATA_START_TRANSMISSION_2);
+            SendCommand(Command.DATA_START_TRANSMISSION_2);
             Thread.Sleep(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
@@ -198,15 +193,15 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public void DisplayFrame()
         {
-            SendCommand(DISPLAY_REFRESH);
+            SendCommand(Command.DISPLAY_REFRESH);
             WaitUntilIdle();
         }
 
         protected virtual void Sleep()
         {
-            SendCommand(POWER_OFF);
+            SendCommand(Command.POWER_OFF);
             WaitUntilIdle();
-            SendCommand(DEEP_SLEEP);
+            SendCommand(Command.DEEP_SLEEP);
             SendData(0xA5); //check code
         }
     }
