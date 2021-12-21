@@ -1,6 +1,6 @@
 # FontBase - Font Base Class
 
-The `Font` base class defines the properties and methods that must be implemented when defining fonts for ise with the `GraphicsLibrary`.
+The `Font` base class defines the properties and methods that must be implemented when defining fonts for ise with the `MicroGraphics`.
 
 ## API
 

@@ -6,7 +6,7 @@ The Maple Web Server is primarily intended to provide RESTful endpoints from a d
 
 A web API consists of one or more request handler classes that derive from RequestHandlerBase:
 
-```
+```csharp
 public class MyRequestHandler : RequestHandlerBase
 ```
 
@@ -22,7 +22,7 @@ If your route begins with a forward slash (`/`) then it is considered an absolut
 
 For example, the following will respond to `GET` requests to `http://[meadow.address]/hello`
 
-```
+```csharp
 public class MyRequestHandler : RequestHandlerBase
 {
     [HttpGet("/hello")]
@@ -38,7 +38,7 @@ If your route *does not* begin with a forward slash (`/`) then it is considered 
 
 For example, the following will respond to `GET` requests to `http://[meadow.address]/my/hello`
 
-```
+```csharp
 public class MyRequestHandler : RequestHandlerBase
 {
     [HttpGet("hello")]
@@ -49,7 +49,7 @@ public class MyRequestHandler : RequestHandlerBase
 
 But the following will respond to `GET` requests to `http://[meadow.address]/webapi/hello`
 
-```
+```csharp
 public class WebAPI : RequestHandlerBase
 {
     [HttpGet("hello")]
@@ -66,7 +66,7 @@ Maple supports providing a handler method parameter through the route path.  Par
 
 As an example, a `GET` to the path `http://[meadow.address]/orders/history/1234` would end up calling the following `GetOrderHistory` handler method with a parameter value of `1234`:
 
-```
+```csharp
 public class OrdersRequestHandler : RequestHandlerBase
 {
 	[HttpGet("history/{orderID}")]
@@ -91,7 +91,7 @@ Supported parameter types are:
 
 By default Maple will create a new instance of an API handler for every request received.  If you want your application to reuse the same handler instance, which provides faster handler execution and decreases GC allocation, simply override the `IsResuable` base property and return `true`.
 
-```
+```csharp
 public override bool IsReusable => true;
 
 ```
@@ -102,7 +102,7 @@ It is recommended that all Handler methods return an `IActionResult` implementat
 
 For example, the following will automatically serialize and return a JSON string array with the proper `content-type` and return code.
 
-```
+```csharp
 [HttpGet("/JsonSample")]
 public IActionResult GetJsonList()
 {

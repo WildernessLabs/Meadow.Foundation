@@ -10,7 +10,7 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Display, Text, Menu</PackageTags>
-    <Version>0.1.33</Version>
+    <Version>0.1.40</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Text based stack navigation and editor for pixel and character displays</Description>
   </PropertyGroup>

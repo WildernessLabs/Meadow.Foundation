@@ -1,25 +1,17 @@
-﻿namespace Meadow.Foundation.Graphics
+﻿using System;
+
+namespace Meadow.Foundation.Graphics
 {
     /// <summary>
     ///     Abstract class for a Font.
     /// </summary>
-    public abstract class FontBase
+    [Obsolete("FontBase is deprecated, use IFont instead")]
+    public abstract class FontBase : IFont
     {
-        /// <summary>
-        ///     Width of a character in the font.
-        /// </summary>
-        public abstract int Width { get; }
+        public byte[] this[char character] => throw new System.NotImplementedException();
 
-        /// <summary>
-        ///     Height of a character in the font.
-        /// </summary>
-        public abstract int Height { get; }
+        public int Width => throw new System.NotImplementedException();
 
-        /// <summary>
-        ///     Get the binary representation of the ASCII character from the font table.
-        /// </summary>
-        /// <param name="character">Character to look up.</param>
-        /// <returns>Array of bytes representing the binary bit pattern of the character.</returns>
-        public abstract byte[] this[char character] { get; }
-    }
+        public int Height => throw new System.NotImplementedException();
+    } 
 }

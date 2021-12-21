@@ -11,8 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meadow.Foundation.Periphera
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Audio.PiezoSpeaker_Sample", "Meadow.Foundation.Core.Samples\Audio.PiezoSpeaker_Sample\Audio.PiezoSpeaker_Sample.csproj", "{74F47C15-1293-404A-8C92-0F72A3DE7BA7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generators.SoftPwmPort_Sample", "Meadow.Foundation.Core.Samples\Generators.SoftPwmPort_Sample\Generators.SoftPwmPort_Sample.csproj", "{F43883BC-378B-4C11-8DC1-2EED26178490}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leds.Led_Sample", "Meadow.Foundation.Core.Samples\Leds.Led_Sample\Leds.Led_Sample.csproj", "{87C64FBE-1AB8-46A2-B9E3-CCB1CF0BDE58}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leds.LedBarGraph_Sample", "Meadow.Foundation.Core.Samples\Leds.LedBarGraph_Sample\Leds.LedBarGraph_Sample.csproj", "{3CC352EE-8A5C-45CE-A2B7-71E11733D5DA}"

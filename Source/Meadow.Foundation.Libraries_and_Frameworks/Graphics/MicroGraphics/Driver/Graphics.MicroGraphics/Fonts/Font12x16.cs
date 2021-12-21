@@ -1,50 +1,22 @@
 ﻿namespace Meadow.Foundation.Graphics
 {
-    public class Font12x16 : FontBase
+    public class Font12x16 : IFont
     {
-        #region Constants
-
-        /// <summary>
-        ///     Width of the font in pixels.
-        /// </summary>
-        private const int WIDTH = 12;
-
-        /// <summary>
-        ///     Height of the font in pixels.
-        /// </summary>
-        private const int HEIGHT = 16;
-
-        #endregion Constants
-
-        #region Properties
-
         /// <summary>
         ///     Width of a character in the font.
         /// </summary>
-        public override int Width
-        {
-            get { return WIDTH; }
-        }
+        public int Width => 12;
 
         /// <summary>
         ///     /   Height of a character in the font.
         /// </summary>
-        public override int Height
-        {
-            get { return HEIGHT; }
-        }
-
-        #endregion Properties
-
-        #region Member variables / fields
+        public int Height => 16;
 
         /// <summary>
         ///     Font table containing the binary representation of ASCII characters.
         /// </summary>
         private static readonly byte[][] _fontTable =
         {
-            #region Font codes
-
             new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, //0020( )
             new byte[] {0x00, 0x00, 0x06, 0x60, 0x00, 0x06, 0x60, 0x00, 0x06, 0x60, 0x00, 0x06, 0x60, 0x00, 0x06, 0x00, 0x00, 0x06, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00}, //0021(!)
             new byte[] {0x00, 0x00, 0x00, 0x98, 0x81, 0x19, 0x98, 0x81, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, //0022(")
@@ -140,13 +112,7 @@
             new byte[] {0x00, 0x00, 0x06, 0x60, 0x00, 0x06, 0x60, 0x00, 0x06, 0x60, 0x00, 0x06, 0x60, 0x00, 0x06, 0x60, 0x00, 0x06, 0x60, 0x00, 0x06, 0x60, 0x00, 0x00}, //007C(|)
             new byte[] {0x00, 0x80, 0x01, 0x38, 0x00, 0x07, 0x60, 0x00, 0x06, 0xC0, 0x00, 0x0C, 0x60, 0x00, 0x06, 0x70, 0x80, 0x03, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00}, //007D(})
             new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x86, 0x73, 0xFC, 0xE3, 0x1E, 0xC6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, //007E(~)
-
-            #endregion Font codes
         };
-
-        #endregion Member variables / fields
-
-        #region Methods
 
         /// <summary>
         ///     Get the binary representation of an ASCII character from the
@@ -157,7 +123,7 @@
         ///     Byte array containing the rows of pixels in the character.  Unknown byte codes will result in a space being
         ///     returned.
         /// </returns>
-        public override byte[] this[char character]
+        public byte[] this[char character]
         {
             get
             {
@@ -169,7 +135,5 @@
                 return _fontTable[(byte)character - 0x20];
             }
         }
-
-        #endregion Methods
     }
 }

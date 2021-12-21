@@ -14,10 +14,10 @@ namespace Meadow.Foundation.Graphics
        // public Point Location { get; set; } //ToDo
 
         public int MidX => Right - Left / 2;
-        public int MidY => Top - Bottom / 2;
+        public int MidY => Bottom - Top / 2;
 
         public int Width => Right - Left;
-        public int Height => Top - Bottom;
+        public int Height => Bottom - Top;
 
         public bool IsEmpty => Bottom == 0 && Top == 0 && Left == 0 && Right == 0;
 

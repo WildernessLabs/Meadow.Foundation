@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Graphics
 {
-    public partial class GraphicsLibrary
+    public partial class MicroGraphics
     {
         public void DrawPath(GraphicsPath path, bool colored)
         {
