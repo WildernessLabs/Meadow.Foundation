@@ -4,7 +4,7 @@ namespace Meadow.Foundation.ICs.ADC
 {
     public class Ads1115 : Ads1x15
     {
-        public enum DataRateSetting
+        public enum SampleRateSetting
         {
             Sps8,
             Sps16,
@@ -18,18 +18,21 @@ namespace Meadow.Foundation.ICs.ADC
 
         protected override int BitResolution => 16;
 
-        public DataRateSetting SampleRate 
+        public SampleRateSetting SampleRate
         {
-            get => (DataRateSetting)InternalSampleRate;
+            get => (SampleRateSetting)InternalSampleRate;
             set => InternalSampleRate = (int)value;
         }
 
-        protected Ads1115(II2cBus i2cBus,
-            byte address = (byte)Address.Default,
-            MeasureMode mode = MeasureMode.OneShot)
-            : base(i2cBus, address, mode)
-        {
+        public Ads1115(II2cBus i2cBus,
+            Address address = Address.Default,
+            MeasureMode mode = MeasureMode.OneShot,
+            ChannelSetting channel = ChannelSetting.A0A1Differential,
+            SampleRateSetting sampleRate = SampleRateSetting.Sps128)
 
+            : base(i2cBus, address, mode, channel)
+        {
+            SampleRate = sampleRate;
         }
     }
 }

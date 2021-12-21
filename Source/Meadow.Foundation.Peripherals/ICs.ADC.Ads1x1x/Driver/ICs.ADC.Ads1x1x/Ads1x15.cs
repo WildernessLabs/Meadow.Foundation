@@ -14,7 +14,6 @@ namespace Meadow.Foundation.ICs.ADC
         private ushort _config;
 
         private const int RateShift = 5;
-        private const int RateMask = 0b111 << RateShift;
         private const int ModeShift = 8;
         private const int MuxShift = 12;
 
@@ -27,13 +26,15 @@ namespace Meadow.Foundation.ICs.ADC
         /// <param name="i2cBus"></param>
         /// <param name="mode"></param>
         protected Ads1x15(II2cBus i2cBus,
-            byte address,
-            MeasureMode mode)
+            Address address,
+            MeasureMode mode,
+            ChannelSetting channel)
         {
-            _i2c = new I2cPeripheral(i2cBus, address);
+            _i2c = new I2cPeripheral(i2cBus, (byte)address);
             _config = _i2c.ReadRegisterAsUShort((byte)Register.Config);
 
             Mode = mode;
+            Channel = channel;
         }
 
         internal protected int InternalSampleRate
