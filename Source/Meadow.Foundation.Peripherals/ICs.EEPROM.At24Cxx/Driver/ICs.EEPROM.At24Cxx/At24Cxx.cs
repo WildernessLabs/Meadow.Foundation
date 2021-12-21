@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.EEPROM
     public partial class At24Cxx
     {
         /// <summary>
-        ///     Communication bus used to communicate with the EEPEOM.
+        ///     Communication bus used to communicate with the EEPROM.
         /// </summary>
         private readonly II2cPeripheral _eeprom;
 
@@ -68,7 +68,7 @@ namespace Meadow.Foundation.ICs.EEPROM
         }
 
         /// <summary>
-        ///     Force the sensor to make a reading and update the relevanyt properties.
+        ///     Force the sensor to make a reading and update the relevant properties.
         /// </summary>
         /// <param name="startAddress">Start address for the read operation.</param>
         /// <param name="amount">Amount of data to read from the EEPROM.</param>
