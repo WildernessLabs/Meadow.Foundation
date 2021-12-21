@@ -1,15 +1,11 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
+﻿using Meadow.Hardware;
 using System;
-using System.Diagnostics;
 
 namespace Meadow.Foundation.Sensors.HallEffect
 {
     /// <summary>
     /// Represents a Lineal Hall Effect tachometer.
     /// 
-    /// Note: This class is not yet implemented.
     /// </summary>
     public class LinearHallEffectTachometer
     {

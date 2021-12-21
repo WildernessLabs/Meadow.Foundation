@@ -79,7 +79,7 @@ namespace Meadow.Foundation.Helpers
         /// </summary>
         /// <param name="startAddress">Starting address of the register.</param>
         /// <param name="registers">Byte array of the register contents.</param>
-        public static void DisplayRegisters(byte startAddress, byte[] registers)
+        public static void DisplayRegisters(byte startAddress, Span<byte> registers)
         {
             var start = startAddress;
             start &= 0xf0;

@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -77,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
         
         /// <summary>
-        /// Convenience method to get the current temperature. For frequent reads, use
+        /// Convenience method to get the current water level. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
         /// <param name="sampleCount">The number of sample readings to take. 

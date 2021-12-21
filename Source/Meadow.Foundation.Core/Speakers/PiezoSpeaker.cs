@@ -1,6 +1,6 @@
-﻿using System.Threading;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Speakers;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Audio
 {
@@ -30,6 +30,7 @@ namespace Meadow.Foundation.Audio
         public PiezoSpeaker(IPwmPort port)
         {
             Port = port;
+            Port.Start();
         }
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         /// <param name="frequency">The frequency in hertz of the tone to be played</param>
         /// <param name="duration">How long the note is played in milliseconds, if durration is 0, tone plays indefinitely</param>
-        public void PlayTone(float frequency, int duration = 0)
+        public async Task PlayTone(float frequency, int duration = 0)
         {
             if (frequency <= 1)
             {
@@ -51,12 +52,10 @@ namespace Meadow.Foundation.Audio
                 Port.Frequency = frequency;
                 Port.DutyCycle = 0.5f;
 
-                Port.Start();
-
                 if (duration > 0)
                 {
-                    Thread.Sleep(duration);
-                    Port.Stop();
+                    await Task.Delay(duration);
+                    Port.DutyCycle = 0f;
                 }
 
                 isPlaying = false;
@@ -68,7 +67,7 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         public void StopTone()
         {
-            Port.Stop();
+            Port.DutyCycle = 0f;
         }
     }
 }

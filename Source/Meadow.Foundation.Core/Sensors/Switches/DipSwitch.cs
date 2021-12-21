@@ -13,8 +13,6 @@ namespace Meadow.Foundation.Sensors.Switches
     /// </summary>
     public class DipSwitch
     {
-        #region Properties
-
         /// <summary>
         /// Returns the ISwitch at the specified index.
         /// </summary>
@@ -31,10 +29,6 @@ namespace Meadow.Foundation.Sensors.Switches
         /// Raised when one of the switches is switched on or off.
         /// </summary>
         public event ArrayEventHandler Changed = delegate { };
-
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// Creates a new DipSwitch connected to the specified switchPins, with the InterruptMode and ResisterMode specified by the type parameters.
@@ -73,10 +67,6 @@ namespace Meadow.Foundation.Sensors.Switches
             }
         }
 
-        #endregion
-
-        #region Methods
-
         /// <summary>
         /// Event handler when switch value has been changed
         /// </summary>
@@ -86,7 +76,5 @@ namespace Meadow.Foundation.Sensors.Switches
             Console.WriteLine($"HandleSwitchChange: {switchNumber} total switches: {Switches.Length}");
             Changed(this, new ArrayEventArgs(switchNumber, Switches[switchNumber]));
         }
-
-        #endregion
     }
 }

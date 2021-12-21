@@ -1,12 +1,12 @@
 ﻿using Meadow.Units;
 using VU = Meadow.Units.Voltage.UnitType;
 
-namespace Meadow.Foundation.Sensors.Environmental
+namespace Meadow.Foundation.Sensors.Light
 {
-    public partial class AnalogWaterLevel
+    public partial class AnalogLightSensor
     {
         /// <summary>
-        ///     Calibration class for AnalogWaterLevel. 
+        ///     Calibration class for AnalogLightSensor. 
         /// </summary>
         public class Calibration
         {
@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             ///     Linear change in the sensor output
             ///     change in temperature.
             /// </summary>
-            public Voltage VoltsPerCentimeter { get; protected set; } = new Voltage(0.25, VU.Volts);
+            public Voltage VoltsPerLuminance{ get; protected set; } = new Voltage(0.25, VU.Volts);
 
             /// <summary>
             ///     Default constructor. Create a new Calibration object with default values
@@ -31,9 +31,9 @@ namespace Meadow.Foundation.Sensors.Environmental
             /// </summary>
             /// <param name="voltsPerCentimeter">Voltage change per cenimeter.</param>
             /// <param name="voltsAtZero">Voltage at a zero water level reading.</param>
-            public Calibration(Voltage voltsPerCentimeter, Voltage voltsAtZero)
+            public Calibration(Voltage voltsPerLuminance, Voltage voltsAtZero)
             {
-                VoltsPerCentimeter = voltsPerCentimeter;
+                VoltsPerLuminance = voltsPerLuminance;
                 VoltsAtZero = voltsAtZero;
             }
         }

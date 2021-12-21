@@ -1,103 +1,66 @@
-﻿using Meadow.Peripherals.Displays;
+﻿using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Graphics.Buffers;
+using System;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Abstract hardware display class 
     /// </summary>
-    public abstract class DisplayBase : IDisplay
+    [Obsolete("This class is obsolete, use IGraphicsDislay instead")]
+    public abstract class DisplayBase : IGraphicsDisplay
     {
-        /// <summary>
-        /// Mode for copying 1 bit bitmaps
-        /// </summary>
-        public enum BitmapMode
-        {
-            And,
-            Or,
-            XOr,
-            Copy
-        };
+        public ColorType ColorMode => throw new NotImplementedException();
 
-        /// <summary>
-        /// Enum for Display color mode, defines bit depth and RGB order
-        /// </summary>
-        public enum DisplayColorMode
+        public int Width => throw new NotImplementedException();
+
+        public int Height => throw new NotImplementedException();
+
+        public bool IgnoreOutOfBoundsPixels { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public void Clear(bool updateDisplay = false)
         {
-            Format1bpp, //single color 
-            Format2bpp, //for 2 color ePaper or 4 color gray scale
-            Format4bpp, //for 16 color gray scale
-            Format8bppMonochome,
-            Format8bppRgb332, //Some TFT displays support this mode
-            Format12bppRgb444, //TFT in 12 bit mode
-            Format16bppRgb555, //not currently used
-            Format16bppRgb565, //TFT in 16 bit mode
-            Format18bppRgb666, //TFT in 18 bit mode
-            Format24bppRgb888  //not currently used
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// The DisplayColorMode for the current display
-        /// </summary>
-        public abstract DisplayColorMode ColorMode { get; }
+        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Width of the display in pixels
-        /// </summary>
-        public abstract int Width { get; }
+        public void DrawPixel(int x, int y, Color color)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Height of the display in pixels
-        /// </summary>
-        public abstract int Height { get; }
+        public void DrawPixel(int x, int y, bool colored)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Indicate of the hardware driver should ignore out of bounds pixels
-        /// or if the driver should generate an exception.
-        /// </summary>
-        public bool IgnoreOutOfBoundsPixels { get; set; }
+        public void Fill(Color fillColor, bool updateDisplay = false)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Transfer the contents of the buffer to the display.
-        /// </summary>
-        public abstract void Show();
+        public void Fill(int x, int y, int width, int height, Color fillColor)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Clear the display.
-        /// </summary>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
-        public abstract void Clear(bool updateDisplay = false);
+        public void InvertPixel(int x, int y)
+        {
+            throw new NotImplementedException();
+        }
 
-        public abstract void DrawPixel(int x, int y, Color color);
+        public void Show()
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Draw a single pixel at the specified color
-        /// For performance, set the pen and then use the overload without a color value
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="colored"></param>
-        public abstract void DrawPixel(int x, int y, bool colored);
-
-        /// <summary>
-        /// Draw a single pixel using the pen color
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        public abstract void DrawPixel(int x, int y);
-
-        /// <summary>
-        /// Invert the color of a single pixel
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        public abstract void InvertPixel(int x, int y);
-
-        /// <summary>
-        /// Set the pen color
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="colored"></param>
-        public abstract void SetPenColor(Color pen);
+        public void Show(int left, int top, int right, int bottom)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
