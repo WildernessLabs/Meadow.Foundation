@@ -33,10 +33,19 @@ namespace Ads1015_Sample
 
         async Task TakeMeasurements()
         {
+            var i = 0;
+
             while (true)
             {
-                var value = await _adc.Read();
-                Console.WriteLine($"ADC: {value}");
+                try
+                {
+                    var value = await _adc.Read();
+                    Console.WriteLine($"ADC Reading {++i:0000}: {value}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
                 await Task.Delay(1000);
             }
         }
