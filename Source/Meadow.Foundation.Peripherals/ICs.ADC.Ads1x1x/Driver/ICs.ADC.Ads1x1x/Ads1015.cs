@@ -16,6 +16,7 @@ namespace Meadow.Foundation.ICs.ADC
         }
 
         protected override int BitResolution => 12;
+        protected override int ReadShiftBits => 4;
 
         public SampleRateSetting SampleRate
         {
