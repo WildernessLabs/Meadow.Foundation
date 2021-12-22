@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Spatial
         public double Z { get; set; }
 
         /// <summary>
-        ///     Create a new Vector object with the specified X, y and Z components.
+        ///     Create a new Vector object with the specified X, Y and Z components.
         /// </summary>
         /// <param name="x">X component of the vector.</param>
         /// <param name="y">Y component of the vector.</param>

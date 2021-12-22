@@ -233,8 +233,8 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 if (x < 0) x = 0;
                 if (y < 0) y = 0;
-                if (x > width - 1) x = width - 1;
-                if (y > height - 1) y = height - 1;
+                if (x > Width - 1) x = Width - 1;
+                if (y > Height - 1) y = Height - 1;
             }
 
             imageBuffer.Fill(color, x, y, width, height);

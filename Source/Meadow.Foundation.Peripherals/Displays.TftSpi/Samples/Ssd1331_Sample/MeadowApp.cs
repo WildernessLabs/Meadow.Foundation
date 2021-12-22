@@ -5,19 +5,20 @@ using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
-namespace Displays.Tft.St7796s_Sample
+namespace Displays.Tft.Ssd1331_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
 
-        GraphicsLibrary graphics;
+        MicroGraphics graphics;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing ...");
 
-            var config = new SpiClockConfiguration(12000, SpiClockConfiguration.Mode.Mode0);
+            var config = new SpiClockConfiguration(new Meadow.Units.Frequency(12000, Meadow.Units.Frequency.UnitType.Kilohertz),
+                SpiClockConfiguration.Mode.Mode0);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             Console.WriteLine("Create display driver instance");
@@ -32,7 +33,7 @@ namespace Displays.Tft.St7796s_Sample
                 width: 320, height: 480
             );
 
-            graphics = new GraphicsLibrary(display);
+            graphics = new MicroGraphics(display);
 
             graphics.CurrentFont = new Font8x8();
             graphics.Clear();
