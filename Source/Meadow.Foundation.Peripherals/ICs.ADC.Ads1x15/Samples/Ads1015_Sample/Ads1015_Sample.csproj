@@ -10,6 +10,6 @@
     <PackageReference Include="Meadow.Foundation" Version="0.*" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\ICs.ADC.Ads1x1x\ICs.ADC.Ads1x1x.csproj" />
+    <ProjectReference Include="..\..\Driver\ICs.ADC.Ads1x15\ICs.ADC.Ads1x15.csproj" />
   </ItemGroup>
 </Project>
