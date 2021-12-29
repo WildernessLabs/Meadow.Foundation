@@ -8,7 +8,7 @@ namespace MicroGraphics.Unit.Tests
     public class ImageTests
     {
         [Fact]
-        public void TestLoadBitmapPositive()
+        public void TestLoadBitmapFilePositive()
         {
             var bpps = new int[] { 32, 24, 8, 4, 1 };
 
@@ -23,6 +23,13 @@ namespace MicroGraphics.Unit.Tests
                 Assert.Equal(53, image.Height);
                 Assert.Equal(bpp, image.BitsPerPixel);
             }
+        }
+
+        [Fact]
+        public void TestLoadBitmapResourcePositive()
+        {
+            var image = Image.LoadFromResource("wl32_res.bmp");
+            Assert.NotNull(image);
         }
     }
 }

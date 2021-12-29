@@ -1,6 +1,7 @@
 ﻿using Meadow.Foundation.Graphics.Buffers;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Meadow.Foundation.Graphics
 {
@@ -24,9 +25,25 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        public static Image LoadFromResource(string path)
+        public static Image LoadFromResource(string name)
         {
-            throw new NotImplementedException();
+            // time to go hunting based on most likely
+            var names = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            // look for an exact match first (if the caller know how resources actually work) or just the name as a fallback
+            var found = names.FirstOrDefault(n => n == name || n.EndsWith(name));
+            if (found != null)
+            {
+                return new Image(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(found));
+            }
+
+            names = System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceNames();
+            found = names.FirstOrDefault(n => n == name || n.EndsWith(name));
+            if (found != null)
+            {
+                return new Image(System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceStream(found));
+            }
+
+            throw new FileNotFoundException("Requested resource not found");
         }
 
         private Image(Stream source)
