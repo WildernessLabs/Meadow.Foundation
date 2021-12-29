@@ -915,7 +915,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a buffer onto the display buffer at the given localation
+        ///     Draw a buffer onto the display buffer at the given location
         ///
         ///     For best performance, source buffer should be the same color depth as the target display
         ///     Note: DrawBuffer will not rotate the source buffer, it will always be oriented relative to base display rotation
@@ -926,6 +926,26 @@ namespace Meadow.Foundation.Graphics
         public void DrawBuffer(int x, int y, IDisplayBuffer buffer)
         {
             display.DrawBuffer(GetXForRotation(x, y), GetYForRotation(x, y), buffer);
+        }
+
+        /// <summary>
+        /// Draw an Image onto the display buffer at the specified location
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="image"></param>
+        public void DrawImage(int x, int y, Image image)
+        {
+            display.DrawBuffer(x, y, image.DisplayBuffer);
+        }
+
+        /// <summary>
+        /// Draw an Image onto the display buffer at (0, 0)
+        /// </summary>
+        /// <param name="image"></param>
+        public void DrawImage(Image image)
+        {
+            DrawImage(0, 0, image);
         }
 
         /// <summary>

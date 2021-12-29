@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Meadow.Foundation.Graphics.Buffers;
+using System;
 using System.IO;
 
 namespace Meadow.Foundation.Graphics
 {
     public partial class Image
     {
-        public byte[] PixelData { get; private set; }
+        public IDisplayBuffer DisplayBuffer { get; private set; }
+
         public int Width { get; private set; }
         public int Height { get; private set; }
         public ColorType ColorType { get; private set; } // TODO: determine this from color depth
@@ -90,7 +92,7 @@ namespace Meadow.Foundation.Graphics
                     // no compression, just pull the data
                     break;
                 case 3:
-                    // not sure what these are used for
+                    // not sure what these are used for -- maybe determining 888, 565, etc?
                     var redMask = BitConverter.ToInt32(dib, 0x36 - 14);
                     var greenMask = BitConverter.ToInt32(dib, 0x3a - 14);
                     var blueMask = BitConverter.ToInt32(dib, 0x3e - 14);
@@ -101,9 +103,28 @@ namespace Meadow.Foundation.Graphics
             }
 
             var offset = 14 + dibSize;
-            PixelData = new byte[source.Length - offset];
+            var pixelData = new byte[source.Length - offset];
             source.Seek(offset, SeekOrigin.Begin);
-            source.Read(PixelData, 0, PixelData.Length);
+            source.Read(pixelData, 0, pixelData.Length);
+
+            switch (BitsPerPixel)
+            {
+                case 32:
+                case 24:
+                    DisplayBuffer = new BufferRgb888(Width, Height, pixelData);
+                    break;
+                case 8:
+                    DisplayBuffer = new BufferGray8(Width, Height, pixelData);
+                    break;
+                case 4:
+                    DisplayBuffer = new BufferGray4(Width, Height, pixelData);
+                    break;
+                case 1:
+                    DisplayBuffer = new Buffer1(Width, Height, pixelData);
+                    break;
+                default:
+                    throw new NotSupportedException("Unsupported color depth");
+            }
         }
 
         private void LoadJpeg(Stream stream)
