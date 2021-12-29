@@ -103,13 +103,18 @@ namespace Meadow.Foundation.Graphics
             }
 
             var offset = 14 + dibSize;
-            var pixelData = new byte[source.Length - offset];
+            // calculate actual size, minus any padding
+            var cal = (int)(Width * Height * (BitsPerPixel / 8f));
+
+            var pixelData = new byte[cal];
             source.Seek(offset, SeekOrigin.Begin);
             source.Read(pixelData, 0, pixelData.Length);
 
             switch (BitsPerPixel)
             {
                 case 32:
+                    DisplayBuffer = new BufferRgb8888(Width, Height, pixelData);
+                    break;
                 case 24:
                     DisplayBuffer = new BufferRgb888(Width, Height, pixelData);
                     break;

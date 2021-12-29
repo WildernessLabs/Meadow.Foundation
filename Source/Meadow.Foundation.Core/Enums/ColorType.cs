@@ -14,6 +14,7 @@
         Format16bppRgb555, //not currently used
         Format16bppRgb565, //TFT in 16 bit mode
         Format18bppRgb666, //TFT in 18 bit mode
-        Format24bppRgb888  //24 bit color
+        Format24bppRgb888,  //24 bit color
+        Format32bppRgba  //32 bit color
     }
 }
