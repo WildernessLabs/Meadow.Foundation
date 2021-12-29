@@ -30,17 +30,15 @@ namespace Meadow.Foundation.Graphics
             // time to go hunting based on most likely
             var names = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceNames();
             // look for an exact match first (if the caller know how resources actually work) or just the name as a fallback
-            var found = names.FirstOrDefault(n => n == name || n.EndsWith(name));
-            if (found != null)
+            if (names.FirstOrDefault(n => n == name || n.EndsWith(name)) is { } found)
             {
                 return new Image(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(found));
             }
 
             names = System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceNames();
-            found = names.FirstOrDefault(n => n == name || n.EndsWith(name));
-            if (found != null)
+            if (names.FirstOrDefault(n => n == name || n.EndsWith(name)) is { } found2)
             {
-                return new Image(System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceStream(found));
+                return new Image(System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceStream(found2));
             }
 
             throw new FileNotFoundException("Requested resource not found");
