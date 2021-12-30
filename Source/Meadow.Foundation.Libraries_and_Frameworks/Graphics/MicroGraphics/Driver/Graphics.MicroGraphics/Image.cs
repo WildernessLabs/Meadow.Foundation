@@ -108,21 +108,22 @@ namespace Meadow.Foundation.Graphics
                     break;
                 case 3:
                     // not sure what these are used for -- maybe determining 888, 565, etc?
+                    /*
                     var redMask = BitConverter.ToInt32(dib, 0x36 - 14);
                     var greenMask = BitConverter.ToInt32(dib, 0x3a - 14);
                     var blueMask = BitConverter.ToInt32(dib, 0x3e - 14);
                     var alphaMask = BitConverter.ToInt32(dib, 0x42 - 14);
+                    */
                     break;
                 default:
                     throw new NotSupportedException("Unsupported bitmap compression");
             }
 
-            var offset = 14 + dibSize;
             // calculate actual size, minus any padding
             var cal = (int)(Width * Height * (BitsPerPixel / 8f));
 
             var pixelData = new byte[cal];
-            source.Seek(offset, SeekOrigin.Begin);
+            source.Seek(dataOffset, SeekOrigin.Begin);
             source.Read(pixelData, 0, pixelData.Length);
 
             switch (BitsPerPixel)
@@ -132,6 +133,12 @@ namespace Meadow.Foundation.Graphics
                     break;
                 case 24:
                     DisplayBuffer = new BufferRgb888(Width, Height, pixelData);
+                    break;
+                case 16:
+                    DisplayBuffer = new BufferRgb565(Width, Height, pixelData);
+                    break;
+                case 12:
+                    DisplayBuffer = new BufferRgb444(Width, Height, pixelData);
                     break;
                 case 8:
                     DisplayBuffer = new BufferGray8(Width, Height, pixelData);

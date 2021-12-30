@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="wl1.bmp" />
+    <None Remove="wl16.bmp" />
     <None Remove="wl24.bmp" />
     <None Remove="wl32.bmp" />
     <None Remove="wl32_res.bmp" />
@@ -17,6 +18,9 @@
 
   <ItemGroup>
     <Content Include="wl1.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wl16.bmp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wl24.bmp">

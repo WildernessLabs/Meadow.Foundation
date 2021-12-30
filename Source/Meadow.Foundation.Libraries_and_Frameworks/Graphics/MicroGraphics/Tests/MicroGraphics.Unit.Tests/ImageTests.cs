@@ -8,9 +8,17 @@ namespace MicroGraphics.Unit.Tests
     public class ImageTests
     {
         [Fact]
+        public void TestLoadBitmapFilePositive2()
+        {
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"wl16.bmp");
+
+                var image = Image.LoadFromFile(path);
+        }
+
+        [Fact]
         public void TestLoadBitmapFilePositive()
         {
-            var bpps = new int[] { 32, 24, 8, 4, 1 };
+            var bpps = new int[] { 32, 24, 16, 8, 4, 1 };
 
             foreach (var bpp in bpps)
             {

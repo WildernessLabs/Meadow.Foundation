@@ -60,31 +60,35 @@ namespace Meadow.Foundation.Graphics
 
             while (true)
             {
-                DrawImageFromFile();
+                DrawImageFromFile(8);
                 Thread.Sleep(2000);
-                DrawImageFromResource();
+                DrawImageFromResource(8);
+                Thread.Sleep(2000);
+                DrawImageFromFile(24);
+                Thread.Sleep(2000);
+                DrawImageFromResource(24);
                 Thread.Sleep(2000);
             }
         }
 
-        private void DrawImageFromFile()
+        private void DrawImageFromFile(int depth)
         {
             Console.WriteLine("Showing file...");
-            var filePath = Path.Combine(MeadowOS.FileSystem.UserFileSystemRoot, "wl24.bmp");
+            var filePath = Path.Combine(MeadowOS.FileSystem.UserFileSystemRoot, $"wl{depth}.bmp");
             var image = Image.LoadFromFile(filePath);
             _graphics.Clear(true);
             _graphics.DrawImage(image);
-            _graphics.DrawText(5, 200, "file", Color.White);
+            _graphics.DrawText(5, 200, $"{depth}bpp file", Color.White);
             _graphics.Show();
         }
 
-        private void DrawImageFromResource()
+        private void DrawImageFromResource(int depth)
         {
             Console.WriteLine("Showing resource...");
-            var image = Image.LoadFromResource("wl24_res.bmp");
+            var image = Image.LoadFromResource($"wl{depth}_res.bmp");
             _graphics.Clear(true);
             _graphics.DrawImage(image);
-            _graphics.DrawText(5, 200, "resource", Color.White);
+            _graphics.DrawText(5, 200, $"{depth}bpp resource", Color.White);
             _graphics.Show();
         }
     }
