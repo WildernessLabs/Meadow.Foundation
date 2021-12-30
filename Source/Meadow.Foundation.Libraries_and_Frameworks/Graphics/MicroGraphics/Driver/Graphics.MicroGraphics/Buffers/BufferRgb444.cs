@@ -60,7 +60,6 @@ namespace Meadow.Foundation.Graphics.Buffers
             b = (byte)(b * 255 / 15);
 
             return new Color(r, g, b);
-
         }
 
         public override void SetPixel(int x, int y, Color color)
