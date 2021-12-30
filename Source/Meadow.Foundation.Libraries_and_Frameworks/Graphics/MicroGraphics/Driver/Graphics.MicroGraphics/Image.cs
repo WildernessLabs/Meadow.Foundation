@@ -176,7 +176,7 @@ namespace Meadow.Foundation.Graphics
                     DisplayBuffer = new BufferRgb444(width, height, pixelData);
                     break;
                 case 8:
-                    // TODO: support 8-bit color
+                    // TODO: support 8-bit grayscale
                     DisplayBuffer = new BufferRgb332(width, height, pixelData);
                     break;
                 case 4:
