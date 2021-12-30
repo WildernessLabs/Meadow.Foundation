@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
 
             //create buffers
-            imageBuffer = new Buffer1(width, height, PAGE_SIZE);
+            imageBuffer = new Buffer1bpp(width, height, PAGE_SIZE);
             readBuffer = new byte[imageBuffer.ByteCount];
             pageBuffer = new byte[PAGE_SIZE + 1];
 

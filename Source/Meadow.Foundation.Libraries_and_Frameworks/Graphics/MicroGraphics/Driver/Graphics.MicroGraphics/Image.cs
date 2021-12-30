@@ -181,7 +181,7 @@ namespace Meadow.Foundation.Graphics
                     break;
                 case 8:
                     // TODO: support 8-bit color
-                    DisplayBuffer = new BufferGray8(width, height, pixelData);
+                    DisplayBuffer = new BufferRgb332(width, height, pixelData);
                     break;
                 case 4:
                     // TODO: support 4-bit color
