@@ -959,7 +959,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="image"></param>
         public void DrawImage(int x, int y, Image image)
         {
-            display.DrawBuffer(x, y, image.DisplayBuffer);
+            DrawBuffer(x, y, image.DisplayBuffer);
         }
 
         /// <summary>

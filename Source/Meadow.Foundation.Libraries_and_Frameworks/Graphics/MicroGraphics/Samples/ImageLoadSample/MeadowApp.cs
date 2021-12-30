@@ -25,8 +25,8 @@ namespace Meadow.Foundation.Graphics
 
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        private MicroGraphics _graphics;
-        private St7789 _display;
+        private MicroGraphics graphics;
+        private St7789 display;
 
         public MeadowApp()
         {
@@ -48,14 +48,14 @@ namespace Meadow.Foundation.Graphics
             };
 
             Console.WriteLine("Creating a MicroGraphics...");
-            _graphics = new MicroGraphics(display);
-            _graphics.Rotation = RotationType._180Degrees;
+            graphics = new MicroGraphics(display);
+            graphics.Rotation = RotationType._180Degrees;
 
-            _graphics.Clear(true);
-            _graphics.CurrentFont = new Font12x20();
+            graphics.Clear();
+            graphics.CurrentFont = new Font12x20();
 
-            _graphics.DrawText(5, 200, "starting...", Color.White);
-            _graphics.Show();
+            graphics.DrawText(5, 200, "starting...", Color.White);
+            graphics.Show();
             Thread.Sleep(2000);
 
             while (true)
@@ -76,20 +76,20 @@ namespace Meadow.Foundation.Graphics
             Console.WriteLine("Showing file...");
             var filePath = Path.Combine(MeadowOS.FileSystem.UserFileSystemRoot, $"wl{depth}.bmp");
             var image = Image.LoadFromFile(filePath);
-            _graphics.Clear(true);
-            _graphics.DrawImage(image);
-            _graphics.DrawText(5, 200, $"{depth}bpp file", Color.White);
-            _graphics.Show();
+            graphics.Clear();
+            graphics.DrawImage(image);
+            graphics.DrawText(5, 200, $"{depth}bpp file", Color.White);
+            graphics.Show();
         }
 
         private void DrawImageFromResource(int depth)
         {
             Console.WriteLine("Showing resource...");
             var image = Image.LoadFromResource($"wl{depth}_res.bmp");
-            _graphics.Clear(true);
-            _graphics.DrawImage(image);
-            _graphics.DrawText(5, 200, $"{depth}bpp resource", Color.White);
-            _graphics.Show();
+            graphics.Clear();
+            graphics.DrawImage(image);
+            graphics.DrawText(5, 200, $"{depth}bpp resource", Color.White);
+            graphics.Show();
         }
     }
 }
