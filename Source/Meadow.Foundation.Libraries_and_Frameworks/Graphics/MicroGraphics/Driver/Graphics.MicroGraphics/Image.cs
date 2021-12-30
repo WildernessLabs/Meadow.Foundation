@@ -12,6 +12,8 @@ namespace Meadow.Foundation.Graphics
         public int Width => DisplayBuffer.Width;
         public int Height => DisplayBuffer.Height;
 
+        public int BitsPerPixel { get; protected set; }
+
         public static Image LoadFromFile(string path)
         {
             var fi = new FileInfo(path);
@@ -59,7 +61,6 @@ namespace Meadow.Foundation.Graphics
                 default:
                     throw new NotSupportedException("Image type not supported");
             }
-
         }
 
         private void LoadBitmap(Stream source)
@@ -102,7 +103,7 @@ namespace Meadow.Foundation.Graphics
                 height *= -1;
             }
 
-            var bitsPerPixel = BitConverter.ToInt16(dib, 28 - 14);
+            BitsPerPixel = BitConverter.ToInt16(dib, 28 - 14);
             var compression = BitConverter.ToInt32(dib, 30 - 14);
             var dataSize = BitConverter.ToInt32(dib, 34 - 14);
 
@@ -124,7 +125,7 @@ namespace Meadow.Foundation.Graphics
                     throw new NotSupportedException("Unsupported bitmap compression");
             }
 
-            var bytesPerRow = (int)(width * (bitsPerPixel / 8f));
+            var bytesPerRow = (int)(width * (BitsPerPixel / 8f));
             // BMP row length is evenly divisible by 4
             var rowPad = 4 - (bytesPerRow % 4);
             var pixelBufferSize = height * bytesPerRow;
@@ -159,7 +160,7 @@ namespace Meadow.Foundation.Graphics
 
             // TODO: determine if it's grayscale?
 
-            switch (bitsPerPixel)
+            switch (BitsPerPixel)
             {
                 case 32:
                     DisplayBuffer = new BufferRgb8888(width, height, pixelData);
