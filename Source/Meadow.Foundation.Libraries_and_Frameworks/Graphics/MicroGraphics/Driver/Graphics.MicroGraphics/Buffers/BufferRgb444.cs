@@ -55,6 +55,10 @@ namespace Meadow.Foundation.Graphics.Buffers
                 b = (byte)(Buffer[index + 1] & 0x0F);
             }
 
+            r = (byte)(r * 255 / 15);
+            g = (byte)(g * 255 / 15);
+            b = (byte)(b * 255 / 15);
+
             return new Color(r, g, b);
 
         }
