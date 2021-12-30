@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Graphics.Buffers
     {
         public override int ByteCount => Width * Height * 4;
 
-        public override ColorType displayColorMode => ColorType.Format32bppRgba;
+        public override ColorType displayColorMode => ColorType.Format32bppRgba8888;
 
         public BufferRgb8888(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             byte b = Buffer[index + 2];
             byte a = Buffer[index + 3];
 
-            return new Color(r, g, b);
+            return new Color(r, g, b, a);
         }
 
         public override void SetPixel(int x, int y, Color color)

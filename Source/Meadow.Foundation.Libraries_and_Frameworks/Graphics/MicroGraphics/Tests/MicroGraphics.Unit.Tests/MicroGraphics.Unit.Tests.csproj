@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="RGB17x3_24.bmp" />
+    <None Remove="RGB17x3_32.bmp" />
+    <None Remove="RGB17x3_4.bmp" />
+    <None Remove="RGB17x3_8.bmp" />
     <None Remove="wl1.bmp" />
     <None Remove="wl16.bmp" />
     <None Remove="wl24.bmp" />
@@ -17,6 +21,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="RGB17x3_24.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="RGB17x3_32.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="RGB17x3_4.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="RGB17x3_8.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wl1.bmp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

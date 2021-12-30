@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Graphics
                     // no compression, just pull the data
                     break;
                 case 3:
-                    // not sure what these are used for -- maybe determining 888, 565, etc?
+                    // not sure what these are used for.  I've seen them on 32 and 24-bit
                     /*
                     var redMask = BitConverter.ToInt32(dib, 0x36 - 14);
                     var greenMask = BitConverter.ToInt32(dib, 0x3a - 14);
@@ -126,6 +126,8 @@ namespace Meadow.Foundation.Graphics
             source.Seek(dataOffset, SeekOrigin.Begin);
             source.Read(pixelData, 0, pixelData.Length);
 
+            // TODO: determine if it's grayscale?
+
             switch (BitsPerPixel)
             {
                 case 32:
@@ -141,13 +143,15 @@ namespace Meadow.Foundation.Graphics
                     DisplayBuffer = new BufferRgb444(Width, Height, pixelData);
                     break;
                 case 8:
+                    // TODO: support 8-bit color
                     DisplayBuffer = new BufferGray8(Width, Height, pixelData);
                     break;
                 case 4:
+                    // TODO: support 4-bit color
                     DisplayBuffer = new BufferGray4(Width, Height, pixelData);
                     break;
                 case 1:
-                    DisplayBuffer = new Buffer1(Width, Height, pixelData);
+                    DisplayBuffer = new Buffer1bpp(Width, Height, pixelData);
                     break;
                 default:
                     throw new NotSupportedException("Unsupported color depth");

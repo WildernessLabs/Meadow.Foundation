@@ -25,8 +25,8 @@ namespace Meadow.Foundation.Graphics
 
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        MicroGraphics _graphics;
-        St7789 _display;
+        private MicroGraphics _graphics;
+        private St7789 _display;
 
         public MeadowApp()
         {
