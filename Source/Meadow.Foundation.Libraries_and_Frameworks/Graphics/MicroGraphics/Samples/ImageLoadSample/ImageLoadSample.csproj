@@ -1,0 +1,37 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <Company>Wilderness Labs, Inc</Company>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="wl24.bmp" />
+    <None Remove="wl24_res.bmp" />
+    <None Remove="wl8.bmp" />
+    <None Remove="wl8_res.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="wl24_res.bmp">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="wl8_res.bmp">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Content Include="wl8.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wl24.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TFTSPI\Displays.TftSpi.csproj" />
+    <ProjectReference Include="..\..\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
+  </ItemGroup>
+</Project>

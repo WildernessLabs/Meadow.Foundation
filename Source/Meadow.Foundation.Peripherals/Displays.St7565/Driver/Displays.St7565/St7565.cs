@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Displays
         protected const bool Data = true;
         protected const bool Command = false;
 
-        protected Buffer1 imageBuffer;
+        protected Buffer1bpp imageBuffer;
         protected byte[] pageBuffer;
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Displays
 
             spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
 
-            imageBuffer = new Buffer1(width, height);
+            imageBuffer = new Buffer1bpp(width, height);
             pageBuffer = new byte[PageSize];
 
             InitST7565();

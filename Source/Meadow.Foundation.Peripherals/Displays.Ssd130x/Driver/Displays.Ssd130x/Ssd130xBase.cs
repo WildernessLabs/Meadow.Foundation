@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <summary>
         ///     Buffer holding the pixels in the display.
         /// </summary>
-        protected Buffer1 imageBuffer;
+        protected Buffer1bpp imageBuffer;
         protected byte[] readBuffer;
         protected Memory<byte> commandBuffer;
         protected byte[] pageBuffer;
