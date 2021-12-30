@@ -59,8 +59,7 @@ namespace Meadow.Foundation.Graphics
                     LoadBitmap(source);
                     break;
                 case 0xffd8:
-                    LoadJpeg(source);
-                    break;
+                    throw new NotSupportedException("JPG images are not supported");
                 default:
                     throw new NotSupportedException("Image type not supported");
             }
@@ -129,12 +128,38 @@ namespace Meadow.Foundation.Graphics
                     throw new NotSupportedException("Unsupported bitmap compression");
             }
 
-            // calculate actual size, minus any padding
-            var cal = (int)(width * height * (BitsPerPixel / 8f));
+            var bytesPerRow = (int)(width * (BitsPerPixel / 8f));
+            // BMP row length is evenly divisible by 4
+            var rowPad = 4 - (bytesPerRow % 4);
+            var pixelBufferSize = height * bytesPerRow;
+            var pixelData = new byte[pixelBufferSize];
 
-            var pixelData = new byte[cal];
             source.Seek(dataOffset, SeekOrigin.Begin);
-            source.Read(pixelData, 0, pixelData.Length);
+
+            // bitmaps are, by default, stored with rows bottom up (though top down is supported)
+            // we need to read row-by-row and put these into the pixel buffer
+            if (invertedRows)
+            {
+                var index = 0;
+                for (var row = 0; row < height; row++)
+                {
+                    source.Read(pixelData, index, bytesPerRow);
+                    // skip any row pad
+                    if (rowPad > 0) source.Seek(rowPad, SeekOrigin.Current);
+                    index += bytesPerRow;
+                }
+            }
+            else
+            {
+                var index = bytesPerRow * (height - 1);
+                for (var row = 0; row < height; row++)
+                {
+                    source.Read(pixelData, index, bytesPerRow);
+                    // skip any row pad
+                    if (rowPad > 0) source.Seek(rowPad, SeekOrigin.Current);
+                    index -= bytesPerRow;
+                }
+            }
 
             // TODO: determine if it's grayscale?
 
@@ -144,6 +169,8 @@ namespace Meadow.Foundation.Graphics
                     DisplayBuffer = new BufferRgb8888(width, height, pixelData);
                     break;
                 case 24:
+                    // 24-bit images are stored BGR, not RGB.  Yay.  Time to swap
+                    ConvertRGBBufferToBGRBuffer(pixelData);
                     DisplayBuffer = new BufferRgb888(width, height, pixelData);
                     break;
                 case 16:
@@ -168,18 +195,18 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        private void LoadJpeg(Stream stream)
+        private void ConvertRGBBufferToBGRBuffer(byte[] buffer)
         {
-            throw new NotImplementedException();
-            // offset   size    description
-            // ------   ----    -----------
-            // 0        2       FFD8
-            // 2        2       width in pixels
-            // 4        2       height in pixels
-            // 6        1       components (1 == gray, 3 == color)
-            // 7        1       sampling factor 1
-            // 8        1       sampling factor 2
-            // 9        1       sampling factor 3
+            byte temp;
+
+            for (int i = 0; i < buffer.Length; i+=3)
+            {
+                // pull red
+                temp = buffer[i];
+                // push blue to red
+                buffer[i] = buffer[i + 2];
+                buffer[i + 2] = temp;
+            }
         }
     }
 }
