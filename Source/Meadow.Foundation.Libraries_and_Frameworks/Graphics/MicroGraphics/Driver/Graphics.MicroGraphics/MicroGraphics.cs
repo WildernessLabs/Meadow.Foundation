@@ -923,8 +923,8 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">x location of target to draw buffer</param>
         /// <param name="y">x location of target to draw buffer</param>
         /// <param name="buffer">the source buffer to write to the display buffer</param>
-        /// /// <param name="rotateImageForDisplay">rotate the buffer if the display is rotated - maybe be slower</param>
-        public void DrawBuffer(int x, int y, IDisplayBuffer buffer, bool rotateBuffrotateImageForDisplayerForDisplay = true)
+        /// /// <param name="rotateBufferForDisplay">rotate the buffer if the display is rotated - maybe be slower</param>
+        public void DrawBuffer(int x, int y, IDisplayBuffer buffer, bool rotateBufferForDisplay = true)
         {
             //fast and happy path
             if(Rotation == RotationType.Default)
@@ -932,7 +932,7 @@ namespace Meadow.Foundation.Graphics
                 display.DrawBuffer(x, y, buffer);
             }
             //rotate buffer if the display is rotated (slow)
-            else if(rotateBuffrotateImageForDisplayerForDisplay) //loop over every pixel
+            else if(rotateBufferForDisplay) //loop over every pixel
             {
                 for(int i = 0; i < buffer.Width; i++)
                 {

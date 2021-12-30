@@ -6,6 +6,7 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 using Meadow.Units;
 
@@ -61,6 +62,8 @@ namespace Displays.Tft.ST7789_Sample
             graphics.DrawRectangle(0, 100, 120, 20, Color.Orange, true);
 
             graphics.Show();
+
+            BufferRotationTest();
         }
 
         //<!—SNOP—>
@@ -73,6 +76,9 @@ namespace Displays.Tft.ST7789_Sample
 
             while (true)
             {
+                BufferRotationTest();
+                Thread.Sleep(sleepDuration);
+
                 PartialUpdateTest();
                 Thread.Sleep(sleepDuration);
 
@@ -142,6 +148,33 @@ namespace Displays.Tft.ST7789_Sample
             Console.WriteLine($"fps: {10.0/sw.Elapsed.TotalSeconds}");
 
             Thread.Sleep(1000);
+        }
+
+        void BufferRotationTest()
+        {
+            var buffer = new BufferRgb888(50, 50);
+            var oldRotation = graphics.Rotation;
+
+            graphics.Clear();
+            graphics.Rotation = RotationType.Default;
+            buffer.Fill(Color.Red);
+            graphics.DrawBuffer(10, 10, buffer);
+
+            graphics.Rotation = RotationType._90Degrees;
+            buffer.Fill(Color.Green);
+            graphics.DrawBuffer(10, 10, buffer);
+
+            graphics.Rotation = RotationType._180Degrees;
+            buffer.Fill(Color.Blue);
+            graphics.DrawBuffer(10, 10, buffer);
+
+            graphics.Rotation = RotationType._270Degrees;
+            buffer.Fill(Color.Yellow);
+            graphics.DrawBuffer(10, 10, buffer);
+
+            graphics.Show();
+
+            graphics.Rotation = oldRotation;
         }
 
         void PartialUpdateTest()
