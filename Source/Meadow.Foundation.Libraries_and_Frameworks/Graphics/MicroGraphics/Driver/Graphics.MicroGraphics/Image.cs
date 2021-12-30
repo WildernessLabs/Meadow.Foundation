@@ -9,8 +9,10 @@ namespace Meadow.Foundation.Graphics
     {
         public IDisplayBuffer DisplayBuffer { get; private set; }
 
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        public int Width => DisplayBuffer.Width;
+        public int Height => DisplayBuffer.Height;
+
+        // these will likely go away once the buffer is fully working
         public ColorType ColorType { get; private set; } // TODO: determine this from color depth
         public int BitsPerPixel { get; private set; }
 
@@ -95,8 +97,16 @@ namespace Meadow.Foundation.Graphics
             source.Seek(-4, SeekOrigin.Current);
             source.Read(dib, 0, dib.Length);
 
-            Width = BitConverter.ToInt32(dib, 18 - 14 );
-            Height = BitConverter.ToInt32(dib, 22 - 14);
+            var width = BitConverter.ToInt32(dib, 18 - 14 );
+            var height = BitConverter.ToInt32(dib, 22 - 14);
+            var invertedRows = false;
+            if (height < 0)
+            {
+                // rows are top to bottom, not bottom to top
+                invertedRows = true;
+                height *= -1;
+            }
+
             BitsPerPixel = BitConverter.ToInt16(dib, 28 - 14);
             var compression = BitConverter.ToInt32(dib, 30 - 14);
             var dataSize = BitConverter.ToInt32(dib, 34 - 14);
@@ -120,7 +130,7 @@ namespace Meadow.Foundation.Graphics
             }
 
             // calculate actual size, minus any padding
-            var cal = (int)(Width * Height * (BitsPerPixel / 8f));
+            var cal = (int)(width * height * (BitsPerPixel / 8f));
 
             var pixelData = new byte[cal];
             source.Seek(dataOffset, SeekOrigin.Begin);
@@ -131,27 +141,27 @@ namespace Meadow.Foundation.Graphics
             switch (BitsPerPixel)
             {
                 case 32:
-                    DisplayBuffer = new BufferRgb8888(Width, Height, pixelData);
+                    DisplayBuffer = new BufferRgb8888(width, height, pixelData);
                     break;
                 case 24:
-                    DisplayBuffer = new BufferRgb888(Width, Height, pixelData);
+                    DisplayBuffer = new BufferRgb888(width, height, pixelData);
                     break;
                 case 16:
-                    DisplayBuffer = new BufferRgb565(Width, Height, pixelData);
+                    DisplayBuffer = new BufferRgb565(width, height, pixelData);
                     break;
                 case 12:
-                    DisplayBuffer = new BufferRgb444(Width, Height, pixelData);
+                    DisplayBuffer = new BufferRgb444(width, height, pixelData);
                     break;
                 case 8:
                     // TODO: support 8-bit color
-                    DisplayBuffer = new BufferGray8(Width, Height, pixelData);
+                    DisplayBuffer = new BufferGray8(width, height, pixelData);
                     break;
                 case 4:
                     // TODO: support 4-bit color
-                    DisplayBuffer = new BufferGray4(Width, Height, pixelData);
+                    DisplayBuffer = new BufferGray4(width, height, pixelData);
                     break;
                 case 1:
-                    DisplayBuffer = new Buffer1bpp(Width, Height, pixelData);
+                    DisplayBuffer = new Buffer1bpp(width, height, pixelData);
                     break;
                 default:
                     throw new NotSupportedException("Unsupported color depth");
