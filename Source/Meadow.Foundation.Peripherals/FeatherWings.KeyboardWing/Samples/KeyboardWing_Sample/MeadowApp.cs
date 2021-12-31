@@ -32,9 +32,9 @@ namespace FeatherWings.KeyboardWing_Sample
                 displayDcPin: Device.Pins.D12,
                 lightSensorPin: Device.Pins.A05);
 
-            keyboardWing.LightSensor.StartUpdating(new System.TimeSpan(0, 0, 30));
+            keyboardWing.LightSensor.StartUpdating(new TimeSpan(0, 0, 30));
 
-            keyboardWing.TouchScreen.Rotation = RotationType._270Degrees;
+            keyboardWing.TouchScreen.Rotation = RotationType._90Degrees;
                 
             graphics = new MicroGraphics(keyboardWing.Display)
             {
