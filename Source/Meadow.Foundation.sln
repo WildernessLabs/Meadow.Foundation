@@ -1016,6 +1016,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B167
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tsc2004_Sample", "Meadow.Foundation.Peripherals\Sensors.Hid.Tsc2004\Samples\Tsc2004_Sample\Tsc2004_Sample.csproj", "{C6D1270C-92AB-4FE2-BE93-29DD52F97AD4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatherWings.KeyboardWing", "FeatherWings.KeyboardWing", "{8422562B-03F1-4C54-9511-0BFA0949F1C3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{16D0B480-74C7-4235-BE46-228A24B71D74}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatherWings.KeyboardWing", "Meadow.Foundation.Peripherals\FeatherWings.KeyboardWing\Driver\FeatherWings.KeyboardWing\FeatherWings.KeyboardWing.csproj", "{C94B646C-223E-4871-84A8-CE8A832D3EFA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KeyboardWing_Sample", "Meadow.Foundation.Peripherals\FeatherWings.KeyboardWing\Samples\KeyboardWing_Sample\KeyboardWing_Sample.csproj", "{A05275B1-3C25-47A2-AE23-93E4A2DAEC97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2354,6 +2362,18 @@ Global
 		{C6D1270C-92AB-4FE2-BE93-29DD52F97AD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6D1270C-92AB-4FE2-BE93-29DD52F97AD4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C6D1270C-92AB-4FE2-BE93-29DD52F97AD4}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{C94B646C-223E-4871-84A8-CE8A832D3EFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C94B646C-223E-4871-84A8-CE8A832D3EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C94B646C-223E-4871-84A8-CE8A832D3EFA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C94B646C-223E-4871-84A8-CE8A832D3EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C94B646C-223E-4871-84A8-CE8A832D3EFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C94B646C-223E-4871-84A8-CE8A832D3EFA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A05275B1-3C25-47A2-AE23-93E4A2DAEC97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A05275B1-3C25-47A2-AE23-93E4A2DAEC97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A05275B1-3C25-47A2-AE23-93E4A2DAEC97}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A05275B1-3C25-47A2-AE23-93E4A2DAEC97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A05275B1-3C25-47A2-AE23-93E4A2DAEC97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A05275B1-3C25-47A2-AE23-93E4A2DAEC97}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2859,6 +2879,10 @@ Global
 		{8908AAA5-53DD-4526-AAF8-01308F1316EF} = {372B055D-2279-47D2-B1A8-AB1E5670202F}
 		{B167E0C6-F2D8-4B4F-B814-578B72B083BE} = {372B055D-2279-47D2-B1A8-AB1E5670202F}
 		{C6D1270C-92AB-4FE2-BE93-29DD52F97AD4} = {B167E0C6-F2D8-4B4F-B814-578B72B083BE}
+		{8422562B-03F1-4C54-9511-0BFA0949F1C3} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{16D0B480-74C7-4235-BE46-228A24B71D74} = {8422562B-03F1-4C54-9511-0BFA0949F1C3}
+		{C94B646C-223E-4871-84A8-CE8A832D3EFA} = {8422562B-03F1-4C54-9511-0BFA0949F1C3}
+		{A05275B1-3C25-47A2-AE23-93E4A2DAEC97} = {16D0B480-74C7-4235-BE46-228A24B71D74}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
