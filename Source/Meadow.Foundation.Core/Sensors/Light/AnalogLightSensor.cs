@@ -18,14 +18,14 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
-        public AnalogLightSensor.Calibration LuminanceCalibration { get; protected set; }
+        public Calibration LuminanceCalibration { get; protected set; }
 
-		public Illuminance illuminance { get; protected set; }
+        public Illuminance? Illuminance => illuminance;
 
-        Illuminance? ILightSensor.Illuminance => illuminance;
+        Illuminance illuminance;
 
         /// <summary>
-        ///     New instance of the AnalogWaterLevel class.
+        ///     New instance of the AnalogLightSensor class.
         /// </summary>
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the sensor is connected to.</param>
