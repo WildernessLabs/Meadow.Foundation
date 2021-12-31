@@ -28,7 +28,7 @@ namespace Bbq10Keyboard_Sample
                 XMax = 3803,
                 YMin = 195,
                 YMax = 3852,
-                Rotation = RotationType._270Degrees
+                Rotation = RotationType._90Degrees
             };
 
             Task.Run(() =>

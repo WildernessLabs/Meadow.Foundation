@@ -141,11 +141,11 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             switch (Rotation)
             {
-                case RotationType._90Degrees:
+                case RotationType._270Degrees:
                     return DisplayHeight - y - 1;
                 case RotationType._180Degrees:
                     return DisplayWidth - x - 1;
-                case RotationType._270Degrees:
+                case RotationType._90Degrees:
                     return y;
                 case RotationType.Default:
                 default:
@@ -157,11 +157,11 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             switch (Rotation)
             {
-                case RotationType._90Degrees:
+                case RotationType._270Degrees:
                     return x;
                 case RotationType._180Degrees:
                     return DisplayHeight - y - 1;
-                case RotationType._270Degrees:
+                case RotationType._90Degrees:
                     return DisplayWidth - x - 1;
                 case RotationType.Default:
                 default:
