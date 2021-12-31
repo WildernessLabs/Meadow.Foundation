@@ -51,7 +51,21 @@ namespace FeatherWings.KeyboardWing_Sample
         {
             if(e.KeyState == Meadow.Foundation.Sensors.Hid.BBQ10Keyboard.KeyState.StatePress)
             {
-                lastKeyPress = e.AsciiValue.ToString();
+                Console.WriteLine($"OnKeyEvent ASCII value: {(byte)e.AsciiValue}");
+
+                lastKeyPress = (byte)e.AsciiValue switch
+                {
+                    (byte)ButtonType._5WayUp => "5-way up",
+                    (byte)ButtonType._5WayDown => "5-way down",
+                    (byte)ButtonType._5WayLeft => "5-way left",
+                    (byte)ButtonType._5WayRight => "5-way right",
+                    (byte)ButtonType._5WayCenter => "5-way center",
+                    (byte)ButtonType.Button1 => "Button 1",
+                    (byte)ButtonType.Button2 => "Button 2",
+                    (byte)ButtonType.Button3 => "Button 3",
+                    (byte)ButtonType.Button4 => "Button 4",
+                    _  => e.AsciiValue.ToString()
+                };
             }
             UpdateDisplay();
         }
@@ -59,7 +73,7 @@ namespace FeatherWings.KeyboardWing_Sample
         void UpdateDisplay()
         {
             graphics.Clear();
-            graphics.DrawText(0, 0, $"Last key pressed: {lastKeyPress}");
+            graphics.DrawText(0, 0, $"Last pressed: {lastKeyPress}");
             graphics.DrawText(0, 16, $"Luminance: {keyboardWing.LightSensor.Illuminance.Value.Lux}");
 
             graphics.Show();
