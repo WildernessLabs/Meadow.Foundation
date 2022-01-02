@@ -11,8 +11,8 @@ namespace Meadow.Foundation.ICs.ADC
     /// </summary>
     public abstract partial class Ads1x15 : SamplingSensorBase<Units.Voltage>
     {
-        private readonly II2cPeripheral _i2c;
-        private ushort _config;
+        private readonly II2cPeripheral i2cPeripheral;
+        private ushort config;
 
         // These are config register bit offsets
         private const int RateShift = 5;
@@ -41,17 +41,17 @@ namespace Meadow.Foundation.ICs.ADC
             MeasureMode mode,
             ChannelSetting channel)
         {            
-            _i2c = new I2cPeripheral(i2cBus, (byte)address, 3, 3);
+            i2cPeripheral = new I2cPeripheral(i2cBus, (byte)address, 3, 3);
 
             SetConfigRegister(0x8583); // this is the default reset - force it in case it's not been reset
-            _config = GetConfigRegister();
+            config = GetConfigRegister();
             Mode = mode;
             Channel = channel;
         }
 
         private ushort GetRegister(Register register)
         {
-            var read = _i2c.ReadRegisterAsUShort((byte)register, ByteOrder.BigEndian);
+            var read = i2cPeripheral.ReadRegisterAsUShort((byte)register, ByteOrder.BigEndian);
             return read;
         }
 
@@ -61,8 +61,8 @@ namespace Meadow.Foundation.ICs.ADC
             w[0] = (byte)register;
             w[1] = (byte)(value >> 8);
             w[2] = (byte)(value & 0xff);
-            _i2c.Write(w);
-            _config = value;
+            i2cPeripheral.Write(w);
+            config = value;
         }
 
         private ushort GetConfigRegister()
@@ -73,17 +73,17 @@ namespace Meadow.Foundation.ICs.ADC
         private void SetConfigRegister(ushort value)
         {
             SetRegister(Register.Config, value);
-            _config = value;
+            config = value;
         }
 
         internal protected int InternalSampleRate
         {
-            get => (_config >> RateShift) & 0b111;
+            get => (config >> RateShift) & 0b111;
             set
             {
                 if (value == InternalSampleRate) return;
 
-                ushort newConfig = (ushort)(_config & ~(0b111 << RateShift));
+                ushort newConfig = (ushort)(config & ~(0b111 << RateShift));
                 newConfig = (ushort)(newConfig | (value << RateShift));
 
                 SetConfigRegister(newConfig);
@@ -96,12 +96,12 @@ namespace Meadow.Foundation.ICs.ADC
         /// </summary>
         public ChannelSetting Channel
         {
-            get => (ChannelSetting)((_config >> MuxShift) & 0b111);
+            get => (ChannelSetting)((config >> MuxShift) & 0b111);
             set
             {
                 if (value == Channel) return;
 
-                ushort newConfig = (ushort)(_config & ~(0b111 << MuxShift));
+                ushort newConfig = (ushort)(config & ~(0b111 << MuxShift));
                 newConfig = (ushort)(newConfig | ((int)value << MuxShift));
 
                 SetConfigRegister(newConfig);
@@ -113,12 +113,12 @@ namespace Meadow.Foundation.ICs.ADC
         /// </summary>
         public FsrGain Gain
         {
-            get => (FsrGain)((_config >> GainShift) & 0b111);
+            get => (FsrGain)((config >> GainShift) & 0b111);
             set
             {
                 if (value == Gain) return;
 
-                ushort newConfig = (ushort)(_config & ~(0b111 << GainShift));
+                ushort newConfig = (ushort)(config & ~(0b111 << GainShift));
                 newConfig = (ushort)(newConfig | ((int)value << GainShift));
 
                 SetConfigRegister(newConfig);
@@ -130,7 +130,7 @@ namespace Meadow.Foundation.ICs.ADC
         /// </summary>
         public MeasureMode Mode
         {
-            get => (MeasureMode)(_config >> ModeShift & 1);
+            get => (MeasureMode)(config >> ModeShift & 1);
             set
             {
                 if (value == Mode) return;
@@ -139,11 +139,11 @@ namespace Meadow.Foundation.ICs.ADC
                 
                 if(value == MeasureMode.OneShot)
                 {
-                    newConfig = (ushort)(_config | (1 << ModeShift));
+                    newConfig = (ushort)(config | (1 << ModeShift));
                 }
                 else
                 {
-                    newConfig = (ushort)(_config & ~(1 << ModeShift));
+                    newConfig = (ushort)(config & ~(1 << ModeShift));
                 }
                 SetConfigRegister(newConfig);
             }
@@ -191,7 +191,7 @@ namespace Meadow.Foundation.ICs.ADC
             if (Mode == MeasureMode.OneShot)
             {
                 // trigger a conversion
-                var cfg = (ushort)(_config | 1 << 15);
+                var cfg = (ushort)(config | 1 << 15);
                 SetConfigRegister(cfg);
 
                 // wait for conversion complete (MSB == 1)
