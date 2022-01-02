@@ -100,7 +100,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             int sourceIndex, destinationIndex;
             int length = buffer.Width * 3;
 
-            for(int i = 0; i < buffer.Height; i++)
+            for (int i = 0; i < buffer.Height; i++)
             {
                 sourceIndex = length * i;
                 destinationIndex = Width * (y + i) * 3 + x * 3;

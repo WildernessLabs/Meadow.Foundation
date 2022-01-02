@@ -16,8 +16,8 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public ColorType ColorMode => ColorType.Format2bpp;
 
-        protected readonly Buffer1 blackImageBuffer;
-        protected readonly Buffer1 colorImageBuffer;
+        protected readonly Buffer1bpp blackImageBuffer;
+        protected readonly Buffer1bpp colorImageBuffer;
 
         public int Width => blackImageBuffer.Width;
         public int Height => blackImageBuffer.Height;
@@ -36,8 +36,8 @@ namespace Meadow.Foundation.Displays.ePaper
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin));
 
-            blackImageBuffer = new Buffer1(width, height);
-            colorImageBuffer = new Buffer1(width, height);
+            blackImageBuffer = new Buffer1bpp(width, height);
+            colorImageBuffer = new Buffer1bpp(width, height);
 
             blackImageBuffer.Clear(true);
             colorImageBuffer.Clear(true);

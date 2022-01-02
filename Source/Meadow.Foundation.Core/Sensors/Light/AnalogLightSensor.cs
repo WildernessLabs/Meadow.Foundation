@@ -1,37 +1,43 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Light
 {
     public partial class AnalogLightSensor
-        : SensorBase<Illuminance>
-	{
-		//==== internals
+        : SensorBase<Illuminance>, ILightSensor
+    {
 		protected IAnalogInputPort AnalogInputPort { get; }
 		protected int sampleCount = 5;
 		protected int sampleIntervalMs = 40;
 
-        //==== properties
-        public Meadow.Foundation.Sensors.Light.AnalogLightSensor.Calibration LuminanceCalibration { get; protected set; }
+        /// <summary>
+        /// Raised when the value of the reading changes.
+        /// </summary>
+        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
-		public Illuminance Illuminance { get; protected set; }
+        public Calibration LuminanceCalibration { get; protected set; }
 
-		/// <summary>
-		///     New instance of the AnalogWaterLevel class.
-		/// </summary>
-		/// <param name="device">The `IAnalogInputController` to create the port on.</param>
-		/// <param name="analogPin">Analog pin the sensor is connected to.</param>
-		/// <param name="calibration">Calibration for the analog sensor.</param> // TODO: @Jorge, what's this mean?
-		/// <param name="updateIntervalMs">The time, in milliseconds, to wait
-		/// between sets of sample readings. This value determines how often
-		/// `Changed` events are raised and `IObservable` consumers are notified.</param>
-		/// <param name="sampleCount">How many samples to take during a given
-		/// reading. These are automatically averaged to reduce noise.</param>
-		/// <param name="sampleIntervalMs">The time, in milliseconds,
-		/// to wait in between samples during a reading.</param>
-		public AnalogLightSensor(
+        public Illuminance? Illuminance => illuminance;
+
+        Illuminance illuminance;
+
+        /// <summary>
+        ///     New instance of the AnalogLightSensor class.
+        /// </summary>
+        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
+        /// <param name="analogPin">Analog pin the sensor is connected to.</param>
+        /// <param name="calibration">Calibration for the analog sensor.</param> // TODO: @Jorge, what's this mean?
+        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
+        /// between sets of sample readings. This value determines how often
+        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
+        /// <param name="sampleCount">How many samples to take during a given
+        /// reading. These are automatically averaged to reduce noise.</param>
+        /// <param name="sampleIntervalMs">The time, in milliseconds,
+        /// to wait in between samples during a reading.</param>
+        public AnalogLightSensor(
 			IAnalogInputController device,
 			IPin analogPin,
 			Calibration? calibration = null,
@@ -60,14 +66,14 @@ namespace Meadow.Foundation.Sensors.Light
                 IAnalogInputPort.CreateObserver(
                     h => {
                         // capture the old water leve.
-                        var oldLuminance = Illuminance;
+                        var oldLuminance = illuminance;
                         //var oldWaterLevel = VoltageToWaterLevel(h.Old);
 
                         // get the new one
                         var newLuminance = VoltageToLuminance(h.New);
-                        Illuminance = newLuminance; // save state
+                        illuminance = newLuminance; // save state
 
-                        base.RaiseEventsAndNotify(
+                        RaiseEventsAndNotify(
                             new ChangeResult<Illuminance>(newLuminance, oldLuminance)
                         );
                     }
@@ -90,10 +96,10 @@ namespace Meadow.Foundation.Sensors.Light
             Voltage voltage = await AnalogInputPort.Read();
 
             // convert and save to our temp property for later retreival
-            Illuminance = VoltageToLuminance(voltage);
+            illuminance = VoltageToLuminance(voltage);
 
             // return
-            return Illuminance;
+            return illuminance;
         }
 
         /// <summary>
@@ -118,6 +124,12 @@ namespace Meadow.Foundation.Sensors.Light
         public void StopUpdating()
         {
             AnalogInputPort.StopUpdating();
+        }
+
+        protected override void RaiseEventsAndNotify(IChangeResult<Units.Illuminance> changeResult)
+        {
+            LuminosityUpdated?.Invoke(this, changeResult);
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

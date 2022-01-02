@@ -1,0 +1,18 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <Company>Wilderness Labs, Inc</Company>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>App</AssemblyName>
+    <RootNamespace>Meadow.Foundation.FeatherWings</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics\MicroGraphics\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\..\Displays.TftSpi\Driver\Displays.TftSpi\Displays.TftSpi.csproj" />
+    <ProjectReference Include="..\..\Driver\FeatherWings.KeyboardWing\FeatherWings.KeyboardWing.csproj" />
+  </ItemGroup>
+</Project>

@@ -2,17 +2,17 @@
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
-    public class Buffer1 : BufferBase
+    public class Buffer1bpp : BufferBase
     {
         public override int ByteCount => Width * Height / 8;
 
         public override ColorType displayColorMode => ColorType.Format1bpp;
 
-        public Buffer1(int width, int height, byte[] buffer) : base(width, height, buffer) { }
+        public Buffer1bpp(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
-        public Buffer1(int width, int height) : base(width, height) { }
+        public Buffer1bpp(int width, int height) : base(width, height) { }
 
-        public Buffer1(int width, int height, int pageSize)
+        public Buffer1bpp(int width, int height, int pageSize)
         {
             Width = width;
             Height = height;
@@ -124,20 +124,20 @@ namespace Meadow.Foundation.Graphics.Buffers
                     }
                     else
                     {   //else 1 bit at a time 
-                        SetPixel(x + i, y + j, (buffer as Buffer1).GetPixelIsColored(i, j));
+                        SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsColored(i, j));
                     }
                 }
             }
         }
 
-        public Buffer1 Rotate(RotationType rotation)
+        public Buffer1bpp Rotate(RotationType rotation)
         {
-            Buffer1 newBuffer;
+            Buffer1bpp newBuffer;
 
             switch(rotation)
             {
                 case RotationType._90Degrees:
-                    newBuffer = new Buffer1(Height, Width);
+                    newBuffer = new Buffer1bpp(Height, Width);
                     for(int i = 0; i < Width; i++)
                     {
                         for(int j = 0; j < Height; j++)
@@ -147,7 +147,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     }
                     break;
                 case RotationType._270Degrees:
-                    newBuffer = new Buffer1(Height, Width);
+                    newBuffer = new Buffer1bpp(Height, Width);
                     for (int i = 0; i < Width; i++)
                     {
                         for (int j = 0; j < Height; j++)
@@ -157,7 +157,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     }
                     break;
                 case RotationType._180Degrees:
-                    newBuffer = new Buffer1(Width, Height);
+                    newBuffer = new Buffer1bpp(Width, Height);
                     for (int i = 0; i < Width; i++)
                     {
                         for (int j = 0; j < Height; j++)
@@ -168,7 +168,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     break;
                 case RotationType.Default:
                 default:
-                    newBuffer = new Buffer1(Width, Height);
+                    newBuffer = new Buffer1bpp(Width, Height);
                     Array.Copy(Buffer, newBuffer.Buffer, ByteCount);
                     break;
 
@@ -188,7 +188,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
             else //90 & 270
             {
-                newBuffer = new Buffer1(Height, Width);
+                newBuffer = new Buffer1bpp(Height, Width);
             }
 
         }
