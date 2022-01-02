@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <Company>Wilderness Labs, Inc</Company>
@@ -9,14 +9,11 @@
     <AssemblyName>App</AssemblyName>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.BME680\Sensors.Atmospheric.Bme680.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Bme680\Sensors.Atmospheric.Bme68x.csproj" />
   </ItemGroup>
 </Project>

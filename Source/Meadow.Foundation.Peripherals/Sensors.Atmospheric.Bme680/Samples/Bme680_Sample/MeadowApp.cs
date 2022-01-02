@@ -83,7 +83,7 @@ namespace Sensors.Atmospheric.BME680_Sample
             var conditions = await sensor.Read();
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
-            Console.WriteLine($"  Pressure: {conditions.Pressure?.Bar:N2}hPa");
+            Console.WriteLine($"  Pressure: {conditions.Pressure?.Hectopascal:N2}hPa");
             Console.WriteLine($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
         }
 

@@ -730,7 +730,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Atmospheric.Bme680"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{01926B24-03D6-4ACC-ABB7-FF90E5861557}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Bme680", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme680\Driver\Sensors.Atmospheric.Bme680\Sensors.Atmospheric.Bme680.csproj", "{12449481-3CDD-446F-8968-5816E65F62F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Bme68x", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme680\Driver\Sensors.Atmospheric.Bme680\Sensors.Atmospheric.Bme68x.csproj", "{12449481-3CDD-446F-8968-5816E65F62F6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bme680_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme680\Samples\Bme680_Sample\Bme680_Sample.csproj", "{0C1F063F-1C44-450D-90FC-A9A95AA03B97}"
 EndProject
