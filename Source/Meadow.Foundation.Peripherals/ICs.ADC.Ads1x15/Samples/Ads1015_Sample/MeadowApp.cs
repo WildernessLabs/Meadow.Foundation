@@ -13,8 +13,6 @@ namespace Ads1015_Sample
         public MeadowApp()
         {
             Initialize();
-            _ = TestSpeed();
-            _ = TakeMeasurements();
         }
 
         void Initialize()
@@ -28,7 +26,33 @@ namespace Ads1015_Sample
                 Ads1015.SampleRateSetting.Sps3300);
 
             _adc.Gain = Ads1x15.FsrGain.TwoThirds;
-                 
+
+            var observer = Ads1015.CreateObserver(
+                handler: result =>
+                {
+                    Console.WriteLine($"Observer: Voltage changed by threshold; new temp: {result.New.Volts:N2}C, old: {result.Old?.Volts:N2}C");
+                },
+                filter: result =>
+                {
+                    //c# 8 pattern match syntax. checks for !null and assigns var.
+                    if (result.Old is { } old)
+                    {
+                        // TODO: you can check to see if the voltage change is > your desired threshold.
+                        // here we look to see if it's > 0.5V
+                        return Math.Abs(result.New.Volts - old.Volts) > 0.5d;
+                    }
+                    return false;
+                }
+                );
+            _adc.Subscribe(observer);
+
+            _adc.Updated += (sender, result) => {
+                Console.WriteLine($"  Voltage: {result.New.Volts:N2}V");
+            };
+
+            _adc.Read().Wait();
+
+            _adc.StartUpdating(TimeSpan.FromMilliseconds(500));
         }
 
         async Task TestSpeed()

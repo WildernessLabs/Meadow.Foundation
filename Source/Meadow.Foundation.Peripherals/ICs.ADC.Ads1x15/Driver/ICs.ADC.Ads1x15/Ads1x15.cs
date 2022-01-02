@@ -2,13 +2,14 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Meadow.Foundation.ICs.ADC
 {
     /// <summary>
     /// Encapsulation for ADCs based upon the Ads1x1x family of chips.
     /// </summary>
-    public abstract partial class Ads1x15
+    public abstract partial class Ads1x15 : SamplingSensorBase<Units.Voltage>
     {
         private readonly II2cPeripheral _i2c;
         private ushort _config;
@@ -39,7 +40,7 @@ namespace Meadow.Foundation.ICs.ADC
             Address address,
             MeasureMode mode,
             ChannelSetting channel)
-        {
+        {            
             _i2c = new I2cPeripheral(i2cBus, (byte)address, 3, 3);
 
             SetConfigRegister(0x8583); // this is the default reset - force it in case it's not been reset
@@ -152,7 +153,7 @@ namespace Meadow.Foundation.ICs.ADC
         /// Reads the last ADC Conversion as a Voltage based on current Gain settings
         /// </summary>
         /// <returns></returns>
-        public async Task<Units.Voltage> Read()
+        protected override async Task<Voltage> ReadSensor()
         {
             var raw = await ReadRaw();
             var scale = 0d;
