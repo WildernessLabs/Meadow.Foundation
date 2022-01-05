@@ -1,6 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Units;
-using System;
 
 namespace Meadow.Foundation.Servos
 {
@@ -44,11 +42,6 @@ namespace Meadow.Foundation.Servos
         protected virtual void SendCommandPulse(float pulseDuration)
         {
             PwmPort.DutyCycle = CalculateDutyCycle(pulseDuration);
-        }
-
-        public void RotateTo(Angle angle, bool stopAfterMotion = false)
-        {
-            throw new NotImplementedException();
         }
     }
 }

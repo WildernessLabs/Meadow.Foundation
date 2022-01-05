@@ -1,13 +1,14 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Servos
 {
     public abstract class AngularServoBase : ServoBase, IAngularServo
     {
         /// <summary>
-        /// Returns the current angle. Returns -1 if the angle is unknown.
+        /// Returns the current angle.
         /// </summary>
         public Angle? Angle { get; protected set; }
 
@@ -26,7 +27,7 @@ namespace Meadow.Foundation.Servos
         /// </summary>
         /// <param name="angle">The angle to rotate to.</param>
         /// <param name="stopAfterMotion">When <b>true</b> the PWM will stop after motion is complete.</param>
-        public void RotateTo(Angle angle, bool stopAfterMotion = false)
+        public async Task RotateTo(Angle angle, bool stopAfterMotion = false)
         {
             if (!PwmPort.State)
             {
@@ -41,21 +42,24 @@ namespace Meadow.Foundation.Servos
 
             // calculate the appropriate pulse duration for the angle
             float pulseDuration = CalculatePulseDuration(angle);
-
+            
             // send our pulse to the servo to make it move
             SendCommandPulse(pulseDuration);
 
+            // wait for completion
+            var rotationRequired = Math.Abs((Angle.HasValue ? Angle.Value.Degrees : 360) - angle.Degrees);
+            var delay = (int)(8 * rotationRequired); // estimating 8ms / degree
+            Console.WriteLine($"Start: {Angle?.Degrees??-1} End:={angle.Degrees}");
+            Console.WriteLine($"degrees={rotationRequired}  Delay={delay}");
+            await Task.Delay(delay);
+
             // update the state
             Angle = angle;
-        }
 
-        /// <summary>
-        /// Stops the signal that controls the servo angle.
-        /// </summary>
-        public override void Stop()
-        {
-            base.Stop();
-            Angle = null;
+            if (stopAfterMotion)
+            {
+                Stop();
+            }
         }
 
         protected float CalculatePulseDuration(Angle angle)
