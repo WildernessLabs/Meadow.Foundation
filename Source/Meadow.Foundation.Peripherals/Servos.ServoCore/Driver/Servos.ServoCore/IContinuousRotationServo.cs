@@ -2,10 +2,8 @@ using System;
 
 namespace Meadow.Foundation.Servos
 {
-    public interface IContinuousRotationServo
+    public interface IContinuousRotationServo : IServo
     {
-        ServoConfig Config { get; }
-
         RotationDirection CurrentDirection { get; }
 
         float CurrentSpeed { get; }

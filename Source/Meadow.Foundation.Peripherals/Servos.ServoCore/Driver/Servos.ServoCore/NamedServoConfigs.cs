@@ -45,5 +45,10 @@ namespace Meadow.Foundation.Servos
         /// Represents the SG90 180 degree servo models. Angle: 0-180, Pulse: 500 - 2,200
         /// </summary>0
         public static ServoConfig SG90 = new ServoConfig(minimumAngle: new Angle(0, AU.Degrees), maximumAngle: new Angle(180, AU.Degrees), minimumPulseDuration: 500, maximumPulseDuration: 2350, frequency: 50);
+
+        /// <summary>
+        /// Represents the MG996R 180 degree servo models. Angle: 0-180, Pulse: 500 - 2,200
+        /// </summary>0
+        public static ServoConfig MG996R = new ServoConfig(minimumAngle: new Angle(0, AU.Degrees), maximumAngle: new Angle(180, AU.Degrees), minimumPulseDuration: 500, maximumPulseDuration: 2350, frequency: 50);
     }
 }

@@ -6,36 +6,17 @@ namespace Meadow.Foundation.Servos
     /// <summary>
     /// Base class implementation for servos that can rotate continuously.
     /// </summary>
-    public abstract class ContinuousRotationServoBase : IContinuousRotationServo
+    public abstract class ContinuousRotationServoBase : ServoBase, IContinuousRotationServo
     {
-        protected IPwmPort _pwm = null;
-
-        /// <summary>
-        /// Gets the ServoConfig that describes this servo.
-        /// </summary>
-        public ServoConfig Config
-        {
-            get { return _config; }
-        }
-        protected ServoConfig _config = null;
-
         /// <summary>
         /// Gets the current rotation direction.
         /// </summary>
-        public RotationDirection CurrentDirection
-        {
-            get { return _currentDirection; }
-        }
-        protected RotationDirection _currentDirection = RotationDirection.None;
+        public RotationDirection CurrentDirection { get; protected set; } = RotationDirection.None;
 
         /// <summary>
         /// Gets the current rotation speed.
         /// </summary>
-        public float CurrentSpeed
-        {
-            get { return _currentSpeed; }
-        }
-        protected float _currentSpeed = -1;
+        public float CurrentSpeed { get; protected set; } = -1;
 
         /// <summary>
         /// Instantiates a new continuous rotation servo on the specified pin, with the specified configuration.
@@ -43,15 +24,8 @@ namespace Meadow.Foundation.Servos
         /// <param name="pin"></param>
         /// <param name="config"></param>
         public ContinuousRotationServoBase(IPwmPort pwm, ServoConfig config)
+            : base(pwm, config)
         {
-            _config = config;
-            // OLD
-			//_pwm = new PWM(pin, config.Frequency, 0, false);
-            // NEW
-            _pwm = pwm;
-            _pwm.Frequency = config.Frequency;
-            _pwm.DutyCycle = 0;
-
         }
 
         /// <summary>
@@ -68,24 +42,23 @@ namespace Meadow.Foundation.Servos
 
             // calculate the appropriate pulse duration for the speed and direction
             float pulseDuration = CalculatePulseDuration(direction, speed);
-            //Console.WriteLine("Pulse Duration: " + pulseDuration.ToString());
 
             // send our pulse to the servo to make it move
             SendCommandPulse(pulseDuration);
 
             // update state
-            _currentDirection = direction;
-            _currentSpeed = speed;
+            CurrentDirection = direction;
+            CurrentSpeed = speed;
         }
 
         /// <summary>
         /// Stops rotation of the servo.
         /// </summary>
-        public void Stop()
+        public override void Stop()
         {
-            _pwm.Stop();
-            _currentDirection = RotationDirection.None;
-            _currentSpeed = 0.0f;
+            base.Stop();
+            CurrentDirection = RotationDirection.None;
+            CurrentSpeed = 0.0f;
         }
 
         /// <summary>
@@ -100,9 +73,9 @@ namespace Meadow.Foundation.Servos
         protected float CalculatePulseDuration(RotationDirection direction, float speed)
         {
             // calculate the midpoint/neutral/stop
-            int midpointPulseDuration = _config.MinimumPulseDuration + ((_config.MaximumPulseDuration - _config.MinimumPulseDuration) / 2);
+            int midpointPulseDuration = Config.MinimumPulseDuration + ((Config.MaximumPulseDuration - Config.MinimumPulseDuration) / 2);
             // the delta is how fast; speed * (max - midpoint)
-            int midPointPulseDelta = (int)(speed * (float)(_config.MaximumPulseDuration - midpointPulseDuration));
+            int midPointPulseDelta = (int)(speed * (float)(Config.MaximumPulseDuration - midpointPulseDuration));
 
             // calculate the pulse direction as less or more than midpoint
             int pulseDuration = midpointPulseDuration;
@@ -118,17 +91,10 @@ namespace Meadow.Foundation.Servos
             return pulseDuration;
         }
 
-        protected float CalculateDutyCycle(float pulseDuration)
+        protected override void SendCommandPulse(float pulseDuration)
         {
-            // the pulse duration is dependent on the frequency we're driving the servo at
-            return pulseDuration / ((1.0f / (float)_config.Frequency) * 1000000f);
-        }
-
-        protected void SendCommandPulse(float pulseDuration)
-        {
-            //Console.WriteLine("Sending Command Pulse");
-            _pwm.DutyCycle = CalculateDutyCycle(pulseDuration);
-            _pwm.Start(); // servo expects to run continuously
+            base.SendCommandPulse(pulseDuration);
+            PwmPort.Start(); // servo expects to run continuously
         }
 
     }
