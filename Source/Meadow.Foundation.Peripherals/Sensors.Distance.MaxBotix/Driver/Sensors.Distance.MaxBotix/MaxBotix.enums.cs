@@ -7,30 +7,33 @@
 
         }
 
+        public enum CommunicationType
+        {
+            Analog,
+            Serial,
+            I2C,
+        }
+
         public enum SensorModel
         {
-            //6.54m (inches)
+            //6.54m
+            //serial: inches
             MB1000,
             MB1010,
             MB1020,
             MB1030,
             MB1040,
 
-            //5m
-            MB1003,
+            //5m RS232 or TTL configurable via solder pad
+            //serial: mm
+            MB1003, 
             MB1013,
             MB1023,
             MB1033,
             MB1043,
 
-            //5m
-            MB1004,
-            MB1014,
-            MB1024,
-            MB1034,
-            MB1044,
-
-            MB1200, //7.6m
+            //serial: cm 
+            MB1200, //7.6m in cm
             MB1210, //7.6m
             MB1220, //7.6m
             MB1230, //7.6m
@@ -45,7 +48,8 @@
             MB1360, //10m
             MB1361, //10m
 
-            //5m RS232 only
+            //5m
+            //serial: mm 
             MB1603,
             MB1604,
             MB1613,
@@ -58,9 +62,11 @@
             MB1644,
 
             //16.5m
+            //serial: cm
             MB2530,
             MB2532,
 
+            //serial: mm
             MB7360, //5m
             MB7363, //10m
             MB7366, //10m
@@ -76,6 +82,8 @@
             MB7389, //5m
             MB7395, //1.5m 
         }
+    }
+}
 
         //park sensors .... trigger only
         /*
@@ -95,11 +103,12 @@
         MB1043,
         */
 
-        public enum CommunicationType
-        {
-            Analog,
-            PWM, //not supported .... no pulse counter yet
-            Serial,
-        }
-    }
-}
+        /* RS232 only
+         *        
+            MB1004,
+            MB1014,
+            MB1024,
+            MB1034,
+            MB1044, */
+
+

@@ -24,6 +24,11 @@ namespace Meadow.Foundation.Sensors.Distance
             sensorModel = sensor;
         }
 
+        Length ReadSensorSerial()
+        {   //I think we'll just cache it for serial
+            return Length.Value;
+        }
+
         private void SerialMessagePort_MessageReceived(object sender, SerialMessageData e)
         { 
             //R###\n //cm
@@ -40,7 +45,7 @@ namespace Meadow.Foundation.Sensors.Distance
             var value = double.Parse(message.Substring(1));
 
             //need to get this per sensor
-            Length.UnitType units = Meadow.Units.Length.UnitType.Millimeters;
+            Length.UnitType units = GetUnitsForDevice(sensorModel);
 
             // create a new change result from the new value
             ChangeResult<Length> changeResult = new ChangeResult<Length>()
@@ -52,6 +57,42 @@ namespace Meadow.Foundation.Sensors.Distance
             Length = changeResult.New;
             // notify
             RaiseEventsAndNotify(changeResult);
+        }
+
+        Length.UnitType GetUnitsForDevice(SensorModel sensor)
+        {
+            switch(sensor)
+            {
+                case SensorModel.MB1000:
+                case SensorModel.MB1010:
+                case SensorModel.MB1020:
+                case SensorModel.MB1030:
+                case SensorModel.MB1040:
+                    return Units.Length.UnitType.Inches;
+
+                case SensorModel.MB1200:
+                case SensorModel.MB1210:
+                case SensorModel.MB1220:
+                case SensorModel.MB1230:
+                case SensorModel.MB1240:
+                case SensorModel.MB1260:
+                case SensorModel.MB1261:
+                case SensorModel.MB1300:
+                case SensorModel.MB1310:
+                case SensorModel.MB1320:
+                case SensorModel.MB1330:
+                case SensorModel.MB1340:
+                case SensorModel.MB1360:
+                case SensorModel.MB1361:
+
+                case SensorModel.MB2530:
+                case SensorModel.MB2532:
+                    return Units.Length.UnitType.Centimeters;
+
+                default:
+                    //most are mm so we'll use it as the default
+                    return Units.Length.UnitType.Millimeters;
+            }
         }
     }
 }
