@@ -6,12 +6,14 @@ namespace Meadow.Foundation.Sensors.Distance
 {
     public partial class MaxBotix
     {
-        ISerialMessagePort serialMessagePort;
+        readonly ISerialMessagePort serialMessagePort;
+
+        static readonly byte[] suffixDelimiter = { 13 }; //ASCII return
+        static readonly int portSpeed = 9600; //this is fixed for MaxBotix
 
         //The baud rate is 9600, 8 bits, no parity, with one stop bit
-        public MaxBotix(IMeadowDevice device, SerialPortName serialPort, SensorType sensor,
-            int serialPortSpeed = 9600)
-            : this(device.CreateSerialMessagePort(serialPort, new byte[] { 13 }, false), sensor)
+        public MaxBotix(IMeadowDevice device, SerialPortName serialPort, SensorType sensor)
+            : this(device.CreateSerialMessagePort(serialPort, suffixDelimiter, false, baudRate: portSpeed), sensor)
         {
         }
 

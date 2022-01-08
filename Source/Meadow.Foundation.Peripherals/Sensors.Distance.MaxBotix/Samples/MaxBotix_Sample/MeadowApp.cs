@@ -1,69 +1,43 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Leds;
+using Meadow.Foundation.Sensors.Distance;
 using System;
-using System.Threading;
 
 namespace MaxBotix_Sample
 {
     // Change F7MicroV2 to F7Micro for V1.x boards
     public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
-        RgbPwmLed onboardLed;
+        MaxBotix maxBotix;
 
         public MeadowApp()
         {
-            Initialize();
-            CycleColors(1000);
-        }
-
-        void Initialize()
-        {
             Console.WriteLine("Initialize hardware...");
 
-            onboardLed = new RgbPwmLed(device: Device,
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                3.3f, 3.3f, 3.3f,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
-        }
+            //Analog
+            maxBotix = new MaxBotix(Device, Device.Pins.A00, MaxBotix.SensorType.HR10Meter);
 
-        void CycleColors(int duration)
-        {
-            Console.WriteLine("Cycle colors...");
+            //Serial
+            maxBotix = new MaxBotix(Device, Device.SerialPortNames.Com4, MaxBotix.SensorType.HR10Meter);
 
-            while (true)
-            {
-                ShowColorPulse(Color.Blue, duration);
-                ShowColorPulse(Color.Cyan, duration);
-                ShowColorPulse(Color.Green, duration);
-                ShowColorPulse(Color.GreenYellow, duration);
-                ShowColorPulse(Color.Yellow, duration);
-                ShowColorPulse(Color.Orange, duration);
-                ShowColorPulse(Color.OrangeRed, duration);
-                ShowColorPulse(Color.Red, duration);
-                ShowColorPulse(Color.MediumVioletRed, duration);
-                ShowColorPulse(Color.Purple, duration);
-                ShowColorPulse(Color.Magenta, duration);
-                ShowColorPulse(Color.Pink, duration);
-            }
-        }
+            //I2C - don't forget external pullup resistors 
+            maxBotix = new MaxBotix(Device.CreateI2cBus(), MaxBotix.SensorType.HR10Meter);
 
-        void ShowColorPulse(Color color, int duration = 1000)
-        {
-            onboardLed.StartPulse(color, (duration / 2));
-            Thread.Sleep(duration);
-            onboardLed.Stop();
-        }
-
-        void ShowColor(Color color, int duration = 1000)
-        {
-            Console.WriteLine($"Color: {color}");
-            onboardLed.SetColor(color);
-            Thread.Sleep(duration);
-            onboardLed.Stop();
+            var consumer = MaxBotix.CreateObserver(
+                handler: result =>
+                {
+                    Console.WriteLine($"Observer: Distance changed by threshold; new distance: {result.New.Centimeters:N2}cm, old: {result.Old?.Centimeters:N2}cm");
+                },
+                filter: result =>
+                {
+                    if (result.Old is { } old)
+                    {
+                        return Math.Abs((result.New - old).Centimeters) > 0.5;
+                    }
+                    return false;
+                }
+            );
+            maxBotix.Subscribe(consumer);
         }
     }
 }

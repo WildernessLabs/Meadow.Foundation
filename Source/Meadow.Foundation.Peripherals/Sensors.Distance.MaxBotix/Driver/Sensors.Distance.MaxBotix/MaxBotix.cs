@@ -4,24 +4,7 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
-    /* Supports:
-     * HRXL-MaxSonar® - WR Series
-     * HRLV-MaxSonar® - EZ Series
-     * HRLV-ShortRange® - EZ Series
-     * HRLV-MaxSonar® - EZ Series
-     * IRXL-MaxSonar® - CS Series
-     * XL-MaxSonar® - EZ Series
-     * XL-MaxSonar® - WR/WRC Series
-     * 
-     * Not Supported:
-     * ParkSonar® - EZ Sensor Series
-     * LV-ProxSonar® - EZ Series (parking sensor)
-     * I2CXL-MaxSonar® - EZ Series
-     */
-
     public partial class MaxBotix : ByteCommsSensorBase<Length>
-
-    //SensorBase<Length>
     {
         /// <summary>
         /// Raised when the value of the reading changes.
@@ -59,17 +42,17 @@ namespace Meadow.Foundation.Sensors.Distance
                 if (IsSampling) return;
                 IsSampling = true;
 
-                if (communication == CommunicationType.Analog)
+                switch(communication)
                 {
-                    analogInputPort.StartUpdating(updateInterval);
-                }
-                else if(communication == CommunicationType.Serial)
-                {
-                    serialMessagePort.Open();
-                }
-                else if(communication == CommunicationType.I2C)
-                {
-                    base.StartUpdating(updateInterval);
+                    case CommunicationType.Analog:
+                        analogInputPort.StartUpdating(updateInterval);
+                        break;
+                    case CommunicationType.Serial:
+                        serialMessagePort.Open();
+                        break;
+                    case CommunicationType.I2C:
+                        base.StartUpdating(updateInterval);
+                        break;
                 }
             }
         }
@@ -93,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Distance
                     serialMessagePort.Close();
                 }
                 else if (communication == CommunicationType.I2C)
-                {
+                {   //handled in ByteCommsSensorBase
                     base.StopUpdating();
                 }
             }
