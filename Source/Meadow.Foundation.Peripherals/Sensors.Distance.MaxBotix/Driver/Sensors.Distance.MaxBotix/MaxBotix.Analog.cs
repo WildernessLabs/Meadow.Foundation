@@ -9,8 +9,7 @@ namespace Meadow.Foundation.Sensors.Distance
     {
         IAnalogInputPort analogInputPort;
 
-        public MaxBotix(IAnalogInputPort analogIntputPort,
-            SensorType sensor)
+        public MaxBotix(IAnalogInputPort analogIntputPort, SensorType sensor)
         {
             analogInputPort = analogIntputPort;
 

@@ -5,7 +5,7 @@ using Meadow.Foundation.Leds;
 using System;
 using System.Threading;
 
-namespace Sensors.Distance.MaxBotix
+namespace MaxBotix_Sample
 {
     // Change F7MicroV2 to F7Micro for V1.x boards
     public class MeadowApp : App<F7MicroV2, MeadowApp>

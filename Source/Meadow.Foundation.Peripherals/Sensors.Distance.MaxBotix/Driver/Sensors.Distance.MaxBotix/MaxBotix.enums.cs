@@ -2,9 +2,13 @@
 {
     public partial class MaxBotix
     {
-        public enum Address
+        /// <summary>
+        ///     Valid addresses for the sensor.
+        /// </summary>
+        public enum Addresses : byte
         {
-
+            Address0 = 0x70,
+            Default = Address0
         }
 
         public enum CommunicationType

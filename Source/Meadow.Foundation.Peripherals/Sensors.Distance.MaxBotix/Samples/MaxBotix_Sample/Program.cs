@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using System.Threading;
 
-namespace Sensors.Distance.MaxBotix
+namespace MaxBotix_Sample
 {
     internal class Program
     {

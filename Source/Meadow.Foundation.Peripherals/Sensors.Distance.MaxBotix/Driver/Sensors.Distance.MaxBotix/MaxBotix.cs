@@ -19,7 +19,9 @@ namespace Meadow.Foundation.Sensors.Distance
      * I2CXL-MaxSonar® - EZ Series
      */
 
-    public partial class MaxBotix : SensorBase<Length>
+    public partial class MaxBotix : ByteCommsSensorBase<Length>
+
+    //SensorBase<Length>
     {
         /// <summary>
         /// Raised when the value of the reading changes.
@@ -49,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Distance
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        public void StartUpdating(TimeSpan? updateInterval)
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety
             lock (samplingLock)
@@ -65,13 +67,17 @@ namespace Meadow.Foundation.Sensors.Distance
                 {
                     serialMessagePort.Open();
                 }
+                else if(communication == CommunicationType.I2C)
+                {
+                    base.StartUpdating(updateInterval);
+                }
             }
         }
 
         /// <summary>
         /// Stops sampling the temperature.
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             lock (samplingLock)
             {
@@ -85,6 +91,10 @@ namespace Meadow.Foundation.Sensors.Distance
                 else if(communication != CommunicationType.Serial)
                 {
                     serialMessagePort.Close();
+                }
+                else if (communication == CommunicationType.I2C)
+                {
+                    base.StopUpdating();
                 }
             }
         }
