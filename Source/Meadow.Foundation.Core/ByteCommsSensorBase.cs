@@ -39,6 +39,12 @@ namespace Meadow.Foundation
             Init(readBufferSize, writeBufferSize);
         }
 
+        protected ByteCommsSensorBase(
+            int readBufferSize = 8, int writeBufferSize = 8)
+        {
+            Init(readBufferSize, writeBufferSize);
+        }
+
         protected virtual void Init(int readBufferSize = 8, int writeBufferSize = 8)
         {
             this.ReadBuffer = new byte[readBufferSize];
