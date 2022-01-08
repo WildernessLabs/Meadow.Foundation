@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Distance
         public double VCC { get; set; } = 3.3;
 
         CommunicationType communication;
-        SensorModel sensorModel;
+        SensorType sensorType;
 
         protected override async Task<Length> ReadSensor()
         {
@@ -86,6 +86,22 @@ namespace Meadow.Foundation.Sensors.Distance
                 {
                     serialMessagePort.Close();
                 }
+            }
+        }
+
+        Length.UnitType GetUnitsForSensor(SensorType sensor)
+        {
+            switch(sensor)
+            {
+                case SensorType.LV:
+                    return Units.Length.UnitType.Inches;
+                case SensorType.XL:
+                case SensorType.XLLongRange:
+                    return Units.Length.UnitType.Centimeters;
+                case SensorType.HR5Meter:
+                case SensorType.HR10Meter:
+                default:
+                    return Units.Length.UnitType.Millimeters;
             }
         }
     }
