@@ -9,7 +9,7 @@ namespace Meadow.Foundation
         //==== events
 
         //==== internals
-        protected IByteCommunications Peripheral { get; set; }
+        protected IByteCommunications? Peripheral { get; set; }
 
         //==== properties
         /// <summary>
