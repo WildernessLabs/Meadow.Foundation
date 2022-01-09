@@ -7,7 +7,7 @@
         /// </summary>
         public enum Addresses : byte
         {
-            Address0 = 0x70,
+            Address0 = 0x70,//112 
             Default = Address0
         }
 

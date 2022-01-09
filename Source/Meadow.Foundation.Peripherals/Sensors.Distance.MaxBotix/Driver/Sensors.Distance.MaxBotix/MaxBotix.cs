@@ -24,6 +24,7 @@ namespace Meadow.Foundation.Sensors.Distance
             {
                 CommunicationType.Analog => await ReadSensorAnalog(),
                 CommunicationType.Serial => ReadSensorSerial(),
+                CommunicationType.I2C => ReadSensorI2c(),
                 _ => throw new NotImplementedException(),
             };
         }

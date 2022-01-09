@@ -1,4 +1,4 @@
-﻿using Meadow.Devices;
+﻿using System.Threading;
 using Meadow.Hardware;
 using Meadow.Units;
 
@@ -10,6 +10,15 @@ namespace Meadow.Foundation.Sensors.Distance
             :base(i2cBus, address)
         {
             sensorType = sensor;
+            communication = CommunicationType.I2C;
+
+            StartI2cSensor(address);
+        }
+
+        void StartI2cSensor(byte address)
+        {
+            Peripheral.ReadRegister(address);
+            Thread.Sleep(100);
         }
 
         Length ReadSensorI2c()
