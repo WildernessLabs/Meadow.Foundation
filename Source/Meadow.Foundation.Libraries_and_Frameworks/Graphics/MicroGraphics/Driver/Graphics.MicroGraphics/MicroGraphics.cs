@@ -271,7 +271,7 @@ namespace Meadow.Foundation.Graphics
             for (var x = x0; x <= x1; x++)
             {
                 DrawPixel(steep ? y : x, steep ? x : y);
-                error = error - dy;
+                error -= dy;
                 if (error < 0)
                 {
                     y += ystep;
@@ -883,7 +883,6 @@ namespace Meadow.Foundation.Graphics
         public Size MeasureText(string text, IFont font, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             return new Size(text.Length * (int)scaleFactor * font.Width, (int)scaleFactor * font.Height);
-
         }
 
         /// <summary>
@@ -904,11 +903,11 @@ namespace Meadow.Foundation.Graphics
 
             if(alignment == TextAlignment.Center)
             {
-                x = x - MeasureText(text, scaleFactor).Width / 2;
+                x -= MeasureText(text, scaleFactor).Width / 2;
             }
             else if(alignment == TextAlignment.Right)
             {
-                x = x - MeasureText(text, scaleFactor).Width;
+                x -= MeasureText(text, scaleFactor).Width;
             }
 
             DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, BitmapMode.And, scaleFactor);
@@ -988,11 +987,11 @@ namespace Meadow.Foundation.Graphics
 
             if (alignment == TextAlignment.Center)
             {
-                x = x - MeasureText(text, scaleFactor).Width / 2;
+                x -= MeasureText(text, scaleFactor).Width / 2;
             }
             else if (alignment == TextAlignment.Right)
             {
-                x = x - MeasureText(text, scaleFactor).Width;
+                x -= MeasureText(text, scaleFactor).Width;
             }
 
             byte[] bitmap = GetBytesForTextBitmap(text);
@@ -1129,12 +1128,6 @@ namespace Meadow.Foundation.Graphics
             return bitmap;
         }
 
-        byte SetBit(byte value, int position, bool high)
-        {
-            var compare = (byte)(1 << position);
-            return high ? (value |= compare) : (byte)(value & ~compare);
-        }
-
         /// <summary>
         ///     Show changes on the display
         /// </summary>
@@ -1256,34 +1249,24 @@ namespace Meadow.Foundation.Graphics
 
         public int GetXForRotation(int x, int y)
         {
-            switch(Rotation)
+            return Rotation switch
             {
-                case RotationType._90Degrees:
-                    return display.Width - y - 1;
-                case RotationType._180Degrees:
-                    return display.Width - x - 1;
-                case RotationType._270Degrees:
-                    return y;
-                case RotationType.Default:
-                default:
-                    return x;
-            }
+                RotationType._90Degrees => display.Width - y - 1,
+                RotationType._180Degrees => display.Width - x - 1,
+                RotationType._270Degrees => y,
+                _ => x,
+            };
         }
 
         public int GetYForRotation(int x, int y)
         {
-            switch (Rotation)
+            return Rotation switch
             {
-                case RotationType._90Degrees:
-                    return x; 
-                case RotationType._180Degrees:
-                    return display.Height - y - 1;
-                case RotationType._270Degrees:
-                    return display.Height - x - 1;
-                case RotationType.Default:
-                default:
-                    return y;
-            }
+                RotationType._90Degrees => x,
+                RotationType._180Degrees => display.Height - y - 1,
+                RotationType._270Degrees => display.Height - x - 1,
+                _ => y,
+            };
         }
     }
 }
