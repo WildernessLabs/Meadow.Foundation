@@ -13,27 +13,36 @@ namespace Meadow.Foundation.Generators
     /// </summary>
 	public class SoftPwmPort : IPwmPort
     {
+        /// <summary>
+        /// Digital output port used for PWM
+        /// </summary>
         protected IDigitalOutputPort Port { get; set; }
 
         public float Duration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public float Period { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool Inverted { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public TimeScale TimeScale { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        
 
-        public float DutyCycle {
+        public float DutyCycle 
+        {
             get => dutyCycle;
-            set {
+            set 
+            {
                 dutyCycle = value;
                 onTimeMilliseconds = CalculateOnTimeMillis();
                 offTimeMilliseconds = CalculateOffTimeMillis();
                 //Console.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
-        } protected float dutyCycle;
+        } 
+        float dutyCycle;
 
-        public float Frequency {
+        public float Frequency 
+        {
             get => frequency;
             set {
-                if (Frequency <= 0) {
+                if (Frequency <= 0)
+                {
                     throw new Exception("Frequency must be > 0.");
                 }
                 frequency = value;
@@ -42,16 +51,30 @@ namespace Meadow.Foundation.Generators
                 //Console.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
         }
+        float frequency = 1.0f; // in the case it doesn't get set before dutycycle, initialize to 1
 
+        /// <summary>
+        /// Channel info for PWM port
+        /// </summary>
         public IPwmChannelInfo Channel {get; protected set;}
 
-        public bool State => this.running;
+        /// <summary>
+        /// State of PWM port (running / not running)
+        /// </summary>
+        public bool State => running;
 
+        /// <summary>
+        /// Pin used for soft PWM
+        /// </summary>
         public IPin Pin => Port.Pin;
 
         IDigitalChannelInfo IPort<IDigitalChannelInfo>.Channel => throw new NotImplementedException();
 
-        protected float frequency = 1.0f; // in the case it doesn't get set before dutycycle, initialize to 1
+
+        /// <summary>
+        /// 
+        /// </summary>
+        
 
         protected Thread? th = null;
         protected int onTimeMilliseconds = 0;

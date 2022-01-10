@@ -2,6 +2,9 @@
 
 namespace Meadow.Foundation.Controllers.Pid
 {
+    /// <summary>
+    /// Represents a standard PID controller
+    /// </summary>
     public class StandardPidController : PidControllerBase
     {
         /// <summary>

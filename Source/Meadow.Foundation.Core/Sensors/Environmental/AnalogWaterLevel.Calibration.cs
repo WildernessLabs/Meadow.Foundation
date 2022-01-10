@@ -10,6 +10,9 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public class Calibration
         {
+            /// <summary>
+            /// Voltage when no water detected
+            /// </summary>
             public Voltage VoltsAtZero { get; protected set; } = new Voltage(1, VU.Volts);
 
             /// <summary>

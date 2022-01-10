@@ -5,17 +5,23 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Environmental
 {
+    /// <summary>
+    /// Represents an analog water level sensor
+    /// </summary>
     public partial class AnalogWaterLevel
         : SensorBase<float>
     {
         //==== internals
-        protected IAnalogInputPort AnalogInputPort { get; }
-        protected int sampleCount = 5;
-        protected int sampleIntervalMs = 40;
+        IAnalogInputPort AnalogInputPort { get; }
 
-        //==== properties
+        /// <summary>
+        /// Calibration of water level
+        /// </summary>
         public Calibration LevelCalibration { get; protected set; }
 
+        /// <summary>
+        /// Water level
+        /// </summary>
         public float WaterLevel { get; protected set; }
 
         /// <summary>
@@ -23,27 +29,25 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the sensor is connected to.</param>
-        /// <param name="calibration">Calibration for the analog sensor.</param> // TODO: @Jorge, what's this mean?
+        /// <param name="calibration">Calibration for the analog sensor.</param>
         /// <param name="updateIntervalMs">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
-        /// <param name="sampleCount">How many samples to take during a given
-        /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalMs">The time, in milliseconds,
-        /// to wait in between samples during a reading.</param>
         public AnalogWaterLevel(
             IAnalogInputController device,
             IPin analogPin,
             Calibration? calibration = null,
-            int updateIntervalMs = 1000,
-            int sampleCount = 5, int sampleIntervalMs = 40)
+            int updateIntervalMs = 1000)
                 : this(device.CreateAnalogInputPort(analogPin), calibration)
         {
             base.UpdateInterval = TimeSpan.FromMilliseconds(updateIntervalMs);
-            this.sampleCount = sampleCount;
-            this.sampleIntervalMs = sampleIntervalMs;
         }
 
+        /// <summary>
+        /// New instance of the AnalogWaterLevel class.
+        /// </summary>
+        /// <param name="analogInputPort">Analog port the sensor is connected to.</param>
+        /// <param name="calibration">Calibration for the analog sensor.</param>
         public AnalogWaterLevel(IAnalogInputPort analogInputPort,
                                  Calibration? calibration = null)
         {

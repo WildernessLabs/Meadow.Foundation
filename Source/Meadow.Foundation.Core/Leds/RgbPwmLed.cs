@@ -20,12 +20,11 @@ namespace Meadow.Foundation.Leds
         readonly float MAX_FORWARD_VOLTAGE = 3.3f;
         readonly float DEFAULT_DUTY_CYCLE = 0f;
 
-        protected Task? animationTask = null;
-        protected CancellationTokenSource? cancellationTokenSource = null;
-
-        protected double maxRedDutyCycle = 1;
-        protected double maxGreenDutyCycle = 1;
-        protected double maxBlueDutyCycle = 1;
+        Task? animationTask = null;
+        CancellationTokenSource? cancellationTokenSource = null;
+        readonly double maxRedDutyCycle = 1;
+        readonly double maxGreenDutyCycle = 1;
+        readonly double maxBlueDutyCycle = 1;
 
         /// <summary>
         /// Turns on LED with current color or turns it off
