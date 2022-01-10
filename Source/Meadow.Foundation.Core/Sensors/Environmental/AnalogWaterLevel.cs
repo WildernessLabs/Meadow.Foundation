@@ -79,11 +79,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Convenience method to get the current water level. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        /// <param name="sampleCount">The number of sample readings to take. 
-        /// Must be greater than 0. These samples are automatically averaged.</param>
-        /// <param name="sampleIntervalDuration">The time, in milliseconds,
-        /// to wait in between samples during a reading.</param>
-        /// <returns>A float value that's ann average value of all the samples taken.</returns>
         protected override async Task<float> ReadSensor()
         {
             // read the voltage

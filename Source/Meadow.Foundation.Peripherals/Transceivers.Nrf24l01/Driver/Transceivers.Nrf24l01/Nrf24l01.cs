@@ -166,13 +166,12 @@ namespace Meadow.Foundation.Transceivers
 
         bool ack_payloads_enabled;
 
-        byte config_reg, addr_width, payload_size = 32;
-
-        byte[] address = new byte[6];
-
-        byte[] pipe0_reading_address = new byte[5];
-
-        Memory<byte> readBuffer = new byte[256]; //ToDo ... check size
+        byte config_reg;
+       //byte addr_width;
+        byte payload_size = 32;
+        readonly byte[] address = new byte[6];
+        readonly byte[] pipe0_reading_address = new byte[5];
+        readonly Memory<byte> readBuffer = new byte[256]; //ToDo ... check size
 
         public Nrf24l01(
             IMeadowDevice device, 

@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         ///  New instance of the AnalogLightSensor class.
         /// </summary>
-        /// Analog port the sensor is connected to.</param>
+        /// <param name="analogInputPort">Analog port the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param> 
         public AnalogLightSensor(IAnalogInputPort analogInputPort,
                                  Calibration? calibration = null)

@@ -7,8 +7,6 @@ namespace Sensors.Sound.Ky038_Sample
 {
     public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
-        Ky038 sensor;
-
         public MeadowApp()
         {
             Console.WriteLine("Initialize...");

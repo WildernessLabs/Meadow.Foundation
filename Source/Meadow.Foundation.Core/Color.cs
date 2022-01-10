@@ -138,7 +138,6 @@ namespace Meadow.Foundation
         /// <param name="red">red component of color</param>
         /// <param name="green">green component of color</param>
         /// <param name="blue">blue component of color</param>
-        /// <param name="alpha">transparancy of color</param>
         public Color(double red, double green, double blue) :
             this((byte)(red*255), (byte)(green*255), (byte)(blue*255), 1)
         {

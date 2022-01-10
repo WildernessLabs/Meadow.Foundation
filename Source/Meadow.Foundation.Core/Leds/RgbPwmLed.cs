@@ -80,7 +80,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Get the blue LED forward voltage
         /// </summary>
-        public float BlueForwardVoltage { get; protected set; }        
+        public float BlueForwardVoltage { get; protected set; }
 
         /// <summary>
         /// Instantiates a RgbPwmLed object with the especified IO device, connected
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="redLedForwardVoltage"></param>
         /// <param name="greenLedForwardVoltage"></param>
         /// <param name="blueLedForwardVoltage"></param>
-        /// <param name="isCommonCathode"></param>
+        /// <param name="commonType"></param>
         public RgbPwmLed(IPwmOutputController device,
             IPin redPwmPin, IPin greenPwmPin, IPin bluePwmPin,
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
@@ -117,7 +117,10 @@ namespace Meadow.Foundation.Leds
         /// <param name="redPwm"></param>
         /// <param name="greenPwm"></param>
         /// <param name="bluePwm"></param>
-        /// <param name="isCommonCathode"></param>
+        /// <param name="redLedForwardVoltage"></param>
+        /// <param name="greenLedForwardVoltage"></param>
+        /// <param name="blueLedForwardVoltage"></param>
+        /// <param name="commonType"></param>
         public RgbPwmLed(IPwmPort redPwm, IPwmPort greenPwm, IPwmPort bluePwm,
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,

@@ -66,13 +66,7 @@ namespace Meadow.Foundation.Controllers.Pid
         /// Calculates the control output based on the Target and Actual, using the current PID values
         /// 
         /// </summary>
-        /// <param name="correctionActions">
-        ///     The corrective actions to use in the Calculation. By default, it uses
-        ///     P, I, and D. To just use PI control pass:
-        ///     `PIDActionType.Proportional | PIDActionType.Integral`.
-        /// </param>
         /// <returns></returns>
         public abstract float CalculateControlOutput();
-
     }
 }

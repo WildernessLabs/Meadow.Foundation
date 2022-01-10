@@ -3,21 +3,17 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Camera;
-using Meadow.Foundation.Displays.TftSpi;
-using Meadow.Hardware;
 using Meadow.Foundation.Graphics;
 using NanoJpeg;
+using Meadow.Foundation.Displays.TftSpi;
 
 namespace MeadowApp
 {
     public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         ArducamMini camera;
-
-        St7789 display;
-
         MicroGraphics graphics;
-        
+        St7789 display;
 
         public MeadowApp()
         {

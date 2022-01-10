@@ -28,9 +28,9 @@ namespace Meadow.Foundation.Sensors.Camera
         static byte OSD_ADD_CHAR = 0x45;
 
         static byte STOPCURRENTFRAME = 0x0;
-        static byte STOPNEXTFRAME = 0x1;
+      //  static byte STOPNEXTFRAME = 0x1;
         static byte RESUMEFRAME = 0x3;
-        static byte STEPFRAME = 0x2;
+      //  static byte STEPFRAME = 0x2;
 
         public enum ImageSize : byte
         {

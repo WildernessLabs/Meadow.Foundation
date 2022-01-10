@@ -21,8 +21,8 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
         IDigitalInterruptPort portRight;
         IDigitalInterruptPort portDown;
 
-        SnakeGame snakeGame;
         BreakoutGame breakoutGame;
+        SnakeGame snakeGame;
 
         public MeadowApp()
         {
