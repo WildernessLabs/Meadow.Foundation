@@ -37,8 +37,9 @@ namespace Meadow.Foundation.Relays
         /// <summary>
         /// Creates a new Relay on an IDigitalOutputPort.
         /// </summary>
-        /// <param name="pin"></param>
-        /// <param name="type"></param>
+        /// <param name="device">IDigitalOutputController to create digital output port</param>
+        /// <param name="pin">Pin connected to relay</param>
+        /// <param name="type">Relay type</param>
         public Relay(IDigitalOutputController device, IPin pin, RelayType type = RelayType.NormallyOpen) :
             this(device.CreateDigitalOutputPort(pin), type) { }
 

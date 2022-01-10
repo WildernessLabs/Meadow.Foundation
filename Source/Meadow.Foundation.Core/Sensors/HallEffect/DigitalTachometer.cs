@@ -45,6 +45,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <summary>
         /// LinearHallEffectTachometer driver
         /// </summary>
+        /// <param name="device">IDigitalInputController to create digital input port</param>
         /// <param name="inputPin"></param>
         /// <param name="type"></param>
         /// <param name="numberOfMagnets"></param>
@@ -56,6 +57,13 @@ namespace Meadow.Foundation.Sensors.HallEffect
            
         }
 
+        /// <summary>
+        /// LinearHallEffectTachometer driver
+        /// </summary>
+        /// <param name="inputPort"></param>
+        /// <param name="type"></param>
+        /// <param name="numberOfMagnets"></param>
+        /// <param name="rpmChangeNotificationThreshold"></param>
         public LinearHallEffectTachometer(IDigitalInputPort inputPort, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F)
         {

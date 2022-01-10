@@ -16,7 +16,6 @@ namespace Sensors.LoadCell.Hx711_Sample
 
         public int CalibrationFactor { get; set; } = 0; //9834945 - 8458935; // TODO: change this based on your scale (using the method provided below)
         public double CalibrationWeight { get; set; } = 1.6; // TODO: enter the known-weight (in units below) you used in calibration
-        public WeightUnits CalibrationWeightUnits { get; set; } = WeightUnits.Kilograms; // TODO: enter the units of the known-weight you used in calibration
 
         public MeadowApp()
         {

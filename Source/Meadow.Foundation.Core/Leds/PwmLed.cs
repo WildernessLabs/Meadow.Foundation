@@ -68,8 +68,9 @@ namespace Meadow.Foundation.Leds
         /// voltage based on the passed `forwardVoltage`. Typical LED forward voltages 
         /// can be found in the `TypicalForwardVoltage` class.
         /// </summary>
-        /// <param name="pwmPort"></param>
-        /// <param name="forwardVoltage"></param>
+        /// <param name="pwmPort">Port to control</param>
+        /// <param name="forwardVoltage">Forward voltage of led</param>
+        /// <param name="terminationType">Termination type of LED</param>
         public PwmLed(IPwmPort pwmPort, float forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
