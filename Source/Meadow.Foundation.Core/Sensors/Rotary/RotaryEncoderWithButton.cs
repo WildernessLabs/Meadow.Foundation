@@ -53,16 +53,31 @@ namespace Meadow.Foundation.Sensors.Rotary
             Button.PressStarted += ButtonPressStarted;
         }
 
+        /// <summary>
+        /// Method when button is clicked (down then up)
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event arguments</param>
         protected void ButtonClicked(object sender, EventArgs e)
         {
             Clicked(this, e);
         }
 
+        /// <summary>
+        /// Method called when button press is started (up state) 
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event arguments</param>
         protected void ButtonPressEnded(object sender, EventArgs e)
         {
             PressEnded(this, e);
         }
 
+        /// <summary>
+        /// Method called when button press is started (down state) 
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event arguments</param>
         protected void ButtonPressStarted(object sender, EventArgs e)
         {
             PressStarted(this, e);

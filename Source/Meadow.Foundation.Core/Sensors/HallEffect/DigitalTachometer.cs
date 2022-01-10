@@ -127,6 +127,9 @@ namespace Meadow.Foundation.Sensors.HallEffect
             }
         }
 
+        /// <summary>
+        /// Notify when RPMs change
+        /// </summary>
         protected void OnRaiseRPMChanged()
         {
             RPMsChanged(this, new ChangeResult<float>(_lastNotifiedRPMs, _RPMs));

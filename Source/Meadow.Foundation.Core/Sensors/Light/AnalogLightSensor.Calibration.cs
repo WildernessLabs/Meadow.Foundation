@@ -10,6 +10,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public class Calibration
         {
+            /// <summary>
+            /// Voltage when no light is detected by sensor
+            /// </summary>
             public Voltage VoltsAtZero { get; protected set; } = new Voltage(1, VU.Volts);
 
             /// <summary>
