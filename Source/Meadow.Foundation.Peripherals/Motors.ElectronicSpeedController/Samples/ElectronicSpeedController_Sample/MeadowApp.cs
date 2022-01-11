@@ -46,7 +46,7 @@ namespace ElectronicSpeedController_Sample
 
         private void Rotary_Rotated(object sender, Meadow.Peripherals.Sensors.Rotary.RotaryChangeResult e)
         {
-            esc.Power += (e.Direction == RotationDirection.Clockwise) ? powerIncrement : -powerIncrement;
+            esc.Power += (e.New == RotationDirection.Clockwise) ? powerIncrement : -powerIncrement;
             DisplayPowerOnLed(esc.Power);
 
             Console.WriteLine($"New Power: {esc.Power * (float)100:n0}%");

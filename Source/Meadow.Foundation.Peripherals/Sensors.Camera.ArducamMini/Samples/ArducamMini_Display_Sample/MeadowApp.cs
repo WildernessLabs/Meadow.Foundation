@@ -86,12 +86,14 @@ namespace MeadowApp
 
             camera = new ArducamMini(Device, spiBus, Device.Pins.D00, Device.CreateI2cBus());
 
-        //    display = new ST7789(Device, spiBus,
-        //        Device.Pins.D04, Device.Pins.D03, Device.Pins.D02, 135, 240);
+            display = new St7789(Device, spiBus,
+                Device.Pins.D04, Device.Pins.D03, Device.Pins.D02, 135, 240);
 
-            graphics = new MicroGraphics(display);
-            graphics.CurrentFont = new Font12x20();
-            graphics.Rotation = RotationType._90Degrees;
+            graphics = new MicroGraphics(display)
+            {
+                CurrentFont = new Font12x20(),
+                Rotation = RotationType._90Degrees
+            };
 
         }
 

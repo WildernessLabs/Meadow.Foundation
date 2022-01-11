@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
         ISerialPort serialPort;
 
-        byte serialNum;
+        //byte serialNum;
         byte[] camerabuff = new byte[CAMERABUFFSIZE + 1];
         byte bufferLen;
         ushort frameptr;

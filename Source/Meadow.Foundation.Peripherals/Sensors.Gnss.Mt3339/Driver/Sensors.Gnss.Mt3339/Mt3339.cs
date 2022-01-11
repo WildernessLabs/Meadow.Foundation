@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 {
     public class NmeaEventArgs
     {
-        public string NmeaSentence { get; set; }
+        public string NmeaSentence { get; set; } = string.Empty;
     }
 
     public class Mt3339
