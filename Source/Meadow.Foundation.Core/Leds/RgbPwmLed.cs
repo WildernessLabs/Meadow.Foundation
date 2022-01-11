@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Leds
                 isOn = value;
             }
         }
-        protected bool isOn;
+        bool isOn;
 
         /// <summary>
         /// The color the LED has been set to.
@@ -237,6 +237,16 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
+        /// <summary>
+        /// Start blinking led
+        /// </summary>
+        /// <param name="color">color to blink</param>
+        /// <param name="onDuration">on duration in ms</param>
+        /// <param name="offDuration">off duration in ms</param>
+        /// <param name="highBrightness">maximum brightness</param>
+        /// <param name="lowBrightness">minimum brightness</param>
+        /// <param name="cancellationToken">token to cancel blink</param>
+        /// <returns></returns>
         protected async Task StartBlinkAsync(Color color, int onDuration, int offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             while (true)
@@ -287,6 +297,15 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
+        /// <summary>
+        /// Start led pulsing
+        /// </summary>
+        /// <param name="color">color to pulse</param>
+        /// <param name="pulseDuration">pulse duration in ms</param>
+        /// <param name="highBrightness">maximum brightness</param>
+        /// <param name="lowBrightness">minimum brightness</param>
+        /// <param name="cancellationToken">token to cancel pulse</param>
+        /// <returns></returns>
         protected async Task StartPulseAsync(Color color, int pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;

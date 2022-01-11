@@ -197,6 +197,14 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
+        /// <summary>
+        /// Start pulsing the led
+        /// </summary>
+        /// <param name="pulseDuration">duration in ms</param>
+        /// <param name="highBrightness">maximum brightness</param>
+        /// <param name="lowBrightness">minimum brightness</param>
+        /// <param name="cancellationToken">token used to cancel pulse</param>
+        /// <returns></returns>
         protected async Task StartPulseAsync(int pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;
