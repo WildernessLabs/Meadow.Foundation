@@ -35,7 +35,7 @@ namespace ElectronicSpeedController_Sample
             rotary.Rotated += Rotary_Rotated;
             rotary.Clicked += (s, e) => {
                 Console.WriteLine($"Arming the device.");
-                _ = esc.Arm();
+                esc.Arm();
             }; ;
 
             //==== Electronic Speed Controller
