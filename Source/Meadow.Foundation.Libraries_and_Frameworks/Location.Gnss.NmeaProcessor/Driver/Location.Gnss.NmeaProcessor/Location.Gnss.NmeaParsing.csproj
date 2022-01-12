@@ -15,6 +15,7 @@
     <Description>Driver for Nmea Parsing</Description>
   </PropertyGroup>
   <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
   <ItemGroup>
