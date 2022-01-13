@@ -7,11 +7,17 @@
         /// </summary>
         public enum Addresses : byte
         {
+            /// <summary>
+            /// I2C address 0
+            /// </summary>
             Address0 = 0x60,
+            /// <summary>
+            /// Default I2C address
+            /// </summary>
             Default = Address0
         }
 
-        public enum Command : byte
+        enum Command : byte
         {
             FIRST_DATA = 0,
             SECOND_DATA = 1,
