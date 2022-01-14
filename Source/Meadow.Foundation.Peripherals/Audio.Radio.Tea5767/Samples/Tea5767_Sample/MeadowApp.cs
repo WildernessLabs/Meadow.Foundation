@@ -27,7 +27,7 @@ namespace Audio.Radio.Tea5767_Sample
             }
 
             //set a known station
-            radio.SelectFrequency(new Meadow.Units.Frequency(94.5, Meadow.Units.Frequency.UnitType.Megahertz);
+            radio.SelectFrequency(new Meadow.Units.Frequency(94.5, Meadow.Units.Frequency.UnitType.Megahertz));
         }
 
         //<!—SNOP—>
