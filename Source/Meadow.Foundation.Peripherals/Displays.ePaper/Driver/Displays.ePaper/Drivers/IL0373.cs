@@ -12,15 +12,36 @@ namespace Meadow.Foundation.Displays.ePaper
     /// </summary>
     public class Il0373 : EpdColorBase
     {
+        /// <summary>
+        /// Create a new IL0373 object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="busyPin">Busy pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
         public Il0373(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         {
         }
 
+        /// <summary>
+        /// Is black inverted on this display
+        /// </summary>
         protected override bool IsBlackInverted => false;
+
+        /// <summary>
+        /// Is color inverted on this display
+        /// </summary>
         protected override bool IsColorInverted => false;
 
+        /// <summary>
+        /// Initialize the display
+        /// </summary>
         protected override void Initialize()
         {
             Reset();
