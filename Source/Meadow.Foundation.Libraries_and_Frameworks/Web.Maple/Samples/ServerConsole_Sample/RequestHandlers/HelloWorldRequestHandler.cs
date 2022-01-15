@@ -17,9 +17,9 @@ namespace Maple.ServerBasic_Sample.RequestHandlers
         }
 
         [HttpGet("/")]
-        public void GetRoot()
+        public IActionResult GetRoot()
         {
-            this.Ok("Root Request").Wait();
+            return this.Ok("Root Request");
         }
 
         [HttpGet("/hello")]
