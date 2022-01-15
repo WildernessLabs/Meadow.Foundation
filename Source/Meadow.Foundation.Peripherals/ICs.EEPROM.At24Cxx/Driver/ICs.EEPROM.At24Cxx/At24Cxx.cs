@@ -12,20 +12,20 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// <summary>
         ///     Communication bus used to communicate with the EEPROM.
         /// </summary>
-        private readonly II2cPeripheral _eeprom;
+        private II2cPeripheral Peripheral { get; }
 
         /// <summary>
         ///     Number of bytes in a page.
         /// </summary>
-        private ushort _pageSize;
+        public ushort PageSize { get; }
 
         /// <summary>
         ///     Number of bytes in the EEPROM module.
         /// </summary>
-        private readonly ushort _memorySize;
+        public ushort MemorySize { get; }
 
-        Memory<byte> readBuffer;
-        Memory<byte> writeBuffer;
+        private Memory<byte> ReadBuffer { get; set; }
+        private Memory<byte> WriteBuffer { get; set; }
 
         /// <summary>
         ///     Create a new AT24Cxx object using the default parameters for the component.
@@ -39,12 +39,12 @@ namespace Meadow.Foundation.ICs.EEPROM
             ushort memorySize = 8192)
         {
             var device = new I2cPeripheral(i2cBus, address);
-            _eeprom = device;
-            _pageSize = pageSize;
-            _memorySize = memorySize;
+            Peripheral = device;
+            PageSize = pageSize;
+            MemorySize = memorySize;
 
-            readBuffer = new byte[3];
-            writeBuffer = new byte[3];
+            ReadBuffer = new byte[3];
+            WriteBuffer = new byte[3];
         }
 
         /// <summary>
@@ -55,12 +55,12 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// <param name="amount">Amunt of data to be accessed.</param>
         private void CheckAddress(ushort address, ushort amount)
         {
-            if (address >= _memorySize)
+            if (address > MemorySize)
             {
                 throw new ArgumentOutOfRangeException(
                     "address", "startAddress should be less than the amount of memory in the module");
             }
-            if ((address + amount) >= _memorySize)
+            if ((address + amount) > MemorySize)
             {
                 throw new ArgumentOutOfRangeException(
                     "address", "startAddress + amount should be less than the amount of memory in the module");
@@ -75,14 +75,14 @@ namespace Meadow.Foundation.ICs.EEPROM
         public byte[] Read(ushort startAddress, ushort amount)
         {
             CheckAddress(startAddress, amount);
-            Span<byte> data = writeBuffer.Span[0..2];
+            Span<byte> data = WriteBuffer.Span[0..2];
             data[0] = (byte) ((startAddress >> 8) & 0xff);
             data[1] = (byte) (startAddress & 0xff);
 
             var results = new byte[amount];
 
-            _eeprom.Write(data);
-            _eeprom.Read(results);
+            Peripheral.Write(data);
+            Peripheral.Read(results);
 
             return results;
         }
@@ -92,7 +92,7 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// </summary>
         /// <param name="startAddress">Address of he first byte to be written.</param>
         /// <param name="data">Data to be written to the EEPROM.</param>
-        public void Write(ushort startAddress, byte[] data)
+        public void Write(ushort startAddress, params byte[] data)
         {
             CheckAddress(startAddress, (ushort) data.Length);
             //
@@ -105,7 +105,7 @@ namespace Meadow.Foundation.ICs.EEPROM
                 addressAndData[0] = (byte) ((address >> 8) & 0xff);
                 addressAndData[1] = (byte) (address & 0xff);
                 addressAndData[2] = data[index];
-                _eeprom.Write(addressAndData);
+                Peripheral.Write(addressAndData);
                 Thread.Sleep(10);
             }
         }
