@@ -81,7 +81,7 @@ namespace Meadow.Foundation.Web.Maple.Server
             RequestProcessMode processMode = RequestProcessMode.Serial,
             ILogger logger = null)
         {
-            Logger =  logger ?? new ConsoleLogger();
+            Logger = logger ?? new ConsoleLogger();
             MethodCache = new RequestMethodCache(Logger);
             ErrorPageGenerator = new ErrorPageGenerator();
 
@@ -135,7 +135,7 @@ namespace Meadow.Foundation.Web.Maple.Server
         /// <summary>
         /// Starts listening to requests, and optionally advertises on UDP.
         /// </summary>
-        public async void Start()
+        public void Start()
         {
             try
             {
@@ -156,8 +156,7 @@ namespace Meadow.Foundation.Web.Maple.Server
             {
                 StartUdpAdvertisement();
             }
-            await StartListeningToIncomingRequests();
-            _httpListener.Close();
+            StartListeningToIncomingRequests();
         }
 
         /// <summary>
@@ -237,7 +236,7 @@ namespace Meadow.Foundation.Web.Maple.Server
         /// rather than in parallel.
         /// </summary>
         /// <returns></returns>
-        protected async Task StartListeningToIncomingRequests()
+        protected void StartListeningToIncomingRequests()
         {
             if (Running)
             {
@@ -245,49 +244,57 @@ namespace Meadow.Foundation.Web.Maple.Server
                 return;
             }
 
+            new Thread(RequestListenerProc).Start();
+        }
+
+        private async void RequestListenerProc()
+        {
             Running = true;
 
-            await Task.Run(async () =>
+            Logger?.Info("Starting up Maple HTTP Request listener.");
+
+            while (Running)
             {
-                Logger?.Info("starting up listener.");
+                HttpListenerContext context = null;
 
-                while (Running)
+                try
                 {
-                    HttpListenerContext context = null;
+                    // wait for a request to come in
+                    context = await _httpListener.GetContextAsync();
+                    Logger?.Info($"Request received from {context.Request.RemoteEndPoint}");
 
-                    try
+                    // depending on our processing mode, process either
+                    // synchronously, or spin off a thread and immediately
+                    // process the next request (as it comes in)
+                    switch (ThreadingMode)
                     {
-                        // wait for a request to come in
-                        context = await _httpListener.GetContextAsync();
-                        Logger?.Info($"Request received from {context.Request.RemoteEndPoint}");
-
-                        // depending on our processing mode, process either
-                        // synchronously, or spin off a thread and immediately
-                        // process the next request (as it comes in)
-                        switch (ThreadingMode)
-                        {
-                            case RequestProcessMode.Serial:
-                                ProcessRequest(context).Wait();
-                                break;
-                            case RequestProcessMode.Parallel:
-                                _ = ProcessRequest(context);
-                                break;
-                        }
-                    }
-                    catch (SocketException e)
-                    {
-                        Logger?.Error("Socket Exception: " + e.ToString());
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger?.Error(ex.ToString());
-                    }
-                    finally
-                    {
-                        context?.Response.Close();                        
+                        case RequestProcessMode.Serial:
+                            ProcessRequest(context).Wait();
+                            break;
+                        case RequestProcessMode.Parallel:
+                            _ = Task.Run(async () =>
+                            {
+                                await ProcessRequest(context);
+                            });
+                            break;
                     }
                 }
-            });
+                catch (SocketException e)
+                {
+                    Logger?.Error("Socket Exception: " + e.ToString());
+                }
+                catch (Exception ex)
+                {
+                    Logger?.Error(ex.ToString());
+                }
+                finally
+                {
+                    context?.Response.Close();
+                }
+            }
+
+            Logger?.Info("Maple HTTP Request listener stopped.");
+            _httpListener.Close();
         }
 
         private IRequestHandler GetHandlerInstance(Type handlerType, out bool shouldDispose)
@@ -318,66 +325,73 @@ namespace Meadow.Foundation.Web.Maple.Server
             return target;
         }
 
-        protected Task ProcessRequest(HttpListenerContext context)
+        protected async Task ProcessRequest(HttpListenerContext context)
         {
-            return Task.Run(async () =>
+            string[] urlQuery = context.Request.RawUrl.Substring(1).Split('?');
+            string[] urlParams = urlQuery[0].Split('/');
+            string requestedMethodName = urlParams[0].ToLower();
+
+            Logger?.Info("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + requestedMethodName);
+
+            var handlerInfo = MethodCache.Match(context.Request.HttpMethod, context.Request.RawUrl, out object param);
+            if (handlerInfo == null)
             {
-                string[] urlQuery = context.Request.RawUrl.Substring(1).Split('?');
-                string[] urlParams = urlQuery[0].Split('/');
-                string requestedMethodName = urlParams[0].ToLower();
+                Logger?.Info("No handler found");
+                await ErrorPageGenerator.SendErrorPage(context, 404, "Not Found");
+                return;
+            }
+            else
+            {
+                var handlerInstance = GetHandlerInstance(handlerInfo.HandlerType, out bool shouldDispose);
 
-                Logger?.Info("Received " + context.Request.HttpMethod + " " + context.Request.RawUrl + " - Invoking " + requestedMethodName);
-
-                var handlerInfo = MethodCache.Match(context.Request.HttpMethod, context.Request.RawUrl, out object param);
-                if (handlerInfo == null)
+                if (handlerInstance == null)
                 {
-                    Logger?.Info("No handler found");
+                    Logger?.Info("Unable to get a handler instance");
                     await ErrorPageGenerator.SendErrorPage(context, 404, "Not Found");
                     return;
                 }
-                else
+
+                handlerInstance.Context = context;
+
+                object[] paramObjects = null;
+
+                if (handlerInfo.Parameter != null)
                 {
-                    var handlerInstance = GetHandlerInstance(handlerInfo.HandlerType, out bool shouldDispose);
-
-                    handlerInstance.Context = context;
-
-                    object[] paramObjects = null;
-
-                    if (handlerInfo.Parameter != null)
+                    paramObjects = new object[]
                     {
-                        paramObjects = new object[]
-                        {
                             param
-                        };
-                    }
-
-                    try
-                    {
-                        if (typeof(IActionResult).IsAssignableFrom(handlerInfo.Method.ReturnType))
-                        {
-                            var result = handlerInfo.Method.Invoke(handlerInstance, paramObjects) as IActionResult;
-                            await result.ExecuteResultAsync(context);
-                        }
-                        else
-                        {
-                            handlerInfo.Method.Invoke(handlerInstance, paramObjects);
-                        }
-
-                        context.Response.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger?.Error(ex.Message);
-                        await ErrorPageGenerator.SendErrorPage(context, 500, ex);
-                    }
-
-                    // if the handler is not reusable, clean up
-                    if (shouldDispose)
-                    {
-                        handlerInstance.Dispose();
-                    }
+                    };
                 }
-            });
+
+                try
+                {
+                    if (typeof(IActionResult).IsAssignableFrom(handlerInfo.Method.ReturnType))
+                    {
+                        var result = handlerInfo.Method.Invoke(handlerInstance, paramObjects) as IActionResult;
+                        await result.ExecuteResultAsync(context);
+                    }
+                    else
+                    {
+                        handlerInfo.Method.Invoke(handlerInstance, paramObjects);
+                    }
+
+                    context.Response.Close();
+                }
+                catch (Exception ex)
+                {
+                    Logger?.Error(ex.Message);
+                    await ErrorPageGenerator.SendErrorPage(context, 500, ex);
+                }
+
+                // if the handler is not reusable, clean up
+                if (shouldDispose)
+                {
+                    Logger?.Debug("Disposing handler instance");
+                    handlerInstance.Dispose();
+                }
+
+                Logger?.Debug("ProcessRequest complete");
+            }
         }
     }
 }
