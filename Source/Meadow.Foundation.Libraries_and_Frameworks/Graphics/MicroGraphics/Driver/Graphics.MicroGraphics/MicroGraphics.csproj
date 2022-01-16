@@ -14,9 +14,22 @@
     <Version>0.9.45</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Lightweight integer accurate 2d graphics drawing system designed for embedded systems</Description>
+    <Configurations>Debug;Release;ProjectRefs</Configurations>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="..\..\..\..\..\icon.png" Pack="true" PackagePath="" />
+  <Choose>
+    <When Condition="'$(Configuration)' == 'ProjectRefs'">
+      <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PackageReference Include="Meadow.Contracts" Version="0.*" />
+        <PackageReference Include="Meadow.Foundation" Version="0.*" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>    
+    <None Include="..\..\..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

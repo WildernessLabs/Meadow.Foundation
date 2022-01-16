@@ -19,9 +19,25 @@
    <Description>Core peripheral drivers for Wilderness Labs Meadow</Description>
    <Nullable>enable</Nullable>
    <LangVersion>8.0</LangVersion>
+   <Configurations>Debug;Release;ProjectRefs</Configurations>
  </PropertyGroup>
- <ItemGroup>
+  <Choose>
+    <When Condition="'$(Configuration)' == 'ProjectRefs'">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
+        <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
+        <ProjectReference Include="..\..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PackageReference Include="Meadow.Contracts" Version="0.*" />
+        <PackageReference Include="Meadow" Version="0.*" />
+        <PackageReference Include="Meadow.Units" Version="0.*" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>
    <None Include="..\..\Source\icon.png" Pack="true" PackagePath="" />
-   <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
  </ItemGroup>
 </Project>
