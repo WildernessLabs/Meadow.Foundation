@@ -1,0 +1,27 @@
+name: Build Maple Latest Binaries
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ maple ]
+    tags:
+      - "maple*"
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Build for F7
+      run: dotnet publish Source/Meadow.Foundation.Libraries_and_Frameworks/Web.Maple/Driver/Web.Maple.Server/Meadow.Foundation.Web.Maple.Server.csproj --framework netstandard2.1
+    - name: Create assets
+      uses: softprops/action-gh-release@v1
+      with:
+        files: "Maple.Server.dll"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

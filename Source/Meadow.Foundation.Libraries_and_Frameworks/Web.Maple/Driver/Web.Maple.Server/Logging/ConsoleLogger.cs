@@ -6,6 +6,16 @@ namespace Meadow.Foundation.Web.Maple.Server
     {
         public Loglevel Loglevel { get; set; } = Loglevel.Error;
 
+        public void Debug(string message)
+        {
+            Log(Loglevel.Debug, message);
+        }
+
+        public void DebugIf(bool condition, string message)
+        {
+            if (condition) Log(Loglevel.Debug, message);
+        }
+
         public void Info(string message)
         {
             Log(Loglevel.Info, message);
