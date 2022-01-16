@@ -1,0 +1,24 @@
+name: Build MicroGraphics
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore Source/Meadow.Foundation.Libraries_and_Frameworks/Graphics/MicroGraphics/MicroGraphics.sln
+    - name: Build
+      run: dotnet build -c Release Source/Meadow.Foundation.Libraries_and_Frameworks/Graphics/MicroGraphics/MicroGraphics.sln --no-restore --framework netstandard2.1
