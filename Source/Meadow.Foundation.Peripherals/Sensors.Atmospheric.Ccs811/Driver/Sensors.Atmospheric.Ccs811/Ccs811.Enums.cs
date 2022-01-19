@@ -1,22 +1,24 @@
-﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
-using Meadow.Units;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Meadow.Foundation.Sensors.Atmospheric
+﻿namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Ccs811
     {
         /// <summary>
 		///     Valid addresses for the sensor.
 		/// </summary>
-		public enum Addresses : byte
+		public enum Address : byte
         {
-            Address0 = 0x5A,
-            Address1 = 0x5B,
-            Default = Address0
+            /// <summary>
+            /// Bus address 0x5A
+            /// </summary>
+            Address_0x5A = 0x5A,
+            /// <summary>
+            /// Bus address 0x5B
+            /// </summary>
+            Address_0x5B = 0x5B,
+            /// <summary>
+            /// Bus address 0x5A
+            /// </summary>
+            Default = Address_0x5A
         }
 
         private enum Register : byte
