@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Weather
 {
-    public partial class RainGauge
+    public partial class SwitchingRainGauge
     : SensorBase<Length>
     {
         protected IDigitalInputPort rainGaugePort;
@@ -21,23 +21,21 @@ namespace Meadow.Foundation.Sensors.Weather
 
         public Length DepthPerClick { get; set; }
 
-        public RainGauge(IDigitalInputController device, IPin rainSensorPin) :
+        public SwitchingRainGauge(IDigitalInputController device, IPin rainSensorPin) :
             this(device, rainSensorPin, new Length(0.2794, Length.UnitType.Millimeters))
         {
         }
 
-        public RainGauge(IDigitalInputController device, IPin rainSensorPin, Length depthPerClick) :
+        public SwitchingRainGauge(IDigitalInputController device, IPin rainSensorPin, Length depthPerClick) :
             this(device.CreateDigitalInputPort(rainSensorPin, InterruptMode.EdgeRising, ResistorMode.InternalPullUp, 500), depthPerClick)
         {
 
         }
 
-        public RainGauge(IDigitalInputPort rainSensorPort, Length depthPerClick)
+        public SwitchingRainGauge(IDigitalInputPort rainSensorPort, Length depthPerClick)
         {
-            DepthPerClick = depthPerClick;
+            this.DepthPerClick = depthPerClick;
             this.rainGaugePort = rainSensorPort;
-
-
         }
 
         public void Reset()

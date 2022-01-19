@@ -10,20 +10,20 @@ namespace MeadowApp
     {
         //<!—SNIP—>
 
-        RainGauge rainGauge;
+        SwitchingRainGauge rainGauge;
 
         public MeadowApp()
         {
             Console.WriteLine("Initialize hardware...");
 
             // initialize the rain gauge driver
-            rainGauge = new RainGauge(Device, Device.Pins.D15);
+            rainGauge = new SwitchingRainGauge(Device, Device.Pins.D15);
 
             //==== Classic event example:
             rainGauge.Updated += (sender, result) => Console.WriteLine($"Updated event {result.New.Millimeters}mm");
 
             //==== IObservable Pattern
-            var observer = RainGauge.CreateObserver(
+            var observer = SwitchingRainGauge.CreateObserver(
                 handler: result => Console.WriteLine($"Rain depth: {result.New.Millimeters}mm"),
                 filter: null
             );
