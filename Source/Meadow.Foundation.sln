@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.32014.148
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32002.261
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meadow.Foundation.Core.Samples", "Meadow.Foundation.Core.Samples", "{7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}"
 EndProject
@@ -1031,6 +1031,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Contracts", "..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj", "{89E6E27A-8960-405C-A5F8-DB37A4652C9A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Units", "..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj", "{EAD5A936-C0BB-49DD-B2EB-D10E1F5B7C5C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Weather.RainGauge", "Sensors.Weather.RainGauge", "{380520E6-12D0-4DD3-AADF-BD27A6F6702F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Weather.RainGauge", "Meadow.Foundation.Peripherals\Sensors.Weather.RainGauge\Driver\Sensors.Weather.RainGauge\Sensors.Weather.RainGauge.csproj", "{2F160576-FEA7-4E78-9EB2-CD145E1CF923}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A29C80C8-E116-4344-A49F-7E58529DC338}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RainGauge_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.RainGauge\Samples\RainGauge_Sample\RainGauge_Sample.csproj", "{F4B31AAE-F188-4D29-BA17-76A6285ACC72}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2394,6 +2402,18 @@ Global
 		{EAD5A936-C0BB-49DD-B2EB-D10E1F5B7C5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAD5A936-C0BB-49DD-B2EB-D10E1F5B7C5C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EAD5A936-C0BB-49DD-B2EB-D10E1F5B7C5C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{2F160576-FEA7-4E78-9EB2-CD145E1CF923}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F160576-FEA7-4E78-9EB2-CD145E1CF923}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F160576-FEA7-4E78-9EB2-CD145E1CF923}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{2F160576-FEA7-4E78-9EB2-CD145E1CF923}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F160576-FEA7-4E78-9EB2-CD145E1CF923}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F160576-FEA7-4E78-9EB2-CD145E1CF923}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F4B31AAE-F188-4D29-BA17-76A6285ACC72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4B31AAE-F188-4D29-BA17-76A6285ACC72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4B31AAE-F188-4D29-BA17-76A6285ACC72}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F4B31AAE-F188-4D29-BA17-76A6285ACC72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4B31AAE-F188-4D29-BA17-76A6285ACC72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4B31AAE-F188-4D29-BA17-76A6285ACC72}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2907,6 +2927,10 @@ Global
 		{169CC53A-9160-4A49-ABEF-9E7C3F78E45C} = {96A79D41-1FBE-45D0-8BBB-EC8FED8D3F60}
 		{89E6E27A-8960-405C-A5F8-DB37A4652C9A} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 		{EAD5A936-C0BB-49DD-B2EB-D10E1F5B7C5C} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
+		{380520E6-12D0-4DD3-AADF-BD27A6F6702F} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{2F160576-FEA7-4E78-9EB2-CD145E1CF923} = {380520E6-12D0-4DD3-AADF-BD27A6F6702F}
+		{A29C80C8-E116-4344-A49F-7E58529DC338} = {380520E6-12D0-4DD3-AADF-BD27A6F6702F}
+		{F4B31AAE-F188-4D29-BA17-76A6285ACC72} = {A29C80C8-E116-4344-A49F-7E58529DC338}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
