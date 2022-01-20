@@ -101,6 +101,7 @@ namespace Meadow.Foundation.Web.Maple.Server
 
             if (IPAddress.Equals(IPAddress.Any))
             {
+                // for now, just use IPv4
                 // because .NET is apparently too stupid to understand "bind to all"
                 foreach (var ni in NetworkInterface
                     .GetAllNetworkInterfaces()
@@ -114,6 +115,8 @@ namespace Meadow.Foundation.Web.Maple.Server
                         _httpListener.Prefixes.Add($"http://{ni.Address}:{port}/");
                     }
                 }
+                // TODO: test this under *nix
+                // _httpListener.Prefixes.Add($"http://+:{port}/");
             }
             else
             {
@@ -145,8 +148,11 @@ namespace Meadow.Foundation.Web.Maple.Server
             {
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
+                    var user = Environment.GetEnvironmentVariable("USERNAME");
+                    var domain = Environment.GetEnvironmentVariable("USERDOMAIN");
+
                     throw new Exception(
-                        $"The server application needs elevated privileges or you must open permission on the URL (e.g. `netsh http add urlacl url=http://{IPAddress}:{Port}/ user=DOMAIN\\user`)");
+                        $"The server application needs elevated privileges or you must open permission on the URL (e.g. `netsh http add urlacl url=http://+:{Port}/ user={domain}\\{user}`)");
                 }
 
                 throw;
