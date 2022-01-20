@@ -19,9 +19,20 @@ jobs:
         dotnet-version: 6.0.x
     - name: Build for F7
       run: dotnet publish Source/Meadow.Foundation.Libraries_and_Frameworks/Web.Maple/Driver/Web.Maple.Server/Meadow.Foundation.Web.Maple.Server.csproj --framework netstandard2.1
-    - name: Create assets
-      uses: softprops/action-gh-release@v1
+    - name: Build ZIP
+      uses: papeloto/action-zip@v1
       with:
-        files: "Maple.Server.dll"
+          files: ./Maple.Server.dll
+          dest: maple.zip
+          
+    - name: Create assets
+      uses: WebFreak001/deploy-nightly@v1.1.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/WildernessLabs/Meadow.Foundation/releases/53208997/assets{?name,label} # find out this value by opening https://api.github.com/repos/<owner>/<repo>/releases in your browser and copy the full "upload_url" value including the {?name,label} part
+        release_id: 53208997 # same as above (id can just be taken out the upload_url, it's used to find old releases)
+        asset_path: ./maple.zip # path to archive to upload
+        asset_name: maple-develop-$$.zip # name to upload the release as, use $$ to insert date (YYYYMMDD) and 6 letter commit hash
+        asset_content_type: application/zip # required by GitHub API
+        max_releases: 2 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
