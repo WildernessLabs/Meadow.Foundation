@@ -10,9 +10,18 @@
         /// </summary>
         public enum Addresses : byte
         {
-            Address0 = 0x3C,
-            Address1 = 0x3D,
-            Default = Address0
+            /// <summary>
+            /// Bus address 0x3C
+            /// </summary>
+            Address_0x3C = 0x3C,
+            /// <summary>
+            /// Bus address 0x3D
+            /// </summary>
+            Address_0x3D = 0x3D,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x3C
         }
 
         /// <summary>

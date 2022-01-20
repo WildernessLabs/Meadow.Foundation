@@ -38,8 +38,8 @@ namespace Meadow.Foundation.Sensors.Power
         {
             switch (address)
             {
-                case (byte)Addresses.Address0:
-                case (byte)Addresses.Address1:
+                case (byte)Addresses.Address_0x40:
+                case (byte)Addresses.Address_0x41:
                     // valid;
                     break;
                 default:

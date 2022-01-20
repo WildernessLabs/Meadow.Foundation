@@ -30,11 +30,20 @@ namespace Meadow.Foundation.Sensors.Motion
         private int GyroScale { get; set; }
         private int AccelerometerScale { get; set; }
 
+        /// <summary>
+        /// Acceleration 3D
+        /// </summary>
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
+        /// <summary>
+        /// Angualr acceleration 3D
+        /// </summary>
         public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
+        /// <summary>
+        /// Temperature
+        /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
-        public Mpu6050(II2cBus i2cBus, Address address = Address.Default)
+        public Mpu6050(II2cBus i2cBus, Addresses address = Addresses.Default)
             : this(i2cBus, (byte)address)
         {
         }

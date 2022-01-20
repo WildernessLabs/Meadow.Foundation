@@ -5,7 +5,7 @@
         /// <summary>
 		///     Valid addresses for the sensor.
 		/// </summary>
-		public enum Address : byte
+		public enum Addresses : byte
         {
             /// <summary>
             /// Bus address 0x5A

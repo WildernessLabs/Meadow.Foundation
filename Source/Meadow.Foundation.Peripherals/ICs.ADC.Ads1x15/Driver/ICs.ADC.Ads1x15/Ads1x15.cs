@@ -37,7 +37,7 @@ namespace Meadow.Foundation.ICs.ADC
         /// <param name="mode"></param>
         /// <param name="channel"></param>
         protected Ads1x15(II2cBus i2cBus,
-            Address address,
+            Addresses address,
             MeasureMode mode,
             ChannelSetting channel)
         {            

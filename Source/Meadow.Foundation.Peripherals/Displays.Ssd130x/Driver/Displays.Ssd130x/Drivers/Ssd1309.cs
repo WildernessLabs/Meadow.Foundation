@@ -23,13 +23,9 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Create a new SSD1309 object using the default parameters for
+        ///     Create a new SSD1309 object
         /// </summary>
-        /// <remarks>
-        ///     Note that by default, any pixels out of bounds will throw and exception.
-        ///     This can be changed by setting the <seealso cref="IgnoreOutOfBoundsPixels" />
-        ///     property to true.
-        /// </remarks>
+        /// <param name="i2cBus">I2cBus connected to display</param>
         /// <param name="address">Address of the bus on the I2C display.</param>
         public Ssd1309(II2cBus i2cBus, byte address = (byte)Addresses.Default) : base(i2cBus, address, DisplayType.OLED128x64)
         {

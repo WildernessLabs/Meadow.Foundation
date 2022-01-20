@@ -9,15 +9,36 @@
         /// </summary>
         public enum Addresses : byte
         {
-            Address0 = 0x70,
-            Default = Address0
+            /// <summary>
+            /// Bus address 0x70
+            /// </summary>
+            Address_0x70 = 0x70,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x70
         }
 
+        /// <summary>
+        /// Blink rate
+        /// </summary>
         public enum BlinkRate : byte
         {
+            /// <summary>
+            /// Off
+            /// </summary>
             Off = 0,
+            /// <summary>
+            /// Fast (2Hz)
+            /// </summary>
             Fast = 2, //2hz
+            /// <summary>
+            /// Medium (1Hz)
+            /// </summary>
             Medium = 4, //1hz
+            /// <summary>
+            /// Slow (0.5Hz)
+            /// </summary>
             Slow = 8, //0.5hz
         }
 
@@ -55,6 +76,5 @@
             HT16K33_DIM = 0xE0, // Set brightness / dimmer
             HT16K33_DDAP = 0, //display address pointer
         }
-
     }
 }

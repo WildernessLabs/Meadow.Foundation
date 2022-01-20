@@ -8,8 +8,14 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public enum Addresses : byte
         {
-            Address0 = 0x5A,
-            Default = Address0
+            /// <summary>
+            /// Bus address 0x5A
+            /// </summary>
+            Address_0x5A = 0x5A,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x5A
         }
 
         /// <summary>

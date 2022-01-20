@@ -5,10 +5,16 @@
         /// <summary>
         ///     Valid addresses for the sensor.
         /// </summary>
-        public enum Addresses : byte
+        public enum Address : byte
         {
-            Address0 = 0x50,
-            Default = Address0
+            /// <summary>
+            /// Bus address 0x50
+            /// </summary>
+            Address_0x50 = 0x50,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x50
         }
     }
 }

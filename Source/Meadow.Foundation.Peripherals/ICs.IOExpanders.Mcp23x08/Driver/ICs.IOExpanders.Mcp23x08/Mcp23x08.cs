@@ -67,7 +67,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="i2cBus"></param>
         /// <param name="address"></param>
-        public Mcp23x08(II2cBus i2cBus, byte address = (byte)Addresses.Default,
+        /// <param name="interruptPort">optional interupt port</param>
+        public Mcp23x08(II2cBus i2cBus, byte address = (byte)Address.Default,
             IDigitalInputPort interruptPort = null) :
             // use the internal constructor that takes an IMcpDeviceComms
             this(new I2cMcpDeviceComms(i2cBus, address), interruptPort)

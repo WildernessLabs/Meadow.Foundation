@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Audio.Radio
         /// </summary>
         /// <param name="i2cBus">I2Cbus connected to the radio</param>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public Tea5767(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Tea5767(II2cBus i2cBus, byte address = (byte)Address.Default)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
