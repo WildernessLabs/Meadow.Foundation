@@ -20,7 +20,7 @@ jobs:
     - name: Build for F7
       run: dotnet publish Source/Meadow.Foundation.Libraries_and_Frameworks/Web.Maple/Driver/Web.Maple.Server/Meadow.Foundation.Web.Maple.Server.csproj --framework netstandard2.1
     - name: Build ZIP
-      uses: papeloto/action-zip@v1
+      uses: vimtor/action-zip@v1
       with:
           files: ./Maple.Server.dll
           dest: maple.zip
