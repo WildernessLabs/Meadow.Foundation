@@ -34,7 +34,12 @@ namespace Meadow.Foundation.Sensors.Motion
         public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
         public Units.Temperature? Temperature => Conditions.Temperature;
 
-        public Mpu6050(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Mpu6050(II2cBus i2cBus, Address address = Address.Default)
+            : this(i2cBus, (byte)address)
+        {
+        }
+
+        public Mpu6050(II2cBus i2cBus, byte address)
             : base(i2cBus, address, readBufferSize: 14)
         {
             Initialize(address);

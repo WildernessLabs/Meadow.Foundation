@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40).</param>
         /// <param name="i2cBus">I2CBus.</param>
-        public Si70xx(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Si70xx(II2cBus i2cBus, byte address = (byte)Address.Default)
             : base(i2cBus, address, 8, 3)
         {
             Initialize();
