@@ -18,11 +18,11 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Build for F7
-      run: dotnet publish Source/Meadow.Foundation.Libraries_and_Frameworks/Web.Maple/Driver/Web.Maple.Server/Meadow.Foundation.Web.Maple.Server.csproj --framework netstandard2.1
+      run: dotnet publish Source/Meadow.Foundation.Libraries_and_Frameworks/Web.Maple/Driver/Web.Maple.Server/Meadow.Foundation.Web.Maple.Server.csproj --framework netstandard2.1 -o ./output
     - name: Build ZIP
       uses: vimtor/action-zip@v1
       with:
-          files: ./Maple.Server.dll
+          files: ./output/Maple.Server.dll
           dest: maple.zip
           
     - name: Create assets
