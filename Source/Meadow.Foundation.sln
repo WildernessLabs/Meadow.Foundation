@@ -1036,9 +1036,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Weather.SwitchingRa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A29C80C8-E116-4344-A49F-7E58529DC338}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Weather.SwitchingRainGauge", "Meadow.Foundation.Peripherals\Sensors.Weather.RainGauge\Driver\Sensors.Weather.SwitchingRainGauge\Sensors.Weather.SwitchingRainGauge.csproj", "{D017E544-F3D7-49DE-913C-CD9D12D23007}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Weather.SwitchingRainGauge", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingRainGauge\Driver\Sensors.Weather.SwitchingRainGauge\Sensors.Weather.SwitchingRainGauge.csproj", "{D017E544-F3D7-49DE-913C-CD9D12D23007}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwitchingRainGauge_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.RainGauge\Samples\SwitchingRainGauge_Sample\SwitchingRainGauge_Sample.csproj", "{AFCF1EBC-B7FC-445A-A8E5-AF3724DA8F78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwitchingRainGauge_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingRainGauge\Samples\SwitchingRainGauge_Sample\SwitchingRainGauge_Sample.csproj", "{AFCF1EBC-B7FC-445A-A8E5-AF3724DA8F78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
