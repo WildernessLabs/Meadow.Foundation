@@ -78,12 +78,18 @@ namespace Meadow.Foundation.Sensors.Hid
         /// to wait in between samples during a reading.</param>
         public AnalogJoystick(
             IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
-            JoystickCalibration? calibration = null, bool isInverted = false,
-            int updateIntervalMs = 1000,
-            int sampleCount = 5, int sampleIntervalMs = 40)
+            JoystickCalibration? calibration = null, bool isInverted = false)
+                : this(device, horizontalPin, verticalPin, calibration, isInverted, 5, TimeSpan.FromMilliseconds(40))
+        { }
+
+        public AnalogJoystick(
+            IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
+            JoystickCalibration? calibration, bool isInverted,
+            int sampleCount, 
+            TimeSpan sampleInterval)
                 : this(
-                      device.CreateAnalogInputPort(horizontalPin, updateIntervalMs, sampleCount, sampleIntervalMs),
-                      device.CreateAnalogInputPort(verticalPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+                      device.CreateAnalogInputPort(horizontalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
+                      device.CreateAnalogInputPort(verticalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
                       calibration, isInverted)
         { }
 

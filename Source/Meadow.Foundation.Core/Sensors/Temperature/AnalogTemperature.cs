@@ -114,13 +114,13 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
         /// <param name="sampleCount">How many samples to take during a given
         /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalMs">The time, in milliseconds,
+        /// <param name="sampleInterval">The time,
         /// to wait in between samples during a reading.</param>
         public AnalogTemperature(
             IAnalogInputController device, IPin analogPin,
-            KnownSensorType sensorType, Calibration? calibration = null,
-            int sampleCount = 5, int sampleIntervalMs = 40)
-                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleIntervalMs),
+            KnownSensorType sensorType, Calibration? calibration,
+            int sampleCount, TimeSpan sampleInterval)
+                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval, new Voltage(3.3, Voltage.UnitType.Volts)),
                       sensorType, calibration)
         {
         }
