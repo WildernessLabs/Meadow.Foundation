@@ -9,8 +9,17 @@ namespace Meadow.Foundation
     /// </summary>
     public enum CircuitTerminationType
     {
+        /// <summary>
+        /// Common ground termination
+        /// </summary>
         CommonGround,
+        /// <summary>
+        /// High or VCC termination
+        /// </summary>
         High,
+        /// <summary>
+        /// Floating / not terminated
+        /// </summary>
         Floating
     }
 }

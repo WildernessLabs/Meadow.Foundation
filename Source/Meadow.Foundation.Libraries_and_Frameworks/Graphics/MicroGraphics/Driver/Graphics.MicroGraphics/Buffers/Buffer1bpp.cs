@@ -175,22 +175,6 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
 
             return newBuffer;
-
-
-
-
-
-
-            if(rotation == RotationType.Default ||
-               rotation == RotationType._180Degrees)
-            {
-                
-            }
-            else //90 & 270
-            {
-                newBuffer = new Buffer1bpp(Height, Width);
-            }
-
         }
     }
 }

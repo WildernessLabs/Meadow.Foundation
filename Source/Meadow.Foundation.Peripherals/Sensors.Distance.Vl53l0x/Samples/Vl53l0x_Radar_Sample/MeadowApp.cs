@@ -18,7 +18,6 @@ namespace MeadowApp
         MicroGraphics graphics;
         St7789 display;
         Vl53l0x sensor;
-        Servo servo;
 
         float[] radarData = new float[181];
 

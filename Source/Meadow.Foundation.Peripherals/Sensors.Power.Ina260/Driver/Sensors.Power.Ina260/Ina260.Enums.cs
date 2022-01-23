@@ -12,9 +12,18 @@ namespace Meadow.Foundation.Sensors.Power
         /// </summary>
         public enum Addresses : byte
         {
-            Address0 = 0x40,
-            Address1 = 0x41,
-            Default = Address0
+            /// <summary>
+            /// Bus address 0x40
+            /// </summary>
+            Address_0x40 = 0x40,
+            /// <summary>
+            /// Bus address 0x41
+            /// </summary>
+            Address_0x41 = 0x41,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x40
         }
 
         private enum Register : byte

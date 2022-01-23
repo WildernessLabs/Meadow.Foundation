@@ -7,6 +7,10 @@ namespace Meadow.Foundation
     /// </summary>
     public class DeviceConfigurationException : Exception
     {
+        /// <summary>
+        /// Create a new DeviceConfigurationException object
+        /// </summary>
+        /// <param name="message"></param>
         public DeviceConfigurationException(string message)
             : base(message)
         {

@@ -1,5 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
 	<PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageIcon>icon.png</PackageIcon>
 		<Authors>Wilderness Labs, Inc</Authors>
 		<TargetFramework>netstandard2.1</TargetFramework>

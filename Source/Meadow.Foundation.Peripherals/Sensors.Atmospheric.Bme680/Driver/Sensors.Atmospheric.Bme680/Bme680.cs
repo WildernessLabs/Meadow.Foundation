@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Oversample TemperatureSampleCount { get; set; } = Oversample.OversampleX8;
         public Oversample PressureSampleCount { get; set; } = Oversample.OversampleX8;
         public Oversample HumiditySampleCount { get; set; } = Oversample.OversampleX8;
-        private Configuration configuration;
+        private readonly Configuration configuration;
 
         /// <summary>
         ///     Communication bus used to read and write to the BME280 sensor.
@@ -52,9 +52,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Compensation data from the sensor.
         /// </summary>
-        protected TemperatureCompensation temperatureCompensation;
-        protected PressureCompensation pressureCompensation;
-        protected HumidityCompensation humidityCompensation;
+        protected TemperatureCompensation? temperatureCompensation;
+        protected PressureCompensation? pressureCompensation;
+        protected HumidityCompensation? humidityCompensation;
 
 
         /// <summary>
@@ -90,10 +90,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
         }
 
-        public Bme680(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration sensorSettings = null)
+        public Bme680(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration? configuration = null)
         {
             bme680Comms = new Bme680SPI(spiBus, chipSelectPort);
-            configuration = new Configuration(); // here to avoid the warning
+
+            if(configuration != null)
+            {
+                this.configuration = configuration;
+            }
+            else
+            {
+                this.configuration = new Configuration();
+            }
+            
             //https://github.com/Zanduino/BME680/blob/master/src/Zanshin_BME680.cpp
             bme680Comms.WriteRegister(0x73, bme680Comms.ReadRegister(0x73));
 

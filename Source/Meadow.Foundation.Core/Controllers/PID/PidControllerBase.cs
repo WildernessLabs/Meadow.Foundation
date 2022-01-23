@@ -3,12 +3,30 @@ using System;
 
 namespace Meadow.Foundation.Controllers.Pid
 {
+    /// <summary>
+    /// Represents a PID controller
+    /// </summary>
     public abstract class PidControllerBase : IPidController
     {
         // state vars
+        /// <summary>
+        /// Last update time
+        /// </summary>
         protected DateTime _lastUpdateTime;
+
+        /// <summary>
+        /// Last error value
+        /// </summary>
         protected float _lastError = 0.0f;
+
+        /// <summary>
+        /// Integral
+        /// </summary>
         protected float _integral = 0.0f;
+
+        /// <summary>
+        /// Last control output value
+        /// </summary>
         protected float _lastControlOutputValue = 0.0f;
 
         /// <summary>
@@ -26,7 +44,14 @@ namespace Meadow.Foundation.Controllers.Pid
         /// </summary>
         public float TargetInput { get; set; }
 
+        /// <summary>
+        /// Output minimum value
+        /// </summary>
         public float OutputMin { get; set; } = -1;
+
+        /// <summary>
+        /// Output maximum value
+        /// </summary>
         public float OutputMax { get; set; } = 1;
 
         /// <summary>
@@ -50,6 +75,9 @@ namespace Meadow.Foundation.Controllers.Pid
         /// </summary>
         public bool OutputTuningInformation { get; set; } = false;
 
+        /// <summary>
+        /// Create a new PID controller
+        /// </summary>
         public PidControllerBase()
         {
             _lastUpdateTime = DateTime.Now;
@@ -57,6 +85,9 @@ namespace Meadow.Foundation.Controllers.Pid
             _integral = 0;
         }
 
+        /// <summary>
+        /// Reset integral
+        /// </summary>
         public void ResetIntegrator()
         {
             _integral = 0;
@@ -66,13 +97,7 @@ namespace Meadow.Foundation.Controllers.Pid
         /// Calculates the control output based on the Target and Actual, using the current PID values
         /// 
         /// </summary>
-        /// <param name="correctionActions">
-        ///     The corrective actions to use in the Calculation. By default, it uses
-        ///     P, I, and D. To just use PI control pass:
-        ///     `PIDActionType.Proportional | PIDActionType.Integral`.
-        /// </param>
         /// <returns></returns>
         public abstract float CalculateControlOutput();
-
     }
 }

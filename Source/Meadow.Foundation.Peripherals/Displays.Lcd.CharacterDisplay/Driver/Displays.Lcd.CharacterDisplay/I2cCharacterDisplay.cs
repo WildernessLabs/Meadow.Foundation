@@ -15,15 +15,18 @@ namespace Meadow.Foundation.Displays.Lcd
         private byte cursorLine = 0;
         private byte cursorColumn = 0;
 
-        // commands
-        static byte LCD_CLEARDISPLAY = 0x01;
-        static byte LCD_RETURNHOME = 0x02;
-        static byte LCD_ENTRYMODESET = 0x04;
-        static byte LCD_DISPLAYCONTROL = 0x08;
-        static byte LCD_CURSORSHIFT = 0x10;
-        static byte LCD_FUNCTIONSET = 0x20;
-        static byte LCD_SETCGRAMADDR = 0x40;
-        static byte LCD_SETDDRAMADDR = 0x80;
+        enum I2CCommands
+        {
+            LCD_CLEARDISPLAY = 0x01,
+            LCD_RETURNHOME = 0x02,
+            LCD_ENTRYMODESET = 0x04,
+            LCD_DISPLAYCONTROL = 0x08,
+            LCD_CURSORSHIFT = 0x10,
+            LCD_FUNCTIONSET = 0x20,
+            LCD_SETCGRAMADDR = 0x40,
+            LCD_SETDDRAMADDR = 0x80,
+        }
+  
         // flags for display entry mode
         static byte LCD_ENTRYRIGHT = 0x00;
         static byte LCD_ENTRYLEFT = 0x02;
@@ -93,7 +96,7 @@ namespace Meadow.Foundation.Displays.Lcd
 
             Write4Bits(0x02 << 4);
 
-            Command((byte)(LCD_FUNCTIONSET | displayFunction));
+            Command((byte)((byte)I2CCommands.LCD_FUNCTIONSET | displayFunction));
 
             // turn the display on with no cursor or blinking default
             displayControl = (byte)(LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF);
@@ -106,14 +109,14 @@ namespace Meadow.Foundation.Displays.Lcd
             displayMode = (byte)(LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT);
 
             // set the entry mode
-            Command((byte)(LCD_ENTRYMODESET | displayMode));
+            Command((byte)((byte)I2CCommands.LCD_ENTRYMODESET | displayMode));
 
             Home();
         }
 
         void Home()
         {
-            Command(LCD_RETURNHOME);  // set cursor position to zero
+            Command((byte)I2CCommands.LCD_RETURNHOME);  // set cursor position to zero
             Thread.Sleep(2); 
         }
 
@@ -163,7 +166,7 @@ namespace Meadow.Foundation.Displays.Lcd
         public void ClearLines()
         {
             // clear display, set cursor position to zero
-            Command(LCD_CLEARDISPLAY);
+            Command((byte)I2CCommands.LCD_CLEARDISPLAY);
             Thread.Sleep(2);
             SetCursorPosition(0, 0);
         }
@@ -176,7 +179,7 @@ namespace Meadow.Foundation.Displays.Lcd
             {
                 line = (byte)(DisplayConfig.Height - 1);    
             }
-            Command((byte)(LCD_SETDDRAMADDR | (column + rowOffsets[line])));
+            Command((byte)((byte)I2CCommands.LCD_SETDDRAMADDR | (column + rowOffsets[line])));
 
             cursorLine = line;
             cursorColumn = column;
@@ -188,7 +191,7 @@ namespace Meadow.Foundation.Displays.Lcd
 
             if (screentText.Length + cursorColumn > DisplayConfig.Width)
             {
-                screentText = screentText.Substring(0, DisplayConfig.Width - cursorColumn);
+                screentText = screentText[..(DisplayConfig.Width - cursorColumn)];
             }
             cursorColumn += (byte)screentText.Length;
 
@@ -211,80 +214,81 @@ namespace Meadow.Foundation.Displays.Lcd
         public void DisplayOff()
         {
             displayControl &= (byte)~LCD_DISPLAYON;
-            Command((byte)(LCD_DISPLAYCONTROL | displayControl));
+            Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
         }
         public void DisplayOn()
         {
             displayControl |= LCD_DISPLAYON;
-            Command((byte)(LCD_DISPLAYCONTROL | displayControl));
+            Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
         }
 
         // Turns the underline cursor on/off
         public void CursorOff()
         {
             displayControl &= (byte)~LCD_CURSORON;
-            Command((byte)(LCD_DISPLAYCONTROL | displayControl));
+            Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
         }
         public void CursorOn()
         {
             displayControl |= LCD_CURSORON;
-            Command((byte)(LCD_DISPLAYCONTROL | displayControl));
+            Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
         }
 
         // Turn on and off the blinking cursor
         public void BlinkOff()
         {
             displayControl &= (byte)~LCD_BLINKON;
-            Command((byte)(LCD_DISPLAYCONTROL | displayControl));
+            Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
         }
         public void BlinkOn()
         {
             displayControl |= LCD_BLINKON;
-            Command((byte)(LCD_DISPLAYCONTROL | displayControl));
+            Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
         }
 
         // These commands scroll the display without changing the RAM
-        public void scrollDisplayLeft()
+        public void ScrollDisplayLeft()
         {
-            Command((byte)(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT));
+            Command((byte)((byte)I2CCommands.LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT));
         }
-        public void scrollDisplayRight()
+
+        public void ScrollDisplayRight()
         {
-            Command((byte)(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT));
+            Command((byte)((byte)I2CCommands.LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT));
         }
 
         // This is for text that flows Left to Right
         public void SetLeftToRight()
         {
-            displayMode |= (byte)LCD_ENTRYLEFT;
-            Command((byte)(LCD_ENTRYMODESET | displayMode));
+            displayMode |= LCD_ENTRYLEFT;
+            Command((byte)((byte)I2CCommands.LCD_ENTRYMODESET | displayMode));
         }
 
         // This is for text that flows Right to Left
         public void SetRightToLeft()
         {
             displayMode &= (byte)~LCD_ENTRYLEFT;
-            Command((byte)(LCD_ENTRYMODESET | displayMode));
+            Command((byte)((byte)I2CCommands.LCD_ENTRYMODESET | displayMode));
         }
 
         // This will 'right justify' text from the cursor
         public void AutoscrollOn()
         {
             displayMode |= LCD_ENTRYSHIFTINCREMENT;
-            Command((byte)(LCD_ENTRYMODESET | displayMode));
+            Command((byte)((byte)I2CCommands.LCD_ENTRYMODESET | displayMode));
         }
 
         // This will 'left justify' text from the cursor
         public void AutoscrollOff()
         {
             displayMode &= (byte)~LCD_ENTRYSHIFTINCREMENT;
-            Command((byte)(LCD_ENTRYMODESET | displayMode));
+            Command((byte)((byte)I2CCommands.LCD_ENTRYMODESET | displayMode));
         }
 
         public void SaveCustomCharacter(byte[] characterMap, byte address)
         {
             address &= 0x7; // we only have 8 locations 0-7
-            Command((byte)(LCD_SETCGRAMADDR | (address << 3)));
+            Command((byte)((byte)I2CCommands.LCD_SETCGRAMADDR | (address << 3)));
             for (int i = 0; i < 8; i++)
             {
                 i2cPeripheral.WriteRegister(Rs, characterMap[i]);

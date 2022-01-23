@@ -6,10 +6,17 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Audio.Mp3
 {
+    /// <summary>
+    /// Represents a Yx5300 serial MP3 player
+    /// </summary>
     public partial class Yx5300
     {
-        ISerialPort serialPort;
+        readonly ISerialPort serialPort;
 
+        /// <summary>
+        /// Create a YX5300 mp3 player object
+        /// </summary>
+        /// <param name="serialPort"></param>
         protected Yx5300(ISerialPort serialPort)
         {
             this.serialPort = serialPort;
@@ -25,92 +32,160 @@ namespace Meadow.Foundation.Audio.Mp3
             Thread.Sleep(500);
         }
 
+        /// <summary>
+        /// Create a YX5300 mp3 player object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="serialPortName">Name of serial port connected to YX5300</param>
         public Yx5300(IMeadowDevice device, SerialPortName serialPortName)
             : this(device.CreateSerialPort(
                 serialPortName))
         { }
 
+        /// <summary>
+        /// Reset the YX5300 hardware
+        /// </summary>
         public void Reset()
         {
             SendCommand(Commands.Reset);
         }
+
+        /// <summary>
+        /// Set the power state to sleep
+        /// </summary>
 
         public void Sleep()
         {
             SendCommand(Commands.Sleep);
         }
 
+        /// <summary>
+        /// Set the power state to normal operations
+        /// </summary>
+
         public void WakeUp()
         {
             SendCommand(Commands.Wake);
         }
 
+        /// <summary>
+        /// Set volume of YX5300
+        /// </summary>
+        /// <param name="volume">byte value from 0-30</param>
         public void SetVolume(byte volume)
         {
             if (volume > 30) { volume = 30; }
             SendCommand(Commands.SetVolume, 0, volume);
         }
 
+        /// <summary>
+        /// Increase audio volume by 1 (0-30)
+        /// </summary>
         public void VolumeUp()
         {
             SendCommand(Commands.VolumeUp);
         }
 
+        /// <summary>
+        /// Decrease audio volume by 1 (0-30)
+        /// </summary>
         public void VolumeDown()
         {
             SendCommand(Commands.VolumeDown);
         }
+
+        /// <summary>
+        /// Get audio volume (0-30)
+        /// </summary>
+        /// <returns></returns>
 
         public async Task<byte> GetVolume()
         {
             return (await SendCommandAndReadResponse(Commands.GetVolume)).Item2;
         }
 
+        /// <summary>
+        /// Get index of currently playing file
+        /// </summary>
+        /// <returns></returns>
         public async Task<byte> GetIndexOfCurrentFile()
         {
             return (await SendCommandAndReadResponse(Commands.GetCurrentFile)).Item2;
         }
 
+        /// <summary>
+        /// Get number of folders
+        /// </summary>
+        /// <returns></returns>
         public async Task<byte> GetNumberOfFolders()
         {
             return (await SendCommandAndReadResponse(Commands.GetNumberOfFolders)).Item2;
         }
 
+        /// <summary>
+        /// Get count of mp3 files in folder
+        /// </summary>
+        /// <param name="folderIndex">index of folder</param>
+        /// <returns></returns>
         public async Task<byte> GetNumberOfTracksInFolder(byte folderIndex)
         {
             return (await SendCommandAndReadResponse(Commands.GetNumberOfTracksInFolder, 0, folderIndex)).Item2;
         }
+
+        /// <summary>
+        /// Get status of YX5300
+        /// </summary>
+        /// <returns>PlayStatus enum</returns>
 
         public async Task<PlayStatus> GetStatus()
         {
             return (PlayStatus)(await SendCommandAndReadResponse(Commands.GetStatus)).Item2;
         }
 
+        /// <summary>
+        /// Play current file
+        /// </summary>
         public void Play()
         {
             SendCommand(Commands.Play);
         }
 
+        /// <summary>
+        /// Play song at index
+        /// </summary>
+        /// <param name="songIndex">index of mp3 file in folder</param>
         public void Play(byte songIndex)
         {
             SendCommand(Commands.PlayIndex, 0, songIndex);
         }
 
+        /// <summary>
+        /// Advance to next track
+        /// </summary>
         public void Next()
         {
             SendCommand(Commands.Next);
         }
 
+        /// <summary>
+        /// Move back to previous track
+        /// </summary>
         public void Previous()
         {
             SendCommand(Commands.Previous);
         }
 
+        /// <summary>
+        /// Pause current mp3
+        /// </summary>
         public void Pause()
         {
             SendCommand(Commands.Pause);
         }
 
+        /// <summary>
+        /// Stop current mp3
+        /// </summary>
         public void Stop()
         {
             SendCommand(Commands.Stop);

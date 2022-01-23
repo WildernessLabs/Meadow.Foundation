@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation
 {
@@ -16,9 +14,16 @@ namespace Meadow.Foundation
         where UNIT : struct
     {
         //==== internals
+        /// <summary>
+        /// Subscribed observers
+        /// </summary>
         protected List<IObserver<IChangeResult<UNIT>>> observers { get; set; } = new List<IObserver<IChangeResult<UNIT>>>();
 
         //==== Observable stuff
+        /// <summary>
+        /// Notify observers of a change
+        /// </summary>
+        /// <param name="changeResult"></param>
         protected void NotifyObservers(IChangeResult<UNIT> changeResult)
         {
             observers.ForEach(x => x.OnNext(changeResult));

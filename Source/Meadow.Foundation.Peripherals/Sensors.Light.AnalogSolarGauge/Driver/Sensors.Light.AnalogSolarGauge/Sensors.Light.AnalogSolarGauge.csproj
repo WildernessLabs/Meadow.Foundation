@@ -17,6 +17,7 @@
     <RootNamespace>Meadow.Foundation.Sensors.Light</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>

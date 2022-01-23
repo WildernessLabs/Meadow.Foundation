@@ -8,8 +8,14 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// </summary>
         public enum Addresses : byte
         {
-            Address0 = 0x2A,
-            Default = Address0
+            /// <summary>
+            /// Bus address 0x2A
+            /// </summary>
+            Address_0x2A = 0x2A,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x2A
         }
 
         private enum CTRL2_BITS : byte

@@ -5,13 +5,15 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
+#nullable enable
+
 namespace Meadow.Foundation.Web.Maple.Server
 {
     internal class HandlerInfo
     {
-        public Type HandlerType { get; set; }
-        public MethodInfo Method { get; set; }
-        public ParameterInfo Parameter { get; set; }
+        public Type? HandlerType { get; set; }
+        public MethodInfo? Method { get; set; }
+        public ParameterInfo? Parameter { get; set; }
     }
 
     internal class RequestMethodCache
@@ -33,7 +35,7 @@ namespace Meadow.Foundation.Web.Maple.Server
             return _methodCache[httpVerb].ContainsKey(methodName);
         }
 
-        private object GetTypedParameter(string param, Type type)
+        private object? GetTypedParameter(string param, Type type)
         {
             if (string.IsNullOrEmpty(param)) return null;
 
@@ -79,7 +81,7 @@ namespace Meadow.Foundation.Web.Maple.Server
             }
         }
 
-        public HandlerInfo Match(string verb, string url, out object param)
+        public HandlerInfo? Match(string verb, string url, out object? param)
         {
             param = null;
 
@@ -255,7 +257,7 @@ namespace Meadow.Foundation.Web.Maple.Server
             }
             else
             {
-                Logger.Warn($"Attempt to add type {t.Name} to Request handlers, but does not implement IRequestHandler");
+                Logger?.Warn($"Attempt to add type {t.Name} to Request handlers, but does not implement IRequestHandler");
             }
         }
 
@@ -274,7 +276,7 @@ namespace Meadow.Foundation.Web.Maple.Server
             _methodCache[httpVerb].Add(methodName, method);
         }
 
-        public MethodInfo GetMethod(string httpVerb, string methodName)
+        public MethodInfo? GetMethod(string httpVerb, string methodName)
         {
             if (!_methodCache.ContainsKey(httpVerb))
             {

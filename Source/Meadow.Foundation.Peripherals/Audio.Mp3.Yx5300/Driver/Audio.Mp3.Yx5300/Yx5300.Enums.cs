@@ -2,11 +2,26 @@
 {
     public partial class Yx5300
     {
+        /// <summary>
+        /// Music play status
+        /// </summary>
         public enum PlayStatus
         {
+            /// <summary>
+            /// Stopped
+            /// </summary>
             Stopped = 0,
+            /// <summary>
+            /// Playing music
+            /// </summary>
             Playing = 1,
+            /// <summary>
+            /// Music is paused
+            /// </summary>
             Paused = 2,
+            /// <summary>
+            /// Status unknown
+            /// </summary>
             Unknown,
         }
 

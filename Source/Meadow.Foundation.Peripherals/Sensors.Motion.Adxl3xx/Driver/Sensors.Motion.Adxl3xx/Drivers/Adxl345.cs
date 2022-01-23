@@ -67,7 +67,17 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
-        public Adxl345(II2cBus i2cBus, byte address = (byte)Addresses.Address0)
+        public Adxl345(II2cBus i2cBus, Addresses address = Addresses.Default)
+            : this(i2cBus, (byte)address)
+        {
+        }
+
+        /// <summary>
+        ///     Create a new instance of the ADXL345 communicating over the I2C interface.
+        /// </summary>
+        /// <param name="address">Address of the I2C sensor</param>
+        /// <param name="i2cBus">I2C bus</param>
+        public Adxl345(II2cBus i2cBus, byte address)
             : base(i2cBus, address)
         {
             var deviceID = ReadRegister(Register.DEVICE_ID);

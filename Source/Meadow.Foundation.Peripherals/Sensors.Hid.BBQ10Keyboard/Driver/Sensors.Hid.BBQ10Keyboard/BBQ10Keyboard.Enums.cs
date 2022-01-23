@@ -10,10 +10,19 @@
             StateRelease
         }
 
+        /// <summary>
+        ///     Valid addresses for the sensor.
+        /// </summary>
         public enum Addresses : byte
         {
-            Default = Address0,
-            Address0 = 0x1F,
+            /// <summary>
+            /// Bus address 0x1F
+            /// </summary>
+            Address_0x1F = 0x1F,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x1F
         }
     }
 }

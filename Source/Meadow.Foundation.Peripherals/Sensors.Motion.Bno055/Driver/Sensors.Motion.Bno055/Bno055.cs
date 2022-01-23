@@ -236,7 +236,18 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="address">Address of the BNO055 (default = 0x28).</param>
         /// <param name="i2cBus">I2C bus (default = 400 KHz).</param>
-        public Bno055(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Bno055(II2cBus i2cBus, Addresses address = Addresses.Default)
+            : this(i2cBus, (byte)address)
+        {
+
+        }
+
+        /// <summary>
+        ///     Create a new BNO055 object using the default parameters for the component.
+        /// </summary>
+        /// <param name="address">Address of the BNO055 (default = 0x28).</param>
+        /// <param name="i2cBus">I2C bus (default = 400 KHz).</param>
+        public Bno055(II2cBus i2cBus, byte address)
             : base(i2cBus, address, readBufferSize: 256)
         {
             if (Peripheral.ReadRegister(Registers.ChipID) != 0xa0)
@@ -405,7 +416,7 @@ namespace Meadow.Foundation.Sensors.Motion
             var x = (short)((ReadBuffer.Span[start + 1] << 8) | ReadBuffer.Span[start]);
             var y = (short)((ReadBuffer.Span[start + 3] << 8) | ReadBuffer.Span[start + 2]);
             var z = (short)((ReadBuffer.Span[start + 5] << 8) | ReadBuffer.Span[start + 4]);
-            return new EulerAngles(x / divisor, y / divisor, z / divisor);
+            return new EulerAngles(new Angle(x / divisor, Angle.UnitType.Radians), new Angle(y / divisor, Angle.UnitType.Radians), new Angle(z / divisor, Angle.UnitType.Radians));
         }
 
         /// <summary>

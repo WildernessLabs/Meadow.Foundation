@@ -84,9 +84,9 @@ namespace Meadow.Foundation.Motors
         /// <summary>
         /// Sends a 0.5ms pulse to the motor to enable throttle control.
         /// </summary>
-        public async Task Arm()
+        public void Arm()
         {
-            this.pwmPort.DutyCycle = CalculateDutyCycle(ArmingPulseDuration, Frequency);
+            pwmPort.DutyCycle = CalculateDutyCycle(ArmingPulseDuration, Frequency);
         }
 
         /// <summary>

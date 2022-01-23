@@ -7,8 +7,14 @@
 		/// </summary>
 		public enum Addresses : byte
 		{
-			Address0 = 0x77,
-			Default = Address0
+			/// <summary>
+			/// Bus address 0x77
+			/// </summary>
+			Address_0x77 = 0x77,
+			/// <summary>
+			/// Default bus address
+			/// </summary>
+			Default = Address_0x77
 		}
 
 		public enum DeviceMode

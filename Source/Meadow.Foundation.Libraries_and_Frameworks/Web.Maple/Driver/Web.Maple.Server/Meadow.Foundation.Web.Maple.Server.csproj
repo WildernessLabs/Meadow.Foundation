@@ -15,6 +15,7 @@
     <Description>Maple is an ultra-lightweight RESTful web API Server, built specifically for Meadow. It provides an easy to extend architecture, and has integrated JSON support via System.Text.Json.</Description>
   </PropertyGroup>
   <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>

@@ -37,7 +37,7 @@ namespace Displays.Tft.ST7789_Sample
             var config = new SpiClockConfiguration(new Frequency(48000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode3);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-            var display = new St7789(
+            display = new St7789(
                 device: Device,
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D15,

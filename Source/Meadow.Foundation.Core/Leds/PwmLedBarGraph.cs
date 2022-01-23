@@ -9,6 +9,9 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class PwmLedBarGraph
     {
+        /// <summary>
+        /// Array to hold pwm leds for bar graph
+        /// </summary>
         protected PwmLed[] pwmLeds;
 
         /// <summary>
@@ -19,12 +22,12 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// A value between 0 and 1 that controls the number of LEDs that are activated
         /// </summary>
-        float percentage;
         public float Percentage
         {
             get => percentage;
             set => SetPercentage(percentage = value);
         }
+        float percentage;
 
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPwnPin and a forwardVoltage for all LEDs in the bar graph

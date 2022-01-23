@@ -4,6 +4,8 @@
     {
         Loglevel Loglevel { get; set; }
         void Log(Loglevel level, string message);
+        void Debug(string message);
+        void DebugIf(bool condition, string message);
         void Info(string message);
         void InfoIf(bool condition, string message);
         void Warn(string message);

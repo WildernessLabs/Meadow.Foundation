@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Last value read from the moisture sensor.
         /// </summary>
-        public double? Moisture { get; private set; }
+        public double? Moisture { get; private set; } = double.NaN;
 
         /// <summary>
         /// Voltage value of most dry soil. Default of `0V`.

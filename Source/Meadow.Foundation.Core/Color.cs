@@ -2,35 +2,74 @@
 
 namespace Meadow.Foundation
 {
+    /// <summary>
+    /// 32bit color struct
+    /// </summary>
     public struct Color
     {
+        /// <summary>
+        /// Default color - black with 0 alpha 
+        /// </summary>
         public static Color Default
         {
             get { return new Color(0, 0, 0, 0); }
         }
 
+        /// <summary>
+        /// Get the 4bpp grayscale value for current color
+        /// </summary>
         public byte Color4bppGray => (byte)((byte)(0.2989 * R + 0.5870 * G + 0.114 * B) >> 4);
 
+        /// <summary>
+        /// Get the 8bpp grayscale value for current color
+        /// </summary>
         public byte Color8bppGray => (byte)(0.2989 * R + 0.5870 * G + 0.114 * B);
 
+        /// <summary>
+        /// Get the 8bpp (332) color value for current color
+        /// </summary>
         public byte Color8bppRgb332 => (byte)((R & 0b11100000) | (G & 0b1110000) >> 3 | ((B & 0b11000000) >> 6));
 
+        /// <summary>
+        /// Get the 12bpp (444) color value for current color
+        /// </summary>
         public ushort Color12bppRgb444 =>
             (ushort)(((R & 0b11110000) << 4) | (G & 0b11110000) | ((B & 0b11110000) >> 4));
 
+        /// <summary>
+        /// Get the 16bpp (565) color value for current color
+        /// </summary>
         public ushort Color16bppRgb565 => 
             (ushort)(((R & 0b11111000) << 8) | ((G & 0b11111100) << 3) | (B >> 3));
 
+        /// <summary>
+        /// Get the 1bpp (on or off) value for current color
+        /// </summary>
         public bool Color1bpp => R > 0 || G > 0 || B > 0;
 
+        /// <summary>
+        /// Current alpha value (0-255)
+        /// </summary>
         public byte A { get; private set; }
-  
+
+        /// <summary>
+        /// Current red value (0-255)
+        /// </summary>
         public byte R { get; private set; }
 
+        /// <summary>
+        /// Current green value (0-255)
+        /// </summary>
         public byte G { get; private set; }
 
+        /// <summary>
+        /// Current blue value (0-255)
+        /// </summary>
         public byte B { get; private set; }
 
+        /// <summary>
+        /// Hue of current color (0-360.0)
+        /// </summary>
         public double Hue
         {
             get
@@ -44,6 +83,9 @@ namespace Meadow.Foundation
         }
         double hue;
 
+        /// <summary>
+        /// Saturation of color (0-1.0)
+        /// </summary>
         public double Saturation
         {
             get
@@ -57,6 +99,9 @@ namespace Meadow.Foundation
         }
         double saturation;
 
+        /// <summary>
+        /// Brightness of color (0-1.0)
+        /// </summary>
         public double Brightness
         {
             get
@@ -70,7 +115,13 @@ namespace Meadow.Foundation
         }
         double brightness;
 
-
+        /// <summary>
+        /// Create a color struct
+        /// </summary>
+        /// <param name="red">red component of color</param>
+        /// <param name="green">green component of color</param>
+        /// <param name="blue">blue component of color</param>
+        /// <param name="alpha">transparancy of color</param>
         public Color(byte red, byte green, byte blue, byte alpha = 255) 
         {
             R = red;
@@ -81,16 +132,28 @@ namespace Meadow.Foundation
             hue = saturation = brightness = -1;
         }
 
+        /// <summary>
+        /// Create a color struct - convenience ctor for doubles - prefer byte version
+        /// </summary>
+        /// <param name="red">red component of color</param>
+        /// <param name="green">green component of color</param>
+        /// <param name="blue">blue component of color</param>
         public Color(double red, double green, double blue) :
             this((byte)(red*255), (byte)(green*255), (byte)(blue*255), 1)
         {
         }
 
+        /// <summary>
+        /// Create a color struct
+        /// </summary>
+        /// <param name="hue">hue of color</param>
+        /// <param name="brightness">brightness of color</param>
+        /// <param name="saturation">saturation of color</param>
+        /// <param name="alpha">alpha (transparency) of color</param>
+
         public Color(double hue, double brightness, double saturation, byte alpha = 255)
         {
-            double red, green, blue;
-
-            Converters.HsvToRgb(hue * 360, saturation, brightness, out red, out green, out blue);
+            Converters.HsvToRgb(hue * 360, saturation, brightness, out double red, out double green, out double blue);
 
             R = (byte)(255 * red);
             G = (byte)(255 * green);
@@ -102,30 +165,34 @@ namespace Meadow.Foundation
             this.brightness = brightness;
         }
 
+        /// <summary>
+        /// Create a new color struct from current color with new brightness
+        /// </summary>
+        /// <param name="brightness">brightness of new color (0-1.0)</param>
+        /// <returns>new color object</returns>
         public Color WithBrightness(double brightness)
         {
             return new Color(Hue, Saturation, brightness, A);
         }
 
+        /// <summary>
+        /// Create a new color struct from current color with new hue
+        /// </summary>
+        /// <param name="hue">hue of new color (0-360.0)</param>
+        /// <returns>new color object</returns>
         public Color WithHue(double hue)
         {
             return new Color(hue, Saturation, Brightness, A);
         }
 
+        /// <summary>
+        /// Create a new color stucts from current color with new saturation
+        /// </summary>
+        /// <param name="saturation">saturation of new color (0-1.0)</param>
+        /// <returns>new color object</returns>
         public Color WithSaturation(double saturation)
         {
             return new Color(Hue, saturation, Brightness, A);
-        }
-
-        static void ConvertToRgb(double hue, double saturation, double brightness, out byte r, out byte g, out byte b)
-        {
-            double red, green, blue;
-
-            Converters.HsvToRgb(hue * 360, saturation, brightness, out red, out green, out blue);
-
-            r = (byte)(255 * red);
-            g = (byte)(255 * green);
-            b = (byte)(255 * blue);
         }
 
         static void ConvertToHsb(byte r, byte g, byte b, out double h, out double s, out double l)
@@ -180,33 +247,47 @@ namespace Meadow.Foundation
             h /= 6.0f;
         }
 
+        /// <summary>
+        /// Equality operator
+        /// </summary>
+        /// <param name="color1">left color value</param>
+        /// <param name="color2">right color value</param>
+        /// <returns>true if equal</returns>
         public static bool operator ==(Color color1, Color color2)
         {
             return EqualsInner(color1, color2);
         }
 
+        /// <summary>
+        /// Not equals operator
+        /// </summary>
+        /// <param name="color1">left color value</param>
+        /// <param name="color2">right color value</param>
+        /// <returns>true if not equals</returns>
         public static bool operator !=(Color color1, Color color2)
         {
             return !EqualsInner(color1, color2);
         }
 
+        /// <summary>
+        /// Get hash of color
+        /// </summary>
+        /// <returns>hash as 32bit int</returns>
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hashcode = R.GetHashCode();
-                hashcode = (hashcode * 397) ^ G.GetHashCode();
-                hashcode = (hashcode * 397) ^ B.GetHashCode();
-                hashcode = (hashcode * 397) ^ A.GetHashCode();
-                return hashcode;
-            }
+            return HashCode.Combine(R, G, B, A);
         }
 
+        /// <summary>
+        /// Compare two color structs for equality
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>true if equals</returns>
         public override bool Equals(object obj)
         {
-            if (obj is Color)
+            if (obj is Color color)
             {
-                return EqualsInner(this, (Color)obj);
+                return EqualsInner(this, color);
             }
             return base.Equals(obj);
         }
@@ -216,6 +297,10 @@ namespace Meadow.Foundation
              return color1.R == color2.R && color1.G == color2.G && color1.B == color2.B && color1.A == color2.A;
         }
 
+        /// <summary>
+        /// Convert color to string 
+        /// </summary>
+        /// <returns>string representing color</returns>
         public override string ToString()
         {
             return "[Color: A={" + A + "}, R={" + R + "}, G={" + G + "}, B={" + B + "}, Hue={" + Hue + "}, Saturation={" + Saturation + "}, Brightness={" + Brightness + "}]";
@@ -243,6 +328,11 @@ namespace Meadow.Foundation
             return (j << 4) | j;
         }
 
+        /// <summary>
+        /// Create a color object from a hex string
+        /// </summary>
+        /// <param name="hex">string hex value</param>
+        /// <returns>new color object</returns>
         public static Color FromHex(string hex)
         {
             // Undefined
@@ -285,39 +375,80 @@ namespace Meadow.Foundation
             }
         }
 
+        /// <summary>
+        /// Create a color object from a 32bit unsigned int
+        /// </summary>
+        /// <param name="argb">color value - 8 bits red, 8 bits green, 8 bits blue, 8 bits alpha</param>
+        /// <returns>new color object</returns>
         public static Color FromUint(uint argb)
         {
             return FromRgba((byte)((argb & 0x00ff0000) >> 0x10), (byte)((argb & 0x0000ff00) >> 0x8), (byte)(argb & 0x000000ff), (byte)((argb & 0xff000000) >> 0x18));
         }
 
+        /// <summary>
+        /// Create a new color object
+        /// </summary>
+        /// <param name="r">red component of color (0-255)</param>
+        /// <param name="g">green component of color (0-255)</param>
+        /// <param name="b">blue component of color (0-255)</param>
+        /// <param name="a">alpha of color (0-255)</param>
+        /// <returns>new color object</returns>
         public static Color FromRgba(byte r, byte g, byte b, byte a)
         {
             return new Color(r, g, b, a);
         }
+        /// <summary>
+        /// Create a new color object
+        /// </summary>
+        /// <param name="r">red component of color (0-255)</param>
+        /// <param name="g">green component of color (0-255)</param>
+        /// <param name="b">blue component of color (0-255)</param>
 
         public static Color FromRgb(byte r, byte g, byte b)
         {
             return FromRgba(r, g, b, 255);
         }
 
+        /// <summary>
+        /// Create a new color object
+        /// </summary>
+        /// <param name="r">red component of color (0-1)</param>
+        /// <param name="g">green component of color (0-1)</param>
+        /// <param name="b">blue component of color (0-1)</param>
+        /// <param name="a">alpha of color (0-1)</param>
+        /// <returns>new color object</returns>
         public static Color FromRgba(double r, double g, double b, double a)
         {
             return new Color((byte)(r*255), (byte)(g * 255), (byte)(b * 255), (byte)(a * 255));
         }
 
+        /// <summary>
+        /// Create a new color object
+        /// </summary>
+        /// <param name="r">red component of color (0-1)</param>
+        /// <param name="g">green component of color (0-1)</param>
+        /// <param name="b">blue component of color (0-1)</param>
+        /// <returns>new color object</returns>
         public static Color FromRgb(double r, double g, double b)
         {
             return FromRgba(r, g, b, 1f);
         }
 
+        /// <summary>
+        /// Create a new color object
+        /// </summary>
+        /// <param name="h">hue of color (0-360)</param>
+        /// <param name="s">saturation of color (0-1)</param>
+        /// <param name="b">brightness of color (0-1)</param>
+        /// <param name="a">alpha of color (0-1)</param>
+        /// <returns>new color object</returns>
         public static Color FromHsba(double h, double s, double b, double a = 1.0)
         {
             return new Color(h, s, b, (byte)(a*255));
         }
 
-        #region Color Definitions
-
         // matches colors in WPF's System.Windows.Media.Colors
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public static readonly Color AliceBlue = FromRgb(240, 248, 255);
         public static readonly Color AntiqueWhite = FromRgb(250, 235, 215);
         public static readonly Color Aqua = FromRgb(0, 255, 255);
@@ -459,7 +590,6 @@ namespace Meadow.Foundation
         public static readonly Color WhiteSmoke = FromRgb(245, 245, 245);
         public static readonly Color Yellow = FromRgb(255, 255, 0);
         public static readonly Color YellowGreen = FromRgb(154, 205, 50);
-
-        #endregion
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }

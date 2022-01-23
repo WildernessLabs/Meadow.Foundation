@@ -26,10 +26,10 @@ namespace Sensors.Atmospheric.Bmp085_Sample
                 filter: result => 
                 {
                     //c# 8 pattern match syntax. checks for !null and assigns var.
-                    if (result.Old is { } old) 
+                    if (result.Old?.Temperature is { } oldTemp &&
+                        result.New.Temperature is { } newTemp)
                     { 
-                        return (
-                        (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5); // returns true if > 0.5°C change.
+                        return (newTemp - oldTemp).Abs().Celsius > 0.5; // returns true if > 0.5°C change.
                     }
                     return false;
                 }

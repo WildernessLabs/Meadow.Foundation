@@ -10,6 +10,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public class Calibration
         {
+            /// <summary>
+            /// Voltage when no light is detected by sensor
+            /// </summary>
             public Voltage VoltsAtZero { get; protected set; } = new Voltage(1, VU.Volts);
 
             /// <summary>
@@ -29,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Light
             /// <summary>
             ///     Create a new Calibration object using the specified values.
             /// </summary>
-            /// <param name="voltsPerCentimeter">Voltage change per cenimeter.</param>
+            /// <param name="voltsPerLuminance">Voltage change per luminance.</param>
             /// <param name="voltsAtZero">Voltage at a zero water level reading.</param>
             public Calibration(Voltage voltsPerLuminance, Voltage voltsAtZero)
             {

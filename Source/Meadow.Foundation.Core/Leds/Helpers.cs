@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Leds
         /// Calculates the maximum duty cycle based on the voltage drop/Forward Voltage/Vf
         /// of the LED.
         /// </summary>
-        /// <param name="Vf"></param>
+        /// <param name="forwardVoltage"></param>
         /// <returns></returns>
         public static float CalculateMaximumDutyCycle(float forwardVoltage)
         {

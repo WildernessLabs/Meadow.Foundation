@@ -1,4 +1,6 @@
+using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 
@@ -13,62 +15,106 @@ namespace Meadow.Foundation.Generators
     /// </summary>
 	public class SoftPwmPort : IPwmPort
     {
+        /// <summary>
+        /// Digital output port used for PWM
+        /// </summary>
         protected IDigitalOutputPort Port { get; set; }
 
-        public float Duration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public float Period { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool Inverted { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public TimeScale TimeScale { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        /// <summary>
+        /// PWM duration in ms
+        /// </summary>
+        public float Duration
+        {
+            get => Period * DutyCycle;
+            set { }
+        }
 
-        public float DutyCycle {
+        /// <summary>
+        /// Period of PWM 
+        /// </summary>
+        public float Period
+        {
+            get => 1 / (float)frequency.Hertz;
+            set => frequency = new Frequency(1 / value, Units.Frequency.UnitType.Hertz);
+        }
+
+        /// <summary>
+        /// Is the PWM signal inverted
+        /// </summary>
+        public bool Inverted { get; set; }
+
+        
+        /// <summary>
+        /// Duty cycle of PWM
+        /// </summary>
+        public float DutyCycle 
+        {
             get => dutyCycle;
-            set {
+            set 
+            {
                 dutyCycle = value;
                 onTimeMilliseconds = CalculateOnTimeMillis();
                 offTimeMilliseconds = CalculateOffTimeMillis();
-                //Console.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
-        } protected float dutyCycle;
+        } 
+        float dutyCycle;
 
-        public float Frequency {
-            get => frequency;
+        /// <summary>
+        /// Frequency of soft PWM
+        /// </summary>
+        public float Frequency 
+        {
+            get => (float)frequency.Hertz;
             set {
-                if (Frequency <= 0) {
-                    throw new Exception("Frequency must be > 0.");
-                }
-                frequency = value;
+                frequency = new Frequency(value, Units.Frequency.UnitType.Hertz);
                 onTimeMilliseconds = CalculateOnTimeMillis();
                 offTimeMilliseconds = CalculateOffTimeMillis();
-                //Console.WriteLine("OnTime: " + _onTimeMilliseconds.ToString() + ", OffTime: " + _offTimeMilliseconds.ToString());
             }
         }
+        Frequency frequency = new Frequency(1.0, Units.Frequency.UnitType.Hertz); // in the case it doesn't get set before dutycycle, initialize to 1
 
+        /// <summary>
+        /// Channel info for PWM port
+        /// </summary>
         public IPwmChannelInfo Channel {get; protected set;}
 
-        public bool State => this.running;
+        /// <summary>
+        /// State of PWM port (running / not running)
+        /// </summary>
+        public bool State => running;
 
+        /// <summary>
+        /// Pin used for soft PWM
+        /// </summary>
         public IPin Pin => Port.Pin;
 
         IDigitalChannelInfo IPort<IDigitalChannelInfo>.Channel => throw new NotImplementedException();
 
-        protected float frequency = 1.0f; // in the case it doesn't get set before dutycycle, initialize to 1
+        /// <summary>
+        /// Timescale
+        /// </summary>
+        public TimeScale TimeScale
+        {
+            get => TimeScale.Seconds;
+            set { }
+        }
 
-        protected Thread? th = null;
-        protected int onTimeMilliseconds = 0;
-        protected int offTimeMilliseconds = 0;
-        protected bool running = false;
+        Thread? thread = null;
+        int onTimeMilliseconds = 0;
+        int offTimeMilliseconds = 0;
+        bool running = false;
 
-        ///// <summary>
-        ///// Instantiate a SoftPwm object that can perform PWM using digital pins
-        ///// </summary>
-        ///// <param name="device"></param>
-        ///// <param name="outputPin"></param>
-        ///// <param name="dutyCycle"></param>
-        ///// <param name="frequency"></param>
-        //public SoftPwm(IIODevice device, IPin outputPin, float dutyCycle = 0.5f, float frequency = 1.0f) :
-        //    this(device.CreateDigitalOutputPort(outputPin, false), dutyCycle, frequency)
-        //{
-        //}
+        /// <summary>
+        /// Instantiate a SoftPwm object that can perform PWM using digital pins
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="outputPin"></param>
+        /// <param name="dutyCycle"></param>
+        /// <param name="frequency"></param>
+        public SoftPwmPort(IMeadowDevice device, IPin outputPin, float dutyCycle = 0.5f, float frequency = 1.0f) :
+            this(device.CreateDigitalOutputPort(outputPin, false), dutyCycle, frequency)
+        {
+        }
 
         /// <summary>
         /// Instantiate a SoftPwm object that can perform PWM using digital pins
@@ -76,11 +122,11 @@ namespace Meadow.Foundation.Generators
         /// <param name="outputPort"></param>
         /// <param name="dutyCycle"></param>
         /// <param name="frequency"></param>
-        public SoftPwmPort(IDigitalOutputPort outputPort, float dutyCycle = 0.0f, float frequency = 100f)
+        public SoftPwmPort(IDigitalOutputPort outputPort, float dutyCycle = 0.0f, float frequency = 1000)
         {
             Port = outputPort;
             DutyCycle = dutyCycle;
-            Frequency = frequency;
+            this.frequency = new Frequency(frequency, Units.Frequency.UnitType.Hertz);
 
             this.Channel = new PwmChannelInfo("SoftPwmChannel", 0, 0, 1000, 1000, false, false);
         }
@@ -93,17 +139,17 @@ namespace Meadow.Foundation.Generators
             running = true;
 
             // create a new thread that actually writes the pwm to the output port
-            th = new Thread(() => 
+            thread = new Thread(() => 
             { 
                 while (running)
                 {
-                    Port.State = true;
+                    Port.State = !Inverted;
                     Thread.Sleep(onTimeMilliseconds);
-                    Port.State = false;
+                    Port.State = Inverted;
                     Thread.Sleep(offTimeMilliseconds);
                 }
             });
-            th.Start();
+            thread.Start();
         }
 
         /// <summary>
@@ -129,9 +175,13 @@ namespace Meadow.Foundation.Generators
             if (dc < 0) dc = 0;
             if (dc > 1) dc = 1;
             // on time  = 
-            return (int)(dc / Frequency * 1000);
+            return (int)(dc / frequency.Kilohertz);
         }
 
+        /// <summary>
+        /// Calculates the off time of pulse in milliseconds
+        /// </summary>
+        /// <returns></returns>
         protected int CalculateOffTimeMillis()
         {
             var dc = DutyCycle;
@@ -139,41 +189,34 @@ namespace Meadow.Foundation.Generators
             if (dc < 0) dc = 0;
             if (dc > 1) dc = 1;
             // off time = 
-            return (int)(((1 - dc) / Frequency) * 1000);
+            return (int)((1 - dc) / frequency.Kilohertz);
         }
 
-        #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
+        /// <summary>
+        /// Dispose soft PWM 
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue) {
-                if (disposing) {
-                    // TODO: dispose managed state (managed objects).
+            if (!disposedValue) 
+            {
+                if (disposing) 
+                {
                 }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
 
                 disposedValue = true;
             }
         }
-
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~SoftPwmPort()
-        // {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
+        
+        /// <summary>
+        /// Dispose soft pwm port
+        /// </summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
         }
-        #endregion
     }
 }

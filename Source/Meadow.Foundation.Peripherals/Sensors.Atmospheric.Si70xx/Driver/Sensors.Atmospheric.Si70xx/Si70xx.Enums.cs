@@ -4,10 +4,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Si70xx
     {
-        public enum Addresses : byte
+        /// <summary>
+        /// Valid addresses for the sensor
+        /// </summary>
+        public enum Address : byte
         {
-            Address0 = 0x40,
-            Default = Address0
+            /// <summary>
+            /// Bus address 0x40
+            /// </summary>
+            Address_0x40 = 0x40,
+            /// <summary>
+            /// Bus address 0x40
+            /// </summary>
+            Default = Address_0x40
         }
 
         private const byte READ_ID_PART1 = 0xfa;
@@ -49,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        ///     Resolution of sensor data
+        ///     Resolution of sensor data, in bits, for both temperature and humidity
         /// </summary>
         public enum SensorResolution : byte
         {

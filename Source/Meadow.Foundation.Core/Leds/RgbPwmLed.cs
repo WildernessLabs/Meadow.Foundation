@@ -20,12 +20,11 @@ namespace Meadow.Foundation.Leds
         readonly float MAX_FORWARD_VOLTAGE = 3.3f;
         readonly float DEFAULT_DUTY_CYCLE = 0f;
 
-        protected Task? animationTask = null;
-        protected CancellationTokenSource? cancellationTokenSource = null;
-
-        protected double maxRedDutyCycle = 1;
-        protected double maxGreenDutyCycle = 1;
-        protected double maxBlueDutyCycle = 1;
+        Task? animationTask = null;
+        CancellationTokenSource? cancellationTokenSource = null;
+        readonly double maxRedDutyCycle = 1;
+        readonly double maxGreenDutyCycle = 1;
+        readonly double maxBlueDutyCycle = 1;
 
         /// <summary>
         /// Turns on LED with current color or turns it off
@@ -39,7 +38,7 @@ namespace Meadow.Foundation.Leds
                 isOn = value;
             }
         }
-        protected bool isOn;
+        bool isOn;
 
         /// <summary>
         /// The color the LED has been set to.
@@ -80,7 +79,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Get the blue LED forward voltage
         /// </summary>
-        public float BlueForwardVoltage { get; protected set; }        
+        public float BlueForwardVoltage { get; protected set; }
 
         /// <summary>
         /// Instantiates a RgbPwmLed object with the especified IO device, connected
@@ -93,7 +92,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="redLedForwardVoltage"></param>
         /// <param name="greenLedForwardVoltage"></param>
         /// <param name="blueLedForwardVoltage"></param>
-        /// <param name="isCommonCathode"></param>
+        /// <param name="commonType"></param>
         public RgbPwmLed(IPwmOutputController device,
             IPin redPwmPin, IPin greenPwmPin, IPin bluePwmPin,
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
@@ -117,7 +116,10 @@ namespace Meadow.Foundation.Leds
         /// <param name="redPwm"></param>
         /// <param name="greenPwm"></param>
         /// <param name="bluePwm"></param>
-        /// <param name="isCommonCathode"></param>
+        /// <param name="redLedForwardVoltage"></param>
+        /// <param name="greenLedForwardVoltage"></param>
+        /// <param name="blueLedForwardVoltage"></param>
+        /// <param name="commonType"></param>
         public RgbPwmLed(IPwmPort redPwm, IPwmPort greenPwm, IPwmPort bluePwm,
             float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
             float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
@@ -235,6 +237,16 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
+        /// <summary>
+        /// Start blinking led
+        /// </summary>
+        /// <param name="color">color to blink</param>
+        /// <param name="onDuration">on duration in ms</param>
+        /// <param name="offDuration">off duration in ms</param>
+        /// <param name="highBrightness">maximum brightness</param>
+        /// <param name="lowBrightness">minimum brightness</param>
+        /// <param name="cancellationToken">token to cancel blink</param>
+        /// <returns></returns>
         protected async Task StartBlinkAsync(Color color, int onDuration, int offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             while (true)
@@ -285,6 +297,15 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
+        /// <summary>
+        /// Start led pulsing
+        /// </summary>
+        /// <param name="color">color to pulse</param>
+        /// <param name="pulseDuration">pulse duration in ms</param>
+        /// <param name="highBrightness">maximum brightness</param>
+        /// <param name="lowBrightness">minimum brightness</param>
+        /// <param name="cancellationToken">token to cancel pulse</param>
+        /// <returns></returns>
         protected async Task StartPulseAsync(Color color, int pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;
