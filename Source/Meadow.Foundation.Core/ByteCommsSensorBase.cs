@@ -61,6 +61,11 @@ namespace Meadow.Foundation
             Init(readBufferSize, writeBufferSize);
         }
 
+        /// <summary>
+        /// ByteCommsSensorBase abstract ctor with no bus
+        /// </summary>
+        /// <param name="readBufferSize">Read buffer size</param>
+        /// <param name="writeBufferSize">Write buffer size</param>
         protected ByteCommsSensorBase(
             int readBufferSize = 8, int writeBufferSize = 8)
         {

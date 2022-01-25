@@ -40,11 +40,15 @@ namespace Meadow.Foundation.Sensors.Motion
             IPin xPin, IPin yPin, IPin zPin,
             int gravityRange, Voltage? supplyVoltage)
         {
-            XAnalogIn = device.CreateAnalogInputPort(xPin);
-            YAnalogIn = device.CreateAnalogInputPort(yPin);
-            ZAnalogIn = device.CreateAnalogInputPort(zPin);
-            GravityRange = (double)gravityRange;
-            if(supplyVoltage is { } supplyV) { this.SupplyVoltage = supplyV; }
+            XAnalogIn = device.CreateAnalogInputPort(xPin, 5, TimeSpan.FromMilliseconds(40), supplyVoltage ?? new Voltage(3.3));
+            YAnalogIn = device.CreateAnalogInputPort(yPin, 5, TimeSpan.FromMilliseconds(40), supplyVoltage ?? new Voltage(3.3));
+            ZAnalogIn = device.CreateAnalogInputPort(zPin, 5, TimeSpan.FromMilliseconds(40), supplyVoltage ?? new Voltage(3.3));
+            GravityRange = gravityRange;
+
+            if(supplyVoltage is { } supplyV) 
+            { 
+                SupplyVoltage = supplyV; 
+            }
         }
 
         protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)

@@ -23,8 +23,8 @@ namespace Meadow.Foundation.Sensors.Light
         ///     Create a new light sensor object using a static reference voltage.
         /// </summary>
         /// <param name="pin">AnalogChannel connected to the sensor.</param>
-        public Alspt19315C(IAnalogInputController device, IPin pin)
-            : this(device.CreateAnalogInputPort(pin))
+        public Alspt19315C(IAnalogInputController device, IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
+            : this(device.CreateAnalogInputPort(pin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
         {
         }
 

@@ -18,9 +18,7 @@ namespace Meadow.Foundation.Sensors.Light
         public event EventHandler<IChangeResult<float>> SolarIntensityUpdated = delegate { };
 
         //==== internals
-        protected IAnalogInputPort analogIn;
-        protected int sampleCount = 5;
-        protected int sampleIntervalMs = 40;
+        protected IAnalogInputPort analogInputPort;
 
         //==== properties
         public Voltage MinVoltageReference { get; protected set; } = new Voltage(0, VU.Volts);
@@ -39,24 +37,28 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
         /// <param name="minVoltageReference">The minimum voltage expected when the solar panel isn't receiving light. Default is 0.</param>
         /// <param name="maxVoltageReference">The maxmimu voltage expected when the solar panel is in full sun. Default is 3.3V.</param>
-        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
+        /// <param name="updateInterval">The time to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
         /// <param name="sampleCount">How many samples to take during a given
         /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalMs">The time, in milliseconds,
+        /// <param name="sampleInterval">The time,
         /// to wait in between samples during a reading.</param>
         public AnalogSolarGauge(
-            IAnalogInputController device, IPin analogPin,
-            Voltage? minVoltageReference = null, Voltage? maxVoltageReference = null,
-            int updateIntervalMs = 10000,
-            int sampleCount = 5, int sampleIntervalMs = 40)
-             : this(device.CreateAnalogInputPort(analogPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+            IAnalogInputController device, 
+            IPin analogPin,
+            Voltage? minVoltageReference = null, 
+            Voltage? maxVoltageReference = null,
+            TimeSpan? updateInterval = null,
+            int sampleCount = 5, 
+            TimeSpan? sampleInterval = null)
+             : this(device.CreateAnalogInputPort(analogPin, 
+                                                 sampleCount, 
+                                                 sampleInterval ?? new TimeSpan(0, 0, 0, 40), 
+                                                 maxVoltageReference ?? new Voltage(3.3)),
                    minVoltageReference, maxVoltageReference)
         {
-            base.UpdateInterval = TimeSpan.FromMilliseconds(updateIntervalMs);
-            this.sampleCount = sampleCount;
-            this.sampleIntervalMs = sampleIntervalMs;
+            base.UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 10);
         }
 
         /// <summary>
@@ -73,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Light
             if (maxVoltageReference is { } maxV) { this.MaxVoltageReference = maxV; }
 
             // TODO: input port validation if any (is it constructed all right?)
-            this.analogIn = analogIn;
+            this.analogInputPort = analogIn;
             Init();
         }
 
@@ -93,13 +95,13 @@ namespace Meadow.Foundation.Sensors.Light
                     RaiseEventsAndNotify(changeResult);
                 },
                 null);
-            analogIn.Subscribe(observer);
+            analogInputPort.Subscribe(observer);
         }
 
         protected override async Task<float> ReadSensor()
         {
             // read the voltage
-            Voltage voltage = await analogIn.Read();
+            Voltage voltage = await analogInputPort.Read();
 
             // convert the voltage
             var newSolarIntensity = ConvertVoltageToIntensity(voltage);
@@ -123,7 +125,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// The default is 5 seconds.</param>
         public void StartUpdating(TimeSpan updateInterval)
         {
-            analogIn.StartUpdating(updateInterval);
+            analogInputPort.StartUpdating(updateInterval);
         }
 
         /// <summary>
@@ -131,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public void StopUpdating()
         {
-            analogIn.StopUpdating();
+            analogInputPort.StopUpdating();
         }
 
         protected override void RaiseEventsAndNotify(IChangeResult<float> changeResult)

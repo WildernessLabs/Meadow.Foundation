@@ -12,7 +12,8 @@ namespace Meadow.Foundation.Sensors.Sound
         protected IDigitalInputPort digitalInputPort;
 
         public Ky038(IMeadowDevice device, IPin A0, IPin D0) : 
-            this (device.CreateAnalogInputPort(A0), device.CreateDigitalInputPort(D0))
+            this (device.CreateAnalogInputPort(A0, 5, TimeSpan.FromMilliseconds(50), new Units.Voltage(3.3)), 
+                device.CreateDigitalInputPort(D0))
         {
         }
 
