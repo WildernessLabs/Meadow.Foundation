@@ -118,9 +118,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// to wait in between samples during a reading.</param>
         public AnalogTemperature(
             IAnalogInputController device, IPin analogPin,
-            KnownSensorType sensorType, Calibration? calibration,
-            int sampleCount, TimeSpan sampleInterval)
-                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval, new Voltage(3.3, Voltage.UnitType.Volts)),
+            KnownSensorType sensorType, Calibration? calibration = null,
+            int sampleCount = 5, TimeSpan? sampleInterval = null)
+                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
                       sensorType, calibration)
         {
         }

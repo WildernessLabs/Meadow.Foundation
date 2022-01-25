@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public Gp2d12(IAnalogInputController device, IPin analogInputPin)
         {
-            AnalogInputPort = device.CreateAnalogInputPort(analogInputPin);
+            AnalogInputPort = device.CreateAnalogInputPort(analogInputPin, 5, TimeSpan.FromMilliseconds(40), new Voltage(3.3));
 
             // wire up our observable
             // have to convert from voltage to length units for our consumers
