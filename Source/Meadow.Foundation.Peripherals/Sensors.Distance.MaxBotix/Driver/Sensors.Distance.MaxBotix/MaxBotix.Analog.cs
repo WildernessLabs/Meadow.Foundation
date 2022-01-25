@@ -22,11 +22,11 @@ namespace Meadow.Foundation.Sensors.Distance
 
         public MaxBotix(SensorType sensor, 
             IMeadowDevice device, 
-            IPin analogIntputPin, 
+            IPin analogInputPin, 
             int sampleCount = 5, 
             TimeSpan? sampleInterval = null, 
             Voltage? voltage = null) :
-            this(device.CreateAnalogInputPort(analogIntputPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)), sensor)
+            this(device.CreateAnalogInputPort(analogInputPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)), sensor)
         {
         }
 
