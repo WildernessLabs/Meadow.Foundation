@@ -1044,10 +1044,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Weather.SwitchingRa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwitchingRainGauge_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingRainGauge\Samples\SwitchingRainGauge_Sample\SwitchingRainGauge_Sample.csproj", "{AFCF1EBC-B7FC-445A-A8E5-AF3724DA8F78}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Contracts", "..\..\Meadow.Core\source\Meadow.Contracts\Meadow.Contracts.csproj", "{F5079A5F-8CE6-43EA-8162-C8EF3CC1773B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Units", "..\..\Meadow.Core\source\Meadow.Units\Meadow.Units.csproj", "{2200F84D-54D5-493F-A0E7-9922F98F70A3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2422,18 +2418,6 @@ Global
 		{AFCF1EBC-B7FC-445A-A8E5-AF3724DA8F78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFCF1EBC-B7FC-445A-A8E5-AF3724DA8F78}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AFCF1EBC-B7FC-445A-A8E5-AF3724DA8F78}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{F5079A5F-8CE6-43EA-8162-C8EF3CC1773B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5079A5F-8CE6-43EA-8162-C8EF3CC1773B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5079A5F-8CE6-43EA-8162-C8EF3CC1773B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{F5079A5F-8CE6-43EA-8162-C8EF3CC1773B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5079A5F-8CE6-43EA-8162-C8EF3CC1773B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5079A5F-8CE6-43EA-8162-C8EF3CC1773B}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{2200F84D-54D5-493F-A0E7-9922F98F70A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2200F84D-54D5-493F-A0E7-9922F98F70A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2200F84D-54D5-493F-A0E7-9922F98F70A3}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{2200F84D-54D5-493F-A0E7-9922F98F70A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2200F84D-54D5-493F-A0E7-9922F98F70A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2200F84D-54D5-493F-A0E7-9922F98F70A3}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2953,8 +2937,6 @@ Global
 		{A29C80C8-E116-4344-A49F-7E58529DC338} = {380520E6-12D0-4DD3-AADF-BD27A6F6702F}
 		{D017E544-F3D7-49DE-913C-CD9D12D23007} = {380520E6-12D0-4DD3-AADF-BD27A6F6702F}
 		{AFCF1EBC-B7FC-445A-A8E5-AF3724DA8F78} = {A29C80C8-E116-4344-A49F-7E58529DC338}
-		{F5079A5F-8CE6-43EA-8162-C8EF3CC1773B} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
-		{2200F84D-54D5-493F-A0E7-9922F98F70A3} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
