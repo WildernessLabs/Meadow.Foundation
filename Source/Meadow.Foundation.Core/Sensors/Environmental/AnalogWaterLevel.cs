@@ -37,10 +37,10 @@ namespace Meadow.Foundation.Sensors.Environmental
             IAnalogInputController device,
             IPin analogPin,
             Calibration? calibration = null,
-            int updateIntervalMs = 1000)
-                : this(device.CreateAnalogInputPort(analogPin), calibration)
+            TimeSpan? updateInterval = null)
+                : this(device.CreateAnalogInputPort(analogPin, 5, TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)), calibration)
         {
-            base.UpdateInterval = TimeSpan.FromMilliseconds(updateIntervalMs);
+            base.UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(1000);
         }
 
         /// <summary>

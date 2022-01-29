@@ -16,7 +16,7 @@ namespace Meadow.Foundation
         /// <summary>
         /// Peripheral object, i.e. an I2CPeripheral or SpiPeripheral
         /// </summary>
-        protected IByteCommunications Peripheral { get; set; }
+        protected IByteCommunications? Peripheral { get; set; }
 
         //==== properties
         /// <summary>
@@ -58,6 +58,17 @@ namespace Meadow.Foundation
             ChipSelectMode chipSelectMode = ChipSelectMode.ActiveLow)
         {
             Peripheral = new SpiPeripheral(spiBus, chipSelect, readBufferSize, writeBufferSize, chipSelectMode);
+            Init(readBufferSize, writeBufferSize);
+        }
+
+        /// <summary>
+        /// ByteCommsSensorBase abstract ctor with no bus
+        /// </summary>
+        /// <param name="readBufferSize">Read buffer size</param>
+        /// <param name="writeBufferSize">Write buffer size</param>
+        protected ByteCommsSensorBase(
+            int readBufferSize = 8, int writeBufferSize = 8)
+        {
             Init(readBufferSize, writeBufferSize);
         }
 

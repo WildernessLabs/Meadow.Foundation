@@ -129,7 +129,7 @@ namespace Meadow.Foundation.Sensors.Hid
             data[1] = (byte)((value >> 8) & 0xFF);
             data[2] = (byte)((value >> 0) & 0xFF);
 
-            i2CPeripheral.WriteBytes(data);
+            i2CPeripheral.Write(data);
         }
 
         void SendCommand(byte command)

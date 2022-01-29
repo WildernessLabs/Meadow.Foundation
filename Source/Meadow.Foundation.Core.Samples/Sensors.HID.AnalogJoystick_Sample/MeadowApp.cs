@@ -3,6 +3,7 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Hid;
 using Meadow.Peripherals.Sensors.Hid;
+using Meadow.Units;
 
 namespace MeadowApp
 {
@@ -33,8 +34,8 @@ namespace MeadowApp
             // these are pretty fast updates (40ms in total), if you need more time to process, you can
             // increase the sample interval duration and/or standby duration.
             joystick = new AnalogJoystick(
-                Device.CreateAnalogInputPort(Device.Pins.A01, 1, 10),
-                Device.CreateAnalogInputPort(Device.Pins.A00, 1, 10),
+                Device.CreateAnalogInputPort(Device.Pins.A01, 1, TimeSpan.FromMilliseconds(10), new Voltage(3.3)),
+                Device.CreateAnalogInputPort(Device.Pins.A00, 1, TimeSpan.FromMilliseconds(10), new Voltage(3.3)),
                 null, false);
 
             Console.WriteLine("Hardware initialization complete.");

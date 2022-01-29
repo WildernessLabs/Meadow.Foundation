@@ -44,20 +44,21 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
-        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
-        /// between sets of sample readings. This value determines how often
-        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
+        /// <param name="updateInterval">The time, to wait between sets of sample readings. 
+        /// This value determines how often`Changed` events are raised and `IObservable` consumers are notified.</param>
         /// <param name="sampleCount">How many samples to take during a given
         /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalMs">The time, in milliseconds,
-        /// to wait in between samples during a reading.</param>
+        /// <param name="sampleInterval">The time, to wait in between samples during a reading.</param>
         public Capacitive(
             IAnalogInputController device, IPin analogPin,
             Voltage? minimumVoltageCalibration, Voltage? maximumVoltageCalibration,
-            int sampleCount = 5, int sampleIntervalMs = 40)
-                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleIntervalMs),
+            TimeSpan? updateInterval = null,
+            int sampleCount = 5, TimeSpan? sampleInterval = null)
+                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3)),
                       minimumVoltageCalibration, maximumVoltageCalibration)
-        { }
+        {
+            this.UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(5);
+        }
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort.
