@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -101,22 +102,28 @@ namespace Meadow.Foundation.Web.Maple.Server
 
             if (IPAddress.Equals(IPAddress.Any))
             {
-                // for now, just use IPv4
-                // because .NET is apparently too stupid to understand "bind to all"
-                foreach (var ni in NetworkInterface
-                    .GetAllNetworkInterfaces()
-                    .SelectMany(i => i.GetIPProperties().UnicastAddresses))
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    if (ni.Address.AddressFamily == AddressFamily.InterNetwork)
+                    // TODO: test this under *nix
+                    _httpListener.Prefixes.Add($"http://+:{port}/");
+                }
+                else
+                {
+                    // for now, just use IPv4
+                    // because .NET is apparently too stupid to understand "bind to all"
+                    foreach (var ni in NetworkInterface
+                        .GetAllNetworkInterfaces()
+                        .SelectMany(i => i.GetIPProperties().UnicastAddresses))
                     {
-                        // for now, just use IPv4
-                        Console.WriteLine($"Listening on http://{ni.Address}:{port}/");
+                        if (ni.Address.AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            // for now, just use IPv4
+                            Console.WriteLine($"Listening on http://{ni.Address}:{port}/");
 
-                        _httpListener.Prefixes.Add($"http://{ni.Address}:{port}/");
+                            _httpListener.Prefixes.Add($"http://{ni.Address}:{port}/");
+                        }
                     }
                 }
-                // TODO: test this under *nix
-                // _httpListener.Prefixes.Add($"http://+:{port}/");
             }
             else
             {
