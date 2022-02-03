@@ -112,7 +112,15 @@ namespace Meadow.Foundation.Web.Maple.Server
             foreach (var pair in pairs)
             {
                 var keyValue = pair.Split(new char[] { '=' });
-                result.Add(HttpUtility.UrlDecode(keyValue[0]), HttpUtility.UrlDecode(keyValue[1]));
+                switch(keyValue.Length)
+                {
+                    case 1:
+                        result.Add(HttpUtility.UrlDecode(keyValue[0]), null);
+                        break;
+                    case 2:
+                        result.Add(HttpUtility.UrlDecode(keyValue[0]), HttpUtility.UrlDecode(keyValue[1]));
+                        break;
+                }
             }
             return result;
         }
