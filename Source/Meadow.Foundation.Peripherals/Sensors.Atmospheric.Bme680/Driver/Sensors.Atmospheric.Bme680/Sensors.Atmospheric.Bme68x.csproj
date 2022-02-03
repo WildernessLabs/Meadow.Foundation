@@ -10,14 +10,14 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Bme68x</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Atmospheric, BME680, BME688</PackageTags>
-    <Version>0.0.36</Version>
+    <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Bosch BME68x I2C and SPI humidity, barometric pressure, ambient temperature and gas (VOC) sensor</Description>
+    <Description>Bosch BME68x I2C humidity, barometric pressure, ambient temperature and gas (VOC) sensor</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />

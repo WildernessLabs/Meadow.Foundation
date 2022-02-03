@@ -69,8 +69,8 @@ namespace Sensors.Atmospheric.BME680_Sample
         {
             Console.WriteLine("Create BME680 sensor with SPI...");
 
-            var spiBus = Device.CreateSpiBus();
-            sensor = new Bme680(spiBus, Device.CreateDigitalOutputPort(Device.Pins.D14));
+          //  var spiBus = Device.CreateSpiBus();
+          //  sensor = new Bme680(spiBus, Device.CreateDigitalOutputPort(Device.Pins.D14));
         }
 
         void CreateI2CSensor()

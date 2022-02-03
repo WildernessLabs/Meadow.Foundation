@@ -10,12 +10,15 @@
             /// <summary>
             /// Address of the peripheral when the address pin is pulled low.
             /// </summary>
-            Address0 = 0x38,
+            Address_0x38 = 0x38,
             /// <summary>
             /// Address of the peripheral when the address pin is pulled high.
             /// </summary>
-            Address1 = 0x39,
-            Default = Address0
+            Address_0x39 = 0x39,
+            /// <summary>
+            /// Defulat bus address
+            /// </summary>
+            Default = Address_0x38
         }
     }
 }

@@ -5,7 +5,7 @@
         /// <summary>
         ///     Valid addresses for the sensor.
         /// </summary>
-        public enum Address : byte
+        public enum Addresses : byte
         {
             Address48 = 0x48,
             Address49 = 0x49,

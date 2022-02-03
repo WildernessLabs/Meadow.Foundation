@@ -12,8 +12,14 @@
 		/// </summary>
 		public enum Addresses : byte
         {
-            Address0 = 0x5C,
-            Default = Address0
+            /// <summary>
+            /// Bus address 0x5C
+            /// </summary>
+            Address_0x5C = 0x5C,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x5C
         }
 
         private enum BusType

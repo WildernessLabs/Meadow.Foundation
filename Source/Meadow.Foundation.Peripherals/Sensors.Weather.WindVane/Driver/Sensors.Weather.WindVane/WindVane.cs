@@ -54,11 +54,12 @@ namespace Meadow.Foundation.Sensors.Weather
         public WindVane(
             IAnalogInputController device, IPin analogInputPin,
             IDictionary<Voltage, Azimuth> azimuthVoltages = null,
-            int updateIntervalMs = 1000,
-            int sampleCount = 1, int sampleIntervalMs = 40)
-            : this(device.CreateAnalogInputPort(analogInputPin, updateIntervalMs, sampleCount, sampleIntervalMs)
+            TimeSpan? updateInterval = null,
+            int sampleCount = 1, TimeSpan? sampleInterval = null)
+            : this(device.CreateAnalogInputPort(analogInputPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3))
                   , azimuthVoltages)
         {
+            this.UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 1);
         }
 
         /// <summary>

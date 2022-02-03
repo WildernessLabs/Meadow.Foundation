@@ -5,16 +5,16 @@
         /// <summary>
         ///     Valid addresses for the sensor.
         /// </summary>
-        public enum Addresses : byte
+        public enum Address : byte
         {
             /// <summary>
             /// I2C address 0
             /// </summary>
-            Address0 = 0x60,
+            Address_0x60 = 0x60,
             /// <summary>
             /// Default I2C address
             /// </summary>
-            Default = Address0
+            Default = Address_0x60
         }
 
         enum Command : byte

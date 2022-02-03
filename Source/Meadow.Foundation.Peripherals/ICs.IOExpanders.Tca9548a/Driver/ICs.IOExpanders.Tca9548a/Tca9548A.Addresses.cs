@@ -7,8 +7,14 @@
 		/// </summary>
 		public enum Addresses : byte
         {
-            Address0 = 0x70,
-            Default = Address0
+            /// <summary>
+            /// Bus address 0x70
+            /// </summary>
+            Address_0x70 = 0x70,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x70
         }
     }
 }

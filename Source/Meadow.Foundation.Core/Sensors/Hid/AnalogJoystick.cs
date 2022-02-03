@@ -69,21 +69,32 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="verticalPin"></param>
         /// <param name="calibration">Calibration for the joystick.</param>
         /// <param name="isInverted">Whether or not the vertical component is inverted.</param>
-        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
-        /// between sets of sample readings. This value determines how often
-        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
+        public AnalogJoystick(
+            IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
+            JoystickCalibration? calibration = null, bool isInverted = false)
+                : this(device, horizontalPin, verticalPin, calibration, isInverted, 5, TimeSpan.FromMilliseconds(40))
+        { }
+
+        /// <summary>
+        /// Creates a 2-axis analog joystick
+        /// </summary>
+        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
+        /// <param name="horizontalPin"></param>
+        /// <param name="verticalPin"></param>
+        /// <param name="calibration">Calibration for the joystick.</param>
+        /// <param name="isInverted">Whether or not the vertical component is inverted.</param>
         /// <param name="sampleCount">How many samples to take during a given
         /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalMs">The time, in milliseconds,
+        /// <param name="sampleInterval">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         public AnalogJoystick(
             IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
-            JoystickCalibration? calibration = null, bool isInverted = false,
-            int updateIntervalMs = 1000,
-            int sampleCount = 5, int sampleIntervalMs = 40)
+            JoystickCalibration? calibration, bool isInverted,
+            int sampleCount, 
+            TimeSpan sampleInterval)
                 : this(
-                      device.CreateAnalogInputPort(horizontalPin, updateIntervalMs, sampleCount, sampleIntervalMs),
-                      device.CreateAnalogInputPort(verticalPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+                      device.CreateAnalogInputPort(horizontalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
+                      device.CreateAnalogInputPort(verticalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
                       calibration, isInverted)
         { }
 

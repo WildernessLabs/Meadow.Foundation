@@ -16,7 +16,7 @@ namespace MeadowApp
         public MeadowApp()
         {
             Console.WriteLine("Initialize hardware...");
-            solarGauge = new AnalogSolarGauge(Device, Device.Pins.A02, updateIntervalMs: 1000);
+            solarGauge = new AnalogSolarGauge(Device, Device.Pins.A02, updateInterval: TimeSpan.FromSeconds(1));
 
             //==== classic .NET Event
             solarGauge.SolarIntensityUpdated += (s, result) => Console.WriteLine($"SolarIntensityUpdated: {result.New * 100:n2}%");

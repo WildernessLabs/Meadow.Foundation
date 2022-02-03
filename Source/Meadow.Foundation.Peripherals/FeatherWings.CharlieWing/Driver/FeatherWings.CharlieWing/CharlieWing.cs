@@ -11,10 +11,19 @@ namespace Meadow.Foundation.FeatherWings
     /// </summary>
     public class CharlieWing : IGraphicsDisplay
     {
+        /// <summary>
+        /// Color mode of display
+        /// </summary>
         public ColorType ColorMode => ColorType.Format8bppGray;
 
+        /// <summary>
+        /// Width of display in pixels
+        /// </summary>
         public int Width => 15;
 
+        /// <summary>
+        /// Height of display in pixels
+        /// </summary>
         public int Height => 7;
 
         public byte Frame { get; set; }

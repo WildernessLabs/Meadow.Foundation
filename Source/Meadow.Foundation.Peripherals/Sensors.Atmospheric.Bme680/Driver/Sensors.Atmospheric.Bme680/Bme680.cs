@@ -6,7 +6,7 @@ using Meadow.Units;
 using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
-using Meadow.Devices;
+
 using System.Buffers;
 using Meadow.Utilities;
 
@@ -14,6 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// BME680 Temperature, Pressure and Humidity Sensor.
+    /// This driver is functional but not complete.
     /// </summary>
     /// <remarks>
     /// This class implements the functionality necessary to read the temperature, pressure and humidity
@@ -24,9 +25,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         //==== events
-        /// <summary>
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
@@ -50,10 +49,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private readonly Bme680Comms bme680Comms;
 
         /// <summary>
-        ///     Compensation data from the sensor.
+        ///     Temperature compensation data
         /// </summary>
         protected TemperatureCompensation? temperatureCompensation;
+        /// <summary>
+        ///     Pressire compensation data
+        /// </summary>
         protected PressureCompensation? pressureCompensation;
+        /// <summary>
+        ///     Humidity compensation data
+        /// </summary>
         protected HumidityCompensation? humidityCompensation;
 
 
@@ -76,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME680" /> class.
         /// </summary>
-        /// <param name="i2c">I2C Bus to use for communicating with the sensor</param>
+        /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
         /// <param name="address">I2C address of the sensor.</param>
         public Bme680(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
@@ -85,6 +90,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 			Initialize();
         }
 
+        /*
         public Bme680(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
             this(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
         {
@@ -107,7 +113,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             bme680Comms.WriteRegister(0x73, bme680Comms.ReadRegister(0x73));
 
             Initialize();
-        }
+        }*/
 
         /// <summary>
         /// 

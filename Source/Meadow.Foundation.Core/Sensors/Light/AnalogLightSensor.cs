@@ -18,18 +18,6 @@ namespace Meadow.Foundation.Sensors.Light
 		protected IAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
-        /// How many samples to take during a given
-        /// reading. These are automatically averaged to reduce noise.
-        /// </summary>
-		protected int sampleCount = 5;
-        /// <summary>
-        /// The time, in milliseconds, to wait
-        /// between sets of sample readings. This value determines how often
-        /// `Changed` events are raised and `IObservable` consumers are notified
-        /// </summary>
-		protected int sampleIntervalMs = 40;
-
-        /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
@@ -52,24 +40,22 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param> 
-        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
+        /// <param name="updateInterval">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
         /// <param name="sampleCount">How many samples to take during a given
         /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalMs">The time, in milliseconds,
+        /// <param name="sampleInterval">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         public AnalogLightSensor(
 			IAnalogInputController device,
 			IPin analogPin,
 			Calibration? calibration = null,
-			int updateIntervalMs = 1000,
-			int sampleCount = 5, int sampleIntervalMs = 40)
-				: this(device.CreateAnalogInputPort(analogPin), calibration)
+            TimeSpan? updateInterval = null,
+			int sampleCount = 5, TimeSpan? sampleInterval = null)
+				: this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 40), new Voltage(3.3)), calibration)
 		{
-			base.UpdateInterval = TimeSpan.FromMilliseconds(updateIntervalMs);
-			this.sampleCount = sampleCount;
-			this.sampleIntervalMs = sampleIntervalMs;
+            base.UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 10);
 		}
 
         /// <summary>
