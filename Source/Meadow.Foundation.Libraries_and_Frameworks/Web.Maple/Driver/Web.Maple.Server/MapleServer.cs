@@ -383,6 +383,11 @@ namespace Meadow.Foundation.Web.Maple.Server
                         var result = handlerInfo.Method.Invoke(handlerInstance, paramObjects) as IActionResult;
                         await result.ExecuteResultAsync(context);
                     }
+                    else if (typeof(Task<IActionResult>).IsAssignableFrom(handlerInfo.Method.ReturnType))
+                    {
+                        var result = (handlerInfo.Method.Invoke(handlerInstance, paramObjects) as Task<IActionResult>).Result;
+                        await result.ExecuteResultAsync(context);
+                    }
                     else
                     {
                         handlerInfo.Method.Invoke(handlerInstance, paramObjects);
