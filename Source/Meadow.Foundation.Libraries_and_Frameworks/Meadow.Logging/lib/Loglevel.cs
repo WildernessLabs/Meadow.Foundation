@@ -1,4 +1,4 @@
-﻿namespace Meadow.Foundation.Web.Maple.Server
+﻿namespace Meadow.Logging
 {
     public enum Loglevel
     {

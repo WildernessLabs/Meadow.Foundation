@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Meadow.Foundation.Web.Maple.Server
+namespace Meadow.Logging
 {
     public class ConsoleLogger : ILogger
     {

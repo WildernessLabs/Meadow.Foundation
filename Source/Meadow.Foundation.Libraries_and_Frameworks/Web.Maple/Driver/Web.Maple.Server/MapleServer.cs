@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -16,7 +17,13 @@ namespace Meadow.Foundation.Web.Maple.Server
     /// </summary>
     public partial class MapleServer
     {
+        /// <summary>
+        /// Default port used for multicast announcement
+        /// </summary>
         public const int MAPLE_SERVER_BROADCASTPORT = 17756;
+        /// <summary>
+        /// Default port used for request listening
+        /// </summary>
         public const int DefaultPort = 5417;
 
         private RequestMethodCache MethodCache { get; }
@@ -25,8 +32,17 @@ namespace Meadow.Foundation.Web.Maple.Server
         private readonly HttpListener _httpListener = new HttpListener();
         private ErrorPageGenerator ErrorPageGenerator { get; }
 
-        public ILogger Logger { get; }
+        /// <summary>
+        /// Logger being used to log messages
+        /// </summary>
+        public ILogger? Logger { get; }
+        /// <summary>
+        /// Local Address server is bound to
+        /// </summary>
         public IPAddress IPAddress { get; private set; }
+        /// <summary>
+        /// Local port server is bound to
+        /// </summary>
         public int Port { get; private set; }
 
         /// <summary>
@@ -55,12 +71,23 @@ namespace Meadow.Foundation.Web.Maple.Server
         /// </summary>
         public string DeviceName { get; set; } = "Meadow";
 
+        /// <summary>
+        /// Creates a new MapleServer that listens on the specified IP Address
+        /// and Port.
+        /// </summary>
+        /// <param name="ipAddress"></param>
+        /// <param name="port">Defaults to 5417.</param>
+        /// <param name="advertise">Whether or not to advertise via UDP.</param>
+        /// <param name="processMode">Whether or not the server should respond to
+        /// requests in parallel or serial.
+        /// </param>
+        /// <param name="logger">Logger instance used for messages</param>
         public MapleServer(
             string ipAddress,
             int port = DefaultPort,
             bool advertise = false,
             RequestProcessMode processMode = RequestProcessMode.Serial,
-            ILogger logger = null)
+            ILogger? logger = null)
             : this(IPAddress.Parse(ipAddress), port, advertise, processMode, logger)
         {
         }
@@ -73,14 +100,15 @@ namespace Meadow.Foundation.Web.Maple.Server
         /// <param name="port">Defaults to 5417.</param>
         /// <param name="advertise">Whether or not to advertise via UDP.</param>
         /// <param name="processMode">Whether or not the server should respond to
-        /// requests in parallel or serial. For Meadow, only Serial works
-        /// reliably today.</param>
+        /// requests in parallel or serial.
+        /// </param>
+        /// <param name="logger">Logger instance used for messages</param>
         public MapleServer(
             IPAddress ipAddress,
             int port = DefaultPort,
             bool advertise = false,
             RequestProcessMode processMode = RequestProcessMode.Serial,
-            ILogger logger = null)
+            ILogger? logger = null)
         {
             Logger = logger ?? new ConsoleLogger();
             MethodCache = new RequestMethodCache(Logger);
@@ -253,7 +281,7 @@ namespace Meadow.Foundation.Web.Maple.Server
         {
             if (Running)
             {
-                Logger.Error("Already running.");
+                Logger?.Error("Already running.");
                 return;
             }
 
