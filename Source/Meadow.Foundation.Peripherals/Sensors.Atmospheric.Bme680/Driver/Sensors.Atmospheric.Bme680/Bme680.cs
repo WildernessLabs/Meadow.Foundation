@@ -148,8 +148,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
         {
-            Console.WriteLine("F");
-
             configuration.TemperatureOversample = TemperatureSampleCount;
             configuration.PressureOversample = PressureSampleCount;
             configuration.HumidityOversample = HumiditySampleCount;
@@ -164,8 +162,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 // Force a sample
                 status = BitHelpers.SetBit(status, 0x00, true);
 
-                Console.WriteLine("GGG");
-
                 bme680Comms.WriteRegister(RegisterAddresses.ControlTemperatureAndPressure.Address, status);
                 // Wait for the sample to be taken.
                 do
@@ -173,27 +169,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     status = bme680Comms.ReadRegister(RegisterAddresses.ControlTemperatureAndPressure.Address);
                 } while (BitHelpers.GetBitValue(status, 0x00));
 
-                Console.WriteLine("H");
-
                 var sensorData = readBuffer.Span[0..RegisterAddresses.AllSensors.Length];
                 bme680Comms.ReadRegisters(RegisterAddresses.AllSensors.Address, sensorData);
-
-                Console.WriteLine("I");
 
                 var rawPressure = GetRawValue(sensorData.Slice(0, 3));
                 var rawTemperature = GetRawValue(sensorData.Slice(3, 3));
                 var rawHumidity = GetRawValue(sensorData.Slice(6, 2));
                 //var rawVoc = GetRawValue(sensorData.Slice(8, 2));
 
-                Console.WriteLine("J");
-
                 bme680Comms.ReadRegisters(RegisterAddresses.CompensationData1.Address, readBuffer.Span[0..RegisterAddresses.CompensationData1.Length]);
                 var compensationData1 = readBuffer.Span[0..RegisterAddresses.CompensationData1.Length].ToArray();
 
                 bme680Comms.ReadRegisters(RegisterAddresses.CompensationData2.Address, readBuffer.Span[0..RegisterAddresses.CompensationData2.Length]);
                 var compensationData2 = readBuffer.Span[0..RegisterAddresses.CompensationData2.Length].ToArray();
-
-                Console.WriteLine("K");
 
                 var compensationData = ArrayPool<byte>.Shared.Rent(64);
                 try
@@ -218,7 +206,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     ArrayPool<byte>.Shared.Return(compensationData, true);
                 }
 
-                Console.WriteLine("Return conditions");
                 return conditions;
             });
         }
