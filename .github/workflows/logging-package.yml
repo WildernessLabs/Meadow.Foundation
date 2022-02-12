@@ -1,0 +1,21 @@
+name: Meadow.Logging Package creation
+
+on:
+  push:
+    tags:
+    - "logging_v[0-9]+.[0-9]+.[0-9]"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set VERSION variable from tag
+      run: echo "VERSION=${GITHUB_REF/refs\/tags\/logging_v/}" >> $GITHUB_ENV
+    - name: Pack
+      run: dotnet pack -c Release Source/Meadow.Foundation.Libraries_and_Frameworks/Meadow.Logging/lib/Meadow.Logging.csproj /p:Version=${VERSION} --output .
+    - name: Push
+      run: dotnet nuget push NuGet.Workflow.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${GITHUB_TOKEN}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
