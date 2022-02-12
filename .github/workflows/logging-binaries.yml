@@ -1,0 +1,38 @@
+name: Meadow.Logging Latest Binaries
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ logging ]
+    tags:
+      - "logging*"
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Build for F7
+      run: dotnet publish Source/Meadow.Foundation.Libraries_and_Frameworks/Meadow.Logging/lib/Meadow.Logging.csproj --framework netstandard2.1 -o ./output
+    - name: Build ZIP
+      uses: vimtor/action-zip@v1
+      with:
+          files: ./output/Maple.Server.dll
+          dest: logging.zip
+          
+    - name: Create assets
+      uses: WebFreak001/deploy-nightly@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/WildernessLabs/Meadow.Foundation/releases/57597674/assets{?name,label} # find out this value by opening https://api.github.com/repos/<owner>/<repo>/releases in your browser and copy the full "upload_url" value including the {?name,label} part
+        release_id: 57597674 # same as above (id can just be taken out the upload_url, it's used to find old releases)
+        asset_path: ./logging.zip # path to archive to upload
+        asset_name: logging-develop-$$.zip # name to upload the release as, use $$ to insert date (YYYYMMDD) and 6 letter commit hash
+        asset_content_type: application/zip # required by GitHub API
+        max_releases: 2 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
