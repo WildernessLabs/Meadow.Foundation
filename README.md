@@ -7,8 +7,9 @@ Meadow.Foundation greatly simplifies the task of building connected things with 
 | Feature | Branch | Status |
 | --- | --- | --- |
 | Drivers | `develop` | [![Build Status](https://dev.azure.com/WildernessLabs/Meadow/_apis/build/status/WildernessLabs.Meadow.Foundation?repoName=WildernessLabs%2FMeadow.Foundation&branchName=develop)](https://dev.azure.com/WildernessLabs/Meadow/_build/latest?definitionId=6&repoName=WildernessLabs%2FMeadow.Foundation&branchName=develop) |
-| Maple | `develop` | [![Maple Build](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/build_maple.yml/badge.svg?branch=develop)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/build_maple.yml) |
+| Maple | `maple` | [![Maple Build](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/build_maple.yml/badge.svg?branch=develop)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/build_maple.yml) |
 | MicroGraphics | `develop` | [![Build MicroGraphics](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/build_micrographics.yml/badge.svg)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/build_micrographics.yml) |
+| Meadow.Logging | `logging` | [![Build Logging](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/logging-build.yml/badge.svg)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/logging-build.yml) |
 
 ## [Latest Binaries](https://github.com/WildernessLabs/Meadow.Foundation/releases/tag/dev-assets)
 
@@ -17,6 +18,7 @@ Meadow.Foundation greatly simplifies the task of building connected things with 
 | Maple | [![Maple Latest Binaries](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/maple-binaries.yml/badge.svg)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/maple-binaries.yml)
 | MicroGraphics | [![MicroGraphics Latest Binaries](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/micrographics-binaries.yml/badge.svg)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/micrographics-binaries.yml)
 | Modbus | [![Modbus Latest Binaries](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/modbus-binaries.yml/badge.svg)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/modbus-binaries.yml)
+| Meadow.Logging | [![Meadow.Logging Latest Binaries](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/logging-binaries.yml/badge.svg)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/logging-binaries.yml) |
 
 ## Requesting New Drivers
 
