@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
 	  <RepositoryType>git</RepositoryType>
-	  <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Logging</RepositoryUrl>
+	  <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
