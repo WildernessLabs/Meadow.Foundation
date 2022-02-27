@@ -96,9 +96,9 @@ namespace Meadow.Foundation.Sensors.Motion
                 Peripheral.ReadRegister((byte)Register.X0, ReadBuffer.Span[0..6]);
 
                 return new Acceleration3D(
-                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
-                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[2] + (ReadBuffer.Span[3] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
-                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[4] + (ReadBuffer.Span[5] << 8)), Acceleration.UnitType.MetersPerSecondSquared)
+                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.Gravity),
+                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[2] + (ReadBuffer.Span[3] << 8)), Acceleration.UnitType.Gravity),
+                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[4] + (ReadBuffer.Span[5] << 8)), Acceleration.UnitType.Gravity)
                     );
 
             });
