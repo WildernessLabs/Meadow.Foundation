@@ -1,4 +1,4 @@
-# Meadow.Foundation
+<img src="Design/banner.jpg" style="margin-bottom:10px" />
 
 Meadow.Foundation greatly simplifies the task of building connected things with Meadow, by providing a unified driver and library framework that includes drivers and abstractions for common peripherals such as sensors, displays, motors, and more. Additionally, it includes utility functions and helpers for common tasks when building connected things.
 
