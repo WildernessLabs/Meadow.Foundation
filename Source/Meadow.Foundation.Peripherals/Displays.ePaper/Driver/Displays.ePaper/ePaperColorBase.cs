@@ -185,11 +185,19 @@ namespace Meadow.Foundation.Displays.ePaper
             blackImageBuffer.WriteBuffer(x, y, displayBuffer);
         }
 
+        /// <summary>
+        /// Send a command to the display
+        /// </summary>
+        /// <param name="command">The command</param>
         protected void SendCommand(Command command)
         {
             SendCommand((byte)command);
         }
 
+        /// <summary>
+        /// Update the display
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void Show()
         {
             throw new NotImplementedException("Show must be implimented in the ePaper display driver");
