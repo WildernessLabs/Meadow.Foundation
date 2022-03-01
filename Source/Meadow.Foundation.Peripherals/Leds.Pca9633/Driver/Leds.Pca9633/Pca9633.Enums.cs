@@ -61,26 +61,30 @@
         }
 
         /// <summary>
-        /// Leds
+        /// Led position on controller
         /// </summary>
-        public enum Leds : byte
+        public enum LedPosition : byte
         {
             /// <summary>
             /// Led 0
             /// </summary>
-            Led0,
+            Led0 = 0x02,
             /// <summary>
             /// Led 1
             /// </summary>
-            Led1,
+            Led1 = 0x03,
             /// <summary>
             /// Led 2
             /// </summary>
-            Led2,
+            Led2 = 0x04,
             /// <summary>
             /// Led 3
             /// </summary>
-            Led3,
+            Led3 = 0x05,
+            /// <summary>
+            /// Led position unknown
+            /// </summary>
+            Undefined,
         }
 
         /// <summary>
@@ -88,11 +92,41 @@
         /// </summary>
         public enum AutoIncrement : byte
         {
+            /// <summary>
+            /// None
+            /// </summary>
             None,
+            /// <summary>
+            /// All registers
+            /// </summary>
             AllRegisters,
+            /// <summary>
+            /// Individual brightness registers
+            /// </summary>
             IndividualBrightnessRegisters,
-            GlobaControlRegisters,
+            /// <summary>
+            /// Global control registers
+            /// </summary>
+            GlobalControlRegisters,
+            /// <summary>
+            /// Individual and global registers
+            /// </summary>
             IndividualAndGlobalRegisters,
+        }
+
+        /// <summary>
+        /// Global driver output type 
+        /// </summary>
+        public enum DriveType : byte
+        {
+            /// <summary>
+            /// Open drain
+            /// </summary>
+            OpenDrain,
+            /// <summary>
+            /// Totem pole
+            /// </summary>
+            TotemPole,
         }
     }
 }
