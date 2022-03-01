@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Leds
         public LedPosition LedBlue { get; set; } = LedPosition.Led0;
 
         /// <summary>
-        /// Turn the led controller on or off
+        /// Turn led controller output on or off
         /// </summary>
         public bool IsOn
         {
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Put device into active stte
+        /// Put device into active state
         /// </summary>
         public void Wake()
         {
@@ -169,7 +169,7 @@ namespace Meadow.Foundation.Leds
 
         }
 
-        //help values for bit manipulation
+        //helper values for bit manipulation
         readonly byte BIT_OUTDRV = 2;
         readonly byte BIT_SLEEP = 4;
     }
