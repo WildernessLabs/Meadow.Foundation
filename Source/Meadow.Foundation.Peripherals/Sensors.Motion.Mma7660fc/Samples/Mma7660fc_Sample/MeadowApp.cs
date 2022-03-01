@@ -6,7 +6,7 @@ using Meadow.Foundation.Sensors.Motion;
 using Meadow.Units;
 using AU = Meadow.Units.Acceleration.UnitType;
 
-namespace Sensors.Motion.Adxl335_Sample
+namespace Sensors.Motion.Mma7660fc_Sample
 {
     public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
@@ -33,10 +33,10 @@ namespace Sensors.Motion.Adxl335_Sample
             // Example that uses an IObersvable subscription to only be notified when the filter is satisfied
             var consumer = Mma7660fc.CreateObserver(
                 handler: result => Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.X:N2}, old: X:{result.Old?.X:N2}"),
-                // only notify if there's a greater than 1G change in the Z direction
+                // only notify if there's a greater than 0.5G change in the Z direction
                 filter: result => {
                     if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
-                        return ((result.New - old).Z > new Acceleration(1, AU.Gravity));
+                        return ((result.New - old).Z > new Acceleration(0.5, AU.Gravity));
                     }
                     return false;
                 });

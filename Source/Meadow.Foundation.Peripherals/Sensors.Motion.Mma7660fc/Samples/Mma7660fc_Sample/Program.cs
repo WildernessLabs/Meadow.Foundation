@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Meadow;
 
-namespace Sensors.Motion.Adxl335_Sample
+namespace Sensors.Motion.Mma7660fc_Sample
 {
     class Program
     {

@@ -8,7 +8,7 @@
     <AssemblyName>Mma7660fc</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Motion.Adxl3xx</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Motion.Mma7660fc</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Mma7660fc, Accelerometer, Motion</PackageTags>
     <Version>0.1.0</Version>

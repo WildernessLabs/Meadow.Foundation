@@ -47,12 +47,12 @@ namespace Meadow.Foundation.Sensors.Motion
 
         void Initialize()
         {
-            SetMode(SensorMode.Standby);
+            SetMode(SensorPowerMode.Standby);
             SetSampleRate(SampleRate._32);
-            SetMode(SensorMode.Active);
+            SetMode(SensorPowerMode.Active);
         }
       
-        void SetMode(SensorMode mode)
+        void SetMode(SensorPowerMode mode)
         {
             Peripheral.WriteRegister((byte)Registers.Mode, (byte)mode);
         }
@@ -74,11 +74,6 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             return Task.Run(() =>
             {
-                //let's start with the tilt/orientation
-              //  var value = (Peripheral.ReadRegister((byte)Registers.TILT));
-
-              //  Console.WriteLine($"TILT: {value}");
-
                 Direction = (DirectionType)(Peripheral.ReadRegister((byte)Registers.TILT) & 0x1C);
 
                 Orientation = (OrientationType)(Peripheral.ReadRegister((byte)Registers.TILT) & 0x03);
