@@ -26,6 +26,16 @@ namespace Meadow.Foundation.Leds
         public LedPosition LedBlue { get; set; } = LedPosition.Led0;
 
         /// <summary>
+        /// Turn the led controller on or off
+        /// </summary>
+        public bool IsOn
+        {
+            get => isOn;
+            set => i2CPeripheral.WriteRegister((byte)Registers.LEDOUT, (byte)(value == true?1:0));
+        }
+        bool isOn = true;
+
+        /// <summary>
         /// Create a new Pca9633 led controller object
         /// </summary>
         /// <param name="i2cBus">i2c bus</param>
@@ -74,22 +84,6 @@ namespace Meadow.Foundation.Leds
             var value = i2CPeripheral.ReadRegister((byte)Registers.MODE1);
             value = (byte)(value | (1 << BIT_SLEEP));
             i2CPeripheral.WriteRegister((byte)Registers.MODE1, value);
-        }
-
-        /// <summary>
-        /// Turn LEDs on
-        /// </summary>
-        public void SetOn()
-        {
-            i2CPeripheral.WriteRegister((byte)Registers.LEDOUT, 1);
-        }
-
-        /// <summary>
-        /// Turn LEDs off
-        /// </summary>
-        public void SetOff()
-        {
-            i2CPeripheral.WriteRegister((byte)Registers.LEDOUT, 0);
         }
 
         /// <summary>
