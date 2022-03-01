@@ -9,7 +9,7 @@
             ZOUT = 0x02,
             TILT = 0x03,
             Mode = 0x07,
-            SleepRate = 0x08;
+            SleepRate = 0x08
         }
     }
 }

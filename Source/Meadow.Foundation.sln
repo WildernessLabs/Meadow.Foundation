@@ -1044,9 +1044,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Weather.SwitchingRa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwitchingRainGauge_Sample", "Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingRainGauge\Samples\SwitchingRainGauge_Sample\SwitchingRainGauge_Sample.csproj", "{AFCF1EBC-B7FC-445A-A8E5-AF3724DA8F78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Contracts", "..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj", "{150569EE-4053-4097-98EE-A455287610B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Contracts", "..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj", "{150569EE-4053-4097-98EE-A455287610B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Units", "..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj", "{46394970-4495-408F-8A9C-31BEBC47E899}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Units", "..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj", "{46394970-4495-408F-8A9C-31BEBC47E899}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Mma7660fc", "Sensors.Motion.Mma7660fc", "{8C70DC80-3DD8-40F7-B781-CDF6D9F8EA42}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Mma7660fc", "Meadow.Foundation.Peripherals\Sensors.Motion.Mma7660fc\Driver\Sensors.Motion.Mma7660fc\Sensors.Motion.Mma7660fc.csproj", "{4924CFE6-44B7-4C9D-AE02-1DD2A63E37D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{9D13043C-8A59-461A-9A4D-3735D06CED77}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mma7660fc_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Mma7660fc\Samples\Mma7660fc_Sample\Mma7660fc_Sample.csproj", "{A2F68D9C-A462-4E7A-A71C-CB773BBB5EED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2430,6 +2438,18 @@ Global
 		{46394970-4495-408F-8A9C-31BEBC47E899}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46394970-4495-408F-8A9C-31BEBC47E899}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46394970-4495-408F-8A9C-31BEBC47E899}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4924CFE6-44B7-4C9D-AE02-1DD2A63E37D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4924CFE6-44B7-4C9D-AE02-1DD2A63E37D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4924CFE6-44B7-4C9D-AE02-1DD2A63E37D9}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{4924CFE6-44B7-4C9D-AE02-1DD2A63E37D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4924CFE6-44B7-4C9D-AE02-1DD2A63E37D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4924CFE6-44B7-4C9D-AE02-1DD2A63E37D9}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A2F68D9C-A462-4E7A-A71C-CB773BBB5EED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2F68D9C-A462-4E7A-A71C-CB773BBB5EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2F68D9C-A462-4E7A-A71C-CB773BBB5EED}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A2F68D9C-A462-4E7A-A71C-CB773BBB5EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2F68D9C-A462-4E7A-A71C-CB773BBB5EED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2F68D9C-A462-4E7A-A71C-CB773BBB5EED}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2951,6 +2971,10 @@ Global
 		{AFCF1EBC-B7FC-445A-A8E5-AF3724DA8F78} = {A29C80C8-E116-4344-A49F-7E58529DC338}
 		{150569EE-4053-4097-98EE-A455287610B5} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 		{46394970-4495-408F-8A9C-31BEBC47E899} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
+		{8C70DC80-3DD8-40F7-B781-CDF6D9F8EA42} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{4924CFE6-44B7-4C9D-AE02-1DD2A63E37D9} = {8C70DC80-3DD8-40F7-B781-CDF6D9F8EA42}
+		{9D13043C-8A59-461A-9A4D-3735D06CED77} = {8C70DC80-3DD8-40F7-B781-CDF6D9F8EA42}
+		{A2F68D9C-A462-4E7A-A71C-CB773BBB5EED} = {9D13043C-8A59-461A-9A4D-3735D06CED77}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

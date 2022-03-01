@@ -21,17 +21,27 @@
         }
 
         //check the TILT registe
-        public enum Orientation : byte
+        public enum DirectionType : byte
+        {
+            Unknown = 0,
+            Up = 0b00011000,
+            Down = 0b00010100,
+            Right = 0b00001000,
+            Left = 0b00000100,
+        }
+
+        public enum OrientationType : byte
+        {
+            Unknown = 0,
+            Back  = 0b00000010,
+            Front = 0b00000001,
+        }
+
+        public enum Tilt : byte
         {
             Shake = 0b10000000,
             Alert = 0b01000000,
-            Tap   = 0b00100000,
-            Up,
-            Down,
-            Right,
-            Left,
-            Back,
-            Front,
+            Tap = 0b00100000,
         }
     }
 }
