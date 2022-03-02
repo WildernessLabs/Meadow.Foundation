@@ -61,7 +61,6 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">x position</param>
         /// <param name="y">y position</param>
         /// <param name="color">color of pixel - converted to on/off</param>
-
         public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color.Color1bpp);
@@ -146,7 +145,6 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">width of region</param>
         /// <param name="height">height of region</param>
         /// <param name="fillColor">color - converted to on/off</param>
-
         public void Fill(int x, int y, int width, int height, Color fillColor)
         {
             if (IgnoreOutOfBoundsPixels)
