@@ -55,14 +55,29 @@ namespace Meadow.Foundation.Displays
         
         private readonly byte DECIMAL = 0b10000000;
 
-        public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
-            :this(spiBus, csPort, 1, 1, maxMode)
+        /// <summary>
+        /// Create a new Max7219 object
+        /// </summary>
+        /// <param name="spiBus">SPI bus</param>
+        /// <param name="chipselectPort">Chip select port</param>
+        /// <param name="deviceCount">Number of cascaded devices</param>
+        /// <param name="maxMode">Display mode of max7219</param>
+        public Max7219(ISpiBus spiBus, IDigitalOutputPort chipselectPort, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
+            :this(spiBus, chipselectPort, deviceCount, 1, maxMode)
         {
         }
 
-        public Max7219(ISpiBus spiBus, IDigitalOutputPort csPort, int deviceRows, int deviceColumns, Max7219Mode maxMode = Max7219Mode.Display)
+        /// <summary>
+        /// Create a new Max7219 object
+        /// </summary>
+        /// <param name="spiBus">SPI bus</param>
+        /// <param name="chipselectPort">Chip select port</param>
+        /// <param name="deviceRows">Number of devices cascaded vertically</param>
+        /// <param name="deviceColumns">Number of devices cascaded horizontally</param>
+        /// <param name="maxMode">Display mode of max7219</param>
+        public Max7219(ISpiBus spiBus, IDigitalOutputPort chipselectPort, int deviceRows, int deviceColumns, Max7219Mode maxMode = Max7219Mode.Display)
         {
-            max7219 = new SpiPeripheral(spiBus, csPort);
+            max7219 = new SpiPeripheral(spiBus, chipselectPort);
 
             DigitRows = deviceRows;
             DigitColumns = deviceColumns * DigitsPerDevice;
@@ -75,15 +90,28 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Creates a Max7219 Device given a <see paramref="spiBus" /> to communicate over and the
-        /// number of devices that are cascaded.
+        /// Create a new Max7219 object
         /// </summary>
-        public Max7219(IMeadowDevice device, ISpiBus spiBus, IPin csPin, int deviceRows = 1, int deviceColumns = 1, Max7219Mode maxMode = Max7219Mode.Display)
-            : this(spiBus, device.CreateDigitalOutputPort(csPin), deviceRows, deviceColumns, maxMode)
+        /// <param name="device">IMeadowDevice</param>
+        /// <param name="spiBus">SPI bus</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="deviceRows">Number of devices cascaded vertically</param>
+        /// <param name="deviceColumns">Number of devices cascaded horizontally</param>
+        /// <param name="maxMode">Display mode of max7219</param>
+        public Max7219(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, int deviceRows = 1, int deviceColumns = 1, Max7219Mode maxMode = Max7219Mode.Display)
+            : this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), deviceRows, deviceColumns, maxMode)
         { }
 
-        public Max7219(IMeadowDevice device, ISpiBus spiBus, IPin csPin, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
-            : this(spiBus, device.CreateDigitalOutputPort(csPin), deviceCount, 1, maxMode)
+        /// <summary>
+        /// Create a new Max7219 object
+        /// </summary>
+        /// <param name="device">IMeadowDevice</param>
+        /// <param name="spiBus">SPI bus</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="deviceCount">Number of cascaded devices</param>
+        /// <param name="maxMode">Display mode of max7219</param>
+        public Max7219(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
+            : this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), deviceCount, 1, maxMode)
         { }
 
         /// <summary>
