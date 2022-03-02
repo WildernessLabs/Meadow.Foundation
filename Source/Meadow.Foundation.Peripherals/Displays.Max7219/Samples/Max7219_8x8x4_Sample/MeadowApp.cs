@@ -36,15 +36,17 @@ namespace MeadowApp
         {
             Console.WriteLine("Init...");
 
-            display =new Max7219(
+            display = new Max7219(
                 Device, Device.CreateSpiBus(Max7219.DefaultSpiBusSpeed),
                 Device.Pins.D00, deviceCount: 4,
-                maxMode: Max7219.Max7219Type.Display);
+                maxMode: Max7219.Max7219Mode.Display);
 
             display.IgnoreOutOfBoundsPixels = true;
 
-            graphics = new MicroGraphics(display);
-            graphics.CurrentFont = new Font4x8();
+            graphics = new MicroGraphics(display)
+            {
+                CurrentFont = new Font4x8()
+            };
 
             Console.WriteLine($"Display W: {display.Width}, H: {display.Height}");
 
@@ -56,17 +58,17 @@ namespace MeadowApp
 
             graphics.Clear();
             graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height);
+
             graphics.Show();
 
-            Thread.Sleep(2500);
+            Thread.Sleep(2000);
         }
 
         void ScrollText()
         {
             graphics.CurrentFont = new Font6x8();
 
-            //string message = "MEADOW F7 BY WILDERNESS LABS";
-            string message = "Meadow F7 by Wildeness Labs";
+            string message = "Meadow F7 by Wilderness Labs";
 
             int delta = graphics.MeasureText(message).Width - graphics.Width;
 
