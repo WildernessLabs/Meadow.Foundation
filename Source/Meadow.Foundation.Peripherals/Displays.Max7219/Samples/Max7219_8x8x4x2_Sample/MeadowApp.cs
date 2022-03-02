@@ -68,7 +68,7 @@ namespace MeadowApp
 
             var spiBus = Device.CreateSpiBus(Max7219.DefaultSpiBusSpeed);
 
-            display = new Max7219(Device, spiBus, Device.Pins.D01, 4, 2, Max7219.Max7219Type.Display);
+            display = new Max7219(Device, spiBus, Device.Pins.D01, 4, 2, Max7219.Max7219Mode.Display);
 
             graphics = new MicroGraphics(display);
 
