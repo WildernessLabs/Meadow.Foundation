@@ -137,23 +137,21 @@ namespace Leds.APA102_Sample
             Console.WriteLine("Run...");
             apa102.Clear();
             apa102.Show();
-
             Thread.Sleep(2000);
+
             apa102.SetLed(0, Color.Red, 0.5f);
             apa102.SetLed(1, Color.White);
             apa102.SetLed(2, Color.Blue);
-
-            Thread.Sleep(2000);
             apa102.Show();
-
             Thread.Sleep(2000);
-            apa102.AutoWrite = true;
+            
             apa102.SetLed(0, Color.Green);
             apa102.SetLed(1, Color.Yellow);
             apa102.SetLed(2, Color.Pink);
-
+            apa102.Show();
             Thread.Sleep(5000);
-            apa102.Clear();
+            
+            apa102.Clear(true);
         }
 
         public static class Colors

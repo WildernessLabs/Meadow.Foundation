@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Devices;
+using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 using Meadow.Units;
 using System;
@@ -11,8 +12,14 @@ namespace Meadow.Foundation.Leds
     /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_DotStar/blob/master/adafruit_dotstar.py </remarks>
     public partial class Apa102
     {
+        /// <summary>
+        /// Default SPI bus speed
+        /// </summary>
         public static Frequency DefaultSpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz);
 
+        /// <summary>
+        /// SpiPeripheral object
+        /// </summary>
         protected ISpiPeripheral spiPeripheral;
 
         const short StartHeaderSize = 4;
@@ -30,8 +37,15 @@ namespace Meadow.Foundation.Leds
         readonly byte[] buffer;
         readonly int endHeaderIndex;
         readonly byte[] pixelOrder;
+
+        /// <summary>
+        /// Total number of leds 
+        /// </summary>
         public int NumberOfLeds => numberOfLeds;
 
+        /// <summary>
+        /// Brightness 
+        /// </summary>
         public float Brightness 
         { 
             get => brightness;
@@ -42,23 +56,34 @@ namespace Meadow.Foundation.Leds
                 else { brightness = value; }
             } 
         }
-
-        public bool AutoWrite { get; set; }
-
         float brightness;
 
-        /// <param name="spiBus">The SPI bus</param>
-        /// <param name="chipSelect">THe SPI chip select pin. Not used but need for creating the  SPI Peripheral</param>
-        /// <param name="numberOfLeds">The number of APA102 LEDs to control</param>
-        /// <param name="pixelOrder">Set the pixel order on the LEDs - different strips implement this differently</param>
-        /// <param name="autoWrite">Transmit any LED changes right away</param>
-        public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
+        /// <summary>
+        /// Creates a new APA102 object
+        /// </summary>
+        /// <param name="device">IMeadowDevice</param>
+        /// <param name="spiBus">SPI bus</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="numberOfLeds">Number of leds</param>
+        /// <param name="pixelOrder">Pixel color order</param>
+        public Apa102(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR)
+        : this(spiBus, numberOfLeds, pixelOrder, device.CreateDigitalOutputPort(chipSelectPin))
         {
-            spiPeripheral = new SpiPeripheral(spiBus, null);
+        }
+
+        /// <summary>
+        /// Creates a new APA102 object
+        /// </summary>
+        /// <param name="spiBus">SPI bus</param>
+        /// <param name="numberOfLeds">Number of leds</param>
+        /// <param name="pixelOrder">Pixel color order</param>
+        /// <param name="chipSelectPort">SPI chip select port (optional)</param>
+        public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, IDigitalOutputPort chipSelectPort = null)
+        {
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
             this.numberOfLeds = numberOfLeds;
             endHeaderSize = this.numberOfLeds / 16;
             Brightness = 1.0f;
-            AutoWrite = autoWrite;
 
             if (this.numberOfLeds % 16 != 0)
             {
@@ -161,11 +186,6 @@ namespace Meadow.Foundation.Leds
             buffer[offset + 1] = rgb[pixelOrder[0]];
             buffer[offset + 2] = rgb[pixelOrder[1]];
             buffer[offset + 3] = rgb[pixelOrder[2]];
-
-            if (AutoWrite)
-            {
-                Show();
-            }
         }
 
         /// <summary>
@@ -179,11 +199,6 @@ namespace Meadow.Foundation.Leds
             {
                 SetLed(i, off);
             }
-
-            if (!AutoWrite && update)
-            {
-                Show();
-            }
         }
 
         /// <summary>
@@ -194,47 +209,16 @@ namespace Meadow.Foundation.Leds
             spiPeripheral.Write(buffer);
         }
 
+        /// <summary>
+        /// Update APA102 with data in display buffer
+        /// </summary>
+        /// <param name="left">left</param>
+        /// <param name="top">top</param>
+        /// <param name="right">right</param>
+        /// <param name="bottom">bottom</param>
         public void Show(int left, int top, int right, int bottom)
         {
             Show();
-        }
-
-        public void Fill(Color clearColor, bool updateDisplay = false)
-        {
-            byte[] color = { clearColor.R, clearColor.G, clearColor.B };
-
-            for (int i = 0; i < NumberOfLeds; i++)
-            {
-                SetLed(i, color);
-            }
-
-            if (!AutoWrite && updateDisplay)
-            {
-                Show();
-            }
-        }
-
-        public void Fill(int x, int y, int width, int height, Color fillColor)
-        {
-            bool isColored = fillColor.Color1bpp;
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    DrawPixel(i, j, fillColor);
-                }
-            }
-        }
-
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
-        {
-            for(int i = 0; i < displayBuffer.Width; i++)
-            {
-                for (int j = 0; j < displayBuffer.Height; j++)
-                {
-                    DrawPixel(x + i, j + y, displayBuffer.GetPixel(i, j));
-                }
-            }
         }
     }
 }
