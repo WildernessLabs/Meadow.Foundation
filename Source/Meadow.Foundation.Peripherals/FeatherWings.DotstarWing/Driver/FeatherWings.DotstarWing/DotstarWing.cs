@@ -23,9 +23,9 @@ namespace Meadow.Foundation.FeatherWings
         {
         }
 
-        public DotstarWing(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, bool autoWrite = false)
+        public DotstarWing(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR)
         {
-            ledMatrix = new Apa102(spiBus, numberOfLeds, pixelOrder, autoWrite);
+            ledMatrix = new Apa102(spiBus, numberOfLeds, pixelOrder);
         }
 
         public ColorType ColorMode => ColorType.Format12bppRgb444;
