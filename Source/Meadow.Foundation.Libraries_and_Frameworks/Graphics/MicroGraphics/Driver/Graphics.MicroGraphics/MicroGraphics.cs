@@ -5,14 +5,14 @@ using System;
 namespace Meadow.Foundation.Graphics
 {
     /// <summary>
-    ///     Provide high level graphics functions
+    /// Provide high level graphics functions
     /// </summary>
     public partial class MicroGraphics 
     {
         private readonly IGraphicsDisplay display;
 
         /// <summary>
-        ///     Current font used for displaying text on the display.
+        /// Current font used for displaying text on the display.
         /// </summary>
         public IFont CurrentFont
         {
@@ -21,11 +21,9 @@ namespace Meadow.Foundation.Graphics
             {
                 currentFont = value;
                 if(currentFont == null) { return; }
-                DisplayConfig = new TextDisplayConfig()
-                {
-                    Width = (ushort)(Width / currentFont.Width),
-                    Height = (ushort)(Height / CurrentFont.Height)
-                };
+
+                DisplayConfig.Width = (ushort)(Width / currentFont.Width);
+                DisplayConfig.Height = (ushort)(Height / CurrentFont.Height);
             }
         }
         IFont currentFont;
@@ -60,7 +58,10 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public int Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Width : display.Height;
 
-        public TextDisplayConfig DisplayConfig { get; private set; }
+        /// <summary>
+        /// Text display configuration for use with text display menu
+        /// </summary>
+        public TextDisplayConfig DisplayConfig { get; private set; } = new TextDisplayConfig();
 
         /// <summary>
         /// </summary>
