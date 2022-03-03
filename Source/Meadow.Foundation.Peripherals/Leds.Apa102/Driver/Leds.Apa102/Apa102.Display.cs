@@ -22,13 +22,12 @@ namespace Meadow.Foundation.Leds
         /// Height of pixel array
         /// </summary>
         public int Height => height;
+        readonly int height;
 
         /// <summary>
         /// Ignore out of bounds pixels
         /// </summary>
         public bool IgnoreOutOfBoundsPixels { get; set; }
-
-        readonly int height;
 
         /// <summary>
         /// Creates a new APA102 object
@@ -137,7 +136,6 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="clearColor">color to fill</param>
         /// <param name="updateDisplay">update after fill</param>
-
         public void Fill(Color clearColor, bool updateDisplay = false)
         {
             byte[] color = { clearColor.R, clearColor.G, clearColor.B };

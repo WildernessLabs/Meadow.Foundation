@@ -1,5 +1,4 @@
 ﻿using Meadow.Devices;
-using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 using Meadow.Units;
 using System;
@@ -15,7 +14,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Default SPI bus speed
         /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz);
+        public static Frequency DefaultSpiBusSpeed = new Frequency(6000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// SpiPeripheral object
