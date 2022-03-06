@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Audio;
@@ -16,19 +16,19 @@ namespace Audio.PiezoSpeaker_Sample
 
             piezoSpeaker = new PiezoSpeaker(Device.CreatePwmPort(Device.Pins.D05));
 
-            TestPiezoSpeaker();
+            _ = PlayTriad();
         }
 
-        protected void TestPiezoSpeaker()
+        async Task PlayTriad()
         {
-            Console.WriteLine("TestPiezoSpeaker...");
-
-            while (true)
+            for (int i = 0; i < 5; i++)
             {
-                Console.WriteLine("Playing A4 note!");
-                piezoSpeaker.PlayTone(440, 1000);
-                piezoSpeaker.StopTone();
-                Thread.Sleep(500);
+                Console.WriteLine("Playing A major triad starting at A4");
+                await piezoSpeaker.PlayTone(440, 500); //A
+                await piezoSpeaker.PlayTone(554.37f, 500); //C#
+                await piezoSpeaker.PlayTone(659.25f, 500); //E
+
+                await Task.Delay(2500);
             }
         }
     }
