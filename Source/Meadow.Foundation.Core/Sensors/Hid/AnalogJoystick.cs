@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Hid;
 using Meadow.Units;
 using System;
@@ -15,9 +14,6 @@ namespace Meadow.Foundation.Sensors.Hid
     public partial class AnalogJoystick
         : SensorBase<JoystickPosition>
     {
-        //==== events
-
-        //==== internals
         /// <summary>
         /// Number of samples used to calculate position
         /// </summary>
@@ -27,7 +23,6 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         protected int sampleIntervalMs;
 
-        //==== properties
         /// <summary>
         /// Analog port connected to horizonal joystick pin
         /// </summary>
@@ -50,9 +45,11 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// 
         /// </summary>
-        public DigitalJoystickPosition? DigitalPosition {
-            get {
-                return TranslateAnalogPositionToDigital();
+        public DigitalJoystickPosition? DigitalPosition
+        {
+            get
+            {
+                return GetDigitalJoystickPosition();
             }
         }
 
@@ -90,7 +87,7 @@ namespace Meadow.Foundation.Sensors.Hid
         public AnalogJoystick(
             IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
             JoystickCalibration? calibration, bool isInverted,
-            int sampleCount, 
+            int sampleCount,
             TimeSpan sampleInterval)
                 : this(
                       device.CreateAnalogInputPort(horizontalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
@@ -99,7 +96,7 @@ namespace Meadow.Foundation.Sensors.Hid
         { }
 
         /// <summary>
-        /// 
+        /// Creates a 2-axis analog joystick
         /// </summary>
         /// <param name="horizontalInputPort"></param>
         /// <param name="verticalInputPort"></param>
@@ -113,9 +110,12 @@ namespace Meadow.Foundation.Sensors.Hid
             VerticalInputPort = verticalInputPort;
             IsInverted = isInverted;
 
-            if (calibration == null) {
+            if (calibration == null)
+            {
                 Calibration = new JoystickCalibration(new Voltage(3.3f, VU.Volts));
-            } else {
+            }
+            else
+            {
                 Calibration = calibration;
             }
 
@@ -127,11 +127,11 @@ namespace Meadow.Foundation.Sensors.Hid
             _ = HorizontalInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    h => {
-                        if (
-                            (((h.Old - Calibration.HorizontalCenter)?.Abs()) < Calibration.DeadZone)
-                            &&
-                            ((h.New - Calibration.HorizontalCenter).Abs() < Calibration.DeadZone)) {
+                    h =>
+                    {
+                        if ((((h.Old - Calibration.HorizontalCenter)?.Abs()) < Calibration.DeadZone) &&
+                            ((h.New - Calibration.HorizontalCenter).Abs() < Calibration.DeadZone))
+                        {
                             return;
                         }
 
@@ -153,7 +153,6 @@ namespace Meadow.Foundation.Sensors.Hid
 
                         var result = new ChangeResult<JoystickPosition>(newPosition, oldPosition);
                         base.RaiseEventsAndNotify(result);
-                        
                     }
                 )
             );
@@ -161,12 +160,12 @@ namespace Meadow.Foundation.Sensors.Hid
             VerticalInputPort.Subscribe
             (
                IAnalogInputPort.CreateObserver(
-                    v => {
+                    v =>
+                    {
                         //var newVerticalValue = v.New;
-                        if (
-                            ((v.Old - Calibration.VerticalCenter)?.Abs() < Calibration.DeadZone)
-                            &&
-                            ((v.New - Calibration.VerticalCenter).Abs() < Calibration.DeadZone)) {
+                        if (((v.Old - Calibration.VerticalCenter)?.Abs() < Calibration.DeadZone) &&
+                            ((v.New - Calibration.VerticalCenter).Abs() < Calibration.DeadZone))
+                        {
                             return;
                         }
                         // events are processed on each axis, serially. so when a new
@@ -189,11 +188,8 @@ namespace Meadow.Foundation.Sensors.Hid
                         base.RaiseEventsAndNotify(result);
                     }
                 )
-           );
+            );
         }
-
-
-        //==== methods
 
         /// <summary>
         /// sets the current position as the center position and
@@ -211,57 +207,50 @@ namespace Meadow.Foundation.Sensors.Hid
                 Calibration.DeadZone);
         }
 
-        ///// <summary>
-        ///// todo: this doesn't do anything today
-        ///// </summary>
-        ///// <param name="duration"></param>
-        ///// <returns></returns>
-        //public async Task SetRange(int duration)
-        //{
-        //    var timeoutTask = Task.Delay(duration);
-
-        //    Voltage h, v;
-
-        //    while (timeoutTask.IsCompleted == false) {
-        //        h = await HorizontalInputPort.Read();
-        //        v = await VerticalInputPort.Read();
-        //    }
-        //}
-
         /// <summary>
         /// Translates an analog position into a digital position, taking into
         /// account the calibration information.
         /// </summary>
-        /// <returns></returns>
-        protected DigitalJoystickPosition TranslateAnalogPositionToDigital()
+        /// <returns>The digital joystick position as DigitalJoystickPosition</returns>
+        protected DigitalJoystickPosition GetDigitalJoystickPosition()
         {
-            var h = Position?.Horizontal;
-            var v = Position?.Vertical;
+            var h = HorizontalInputPort.Voltage.Volts;
+            var v = VerticalInputPort.Voltage.Volts;
 
-            if (h > (Calibration.HorizontalCenter + Calibration.DeadZone).Volts) {
-                if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts) {
+            if (h > (Calibration.HorizontalCenter + Calibration.DeadZone).Volts)
+            {
+                if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts)
+                {
                     return IsInverted ? DigitalJoystickPosition.DownLeft : DigitalJoystickPosition.UpRight;
                 }
-                if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts) {
+                if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts)
+                {
                     return IsInverted ? DigitalJoystickPosition.UpLeft : DigitalJoystickPosition.DownRight;
                 }
                 return IsInverted ? DigitalJoystickPosition.Left : DigitalJoystickPosition.Right;
-            } else if (h < (Calibration.HorizontalCenter - Calibration.DeadZone).Volts) {
-                if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts) {
+            }
+            else if (h < (Calibration.HorizontalCenter - Calibration.DeadZone).Volts)
+            {
+                if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts)
+                {
                     return IsInverted ? DigitalJoystickPosition.DownRight : DigitalJoystickPosition.UpLeft;
                 }
-                if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts) {
+                if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts)
+                {
                     return IsInverted ? DigitalJoystickPosition.UpRight : DigitalJoystickPosition.DownLeft;
                 }
                 return IsInverted ? DigitalJoystickPosition.Right : DigitalJoystickPosition.Left;
-            } else if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts) {
+            }
+            else if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts)
+            {
                 return IsInverted ? DigitalJoystickPosition.Down : DigitalJoystickPosition.Up;
-            } else if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts) {
+            }
+            else if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts)
+            {
                 return IsInverted ? DigitalJoystickPosition.Up : DigitalJoystickPosition.Down;
             }
 
             return DigitalJoystickPosition.Center;
-
         }
 
         /// <summary>
@@ -273,7 +262,7 @@ namespace Meadow.Foundation.Sensors.Hid
             var h = await HorizontalInputPort.Read();
             var v = await VerticalInputPort.Read();
 
-            JoystickPosition position = new JoystickPosition( GetNormalizedPosition(h, true), GetNormalizedPosition(v, false));
+            JoystickPosition position = new JoystickPosition(GetNormalizedPosition(h, true), GetNormalizedPosition(v, false));
             return position;
         }
 
@@ -291,7 +280,8 @@ namespace Meadow.Foundation.Sensors.Hid
         public void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety
-            lock (samplingLock) {
+            lock (samplingLock)
+            {
                 if (IsSampling) return;
                 IsSampling = true;
 
@@ -308,7 +298,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public void StopUpdating()
         {
-            lock (samplingLock) {
+            lock (samplingLock)
+            {
                 if (!IsSampling) return;
 
                 HorizontalInputPort.StopUpdating();
@@ -316,7 +307,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
                 SamplingTokenSource?.Cancel();
 
-                // state muh-cheen
+                // state machine
                 IsSampling = false;
             }
         }
@@ -332,22 +323,30 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             double normalized;
 
-            if (isHorizontal) {
-                if (value <= Calibration.HorizontalCenter) {
+            if (isHorizontal)
+            {
+                if (value <= Calibration.HorizontalCenter)
+                {
                     normalized = (value.Volts - Calibration.HorizontalCenter.Volts) / (Calibration.HorizontalCenter.Volts - Calibration.HorizontalMin.Volts);
-                } else {
+                }
+                else
+                {
                     normalized = (value.Volts - Calibration.HorizontalCenter.Volts) / (Calibration.HorizontalMax.Volts - Calibration.HorizontalCenter.Volts);
                 }
-            } else {
-                if (value <= Calibration.VerticalCenter) {
+            }
+            else
+            {
+                if (value <= Calibration.VerticalCenter)
+                {
                     normalized = (value.Volts - Calibration.VerticalCenter.Volts) / (Calibration.VerticalCenter.Volts - Calibration.VerticalMin.Volts);
-                } else {
+                }
+                else
+                {
                     normalized = (value.Volts - Calibration.VerticalCenter.Volts) / (Calibration.VerticalMax.Volts - Calibration.VerticalCenter.Volts);
                 }
             }
 
             return (float)(IsInverted ? -1 * normalized : normalized);
         }
-
     }
 }

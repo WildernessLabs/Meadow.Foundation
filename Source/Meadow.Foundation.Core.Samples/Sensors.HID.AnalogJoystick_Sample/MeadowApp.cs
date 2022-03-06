@@ -44,6 +44,7 @@ namespace MeadowApp
         void JoystickUpdated(object sender, IChangeResult<JoystickPosition> e)
         {
             Console.WriteLine($"Horizontal: {e.New.Horizontal:n2}, Vertical: {e.New.Vertical:n2}");
+            Console.WriteLine($"Digital position: {joystick.DigitalPosition}");
         }
     }
 }
