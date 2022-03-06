@@ -37,8 +37,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected const byte outDrv = 0x04;
         protected const byte mode1AI = 0x21;
 
+        /// <summary>
+        /// The I2C bus connected to the pca9685
+        /// </summary>
         public II2cBus i2CBus { get; protected set; }
-        byte address;
+
+        readonly byte address;
 
         public Pca9685(II2cBus i2cBus, byte address = (byte)Addresses.Default, int frequency = 100)
         {
