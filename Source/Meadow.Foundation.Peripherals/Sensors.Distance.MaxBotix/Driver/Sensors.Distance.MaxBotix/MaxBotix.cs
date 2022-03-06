@@ -11,13 +11,24 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public event EventHandler<IChangeResult<Length>> LengthUpdated = delegate { };
 
+        /// <summary>
+        /// Distance from sensor to object
+        /// </summary>
         public Length? Length { get; protected set; }
 
+        /// <summary>
+        ///  voltage common collector (VCC) typically 3.3V
+        /// </summary>
         public double VCC { get; set; } = 3.3;
 
         CommunicationType communication;
         SensorType sensorType;
 
+        /// <summary>
+        /// Read the distance from the sensor
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         protected override async Task<Length> ReadSensor()
         {
             return communication switch
@@ -29,12 +40,20 @@ namespace Meadow.Foundation.Sensors.Distance
             };
         }
 
+        /// <summary>
+        /// Raise distance change event for subscribers
+        /// </summary>
+        /// <param name="changeResult"></param>
         protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
         {
             LengthUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Start updating distances
+        /// </summary>
+        /// <param name="updateInterval"></param>
         public override void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety
