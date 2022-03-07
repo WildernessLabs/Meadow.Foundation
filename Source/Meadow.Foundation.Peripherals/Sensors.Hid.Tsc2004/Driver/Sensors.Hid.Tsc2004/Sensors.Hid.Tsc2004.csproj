@@ -12,7 +12,7 @@
 		<RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
 		<PackageTags>Meadow.Foundation,touch,screen,display,capacitive,tsc2004</PackageTags>
 		<Version>0.1.0</Version>
-		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>Tsc2004 I2C capacitive touch screen</Description>
 	</PropertyGroup>
 	<ItemGroup>
