@@ -12,7 +12,7 @@
     <PackageTags>Meadow.Foundation, ADC, ADS1015, ADS1115</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>TI ADS1x15 I2C Aanalog ddigical converters (t-to-ADC()s (ADS1015 / ADS 1115)</Description>
+    <Description>TI ADS1x15 I2C analog to digital converters (ADS1015 / ADS1115)</Description>
   </PropertyGroup>
 	<ItemGroup>
 		<None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
