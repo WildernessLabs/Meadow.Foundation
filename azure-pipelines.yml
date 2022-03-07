@@ -7,7 +7,15 @@ resources:
       type: github
       endpoint: WildernessLabs
       name: WildernessLabs/Meadow.Core
-
+    - repository: MeadowContracts
+      type: github
+      endpoint: WildernessLabs
+      name: WildernessLabs/Meadow.Contracts
+    - repository: MeadowUnits
+      type: github
+      endpoint: WildernessLabs
+      name: WildernessLabs/Meadow.Units
+      
 trigger:
   - main
   - develop
@@ -32,6 +40,8 @@ stages:
         steps:
           - checkout: self
           - checkout: MeadowCore
+          - checkout: MeadowContracts
+          - checkout: MeadowUnits
           - task: NuGetToolInstaller@1
             inputs:
               versionSpec: 5.8
