@@ -5,15 +5,15 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>OLED128x32</AssemblyName>
+    <AssemblyName>KeyboardWing</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.FeatherWings.OLED128x32Wing</PackageId>
+    <PackageId>Meadow.Foundation.FeatherWings.KeyboardWing</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, FeatherWing, OLED128x32, SSD1306</PackageTags>
-    <Version>0.1.39</Version>
+    <PackageTags>Meadow.Foundation, FeatherWing, BBQ 10, keyboard, blackberry</PackageTags>
+    <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>AdaFruit OLED 128x32 monochrome display FeatherWing</Description>
+    <Description>BBQ 10 Keyboard FeatherWing</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
