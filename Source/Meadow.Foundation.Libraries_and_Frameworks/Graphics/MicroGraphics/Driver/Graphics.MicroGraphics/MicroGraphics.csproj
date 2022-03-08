@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -17,9 +17,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\..\..\icon.png" Pack="true" PackagePath="" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>
