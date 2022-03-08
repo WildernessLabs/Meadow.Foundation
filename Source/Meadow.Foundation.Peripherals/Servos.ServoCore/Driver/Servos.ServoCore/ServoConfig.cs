@@ -12,11 +12,6 @@ namespace Meadow.Foundation.Servos
 
         public int Frequency { get; private set; } // almost always 50hz
 
-        //public ServoConfig(int? minimumAngle = 0, int maximumAngle = 180, int minimumPulseDuration = 1000, int maximumPulseDuration = 2000, int frequency = 50)
-        //    : this(new Angle(minimumAngle?? 0), new Angle(maximumAngle), minimumPulseDuration, maximumPulseDuration, frequency)
-        //{
-        //}
-
         /// <summary>
         /// 
         /// </summary>

@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using System.Threading;
 
-namespace Displays.Tft.St7796s_Sample
+namespace Displays.Tft.Ssd1331_Sample
 {
     class Program
     {

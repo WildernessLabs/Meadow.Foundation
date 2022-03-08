@@ -5,15 +5,49 @@
     /// </summary>
     public enum ColorType
     {
-        Format1bpp, //single color 
-        Format2bpp, //for 2 color ePaper or 4 color gray scale
-        Format4bppGray, //for 16 color gray scale
+        /// <summary>
+        /// 1-bit color
+        /// </summary>
+        Format1bpp,
+        /// <summary>
+        /// 2-bit color
+        /// </summary>
+        Format2bpp,
+        /// <summary>
+        /// 4-bit grayscale
+        /// </summary>
+        Format4bppGray,
+        /// <summary>
+        /// 8-bit grayscale
+        /// </summary>
         Format8bppGray,
-        Format8bppRgb332, //Some TFT displays support this mode
-        Format12bppRgb444, //TFT in 12 bit mode
-        Format16bppRgb555, //not currently used
+        /// <summary>
+        /// 8-bit color
+        /// </summary>
+        Format8bppRgb332,
+        /// <summary>
+        /// 12-bit color
+        /// </summary>
+        Format12bppRgb444,
+        /// <summary>
+        /// 15-bit color
+        /// </summary>
+        Format16bppRgb555,
+        /// <summary>
+        /// 16-bit color
+        /// </summary>
         Format16bppRgb565, //TFT in 16 bit mode
-        Format18bppRgb666, //TFT in 18 bit mode
-        Format24bppRgb888  //24 bit color
+        /// <summary>
+        /// 18-bit color
+        /// </summary>
+        Format18bppRgb666,
+        /// <summary>
+        /// 24-bit color
+        /// </summary>
+        Format24bppRgb888,
+        /// <summary>
+        /// 32-bit color
+        /// </summary>
+        Format32bppRgba8888
     }
 }

@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
 using System;
 using System.Threading;
@@ -12,8 +11,8 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class Led : ILed
 	{
-		protected Task? animationTask;
-		protected CancellationTokenSource? cancellationTokenSource;
+		Task? animationTask;
+		CancellationTokenSource? cancellationTokenSource;
 
 		/// <summary>
 		/// Gets the port that is driving the LED
@@ -27,18 +26,19 @@ namespace Meadow.Foundation.Leds
 		/// <value><c>true</c> if is on; otherwise, <c>false</c>.</value>
 		public bool IsOn
 		{
-			get { return isOn; }
+			get => isOn; 
 			set
 			{
 				isOn = value;
 				Port.State = isOn;
 			}
 		}
-		protected bool isOn;
+		bool isOn;
 
 		/// <summary>
 		/// Creates a LED through a pin directly from the Digital IO of the board
 		/// </summary>
+		/// <param name="device">IDigitalOutputController to instantiate output port</param>
 		/// <param name="pin"></param>
 		public Led(IDigitalOutputController device, IPin pin) :
 			this(device.CreateDigitalOutputPort(pin, false))
@@ -79,6 +79,13 @@ namespace Meadow.Foundation.Leds
 			animationTask.Start();
 		}
 		
+		/// <summary>
+		/// Set LED to blink
+		/// </summary>
+		/// <param name="onDuration">on duration in ms</param>
+		/// <param name="offDuration">off duration in ms</param>
+		/// <param name="cancellationToken">cancellation token used to cancel blink</param>
+		/// <returns></returns>
 		protected async Task StartBlinkAsync(int onDuration, int offDuration, CancellationToken cancellationToken)
 		{
 			while (true)
@@ -89,9 +96,9 @@ namespace Meadow.Foundation.Leds
 				}
 
 				Port.State = true;
-				await Task.Delay((int)onDuration);
+				await Task.Delay(onDuration);
 				Port.State = false;
-				await Task.Delay((int)offDuration);
+				await Task.Delay(offDuration);
 			}
 
 			Port.State = IsOn;

@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Last value read from the moisture sensor.
         /// </summary>
-        public double? Moisture { get; private set; }
+        public double? Moisture { get; private set; } = double.NaN;
 
         /// <summary>
         /// Voltage value of most dry soil. Default of `0V`.
@@ -46,16 +46,18 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device.
         /// </summary>
-        /// <param name="analogPort"></param>
-        /// <param name="digitalPort"></param>
+        /// <param name="analogPin"></param>
+        /// <param name="digitalPin"></param>
         public Fc28(
             IMeadowDevice device, IPin analogPin, IPin digitalPin,
             Voltage? minimumVoltageCalibration, Voltage? maximumVoltageCalibration,
-            int updateIntervalMs = 1000,
-            int sampleCount = 5, int sampleIntervalMs = 40)
-                : this(device.CreateAnalogInputPort(analogPin, updateIntervalMs, sampleCount, sampleIntervalMs),
+            TimeSpan? updateInterval = null,
+            int sampleCount = 5, TimeSpan? sampleInterval = null)
+                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 0, 40), new Voltage(3.3)),
                       device.CreateDigitalOutputPort(digitalPin), minimumVoltageCalibration, maximumVoltageCalibration)
-        { }
+        {
+            this.UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 1);
+        }
 
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin and digital pin.

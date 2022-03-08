@@ -16,8 +16,8 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public ColorType ColorMode => ColorType.Format2bpp;
 
-        protected readonly Buffer1 blackImageBuffer;
-        protected readonly Buffer1 colorImageBuffer;
+        protected readonly Buffer1bpp blackImageBuffer;
+        protected readonly Buffer1bpp colorImageBuffer;
 
         public int Width => blackImageBuffer.Width;
         public int Height => blackImageBuffer.Height;
@@ -36,8 +36,8 @@ namespace Meadow.Foundation.Displays.ePaper
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin));
 
-            blackImageBuffer = new Buffer1(width, height);
-            colorImageBuffer = new Buffer1(width, height);
+            blackImageBuffer = new Buffer1bpp(width, height);
+            colorImageBuffer = new Buffer1bpp(width, height);
 
             blackImageBuffer.Clear(true);
             colorImageBuffer.Clear(true);
@@ -185,11 +185,19 @@ namespace Meadow.Foundation.Displays.ePaper
             blackImageBuffer.WriteBuffer(x, y, displayBuffer);
         }
 
+        /// <summary>
+        /// Send a command to the display
+        /// </summary>
+        /// <param name="command">The command</param>
         protected void SendCommand(Command command)
         {
             SendCommand((byte)command);
         }
 
+        /// <summary>
+        /// Update the display
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void Show()
         {
             throw new NotImplementedException("Show must be implimented in the ePaper display driver");

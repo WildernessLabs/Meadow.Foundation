@@ -9,8 +9,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public enum Addresses : byte
         {
-            Address0 = 0x40,
-            Default = Address0
+            /// <summary>
+            /// Bus address 0x40
+            /// </summary>
+            Address_0x40 = 0x40,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x40
         }
 
         private const byte SOFT_RESET = 0xFE;

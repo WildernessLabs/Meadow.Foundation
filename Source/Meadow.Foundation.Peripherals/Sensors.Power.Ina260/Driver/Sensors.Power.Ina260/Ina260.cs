@@ -15,9 +15,6 @@ namespace Meadow.Foundation.Sensors.Power
         public event EventHandler<IChangeResult<Units.Current>> CurrentUpdated = delegate { };
 
         private const float MeasurementScale = 0.00125f;
-        private TimeSpan _samplePeriod;
-
-        private Register RegisterPointer { get; set; }
 
         /// <summary>
         /// The value of the current (in Amps) flowing through the shunt resistor from the last reading
@@ -41,8 +38,8 @@ namespace Meadow.Foundation.Sensors.Power
         {
             switch (address)
             {
-                case (byte)Addresses.Address0:
-                case (byte)Addresses.Address1:
+                case (byte)Addresses.Address_0x40:
+                case (byte)Addresses.Address_0x41:
                     // valid;
                     break;
                 default:

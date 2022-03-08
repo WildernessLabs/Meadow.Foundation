@@ -24,10 +24,9 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             ushort color = GetPixel16bpp(x, y);
 
-            //split into R,G,B & invert
-            byte r = (byte)((color >> 11) & 0x1F);
-            byte g = (byte)((color >> 5) & 0x3F);
-            byte b = (byte)((color) & 0x1F);
+            byte r = (byte)(((color >> 11) & 0x1F) * 255 / 31);
+            byte g = (byte)(((color >> 5) & 0x3F) * 255 / 63);
+            byte b = (byte)(((color) & 0x1F) * 255 / 31);
 
             return new Color(r, g, b);
         }

@@ -2,6 +2,9 @@
 
 namespace Meadow.Foundation.Controllers.Pid
 {
+    /// <summary>
+    /// Represents a standard PID controller
+    /// </summary>
     public class StandardPidController : PidControllerBase
     {
         /// <summary>
@@ -14,6 +17,10 @@ namespace Meadow.Foundation.Controllers.Pid
         /// </summary>
         public override float DerivativeComponent { get; set; } = 0;
 
+        /// <summary>
+        /// Calculate control output of PID
+        /// </summary>
+        /// <returns></returns>
         public override float CalculateControlOutput()
         {
             // init vars

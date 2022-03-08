@@ -9,14 +9,13 @@ namespace Sensors.Gnss.Mt3339_Sample
     public class MeadowApp : App<F7MicroV2, MeadowApp>
     {
         //<!—SNIP—>
-
         Mt3339 gps;
 
         public MeadowApp()
         {
             Console.WriteLine("Initializing ...");
 
-            var gps = new Mt3339(Device, Device.SerialPortNames.Com4);
+            gps = new Mt3339(Device, Device.SerialPortNames.Com4);
 
             Subscribe();
 

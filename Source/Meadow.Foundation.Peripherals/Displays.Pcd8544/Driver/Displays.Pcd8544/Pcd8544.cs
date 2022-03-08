@@ -26,13 +26,13 @@ namespace Meadow.Foundation.Displays
         protected IDigitalOutputPort chipSelectPort;
         protected ISpiPeripheral spiDisplay;
 
-        protected Buffer1 imageBuffer;
+        protected Buffer1bpp imageBuffer;
 
         protected Memory<byte> commandBuffer;
 
         public Pcd8544(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
-            imageBuffer = new Buffer1(Width, Height);
+            imageBuffer = new Buffer1bpp(Width, Height);
             commandBuffer = new byte[7];
 
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, true);

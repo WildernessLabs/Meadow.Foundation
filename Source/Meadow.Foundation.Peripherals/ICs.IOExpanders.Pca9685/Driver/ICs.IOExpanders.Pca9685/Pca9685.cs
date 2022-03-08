@@ -37,14 +37,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected const byte outDrv = 0x04;
         protected const byte mode1AI = 0x21;
 
+        /// <summary>
+        /// The I2C bus connected to the pca9685
+        /// </summary>
         public II2cBus i2CBus { get; protected set; }
-        public byte Address { get; protected set; }
+
+        readonly byte address;
 
         public Pca9685(II2cBus i2cBus, byte address = (byte)Addresses.Default, int frequency = 100)
         {
             i2CBus = i2cBus;
-            Address = address;
-            i2cPeripheral = new I2cPeripheral(i2CBus, Address);
+            this.address = address;
+            i2cPeripheral = new I2cPeripheral(i2CBus, address);
             this.frequency = frequency;
         }
 
@@ -53,8 +57,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public virtual void Initialize()
         {
-            i2CBus.WriteData(Address, Mode1, 0X00);
-            i2CBus.WriteData(Address, Mode1);
+            i2CBus.WriteData(address, Mode1, 0X00);
+            i2CBus.WriteData(address, Mode1);
 
             Thread.Sleep(5);
 
@@ -79,7 +83,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new ArgumentException("Value must be between 0 and 15", "portNumber");
             }
 
-            var pwmPort = new PwmPort(i2CBus, Address, Led0OnL, frequency, portNumber, dutyCycle);
+            var pwmPort = new PwmPort(i2CBus, address, Led0OnL, frequency, portNumber, dutyCycle);
 
             return pwmPort;
         }
@@ -135,7 +139,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         protected virtual void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
         {
-            i2CBus.WriteData(Address, register, ledXOnL, ledXOnH, ledXOffL, ledXOffH);
+            i2CBus.WriteData(address, register, ledXOnL, ledXOnH, ledXOffL, ledXOffH);
         }
 
         protected virtual void Write(byte register, byte value)

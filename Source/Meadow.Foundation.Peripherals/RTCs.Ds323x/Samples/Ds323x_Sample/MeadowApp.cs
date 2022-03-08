@@ -9,8 +9,6 @@ namespace MeadowApp
     {
         //<!—SNIP—>
 
-        private Ds3231 sensor;
-
         public MeadowApp()
         {
             Console.WriteLine("Initialize hardware...");

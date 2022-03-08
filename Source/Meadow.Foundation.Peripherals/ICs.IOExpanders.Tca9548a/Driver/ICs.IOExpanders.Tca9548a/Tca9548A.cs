@@ -12,9 +12,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// </summary>
     public partial class Tca9548a : II2cPeripheral
     {
-        private readonly IReadOnlyDictionary<byte, II2cBus> _buses;
-        private byte _selectedBus = 0xff;
+        private readonly IReadOnlyDictionary<byte, II2cBus> buses;
+        private byte selectedBus = 0xff;
         internal SemaphoreSlim BusSelectorSemaphore = new SemaphoreSlim(1, 1);
+
+        /// <summary>
+        /// The address of this device on the <see cref="Bus"/>.
+        /// </summary>
+        public byte Address { get; }
 
         /// <summary>
         /// Create a <see cref="Tca9548a"/> i2c multiplexer
@@ -34,7 +39,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             Bus = bus ?? throw new ArgumentNullException(nameof(bus), "The bus cannot be null.");
 
-            _buses = Enumerable.Range(0, 8)
+            buses = Enumerable.Range(0, 8)
                                .Select(Convert.ToByte)
                                .ToDictionary(
                                    b => b,
@@ -44,21 +49,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create a <see cref="Tca9548a"/> i2c multiplexer.
         /// </summary>
-        /// <param name="bus">The <see cref="I2cBus"/> the device is attached to</param>
+        /// <param name="i2cBus">The <see cref="I2cBus"/> the device is attached to</param>
         /// <param name="a0">The logic high/low state of pin A0</param>
         /// <param name="a1">The logic high/low state of pin A1</param>
         /// <param name="a2">The logic high/low state of pin A2</param>
         /// <exception cref="ArgumentOutOfRangeException">The device address was invalid</exception>
         /// <exception cref="ArgumentNullException">The bus was null</exception>
-        public Tca9548a(II2cBus bus, bool a0, bool a1, bool a2)
-            : this(bus, TcaAddressTable.GetAddressFromPins(a0, a1, a2))
+        public Tca9548a(II2cBus i2cBus, bool a0, bool a1, bool a2)
+            : this(i2cBus, TcaAddressTable.GetAddressFromPins(a0, a1, a2))
         {
         }
-
-        /// <summary>
-        /// The address of this device on the <see cref="Bus"/>.
-        /// </summary>
-        public byte Address { get; }
 
         /// <summary>
         /// The <see cref="II2cBus"/> this device is connected to.
@@ -68,42 +68,42 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The <see cref="II2cBus"/> connected to SD0/SC0
         /// </summary>
-        public II2cBus Bus0 => _buses[0];
+        public II2cBus Bus0 => buses[0];
 
         /// <summary>
         /// The <see cref="II2cBus"/> connected to SD1/SC1
         /// </summary>
-        public II2cBus Bus1 => _buses[1];
+        public II2cBus Bus1 => buses[1];
 
         /// <summary>
         /// The <see cref="II2cBus"/> connected to SD2/SC2
         /// </summary>
-        public II2cBus Bus2 => _buses[2];
+        public II2cBus Bus2 => buses[2];
 
         /// <summary>
         /// The <see cref="II2cBus"/> connected to SD3/SC3
         /// </summary>
-        public II2cBus Bus3 => _buses[3];
+        public II2cBus Bus3 => buses[3];
 
         /// <summary>
         /// The <see cref="II2cBus"/> connected to SD4/SC4
         /// </summary>
-        public II2cBus Bus4 => _buses[4];
+        public II2cBus Bus4 => buses[4];
 
         /// <summary>
         /// The <see cref="II2cBus"/> connected to SD5/SC5
         /// </summary>
-        public II2cBus Bus5 => _buses[5];
+        public II2cBus Bus5 => buses[5];
 
         /// <summary>
         /// The <see cref="II2cBus"/> connected to SD6/SC6
         /// </summary>
-        public II2cBus Bus6 => _buses[6];
+        public II2cBus Bus6 => buses[6];
 
         /// <summary>
         /// The <see cref="II2cBus"/> connected to SD7/SC7
         /// </summary>
-        public II2cBus Bus7 => _buses[7];
+        public II2cBus Bus7 => buses[7];
 
         /// <summary>
         /// Activate the specified bus
@@ -111,7 +111,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="busIndex"></param>
         internal void SelectBus(byte busIndex)
         {
-            if (_selectedBus == busIndex)
+            if (this.selectedBus == busIndex)
             {
                 return;
             }
@@ -123,7 +123,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new Exception(
                     $"Failed to switch to the desired bus. Expected {@byte:X8} got {selectedBus:X8}");
 
-            _selectedBus = busIndex;
+            this.selectedBus = busIndex;
         }
 
 

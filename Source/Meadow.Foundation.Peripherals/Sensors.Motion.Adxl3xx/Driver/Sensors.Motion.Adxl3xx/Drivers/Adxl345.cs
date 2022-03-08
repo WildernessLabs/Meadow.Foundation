@@ -67,7 +67,17 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
-        public Adxl345(II2cBus i2cBus, byte address = (byte)Addresses.Address0)
+        public Adxl345(II2cBus i2cBus, Addresses address = Addresses.Default)
+            : this(i2cBus, (byte)address)
+        {
+        }
+
+        /// <summary>
+        ///     Create a new instance of the ADXL345 communicating over the I2C interface.
+        /// </summary>
+        /// <param name="address">Address of the I2C sensor</param>
+        /// <param name="i2cBus">I2C bus</param>
+        public Adxl345(II2cBus i2cBus, byte address)
             : base(i2cBus, address)
         {
             var deviceID = ReadRegister(Register.DEVICE_ID);
@@ -86,9 +96,9 @@ namespace Meadow.Foundation.Sensors.Motion
                 Peripheral.ReadRegister((byte)Register.X0, ReadBuffer.Span[0..6]);
 
                 return new Acceleration3D(
-                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
-                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[2] + (ReadBuffer.Span[3] << 8)), Acceleration.UnitType.MetersPerSecondSquared),
-                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[4] + (ReadBuffer.Span[5] << 8)), Acceleration.UnitType.MetersPerSecondSquared)
+                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.Gravity),
+                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[2] + (ReadBuffer.Span[3] << 8)), Acceleration.UnitType.Gravity),
+                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[4] + (ReadBuffer.Span[5] << 8)), Acceleration.UnitType.Gravity)
                     );
 
             });

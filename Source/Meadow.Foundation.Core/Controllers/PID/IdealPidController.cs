@@ -2,12 +2,17 @@
 
 namespace Meadow.Foundation.Controllers.Pid
 {
+    /// <summary>
+    /// IDealPidController class
+    /// </summary>
     public class IdealPidController : PidControllerBase
     {
+        /// <summary>
+        /// Calculate control output for PID controller
+        /// </summary>
+        /// <returns></returns>
         public override float CalculateControlOutput()
         {
-            // init vars
-            float control = 0.0f;
             var now = DateTime.Now;
 
             // time delta (how long since last calculation)
@@ -39,15 +44,16 @@ namespace Meadow.Foundation.Controllers.Pid
             var diff = error - _lastError / seconds;
             var derivative = DerivativeComponent * diff;
 
+            // init vars
             // add the appropriate corrections
-            control = proportional + integral + derivative;
+            float control = proportional + integral + derivative;
 
             //
             //Console.WriteLine("PID Control (preclamp): " + control.ToString("N4"));
 
             // clamp
-            if (control > OutputMax) control = OutputMax;
-            if (control < OutputMin) control = OutputMin;
+            if (control > OutputMax) { control = OutputMax; }
+            if (control < OutputMin) { control = OutputMin; }
 
             //Console.WriteLine("PID Control (postclamp): " + control.ToString("N4"));
 

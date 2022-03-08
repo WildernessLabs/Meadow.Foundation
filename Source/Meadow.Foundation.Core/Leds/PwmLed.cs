@@ -13,11 +13,11 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class PwmLed : IPwmLed
     {
-        protected Task? animationTask;
-        protected CancellationTokenSource? cancellationTokenSource;
+        Task? animationTask;
+        CancellationTokenSource? cancellationTokenSource;
 
-        protected float maximumPwmDuty = 1;
-        protected bool inverted;
+        readonly float maximumPwmDuty = 1;
+        readonly bool inverted;
 
         /// <summary>
         /// Gets the brightness of the LED, controlled by a PWM signal, and limited by the 
@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Leds
                 isOn = value;
             }
         }
-        protected bool isOn;
+        bool isOn;
 
         /// <summary>
         /// Gets the PwmPort
@@ -68,8 +68,9 @@ namespace Meadow.Foundation.Leds
         /// voltage based on the passed `forwardVoltage`. Typical LED forward voltages 
         /// can be found in the `TypicalForwardVoltage` class.
         /// </summary>
-        /// <param name="pwmPort"></param>
-        /// <param name="forwardVoltage"></param>
+        /// <param name="pwmPort">Port to control</param>
+        /// <param name="forwardVoltage">Forward voltage of led</param>
+        /// <param name="terminationType">Termination type of LED</param>
         public PwmLed(IPwmPort pwmPort, float forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
@@ -141,6 +142,15 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
+        /// <summary>
+        /// Start blinking the LED
+        /// </summary>
+        /// <param name="onDuration">on duration in ms</param>
+        /// <param name="offDuration">off duration in ms</param>
+        /// <param name="highBrightness">maximum brightness</param>
+        /// <param name="lowBrightness">minimum brightness</param>
+        /// <param name="cancellationToken">token for cancellation</param>
+        /// <returns></returns>
         protected async Task StartBlinkAsync(int onDuration, int offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             while (true)
@@ -187,6 +197,14 @@ namespace Meadow.Foundation.Leds
             animationTask.Start();
         }
         
+        /// <summary>
+        /// Start pulsing the led
+        /// </summary>
+        /// <param name="pulseDuration">duration in ms</param>
+        /// <param name="highBrightness">maximum brightness</param>
+        /// <param name="lowBrightness">minimum brightness</param>
+        /// <param name="cancellationToken">token used to cancel pulse</param>
+        /// <returns></returns>
         protected async Task StartPulseAsync(int pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;

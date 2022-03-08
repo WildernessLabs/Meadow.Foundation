@@ -1,6 +1,7 @@
 ﻿using System;
 using Meadow.Hardware;
-using Meadow.Peripherals.Motors;
+
+#nullable enable
 
 namespace Meadow.Foundation.Motors
 {

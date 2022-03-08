@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation
 {
+    /// <summary>
+    /// Base class that represents a sampling sensor to support the observable pattern
+    /// </summary>
+    /// <typeparam name="UNIT"></typeparam>
     public abstract class SamplingSensorBase<UNIT>
         : SensorBase<UNIT>
         where UNIT : struct

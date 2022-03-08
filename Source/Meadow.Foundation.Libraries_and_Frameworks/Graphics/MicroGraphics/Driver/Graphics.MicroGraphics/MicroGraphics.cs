@@ -5,14 +5,14 @@ using System;
 namespace Meadow.Foundation.Graphics
 {
     /// <summary>
-    ///     Provide high level graphics functions
+    /// Provide high level graphics functions
     /// </summary>
     public partial class MicroGraphics 
     {
         private readonly IGraphicsDisplay display;
 
         /// <summary>
-        ///     Current font used for displaying text on the display.
+        /// Current font used for displaying text on the display.
         /// </summary>
         public IFont CurrentFont
         {
@@ -21,11 +21,9 @@ namespace Meadow.Foundation.Graphics
             {
                 currentFont = value;
                 if(currentFont == null) { return; }
-                DisplayConfig = new TextDisplayConfig()
-                {
-                    Width = (ushort)(Width / currentFont.Width),
-                    Height = (ushort)(Height / CurrentFont.Height)
-                };
+
+                DisplayConfig.Width = (ushort)(Width / currentFont.Width);
+                DisplayConfig.Height = (ushort)(Height / CurrentFont.Height);
             }
         }
         IFont currentFont;
@@ -60,7 +58,10 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public int Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Width : display.Height;
 
-        public TextDisplayConfig DisplayConfig { get; private set; }
+        /// <summary>
+        /// Text display configuration for use with text display menu
+        /// </summary>
+        public TextDisplayConfig DisplayConfig { get; private set; } = new TextDisplayConfig();
 
         /// <summary>
         /// </summary>
@@ -271,7 +272,7 @@ namespace Meadow.Foundation.Graphics
             for (var x = x0; x <= x1; x++)
             {
                 DrawPixel(steep ? y : x, steep ? x : y);
-                error = error - dy;
+                error -= dy;
                 if (error < 0)
                 {
                     y += ystep;
@@ -883,7 +884,6 @@ namespace Meadow.Foundation.Graphics
         public Size MeasureText(string text, IFont font, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             return new Size(text.Length * (int)scaleFactor * font.Width, (int)scaleFactor * font.Height);
-
         }
 
         /// <summary>
@@ -904,18 +904,18 @@ namespace Meadow.Foundation.Graphics
 
             if(alignment == TextAlignment.Center)
             {
-                x = x - MeasureText(text, scaleFactor).Width / 2;
+                x -= MeasureText(text, scaleFactor).Width / 2;
             }
             else if(alignment == TextAlignment.Right)
             {
-                x = x - MeasureText(text, scaleFactor).Width;
+                x -= MeasureText(text, scaleFactor).Width;
             }
 
             DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, BitmapMode.And, scaleFactor);
         }
 
         /// <summary>
-        ///     Draw a buffer onto the display buffer at the given localation
+        ///     Draw a buffer onto the display buffer at the given location
         ///
         ///     For best performance, source buffer should be the same color depth as the target display
         ///     Note: DrawBuffer will not rotate the source buffer, it will always be oriented relative to base display rotation
@@ -923,9 +923,52 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">x location of target to draw buffer</param>
         /// <param name="y">x location of target to draw buffer</param>
         /// <param name="buffer">the source buffer to write to the display buffer</param>
-        public void DrawBuffer(int x, int y, IDisplayBuffer buffer)
+        /// /// <param name="rotateBufferForDisplay">rotate the buffer if the display is rotated - maybe be slower</param>
+        public void DrawBuffer(int x, int y, IDisplayBuffer buffer, bool rotateBufferForDisplay = true)
         {
-            display.DrawBuffer(GetXForRotation(x, y), GetYForRotation(x, y), buffer);
+            //fast and happy path
+            if(Rotation == RotationType.Default)
+            {
+                display.DrawBuffer(x, y, buffer);
+            }
+            //rotate buffer if the display is rotated (slow)
+            else if(rotateBufferForDisplay) //loop over every pixel
+            {
+                for(int i = 0; i < buffer.Width; i++)
+                {
+                    for(int j = 0; j < buffer.Height; j++)
+                    {
+                        display.DrawPixel(GetXForRotation(x + i, y + j),
+                            GetYForRotation(x + i, y + j),
+                            buffer.GetPixel(i, j));
+                    }
+                }
+            }
+            //don't rotate buffer with the display (fast)
+            else
+            {
+                display.DrawBuffer(GetXForRotation(x, y), GetYForRotation(x, y), buffer);
+            }
+        }
+
+        /// <summary>
+        /// Draw an Image onto the display buffer at the specified location
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="image"></param>
+        public void DrawImage(int x, int y, Image image)
+        {
+            DrawBuffer(x, y, image.DisplayBuffer);
+        }
+
+        /// <summary>
+        /// Draw an Image onto the display buffer at (0, 0)
+        /// </summary>
+        /// <param name="image"></param>
+        public void DrawImage(Image image)
+        {
+            DrawImage(0, 0, image);
         }
 
         /// <summary>
@@ -945,11 +988,11 @@ namespace Meadow.Foundation.Graphics
 
             if (alignment == TextAlignment.Center)
             {
-                x = x - MeasureText(text, scaleFactor).Width / 2;
+                x -= MeasureText(text, scaleFactor).Width / 2;
             }
             else if (alignment == TextAlignment.Right)
             {
-                x = x - MeasureText(text, scaleFactor).Width;
+                x -= MeasureText(text, scaleFactor).Width;
             }
 
             byte[] bitmap = GetBytesForTextBitmap(text);
@@ -1086,12 +1129,6 @@ namespace Meadow.Foundation.Graphics
             return bitmap;
         }
 
-        byte SetBit(byte value, int position, bool high)
-        {
-            var compare = (byte)(1 << position);
-            return high ? (value |= compare) : (byte)(value & ~compare);
-        }
-
         /// <summary>
         ///     Show changes on the display
         /// </summary>
@@ -1213,34 +1250,24 @@ namespace Meadow.Foundation.Graphics
 
         public int GetXForRotation(int x, int y)
         {
-            switch(Rotation)
+            return Rotation switch
             {
-                case RotationType._90Degrees:
-                    return display.Width - y - 1;
-                case RotationType._180Degrees:
-                    return display.Width - x - 1;
-                case RotationType._270Degrees:
-                    return y;
-                case RotationType.Default:
-                default:
-                    return x;
-            }
+                RotationType._90Degrees => display.Width - y - 1,
+                RotationType._180Degrees => display.Width - x - 1,
+                RotationType._270Degrees => y,
+                _ => x,
+            };
         }
 
         public int GetYForRotation(int x, int y)
         {
-            switch (Rotation)
+            return Rotation switch
             {
-                case RotationType._90Degrees:
-                    return x; 
-                case RotationType._180Degrees:
-                    return display.Height - y - 1;
-                case RotationType._270Degrees:
-                    return display.Height - x - 1;
-                case RotationType.Default:
-                default:
-                    return y;
-            }
+                RotationType._90Degrees => x,
+                RotationType._180Degrees => display.Height - y - 1,
+                RotationType._270Degrees => display.Height - x - 1,
+                _ => y,
+            };
         }
     }
 }

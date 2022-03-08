@@ -10,7 +10,7 @@ namespace Sensors.Atmospheric.BME680_Sample
     {
         //<!—SNIP—>
 
-        Bme680 sensor;
+        Bme680? sensor;
 
         public MeadowApp()
         {
@@ -29,30 +29,34 @@ namespace Sensors.Atmospheric.BME680_Sample
                 filter: result =>
                 {
                     //c# 8 pattern match syntax. checks for !null and assigns var.
-                    if (result.Old is { } old)
+                    if (result.Old?.Temperature is { } oldTemp &&
+                        result.Old?.Humidity is { } oldHumidity &&
+                        result.New.Temperature is { } newTemp && 
+                        result.New.Humidity is { } newHumidity)
                     {
-                        return (
-                        (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5
-                        &&
-                        (result.New.Humidity.Value - old.Humidity.Value).Percent > 0.05
-                        );
+                        return ((newTemp - oldTemp).Abs().Celsius > 0.5 &&
+                                (newHumidity - oldHumidity).Percent > 0.05);
                     }
                     return false;
                 }
             );
-            sensor.Subscribe(consumer);
+
+            sensor?.Subscribe(consumer);
 
             Console.WriteLine("B");
 
-            sensor.Updated += (sender, result) => {
-                Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
-                Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
-                Console.WriteLine($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
-            };
+            if(sensor != null)
+            {
+                sensor.Updated += (sender, result) => {
+                    Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
+                    Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
+                    Console.WriteLine($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
+                };
+            }
 
             Console.WriteLine("D");
 
-            sensor.StartUpdating(TimeSpan.FromSeconds(1));
+            sensor?.StartUpdating(TimeSpan.FromSeconds(1));
 
             Console.WriteLine("C");
 
@@ -65,8 +69,8 @@ namespace Sensors.Atmospheric.BME680_Sample
         {
             Console.WriteLine("Create BME680 sensor with SPI...");
 
-            var spiBus = Device.CreateSpiBus();
-            sensor = new Bme680(spiBus, Device.CreateDigitalOutputPort(Device.Pins.D14));
+          //  var spiBus = Device.CreateSpiBus();
+          //  sensor = new Bme680(spiBus, Device.CreateDigitalOutputPort(Device.Pins.D14));
         }
 
         void CreateI2CSensor()
@@ -74,17 +78,19 @@ namespace Sensors.Atmospheric.BME680_Sample
             Console.WriteLine("Create BME680 sensor with I2C...");
 
             var i2c = Device.CreateI2cBus();
-            sensor = new Bme680(i2c, (byte)Bme680.Addresses.Default); // SDA pulled up
+            sensor = new Bme680(i2c, (byte)Bme680.Addresses.Address_0x76); // SDA pulled down
 
         }
 
         async Task ReadConditions()
         {
-            var conditions = await sensor.Read();
+            if(sensor == null) { return; }
+
+            var (Temperature, Humidity, Pressure) = await sensor.Read();
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
-            Console.WriteLine($"  Pressure: {conditions.Pressure?.Bar:N2}hPa");
-            Console.WriteLine($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
+            Console.WriteLine($"  Temperature: {Temperature?.Celsius:N2}C");
+            Console.WriteLine($"  Pressure: {Pressure?.Hectopascal:N2}hPa");
+            Console.WriteLine($"  Relative Humidity: {Humidity?.Percent:N2}%");
         }
 
         //<!—SNOP—>

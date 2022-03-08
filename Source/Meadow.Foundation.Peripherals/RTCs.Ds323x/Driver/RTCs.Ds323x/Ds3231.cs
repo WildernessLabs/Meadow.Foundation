@@ -18,7 +18,7 @@ namespace Meadow.Foundation.RTCs
             IDigitalInputController device,
             II2cBus i2cBus,
             IPin interruptPin = null,
-            byte address = (byte)Addresses.Default)
+            byte address = (byte)Address.Default)
             : base(new I2cPeripheral(i2cBus, address), device, interruptPin)
         {
         }
@@ -33,7 +33,7 @@ namespace Meadow.Foundation.RTCs
         public Ds3231(
            II2cBus i2cBus,
            IDigitalInputPort interruptPort = null,
-           byte address = (byte)Addresses.Default)
+           byte address = (byte)Address.Default)
            : base(new I2cPeripheral(i2cBus, address), interruptPort)
         {
         }

@@ -44,7 +44,6 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public void Wake()
         {
-            ushort conf_shutdown;
             ushort config = Peripheral.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
 
             config = (ushort)(config & (~MCP_CONFIG_SHUTDOWN));
@@ -57,7 +56,6 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public void Sleep()
         {
-            ushort conf_shutdown;
             ushort config = Peripheral.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
 
             Peripheral.WriteRegister(MCP_REG_CONFIG, (ushort)(config | MCP_CONFIG_SHUTDOWN));

@@ -22,14 +22,14 @@ namespace MeadowApp
                 handler: result => 
                 {
                     Console.WriteLine($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
-                },                
-                filter: result => 
+                },
+                filter: result =>
                 {
                     //c# 8 pattern match syntax. checks for !null and assigns var.
-                    if (result.Old is { } old) 
-                    { 
-                        return (
-                        (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5);
+                    if (result.Old?.Temperature is { } oldTemp &&
+                        result.New.Temperature is { } newTemp)
+                    {
+                        return (newTemp - oldTemp).Abs().Celsius > 0.5; // returns true if > 0.5°C change.
                     }
                     return false;
                 }

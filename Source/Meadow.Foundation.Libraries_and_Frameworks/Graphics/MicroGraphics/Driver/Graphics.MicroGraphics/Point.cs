@@ -44,9 +44,6 @@ namespace Meadow.Foundation.Graphics
         /// <param name="point">
         /// The <see cref="Point"/> instance to translate.
         /// </param>
-        /// <param name="size">
-        /// The <see cref="Size"/> instance to translate point with.
-        /// </param>
         /// <returns>
         /// A new <see cref="Point"/> instance translated by size.
         /// </returns>

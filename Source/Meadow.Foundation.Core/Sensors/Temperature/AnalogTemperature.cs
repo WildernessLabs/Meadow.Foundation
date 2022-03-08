@@ -41,6 +41,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         //==== internals
+        ///<Summary>
+        /// AnalogInputPort connected to temperature sensor
+        ///</Summary>
         protected IAnalogInputPort AnalogInputPort { get; }
 
         //==== properties
@@ -49,17 +52,48 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public enum KnownSensorType
         {
+            ///<Summary>
+            /// Custom temperature sensor
+            ///</Summary>
             Custom,
+            ///<Summary>
+            /// TMP235 temperature sensor
+            ///</Summary>
             TMP235,
+            ///<Summary>
+            /// TMP236 temperature sensor
+            ///</Summary>
             TMP236,
+            ///<Summary>
+            /// TMP35 temperature sensor
+            ///</Summary>
             TMP35,
+            ///<Summary>
+            /// TMP36 temperature sensor
+            ///</Summary>
             TMP36,
+            ///<Summary>
+            /// TMP37 temperature sensor
+            ///</Summary>
             TMP37,
+            ///<Summary>
+            /// LM35 temperature sensor
+            ///</Summary>
             LM35,
+            ///<Summary>
+            /// LM45 temperature sensor
+            ///</Summary>
             LM45,
-            LM50
+            ///<Summary>
+            /// LM50 temperature sensor
+            ///</Summary>
+            LM50,
+
         }
 
+        ///<Summary>
+        /// SensorCalibration property for temperature sensor
+        ///</Summary>
         public Calibration SensorCalibration { get; set; }
 
         /// <summary>
@@ -80,17 +114,23 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
         /// <param name="sampleCount">How many samples to take during a given
         /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalMs">The time, in milliseconds,
+        /// <param name="sampleInterval">The time,
         /// to wait in between samples during a reading.</param>
         public AnalogTemperature(
             IAnalogInputController device, IPin analogPin,
             KnownSensorType sensorType, Calibration? calibration = null,
-            int sampleCount = 5, int sampleIntervalMs = 40)
-                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleIntervalMs),
+            int sampleCount = 5, TimeSpan? sampleInterval = null)
+                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
                       sensorType, calibration)
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of the AnalogTemperature class.
+        /// </summary>
+        /// <param name="analogInputPort">The `IAnalogInputPort` connected to the sensor.</param>
+        /// <param name="sensorType">Type of sensor attached to the analog port.</param>
+        /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
         public AnalogTemperature(IAnalogInputPort analogInputPort,
                                  KnownSensorType sensorType,
                                  Calibration? calibration = null)
@@ -212,16 +252,16 @@ namespace Meadow.Foundation.Sensors.Temperature
             }
         }
 
+        /// <summary>
+        /// Method to notify subscribers to TemperatureUpdated event handler
+        /// </summary>
         protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
         { 
             TemperatureUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        /// <summary>
-        /// Converts a voltage value to a celsius temp, based on the current
-        /// calibration values.
-        /// </summary>
+        
         /// <param name="voltage"></param>
         /// <returns>temperature in celcius</returns>
         protected Units.Temperature VoltageToTemperature(Voltage voltage)

@@ -36,11 +36,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <summary>
         ///     Create a new SSD1306 object using the default parameters for
         /// </summary>
-        /// <remarks>
-        ///     Note that by default, any pixels out of bounds will throw and exception.
-        ///     This can be changed by setting the <seealso cref="IgnoreOutOfBoundsPixels" />
-        ///     property to true.
-        /// </remarks>
+        /// <param name="i2cBus">I2cBus connected to display</param>
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
         public Ssd1306(II2cBus i2cBus,
@@ -92,7 +88,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
 
             //create buffers
-            imageBuffer = new Buffer1(width, height, PAGE_SIZE);
+            imageBuffer = new Buffer1bpp(width, height, PAGE_SIZE);
             readBuffer = new byte[imageBuffer.ByteCount];
             pageBuffer = new byte[PAGE_SIZE + 1];
 

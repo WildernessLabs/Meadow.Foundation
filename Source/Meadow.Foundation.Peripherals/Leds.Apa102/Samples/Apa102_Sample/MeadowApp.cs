@@ -12,7 +12,7 @@ namespace Leds.APA102_Sample
         //<!—SNIP—>
 
         Apa102 apa102;
-        int numberOfLeds = 8;
+        int numberOfLeds = 49;
         float maxBrightness = 0.25f;
 
         public MeadowApp()
@@ -25,9 +25,9 @@ namespace Leds.APA102_Sample
             apa102.SetLed(index: 0, color: Color.Red, brightness: 0.5f);
             apa102.SetLed(index: 1, color: Color.Purple, brightness: 0.6f);
             apa102.SetLed(index: 2, color: Color.Blue, brightness: 0.7f);
-            apa102.SetLed(index: 2, color: Color.Green, brightness: 0.8f);
-            apa102.SetLed(index: 2, color: Color.Yellow, brightness: 0.9f);
-            apa102.SetLed(index: 2, color: Color.Orange, brightness: 1.0f);
+            apa102.SetLed(index: 3, color: Color.Green, brightness: 0.8f);
+            apa102.SetLed(index: 4, color: Color.Yellow, brightness: 0.9f);
+            apa102.SetLed(index: 5, color: Color.Orange, brightness: 1.0f);
 
             apa102.Show();
         }
@@ -54,7 +54,9 @@ namespace Leds.APA102_Sample
         void SetColor(Color color, float brightness)
         {
             Console.WriteLine($"SetColor(color:{color}");
-            for (int i = 0; i < apa102.NumberOfLeds; i++) {
+
+            for (int i = 0; i < apa102.NumberOfLeds; i++) 
+            {
                 apa102.SetLed(i, color, brightness);
             }
             apa102.Show();
@@ -68,32 +70,33 @@ namespace Leds.APA102_Sample
         {
             Console.WriteLine("Pulse");
 
-            float minimumBrightness = 0.05f;
-            float brightness = minimumBrightness;
+            float minBrightness = 0.05f;
+            float brightness = minBrightness;
             float increment = 0.01f; // the colors don't seem to have more resolution than this.
             bool forward = true;
-            int pulsesPerLoop = (int)((maxBrightness / increment) * 2);
-            //Console.WriteLine($"pulses per loop: {pulsesPerLoop}");
+
+            int pulsesPerLoop = (int)(maxBrightness / increment * 2);
             int totalNumberOfPulses = numberOfPulses * pulsesPerLoop;
 
             for (int loop = 0; loop < totalNumberOfPulses; loop++)
             {
-                // set all the leds one color.
-                for (int i = 0; i < apa102.NumberOfLeds; i++) {
-                    apa102.SetLed(i, color, brightness);
-                }
-
-                // increment/decrement our brightness depending on which direction
-                // we're going
+                // increment/decrement our brightness depending on direction
                 if (forward) { brightness += increment; }
                 else { brightness -= increment; }
 
-                // check where we're at to determine direction.
-                if (brightness <= minimumBrightness) {
+                if (brightness <= minBrightness)
+                {
                     forward = true;
                 }
-                if (brightness >= maxBrightness) {
+                if (brightness >= maxBrightness)
+                {
                     forward = false;
+                }
+
+                // set all the leds one color
+                for (int i = 0; i < apa102.NumberOfLeds; i++)
+                {
+                    apa102.SetLed(i, color, brightness);
                 }
 
                 apa102.Show();
@@ -137,23 +140,21 @@ namespace Leds.APA102_Sample
             Console.WriteLine("Run...");
             apa102.Clear();
             apa102.Show();
-
             Thread.Sleep(2000);
+
             apa102.SetLed(0, Color.Red, 0.5f);
             apa102.SetLed(1, Color.White);
             apa102.SetLed(2, Color.Blue);
-
-            Thread.Sleep(2000);
             apa102.Show();
-
             Thread.Sleep(2000);
-            apa102.AutoWrite = true;
+            
             apa102.SetLed(0, Color.Green);
             apa102.SetLed(1, Color.Yellow);
             apa102.SetLed(2, Color.Pink);
-
+            apa102.Show();
             Thread.Sleep(5000);
-            apa102.Clear();
+            
+            apa102.Clear(true);
         }
 
         public static class Colors

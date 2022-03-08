@@ -14,10 +14,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ByteCommsSensorBase<(Concentration? Co2, Concentration? Voc)>,
         ICo2Sensor, IVocSensor
     {
+        private const int ReadBufferSize = 10;
+        private const int WriteBufferSize = 8;
+
         // internal thread lock
         private byte[] _readingBuffer = new byte[8];
 
+        /// <summary>
+        /// Event raised when the CO2 concentration value changes
+        /// </summary>
         public event EventHandler<ChangeResult<Concentration>> Co2Updated = delegate { };
+        /// <summary>
+        /// Event raised when the VOC concentration value changes
+        /// </summary>
         public event EventHandler<ChangeResult<Concentration>> VocUpdated = delegate { };
 
         /// <summary>
@@ -30,8 +39,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Concentration? Voc => Conditions.Voc;
 
-        public Ccs811(II2cBus i2cBus, byte address = (byte)Addresses.Default)
-            : base(i2cBus, address, 10, 8)
+        public Ccs811(II2cBus i2cBus, Addresses address = Addresses.Default)
+            : this(i2cBus, (byte)address)
+        {
+        }
+
+        public Ccs811(II2cBus i2cBus, byte address)
+            : base(i2cBus, address, ReadBufferSize, WriteBufferSize)
         {
             switch (address)
             {
@@ -45,6 +59,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             Init();
         }
+
         protected void Init()
         {
             // reset

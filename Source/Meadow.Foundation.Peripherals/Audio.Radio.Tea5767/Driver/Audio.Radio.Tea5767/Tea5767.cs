@@ -2,9 +2,13 @@
 using System;
 using System.Threading;
 using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Audio.Radio
 {
+    /// <summary>
+    /// Represents a TEA5767 radio
+    /// </summary>
     public partial class Tea5767
     {
         /// <summary>
@@ -13,16 +17,20 @@ namespace Meadow.Foundation.Audio.Radio
         private readonly II2cPeripheral i2cPeripheral;
 
         byte hiInjection;
-        Memory<byte> writeBuffer = new byte[5];
-        Memory<byte> readBuffer = new byte[5];
+        readonly Memory<byte> writeBuffer = new byte[5];
+        readonly Memory<byte> readBuffer = new byte[5];
 
+        /// <summary>
+        /// Is the audio muted
+        /// </summary>
         public bool IsMuted { get; set; }
 
         /// <summary>
         ///     Create a new TEA5767 object using the default parameters
         /// </summary>
+        /// <param name="i2cBus">I2Cbus connected to the radio</param>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public Tea5767(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Tea5767(II2cBus i2cBus, byte address = (byte)Address.Default)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
@@ -76,7 +84,11 @@ namespace Meadow.Foundation.Audio.Radio
             hiInjection = (signalHigh < signalLow) ? (byte)1 : (byte)0;
         }
 
-        public void SetFrequency(float frequency)
+        /// <summary>
+        /// Frequency in Mhz
+        /// </summary>
+        /// <param name="frequency">frequency in Mhz</param>
+        void SetFrequency(double frequency)
         {
             uint frequencyW;
 
@@ -104,6 +116,9 @@ namespace Meadow.Foundation.Audio.Radio
             Thread.Sleep(100);
         }
 
+        /// <summary>
+        /// Mute audio if not muted
+        /// </summary>
         public void Mute()
         {
             IsMuted = true;
@@ -128,18 +143,14 @@ namespace Meadow.Foundation.Audio.Radio
             writeBuffer.Span[(byte)Command.FIRST_DATA] &= 127;
         }
 
-        public void SelectFrequency(float frequency)
+        /// <summary>
+        /// Select radio frequency
+        /// </summary>
+        /// <param name="frequency">the frequency</param>
+        public void SelectFrequency(Frequency frequency)
         {
-            CalculateOptimalHiLoInjection(frequency);
-            SetFrequency(frequency);
-        }
-
-        void SelectFrequencyMuting(float frequency)
-        {
-            Mute();
-            CalculateOptimalHiLoInjection(frequency);
-            SetFrequency(frequency);
-            SetSoundBackOn();
+            CalculateOptimalHiLoInjection((float)frequency.Megahertz);
+            SetFrequency(frequency.Megahertz);
         }
 
         void ReadStatus()
@@ -148,7 +159,11 @@ namespace Meadow.Foundation.Audio.Radio
             Thread.Sleep(100);
         }
 
-        public double GetFrequency()
+        /// <summary>
+        /// Get the current radio frequency
+        /// </summary>
+        /// <returns></returns>
+        public Frequency GetFrequency()
         {
             LoadFrequency();
 
@@ -156,11 +171,11 @@ namespace Meadow.Foundation.Audio.Radio
 
             if (hiInjection > 0)
             {
-                return (frequencyW / 4.0 * 32768.0 - 225000.0) / 1000000.0;
+                return new Frequency(frequencyW / 4.0 * 32768.0 - 225000.0, Frequency.UnitType.Hertz);
             }
             else
             {
-                return (frequencyW / 4.0 * 32768.0 + 225000.0) / 1000000.0;
+                return new Frequency(frequencyW / 4.0 * 32768.0 + 225000.0, Frequency.UnitType.Hertz);
             }
         }
 
@@ -184,7 +199,8 @@ namespace Meadow.Foundation.Audio.Radio
             writeBuffer.Span[(byte)Command.THIRD_DATA] &= 127;
         }
 
-        void setSearchLowStopLevel()
+        /*
+        void SetSearchLowStopLevel()
         {
             writeBuffer.Span[(byte)Command.THIRD_DATA] &= 237;
             writeBuffer.Span[(byte)Command.THIRD_DATA] |= ((byte)Command.LOW_STOP_LEVEL << 5);
@@ -201,6 +217,7 @@ namespace Meadow.Foundation.Audio.Radio
             writeBuffer.Span[(byte)Command.THIRD_DATA] &= 237;
             writeBuffer.Span[(byte)Command.THIRD_DATA] |= ((byte)Command.HIGH_STOP_LEVEL << 5);
         }
+        */
 
         void SetHighSideLOInjection()
         {
@@ -212,28 +229,31 @@ namespace Meadow.Foundation.Audio.Radio
             writeBuffer.Span[(byte)Command.THIRD_DATA] &= 239;
         }
 
-        public byte SearchNextSilent()
+        /// <summary>
+        /// Search to next station and mute while seeking
+        /// </summary>
+        /// <returns></returns>
+        public bool SearchNextSilent()
         {
-            byte bandLimitReached;
-
             Mute();
-            bandLimitReached = SearchNext();
             SetSoundBackOn();
 
-            return bandLimitReached;
+            return SearchNext();
         }
 
-        public byte SearchNext()
+        /// <summary>
+        /// Search to next station
+        /// </summary>
+        /// <returns></returns>
+        public bool SearchNext()
         {
-            byte bandLimitReached;
-
             if (IsSearchUp())
             {
-                SelectFrequency((float)GetFrequency() + 0.1f);
+                SelectFrequency(GetFrequency() + new Frequency(0.1, Frequency.UnitType.Megahertz));
             }
             else
             {
-                SelectFrequency((float)GetFrequency() - 0.1f);
+                SelectFrequency(GetFrequency() - new Frequency(0.1, Frequency.UnitType.Megahertz));
             }
 
             //Turns the search on
@@ -245,8 +265,6 @@ namespace Meadow.Foundation.Audio.Radio
                 Thread.Sleep(50);
             }
 
-            //Read Band Limit flag
-            bandLimitReached = IsBandLimitReached();
             //Loads the new selected frequency
             LoadFrequency();
 
@@ -254,49 +272,70 @@ namespace Meadow.Foundation.Audio.Radio
             writeBuffer.Span[(byte)Command.FIRST_DATA] &= 191;
             TransmitData();
 
-            return bandLimitReached;
+            //Read Band Limit flag
+            return IsBandLimitReached();
         }
 
-        byte SearchMutingFromBeginning()
+        /// <summary>
+        /// Start searching for station from lowest frequency (87Mhz)
+        /// </summary>
+        /// <returns>true if station found</returns>
+        public bool SearchFromBeginningMuted()
         {
-            byte bandLimitReached;
+            bool bandLimitReached;
 
             Mute();
             bandLimitReached = StartSearchFromBeginning();
             SetSoundBackOn();
 
-            return bandLimitReached;
+            return !bandLimitReached;
         }
 
-        byte SearchMutingFromEnd()
+        /// <summary>
+        /// Start searching for station from highest frequency (108Mhz)
+        /// </summary>
+        /// <returns></returns>
+        public bool SearchFromEndMuted()
         {
-            byte bandLimitReached;
+            bool bandLimitReached;
 
             Mute();
             bandLimitReached = StartSearchFromEnd();
             SetSoundBackOn();
 
-            return bandLimitReached;
+            return !bandLimitReached;
         }
 
-        byte StartSearchFromBeginning()
+        /// <summary>
+        /// Start searching for station from lowest frequency (87Mhz)
+        /// </summary>
+        /// <returns>true if station found</returns>
+        public bool StartSearchFromBeginning()
         {
             SetSearchUp();
             return StartSearchFrom(87.0f);
         }
 
-        byte StartSearchFromEnd()
+        /// <summary>
+        /// Start searching for station from highest frequency (108Mhz)
+        /// </summary>
+        /// <returns></returns>
+        public bool StartSearchFromEnd()
         {
             SetSearchDown();
             return StartSearchFrom(108.0f);
         }
 
-        byte StartSearchFrom(float frequency)
+        bool StartSearchFrom(float frequency)
         {
-            SelectFrequency(frequency);
+            SelectFrequency(new Frequency(frequency, Frequency.UnitType.Megahertz));
             return SearchNext();
         }
 
+        /// <summary>
+        /// Get Signal Level
+        /// </summary>
+        /// <returns>level as a byte (0-255)</returns>
         public byte GetSignalLevel()
         {
             //Necessary before read status
@@ -306,40 +345,64 @@ namespace Meadow.Foundation.Audio.Radio
             return (byte)(readBuffer.Span[(byte)Command.FOURTH_DATA] >> 4);
         }
 
+        /// <summary>
+        /// Is the current station stereo
+        /// </summary>
+        /// <returns></returns>
         public bool IsStereo()
         {
             ReadStatus();
             return (readBuffer.Span[(byte)Command.THIRD_DATA] >> 7) > 0;
         }
 
+        /// <summary>
+        /// Is the radio ready for operation
+        /// </summary>
+        /// <returns></returns>
         public bool IsReady()
         {
             ReadStatus();
             return (readBuffer.Span[(byte)Command.FIRST_DATA] >> 7) > 0;
         }
 
-        public byte IsBandLimitReached()
+        bool IsBandLimitReached()
         {
             ReadStatus();
-            return (byte)((readBuffer.Span[(byte)Command.FIRST_DATA] >> 6) & 1);
+            return ((readBuffer.Span[(byte)Command.FIRST_DATA] >> 6) & 1) == 1;
         }
 
-        bool IsSearchUp()
+        /// <summary>
+        /// Is search mode up
+        /// </summary>
+        /// <returns></returns>
+        public bool IsSearchUp()
         {
             return ((writeBuffer.Span[(byte)Command.THIRD_DATA] & 128) != 0);
         }
 
-        bool IsSearchDown()
+        /// <summary>
+        /// Is search mode down
+        /// </summary>
+        /// <returns></returns>
+        public bool IsSearchDown()
         {
             return ((writeBuffer.Span[(byte)Command.THIRD_DATA] & 128) == 0);
         }
 
+        /// <summary>
+        /// Is the radio in standby mode
+        /// </summary>
+        /// <returns></returns>
         public bool IsStandby()
         {
             ReadStatus();
             return (writeBuffer.Span[(byte)Command.FOURTH_DATA] & 64) != 0;
         }
 
+        /// <summary>
+        /// Enable stereo if set to mono
+        /// </summary>
+        /// <param name="enable"></param>
         public void EnableStereo(bool enable)
         {
             if (enable)
@@ -353,6 +416,9 @@ namespace Meadow.Foundation.Audio.Radio
             TransmitData();
         }
 
+        /// <summary>
+        /// Enable soft mute
+        /// </summary>
         public void SetSoftMuteOn()
         {
             writeBuffer.Span[(byte)Command.FOURTH_DATA] |= 8;
@@ -365,30 +431,46 @@ namespace Meadow.Foundation.Audio.Radio
             TransmitData();
         }
 
+        /// <summary>
+        /// Mute the right channel
+        /// </summary>
         public void MuteRight()
         {
             writeBuffer.Span[(byte)Command.THIRD_DATA] |= 4;
             TransmitData();
         }
 
+        /// <summary>
+        /// Unmute the right channel
+        /// </summary>
         public void UnuteRight()
         {
             writeBuffer.Span[(byte)Command.THIRD_DATA] &= 251;
             TransmitData();
         }
 
+        /// <summary>
+        /// Mute the left channel
+        /// </summary>
         public void MuteLeft()
         {
             writeBuffer.Span[(byte)Command.THIRD_DATA] |= 2;
             TransmitData();
         }
 
+        /// <summary>
+        /// Unmute the left channel
+        /// </summary>
         public void UnmuteLeft()
         {
             writeBuffer.Span[(byte)Command.THIRD_DATA] &= 253;
             TransmitData();
         }
 
+        /// <summary>
+        /// Enable standby mode
+        /// </summary>
+        /// <param name="enable"></param>
         public void EnableStandby(bool enable)
         {
             if (enable)
@@ -402,24 +484,36 @@ namespace Meadow.Foundation.Audio.Radio
             TransmitData();
         }
 
+        /// <summary>
+        /// Enable high cut control
+        /// </summary>
         public void SetHighCutControlOn()
         {
             writeBuffer.Span[(byte)Command.FOURTH_DATA] |= 4;
             TransmitData();
         }
 
+        /// <summary>
+        /// Disable high cut control
+        /// </summary>
         public void SetHighCutControlOff()
         {
             writeBuffer.Span[(byte)Command.FOURTH_DATA] &= 251;
             TransmitData();
         }
 
+        /// <summary>
+        /// Enable stereo noise cancelling
+        /// </summary>
         public void SetStereoNoiseCancellingOn()
         {
             writeBuffer.Span[(byte)Command.FOURTH_DATA] |= 2;
             TransmitData();
         }
 
+        /// <summary>
+        /// Disable stereo noise cancelling
+        /// </summary>
         public void SetStereoNoiseCancellingOff()
         {
             writeBuffer.Span[(byte)Command.FOURTH_DATA] &= 253;

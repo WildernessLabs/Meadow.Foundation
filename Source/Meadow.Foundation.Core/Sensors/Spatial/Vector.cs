@@ -35,6 +35,12 @@ namespace Meadow.Foundation.Spatial
             Z = z;
         }
 
+        /// <summary>
+        /// Vector addition operator
+        /// </summary>
+        /// <param name="lvalue">left value</param>
+        /// <param name="rvalue">right value</param>
+        /// <returns></returns>
         [Pure]
         public static Vector operator +(Vector lvalue, Vector rvalue)
         {
@@ -44,6 +50,13 @@ namespace Meadow.Foundation.Spatial
 
             return new Vector(x, y, z);
         }
+
+        /// <summary>
+        /// Vector subtraction operator
+        /// </summary>
+        /// <param name="lvalue">left value</param>
+        /// <param name="rvalue">right value</param>
+        /// <returns></returns>
 
         [Pure]
         public static Vector operator -(Vector lvalue, Vector rvalue)

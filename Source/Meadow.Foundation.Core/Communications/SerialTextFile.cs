@@ -75,6 +75,7 @@ namespace Meadow.Foundation.Communications
         /// <summary>
         ///     Create a new SerialTextFile and attach the instance to the specfied serial port.
         /// </summary>
+        /// <param name="device">ISerialController used to instantiate serial port.</param>
         /// <param name="port">Serial port name.</param>
         /// <param name="baudRate">Baud rate.</param>
         /// <param name="parity">Parity.</param>
@@ -94,6 +95,7 @@ namespace Meadow.Foundation.Communications
         /// </summary>
         /// <param name="serialPort">Serial port object.</param>
         /// <param name="endOfLine">Text indicating the end of a line of text.</param>
+        /// <param name="useSerialEvents">Enable data received events</param>
         public SerialTextFile(ISerialPort serialPort, string endOfLine, bool useSerialEvents = true)
         {
             this.serialPort = serialPort;

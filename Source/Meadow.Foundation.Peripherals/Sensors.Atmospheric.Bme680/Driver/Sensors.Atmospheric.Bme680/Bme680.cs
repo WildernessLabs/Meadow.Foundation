@@ -6,7 +6,7 @@ using Meadow.Units;
 using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
-using Meadow.Devices;
+
 using System.Buffers;
 using Meadow.Utilities;
 
@@ -14,6 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// BME680 Temperature, Pressure and Humidity Sensor.
+    /// This driver is functional but not complete.
     /// </summary>
     /// <remarks>
     /// This class implements the functionality necessary to read the temperature, pressure and humidity
@@ -24,9 +25,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         //==== events
-        /// <summary>
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
@@ -38,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Oversample TemperatureSampleCount { get; set; } = Oversample.OversampleX8;
         public Oversample PressureSampleCount { get; set; } = Oversample.OversampleX8;
         public Oversample HumiditySampleCount { get; set; } = Oversample.OversampleX8;
-        private Configuration configuration;
+        private readonly Configuration configuration;
 
         /// <summary>
         ///     Communication bus used to read and write to the BME280 sensor.
@@ -50,11 +49,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private readonly Bme680Comms bme680Comms;
 
         /// <summary>
-        ///     Compensation data from the sensor.
+        ///     Temperature compensation data
         /// </summary>
-        protected TemperatureCompensation temperatureCompensation;
-        protected PressureCompensation pressureCompensation;
-        protected HumidityCompensation humidityCompensation;
+        protected TemperatureCompensation? temperatureCompensation;
+        /// <summary>
+        ///     Pressire compensation data
+        /// </summary>
+        protected PressureCompensation? pressureCompensation;
+        /// <summary>
+        ///     Humidity compensation data
+        /// </summary>
+        protected HumidityCompensation? humidityCompensation;
 
 
         /// <summary>
@@ -76,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME680" /> class.
         /// </summary>
-        /// <param name="i2c">I2C Bus to use for communicating with the sensor</param>
+        /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
         /// <param name="address">I2C address of the sensor.</param>
         public Bme680(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
@@ -85,20 +90,30 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 			Initialize();
         }
 
+        /*
         public Bme680(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
             this(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
         {
         }
 
-        public Bme680(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration sensorSettings = null)
+        public Bme680(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration? configuration = null)
         {
             bme680Comms = new Bme680SPI(spiBus, chipSelectPort);
-            configuration = new Configuration(); // here to avoid the warning
+
+            if(configuration != null)
+            {
+                this.configuration = configuration;
+            }
+            else
+            {
+                this.configuration = new Configuration();
+            }
+            
             //https://github.com/Zanduino/BME680/blob/master/src/Zanshin_BME680.cpp
             bme680Comms.WriteRegister(0x73, bme680Comms.ReadRegister(0x73));
 
             Initialize();
-        }
+        }*/
 
         /// <summary>
         /// 
@@ -133,8 +148,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
         {
-            Console.WriteLine("F");
-
             configuration.TemperatureOversample = TemperatureSampleCount;
             configuration.PressureOversample = PressureSampleCount;
             configuration.HumidityOversample = HumiditySampleCount;
@@ -149,8 +162,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 // Force a sample
                 status = BitHelpers.SetBit(status, 0x00, true);
 
-                Console.WriteLine("GGG");
-
                 bme680Comms.WriteRegister(RegisterAddresses.ControlTemperatureAndPressure.Address, status);
                 // Wait for the sample to be taken.
                 do
@@ -158,27 +169,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     status = bme680Comms.ReadRegister(RegisterAddresses.ControlTemperatureAndPressure.Address);
                 } while (BitHelpers.GetBitValue(status, 0x00));
 
-                Console.WriteLine("H");
-
                 var sensorData = readBuffer.Span[0..RegisterAddresses.AllSensors.Length];
                 bme680Comms.ReadRegisters(RegisterAddresses.AllSensors.Address, sensorData);
-
-                Console.WriteLine("I");
 
                 var rawPressure = GetRawValue(sensorData.Slice(0, 3));
                 var rawTemperature = GetRawValue(sensorData.Slice(3, 3));
                 var rawHumidity = GetRawValue(sensorData.Slice(6, 2));
                 //var rawVoc = GetRawValue(sensorData.Slice(8, 2));
 
-                Console.WriteLine("J");
-
                 bme680Comms.ReadRegisters(RegisterAddresses.CompensationData1.Address, readBuffer.Span[0..RegisterAddresses.CompensationData1.Length]);
                 var compensationData1 = readBuffer.Span[0..RegisterAddresses.CompensationData1.Length].ToArray();
 
                 bme680Comms.ReadRegisters(RegisterAddresses.CompensationData2.Address, readBuffer.Span[0..RegisterAddresses.CompensationData2.Length]);
                 var compensationData2 = readBuffer.Span[0..RegisterAddresses.CompensationData2.Length].ToArray();
-
-                Console.WriteLine("K");
 
                 var compensationData = ArrayPool<byte>.Shared.Rent(64);
                 try
@@ -203,7 +206,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     ArrayPool<byte>.Shared.Return(compensationData, true);
                 }
 
-                Console.WriteLine("Return conditions");
                 return conditions;
             });
         }

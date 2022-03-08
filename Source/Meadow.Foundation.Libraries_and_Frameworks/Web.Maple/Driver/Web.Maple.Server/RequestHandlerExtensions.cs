@@ -1,52 +1,49 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Web.Maple.Server
 {
     public static class RequestHandlerExtensions
     {
-        public static void BadRequest(this RequestHandlerBase handler)
+        public static IActionResult BadRequest(this RequestHandlerBase handler)
         {
-            handler.Context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            handler.Send();
+            return new StatusCodeResult(HttpStatusCode.BadRequest);
         }
 
-        public static void NotFound(this RequestHandlerBase handler)
+        public static IActionResult NotFound(this RequestHandlerBase handler)
         {
-            handler.Context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-            handler.Send();
+            return new NotFoundResult();
         }
 
-        public static void Forbidden(this RequestHandlerBase handler)
+        public static IActionResult Forbidden(this RequestHandlerBase handler)
         {
-            handler.Context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-            handler.Send();
+            return new StatusCodeResult(HttpStatusCode.Forbidden);
         }
 
-        public static void ServerError(this RequestHandlerBase handler)
+        public static IActionResult ServerError(this RequestHandlerBase handler, Exception ex)
         {
-            handler.Context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            handler.Send();
+            return new ServerErrorResult(ex);
         }
 
-        public static void Ok(this RequestHandlerBase handler)
+        public static IActionResult ServerError(this RequestHandlerBase handler)
         {
-            handler.Context.Response.StatusCode = (int)HttpStatusCode.OK;
-            handler.Send();
+            return new ServerErrorResult();
         }
 
-        public static async Task Ok(this RequestHandlerBase handler, string content)
+        public static IActionResult Ok(this RequestHandlerBase handler)
         {
-            handler.Context.Response.StatusCode = (int)HttpStatusCode.OK;
-            handler.Context.Response.ContentType = ContentTypes.Application_Text;
-            await handler.Send(content);
+            return new OkResult();
         }
 
-        public static async Task Json(this RequestHandlerBase handler, object content)
+        public static IActionResult Ok(this RequestHandlerBase handler, string content)
         {
-            handler.Context.Response.StatusCode = (int)HttpStatusCode.OK;
-            handler.Context.Response.ContentType = ContentTypes.Application_Json;
-            await handler.Send(content);
+            return new OkObjectResult(content);
+        }
+
+        public static IActionResult Json(this RequestHandlerBase handler, object content)
+        {
+            return new JsonResult(content);
         }
     }
 }

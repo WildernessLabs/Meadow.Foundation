@@ -7,6 +7,7 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Graphics.Buffers;
 using SimpleJpegDecoder;
 
 namespace Displays.TftSpi.Ili9341_Jpg_Sample
@@ -80,29 +81,15 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
             Console.WriteLine($"Width {decoder.Width}");
             Console.WriteLine($"Height {decoder.Height}");
 
+            var jpgImage = new BufferRgb888(decoder.Width, decoder.Height, jpg);
+
             graphics.Clear();
             graphics.DrawRectangle(0, 0, 240, 320, Color.White, true);
 
             int x = 0;
-            int y = (320 - decoder.Height) / 2; 
-            byte r, g, b;
+            int y = (240 - decoder.Height) / 2;
 
-            for (int i = 0; i < jpg.Length; i += 3)
-            {
-                r = jpg[i];
-                g = jpg[i + 1];
-                b = jpg[i + 2];
-
-                display.DrawPixel(x, y, r, g, b);
-
-                x++;
-
-                if(x % decoder.Width == 0)
-                {
-                    y++;
-                    x = 0;
-                }
-            }
+            display.DrawBuffer(x, y, jpgImage);
 
             Console.WriteLine("Jpeg show");
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -14,18 +13,30 @@ namespace Meadow.Foundation.Web.Maple.Client
 {
     public class MapleClient
     {
-        public ObservableCollection<ServerModel> Servers
-        {
-            get;
-        } = new ObservableCollection<ServerModel>();
+        /// <summary>
+        /// List of Maple Servers
+        /// </summary>
+        public ObservableCollection<ServerModel> Servers { get; } = new ObservableCollection<ServerModel>();
 
+        /// <summary>
+        /// Port to Listen for Maple servers broadcasting over UDP
+        /// </summary>
         public int ListenPort { get; set; }
-        public int ListenTimeout { get; set; }
 
-        public MapleClient(int listenPort = 17756, int listenTimeout = 5000)
+        /// <summary>
+        /// Timeout time to listen and send Maple requests
+        /// </summary>
+        public TimeSpan ListenTimeout { get; protected set; }
+
+        /// <summary>
+        /// Creates a new instance of the MapleClient class
+        /// </summary>
+        /// <param name="listenPort"></param>
+        /// <param name="listenTimeout"></param>
+        public MapleClient(int listenPort = 17756, TimeSpan? listenTimeout = null)
         {
             ListenPort = listenPort;
-            ListenTimeout = listenTimeout;
+            ListenTimeout = listenTimeout ?? TimeSpan.FromSeconds(5);
         }
 
         /// <summary>
@@ -111,12 +122,13 @@ namespace Meadow.Foundation.Web.Maple.Client
             return new UdpReceiveResult();
         }
 
+        [Obsolete("Use PostAsync method.")]
         protected async Task<bool> SendCommandAsync(string command, string hostAddress)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri("http://" + hostAddress + "/"),
-                Timeout = TimeSpan.FromSeconds(ListenTimeout)
+                Timeout = ListenTimeout
             };
 
             try
@@ -131,11 +143,20 @@ namespace Meadow.Foundation.Web.Maple.Client
             }
         }
 
+        /// <summary>
+        /// Sends a POST request
+        /// </summary>
+        /// <param name="hostAddress"></param>
+        /// <param name="port"></param>
+        /// <param name="endPoint"></param>
+        /// <param name="data"></param>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
         public async Task<bool> PostAsync(string hostAddress, int port, string endPoint, string data, string contentType = "text/plain")
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri($"http://{hostAddress}:{port}/{endPoint}");
-            client.Timeout = TimeSpan.FromSeconds(ListenTimeout);
+            client.Timeout = ListenTimeout;
             client.DefaultRequestHeaders
                 .Accept
                 .Add(new MediaTypeWithQualityHeaderValue(contentType));
@@ -152,12 +173,21 @@ namespace Meadow.Foundation.Web.Maple.Client
             }
         }
 
+        /// <summary>
+        /// Sends a GET request with one parameter
+        /// </summary>
+        /// <param name="hostAddress"></param>
+        /// <param name="port"></param>
+        /// <param name="endpoint"></param>
+        /// <param name="param"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public async Task<string> GetAsync(string hostAddress, int port, string endpoint, string param, string value)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri($"http://{hostAddress}:{port}/"),
-                Timeout = TimeSpan.FromSeconds(ListenTimeout)
+                Timeout = ListenTimeout
             };
 
             try
@@ -176,12 +206,20 @@ namespace Meadow.Foundation.Web.Maple.Client
             }
         }
 
+        /// <summary>
+        /// Sends a GET request with list of parameters
+        /// </summary>
+        /// <param name="hostAddress"></param>
+        /// <param name="port"></param>
+        /// <param name="endpoint"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public async Task<string> GetAsync(string hostAddress, int port, string endpoint, IDictionary<string, string> parameters)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri($"http://{hostAddress}:{port}/"),
-                Timeout = TimeSpan.FromSeconds(ListenTimeout)
+                Timeout = ListenTimeout
             };
 
             try

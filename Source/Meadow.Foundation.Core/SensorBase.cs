@@ -14,10 +14,20 @@ namespace Meadow.Foundation
         where UNIT : struct
     {
         //==== events
+        /// <summary>
+        /// Event handler for updated values
+        /// </summary>
         public event EventHandler<IChangeResult<UNIT>> Updated = delegate { };
 
         //==== internals
+        /// <summary>
+        /// Lock for sampling
+        /// </summary>
         protected object samplingLock = new object();
+
+        /// <summary>
+        /// Sampling cancellation token source
+        /// </summary>
         protected CancellationTokenSource? SamplingTokenSource { get; set; }
 
         //==== properties
@@ -41,8 +51,16 @@ namespace Meadow.Foundation
         public virtual TimeSpan UpdateInterval { get; protected set; } = TimeSpan.FromSeconds(5);
 
         //==== ISensor Methods
+        /// <summary>
+        /// Read value from sensor
+        /// </summary>
+        /// <returns>unitized value</returns>
         protected abstract Task<UNIT> ReadSensor();
 
+        /// <summary>
+        /// Notify observers
+        /// </summary>
+        /// <param name="changeResult">provides new and old values</param>
         protected virtual void RaiseEventsAndNotify(IChangeResult<UNIT> changeResult)
         {
             Updated.Invoke(this, changeResult);

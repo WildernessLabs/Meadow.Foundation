@@ -6,7 +6,13 @@ namespace Meadow.Foundation.Sensors.Rotary
     /// </summary>
     public struct TwoBitGrayCode
     {
+        /// <summary>
+        /// A phase of graycode 
+        /// </summary>
         public bool APhase;
+        /// <summary>
+        /// B phase of graycode
+        /// </summary>
         public bool BPhase;
     }
 }
