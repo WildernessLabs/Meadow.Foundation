@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Leds
 {
@@ -13,8 +14,9 @@ namespace Meadow.Foundation.Leds
 
         public SparkFunQwiicLEDStick(II2cBus bus,
             byte address = (byte)Addresses.Default)
-            : base(bus, address)
+            : base(bus, address, 1, 16)
         {
+            Initialize();
         }
 
         public float Brightness
@@ -125,9 +127,9 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Show()
         {
-            base.WriteRegisters((byte)Register.RedArray, _buffer[0]);
-            base.WriteRegisters((byte)Register.GreenArray, _buffer[1]);
-            base.WriteRegisters((byte)Register.BlueArray, _buffer[2]);
+            base.WriteRegister((byte)Register.RedArray, _buffer[0]);
+            base.WriteRegister((byte)Register.GreenArray, _buffer[1]);
+            base.WriteRegister((byte)Register.BlueArray, _buffer[2]);
 
             WriteBrightnessArray();
         }
@@ -137,7 +139,7 @@ namespace Meadow.Foundation.Leds
             // TODO: this could be improved - need to track current brightness and only write on change
             for (byte b = 0; b < ArrayLength; b++)
             {
-                base.WriteRegisters((byte)Register.SingleBrightness, new byte[] { b, _buffer[3][b] });
+                base.WriteRegister((byte)Register.SingleBrightness, new byte[] { b, _buffer[3][b] });
             }
         }
 
@@ -146,6 +148,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Clear(bool update = false)
         {
+            Console.WriteLine("Clear");
             base.Write((byte)Register.AllOff);
         }
     }
