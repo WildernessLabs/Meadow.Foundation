@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Leds
     /// Represents APA102/Dotstar Led(s).
     /// </summary>
     /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_DotStar/blob/master/adafruit_dotstar.py </remarks>
-    public partial class Apa102
+    public partial class Apa102 : IApa102
     {
         /// <summary>
         /// Default SPI bus speed
@@ -45,15 +45,15 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Brightness 
         /// </summary>
-        public float Brightness 
-        { 
+        public float Brightness
+        {
             get => brightness;
-            set 
+            set
             {
                 if (value < 0) { brightness = 0; }
                 else if (value > 1f) { brightness = 1f; }
                 else { brightness = value; }
-            } 
+            }
         }
         float brightness;
 
@@ -148,7 +148,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, Color color, float brightness = 1f)
         {
-            SetLed(index, new byte[]{ color.R, color.G, color.B }, brightness);
+            SetLed(index, new byte[] { color.R, color.G, color.B }, brightness);
         }
 
         /// <summary>
@@ -175,8 +175,8 @@ namespace Meadow.Foundation.Leds
             }
 
             // clamp
-            if(brightness>1) { brightness = 1; }
-            if(brightness<0) { brightness = 0; }
+            if (brightness > 1) { brightness = 1; }
+            if (brightness < 0) { brightness = 0; }
 
             var offset = index * 4 + StartHeaderSize;
 
@@ -192,9 +192,9 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Clear(bool update = false)
         {
-            byte[] off = {0, 0, 0};
+            byte[] off = { 0, 0, 0 };
 
-            for(int i = 0; i < NumberOfLeds; i++)
+            for (int i = 0; i < NumberOfLeds; i++)
             {
                 SetLed(i, off);
             }
