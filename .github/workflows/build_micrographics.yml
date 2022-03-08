@@ -21,4 +21,4 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore Source/Meadow.Foundation.Libraries_and_Frameworks/Graphics/MicroGraphics/MicroGraphics.sln
     - name: Build
-      run: dotnet build -c Release Source/Meadow.Foundation.Libraries_and_Frameworks/Graphics/MicroGraphics/MicroGraphics.sln --no-restore --framework netstandard2.1
+      run: dotnet build -c Release Source/Meadow.Foundation.Libraries_and_Frameworks/Graphics/MicroGraphics/MicroGraphics.sln -p:GeneratePackageOnBuild=False --no-restore --framework netstandard2.1
