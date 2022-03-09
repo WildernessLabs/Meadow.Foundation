@@ -5,26 +5,11 @@
         /// <summary>
         ///     Start measurement bit in the configuration register.
         /// </summary>
-        private const byte StartMeasurement = 0x01;
+        private const byte MeasureHumidity = 0x01;
 
         /// <summary>
         ///     Measure temperature bit in the configuration register.
         /// </summary>
-        private const byte MeasureTemperature = 0x10;
-
-        /// <summary>
-        ///     Heater control bit in the configuration register.
-        /// </summary>
-        private const byte HeaterOnBit = 0x02;
-
-        /// <summary>
-        ///     Mask used to turn the heater off.
-        /// </summary>
-        private const byte HeaterMask = 0xfd;
-
-        /// <summary>
-        ///     Minimum value that should be used for the polling frequency.
-        /// </summary>
-        public const ushort MinimumPollingPeriod = 200;
+        private const byte MeasureTemperature = 0x11;
     }
 }

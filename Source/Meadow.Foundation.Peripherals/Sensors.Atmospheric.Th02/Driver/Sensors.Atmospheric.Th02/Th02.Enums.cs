@@ -23,23 +23,23 @@
         public enum Registers
         {
             /// <summary>
-            ///     Status register.
+            /// Status register
             /// </summary>
             Status = 0x00,
             /// <summary>
-            ///     High byte of the data register.
+            /// High byte of the data register
             /// </summary>
             DataHigh = 0x01,
             /// <summary>
-            ///     Low byte of the data register.
+            /// Low byte of the data register
             /// </summary>
             DataLow = 0x02,
             /// <summary>
-            ///     Addess of the configuration register.
+            /// Addess of the configuration register
             /// </summary>
-            Config = 0x04,
+            Config = 0x03,
             /// <summary>
-            ///     Address of the ID register.
+            /// Address of the ID register
             /// </summary>
             ID = 0x11
         }

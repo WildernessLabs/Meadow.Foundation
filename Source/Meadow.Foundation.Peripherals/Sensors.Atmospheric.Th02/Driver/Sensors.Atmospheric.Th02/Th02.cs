@@ -26,26 +26,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
-        /// Get / set the heater status
-        /// </summary>
-        public bool HeaterOn
-        {
-            get => (Peripheral?.ReadRegister((byte)Registers.Config) & HeaterOnBit) > 0;
-            
-            set
-            {
-                if (Peripheral == null) return;
-
-                byte config = Peripheral.ReadRegister((byte)Registers.Config);
-                if (value)
-                    config |= HeaterOnBit;
-                else
-                    config &= HeaterMask;
-                Peripheral?.WriteRegister((byte)Registers.Config, config);
-            }
-        }
-
-        /// <summary>
         /// Last value read from the Pressure sensor.
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
@@ -57,12 +37,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         /// <summary>
         /// Provide a mechanism for reading the temperature and humidity from
-        /// a Th02 temperature / humidity sensor.
+        /// a Th02 temperature / humidity sensor
         /// </summary>
         public Th02(II2cBus i2cBus, byte address = (byte)Addresses.Default)
                 : base(i2cBus, address)
         {
-
         }
 
         /// <summary>
@@ -91,44 +70,37 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
-                Console.WriteLine($"A {Peripheral != null}");
-
                 //  Get the humidity first.
-                Peripheral?.WriteRegister((byte)Registers.Config, StartMeasurement);
-                //  Maximum conversion time should be 40ms but loop just in case it takes longer.
-                Thread.Sleep(40);
+                Peripheral?.WriteRegister((byte)Registers.Config, MeasureHumidity);
+                
+                //  Maximum conversion time should be 40ms
+                while ((Peripheral?.ReadRegister((byte)Registers.Status) & 0x01) > 0)
+                {
+                    Thread.Sleep(40);
+                }
 
-                Console.WriteLine("B");
-
-            //    while ((Peripheral?.ReadRegister((byte)Registers.Status) & 0x01) > 0);
                 byte[] data = new byte[2];
                 
                 Peripheral?.ReadRegister((byte)Registers.DataHigh, data);
                 int temp = data[0] << 8;
                 temp |= data[1];
                 temp >>= 4;
-                Console.WriteLine($"C: {temp}");
 
                 conditions.Humidity = new RelativeHumidity(temp / 16.0 - 24);
 
-                
-
                 //  Now get the temperature.
-                Peripheral?.WriteRegister((byte)Registers.Config, StartMeasurement | MeasureTemperature);
-                //  Maximum conversion time should be 40ms but loop just in case 
-                //  it takes longer.
-                Thread.Sleep(40);
-              //  while ((Peripheral?.ReadRegister((byte)Registers.Status) & 0x01) > 0);
-
-                Console.WriteLine("D");
+                Peripheral?.WriteRegister((byte)Registers.Config, MeasureTemperature);
+                //  Maximum conversion time should be 40ms
+                while ((Peripheral?.ReadRegister((byte)Registers.Status) & 0x01) > 0)
+                {
+                    Thread.Sleep(40);
+                }
 
                 Peripheral?.ReadRegister((byte)Registers.DataHigh, data);
                 temp = data[0] << 8;
                 temp |= data[1];
                 temp >>= 2; //drop the two unused bits (14 bit value)
                 conditions.Temperature = new Units.Temperature(temp / 32.0 - 50, Units.Temperature.UnitType.Celsius);
-
-                Console.WriteLine($"E: {temp}");
 
                 return conditions;
             });
