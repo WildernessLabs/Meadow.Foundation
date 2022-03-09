@@ -10,7 +10,7 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Th02</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, Atmospheric, Th02. Temperature, Humidity</PackageTags>
+    <PackageTags>Meadow.Foundation, Atmospheric, Th02, Temperature, Humidity</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Th02 I2C Relative Humidity and temperature sensor</Description>

@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
-        /// Last value read from the Pressure sensor.
+        /// Last value read from the Temperature sensor.
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
-                //  Get the humidity first.
+                //  Read the humidity
                 Peripheral?.WriteRegister((byte)Registers.Config, MeasureHumidity);
                 
                 //  Maximum conversion time should be 40ms
@@ -88,8 +88,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 conditions.Humidity = new RelativeHumidity(temp / 16.0 - 24);
 
-                //  Now get the temperature.
+                //  Read the temperature
                 Peripheral?.WriteRegister((byte)Registers.Config, MeasureTemperature);
+
                 //  Maximum conversion time should be 40ms
                 while ((Peripheral?.ReadRegister((byte)Registers.Status) & 0x01) > 0)
                 {

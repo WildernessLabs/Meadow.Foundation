@@ -10,7 +10,7 @@ namespace Sensors.Atmospheric.Th02_Sample
     {
         //<!—SNIP—>
 
-        Th02 sensor;
+        readonly Th02 sensor;
 
         public MeadowApp()
         {
@@ -52,7 +52,6 @@ namespace Sensors.Atmospheric.Th02_Sample
             var conditions = await sensor.Read();
             Console.WriteLine($"Temperature: {conditions.Temperature?.Celsius}°C, Relative Humidity: {conditions.Humidity?.Percent}%");
         }
-
         //<!—SNOP—>
     }
 }
