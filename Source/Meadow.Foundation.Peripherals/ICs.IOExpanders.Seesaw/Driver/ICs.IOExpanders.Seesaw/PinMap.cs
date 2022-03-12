@@ -22,6 +22,9 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
 
     public class PinMap
     {
+        // The pins capable of Neopixel output
+        public readonly byte[] NeopixelPins;
+
         // The pins capable of analog output
         public readonly byte[] AnalogPins;
 
@@ -39,6 +42,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
             switch (hwid)
             {
                 case (byte)HwidCodes.ATSAMD09:
+                    NeopixelPins = new byte[] { 9, 10, 11, 14, 15, 24, 25 };
                     AnalogPins = new byte[] { 2, 3, 4, 5 };
                     PWMWidth = 8;
                     PWMPins = new byte[] { 4, 5, 6, 7 };
@@ -46,6 +50,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
                     break;
 
                 case (byte)HwidCodes.ATtiny8X7:
+                    NeopixelPins = new byte[] { 0, 1, 2, 3, 20, 5, 6, 7, 8, 9, 12, 13, 14, 18, 19 };
                     AnalogPins = new byte[] { 0, 1, 2, 3, 6, 7, 18, 19, 20 };
                     PWMWidth = 16;
                     PWMPins = new byte[] { 0, 1, 9, 12, 13 };

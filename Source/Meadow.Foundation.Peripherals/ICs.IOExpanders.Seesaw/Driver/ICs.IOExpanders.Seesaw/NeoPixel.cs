@@ -131,7 +131,6 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
             bool reversePixelOrder = false,
             double brightness = 1.0
 
-        // TODO: Add neopixel speed
         )
         {
             I2cSeesaw = seesaw;
@@ -150,7 +149,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
             I2cSeesaw.I2cPeripheral.Write(new Span<byte>(new byte[] { (byte)BaseAddresses.Neopixel, (byte)NeopixelCommands.Pin, (byte)NeopixelPin }));
 
             // The protocol speed: 0x00 = 400khz, 0x01 = 800khz(default)
-            //I2cSeesaw.I2cPeripheral.Write(new Span<byte>(new byte[] { (byte)BaseAddresses.Neopixel, (byte)NeopixelCommands.Speed, (byte)NeopixelSpeed }));
+            I2cSeesaw.I2cPeripheral.Write(new Span<byte>(new byte[] { (byte)BaseAddresses.Neopixel, (byte)NeopixelCommands.Speed, (byte)NeopixelSpeed }));
 
             // the number of bytes currently used for the pixel array. This is dependent on the number of pixels and whether you are using RGB or RGBW
             byte[] bufferLength = BitConverter.GetBytes(NumberOfPixels * BytesPerPixel);
@@ -175,11 +174,11 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
                 pxa = PixelArrayInstance.PixelData;
 
             List<byte> ppx = new List<byte>();
-            pxa.ToList().ForEach(p => ppx.AddRange(BitConverter.GetBytes(p).Reverse().Take(BytesPerPixel).OrderBytes<byte>(PixelOrder).Select(b => (byte)(b * Brightness))));
+            pxa.ToList().ForEach(p => ppx.AddRange(BitConverter.GetBytes(p).Take(BytesPerPixel).Reverse().OrderBytes<byte>(PixelOrder).Select(b => (byte)(b * Brightness))));
 
             int segmentOffset = 0;
             int ppxCount = ppx.Count();
-            int MaxTotalPixelBytesPerWrite = 30 / BytesPerPixel * BytesPerPixel;
+            int MaxTotalPixelBytesPerWrite = 28 / BytesPerPixel * BytesPerPixel;
             while (segmentOffset < ppxCount)
             {
                 List<byte> o = new List<byte> { (byte)BaseAddresses.Neopixel, (byte)NeopixelCommands.Buf, 0, (byte)segmentOffset };
