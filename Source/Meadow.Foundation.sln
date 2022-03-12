@@ -993,6 +993,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Seesaw", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neopixel_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Seesaw\Samples\Neopixel_Sample\Neopixel_Sample.csproj", "{5329ED9E-4CDE-471E-B28C-7B4DFACC8DF7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neopixel_Sample2", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Seesaw\Samples\Neopixel_Sample2\Neopixel_Sample2.csproj", "{EA5C5E96-7E0F-47D0-AAD7-B00E4D5A5D09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2285,6 +2287,12 @@ Global
 		{5329ED9E-4CDE-471E-B28C-7B4DFACC8DF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5329ED9E-4CDE-471E-B28C-7B4DFACC8DF7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5329ED9E-4CDE-471E-B28C-7B4DFACC8DF7}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{EA5C5E96-7E0F-47D0-AAD7-B00E4D5A5D09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA5C5E96-7E0F-47D0-AAD7-B00E4D5A5D09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA5C5E96-7E0F-47D0-AAD7-B00E4D5A5D09}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EA5C5E96-7E0F-47D0-AAD7-B00E4D5A5D09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA5C5E96-7E0F-47D0-AAD7-B00E4D5A5D09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA5C5E96-7E0F-47D0-AAD7-B00E4D5A5D09}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2781,6 +2789,7 @@ Global
 		{61274D60-0E07-4BC2-AEB6-CA54158B5429} = {2514F279-7F15-4981-9ECE-E126FB1364B6}
 		{DEC4C996-E295-4022-8F3E-F88987B0653D} = {2514F279-7F15-4981-9ECE-E126FB1364B6}
 		{5329ED9E-4CDE-471E-B28C-7B4DFACC8DF7} = {61274D60-0E07-4BC2-AEB6-CA54158B5429}
+		{EA5C5E96-7E0F-47D0-AAD7-B00E4D5A5D09} = {61274D60-0E07-4BC2-AEB6-CA54158B5429}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

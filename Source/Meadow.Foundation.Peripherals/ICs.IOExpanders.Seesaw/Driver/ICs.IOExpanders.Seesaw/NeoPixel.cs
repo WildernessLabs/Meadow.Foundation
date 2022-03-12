@@ -33,19 +33,19 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
             {
                 if (pixelOrder == null) pixelOrder = Neopixel.GRBW;
                 BytesPerPixel = pixelOrder.Length;
-                PixelData = new uint[np];
+                _PixelData = new uint[np];
             }
 
-            public uint[] PixelData { get; }
+            private uint[] _PixelData;
             public int BytesPerPixel { get; }
 
             public object this[int index]
             {
                 get
                 {
-                    if (index >= 0 && index < PixelData.Length)
+                    if (index >= 0 && index < _PixelData.Length)
                     {
-                        return PixelData[index];
+                        return _PixelData[index];
                     }
                     else
                     {
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
                 }
                 set
                 {
-                    if (index >= 0 && index < PixelData.Length)
+                    if (index >= 0 && index < _PixelData.Length)
                     {
                         Type t = value.GetType();
                         if (!new Type[] { typeof(uint), typeof(int), typeof(ValueTuple<int, int, int>), typeof(ValueTuple<int, int, int, int>) }.Contains(t))
@@ -65,7 +65,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
                         t == typeof(ValueTuple<int, int, int>) ? (uint)(((ValueTuple<int, int, int>)value).Item1 << 16 | ((ValueTuple<int, int, int>)value).Item2 << 8 | ((ValueTuple<int, int, int>)value).Item3) :
                         t == typeof(ValueTuple<int, int, int, int>) ? (uint)(((ValueTuple<int, int, int, int>)value).Item1 << 24 | ((ValueTuple<int, int, int, int>)value).Item2 << 16 | ((ValueTuple<int, int, int, int>)value).Item3 << 8 | ((ValueTuple<int, int, int, int>)value).Item4) :
                         (uint)0;
-                        PixelData[index] = newColor;
+                        _PixelData[index] = newColor;
                     }
                     else
                     {
@@ -74,15 +74,20 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
                 }
             }
 
+            public uint[] CopyPixels()
+            {
+                return (uint[])_PixelData.Clone();
+            }
+            
             public override string ToString()
             {
-                string[] outString = new string[PixelData.Length * BytesPerPixel];
-                for (int i = 0; i < PixelData.Length; i++)
-                    outString[i] = "0x" + BitConverter.ToString(BitConverter.GetBytes(PixelData[i]).Reverse().Skip(4 - BytesPerPixel).Take(BytesPerPixel).ToArray()).Replace("-", ""); ;
+                string[] outString = new string[_PixelData.Length * BytesPerPixel];
+                for (int i = 0; i < _PixelData.Length; i++)
+                    outString[i] = "0x" + BitConverter.ToString(BitConverter.GetBytes(_PixelData[i]).Reverse().Skip(4 - BytesPerPixel).Take(BytesPerPixel).ToArray()).Replace("-", ""); ;
                 return string.Join(", ", outString);
             }
 
-            public int Length { get => PixelData.Length; }
+            public int Length { get => _PixelData.Length; }
 
             public void Fill(object color, IEnumerable<int> pixels)  // int, uint, (r, g, b), or (r, g, b, w)
             {
@@ -98,7 +103,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
         }
 
         /// <summary>
-        /// <c>Neopixel</c> is the base class for driving neopixels on Adafruit Feather
+        /// <c>Neopixel</c> is the base class for driving neopixels on Adafruit Seesaw
         /// </summary>
         /// <example>
         /// <code>
@@ -131,7 +136,6 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
             bool reversePixelOrder = false,
             double brightness = 1.0
 
-        // TODO: Add neopixel speed
         )
         {
             I2cSeesaw = seesaw;
@@ -150,7 +154,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
             I2cSeesaw.I2cPeripheral.Write(new Span<byte>(new byte[] { (byte)BaseAddresses.Neopixel, (byte)NeopixelCommands.Pin, (byte)NeopixelPin }));
 
             // The protocol speed: 0x00 = 400khz, 0x01 = 800khz(default)
-            //I2cSeesaw.I2cPeripheral.Write(new Span<byte>(new byte[] { (byte)BaseAddresses.Neopixel, (byte)NeopixelCommands.Speed, (byte)NeopixelSpeed }));
+            I2cSeesaw.I2cPeripheral.Write(new Span<byte>(new byte[] { (byte)BaseAddresses.Neopixel, (byte)NeopixelCommands.Speed, (byte)NeopixelSpeed }));
 
             // the number of bytes currently used for the pixel array. This is dependent on the number of pixels and whether you are using RGB or RGBW
             byte[] bufferLength = BitConverter.GetBytes(NumberOfPixels * BytesPerPixel);
@@ -164,22 +168,19 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
 
         public void MoveToDisplay()
         {
-            uint[] pxa;
+            uint[] pxa = PixelArrayInstance.CopyPixels();
 
             if (ReversePixelOrder)
             {
-                pxa = (uint[])PixelArrayInstance.PixelData.Clone();
                 Array.Reverse(pxa);
             }
-            else
-                pxa = PixelArrayInstance.PixelData;
 
             List<byte> ppx = new List<byte>();
-            pxa.ToList().ForEach(p => ppx.AddRange(BitConverter.GetBytes(p).Reverse().Take(BytesPerPixel).OrderBytes<byte>(PixelOrder).Select(b => (byte)(b * Brightness))));
+            pxa.ToList().ForEach(p => ppx.AddRange(BitConverter.GetBytes(p).Take(BytesPerPixel).Reverse().OrderBytes<byte>(PixelOrder).Select(b => (byte)(b * Brightness))));
 
             int segmentOffset = 0;
             int ppxCount = ppx.Count();
-            int MaxTotalPixelBytesPerWrite = 30 / BytesPerPixel * BytesPerPixel;
+            int MaxTotalPixelBytesPerWrite = 28 / BytesPerPixel * BytesPerPixel;
             while (segmentOffset < ppxCount)
             {
                 List<byte> o = new List<byte> { (byte)BaseAddresses.Neopixel, (byte)NeopixelCommands.Buf, 0, (byte)segmentOffset };

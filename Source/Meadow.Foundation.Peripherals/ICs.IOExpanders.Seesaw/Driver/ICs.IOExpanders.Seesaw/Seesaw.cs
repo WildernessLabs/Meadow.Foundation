@@ -32,7 +32,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
     {
         public  II2cBus I2cBus { get; }
         public byte SeesawBoardAddr { get; }
-        private IPin DeviceReadyPin { get; }
+        private byte? DeviceReadyPin { get; }
         public bool ResetOnInit { get; }
 
         public II2cPeripheral I2cPeripheral { get; }
@@ -42,8 +42,8 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
         (
             II2cBus i2cBus,              // Bus the Seesaw is connected to
             byte seesawBoardAddr = 0x49, // I2C address of the Seesaw device
-            IPin deviceReadyPin = null,  // Pin connected to Seesaw's 'ready' output. Not yet implemented
-            bool resetOnInit = true      // Whether to do a software reset on init
+            bool resetOnInit = true,     // Whether to do a software reset on init
+            byte? deviceReadyPin = null  // Pin connected to Seesaw's 'ready' output. Not yet implemented
         )
         {
             this.I2cBus = i2cBus;
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.ICs.IOExpanders.Seesaw
 
         public void SwReset(int postResetDelay = 500)
         {
-            I2cPeripheral.Write(new byte[] { (byte)BaseAddresses.Status, (byte)StatusCommands.SwReset, (byte)0xFF });
+            I2cPeripheral.Write(new Span<byte>(new byte[] { (byte)BaseAddresses.Status, (byte)StatusCommands.SwReset, (byte)0xFF }));
             Thread.Sleep(postResetDelay);
         }
 
