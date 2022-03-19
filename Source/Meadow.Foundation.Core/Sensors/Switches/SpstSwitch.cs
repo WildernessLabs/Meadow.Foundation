@@ -11,8 +11,6 @@ namespace Meadow.Foundation.Sensors.Switches
     /// 
     /// Use the SwitchCircuitTerminationType to specify whether the other side of the switch
     /// terminates to ground or high.
-    /// 
-    /// Note: This class is not yet implemented.
     /// </summary>
     public class SpstSwitch : ISwitch, ISensor
     {
@@ -33,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Returns the DigitalInputPort.
         /// </summary>
-        public IDigitalInputPort DigitalIn { get; protected set; }
+        protected IDigitalInputPort DigitalIn { get; set; }
 
         /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.

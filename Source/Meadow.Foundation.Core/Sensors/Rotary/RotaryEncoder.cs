@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Rotary;
+using System;
 
 namespace Meadow.Foundation.Sensors.Rotary
 {
@@ -10,13 +9,11 @@ namespace Meadow.Foundation.Sensors.Rotary
     /// </summary>
     public class RotaryEncoder : ObservableBase<RotationDirection>, IRotaryEncoder
     {
-        //==== events
         /// <summary>
         /// Raised when the rotary encoder is rotated and returns a RotaryTurnedEventArgs object which describes the direction of rotation.
         /// </summary>
         public event EventHandler<RotaryChangeResult> Rotated = delegate { };
 
-        //==== properties
         /// <summary>
         /// Returns the pin connected to the A-phase output on the rotary encoder.
         /// </summary>
@@ -32,7 +29,6 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// </summary>
         public RotationDirection? LastDirectionOfRotation { get; protected set; }
 
-        //==== internals
         /// <summary>
         /// Contains the previous offset used to find direction information
         /// </summary>
@@ -135,7 +131,7 @@ namespace Meadow.Foundation.Sensors.Rotary
             }
         }
 
-        void RaiseRotatedAndNotify(RotaryChangeResult result)
+        private void RaiseRotatedAndNotify(RotaryChangeResult result)
         {
             Rotated?.Invoke(this, result);
             base.NotifyObservers(result);

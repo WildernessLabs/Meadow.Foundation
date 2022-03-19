@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Audio
         /// <summary>
         /// Gets the port that is driving the Piezo Speaker
         /// </summary>
-        public IPwmPort Port { get; protected set; }
+        protected IPwmPort Port { get; set; }
 
         private bool isPlaying = false;
 

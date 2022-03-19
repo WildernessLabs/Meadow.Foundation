@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <summary>
         /// Input port for the tachometer
         /// </summary>
-        public IDigitalInputPort InputPort { get; private set; }
+        protected IDigitalInputPort InputPort { get; set; }
 
         /// <summary>
         /// Returns number of magnets of the sensor.

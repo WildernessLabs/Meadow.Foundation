@@ -23,15 +23,17 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Get the red LED port
         /// </summary>
-        public IDigitalOutputPort RedPort { get; protected set; }
+        protected IDigitalOutputPort RedPort { get; set; }
+
         /// <summary>
         /// Get the green LED port
         /// </summary>
-        public IDigitalOutputPort GreenPort { get; protected set; }
+        protected IDigitalOutputPort GreenPort { get; set; }
+
         /// <summary>
         /// Get the blue LED port
         /// </summary>
-        public IDigitalOutputPort BluePort { get; protected set; }
+        protected IDigitalOutputPort BluePort { get; set; }
 
         /// <summary>
         /// Is the LED using a common cathode
@@ -195,25 +197,6 @@ namespace Meadow.Foundation.Leds
                 SetColor(Colors.Black);
                 await Task.Delay(offDuration);
             }
-        }
-
-        /// <summary>
-        /// Starts the blink animation.
-        /// </summary>
-        /// <param name="color"></param>
-        /// <param name="onDuration"></param>
-        /// <param name="offDuration"></param>
-        [Obsolete("Method deprecated: use StartBlink(Colors color, int onDuration, int offDuration)")]
-        public void StartBlink(Colors color, uint onDuration, uint offDuration)
-        {
-            Stop();
-
-            animationTask = new Task(async () =>
-            {
-                cancellationTokenSource = new CancellationTokenSource();
-                await StartBlinkAsync(color, (int)onDuration, (int)offDuration, cancellationTokenSource.Token);
-            });
-            animationTask.Start();
         }
     }
 }

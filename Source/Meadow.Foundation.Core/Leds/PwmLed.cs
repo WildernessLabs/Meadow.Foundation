@@ -1,9 +1,8 @@
+using Meadow.Hardware;
+using Meadow.Peripherals.Leds;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Devices;
-using Meadow.Hardware;
-using Meadow.Peripherals.Leds;
 
 namespace Meadow.Foundation.Leds
 {
@@ -42,7 +41,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Gets the PwmPort
         /// </summary>
-        public IPwmPort Port { get; protected set; }
+        protected IPwmPort Port { get; set; }
 
         /// <summary>
         /// Gets the forward voltage value
@@ -258,64 +257,6 @@ namespace Meadow.Foundation.Leds
         {
             cancellationTokenSource?.Cancel();
             IsOn = false;
-        }
-
-        /// <summary>
-        /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
-        /// </summary>
-        [Obsolete("Method deprecated: use StartBlink(int onDuration, int offDuration, float highBrightness, float lowBrightness)")]
-        public void StartBlink(uint onDuration, uint offDuration, float highBrightness, float lowBrightness)
-        {
-            if (highBrightness > 1 || highBrightness <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
-            }
-            if (lowBrightness >= 1 || lowBrightness < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
-            }
-            if (lowBrightness >= highBrightness)
-            {
-                throw new Exception("offBrightness must be less than onBrightness");
-            }
-
-            Stop();
-
-            animationTask = new Task(async () =>
-            {
-                cancellationTokenSource = new CancellationTokenSource();
-                await StartBlinkAsync((int)onDuration, (int)offDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
-            });
-            animationTask.Start();
-        }
-
-        /// <summary>
-        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
-        /// </summary>        
-        [Obsolete("Method deprecated: use StartPulse(int pulseDuration, float highBrightness, float lowBrightness)")]
-        public void StartPulse(uint pulseDuration, float highBrightness, float lowBrightness)
-        {
-            if (highBrightness > 1 || highBrightness <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(highBrightness), "highBrightness must be > 0 and <= 1");
-            }
-            if (lowBrightness >= 1 || lowBrightness < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
-            }
-            if (lowBrightness >= highBrightness)
-            {
-                throw new Exception("lowBrightness must be less than highbrightness");
-            }
-
-            Stop();
-
-            animationTask = new Task(async () =>
-            {
-                cancellationTokenSource = new CancellationTokenSource();
-                await StartPulseAsync((int)pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
-            });
-            animationTask.Start();
         }
     }
 }

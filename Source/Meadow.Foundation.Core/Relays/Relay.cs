@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Relays
         /// <summary>
         /// Returns digital output port
         /// </summary>
-        public IDigitalOutputPort DigitalOut { get; protected set; }
+        protected IDigitalOutputPort DigitalOut { get; set; }
 
         /// <summary>
         /// Returns type of relay.
@@ -27,10 +27,8 @@ namespace Meadow.Foundation.Relays
             get => isOn; 
             set
             {
-                // if turning on,
                 isOn = value;
                 DigitalOut.State = isOn ? onValue : !onValue;
-                
             }
         } 
         bool isOn = false;
