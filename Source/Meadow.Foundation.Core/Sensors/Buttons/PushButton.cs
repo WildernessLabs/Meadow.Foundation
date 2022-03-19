@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Returns digital input port.
         /// </summary>
-        public IDigitalInputPort DigitalIn { get; private set; }
+        protected IDigitalInputPort DigitalIn { get; set; }
 
         /// <summary>
         /// Raised when a press starts (the button is pushed down; circuit is closed).

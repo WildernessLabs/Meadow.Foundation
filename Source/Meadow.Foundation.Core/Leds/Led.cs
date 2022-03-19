@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Leds
 		/// Gets the port that is driving the LED
 		/// </summary>
 		/// <value>The port</value>
-		public IDigitalOutputPort Port { get; protected set; }
+		protected IDigitalOutputPort Port { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="T:Meadow.Foundation.Leds.Led"/> is on.

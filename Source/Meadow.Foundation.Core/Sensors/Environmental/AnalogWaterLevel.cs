@@ -11,8 +11,10 @@ namespace Meadow.Foundation.Sensors.Environmental
     public partial class AnalogWaterLevel
         : SensorBase<float>
     {
-        //==== internals
-        IAnalogInputPort AnalogInputPort { get; }
+        /// <summary>
+        /// AnalogInputPort connected to temperature sensor
+        /// </summary>
+        protected IAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         /// Calibration of water level

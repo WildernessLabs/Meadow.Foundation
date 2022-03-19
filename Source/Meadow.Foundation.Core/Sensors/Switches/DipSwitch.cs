@@ -8,8 +8,6 @@ namespace Meadow.Foundation.Sensors.Switches
     /// <summary>
     /// Represents a DIP-switch wired in a bus configuration, in which all switches 
     /// are terminated to the same ground/common or high pin.
-    ///     
-    /// Note: This class is not yet implemented.
     /// </summary>
     public class DipSwitch
     {

@@ -66,16 +66,6 @@ namespace Meadow.Foundation.Motors
         float power = 0;
 
         /// <summary>
-        /// Obsolete, please use `Power`.
-        /// </summary>
-        [Obsolete("Use Power property")]
-        public float Speed
-        {
-            get => Power;
-            set { Power = value; }
-        }
-
-        /// <summary>
         /// The frequency of the PWM used to drive the motors. 
         /// Default value is 1600.
         /// </summary>
@@ -106,7 +96,6 @@ namespace Meadow.Foundation.Motors
         /// <param name="a2Port"></param>
         /// <param name="enablePort"></param>
         /// <param name="pwmFrequency"></param>
-
         public HBridgeMotor(IPwmPort a1Port, IPwmPort a2Port, IDigitalOutputPort enablePort, float pwmFrequency = 1600)
         {
             motorLeftPwm = a1Port;

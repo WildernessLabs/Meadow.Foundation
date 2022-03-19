@@ -7,9 +7,7 @@ namespace Meadow.Foundation.Sensors.Switches
 {
     /// <summary>
     /// Represents a simple, two position, Single-Pole-Dual-Throw (SPDT) switch that closes a circuit 
-    /// to either ground/common or high depending on position.
-    /// 
-    /// Note: This class is not yet implemented.
+    /// to either ground/common or high depending on position.    
     /// </summary>
     public class SpdtSwitch : ISwitch, ISensor
     {
@@ -25,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Returns the DigitalInputPort.
         /// </summary>
-        public IDigitalInputPort DigitalIn { get; protected set; }
+        protected IDigitalInputPort DigitalIn { get; set; }
 
         /// <summary>
         /// Raised when the switch circuit is opened or closed.
