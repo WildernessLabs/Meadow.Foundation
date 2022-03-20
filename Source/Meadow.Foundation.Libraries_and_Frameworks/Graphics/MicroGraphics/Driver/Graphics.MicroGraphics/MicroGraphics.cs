@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a single pixel using the pen color
+        /// Draw a single pixel using the pen color
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
@@ -83,7 +83,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a single pixel using the pen color
+        /// Draw a single pixel using the pen color
         /// </summary>
         /// <param name="index">pixel location in buffer</param>
         public void DrawPixel(int index)
@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Invert the color of the pixel at the given location
+        /// Invert the color of the pixel at the given location
         /// </summary>
         /// <param name="x">x location</param>
         /// <param name="y">y location</param>
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Invert all pixels within a rectangle 
+        /// Invert all pixels within a rectangle 
         /// </summary>
         /// <param name="x">x start</param>
         /// <param name="y">y start</param>
@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a single pixel 
+        /// Draw a single pixel 
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
@@ -131,7 +131,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a single pixel 
+        /// Draw a single pixel 
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
@@ -142,13 +142,13 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a line using Bresenhams line drawing algorithm.
+        /// Draw a line using Bresenhams line drawing algorithm.
         /// </summary>
         /// <remarks>
-        ///     Bresenhams line drawing algoritm:
-        ///     https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-        ///     C# Implementation:
-        ///     https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+        /// Bresenhams line drawing algoritm:
+        /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+        /// C# Implementation:
+        /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
         /// </remarks>
         /// <param name="x0">Abscissa of the starting point of the line.</param>
         /// <param name="y0">Ordinate of the starting point of the line</param>
@@ -161,7 +161,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a line using polar coordinates
+        /// Draw a line using polar coordinates
         /// </summary>
         /// <remarks>
         /// <param name="x">Abscissa of the starting point of the line</param>
@@ -175,13 +175,13 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a line using Bresenhams line drawing algorithm.
+        /// Draw a line using Bresenhams line drawing algorithm.
         /// </summary>
         /// <remarks>
-        ///     Bresenhams line drawing algoritm:
-        ///     https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-        ///     C# Implementation:
-        ///     https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+        /// Bresenhams line drawing algoritm:
+        /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+        /// C# Implementation:
+        /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
         /// </remarks>
         /// <param name="x0">Abscissa of the starting point of the line.</param>
         /// <param name="y0">Ordinate of the starting point of the line</param>
@@ -224,7 +224,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a line from a point to a position defined by a radius and an angle
+        /// Draw a line from a point to a position defined by a radius and an angle
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y">Ordinate of the starting point of the line</param>
@@ -282,7 +282,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a horizontal line.
+        /// Draw a horizontal line.
         /// </summary>
         /// <param name="x">Abscissa of the starting point of the line.</param>
         /// <param name="y">Ordinate of the starting point of the line.</param>
@@ -294,7 +294,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a horizontal line.
+        /// Draw a horizontal line.
         /// </summary>
         /// <param name="x">Abscissa of the starting point of the line.</param>
         /// <param name="y">Ordinate of the starting point of the line.</param>
@@ -334,7 +334,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a vertical line.
+        /// Draw a vertical line.
         /// </summary>
         /// <param name="x">Abscissa of the starting point of the line.</param>
         /// <param name="y">Ordinate of the starting point of the line.</param>
@@ -346,7 +346,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a vertical line.
+        /// Draw a vertical line.
         /// </summary>
         /// <param name="x">Abscissa of the starting point of the line.</param>
         /// <param name="y">Ordinate of the starting point of the line.</param>
@@ -386,16 +386,16 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///  Draw a  triangle
+        /// Draw a  triangle
         /// </summary>
-        ///  <param name="x0">Vertex #0 x coordinate</param>
-        ///  <param name="y0">Vertex #0 y coordinate</param>
-        ///  <param name="x1">Vertex #1 x coordinate</param>
-        ///  <param name="y1">Vertex #1 y coordinate</param>
-        ///  <param name="x2">Vertex #2 x coordinate</param>
-        ///  <param name="y2">Vertex #2 y coordinate</param>
-        ///  <param name="color">Color of triangle</param>
-        ///  <param name="filled">Draw a filled triangle?</param>
+        /// <param name="x0">Vertex #0 x coordinate</param>
+        /// <param name="y0">Vertex #0 y coordinate</param>
+        /// <param name="x1">Vertex #1 x coordinate</param>
+        /// <param name="y1">Vertex #1 y coordinate</param>
+        /// <param name="x2">Vertex #2 x coordinate</param>
+        /// <param name="y2">Vertex #2 y coordinate</param>
+        /// <param name="color">Color of triangle</param>
+        /// <param name="filled">Draw a filled triangle?</param>
         public void DrawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, Color color, bool filled = false)
         {
             if(filled)
@@ -411,7 +411,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///  Draw a  triangle
+        /// Draw a  triangle
         /// </summary>
         /// <remarks>
         /// Draw triangle method for 1 bit displays
@@ -525,15 +525,15 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a circle
+        /// Draw a circle
         /// </summary>
         /// <remarks>
-        ///     This algorithm draws the circle by splitting the full circle into eight
-        ///     segments.
-        ///     This method uses the Midpoint algorithm:
-        ///     https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-        ///     A C# implementation can be found here:
-        ///     https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
+        /// This algorithm draws the circle by splitting the full circle into eight
+        /// segments.
+        /// This method uses the Midpoint algorithm:
+        /// https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
+        /// A C# implementation can be found here:
+        /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
         /// <param name="centerX">Abscissa of the centre point of the circle.</param>
         /// <param name="centerY">Ordinate of the centre point of the circle.</param>
@@ -546,15 +546,15 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a circle
+        /// Draw a circle
         /// </summary>
         /// <remarks>
-        ///     This algorithm draws the circle by splitting the full circle into eight
-        ///     segments.
-        ///     This method uses the Midpoint algorithm:
-        ///     https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-        ///     A C# implementation can be found here:
-        ///     https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
+        /// This algorithm draws the circle by splitting the full circle into eight
+        /// segments.
+        /// This method uses the Midpoint algorithm:
+        /// https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
+        /// A C# implementation can be found here:
+        /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
         /// <param name="centerX">Abscissa of the centre point of the circle.</param>
         /// <param name="centerY">Ordinate of the centre point of the circle.</param>
@@ -580,11 +580,31 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        /// <summary>
+        /// Draws a circle quadrant (quarter circle)
+        /// </summary>
+        /// <param name="centerX"></param>
+        /// <param name="centerY"></param>
+        /// <param name="radius"></param>
+        /// <param name="quadrant"></param>
+        /// <param name="colored"></param>
+        /// <param name="filled"></param>
+        /// <param name="centerBetweenPixels"></param>
         public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, bool colored = true, bool filled = false, bool centerBetweenPixels = false)
         {
             DrawCircleQuadrant(centerX, centerY, radius, quadrant, (colored ? Color.White : Color.Black), filled, centerBetweenPixels);
         }
 
+        /// <summary>
+        /// Draws a circle quadrant (quarter circle)
+        /// </summary>
+        /// <param name="centerX"></param>
+        /// <param name="centerY"></param>
+        /// <param name="radius"></param>
+        /// <param name="quadrant"></param>
+        /// <param name="color"></param>
+        /// <param name="filled"></param>
+        /// <param name="centerBetweenPixels"></param>
         public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
             if (quadrant < 0 || quadrant > 3) { throw new ArgumentOutOfRangeException("DrawCircleQuadrant: quadrant must be between 0 & 3 inclusive"); }
@@ -756,7 +776,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a rectangle.
+        /// Draw a rectangle.
         /// </summary>
         /// <param name="x">Abscissa of the top left corner.</param>
         /// <param name="y">Ordinate of the top left corner.</param>
@@ -770,7 +790,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a rectangle.
+        /// Draw a rectangle.
         /// </summary>
         /// <param name="x">Abscissa of the top left corner.</param>
         /// <param name="y">Ordinate of the top left corner.</param>
@@ -780,6 +800,18 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default).</param>
         public void DrawRectangle(int x, int y, int width, int height, Color color, bool filled = false)
         {
+            if(width < 0)
+            {
+                width *= -1;
+                x -= width;
+            }
+
+            if (height < 0)
+            {
+                height *= -1;
+                y -= height;
+            }
+
             if (filled)
             {
                 switch(Rotation)
@@ -797,11 +829,6 @@ namespace Meadow.Foundation.Graphics
                         display.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width, color);
                         break;
                 }
-                /*
-                for (var i = 0; i <= height; i++)
-                {
-                    DrawLine(x, y + i, x + width, y + i, color);
-                } */
             }
             else
             {
@@ -817,7 +844,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a rounded rectangle.
+        /// Draw a rounded rectangle.
         /// </summary>
         /// <param name="x">Abscissa of the top left corner.</param>
         /// <param name="y">Ordinate of the top left corner.</param>
@@ -866,7 +893,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Get the size in pixels of a string using the current font
+        /// Get the size in pixels of a string using the current font
         /// </summary>
         /// <param name="text">The string to measure.</param>
         /// <param name="scaleFactor">Scalefactor used to calculate the size.</param>
@@ -876,7 +903,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Get the size in pixels of a string for a given font and scale factor
+        /// Get the size in pixels of a string for a given font and scale factor
         /// </summary>
         /// <param name="text">The string to measure.</param>
         /// <param name="font">The font used to calculate the text size.</param>
@@ -887,11 +914,13 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a text message on the display using the current font.
+        /// Draw a text message on the display using the current font.
         /// </summary>
         /// <param name="x">Abscissa of the location of the text.</param>
         /// <param name="y">Ordinate of the location of the text.</param>
         /// <param name="text">Text to display.</param>
+        /// <param name="scaleFactor">Scalefactor used to calculate the size.</param>
+        /// <param name="alignment">Left, Center or right aligned text.</param>
         public void DrawText(int x, int y, string text,
             ScaleFactor scaleFactor = ScaleFactor.X1, TextAlignment alignment = TextAlignment.Left)
         {
@@ -915,10 +944,10 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a buffer onto the display buffer at the given location
+        /// Draw a buffer onto the display buffer at the given location
         ///
-        ///     For best performance, source buffer should be the same color depth as the target display
-        ///     Note: DrawBuffer will not rotate the source buffer, it will always be oriented relative to base display rotation
+        /// For best performance, source buffer should be the same color depth as the target display
+        /// Note: DrawBuffer will not rotate the source buffer, it will always be oriented relative to base display rotation
         /// </summary>
         /// <param name="x">x location of target to draw buffer</param>
         /// <param name="y">x location of target to draw buffer</param>
@@ -972,12 +1001,14 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Draw a text message on the display using the current font.
+        /// Draw a text message on the display using the current font.
         /// </summary>
         /// <param name="x">Abscissa of the location of the text.</param>
         /// <param name="y">Ordinate of the location of the text.</param>
         /// <param name="text">Text to display.</param>
         /// <param name="color">Color of the text.</param>
+        /// <param name="scaleFactor">Scalefactor used to calculate the size.</param>
+        /// <param name="alignment">Left, Center or right aligned text.</param>
         public void DrawText(int x, int y, string text, Color color,
             ScaleFactor scaleFactor = ScaleFactor.X1, TextAlignment alignment = TextAlignment.Left)
         {
@@ -1130,7 +1161,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Show changes on the display
+        /// Show changes on the display
         /// </summary>
         public void Show()
         {
@@ -1138,8 +1169,8 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Update a region of the display
-        ///     Note: not all displays support partial updates
+        /// Update a region of the display
+        /// Note: not all displays support partial updates
         /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
@@ -1147,8 +1178,8 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Update a region of the display
-        ///     Note: not all displays support partial updates
+        /// Update a region of the display
+        /// Note: not all displays support partial updates
         /// </summary>
         public void Show(Rect rect)
         {
@@ -1156,7 +1187,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Clear the display.
+        /// Clear the display.
         /// </summary>
         /// <param name="updateDisplay">Update the display immediately when true.</param>
         public void Clear(bool updateDisplay = false)
@@ -1165,7 +1196,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Clear the display to a color
+        /// Clear the display to a color
         /// </summary>
         /// <param name="updateDisplay">Update the display immediately when true.</param>
         /// <param name="color">Color to set display.</param>
@@ -1177,9 +1208,9 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Display a 1-bit bitmap
+        /// Display a 1-bit bitmap
         /// 
-        ///     This method simply calls a similar method in the display hardware.
+        /// This method simply calls a similar method in the display hardware.
         /// </summary>
         /// <param name="x">Abscissa of the top left corner of the bitmap.</param>
         /// <param name="y">Ordinate of the top left corner of the bitmap.</param>
@@ -1231,9 +1262,9 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        ///     Display a 1-bit bitmap
+        /// Display a 1-bit bitmap
         /// 
-        ///     This method simply calls a similar method in the display hardware.
+        /// This method simply calls a similar method in the display hardware.
         /// </summary>
         /// <param name="x">Abscissa of the top left corner of the bitmap.</param>
         /// <param name="y">Ordinate of the top left corner of the bitmap.</param>
