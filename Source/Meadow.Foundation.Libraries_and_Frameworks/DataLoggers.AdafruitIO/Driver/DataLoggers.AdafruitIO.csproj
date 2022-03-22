@@ -4,20 +4,20 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>ThingSpeak</AssemblyName>
+    <AssemblyName>AdafruitIO</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.DataLoggers.AdafruitIO</PackageId>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, DataLoggers, ThingSpeak</PackageTags>
+    <PackageTags>Meadow.Foundation, DataLoggers, Adafruit IO</PackageTags>
     <Version>0.5.43</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for the ThingSpeak data logging system</Description>
+    <Description>Driver for the Adafruit IO data logging system</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\..\icon.png" Pack="true" PackagePath="" />
-    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\DataLoggers.Core\Driver\DataLoggers.Core\DataLoggers.csproj" />
+    <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\DataLoggers.Core\Driver\DataLoggers.csproj" />
   </ItemGroup>
 </Project>
