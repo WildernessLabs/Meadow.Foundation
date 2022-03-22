@@ -31,7 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TFTSPI\Displays.TftSpi.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TftSpi.csproj" />
     <ProjectReference Include="..\..\Driver\Graphics.MicroGraphics\MicroGraphics.csproj" />
   </ItemGroup>
 </Project>

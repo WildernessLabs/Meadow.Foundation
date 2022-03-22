@@ -16,6 +16,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Sensors.Moisture.Capacitive\Driver\Sensors.Moisture.Capacitive\Sensors.Moisture.Capacitive.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Moisture.Capacitive.csproj" />
   </ItemGroup>
 </Project>

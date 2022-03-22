@@ -11,6 +11,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\FeatherWings.ServoWing\FeatherWings.ServoWing.csproj" />
+    <ProjectReference Include="..\..\Driver\FeatherWings.ServoWing.csproj" />
   </ItemGroup>
 </Project>

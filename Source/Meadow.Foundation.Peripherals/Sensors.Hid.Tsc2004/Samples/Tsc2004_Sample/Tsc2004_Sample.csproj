@@ -10,6 +10,6 @@
     <PackageReference Include="Meadow.Foundation" Version="0.*" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Hid.Tsc2004\Sensors.Hid.Tsc2004.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Hid.Tsc2004.csproj" />
   </ItemGroup>
 </Project>

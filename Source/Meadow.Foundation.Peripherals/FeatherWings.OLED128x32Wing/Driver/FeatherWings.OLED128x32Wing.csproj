@@ -1,0 +1,22 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>OLED128x32</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.FeatherWings.OLED128x32Wing</PackageId>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation, FeatherWing, OLED128x32, SSD1306</PackageTags>
+    <Version>0.1.39</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>AdaFruit OLED 128x32 monochrome display FeatherWing</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+    <ProjectReference Include="..\..\Displays.Ssd130x\Driver\Displays.Ssd130x.csproj" />
+  </ItemGroup>
+</Project>
