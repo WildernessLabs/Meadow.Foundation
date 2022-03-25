@@ -15,7 +15,7 @@
     <EmbeddedResource Include="menu.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\TextDisplayMenu.csproj" />
+    <ProjectReference Include="..\..\Driver\Displays.TextDisplayMenu.csproj" />
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd130x\Driver\Displays.Ssd130x.csproj" />
   </ItemGroup>
