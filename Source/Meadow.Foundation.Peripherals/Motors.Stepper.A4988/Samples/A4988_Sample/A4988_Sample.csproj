@@ -10,6 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Motors.Stepper.A4988\Motors.Stepper.A4988.csproj" />
+    <ProjectReference Include="..\..\Driver\Motors.Stepper.A4988.csproj" />
   </ItemGroup>
 </Project>

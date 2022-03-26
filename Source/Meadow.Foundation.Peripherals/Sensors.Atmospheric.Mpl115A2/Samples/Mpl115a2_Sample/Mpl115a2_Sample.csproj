@@ -17,6 +17,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Mpl115a2\Sensors.Atmospheric.Mpl115a2.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Mpl115a2.csproj" />
   </ItemGroup>
 </Project>

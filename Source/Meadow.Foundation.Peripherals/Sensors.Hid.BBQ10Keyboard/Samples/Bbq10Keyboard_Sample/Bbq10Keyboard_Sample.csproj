@@ -10,6 +10,6 @@
     <PackageReference Include="Meadow.Foundation" Version="0.*" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Sensors.Hid.BBQ10Keyboard\Sensors.Hid.Bbq10Keyboard.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Hid.Bbq10Keyboard.csproj" />
   </ItemGroup>
 </Project>
