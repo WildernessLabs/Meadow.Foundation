@@ -12,6 +12,11 @@
             /// </summary>
             Address_0x27 = 0x27,
             /// <summary>
+            /// Bus address 0x3E
+            /// Used by some Grove LCD dislpays
+            /// </summary>
+            Address_0x3E = 0x3E,
+            /// <summary>
             /// Default bus address
             /// </summary>
             Default = Address_0x27
