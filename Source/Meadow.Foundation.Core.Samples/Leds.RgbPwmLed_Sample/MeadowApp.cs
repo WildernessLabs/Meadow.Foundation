@@ -92,17 +92,17 @@ namespace Leds.RgbPwmLed_Sample
                     rgbPwmLed.Stop();
 
                     // Blink
-                    rgbPwmLed.StartBlink(Color.Red, 500, 500, 0.65f, 0.25f);
+                    rgbPwmLed.StartBlink(Color.Red, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 0.65f, 0.25f);
                     Console.WriteLine("Blinking Red");
                     Thread.Sleep(3000);
                     rgbPwmLed.Stop();
 
-                    rgbPwmLed.StartBlink(Color.Green, 500, 500, 0.65f, 0.25f);
+                    rgbPwmLed.StartBlink(Color.Green, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 0.65f, 0.25f);
                     Console.WriteLine("Blinking Green");
                     Thread.Sleep(3000);
                     rgbPwmLed.Stop();
 
-                    rgbPwmLed.StartBlink(Color.Blue, 500, 500, 0.65f, 0.25f);
+                    rgbPwmLed.StartBlink(Color.Blue, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 0.65f, 0.25f);
                     Console.WriteLine("Blinking Blue");
                     Thread.Sleep(3000);
                     rgbPwmLed.Stop();
