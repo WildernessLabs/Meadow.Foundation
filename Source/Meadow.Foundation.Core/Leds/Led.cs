@@ -67,14 +67,17 @@ namespace Meadow.Foundation.Leds
 		/// </summary>
 		/// <param name="onDuration"></param>
 		/// <param name="offDuration"></param>
-		public void StartBlink(int onDuration = 200, int offDuration = 200)
+		public void StartBlink(TimeSpan? onDuration = null, TimeSpan? offDuration = null)
 		{
+			onDuration = onDuration ?? TimeSpan.FromMilliseconds(200);
+			offDuration = offDuration ?? TimeSpan.FromMilliseconds(200);
+
 			Stop();
 
 			animationTask = new Task(async () =>
 			{
 				cancellationTokenSource = new CancellationTokenSource();
-				await StartBlinkAsync(onDuration, offDuration, cancellationTokenSource.Token);
+				await StartBlinkAsync((TimeSpan)onDuration, (TimeSpan)offDuration, cancellationTokenSource.Token);
 			});
 			animationTask.Start();
 		}
@@ -86,7 +89,7 @@ namespace Meadow.Foundation.Leds
 		/// <param name="offDuration">off duration in ms</param>
 		/// <param name="cancellationToken">cancellation token used to cancel blink</param>
 		/// <returns></returns>
-		protected async Task StartBlinkAsync(int onDuration, int offDuration, CancellationToken cancellationToken)
+		protected async Task StartBlinkAsync(TimeSpan onDuration, TimeSpan offDuration, CancellationToken cancellationToken)
 		{
 			while (true)
 			{
@@ -102,24 +105,6 @@ namespace Meadow.Foundation.Leds
 			}
 
 			Port.State = IsOn;
-		}
-
-		/// <summary>
-		/// Blink animation that turns the LED on and off based on the OnDuration and offDuration values in ms
-		/// </summary>
-		/// <param name="onDuration"></param>
-		/// <param name="offDuration"></param>
-		[Obsolete("Method deprecated: use StartBlink(int onDuration, int offDuration)")]
-		public void StartBlink(uint onDuration, uint offDuration)
-		{
-			Stop();
-
-			animationTask = new Task(async () =>
-			{
-				cancellationTokenSource = new CancellationTokenSource();
-				await StartBlinkAsync((int)onDuration, (int)offDuration, cancellationTokenSource.Token);
-			});
-			animationTask.Start();
 		}
 	}
 }

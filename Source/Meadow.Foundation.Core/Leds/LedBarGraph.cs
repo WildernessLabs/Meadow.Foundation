@@ -113,8 +113,11 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
-        public void StartBlink(int onDuration = 200, int offDuration = 200)
+        public void StartBlink(TimeSpan? onDuration = null, TimeSpan? offDuration = null)
         {
+            onDuration = onDuration ?? TimeSpan.FromMilliseconds(200);
+            offDuration = offDuration ?? TimeSpan.FromMilliseconds(200);
+
             foreach (var led in leds)
             {
                 led.StartBlink(onDuration, offDuration);
@@ -127,8 +130,11 @@ namespace Meadow.Foundation.Leds
         /// <param name="index"></param>
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
-        public void SetLedBlink(int index, int onDuration = 200, int offDuration = 200)
+        public void SetLedBlink(int index, TimeSpan? onDuration = null, TimeSpan? offDuration = null)
         {
+            onDuration = onDuration ?? TimeSpan.FromMilliseconds(200);
+            offDuration = offDuration ?? TimeSpan.FromMilliseconds(200);
+
             if (index >= Count)
             {
                 throw new ArgumentOutOfRangeException();

@@ -214,8 +214,11 @@ namespace Meadow.Foundation.Leds
         /// <param name="offDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        public void StartBlink(Color color, int onDuration = 200, int offDuration = 200, float highBrightness = 1f, float lowBrightness = 0f)
+        public void StartBlink(Color color, TimeSpan? onDuration = null, TimeSpan? offDuration = null, float highBrightness = 1f, float lowBrightness = 0f)
         {
+            onDuration = onDuration ?? TimeSpan.FromMilliseconds(200);
+            offDuration = offDuration ?? TimeSpan.FromMilliseconds(200);
+
             if (highBrightness > 1 || highBrightness <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
@@ -236,7 +239,7 @@ namespace Meadow.Foundation.Leds
             animationTask = new Task(async () =>
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                await StartBlinkAsync(color, onDuration, offDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+                await StartBlinkAsync(color, (TimeSpan)onDuration, (TimeSpan)offDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
             });
             animationTask.Start();
         }
@@ -251,7 +254,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightness">minimum brightness</param>
         /// <param name="cancellationToken">token to cancel blink</param>
         /// <returns></returns>
-        protected async Task StartBlinkAsync(Color color, int onDuration, int offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
+        protected async Task StartBlinkAsync(Color color, TimeSpan onDuration, TimeSpan offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             while (true)
             {
@@ -261,9 +264,9 @@ namespace Meadow.Foundation.Leds
                 }
 
                 SetColor(color, highBrightness);
-                await Task.Delay((int)onDuration);
+                await Task.Delay(onDuration);
                 SetColor(color, lowBrightness);
-                await Task.Delay((int)offDuration);
+                await Task.Delay(offDuration);
             }
         }
 
@@ -274,8 +277,10 @@ namespace Meadow.Foundation.Leds
         /// <param name="pulseDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        public void StartPulse(Color color, int pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void StartPulse(Color color, TimeSpan? pulseDuration = null, float highBrightness = 1, float lowBrightness = 0.15F)
         {
+            pulseDuration = pulseDuration ?? TimeSpan.FromMilliseconds(600);
+
             if (highBrightness > 1 || highBrightness <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
@@ -296,7 +301,7 @@ namespace Meadow.Foundation.Leds
             animationTask = new Task(async () =>
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                await StartPulseAsync(color, pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+                await StartPulseAsync(color, (TimeSpan)pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
             });
             animationTask.Start();
         }
@@ -310,12 +315,12 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightness">minimum brightness</param>
         /// <param name="cancellationToken">token to cancel pulse</param>
         /// <returns></returns>
-        protected async Task StartPulseAsync(Color color, int pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
+        protected async Task StartPulseAsync(Color color, TimeSpan pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;
             bool ascending = true;
-            int intervalTime = 60; // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
-            float steps = pulseDuration / intervalTime;
+            TimeSpan intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
+            float steps = pulseDuration.Milliseconds / intervalTime.Milliseconds;
             float changeAmount = (highBrightness - lowBrightness) / steps;
             float changeUp = changeAmount;
             float changeDown = -1 * changeAmount;
@@ -350,8 +355,6 @@ namespace Meadow.Foundation.Leds
 
                 SetColor(color, brightness);
 
-                // TODO: what is this 80 ms delay? shouldn't it be intervalTime?
-                //await Task.Delay(80);
                 await Task.Delay(intervalTime);
             }
         }

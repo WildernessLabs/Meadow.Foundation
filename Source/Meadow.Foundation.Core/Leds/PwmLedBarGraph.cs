@@ -135,7 +135,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="offDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        public void SetLedBlink(int index, int onDuration = 200, int offDuration = 200, float highBrightness = 1, float lowBrightness = 0) 
+        public void SetLedBlink(int index, TimeSpan? onDuration = null, TimeSpan? offDuration = null, float highBrightness = 1, float lowBrightness = 0) 
         {
             if (index >= Count)
             {
@@ -154,7 +154,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="pulseDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        public void SetLedPulse(int index, int pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F) 
+        public void SetLedPulse(int index, TimeSpan? pulseDuration = null, float highBrightness = 1, float lowBrightness = 0.15F) 
         {
             if (index >= Count)
             {
@@ -171,7 +171,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="offDuration">Off duration.</param>
         /// <param name="highBrightness">High brigtness.</param>
         /// <param name="lowBrightness">Low brightness.</param>
-        public void StartBlink(int onDuration = 200, int offDuration = 200, float highBrightness = 1, float lowBrightness = 0)
+        public void StartBlink(TimeSpan? onDuration = null, TimeSpan? offDuration = null, float highBrightness = 1, float lowBrightness = 0)
         {
             foreach (var pwmLed in pwmLeds)
             {
@@ -185,7 +185,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness">High brigtness.</param>
         /// <param name="lowBrightness">Low brightness.</param>
         /// </summary>
-        public void StartPulse(int pulseDuration = 600, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void StartPulse(TimeSpan? pulseDuration = null, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {
