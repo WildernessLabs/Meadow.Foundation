@@ -1,5 +1,6 @@
 ﻿using Meadow.Devices;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.Leds
@@ -30,9 +31,12 @@ namespace Meadow.Foundation.Leds
         float percentage;
 
         /// <summary>
-        /// Create an LedBarGraph instance from an array of IPwnPin and a forwardVoltage for all LEDs in the bar graph
+        /// Create an LedBarGraph instance for single color LED bar graphs
         /// </summary>
-        public PwmLedBarGraph(IPwmOutputController device, IPin[] pins, float forwardVoltage)
+        /// <param name="device"></param>
+        /// <param name="pins">Array of pins</param>
+        /// <param name="forwardVoltage">Single forward voltage</param>
+        public PwmLedBarGraph(IPwmOutputController device, IPin[] pins, Voltage forwardVoltage)
         {
             pwmLeds = new PwmLed[pins.Length];
 
@@ -43,15 +47,48 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Create an LedBarGraph instance from an array of IDigitalOutputPort
+        /// Create an LedBarGraph instance for single color LED bar graphs
         /// </summary>
-        public PwmLedBarGraph(IPwmPort[] ports, float forwardVoltage)
+        /// <param name="ports">Array of Pwm Ports</param>
+        /// <param name="forwardVoltage">Single forward voltage</param>
+        public PwmLedBarGraph(IPwmPort[] ports, Voltage forwardVoltage)
         {
             pwmLeds = new PwmLed[ports.Length];
 
             for (int i = 0; i < ports.Length; i++)
             {
                 pwmLeds[i] = new PwmLed(ports[i], forwardVoltage);
+            }
+        }
+
+        /// <summary>
+        /// Create an LedBarGraph instance for multi color LED bar graphs
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="pins">Array of pins</param>
+        /// <param name="forwardVoltage">Array of forward voltages</param>
+        public PwmLedBarGraph(IPwmOutputController device, IPin[] pins, Voltage[] forwardVoltage)
+        {
+            pwmLeds = new PwmLed[pins.Length];
+
+            for (int i = 0; i < pins.Length; i++)
+            {
+                pwmLeds[i] = new PwmLed(device, pins[i], forwardVoltage[i]);
+            }
+        }
+
+        /// <summary>
+        /// Create an LedBarGraph instance for multi color LED bar graphs
+        /// </summary>
+        /// <param name="ports">Array of ports</param>
+        /// <param name="forwardVoltage">Array of forward voltages</param>
+        public PwmLedBarGraph(IPwmPort[] ports, Voltage[] forwardVoltage)
+        {
+            pwmLeds = new PwmLed[ports.Length];
+
+            for (int i = 0; i < ports.Length; i++)
+            {
+                pwmLeds[i] = new PwmLed(ports[i], forwardVoltage[i]);
             }
         }
 
@@ -131,11 +168,29 @@ namespace Meadow.Foundation.Leds
         /// Starts a blink animation on an individual LED
         /// </summary>
         /// <param name="index"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        public void SetLedBlink(int index, float highBrightness = 1, float lowBrightness = 0)
+        {
+            if (index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            pwmLeds[index].Stop();
+            pwmLeds[index].IsOn = false;
+            pwmLeds[index].StartBlink(highBrightness, lowBrightness);
+        }
+
+        /// <summary>
+        /// Starts a blink animation on an individual LED
+        /// </summary>
+        /// <param name="index"></param>
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        public void SetLedBlink(int index, TimeSpan? onDuration = null, TimeSpan? offDuration = null, float highBrightness = 1, float lowBrightness = 0) 
+        public void SetLedBlink(int index, TimeSpan onDuration, TimeSpan offDuration, float highBrightness = 1, float lowBrightness = 0) 
         {
             if (index >= Count)
             {
@@ -151,10 +206,26 @@ namespace Meadow.Foundation.Leds
         /// Starts a pulse animation on an individual LED
         /// </summary>
         /// <param name="index"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        public void SetLedPulse(int index, float highBrightness = 1, float lowBrightness = 0.15F)
+        {
+            if (index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            pwmLeds[index].StartPulse(highBrightness, lowBrightness);
+        }
+
+        /// <summary>
+        /// Starts a pulse animation on an individual LED with the specified pulse cycle
+        /// </summary>
+        /// <param name="index"></param>
         /// <param name="pulseDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        public void SetLedPulse(int index, TimeSpan? pulseDuration = null, float highBrightness = 1, float lowBrightness = 0.15F) 
+        public void SetLedPulse(int index, TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F) 
         {
             if (index >= Count)
             {
@@ -165,17 +236,56 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
+        /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting.
+        /// </summary>
+        /// <param name="highBrightness">High brigtness.</param>
+        /// <param name="lowBrightness">Low brightness.</param>
+        public void StartBlink(float highBrightness = 1, float lowBrightness = 0)
+        {
+            foreach (var pwmLed in pwmLeds)
+            {
+                pwmLed.StartBlink(highBrightness, lowBrightness);
+            }
+        }
+
+        /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
         /// </summary>
         /// <param name="onDuration">On duration.</param>
         /// <param name="offDuration">Off duration.</param>
         /// <param name="highBrightness">High brigtness.</param>
         /// <param name="lowBrightness">Low brightness.</param>
-        public void StartBlink(TimeSpan? onDuration = null, TimeSpan? offDuration = null, float highBrightness = 1, float lowBrightness = 0)
+        public void StartBlink(TimeSpan onDuration, TimeSpan offDuration, float highBrightness = 1, float lowBrightness = 0)
         {
             foreach (var pwmLed in pwmLeds)
             {
                 pwmLed.StartBlink(onDuration, offDuration, highBrightness, lowBrightness);
+            }
+        }
+
+        /// <summary>
+        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting.
+        /// <param name="highBrightness">High brigtness.</param>
+        /// <param name="lowBrightness">Low brightness.</param>
+        /// </summary>
+        public void StartPulse(float highBrightness = 1, float lowBrightness = 0.15F)
+        {
+            if (highBrightness > 1 || highBrightness <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "highBrightness must be > 0 and <= 1");
+            }
+            if (lowBrightness >= 1 || lowBrightness < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
+            }
+            if (lowBrightness >= highBrightness)
+            {
+                throw new Exception("lowBrightness must be less than highbrightness");
+            }
+
+            foreach (var pwmLed in pwmLeds)
+            {
+                pwmLed.StartPulse(highBrightness, lowBrightness);
             }
         }
 
@@ -185,7 +295,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness">High brigtness.</param>
         /// <param name="lowBrightness">Low brightness.</param>
         /// </summary>
-        public void StartPulse(TimeSpan? pulseDuration = null, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void StartPulse(TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0)
             {

@@ -4,6 +4,7 @@ using Meadow.Foundation.Leds;
 using Meadow.Hardware;
 using System;
 using System.Threading;
+using Meadow.Units;
 
 namespace Leds.PwmLedBarGraph_Sample
 {
@@ -29,7 +30,7 @@ namespace Leds.PwmLedBarGraph_Sample
                  Device.Pins.D03,
                  Device.Pins.D02
             };
-            pwmLedBarGraph = new PwmLedBarGraph(Device, pins, 3.3f);
+            pwmLedBarGraph = new PwmLedBarGraph(Device, pins, new Voltage(3.3));
 
             // Using an array of IPwmPorts
             //IPwmPort[] ports =

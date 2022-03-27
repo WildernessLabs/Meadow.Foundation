@@ -58,20 +58,12 @@ namespace Leds.LedBarGraph_Sample
 
             while (true)
             {
-                Console.WriteLine("Turning them on using SetLed...");
+                Console.WriteLine("Turning them on and off for 1 second using SetLed...");
                 for (int i = 0; i < ledBarGraph.Count; i++)
                 {
                     ledBarGraph.SetLed(i, true);
-                    Thread.Sleep(300);
-                }
-
-                Thread.Sleep(1000);
-
-                Console.WriteLine("Turning them off using SetLed...");
-                for (int i = ledBarGraph.Count - 1; i >= 0; i--)
-                {
+                    Thread.Sleep(1000);
                     ledBarGraph.SetLed(i, false);
-                    Thread.Sleep(300);
                 }
 
                 Thread.Sleep(1000);
@@ -81,7 +73,7 @@ namespace Leds.LedBarGraph_Sample
                 {
                     percentage += 0.10m;
                     Console.WriteLine($"{percentage}");
-                    ledBarGraph.Percentage = (float) Math.Min(1.0m, percentage);                    
+                    ledBarGraph.Percentage = (float) Math.Min(1.0m, percentage);
                     Thread.Sleep(500);
                 }
 
@@ -92,7 +84,7 @@ namespace Leds.LedBarGraph_Sample
                 {
                     percentage -= 0.10m;
                     Console.WriteLine($"{percentage}");
-                    ledBarGraph.Percentage = (float) Math.Max(0.0m, percentage);                    
+                    ledBarGraph.Percentage = (float) Math.Max(0.0m, percentage);
                     Thread.Sleep(500);
                 }
 
@@ -100,6 +92,13 @@ namespace Leds.LedBarGraph_Sample
 
                 Console.WriteLine("Blinking for 3 seconds...");
                 ledBarGraph.StartBlink();
+                Thread.Sleep(3000);
+                ledBarGraph.Stop();
+
+                Thread.Sleep(1000);
+
+                Console.WriteLine("Blinking for 3 seconds...");
+                ledBarGraph.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
                 Thread.Sleep(3000);
                 ledBarGraph.Stop();
 

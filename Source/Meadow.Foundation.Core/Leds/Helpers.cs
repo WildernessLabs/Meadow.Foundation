@@ -1,3 +1,5 @@
+using Meadow.Units;
+
 namespace Meadow.Foundation.Leds
 {
     /// <summary>
@@ -11,14 +13,14 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="forwardVoltage"></param>
         /// <returns></returns>
-        public static float CalculateMaximumDutyCycle(float forwardVoltage)
+        public static float CalculateMaximumDutyCycle(Voltage forwardVoltage)
         {
             // clamp to our maximum output voltage
-            float Vf = forwardVoltage;
-            if (Vf > 3.3) { Vf = 3.3F; }
+            Voltage Vf = forwardVoltage;
+            if (Vf > new Voltage(3.3)) { Vf = new Voltage(3.3); }
 
             // 1.8V / 3.3V = .55 = 55%
-            float maxDutyPercent = Vf / 3.3F;
+            float maxDutyPercent = (float)(Vf.Volts / new Voltage(3.3).Volts);
 
             return maxDutyPercent;
         }

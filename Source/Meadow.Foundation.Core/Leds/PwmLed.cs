@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
+using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,7 +47,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Gets the forward voltage value
         /// </summary>
-        public float ForwardVoltage { get; protected set; }
+        public Voltage ForwardVoltage { get; protected set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Leds.PwmLed"/> class.
@@ -58,9 +59,16 @@ namespace Meadow.Foundation.Leds
         /// hooked to ground or High. Typically used for RGB Leds which can have
         /// either a common cathode, or common anode. But can also enable an LED
         /// to be reversed by inverting the PWM signal.</param>
-        public PwmLed(IPwmOutputController device, IPin pin,
-            float forwardVoltage, CircuitTerminationType terminationType = CircuitTerminationType.CommonGround) : 
-            this (device.CreatePwmPort(pin), forwardVoltage, terminationType) { }
+        public PwmLed(
+            IPwmOutputController device, 
+            IPin pin,
+            Voltage forwardVoltage, 
+            CircuitTerminationType terminationType = CircuitTerminationType.CommonGround) : 
+            this (
+                device.CreatePwmPort(pin), 
+                forwardVoltage, 
+                terminationType) 
+        { }
 
         /// <summary>
         /// Creates a new PwmLed on the specified PWM pin and limited to the appropriate 
@@ -70,11 +78,13 @@ namespace Meadow.Foundation.Leds
         /// <param name="pwmPort">Port to control</param>
         /// <param name="forwardVoltage">Forward voltage of led</param>
         /// <param name="terminationType">Termination type of LED</param>
-        public PwmLed(IPwmPort pwmPort, float forwardVoltage,
+        public PwmLed(
+            IPwmPort pwmPort, 
+            Voltage forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
             // validate and persist forward voltage
-            if (forwardVoltage < 0 || forwardVoltage > 3.3F)
+            if (forwardVoltage < new Voltage(0) || forwardVoltage > new Voltage(3.3))
             {
                 throw new ArgumentOutOfRangeException(nameof(forwardVoltage), "error, forward voltage must be between 0, and 3.3");
             }
@@ -114,13 +124,41 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
+        /// Start a Blink animation which sets the brightness of the LED alternating between a low and high brightness setting.
+        /// </summary>
+        public void StartBlink(float highBrightness = 1f, float lowBrightness = 0f)
+        {
+            var onDuration = TimeSpan.FromMilliseconds(500);
+            var offDuration = TimeSpan.FromMilliseconds(500);
+
+            if (highBrightness > 1 || highBrightness <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
+            }
+            if (lowBrightness >= 1 || lowBrightness < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
+            }
+            if (lowBrightness >= highBrightness)
+            {
+                throw new Exception("offBrightness must be less than onBrightness");
+            }
+
+            Stop();
+
+            animationTask = new Task(async () =>
+            {
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartBlinkAsync(onDuration, offDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
+        }
+
+        /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
         /// </summary>
-        public void StartBlink(TimeSpan? onDuration = null, TimeSpan? offDuration = null, float highBrightness = 1f, float lowBrightness = 0f)
+        public void StartBlink(TimeSpan onDuration, TimeSpan offDuration, float highBrightness = 1f, float lowBrightness = 0f)
         {
-            onDuration = onDuration ?? TimeSpan.FromMilliseconds(200);
-            offDuration = offDuration ?? TimeSpan.FromMilliseconds(200);
-
             if (highBrightness > 1 || highBrightness <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
@@ -172,12 +210,40 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
+        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting.
+        /// </summary>
+        public void StartPulse(float highBrightness = 1, float lowBrightness = 0.15F)
+        {
+            var pulseDuration = TimeSpan.FromMilliseconds(600);
+
+            if (highBrightness > 1 || highBrightness <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "highBrightness must be > 0 and <= 1");
+            }
+            if (lowBrightness >= 1 || lowBrightness < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
+            }
+            if (lowBrightness >= highBrightness)
+            {
+                throw new Exception("lowBrightness must be less than highbrightness");
+            }
+
+            Stop();
+
+            animationTask = new Task(async () =>
+            {
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartPulseAsync(pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
+        }
+
+        /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
         /// </summary>
-        public void StartPulse(TimeSpan? pulseDuration = null, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void StartPulse(TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F)
         {
-            pulseDuration = pulseDuration ?? TimeSpan.FromMilliseconds(600);
-
             if (highBrightness > 1 || highBrightness <= 0) 
             {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "highBrightness must be > 0 and <= 1");
@@ -196,7 +262,7 @@ namespace Meadow.Foundation.Leds
             animationTask = new Task(async () =>
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                await StartPulseAsync((TimeSpan)pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+                await StartPulseAsync(pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
             });
             animationTask.Start();
         }

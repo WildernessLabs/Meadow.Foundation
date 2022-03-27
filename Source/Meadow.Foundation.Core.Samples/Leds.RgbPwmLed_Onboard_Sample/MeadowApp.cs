@@ -28,7 +28,7 @@ namespace Leds.RgbPwmLed_Onboard_Sample
                 Device.Pins.OnboardLedRed,
                 Device.Pins.OnboardLedGreen,
                 Device.Pins.OnboardLedBlue,
-                commonType: CommonType.CommonAnode);            
+                commonType: CommonType.CommonAnode);
         }
 
         public void TestSomeColors()
