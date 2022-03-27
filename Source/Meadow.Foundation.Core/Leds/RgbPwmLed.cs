@@ -16,16 +16,24 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class RgbPwmLed
     {
-        readonly int DEFAULT_FREQUENCY = 200; //hz
-        readonly Voltage MAX_FORWARD_VOLTAGE = new Voltage(3.3);
-        readonly Voltage MIN_FORWARD_VOLTAGE = new Voltage(0);
-        readonly float DEFAULT_DUTY_CYCLE = 0f;
-
         Task? animationTask = null;
         CancellationTokenSource? cancellationTokenSource = null;
+
+        readonly int DEFAULT_FREQUENCY = 200; //hz
+        readonly float DEFAULT_DUTY_CYCLE = 0f;
         readonly double maxRedDutyCycle = 1;
         readonly double maxGreenDutyCycle = 1;
         readonly double maxBlueDutyCycle = 1;
+
+        /// <summary>
+        /// Maximum forward voltage (3.3 Volts)
+        /// </summary>
+        public Voltage MAX_FORWARD_VOLTAGE => new Voltage(3.3);
+
+        /// <summary>
+        /// Minimum forward voltage (0 Volts)
+        /// </summary>
+        public Voltage MIN_FORWARD_VOLTAGE => new Voltage(0);
 
         /// <summary>
         /// Turns on LED with current color or turns it off
@@ -269,17 +277,15 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
+        /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting.
         /// </summary>
         /// <param name="color"></param>
-        /// <param name="onDuration"></param>
-        /// <param name="offDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        public void StartBlink(Color color, TimeSpan? onDuration = null, TimeSpan? offDuration = null, float highBrightness = 1f, float lowBrightness = 0f)
+        public void StartBlink(Color color, float highBrightness = 1f, float lowBrightness = 0f)
         {
-            onDuration = onDuration ?? TimeSpan.FromMilliseconds(200);
-            offDuration = offDuration ?? TimeSpan.FromMilliseconds(200);
+            var onDuration = TimeSpan.FromMilliseconds(500);
+            var offDuration = TimeSpan.FromMilliseconds(500);
 
             if (highBrightness > 1 || highBrightness <= 0)
             {
@@ -302,6 +308,41 @@ namespace Meadow.Foundation.Leds
             {
                 cancellationTokenSource = new CancellationTokenSource();
                 await StartBlinkAsync(color, (TimeSpan)onDuration, (TimeSpan)offDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
+        }
+
+        /// <summary>
+        /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
+        /// </summary>
+        /// <param name="color"></param>
+        /// <param name="onDuration"></param>
+        /// <param name="offDuration"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        public void StartBlink(Color color, TimeSpan onDuration, TimeSpan offDuration, float highBrightness = 1f, float lowBrightness = 0f)
+        {
+            if (highBrightness > 1 || highBrightness <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
+            }
+            if (lowBrightness >= 1 || lowBrightness < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
+            }
+            if (lowBrightness >= highBrightness)
+            {
+                throw new Exception("offBrightness must be less than onBrightness");
+            }
+
+            Color = color;
+
+            Stop();
+
+            animationTask = new Task(async () =>
+            {
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartBlinkAsync(color, onDuration, offDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
             });
             animationTask.Start();
         }
@@ -333,15 +374,14 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
+        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting.
         /// </summary>
         /// <param name="color"></param>
-        /// <param name="pulseDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        public void StartPulse(Color color, TimeSpan? pulseDuration = null, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void StartPulse(Color color, float highBrightness = 1, float lowBrightness = 0.15F)
         {
-            pulseDuration = pulseDuration ?? TimeSpan.FromMilliseconds(600);
+            var pulseDuration = TimeSpan.FromMilliseconds(600);
 
             if (highBrightness > 1 || highBrightness <= 0)
             {
@@ -363,7 +403,43 @@ namespace Meadow.Foundation.Leds
             animationTask = new Task(async () =>
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                await StartPulseAsync(color, (TimeSpan)pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+                await StartPulseAsync(color, pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
+        }
+
+        /// <summary>
+        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
+        /// </summary>
+        /// <param name="color"></param>
+        /// <param name="pulseDuration"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        public void StartPulse(Color color, TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F)
+        {
+            pulseDuration = TimeSpan.FromMilliseconds(600);
+
+            if (highBrightness > 1 || highBrightness <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
+            }
+            if (lowBrightness >= 1 || lowBrightness < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
+            }
+            if (lowBrightness >= highBrightness)
+            {
+                throw new Exception("offBrightness must be less than onBrightness");
+            }
+
+            Color = color;
+
+            Stop();
+
+            animationTask = new Task(async () =>
+            {
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartPulseAsync(color, pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
             });
             animationTask.Start();
         }

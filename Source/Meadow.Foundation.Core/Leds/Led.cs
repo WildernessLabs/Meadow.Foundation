@@ -63,21 +63,36 @@ namespace Meadow.Foundation.Leds
 		}
 
 		/// <summary>
-		/// Blink animation that turns the LED on and off based on the OnDuration and offDuration values in ms
+		/// Blink animation that turns the LED on (500ms) and off (500ms)
 		/// </summary>
-		/// <param name="onDuration"></param>
-		/// <param name="offDuration"></param>
-		public void StartBlink(TimeSpan? onDuration = null, TimeSpan? offDuration = null)
+		public void StartBlink()
 		{
-			onDuration = onDuration ?? TimeSpan.FromMilliseconds(200);
-			offDuration = offDuration ?? TimeSpan.FromMilliseconds(200);
+			var onDuration = TimeSpan.FromMilliseconds(500);
+			var offDuration = TimeSpan.FromMilliseconds(500);
 
 			Stop();
 
 			animationTask = new Task(async () =>
 			{
 				cancellationTokenSource = new CancellationTokenSource();
-				await StartBlinkAsync((TimeSpan)onDuration, (TimeSpan)offDuration, cancellationTokenSource.Token);
+				await StartBlinkAsync(onDuration, offDuration, cancellationTokenSource.Token);
+			});
+			animationTask.Start();
+		}
+
+		/// <summary>
+		/// Blink animation that turns the LED on and off based on the OnDuration and offDuration values in ms
+		/// </summary>
+		/// <param name="onDuration"></param>
+		/// <param name="offDuration"></param>
+		public void StartBlink(TimeSpan onDuration, TimeSpan offDuration)
+		{
+			Stop();
+
+			animationTask = new Task(async () =>
+			{
+				cancellationTokenSource = new CancellationTokenSource();
+				await StartBlinkAsync(onDuration, offDuration, cancellationTokenSource.Token);
 			});
 			animationTask.Start();
 		}

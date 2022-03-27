@@ -109,14 +109,12 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Blink animation that turns the LED bar graph on and off based on the OnDuration and offDuration values in ms
+        /// Blink animation that turns the LED bar graph on (500ms) and off (500ms)
         /// </summary>
-        /// <param name="onDuration"></param>
-        /// <param name="offDuration"></param>
-        public void StartBlink(TimeSpan? onDuration = null, TimeSpan? offDuration = null)
+        public void StartBlink()
         {
-            onDuration = onDuration ?? TimeSpan.FromMilliseconds(200);
-            offDuration = offDuration ?? TimeSpan.FromMilliseconds(200);
+            var onDuration = TimeSpan.FromMilliseconds(500);
+            var offDuration = TimeSpan.FromMilliseconds(500);
 
             foreach (var led in leds)
             {
@@ -125,16 +123,43 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
+        /// Blink animation that turns the LED bar graph on and off based on the OnDuration and offDuration values in ms
+        /// </summary>
+        /// <param name="onDuration"></param>
+        /// <param name="offDuration"></param>
+        public void StartBlink(TimeSpan onDuration, TimeSpan offDuration)
+        {
+            foreach (var led in leds)
+            {
+                led.StartBlink(onDuration, offDuration);
+            }
+        }
+
+        /// <summary>
+        /// Starts a blink animation on an individual LED on (500ms) and off (500ms)
+        /// </summary>
+        /// <param name="index"></param>
+        public void SetLedBlink(int index)
+        {
+            var onDuration = TimeSpan.FromMilliseconds(500);
+            var offDuration = TimeSpan.FromMilliseconds(500);
+
+            if (index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            leds[index].StartBlink(onDuration, offDuration);
+        }
+
+        /// <summary>
         /// Starts a blink animation on an individual LED
         /// </summary>
         /// <param name="index"></param>
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
-        public void SetLedBlink(int index, TimeSpan? onDuration = null, TimeSpan? offDuration = null)
+        public void SetLedBlink(int index, TimeSpan onDuration, TimeSpan offDuration)
         {
-            onDuration = onDuration ?? TimeSpan.FromMilliseconds(200);
-            offDuration = offDuration ?? TimeSpan.FromMilliseconds(200);
-
             if (index >= Count)
             {
                 throw new ArgumentOutOfRangeException();

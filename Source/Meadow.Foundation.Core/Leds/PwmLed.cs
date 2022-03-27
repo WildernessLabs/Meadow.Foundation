@@ -124,13 +124,41 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
+        /// Start a Blink animation which sets the brightness of the LED alternating between a low and high brightness setting.
+        /// </summary>
+        public void StartBlink(float highBrightness = 1f, float lowBrightness = 0f)
+        {
+            var onDuration = TimeSpan.FromMilliseconds(500);
+            var offDuration = TimeSpan.FromMilliseconds(500);
+
+            if (highBrightness > 1 || highBrightness <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
+            }
+            if (lowBrightness >= 1 || lowBrightness < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
+            }
+            if (lowBrightness >= highBrightness)
+            {
+                throw new Exception("offBrightness must be less than onBrightness");
+            }
+
+            Stop();
+
+            animationTask = new Task(async () =>
+            {
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartBlinkAsync(onDuration, offDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
+        }
+
+        /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
         /// </summary>
-        public void StartBlink(TimeSpan? onDuration = null, TimeSpan? offDuration = null, float highBrightness = 1f, float lowBrightness = 0f)
+        public void StartBlink(TimeSpan onDuration, TimeSpan offDuration, float highBrightness = 1f, float lowBrightness = 0f)
         {
-            onDuration = onDuration ?? TimeSpan.FromMilliseconds(200);
-            offDuration = offDuration ?? TimeSpan.FromMilliseconds(200);
-
             if (highBrightness > 1 || highBrightness <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
@@ -182,12 +210,40 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
+        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting.
+        /// </summary>
+        public void StartPulse(float highBrightness = 1, float lowBrightness = 0.15F)
+        {
+            var pulseDuration = TimeSpan.FromMilliseconds(600);
+
+            if (highBrightness > 1 || highBrightness <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(highBrightness), "highBrightness must be > 0 and <= 1");
+            }
+            if (lowBrightness >= 1 || lowBrightness < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
+            }
+            if (lowBrightness >= highBrightness)
+            {
+                throw new Exception("lowBrightness must be less than highbrightness");
+            }
+
+            Stop();
+
+            animationTask = new Task(async () =>
+            {
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartPulseAsync(pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
+        }
+
+        /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
         /// </summary>
-        public void StartPulse(TimeSpan? pulseDuration = null, float highBrightness = 1, float lowBrightness = 0.15F)
+        public void StartPulse(TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F)
         {
-            pulseDuration = pulseDuration ?? TimeSpan.FromMilliseconds(600);
-
             if (highBrightness > 1 || highBrightness <= 0) 
             {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "highBrightness must be > 0 and <= 1");
@@ -206,7 +262,7 @@ namespace Meadow.Foundation.Leds
             animationTask = new Task(async () =>
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                await StartPulseAsync((TimeSpan)pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+                await StartPulseAsync(pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
             });
             animationTask.Start();
         }

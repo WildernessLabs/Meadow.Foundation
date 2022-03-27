@@ -69,6 +69,26 @@ namespace Leds.PwmLed_Sample
 
                 Thread.Sleep(1000);
 
+                Console.WriteLine("Blinking the LED for a bit.");
+                foreach (var pwmLed in pwmLeds)
+                {
+                    pwmLed.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                    Thread.Sleep(1000);
+                    pwmLed.Stop();
+                }
+
+                Thread.Sleep(1000);
+
+                Console.WriteLine("Pulsing the LED for a bit.");
+                foreach (var pwmLed in pwmLeds)
+                {
+                    pwmLed.StartPulse();
+                    Thread.Sleep(1000);
+                    pwmLed.Stop();
+                }
+
+                Thread.Sleep(1000);
+
                 Console.WriteLine("Pulsing the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {

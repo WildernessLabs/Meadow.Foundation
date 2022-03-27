@@ -76,6 +76,18 @@ namespace Leds.RgbLed_Sample
                 }
 
                 Thread.Sleep(1000);
+
+                Console.WriteLine("Blinking through each color on each RGB LED...");
+                foreach (var rgbLed in rgbLeds)
+                {
+                    for (int i = 0; i < (int)RgbLed.Colors.count; i++)
+                    {
+                        rgbLed.StartBlink((RgbLed.Colors)i, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                        Thread.Sleep(3000);
+                    }
+                }
+
+                Thread.Sleep(1000);
             }
         }
     }
