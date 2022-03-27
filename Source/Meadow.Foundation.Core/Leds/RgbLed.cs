@@ -163,14 +163,17 @@ namespace Meadow.Foundation.Leds
         /// <param name="color"></param>
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
-        public void StartBlink(Colors color, int onDuration = 200, int offDuration = 200)
+        public void StartBlink(Colors color, TimeSpan? onDuration = null, TimeSpan? offDuration = null)
         {
+            onDuration = onDuration ?? TimeSpan.FromMilliseconds(200);
+            offDuration = offDuration ?? TimeSpan.FromMilliseconds(200);
+
             Stop();
 
             animationTask = new Task(async () =>
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                await StartBlinkAsync(color, onDuration, offDuration, cancellationTokenSource.Token);
+                await StartBlinkAsync(color, (TimeSpan)onDuration, (TimeSpan)offDuration, cancellationTokenSource.Token);
             });
             animationTask.Start();
         }
@@ -183,7 +186,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="offDuration"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        protected async Task StartBlinkAsync(Colors color, int onDuration, int offDuration, CancellationToken cancellationToken)
+        protected async Task StartBlinkAsync(Colors color, TimeSpan onDuration, TimeSpan offDuration, CancellationToken cancellationToken)
         {
             while (true)
             {
