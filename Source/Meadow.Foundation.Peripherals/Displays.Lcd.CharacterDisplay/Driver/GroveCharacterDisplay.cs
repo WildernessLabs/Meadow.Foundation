@@ -58,5 +58,84 @@ namespace Meadow.Foundation.Displays.Lcd
             var data = new byte[] { 0x40, value };
             i2cPeripheral.Write(data);
         }
+
+        public void DisplayOn()
+        {
+            displayControl &= (byte)~LCD_DISPLAYON;
+            Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
+        }
+
+        public void DisplayOff()
+        {
+            displayControl |= LCD_DISPLAYON;
+            Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
+        }
+
+        // Turns the underline cursor on/off
+        public void ShowCursor()
+        {
+            displayControl &= (byte)~LCD_CURSORON;
+            Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
+        }
+
+        public void HideCursor()
+        {
+            displayControl |= LCD_CURSORON;
+            Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
+        }
+
+        // Turn on and off the blinking cursor
+        public void BlinkCursor(bool blink)
+        {
+            if (blink)
+            {
+                displayControl &= (byte)~LCD_BLINKON;
+                Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
+            }
+            else
+            {
+                displayControl |= LCD_BLINKON;
+                Command((byte)((byte)I2CCommands.LCD_DISPLAYCONTROL | displayControl));
+            }
+        }
+
+        // These commands scroll the display without changing the RAM
+        public void ScrollDisplayLeft()
+        {
+            Command((byte)((byte)I2CCommands.LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT));
+        }
+        public void ScrollDisplayRight()
+        {
+            Command((byte)((byte)I2CCommands.LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT));
+        }
+
+        // This is for text that flows Left to Right
+        public void LeftToRight()
+        {
+            displayMode |= LCD_ENTRYLEFT;
+            Command((byte)((byte)I2CCommands.LCD_ENTRYMODESET | displayMode));
+        }
+
+        // This is for text that flows Right to Left
+        public void RightToLeft()
+        {
+            displayMode &= (byte)~LCD_ENTRYLEFT;
+            Command((byte)((byte)I2CCommands.LCD_ENTRYMODESET | displayMode));
+        }
+
+        // This will 'right justify' text from the cursor
+        public void Autoscroll(bool scroll)
+        {
+            if(scroll)
+            {
+                displayMode |= LCD_ENTRYSHIFTINCREMENT;
+                Command((byte)((byte)I2CCommands.LCD_ENTRYMODESET | displayMode));
+            }
+            else
+            {
+                displayMode &= (byte)~LCD_ENTRYSHIFTINCREMENT;
+                Command((byte)((byte)I2CCommands.LCD_ENTRYMODESET | displayMode));
+            }    
+        }
     }
 }
