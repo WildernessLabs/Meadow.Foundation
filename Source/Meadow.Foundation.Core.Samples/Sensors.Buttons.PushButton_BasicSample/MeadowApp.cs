@@ -32,7 +32,6 @@ namespace MeadowApp
                 redPwmPin: Device.Pins.OnboardLedRed,
                 greenPwmPin: Device.Pins.OnboardLedGreen,
                 bluePwmPin: Device.Pins.OnboardLedBlue,
-                3.3f, 3.3f, 3.3f,
                 Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
 
             //===== Push Button

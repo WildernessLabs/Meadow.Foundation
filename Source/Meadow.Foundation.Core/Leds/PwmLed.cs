@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
+using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,7 +47,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Gets the forward voltage value
         /// </summary>
-        public float ForwardVoltage { get; protected set; }
+        public Voltage ForwardVoltage { get; protected set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Leds.PwmLed"/> class.
@@ -58,9 +59,16 @@ namespace Meadow.Foundation.Leds
         /// hooked to ground or High. Typically used for RGB Leds which can have
         /// either a common cathode, or common anode. But can also enable an LED
         /// to be reversed by inverting the PWM signal.</param>
-        public PwmLed(IPwmOutputController device, IPin pin,
-            float forwardVoltage, CircuitTerminationType terminationType = CircuitTerminationType.CommonGround) : 
-            this (device.CreatePwmPort(pin), forwardVoltage, terminationType) { }
+        public PwmLed(
+            IPwmOutputController device, 
+            IPin pin,
+            Voltage forwardVoltage, 
+            CircuitTerminationType terminationType = CircuitTerminationType.CommonGround) : 
+            this (
+                device.CreatePwmPort(pin), 
+                forwardVoltage, 
+                terminationType) 
+        { }
 
         /// <summary>
         /// Creates a new PwmLed on the specified PWM pin and limited to the appropriate 
@@ -70,11 +78,13 @@ namespace Meadow.Foundation.Leds
         /// <param name="pwmPort">Port to control</param>
         /// <param name="forwardVoltage">Forward voltage of led</param>
         /// <param name="terminationType">Termination type of LED</param>
-        public PwmLed(IPwmPort pwmPort, float forwardVoltage,
+        public PwmLed(
+            IPwmPort pwmPort, 
+            Voltage forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
             // validate and persist forward voltage
-            if (forwardVoltage < 0 || forwardVoltage > 3.3F)
+            if (forwardVoltage < new Voltage(0) || forwardVoltage > new Voltage(3.3))
             {
                 throw new ArgumentOutOfRangeException(nameof(forwardVoltage), "error, forward voltage must be between 0, and 3.3");
             }

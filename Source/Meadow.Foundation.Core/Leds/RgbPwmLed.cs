@@ -1,9 +1,9 @@
+using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
-using Meadow.Hardware;
 using System.Threading.Tasks;
 using static Meadow.Peripherals.Leds.IRgbLed;
-using Meadow.Devices;
 
 namespace Meadow.Foundation.Leds
 {
@@ -17,7 +17,8 @@ namespace Meadow.Foundation.Leds
     public class RgbPwmLed
     {
         readonly int DEFAULT_FREQUENCY = 200; //hz
-        readonly float MAX_FORWARD_VOLTAGE = 3.3f;
+        readonly Voltage MAX_FORWARD_VOLTAGE = new Voltage(3.3);
+        readonly Voltage MIN_FORWARD_VOLTAGE = new Voltage(0);
         readonly float DEFAULT_DUTY_CYCLE = 0f;
 
         Task? animationTask = null;
@@ -67,23 +68,75 @@ namespace Meadow.Foundation.Leds
 
         /// <summary>
         /// Gets the common type
-        /// </summary>        
+        /// </summary>
         public CommonType Common { get; protected set; }
 
         /// <summary>
         /// Get the red LED forward voltage
         /// </summary>
-        public float RedForwardVoltage { get; protected set; }
+        public Voltage RedForwardVoltage { get; protected set; }
 
         /// <summary>
         /// Get the green LED forward voltage
         /// </summary>
-        public float GreenForwardVoltage { get; protected set; }
+        public Voltage GreenForwardVoltage { get; protected set; }
 
         /// <summary>
         /// Get the blue LED forward voltage
         /// </summary>
-        public float BlueForwardVoltage { get; protected set; }
+        public Voltage BlueForwardVoltage { get; protected set; }
+
+        /// <summary>
+        /// Create instance of RgbPwmLed
+        /// </summary>
+        /// <param name="redPwm"></param>
+        /// <param name="greenPwm"></param>
+        /// <param name="bluePwm"></param>
+        /// <param name="commonType"></param>
+        public RgbPwmLed(
+            IPwmPort redPwm,
+            IPwmPort greenPwm,
+            IPwmPort bluePwm,
+            CommonType commonType = CommonType.CommonCathode)
+        {
+            RedPwm = redPwm;
+            GreenPwm = greenPwm;
+            BluePwm = bluePwm;
+
+            RedForwardVoltage = TypicalForwardVoltage.Red;
+            GreenForwardVoltage = TypicalForwardVoltage.Green;
+            BlueForwardVoltage = TypicalForwardVoltage.Blue;
+
+            Common = commonType;
+
+            // calculate and set maximum PWM duty cycles
+            maxRedDutyCycle = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
+            maxGreenDutyCycle = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
+            maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);
+
+            ResetPwms();
+        }
+
+        /// <summary>
+        /// Create instance of RgbPwmLed
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="redPwmPin"></param>
+        /// <param name="greenPwmPin"></param>
+        /// <param name="bluePwmPin"></param>
+        /// <param name="commonType"></param>
+        public RgbPwmLed(
+            IPwmOutputController device,
+            IPin redPwmPin,
+            IPin greenPwmPin,
+            IPin bluePwmPin,
+            CommonType commonType = CommonType.CommonCathode) :
+            this(
+                device.CreatePwmPort(redPwmPin),
+                device.CreatePwmPort(greenPwmPin),
+                device.CreatePwmPort(bluePwmPin),
+                commonType)
+        { }
 
         /// <summary>
         /// Instantiates a RgbPwmLed object with the especified IO device, connected
@@ -97,17 +150,23 @@ namespace Meadow.Foundation.Leds
         /// <param name="greenLedForwardVoltage"></param>
         /// <param name="blueLedForwardVoltage"></param>
         /// <param name="commonType"></param>
-        public RgbPwmLed(IPwmOutputController device,
-            IPin redPwmPin, IPin greenPwmPin, IPin bluePwmPin,
-            float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
-            float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
-            float blueLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
+        public RgbPwmLed(
+            IPwmOutputController device,
+            IPin redPwmPin, 
+            IPin greenPwmPin, 
+            IPin bluePwmPin,
+            Voltage redLedForwardVoltage,
+            Voltage greenLedForwardVoltage,
+            Voltage blueLedForwardVoltage,
             CommonType commonType = CommonType.CommonCathode) :
-            this(device.CreatePwmPort(redPwmPin),
-                  device.CreatePwmPort(greenPwmPin),
-                  device.CreatePwmPort(bluePwmPin),
-                  redLedForwardVoltage, greenLedForwardVoltage, blueLedForwardVoltage,
-                  commonType)
+            this(
+                device.CreatePwmPort(redPwmPin),
+                device.CreatePwmPort(greenPwmPin),
+                device.CreatePwmPort(bluePwmPin),
+                redLedForwardVoltage, 
+                greenLedForwardVoltage, 
+                blueLedForwardVoltage,
+                commonType)
         { }
 
         /// <summary>
@@ -124,26 +183,29 @@ namespace Meadow.Foundation.Leds
         /// <param name="greenLedForwardVoltage"></param>
         /// <param name="blueLedForwardVoltage"></param>
         /// <param name="commonType"></param>
-        public RgbPwmLed(IPwmPort redPwm, IPwmPort greenPwm, IPwmPort bluePwm,
-            float redLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
-            float greenLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
-            float blueLedForwardVoltage = TypicalForwardVoltage.ResistorLimited,
+        public RgbPwmLed(
+            IPwmPort redPwm, 
+            IPwmPort greenPwm, 
+            IPwmPort bluePwm,
+            Voltage redLedForwardVoltage,
+            Voltage greenLedForwardVoltage,
+            Voltage blueLedForwardVoltage,
             CommonType commonType = CommonType.CommonCathode)
         {
             // validate and persist forward voltages
-            if (redLedForwardVoltage < 0 || redLedForwardVoltage > MAX_FORWARD_VOLTAGE)
+            if (redLedForwardVoltage < MIN_FORWARD_VOLTAGE || redLedForwardVoltage > MAX_FORWARD_VOLTAGE)
             {
                 throw new ArgumentOutOfRangeException(nameof(redLedForwardVoltage), "error, forward voltage must be between 0, and 3.3");
             }
             RedForwardVoltage = redLedForwardVoltage;
 
-            if (greenLedForwardVoltage < 0 || greenLedForwardVoltage > MAX_FORWARD_VOLTAGE)
+            if (greenLedForwardVoltage < MIN_FORWARD_VOLTAGE || greenLedForwardVoltage > MAX_FORWARD_VOLTAGE)
             {
                 throw new ArgumentOutOfRangeException(nameof(greenLedForwardVoltage), "error, forward voltage must be between 0, and 3.3");
             }
             GreenForwardVoltage = greenLedForwardVoltage;
 
-            if (blueLedForwardVoltage < 0 || blueLedForwardVoltage > MAX_FORWARD_VOLTAGE)
+            if (blueLedForwardVoltage < MIN_FORWARD_VOLTAGE || blueLedForwardVoltage > MAX_FORWARD_VOLTAGE)
             {
                 throw new ArgumentOutOfRangeException(nameof(blueLedForwardVoltage), "error, forward voltage must be between 0, and 3.3");
             }
@@ -151,14 +213,14 @@ namespace Meadow.Foundation.Leds
 
             Common = commonType;
 
-            // calculate and set maximum PWM duty cycles
-            maxRedDutyCycle = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
-            maxGreenDutyCycle = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
-            maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);            
-
             RedPwm = redPwm;
             GreenPwm = greenPwm;
             BluePwm = bluePwm;
+
+            // calculate and set maximum PWM duty cycles
+            maxRedDutyCycle = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
+            maxGreenDutyCycle = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
+            maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);
 
             ResetPwms();
         }

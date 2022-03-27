@@ -58,12 +58,16 @@ namespace Leds.Led_Sample
                     Thread.Sleep(100);
                 }
 
+                Thread.Sleep(1000);
+
                 Console.WriteLine("Turning off each led every 100ms");
                 foreach (var led in leds)
                 {
                     led.IsOn = false;
                     Thread.Sleep(100);
                 }
+
+                Thread.Sleep(1000);
 
                 Console.WriteLine("Turning on and off each led for 100ms");
                 foreach (var led in leds)
@@ -73,6 +77,8 @@ namespace Leds.Led_Sample
                     led.IsOn = false;
                 }
 
+                Thread.Sleep(1000);
+
                 Console.WriteLine("Blinking the LEDs for a second each");
                 foreach (var led in leds)
                 {
@@ -80,6 +86,8 @@ namespace Leds.Led_Sample
                     Thread.Sleep(1000);
                     led.Stop();
                 }
+
+                Thread.Sleep(1000);
             }
         }
     }
