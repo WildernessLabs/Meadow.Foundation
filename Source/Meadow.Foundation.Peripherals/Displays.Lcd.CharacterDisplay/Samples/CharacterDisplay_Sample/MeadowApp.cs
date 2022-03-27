@@ -17,7 +17,8 @@ namespace Displays.Lcd.CharacterDisplay_Sample
         {
             //InitGpio();
             //InitGpioWithPWM();
-            InitI2c();
+            //InitI2c();
+            InitGrove();
 
             TestCharacterDisplay();
 
@@ -68,6 +69,19 @@ namespace Displays.Lcd.CharacterDisplay_Sample
                 i2cBus: Device.CreateI2cBus(I2cBusSpeed.Standard),
                 address: (byte)I2cCharacterDisplay.Addresses.Default,
                 rows: 4, columns: 20
+            );
+        }
+
+        void InitGrove()
+        {
+            Console.WriteLine("InitGrove...");
+
+            display = new CharacterDisplay
+            (
+                i2cBus: Device.CreateI2cBus(I2cBusSpeed.Standard),
+                address: (byte)I2cCharacterDisplay.Addresses.Grove,
+                rows: 2, columns: 16,
+                isGroveDisplay: true
             );
         }
 

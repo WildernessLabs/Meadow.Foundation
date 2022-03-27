@@ -19,7 +19,11 @@
             /// <summary>
             /// Default bus address
             /// </summary>
-            Default = Address_0x27
+            Default = Address_0x27,
+            /// <summary>
+            /// Grove bus address
+            /// </summary>
+            Grove = Address_0x3E
         }
     }
 }

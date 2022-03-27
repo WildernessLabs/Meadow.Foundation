@@ -8,14 +8,14 @@ namespace Meadow.Foundation.Displays.Lcd
     {
         protected II2cPeripheral i2cPeripheral;
 
-        private byte displayControl;
-        private byte displayMode;
+        protected byte displayControl;
+        protected byte displayMode;
         private byte backlightValue;
 
-        private byte cursorLine = 0;
-        private byte cursorColumn = 0;
+        protected byte cursorLine = 0;
+        protected byte cursorColumn = 0;
 
-        enum I2CCommands
+        protected enum I2CCommands
         {
             LCD_CLEARDISPLAY = 0x01,
             LCD_RETURNHOME = 0x02,
@@ -28,35 +28,35 @@ namespace Meadow.Foundation.Displays.Lcd
         }
   
         // flags for display entry mode
-        static byte LCD_ENTRYRIGHT = 0x00;
-        static byte LCD_ENTRYLEFT = 0x02;
-        static byte LCD_ENTRYSHIFTINCREMENT = 0x01;
-        static byte LCD_ENTRYSHIFTDECREMENT = 0x00;
+        protected static byte LCD_ENTRYRIGHT = 0x00;
+        protected static byte LCD_ENTRYLEFT = 0x02;
+        protected static byte LCD_ENTRYSHIFTINCREMENT = 0x01;
+        protected static byte LCD_ENTRYSHIFTDECREMENT = 0x00;
         // flags for display on/off control
-        static byte LCD_DISPLAYON = 0x04;
-        static byte LCD_DISPLAYOFF = 0x00;
-        static byte LCD_CURSORON = 0x02;
-        static byte LCD_CURSOROFF = 0x00;
-        static byte LCD_BLINKON = 0x01;
-        static byte LCD_BLINKOFF = 0x00;
+        protected static byte LCD_DISPLAYON = 0x04;
+        protected static byte LCD_DISPLAYOFF = 0x00;
+        protected static byte LCD_CURSORON = 0x02;
+        protected static byte LCD_CURSOROFF = 0x00;
+        protected static byte LCD_BLINKON = 0x01;
+        protected static byte LCD_BLINKOFF = 0x00;
         // flags for display/cursor shift
-        static byte LCD_DISPLAYMOVE = 0x08;
-        static byte LCD_CURSORMOVE = 0x00;
-        static byte LCD_MOVERIGHT = 0x04;
-        static byte LCD_MOVELEFT = 0x00;
+        protected static byte LCD_DISPLAYMOVE = 0x08;
+        protected static byte LCD_CURSORMOVE = 0x00;
+        protected static byte LCD_MOVERIGHT = 0x04;
+        protected static byte LCD_MOVELEFT = 0x00;
         // flags for function set
-        static byte LCD_8BITMODE = 0x10;
-        static byte LCD_4BITMODE = 0x00;
-        static byte LCD_2LINE = 0x08;
-        static byte LCD_1LINE = 0x00;
-        static byte LCD_5x10DOTS = 0x04;
-        static byte LCD_5x8DOTS = 0x00;
+        protected static byte LCD_8BITMODE = 0x10;
+        protected static byte LCD_4BITMODE = 0x00;
+        protected static byte LCD_2LINE = 0x08;
+        protected static byte LCD_1LINE = 0x00;
+        protected static byte LCD_5x10DOTS = 0x04;
+        protected static byte LCD_5x8DOTS = 0x00;
         // flags for backlight control
-        static byte LCD_BACKLIGHT = 0x08;
-        static byte LCD_NOBACKLIGHT = 0x00;
-        static byte En = 0b00000100;  // Enable bit
-        static byte Rw = 0b00000010;  // Read/Write bit
-        static byte Rs = 0b00000001;  // Register select bit
+        protected static byte LCD_BACKLIGHT = 0x08;
+        protected static byte LCD_NOBACKLIGHT = 0x00;
+        protected static byte En = 0b00000100;  // Enable bit
+        protected static byte Rw = 0b00000010;  // Read/Write bit
+        protected static byte Rs = 0b00000001;  // Register select bit
 
         public TextDisplayConfig DisplayConfig { get; protected set; }
 
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Displays.Lcd
             Initialize();
         }
 
-        void Initialize()
+        protected virtual void Initialize()
         {
             var displayFunction = (byte)(LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS);
 
@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Displays.Lcd
             Thread.Sleep(2); 
         }
 
-        void Command(byte value)
+        protected virtual void Command(byte value)
         {
             Send(value, 0);
         }
@@ -136,7 +136,7 @@ namespace Meadow.Foundation.Displays.Lcd
             i2cPeripheral.Write((byte)(value | backlightValue));
         }
 
-        void Send(byte value, byte mode)
+        protected virtual void Send(byte value, byte mode)
         {
             byte highnib = (byte)(value & 0xf0);
             byte lownib = (byte)((value << 4) & 0xf0);
