@@ -23,7 +23,7 @@ namespace Displays.Tft.ST7789_Sample
         resetPin: Device.Pins.D04,
     */
 
-    public class MeadowApp : App<F7MicroV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         //<!—SNIP—>
 

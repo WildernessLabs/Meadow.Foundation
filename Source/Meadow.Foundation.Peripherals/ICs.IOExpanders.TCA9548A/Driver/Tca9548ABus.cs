@@ -10,6 +10,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private readonly Tca9548a _tca9548a;
         private readonly byte _busIndex;
 
+        private byte[] _sendBuffer = new byte[1];
+
         internal Tca9548aBus(Tca9548a tca9548A, int frequency, byte busIndex)
         {
             _tca9548a = tca9548A;
@@ -26,7 +28,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             try
             {
                 _tca9548a.SelectBus(_busIndex);
-                _tca9548a.Bus.WriteData(peripheralAddress, data);
+                _tca9548a.Bus.Write(peripheralAddress, data);
             }
             finally
             {
@@ -34,21 +36,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        /*
         public void WriteData(byte peripheralAddress, IEnumerable<byte> data)
-        {
-            _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
-            try
-            {
-                _tca9548a.SelectBus(_busIndex);
-                _tca9548a.Bus.WriteData(peripheralAddress, data);
-            }
-            finally
-            {
-                _tca9548a.BusSelectorSemaphore.Release();
-            }
-        }
-
-        public void Write(byte peripheralAddress, Span<byte> data)
         {
             _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
             try
@@ -60,16 +49,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 _tca9548a.BusSelectorSemaphore.Release();
             }
-        }
+        }*/
 
-        [Obsolete("This overload if WriteReadData is obsolete for performance reasons and will be removed in a future release.  Migrate to another overload.", false)]
-        public byte[] WriteReadData(byte peripheralAddress, int byteCountToRead, params byte[] dataToWrite)
+        public void Write(byte peripheralAddress, Span<byte> data)
         {
             _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
             try
             {
                 _tca9548a.SelectBus(_busIndex);
-                return _tca9548a.Bus.WriteReadData(peripheralAddress, byteCountToRead, dataToWrite);
+                _tca9548a.Bus.Write(peripheralAddress, data);
             }
             finally
             {
@@ -97,7 +85,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             try
             {
                 _tca9548a.SelectBus(_busIndex);
-                return _tca9548a.Bus.ReadData(peripheralAddress, numberOfBytes);
+                var data = new byte[numberOfBytes];
+                _tca9548a.Bus.Read(peripheralAddress, data);
+                return data;
             }
             finally
             {
@@ -105,13 +95,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        public void WriteData(byte peripheralAddress, byte[] data, int length)
+        public void WriteData(byte peripheralAddress, Span<byte> data, int length)
         {
             _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
-            try {
+            try 
+            {
                 _tca9548a.SelectBus(_busIndex);
-                _tca9548a.Bus.WriteData(peripheralAddress, data, length);
-            } finally {
+                _tca9548a.Bus.Write(peripheralAddress, data[..length]);
+            } 
+            finally
+            {
                 _tca9548a.BusSelectorSemaphore.Release();
             }
         }
@@ -119,10 +112,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public void ExchangeData(byte peripheralAddress, Span<byte> writeBuffer, int writeCount, Span<byte> readBuffer, int readCount)
         {
             _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
-            try {
+            try
+            {
                 _tca9548a.SelectBus(_busIndex);
                 _tca9548a.Bus.Exchange(peripheralAddress, writeBuffer[0..writeCount], readBuffer[0..readCount]);
-            } finally {
+            } 
+            finally 
+            {
                 _tca9548a.BusSelectorSemaphore.Release();
             }
         }

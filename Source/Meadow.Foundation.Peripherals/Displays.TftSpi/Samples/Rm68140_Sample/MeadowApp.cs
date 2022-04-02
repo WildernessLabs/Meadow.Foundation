@@ -8,7 +8,7 @@ using Meadow.Units;
 
 namespace Displays.Tft.Rm68140_Sample
 {
-    public class MeadowApp : App<F7MicroV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         //<!—SNIP—>
 

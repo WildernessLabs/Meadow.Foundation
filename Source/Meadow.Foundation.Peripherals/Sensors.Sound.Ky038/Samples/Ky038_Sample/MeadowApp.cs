@@ -5,7 +5,7 @@ using Meadow.Foundation.Sensors.Sound;
 
 namespace Sensors.Sound.Ky038_Sample
 {
-    public class MeadowApp : App<F7MicroV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         public MeadowApp()
         {

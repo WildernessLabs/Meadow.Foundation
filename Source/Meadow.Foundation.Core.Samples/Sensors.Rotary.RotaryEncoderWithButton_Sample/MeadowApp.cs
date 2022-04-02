@@ -6,7 +6,7 @@ using Meadow.Peripherals.Sensors.Rotary;
 
 namespace Sensors.Rotary.RotaryEncoderWithButton_Sample
 {
-    public class MeadowApp : App<F7MicroV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         protected int value = 0;
         protected RotaryEncoderWithButton rotaryEncoder;

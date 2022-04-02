@@ -10,7 +10,7 @@ using Meadow.Hardware;
 
 namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 {
-    public class MeadowApp : App<F7MicroV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         Mcp23x08 _mcp;
 

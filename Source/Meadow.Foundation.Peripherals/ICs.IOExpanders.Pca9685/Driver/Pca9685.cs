@@ -57,8 +57,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public virtual void Initialize()
         {
-            i2CBus.WriteData(address, Mode1, 0X00);
-            i2CBus.WriteData(address, Mode1);
+            i2CBus.Write(address, new byte[] { Mode1, 0x00 });
+            i2CBus.Write(address, new byte[] { Mode1 });
 
             Thread.Sleep(5);
 
@@ -139,7 +139,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         protected virtual void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
         {
-            i2CBus.WriteData(address, register, ledXOnL, ledXOnH, ledXOffL, ledXOffH);
+            i2CBus.Write(address, new byte[] { register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
         }
 
         protected virtual void Write(byte register, byte value)

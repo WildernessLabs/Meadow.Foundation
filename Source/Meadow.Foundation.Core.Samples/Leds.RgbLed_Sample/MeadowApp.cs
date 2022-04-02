@@ -7,7 +7,7 @@ using Meadow.Foundation.Leds;
 
 namespace Leds.RgbLed_Sample
 {
-    public class MeadowApp : App<F7MicroV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         protected List<RgbLed> rgbLeds;
 
