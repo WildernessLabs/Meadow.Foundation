@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Sensors.GPS.NMEA_SSD1309_Sample
 {
-    public class MeadowApp : App<F7MicroV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         //SerialTextFile serialTextFile;
         NmeaSentenceProcessor nmea;

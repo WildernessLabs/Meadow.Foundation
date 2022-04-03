@@ -10,7 +10,7 @@ using Meadow.Units;
 
 namespace Sensors.Distance.Vl53l0x_St7789_Sample
 {
-    public class MeadowApp : App<F7MicroV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         St7789 display;
         MicroGraphics graphics;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -80,6 +81,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 AllPins.Add(GP6);
                 AllPins.Add(GP7);
             }
-		}
+
+            public IEnumerator<IPin> GetEnumerator() => AllPins.GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
 	}
 }

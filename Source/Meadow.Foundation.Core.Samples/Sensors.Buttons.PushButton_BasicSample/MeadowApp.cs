@@ -13,7 +13,7 @@ namespace MeadowApp
     /// terminates on the `3V3` rail on one end, and `D02` on the other, such
     /// that when the button is pressed, `D02` is raised `HIGH`.
     /// </summary>
-    public class MeadowApp : App<F7MicroV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         RgbPwmLed onboardLed;
         PushButton pushButton;

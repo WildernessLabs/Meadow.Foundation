@@ -8,7 +8,7 @@ using Meadow.Gateway.WiFi;
 
 namespace Maple.ServerSimpleMeadow_Sample
 {
-    public class MeadowApp : App<F7MicroV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         MapleServer server;
 

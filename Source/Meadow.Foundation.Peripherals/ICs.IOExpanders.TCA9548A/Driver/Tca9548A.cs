@@ -146,7 +146,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         ///<inheritdoc cref="Write"/>
         public void Write(byte value)
         {
-            Bus.WriteData(Address, value);
+            Bus.Write(Address, new byte[] { value });
         }
 
         /// <inheritdoc cref="WriteBytes"/>
@@ -205,7 +205,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <inheritdoc cref="ReadBytes"/>
         public byte[] ReadBytes(ushort numberOfBytes)
         {
-            return Bus.ReadData(Address, numberOfBytes);
+            var data = new byte[numberOfBytes];
+            Bus.Read(Address, data);
+            return data;
         }
 
         /// <inheritdoc cref="ReadRegister"/>

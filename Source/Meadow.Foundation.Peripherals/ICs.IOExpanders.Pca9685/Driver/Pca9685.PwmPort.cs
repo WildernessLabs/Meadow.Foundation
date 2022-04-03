@@ -84,7 +84,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             private void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
             {
-                _i2cBus.WriteData(_address, register, ledXOnL, ledXOnH, ledXOffL, ledXOffH);
+                _i2cBus.Write(_address, new byte[] {register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
             }
         }
     }
