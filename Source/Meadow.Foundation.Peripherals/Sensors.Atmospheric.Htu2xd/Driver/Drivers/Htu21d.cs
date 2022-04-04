@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 Peripheral?.Write((byte)Registers.TEMPERATURE_MEASURE_NOHOLD);
                 Thread.Sleep(20); // Maximum conversion time is 12ms (page 5 of the datasheet)
 
-                Peripheral?.Read(ReadBuffer.Span[0..3]);// 2 data bytes plus a checksum (we ignore the checksum here)
+                Peripheral?.Read(ReadBuffer.Span[0..2]);// 2 data bytes plus a checksum (we ignore the checksum here)
                 var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
                 conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), Units.Temperature.UnitType.Celsius);
 
