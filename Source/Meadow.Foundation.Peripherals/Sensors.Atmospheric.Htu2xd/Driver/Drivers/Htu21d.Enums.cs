@@ -1,24 +1,7 @@
-﻿using System;
-
-namespace Meadow.Foundation.Sensors.Atmospheric
+﻿namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Htu21d
     {
-        /// <summary>
-        ///     Valid addresses for the sensor.
-        /// </summary>
-        public enum Addresses : byte
-        {
-            /// <summary>
-            /// Bus address 0x40
-            /// </summary>
-            Address_0x40 = 0x40,
-            /// <summary>
-            /// Default bus address
-            /// </summary>
-            Default = Address_0x40
-        }
-
         private const byte SOFT_RESET = 0xFE;
 
         private const byte TEMPERATURE_MEASURE_NOHOLD = 0xF3;
@@ -42,11 +25,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             TEMP12_HUM8 = 0x01,
             TEMP13_HUM10 = 0x80,
             TEMP11_HUM11 = 0x81,
-        }
-
-        private enum Register : byte
-        {
-
         }
     }
 }
