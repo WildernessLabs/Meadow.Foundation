@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected void Initialize ()
         {
-            Peripheral?.Write(SOFT_RESET);
+            Peripheral?.Write((byte)Registers.SOFT_RESET);
 					 			
 			Thread.Sleep(100);
 
@@ -49,7 +49,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return await Task.Run(() => 
             {
                 // humidity
-                Peripheral?.Write(HUMDITY_MEASURE_NOHOLD);
+                Peripheral?.Write((byte)Registers.HUMDITY_MEASURE_NOHOLD);
                 Thread.Sleep(20); // Maximum conversion time is 12ms (page 5 of the datasheet)
              
                 Peripheral?.Read(ReadBuffer.Span[0..2]);// 2 data bytes plus a checksum (we ignore the checksum here)
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 conditions.Humidity = new RelativeHumidity(humidity, HU.Percent);
 
                 // temperature
-                Peripheral?.Write(TEMPERATURE_MEASURE_NOHOLD);
+                Peripheral?.Write((byte)Registers.TEMPERATURE_MEASURE_NOHOLD);
                 Thread.Sleep(20); // Maximum conversion time is 12ms (page 5 of the datasheet)
 
                 Peripheral?.Read(ReadBuffer.Span[0..3]);// 2 data bytes plus a checksum (we ignore the checksum here)
@@ -78,14 +78,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             if (Peripheral == null) return;
 
-            var register = Peripheral.ReadRegister(READ_HEATER_REGISTER);
+            var register = Peripheral.ReadRegister((byte)Registers.READ_HEATER_REGISTER);
             register &= 0xfd;
 
             if (heaterOn)
             {
                 register |= 0x02;
             }
-            Peripheral.WriteRegister(WRITE_HEATER_REGISTER, register);
+            Peripheral.WriteRegister((byte)Registers.WRITE_HEATER_REGISTER, register);
         }
 		
 		//Set sensor resolution
@@ -101,7 +101,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             if (Peripheral == null) return;
 
-            var register = Peripheral.ReadRegister(READ_USER_REGISTER);
+            var register = Peripheral.ReadRegister((byte)Registers.READ_USER_REGISTER);
 
             var res = (byte)resolution;
 
@@ -110,7 +110,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             register |= res; //Mask in the requested resolution bits
 
             //Request a write to user register
-            Peripheral.WriteRegister(WRITE_USER_REGISTER, register); //Write the new resolution bits
+            Peripheral.WriteRegister((byte)Registers.WRITE_USER_REGISTER, register); //Write the new resolution bits
         }
     }
 }
