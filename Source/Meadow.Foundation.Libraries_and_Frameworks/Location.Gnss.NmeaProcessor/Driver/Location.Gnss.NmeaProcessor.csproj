@@ -6,13 +6,13 @@
     <AssemblyName>NMEA</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor</PackageId>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, NmeaParsing, Gnss</PackageTags>
+    <PackageTags>Meadow.Foundation, Nmea, Gnss</PackageTags>
     <Version>0.1.42</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for Nmea Parsing</Description>
+    <Description>GNSS NMEA parsing library</Description>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

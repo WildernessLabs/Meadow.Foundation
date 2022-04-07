@@ -1,7 +1,7 @@
 ﻿using System;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
+namespace Meadow.Foundation.Sensors.Location.Gnss
 {
     // TODO: Should this be a struct with fields?
     /// <summary>

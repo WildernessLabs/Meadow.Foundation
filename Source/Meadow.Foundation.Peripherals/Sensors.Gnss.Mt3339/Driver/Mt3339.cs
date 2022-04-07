@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
+using Meadow.Foundation.Sensors.Location.Gnss;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 

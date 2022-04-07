@@ -1,7 +1,7 @@
 ﻿using System;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
+namespace Meadow.Foundation.Sensors.Location.Gnss
 {
     /// <summary>
     /// Parses VTG (Velocity Made Good) messages from a GPS/GNSS receiver.

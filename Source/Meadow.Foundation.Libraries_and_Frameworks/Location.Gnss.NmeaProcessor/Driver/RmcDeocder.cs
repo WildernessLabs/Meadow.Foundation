@@ -2,7 +2,7 @@
 using Meadow.Peripherals.Sensors.Location;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
+namespace Meadow.Foundation.Sensors.Location.Gnss
 {
     /// <summary>
     /// Decode RMC - Recommended Minimum Specific GPS messages.
