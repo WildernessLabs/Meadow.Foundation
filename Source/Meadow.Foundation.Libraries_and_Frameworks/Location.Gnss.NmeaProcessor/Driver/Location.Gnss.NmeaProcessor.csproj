@@ -1,19 +1,22 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>DataLoggers</AssemblyName>
+    <AssemblyName>NmeaProcessor</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.DataLoggers</PackageId>
-    <PackageIconUrl>https://github.com/WildernessLabs/Meadow.Foundation/blob/master/Source/icon.png?raw=true</PackageIconUrl>
+    <PackageId>Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor</PackageId>
+    <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, DataLoggers</PackageTags>
-    <Version>0.5.43</Version>
+    <PackageTags>Meadow.Foundation, Nmea, Gnss</PackageTags>
+    <Version>0.1.42</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Data logger library</Description>
+    <Description>GNSS NMEA parsing library</Description>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
