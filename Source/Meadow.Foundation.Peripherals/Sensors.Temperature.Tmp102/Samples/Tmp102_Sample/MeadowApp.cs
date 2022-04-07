@@ -11,7 +11,7 @@ namespace Sensors.Temperature.Tmp102_Sample
 
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Tmp102 tmp102;
 
@@ -39,7 +39,7 @@ namespace Sensors.Temperature.Tmp102_Sample
             tmp102.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void TestRead()
         {

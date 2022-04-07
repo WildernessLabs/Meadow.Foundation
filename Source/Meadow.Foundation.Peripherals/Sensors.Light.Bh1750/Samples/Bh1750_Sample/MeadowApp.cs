@@ -9,7 +9,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Bh1750 sensor;
 
@@ -56,6 +56,6 @@ namespace MeadowApp
             Console.WriteLine($"   Light: {result.Lux:N2}Lux");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

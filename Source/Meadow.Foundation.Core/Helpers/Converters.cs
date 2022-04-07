@@ -6,16 +6,16 @@ namespace Meadow.Foundation
     // consider mari-kondo'ing this.
 
     /// <summary>
-    ///     Provide a mechanism to convert from on type (typically string) to
-    ///     another .NET type.
-    ///     This class provide methods that are available in .NET not in NETMF, for
-    ///     example double.TryParse is available, but int.TryParse is not.
+    /// Provide a mechanism to convert from on type (typically string) to
+    /// another .NET type.
+    /// This class provide methods that are available in .NET not in NETMF, for
+    /// example double.TryParse is available, but int.TryParse is not.
     /// </summary>
     public class Converters
     {
         /// <summary>
-        ///     Parse a string and return the integer representation of the string or the
-        ///     default value.
+        /// Parse a string and return the integer representation of the string or the
+        /// default value.
         /// </summary>
         /// <param name="value">String containing the value to be converted.</param>
         /// <param name="defaultValue">Default value in the case where the string cannot be parsed.</param>
@@ -32,8 +32,8 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        ///     Parse a string and return the double representation of the string or the
-        ///     default value.
+        /// Parse a string and return the double representation of the string or the
+        /// default value.
         /// </summary>
         /// <param name="value">String containing the value to be converted.</param>
         /// <param name="defaultValue">Default value in the case where the string cannot be parsed.</param>
@@ -50,7 +50,7 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        ///     Convert a BCD value in a byte into a decimal representation.
+        /// Convert a BCD value in a byte into a decimal representation.
         /// </summary>
         /// <param name="bcd">BCD value to decode.</param>
         /// <returns>Decimal version of the BCD value.</returns>
@@ -62,7 +62,7 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        ///     Convert a byte to BCD.
+        /// Convert a byte to BCD.
         /// </summary>
         /// <returns>BCD encoded version of the byte value.</returns>
         /// <param name="v">Byte value to encode.</param>

@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// to be used with this class.
         /// </summary>
         /// <remarks>
-        ///     
+        /// 
         /// </remarks>
         public class JoystickCalibration
         {

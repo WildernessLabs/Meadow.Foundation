@@ -8,7 +8,7 @@ namespace Displays.ePaper.SSD1681_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -34,6 +34,6 @@ namespace Displays.ePaper.SSD1681_Sample
             graphics.Show();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

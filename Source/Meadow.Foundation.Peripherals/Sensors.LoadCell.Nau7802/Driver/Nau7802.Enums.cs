@@ -4,7 +4,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
     public partial class Nau7802
     {
         /// <summary>
-        ///     Valid addresses for the sensor.
+        /// Valid addresses for the sensor.
         /// </summary>
         public enum Addresses : byte
         {

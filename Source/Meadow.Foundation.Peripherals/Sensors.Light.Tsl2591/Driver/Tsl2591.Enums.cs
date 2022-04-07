@@ -9,12 +9,12 @@ using IU = Meadow.Units.Illuminance.UnitType;
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
-    ///     Driver for the TSL2591 light-to-digital converter.
+    /// Driver for the TSL2591 light-to-digital converter.
     /// </summary>
     public partial class Tsl2591
     {
         /// <summary>
-		///     Valid addresses for the sensor.
+		/// Valid addresses for the sensor.
 		/// </summary>
 		public enum Addresses : byte
         {

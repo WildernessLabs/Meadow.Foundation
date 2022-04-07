@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -41,6 +41,6 @@ namespace MeadowApp
             }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

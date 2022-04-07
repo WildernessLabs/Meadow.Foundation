@@ -10,7 +10,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         RgbPwmLed onboardLed;
         SwitchingAnemometer anemometer;
@@ -66,6 +66,6 @@ namespace MeadowApp
             var wspeedColor = Color.FromRgb(r, 0, b);
             onboardLed.SetColor(wspeedColor);
         }
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

@@ -3,27 +3,27 @@
 namespace Meadow.Foundation.Spatial
 {
     /// <summary>
-    ///     Vector in three dimensional space.
+    /// Vector in three dimensional space.
     /// </summary>
     public struct Vector
     {
         /// <summary>
-        ///     X component of the vector.
+        /// X component of the vector.
         /// </summary>
         public double X { get; set; }
 
         /// <summary>
-        ///     Y component of the vector.
+        /// Y component of the vector.
         /// </summary>
         public double Y { get; set; }
 
         /// <summary>
-        ///     Z component of the vector.
+        /// Z component of the vector.
         /// </summary>
         public double Z { get; set; }
 
         /// <summary>
-        ///     Create a new Vector object with the specified X, Y and Z components.
+        /// Create a new Vector object with the specified X, Y and Z components.
         /// </summary>
         /// <param name="x">X component of the vector.</param>
         /// <param name="y">Y component of the vector.</param>

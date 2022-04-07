@@ -9,7 +9,7 @@ namespace Leds.Pca9633_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
         public MeadowApp()
         {
             Console.WriteLine("Initialize hardware...");
@@ -28,6 +28,6 @@ namespace Leds.Pca9633_Sample
             Thread.Sleep(1000);
             driver.SetColor(Color.Yellow);
         }
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

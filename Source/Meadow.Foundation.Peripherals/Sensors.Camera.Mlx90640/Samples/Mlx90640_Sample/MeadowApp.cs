@@ -9,7 +9,7 @@ namespace Sensors.Temperature.MLX90640_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Mlx90640 sensor;
 
@@ -92,6 +92,6 @@ namespace Sensors.Temperature.MLX90640_Sample
            }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

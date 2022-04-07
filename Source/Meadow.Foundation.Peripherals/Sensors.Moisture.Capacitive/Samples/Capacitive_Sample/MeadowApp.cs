@@ -9,7 +9,7 @@ namespace Sensors.Moisture.Capacitive_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Capacitive capacitive;
 
@@ -55,6 +55,6 @@ namespace Sensors.Moisture.Capacitive_Sample
             var moisture = await capacitive.Read();
             Console.WriteLine($"Moisture New Value { moisture }");            
         }
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

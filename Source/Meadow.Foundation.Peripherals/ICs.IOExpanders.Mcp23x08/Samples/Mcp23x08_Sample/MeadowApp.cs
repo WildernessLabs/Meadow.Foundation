@@ -9,7 +9,7 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Mcp23x08 _mcp;
         public MeadowApp()
@@ -90,6 +90,6 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
             }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

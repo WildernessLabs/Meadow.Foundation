@@ -3,7 +3,7 @@
     public partial class Is31fl3731
     {
         /// <summary>
-        ///     Valid addresses for the sensor.
+        /// Valid addresses for the sensor.
         /// </summary>
         public enum Addresses : byte
         {

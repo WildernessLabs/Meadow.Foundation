@@ -9,7 +9,7 @@ namespace Leds.APA102_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Apa102 apa102;
         int numberOfLeds = 49;
@@ -32,7 +32,7 @@ namespace Leds.APA102_Sample
             apa102.Show();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void Apa102Tests()
         {

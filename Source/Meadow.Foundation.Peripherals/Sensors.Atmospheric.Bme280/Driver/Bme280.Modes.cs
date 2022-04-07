@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public partial class Bme280
     {
         /// <summary>
-        ///     Valid values for the operating mode of the sensor.
+        /// Valid values for the operating mode of the sensor.
         /// </summary>
         public enum Modes : byte
         {

@@ -8,7 +8,7 @@ namespace Sensors.Atmospheric.Bmp085_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Bmp085 sensor;
 
@@ -53,6 +53,6 @@ namespace Sensors.Atmospheric.Bmp085_Sample
             Console.WriteLine($"Temperature: {conditions.Temperature?.Celsius}°C, Pressure: {conditions.Pressure?.Pascal}Pa");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

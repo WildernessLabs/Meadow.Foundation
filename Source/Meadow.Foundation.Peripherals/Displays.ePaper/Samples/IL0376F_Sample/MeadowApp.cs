@@ -8,7 +8,7 @@ namespace Displays.ePaper.IL0376F_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -35,6 +35,6 @@ namespace Displays.ePaper.IL0376F_Sample
             graphics.Show();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

@@ -8,7 +8,7 @@ namespace Ms5611_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Ms5611 sensor;
 
@@ -49,6 +49,6 @@ namespace Ms5611_Sample
             sensor = new Ms5611(Device.CreateSpiBus(), Device.Pins.D00);
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

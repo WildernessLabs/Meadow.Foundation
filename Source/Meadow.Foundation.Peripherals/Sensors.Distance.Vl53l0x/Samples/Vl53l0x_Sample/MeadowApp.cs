@@ -10,7 +10,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Vl53l0x sensor;
 
@@ -38,7 +38,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
             }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void InitializeWithShutdownPin()
         {

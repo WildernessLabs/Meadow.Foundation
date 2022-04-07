@@ -8,7 +8,7 @@ namespace Sensors.Light.Tsl2591_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Tsl2591 sensor;
 
@@ -58,6 +58,6 @@ namespace Sensors.Light.Tsl2591_Sample
             Console.WriteLine($"  Integrated Light: {result.Integrated?.Lux:N2}Lux");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

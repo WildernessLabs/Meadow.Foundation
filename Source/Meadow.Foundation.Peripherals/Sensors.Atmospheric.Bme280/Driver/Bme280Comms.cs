@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     internal abstract class Bme280Comms
     {
         /// <summary>
-        ///     Registers used to control the BME280.
+        /// Registers used to control the BME280.
         /// </summary>
         internal enum Register : byte
         {

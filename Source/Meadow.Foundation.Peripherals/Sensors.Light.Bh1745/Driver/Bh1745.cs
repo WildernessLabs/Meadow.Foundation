@@ -228,7 +228,7 @@ namespace Meadow.Foundation.Sensors.Light
         //==== ctors
 
         /// <summary>
-        ///     Create a new BH17545 color sensor object
+        /// Create a new BH17545 color sensor object
         /// </summary>
         public Bh1745(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)

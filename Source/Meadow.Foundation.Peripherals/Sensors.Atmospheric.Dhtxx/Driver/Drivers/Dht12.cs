@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
     public class Dht12 : DhtBase
     {
         /// <summary>
-        ///     Create a new Dht12 object.
+        /// Create a new Dht12 object.
         /// </summary>
         /// <param name="address">Address of the Dht12 (default = 0x27).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>

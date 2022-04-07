@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Sensors.Light
     public partial class AnalogLightSensor
     {
         /// <summary>
-        ///     Calibration class for AnalogLightSensor. 
+        /// Calibration class for AnalogLightSensor. 
         /// </summary>
         public class Calibration
         {
@@ -16,21 +16,21 @@ namespace Meadow.Foundation.Sensors.Light
             public Voltage VoltsAtZero { get; protected set; } = new Voltage(1, VU.Volts);
 
             /// <summary>
-            ///     Linear change in the sensor output
-            ///     change in temperature.
+            /// Linear change in the sensor output
+            /// change in temperature.
             /// </summary>
             public Voltage VoltsPerLuminance{ get; protected set; } = new Voltage(0.25, VU.Volts);
 
             /// <summary>
-            ///     Default constructor. Create a new Calibration object with default values
-            ///     for the properties.
+            /// Default constructor. Create a new Calibration object with default values
+            /// for the properties.
             /// </summary>
             public Calibration()
             {
             }
 
             /// <summary>
-            ///     Create a new Calibration object using the specified values.
+            /// Create a new Calibration object using the specified values.
             /// </summary>
             /// <param name="voltsPerLuminance">Voltage change per luminance.</param>
             /// <param name="voltsAtZero">Voltage at a zero water level reading.</param>

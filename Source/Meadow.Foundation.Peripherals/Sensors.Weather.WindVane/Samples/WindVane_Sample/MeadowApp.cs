@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         WindVane windVane;
 
@@ -37,6 +37,6 @@ namespace MeadowApp
             windVane.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

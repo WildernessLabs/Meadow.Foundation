@@ -10,7 +10,7 @@ namespace Sensors.Motion.Adxl337_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Adxl337 sensor;
 
@@ -56,6 +56,6 @@ namespace Sensors.Motion.Adxl337_Sample
                 $"Z:{result.Z.MetersPerSecondSquared:N2} (m/s^2)]");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

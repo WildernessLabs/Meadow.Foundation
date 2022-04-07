@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Light
         : ByteCommsSensorBase<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)>
     {
         /// <summary>
-        ///     Create a new SI1145 sensor object.
+        /// Create a new SI1145 sensor object.
         /// </summary>
         /// <param name="address">Address of the chip on the I2C bus (default to 0x60).</param>
         /// <param name="i2cBus">I2cBus (default to 400 KHz).</param>

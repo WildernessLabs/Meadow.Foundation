@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Alspt19315C sensor;
 
@@ -52,6 +52,6 @@ namespace MeadowApp
             var result = await sensor.Read();
             Console.WriteLine($"Initial temp: {result.Volts:N2}V");
         }
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

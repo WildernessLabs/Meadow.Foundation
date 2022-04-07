@@ -25,7 +25,7 @@ namespace Displays.Tft.ST7789_Sample
 
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         MicroGraphics graphics;
         St7789 display;
@@ -66,7 +66,7 @@ namespace Displays.Tft.ST7789_Sample
             BufferRotationTest();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         int sleepDuration = 500;
         void DisplayTest()

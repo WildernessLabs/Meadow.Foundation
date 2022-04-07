@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Displays.ePaper
 {
     //WaveShare 1.54" BW
     /// <summary>
-    ///     Represents an Ssd1608 ePaper display
+    /// Represents an Ssd1608 ePaper display
     /// </summary>
     public class Ssd1608 : EpdBase
     {

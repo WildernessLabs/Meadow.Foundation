@@ -8,7 +8,7 @@ namespace ICs.IOExpanders.Pca9685_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -25,6 +25,6 @@ namespace ICs.IOExpanders.Pca9685_Sample
             port7.Start();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

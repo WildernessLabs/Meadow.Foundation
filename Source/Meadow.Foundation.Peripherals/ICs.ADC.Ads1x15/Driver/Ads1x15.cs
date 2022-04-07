@@ -30,7 +30,7 @@ namespace Meadow.Foundation.ICs.ADC
         protected virtual int ReadShiftBits { get; } = 0;
 
         /// <summary>
-        ///     Create a new Ads1x15 object using the default parameters for the component.
+        /// Create a new Ads1x15 object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the At24Cxx (default = 0x50).</param>
         /// <param name="i2cBus"></param>

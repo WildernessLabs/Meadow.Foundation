@@ -40,24 +40,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private readonly Configuration configuration;
 
         /// <summary>
-        ///     Communication bus used to read and write to the BME280 sensor.
+        /// Communication bus used to read and write to the BME280 sensor.
         /// </summary>
         /// <remarks>
-        ///     The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
-        ///     selection to be made in the constructor.
+        /// The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
+        /// selection to be made in the constructor.
         /// </remarks>
         private readonly Bme680Comms bme680Comms;
 
         /// <summary>
-        ///     Temperature compensation data
+        /// Temperature compensation data
         /// </summary>
         protected TemperatureCompensation? temperatureCompensation;
         /// <summary>
-        ///     Pressire compensation data
+        /// Pressire compensation data
         /// </summary>
         protected PressureCompensation? pressureCompensation;
         /// <summary>
-        ///     Humidity compensation data
+        /// Humidity compensation data
         /// </summary>
         protected HumidityCompensation? humidityCompensation;
 
@@ -79,7 +79,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME680" /> class.
+        /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME680" /> class.
         /// </summary>
         /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
         /// <param name="address">I2C address of the sensor.</param>

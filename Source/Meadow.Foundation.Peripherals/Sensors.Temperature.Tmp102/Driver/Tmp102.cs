@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         private Resolution _sensorResolution;
 
         /// <summary>
-        ///     Get / set the resolution of the sensor.
+        /// Get / set the resolution of the sensor.
         /// </summary>
         public Resolution SensorResolution
         {
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
-        ///     Create a new TMP102 object using the default configuration for the sensor.
+        /// Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>
         public Tmp102(II2cBus i2cBus, byte address = (byte)Addresses.Default)

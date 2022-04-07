@@ -8,7 +8,7 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Is31fl3731 iS31FL3731;
         public MeadowApp()
@@ -34,7 +34,7 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
             }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void IS31FL3731Tests()
         { 

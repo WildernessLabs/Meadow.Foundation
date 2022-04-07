@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Max7219 display;
 
@@ -55,7 +55,7 @@ namespace MeadowApp
             }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void CharacterDemo()
         {

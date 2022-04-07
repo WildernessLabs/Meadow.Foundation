@@ -8,7 +8,7 @@ namespace Sensors.AirQuality.Ccs811_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Ccs811 sensor;
 
@@ -60,6 +60,6 @@ namespace Sensors.AirQuality.Ccs811_Sample
             Console.WriteLine($"  VOC: {result.Voc.Value.PartsPerBillion:n1}ppb");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

@@ -8,7 +8,7 @@ namespace RTCs.DS1307_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -53,6 +53,6 @@ namespace RTCs.DS1307_Sample
             Console.WriteLine(BitConverter.ToString(data));
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

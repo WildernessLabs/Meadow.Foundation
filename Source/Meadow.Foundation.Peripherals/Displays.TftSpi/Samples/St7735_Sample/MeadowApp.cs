@@ -9,7 +9,7 @@ namespace Displays.TftSpi.St7735_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -45,6 +45,6 @@ namespace Displays.TftSpi.St7735_Sample
             graphics.Show();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

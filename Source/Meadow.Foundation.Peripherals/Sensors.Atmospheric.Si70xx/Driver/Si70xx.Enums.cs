@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        ///     Specific device type / model
+        /// Specific device type / model
         /// </summary>
         public enum DeviceType
         {
@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        ///     Resolution of sensor data, in bits, for both temperature and humidity
+        /// Resolution of sensor data, in bits, for both temperature and humidity
         /// </summary>
         public enum SensorResolution : byte
         {

@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public OrientationType Orientation { get; set; } = OrientationType.Unknown;
 
         /// <summary>
-        ///     Create a new instance of the Mma7660fc communicating over the I2C interface.
+        /// Create a new instance of the Mma7660fc communicating over the I2C interface.
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Create a new instance of the Mma7660fc communicating over the I2C interface.
+        /// Create a new instance of the Mma7660fc communicating over the I2C interface.
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>

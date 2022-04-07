@@ -10,7 +10,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Tcs3472x sensor;
         RgbPwmLed rgbLed;
@@ -66,6 +66,6 @@ namespace MeadowApp
             if (result.Color is { } color) { rgbLed.SetColor(color); }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

@@ -199,7 +199,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        ///     Reset the sensor.
+        /// Reset the sensor.
         /// </summary>
         public void Reset()
         {

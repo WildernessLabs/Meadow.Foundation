@@ -6,7 +6,7 @@
     public partial class Vl53l0x
     {
         /// <summary>
-		///     Valid addresses for the sensor.
+		/// Valid addresses for the sensor.
 		/// </summary>
 		public enum Addresses : byte
         {

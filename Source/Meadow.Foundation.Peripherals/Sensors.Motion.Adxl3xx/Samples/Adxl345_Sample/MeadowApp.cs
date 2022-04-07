@@ -8,7 +8,7 @@ namespace Sensors.Motion.Adxl345_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Adxl345 sensor;
 
@@ -43,7 +43,7 @@ namespace Sensors.Motion.Adxl345_Sample
                 $"Z:{result.Z.MetersPerSecondSquared:N2} (m/s^2)]");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         //==== IObservable 
         // Example that uses an IObersvable subscription to only be notified

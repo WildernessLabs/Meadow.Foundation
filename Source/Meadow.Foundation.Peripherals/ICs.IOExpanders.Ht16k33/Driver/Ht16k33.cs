@@ -8,7 +8,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Ht16k33
     {
         /// <summary>
-        ///     HT16K33 LED driver and key scan
+        /// HT16K33 LED driver and key scan
         /// </summary>
         private readonly II2cPeripheral i2cPeripheral;
 
@@ -19,7 +19,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private byte[] keyBuffer = new byte[6];
 
         /// <summary>
-        ///     Create a new HT16K33 object using the default parameters
+        /// Create a new HT16K33 object using the default parameters
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="i2cBus">I2C bus instance</param>

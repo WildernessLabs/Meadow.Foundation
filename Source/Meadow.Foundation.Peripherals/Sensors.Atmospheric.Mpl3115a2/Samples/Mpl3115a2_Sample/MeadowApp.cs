@@ -8,7 +8,7 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         readonly Mpl3115a2 sensor;
 
@@ -52,6 +52,6 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
             Console.WriteLine($"Temperature: {conditions.Temperature?.Celsius}°C, Pressure: {conditions.Pressure?.Pascal}Pa");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

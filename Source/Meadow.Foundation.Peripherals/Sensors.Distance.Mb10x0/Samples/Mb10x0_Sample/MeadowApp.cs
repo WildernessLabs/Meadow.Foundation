@@ -8,7 +8,7 @@ namespace Sensors.Distance.Mb10x0_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Mb10x0 sensor;
 
@@ -26,6 +26,6 @@ namespace Sensors.Distance.Mb10x0_Sample
             }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }
