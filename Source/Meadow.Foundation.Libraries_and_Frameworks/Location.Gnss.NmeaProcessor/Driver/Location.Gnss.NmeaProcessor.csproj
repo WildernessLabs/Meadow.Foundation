@@ -3,7 +3,7 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>NMEA</AssemblyName>
+    <AssemblyName>NmeaProcessor</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor</PackageId>
