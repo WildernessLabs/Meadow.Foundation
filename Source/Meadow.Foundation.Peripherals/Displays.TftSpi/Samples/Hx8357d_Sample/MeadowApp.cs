@@ -13,7 +13,7 @@ namespace Displays.Tft.Hx8357d_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         MicroGraphics graphics;
 
@@ -52,7 +52,7 @@ namespace Displays.Tft.Hx8357d_Sample
             graphics.Show();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void DisplayTests()
         { 

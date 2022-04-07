@@ -4,7 +4,7 @@ namespace Meadow.Foundation.Sensors.Hid
     public partial class Mpr121
     {
         /// <summary>
-        ///     Valid addresses for the sensor.
+        /// Valid addresses for the sensor.
         /// </summary>
         public enum Addresses : byte
         {

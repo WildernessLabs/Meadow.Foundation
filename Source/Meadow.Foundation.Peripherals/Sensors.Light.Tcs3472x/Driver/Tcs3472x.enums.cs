@@ -3,7 +3,7 @@
     public partial class Tcs3472x
     {
         /// <summary>
-		///     Valid addresses for the sensor.
+		/// Valid addresses for the sensor.
 		/// </summary>
 		public enum Addresses : byte
         {

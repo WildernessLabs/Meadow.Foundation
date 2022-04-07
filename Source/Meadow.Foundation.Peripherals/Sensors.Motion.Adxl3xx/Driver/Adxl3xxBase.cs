@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Acceleration3D? Acceleration3D => Conditions;
 
         /// <summary>
-        ///     Create a new ADXL335 sensor object.
+        /// Create a new ADXL335 sensor object.
         /// </summary>
         /// <param name="xPin">Analog pin connected to the X axis output from the ADXL335 sensor.</param>
         /// <param name="yPin">Analog pin connected to the Y axis output from the ADXL335 sensor.</param>

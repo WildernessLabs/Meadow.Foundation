@@ -3,7 +3,7 @@
     public partial class Ds1307
     {
         /// <summary>
-		///     Valid addresses for the sensor.
+		/// Valid addresses for the sensor.
 		/// </summary>
 		public enum Address : byte
         {

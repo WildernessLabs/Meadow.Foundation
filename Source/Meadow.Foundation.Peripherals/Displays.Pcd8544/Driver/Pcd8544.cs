@@ -68,10 +68,10 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Clear the display
+        /// Clear the display
         /// </summary>
         /// <remarks>
-        ///     Clears the internal memory buffer 
+        /// Clears the internal memory buffer 
         /// </remarks>
         /// <param name="updateDisplay">If true, it will force a display update</param>
         public void Clear(bool updateDisplay = false)
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Coordinates start with index 0
+        /// Coordinates start with index 0
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
@@ -113,7 +113,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Coordinates start with index 0
+        /// Coordinates start with index 0
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>

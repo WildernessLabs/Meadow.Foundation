@@ -9,7 +9,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Tb67h420ftg motorDriver;
 
@@ -63,6 +63,6 @@ namespace MeadowApp
             motorDriver.Motor2.Power = 0f;
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

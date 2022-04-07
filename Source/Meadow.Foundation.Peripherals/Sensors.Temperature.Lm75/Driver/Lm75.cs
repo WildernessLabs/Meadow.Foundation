@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
-        ///     Create a new TMP102 object using the default configuration for the sensor.
+        /// Create a new TMP102 object using the default configuration for the sensor.
         /// </summary>
         /// <param name="address">I2C address of the sensor.</param>
         public Lm75(II2cBus i2cBus, byte address = (byte)Addresses.Default)

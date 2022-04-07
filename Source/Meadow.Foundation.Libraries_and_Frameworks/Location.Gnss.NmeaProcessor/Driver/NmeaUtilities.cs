@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     public class NmeaUtilities
     {
         /// <summary>
-        ///     Extract the time of the reading.
+        /// Extract the time of the reading.
         /// </summary>
         /// <param name="date">Date the reading was taken (this can be null)</param>
         /// <param name="time">String containing the time of the reading in the format hhmmss.sss</param>

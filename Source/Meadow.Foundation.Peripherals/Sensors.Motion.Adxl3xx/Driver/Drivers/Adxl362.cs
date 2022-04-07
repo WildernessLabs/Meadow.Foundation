@@ -221,7 +221,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///  Get / set the filter control register (see page 33 of the data sheet).   
+        /// Get / set the filter control register (see page 33 of the data sheet).   
         /// </summary>
         public byte FilterControl
         {

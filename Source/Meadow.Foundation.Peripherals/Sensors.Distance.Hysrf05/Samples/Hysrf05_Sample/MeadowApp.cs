@@ -9,7 +9,7 @@ namespace Sensors.Distance.HYSRF05_Sample
     /* Driver in development */
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Hysrf05 hYSRF05;
 
@@ -31,6 +31,6 @@ namespace Sensors.Distance.HYSRF05_Sample
             Console.WriteLine($"Distance is {e.New.Centimeters}cm");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

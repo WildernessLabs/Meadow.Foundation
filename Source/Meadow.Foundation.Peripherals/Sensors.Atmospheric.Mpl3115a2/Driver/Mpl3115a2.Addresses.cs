@@ -3,7 +3,7 @@
     public partial class Mpl3115a2
     {
         /// <summary>
-        ///     Valid addresses for the sensor.
+        /// Valid addresses for the sensor.
         /// </summary>
         public enum Addresses : byte
         {

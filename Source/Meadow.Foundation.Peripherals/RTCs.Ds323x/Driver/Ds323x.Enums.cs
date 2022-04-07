@@ -3,7 +3,7 @@
     public partial class Ds323x
     {
         /// <summary>
-        ///     Possible values for the alarm that can be set or alarm that has been raised.
+        /// Possible values for the alarm that can be set or alarm that has been raised.
         /// </summary>
         public enum Alarm
         {
@@ -14,7 +14,7 @@
         }
 
         /// <summary>
-        ///     Registers bits in the control register.
+        /// Registers bits in the control register.
         /// </summary>
         private enum ControlRegisterBits
         {
@@ -29,7 +29,7 @@
         }
 
         /// <summary>
-        ///     Register bits in the control / status register.
+        /// Register bits in the control / status register.
         /// </summary>
         private enum StatusRegisterBits
         {
@@ -44,7 +44,7 @@
         }
 
         /// <summary>
-        ///     Possible frequency for the square wave output.
+        /// Possible frequency for the square wave output.
         /// </summary>
         public enum RateSelect
         {
@@ -55,7 +55,7 @@
         }
 
         /// <summary>
-        ///     Determine which alarm should be raised.
+        /// Determine which alarm should be raised.
         /// </summary>
         public enum AlarmType
         {

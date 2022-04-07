@@ -83,10 +83,10 @@ namespace Meadow.Foundation.Sensors.Light
         //==== ctors
 
         /// <summary>
-        ///     Create a new instance of the Tcs3472x class with the specified I2C address.
+        /// Create a new instance of the Tcs3472x class with the specified I2C address.
         /// </summary>
         /// <remarks>
-        ///     By default the sensor will be set to low gain.
+        /// By default the sensor will be set to low gain.
         /// <remarks>
         /// <param name="i2cBus">I2C bus.</param>
         public Tcs3472x(

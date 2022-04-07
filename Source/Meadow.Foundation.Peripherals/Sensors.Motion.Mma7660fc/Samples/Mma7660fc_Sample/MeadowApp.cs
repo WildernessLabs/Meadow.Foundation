@@ -10,7 +10,7 @@ namespace Sensors.Motion.Mma7660fc_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Mma7660fc sensor;
 
@@ -58,6 +58,6 @@ namespace Sensors.Motion.Mma7660fc_Sample
                 $"Z:{result.Z.MetersPerSecondSquared:N2} (m/s^2)]");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

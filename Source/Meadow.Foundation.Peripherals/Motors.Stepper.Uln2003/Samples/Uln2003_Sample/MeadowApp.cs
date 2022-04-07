@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -35,6 +35,6 @@ namespace MeadowApp
                 Thread.Sleep(10);
             } 
         }
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

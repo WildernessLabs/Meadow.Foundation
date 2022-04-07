@@ -10,7 +10,7 @@ namespace Sensors.Temperature.Lm75_Sample
     // TODO: this sample needs to be updated.
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Lm75 lm75;
 
@@ -40,7 +40,7 @@ namespace Sensors.Temperature.Lm75_Sample
             lm75.StartUpdating();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         async Task TestRead()
         {

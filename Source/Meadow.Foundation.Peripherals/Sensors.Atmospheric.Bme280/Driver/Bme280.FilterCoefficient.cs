@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public partial class Bme280
     {
         /// <summary>
-        ///     Valid filter co-efficient values.
+        /// Valid filter co-efficient values.
         /// </summary>
         public enum FilterCoefficient : byte
         {

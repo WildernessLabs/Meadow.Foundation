@@ -10,7 +10,7 @@ namespace Servos.Servo_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         protected Servo servo;
 
@@ -41,6 +41,6 @@ namespace Servos.Servo_Sample
             }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

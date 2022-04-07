@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Hih6130 sensor;
 
@@ -58,6 +58,6 @@ namespace MeadowApp
             Console.WriteLine($"  Relative Humidity: {result.Humidity:F1}%");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

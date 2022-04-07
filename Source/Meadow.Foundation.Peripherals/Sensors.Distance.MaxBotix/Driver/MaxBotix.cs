@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Distance
         public Length? Length { get; protected set; }
 
         /// <summary>
-        ///  voltage common collector (VCC) typically 3.3V
+        /// voltage common collector (VCC) typically 3.3V
         /// </summary>
         public double VCC { get; set; } = 3.3;
 

@@ -4,21 +4,21 @@ using System.Text;
 namespace Meadow.Foundation.Helpers
 {
     /// <summary>
-    ///     Provide CRC and checksum methods
+    /// Provide CRC and checksum methods
     /// </summary>
     public class Checksum
     {
         #region Member variables / fields
 
         /// <summary>
-        ///     Lookup table for the polynomial CRC 8 method.
+        /// Lookup table for the polynomial CRC 8 method.
         /// </summary>
         private static byte[]? _lookupTable = null;
 
         /// <summary>
-        ///     When the _lookupTable is not null then _polynomial will contain the 
-        ///     value of the byte used to generate the lookup table for the PolynomialCRC8
-        ///     method.
+        /// When the _lookupTable is not null then _polynomial will contain the 
+        /// value of the byte used to generate the lookup table for the PolynomialCRC8
+        /// method.
         /// </summary>
         private static byte _polynomial;
 
@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Helpers
         #region Methods
 
         /// <summary>
-        ///     Calculate a checksum for the string by XORing the bytes in the string.
+        /// Calculate a checksum for the string by XORing the bytes in the string.
         /// </summary>
         /// <param name="data">String to calculate the checksum for.</param>
         /// <returns>XOR checksum for the sting.</returns>
@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Helpers
         }
 
         /// <summary>
-        ///     Generate a checksum by XORing all of the data in the array.
+        /// Generate a checksum by XORing all of the data in the array.
         /// </summary>
         /// <param name="data">Data to calculate the checksum for.</param>
         /// <returns>XOR Checksum of the array of bytes.</returns>
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Helpers
         }
 
         /// <summary>
-        ///     Generte the lookup table for the PolynomialCRC method.
+        /// Generte the lookup table for the PolynomialCRC method.
         /// </summary>
         private static byte[] PopulateLookupTable(byte polynomial)
         {
@@ -80,7 +80,7 @@ namespace Meadow.Foundation.Helpers
         }
 
         /// <summary>
-        ///     Calculate the 8-bit CRC using the specified polynomial.
+        /// Calculate the 8-bit CRC using the specified polynomial.
         /// </summary>
         /// <param name="data">Data bytes to generate a CRC for.</param>
         /// <param name="polynomial">Polynomial byte to use in the CRC calculation.</param>

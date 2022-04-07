@@ -7,14 +7,14 @@ namespace Meadow.Foundation.Motors
     /// Driver for Electornic Speed Controllers used, typically, to drive
     /// motors via a PWM signal. To use, you generally have to first _calibrate_
     /// the ESC via the following steps:
-    ///  1. Depower the ESC, set power to intended max point (e.g. `1.0` power)
-    ///  2. Power the ESC, wait for "happy tones" to indicate good power supply
-    ///  then (possibly) two beeps to indicate max power limit set.
-    ///  3. Set the ESC power to intended minimum power point (e.g. `0.0` power)
-    ///  and the ESC should provide one beep per every LiPo cell (`3.7V`) of
-    ///  power supplied, and then a long beep.
-    ///  4. Optionally, per some ESCs, arm, by calling the `Arm()` method, which
-    ///  will drop the power below 0.0;
+    /// 1. Depower the ESC, set power to intended max point (e.g. `1.0` power)
+    /// 2. Power the ESC, wait for "happy tones" to indicate good power supply
+    /// then (possibly) two beeps to indicate max power limit set.
+    /// 3. Set the ESC power to intended minimum power point (e.g. `0.0` power)
+    /// and the ESC should provide one beep per every LiPo cell (`3.7V`) of
+    /// power supplied, and then a long beep.
+    /// 4. Optionally, per some ESCs, arm, by calling the `Arm()` method, which
+    /// will drop the power below 0.0;
     /// </summary>
     public class ElectronicSpeedController
     {

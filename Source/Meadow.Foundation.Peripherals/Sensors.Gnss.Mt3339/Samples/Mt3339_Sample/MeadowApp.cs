@@ -8,7 +8,7 @@ namespace Sensors.Gnss.Mt3339_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
         Mt3339 gps;
 
         public MeadowApp()
@@ -61,6 +61,6 @@ namespace Sensors.Gnss.Mt3339_Sample
                 Console.WriteLine("*********************************************");
             };
         }
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

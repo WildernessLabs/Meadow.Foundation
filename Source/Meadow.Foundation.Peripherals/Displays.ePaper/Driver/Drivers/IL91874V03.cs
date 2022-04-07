@@ -7,8 +7,8 @@ namespace Meadow.Foundation.Displays.ePaper
     //GxGDEW027W3
     //currently hard coded to the avaliable display size
     /// <summary>
-    ///     Represents the older v0.3 Il91874V03 ePaper color displays
-    ///     264x176, 2.7inch tri color e-Ink display / SPI interface 
+    /// Represents the older v0.3 Il91874V03 ePaper color displays
+    /// 264x176, 2.7inch tri color e-Ink display / SPI interface 
     /// </summary>
     public class Il91874V03 : EpdBase
     {

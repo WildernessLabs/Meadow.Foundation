@@ -11,7 +11,7 @@ namespace Sensors.Moisture.FC28_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Fc28 fc28;
 
@@ -46,7 +46,7 @@ namespace Sensors.Moisture.FC28_Sample
             fc28.StartUpdating();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         async Task TestFC28Read()
         {

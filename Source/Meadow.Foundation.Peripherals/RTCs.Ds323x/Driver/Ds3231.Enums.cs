@@ -3,7 +3,7 @@
     public partial class Ds3231 : Ds323x
     {
         /// <summary>
-		///     Valid addresses for the sensor.
+		/// Valid addresses for the sensor.
 		/// </summary>
 		public enum Address : byte
         {

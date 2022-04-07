@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Gp2d12 sensor;
 
@@ -50,6 +50,6 @@ namespace MeadowApp
             Console.WriteLine($"Initial temp: {temperature.Centimeters:N2}cm");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

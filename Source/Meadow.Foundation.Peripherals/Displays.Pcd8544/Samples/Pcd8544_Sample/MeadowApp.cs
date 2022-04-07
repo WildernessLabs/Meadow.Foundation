@@ -8,7 +8,7 @@ namespace Displays.Pcd8854_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -35,7 +35,7 @@ namespace Displays.Pcd8854_Sample
             graphics.Show();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void CounterDemo(MicroGraphics graphics)
         {

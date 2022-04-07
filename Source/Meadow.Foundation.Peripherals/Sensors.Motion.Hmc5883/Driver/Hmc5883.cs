@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    ///     Driver for the Hmc5883 digital compass.
-    ///     
+    /// Driver for the Hmc5883 digital compass.
+    /// 
     /// This driver is untested
     /// </summary>
     public partial class Hmc5883 : ByteCommsSensorBase<Vector>
     {
         //==== events
         /// <summary>
-        ///     Event to be raised when the compass changes
+        /// Event to be raised when the compass changes
         /// </summary>
         public event EventHandler<IChangeResult<Vector>> DirectionUpdated = delegate { };
 

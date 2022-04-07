@@ -7,7 +7,7 @@ namespace Sensors.Distance.Mpr121_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -33,6 +33,6 @@ namespace Sensors.Distance.Mpr121_Sample
             Console.WriteLine(msg);
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

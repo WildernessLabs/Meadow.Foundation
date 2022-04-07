@@ -8,7 +8,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Si70xx sensor;
 
@@ -58,6 +58,6 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
             Console.WriteLine($"  Relative Humidity: {result.Humidity:F1}%");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

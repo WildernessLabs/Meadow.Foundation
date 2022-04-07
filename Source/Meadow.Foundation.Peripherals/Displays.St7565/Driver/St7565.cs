@@ -8,7 +8,7 @@ using Meadow.Foundation.Graphics;
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    ///     Provide an interface to the ST7565 family of displays.
+    /// Provide an interface to the ST7565 family of displays.
     /// </summary>
     public partial class St7565 : IGraphicsDisplay
     {
@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Displays
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
         /// <summary>
-        ///     SPI object
+        /// SPI object
         /// </summary>
         protected ISpiPeripheral spiPerihperal;
 
@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Displays
         protected byte[] pageBuffer;
 
         /// <summary>
-        ///     Invert the entire display (true) or return to normal mode (false).
+        /// Invert the entire display (true) or return to normal mode (false).
         /// </summary>
         public void InvertDisplay(bool cmd)
         {
@@ -57,7 +57,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Create a new ST7565 object using the default parameters for
+        /// Create a new ST7565 object using the default parameters for
         /// </summary>
         public St7565(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width = 128, int height = 64)
@@ -115,7 +115,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Send a command to the display.
+        /// Send a command to the display.
         /// </summary>
         /// <param name="command">Command byte to send to the display.</param>
         private void SendCommand(byte command)
@@ -125,7 +125,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Send a sequence of commands to the display.
+        /// Send a sequence of commands to the display.
         /// </summary>
         /// <param name="commands">List of commands to send.</param>
         private void SendCommands(byte[] commands)
@@ -142,7 +142,7 @@ namespace Meadow.Foundation.Displays
         protected const int PageSize = 128;
 
         /// <summary>
-        ///     Send the internal pixel buffer to display.
+        /// Send the internal pixel buffer to display.
         /// </summary>
         public void Show()
         {
@@ -186,7 +186,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Clear the display buffer.
+        /// Clear the display buffer.
         /// </summary>
         /// <param name="updateDisplay">Immediately update the display when true.</param>
         public void Clear(bool updateDisplay = false)
@@ -197,7 +197,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Coordinates start with index 0
+        /// Coordinates start with index 0
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
@@ -208,7 +208,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Coordinates start with index 0
+        /// Coordinates start with index 0
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
@@ -238,7 +238,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Start the display scrollling in the specified direction.
+        /// Start the display scrollling in the specified direction.
         /// </summary>
         /// <param name="direction">Direction that the display should scroll.</param>
         public void StartScrolling(ScrollDirection direction)
@@ -247,11 +247,11 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Start the display scrolling.
+        /// Start the display scrolling.
         /// </summary>
         /// <remarks>
-        ///     In most cases setting startPage to 0x00 and endPage to 0xff will achieve an
-        ///     acceptable scrolling effect.
+        /// In most cases setting startPage to 0x00 and endPage to 0xff will achieve an
+        /// acceptable scrolling effect.
         /// </remarks>
         /// <param name="direction">Direction that the display should scroll.</param>
         /// <param name="startPage">Start page for the scroll.</param>
@@ -288,11 +288,11 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        ///     Turn off scrolling.
+        /// Turn off scrolling.
         /// </summary>
         /// <remarks>
-        ///     Datasheet states that scrolling must be turned off before changing the
-        ///     scroll direction in order to prevent RAM corruption.
+        /// Datasheet states that scrolling must be turned off before changing the
+        /// scroll direction in order to prevent RAM corruption.
         /// </remarks>
         public void StopScrolling()
         {

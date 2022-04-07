@@ -10,7 +10,7 @@ namespace Sensors.Motion.Adxl362_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Adxl362 sensor;
 
@@ -59,6 +59,6 @@ namespace Sensors.Motion.Adxl362_Sample
             Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

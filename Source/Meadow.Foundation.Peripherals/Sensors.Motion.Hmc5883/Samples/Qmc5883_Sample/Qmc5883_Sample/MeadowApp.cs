@@ -10,7 +10,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Qmc5883 sensor;
 
@@ -57,6 +57,6 @@ namespace MeadowApp
             Console.WriteLine($"Heading: [{Hmc5883.DirectionToHeading(result).DecimalDegrees:N2}] degrees");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

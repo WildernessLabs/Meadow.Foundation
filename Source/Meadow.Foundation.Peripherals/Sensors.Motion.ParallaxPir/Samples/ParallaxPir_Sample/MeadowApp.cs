@@ -8,7 +8,7 @@ namespace Sensors.Motion.ParallaxPir_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         ParallaxPir parallaxPir;
 
@@ -19,6 +19,6 @@ namespace Sensors.Motion.ParallaxPir_Sample
             parallaxPir.OnMotionEnd += (sender) => Console.WriteLine($"Motion end  {DateTime.Now}");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

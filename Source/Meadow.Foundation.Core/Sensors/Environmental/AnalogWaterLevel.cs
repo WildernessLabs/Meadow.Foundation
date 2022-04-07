@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         public float WaterLevel { get; protected set; }
 
         /// <summary>
-        ///     New instance of the AnalogWaterLevel class.
+        /// New instance of the AnalogWaterLevel class.
         /// </summary>
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the sensor is connected to.</param>

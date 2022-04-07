@@ -11,8 +11,8 @@ namespace Meadow.Foundation.Helpers
         #region Methods
 
         /// <summary>
-        ///     Convert a byte array to a series of hexadecimal numbers
-        ///     separated by a minus sign.
+        /// Convert a byte array to a series of hexadecimal numbers
+        /// separated by a minus sign.
         /// </summary>
         /// <param name="bytes">Array of bytes to convert.</param>
         /// <returns>series of hexadecimal bytes in the format xx-yy-zz</returns>
@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Helpers
         }
 
         /// <summary>
-        ///     Convert a byte into the hex representation of the value.
+        /// Convert a byte into the hex representation of the value.
         /// </summary>
         /// <param name="b">Value to convert.</param>
         /// <returns>Two hexadecimal digits representing the byte.</returns>
@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Helpers
         }
 
         /// <summary>
-        ///     Convert a byte into hexadecimal including the "0x" prefix.
+        /// Convert a byte into hexadecimal including the "0x" prefix.
         /// </summary>
         /// <param name="b">Value to convert.</param>
         /// <returns>Hexadecimal string including the 0x prefix.</returns>
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Helpers
         }
 
         /// <summary>
-        ///     Convert an unsigned short into hexadecimal.
+        /// Convert an unsigned short into hexadecimal.
         /// </summary>
         /// <param name="us">Unsigned short value to convert.</param>
         /// <returns>Hexadecimal representation of the unsigned short.</returns>
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Helpers
         }
 
         /// <summary>
-        ///     Convert an integer into hexadecimal.
+        /// Convert an integer into hexadecimal.
         /// </summary>
         /// <param name="i">Integer to convert to hexadecimal.</param>
         /// <returns>Hexadecimal representation of the unsigned short.</returns>
@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Helpers
         }
 
         /// <summary>
-        ///     Dump the array of bytes to the debug output in hexadecimal.
+        /// Dump the array of bytes to the debug output in hexadecimal.
         /// </summary>
         /// <param name="startAddress">Starting address of the register.</param>
         /// <param name="registers">Byte array of the register contents.</param>

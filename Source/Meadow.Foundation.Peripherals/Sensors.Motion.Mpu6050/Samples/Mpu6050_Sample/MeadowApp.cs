@@ -11,7 +11,7 @@ namespace Sensors.Motion.mpu5060_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Mpu6050 sensor;
 
@@ -68,6 +68,6 @@ namespace Sensors.Motion.mpu5060_Sample
             Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

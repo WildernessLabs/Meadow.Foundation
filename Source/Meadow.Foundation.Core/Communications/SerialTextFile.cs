@@ -6,14 +6,14 @@ using Meadow.Hardware;
 namespace Meadow.Foundation.Communications
 {
     /// <summary>
-    ///     Provide a mechanism for reading lines of text from a SerialPort.
+    /// Provide a mechanism for reading lines of text from a SerialPort.
     /// </summary>
     public class SerialTextFile
     {
         #region Constants
 
         /// <summary>
-        ///     Default buffer size for the incoming data from the serial port.
+        /// Default buffer size for the incoming data from the serial port.
         /// </summary>
         private const int MAXIMUM_BUFFER_SIZE = 512;
 
@@ -22,23 +22,23 @@ namespace Meadow.Foundation.Communications
         #region Member variables / fields
 
         /// <summary>
-        ///     Serial port object that the
+        /// Serial port object that the
         /// </summary>
         private readonly ISerialPort serialPort;
 
         /// <summary>
-        ///     Buffer to hold the incoming text from the serial port.
+        /// Buffer to hold the incoming text from the serial port.
         /// </summary>
         private string buffer = string.Empty;
 
         /// <summary>
-        ///     The static buffer is used when processing the text coming in from the
-        ///     serial port.
+        /// The static buffer is used when processing the text coming in from the
+        /// serial port.
         /// </summary>
         private readonly byte[] staticBuffer = new byte[MAXIMUM_BUFFER_SIZE];
 
         /// <summary>
-        ///     Character(s) that indicate an end of line in the text stream.
+        /// Character(s) that indicate an end of line in the text stream.
         /// </summary>
         private readonly string LINE_END = "\n";
 
@@ -47,14 +47,14 @@ namespace Meadow.Foundation.Communications
         #region Events and delegates
 
         /// <summary>
-        ///     Delegate for the line ready event.
+        /// Delegate for the line ready event.
         /// </summary>
         /// <param name="line">Line of text ready for processing.</param>
         /// <param name="sender">Reference to the object generating the event.</param>
         public delegate void LineReceived(object sender, string line);
 
         /// <summary>
-        ///     A complete line of text has been read, send this to the event subscriber.
+        /// A complete line of text has been read, send this to the event subscriber.
         /// </summary>
         public event LineReceived OnLineReceived = delegate {};
 
@@ -63,8 +63,8 @@ namespace Meadow.Foundation.Communications
         #region Constructors
 
         /// <summary>
-        ///     Default constructor for the SerialTextFile class, made private to prevent the
-        ///     programmer from using this method of construcing an object.
+        /// Default constructor for the SerialTextFile class, made private to prevent the
+        /// programmer from using this method of construcing an object.
         /// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private SerialTextFile()
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Communications
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
-        ///     Create a new SerialTextFile and attach the instance to the specfied serial port.
+        /// Create a new SerialTextFile and attach the instance to the specfied serial port.
         /// </summary>
         /// <param name="device">ISerialController used to instantiate serial port.</param>
         /// <param name="port">Serial port name.</param>
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Communications
         }
 
         /// <summary>
-        ///     Create a new SerialTextFile and attach the instance to the specfied serial port.
+        /// Create a new SerialTextFile and attach the instance to the specfied serial port.
         /// </summary>
         /// <param name="serialPort">Serial port object.</param>
         /// <param name="endOfLine">Text indicating the end of a line of text.</param>
@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Communications
         #region Methods
 
         /// <summary>
-        ///     Open the serial port and start processing the data from the serial port.
+        /// Open the serial port and start processing the data from the serial port.
         /// </summary>
         public void Open()
         {
@@ -134,10 +134,10 @@ namespace Meadow.Foundation.Communications
         }
 
         /// <summary>
-        ///     Close the serial port and stop processing data.
+        /// Close the serial port and stop processing data.
         /// </summary>
         /// <remarks>
-        ///     This method clears the buffer and destroys any pending text.
+        /// This method clears the buffer and destroys any pending text.
         /// </remarks>
         public void Close()
         {
@@ -153,7 +153,7 @@ namespace Meadow.Foundation.Communications
         #region Interrupt handlers
 
         /// <summary>
-        ///     Process the data from the serial port.
+        /// Process the data from the serial port.
         /// </summary>
         private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {

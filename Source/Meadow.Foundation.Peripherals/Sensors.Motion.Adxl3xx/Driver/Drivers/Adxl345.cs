@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    ///     Driver for the ADXL345 triple axis accelerometer.
-    ///     +/- 16g
+    /// Driver for the ADXL345 triple axis accelerometer.
+    /// +/- 16g
     /// </summary>
     public partial class Adxl345 : ByteCommsSensorBase<Acceleration3D>, IAccelerometer
     {
@@ -27,10 +27,10 @@ namespace Meadow.Foundation.Sensors.Motion
         public Acceleration3D? Acceleration3D => Conditions;
 
         /// <summary>
-        ///     Values stored in this register are automatically added to the X reading.
+        /// Values stored in this register are automatically added to the X reading.
         /// </summary>
         /// <remarks>
-        ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
+        /// Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
         public sbyte OffsetX
         {
@@ -39,10 +39,10 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Values stored in this register are automatically added to the Y reading.
+        /// Values stored in this register are automatically added to the Y reading.
         /// </summary>
         /// <remarks>
-        ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
+        /// Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
         public sbyte OffsetY
         {
@@ -51,10 +51,10 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Values stored in this register are automatically added to the Z reading.
+        /// Values stored in this register are automatically added to the Z reading.
         /// </summary>
         /// <remarks>
-        ///     Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
+        /// Scale factor is 15.6 mg/LSB so 0x7f represents an offset of 2g.
         /// </remarks>
         public sbyte OffsetZ
         {
@@ -63,7 +63,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Create a new instance of the ADXL345 communicating over the I2C interface.
+        /// Create a new instance of the ADXL345 communicating over the I2C interface.
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Create a new instance of the ADXL345 communicating over the I2C interface.
+        /// Create a new instance of the ADXL345 communicating over the I2C interface.
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
@@ -111,7 +111,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Set the PowerControl register (see pages 25 and 26 of the data sheet)
+        /// Set the PowerControl register (see pages 25 and 26 of the data sheet)
         /// </summary>
         /// <param name="linkActivityAndInactivity">Link the activity and inactivity events.</param>
         /// <param name="autoSleep">Enable / disable auto sleep when the activity and inactivity are linked.</param>
@@ -143,22 +143,22 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Configure the data format (see pages 26 and 27 of the data sheet).
+        /// Configure the data format (see pages 26 and 27 of the data sheet).
         /// </summary>
         /// <param name="selfTest">Put the device into self test mode when true.</param>
         /// <param name="spiMode">Use 3-wire SPI (true) or 4-wire SPI (false).</param>
         /// <param name="fullResolution">
-        ///     Set to full resolution (true) or 10-bit mode using the range determined by the range
-        ///     parameter (false).
+        /// Set to full resolution (true) or 10-bit mode using the range determined by the range
+        /// parameter (false).
         /// </param>
         /// <param name="justification">Left-justified when true, right justified with sign extension when false.</param>
         /// <param name="range">Set the range of the sensor to 2g, 4g, 8g or 16g</param>
         /// <remarks>
-        ///     The range of the sensor is determined by the following table:
-        ///         0:  +/- 2g
-        ///         1:  +/- 4g
-        ///         2:  +/- 8g
-        ///         3:  +/ 16g
+        /// The range of the sensor is determined by the following table:
+        /// 0:  +/- 2g
+        /// 1:  +/- 4g
+        /// 2:  +/- 8g
+        /// 3:  +/ 16g
         /// </remarks>
         public void SetDataFormat(bool selfTest, bool spiMode, bool fullResolution, bool justification, GForceRanges range)
         {
@@ -185,12 +185,12 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Set the data rate and low power mode for the sensor.
+        /// Set the data rate and low power mode for the sensor.
         /// </summary>
         /// <param name="dataRate">Data rate for the sensor.</param>
         /// <param name="lowPower">
-        ///     Setting this to true will enter low power mode (note measurement will encounter more noise in
-        ///     this mode).
+        /// Setting this to true will enter low power mode (note measurement will encounter more noise in
+        /// this mode).
         /// </param>
         public void SetDataRate(byte dataRate, bool lowPower)
         {
@@ -220,7 +220,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Dump the registers to the debug output stream.
+        /// Dump the registers to the debug output stream.
         /// </summary>
         public void DisplayRegisters()
         {

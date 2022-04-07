@@ -10,7 +10,7 @@ namespace Sensors.Light.Veml7700_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Veml7700 sensor;
 
@@ -48,7 +48,7 @@ namespace Sensors.Light.Veml7700_Sample
             Console.WriteLine($"  Illuminance: {conditions.Lux:n3}Lux");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }
 

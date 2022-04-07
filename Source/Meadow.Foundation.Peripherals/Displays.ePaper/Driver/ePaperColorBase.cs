@@ -7,7 +7,7 @@ using Meadow.Foundation.Graphics;
 namespace Meadow.Foundation.Displays.ePaper
 {
     /// <summary>
-    ///     Provide an interface for ePaper 3 color displays
+    /// Provide an interface for ePaper 3 color displays
     /// </summary>
     public abstract class EpdColorBase : SpiDisplayBase, IGraphicsDisplay
     {

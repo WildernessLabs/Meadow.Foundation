@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         readonly IRfidReader rfidReader;
 
@@ -55,6 +55,6 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
             }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

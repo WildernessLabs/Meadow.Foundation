@@ -11,7 +11,7 @@ namespace ElectronicSpeedController_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         float frequency = 50f;
         const float armMs = 0.5f;
@@ -71,6 +71,6 @@ namespace ElectronicSpeedController_Sample
             return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

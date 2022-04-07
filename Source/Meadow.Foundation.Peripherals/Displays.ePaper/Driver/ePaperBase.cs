@@ -6,7 +6,7 @@ using Meadow.Foundation.Graphics;
 namespace Meadow.Foundation.Displays.ePaper
 {
     /// <summary>
-    ///     Provide an interface for ePaper monochrome displays
+    /// Provide an interface for ePaper monochrome displays
     /// </summary>
     public abstract class EpdBase : SpiDisplayBase, IGraphicsDisplay
     {
@@ -80,7 +80,7 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         /// <summary>
-        ///     Clear the display.
+        /// Clear the display.
         /// </summary>
         /// <param name="color">Color to set the display (not used on ePaper displays)</param>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
@@ -111,7 +111,7 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         /// <summary>
-        ///     Clear the display.
+        /// Clear the display.
         /// </summary>
         /// <param name="colored">Set the display dark when true</param>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
@@ -129,7 +129,7 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         /// <summary>
-        ///     Draw a single pixel 
+        /// Draw a single pixel 
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
@@ -153,7 +153,7 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         /// <summary>
-        ///     Draw a single pixel 
+        /// Draw a single pixel 
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
@@ -180,7 +180,7 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         /// <summary>
-        ///     Draw a single pixel 
+        /// Draw a single pixel 
         /// </summary>
         /// <param name="x">x location</param>
         /// <param name="y">y location</param>
@@ -193,7 +193,7 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         /// <summary>
-        ///     Draw the display buffer to screen
+        /// Draw the display buffer to screen
         /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
@@ -213,7 +213,7 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         /// <summary>
-        ///     Draw the display buffer to screen
+        /// Draw the display buffer to screen
         /// </summary>
         public void Show()
         {

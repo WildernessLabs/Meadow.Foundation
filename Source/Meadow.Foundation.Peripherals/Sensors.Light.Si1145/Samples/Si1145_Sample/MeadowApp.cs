@@ -10,7 +10,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Si1145 sensor;
 
@@ -58,6 +58,6 @@ namespace MeadowApp
             Console.WriteLine($"  UV Index: {result.UltravioletIndex:N2}Lux");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

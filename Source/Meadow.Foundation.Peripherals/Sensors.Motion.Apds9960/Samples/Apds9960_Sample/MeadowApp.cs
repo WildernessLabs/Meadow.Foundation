@@ -8,7 +8,7 @@ namespace BasicSensors.Motion.Apds9960_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Apds9960 sensor;
 
@@ -44,7 +44,7 @@ namespace BasicSensors.Motion.Apds9960_Sample
             Console.WriteLine($"  Color: {result.Color:N2}Lux");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }
 

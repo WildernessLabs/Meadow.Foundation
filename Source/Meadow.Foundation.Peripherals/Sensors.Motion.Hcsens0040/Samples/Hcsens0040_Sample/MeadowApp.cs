@@ -7,7 +7,7 @@ namespace Sensors.Motion.ParallaxPir_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Hcsens0040 sensor;
 
@@ -23,6 +23,6 @@ namespace Sensors.Motion.ParallaxPir_Sample
             Console.WriteLine($"Motion detected {DateTime.Now}");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public partial class Bme280
     {
         /// <summary>
-        ///     Valid values for the inactive duration in normal mode.
+        /// Valid values for the inactive duration in normal mode.
         /// </summary>
         public enum StandbyDuration : byte
         {

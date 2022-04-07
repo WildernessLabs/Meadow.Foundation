@@ -9,7 +9,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         CharacterDisplay display;
 
@@ -121,6 +121,6 @@ namespace Displays.Lcd.CharacterDisplay_Sample
             display.WriteLine("Complete!", 0);
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

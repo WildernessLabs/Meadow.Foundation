@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Ags01Db ags10Db;
 
@@ -37,7 +37,7 @@ namespace MeadowApp
             ags10Db.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void TestRead()
         {
