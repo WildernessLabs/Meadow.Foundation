@@ -1,10 +1,8 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TU = Meadow.Units.Temperature.UnitType;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
