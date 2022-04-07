@@ -10,17 +10,17 @@ namespace Meadow.Foundation.ICs.EEPROM
     public partial class At24Cxx
     {
         /// <summary>
-        ///     Communication bus used to communicate with the EEPROM.
+        /// Communication bus used to communicate with the EEPROM.
         /// </summary>
         private II2cPeripheral Peripheral { get; }
 
         /// <summary>
-        ///     Number of bytes in a page.
+        /// Number of bytes in a page.
         /// </summary>
         public ushort PageSize { get; }
 
         /// <summary>
-        ///     Number of bytes in the EEPROM module.
+        /// Number of bytes in the EEPROM module.
         /// </summary>
         public ushort MemorySize { get; }
 
@@ -28,7 +28,7 @@ namespace Meadow.Foundation.ICs.EEPROM
         private Memory<byte> WriteBuffer { get; set; }
 
         /// <summary>
-        ///     Create a new AT24Cxx object using the default parameters for the component.
+        /// Create a new AT24Cxx object using the default parameters for the component.
         /// </summary>
         /// <param name="i2cBus">I2CBus connected to display</param>
         /// <param name="address">Address of the At24Cxx (default = 0x50).</param>
@@ -49,8 +49,8 @@ namespace Meadow.Foundation.ICs.EEPROM
         }
 
         /// <summary>
-        ///     Check the startAddress and the amount of data being accessed to make sure that the
-        ///     addresss and the startAddress plus the amount remain within the bounds of the memory chip.
+        /// Check the startAddress and the amount of data being accessed to make sure that the
+        /// addresss and the startAddress plus the amount remain within the bounds of the memory chip.
         /// </summary>
         /// <param name="address">Start startAddress for the memory activity.</param>
         /// <param name="amount">Amunt of data to be accessed.</param>
@@ -69,7 +69,7 @@ namespace Meadow.Foundation.ICs.EEPROM
         }
 
         /// <summary>
-        ///     Force the sensor to make a reading and update the relevant properties.
+        /// Force the sensor to make a reading and update the relevant properties.
         /// </summary>
         /// <param name="startAddress">Start address for the read operation.</param>
         /// <param name="amount">Amount of data to read from the EEPROM.</param>
@@ -89,7 +89,7 @@ namespace Meadow.Foundation.ICs.EEPROM
         }
 
         /// <summary>
-        ///     Write a number of bytes to the EEPROM.
+        /// Write a number of bytes to the EEPROM.
         /// </summary>
         /// <param name="startAddress">Address of he first byte to be written.</param>
         /// <param name="data">Data to be written to the EEPROM.</param>

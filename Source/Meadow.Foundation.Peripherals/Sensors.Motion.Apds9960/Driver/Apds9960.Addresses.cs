@@ -7,7 +7,7 @@
     public partial class Apds9960
     {
         /// <summary>
-        ///     Valid addresses for the sensor.
+        /// Valid addresses for the sensor.
         /// </summary>
         public enum Addresses : byte
         {

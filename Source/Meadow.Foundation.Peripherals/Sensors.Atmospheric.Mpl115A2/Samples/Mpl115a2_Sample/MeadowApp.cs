@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Mpl115a2 sensor;
 
@@ -52,6 +52,6 @@ namespace MeadowApp
             Console.WriteLine($"Temperature: {conditions.Temperature?.Celsius}°C, Pressure: {conditions.Pressure?.Pascal}Pa");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

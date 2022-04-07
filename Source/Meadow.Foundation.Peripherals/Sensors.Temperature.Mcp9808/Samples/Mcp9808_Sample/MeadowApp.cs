@@ -8,7 +8,7 @@ namespace Sensors.Temperature.Mcp9808_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Mcp9808 mcp9808;
 
@@ -36,7 +36,7 @@ namespace Sensors.Temperature.Mcp9808_Sample
             mcp9808.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void TestRead()
         {

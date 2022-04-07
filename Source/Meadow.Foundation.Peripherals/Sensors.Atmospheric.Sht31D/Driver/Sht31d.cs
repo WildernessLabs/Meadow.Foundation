@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        ///     Create a new SHT31D object.
+        /// Create a new SHT31D object.
         /// </summary>
         /// <param name="address">Sensor address (should be 0x44 or 0x45).</param>
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        ///     Get a reading from the sensor and set the Temperature and Humidity properties.
+        /// Get a reading from the sensor and set the Temperature and Humidity properties.
         /// </summary>
         protected override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {

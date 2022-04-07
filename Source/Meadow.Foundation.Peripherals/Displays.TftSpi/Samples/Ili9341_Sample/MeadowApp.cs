@@ -12,7 +12,7 @@ namespace Displays.Tft.Ili9341_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Ili9341 display;
         MicroGraphics graphics;
@@ -52,7 +52,7 @@ namespace Displays.Tft.Ili9341_Sample
             DisplayTest();
        }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void DisplayTest()
 	    {

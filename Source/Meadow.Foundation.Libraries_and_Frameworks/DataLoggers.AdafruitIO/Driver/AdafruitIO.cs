@@ -12,8 +12,8 @@ namespace Meadow.Foundation.DataLoggers
     /// The X-AIO-Key needs to be incuded in the header
     /// The data should be JSON ecoded as follows:
     /// {
-    ///     "value": "12",
-    ///     "created_at": "2017-12-27T13:20:00Z"
+    /// "value": "12",
+    /// "created_at": "2017-12-27T13:20:00Z"
     /// }
     /// </remarks>
     /// <example>

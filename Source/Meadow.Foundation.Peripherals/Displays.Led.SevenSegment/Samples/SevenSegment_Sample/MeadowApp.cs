@@ -8,7 +8,7 @@ namespace Displays.Led.SevenSegment_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -30,7 +30,7 @@ namespace Displays.Led.SevenSegment_Sample
             sevenSegment.SetDisplay(character: '1', showDecimal: true);
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void TestSevenSegment(SevenSegment sevenSegment)
         {

@@ -8,7 +8,7 @@ namespace Sensors.Atmospheric.BME280_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Bme280 sensor;
 
@@ -77,6 +77,6 @@ namespace Sensors.Atmospheric.BME280_Sample
             Console.WriteLine($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

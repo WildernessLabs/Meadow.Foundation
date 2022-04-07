@@ -10,7 +10,7 @@ namespace Sensors.LoadCell.Hx711_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Hx711 loadSensor;
 
@@ -53,6 +53,6 @@ namespace Sensors.LoadCell.Hx711_Sample
             Console.WriteLine($"Your scale's Calibration Factor is: {factor}.  Enter this into the code for future use.");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

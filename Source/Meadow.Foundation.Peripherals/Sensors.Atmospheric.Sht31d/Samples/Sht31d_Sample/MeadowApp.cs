@@ -8,7 +8,7 @@ namespace BasicSensors.Atmospheric.SHT31D_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Sht31d sensor;
 
@@ -58,6 +58,6 @@ namespace BasicSensors.Atmospheric.SHT31D_Sample
             Console.WriteLine($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

@@ -6,8 +6,8 @@ namespace Meadow.Foundation.Displays.ePaper
 {
     //aka WaveShare 4.2" B tri color
     /// <summary>
-    ///     Represents an Il0398 ePaper color display
-    ///     400x300, 4.2inch e-Ink three-color display, SPI interface 
+    /// Represents an Il0398 ePaper color display
+    /// 400x300, 4.2inch e-Ink three-color display, SPI interface 
     /// </summary>
     public class Il0398 : EpdColorBase
     {

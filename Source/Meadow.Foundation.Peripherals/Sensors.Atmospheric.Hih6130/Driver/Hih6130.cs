@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        ///     Create a new HIH6130 object using the default parameters for the component.
+        /// Create a new HIH6130 object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the HIH6130 (default = 0x27).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
@@ -56,7 +56,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        ///     Force the sensor to make a reading and update the relevant properties.
+        /// Force the sensor to make a reading and update the relevant properties.
         /// </summary>
         protected async override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {

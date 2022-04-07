@@ -19,29 +19,29 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public PinDefinitions Pins { get; } = new PinDefinitions();
 
         /// <summary>
-        ///     Number of chips required to implement this ShiftRegister.
+        /// Number of chips required to implement this ShiftRegister.
         /// </summary>
         private readonly int numberOfChips;
 
         private byte[] latchData;
 
         /// <summary>
-        ///     SPI interface used to communicate with the shift registers.
+        /// SPI interface used to communicate with the shift registers.
         /// </summary>
         private readonly ISpiPeripheral spiPeripheral;
 
         /// <summary>
-        ///     Default constructor.
+        /// Default constructor.
         /// </summary>
         /// <remarks>
-        ///     This is private to prevent the programmer from calling it explicitly.
+        /// This is private to prevent the programmer from calling it explicitly.
         /// </remarks>
         private x74595()
         {
         }
 
         /// <summary>
-        ///     Constructor a ShiftRegister 74595 object.
+        /// Constructor a ShiftRegister 74595 object.
         /// </summary>
         /// <param name="pins">Number of pins in the shift register (should be a multiple of 8 pins).</param>
         /// <param name="spiBus">SpiBus object</param>

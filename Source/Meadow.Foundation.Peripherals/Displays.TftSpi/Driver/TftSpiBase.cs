@@ -81,7 +81,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected abstract void SetAddressWindow(int x0, int y0, int x1, int y1);
 
         /// <summary>
-        ///     Clear the display.
+        /// Clear the display.
         /// </summary>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
         public void Clear(bool updateDisplay = false)
@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         }
    
         /// <summary>
-        ///     Draw a single pixel 
+        /// Draw a single pixel 
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
@@ -124,7 +124,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         }
 
         /// <summary>
-        ///     Draw a single pixel 
+        /// Draw a single pixel 
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
@@ -135,7 +135,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         }
 
         /// <summary>
-        ///     Draw a single pixel 
+        /// Draw a single pixel 
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
@@ -146,7 +146,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         }
 
         /// <summary>
-        ///     Draw a single pixel 
+        /// Draw a single pixel 
         /// </summary>
         /// <param name="x">x location</param>
         /// <param name="y">y location</param>
@@ -159,7 +159,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         }
 
         /// <summary>
-        ///     Invert the color of a single pixel as represented in the display buffer
+        /// Invert the color of a single pixel as represented in the display buffer
         /// </summary>
         /// <param name="x">x location</param>
         /// <param name="y">y location</param>
@@ -259,7 +259,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         }
 
         /// <summary>
-        ///     Draw the display buffer to screen
+        /// Draw the display buffer to screen
         /// </summary>
         public void Show()
         {

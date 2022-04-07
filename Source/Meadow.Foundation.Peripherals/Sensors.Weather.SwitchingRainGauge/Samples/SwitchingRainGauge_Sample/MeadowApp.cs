@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         SwitchingRainGauge rainGauge;
 
@@ -37,6 +37,6 @@ namespace MeadowApp
             rainGauge.StartUpdating();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

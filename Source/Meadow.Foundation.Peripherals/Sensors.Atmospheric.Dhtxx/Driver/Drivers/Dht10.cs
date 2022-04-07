@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         //private new byte[] _readBuffer = new byte[6];
 
         /// <summary>
-        ///     Create a new Dht10 object.
+        /// Create a new Dht10 object.
         /// </summary>
         /// <param name="address">Address of the Dht12 (default = 0x27).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>

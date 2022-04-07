@@ -8,7 +8,7 @@ namespace Audio.Radio.Tea5767_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -30,6 +30,6 @@ namespace Audio.Radio.Tea5767_Sample
             radio.SelectFrequency(new Meadow.Units.Frequency(94.5, Meadow.Units.Frequency.UnitType.Megahertz));
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

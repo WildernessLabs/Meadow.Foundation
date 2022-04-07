@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Motion
     public class Adxl335 : Adxl3xxBase
     {
         /// <summary>
-        ///     Create a new ADXL335 sensor object.
+        /// Create a new ADXL335 sensor object.
         /// </summary>
         /// <param name="device">Device that has the analog pins.</param>
         /// <param name="xPin">Analog pin connected to the X axis output from the ADXL335 sensor.</param>

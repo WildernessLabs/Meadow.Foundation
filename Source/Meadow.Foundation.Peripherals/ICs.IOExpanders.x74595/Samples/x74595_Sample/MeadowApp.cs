@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         x74595 shiftRegister;
 
@@ -50,6 +50,6 @@ namespace MeadowApp
             }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

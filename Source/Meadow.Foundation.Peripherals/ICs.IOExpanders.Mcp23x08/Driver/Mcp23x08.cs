@@ -34,7 +34,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         byte _iocon;
 
         /// <summary>
-        ///     object for using lock() to do thread synch
+        /// object for using lock() to do thread synch
         /// </summary>
         protected object _lock = new object();
 
@@ -127,8 +127,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         /// <summary>
         /// Initializes the chip for use:
-        ///  * Puts all IOs into an input state
-        ///  * zeros out all setting and state registers
+        /// * Puts all IOs into an input state
+        /// * zeros out all setting and state registers
         /// </summary>
         protected void Initialize()
         {

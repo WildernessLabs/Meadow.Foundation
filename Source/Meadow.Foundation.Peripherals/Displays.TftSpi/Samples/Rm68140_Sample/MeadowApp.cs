@@ -10,7 +10,7 @@ namespace Displays.Tft.Rm68140_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         MicroGraphics graphics;
 
@@ -47,6 +47,6 @@ namespace Displays.Tft.Rm68140_Sample
             graphics.Show();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

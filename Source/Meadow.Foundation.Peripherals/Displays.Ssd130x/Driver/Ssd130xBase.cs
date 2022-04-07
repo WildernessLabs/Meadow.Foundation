@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
         /// <summary>
-        ///     SSD1306 SPI display
+        /// SSD1306 SPI display
         /// </summary>
         protected ISpiPeripheral spiPeripheral;
 
@@ -33,12 +33,12 @@ namespace Meadow.Foundation.Displays.Ssd130x
         protected const int PAGE_SIZE = 16;
 
         /// <summary>
-        ///     SSD1306 I2C display
+        /// SSD1306 I2C display
         /// </summary>
         protected II2cPeripheral i2cPeripheral;
 
         /// <summary>
-        ///     Buffer holding the pixels in the display.
+        /// Buffer holding the pixels in the display.
         /// </summary>
         protected Buffer1bpp imageBuffer;
         protected byte[] readBuffer;
@@ -46,16 +46,16 @@ namespace Meadow.Foundation.Displays.Ssd130x
         protected byte[] pageBuffer;
 
         /// <summary>
-        ///     Sequence of command bytes that must be sent to the display before
-        ///     the Show method can send the data buffer.
+        /// Sequence of command bytes that must be sent to the display before
+        /// the Show method can send the data buffer.
         /// </summary>
         protected byte[] showPreamble;
 
         /// <summary>
-        ///     Invert the entire display (true) or return to normal mode (false).
+        /// Invert the entire display (true) or return to normal mode (false).
         /// </summary>
         /// <remarks>
-        ///     See section 10.1.10 in the datasheet.
+        /// See section 10.1.10 in the datasheet.
         /// </remarks>
         public bool InvertDisplay
         {
@@ -67,12 +67,12 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
         }
         /// <summary>
-        ///     Backing variable for the InvertDisplay property.
+        /// Backing variable for the InvertDisplay property.
         /// </summary>
         private bool invertDisplay;
 
         /// <summary>
-        ///     Get / Set the contrast of the display.
+        /// Get / Set the contrast of the display.
         /// </summary>
         public byte Contrast
         {
@@ -85,12 +85,12 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
         }
         /// <summary>
-        ///     Backing variable for the Contrast property.
+        /// Backing variable for the Contrast property.
         /// </summary>
         private byte contrast;
 
         /// <summary>
-        ///     Put the display to sleep (turns the display off).
+        /// Put the display to sleep (turns the display off).
         /// </summary>
         public bool Sleep
         {
@@ -103,14 +103,14 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Backing variable for the Sleep property.
+        /// Backing variable for the Sleep property.
         /// </summary>
         private bool sleep;
 
         protected DisplayType displayType;
 
         /// <summary>
-        ///     Send a command to the display.
+        /// Send a command to the display.
         /// </summary>
         /// <param name="command">Command byte to send to the display.</param>
         private void SendCommand(byte command)
@@ -129,7 +129,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Send a sequence of commands to the display.
+        /// Send a sequence of commands to the display.
         /// </summary>
         /// <param name="commands">List of commands to send.</param>
         protected void SendCommands(Span<byte> commands)
@@ -150,7 +150,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Send the internal pixel buffer to display.
+        /// Send the internal pixel buffer to display.
         /// </summary>
         public void Show()
         {
@@ -183,7 +183,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Clear the display buffer.
+        /// Clear the display buffer.
         /// </summary>
         /// <param name="updateDisplay">Immediately update the display when true.</param>
         public void Clear(bool updateDisplay = false)
@@ -197,7 +197,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Draw a pixel to the display - coordinates start with index 0
+        /// Draw a pixel to the display - coordinates start with index 0
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
@@ -208,7 +208,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Draw a pixel to the display - coordinates start with index 0
+        /// Draw a pixel to the display - coordinates start with index 0
         /// </summary>
         /// <param name="x">Abscissa of the pixel to the set / reset.</param>
         /// <param name="y">Ordinate of the pixel to the set / reset.</param>
@@ -238,7 +238,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Start the display scrollling in the specified direction.
+        /// Start the display scrollling in the specified direction.
         /// </summary>
         /// <param name="direction">Direction that the display should scroll.</param>
         public void StartScrolling(ScrollDirection direction)
@@ -247,11 +247,11 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Start the display scrolling.
+        /// Start the display scrolling.
         /// </summary>
         /// <remarks>
-        ///     In most cases setting startPage to 0x00 and endPage to 0xff will achieve an
-        ///     acceptable scrolling effect.
+        /// In most cases setting startPage to 0x00 and endPage to 0xff will achieve an
+        /// acceptable scrolling effect.
         /// </remarks>
         /// <param name="direction">Direction that the display should scroll.</param>
         /// <param name="startPage">Start page for the scroll.</param>
@@ -286,11 +286,11 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        ///     Turn off scrolling.
+        /// Turn off scrolling.
         /// </summary>
         /// <remarks>
-        ///     Datasheet states that scrolling must be turned off before changing the
-        ///     scroll direction in order to prevent RAM corruption.
+        /// Datasheet states that scrolling must be turned off before changing the
+        /// scroll direction in order to prevent RAM corruption.
         /// </remarks>
         public void StopScrolling()
         {

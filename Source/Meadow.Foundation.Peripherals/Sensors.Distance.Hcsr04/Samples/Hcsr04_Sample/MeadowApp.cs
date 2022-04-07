@@ -10,7 +10,7 @@ namespace Sensors.Distance.HCSR04_Sample
     // Meadow is currently not reading timing deltas smaller than 10,000 ticks (10ms) in b3.7
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Hcsr04 hCSR04;
 
@@ -36,6 +36,6 @@ namespace Sensors.Distance.HCSR04_Sample
             Console.WriteLine($"Distance (cm): {e.New.Centimeters}");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

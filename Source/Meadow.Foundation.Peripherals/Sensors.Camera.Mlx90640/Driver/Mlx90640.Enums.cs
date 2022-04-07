@@ -3,7 +3,7 @@
     public partial class Mlx90640
     {
         /// <summary>
-        ///     Valid addresses for the sensor.
+        /// Valid addresses for the sensor.
         /// </summary>
         public enum Addresses : byte
         {

@@ -8,7 +8,7 @@ namespace AdafruitMPRLSSensorExample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -30,6 +30,6 @@ namespace AdafruitMPRLSSensorExample
             Console.WriteLine($"Raw sensor value: {result.New.RawPsiMeasurement?.Psi}");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

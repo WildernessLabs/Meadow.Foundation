@@ -6,7 +6,7 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
-    ///     Driver for the Max44009 light-to-digital converter.
+    /// Driver for the Max44009 light-to-digital converter.
     /// </summary>
     public partial class Max44009 : ByteCommsSensorBase<Illuminance>
     {

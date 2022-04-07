@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Light
     // TODO: This sensor has an interr
 
     /// <summary>
-    ///     Driver for the TSL2591 light-to-digital converter.
+    /// Driver for the TSL2591 light-to-digital converter.
     /// </summary>
     public partial class Tsl2591 :
         ByteCommsSensorBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,

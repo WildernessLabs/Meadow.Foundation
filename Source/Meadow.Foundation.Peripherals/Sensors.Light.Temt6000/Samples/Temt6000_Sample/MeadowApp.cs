@@ -10,7 +10,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Temt6000 sensor;
 
@@ -51,6 +51,6 @@ namespace MeadowApp
             Console.WriteLine($"Initial temp: {result.Volts:N2}V");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

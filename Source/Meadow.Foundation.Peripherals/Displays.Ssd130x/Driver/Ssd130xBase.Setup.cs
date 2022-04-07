@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         //These should only be accessed once so no perf penalty 
 
         /// <summary>
-        ///     Sequence of bytes that should be sent to a 128x64 OLED display to setup the device.
+        /// Sequence of bytes that should be sent to a 128x64 OLED display to setup the device.
         /// </summary>
         protected Span<byte> Oled128x64SetupSequence => new byte[]
         {
@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         };
 
         /// <summary>
-        ///     Sequence of bytes that should be sent to a 128x32 OLED display to setup the device.
+        /// Sequence of bytes that should be sent to a 128x32 OLED display to setup the device.
         /// </summary>
         protected Span<byte> Oled128x32SetupSequence => new byte[]
         {
@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         };
 
         /// <summary>
-        ///     Sequence of bytes that should be sent to a 72x40 OLED display to setup the device.
+        /// Sequence of bytes that should be sent to a 72x40 OLED display to setup the device.
         /// </summary>
         protected Span<byte> Oled72x40SetupSequence => new byte[]
         {
@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         };
 
         /// <summary>
-        ///     Sequence of bytes that should be sent to a 96x16 OLED display to setup the device.
+        /// Sequence of bytes that should be sent to a 96x16 OLED display to setup the device.
         /// </summary>
         protected Span<byte> Oled96x16SetupSequence => new byte[]
         {
@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             0xda, 0x02, 0x81, 0xaf, 0xd9, 0x1f, 0xdb, 0x40, 0xa4, 0xa6, 0xaf
         };
         /// <summary>
-        ///     Sequence of bytes that should be sent to a 64x48 OLED display to setup the device.
+        /// Sequence of bytes that should be sent to a 64x48 OLED display to setup the device.
         /// </summary>
         protected Span<byte> Oled64x48SetupSequence => new byte[]
         {

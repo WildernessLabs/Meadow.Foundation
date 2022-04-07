@@ -7,7 +7,7 @@ namespace Meadow.Foundation.RTCs
     public partial class Ds323x : IDisposable
     {
         /// <summary>
-        ///     Register addresses in the sensor.
+        /// Register addresses in the sensor.
         /// </summary>
         protected static class Registers
         {
@@ -33,47 +33,47 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Number of registers that hold the date and time information.
+        /// Number of registers that hold the date and time information.
         /// </summary>
         private const int DATE_TIME_REGISTERS_SIZE = 0x07;
 
         /// <summary>
-        ///     Bit mask to turn Alarm1 on.
+        /// Bit mask to turn Alarm1 on.
         /// </summary>
         private const byte ALARM1_ENABLE = 0x01;
 
         /// <summary>
-        ///     Bit mask to turn Alarm1 off.
+        /// Bit mask to turn Alarm1 off.
         /// </summary>
         private const byte ALARM1_DISABLE = 0xfe;
 
         /// <summary>
-        ///     Bit mask to turn Alarm2 on.
+        /// Bit mask to turn Alarm2 on.
         /// </summary>
         private const byte ALARM2_ENABLE = 0x02;
 
         /// <summary>
-        ///     Bit mask to turn Alarm2 off.
+        /// Bit mask to turn Alarm2 off.
         /// </summary>
         private const byte ALARM2_DISABLE = 0xfd;
 
         /// <summary>
-        ///     Interrupt flag for Alarm1.
+        /// Interrupt flag for Alarm1.
         /// </summary>
         private const byte ALARM1_INTERRUPT_FLAG = 0x01;
 
         /// <summary>
-        ///     Bit mask to clear the Alarm1 interrupt.
+        /// Bit mask to clear the Alarm1 interrupt.
         /// </summary>
         private const byte ALARM1_INTERRUPT_OFF = 0xfe;
 
         /// <summary>
-        ///     Interrupt flag for the Alarm2 interrupt.
+        /// Interrupt flag for the Alarm2 interrupt.
         /// </summary>
         private const byte ALARM2_INTERRUPT_FLAG = 0x02;
 
         /// <summary>
-        ///     Bit mask to clear the Alarm2 interrupt.
+        /// Bit mask to clear the Alarm2 interrupt.
         /// </summary>
         private const byte ALARM2_INTERRUPT_OFF = 0xfd;
 
@@ -146,12 +146,12 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Delegate for the alarm events.
+        /// Delegate for the alarm events.
         /// </summary>
         public delegate void AlarmRaised(object sender);
 
         /// <summary>
-        ///     Event raised when Alarm1 is triggered.
+        /// Event raised when Alarm1 is triggered.
         /// </summary>
         public event AlarmRaised OnAlarm1Raised
         {
@@ -167,7 +167,7 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Event raised when Alarm2 is triggered.
+        /// Event raised when Alarm2 is triggered.
         /// </summary>
         public event AlarmRaised OnAlarm2Raised
         {
@@ -183,7 +183,7 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Get / Set the current date and time.
+        /// Get / Set the current date and time.
         /// </summary>
         public DateTime CurrentDateTime
         {
@@ -200,7 +200,7 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Get the current die temperature.
+        /// Get the current die temperature.
         /// </summary>
         public Units.Temperature Temperature
         {
@@ -214,21 +214,21 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     DS323x Real Time Clock object.
+        /// DS323x Real Time Clock object.
         /// </summary>
         protected II2cPeripheral ds323x { get; }
 
         /// <summary>
-        ///     Interrupt port attached to the DS323x RTC module.
+        /// Interrupt port attached to the DS323x RTC module.
         /// </summary>
         protected IDigitalInputPort InterruptPort { get; private set; }
 
         /// <summary>
-        ///     Control register.
+        /// Control register.
         /// </summary>
         /// <remarks>
-        ///     Control register contains the following bit (in sequence b7 - b0):
-        ///     EOSC - BBSQW - CONV - RS1 - RS2 - INTCN - A2IE - A1IE
+        /// Control register contains the following bit (in sequence b7 - b0):
+        /// EOSC - BBSQW - CONV - RS1 - RS2 - INTCN - A2IE - A1IE
         /// </remarks>
         protected byte ControlRegister
         {
@@ -237,11 +237,11 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Control and status register.
+        /// Control and status register.
         /// </summary>
         /// <remarks>
-        ///     Control and status register contains the following bit (in sequence b7 - b0):
-        ///     OSF - 0 - 0 - 0 - EN32KHZ - BSY - A2F - A1F
+        /// Control and status register contains the following bit (in sequence b7 - b0):
+        /// OSF - 0 - 0 - 0 - EN32KHZ - BSY - A2F - A1F
         /// </remarks>
         protected byte ControlStatusRegister
         {
@@ -250,7 +250,7 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Determine which alarm has been raised.
+        /// Determine which alarm has been raised.
         /// </summary>
         protected Alarm WhichAlarm
         {
@@ -276,8 +276,8 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Decode the register contents and create a DateTime version of the
-        ///     register contents.
+        /// Decode the register contents and create a DateTime version of the
+        /// register contents.
         /// </summary>
         /// <param name="data">Register contents.</param>
         /// <returns>DateTime object version of the data.</returns>
@@ -310,7 +310,7 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Encode the a DateTime object into the format used by the DS323x chips.
+        /// Encode the a DateTime object into the format used by the DS323x chips.
         /// </summary>
         /// <param name="dt">DateTime object to encode.</param>
         /// <returns>Bytes to send to the DS323x chip.</returns>
@@ -337,7 +337,7 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Convert the day of the week to a byte.
+        /// Convert the day of the week to a byte.
         /// </summary>
         /// <param name="day">Day of the week</param>
         /// <returns>Byte representation of the day of the week (Sunday = 1).</returns>
@@ -372,7 +372,7 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Set one of the two alarms on the DS323x module.
+        /// Set one of the two alarms on the DS323x module.
         /// </summary>
         /// <param name="alarm">Define the alarm to be set.</param>
         /// <param name="time">Date and time for the alarm.</param>
@@ -469,7 +469,7 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Enable or disable the specified alarm.
+        /// Enable or disable the specified alarm.
         /// </summary>
         /// <param name="alarm">Alarm to enable / disable.</param>
         /// <param name="enable">Alarm state, true = on, false = off.</param>
@@ -502,7 +502,7 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Clear the alarm interrupt flag for the specified alarm.
+        /// Clear the alarm interrupt flag for the specified alarm.
         /// </summary>
         /// <param name="alarm">Alarm to clear.</param>
         public void ClearInterrupt(Alarm alarm)
@@ -525,7 +525,7 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        ///     Display the registers.
+        /// Display the registers.
         /// </summary>
         public void DisplayRegisters()
         {

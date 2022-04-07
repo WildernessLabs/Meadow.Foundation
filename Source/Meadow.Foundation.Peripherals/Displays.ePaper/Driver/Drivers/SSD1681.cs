@@ -6,9 +6,9 @@ namespace Meadow.Foundation.Displays.ePaper
 {
 
     /// <summary>
-    ///     Represents an Ssd1681 ePaper B/W or color display commonly 1.54"
-    ///     200x200, e-Ink three-color display, SPI interface 
-    ///     DRIVER NOT COMPLETE
+    /// Represents an Ssd1681 ePaper B/W or color display commonly 1.54"
+    /// 200x200, e-Ink three-color display, SPI interface 
+    /// DRIVER NOT COMPLETE
     /// </summary>
     public class Ssd1681 : EpdColorBase
     {

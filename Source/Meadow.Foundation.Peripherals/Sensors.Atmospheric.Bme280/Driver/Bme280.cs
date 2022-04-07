@@ -57,21 +57,21 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Oversample HumiditySampleCount { get; set; } = Oversample.OversampleX8;
 
         /// <summary>
-        ///     Communication bus used to read and write to the BME280 sensor.
+        /// Communication bus used to read and write to the BME280 sensor.
         /// </summary>
         /// <remarks>
-        ///     The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
-        ///     selection to be made in the constructor.
+        /// The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
+        /// selection to be made in the constructor.
         /// </remarks>
         private readonly Bme280Comms bme280Comms;
 
         /// <summary>
-        ///     Compensation data from the sensor.
+        /// Compensation data from the sensor.
         /// </summary>
         protected CompensationData compensationData;
 
         ///// <summary>
-        /////     Update interval in milliseconds
+        ///// Update interval in milliseconds
         ///// </summary>
         //private ushort _updateInterval = 100;
 
@@ -94,7 +94,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
+        /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
         /// </summary>
         /// <param name="i2c">I2C Bus to use for communicating with the sensor</param>
         /// <param name="address">I2C address of the sensor (default = 0x77).</param>
@@ -149,14 +149,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Update the sensor information from the BME280.
         /// </summary>
         /// <remarks>
-        ///     Reads the raw temperature, pressure and humidity data from the BME280 and applies
-        ///     the compensation data to get the actual readings.  These are made available through the
-        ///     Temperature, Pressure and Humidity properties.
-        ///     All three readings are taken at once to ensure that the three readings are consistent.
-        ///     Register locations and formulas taken from the Bosch BME280 datasheet revision 1.1, May 2015.
-        ///     Register locations - section 5.3 Memory Map
-        ///     Formulas - section 4.2.3 Compensation Formulas
-        ///     The integer formulas have been used to try and keep the calculations performant.
+        /// Reads the raw temperature, pressure and humidity data from the BME280 and applies
+        /// the compensation data to get the actual readings.  These are made available through the
+        /// Temperature, Pressure and Humidity properties.
+        /// All three readings are taken at once to ensure that the three readings are consistent.
+        /// Register locations and formulas taken from the Bosch BME280 datasheet revision 1.1, May 2015.
+        /// Register locations - section 5.3 Memory Map
+        /// Formulas - section 4.2.3 Compensation Formulas
+        /// The integer formulas have been used to try and keep the calculations performant.
         /// </remarks>
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
         {
@@ -299,17 +299,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             });
         }
         /// <summary>
-        ///     Update the configuration for the BME280.
+        /// Update the configuration for the BME280.
         /// </summary>
         /// <remarks>
-        ///     This method uses the data in the configuration properties in order to set up the
-        ///     BME280.  Ensure that the following are set correctly before calling this method:
-        ///     - Standby
-        ///     - Filter
-        ///     - HumidityOverSampling
-        ///     - TemperatureOverSampling
-        ///     - PressureOverSampling
-        ///     - Mode
+        /// This method uses the data in the configuration properties in order to set up the
+        /// BME280.  Ensure that the following are set correctly before calling this method:
+        /// - Standby
+        /// - Filter
+        /// - HumidityOverSampling
+        /// - TemperatureOverSampling
+        /// - PressureOverSampling
+        /// - Mode
         /// </remarks>
         protected void UpdateConfiguration(Configuration configuration)
         {
@@ -329,10 +329,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        ///     Reset the sensor.
+        /// Reset the sensor.
         /// </summary>
         /// <remarks>
-        ///     Perform a full power-on-reset of the sensor and reset the configuration of the sensor.
+        /// Perform a full power-on-reset of the sensor and reset the configuration of the sensor.
         /// </remarks>
         public void Reset()
         {
@@ -341,16 +341,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        ///     Reads the compensation data.
+        /// Reads the compensation data.
         /// </summary>
         /// <remarks>
-        ///     The compensation data is written to the chip at the time of manufacture and cannot be changed.
-        ///     This information is used to convert the readings from the sensor into actual temperature,
-        ///     pressure and humidity readings.
-        ///     From the data sheet, the register addresses and length are:
-        ///     Temperature and pressure: start address 0x88, end address 0x9F (length = 24)
-        ///     Humidity 1: 0xa1, length = 1
-        ///     Humidity 2 and 3: start address 0xe1, end address 0xe7, (length = 8)
+        /// The compensation data is written to the chip at the time of manufacture and cannot be changed.
+        /// This information is used to convert the readings from the sensor into actual temperature,
+        /// pressure and humidity readings.
+        /// From the data sheet, the register addresses and length are:
+        /// Temperature and pressure: start address 0x88, end address 0x9F (length = 24)
+        /// Humidity 1: 0xa1, length = 1
+        /// Humidity 2 and 3: start address 0xe1, end address 0xe7, (length = 8)
         /// </remarks>
         protected void ReadCompensationData()
         {

@@ -10,7 +10,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         MicroGraphics graphics;
         Ssd1309 display;
@@ -62,7 +62,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
             );
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
 
         void TestCircles()
         {

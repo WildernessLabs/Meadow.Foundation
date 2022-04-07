@@ -16,7 +16,7 @@ namespace Sensors.Camera.Vc0706_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Vc0706 camera;
 
@@ -64,6 +64,6 @@ namespace Sensors.Camera.Vc0706_Sample
             Console.WriteLine($"IsColor {decoder.IsColor}");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

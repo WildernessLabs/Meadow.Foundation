@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Light
         Illuminance illuminance;
 
         /// <summary>
-        ///     New instance of the AnalogLightSensor class.
+        /// New instance of the AnalogLightSensor class.
         /// </summary>
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the sensor is connected to.</param>
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Light
 		}
 
         /// <summary>
-        ///  New instance of the AnalogLightSensor class.
+        /// New instance of the AnalogLightSensor class.
         /// </summary>
         /// <param name="analogInputPort">Analog port the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param> 

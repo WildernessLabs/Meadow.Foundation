@@ -10,7 +10,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Bno055 sensor;
 
@@ -115,6 +115,6 @@ namespace MeadowApp
 
             Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
         }
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

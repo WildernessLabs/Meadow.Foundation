@@ -9,7 +9,7 @@ namespace Sensors.Atmospheric.Dht12_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Dht12 sensor;
 
@@ -59,6 +59,6 @@ namespace Sensors.Atmospheric.Dht12_Sample
             Console.WriteLine($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

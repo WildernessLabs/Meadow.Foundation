@@ -10,7 +10,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
         AnalogSolarGauge solarGauge;
 
         public MeadowApp()
@@ -47,6 +47,6 @@ namespace MeadowApp
             var result = await solarGauge.Read();
             Console.WriteLine($"Solar Intensity: {result * 100:n2}%");
         }
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

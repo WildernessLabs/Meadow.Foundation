@@ -32,16 +32,16 @@ namespace Meadow.Foundation.Sensors.Motion
     // opportunity to use the sensor in a low or lower-power configuration.
 
     /// <summary>
-    ///     Provide methods / properties to allow an application to control a BNO055 
-    ///     9-axis absolute orientation sensor.
+    /// Provide methods / properties to allow an application to control a BNO055 
+    /// 9-axis absolute orientation sensor.
     /// </summary>
     /// <remarks>
-    ///     By defult the sensor will start with the following configuration:
+    /// By defult the sensor will start with the following configuration:
     /// 
-    ///     Range           Range       Bandwidth
-    ///     Accelerometer   4G          62.5 Hz
-    ///     Magnetometer    N/A         10 Hz
-    ///     Gyroscope       2000 dps    32 Hz
+    /// Range           Range       Bandwidth
+    /// Accelerometer   4G          62.5 Hz
+    /// Magnetometer    N/A         10 Hz
+    /// Gyroscope       2000 dps    32 Hz
     /// </remarks>
     public partial class Bno055 : ByteCommsSensorBase<(
         Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        ///     Select the source of the Temperatute property.
+        /// Select the source of the Temperatute property.
         /// </summary>
         public Sensor TemperatureSource
         {
@@ -95,7 +95,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Get or set the power mode for the sensor.
+        /// Get or set the power mode for the sensor.
         /// </summary>
 	    public byte PowerMode
         {
@@ -111,10 +111,10 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Get / set the current operating mode for the sensor.
+        /// Get / set the current operating mode for the sensor.
         /// </summary>
         /// <remarks>
-        ///     Mode change takes 7-19 ms.
+        /// Mode change takes 7-19 ms.
         /// </remarks>
 	    public byte OperatingMode
         {
@@ -134,14 +134,14 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Get / set the register page.  Page 1 contains a number of configuration registers.
-        ///     Page 0 contains the sensor information.
+        /// Get / set the register page.  Page 1 contains a number of configuration registers.
+        /// Page 0 contains the sensor information.
         /// </summary>
         /// <remarks>
-        ///     Most of the operating in this class are on the sensor data.  It is therefore
-        ///     crucial that the sensor is left accessing Page 0.  Methods / properties that
-        ///     require access to the registers in Page 1 should change to Page 1, complete
-        ///     the work and then return the system back to Page 0.
+        /// Most of the operating in this class are on the sensor data.  It is therefore
+        /// crucial that the sensor is left accessing Page 0.  Methods / properties that
+        /// require access to the registers in Page 1 should change to Page 1, complete
+        /// the work and then return the system back to Page 0.
         /// </remarks>
 	    private byte Page
         {
@@ -160,7 +160,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Check if sensor is currently working in Fusion mode.
+        /// Check if sensor is currently working in Fusion mode.
         /// </summary>
 	    public bool IsInFusionMode
         {
@@ -175,7 +175,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Get the system calibration status.
+        /// Get the system calibration status.
         /// </summary>
         public bool IsSystemCalibrated
         {
@@ -186,7 +186,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Get the accelerometer calibration status.
+        /// Get the accelerometer calibration status.
         /// </summary>
         public bool IsAccelerometerCalibrated
         {
@@ -197,7 +197,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Get the gyroscope calibration status.
+        /// Get the gyroscope calibration status.
         /// </summary>
         public bool IsGyroscopeCalibrated
         {
@@ -208,7 +208,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Get the magnetometer status.
+        /// Get the magnetometer status.
         /// </summary>
         public bool IsMagnetometerCalibrated
         {
@@ -216,11 +216,11 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Is the system fully calibrated?
+        /// Is the system fully calibrated?
         /// </summary>
         /// <remarks>
-        ///     The sensor is fully calibrated if the system, accelerometer, gyroscope and megnetometer
-        ///     are all calibrated.
+        /// The sensor is fully calibrated if the system, accelerometer, gyroscope and megnetometer
+        /// are all calibrated.
         /// </remarks>
         public bool IsFullyCalibrated
         {
@@ -232,7 +232,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Create a new BNO055 object using the default parameters for the component.
+        /// Create a new BNO055 object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the BNO055 (default = 0x28).</param>
         /// <param name="i2cBus">I2C bus (default = 400 KHz).</param>
@@ -243,7 +243,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Create a new BNO055 object using the default parameters for the component.
+        /// Create a new BNO055 object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the BNO055 (default = 0x28).</param>
         /// <param name="i2cBus">I2C bus (default = 400 KHz).</param>
@@ -393,7 +393,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Convert a section of the sensor data into a tuple.
+        /// Convert a section of the sensor data into a tuple.
         /// </summary>
         /// <param name="start">Start of the data in the _sensorReadings member variable.</param>
         protected (double X, double Y, double Z) GetReadings(int start, double divisor)
@@ -406,7 +406,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Convert the sensor readings into an orientation in Euler angles.
+        /// Convert the sensor readings into an orientation in Euler angles.
         /// </summary>
         /// <param name="start">First of the sensor readings to convert.</param>
         /// <param name="divisor">Divisor to apply to the sensor data.</param>
@@ -420,7 +420,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        ///     Read all of the registers and display their values on the Debug output.
+        /// Read all of the registers and display their values on the Debug output.
         /// </summary>
 	    public void DisplayRegisters()
         {

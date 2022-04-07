@@ -8,7 +8,7 @@ namespace ICs.IOExpanders.HT16K33_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         protected Ht16k33 ht16k33;
 
@@ -36,6 +36,6 @@ namespace ICs.IOExpanders.HT16K33_Sample
             }
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

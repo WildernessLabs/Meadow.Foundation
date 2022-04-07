@@ -12,17 +12,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public class ConfigurationRegisterBits
         {
             /// <summary>
-            ///     PT_DATA_CFG - Enable the event detection.
+            /// PT_DATA_CFG - Enable the event detection.
             /// </summary>
             public static readonly byte DataReadyEvent = 0x01;
 
             /// <summary>
-            ///     PT_DATA_CFG - Enable the pressure data ready events.
+            /// PT_DATA_CFG - Enable the pressure data ready events.
             /// </summary>
             public static readonly byte EnablePressureEvent = 0x02;
 
             /// <summary>
-            ///     PT_DATA_CFG - Enable the temperature data ready events.
+            /// PT_DATA_CFG - Enable the temperature data ready events.
             /// </summary>
             public static readonly byte EnableTemperatureEvent = 0x04;
         }

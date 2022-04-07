@@ -35,22 +35,22 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        ///     Serial number of the device.
+        /// Serial number of the device.
         /// </summary>
         public ulong SerialNumber { get; private set; }
 
         /// <summary>
-        ///     Device type as extracted from the serial number.
+        /// Device type as extracted from the serial number.
         /// </summary>
         public DeviceType SensorType { get; private set; }
 
         /// <summary>
-        ///     Firmware revision of the sensor.
+        /// Firmware revision of the sensor.
         /// </summary>
         public byte FirmwareRevision { get; private set; }
 
         /// <summary>
-        ///     Create a new SI7021 temperature and humidity sensor.
+        /// Create a new SI7021 temperature and humidity sensor.
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40).</param>
         /// <param name="i2cBus">I2CBus.</param>

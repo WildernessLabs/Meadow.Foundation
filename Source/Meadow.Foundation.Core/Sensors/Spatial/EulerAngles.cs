@@ -4,27 +4,27 @@ namespace Meadow.Foundation.Spatial
 {
     //TODO: are these in degrees?? should be unitized
     /// <summary>
-    ///     Euler angles to define the orientation.
+    /// Euler angles to define the orientation.
     /// </summary>
     public struct EulerAngles
     {
         /// <summary>
-        ///     Heading.
+        /// Heading.
         /// </summary>
         public Angle Heading { get; set; }
 
         /// <summary>
-        ///     Roll angle.
+        /// Roll angle.
         /// </summary>
         public Angle Roll { get; set; }
 
         /// <summary>
-        ///     Pitch angle.
+        /// Pitch angle.
         /// </summary>
         public Angle Pitch { get; set; }
 
         /// <summary>
-        ///     Create a new EulerAngles object.
+        /// Create a new EulerAngles object.
         /// </summary>
         /// <param name="heading">Heading reading.</param>
         /// <param name="roll">Roll angle.</param>

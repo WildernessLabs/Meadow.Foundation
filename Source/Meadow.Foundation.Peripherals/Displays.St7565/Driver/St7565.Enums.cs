@@ -1,29 +1,29 @@
 ﻿namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    ///     Provide an interface to the ST7565 family of displays.
+    /// Provide an interface to the ST7565 family of displays.
     /// </summary>
     public partial class St7565
     {
         /// <summary>
-        ///     Allow the programmer to set the scroll direction.
+        /// Allow the programmer to set the scroll direction.
         /// </summary>
         public enum ScrollDirection
         {
             /// <summary>
-            ///     Scroll the display to the left.
+            /// Scroll the display to the left.
             /// </summary>
             Left,
             /// <summary>
-            ///     Scroll the display to the right.
+            /// Scroll the display to the right.
             /// </summary>
             Right,
             /// <summary>
-            ///     Scroll the display from the bottom left and vertically.
+            /// Scroll the display from the bottom left and vertically.
             /// </summary>
             RightAndVertical,
             /// <summary>
-            ///     Scroll the display from the bottom right and vertically.
+            /// Scroll the display from the bottom right and vertically.
             /// </summary>
             LeftAndVertical
         }

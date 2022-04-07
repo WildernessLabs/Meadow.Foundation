@@ -1,19 +1,22 @@
 ﻿namespace Meadow.Foundation.Graphics
 {
+    /// <summary>
+    /// Represents a 12x16 bitmap font
+    /// </summary>
     public class Font12x16 : IFont
     {
         /// <summary>
-        ///     Width of a character in the font.
+        /// Width of a character in the font.
         /// </summary>
         public int Width => 12;
 
         /// <summary>
-        ///     /   Height of a character in the font.
+        /// Height of a character in the font.
         /// </summary>
         public int Height => 16;
 
         /// <summary>
-        ///     Font table containing the binary representation of ASCII characters.
+        /// Font table containing the binary representation of ASCII characters.
         /// </summary>
         private static readonly byte[][] _fontTable =
         {
@@ -115,13 +118,13 @@
         };
 
         /// <summary>
-        ///     Get the binary representation of an ASCII character from the
-        ///     font table.
+        /// Get the binary representation of an ASCII character from the
+        /// font table.
         /// </summary>
         /// <param name="character">Character to look up.</param>
         /// <returns>
-        ///     Byte array containing the rows of pixels in the character.  Unknown byte codes will result in a space being
-        ///     returned.
+        /// Byte array containing the rows of pixels in the character.  Unknown byte codes will result in a space being
+        /// returned.
         /// </returns>
         public byte[] this[char character]
         {

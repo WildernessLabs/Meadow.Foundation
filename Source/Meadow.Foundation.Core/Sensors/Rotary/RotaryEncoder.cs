@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// we are rotating the other direction. For each change we must consider the
         /// previous state of A and B and the current state of A and B. This can be
         /// represented as 4-bit number.
-        ///  3 2 1 0
+        /// 3 2 1 0
         /// |old|new|
         /// |A|B|A|B|
         ///

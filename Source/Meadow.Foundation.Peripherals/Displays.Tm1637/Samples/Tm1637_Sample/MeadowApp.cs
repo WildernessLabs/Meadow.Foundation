@@ -9,7 +9,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Tm1637 display;
 
@@ -29,6 +29,6 @@ namespace MeadowApp
             display.Show(chars);
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

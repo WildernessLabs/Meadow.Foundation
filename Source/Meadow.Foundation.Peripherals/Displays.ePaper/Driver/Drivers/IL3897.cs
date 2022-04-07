@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Displays.ePaper
 {
     //aka WaveShare EPD2i13
     /// <summary>
-    ///     Represents an Il3897 ePaper display
+    /// Represents an Il3897 ePaper display
     /// </summary>
     public class Il3897 : EpdBase
     {

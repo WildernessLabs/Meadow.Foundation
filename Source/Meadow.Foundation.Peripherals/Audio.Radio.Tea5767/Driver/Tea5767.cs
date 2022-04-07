@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Audio.Radio
     public partial class Tea5767
     {
         /// <summary>
-        ///     TEA5767 radio.
+        /// TEA5767 radio.
         /// </summary>
         private readonly II2cPeripheral i2cPeripheral;
 
@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Audio.Radio
         public bool IsMuted { get; set; }
 
         /// <summary>
-        ///     Create a new TEA5767 object using the default parameters
+        /// Create a new TEA5767 object using the default parameters
         /// </summary>
         /// <param name="i2cBus">I2Cbus connected to the radio</param>
         /// <param name="address">Address of the bus on the I2C display.</param>

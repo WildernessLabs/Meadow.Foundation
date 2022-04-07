@@ -8,7 +8,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -27,6 +27,6 @@ namespace MeadowApp
             ina.StartUpdating(TimeSpan.FromSeconds(2));
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

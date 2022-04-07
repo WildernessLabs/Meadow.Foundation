@@ -8,7 +8,7 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         public MeadowApp()
         {
@@ -54,6 +54,6 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
             graphics.Show();
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }

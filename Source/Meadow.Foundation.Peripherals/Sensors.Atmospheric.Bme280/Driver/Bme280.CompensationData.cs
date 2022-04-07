@@ -3,7 +3,7 @@
     public partial class Bme280
     {
         /// <summary>
-        ///     Compensation data.
+        /// Compensation data.
         /// </summary>
         protected struct CompensationData
         {

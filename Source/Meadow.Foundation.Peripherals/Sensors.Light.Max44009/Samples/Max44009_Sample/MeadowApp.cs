@@ -9,7 +9,7 @@ namespace Sensors.Light.Max44009_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //<!—SNIP—>
+        //<!=SNIP=>
 
         Max44009 sensor;
 
@@ -53,6 +53,6 @@ namespace Sensors.Light.Max44009_Sample
             Console.WriteLine($"   Light: {result.Lux:N2}Lux");
         }
 
-        //<!—SNOP—>
+        //<!=SNOP=>
     }
 }
