@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
+using Meadow.Foundation.Sensors.Location.Gnss;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace MeadowApp

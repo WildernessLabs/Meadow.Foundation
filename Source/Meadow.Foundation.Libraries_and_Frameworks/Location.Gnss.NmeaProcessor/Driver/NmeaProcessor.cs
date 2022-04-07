@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Meadow.Utilities;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
+namespace Meadow.Foundation.Sensors.Location.Gnss
 {
     /// <summary>
     /// An engine that processes NMEA GPS/GNSS sentences by calling the appropriate

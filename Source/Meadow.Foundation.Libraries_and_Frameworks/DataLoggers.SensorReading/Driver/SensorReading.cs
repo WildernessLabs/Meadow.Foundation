@@ -7,8 +7,6 @@ namespace Meadow.Foundation.DataLoggers
     /// </summary>
     public class SensorReading
     {
-        #region Properties
-
         /// <summary>
         ///     Name of the sensor reading.
         /// </summary>
@@ -23,8 +21,6 @@ namespace Meadow.Foundation.DataLoggers
         ///     Date and time the reading was taken.
         /// </summary>
         public DateTime CreatedAt { get; set; }
-
-        #endregion Properties
 
         /// <summary>
         ///     Create a new SensorReading object.

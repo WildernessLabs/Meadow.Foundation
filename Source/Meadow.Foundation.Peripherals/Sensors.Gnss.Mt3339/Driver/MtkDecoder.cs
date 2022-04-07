@@ -1,5 +1,5 @@
 ﻿using System;
-using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
+using Meadow.Foundation.Sensors.Location.Gnss;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Gnss

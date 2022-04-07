@@ -5,27 +5,24 @@ using System.Threading;
 
 namespace Meadow.Foundation.DataLoggers
 {
+    /// <summary>
+    /// Represents a ThingSpeak data logger object
+    /// </summary>
     public class ThingSpeak
     {
-        #region Properties
-
         /// <summary>
-        ///     Get or set the ThingSpeak WriteKey.  This key allows this class to identify itself 
-        ///     with ThingSpeak and log data with the service.
+        /// Get or set the ThingSpeak WriteKey.  This key allows this class to identify itself 
+        /// with ThingSpeak and log data with the service.
         /// </summary>
         public string WriteKey { get; set; }
 
         /// <summary>
-        ///     URI of the ThingSpeak api.
+        /// URI of the ThingSpeak api.
         /// </summary>
         public string URI { get; set;  }
 
-        #endregion Properties
-
-        #region Constructor(s)
-
         /// <summary>
-        ///     Create a new ThingSpeak object.
+        /// Create a new ThingSpeak object.
         /// </summary>
         /// <param name="writeKey">Write key.</param>
         public ThingSpeak(string writeKey)
@@ -34,12 +31,8 @@ namespace Meadow.Foundation.DataLoggers
             URI = "https://api.thingspeak.com/update";
         }
 
-        #endregion Constructor(s)
-
-        #region Methods
-
         /// <summary>
-        ///     Send a single value to ThingSpeak
+        /// Send a single value to ThingSpeak
         /// </summary>
         /// <param name="value">Value to send to ThingSpeak.</param>
         public void PostValue(string value)
@@ -48,7 +41,7 @@ namespace Meadow.Foundation.DataLoggers
         }
 
         /// <summary>
-        ///     Post a series of values to ThingSpeak.
+        /// Post a series of values to ThingSpeak.
         /// </summary>
         /// <param name="values">Array of values to send to ThingSpeak.</param>
         public void PostValues(params string[] values)
@@ -66,12 +59,12 @@ namespace Meadow.Foundation.DataLoggers
         }
 
         /// <summary>
-        ///     Post the specified data to ThingSpeak.
+        /// Post the specified data to ThingSpeak.
         /// </summary>
         /// <remarks>
-        ///     The data should be URL encoded in the format:
+        /// The data should be URL encoded in the format:
         /// 
-        ///     field1=10.2&field2=15
+        /// field1=10.2&field2=15
         /// </remarks>
         /// <param name="data">Data to send.</param>
         /// <returns>Record number for the reading(s) just added.</returns>
@@ -115,7 +108,5 @@ namespace Meadow.Foundation.DataLoggers
             }
             return(result);
         }
-
-        #endregion Methods
     }
 }

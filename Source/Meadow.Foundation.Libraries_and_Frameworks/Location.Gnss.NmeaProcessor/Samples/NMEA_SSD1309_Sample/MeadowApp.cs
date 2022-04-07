@@ -2,7 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing;
+using Meadow.Foundation.Sensors.Location.Gnss;
 using Meadow.Hardware;
 using System;
 using System.Text;

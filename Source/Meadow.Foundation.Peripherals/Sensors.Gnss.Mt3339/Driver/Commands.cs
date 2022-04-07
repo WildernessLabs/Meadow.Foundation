@@ -167,7 +167,7 @@
         public const string PMTK_ENABLE_WAAS = "$PMTK301,2*2E";
 
         /// <summary>
-        /// standby command & boot successful message
+        /// standby command and boot successful message
         /// </summary>
         public const string PMTK_STANDBY = "$PMTK161,0*28";
 

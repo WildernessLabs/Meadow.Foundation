@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.Location.Gnss.NmeaParsing
+namespace Meadow.Foundation.Sensors.Location.Gnss
 {
     /// <summary>
     /// Process the Satellites in view messages from a GPS module.
