@@ -2,7 +2,7 @@
 
 # Meadow.Foundation
 
-The Meadow.Foundation peripherals library is an open source repository of drivers and libraries that streamline and simplifiy adding hardware to your .NET Meadow IoT application.
+The [Meadow.Foundation](http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/Peripherals/) peripherals library is an open source repository of drivers and libraries that streamline and simplifiy adding hardware to your .NET Meadow IoT application.
 
 Meadow.Foundation makes the task of building connected things easy with Meadow by providing a unified driver and library framework that includes drivers and abstractions for common peripherals such as: sensors, displays, motors, cameras and more. Additionally, it includes utility functions and helpers for common tasks when building connected things.
 
@@ -29,9 +29,7 @@ If you have a need for a driver that we don't yet support, you have a couple opt
 
 # Documentation
 
-You can read more Meadow.Foundation and how to get started in our [beta developer site](http://beta-developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
-
-Refer to our [Meadow.Foundation Peripherals Status](https://docs.google.com/spreadsheets/d/1U0asbAYjQgJ6dvqVXnvL8X1BPZiGZcpNl-GsdKagp2s/edit#gid=0) spreadsheet to track the progress of all the peripherals we're supporting in our latest version.
+You can read more Meadow.Foundation and how to get started in our [developer site](http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
 ## Using
 
