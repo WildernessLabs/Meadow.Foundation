@@ -12,6 +12,6 @@
     <ProjectReference Include="..\..\..\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd130x\Driver\Displays.Ssd130x.csproj" />
-    <ProjectReference Include="..\..\Driver\Location.Gnss.NmeaProcessor.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Location.Gnss.NmeaProcessor.csproj" />
   </ItemGroup>
 </Project>

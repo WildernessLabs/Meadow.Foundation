@@ -24,7 +24,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Location.Gnss.NmeaProcessor\Driver\Location.Gnss.NmeaProcessor.csproj" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

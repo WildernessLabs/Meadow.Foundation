@@ -9,6 +9,8 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
+        //<!=SNIP=>
+
         List<string> sentences;
         NmeaSentenceProcessor nmeaProcessor;
 
@@ -32,7 +34,7 @@ namespace MeadowApp
             Console.WriteLine("Made it through all sentences");
         }
 
-        protected void InitDecoders()
+        void InitDecoders()
         {
             Console.WriteLine("Create NMEA");
             nmeaProcessor = new NmeaSentenceProcessor();
@@ -97,7 +99,7 @@ namespace MeadowApp
 
         }
 
-        public List<string> GetSampleNmeaSentences()
+        List<string> GetSampleNmeaSentences()
         {
             List<string> sentences = new List<string>() {
                 "$GPGGA,000049.799,,,,,0,00,,,M,,M,,*72", // i think not valid.
@@ -123,7 +125,8 @@ namespace MeadowApp
             };
 
             return sentences;
-
         }
+
+        //<!=SNOP=>
     }
 }
