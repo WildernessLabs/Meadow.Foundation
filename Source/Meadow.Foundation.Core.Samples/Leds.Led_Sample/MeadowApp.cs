@@ -9,6 +9,8 @@ namespace Leds.Led_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
+        //<!=SNIP=>
+
         readonly List<Led> leds;
 
         public MeadowApp()
@@ -88,5 +90,7 @@ namespace Leds.Led_Sample
                 Thread.Sleep(1000);
             }
         }
+
+        //<!=SNOP=>
     }
 }

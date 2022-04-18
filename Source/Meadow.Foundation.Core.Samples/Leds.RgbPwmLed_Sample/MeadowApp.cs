@@ -10,6 +10,8 @@ namespace Leds.RgbPwmLed_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
+        //<!=SNIP=>
+
         List<RgbPwmLed> rgbPwmLeds;
 
         public MeadowApp()
@@ -126,5 +128,7 @@ namespace Leds.RgbPwmLed_Sample
                 }
             }
         }
+
+        //<!=SNOP=>
     }
 }

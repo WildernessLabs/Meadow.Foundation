@@ -7,7 +7,9 @@ using Meadow.Foundation.Audio;
 namespace Audio.PiezoSpeaker_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
-    {        
+    {
+        //<!=SNIP=>
+
         protected PiezoSpeaker piezoSpeaker;
 
         public MeadowApp()
@@ -31,5 +33,7 @@ namespace Audio.PiezoSpeaker_Sample
                 await Task.Delay(2500);
             }
         }
+
+        //<!=SNOP=>
     }
 }
