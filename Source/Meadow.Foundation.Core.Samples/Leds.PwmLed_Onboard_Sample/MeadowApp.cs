@@ -10,9 +10,11 @@ namespace Leds.PwmLed_Onboard_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        PwmLed _redPwmLed;
-        PwmLed _greenPwmLed;
-        PwmLed _bluePwmLed;
+        //<!=SNIP=>
+
+        PwmLed redPwmLed;
+        PwmLed greenPwmLed;
+        PwmLed bluePwmLed;
 
         public MeadowApp()
         {
@@ -24,56 +26,58 @@ namespace Leds.PwmLed_Onboard_Sample
         public void ConfigurePeripherals()
         {
             Console.WriteLine("Creating peripherals...");
-            this._redPwmLed = new PwmLed(Device,
-                Device.Pins.OnboardLedRed, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
-            this._greenPwmLed = new PwmLed(Device,
-                Device.Pins.OnboardLedGreen, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
-            this._bluePwmLed = new PwmLed(Device,
-                Device.Pins.OnboardLedBlue, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
+            redPwmLed = new PwmLed(Device, Device.Pins.OnboardLedRed, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
+            greenPwmLed = new PwmLed(Device, Device.Pins.OnboardLedGreen, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
+            bluePwmLed = new PwmLed(Device, Device.Pins.OnboardLedBlue, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
         }
 
         public void BrightnessTest(int loopCount)
         {
             for (int i = 0; i < loopCount; i++) {
                 Console.WriteLine("Blue On @ 1.0");
-                _bluePwmLed.SetBrightness(1);
+                bluePwmLed.SetBrightness(1);
                 Thread.Sleep(1000);
+
                 Console.WriteLine("Blue at 98.5%");
-                _bluePwmLed.SetBrightness(0.985f);
+                bluePwmLed.SetBrightness(0.985f);
                 Thread.Sleep(1000);
+
                 Console.WriteLine("Blue Off");
-                _bluePwmLed.SetBrightness(0);
+                bluePwmLed.SetBrightness(0);
                 Thread.Sleep(1000);
+
                 Console.WriteLine("Blue 50%");
-                _bluePwmLed.SetBrightness(0.5f);
+                bluePwmLed.SetBrightness(0.5f);
                 Thread.Sleep(1000);
-                _bluePwmLed.Stop();
+                bluePwmLed.Stop();
             }
         }
 
         public void PulseLeds()
         {
-            while (true) {
-                //    Console.WriteLine($"State: {state}");
+            while (true) 
+            {
                 Console.WriteLine("Pulse Red.");
-                this._redPwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.05f);
+                redPwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.05f);
                 Thread.Sleep(1000);
                 Console.WriteLine("Stop Red.");
-                this._redPwmLed.Stop();
+                redPwmLed.Stop();
 
                 Console.WriteLine("Pulse Blue.");
-                this._bluePwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.05f);
+                bluePwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.05f);
                 Thread.Sleep(2000);
                 Console.WriteLine("Stop Blue.");
-                this._bluePwmLed.Stop();
+                bluePwmLed.Stop();
 
                 Console.WriteLine("Pulse Green.");
-                this._greenPwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.0f);
+                greenPwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.0f);
                 Thread.Sleep(2000);
                 Console.WriteLine("Stop Green.");
-                this._greenPwmLed.Stop();
+                greenPwmLed.Stop();
 
             }
         }
+
+        //<!=SNOP=>
     }
 }

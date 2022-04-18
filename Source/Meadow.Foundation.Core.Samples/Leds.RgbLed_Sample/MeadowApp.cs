@@ -9,6 +9,8 @@ namespace Leds.RgbLed_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
+        //<!=SNIP=>
+
         protected List<RgbLed> rgbLeds;
 
         public MeadowApp()
@@ -90,5 +92,7 @@ namespace Leds.RgbLed_Sample
                 Thread.Sleep(1000);
             }
         }
+
+        //<!=SNOP=>
     }
 }

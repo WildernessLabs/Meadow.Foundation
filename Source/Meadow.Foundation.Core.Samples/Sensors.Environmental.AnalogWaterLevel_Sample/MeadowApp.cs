@@ -8,6 +8,8 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
+        //<!=SNIP=>
+
         AnalogWaterLevel analogWaterLevel;
 
         public MeadowApp()
@@ -24,7 +26,6 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
             // when the level changes by at least 0.1cm
             analogWaterLevel.Subscribe(AnalogWaterLevel.CreateObserver(
                 h => Console.WriteLine($"Water level changed by 10 mm; new: {h.New}, old: {h.Old}"),
-                // TODO: revisit this
                 null //e => { return Math.Abs(e.Delta) > 0.1f; }
             ));
 
@@ -36,8 +37,7 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
             // Get an initial reading.
             ReadLevel().Wait();
 
-            // Spin up the sampling thread so that events are raised and
-            // IObservable notifications are sent.
+            // Spin up the sampling thread so that events are raised and IObservable notifications are sent.
             analogWaterLevel.StartUpdating(TimeSpan.FromSeconds(5));
         }
 
@@ -46,5 +46,7 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
             var conditions = await analogWaterLevel.Read();
             Console.WriteLine($"Initial level: { conditions }");
         }
+
+        //<!=SNOP=>
     }
 }

@@ -8,6 +8,8 @@ namespace Sensors.HallEffect_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
+        //<!=SNIP=>
+
         LinearHallEffectTachometer hallSensor;
 
         public MeadowApp()
@@ -28,5 +30,7 @@ namespace Sensors.HallEffect_Sample
         {
             Console.WriteLine($"RPM: {e.New}");
         }
+
+        //<!=SNOP=>
     }
 }

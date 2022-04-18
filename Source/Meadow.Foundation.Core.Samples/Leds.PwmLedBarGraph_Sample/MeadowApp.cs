@@ -10,6 +10,8 @@ namespace Leds.PwmLedBarGraph_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
+        //<!=SNIP=>
+
         PwmLedBarGraph pwmLedBarGraph;
 
         public MeadowApp()
@@ -31,22 +33,6 @@ namespace Leds.PwmLedBarGraph_Sample
                  Device.Pins.D02
             };
             pwmLedBarGraph = new PwmLedBarGraph(Device, pins, new Voltage(3.3));
-
-            // Using an array of IPwmPorts
-            //IPwmPort[] ports =
-            //{
-            //     Device.CreatePwmPort(Device.Pins.D02),
-            //     Device.CreatePwmPort(Device.Pins.D03),
-            //     Device.CreatePwmPort(Device.Pins.D04),
-            //     Device.CreatePwmPort(Device.Pins.D05),
-            //     Device.CreatePwmPort(Device.Pins.D06),
-            //     Device.CreatePwmPort(Device.Pins.D07),
-            //     Device.CreatePwmPort(Device.Pins.D08),
-            //     Device.CreatePwmPort(Device.Pins.D09),
-            //     Device.CreatePwmPort(Device.Pins.D10),
-            //     Device.CreatePwmPort(Device.Pins.D11)
-            //};
-            //pwmLedBarGraph = new PwmLedBarGraph(ports, 0.25f);            
 
             TestPwmLedBarGraph();
         }
@@ -119,5 +105,7 @@ namespace Leds.PwmLedBarGraph_Sample
                 Thread.Sleep(1000);
             }
         }
+
+        //<!=SNOP=>
     }
 }

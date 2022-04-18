@@ -8,15 +8,12 @@ namespace Sensors.Rotary.RotaryEncoderWithButton_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
+        //<!=SNIP=>
+
         protected int value = 0;
         protected RotaryEncoderWithButton rotaryEncoder;
 
         public MeadowApp()
-        {
-            Initialize();
-        }
-
-        void Initialize()
         {
             Console.WriteLine("Initializing Hardware...");
 
@@ -45,24 +42,19 @@ namespace Sensors.Rotary.RotaryEncoderWithButton_Sample
             );
             rotaryEncoder.Subscribe(observer);
 
-            //==== Button events
-            rotaryEncoder.Clicked += (s, e) => {
-                Console.WriteLine("Button Clicked");
-            };
-            rotaryEncoder.PressEnded += (s, e) => {
-                Console.WriteLine("Press ended");
-            };
-            rotaryEncoder.PressStarted += (s, e) => {
-                Console.WriteLine("Press started");
-            };
-
-
+            rotaryEncoder.Clicked += (s, e) => Console.WriteLine("Button Clicked");
+          
+            rotaryEncoder.PressEnded += (s, e) => Console.WriteLine("Press ended");
+       
+            rotaryEncoder.PressStarted += (s, e) => Console.WriteLine("Press started");
+     
             Console.WriteLine("Hardware initialization complete.");
         }
 
         private void RotaryEncoder_Rotated(object sender, RotaryChangeResult e)
         {
-            switch (e.New) {
+            switch (e.New) 
+            {
                 case RotationDirection.Clockwise:
                     value++;
                     Console.WriteLine("/\\ Value = {0} CW", value);
@@ -73,5 +65,7 @@ namespace Sensors.Rotary.RotaryEncoderWithButton_Sample
                     break;
             }
         }
+
+        //<!=SNOP=>
     }
 }

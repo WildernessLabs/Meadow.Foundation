@@ -8,6 +8,8 @@ namespace Motor.HBridgeMotor_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
+        //<!=SNIP=>
+
         protected HBridgeMotor motor1;
 
         public MeadowApp()
@@ -43,5 +45,7 @@ namespace Motor.HBridgeMotor_Sample
                 Thread.Sleep(1000);
             }
         }
+
+        //<!=SNOP=>
     }
 }

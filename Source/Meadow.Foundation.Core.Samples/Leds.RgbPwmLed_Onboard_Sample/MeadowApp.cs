@@ -11,19 +11,21 @@ namespace Leds.RgbPwmLed_Onboard_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        RgbPwmLed _onboard;
+        //<!=SNIP=>
+
+        RgbPwmLed onboardLed;
 
         public MeadowApp()
         {
             ConfigurePeripherals();
-            TestSomeColors();
+            TestColors();
             RunColors();
         }
 
         public void ConfigurePeripherals()
         {
             Console.WriteLine("Creating peripherals...");
-            this._onboard = new RgbPwmLed(
+            this.onboardLed = new RgbPwmLed(
                 Device,
                 Device.Pins.OnboardLedRed,
                 Device.Pins.OnboardLedGreen,
@@ -31,13 +33,13 @@ namespace Leds.RgbPwmLed_Onboard_Sample
                 commonType: CommonType.CommonAnode);
         }
 
-        public void TestSomeColors()
+        public void TestColors()
         {
-            _onboard.SetColor(Color.Crimson);
+            onboardLed.SetColor(Color.Crimson);
             Thread.Sleep(3000);
-            _onboard.SetColor(Color.MediumPurple);
+            onboardLed.SetColor(Color.MediumPurple);
             Thread.Sleep(3000);
-            _onboard.SetColor(Color.FromHex("#23abe3"));
+            onboardLed.SetColor(Color.FromHex("#23abe3"));
         }
 
         public void RunColors()
@@ -50,14 +52,13 @@ namespace Leds.RgbPwmLed_Onboard_Sample
                     Console.WriteLine($"Hue: {hue}");
 
                     // set the color of the RGB
-                    _onboard.SetColor(Color.FromHsba((hue), 1, 1));
+                    onboardLed.SetColor(Color.FromHsba((hue), 1, 1));
 
-                    // for a fun, fast rotation through the hue spectrum:
-                    //Thread.Sleep (1);
-                    // for a gentle walk through the forest of colors;
                     Thread.Sleep(18);
                 }
             }
         }
+
+        //<!=SNOP=>
     }
 }

@@ -9,6 +9,8 @@ namespace Leds.LedBarGraph_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
+        //<!=SNIP=>
+
         LedBarGraph ledBarGraph;
 
         public MeadowApp()
@@ -29,23 +31,8 @@ namespace Leds.LedBarGraph_Sample
                  Device.Pins.D03,
                  Device.Pins.D02
             };
-            ledBarGraph = new LedBarGraph(Device, pins);
 
-            // Passing an array of DigitalOutputPorts
-            //IDigitalOutputPort[] ports =
-            //{
-            //Device.CreateDigitalOutputPort(Device.Pins.D05),
-            //Device.CreateDigitalOutputPort(Device.Pins.D06),
-            //Device.CreateDigitalOutputPort(Device.Pins.D07),
-            //Device.CreateDigitalOutputPort(Device.Pins.D08),
-            //Device.CreateDigitalOutputPort(Device.Pins.D09),
-            //Device.CreateDigitalOutputPort(Device.Pins.D10),
-            //Device.CreateDigitalOutputPort(Device.Pins.D11),
-            //Device.CreateDigitalOutputPort(Device.Pins.D12),
-            //Device.CreateDigitalOutputPort(Device.Pins.D13),
-            //Device.CreateDigitalOutputPort(Device.Pins.D14)
-            //};
-            //ledBarGraph = new LedBarGraph(ports);
+            ledBarGraph = new LedBarGraph(Device, pins);
 
             TestLedBarGraph();
         }
@@ -105,5 +92,7 @@ namespace Leds.LedBarGraph_Sample
                 Thread.Sleep(1000);
             }
         }
+
+        //<!=SNOP=>
     }
 }

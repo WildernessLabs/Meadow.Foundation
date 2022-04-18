@@ -9,6 +9,8 @@ namespace Leds.PwmLed_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
+        //<!=SNIP=>
+
         List<PwmLed> pwmLeds;
 
         public MeadowApp()
@@ -116,5 +118,7 @@ namespace Leds.PwmLed_Sample
                 Thread.Sleep(1000);
             }
         }
+
+        //<!=SNOP=>
     }
 }
