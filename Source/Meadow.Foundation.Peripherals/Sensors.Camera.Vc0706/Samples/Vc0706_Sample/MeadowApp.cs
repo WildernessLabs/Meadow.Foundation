@@ -27,8 +27,8 @@ namespace Sensors.Camera.Vc0706_Sample
 
             camera = new Vc0706(Device, Device.SerialPortNames.Com4, 38400);
 
-            camera.SetImageSize(Vc0706.ImageSize._320x240);
-            Console.WriteLine($"Image size is {camera.GetImageSize()}");
+            camera.SetCaptureResolution(Vc0706.ImageResolution._320x240);
+            Console.WriteLine($"Image size is {camera.GetCaptureResolution()}");
 
             camera.TakePicture();
 
