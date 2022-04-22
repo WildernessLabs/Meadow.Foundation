@@ -26,5 +26,6 @@
         const byte GPIO_PWREN_MASK = 0x04;
         const byte ARDUCHIP_GPIO = 0x06;
         const byte SINGLE_FIFO_READ = 0x3D;
+        const byte BURST_FIFO_READ =0x3C;  //Burst FIFO read operation
     }
 }

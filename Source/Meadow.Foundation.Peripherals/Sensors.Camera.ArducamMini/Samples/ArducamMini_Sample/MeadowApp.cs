@@ -26,22 +26,15 @@ namespace MeadowApp
 
             Console.WriteLine("Capture started");
 
-            for (int i = 0; i < 20; i++)
+            Thread.Sleep(1000);
+
+            if (camera.IsPhotoAvaliable())
             {
-                Thread.Sleep(1000);
+                Console.WriteLine("Capture complete");
 
-                if (camera.IsPhotoAvaliable())
-                {
-                    Console.WriteLine("Capture complete");
+                var data = camera.GetImageData();
 
-                    var data = camera.GetImageData();
-
-                    Console.WriteLine($"Jpeg captured {data.Length}");
-                }
-                else
-                {
-                    Console.WriteLine($"{i}");
-                }
+                Console.WriteLine($"Jpeg captured {data.Length}");
             }
         }
 

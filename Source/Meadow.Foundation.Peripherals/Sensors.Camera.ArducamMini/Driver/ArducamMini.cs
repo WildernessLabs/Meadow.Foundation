@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
 
-            spiDevice = new SpiPeripheral(spiBus, chipSelectPort, csMode: ChipSelectMode.ActiveHigh);
+            spiDevice = new SpiPeripheral(spiBus, chipSelectPort, csMode: ChipSelectMode.ActiveLow);
 
             Initialize();
         }
@@ -108,26 +108,42 @@ namespace Meadow.Foundation.Sensors.Camera
             return length;
         }
 
-        void SetFifoBurst()
-        {
-         //   spiDevice.Write(BURST_FIFO_READ);
-        }
-
         public byte ReadFifo()
         {
             return spiDevice.ReadRegister(SINGLE_FIFO_READ);
+        }
+
+        byte[] ReadFifoBurst(int length)
+        {
+            var buffer = new byte[length];
+            spiDevice.ReadRegister(BURST_FIFO_READ, buffer);
+            return buffer;  
         }
 
         public byte[] GetImageData()
         {
             Console.WriteLine("GetImageData");
 
-            Console.WriteLine($"Len: {ReadFifoLength()}");
+            int fifoLen = ReadFifoLength();
+
+            Console.WriteLine($"Len: {fifoLen}");
+
+        //    spiDevice.Write(BURST_FIFO_READ);
 
             using var ms = new MemoryStream();
-            for (int i = 0; i < ReadFifoLength(); i++)
+
+            byte value;
+
+            for (int i = 0; i < 40; i++)
             {
-                ms.WriteByte(ReadFifo());
+                value = ReadFifo();
+
+                ms.WriteByte(value);
+
+               // if(i % 100 == 0)
+                {
+                    Console.WriteLine($"Read {i} bytes - {value}");
+                }
             }
 
             return ms.ToArray();
@@ -142,7 +158,9 @@ namespace Meadow.Foundation.Sensors.Camera
 
         int GetBit(byte address, byte bit)
         {
+            Console.WriteLine("GetBit");
             var temp = spiDevice.ReadRegister(address);
+            Console.WriteLine($"Value {temp}");
             return (byte)(temp & bit);
         }
 
