@@ -104,7 +104,7 @@ namespace MeadowApp
             Console.WriteLine("Attempting single capture");
             camera.FlushFifo();
             camera.ClearFifoFlag();
-            camera.StartCapture();
+            camera.CapturePhoto();
 
             Console.WriteLine("Capture started");
 

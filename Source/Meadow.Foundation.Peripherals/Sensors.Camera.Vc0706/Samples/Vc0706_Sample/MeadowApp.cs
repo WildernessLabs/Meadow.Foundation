@@ -34,9 +34,9 @@ namespace Sensors.Camera.Vc0706_Sample
         {
             Console.WriteLine($"Image size is {camera.GetCaptureResolution()}");
 
-            camera.TakePicture();
+            camera.CapturePhoto();
 
-            using var jpegStream = await camera.GetImageStream();
+            using var jpegStream = await camera.GetPhotoStream();
 
             var jpeg = new JpegImage(jpegStream);
             Console.WriteLine($"{jpeg.Width}, {jpeg.Height}");

@@ -356,17 +356,26 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Capture a new image
         /// </summary>
         /// <returns>true if successful</returns>
-        public bool TakePicture()
+        public bool CapturePhoto()
         {
             framePointer = 0;
             return CameraFrameBuffCtrl(STOPCURRENTFRAME);
         }
 
         /// <summary>
+        /// Check if there is picture data on the camera
+        /// </summary>
+        /// <returns>true is data is avaliable</returns>
+        public bool IsPhotoAvaliable()
+        {
+            return GetFrameLength() != 0;
+        }
+
+        /// <summary>
         /// Retreive the image data from the camera
         /// </summary>
         /// <returns>The image data as a jpeg in a MemoryStream</returns>
-        public Task<MemoryStream> GetImageStream()
+        public Task<MemoryStream> GetPhotoStream()
         {
             return Task.Run(() =>
             {
@@ -405,9 +414,9 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Retreive the image data from the camera
         /// </summary>
         /// <returns>The image data as a jpeg in a byte array</returns>
-        public async Task<byte[]> GetImageData()
+        public async Task<byte[]> GetPhotoData()
         {
-            using var stream = await GetImageStream();
+            using var stream = await GetPhotoStream();
             return stream.ToArray();
         }
 

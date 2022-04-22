@@ -3,7 +3,6 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Camera;
-using Meadow.Hardware;
 
 namespace MeadowApp
 {
@@ -13,28 +12,36 @@ namespace MeadowApp
 
         public MeadowApp()
         {
-            Console.WriteLine("Creating output ports...");
+            Console.WriteLine("Initialize...");
 
-            var camera = new ArducamMini(Device, Device.CreateSpiBus(), Device.Pins.D00, Device.CreateI2cBus());
+            var spiBus = Device.CreateSpiBus(new Meadow.Units.Frequency(8, Meadow.Units.Frequency.UnitType.Megahertz));
+            var camera = new ArducamMini(Device, spiBus, Device.Pins.D00, Device.CreateI2cBus());
 
             Thread.Sleep(1000);
 
             Console.WriteLine("Attempting single capture");
             camera.FlushFifo();
-            camera.ClearFifoFlag();
-            camera.StartCapture();
+            camera.FlushFifo();
+            camera.CapturePhoto();
 
             Console.WriteLine("Capture started");
 
-            Thread.Sleep(1000);
-
-            if(camera.IsCaptureComplete())
+            for (int i = 0; i < 20; i++)
             {
-                Console.WriteLine("Capture complete");
+                Thread.Sleep(1000);
 
-                var data = camera.GetImageData();
+                if (camera.IsPhotoAvaliable())
+                {
+                    Console.WriteLine("Capture complete");
 
-                Console.WriteLine($"Jpeg captured {data.Length}");
+                    var data = camera.GetImageData();
+
+                    Console.WriteLine($"Jpeg captured {data.Length}");
+                }
+                else
+                {
+                    Console.WriteLine($"{i}");
+                }
             }
         }
 
