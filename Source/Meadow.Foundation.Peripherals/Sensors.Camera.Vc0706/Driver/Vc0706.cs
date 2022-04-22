@@ -1,7 +1,9 @@
 ﻿using Meadow.Hardware;
 using System;
+using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Camera
 {
@@ -361,6 +363,55 @@ namespace Meadow.Foundation.Sensors.Camera
         }
 
         /// <summary>
+        /// Retreive the image data from the camera
+        /// </summary>
+        /// <returns>The image data as a jpeg in a MemoryStream</returns>
+        public Task<MemoryStream> GetImageStream()
+        {
+            return Task.Run(() =>
+            {
+                uint frameLen = GetFrameLength();
+                byte bytesToRead;
+
+                var stream = new MemoryStream();
+                
+                int bytesRead = 0;
+
+                while (frameLen > 0)
+                {
+                    bytesToRead = (byte)Math.Min(128, frameLen);
+                    bytesRead += bytesToRead;
+
+                    var buffer = ReadPicture(bytesToRead);
+
+                    if (buffer.Length == 0) //means we're ahead of the camera
+                        continue;
+
+                    Console.WriteLine($"{buffer.Length}, {bytesToRead}");
+                    stream.Write(buffer, 0, bytesToRead);
+                    frameLen -= bytesToRead;
+                }
+
+                if (stream.Length == 0)
+                {
+                    return null;
+                }
+
+                return stream;
+            });
+        }
+
+        /// <summary>
+        /// Retreive the image data from the camera
+        /// </summary>
+        /// <returns>The image data as a jpeg in a byte array</returns>
+        public async Task<byte[]> GetImageData()
+        {
+            using var stream = await GetImageStream();
+            return stream.ToArray();
+        }
+
+        /// <summary>
         /// Resume live video over composite 
         /// </summary>
         /// <returns></returns>
@@ -437,6 +488,20 @@ namespace Meadow.Foundation.Sensors.Camera
             return len;
         }
 
+        byte[] args = {0x0C,
+                    0x0,
+                    0x0A,
+                    0,
+                    0,
+                    0, //(byte)(framePointer >> 8),
+                    0, //(byte)(framePointer & 0xFF),
+                    0,
+                    0,
+                    0,
+                    0, //length,
+                    (byte)(CAMERA_DELAY >> 8),
+                    (byte)(CAMERA_DELAY & 0xFF)};
+
         /// <summary>
         /// Read bytes from the camera buffer
         /// </summary>
@@ -444,19 +509,9 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <returns></returns>
         public byte[] ReadPicture(byte length)
         {
-            byte[] args = {0x0C,
-                    0x0,
-                    0x0A,
-                    0,
-                    0,
-                    (byte)(framePointer >> 8),
-                    (byte)(framePointer & 0xFF),
-                    0,
-                    0,
-                    0,
-                    length,
-                    (byte)(CAMERADELAY >> 8),
-                    (byte)(CAMERADELAY & 0xFF)};
+            args[5] = (byte)(framePointer >> 8);
+            args[6] = (byte)(framePointer & 0xFF);
+            args[10] = length;
 
             if (!RunCommand(READ_FBUF, args, (byte)args.Length, 5, false))
             { 
@@ -464,14 +519,14 @@ namespace Meadow.Foundation.Sensors.Camera
             }
 
             // read into the buffer PACKETLEN!
-            if (ReadResponse((byte)(length + 5), CAMERADELAY) == 0)
+            if (ReadResponse((byte)(length + 5), CAMERA_DELAY) == 0)
             { 
                 return new byte[0]; 
             }
 
             framePointer += length;
 
-            return cameraBuffer;
+            return cameraBuffer; //this returns the entire buffer instead of the data we need
         }
 
         bool RunCommand(byte cmd, 
@@ -507,14 +562,13 @@ namespace Meadow.Foundation.Sensors.Camera
             }
         }
 
-        byte ReadResponse(byte numbytes, byte timeout = 200)
+        byte ReadResponse(int length, int timeout = 200)
         {
             byte counter = 0;
             bufferLength = 0;
             int avail;
 
-            //100 != 0 && 200 != 0
-            while ((bufferLength != numbytes) && (timeout != counter))
+            while ((bufferLength != length) && (timeout != counter))
             {
                 avail = serialPort.BytesToRead;
 
@@ -526,8 +580,7 @@ namespace Meadow.Foundation.Sensors.Camera
                 }
                 counter = 0;
                 // there's a byte!
-                cameraBuffer[bufferLength++] = (byte)serialPort.ReadByte(); // hwSerial->read();
-                //Console.WriteLine($"{avail}: A byte! {camerabuff[bufferLen - 1]}");
+                cameraBuffer[bufferLength++] = (byte)serialPort.ReadByte();
             }
             return bufferLength;
         }

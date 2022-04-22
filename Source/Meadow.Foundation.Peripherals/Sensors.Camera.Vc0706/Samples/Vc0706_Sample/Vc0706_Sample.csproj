@@ -12,7 +12,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="SimpleJpegDecoder" Version="0.3.0" />
+    <PackageReference Include="BitMiracle.LibJpeg.NET" Version="1.5.324" />
+    <PackageReference Include="SimpleJpegDecoder" Version="0.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Displays.TftSpi\Driver\Displays.TftSpi.csproj" />

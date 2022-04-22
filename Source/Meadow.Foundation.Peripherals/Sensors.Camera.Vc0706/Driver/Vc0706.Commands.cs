@@ -34,7 +34,7 @@
         static byte SET_ZOOM = 0x52;
         static byte GET_ZOOM = 0x53;
 
-        static byte CAMERABUFFSIZE = 100;
-        static byte CAMERADELAY = 10;
+        static byte CAMERABUFFSIZE = 200;
+        static byte CAMERA_DELAY = 10;
     }
 }
