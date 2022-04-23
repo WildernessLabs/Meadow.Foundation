@@ -7,7 +7,7 @@
     <AssemblyName>ThingSpeak</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.DataLoggers.AdafruitIO</PackageId>
+    <PackageId>Meadow.Foundation.DataLoggers.ThingSpeak</PackageId>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, DataLoggers, ThingSpeak</PackageTags>
