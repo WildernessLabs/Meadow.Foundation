@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// 2-axis analog joystick
     /// </summary>
     public partial class AnalogJoystick
-        : SensorBase<JoystickPosition>
+        : SensorBase<AnalogJoystickPosition>, IAnalogJoystick
     {
         /// <summary>
         /// Number of samples used to calculate position
@@ -33,25 +33,24 @@ namespace Meadow.Foundation.Sensors.Hid
         protected IAnalogInputPort VerticalInputPort { get; set; }
 
         /// <summary>
-        /// Is the joystick inverted 
+        /// Is the horizontal / x-axis inverted 
         /// </summary>
-        public bool IsInverted { get; protected set; }
+        public bool IsHorizontalInverted { get; set; }
 
         /// <summary>
-        /// Current position of
+        /// Is the vertical / y-axis inverted 
         /// </summary>
-        public JoystickPosition? Position { get; protected set; }
+        public bool IsVerticalInverted { get; set; }
 
         /// <summary>
-        /// 
+        /// Current position of analog joystick
         /// </summary>
-        public DigitalJoystickPosition? DigitalPosition
-        {
-            get
-            {
-                return GetDigitalJoystickPosition();
-            }
-        }
+        public AnalogJoystickPosition? Position { get; protected set; }
+
+        /// <summary>
+        /// Digital position of joystick
+        /// </summary>
+        public DigitalJoystickPosition? DigitalPosition => GetDigitalJoystickPosition();
 
         /// <summary>
         /// Callibration for 2-axis analog joystick
@@ -65,11 +64,10 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="horizontalPin"></param>
         /// <param name="verticalPin"></param>
         /// <param name="calibration">Calibration for the joystick.</param>
-        /// <param name="isInverted">Whether or not the vertical component is inverted.</param>
         public AnalogJoystick(
             IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
-            JoystickCalibration? calibration = null, bool isInverted = false)
-                : this(device, horizontalPin, verticalPin, calibration, isInverted, 5, TimeSpan.FromMilliseconds(40))
+            JoystickCalibration? calibration = null)
+                : this(device, horizontalPin, verticalPin, calibration, 5, TimeSpan.FromMilliseconds(40))
         { }
 
         /// <summary>
@@ -79,20 +77,19 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="horizontalPin"></param>
         /// <param name="verticalPin"></param>
         /// <param name="calibration">Calibration for the joystick.</param>
-        /// <param name="isInverted">Whether or not the vertical component is inverted.</param>
         /// <param name="sampleCount">How many samples to take during a given
         /// reading. These are automatically averaged to reduce noise.</param>
         /// <param name="sampleInterval">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         public AnalogJoystick(
             IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
-            JoystickCalibration? calibration, bool isInverted,
+            JoystickCalibration? calibration,
             int sampleCount,
             TimeSpan sampleInterval)
                 : this(
                       device.CreateAnalogInputPort(horizontalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
                       device.CreateAnalogInputPort(verticalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
-                      calibration, isInverted)
+                      calibration)
         { }
 
         /// <summary>
@@ -101,14 +98,12 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="horizontalInputPort"></param>
         /// <param name="verticalInputPort"></param>
         /// <param name="calibration"></param>
-        /// <param name="isInverted"></param>
         public AnalogJoystick(
             IAnalogInputPort horizontalInputPort, IAnalogInputPort verticalInputPort,
-            JoystickCalibration? calibration = null, bool isInverted = false)
+            JoystickCalibration? calibration = null)
         {
             HorizontalInputPort = horizontalInputPort;
             VerticalInputPort = verticalInputPort;
-            IsInverted = isInverted;
 
             if (calibration == null)
             {
@@ -120,6 +115,19 @@ namespace Meadow.Foundation.Sensors.Hid
             }
 
             InitSubscriptions();
+        }
+
+        event EventHandler<ChangeResult<AnalogJoystickPosition>> IAnalogJoystick.Updated
+        {
+            add
+            {
+                throw new NotImplementedException();
+            }
+
+            remove
+            {
+                throw new NotImplementedException();
+            }
         }
 
         void InitSubscriptions()
@@ -146,12 +154,12 @@ namespace Meadow.Foundation.Sensors.Hid
                         // vertical (if any)
                         var newH = GetNormalizedPosition(h.New, true);
                         var newV = Position?.Vertical; // old vertical
-                        JoystickPosition newPosition = new JoystickPosition(newH, newV);
+                        AnalogJoystickPosition newPosition = new AnalogJoystickPosition(newH, newV);
 
                         //save state
                         Position = newPosition;
 
-                        var result = new ChangeResult<JoystickPosition>(newPosition, oldPosition);
+                        var result = new ChangeResult<AnalogJoystickPosition>(newPosition, oldPosition);
                         base.RaiseEventsAndNotify(result);
                     }
                 )
@@ -179,12 +187,12 @@ namespace Meadow.Foundation.Sensors.Hid
                         // horizontal (if any)
                         var newV = GetNormalizedPosition(v.New, true);
                         var newH = Position?.Horizontal; // old horizontal
-                        JoystickPosition newPosition = new JoystickPosition(newH, newV);
+                        AnalogJoystickPosition newPosition = new AnalogJoystickPosition(newH, newV);
 
                         //save state
                         Position = newPosition;
 
-                        var result = new ChangeResult<JoystickPosition>(newPosition, oldPosition);
+                        var result = new ChangeResult<AnalogJoystickPosition>(newPosition, oldPosition);
                         base.RaiseEventsAndNotify(result);
                     }
                 )
@@ -217,37 +225,47 @@ namespace Meadow.Foundation.Sensors.Hid
             var h = HorizontalInputPort.Voltage.Volts;
             var v = VerticalInputPort.Voltage.Volts;
 
-            if (h > (Calibration.HorizontalCenter + Calibration.DeadZone).Volts)
+            if (IsHorizontalInverted)
             {
+                h = 3.3 - h;
+            }
+            if (IsVerticalInverted)
+            {
+                v = 3.3 - v;
+            }
+
+            
+            if (h > (Calibration.HorizontalCenter + Calibration.DeadZone).Volts)
+            {   //Right
                 if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts)
-                {
-                    return IsInverted ? DigitalJoystickPosition.DownLeft : DigitalJoystickPosition.UpRight;
+                { 
+                    return DigitalJoystickPosition.UpRight;
                 }
                 if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts)
                 {
-                    return IsInverted ? DigitalJoystickPosition.UpLeft : DigitalJoystickPosition.DownRight;
+                    return DigitalJoystickPosition.DownRight;
                 }
-                return IsInverted ? DigitalJoystickPosition.Left : DigitalJoystickPosition.Right;
+                return DigitalJoystickPosition.Right;
             }
             else if (h < (Calibration.HorizontalCenter - Calibration.DeadZone).Volts)
-            {
+            {   //Left
                 if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts)
                 {
-                    return IsInverted ? DigitalJoystickPosition.DownRight : DigitalJoystickPosition.UpLeft;
+                    return DigitalJoystickPosition.UpLeft;
                 }
                 if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts)
                 {
-                    return IsInverted ? DigitalJoystickPosition.UpRight : DigitalJoystickPosition.DownLeft;
+                    return DigitalJoystickPosition.DownLeft;
                 }
-                return IsInverted ? DigitalJoystickPosition.Right : DigitalJoystickPosition.Left;
+                return  DigitalJoystickPosition.Left;
             }
             else if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts)
-            {
-                return IsInverted ? DigitalJoystickPosition.Down : DigitalJoystickPosition.Up;
+            {   //Up
+                return DigitalJoystickPosition.Up;
             }
             else if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts)
-            {
-                return IsInverted ? DigitalJoystickPosition.Up : DigitalJoystickPosition.Down;
+            {   //Down
+                return DigitalJoystickPosition.Down;
             }
 
             return DigitalJoystickPosition.Center;
@@ -257,12 +275,22 @@ namespace Meadow.Foundation.Sensors.Hid
         /// Convenience method to get the current temperature. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        protected override async Task<JoystickPosition> ReadSensor()
+        protected override async Task<AnalogJoystickPosition> ReadSensor()
         {
             var h = await HorizontalInputPort.Read();
             var v = await VerticalInputPort.Read();
 
-            JoystickPosition position = new JoystickPosition(GetNormalizedPosition(h, true), GetNormalizedPosition(v, false));
+            if(IsHorizontalInverted)
+            {   //just flip the value
+                h = new Voltage(3.3, VU.Volts) - h;
+            }
+
+            if (IsVerticalInverted)
+            {   //flip the value
+                v = new Voltage(3.3, VU.Volts) - v;
+            }
+
+            AnalogJoystickPosition position = new AnalogJoystickPosition(GetNormalizedPosition(h, true), GetNormalizedPosition(v, false));
             return position;
         }
 
@@ -334,7 +362,7 @@ namespace Meadow.Foundation.Sensors.Hid
                     normalized = (value.Volts - Calibration.HorizontalCenter.Volts) / (Calibration.HorizontalMax.Volts - Calibration.HorizontalCenter.Volts);
                 }
             }
-            else
+            else //vertical
             {
                 if (value <= Calibration.VerticalCenter)
                 {
@@ -346,7 +374,7 @@ namespace Meadow.Foundation.Sensors.Hid
                 }
             }
 
-            return (float)(IsInverted ? -1 * normalized : normalized);
+            return (float)normalized;
         }
     }
 }
