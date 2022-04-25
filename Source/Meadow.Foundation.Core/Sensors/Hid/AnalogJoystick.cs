@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Sensors.Hid
         public bool IsHorizontalInverted { get; set; }
 
         /// <summary>
-        /// Is the horizontal / x-axis inverted 
+        /// Is the vertical / y-axis inverted 
         /// </summary>
         public bool IsVerticalInverted { get; set; }
 
