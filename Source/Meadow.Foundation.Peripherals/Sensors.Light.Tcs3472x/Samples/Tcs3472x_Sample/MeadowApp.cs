@@ -29,7 +29,7 @@ namespace MeadowApp
                 Device.Pins.OnboardLedBlue,
                 commonType: CommonType.CommonAnode);
 
-            // Example that uses an IObersvable subscription to only be notified when the filter is satisfied
+            // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Tcs3472x.CreateObserver(
                 handler: result => Console.WriteLine($"Observer: filter satisifed: {result.New.AmbientLight?.Lux:N2}Lux, old: {result.Old?.AmbientLight?.Lux:N2}Lux"),
                 

@@ -22,7 +22,7 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
                 analogPin: Device.Pins.A00
             );
 
-            // Example that uses an IObersvable subscription to only be notified
+            // Example that uses an IObservable subscription to only be notified
             // when the level changes by at least 0.1cm
             analogWaterLevel.Subscribe(AnalogWaterLevel.CreateObserver(
                 h => Console.WriteLine($"Water level changed by 10 mm; new: {h.New}, old: {h.Old}"),

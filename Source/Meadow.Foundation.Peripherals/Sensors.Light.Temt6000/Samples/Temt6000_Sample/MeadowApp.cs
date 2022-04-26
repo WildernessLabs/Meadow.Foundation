@@ -21,7 +21,7 @@ namespace MeadowApp
             // configure our sensor
             sensor = new Temt6000(Device, Device.Pins.A03);
 
-            // Example that uses an IObersvable subscription to only be notified when the voltage changes by at least 0.5V
+            // Example that uses an IObservable subscription to only be notified when the voltage changes by at least 0.5V
             var consumer = Temt6000.CreateObserver(
                 handler: result => Console.WriteLine($"Observer filter satisfied: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V"),
                 // only notify if the change is greater than 0.5V

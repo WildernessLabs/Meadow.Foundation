@@ -19,7 +19,7 @@ namespace Sensors.Light.Max44009_Sample
 
             sensor = new Max44009(Device.CreateI2cBus());
 
-            // Example that uses an IObersvable subscription to only be notified when the filter is satisfied
+            // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Max44009.CreateObserver(
                 handler: result => Console.WriteLine($"Observer: filter satisifed: {result.New.Lux:N2}Lux, old: {result.Old?.Lux:N2}Lux"),
 

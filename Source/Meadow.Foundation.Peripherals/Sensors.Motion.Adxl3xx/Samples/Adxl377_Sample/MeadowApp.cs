@@ -28,7 +28,7 @@ namespace Sensors.Motion.Adxl377_Sample
                     $"Z:{result.New.Z.MetersPerSecondSquared:N2} (m/s^2)]");
             };
 
-            // Example that uses an IObersvable subscription to only be notified when the filter is satisfied
+            // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Adxl377.CreateObserver(
                 handler: result => Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.X:N2}, old: X:{result.Old?.X:N2}"),
                 // only notify if there's a greater than 1G change in the Z direction

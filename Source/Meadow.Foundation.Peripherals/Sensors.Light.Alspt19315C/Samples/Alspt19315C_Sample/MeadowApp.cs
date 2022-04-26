@@ -20,7 +20,7 @@ namespace MeadowApp
             sensor = new Alspt19315C(Device, Device.Pins.A03);
 
             //==== IObservable Pattern with an optional notification filter.
-            // Example that uses an IObersvable subscription to only be notified
+            // Example that uses an IObservable subscription to only be notified
             // when the voltage changes by at least 0.5V
             var consumer = Alspt19315C.CreateObserver(
                 handler: result => Console.WriteLine($"Observer filter satisfied: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V"),

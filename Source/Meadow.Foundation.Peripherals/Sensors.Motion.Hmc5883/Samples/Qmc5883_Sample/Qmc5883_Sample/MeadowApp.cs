@@ -29,7 +29,7 @@ namespace MeadowApp
                 Console.WriteLine($"Heading: [{Hmc5883.DirectionToHeading(result.New).DecimalDegrees:N2}] degrees");
             };
 
-            // Example that uses an IObersvable subscription to only be notified when the filter is satisfied
+            // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Qmc5883.CreateObserver(
                 handler: result => Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{Qmc5883.DirectionToHeading(result.New):N2}," +
                         $" old: X:{((result.Old != null) ? Qmc5883.DirectionToHeading(result.Old.Value) : "n/a"):N2} degrees"),

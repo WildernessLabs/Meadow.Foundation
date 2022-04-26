@@ -49,7 +49,7 @@ namespace BasicSensors.Motion.Apds9960_Sample
 }
 
 ////==== IObservable 
-//// Example that uses an IObersvable subscription to only be notified
+//// Example that uses an IObservable subscription to only be notified
 //// when the filter is satisfied
 //var consumer = Apds9960.CreateObserver(
 //    handler: result => {
