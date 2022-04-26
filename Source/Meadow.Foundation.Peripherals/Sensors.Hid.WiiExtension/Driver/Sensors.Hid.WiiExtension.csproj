@@ -1,0 +1,26 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+	<PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageIcon>icon.png</PackageIcon>
+		<Authors>Wilderness Labs, Inc</Authors>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<OutputType>Library</OutputType>
+		<AssemblyName>WiiExtension</AssemblyName>
+		<Company>Wilderness Labs, Inc</Company>
+		<PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+		<PackageId>Meadow.Foundation.Sensors.Hid.WiiExtension</PackageId>
+		<RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+		<PackageTags>Meadow.Foundation,wii,nunchuck,classic,controller</PackageTags>
+		<Version>0.1.0</Version>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Description>Nintendo Wii I2C extension controllers (nunchuck, classic controller, snes mini controller, nes mini controller)</Description>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
+	  <ProjectReference Include="..\..\..\..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj" />
+	  <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+	</ItemGroup>
+</Project>

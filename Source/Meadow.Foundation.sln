@@ -1004,6 +1004,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NmeaProcessor_Sample", "Mea
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generators.SoftPwmPort_Sample", "Meadow.Foundation.Core.Samples\Generators.SoftPwmPort_Sample\Generators.SoftPwmPort_Sample.csproj", "{07F091E6-76EA-4A01-AB96-BF48EB87412A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Hid.WiiExtension", "Sensors.Hid.WiiExtension", "{16681455-B8C2-448B-946F-F2053916B2B5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.WiiExtension", "Meadow.Foundation.Peripherals\Sensors.Hid.WiiExtension\Driver\Sensors.Hid.WiiExtension.csproj", "{0A83C802-7117-4D78-98A5-C67BD70AF1A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2342,6 +2346,12 @@ Global
 		{07F091E6-76EA-4A01-AB96-BF48EB87412A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07F091E6-76EA-4A01-AB96-BF48EB87412A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{07F091E6-76EA-4A01-AB96-BF48EB87412A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{0A83C802-7117-4D78-98A5-C67BD70AF1A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A83C802-7117-4D78-98A5-C67BD70AF1A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A83C802-7117-4D78-98A5-C67BD70AF1A6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{0A83C802-7117-4D78-98A5-C67BD70AF1A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A83C802-7117-4D78-98A5-C67BD70AF1A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A83C802-7117-4D78-98A5-C67BD70AF1A6}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2841,6 +2851,8 @@ Global
 		{C1F592C9-E31A-4C58-B8D2-960A4592D7AD} = {17E22697-CB77-4F38-AB13-BBDBD53B7829}
 		{55025FED-EB56-4875-AF18-C48F30E20991} = {17E22697-CB77-4F38-AB13-BBDBD53B7829}
 		{07F091E6-76EA-4A01-AB96-BF48EB87412A} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
+		{16681455-B8C2-448B-946F-F2053916B2B5} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
+		{0A83C802-7117-4D78-98A5-C67BD70AF1A6} = {16681455-B8C2-448B-946F-F2053916B2B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
