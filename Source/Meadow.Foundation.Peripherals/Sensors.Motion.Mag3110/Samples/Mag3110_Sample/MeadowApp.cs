@@ -29,7 +29,7 @@ namespace MeadowApp
                 Console.WriteLine($"Temp: {result.New.Temperature?.Celsius:N2}C");
             };
 
-            // Example that uses an IObersvable subscription to only be notified when the filter is satisfied
+            // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Mag3110.CreateObserver(
                 handler: result => Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.MagneticField3D?.X.MicroTesla:N2}, old: X:{result.Old?.MagneticField3D?.X.MicroTesla:N2}"),
                 // only notify if there's a greater than 1 micro tesla on the Y axis

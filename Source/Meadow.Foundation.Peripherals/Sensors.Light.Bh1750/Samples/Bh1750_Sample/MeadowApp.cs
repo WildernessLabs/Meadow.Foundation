@@ -24,7 +24,7 @@ namespace MeadowApp
                 lightTransmittance: 1 // lower this to increase sensitivity, for instance, if it's behind a semi opaque window
                 ); 
 
-            // Example that uses an IObersvable subscription to only be notified when the filter is satisfied
+            // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Bh1750.CreateObserver(
                 handler: result => Console.WriteLine($"Observer: filter satisifed: {result.New.Lux:N2}Lux, old: {result.Old?.Lux:N2}Lux"),
                 

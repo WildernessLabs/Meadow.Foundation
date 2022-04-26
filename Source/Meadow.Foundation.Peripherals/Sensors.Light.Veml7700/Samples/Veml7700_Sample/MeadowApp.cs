@@ -54,7 +54,7 @@ namespace Sensors.Light.Veml7700_Sample
 
 
 ////==== IObservable 
-//// Example that uses an IObersvable subscription to only be notified
+//// Example that uses an IObservable subscription to only be notified
 //// when the temperature changes by at least a degree, and humidty by 5%.
 //// (blowing hot breath on the sensor should trigger)
 //var consumer = Veml7700.CreateObserver(

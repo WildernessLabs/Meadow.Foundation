@@ -34,7 +34,7 @@ namespace Sensors.Motion.mpu5060_Sample
                 Console.WriteLine($"Temp: {result.New.Temperature?.Celsius:N2}C");
             };
 
-            // Example that uses an IObersvable subscription to only be notified when the filter is satisfied
+            // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Mpu6050.CreateObserver(
                 handler: result => Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.Acceleration3D?.X:N2}, old: X:{result.Old?.Acceleration3D?.X:N2}"),
                 // only notify if there's a greater than 1G change in the Z direction
