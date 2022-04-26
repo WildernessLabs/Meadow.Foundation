@@ -24,6 +24,9 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public IAnalogJoystick AnalogStick { get; } = new WiiExtensionAnalogJoystick(8);
 
+        /// <summary>
+        /// Acceleration data from accelerometer
+        /// </summary>
         public Acceleration3D? Acceleration3D { get; protected set; } = null;
 
 
