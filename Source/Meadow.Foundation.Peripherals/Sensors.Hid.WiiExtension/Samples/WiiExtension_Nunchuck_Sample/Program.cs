@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using System.Threading;
 
-namespace Bbq10Keyboard_Sample
+namespace WiiNunchuck_Sample
 {
     class Program
     {

@@ -1008,6 +1008,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Hid.WiiExtension", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.WiiExtension", "Meadow.Foundation.Peripherals\Sensors.Hid.WiiExtension\Driver\Sensors.Hid.WiiExtension.csproj", "{0A83C802-7117-4D78-98A5-C67BD70AF1A6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{9E6A4897-5F52-4893-B090-EF5B941AC709}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WiiExtension_ClassicController_Sample", "Meadow.Foundation.Peripherals\Sensors.Hid.WiiExtension\Samples\WiiExtension_ClassicController_Sample\WiiExtension_ClassicController_Sample.csproj", "{63AD1293-4D21-42C4-A745-4C327C1055B3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WiiExtension_Nunchuck_Sample", "Meadow.Foundation.Peripherals\Sensors.Hid.WiiExtension\Samples\WiiExtension_Nunchuck_Sample\WiiExtension_Nunchuck_Sample.csproj", "{BAB5322F-E464-40E3-9AF2-CC30C2F8816D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2352,6 +2358,18 @@ Global
 		{0A83C802-7117-4D78-98A5-C67BD70AF1A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A83C802-7117-4D78-98A5-C67BD70AF1A6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0A83C802-7117-4D78-98A5-C67BD70AF1A6}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{63AD1293-4D21-42C4-A745-4C327C1055B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63AD1293-4D21-42C4-A745-4C327C1055B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63AD1293-4D21-42C4-A745-4C327C1055B3}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{63AD1293-4D21-42C4-A745-4C327C1055B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63AD1293-4D21-42C4-A745-4C327C1055B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63AD1293-4D21-42C4-A745-4C327C1055B3}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{BAB5322F-E464-40E3-9AF2-CC30C2F8816D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAB5322F-E464-40E3-9AF2-CC30C2F8816D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAB5322F-E464-40E3-9AF2-CC30C2F8816D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{BAB5322F-E464-40E3-9AF2-CC30C2F8816D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAB5322F-E464-40E3-9AF2-CC30C2F8816D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAB5322F-E464-40E3-9AF2-CC30C2F8816D}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2853,6 +2871,9 @@ Global
 		{07F091E6-76EA-4A01-AB96-BF48EB87412A} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
 		{16681455-B8C2-448B-946F-F2053916B2B5} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{0A83C802-7117-4D78-98A5-C67BD70AF1A6} = {16681455-B8C2-448B-946F-F2053916B2B5}
+		{9E6A4897-5F52-4893-B090-EF5B941AC709} = {16681455-B8C2-448B-946F-F2053916B2B5}
+		{63AD1293-4D21-42C4-A745-4C327C1055B3} = {9E6A4897-5F52-4893-B090-EF5B941AC709}
+		{BAB5322F-E464-40E3-9AF2-CC30C2F8816D} = {9E6A4897-5F52-4893-B090-EF5B941AC709}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
