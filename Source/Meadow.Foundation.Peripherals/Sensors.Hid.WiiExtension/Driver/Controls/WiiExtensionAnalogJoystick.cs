@@ -15,14 +15,14 @@ namespace Meadow.Foundation.Sensors.Hid
         public byte BitsOfPrecision { get; protected set; }
         
         //cache values for performance 
-        private readonly float offset;
-        private readonly float scale;
+        readonly float offset;
+        readonly float scale;
 
         public WiiExtensionAnalogJoystick(byte bitsOfPrecision)
         {
             BitsOfPrecision = bitsOfPrecision;
             offset = (float)Math.Pow(2, bitsOfPrecision - 1);
-            scale = 1.0f / (float)Math.Pow(2, bitsOfPrecision - 1);
+            scale = 1.0f / offset;
         }
 
         public void Update(byte xAxisValue, byte yAxisValue)

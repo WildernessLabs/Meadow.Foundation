@@ -2,6 +2,7 @@
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Hid;
 using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
@@ -29,13 +30,13 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public Acceleration3D? Acceleration3D { get; protected set; } = null;
 
-
         bool CButtonPressed => (readBuffer[5] >> 1 & 0x01) == 0;
         bool ZButtonPressed => (readBuffer[5] & 0x01) == 0;
 
         byte JoystickX => readBuffer[0];
         byte JoystickY => readBuffer[1];
 
+        //appears to be 10 bits +/- 2g
         int XAcceleration => (readBuffer[2] << 2) | ((readBuffer[5] >> 2) & 3);
         int YAcceleration => (readBuffer[3] << 2) | ((readBuffer[5] >> 4) & 3);
         int ZAcceleration => (readBuffer[4] << 2) | ((readBuffer[5] >> 6) & 3);
@@ -44,8 +45,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// Creates a Wii Nunchuck object
         /// </summary>
         /// <param name="i2cBus">the I2C bus connected to controller</param>
-        /// <param name="address">the address of the controller</param>
-        public WiiNunchuck(II2cBus i2cBus, byte address) : base(i2cBus, address)
+        public WiiNunchuck(II2cBus i2cBus) : base(i2cBus, (byte)Addresses.Default)
         {
         }
 

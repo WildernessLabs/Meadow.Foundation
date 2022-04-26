@@ -39,11 +39,11 @@ namespace Meadow.Foundation.Sensors.Hid
 
         public void Update(bool state)
         {
+            //Console.WriteLine($"{state} {State}");
+
             if (state == true && State == false)
             {   // save our press start time (for long press event)
                 buttonPressStart = DateTime.Now;
-                // raise our event in an inheritance friendly way
-               // Console.WriteLine($"{state} {State}");
 
                 RaisePressStarted();
             }

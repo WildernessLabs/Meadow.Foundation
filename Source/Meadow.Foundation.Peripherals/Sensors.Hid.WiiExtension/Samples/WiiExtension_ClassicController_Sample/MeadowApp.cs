@@ -5,7 +5,7 @@ using System;
 
 namespace WiiClassicController_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV1, MeadowApp>
     {
         //Snip
 
@@ -15,6 +15,9 @@ namespace WiiClassicController_Sample
         {
             Console.WriteLine("Initialize hardware...");
             var i2cBus = Device.CreateI2cBus(WiiClassicController.DefaultSpeed);
+
+            classicController = new WiiClassicController(i2cBus: i2cBus, 
+                                                         useHighResolutionMode: true);
 
             //onetime update - could be used in a game loop
             classicController.Update();
@@ -39,11 +42,13 @@ namespace WiiClassicController_Sample
 
             classicController.DPad.Updated += (s, e) => Console.WriteLine($"DPad {e.New}");
 
+           
             classicController.LeftTrigger.Updated += (s, e) => Console.WriteLine($"Left Trigger {e.New}");
             classicController.RightTrigger.Updated += (s, e) => Console.WriteLine($"Left Trigger {e.New}");
 
             classicController.LeftAnalogStick.Updated += (s, e) => Console.WriteLine($"Left Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
             classicController.RightAnalogStick.Updated += (s, e) => Console.WriteLine($"Right Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
+            
 
             //Start reading updates
             classicController.StartUpdating(TimeSpan.FromMilliseconds(200));

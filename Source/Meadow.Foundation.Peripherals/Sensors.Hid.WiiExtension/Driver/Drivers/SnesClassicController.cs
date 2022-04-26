@@ -75,8 +75,7 @@ namespace Sensors.Hid.WiiExtension
         /// Creates a SNES Classic Mini Controller object
         /// </summary>
         /// <param name="i2cBus">the I2C bus connected to controller</param>
-        /// <param name="address">the address of the controller</param>
-        public SnesClassicController(II2cBus i2cBus, byte address) : base(i2cBus, address)
+        public SnesClassicController(II2cBus i2cBus) : base(i2cBus, (byte)Addresses.Default)
         {
         }
 
