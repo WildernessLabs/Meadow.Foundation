@@ -1,12 +1,11 @@
-﻿using Meadow;
+﻿using Meadow.Peripherals.Sensors.Hid;
 using System;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
-    internal class WiiExtensionTrigger : IAnalogTrigger
+    internal class WiiExtensionAnalogTrigger : IAnalogTrigger
     {
         public double? Position { get; protected set; } = 0;
-        
 
         public event EventHandler<ChangeResult<double>> Updated;
 

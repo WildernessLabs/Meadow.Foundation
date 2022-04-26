@@ -1,17 +1,30 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Hid;
-using System;
-using System.Threading;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
+    /// <summary>
+    /// Represents a Nintendo Wii I2C Nunchuck
+    /// </summary>
     public class WiiNunchuck : WiiExtensionBase
     {
+        /// <summary>
+        /// C Button
+        /// </summary>
         public IButton CButton { get; } = new WiiExtensionButton();
+        /// <summary>
+        /// Z Button
+        /// </summary>
         public IButton ZButton { get; } = new WiiExtensionButton();
 
-        public IAnalogJoystick AnalogStick { get; } = new WiiExtensionAnalogJoystick(6);
+        /// <summary>
+        /// Analog jostick (8 bits of precision)
+        /// </summary>
+        public IAnalogJoystick AnalogStick { get; } = new WiiExtensionAnalogJoystick(8);
+
+        public Acceleration3D? Acceleration3D { get; protected set; } = null;
 
 
         bool CButtonPressed => (readBuffer[5] >> 1 & 0x01) == 0;
@@ -24,10 +37,18 @@ namespace Meadow.Foundation.Sensors.Hid
         int YAcceleration => (readBuffer[3] << 2) | ((readBuffer[5] >> 4) & 3);
         int ZAcceleration => (readBuffer[4] << 2) | ((readBuffer[5] >> 6) & 3);
 
+        /// <summary>
+        /// Creates a Wii Nunchuck object
+        /// </summary>
+        /// <param name="i2cBus">the I2C bus connected to controller</param>
+        /// <param name="address">the address of the controller</param>
         public WiiNunchuck(II2cBus i2cBus, byte address) : base(i2cBus, address)
         {
         }
 
+        /// <summary>
+        /// Get the latest sensor data from the device
+        /// </summary>
         public override void Update()
         {
             base.Update();
@@ -37,7 +58,10 @@ namespace Meadow.Foundation.Sensors.Hid
 
             (AnalogStick as WiiExtensionAnalogJoystick).Update(JoystickX, JoystickY);
 
-          //  Console.WriteLine($"{XAcceleration}, {YAcceleration}, {ZAcceleration}");
+            Acceleration3D = new Acceleration3D((XAcceleration - 512) * 0.5,
+                                                (YAcceleration - 512) * 0.5,
+                                                (ZAcceleration - 512) * 0.5,
+                                                Acceleration.UnitType.Gravity);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Meadow;
-using Meadow.Peripherals.Sensors.Hid;
+﻿using Meadow.Peripherals.Sensors.Hid;
 using System;
 
 namespace Meadow.Foundation.Sensors.Hid

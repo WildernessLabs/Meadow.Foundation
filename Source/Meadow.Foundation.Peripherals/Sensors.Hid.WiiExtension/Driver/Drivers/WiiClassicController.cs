@@ -4,38 +4,83 @@ using Meadow.Peripherals.Sensors.Hid;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
+    /// <summary>
+    /// Represents a Nintendo Wii I2C Classic controller
+    /// </summary>
     public class WiiClassicController : WiiExtensionBase
     {
-        //D-pad
+        /// <summary>
+        /// D-pad
+        /// </summary>
         public IDigitalJoystick DPad { get; } = new WiiExtensionDPad();
 
-        //A, B, X, Y
+        /// <summary>
+        /// X Button
+        /// </summary>
         public IButton XButton { get; } = new WiiExtensionButton();
+        /// <summary>
+        /// Y Button
+        /// </summary>
         public IButton YButton { get; } = new WiiExtensionButton();
+        /// <summary>
+        /// A Button
+        /// </summary>
         public IButton AButton { get; } = new WiiExtensionButton();
+        /// <summary>
+        /// B Button
+        /// </summary>
         public IButton BButton { get; } = new WiiExtensionButton();
 
-        //L, R, ZL, ZR
+        /// <summary>
+        /// L Button
+        /// </summary>
         public IButton LButton { get; } = new WiiExtensionButton();
+        /// <summary>
+        /// R Button
+        /// </summary>
         public IButton RButton { get; } = new WiiExtensionButton();
+        /// <summary>
+        /// ZL Button (at bottom of trigger)
+        /// </summary>
         public IButton ZLButton { get; } = new WiiExtensionButton();
+        /// <summary>
+        /// ZR Button (at bottom of trigger)
+        /// </summary>
         public IButton ZRButton { get; } = new WiiExtensionButton();
 
-        //Plus, Minus, Home
+        /// <summary>
+        /// + Button
+        /// </summary>
         public IButton PlusButton { get; } = new WiiExtensionButton();
+        /// <summary>
+        /// - Button
+        /// </summary>
         public IButton MinusButton { get; } = new WiiExtensionButton();
+        /// <summary>
+        /// Home Button
+        /// </summary>
         public IButton HomeButton { get; } = new WiiExtensionButton();
 
-        //Analog joysticks
+        /// <summary>
+        /// Left analog jostick (6 bits of precision)
+        /// </summary>
         public IAnalogJoystick LeftAnalogStick { get; } = new WiiExtensionAnalogJoystick(6);
 
+        /// <summary>
+        /// Right analog jostick (5 bits of precision)
+        /// </summary>
         public IAnalogJoystick RightAnalogStick { get; } = new WiiExtensionAnalogJoystick(5);
 
-        //Analog triggers
-        public IAnalogTrigger LeftTrigger { get; } = new WiiExtensionTrigger();
-        public IAnalogTrigger RightTrigger { get; } = new WiiExtensionTrigger();
+        /// <summary>
+        /// Left analog trigger (5 bits of precision)
+        /// </summary>
+        public IAnalogTrigger LeftTrigger { get; } = new WiiExtensionAnalogTrigger();
+        /// <summary>
+        /// Right analog trigger (5 bits of precision)
+        /// </summary>
+        public IAnalogTrigger RightTrigger { get; } = new WiiExtensionAnalogTrigger();
 
-
+        //helper internal properties
         byte LeftJoystickX => (byte)(readBuffer[0] & 0x3F);
         byte LeftJoystickY => (byte)(readBuffer[1] & 0x3F);
 
@@ -65,11 +110,18 @@ namespace Meadow.Foundation.Sensors.Hid
         bool AButtonPressed => (readBuffer[5] >> 4 & 0x01) == 0;
         bool BButtonPressed => (readBuffer[5] >> 6 & 0x01) == 0;
 
-
+        /// <summary>
+        /// Creates a Wii Classic Controller object
+        /// </summary>
+        /// <param name="i2cBus">the I2C bus connected to controller</param>
+        /// <param name="address">the address of the controller</param>
         public WiiClassicController(II2cBus i2cBus, byte address) : base(i2cBus, address)
         {
         }
 
+        /// <summary>
+        /// Get the latest sensor data from the device
+        /// </summary>
         public override void Update()
         {
             base.Update();
@@ -99,8 +151,8 @@ namespace Meadow.Foundation.Sensors.Hid
             (ZRButton as WiiExtensionButton).Update(ZRButtonPressed);
 
             //analog triggers
-            (LeftTrigger as WiiExtensionTrigger).Update(LeftTriggerPosition);
-            (RightTrigger as WiiExtensionTrigger).Update(RightTriggerPosition);
+            (LeftTrigger as WiiExtensionAnalogTrigger).Update(LeftTriggerPosition);
+            (RightTrigger as WiiExtensionAnalogTrigger).Update(RightTriggerPosition);
         }
     }
 }
