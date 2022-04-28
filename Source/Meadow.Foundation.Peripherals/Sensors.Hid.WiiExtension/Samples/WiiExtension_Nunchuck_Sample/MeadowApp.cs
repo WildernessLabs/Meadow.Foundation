@@ -5,7 +5,7 @@ using System;
 
 namespace WiiNunchuck_Sample
 {
-    public class MeadowApp : App<F7FeatherV1, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         //Snip
 
@@ -16,6 +16,8 @@ namespace WiiNunchuck_Sample
             Console.WriteLine("Initialize hardware...");
 
             nunchuck = new WiiNunchuck(Device.CreateI2cBus(WiiNunchuck.DefaultSpeed));
+
+            nunchuck.GetIdentification();
 
             Console.WriteLine("Update");
 

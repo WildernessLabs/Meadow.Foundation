@@ -5,7 +5,7 @@ using System;
 
 namespace WiiClassicController_Sample
 {
-    public class MeadowApp : App<F7FeatherV1, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         //Snip
 

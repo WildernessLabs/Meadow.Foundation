@@ -70,9 +70,19 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public virtual void Update()
         {
-            i2cPeripheral.WriteRegister(0, 0);
+            i2cPeripheral.Write(0);
 
-            i2cPeripheral.Read(readBuffer);
+            i2cPeripheral.Read(readBuffer[..6]);
+        }
+
+        public byte[] GetIdentification()
+        {
+            i2cPeripheral.Write(0xFA);
+            i2cPeripheral.Read(readBuffer[..6]);
+
+            Console.WriteLine(BitConverter.ToString(readBuffer[..6].ToArray()));
+
+            return readBuffer[..6].ToArray();
         }
 
         /// <summary>
