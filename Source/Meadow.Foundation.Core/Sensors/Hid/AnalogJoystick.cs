@@ -65,9 +65,17 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="verticalPin"></param>
         /// <param name="calibration">Calibration for the joystick.</param>
         public AnalogJoystick(
-            IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
+            IAnalogInputController device, 
+            IPin horizontalPin, 
+            IPin verticalPin,
             JoystickCalibration? calibration = null)
-                : this(device, horizontalPin, verticalPin, calibration, 5, TimeSpan.FromMilliseconds(40))
+                : this(
+                    device, 
+                    horizontalPin, 
+                    verticalPin, 
+                    calibration, 
+                    sampleCount: 5, 
+                    TimeSpan.FromMilliseconds(40))
         { }
 
         /// <summary>
@@ -82,7 +90,9 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="sampleInterval">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         public AnalogJoystick(
-            IAnalogInputController device, IPin horizontalPin, IPin verticalPin,
+            IAnalogInputController device, 
+            IPin horizontalPin, 
+            IPin verticalPin,
             JoystickCalibration? calibration,
             int sampleCount,
             TimeSpan sampleInterval)
@@ -99,7 +109,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="verticalInputPort"></param>
         /// <param name="calibration"></param>
         public AnalogJoystick(
-            IAnalogInputPort horizontalInputPort, IAnalogInputPort verticalInputPort,
+            IAnalogInputPort horizontalInputPort, 
+            IAnalogInputPort verticalInputPort,
             JoystickCalibration? calibration = null)
         {
             HorizontalInputPort = horizontalInputPort;
