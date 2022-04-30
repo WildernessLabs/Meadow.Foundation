@@ -23,7 +23,12 @@ namespace Meadow.Foundation.Leds
         /// Gets the brightness of the LED, controlled by a PWM signal, and limited by the 
         /// calculated maximum voltage. Valid values are from 0 to 1, inclusive.
         /// </summary>
-        public float Brightness { get; private set; } = 0;
+        public float Brightness
+        {
+            get => _brightness;
+            set => SetBrightness(value);
+        }
+        float _brightness = 0;
 
         /// <summary>
         /// Gets or Sets the state of the LED
@@ -106,14 +111,15 @@ namespace Meadow.Foundation.Leds
         /// Sets the LED to a specific brightness.
         /// </summary>
         /// <param name="brightness">Valid values are from 0 to 1, inclusive</param>
+        [Obsolete("Use Brightness property instead")]
         public void SetBrightness(float brightness)
         {
             if (brightness < 0 || brightness > 1) 
             {
-                throw new ArgumentOutOfRangeException(nameof(brightness), "err: brightness must be between 0 and 1, inclusive.");
+                throw new ArgumentOutOfRangeException(nameof(brightness), "brightness must be between 0 and 1, inclusive.");
             }
 
-            Brightness = brightness;
+            _brightness = brightness;
 
             Port.DutyCycle = maximumPwmDuty * Brightness;
 
@@ -315,8 +321,6 @@ namespace Meadow.Foundation.Leds
 
                 SetBrightness(brightness);
 
-                // TODO: what is this 80 ms delay? shouldn't it be intervalTime?
-                //await Task.Delay(80);
                 await Task.Delay(intervalTime);
             }
         }
