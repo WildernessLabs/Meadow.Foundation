@@ -111,6 +111,7 @@ namespace Meadow.Foundation.Leds
         /// Sets the LED to a specific brightness.
         /// </summary>
         /// <param name="brightness">Valid values are from 0 to 1, inclusive</param>
+        [Obsolete("Use Brightness property instead")]
         public void SetBrightness(float brightness)
         {
             if (brightness < 0 || brightness > 1) 
