@@ -7,39 +7,39 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Hid
 {
     /// <summary>
-	/// Represents an AS5013 Hall navigation sensor
-	/// for analog joysticks
-	/// </summary>
+    /// Represents an AS5013 Hall navigation sensor
+    /// for analog joysticks
+    /// </summary>
     public partial class As5013 
         : SensorBase<AnalogJoystickPosition>, IAnalogJoystick
     {
         /// <summary>
-		/// Default I2C bus speed
-		/// </summary>
+        /// Default I2C bus speed
+        /// </summary>
         public I2cBusSpeed DefaultSpeed => I2cBusSpeed.FastPlus;
 
         /// <summary>
-		/// Is the horizontal analog value inverted
-		/// </summary>
+        /// Is the horizontal analog value inverted
+        /// </summary>
         public bool IsHorizontalInverted { get; set; }
 
         /// <summary>
-		/// Is the vertical analog value inverted
-		/// </summary>
+        /// Is the vertical analog value inverted
+        /// </summary>
         public bool IsVerticalInverted { get; set; }
 
         /// <summary>
-		/// The joystick position
-		/// </summary>
+        /// The joystick position
+        /// </summary>
         public AnalogJoystickPosition? Position { get; private set; } = null;
 
         readonly II2cPeripheral i2CPeripheral;
 
         /// <summary>
-		/// Create a new As5013 object
-		/// </summary>
-		/// <param name="i2cBus">the I2C bus</param>
-		/// <param name="address">the device I2C address</param>
+        /// Create a new As5013 object
+        /// </summary>
+        /// <param name="i2cBus">the I2C bus</param>
+        /// <param name="address">the device I2C address</param>
         public As5013(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2CPeripheral = new I2cPeripheral(i2cBus, address);
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
         /// </param>
-		/// </summart>
+        /// </summart>
         public void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety
@@ -105,22 +105,11 @@ namespace Meadow.Foundation.Sensors.Hid
             }
         }
 
-        void SetDefaultConfiguration()
-        {
-            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL2, (byte)Command.JOYSTICK_CONTROL2_TEST_CMD);
-            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_AGC, (byte)Command.JOYSTICK_AGC_MAX_SENSITIVITY_CMD);
-            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_T_CTRL, (byte)Command.JOYSTICK_T_CTRL_SCALING_90_8_CMD);
-
-            byte value = (byte)(i2CPeripheral.ReadRegister((byte)Register.JOYSTICK_CONTROL1) & 0x01);
-
-            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL1, (byte)((byte)Command.JOYSTICK_CONTROL1_RESET_CMD | value));
-        }
-
         /// <summary>
-		/// Set the device into low power mode
-		/// </summary>
-		/// <param name="timing">timing between reads</param>
-        void SetLowPowerMode(byte timing)
+        /// Set the device into low power mode
+        /// </summary>
+        /// <param name="timing">timing between reads</param>
+        public void SetLowPowerMode(byte timing)
         {
             timing %= 8;
 
@@ -132,9 +121,9 @@ namespace Meadow.Foundation.Sensors.Hid
         }
 
         /// <summary>
-		/// Set the data scaling factor from the hall sensor (see datasheet)
-		/// </summary>
-		/// <param name="scalingFactor"></param>
+        /// Set the data scaling factor from the hall sensor (see datasheet)
+        /// </summary>
+        /// <param name="scalingFactor"></param>
         public void SetScalingFactor(byte scalingFactor)
         {
             if (scalingFactor > 32)
@@ -147,26 +136,22 @@ namespace Meadow.Foundation.Sensors.Hid
             }
         }
 
-        void DisableInterrupt()
-        {
-            var value = (byte)(i2CPeripheral.ReadRegister((byte)Register.JOYSTICK_CONTROL1) & 0x04);
-
-            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL1, (byte)((byte)Command.JOYSTICK_CONTROL1_RESET_CMD | value));
-        }
-
-        void EnableInterrupt()
-        {
-            var value = (byte)(i2CPeripheral.ReadRegister((byte)Register.JOYSTICK_CONTROL1) | 0x04);
-
-            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL1, (byte)((byte)Command.JOYSTICK_CONTROL1_RESET_CMD | value));
-        }
-
         /// <summary>
         /// Invert the channel voltage function
         /// </summary>
-        void InvertSpinning()
+        public void InvertSpinning()
         {
             i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL2, (byte)Command.JOYSTICK_INVERT_SPINING_CMD);
+        }
+
+        /// <summary>
+        /// Soft reset the IC
+        /// </summary>
+        public void SoftReset()
+        {
+            var value = (byte)(i2CPeripheral.ReadRegister((byte)Register.JOYSTICK_CONTROL1) & 0x01);
+
+            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL1, (byte)((byte)Command.JOYSTICK_CONTROL1_RESET_CMD | value));
         }
 
         void Update()
@@ -190,12 +175,27 @@ namespace Meadow.Foundation.Sensors.Hid
             base.RaiseEventsAndNotify(result);
         }
 
-        /// <summary>
-		/// Soft reset the IC
-		/// </summary>
-        public void SoftReset()
+        void DisableInterrupt()
         {
-            var value = (byte)(i2CPeripheral.ReadRegister((byte)Register.JOYSTICK_CONTROL1) & 0x01);
+            var value = (byte)(i2CPeripheral.ReadRegister((byte)Register.JOYSTICK_CONTROL1) & 0x04);
+
+            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL1, (byte)((byte)Command.JOYSTICK_CONTROL1_RESET_CMD | value));
+        }
+
+        void EnableInterrupt()
+        {
+            var value = (byte)(i2CPeripheral.ReadRegister((byte)Register.JOYSTICK_CONTROL1) | 0x04);
+
+            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL1, (byte)((byte)Command.JOYSTICK_CONTROL1_RESET_CMD | value));
+        }
+
+        void SetDefaultConfiguration()
+        {
+            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL2, (byte)Command.JOYSTICK_CONTROL2_TEST_CMD);
+            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_AGC, (byte)Command.JOYSTICK_AGC_MAX_SENSITIVITY_CMD);
+            i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_T_CTRL, (byte)Command.JOYSTICK_T_CTRL_SCALING_90_8_CMD);
+
+            byte value = (byte)(i2CPeripheral.ReadRegister((byte)Register.JOYSTICK_CONTROL1) & 0x01);
 
             i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL1, (byte)((byte)Command.JOYSTICK_CONTROL1_RESET_CMD | value));
         }
