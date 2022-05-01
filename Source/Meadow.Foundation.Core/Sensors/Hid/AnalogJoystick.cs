@@ -128,19 +128,6 @@ namespace Meadow.Foundation.Sensors.Hid
             InitSubscriptions();
         }
 
-        event EventHandler<ChangeResult<AnalogJoystickPosition>> IAnalogJoystick.Updated
-        {
-            add
-            {
-                throw new NotImplementedException();
-            }
-
-            remove
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         void InitSubscriptions()
         {
             _ = HorizontalInputPort.Subscribe
