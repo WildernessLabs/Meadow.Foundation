@@ -19,14 +19,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
-        /// Precension of sensor reading
+        /// Precision of sensor reading
         /// </summary>
-        public Precision ReadPrecision { get; protected set; } = Sht4x.Precision.HighPrecisionNoHeat;
+        public Precision ReadPrecision { get; protected set; } = Precision.HighPrecisionNoHeat;
 
         /// <summary>
         /// Temperature changed event handler
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+
         /// <summary>
         /// Humidity changed event handler
         /// </summary>
@@ -69,7 +70,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        int GetDelayForPrecision(Precision precision)
+        /// <summary>
+        /// Returns the appropriate delay in ms for the set precision
+        /// </summary>
+        /// <param name="precision">Precision to calculate delay</param>
+        /// <returns></returns>
+        protected int GetDelayForPrecision(Precision precision)
         {
             int delay = 10;
 
@@ -109,7 +115,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return await Task.Run(() =>
             {
                 Peripheral?.Write((byte)ReadPrecision);
-                Thread.Sleep(GetDelayForPrecision(ReadPrecision)); // Maximum conversion time is 20ms 
+                Thread.Sleep(GetDelayForPrecision(ReadPrecision));
                 Peripheral?.Read(ReadBuffer.Span[0..5]);
 
                 var temperature = (175 * (float)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]) / 65535) - 45;
