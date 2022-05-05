@@ -1,0 +1,24 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>SharpMemory</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.Displays.SharpMemory</PackageId>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, Sharp, Memory, ePaper</PackageTags>
+    <Version>0.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Sharp SPI Memory LCD display</Description>
+    <Configurations>Debug;Release;ProjectRefs</Configurations>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
+  </ItemGroup>
+</Project>
