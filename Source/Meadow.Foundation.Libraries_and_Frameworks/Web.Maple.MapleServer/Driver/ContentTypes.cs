@@ -1,6 +1,5 @@
 ﻿namespace Meadow.Foundation.Web.Maple
 {
-
     public class ContentTypes
     {
         public const string Application_Form_UrlEncoded = "application/x-www-form-urlencoded";
