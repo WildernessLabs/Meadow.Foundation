@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Leds
         public float Brightness
         {
             get => _brightness;
-            set => SetBrightness(value);
+            set => _brightness = value;
         }
         float _brightness = 0;
 
@@ -206,9 +206,9 @@ namespace Meadow.Foundation.Leds
                     break;
                 }
 
-                SetBrightness(highBrightness);
+                Brightness = highBrightness;
                 await Task.Delay(onDuration);
-                SetBrightness(lowBrightness);
+                Brightness = lowBrightness;
                 await Task.Delay(offDuration);
             }
 
@@ -319,7 +319,7 @@ namespace Meadow.Foundation.Leds
                     brightness = 1;
                 }
 
-                SetBrightness(brightness);
+                Brightness = brightness;
 
                 await Task.Delay(intervalTime);
             }
