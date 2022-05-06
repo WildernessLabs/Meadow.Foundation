@@ -1,4 +1,4 @@
-﻿using Meadow.Foundation.Web.Maple.Server;
+﻿using Meadow.Foundation.Web.Maple;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Maple.Unit.Tests

@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace Meadow.Foundation.Web.Maple.Server
+namespace Meadow.Foundation.Web.Maple
 {
     public enum EmptyBodyBehavior
     {
