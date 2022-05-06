@@ -132,22 +132,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         protected void Initialize()
         {
-            byte[] buffers = new byte[10];
-
-            // IO Direction
-            buffers[0] = 0xFF; //all input `11111111`
-
-            // set all the other registers to zeros (we skip the last one, output latch)
-            for (int i = 1; i < 10; i++)
-            {
-                buffers[i] = 0x00; //all zero'd out `00000000`
-            }
-
-            // the chip will automatically write all registers sequentially.
-            _mcpDevice.WriteRegisters(RegisterAddresses.IODirectionRegister, buffers);
+            _mcpDevice.WriteRegister(RegisterAddresses.IODirectionRegister, 0xFF); // set all the other registers to zeros (we skip the last one, output latch)
+            _mcpDevice.WriteRegister(RegisterAddresses.InputPolarityRegister, 0x00);
+            _mcpDevice.WriteRegister(RegisterAddresses.InterruptOnChangeRegister, 0x00);
+            _mcpDevice.WriteRegister(RegisterAddresses.DefaultComparisonValueRegister, 0x00);
+            _mcpDevice.WriteRegister(RegisterAddresses.InterruptControlRegister, 0x00);
+            _mcpDevice.WriteRegister(RegisterAddresses.IOConfigurationRegister, 0x00);
+            _mcpDevice.WriteRegister(RegisterAddresses.PullupResistorConfigurationRegister, 0x00);
+            _mcpDevice.WriteRegister(RegisterAddresses.InterruptFlagRegister, 0x00);
+            _mcpDevice.WriteRegister(RegisterAddresses.InterruptCaptureRegister, 0x00);
+            _mcpDevice.WriteRegister(RegisterAddresses.GPIORegister, 0x00);
 
             // save our state
-            _iodir = buffers[0];
+            _iodir = 0xFF;
             _gpio = 0x00;
             _olat = 0x00;
             _gppu = 0x00;
