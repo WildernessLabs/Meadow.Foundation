@@ -4,7 +4,7 @@
     {
         /// <summary>
         /// Valid addresses for the sensor
-        /// Controlled by pulling A0 & A1 high or low
+        /// Controlled by pulling A0 and A1 high or low
         /// </summary>
         public enum Addresses : byte
         {
@@ -32,8 +32,14 @@
 
         enum Register : byte
         {
-            DS3502_WIPER = 0, // Wiper value register
-            DS3502_MODE = 2, // Mode selection register
+            /// <summary>
+            /// Wiper value register
+            /// </summary>
+            DS3502_WIPER = 0, 
+            /// <summary>
+            /// Mode selection register (change wiper or set default wiper)
+            /// </summary>
+            DS3502_MODE = 2,
         }
     }
 }
