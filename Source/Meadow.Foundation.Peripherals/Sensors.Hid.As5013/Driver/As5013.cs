@@ -14,6 +14,11 @@ namespace Meadow.Foundation.Sensors.Hid
         : SensorBase<AnalogJoystickPosition>, IAnalogJoystick
     {
         /// <summary>
+        /// Event if interrupt port is provided for interrupt pin
+        /// </summary>
+        public event EventHandler Interrupt;
+
+        /// <summary>
         /// Default I2C bus speed
         /// </summary>
         public I2cBusSpeed DefaultSpeed => I2cBusSpeed.FastPlus;
@@ -29,9 +34,29 @@ namespace Meadow.Foundation.Sensors.Hid
         public bool IsVerticalInverted { get; set; }
 
         /// <summary>
+        /// Swap horizonal and vertical
+        /// </summary>
+        public bool IsVerticalHorizonalSwapped { get; set; } = false;
+
+        /// <summary>
         /// The joystick position
         /// </summary>
         public AnalogJoystickPosition? Position { get; private set; } = null;
+
+        /// <summary>
+        /// The digital joystick position
+        /// </summary>
+        public DigitalJoystickPosition? DigitalPosition
+        {
+            get
+            {
+                if(IsSampling == false)
+                {
+                    Update();
+                }
+                return GetDigitalJoystickPosition();
+            }
+        } 
 
         readonly II2cPeripheral i2CPeripheral;
 
@@ -40,9 +65,15 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         /// <param name="i2cBus">the I2C bus</param>
         /// <param name="address">the device I2C address</param>
-        public As5013(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        /// <param name="interruptPort">port connected to the interrupt pin</param>
+        public As5013(II2cBus i2cBus, byte address = (byte)Addresses.Default, IDigitalInterruptPort interruptPort = null)
         {
             i2CPeripheral = new I2cPeripheral(i2cBus, address);
+
+            if(interruptPort != null)
+            {
+                interruptPort.Changed += (s, e) => Interrupt?.Invoke(s, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -164,6 +195,13 @@ namespace Meadow.Foundation.Sensors.Hid
             float newX = xValue / 128.0f * (IsHorizontalInverted ? -1 : 1);
             float newY = yValue / 128.0f * (IsVerticalInverted ? -1 : 1);
 
+            if (IsVerticalHorizonalSwapped)
+            {
+                float temp = newX;
+                newX = newY;
+                newY = temp;
+            }
+
             // capture history
             var oldPosition = Position;
             var newPosition = new AnalogJoystickPosition(newX, newY);
@@ -175,21 +213,30 @@ namespace Meadow.Foundation.Sensors.Hid
             base.RaiseEventsAndNotify(result);
         }
 
-        void DisableInterrupt()
+        /// <summary>
+        /// Disable the interrupt pin
+        /// </summary>
+        public void DisableInterrupt()
         {
             var value = (byte)(i2CPeripheral.ReadRegister((byte)Register.JOYSTICK_CONTROL1) & 0x04);
 
             i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL1, (byte)((byte)Command.JOYSTICK_CONTROL1_RESET_CMD | value));
         }
 
-        void EnableInterrupt()
+        /// <summary>
+        /// enable the interrupt pin
+        /// </summary>
+        public void EnableInterrupt()
         {
             var value = (byte)(i2CPeripheral.ReadRegister((byte)Register.JOYSTICK_CONTROL1) | 0x04);
 
             i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL1, (byte)((byte)Command.JOYSTICK_CONTROL1_RESET_CMD | value));
         }
 
-        void SetDefaultConfiguration()
+        /// <summary>
+        /// Set the default configuration
+        /// </summary>
+        public void SetDefaultConfiguration()
         {
             i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL2, (byte)Command.JOYSTICK_CONTROL2_TEST_CMD);
             i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_AGC, (byte)Command.JOYSTICK_AGC_MAX_SENSITIVITY_CMD);
@@ -198,6 +245,49 @@ namespace Meadow.Foundation.Sensors.Hid
             byte value = (byte)(i2CPeripheral.ReadRegister((byte)Register.JOYSTICK_CONTROL1) & 0x01);
 
             i2CPeripheral.WriteRegister((byte)Register.JOYSTICK_CONTROL1, (byte)((byte)Command.JOYSTICK_CONTROL1_RESET_CMD | value));
+        }
+
+        DigitalJoystickPosition GetDigitalJoystickPosition()
+        {
+            var h = Position.Value.Horizontal;
+            var v = Position.Value.Vertical;
+
+            var threshold = 0.5f;
+
+            if (h > threshold)
+            {   //Right
+                if (v > threshold)
+                {
+                    return DigitalJoystickPosition.UpRight;
+                }
+                if (v < threshold)
+                {
+                    return DigitalJoystickPosition.DownRight;
+                }
+                return DigitalJoystickPosition.Right;
+            }
+            else if (h < threshold)
+            {   //Left
+                if (v > threshold)
+                {
+                    return DigitalJoystickPosition.UpLeft;
+                }
+                if (v < threshold)
+                {
+                    return DigitalJoystickPosition.DownLeft;
+                }
+                return DigitalJoystickPosition.Left;
+            }
+            else if (v > threshold)
+            {   //Up
+                return DigitalJoystickPosition.Up;
+            }
+            else if (v < threshold)
+            {   //Down
+                return DigitalJoystickPosition.Down;
+            }
+
+            return DigitalJoystickPosition.Center;
         }
     }
 }
