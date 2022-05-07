@@ -103,7 +103,6 @@ namespace MeadowApp
 
             Console.WriteLine("Attempting single capture");
             camera.FlushFifo();
-            camera.ClearFifoFlag();
             camera.CapturePhoto();
 
             Console.WriteLine("Capture started");
@@ -112,7 +111,7 @@ namespace MeadowApp
 
             Thread.Sleep(1000);
 
-            if (camera.IsCaptureComplete())
+            if (camera.IsPhotoAvaliable())
             {
                 Console.WriteLine("Capture complete");
 

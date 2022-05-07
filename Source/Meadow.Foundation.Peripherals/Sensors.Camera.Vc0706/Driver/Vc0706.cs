@@ -33,12 +33,7 @@ namespace Meadow.Foundation.Sensors.Camera
         public Vc0706(ISerialController device, SerialPortName portName, int baudRate)
         {
              serialPort = device.CreateSerialPort(portName, baudRate);
-            /*serialPort = device.CreateSerialMessagePort(
-                        portName: portName, 
-                        suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
-                        baudRate: baud,
-                        preserveDelimiter: true, 
-                        readBufferSize: 512);*/
+
             serialPort.Open();
 
             SetBaud((BaudRate)baudRate);
@@ -391,13 +386,12 @@ namespace Meadow.Foundation.Sensors.Camera
                     bytesToRead = (byte)Math.Min(128, frameLen);
                     bytesRead += bytesToRead;
 
-                    var buffer = ReadPicture(bytesToRead);
+                    var buffer = ReadPicture(bytesToRead); //complete buffer
 
                     if (buffer.Length == 0) //means we're ahead of the camera
                         continue;
 
-                    Console.WriteLine($"{buffer.Length}, {bytesToRead}");
-                    stream.Write(buffer, 0, bytesToRead);
+                    stream.Write(buffer, 0, bytesToRead); //only write the good data
                     frameLen -= bytesToRead;
                 }
 
@@ -497,7 +491,7 @@ namespace Meadow.Foundation.Sensors.Camera
             return len;
         }
 
-        byte[] args = {0x0C,
+        readonly byte[] args = {0x0C,
                     0x0,
                     0x0A,
                     0,
