@@ -2,21 +2,48 @@
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
+    /// <summary>
+    /// Base class for image buffers
+    /// </summary>
     public abstract class BufferBase : IDisplayBuffer
     {
+        /// <summary>
+        /// Width of buffer in pixels
+        /// </summary>
         public int Width { get; protected set; }
+
+        /// <summary>
+        /// Height of buffer in pixels
+        /// </summary>
         public int Height { get; protected set; }
 
+        /// <summary>
+        /// Raw bytes 
+        /// </summary>
         public byte[] Buffer { get; protected set; }
 
+        /// <summary>
+        /// Number of bytes
+        /// </summary>
         public abstract int ByteCount { get; }
 
+        /// <summary>
+        /// Color mode of the buffer
+        /// </summary>
         public abstract ColorType displayColorMode { get; }
 
+        /// <summary>
+        /// Creates a new buffer object
+        /// </summary>
         public BufferBase()
         {
         }
 
+        /// <summary>
+        /// Creates a new buffer object
+        /// </summary>
+        /// <param name="width">width in pixels</param>
+        /// <param name="height">height in pixels</param>
         public BufferBase(int width, int height)
         {
             Width = width;
@@ -25,6 +52,13 @@ namespace Meadow.Foundation.Graphics.Buffers
             Buffer = new byte[ByteCount];
         }
 
+        /// <summary>
+        /// Creates a new buffer object
+        /// </summary>
+        /// <param name="width">width in pixels</param>
+        /// <param name="height">height in pixels</param>
+        /// <param name="buffer">source data to store in buffer</param>
+        /// <exception cref="ArgumentException"></exception>
         public BufferBase(int width, int height, byte[] buffer)
         {
             Width = width;

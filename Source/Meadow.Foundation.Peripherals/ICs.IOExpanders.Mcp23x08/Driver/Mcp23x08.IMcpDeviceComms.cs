@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -9,9 +7,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         internal interface IMcpDeviceComms
         {
             byte ReadRegister(byte address);
-            byte[] ReadRegisters(byte address, ushort length);
             void WriteRegister(byte address, byte value);
-            void WriteRegisters(byte address, byte[] data);
         }
 
         internal class I2cMcpDeviceComms : I2cPeripheral, IMcpDeviceComms
@@ -19,16 +15,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public I2cMcpDeviceComms(II2cBus bus, byte peripheralAddress)
                 : base(bus, peripheralAddress)
             {
-            }
-
-            public byte[] ReadRegisters(byte address, ushort length)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void WriteRegisters(byte address, byte[] data)
-            {
-                throw new NotImplementedException();
             }
         }
     }

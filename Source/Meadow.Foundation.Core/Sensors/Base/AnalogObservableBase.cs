@@ -11,21 +11,33 @@ namespace Meadow.Foundation.Sensors.Base
     public abstract class AnalogObservableBase : SensorBase<Voltage>
     {
         /// <summary>
-        /// Analog port connected to the sensor.
+        /// Analog port connected to the sensor
         /// </summary>
         private readonly IAnalogInputPort AnalogInputPort;
 
+        /// <summary>
+        /// Current voltage
+        /// </summary>
         public Voltage Voltage { get; protected set; }
+
 
         /// <summary>
         /// Creates a new AnalogObservableBase driver
         /// </summary>
+        /// <param name="device">Meadow device</param>
         /// <param name="pin">AnalogChannel connected to the sensor.</param>
+        /// <param name="sampleCount">number of sample to average for a reading</param>
+        /// <param name="sampleInterval">time between intervals</param>
+        /// <param name="voltage">max voltage of analog port</param>
         public AnalogObservableBase(IAnalogInputController device, IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
             : this(device.CreateAnalogInputPort(pin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
         {
         }
 
+        /// <summary>
+        /// Creates a new AnalogObservableBase driver
+        /// </summary>
+        /// <param name="port">analog input port</param>
         public AnalogObservableBase(IAnalogInputPort port)
         {
             AnalogInputPort = port;

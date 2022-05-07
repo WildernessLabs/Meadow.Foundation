@@ -161,7 +161,7 @@ namespace Meadow.Foundation.Leds
 
             pwmLeds[index].Stop();
             pwmLeds[index].IsOn = false;
-            pwmLeds[index].SetBrightness(brightness);
+            pwmLeds[index].Brightness = brightness;
         }
 
         /// <summary>

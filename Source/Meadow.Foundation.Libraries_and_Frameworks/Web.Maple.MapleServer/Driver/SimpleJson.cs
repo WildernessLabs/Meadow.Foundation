@@ -683,7 +683,7 @@ namespace SimpleJson
 
         static IDictionary<string, object> ParseObject(char[] json, ref int index, ref bool success)
         {
-            IDictionary<string, object> table = new JsonObject();
+            IDictionary<string, object> table = new JsonObject(StringComparer.InvariantCultureIgnoreCase);
             int token;
 
             // {

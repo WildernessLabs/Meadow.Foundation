@@ -36,6 +36,20 @@ namespace Meadow.Foundation.Sensors.Rotary
         public event EventHandler PressStarted = delegate { };
 
         /// <summary>
+        /// Raised when the button circuit is pressed for LongPressDuration.
+        /// </summary>
+        public event EventHandler LongClicked = delegate { };
+
+        /// <summary>
+        /// The minimum duration for a long press.
+        /// </summary>
+        public TimeSpan LongClickedThreshold
+        {
+            get => Button.LongClickedThreshold;
+            set => Button.LongClickedThreshold = value;
+        }
+
+        /// <summary>
         /// Instantiates a new RotaryEncoder on the specified pins that has an integrated button.
         /// </summary>
         /// <param name="device"></param>
@@ -51,6 +65,12 @@ namespace Meadow.Foundation.Sensors.Rotary
             Button.Clicked += ButtonClicked;
             Button.PressEnded += ButtonPressEnded;
             Button.PressStarted += ButtonPressStarted;
+            Button.LongClicked += ButtonLongClicked;
+        }
+
+        private void ButtonLongClicked(object sender, EventArgs e)
+        {
+            LongClicked(this, e);
         }
 
         /// <summary>

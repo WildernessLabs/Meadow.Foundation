@@ -157,7 +157,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Turn off all LEDs
         /// </summary>
-        /// <param name="frame">the frame to clear</param>
         public virtual void ClearAllFrames()
         {
             for(byte i = 0; i < 7; i++)

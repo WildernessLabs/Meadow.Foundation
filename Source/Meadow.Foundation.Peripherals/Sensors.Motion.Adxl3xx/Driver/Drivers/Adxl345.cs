@@ -14,9 +14,12 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public partial class Adxl345 : ByteCommsSensorBase<Acceleration3D>, IAccelerometer
     {
+        /// <summary>
+        /// Event raised when acceleration changes
+        /// </summary>
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
 
-        static double ADXL345_MG2G_MULTIPLIER = (0.004);
+        readonly double ADXL345_MG2G_MULTIPLIER = 0.004;
 
         /// <summary>
         /// Minimum value that can be used for the update interval when the
@@ -24,6 +27,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public const ushort MinimumPollingPeriod = 100;
 
+        /// <summary>
+        /// Current acceleration
+        /// </summary>
         public Acceleration3D? Acceleration3D => Conditions;
 
         /// <summary>
@@ -34,8 +40,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetX
         {
-            get { return (sbyte)ReadRegister(Register.OFFSET_X); }
-            set { WriteRegister(Register.OFFSET_X, (byte)value); }
+            get => (sbyte)ReadRegister(Register.OFFSET_X); 
+            set => WriteRegister(Register.OFFSET_X, (byte)value); 
         }
 
         /// <summary>
@@ -46,8 +52,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetY
         {
-            get { return (sbyte)ReadRegister(Register.OFFSET_Y); }
-            set { WriteRegister(Register.OFFSET_Y, (byte)value); }
+            get => (sbyte)ReadRegister(Register.OFFSET_Y); 
+            set => WriteRegister(Register.OFFSET_Y, (byte)value); 
         }
 
         /// <summary>
@@ -58,8 +64,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetZ
         {
-            get { return (sbyte)ReadRegister(Register.OFFSET_Z); }
-            set { WriteRegister(Register.OFFSET_Z, (byte)value); }
+            get => (sbyte)ReadRegister(Register.OFFSET_Z); 
+            set => WriteRegister(Register.OFFSET_Z, (byte)value); 
         }
 
         /// <summary>
@@ -88,6 +94,10 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
+        /// <summary>
+        /// Read sensor
+        /// </summary>
+        /// <returns>Current acceleration</returns>
         protected override Task<Acceleration3D> ReadSensor()
         {
             return Task.Run(() =>
@@ -100,10 +110,13 @@ namespace Meadow.Foundation.Sensors.Motion
                     new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[2] + (ReadBuffer.Span[3] << 8)), Acceleration.UnitType.Gravity),
                     new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[4] + (ReadBuffer.Span[5] << 8)), Acceleration.UnitType.Gravity)
                     );
-
             });
         }
 
+        /// <summary>
+        /// Raise changed event for subscribers
+        /// </summary>
+        /// <param name="changeResult"></param>
         protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
         {
             Acceleration3DUpdated?.Invoke(this, changeResult);

@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param>
-        /// <param name="updateIntervalMs">The time, in milliseconds, to wait
+        /// <param name="updateInterval">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
         public AnalogWaterLevel(
