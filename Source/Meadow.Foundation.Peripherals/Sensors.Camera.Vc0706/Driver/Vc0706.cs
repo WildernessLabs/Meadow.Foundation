@@ -109,7 +109,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Get the motion detection mode 
         /// </summary>
         /// <returns>true if enabled, false if not enabled or command failed</returns>
-        public bool GetMotionDetect()
+        public bool GetMotionDetectMode()
         {
             byte[] args = { 0x0 };
 
@@ -168,11 +168,11 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <summary>
         /// Set downsize
         /// </summary>
-        /// <param name="newSize"></param>
+        /// <param name="downsize"></param>
         /// <returns></returns>
-        public bool SetDownsize(byte newSize)
+        public bool SetDownsize(byte downsize)
         {
-            byte[] args = { 0x01, newSize };
+            byte[] args = { 0x01, downsize };
 
             return RunCommand(DOWNSIZE_CTRL, args, 2, 5);
         }
@@ -262,7 +262,6 @@ namespace Meadow.Foundation.Sensors.Camera
             }
 
             RunCommand(OSD_ADD_CHAR, args, (byte)args.Length, 5);
-           // printBuff();
         }
 
         /// <summary>
@@ -284,7 +283,6 @@ namespace Meadow.Foundation.Sensors.Camera
         {
             byte[] args = { 0x4, 0x1, 0x1, 0x12, 0x04 };
             RunCommand(READ_DATA, args, (byte)args.Length, 6);
-            PrintBuffer();
             return cameraBuffer[5];
         }
 
@@ -317,8 +315,6 @@ namespace Meadow.Foundation.Sensors.Camera
 
             if (!RunCommand(GET_ZOOM, args, (byte)args.Length, 16))
             { return (0,0,0,0,0,0); }
-
-            PrintBuffer();
 
             ushort w = cameraBuffer[5];
             w <<= 8;
@@ -596,17 +592,6 @@ namespace Meadow.Foundation.Sensors.Camera
                 return false;
             }
             return true;
-        }
-
-        /// <summary>
-        /// Write the current buffer to the console for debugging
-        /// </summary>
-        public void PrintBuffer()
-        {
-            for (byte i = 0; i < bufferLength; i++)
-            {
-                Console.WriteLine(cameraBuffer[i]);
-            }
         }
     }
 }
