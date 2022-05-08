@@ -6,42 +6,16 @@ using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Camera
 {
+    //https://www.arducam.com/docs/spi-cameras-for-arduino/hardware/arducam-shield-mini-2mp-plus/
+
     public partial class ArducamMini
     {
-        const byte ADDRESS_READ = 0x60;
-        const byte ADDRESS_WRITE = 0x61;
-
-        const byte ARDUCHIP_TEST1 = 0x00;
-        const byte OV2640_CHIPID_HIGH = 0x0A;
-        const byte OV2640_CHIPID_LOW = 0x0B;
-        const byte JPEG_FMT = 1;
-        const byte REG_SIZE = 8;
-
-        const byte ARDUCHIP_FIFO = 0x04;
-        const byte FIFO_CLEAR_MASK = 0x01;
-        const byte FIFO_START_MASK = 0x02;
-        const byte FIFO_RDPTR_RST_MASK = 0x10;
-        const byte FIFO_WRPTR_RST_MASK = 0x20;
-        const byte FIFO_SIZE1 = 0x42;
-        const byte FIFO_SIZE2 = 0x43;
-        const byte FIFO_SIZE3 = 0x44;
-        const byte ARDUCHIP_FRAMES = 0x01;
-        const byte ARDUCHIP_TRIG = 0x41;
-        const byte CAP_DONE_MASK = 0x08;
-        const byte GPIO_PWDN_MASK = 0x02;
-        const byte GPIO_PWREN_MASK = 0x04;
-        const byte ARDUCHIP_GPIO = 0x06;
-        const byte SINGLE_FIFO_READ = 0x3D;
-
         public int DEFAULT_SPEED = 8000; // in khz
 
-        protected II2cPeripheral i2cDevice;
-
-        protected ISpiPeripheral spiDevice;
-
-        protected IDigitalOutputPort chipSelectPort;
-
-        Memory<byte> readBuffer = new byte[1];
+        readonly II2cPeripheral i2cDevice;
+        readonly ISpiPeripheral spiDevice;
+        readonly IDigitalOutputPort chipSelectPort;
+        readonly Memory<byte> readBuffer = new byte[1];
 
         public ArducamMini(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
@@ -49,35 +23,22 @@ namespace Meadow.Foundation.Sensors.Camera
 
             chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
 
-            spiDevice = new SpiPeripheral(spiBus, chipSelectPort);
+            spiDevice = new SpiPeripheral(spiBus, chipSelectPort, csMode: ChipSelectMode.ActiveLow);
 
             Initialize();
         }
 
-        private void Cbi(ref int reg, int bitmask)
-        {
-            reg &= ~bitmask;
-        }
-
-        private void Sbi(ref int reg, int bitmask)
-        {
-            reg |= bitmask;
-        }
-
         protected void WriteSpiRegister(byte address, byte value)
         {
-            spiDevice.WriteRegister(address, value);
+            spiDevice.WriteRegister((byte)(address | 0x80), value);
         } 
 
         protected void WriteI2cRegisters(SensorReg[] regs)
         {
             for (int i = 0; i < regs.Length; i++)
             {
-                if ((regs[i].Address != 0xFF) | (regs[i].Value != 0xFF))
-                {
-                    WriteI2cRegister(regs[i].Address, regs[i].Value);
-                    Thread.Sleep(10);
-                }
+                WriteI2cRegister(regs[i].Address, regs[i].Value);
+                Thread.Sleep(1);
             }
         }
 
@@ -96,9 +57,13 @@ namespace Meadow.Foundation.Sensors.Camera
             Console.WriteLine("Initialize");
 
             WriteI2cRegister(0xff, 0x01);
-            Thread.Sleep(10);
             WriteI2cRegister(0x12, 0x80);
             Thread.Sleep(100);
+
+            //non jpeg
+            WriteI2cRegisters(InitSettings.QVGA);
+            return;
+
 
             Console.WriteLine("OV2640_JPEG_INIT...");
             WriteI2cRegisters(InitSettings.JPEG_INIT);
@@ -110,34 +75,34 @@ namespace Meadow.Foundation.Sensors.Camera
             WriteI2cRegisters(InitSettings.JPEG);
 
             WriteI2cRegister(0xff, 0x01);
-            Thread.Sleep(10);
             WriteI2cRegister(0x15, 0x00);
-            Thread.Sleep(10);
 
             Console.WriteLine("OV2640_320x240_JPEG");
             WriteI2cRegisters(InitSettings.SIZE_320x420);
         }
 
-        public void ClearFifoFlag()
-        {
-            WriteSpiRegister(ARDUCHIP_FIFO, FIFO_CLEAR_MASK);
-        }
-
+        /// <summary>
+        /// Flush FIFO
+        /// </summary>
         public void FlushFifo()
         {
             WriteSpiRegister(ARDUCHIP_FIFO, FIFO_CLEAR_MASK);
         }
 
-        public void StartCapture()
+        /// <summary>
+        /// Capture photo
+        /// </summary>
+        public bool CapturePhoto()
         {
             WriteSpiRegister(ARDUCHIP_FIFO, FIFO_START_MASK);
+            return true;
         }
 
         public int ReadFifoLength()
         {
             var len1 = spiDevice.ReadRegister(FIFO_SIZE1);
             var len2 = spiDevice.ReadRegister(FIFO_SIZE2);
-            var len3 = spiDevice.ReadRegister(FIFO_SIZE3);
+            var len3 = spiDevice.ReadRegister(FIFO_SIZE3) & 0x7f;
 
             var length = ((len3 << 16) | (len2 << 8) | len1) & 0x07fffff;
             return length;
@@ -148,24 +113,43 @@ namespace Meadow.Foundation.Sensors.Camera
             return spiDevice.ReadRegister(SINGLE_FIFO_READ);
         }
 
+        byte[] ReadFifoBurst(int length)
+        {
+            var buffer = new byte[length];
+            spiDevice.ReadRegister(BURST_FIFO_READ, buffer);
+            return buffer;  
+        }
+
         public byte[] GetImageData()
         {
             Console.WriteLine("GetImageData");
 
-            Console.WriteLine($"Len: {ReadFifoLength()}");
+            int fifoLen = ReadFifoLength();
 
-            using (var ms = new MemoryStream())
+            Console.WriteLine($"Len: {fifoLen}");
+
+        //    spiDevice.Write(BURST_FIFO_READ);
+
+            using var ms = new MemoryStream();
+
+            byte value;
+
+            for (int i = 0; i < 40; i++)
             {
-                for (int i = 0; i < ReadFifoLength(); i++)
-                {
-                    ms.WriteByte(ReadFifo());
-                }
+                value = ReadFifo();
 
-                return ms.ToArray();
+                ms.WriteByte(value);
+
+               // if(i % 100 == 0)
+                {
+                    Console.WriteLine($"Read {i} bytes - {value}");
+                }
             }
+
+            return ms.ToArray();
         }
 
-        public bool IsCaptureComplete()
+        public bool IsPhotoAvaliable()
         {
             var value = GetBit(ARDUCHIP_TRIG, CAP_DONE_MASK);
 
@@ -174,7 +158,9 @@ namespace Meadow.Foundation.Sensors.Camera
 
         int GetBit(byte address, byte bit)
         {
+            Console.WriteLine("GetBit");
             var temp = spiDevice.ReadRegister(address);
+            Console.WriteLine($"Value {temp}");
             return (byte)(temp & bit);
         }
 
