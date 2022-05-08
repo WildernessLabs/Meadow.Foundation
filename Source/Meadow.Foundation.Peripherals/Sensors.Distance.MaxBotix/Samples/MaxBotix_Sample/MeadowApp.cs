@@ -46,12 +46,12 @@ namespace MaxBotix_Sample
 
             maxBotix.Subscribe(consumer);
 
-            maxBotix.LengthUpdated += MaxBotix_LengthUpdated;
+            maxBotix.DistanceUpdated += MaxBotix_DistanceUpdated;
 
             maxBotix.StartUpdating(new TimeSpan(0, 0, 1));
         }
 
-        private void MaxBotix_LengthUpdated(object sender, IChangeResult<Length> e)
+        private void MaxBotix_DistanceUpdated(object sender, IChangeResult<Length> e)
         {
             Console.WriteLine($"Length: {e.New.Centimeters}cm");
         }

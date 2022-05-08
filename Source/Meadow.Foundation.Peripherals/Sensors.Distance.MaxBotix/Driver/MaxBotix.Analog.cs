@@ -44,10 +44,10 @@ namespace Meadow.Foundation.Sensors.Distance
                         ChangeResult<Length> changeResult = new ChangeResult<Length>()
                         {
                             New = await ReadSensorAnalog(),
-                            Old = Length,
+                            Old = Distance,
                         };
                         // save state
-                        Length = changeResult.New;
+                        Distance = changeResult.New;
                         // notify
                         RaiseEventsAndNotify(changeResult);
                     }

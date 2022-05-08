@@ -28,7 +28,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
         Length ReadSensorSerial()
         {   //I think we'll just cache it for serial
-            return Length.Value;
+            return Distance.Value;
         }
 
         private void SerialMessagePort_MessageReceived(object sender, SerialMessageData e)
@@ -53,10 +53,10 @@ namespace Meadow.Foundation.Sensors.Distance
             ChangeResult<Length> changeResult = new ChangeResult<Length>()
             {
                 New = new Length(value, units),
-                Old = Length,
+                Old = Distance,
             };
             // save state
-            Length = changeResult.New;
+            Distance = changeResult.New;
             // notify
             RaiseEventsAndNotify(changeResult);
         }

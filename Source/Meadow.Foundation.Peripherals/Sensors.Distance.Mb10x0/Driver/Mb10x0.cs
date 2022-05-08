@@ -7,7 +7,7 @@ using LU = Meadow.Units.Length.UnitType;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
-    // TODO: why is `DistanceUpdated` never invoked? is this sensor done?
+    // In progress and not working - DistanceUpdated currently is never called 
     public class Mb10x0 : SensorBase<Length>, IRangeFinder
     {
         //==== events
