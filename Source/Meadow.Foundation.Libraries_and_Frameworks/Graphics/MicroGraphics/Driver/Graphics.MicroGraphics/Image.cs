@@ -128,7 +128,7 @@ namespace Meadow.Foundation.Graphics
             var bytesPerRow = (int)(width * (BitsPerPixel / 8f));
             // BMP row length is evenly divisible by 4
             var mod = (bytesPerRow % 4);
-            var rowPad = mod == 0 ? 0 : 4 - (bytesPerRow % 4);
+            var rowPad = mod == 0 ? 0 : 4 - mod;
             var pixelBufferSize = height * bytesPerRow;
             var pixelData = new byte[pixelBufferSize];
 
