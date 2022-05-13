@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// Based on the Wii classic contoller including:
     /// Classic Pro, Snes classic, and Nes classic controllers
     /// </summary>
-    public abstract class WiiClassicControllerBase : WiiExtensionBase
+    public abstract class WiiClassicControllerBase : WiiExtensionControllerBase
     {
         /// <summary>
         /// Get the x-axis value for the left analog joystick (classic and classic pro)

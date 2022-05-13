@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// <summary>
     /// Represents a Nintendo Wii I2C Nunchuck
     /// </summary>
-    public class WiiNunchuck : WiiExtensionBase
+    public class WiiNunchuck : WiiExtensionControllerBase
     {
         /// <summary>
         /// C Button

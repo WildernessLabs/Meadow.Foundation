@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Hid
 {
-    public abstract partial class WiiExtensionBase
+    public abstract partial class WiiExtensionControllerBase
     {
         /// <summary>
         /// Valid addresses for the sensor.
