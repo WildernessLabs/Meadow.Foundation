@@ -3,12 +3,12 @@ using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Hid;
 
-namespace Sensors.Hid.WiiExtension
+namespace Meadow.Foundation.Sensors.Hid
 {
     /// <summary>
     /// Represents a Nintendo SNES Classic Mini controller
     /// </summary>
-    public class SnesClassicController : WiiExtensionBase
+    public class SnesClassicController : WiiClassicControllerBase
     {
         /// <summary>
         /// D-pad
@@ -49,27 +49,6 @@ namespace Sensors.Hid.WiiExtension
         /// - Button
         /// </summary>
         public IButton SelectButton { get; } = new WiiExtensionButton();
-        /// <summary>
-        /// Home Button
-        /// </summary>
-
-        bool PlusButtonPressed => (readBuffer[4] >> 2 & 0x01) == 0;
-        bool MinusButtonPressed => (readBuffer[4] >> 4 & 0x01) == 0;
-      
-
-        bool LButtonPressed => (readBuffer[4] >> 5 & 0x01) == 0;
-        bool RButtonPressed => (readBuffer[4] >> 1 & 0x01) == 0;
-
-
-        bool DPadLeftPressed => (readBuffer[5] >> 1 & 0x01) == 0;
-        bool DPadRightPressed => (readBuffer[4] >> 7 & 0x01) == 0;
-        bool DPadUpPressed => (readBuffer[5] >> 0 & 0x01) == 0;
-        bool DPadDownPressed => (readBuffer[4] >> 6 & 0x01) == 0;
-
-        bool XButtonPressed => (readBuffer[5] >> 3 & 0x01) == 0;
-        bool YButtonPressed => (readBuffer[5] >> 5 & 0x01) == 0;
-        bool AButtonPressed => (readBuffer[5] >> 4 & 0x01) == 0;
-        bool BButtonPressed => (readBuffer[5] >> 6 & 0x01) == 0;
 
         /// <summary>
         /// Creates a SNES Classic Mini Controller object

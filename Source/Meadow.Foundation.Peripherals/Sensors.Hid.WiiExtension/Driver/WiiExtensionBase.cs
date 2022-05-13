@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Hid
         public bool IsSampling { get; protected set; } = false;
 
         /// <summary>
-        /// Base ctor constructor
+        /// Base constructor
         /// </summary>
         /// <param name="i2cBus">the I2C bus connected to the extension controller</param>
         /// <param name="address">The extension controller address</param>

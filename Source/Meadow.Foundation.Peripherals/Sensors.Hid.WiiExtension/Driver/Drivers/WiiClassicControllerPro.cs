@@ -5,9 +5,9 @@ using Meadow.Peripherals.Sensors.Hid;
 namespace Meadow.Foundation.Sensors.Hid
 {
     /// <summary>
-    /// Represents a Nintendo Wii I2C Classic Controller
+    /// Represents a Nintendo Wii I2C Classic Controller Pro
     /// </summary>
-    public class WiiClassicController : WiiClassicControllerBase
+    public class WiiClassicControllerPro : WiiClassicControllerBase
     {
         /// <summary>
         /// D-pad
@@ -72,27 +72,16 @@ namespace Meadow.Foundation.Sensors.Hid
         public IAnalogJoystick RightAnalogStick { get; }
 
         /// <summary>
-        /// Left analog trigger (5 or 8 bits of precision)
-        /// </summary>
-        public IAnalogTrigger LeftTrigger { get; }
-        /// <summary>
-        /// Right analog trigger (5 or 8 bits of precision)
-        /// </summary>
-        public IAnalogTrigger RightTrigger { get; }
-
-        /// <summary>
         /// Creates a Wii Classic Controller object
         /// </summary>
         /// <param name="i2cBus">the I2C bus connected to controller</param>
         /// <param name="useHighResolutionMode">Enable high resolution mode analog sticks and triggers (8 bits of precision)</param>
-        public WiiClassicController(II2cBus i2cBus, bool useHighResolutionMode = false) : base(i2cBus, (byte)Addresses.Default)
+        public WiiClassicControllerPro(II2cBus i2cBus, bool useHighResolutionMode = false) : base(i2cBus, (byte)Addresses.Default)
         {
             this.useHighResolutionMode = useHighResolutionMode;
 
-            LeftAnalogStick = new WiiExtensionAnalogJoystick((byte)(useHighResolutionMode? 8 : 6));
+            LeftAnalogStick = new WiiExtensionAnalogJoystick((byte)(useHighResolutionMode ? 8 : 6));
             RightAnalogStick = new WiiExtensionAnalogJoystick((byte)(useHighResolutionMode ? 8 : 5));
-            LeftTrigger = new WiiExtensionAnalogTrigger((byte)(useHighResolutionMode ? 8 : 5));
-            RightTrigger = new WiiExtensionAnalogTrigger((byte)(useHighResolutionMode ? 8 : 5));
         }
 
         /// <summary>
@@ -100,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public override void Update()
         {
-            if(useHighResolutionMode)
+            if (useHighResolutionMode)
             {
                 i2cPeripheral.WriteRegister(0, 0);
                 i2cPeripheral.Read(readBuffer[..8]);
@@ -133,10 +122,6 @@ namespace Meadow.Foundation.Sensors.Hid
             (RButton as WiiExtensionButton).Update(RButtonPressed);
             (ZLButton as WiiExtensionButton).Update(ZLButtonPressed);
             (ZRButton as WiiExtensionButton).Update(ZRButtonPressed);
-
-            //analog triggers
-            (LeftTrigger as WiiExtensionAnalogTrigger).Update(LeftTriggerPosition);
-            (RightTrigger as WiiExtensionAnalogTrigger).Update(RightTriggerPosition);
         }
     }
 }
