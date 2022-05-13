@@ -6,10 +6,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\Driver\Sensors.Distance.MaxBotix.csproj" />
   </ItemGroup>
 </Project>

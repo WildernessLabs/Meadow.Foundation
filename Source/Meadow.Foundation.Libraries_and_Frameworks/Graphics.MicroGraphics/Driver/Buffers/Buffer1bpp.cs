@@ -2,12 +2,27 @@
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
+    /// <summary>
+    /// Represents a 1bpp buffer
+    /// </summary>
     public class Buffer1bpp : BufferBase
     {
+        /// <summary>
+        /// Total bytes used by the buffer
+        /// </summary>
         public override int ByteCount => Width * Height / 8;
 
+        /// <summary>
+        /// Color mode of the buffer - 1 bit per pixel 
+        /// </summary>
         public override ColorType displayColorMode => ColorType.Format1bpp;
 
+        /// <summary>
+        /// Creates a new Buffer1bpp object
+        /// </summary>
+        /// <param name="width">width of buffer in pixels</param>
+        /// <param name="height">height of buffer in pixels</param>
+        /// <param name="buffer">data to copy into buffer</param>
         public Buffer1bpp(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
         public Buffer1bpp(int width, int height) : base(width, height) { }

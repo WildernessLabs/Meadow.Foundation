@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Graphics
 
         /// <summary>
         /// Save any state variables
-        /// Includes: CurrentFont, Stroke, & Rotation
+        /// Includes: CurrentFont, Stroke, and Rotation
         /// </summary>
         public void SaveState()
         {

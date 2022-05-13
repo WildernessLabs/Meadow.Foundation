@@ -12,8 +12,14 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public partial class Vl53l0x : ByteCommsSensorBase<Length>, IRangeFinder
     {
+        /// <summary>
+        /// Distance updated event
+        /// </summary>
         public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
 
+        /// <summary>
+        /// Is the hardware shutdown / off
+        /// </summary>
         public bool IsShutdown
         {
             get
@@ -48,6 +54,12 @@ namespace Meadow.Foundation.Sensors.Distance
        
         byte stopVariable;
 
+        /// <summary>
+        /// Creates a new Vl53l0x object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="i2cBus">I2C bus</param>
+        /// <param name="address">I2C address</param>
         public Vl53l0x(
             IDigitalOutputController device, II2cBus i2cBus,
             byte address = (byte)Addresses.Default)
@@ -55,9 +67,14 @@ namespace Meadow.Foundation.Sensors.Distance
         {
         }
 
+        /// <summary>
+        /// Creates a new Vl53l0x object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
         /// <param name="i2cBus">I2C bus</param>
+        /// <param name="shutdownPin">Shutdown pin</param>
         /// <param name="address">VL53L0X address</param>
-        /// <param name="units">Unit of measure</param>
+
         public Vl53l0x(
             IDigitalOutputController device, II2cBus i2cBus, IPin shutdownPin,
             byte address = (byte)Addresses.Default)
@@ -69,6 +86,10 @@ namespace Meadow.Foundation.Sensors.Distance
             Initialize().Wait();
         }
 
+        /// <summary>
+        /// Raise distance change event and notify subscribers
+        /// </summary>
+        /// <param name="changeResult"></param>
         protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
         {
             DistanceUpdated?.Invoke(this, changeResult);
@@ -100,8 +121,6 @@ namespace Meadow.Foundation.Sensors.Distance
             Peripheral.WriteRegister(0x00, 0x01);
             Peripheral.WriteRegister(0xFF, 0x00);
             Peripheral.WriteRegister(0x80, 0x00);
-
-            //var configControl = (byte)(Read((byte)Register.MsrcConfigControl) | 0x12);
 
             Peripheral.WriteRegister((byte)Register.SystemSequenceConfig, 0xFF);
             var spadInfo = GetSpadInfo();

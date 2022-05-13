@@ -6,8 +6,8 @@ using System;
 
 namespace MaxBotix_Sample
 {
-    // Change F7MicroV2 to F7Micro for V1.x boards
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    // Change F7MicroV2 to F7FeatherV1 for V1.x boards
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         MaxBotix maxBotix;
 
@@ -46,12 +46,12 @@ namespace MaxBotix_Sample
 
             maxBotix.Subscribe(consumer);
 
-            maxBotix.LengthUpdated += MaxBotix_LengthUpdated;
+            maxBotix.DistanceUpdated += MaxBotix_DistanceUpdated;
 
             maxBotix.StartUpdating(new TimeSpan(0, 0, 1));
         }
 
-        private void MaxBotix_LengthUpdated(object sender, IChangeResult<Length> e)
+        private void MaxBotix_DistanceUpdated(object sender, IChangeResult<Length> e)
         {
             Console.WriteLine($"Length: {e.New.Centimeters}cm");
         }

@@ -12,12 +12,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="SimpleJpegDecoder" Version="0.3.0" />
+    <PackageReference Include="BitMiracle.LibJpeg.NET" Version="1.5.324" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Displays.TftSpi\Driver\Displays.TftSpi.csproj" />
     <ProjectReference Include="..\..\Driver\Sensors.Camera.Vc0706.csproj" />
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
   </ItemGroup>
 </Project>

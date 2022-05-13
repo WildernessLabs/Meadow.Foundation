@@ -9,7 +9,10 @@ namespace Meadow.Foundation.Graphics
     /// </summary>
     public partial class MicroGraphics 
     {
-        private readonly IGraphicsDisplay display;
+        /// <summary>
+        /// Display object reponsible for managing the buffer and rendering
+        /// </summary>
+        protected readonly IGraphicsDisplay display;
 
         /// <summary>
         /// Current font used for displaying text on the display.
@@ -77,16 +80,38 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
-        public void DrawPixel(int x, int y)
+        public virtual void DrawPixel(int x, int y)
         {
             display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor);
+        }
+
+        /// <summary>
+        /// Draw a single pixel 
+        /// </summary>
+        /// <param name="x">x location </param>
+        /// <param name="y">y location</param>
+        /// <param name="colored">Turn the pixel on (true) or off (false).</param>
+        public void DrawPixel(int x, int y, bool colored)
+        {
+            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), colored);
+        }
+
+        /// <summary>
+        /// Draw a single pixel 
+        /// </summary>
+        /// <param name="x">x location </param>
+        /// <param name="y">y location</param>
+        /// <param name="color">Color of pixel.</param>
+        public virtual void DrawPixel(int x, int y, Color color)
+        {
+            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor = color);
         }
 
         /// <summary>
         /// Draw a single pixel using the pen color
         /// </summary>
         /// <param name="index">pixel location in buffer</param>
-        public void DrawPixel(int index)
+        public virtual void DrawPixel(int index)
         {   
             display.DrawPixel(index % display.Width, index / display.Width, PenColor);
         }
@@ -108,7 +133,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">y start</param>
         /// /// <param name="width">width of area to invert</param>
         /// <param name="height">height of area to invert</param>
-        public void InvertRectangle(int x, int y, int width, int height)
+        public virtual void InvertRectangle(int x, int y, int width, int height)
         {
             for (int i = 0; i < width; i++)
             {
@@ -120,41 +145,13 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Draw a single pixel 
+        /// Draw a line using Bresenhams line drawing algorithm
         /// </summary>
-        /// <param name="x">x location </param>
-        /// <param name="y">y location</param>
-        /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public void DrawPixel (int x, int y, bool colored)
-        {
-            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), colored);
-        }
-
-        /// <summary>
-        /// Draw a single pixel 
-        /// </summary>
-        /// <param name="x">x location </param>
-        /// <param name="y">y location</param>
-        /// <param name="color">Color of pixel.</param>
-        public void DrawPixel (int x, int y, Color color)
-        {
-            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor = color);
-        }
-
-        /// <summary>
-        /// Draw a line using Bresenhams line drawing algorithm.
-        /// </summary>
-        /// <remarks>
-        /// Bresenhams line drawing algoritm:
-        /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-        /// C# Implementation:
-        /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-        /// </remarks>
-        /// <param name="x0">Abscissa of the starting point of the line.</param>
+        /// <param name="x0">Abscissa of the starting point of the line</param>
         /// <param name="y0">Ordinate of the starting point of the line</param>
-        /// <param name="x1">Abscissa of the end point of the line.</param>
+        /// <param name="x1">Abscissa of the end point of the line</param>
         /// <param name="y1">Ordinate of the end point of the line</param>
-        /// <param name="colored">Turn the pixel on (true) or off (false).</param>
+        /// <param name="colored">Turn the pixel on (true) or off (false)</param>
         public void DrawLine(int x0, int y0, int x1, int y1, bool colored)
         {
             DrawLine(x0, y0, x1, y1, (colored ? Color.White : Color.Black));
@@ -163,7 +160,6 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a line using polar coordinates
         /// </summary>
-        /// <remarks>
         /// <param name="x">Abscissa of the starting point of the line</param>
         /// <param name="y">Ordinate of the starting point of the line</param>
         /// <param name="length">Length of line.</param>
@@ -175,7 +171,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Draw a line using Bresenhams line drawing algorithm.
+        /// Draw a line using Bresenhams line drawing algorithm
         /// </summary>
         /// <remarks>
         /// Bresenhams line drawing algoritm:
@@ -183,11 +179,11 @@ namespace Meadow.Foundation.Graphics
         /// C# Implementation:
         /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
         /// </remarks>
-        /// <param name="x0">Abscissa of the starting point of the line.</param>
+        /// <param name="x0">Abscissa of the starting point of the line</param>
         /// <param name="y0">Ordinate of the starting point of the line</param>
-        /// <param name="x1">Abscissa of the end point of the line.</param>
+        /// <param name="x1">Abscissa of the end point of the line</param>
         /// <param name="y1">Ordinate of the end point of the line</param>
-        /// <param name="color">The color of the line.</param>
+        /// <param name="color">The color of the line</param>
         public void DrawLine(int x0, int y0, int x1, int y1, Color color)
         {
             PenColor = color;
@@ -1163,7 +1159,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Show changes on the display
         /// </summary>
-        public void Show()
+        public virtual void Show()
         {
             display.Show();
         }
@@ -1172,7 +1168,7 @@ namespace Meadow.Foundation.Graphics
         /// Update a region of the display
         /// Note: not all displays support partial updates
         /// </summary>
-        public void Show(int left, int top, int right, int bottom)
+        public virtual void Show(int left, int top, int right, int bottom)
         {
             display.Show(left, top, right, bottom);
         }
@@ -1181,7 +1177,7 @@ namespace Meadow.Foundation.Graphics
         /// Update a region of the display
         /// Note: not all displays support partial updates
         /// </summary>
-        public void Show(Rect rect)
+        public virtual void Show(Rect rect)
         {
             display.Show(rect.Left, rect.Top, rect.Right, rect.Bottom);
         }
@@ -1190,7 +1186,7 @@ namespace Meadow.Foundation.Graphics
         /// Clear the display.
         /// </summary>
         /// <param name="updateDisplay">Update the display immediately when true.</param>
-        public void Clear(bool updateDisplay = false)
+        public virtual void Clear(bool updateDisplay = false)
         {
             display.Clear(updateDisplay);
         }
@@ -1200,7 +1196,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="updateDisplay">Update the display immediately when true.</param>
         /// <param name="color">Color to set display.</param>
-        public void Clear(Color color, bool updateDisplay = false)
+        public virtual void Clear(Color color, bool updateDisplay = false)
         {
             DrawRectangle(0, 0, Width, Height, color, true);
 
@@ -1208,16 +1204,15 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Display a 1-bit bitmap
-        /// 
-        /// This method simply calls a similar method in the display hardware.
+        /// Display a 1-bit bitmap stored in a byte array
         /// </summary>
-        /// <param name="x">Abscissa of the top left corner of the bitmap.</param>
-        /// <param name="y">Ordinate of the top left corner of the bitmap.</param>
-        /// <param name="width">Width of the bitmap in pixels.</param>
-        /// <param name="height">Height of the bitmap in pixels.</param>
-        /// <param name="bitmap">Bitmap to display.</param>
-        /// <param name="bitmapMode">How should the bitmap be transferred to the display?</param>
+        /// <param name="x">Abscissa of the top left corner of the bitmap</param>
+        /// <param name="y">Ordinate of the top left corner of the bitmap</param>
+        /// <param name="width">Width of the bitmap in pixels</param>
+        /// <param name="height">Height of the bitmap in pixels</param>
+        /// <param name="bitmap">Bitmap to display</param>
+        /// <param name="bitmapMode">How  the bitmap should be transferred to the buffer (not implemented)</param>
+        /// <param name="scaleFactor">The integer scale factor (default is 1)</param>
         public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             width /= 8;
@@ -1263,15 +1258,14 @@ namespace Meadow.Foundation.Graphics
 
         /// <summary>
         /// Display a 1-bit bitmap
-        /// 
-        /// This method simply calls a similar method in the display hardware.
         /// </summary>
-        /// <param name="x">Abscissa of the top left corner of the bitmap.</param>
-        /// <param name="y">Ordinate of the top left corner of the bitmap.</param>
-        /// <param name="width">Width of the bitmap in pixels.</param>
-        /// <param name="height">Height of the bitmap in pixels.</param>
-        /// <param name="bitmap">Bitmap to display.</param>
-        /// <param name="color">The color of the bitmap.</param>
+        /// <param name="x">Abscissa of the top left corner of the bitmap</param>
+        /// <param name="y">Ordinate of the top left corner of the bitmap</param>
+        /// <param name="width">Width of the bitmap in pixels</param>
+        /// <param name="height">Height of the bitmap in pixels</param>
+        /// <param name="bitmap">Bitmap to display</param>
+        /// <param name="color">The color of the bitmap</param>
+        /// <param name="scaleFactor">The integer scale factor (default is 1)</param>
         public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             PenColor = color;
@@ -1279,6 +1273,12 @@ namespace Meadow.Foundation.Graphics
             DrawBitmap(x, y, width, height, bitmap, BitmapMode.Copy, scaleFactor);
         }
 
+        /// <summary>
+        /// Get x pixel position for the current graphics rotation
+        /// </summary>
+        /// <param name="x">The non-rotated x position</param>
+        /// <param name="y">The non-rotated y position</param>
+        /// <returns></returns>
         public int GetXForRotation(int x, int y)
         {
             return Rotation switch
@@ -1290,6 +1290,12 @@ namespace Meadow.Foundation.Graphics
             };
         }
 
+        /// <summary>
+        /// Get y pixel position for the current graphics rotation
+        /// </summary>
+        /// <param name="x">The non-rotated x position</param>
+        /// <param name="y">The non-rotated y position</param>
+        /// <returns></returns>
         public int GetYForRotation(int x, int y)
         {
             return Rotation switch
