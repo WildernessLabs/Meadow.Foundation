@@ -1,28 +1,29 @@
-﻿using Meadow.Units;
+﻿using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
-    public partial class MaxBotix : ByteCommsSensorBase<Length>
+    public partial class MaxBotix : ByteCommsSensorBase<Length>, IRangeFinder
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<IChangeResult<Length>> LengthUpdated = delegate { };
+        public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
 
         /// <summary>
         /// Distance from sensor to object
         /// </summary>
-        public Length? Length { get; protected set; }
+        public Length? Distance { get; protected set; }
 
         /// <summary>
         /// voltage common collector (VCC) typically 3.3V
         /// </summary>
         public double VCC { get; set; } = 3.3;
 
-        CommunicationType communication;
-        SensorType sensorType;
+        readonly CommunicationType communication;
+        readonly SensorType sensorType;
 
         /// <summary>
         /// Read the distance from the sensor
@@ -46,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="changeResult"></param>
         protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
         {
-            LengthUpdated?.Invoke(this, changeResult);
+            DistanceUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
 

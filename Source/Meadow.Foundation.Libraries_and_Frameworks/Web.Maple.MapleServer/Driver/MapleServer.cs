@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -111,9 +112,11 @@ namespace Meadow.Foundation.Web.Maple
                         // for now, just use IPv4
                         Console.WriteLine($"Listening on http://{ni.Address}:{port}/");
 
-                        _httpListener.Prefixes.Add($"http://{ni.Address}:{port}/");
+//                        _httpListener.Prefixes.Add($"http://{ni.Address}:{port}/");
                     }
                 }
+
+                _httpListener.Prefixes.Add($"http://+:{port}/");
             }
             else
             {
@@ -141,7 +144,7 @@ namespace Meadow.Foundation.Web.Maple
             {
                 _httpListener.Start();
             }
-            catch (HttpListenerException)
+            catch (HttpListenerException e)
             {
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
@@ -270,11 +273,13 @@ namespace Meadow.Foundation.Web.Maple
                     {
                         case RequestProcessMode.Serial:
                             ProcessRequest(context).Wait();
+                            context?.Response.Close();
                             break;
                         case RequestProcessMode.Parallel:
                             _ = Task.Run(async () =>
                             {
                                 await ProcessRequest(context);
+                                context?.Response.Close();
                             });
                             break;
                     }
@@ -286,10 +291,6 @@ namespace Meadow.Foundation.Web.Maple
                 catch (Exception ex)
                 {
                     Logger?.Error(ex.ToString());
-                }
-                finally
-                {
-                    context?.Response.Close();
                 }
             }
 
@@ -353,26 +354,57 @@ namespace Meadow.Foundation.Web.Maple
 
                 handlerInstance.Context = context;
 
-                object[] paramObjects = null;
+                List<object> paramObjects = new List<object>();
 
                 if (handlerInfo.Parameter != null)
                 {
-                    paramObjects = new object[]
+                    paramObjects.Add(param);
+                }
+                
+
+                // does the method have a [FromBody] parameter?
+                if (handlerInfo.Method.GetParameters().FirstOrDefault(p => p.CustomAttributes.Any(a => a.AttributeType.Equals(typeof(FromBodyAttribute)))) is { } p)
+                {
+                    using (var reader = new StreamReader(context.Request.InputStream))
                     {
-                            param
-                    };
+                        var json = reader.ReadToEnd();
+
+                        if (string.IsNullOrEmpty(json))
+                        {
+                            // check for empty body behavior
+                            if (p.GetCustomAttributes(typeof(FromBodyAttribute), true).FirstOrDefault() as FromBodyAttribute is { } fb)
+                            {
+                                switch (fb.EmptyBodyBehavior)
+                                {
+                                    case EmptyBodyBehavior.Disallow:
+                                        var msg = "Empty body disallowed";
+                                        Logger?.Error(msg);
+                                        await ErrorPageGenerator.SendErrorPage(context, 500, msg);
+                                        break;
+                                    default:
+                                        paramObjects.Add(p.ParameterType.IsValueType ? Activator.CreateInstance(p.ParameterType) : null);
+                                        break;
+                                }
+                            }
+                        }
+                        else
+                        { 
+                            var o = SimpleJson.SimpleJson.DeserializeObject(json, p.ParameterType);
+                            paramObjects.Add(o);
+                        }
+                    }
                 }
 
                 try
                 {
                     if (typeof(IActionResult).IsAssignableFrom(handlerInfo.Method.ReturnType))
                     {
-                        var result = handlerInfo.Method.Invoke(handlerInstance, paramObjects) as IActionResult;
+                        var result = handlerInfo.Method.Invoke(handlerInstance, paramObjects.Count > 0 ? paramObjects.ToArray() : null) as IActionResult;
                         await result.ExecuteResultAsync(context);
                     }
                     else
                     {
-                        handlerInfo.Method.Invoke(handlerInstance, paramObjects);
+                        handlerInfo.Method.Invoke(handlerInstance, paramObjects.Count > 0 ? paramObjects.ToArray() : null);
                     }
 
                     context.Response.Close();

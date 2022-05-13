@@ -17,12 +17,12 @@ namespace Meadow.Foundation.DataLoggers
         public string WriteKey { get; set; }
 
         /// <summary>
-        /// URI of the ThingSpeak api.
+        /// URI of the ThingSpeak api
         /// </summary>
         public string URI { get; set;  }
 
         /// <summary>
-        /// Create a new ThingSpeak object.
+        /// Create a new ThingSpeak object
         /// </summary>
         /// <param name="writeKey">Write key.</param>
         public ThingSpeak(string writeKey)
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.DataLoggers
         }
 
         /// <summary>
-        /// Post a series of values to ThingSpeak.
+        /// Post a series of values to ThingSpeak
         /// </summary>
         /// <param name="values">Array of values to send to ThingSpeak.</param>
         public void PostValues(params string[] values)
@@ -59,19 +59,19 @@ namespace Meadow.Foundation.DataLoggers
         }
 
         /// <summary>
-        /// Post the specified data to ThingSpeak.
+        /// Post the specified data to ThingSpeak
         /// </summary>
         /// <remarks>
         /// The data should be URL encoded in the format:
-        /// 
         /// field1=10.2&field2=15
         /// </remarks>
-        /// <param name="data">Data to send.</param>
-        /// <returns>Record number for the reading(s) just added.</returns>
+        /// <param name="data">Data to send</param>
+        /// <returns>Record number for the reading(s) just added</returns>
         private int PostData(string data)
         {
             int retryCount = 0;
             int result = 0;
+
             while (retryCount < 3)
             {
                 try

@@ -18,9 +18,8 @@ namespace Sensors.Temperature.MLX90640_Sample
             Console.WriteLine("Initialize hardware...");
 
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Fast);
-            sensor = new Mlx90640(i2cBus, measurementUnit: Mlx90640.Units.Celsius);
-            sensor.Initialize();
-
+            sensor = new Mlx90640(i2cBus);
+  
             //View sensor data as temperature values
             Run(showTempArrayAsAsciiArt: false);
         }
@@ -54,7 +53,7 @@ namespace Sensors.Temperature.MLX90640_Sample
             {
                 Thread.Sleep(1000);
 
-                frame = sensor.Read();
+                frame = sensor.ReadRawData();
 
                 Console.WriteLine();
 

@@ -12,22 +12,21 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public class Sfsr02: SensorBase<Length>, IRangeFinder
     {
-        //==== events
 		/// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
         public event EventHandler<IChangeResult<Length>> DistanceUpdated;
 
-        //==== internals
         /// <summary>
         /// Trigger/Echo Pin
         /// </summary>
         protected IBiDirectionalPort triggerEchoPort;
 
+        /// <summary>
+        /// Start time
+        /// </summary>
         protected long tickStart;
 
-
-        //==== properties
         /// <summary>
         /// Returns current distance
         /// </summary>
