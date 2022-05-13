@@ -6,29 +6,29 @@ namespace Meadow.Foundation.Sensors.Hid
     internal class WiiExtensionButton : IButton
     {
         /// <summary>
-        /// The minimum duration for a long press.
+        /// The minimum duration for a long press
         /// </summary>
         public TimeSpan LongClickedThreshold { get; set; } = TimeSpan.Zero;
 
         public bool State { get; protected set; } = false;
 
         /// <summary>
-        /// Raised when a press starts (the button is pushed down).
+        /// Raised when a press starts (the button is pushed down)
         /// </summary>
         public event EventHandler PressStarted;
 
         /// <summary>
-        /// Raised when a press ends (the button is released).
+        /// Raised when a press ends (the button is released)
         /// </summary>
         public event EventHandler PressEnded;
 
         /// <summary>
-        /// Raised when the button circuit is re-opened after it has been closed (at the end of a press).
+        /// Raised when the button circuit is re-opened after it has been closed (at the end of a press)
         /// </summary>
         public event EventHandler Clicked;
         
         /// <summary>
-        /// Raised when the button circuit is pressed for LongPressDuration.
+        /// Raised when the button circuit is pressed for LongPressDuration
         /// </summary>
         public event EventHandler LongClicked;
 
@@ -39,8 +39,6 @@ namespace Meadow.Foundation.Sensors.Hid
 
         public void Update(bool state)
         {
-            //Console.WriteLine($"{state} {State}");
-
             if (state == true && State == false)
             {   // save our press start time (for long press event)
                 buttonPressStart = DateTime.Now;
@@ -80,7 +78,6 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         protected virtual void RaiseClicked()
         {
-            //Console.WriteLine("RaiseClicked");
             Clicked?.Invoke(this, EventArgs.Empty);
         }
 
@@ -89,7 +86,6 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         protected virtual void RaisePressStarted()
         {
-            //Console.WriteLine("RaisePressStarted");
             PressStarted?.Invoke(this, new EventArgs());
         }
 
@@ -98,7 +94,6 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         protected virtual void RaisePressEnded()
         {
-            //Console.WriteLine("RaisePressEnded");
             PressEnded?.Invoke(this, new EventArgs());
         }
 
@@ -107,7 +102,6 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         protected virtual void RaiseLongClicked()
         {
-            //Console.WriteLine("RaiseLongClicked");
             LongClicked?.Invoke(this, new EventArgs());
         }
     }
