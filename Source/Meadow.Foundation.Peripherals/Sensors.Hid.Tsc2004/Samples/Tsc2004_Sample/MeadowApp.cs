@@ -11,7 +11,7 @@ namespace Bbq10Keyboard_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //Snip
+        //<!=SNIP=>
 
         Tsc2004 touchScreen;
 
@@ -48,6 +48,6 @@ namespace Bbq10Keyboard_Sample
             });
         }
 
-        //Snop
+        //<!=SNOP=>
     }
 }
