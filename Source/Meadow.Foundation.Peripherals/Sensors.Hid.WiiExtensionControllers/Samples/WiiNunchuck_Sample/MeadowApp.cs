@@ -7,7 +7,7 @@ namespace WiiNunchuck_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //Snip
+        //<!=SNIP=>
 
         readonly WiiNunchuck nunchuck;
 
@@ -37,6 +37,6 @@ namespace WiiNunchuck_Sample
             nunchuck.StartUpdating(TimeSpan.FromMilliseconds(200));
         }
 
-        //Snop
+        //<!=SNOP=>
     }
 }

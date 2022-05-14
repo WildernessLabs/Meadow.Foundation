@@ -7,7 +7,7 @@ namespace SnesClassicController_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //Snip
+        //<!=SNIP=>
 
         readonly SnesClassicController snesController;
 
@@ -42,6 +42,6 @@ namespace SnesClassicController_Sample
             snesController.StartUpdating(TimeSpan.FromMilliseconds(200));
         }
 
-        //Snop
+        //<!=SNOP=>
     }
 }

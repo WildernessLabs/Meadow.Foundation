@@ -7,7 +7,7 @@ namespace NesClassicController_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //Snip
+        //<!=SNIP=>
 
         readonly NesClassicController nesController;
 
@@ -37,6 +37,6 @@ namespace NesClassicController_Sample
             nesController.StartUpdating(TimeSpan.FromMilliseconds(200));
         }
 
-        //Snop
+        //<!=SNOP=>
     }
 }

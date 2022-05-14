@@ -7,7 +7,7 @@ namespace WiiClassicControllerPro_Sample
 {
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
-        //Snip
+        //<!=SNIP=>
 
         readonly WiiClassicControllerPro classicControllerPro;
 
@@ -49,6 +49,6 @@ namespace WiiClassicControllerPro_Sample
             classicControllerPro.StartUpdating(TimeSpan.FromMilliseconds(200));
         }
 
-        //Snop
+        //<!=SNOP=>
     }
 }
