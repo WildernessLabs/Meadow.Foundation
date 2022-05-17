@@ -8,10 +8,11 @@ Meadow.Foundation makes the task of building connected things easy with Meadow b
 
 ## Repositories 
 
-Meadow.Foundation is currently split into three (3) GitHub repos:
+Meadow.Foundation is currently split into multiple GitHub repos:
 1. [Meadow.Foundation](https://github.com/WildernessLabs/Meadow.Foundation/) which contains the majority of the peripheral and library source code
 2. [Meadow.Foundation.Featherwings](https://github.com/WildernessLabs/Meadow.Foundation.Featherwings/) contains drivers for hardware that conforms to the [Adafruit Featherwing](https://learn.adafruit.com/adafruit-feather/) form factor
 3. [Meadow.Foundation.Grove](https://github.com/WildernessLabs/Meadow.Foundation.Grove/) contains drivers for [Seeed Studio Grove](https://www.seeedstudio.com/grove.html) modular hardware peripherals
+4. [Meadow.Foundation.MikroBus](https://github.com/WildernessLabs/Meadow.Foundation.mikrobus/) contains drivers for [MikroElektronika](https://www.mikroe.com/click)  mikroBUS Click Boards
 
 ## Repository Status
 
