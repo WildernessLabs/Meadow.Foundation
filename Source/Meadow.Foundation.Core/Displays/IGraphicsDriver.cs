@@ -3,7 +3,22 @@
 namespace Meadow.Foundation.Graphics
 {
     /// <summary>
-    /// Represents a pixel based graphics display
+    /// Represents a pixel based graphics display.
+    /// 
+    /// Conceptually, implementing drivers should:
+    /// 
+    /// 1. Have the primary responsibility of passing a buffer of 
+    /// "pixel" data to the device, which can be encoded at a variety
+    /// of bit depths
+    /// 
+    /// 2. Use an IPixelBuffer instance to represent the state of the
+    /// display as an in-memory object
+    /// 
+    /// 3. Avoid doing memory/buffer manipulation operations such as
+    /// Draw, Fill, Copy, etc. These operations should be the responsibility 
+    /// of the IPixelBuffer and existing API methods are for back-compat. They
+    /// should wrap the appropriate buffer methods.
+    /// 
     /// </summary>
     public interface IGraphicsDriver
     {
@@ -27,6 +42,12 @@ namespace Meadow.Foundation.Graphics
         /// or if the driver should generate an exception.
         /// </summary>
         public bool IgnoreOutOfBoundsPixels { get; set; }
+
+        /// <summary>
+        /// Provide a buffer that matches this display's color depth, height, and width.
+        /// This should be the buffer that is sent to the device when Show is called
+        /// </summary>
+        public IPixelBuffer PixelBuffer { get; }
 
         /// <summary>
         /// Transfer the contents of the buffer to the display.
