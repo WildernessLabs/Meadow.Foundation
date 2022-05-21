@@ -87,7 +87,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             throw new NotImplementedException();
         }
 
-        public new void WriteBuffer(int x, int y, IPixelBuffer buffer)
+        public override void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
             if(buffer.ColorMode == ColorMode)
             {
