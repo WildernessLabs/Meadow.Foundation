@@ -8,6 +8,7 @@ namespace Meadow.Foundation.Graphics.Buffers
     {
         public override ColorType ColorMode => ColorType.Format1bpp;
 
+
         public Buffer1bpp(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
         public Buffer1bpp(int width, int height) : base(width, height) { }
@@ -23,50 +24,37 @@ namespace Meadow.Foundation.Graphics.Buffers
             Buffer = new byte[bufferSize];
         }
 
-        public void Clear(bool isColored)
-        {
-            // split the color in to two byte values
-            Buffer[0] = (byte)(isColored ? 0xFF : 0);
 
-            int arrayMidPoint = Buffer.Length / 2;
-            int copyLength;
-
-            for (copyLength = 1; copyLength < arrayMidPoint; copyLength <<= 1)
-            {
-                Array.Copy(Buffer, 0, Buffer, copyLength, copyLength);
-            }
-
-            Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
-        }
+        
 
         public override void Fill(Color color)
         {
             Clear(color.Color1bpp);
         }
 
-        public override void Fill(Color color, int x, int y, int width, int height)
+        public override void Fill(Color color, int originX, int originY, int width, int height)
         {
-            if (x < 0 || x + width > Width ||
-                y < 0 || y + height > Height)
+            if (originX < 0 || originX + width > Width ||
+                originY < 0 || originY + height > Height)
             {
                 throw new ArgumentOutOfRangeException();
             }
 
             var isColored = color.Color1bpp;
 
-            for (int i = 0; i < width; i++)
+            for (int x = 0; x < width; x++)
             {
-                for (int j = 0; j < height; j++)
+                for (int y = 0; y < height; y++)
                 {   //byte aligned and at least 8 rows to go
-                    if ((j + y) % 8 == 0 && j + y + 8 <= height)
+                    if ((y + originY) % 8 == 0 && y + originY + 8 <= height)
                     {
                         //set an entire byte - fast
-                        Buffer[((j + y) >> 3) * Width + x + i] = (byte)(isColored ? 0xFF : 0);
-                        j += 7; //the main loop will add 1 to make it 8
+                        Buffer[((y + originY) >> 3) * Width + originX + x] = (byte)(isColored ? 0xFF : 0);
+                        y += 7; //the main loop will add 1 to make it 8
                     }
                     else
                     {
-                        SetPixel(x + i, y + j, isColored);
+                        SetPixel(originX + x, originY + y, isColored);
                     }
                 }
             }
@@ -77,6 +65,10 @@ namespace Meadow.Foundation.Graphics.Buffers
             return GetPixelIsColored(x, y) ? Color.White : Color.Black;
         }
 
+        public override void SetPixel(int x, int y, Color color)
+        {
+            SetPixel(x, y, color.Color1bpp);
+        }
         public void SetPixel(int x, int y, bool colored)
         {
             var index = (y >> 3) * Width + x; //divide by 8
@@ -91,17 +83,12 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
-        public override void SetPixel(int x, int y, Color color)
-        {
-            SetPixel(x, y, color.Color1bpp);
-        }
-
         public override void InvertPixel(int x, int y)
         {
             throw new NotImplementedException();
         }
 
-        public new void WriteBuffer(int x, int y, IPixelBuffer buffer)
+        public override void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
             // our color modes match, we can fast copy
             if(buffer.ColorMode == ColorMode)
@@ -132,6 +119,24 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
 
+
+
+
+        public void Clear(bool isColored)
+        {
+            // split the color in to two byte values
+            Buffer[0] = (byte)(isColored ? 0xFF : 0);
+
+            int arrayMidPoint = Buffer.Length / 2;
+            int copyLength;
+
+            for (copyLength = 1; copyLength < arrayMidPoint; copyLength <<= 1)
+            {
+                Array.Copy(Buffer, 0, Buffer, copyLength, copyLength);
+            }
+
+            Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
+        }
 
         public bool GetPixelIsColored(int x, int y)
         {

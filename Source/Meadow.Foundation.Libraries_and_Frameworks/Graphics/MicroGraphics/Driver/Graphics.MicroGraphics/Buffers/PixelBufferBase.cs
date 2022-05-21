@@ -100,7 +100,7 @@ namespace MicroGraphics.Buffers
         /// <param name="originX">The X coord to start writing</param>
         /// <param name="originY">The Y coord to start writing</param>
         /// <param name="buffer">The buffer to copy into this buffer</param>
-        public void WriteBuffer(int originX, int originY, IPixelBuffer buffer)
+        public virtual void WriteBuffer(int originX, int originY, IPixelBuffer buffer)
         {
             WriteBufferSlow(originX, originY, buffer);
         }
