@@ -2,37 +2,16 @@
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
-    public class BufferGray8 : BufferBase
+    public class BufferGray8 : PixelBufferBase
     {
-        public override int ByteCount => Width * Height;
+        public override ColorType ColorMode => ColorType.Format8bppGray;
 
-        public override ColorType displayColorMode => ColorType.Format8bppGray;
 
         public BufferGray8(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
         public BufferGray8(int width, int height) : base(width, height) { }
 
-        public byte GetPixel8bpp(int x, int y)
-        {
-            return Buffer[y * Width + x];
-        }
 
-        public override Color GetPixel(int x, int y)
-        {
-            var gray = GetPixel8bpp(x, y);
-
-            return new Color(gray, gray, gray);
-        }
-
-        public void SetPixel(int x, int y, byte gray)
-        {
-            Buffer[y * Width + x] = gray;
-        }
-
-        public override void SetPixel(int x, int y, Color color)
-        {
-            SetPixel(x, y, color.Color8bppGray);
-        }
 
         public override void Fill(Color color)
         {
@@ -78,24 +57,53 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
-        public new void WriteBuffer(int x, int y, IDisplayBuffer buffer)
+        public override Color GetPixel(int x, int y)
         {
-            if (base.WriteBuffer(x, y, buffer))
-            {   //call the base for validation
-                //and to handle the slow path when buffers don't match
-                return;
-            }
+            var gray = GetPixel8bpp(x, y);
 
-            int sourceIndex, destinationIndex;
-            int length = buffer.Width;
+            return new Color(gray, gray, gray);
+        }
 
-            for (int i = 0; i < buffer.Height; i++)
+        public override void SetPixel(int x, int y, Color color)
+        {
+            SetPixel(x, y, color.Color8bppGray);
+        }
+        public void SetPixel(int x, int y, byte gray)
+        {
+            Buffer[y * Width + x] = gray;
+        }
+
+        public override void InvertPixel(int x, int y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteBuffer(int originX, int originY, IPixelBuffer buffer)
+        {
+            if(buffer.ColorMode == ColorMode)
             {
-                sourceIndex = length * i;
-                destinationIndex = Width * (y + i) + x;
+                int sourceIndex, destinationIndex;
+                int length = buffer.Width;
 
-                Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length); ;
+                for (int i = 0; i < buffer.Height; i++)
+                {
+                    sourceIndex = length * i;
+                    destinationIndex = Width * (originY + i) + originX;
+
+                    Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length); ;
+                }
             }
+            else
+            {
+                base.WriteBuffer(originX, originY, buffer);
+            }
+        }
+
+
+
+        public byte GetPixel8bpp(int x, int y)
+        {
+            return Buffer[y * Width + x];
         }
     }
 }
