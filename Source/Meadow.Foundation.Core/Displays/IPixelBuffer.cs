@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
     /// An interface representing the concept of a

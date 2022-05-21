@@ -1,6 +1,4 @@
-﻿using Meadow.Foundation.Displays;
-using MicroGraphics.Buffers;
-using System;
+﻿using System;
 
 namespace Meadow.Foundation.Graphics.Buffers
 {

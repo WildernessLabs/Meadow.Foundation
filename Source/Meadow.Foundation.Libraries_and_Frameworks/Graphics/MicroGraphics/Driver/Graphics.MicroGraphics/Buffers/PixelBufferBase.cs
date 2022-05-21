@@ -2,10 +2,8 @@
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace MicroGraphics.Buffers
+namespace Meadow.Foundation.Graphics.Buffers
 {
     public abstract class PixelBufferBase : IPixelBuffer
     {
@@ -73,6 +71,7 @@ namespace MicroGraphics.Buffers
             }
             Buffer = buffer;
         }
+
 
 
         public void Clear()
