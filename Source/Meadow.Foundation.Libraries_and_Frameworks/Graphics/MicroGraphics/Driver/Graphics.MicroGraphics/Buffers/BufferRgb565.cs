@@ -2,22 +2,49 @@
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
-    public class BufferRgb565 : BufferBase
+    public class BufferRgb565 : PixelBufferBase
     {
-        public override int ByteCount => Width * Height * 2;
+        public override ColorType ColorMode => ColorType.Format16bppRgb565;
 
-        public override ColorType displayColorMode => ColorType.Format16bppRgb565;
 
         public BufferRgb565(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
         public BufferRgb565(int width, int height) : base(width, height) { }
 
-        public ushort GetPixel16bpp(int x, int y)
-        {
-            //get current color
-            var index = ((y * Width) + x) * sizeof(ushort);
 
-            return (ushort)(Buffer[index] << 8 | Buffer[++index]);
+
+        public override void Fill(Color color)
+        {
+            Clear(color.Color16bppRgb565);
+        }
+
+        public override void Fill(Color color, int x, int y, int width, int height)
+        {
+            if (x < 0 || x + width > Width ||
+                y < 0 || y + height > Height)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            byte[] value = { (byte)(color.Color16bppRgb565 >> 8), (byte)color.Color16bppRgb565 };
+            int index = (y * Width + x) * 2 - 1;
+
+            //fill the first line
+            for (int i = 0; i < width; i++)
+            {
+                Buffer[++index] = value[0];
+                Buffer[++index] = value[1];
+            }
+
+            //array copy the rest
+            for (int j = 0; j < height - 1; j++)
+            {
+                Array.Copy(Buffer,
+                    (y + j) * Width * 2 + x * 2,
+                    Buffer,
+                    (y + j + 1) * Width * 2 + x * 2,
+                    width * 2);
+            }
         }
 
         public override Color GetPixel(int x, int y)
@@ -31,6 +58,10 @@ namespace Meadow.Foundation.Graphics.Buffers
             return new Color(r, g, b);
         }
 
+        public override void SetPixel(int x, int y, Color color)
+        {
+            SetPixel(x, y, color.Color16bppRgb565);
+        }
         public void SetPixel(int x, int y, ushort color)
         {
             var index = ((y * Width) + x) * 2;
@@ -39,43 +70,40 @@ namespace Meadow.Foundation.Graphics.Buffers
             Buffer[++index] = (byte)color;
         }
 
-        public override void SetPixel(int x, int y, Color color)
+        public override void InvertPixel(int x, int y)
         {
-            SetPixel(x, y, color.Color16bppRgb565);
+            throw new NotImplementedException();
         }
 
-        public override void Fill(Color color)
+        public override void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
-            Clear(color.Color16bppRgb565);
+            if(buffer.ColorMode == ColorMode)
+            {
+                int sourceIndex, destinationIndex;
+                int length = buffer.Width * 2;
+
+                for (int i = 0; i < buffer.Height; i++)
+                {
+                    sourceIndex = length * i;
+                    destinationIndex = Width * (y + i) * 2 + x * 2;
+
+                    Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length); ;
+                }
+            }
+            else
+            {
+                base.WriteBuffer(x, y, buffer);
+            }
         }
 
-        public override void Fill(Color color, int x, int y, int width, int height)
+
+
+        public ushort GetPixel16bpp(int x, int y)
         {
-            if(x < 0 || x + width > Width ||
-                y < 0 || y + height > Height)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
+            //get current color
+            var index = ((y * Width) + x) * sizeof(ushort);
 
-            byte[] value = { (byte)(color.Color16bppRgb565 >> 8), (byte)color.Color16bppRgb565 };
-            int index = (y * Width + x) * 2 - 1;
-
-            //fill the first line
-            for(int i = 0; i < width; i++)
-            {
-                Buffer[++index] = value[0];
-                Buffer[++index] = value[1];
-            }
-
-            //array copy the rest
-            for(int j = 0; j < height - 1; j++)
-            {
-                Array.Copy(Buffer,
-                    (y + j) * Width * 2 + x * 2,
-                    Buffer,
-                    (y + j + 1) * Width * 2 + x * 2,
-                    width * 2);
-            }
+            return (ushort)(Buffer[index] << 8 | Buffer[++index]);
         }
 
         public void Clear(ushort color)
@@ -93,26 +121,6 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
             //copy whatever is remaining
             Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
-        }
-
-        public new void WriteBuffer(int x, int y, IDisplayBuffer buffer)
-        {
-            if (base.WriteBuffer(x, y, buffer))
-            {   //call the base for validation
-                //and to handle the slow path when buffers don't match
-                return;
-            }
-
-            int sourceIndex, destinationIndex;
-            int length = buffer.Width * 2;
-
-            for (int i = 0; i < buffer.Height; i++)
-            {
-                sourceIndex = length * i;
-                destinationIndex = Width * (y + i) * 2 + x * 2;
-
-                Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length); ;
-            }
         }
     }
 }
