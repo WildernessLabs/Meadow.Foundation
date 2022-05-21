@@ -8,7 +8,7 @@ namespace Meadow.Foundation.FeatherWings
     /// <summary>
     /// Represents an Adafruit Led Matrix 8x16 feather wing (HT16K33)
     /// </summary>
-    public class LedMatrix8x16Wing : IGraphicsDisplay
+    public class LedMatrix8x16Wing : IGraphicsDriver
     {
         private Ht16k33 ht16k33;
 

@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
-    public abstract partial class TftSpiBase : IGraphicsDisplay
+    public abstract partial class TftSpiBase : IGraphicsDriver
     {
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 

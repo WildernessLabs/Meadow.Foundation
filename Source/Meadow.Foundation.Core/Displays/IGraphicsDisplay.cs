@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Graphics
     /// <summary>
     /// Represents a pixel based graphics display
     /// </summary>
-    public interface IGraphicsDisplay
+    public interface IGraphicsDriver
     {
         /// <summary>
         /// The ColorType for the current display

@@ -5,7 +5,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Leds
 {
-    public partial class Apa102 : IGraphicsDisplay
+    public partial class Apa102 : IGraphicsDriver
     {
         /// <summary>
         /// Color mode of leds - 24bpp

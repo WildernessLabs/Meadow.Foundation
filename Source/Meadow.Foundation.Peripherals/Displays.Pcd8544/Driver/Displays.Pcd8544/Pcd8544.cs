@@ -7,7 +7,7 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Displays
 {
-    public class Pcd8544 : IGraphicsDisplay
+    public class Pcd8544 : IGraphicsDriver
     {
         public static Frequency DEFAULT_SPEED = new Frequency(4000, Frequency.UnitType.Kilohertz);
 

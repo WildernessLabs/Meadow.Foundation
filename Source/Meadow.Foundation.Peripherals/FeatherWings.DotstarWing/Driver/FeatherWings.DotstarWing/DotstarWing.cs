@@ -9,7 +9,7 @@ namespace Meadow.Foundation.FeatherWings
     /// <summary>
     /// Represents Adafruit's Dotstar feather wing 12x6
     /// </summary>
-    public class DotstarWing : IGraphicsDisplay
+    public class DotstarWing : IGraphicsDriver
     {
         Apa102 ledMatrix;
 

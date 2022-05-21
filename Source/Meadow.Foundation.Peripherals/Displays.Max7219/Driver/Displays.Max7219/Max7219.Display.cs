@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Max7219 LED matrix driver
     /// </summary>
-    public partial class Max7219 : IGraphicsDisplay
+    public partial class Max7219 : IGraphicsDriver
     {
         /// <summary>
         /// Color mode of display - 1bpp

@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Graphics
     /// </summary>
     public partial class MicroGraphics 
     {
-        private readonly IGraphicsDisplay display;
+        private readonly IGraphicsDriver display;
 
         /// <summary>
         /// Current font used for displaying text on the display.
@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// </summary>
         /// <param name="display"></param>
-        public MicroGraphics(IGraphicsDisplay display)
+        public MicroGraphics(IGraphicsDriver display)
         {
             this.display = display;
             CurrentFont = null;

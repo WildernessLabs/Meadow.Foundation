@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     ///     Provide an interface to the ST7565 family of displays.
     /// </summary>
-    public partial class St7565 : IGraphicsDisplay
+    public partial class St7565 : IGraphicsDriver
     {
         public ColorType ColorMode => ColorType.Format1bpp;
 

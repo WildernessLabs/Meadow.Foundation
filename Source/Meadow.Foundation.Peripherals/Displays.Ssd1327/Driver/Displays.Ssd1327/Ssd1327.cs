@@ -7,7 +7,7 @@ using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays
 {
-    public partial class Ssd1327 : IGraphicsDisplay
+    public partial class Ssd1327 : IGraphicsDriver
     {
         public ColorType ColorMode => ColorType.Format4bppGray;
 

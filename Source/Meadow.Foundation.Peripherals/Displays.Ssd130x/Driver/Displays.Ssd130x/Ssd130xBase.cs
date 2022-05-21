@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
     /// <summary>
     /// Provide an interface to the SSD1306 family of OLED displays.
     /// </summary>
-    public abstract partial class Ssd130xBase : IGraphicsDisplay
+    public abstract partial class Ssd130xBase : IGraphicsDriver
     {
         public ColorType ColorMode => ColorType.Format1bpp;
 

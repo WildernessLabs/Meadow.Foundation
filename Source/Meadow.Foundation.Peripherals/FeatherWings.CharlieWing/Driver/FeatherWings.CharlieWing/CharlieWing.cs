@@ -9,7 +9,7 @@ namespace Meadow.Foundation.FeatherWings
     /// <summary>
     /// Represents an Adafruit CharliePlex 15x7 feather wing
     /// </summary>
-    public class CharlieWing : IGraphicsDisplay
+    public class CharlieWing : IGraphicsDriver
     {
         /// <summary>
         /// Color mode of display
