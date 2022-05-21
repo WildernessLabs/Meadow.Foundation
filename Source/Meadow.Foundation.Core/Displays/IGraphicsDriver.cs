@@ -3,9 +3,10 @@
 namespace Meadow.Foundation.Graphics
 {
     /// <summary>
-    /// Represents a pixel based graphics display.
+    /// IGraphicsDriver provides a standard interface for working
+    /// with display devices.
     /// 
-    /// Conceptually, implementing drivers should:
+    /// Conceptually, implementing classes should:
     /// 
     /// 1. Have the primary responsibility of passing a buffer of 
     /// "pixel" data to the device, which can be encoded at a variety
