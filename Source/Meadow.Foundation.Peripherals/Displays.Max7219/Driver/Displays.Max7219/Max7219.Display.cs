@@ -171,7 +171,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">x position</param>
         /// <param name="y">y position</param>
         /// <param name="displayBuffer">buffer to draw</param>
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IPixelBuffer displayBuffer)
         {   //need to refactor to use a proper buffer
             for (int i = 0; i < displayBuffer.Width; i++)
             {

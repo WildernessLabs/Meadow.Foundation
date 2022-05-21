@@ -21,6 +21,9 @@
    <LangVersion>8.0</LangVersion>
  </PropertyGroup>
  <ItemGroup>
+   <Compile Remove="Displays\IDisplayBuffer.cs" />
+ </ItemGroup>
+ <ItemGroup>
    <None Include="..\..\Source\icon.png" Pack="true" PackagePath="" />
  </ItemGroup>
  <ItemGroup>

@@ -207,7 +207,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="x">x location in pixels</param>
         /// <param name="y">y location in pixels</param>
         /// <param name="displayBuffer"></param>
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }

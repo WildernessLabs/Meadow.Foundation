@@ -104,7 +104,7 @@ namespace Meadow.Foundation.FeatherWings
             ledMatrix.Fill(x, y, width, height, fillColor);
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             ledMatrix.DrawBuffer(x, y, displayBuffer);
         }

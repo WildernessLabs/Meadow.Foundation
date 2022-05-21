@@ -49,7 +49,7 @@ namespace Meadow.Foundation.FeatherWings
             }
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             throw new System.NotImplementedException();
         }

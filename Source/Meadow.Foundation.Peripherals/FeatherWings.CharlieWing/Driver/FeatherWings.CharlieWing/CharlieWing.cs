@@ -115,7 +115,7 @@ namespace Meadow.Foundation.FeatherWings
             throw new NotImplementedException();
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             throw new NotImplementedException();
         }

@@ -307,7 +307,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             throw new NotImplementedException();
         }
 
-        public virtual void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public virtual void DrawBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             throw new NotImplementedException();
         }

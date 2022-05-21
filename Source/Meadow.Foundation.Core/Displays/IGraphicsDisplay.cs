@@ -88,6 +88,6 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a buffer to the display
         /// </summary>
-        public abstract void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer);
+        public abstract void DrawBuffer(int x, int y, IPixelBuffer displayBuffer);
     }
 }

@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         protected IDigitalOutputPort chipSelectPort;
         protected ISpiPeripheral spiDisplay;
 
-        protected IDisplayBuffer imageBuffer;
+        protected IPixelBuffer imageBuffer;
         protected Memory<byte> readBuffer;
 
        // protected int xMin, xMax, yMin, yMax;
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             }
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer buffer)
+        public void DrawBuffer(int x, int y, IPixelBuffer buffer)
         {
             imageBuffer.WriteBuffer(x, y, buffer);
         }

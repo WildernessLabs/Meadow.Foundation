@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="y">target y position to draw buffer </param>
         /// <param name="buffer">buffer to draw to target</param>
         /// <returns></returns>
-        bool WriteBuffer(int x, int y, IDisplayBuffer buffer);
+        bool WriteBuffer(int x, int y, IPixelBuffer buffer);
 
         /// <summary>
         /// Clear the buffer (write 0s to byte array)

@@ -180,7 +180,7 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             blackImageBuffer.WriteBuffer(x, y, displayBuffer);
         }

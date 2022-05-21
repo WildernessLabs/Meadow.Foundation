@@ -319,7 +319,7 @@ namespace Meadow.Foundation.Displays
             imageBuffer.Fill(color, x, y, width, height);
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void DrawBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
