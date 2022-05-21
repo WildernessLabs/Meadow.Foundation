@@ -85,6 +85,11 @@ namespace Meadow.Foundation.Graphics.Buffers
             Buffer[index + 3] = color.A;
         }
 
+        public override void InvertPixel(int x, int y)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
             if(buffer.ColorMode == ColorMode)
