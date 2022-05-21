@@ -47,6 +47,9 @@ namespace Meadow.Foundation.Graphics
 
         /// <summary>
         /// Clear the display.
+        /// 
+        /// TODO: remove device-specific implementations and
+        /// wrap buffer capabilities!
         /// </summary>
         /// <param name="fillColor">The color used to fill the display buffer.</param>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
@@ -54,6 +57,9 @@ namespace Meadow.Foundation.Graphics
 
         /// <summary>
         /// Clear the display.
+        /// 
+        /// TODO: remove device-specific implementations and
+        /// wrap buffer capabilities!
         /// </summary>
         /// <param name="x">x position</param>
         /// <param name="y">y postion</param>
@@ -64,6 +70,9 @@ namespace Meadow.Foundation.Graphics
 
         /// <summary>
         /// Draw a single pixel at the specified color
+        /// 
+        /// /// TODO: remove device-specific implementations and
+        /// wrap buffer capabilities!
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -72,6 +81,9 @@ namespace Meadow.Foundation.Graphics
 
         /// <summary>
         /// Enable or disable a single pixel (used for 1bpp displays)
+        /// 
+        /// TODO: remove device-specific implementations and
+        /// wrap buffer capabilities!
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -80,6 +92,9 @@ namespace Meadow.Foundation.Graphics
 
         /// <summary>
         /// Invert the color of a single pixel
+        /// 
+        /// TODO: remove device-specific implementations and
+        /// wrap buffer capabilities!
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -87,6 +102,9 @@ namespace Meadow.Foundation.Graphics
 
         /// <summary>
         /// Draw a buffer to the display
+        /// 
+        /// TODO: remove device-specific implementations and
+        /// wrap buffer capabilities!
         /// </summary>
         public abstract void DrawBuffer(int x, int y, IPixelBuffer displayBuffer);
     }
