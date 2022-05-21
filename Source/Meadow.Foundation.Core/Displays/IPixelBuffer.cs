@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="x">The X coord to invert</param>
         /// <param name="y">The Y coord to invert</param>
-        public void InvertPixel(int x, int y);
+        void InvertPixel(int x, int y);
 
         /// <summary>
         /// Writes another pixel buffer into this buffer.
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="originY">The Y origin to start writing</param>
         /// <param name="buffer">The buffer to write into this buffer</param>
         /// <returns></returns>
-        bool WriteBuffer(int originX, int originY, IPixelBuffer buffer);
+        void WriteBuffer(int originX, int originY, IPixelBuffer buffer);
 
         /// <summary>
         /// Fills the buffer with the provided color

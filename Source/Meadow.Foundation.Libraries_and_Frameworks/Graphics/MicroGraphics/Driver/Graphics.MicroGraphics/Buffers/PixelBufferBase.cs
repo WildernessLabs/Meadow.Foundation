@@ -13,7 +13,7 @@ namespace MicroGraphics.Buffers
 
         public int Height { get; protected set; }
 
-        public ColorType ColorMode { get; protected set; }
+        public virtual ColorType ColorMode { get; protected set; }
 
         public int BitDepth
         {
@@ -46,9 +46,12 @@ namespace MicroGraphics.Buffers
             }
         }
 
-        public bool IgnoreOutOfBounds { get; protected set; } = true;
+        // TODO: the default here should be true but all deriving classes
+        // need to implement protection for out of bounds writes
+        public bool IgnoreOutOfBounds { get; protected set; } = false;
 
         public byte[] Buffer { get; protected set; }
+
 
 
         public PixelBufferBase() { }
@@ -71,6 +74,7 @@ namespace MicroGraphics.Buffers
             Buffer = buffer;
         }
 
+
         public void Clear()
         {
             Array.Clear(Buffer, 0, Buffer.Length);
@@ -83,6 +87,8 @@ namespace MicroGraphics.Buffers
         public abstract Color GetPixel(int x, int y);
 
         public abstract void SetPixel(int x, int y, Color color);
+
+        public abstract void InvertPixel(int x, int y);
 
         /// <summary>
         /// Default way to write a buffer into this buffer.
@@ -98,6 +104,9 @@ namespace MicroGraphics.Buffers
         {
             WriteBufferSlow(originX, originY, buffer);
         }
+
+
+
 
         /// <summary>
         /// A slow buffer write operation that writes pixel-by-pixel using
