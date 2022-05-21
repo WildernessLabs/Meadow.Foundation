@@ -72,7 +72,18 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public override void InvertPixel(int x, int y)
         {
-            throw new NotImplementedException();
+            //get current color
+            ushort color = GetPixel16bpp(x, y);
+
+            //split into R,G,B & invert
+            byte r = (byte)(0x1F - ((color >> 11) & 0x1F));
+            byte g = (byte)(0x3F - ((color >> 5) & 0x3F));
+            byte b = (byte)(0x1F - (color) & 0x1F);
+
+            //get new color
+            color = (ushort)(r << 11 | g << 5 | b);
+
+            SetPixel(x, y, color);
         }
 
         public override void WriteBuffer(int x, int y, IPixelBuffer buffer)

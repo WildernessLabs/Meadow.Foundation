@@ -181,50 +181,11 @@ namespace Meadow.Foundation.Displays.TftSpi
             }
         }
 
-        void InvertPixelRgb565(int x, int y)
-        {
-            //get current color
-            ushort color = (imageBuffer as BufferRgb565).GetPixel16bpp(x, y);
-
-            //split into R,G,B & invert
-            byte r = (byte)(0x1F - ((color >> 11) & 0x1F));
-            byte g = (byte)(0x3F - ((color >> 5) & 0x3F));
-            byte b = (byte)(0x1F - (color) & 0x1F);
-
-            //get new color
-            color = (ushort)(r << 11 | g << 5 | b);
-
-            (imageBuffer as BufferRgb565).SetPixel(x, y, color);
+            pixelBuffer.InvertPixel(x, y);
         }
 
-        public void InvertPixelRgb444(int x, int y)
         {
-            byte r, g, b;
-            int index;
-            if(x % 2 == 0)
-            {
-                index = (x + y * Width) * 3 / 2;
-
-                r = (byte)(imageBuffer.Buffer[index] >> 4);
-                g = (byte)(imageBuffer.Buffer[index] & 0x0F);
-                b = (byte)(imageBuffer.Buffer[index + 1] >> 4);
-            }
-            else
-            {
-                index = ((x - 1 + y * Width) * 3 / 2) + 1;
-                r = (byte)(imageBuffer.Buffer[index] & 0x0F);
-                g = (byte)(imageBuffer.Buffer[index + 1] >> 4);
-                b = (byte)(imageBuffer.Buffer[index + 1] & 0x0F);
-            }
-
-            r = (byte)(~r & 0x0F);
-            g = (byte)(~g & 0x0F);
-            b = (byte)(~b & 0x0F);
-
-            //get new color
-            var color = (ushort)(r << 8 | g << 4 | b);
-
-            (imageBuffer as BufferRgb444).SetPixel(x, y, color);
+            pixelBuffer.WriteBuffer(x, y, buffer);
         }
 
         public void Fill(int x, int y, int width, int height, Color color)
