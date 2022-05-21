@@ -15,7 +15,22 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public override void Fill(Color color)
         {
-            Clear(color.Color16bppRgb565);
+            // get color as ushort
+            var shortColor = color.Color16bppRgb565;
+
+            // split the color in to two byte values
+            Buffer[0] = (byte)(shortColor >> 8);
+            Buffer[1] = (byte)shortColor;
+
+            int arrayMidPoint = Buffer.Length / 2;
+            int copyLength;
+
+            for (copyLength = 2; copyLength < arrayMidPoint; copyLength <<= 1)
+            {
+                Array.Copy(Buffer, 0, Buffer, copyLength, copyLength);
+            }
+            //copy whatever is remaining
+            Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
         }
 
         public override void Fill(Color color, int x, int y, int width, int height)
@@ -115,23 +130,6 @@ namespace Meadow.Foundation.Graphics.Buffers
             var index = ((y * Width) + x) * sizeof(ushort);
 
             return (ushort)(Buffer[index] << 8 | Buffer[++index]);
-        }
-
-        public void Clear(ushort color)
-        { 
-            // split the color in to two byte values
-            Buffer[0] = (byte)(color >> 8);
-            Buffer[1] = (byte)color;
-
-            int arrayMidPoint = Buffer.Length / 2;
-            int copyLength;
-
-            for (copyLength = 2; copyLength < arrayMidPoint; copyLength <<= 1)
-            {
-                Array.Copy(Buffer, 0, Buffer, copyLength, copyLength);
-            }
-            //copy whatever is remaining
-            Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
         }
     }
 }
