@@ -2,46 +2,17 @@
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
-    public class BufferRgb332 : BufferBase
+    public class BufferRgb332 : PixelBufferBase
     {
-        public override int ByteCount => Width * Height;
+        public override ColorType ColorMode => ColorType.Format8bppRgb332;
 
-        public override ColorType displayColorMode => ColorType.Format8bppRgb332;
+
 
         public BufferRgb332(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
         public BufferRgb332(int width, int height) : base(width, height) { }
 
-        public int GetPixel8bpp(int x, int y)
-        {
-            return Buffer[y * Width + x];
-        }
 
-        public override Color GetPixel(int x, int y)
-        {
-            byte r, g, b;
-            int index = y * Width + x;
-
-            r = (byte)(Buffer[index] >> 5 & 0x07);
-            g = (byte)(Buffer[index] >> 2 & 0x07);
-            b = (byte)(Buffer[index]      & 0x03);
-            
-            r = (byte)(r * 255 / 7);
-            g = (byte)(g * 255 / 7);
-            b = (byte)(b * 255 / 3);
-
-            return new Color(r, g, b);
-        }
-
-        public void SetPixel(int x, int y, byte gray)
-        {
-            Buffer[y * Width + x] = gray;
-        }
-
-        public override void SetPixel(int x, int y, Color color)
-        {
-            SetPixel(x, y, color.Color8bppRgb332);
-        }
 
         public override void Fill(Color color)
         {
@@ -87,24 +58,61 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
-        public new void WriteBuffer(int x, int y, IDisplayBuffer buffer)
+        public override Color GetPixel(int x, int y)
         {
-            if (base.WriteBuffer(x, y, buffer))
-            {   //call the base for validation
-                //and to handle the slow path when buffers don't match
-                return;
-            }
+            byte r, g, b;
+            int index = y * Width + x;
 
-            int sourceIndex, destinationIndex;
-            int length = buffer.Width;
+            r = (byte)(Buffer[index] >> 5 & 0x07);
+            g = (byte)(Buffer[index] >> 2 & 0x07);
+            b = (byte)(Buffer[index] & 0x03);
 
-            for (int i = 0; i < buffer.Height; i++)
+            r = (byte)(r * 255 / 7);
+            g = (byte)(g * 255 / 7);
+            b = (byte)(b * 255 / 3);
+
+            return new Color(r, g, b);
+        }
+
+        public override void SetPixel(int x, int y, Color color)
+        {
+            SetPixel(x, y, color.Color8bppRgb332);
+        }
+        public void SetPixel(int x, int y, byte gray)
+        {
+            Buffer[y * Width + x] = gray;
+        }
+
+        public override void InvertPixel(int x, int y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteBuffer(int originX, int originY, IPixelBuffer buffer)
+        {
+            if(buffer.ColorMode == ColorMode)
             {
-                sourceIndex = length * i;
-                destinationIndex = Width * (y + i) + x;
+                int sourceIndex, destinationIndex;
+                int length = buffer.Width;
 
-                Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length); ;
+                for (int i = 0; i < buffer.Height; i++)
+                {
+                    sourceIndex = length * i;
+                    destinationIndex = Width * (originY + i) + originX;
+
+                    Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length); ;
+                }
+            }
+            else
+            {
+                base.WriteBuffer(originX, originY, buffer);
             }
         }
+
+
+        public int GetPixel8bpp(int x, int y)
+        {
+            return Buffer[y * Width + x];
+        }        
     }
 }
