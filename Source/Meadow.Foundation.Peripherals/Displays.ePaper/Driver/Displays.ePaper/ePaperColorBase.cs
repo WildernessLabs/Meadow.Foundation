@@ -21,6 +21,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public int Width => blackImageBuffer.Width;
         public int Height => blackImageBuffer.Height;
+        public IPixelBuffer PixelBuffer => throw new NotImplementedException("This device uses multiple buffers for drawing and does not expose a useful IPixelBuffer.");
 
         public bool IgnoreOutOfBoundsPixels { get; set; }
 

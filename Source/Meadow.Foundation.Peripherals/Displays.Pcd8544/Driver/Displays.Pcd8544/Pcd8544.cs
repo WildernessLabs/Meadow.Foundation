@@ -19,6 +19,8 @@ namespace Meadow.Foundation.Displays
 
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
+        public IPixelBuffer PixelBuffer => imageBuffer;
+
         public bool IsDisplayInverted { get; private set; } = false;
 
         protected IDigitalOutputPort dataCommandPort;

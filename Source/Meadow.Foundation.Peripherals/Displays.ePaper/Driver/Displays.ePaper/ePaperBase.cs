@@ -35,6 +35,11 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
+        /// <summary>
+        /// This device does not use a pixel buffer, it's methods directly light up LEDs on the device.
+        /// </summary>
+        public IPixelBuffer PixelBuffer => imageBuffer;
+
         private EpdBase()
         { }
 

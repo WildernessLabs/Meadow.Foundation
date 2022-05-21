@@ -18,6 +18,8 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
+        public IPixelBuffer PixelBuffer => imageBuffer;
+
         /// <summary>
         ///     SSD1306 SPI display
         /// </summary>

@@ -30,6 +30,11 @@ namespace Meadow.Foundation.Displays
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
         /// <summary>
+        /// This device does not use a pixel buffer, it's methods directly light up LEDs on the device.
+        /// </summary>
+        public IPixelBuffer PixelBuffer => throw new NotImplementedException("This driver directly interfaces with device and doesn't implement an IPixelBuffer");
+
+        /// <summary>
         /// Partial screen update
         /// </summary>
         /// <param name="left"></param>

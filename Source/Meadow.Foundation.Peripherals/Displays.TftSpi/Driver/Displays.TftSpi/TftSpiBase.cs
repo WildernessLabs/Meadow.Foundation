@@ -19,6 +19,8 @@ namespace Meadow.Foundation.Displays.TftSpi
         public int Height => pixelBuffer.Height;
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
+        public IPixelBuffer PixelBuffer => pixelBuffer;
+
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;

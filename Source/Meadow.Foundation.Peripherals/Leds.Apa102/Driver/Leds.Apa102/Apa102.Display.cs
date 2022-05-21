@@ -2,6 +2,7 @@
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Leds
 {
@@ -23,6 +24,11 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public int Height => height;
         readonly int height;
+
+        /// <summary>
+        /// This device does not use a pixel buffer, it's methods directly light up LEDs on the device.
+        /// </summary>
+        public IPixelBuffer PixelBuffer => throw new NotImplementedException("This driver directly interfaces with device and doesn't implement an IPixelBuffer");
 
         /// <summary>
         /// Ignore out of bounds pixels

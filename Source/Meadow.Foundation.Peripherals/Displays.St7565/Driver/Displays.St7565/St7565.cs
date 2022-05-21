@@ -20,6 +20,8 @@ namespace Meadow.Foundation.Displays
 
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
+        public IPixelBuffer PixelBuffer => imageBuffer;
+
         /// <summary>
         ///     SPI object
         /// </summary>
