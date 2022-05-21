@@ -9,7 +9,8 @@ namespace Meadow.Foundation.Graphics
     /// </summary>
     public partial class MicroGraphics 
     {
-        private readonly IGraphicsDriver display;
+        protected readonly IGraphicsDriver driver;
+        protected readonly IPixelBuffer pixelBuffer;
 
         /// <summary>
         /// Current font used for displaying text on the display.
@@ -31,7 +32,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Current color mode
         /// </summary>
-        public ColorType ColorMode => display.ColorMode;
+        public ColorType ColorMode => pixelBuffer.ColorMode;
 
         /// <summary>
         /// Current rotation used for drawing pixels to the display
@@ -51,12 +52,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Return the height of the display after accounting for the rotation.
         /// </summary>
-        public int Height => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Height : display.Width;
+        public int Height => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? pixelBuffer.Height : pixelBuffer.Width;
 
         /// <summary>
         /// Return the width of the display after accounting for the rotation.
         /// </summary>
-        public int Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Width : display.Height;
+        public int Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? pixelBuffer.Width : pixelBuffer.Height;
 
         /// <summary>
         /// Text display configuration for use with text display menu
@@ -65,10 +66,16 @@ namespace Meadow.Foundation.Graphics
 
         /// <summary>
         /// </summary>
-        /// <param name="display"></param>
-        public MicroGraphics(IGraphicsDriver display)
+        /// <param name="driver"></param>
+        public MicroGraphics(IGraphicsDriver driver)
         {
-            this.display = display;
+            this.driver = driver;
+
+            // by default, the pixelBuffer is set to the
+            // driver's pixelBuffer. However, this can
+            // be overridden to implement double-buffering
+            this.pixelBuffer = this.driver.PixelBuffer;
+
             CurrentFont = null;
         }
 
@@ -79,7 +86,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">y location</param>
         public void DrawPixel(int x, int y)
         {
-            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor);
+            pixelBuffer.SetPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor);
         }
 
         /// <summary>
@@ -88,7 +95,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="index">pixel location in buffer</param>
         public void DrawPixel(int index)
         {   
-            display.DrawPixel(index % display.Width, index / display.Width, PenColor);
+            pixelBuffer.SetPixel(index % pixelBuffer.Width, index / pixelBuffer.Width, PenColor);
         }
 
         /// <summary>
@@ -98,7 +105,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">y location</param>
         public void InvertPixel(int x, int y)
         {
-            display.InvertPixel(GetXForRotation(x, y), GetYForRotation(x, y));
+            pixelBuffer.InvertPixel(GetXForRotation(x, y), GetYForRotation(x, y));
         }
 
         /// <summary>
@@ -127,7 +134,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public void DrawPixel (int x, int y, bool colored)
         {
-            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), colored);
+            pixelBuffer.SetPixel(GetXForRotation(x, y), GetYForRotation(x, y), colored ? Color.White : Color.Black);
         }
 
         /// <summary>
@@ -138,7 +145,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">Color of pixel.</param>
         public void DrawPixel (int x, int y, Color color)
         {
-            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor = color);
+            pixelBuffer.SetPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor = color);
         }
 
         /// <summary>
@@ -785,16 +792,16 @@ namespace Meadow.Foundation.Graphics
                 switch(Rotation)
                 {
                     case RotationType.Default:
-                        display.Fill(x, y, width, height, color);
+                        pixelBuffer.Fill(color, x, y, width, height);
                         break;
                     case RotationType._90Degrees:
-                        display.Fill(GetXForRotation(x, y) - height + 1, GetYForRotation(x, y), height, width, color);
+                        pixelBuffer.Fill(color, GetXForRotation(x, y) - height + 1, GetYForRotation(x, y), height, width);
                         break;
                     case RotationType._180Degrees:
-                        display.Fill(GetXForRotation(x, y) - width + 1, GetYForRotation(x, y) - height + 1, width, height, color);
+                        pixelBuffer.Fill(color, GetXForRotation(x, y) - width + 1, GetYForRotation(x, y) - height + 1, width, height);
                         break;
                     case RotationType._270Degrees:
-                        display.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width, color);
+                        pixelBuffer.Fill(color, GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width);
                         break;
                 }
                 /*
@@ -920,34 +927,35 @@ namespace Meadow.Foundation.Graphics
         ///     For best performance, source buffer should be the same color depth as the target display
         ///     Note: DrawBuffer will not rotate the source buffer, it will always be oriented relative to base display rotation
         /// </summary>
-        /// <param name="x">x location of target to draw buffer</param>
-        /// <param name="y">x location of target to draw buffer</param>
+        /// <param name="originX">x location of target to draw buffer</param>
+        /// <param name="originY">x location of target to draw buffer</param>
         /// <param name="buffer">the source buffer to write to the display buffer</param>
         /// /// <param name="rotateBufferForDisplay">rotate the buffer if the display is rotated - maybe be slower</param>
-        public void DrawBuffer(int x, int y, IPixelBuffer buffer, bool rotateBufferForDisplay = true)
+        public void DrawBuffer(int originX, int originY, IPixelBuffer buffer, bool rotateBufferForDisplay = true)
         {
             //fast and happy path
             if(Rotation == RotationType.Default)
             {
-                display.DrawBuffer(x, y, buffer);
+                pixelBuffer.WriteBuffer(originX, originY, buffer);
             }
             //rotate buffer if the display is rotated (slow)
             else if(rotateBufferForDisplay) //loop over every pixel
             {
-                for(int i = 0; i < buffer.Width; i++)
+                for(int x = 0; x < buffer.Width; x++)
                 {
-                    for(int j = 0; j < buffer.Height; j++)
+                    for(int y = 0; y < buffer.Height; y++)
                     {
-                        display.DrawPixel(GetXForRotation(x + i, y + j),
-                            GetYForRotation(x + i, y + j),
-                            buffer.GetPixel(i, j));
+                        var transX = GetXForRotation(originX + x, originY + y);
+                        var transY = GetYForRotation(originX + x, originY + y);
+                        var color = buffer.GetPixel(x, y);
+                        pixelBuffer.SetPixel(transX, transY, color);
                     }
                 }
             }
             //don't rotate buffer with the display (fast)
             else
             {
-                display.DrawBuffer(GetXForRotation(x, y), GetYForRotation(x, y), buffer);
+                pixelBuffer.WriteBuffer(GetXForRotation(originX, originY), GetYForRotation(originX, originY), buffer);
             }
         }
 
@@ -1134,7 +1142,8 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public void Show()
         {
-            display.Show();
+            BlitDisplayBufferToDriver();
+            driver.Show();
         }
 
         /// <summary>
@@ -1143,7 +1152,8 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
-            display.Show(left, top, right, bottom);
+            BlitDisplayBufferToDriver();
+            driver.Show(left, top, right, bottom);
         }
 
         /// <summary>
@@ -1152,7 +1162,8 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public void Show(Rect rect)
         {
-            display.Show(rect.Left, rect.Top, rect.Right, rect.Bottom);
+            BlitDisplayBufferToDriver();
+            driver.Show(rect.Left, rect.Top, rect.Right, rect.Bottom);
         }
 
         /// <summary>
@@ -1161,7 +1172,11 @@ namespace Meadow.Foundation.Graphics
         /// <param name="updateDisplay">Update the display immediately when true.</param>
         public void Clear(bool updateDisplay = false)
         {
-            display.Clear(updateDisplay);
+            pixelBuffer.Clear();
+            if(updateDisplay)
+            {
+                Show();
+            }
         }
 
         /// <summary>
@@ -1252,8 +1267,8 @@ namespace Meadow.Foundation.Graphics
         {
             return Rotation switch
             {
-                RotationType._90Degrees => display.Width - y - 1,
-                RotationType._180Degrees => display.Width - x - 1,
+                RotationType._90Degrees => pixelBuffer.Width - y - 1,
+                RotationType._180Degrees => pixelBuffer.Width - x - 1,
                 RotationType._270Degrees => y,
                 _ => x,
             };
@@ -1264,10 +1279,19 @@ namespace Meadow.Foundation.Graphics
             return Rotation switch
             {
                 RotationType._90Degrees => x,
-                RotationType._180Degrees => display.Height - y - 1,
-                RotationType._270Degrees => display.Height - x - 1,
+                RotationType._180Degrees => pixelBuffer.Height - y - 1,
+                RotationType._270Degrees => pixelBuffer.Height - x - 1,
                 _ => y,
             };
+        }
+
+        void BlitDisplayBufferToDriver()
+        {
+            // copy our drawing buffer to the device buffer if they don't match
+            if (driver.PixelBuffer != pixelBuffer)
+            {
+                driver.PixelBuffer.WriteBuffer(0, 0, pixelBuffer);
+            }
         }
     }
 }
