@@ -132,7 +132,7 @@ namespace Displays.Tft.ST7789_Sample
             //    }
             //}
 
-            display.Clear(WildernessLabsColors.AzureBlue);
+            display.Fill(WildernessLabsColors.AzureBlue);
 
             var sw = new Stopwatch();
             sw.Start();

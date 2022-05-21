@@ -6,6 +6,7 @@ using Meadow.Foundation.Sensors.Camera;
 using Meadow.Foundation.Graphics;
 using NanoJpeg;
 using Meadow.Foundation.Displays.TftSpi;
+using Meadow.Foundation;
 
 namespace MeadowApp
 {
@@ -53,11 +54,8 @@ namespace MeadowApp
 
             for (int i = 0; i < jpg.Length; i += 3)
             {
-                r = jpg[i];
-                g = jpg[i + 1];
-                b = jpg[i + 2];
-
-                display.DrawPixel(x, y, r, g, b);
+                var color = new Color(jpg[i], jpg[i + 1], jpg[i + 2]);
+                display.DrawPixel(x, y, color);
 
                 x++;
 
