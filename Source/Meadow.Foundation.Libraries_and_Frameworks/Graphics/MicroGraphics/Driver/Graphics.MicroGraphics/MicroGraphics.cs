@@ -9,8 +9,8 @@ namespace Meadow.Foundation.Graphics
     /// </summary>
     public partial class MicroGraphics 
     {
-        protected readonly IGraphicsDriver driver;
-        protected readonly IPixelBuffer pixelBuffer;
+        protected IGraphicsDriver driver;
+        protected IPixelBuffer pixelBuffer;
 
         /// <summary>
         /// Current font used for displaying text on the display.
@@ -63,6 +63,8 @@ namespace Meadow.Foundation.Graphics
         /// Text display configuration for use with text display menu
         /// </summary>
         public TextDisplayConfig DisplayConfig { get; private set; } = new TextDisplayConfig();
+
+
 
         /// <summary>
         /// </summary>
@@ -1142,7 +1144,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public void Show()
         {
-            BlitDisplayBufferToDriver();
+            BlitPixelBufferToDeviceBuffer();
             driver.Show();
         }
 
@@ -1152,7 +1154,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
-            BlitDisplayBufferToDriver();
+            BlitPixelBufferToDeviceBuffer();
             driver.Show(left, top, right, bottom);
         }
 
@@ -1162,7 +1164,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public void Show(Rect rect)
         {
-            BlitDisplayBufferToDriver();
+            BlitPixelBufferToDeviceBuffer();
             driver.Show(rect.Left, rect.Top, rect.Right, rect.Bottom);
         }
 
@@ -1285,7 +1287,7 @@ namespace Meadow.Foundation.Graphics
             };
         }
 
-        void BlitDisplayBufferToDriver()
+        protected virtual void BlitPixelBufferToDeviceBuffer()
         {
             // copy our drawing buffer to the device buffer if they don't match
             if (driver.PixelBuffer != pixelBuffer)
