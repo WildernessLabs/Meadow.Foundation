@@ -26,7 +26,21 @@ namespace Meadow.Foundation.Leds
         public float Brightness
         {
             get => _brightness;
-            set => _brightness = value;
+            set 
+            {
+                if (value < 0 || value > 1)
+                {
+                    throw new ArgumentOutOfRangeException("Brightness must be between 0 and 1, inclusive.");
+                }
+
+                _brightness = value;
+                Port.DutyCycle = maximumPwmDuty * Brightness;
+
+                if (!Port.State)
+                {
+                    Port.Start();
+                }
+            }
         }
         float _brightness = 0;
 
