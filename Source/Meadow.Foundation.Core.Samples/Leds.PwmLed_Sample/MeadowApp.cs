@@ -30,7 +30,7 @@ namespace Leds.PwmLed_Sample
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D03), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D04), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D05), TypicalForwardVoltage.Blue),
-                //new PwmLed(Device.CreatePwmPort(Device.Pins.D06), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D06), TypicalForwardVoltage.Blue), // This pin throws an exception as PWM Port
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D07), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D08), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D09), TypicalForwardVoltage.Blue),
