@@ -30,7 +30,7 @@ namespace Leds.PwmLed_Sample
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D03), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D04), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D05), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D06), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D06), TypicalForwardVoltage.Blue), // This pin throws an exception as PWM Port
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D07), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D08), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D09), TypicalForwardVoltage.Blue),
@@ -49,13 +49,15 @@ namespace Leds.PwmLed_Sample
         {
             Console.WriteLine("TestPwmLeds...");
 
+            pwmLeds[0].Brightness = 2;
+
             while (true)
             {
                 Console.WriteLine("Turning on and off each led for 1 second");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.IsOn = true;
-                    Thread.Sleep(100);
+                    Thread.Sleep(1000);
                     pwmLed.IsOn = false;
                 }
 
@@ -65,7 +67,7 @@ namespace Leds.PwmLed_Sample
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartBlink();
-                    Thread.Sleep(1000);
+                    Thread.Sleep(3000);
                     pwmLed.Stop();
                 }
 
@@ -75,7 +77,7 @@ namespace Leds.PwmLed_Sample
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-                    Thread.Sleep(1000);
+                    Thread.Sleep(3000);
                     pwmLed.Stop();
                 }
 
@@ -104,13 +106,13 @@ namespace Leds.PwmLed_Sample
                 Console.WriteLine("Set brightness the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
-                    pwmLed.SetBrightness(0.25f);
+                    pwmLed.Brightness = 0.25f;
                     Thread.Sleep(250);
-                    pwmLed.SetBrightness(0.5f);
+                    pwmLed.Brightness = 0.5f;
                     Thread.Sleep(250);
-                    pwmLed.SetBrightness(0.75f);
+                    pwmLed.Brightness = 0.75f;
                     Thread.Sleep(250);
-                    pwmLed.SetBrightness(1.0f);
+                    pwmLed.Brightness = 1.0f;
                     Thread.Sleep(250);
                     pwmLed.Stop();
                 }

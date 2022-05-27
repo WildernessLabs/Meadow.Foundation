@@ -75,7 +75,7 @@ namespace Leds.Led_Sample
                 foreach (var led in leds)
                 {
                     led.StartBlink();
-                    Thread.Sleep(1000);
+                    Thread.Sleep(3000);
                     led.Stop();
                 }
 
@@ -83,11 +83,11 @@ namespace Leds.Led_Sample
                 foreach (var led in leds)
                 {
                     led.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-                    Thread.Sleep(1000);
+                    Thread.Sleep(3000);
                     led.Stop();
                 }
 
-                Thread.Sleep(1000);
+                Thread.Sleep(3000);
             }
         }
 

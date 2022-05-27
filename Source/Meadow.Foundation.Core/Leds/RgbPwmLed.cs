@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Leds
         {
             get => isOn;
             set
-            {                
+            {
                 SetColor(Color, value? 1 : 0);
                 isOn = value;
             }
