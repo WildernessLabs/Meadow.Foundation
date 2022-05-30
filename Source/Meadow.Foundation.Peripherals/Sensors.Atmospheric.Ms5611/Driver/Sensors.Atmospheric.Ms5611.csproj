@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
@@ -11,7 +11,7 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Ms5611</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Atmospheric, Ms5611</PackageTags>
-    <Version>0.1.42</Version>
+    <Version>0.1.52</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>MS5611 SPI and I2C altimeter and barometric pressure sensor</Description>
   </PropertyGroup>

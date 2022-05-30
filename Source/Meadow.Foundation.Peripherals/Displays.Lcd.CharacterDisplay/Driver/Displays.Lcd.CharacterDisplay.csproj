@@ -11,7 +11,7 @@
     <PackageId>Meadow.Foundation.Displays.Lcd.CharacterDisplay</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Character Display</PackageTags>
-    <Version>0.8.35</Version>
+    <Version>0.8.45</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Digital and I2C LCD character displays</Description>
   </PropertyGroup>

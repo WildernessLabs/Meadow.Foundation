@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
@@ -11,7 +11,7 @@
     <PackageId>Meadow.Foundation.Sensors.Hid.Mpr121</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, MPR121, capacitive, keypad</PackageTags>
-    <Version>0.1.35</Version>
+    <Version>0.1.45</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Freescale Semiconductor MPR121 I2C capacitive keypad controller</Description>
   </PropertyGroup>

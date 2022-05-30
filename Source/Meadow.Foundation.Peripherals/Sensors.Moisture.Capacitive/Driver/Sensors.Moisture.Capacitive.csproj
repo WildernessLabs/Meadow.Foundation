@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
@@ -11,7 +11,7 @@
     <PackageId>Meadow.Foundation.Sensors.Moisture.Capacitive</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Capacitive, Soil Moisture</PackageTags>
-    <Version>0.5.45</Version>
+    <Version>0.5.55</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Analog capacitive soil moisture sensor</Description>
     <Nullable>enable</Nullable>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
@@ -11,7 +11,7 @@
     <PackageId>Meadow.Foundation.Sensors.Motion.Mag3110</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, motion, magnetometer</PackageTags>
-    <Version>0.1.19</Version>
+    <Version>0.1.29</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Freescale MAG3110 I2C 3 axis magnetometer</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
@@ -11,7 +11,7 @@
     <PackageId>Meadow.Foundation.Sensors.Motion.Mpu6050</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Motion, Mpu6050</PackageTags>
-    <Version>0.5.47</Version>
+    <Version>0.5.57</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Mpu6050 I2C MEMS 3 axis gyroscope accelerometer motion sensor</Description>
     <Nullable>enable</Nullable>

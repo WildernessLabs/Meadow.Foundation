@@ -1,4 +1,4 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -11,7 +11,7 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Display, Graphics</PackageTags>
-    <Version>0.9.45</Version>
+    <Version>0.9.54</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Lightweight integer accurate 2d graphics drawing system designed for embedded systems</Description>
   </PropertyGroup>
