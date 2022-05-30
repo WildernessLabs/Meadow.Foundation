@@ -31,7 +31,7 @@ variables:
   internalFeedName: "Meadow.Staging"
 
 pool:
-  vmImage: windows-2019
+  vmImage: windows-2022
 
 stages:
   - stage: Build
