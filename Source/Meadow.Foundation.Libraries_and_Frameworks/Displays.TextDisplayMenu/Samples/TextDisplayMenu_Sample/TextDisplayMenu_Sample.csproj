@@ -16,7 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Driver\Displays.TextDisplayMenu.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
+    <PackageReference Include="Meadow.F7" Version="0.*" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Ssd130x\Driver\Displays.Ssd130x.csproj" />
   </ItemGroup>
 </Project>

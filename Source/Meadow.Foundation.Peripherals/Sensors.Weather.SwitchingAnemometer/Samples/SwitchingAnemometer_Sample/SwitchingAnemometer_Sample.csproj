@@ -11,7 +11,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
+    <PackageReference Include="Meadow.F7" Version="0.*" />
     <ProjectReference Include="..\..\Driver\Sensors.Weather.SwitchingAnemometer.csproj" />
   </ItemGroup>
 </Project>

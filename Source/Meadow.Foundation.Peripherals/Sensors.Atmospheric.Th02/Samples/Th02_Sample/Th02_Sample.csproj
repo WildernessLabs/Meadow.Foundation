@@ -15,7 +15,7 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
+    <PackageReference Include="Meadow.F7" Version="0.*" />
     <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Th02.csproj" />
   </ItemGroup>
 </Project>
