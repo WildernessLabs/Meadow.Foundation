@@ -10,7 +10,7 @@ using TU = Meadow.Units.Temperature.UnitType;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Provides access to the Sensiron SGP40 VAC sensor
+    /// Provides access to the Sensiron SGP40 VOC sensor
     /// </summary>
     public partial class Sgp40 :
         ByteCommsSensorBase<int>
