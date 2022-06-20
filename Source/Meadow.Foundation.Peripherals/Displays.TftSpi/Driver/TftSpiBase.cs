@@ -17,17 +17,17 @@ namespace Meadow.Foundation.Displays.TftSpi
         public abstract ColorType DefautColorMode { get; }
         public int Width => imageBuffer.Width;
         public int Height => imageBuffer.Height;
-        public bool IgnoreOutOfBoundsPixels { get; set; }
+        public bool IgnoreOutOfBounds { get; set; }
+
+        public IPixelBuffer PixelBuffer => imageBuffer;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
         protected IDigitalOutputPort chipSelectPort;
         protected ISpiPeripheral spiDisplay;
 
-        protected IDisplayBuffer imageBuffer;
+        protected IPixelBuffer imageBuffer;
         protected Memory<byte> readBuffer;
-
-       // protected int xMin, xMax, yMin, yMax;
 
         protected const bool Data = true;
         protected const bool Command = false;
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             }
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer buffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
             imageBuffer.WriteBuffer(x, y, buffer);
         }
@@ -165,7 +165,7 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="y">y location</param>
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if (IgnoreOutOfBounds)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -229,7 +229,7 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         public void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if (IgnoreOutOfBounds)
             {
                 if (x < 0) x = 0;
                 if (y < 0) y = 0;
@@ -237,12 +237,12 @@ namespace Meadow.Foundation.Displays.TftSpi
                 if (y > Height - 1) y = Height - 1;
             }
 
-            imageBuffer.Fill(color, x, y, width, height);
+            imageBuffer.Fill(x, y, width, height, color);
         }
 
         private void SetPixel(int x, int y, ushort color)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if (IgnoreOutOfBounds)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }

@@ -41,7 +41,7 @@ namespace MeadowApp
                 Device.Pins.D00, deviceCount: 4,
                 maxMode: Max7219.Max7219Mode.Display);
 
-            display.IgnoreOutOfBoundsPixels = true;
+            display.IgnoreOutOfBounds = true;
 
             graphics = new MicroGraphics(display)
             {

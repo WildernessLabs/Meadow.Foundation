@@ -188,6 +188,14 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
+        /// Clear the buffer
+        /// </summary>
+        public void Clear()
+        {
+            Clear(false);
+        }
+
+        /// <summary>
         /// Turn off all the Leds
         /// </summary>
         public void Clear(bool update = false)

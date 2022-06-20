@@ -27,7 +27,9 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Will display ignore out of bounds pixels
         /// </summary>
-        public bool IgnoreOutOfBoundsPixels { get; set; }
+        public bool IgnoreOutOfBounds { get; set; }
+
+        public IPixelBuffer PixelBuffer => this;
 
         /// <summary>
         /// Partial screen update
@@ -40,6 +42,14 @@ namespace Meadow.Foundation.Displays
         {
             //ToDo Check if partial updates are possible (although it's pretty fast as is)
             Show();
+        }
+
+        /// <summary>
+        /// Clear the display buffer
+        /// </summary>
+        public void Clear()
+        {
+            Clear(false);
         }
 
         /// <summary>
@@ -75,7 +85,7 @@ namespace Meadow.Foundation.Displays
 
         public void DrawPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if (IgnoreOutOfBounds)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -107,7 +117,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="y">y position</param>
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if (IgnoreOutOfBounds)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -147,7 +157,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="fillColor">color - converted to on/off</param>
         public void Fill(int x, int y, int width, int height, Color fillColor)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if (IgnoreOutOfBounds)
             {
                 if (x < 0) x = 0;
                 if (y < 0) y = 0;
@@ -171,7 +181,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">x position</param>
         /// <param name="y">y position</param>
         /// <param name="displayBuffer">buffer to draw</param>
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {   //need to refactor to use a proper buffer
             for (int i = 0; i < displayBuffer.Width; i++)
             {

@@ -16,7 +16,12 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
         public int Height => imageBuffer.Height;
 
-        public bool IgnoreOutOfBoundsPixels { get; set; }
+        public bool IgnoreOutOfBounds { get; set; }
+
+        /// <summary>
+        /// The buffer the holds the pixel data for the display
+        /// </summary>
+        public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
         /// SSD1306 SPI display
@@ -215,7 +220,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
         public void DrawPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if (IgnoreOutOfBounds)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -226,7 +231,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
         public void InvertPixel(int x, int y)
         {
-            if(IgnoreOutOfBoundsPixels)
+            if(IgnoreOutOfBounds)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -307,7 +312,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             throw new NotImplementedException();
         }
 
-        public virtual void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public virtual void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             throw new NotImplementedException();
         }

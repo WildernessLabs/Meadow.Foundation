@@ -34,7 +34,7 @@ namespace Displays.Tft.Hx8357b_Sample
                 resetPin: Device.Pins.D00,
                 width: 320, height: 480, displayColorMode: ColorType.Format16bppRgb565)
             {
-                IgnoreOutOfBoundsPixels = true
+                IgnoreOutOfBounds = true
             };
 
             Console.WriteLine("Create graphics lib");

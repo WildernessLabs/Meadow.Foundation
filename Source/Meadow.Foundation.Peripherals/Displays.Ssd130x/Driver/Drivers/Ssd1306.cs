@@ -96,7 +96,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
             showPreamble = new byte[] { 0x21, 0x00, (byte)(width - 1), 0x22, 0x00, (byte)(height / 8 - 1) };
 
-            IgnoreOutOfBoundsPixels = false;
+            IgnoreOutOfBounds = false;
 
             //
             //  Finally, put the display into a known state.
@@ -119,7 +119,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
         public override void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if (IgnoreOutOfBounds)
             {
                 if (x < 0) x = 0;
                 if (y < 0) y = 0;
@@ -127,10 +127,10 @@ namespace Meadow.Foundation.Displays.Ssd130x
                 if (y > height - 1) y = height - 1;
             }
 
-            imageBuffer.Fill(color, x, y, width, height);
+            imageBuffer.Fill(x, y, width, height, color);
         }
 
-        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public override void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }

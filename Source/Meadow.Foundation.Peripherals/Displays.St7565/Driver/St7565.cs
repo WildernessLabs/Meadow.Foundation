@@ -18,7 +18,12 @@ namespace Meadow.Foundation.Displays
 
         public int Height => imageBuffer.Height;
 
-        public bool IgnoreOutOfBoundsPixels { get; set; }
+        public bool IgnoreOutOfBounds { get; set; }
+
+        /// <summary>
+        /// The buffer the holds the pixel data for the display
+        /// </summary>
+        public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
         /// SPI object
@@ -215,7 +220,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
         public void DrawPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if (IgnoreOutOfBounds)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -226,7 +231,7 @@ namespace Meadow.Foundation.Displays
 
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if (IgnoreOutOfBounds)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -308,7 +313,7 @@ namespace Meadow.Foundation.Displays
 
         public void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBoundsPixels)
+            if (IgnoreOutOfBounds)
             {
                 if (x < 0) x = 0;
                 if (y < 0) y = 0;
@@ -316,10 +321,10 @@ namespace Meadow.Foundation.Displays
                 if (y > height - 1) y = height - 1;
             }
 
-            imageBuffer.Fill(color, x, y, width, height);
+            imageBuffer.Fill(x, y, width, height, color);
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }

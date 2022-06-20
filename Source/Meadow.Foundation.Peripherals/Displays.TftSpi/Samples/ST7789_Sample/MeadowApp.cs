@@ -21,6 +21,10 @@ namespace Displays.Tft.ST7789_Sample
         chipSelectPin: Device.Pins.D14,
         dcPin: Device.Pins.D03,
         resetPin: Device.Pins.D04,
+       ProjLab:
+        chipSelectPin: Device.Pins.A03,
+        dcPin: Device.Pins.A04,
+        resetPin: Device.Pins.A05,
     */
 
     public class MeadowApp : App<F7FeatherV2, MeadowApp>
@@ -40,12 +44,12 @@ namespace Displays.Tft.ST7789_Sample
             display = new St7789(
                 device: Device,
                 spiBus: spiBus,
-                chipSelectPin: Device.Pins.D15,
-                dcPin: Device.Pins.D11,
-                resetPin: Device.Pins.D14,
-                width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
+                chipSelectPin: Device.Pins.A03,
+                dcPin: Device.Pins.A04,
+                resetPin: Device.Pins.A05,
+                width: 240, height: 240, displayColorMode: ColorType.Format12bppRgb444)
             {
-                IgnoreOutOfBoundsPixels = true
+                IgnoreOutOfBounds = true
             };
 
             graphics = new MicroGraphics(display);
@@ -63,7 +67,7 @@ namespace Displays.Tft.ST7789_Sample
 
             graphics.Show();
 
-            BufferRotationTest();
+            DisplayTest();
         }
 
         //<!=SNOP=>
