@@ -87,9 +87,8 @@ namespace Meadow.Foundation.Leds
             Voltage forwardVoltage, 
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
-            var pwm = device.CreatePwmPort(pin);
+            var pwm = device.CreatePwmPort(pin, new Frequency(100, Frequency.UnitType.Hertz));
             createdPwm = true; // signal that we created it, so we should dispose of it
-            pwm.Frequency = new Frequency(100, Frequency.UnitType.Hertz);
             pwm.DutyCycle = 0;
             Initialize(pwm, forwardVoltage, terminationType);
         }
