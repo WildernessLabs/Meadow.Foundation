@@ -62,11 +62,11 @@ namespace Meadow.Foundation.Generators
         /// <summary>
         /// Frequency of soft PWM
         /// </summary>
-        public float Frequency 
+        public Frequency Frequency 
         {
-            get => (float)frequency.Hertz;
+            get => frequency;
             set {
-                frequency = new Frequency(value, Units.Frequency.UnitType.Hertz);
+                frequency = value;
                 onTimeMilliseconds = CalculateOnTimeMillis();
                 offTimeMilliseconds = CalculateOffTimeMillis();
             }
