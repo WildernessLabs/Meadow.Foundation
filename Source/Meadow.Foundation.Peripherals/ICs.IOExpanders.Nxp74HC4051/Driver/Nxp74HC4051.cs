@@ -4,16 +4,10 @@ using System;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represents an NXP 74HC4051 analog multiplexer
+    /// Represents an NXP 74HC4051 8-channel analog multiplexer
     /// </summary>
-    public partial class Nxp74HC4051
+    public class Nxp74HC4051 : AnalogInputMultiplexerBase
     {
-        private object _syncRoot = new object();
-
-        /// <summary>
-        /// The port connected to the Enable pin of the mux (otherwise must be tied low)
-        /// </summary>
-        public IDigitalOutputPort? EnablePort { get; }
         /// <summary>
         /// The port connected to the mux's S0 selection pin
         /// </summary>
@@ -21,54 +15,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The port connected to the mux's S1 selection pin
         /// </summary>
-        public IDigitalOutputPort S1 { get; }
+        public IDigitalOutputPort? S1 { get; }
         /// <summary>
         /// The port connected to the mux's S2 selection pin
         /// </summary>
-        public IDigitalOutputPort S2 { get; }
-        /// <summary>
-        /// The analog input connected to the Mux output pin (Z)
-        /// </summary>
-        public IAnalogInputPort Z { get; }
+        public IDigitalOutputPort? S2 { get; }
 
         /// <summary>
         /// Creates a new Nxp74HC4051 object using the default parameters
         /// </summary>
-        public Nxp74HC4051(IDigitalOutputPort s0, IDigitalOutputPort s1, IDigitalOutputPort s2, IAnalogInputPort z, IDigitalOutputPort? enable = null)
+        public Nxp74HC4051(IAnalogInputPort z, IDigitalOutputPort s0, IDigitalOutputPort? s1 = null, IDigitalOutputPort? s2 = null, IDigitalOutputPort? enable = null)
+            : base (z, enable)
         {
             S0 = s0;
             S1 = s1;
             S2 = s2;
-            Z = z;
-            EnablePort = enable;
-        }
-
-        /// <summary>
-        /// Enables the multiplexer (if an enable port was provided)
-        /// </summary>
-        public void Enable()
-        {
-            if (EnablePort != null)
-            {
-                lock (_syncRoot)
-                {
-                    EnablePort.State = false; // active low
-                }
-            }
-        }
-
-        /// <summary>
-        /// Disables the multiplexer (if an enable port was provided)
-        /// </summary>
-        public void Disable()
-        {
-            if (EnablePort != null)
-            {
-                lock (_syncRoot)
-                {
-                    EnablePort.State = true;
-                }
-            }
         }
 
         /// <summary>
@@ -76,11 +37,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="channel"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public void SetInputChannel(int channel)
+        public override void SetInputChannel(int channel)
         {
-            if(channel < 0 || channel > 7) throw new ArgumentOutOfRangeException();
+            if (channel < 0 || channel > 7) throw new ArgumentOutOfRangeException();
 
-            lock (_syncRoot)
+            lock (SyncRoot)
             {
                 var reenable = false;
 
@@ -115,40 +76,50 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     case 0:
                         S0.State = false;
-                        S1.State = false;
-                        S2.State = false;
+                        if (S1 != null) { S1.State = false; }
+                        if (S2 != null) { S2.State = false; }
                         break;
                     case 1:
                         S0.State = true;
-                        S1.State = false;
-                        S2.State = false;
+                        if (S1 != null) { S1.State = false; }
+                        if (S2 != null) { S2.State = false; }
                         break;
                     case 2:
+                        if (S1 == null) throw new ArgumentException("You must have an S1 connected to access channels > 1");
                         S0.State = false;
                         S1.State = true;
-                        S2.State = false;
+                        if (S2 != null) { S2.State = false; }
                         break;
                     case 3:
+                        if (S1 == null) throw new ArgumentException("You must have an S1 connected to access channels > 1");
                         S0.State = true;
                         S1.State = true;
-                        S2.State = false;
+                        if (S2 != null) { S2.State = false; }
                         break;
                     case 4:
+                        if (S1 == null) throw new ArgumentException("You must have an S1 connected to access channels > 1");
+                        if (S2 == null) throw new ArgumentException("You must have an S2 connected to access channels > 3");
                         S0.State = false;
                         S1.State = false;
                         S2.State = true;
                         break;
                     case 5:
+                        if (S1 == null) throw new ArgumentException("You must have an S1 connected to access channels > 1");
+                        if (S2 == null) throw new ArgumentException("You must have an S2 connected to access channels > 3");
                         S0.State = true;
                         S1.State = false;
                         S2.State = true;
                         break;
                     case 6:
+                        if (S1 == null) throw new ArgumentException("You must have an S1 connected to access channels > 1");
+                        if (S2 == null) throw new ArgumentException("You must have an S2 connected to access channels > 3");
                         S0.State = false;
                         S1.State = true;
                         S2.State = true;
                         break;
                     case 7:
+                        if (S1 == null) throw new ArgumentException("You must have an S1 connected to access channels > 1");
+                        if (S2 == null) throw new ArgumentException("You must have an S2 connected to access channels > 3");
                         S0.State = true;
                         S1.State = true;
                         S2.State = true;
