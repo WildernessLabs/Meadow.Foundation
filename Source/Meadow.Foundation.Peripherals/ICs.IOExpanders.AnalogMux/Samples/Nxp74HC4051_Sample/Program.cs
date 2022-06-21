@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Meadow;
 
-namespace ICs.IOExpanders.Ds3502_Sample
+namespace ICs.IOExpanders.Nxp74HC4051_Sample
 {
     class Program
     {
