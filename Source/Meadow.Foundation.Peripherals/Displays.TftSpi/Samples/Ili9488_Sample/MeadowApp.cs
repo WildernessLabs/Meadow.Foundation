@@ -33,7 +33,7 @@ namespace Displays.Tft.Ili9488_Sample
                 width: 320, height: 480
             )
             {
-                IgnoreOutOfBounds = true
+                IgnoreOutOfBoundsPixels = true
             };
 
             graphics = new MicroGraphics(display);

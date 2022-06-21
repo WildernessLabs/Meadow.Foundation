@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Graphics
                 resetPin: Device.Pins.D14,
                 width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
             {
-                IgnoreOutOfBounds = true
+                IgnoreOutOfBoundsPixels = true
             };
 
             Console.WriteLine("Creating a MicroGraphics...");

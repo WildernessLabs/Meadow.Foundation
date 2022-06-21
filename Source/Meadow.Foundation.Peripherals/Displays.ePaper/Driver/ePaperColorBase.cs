@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Displays.ePaper
         public int Width => blackImageBuffer.Width;
         public int Height => blackImageBuffer.Height;
 
-        public bool IgnoreOutOfBounds { get; set; }
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         public IPixelBuffer PixelBuffer => blackImageBuffer;
 
@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBounds)
+            if (IgnoreOutOfBoundsPixels)
             {
                 if (x < 0) x = 0;
                 if (y < 0) y = 0;
@@ -100,7 +100,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public void DrawPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBounds)
+            if (IgnoreOutOfBoundsPixels)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -131,7 +131,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBounds)
+            if (IgnoreOutOfBoundsPixels)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -142,7 +142,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public void DrawColoredPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBounds)
+            if (IgnoreOutOfBoundsPixels)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }

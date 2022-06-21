@@ -24,7 +24,7 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
                        resetPin: Device.Pins.D00,
                        width: 128, height: 128)
             {
-                IgnoreOutOfBounds = true
+                IgnoreOutOfBoundsPixels = true
             };
 
             var graphics = new MicroGraphics(display);

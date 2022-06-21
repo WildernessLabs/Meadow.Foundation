@@ -32,7 +32,7 @@ namespace Displays.Tft.Hx8357d_Sample
                 resetPin: Device.Pins.D00,
                 width: 320, height: 480)
             {
-                IgnoreOutOfBounds = true
+                IgnoreOutOfBoundsPixels = true
             };
 
             Console.WriteLine("Create graphics lib");

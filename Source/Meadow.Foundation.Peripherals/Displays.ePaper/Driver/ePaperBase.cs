@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <summary>
         /// Ignore out of bounds pixel writes 
         /// </summary>
-        public bool IgnoreOutOfBounds { get; set; }
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         private EpdBase()
         { }
@@ -104,7 +104,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="color">color to fill</param>
         public void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBounds)
+            if (IgnoreOutOfBoundsPixels)
             {
                 if (x < 0) x = 0;
                 if (y < 0) y = 0;
@@ -141,7 +141,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public void DrawPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBounds)
+            if (IgnoreOutOfBoundsPixels)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -175,7 +175,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="y">y coordinate of pixel</param>
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBounds)
+            if (IgnoreOutOfBoundsPixels)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }

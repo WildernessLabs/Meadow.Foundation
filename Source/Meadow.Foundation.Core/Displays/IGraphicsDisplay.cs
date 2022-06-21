@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Graphics
         /// Indicate of the hardware driver should ignore out of bounds pixels
         /// or if the driver should generate an exception.
         /// </summary>
-        public bool IgnoreOutOfBounds { get; set; }
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         /// <summary>
         /// Provide a buffer that matches this display's color depth, height, and width.

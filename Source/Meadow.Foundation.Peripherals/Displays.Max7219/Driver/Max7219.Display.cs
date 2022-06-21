@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Will display ignore out of bounds pixels
         /// </summary>
-        public bool IgnoreOutOfBounds { get; set; }
+        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         public IPixelBuffer PixelBuffer => this;
 
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Displays
 
         public void DrawPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBounds)
+            if (IgnoreOutOfBoundsPixels)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -117,7 +117,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="y">y position</param>
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBounds)
+            if (IgnoreOutOfBoundsPixels)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 { return; }
@@ -157,7 +157,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="fillColor">color - converted to on/off</param>
         public void Fill(int x, int y, int width, int height, Color fillColor)
         {
-            if (IgnoreOutOfBounds)
+            if (IgnoreOutOfBoundsPixels)
             {
                 if (x < 0) x = 0;
                 if (y < 0) y = 0;

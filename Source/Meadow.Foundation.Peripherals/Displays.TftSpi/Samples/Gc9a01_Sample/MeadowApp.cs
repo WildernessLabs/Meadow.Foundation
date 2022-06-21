@@ -32,7 +32,7 @@ namespace Displays.Tft.Gc9a01_Sample
                 resetPin: Device.Pins.D00
             )
             {
-                IgnoreOutOfBounds = true
+                IgnoreOutOfBoundsPixels = true
             };
 
             graphics = new MicroGraphics(display);

@@ -33,7 +33,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
                 width: 240, height: 320
             )
             {
-                IgnoreOutOfBounds = true
+                IgnoreOutOfBoundsPixels = true
             };
 
             graphics = new MicroGraphics(display);
