@@ -1,7 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -12,10 +10,25 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         private object _syncRoot = new object();
 
+        /// <summary>
+        /// The port connected to the Enable pin of the mux (otherwise must be tied low)
+        /// </summary>
         public IDigitalOutputPort? EnablePort { get; }
+        /// <summary>
+        /// The port connected to the mux's S0 selection pin
+        /// </summary>
         public IDigitalOutputPort S0 { get; }
+        /// <summary>
+        /// The port connected to the mux's S1 selection pin
+        /// </summary>
         public IDigitalOutputPort S1 { get; }
+        /// <summary>
+        /// The port connected to the mux's S2 selection pin
+        /// </summary>
         public IDigitalOutputPort S2 { get; }
+        /// <summary>
+        /// The analog input connected to the Mux output pin (Z)
+        /// </summary>
         public IAnalogInputPort Z { get; }
 
         /// <summary>
@@ -30,6 +43,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             EnablePort = enable;
         }
 
+        /// <summary>
+        /// Enables the multiplexer (if an enable port was provided)
+        /// </summary>
         public void Enable()
         {
             if (EnablePort != null)
@@ -41,6 +57,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        /// <summary>
+        /// Disables the multiplexer (if an enable port was provided)
+        /// </summary>
         public void Disable()
         {
             if (EnablePort != null)
@@ -52,6 +71,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        /// <summary>
+        /// Sets the channel input (Y pin) that will be routed to the mux output (Z pin)
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void SetInputChannel(int channel)
         {
             if(channel < 0 || channel > 7) throw new ArgumentOutOfRangeException();
