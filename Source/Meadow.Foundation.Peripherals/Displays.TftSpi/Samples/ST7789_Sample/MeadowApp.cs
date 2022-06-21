@@ -47,7 +47,7 @@ namespace Displays.Tft.ST7789_Sample
                 chipSelectPin: Device.Pins.A03,
                 dcPin: Device.Pins.A04,
                 resetPin: Device.Pins.A05,
-                width: 240, height: 240, displayColorMode: ColorType.Format12bppRgb444)
+                width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
             {
                 IgnoreOutOfBounds = true
             };
@@ -66,8 +66,6 @@ namespace Displays.Tft.ST7789_Sample
             graphics.DrawRectangle(0, 100, 120, 20, Color.Orange, true);
 
             graphics.Show();
-
-            DisplayTest();
         }
 
         //<!=SNOP=>
@@ -75,16 +73,13 @@ namespace Displays.Tft.ST7789_Sample
         int sleepDuration = 500;
         void DisplayTest()
         { 
-
             Thread.Sleep(sleepDuration);
 
             while (true)
             {
                 BufferRotationTest();
                 Thread.Sleep(sleepDuration);
-
-                PartialUpdateTest();
-                Thread.Sleep(sleepDuration);
+                break;
 
                 PathTest();
                 Thread.Sleep(sleepDuration);
@@ -188,7 +183,7 @@ namespace Displays.Tft.ST7789_Sample
 
             graphics.Clear(true);
 
-            for(int i = 0; i < 200; i++)
+            for(int i = 0; i < 1; i++)
             {
                 if(i == 0) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Blue, true);
                 if (i == 50) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.LawnGreen, true);
