@@ -42,12 +42,6 @@
         int ByteCount { get; }
 
         /// <summary>
-        /// Determines whether this buffer should throw errors if
-        /// you try to write pixels outside of the bounds
-        /// </summary>
-        bool IgnoreOutOfBounds { get; set; }
-
-        /// <summary>
         /// The byte array that holds all pixel data
         /// </summary>
         byte[] Buffer { get; }

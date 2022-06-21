@@ -49,10 +49,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public int ByteCount => (Width * Height * BitDepth) / 8;
 
-        public bool IgnoreOutOfBounds { get; set; } = false;
-
         public byte[] Buffer { get; protected set; }
-
 
         public PixelBufferBase() { }
 
@@ -115,19 +112,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="buffer">The buffer to write</param>
         protected void WriteBufferSlow(int originX, int originY, IPixelBuffer buffer)
         {
-            Color color;
-
-            // ensure that we don't write beyond the bounds and have a range exception
-            // if IgnoreOutOfBounds is true
-            var xRange = IgnoreOutOfBounds ? Math.Min(Width, originX + buffer.Width) : buffer.Width;
-            var yRange = IgnoreOutOfBounds ? Math.Min(Height, originY + buffer.Height) : buffer.Width;
-
-            for (var x = 0; x < xRange; x++)
+            for (var x = 0; x < buffer.Width; x++)
             {
-                for(var y = 0; y < yRange; y++)
+                for(var y = 0; y < buffer.Height; y++)
                 {
-                    color = buffer.GetPixel(x, y);
-                    SetPixel(originX + x, originY + y, color);
+                    SetPixel(originX + x, originY + y, buffer.GetPixel(x, y));
                 }
             }
         }
