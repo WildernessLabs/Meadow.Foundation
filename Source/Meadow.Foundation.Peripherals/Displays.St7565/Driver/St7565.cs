@@ -237,9 +237,7 @@ namespace Meadow.Foundation.Displays
                 { return; }
             }
 
-            var index = (y / 8 * Width) + x;
-
-            imageBuffer.Buffer[index] = (imageBuffer.Buffer[index] ^= (byte)(1 << y % 8));
+            imageBuffer.InvertPixel(x, y);
         }
 
         /// <summary>

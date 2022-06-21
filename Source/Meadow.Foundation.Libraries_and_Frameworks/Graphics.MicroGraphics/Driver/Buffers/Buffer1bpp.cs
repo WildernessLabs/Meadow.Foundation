@@ -120,7 +120,9 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="y">y position of pixel</param>
         public override void InvertPixel(int x, int y)
         {
-            throw new NotImplementedException();
+            var index = (y / 8 * Width) + x;
+
+            Buffer[index] = Buffer[index] ^= (byte)(1 << y % 8);
         }
 
         /// <summary>

@@ -114,7 +114,7 @@ namespace Meadow.Foundation.Displays
                 { return; }
             }
 
-            imageBuffer.SetPixel(x, y, !imageBuffer.GetPixelIsColored(x, y));
+            imageBuffer.InvertPixel(x, y);
         }
 
         /// <summary>

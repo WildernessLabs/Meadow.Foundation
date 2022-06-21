@@ -106,11 +106,13 @@ namespace Meadow.Foundation.Displays
 
         public void InvertPixel(int x, int y)
         {
-            byte color = imageBuffer.GetPixel4bpp(x, y);
+            if (IgnoreOutOfBounds)
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                { return; }
+            }
 
-            color = (byte)(((byte)~color) & 0x0f);
-
-            DrawPixel(x, y, color);
+            imageBuffer.InvertPixel(x, y);
         }
 
         public void Show(int left, int top, int right, int bottom)

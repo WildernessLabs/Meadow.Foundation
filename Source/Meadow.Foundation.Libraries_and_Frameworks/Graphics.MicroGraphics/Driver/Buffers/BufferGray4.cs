@@ -85,7 +85,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="y">y position of pixel</param>
         public override void InvertPixel(int x, int y)
         {
-            throw new NotImplementedException();
+            byte color = GetPixel4bpp(x, y);
+
+            color = (byte)(((byte)~color) & 0x0f);
+
+            SetPixel(x, y, color);
         }
 
         /// <summary>
