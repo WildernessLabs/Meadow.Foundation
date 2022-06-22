@@ -89,7 +89,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
             int x = 0;
             int y = (240 - decoder.Height) / 2;
 
-            display.DrawBuffer(x, y, jpgImage);
+            display.WriteBuffer(x, y, jpgImage);
 
             Console.WriteLine("Jpeg show");
 

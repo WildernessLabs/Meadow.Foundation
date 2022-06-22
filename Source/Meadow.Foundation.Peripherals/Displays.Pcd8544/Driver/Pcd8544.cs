@@ -19,6 +19,11 @@ namespace Meadow.Foundation.Displays
 
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
+        /// <summary>
+        /// The buffer the holds the pixel data for the display
+        /// </summary>
+        public IPixelBuffer PixelBuffer => imageBuffer;
+
         public bool IsDisplayInverted { get; private set; } = false;
 
         protected IDigitalOutputPort dataCommandPort;
@@ -109,7 +114,7 @@ namespace Meadow.Foundation.Displays
                 { return; }
             }
 
-            imageBuffer.SetPixel(x, y, !imageBuffer.GetPixelIsColored(x, y));
+            imageBuffer.InvertPixel(x, y);
         }
 
         /// <summary>
@@ -161,10 +166,10 @@ namespace Meadow.Foundation.Displays
                 if (y > height - 1) y = height - 1;
             }
 
-            imageBuffer.Fill(color, x, y, width, height);
+            imageBuffer.Fill(x, y, width, height, color);
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }

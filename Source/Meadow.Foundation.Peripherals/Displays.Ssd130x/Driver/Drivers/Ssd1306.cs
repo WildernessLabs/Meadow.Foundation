@@ -127,10 +127,10 @@ namespace Meadow.Foundation.Displays.Ssd130x
                 if (y > height - 1) y = height - 1;
             }
 
-            imageBuffer.Fill(color, x, y, width, height);
+            imageBuffer.Fill(x, y, width, height, color);
         }
 
-        public override void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public override void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }

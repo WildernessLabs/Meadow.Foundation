@@ -29,6 +29,12 @@ namespace Meadow.Foundation.Graphics
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
         /// <summary>
+        /// Provide a buffer that matches this display's color depth, height, and width.
+        /// This should be the buffer that is sent to the device when Show is called
+        /// </summary>
+        public IPixelBuffer PixelBuffer { get; }
+
+        /// <summary>
         /// Transfer the contents of the buffer to the display.
         /// </summary>
         public void Show();
@@ -88,6 +94,6 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a buffer to the display
         /// </summary>
-        public abstract void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer);
+        public abstract void WriteBuffer(int x, int y, IPixelBuffer displayBuffer);
     }
 }

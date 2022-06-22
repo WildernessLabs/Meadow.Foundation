@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// <summary>
     /// Provide an interface for ePaper 3 color displays
     /// </summary>
-    public abstract class EpdColorBase : SpiDisplayBase, IGraphicsDisplay
+    public abstract partial class EpdColorBase : SpiDisplayBase, IGraphicsDisplay
     {
         protected abstract bool IsBlackInverted { get; }
         protected abstract bool IsColorInverted { get; }
@@ -23,6 +23,12 @@ namespace Meadow.Foundation.Displays.ePaper
         public int Height => blackImageBuffer.Height;
 
         public bool IgnoreOutOfBoundsPixels { get; set; }
+
+        public IPixelBuffer PixelBuffer => blackImageBuffer;
+
+        public IPixelBuffer ColorPixelBuffer => colorImageBuffer;
+
+
 
         private EpdColorBase()
         { }
@@ -73,11 +79,11 @@ namespace Meadow.Foundation.Displays.ePaper
 
             if (color == Color.Black)
             {
-                blackImageBuffer.Fill(color, x, y, width, height);
+                blackImageBuffer.Fill(x, y, width, height, color);
             }
             else if (color != Color.White)
             {
-                colorImageBuffer.Fill(color, x, y, width, height);
+                colorImageBuffer.Fill(x, y, width, height, color);
             }
         }
 
@@ -180,7 +186,7 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             blackImageBuffer.WriteBuffer(x, y, displayBuffer);
         }

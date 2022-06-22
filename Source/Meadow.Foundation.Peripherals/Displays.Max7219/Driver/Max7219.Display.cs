@@ -29,6 +29,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
+        public IPixelBuffer PixelBuffer => this;
+
         /// <summary>
         /// Partial screen update
         /// </summary>
@@ -40,6 +42,14 @@ namespace Meadow.Foundation.Displays
         {
             //ToDo Check if partial updates are possible (although it's pretty fast as is)
             Show();
+        }
+
+        /// <summary>
+        /// Clear the display buffer
+        /// </summary>
+        public void Clear()
+        {
+            Clear(false);
         }
 
         /// <summary>
@@ -171,7 +181,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">x position</param>
         /// <param name="y">y position</param>
         /// <param name="displayBuffer">buffer to draw</param>
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {   //need to refactor to use a proper buffer
             for (int i = 0; i < displayBuffer.Width; i++)
             {

@@ -19,6 +19,11 @@ namespace Meadow.Foundation.Displays.Ssd130x
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
         /// <summary>
+        /// The buffer the holds the pixel data for the display
+        /// </summary>
+        public IPixelBuffer PixelBuffer => imageBuffer;
+
+        /// <summary>
         /// SSD1306 SPI display
         /// </summary>
         protected ISpiPeripheral spiPeripheral;
@@ -232,9 +237,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
                 { return; }
             }
 
-            var index = (y >> 8) * Width + x;
-
-            imageBuffer.Buffer[index] = (imageBuffer.Buffer[index] ^= (byte)(1 << y % 8));
+            imageBuffer.InvertPixel(x, y);
         }
 
         /// <summary>
@@ -307,7 +310,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
             throw new NotImplementedException();
         }
 
-        public virtual void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public virtual void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             throw new NotImplementedException();
         }

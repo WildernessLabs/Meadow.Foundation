@@ -29,6 +29,8 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public bool IgnoreOutOfBoundsPixels { get; set; }
 
+        public IPixelBuffer PixelBuffer => this;
+
         /// <summary>
         /// Creates a new APA102 object
         /// </summary>
@@ -176,7 +178,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="x">x position</param>
         /// <param name="y">y position</param>
         /// <param name="displayBuffer">buffer to draw</param>
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             for (int i = 0; i < displayBuffer.Width; i++)
             {
