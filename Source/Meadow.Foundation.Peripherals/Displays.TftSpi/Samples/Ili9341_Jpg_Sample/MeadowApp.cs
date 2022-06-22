@@ -33,10 +33,10 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
                 width: 240, height: 320
             )
             {
-                IgnoreOutOfBoundsPixels = true
             };
 
             graphics = new MicroGraphics(display);
+            graphics.IgnoreOutOfBoundsPixels = true;
 
             int delay = 5000;
 

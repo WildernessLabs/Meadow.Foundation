@@ -16,7 +16,6 @@ namespace Meadow.Foundation.Displays.TftSpi
         public abstract ColorType DefautColorMode { get; }
         public int Width => imageBuffer.Width;
         public int Height => imageBuffer.Height;
-        public bool IgnoreOutOfBoundsPixels { get; set; } = false;
 
         public IPixelBuffer PixelBuffer => imageBuffer;
 
@@ -123,14 +122,6 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="color">Color of pixel.</param>
         public void DrawPixel(int x, int y, Color color)
         {
-            if(IgnoreOutOfBoundsPixels)
-            {
-                if(x < 0 || x >= Width || y < 0 || y >= Height)
-                {
-                    return;
-                }
-            }
-
             imageBuffer.SetPixel(x, y, color);
         }
 
@@ -154,25 +145,11 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <param name="y">y location</param>
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             PixelBuffer.InvertPixel(x, y);
         }
 
         public void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0) x = 0;
-                if (y < 0) y = 0;
-                if (x > Width - 1) x = Width - 1;
-                if (y > Height - 1) y = Height - 1;
-            }
-
             imageBuffer.Fill(x, y, width, height, color);
         }
 

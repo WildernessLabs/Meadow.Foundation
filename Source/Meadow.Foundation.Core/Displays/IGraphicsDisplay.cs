@@ -23,12 +23,6 @@ namespace Meadow.Foundation.Graphics
         public int Height { get; }
 
         /// <summary>
-        /// Indicate of the hardware driver should ignore out of bounds pixels
-        /// or if the driver should generate an exception.
-        /// </summary>
-        public bool IgnoreOutOfBoundsPixels { get; set; }
-
-        /// <summary>
         /// Provide a buffer that matches this display's color depth, height, and width.
         /// This should be the buffer that is sent to the device when Show is called
         /// </summary>

@@ -41,11 +41,10 @@ namespace MeadowApp
                 Device.Pins.D00, deviceCount: 4,
                 maxMode: Max7219.Max7219Mode.Display);
 
-            display.IgnoreOutOfBoundsPixels = true;
-
             graphics = new MicroGraphics(display)
             {
-                CurrentFont = new Font4x8()
+                CurrentFont = new Font4x8(),
+                IgnoreOutOfBoundsPixels = true,
             };
 
             Console.WriteLine($"Display W: {display.Width}, H: {display.Height}");

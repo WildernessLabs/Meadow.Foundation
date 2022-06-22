@@ -41,19 +41,21 @@ namespace Displays.Tft.ST7789_Sample
             var config = new SpiClockConfiguration(new Frequency(48000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode3);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-            display = new St7789(
-                device: Device,
-                spiBus: spiBus,
-                chipSelectPin: Device.Pins.A03,
-                dcPin: Device.Pins.A04,
-                resetPin: Device.Pins.A05,
-                width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
-            {
-                IgnoreOutOfBoundsPixels = true
-            };
+        display = new St7789(
+            device: Device,
+            spiBus: spiBus,
+            chipSelectPin: Device.Pins.A03,
+            dcPin: Device.Pins.A04,
+            resetPin: Device.Pins.A05,
+            width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
+        {
+        };
 
-            graphics = new MicroGraphics(display);
-            graphics.Rotation = RotationType._180Degrees;
+        graphics = new MicroGraphics(display)
+        {
+            Rotation = RotationType._180Degrees,
+            IgnoreOutOfBoundsPixels = true
+        };
 
             graphics.Clear(true);
 
@@ -66,6 +68,8 @@ namespace Displays.Tft.ST7789_Sample
             graphics.DrawRectangle(0, 100, 120, 20, Color.Orange, true);
 
             graphics.Show();
+
+            DisplayTest();
         }
 
         //<!=SNOP=>
@@ -79,7 +83,6 @@ namespace Displays.Tft.ST7789_Sample
             {
                 BufferRotationTest();
                 Thread.Sleep(sleepDuration);
-                break;
 
                 PathTest();
                 Thread.Sleep(sleepDuration);

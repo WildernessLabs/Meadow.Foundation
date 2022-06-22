@@ -22,8 +22,6 @@ namespace Meadow.Foundation.Displays.ePaper
         public int Width => blackImageBuffer.Width;
         public int Height => blackImageBuffer.Height;
 
-        public bool IgnoreOutOfBoundsPixels { get; set; }
-
         public IPixelBuffer PixelBuffer => blackImageBuffer;
 
         public IPixelBuffer ColorPixelBuffer => colorImageBuffer;
@@ -69,14 +67,6 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0) x = 0;
-                if (y < 0) y = 0;
-                if (x > width - 1) x = width - 1;
-                if (y > height - 1) y = height - 1;
-            }
-
             if (color == Color.Black)
             {
                 blackImageBuffer.Fill(x, y, width, height, color);
@@ -100,12 +90,6 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public void DrawPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             if(IsBlackInverted) { colored = !colored; }
 
             //could move this to the buffer but need to support horizonal bit storage 
@@ -131,23 +115,11 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             blackImageBuffer.Buffer[(x + y * Width) / 8] ^= (byte)~(0x80 >> (x % 8));
         }
 
         public void DrawColoredPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             if (IsBlackInverted) { colored = !colored; }
 
             if ((colored && !IsColorInverted) ||

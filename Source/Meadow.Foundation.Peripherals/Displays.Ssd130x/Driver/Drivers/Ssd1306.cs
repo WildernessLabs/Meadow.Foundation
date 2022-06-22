@@ -96,11 +96,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
             showPreamble = new byte[] { 0x21, 0x00, (byte)(width - 1), 0x22, 0x00, (byte)(height / 8 - 1) };
 
-            IgnoreOutOfBoundsPixels = false;
-
-            //
-            //  Finally, put the display into a known state.
-            //
+            // Finally, put the display into a known state.
             InvertDisplay = false;
             Sleep = false;
             Contrast = 0xff;
@@ -119,14 +115,6 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
         public override void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0) x = 0;
-                if (y < 0) y = 0;
-                if (x > width - 1) x = width - 1;
-                if (y > height - 1) y = height - 1;
-            }
-
             imageBuffer.Fill(x, y, width, height, color);
         }
 
