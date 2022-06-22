@@ -41,21 +41,24 @@ namespace Displays.Tft.ST7789_Sample
             var config = new SpiClockConfiguration(new Frequency(48000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode3);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-        display = new St7789(
-            device: Device,
-            spiBus: spiBus,
-            chipSelectPin: Device.Pins.A03,
-            dcPin: Device.Pins.A04,
-            resetPin: Device.Pins.A05,
-            width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
-        {
-        };
+            display = new St7789(
+                device: Device,
+                spiBus: spiBus,
+                chipSelectPin: Device.Pins.A03,
+                dcPin: Device.Pins.A04,
+                resetPin: Device.Pins.A05,
+                width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
+            {
+            };
 
-        graphics = new MicroGraphics(display)
-        {
-            Rotation = RotationType._180Degrees,
-            IgnoreOutOfBoundsPixels = true
-        };
+            display.Clear(Color.AliceBlue);
+            display.Show();
+
+            graphics = new MicroGraphics(display)
+            {
+                Rotation = RotationType._90Degrees,
+                IgnoreOutOfBoundsPixels = true
+            };
 
             graphics.Clear(true);
 
@@ -79,8 +82,12 @@ namespace Displays.Tft.ST7789_Sample
         { 
             Thread.Sleep(sleepDuration);
 
+            var stopwatch = new Stopwatch();
+
             while (true)
             {
+                stopwatch.Restart();
+
                 BufferRotationTest();
                 Thread.Sleep(sleepDuration);
 
@@ -119,6 +126,9 @@ namespace Displays.Tft.ST7789_Sample
 
                 InvertTest();
                 Thread.Sleep(sleepDuration);
+
+                stopwatch.Stop();
+                Console.WriteLine($"Total time: {stopwatch.ElapsedMilliseconds}ms");
             }
         }
 

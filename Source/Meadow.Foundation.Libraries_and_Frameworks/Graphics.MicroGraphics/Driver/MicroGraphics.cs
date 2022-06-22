@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Graphics
         /// PixelBuffer draw target, this will be reference to the display pizel buffer 
         /// when drawing to a device driver
         /// </summary>
-        protected readonly IPixelBuffer pixelBuffer;
+        protected IPixelBuffer pixelBuffer;
 
         /// <summary>
         /// Ingore pixel that are outside of the pixel buffer coordinate space
@@ -362,10 +362,7 @@ namespace Meadow.Foundation.Graphics
                 length *= -1;
             }
 
-            for (var i = x; (i - x) <= length; i++)
-            {
-                DrawPixel(i, y);
-            }
+            Fill(x, y, length, 1, PenColor);
         }
 
         /// <summary>
@@ -414,10 +411,7 @@ namespace Meadow.Foundation.Graphics
                 length *= -1;
             }
 
-            for (var i = y; (i - y) < length; i++)
-            {
-                DrawPixel(x, i);
-            }
+            Fill(x, y, 1, length, PenColor);
         }
 
         /// <summary>
@@ -575,6 +569,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="radius">Radius of the circle.</param>
         /// <param name="colored">Show the circle when true.</param>
         /// <param name="filled">Draw a filled circle?</param>
+        /// <param name="centerBetweenPixels">Set center between pixels</param>
         public void DrawCircle(int centerX, int centerY, int radius, bool colored = true, bool filled = false, bool centerBetweenPixels = false)
         {
             DrawCircle(centerX, centerY, radius, (colored ? Color.White : Color.Black), filled, centerBetweenPixels);
@@ -792,10 +787,10 @@ namespace Meadow.Foundation.Graphics
 
             while (x <= y)
             {
-                DrawLine(centerX + x - offset, centerY + y - offset, centerX - x, centerY + y - offset);
-                DrawLine(centerX + x - offset, centerY - y, centerX - x, centerY - y);
-                DrawLine(centerX - y, centerY + x - offset, centerX + y - offset, centerY + x - offset);
-                DrawLine(centerX - y, centerY - x, centerX + y - offset, centerY - x);
+                DrawHorizontalLine(centerX - x, centerY + y - offset, 2 * x - offset);
+                DrawHorizontalLine(centerX - x, centerY - y,          2 * x - offset);
+                DrawHorizontalLine(centerX - y, centerY + x - offset, 2 * y - offset);
+                DrawHorizontalLine(centerX - y, centerY - x,          2 * y - offset);
 
                 if (d < 0)
                 {
@@ -847,31 +842,9 @@ namespace Meadow.Foundation.Graphics
                 y -= height;
             }
 
-            if(IgnoreOutOfBoundsPixels)
-            {
-                if(x < 0) x = 0;
-                if(y < 0) y = 0;
-                if (x + width >= Width) width = Width - x - 1;
-                if (y + height >= Height) height = Height - x - 1;
-            }
-
             if (filled)
             {
-                switch (Rotation)
-                {
-                    case RotationType.Default:
-                        pixelBuffer.Fill(x, y, width, height, color);
-                        break;
-                    case RotationType._90Degrees:
-                        pixelBuffer.Fill(GetXForRotation(x, y) - height + 1, GetYForRotation(x, y), height, width, color);
-                        break;
-                    case RotationType._180Degrees:
-                        pixelBuffer.Fill(GetXForRotation(x, y) - width + 1, GetYForRotation(x, y) - height + 1, width, height, color);
-                        break;
-                    case RotationType._270Degrees:
-                        pixelBuffer.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width, color);
-                        break;
-                }
+                Fill(x, y, width, height, color);
             }
             else
             {
@@ -1372,6 +1345,33 @@ namespace Meadow.Foundation.Graphics
                 return false;
 
             return true;
+        }
+
+        void Fill(int x, int y, int width, int height, Color color)
+        {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                if (x + width >= Width) width = Width - x - 1;
+                if (y + height >= Height) height = Height - x - 1;
+            }
+
+            switch (Rotation)
+            {
+                case RotationType.Default:
+                    pixelBuffer.Fill(x, y, width, height, color);
+                    break;
+                case RotationType._90Degrees:
+                    pixelBuffer.Fill(GetXForRotation(x, y) - height + 1, GetYForRotation(x, y), height, width, color);
+                    break;
+                case RotationType._180Degrees:
+                    pixelBuffer.Fill(GetXForRotation(x, y) - width + 1, GetYForRotation(x, y) - height + 1, width, height, color);
+                    break;
+                case RotationType._270Degrees:
+                    pixelBuffer.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width, color);
+                    break;
+            }
         }
     }
 }
