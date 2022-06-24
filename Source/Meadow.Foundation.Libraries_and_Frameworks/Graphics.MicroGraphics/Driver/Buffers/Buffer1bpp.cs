@@ -3,19 +3,14 @@
 namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
-    /// Represents a 1bpp buffer
+    /// Represents a 1bpp pixel buffer
     /// </summary>
-    public class Buffer1bpp : BufferBase
+    public class Buffer1bpp : PixelBufferBase
     {
-        /// <summary>
-        /// Total bytes used by the buffer
-        /// </summary>
-        public override int ByteCount => Width * Height / 8;
-
         /// <summary>
         /// Color mode of the buffer - 1 bit per pixel 
         /// </summary>
-        public override ColorType displayColorMode => ColorType.Format1bpp;
+        public override ColorType ColorMode => ColorType.Format1bpp;
 
         /// <summary>
         /// Creates a new Buffer1bpp object
@@ -74,7 +69,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             Clear(color.Color1bpp);
         }
 
-        public override void Fill(Color color, int x, int y, int width, int height)
+        public override void Fill(int x, int y, int width, int height, Color color)
         {
             if (x < 0 || x + width > Width ||
                 y < 0 || y + height > Height)
@@ -118,78 +113,50 @@ namespace Meadow.Foundation.Graphics.Buffers
             Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
         }
 
-        public new void WriteBuffer(int x, int y, IDisplayBuffer buffer)
+        /// <summary>
+        /// Invert the pixel
+        /// </summary>
+        /// <param name="x">x position of pixel</param>
+        /// <param name="y">y position of pixel</param>
+        public override void InvertPixel(int x, int y)
         {
-            if (base.WriteBuffer(x, y, buffer))
-            {   //call the base for validation
-                //and to handle the slow path when buffers don't match
-                return;
-            }
+            var index = (y / 8 * Width) + x;
 
-            for (int i = 0; i < buffer.Width; i++)
+            Buffer[index] = Buffer[index] ^= (byte)(1 << y % 8);
+        }
+
+        /// <summary>
+        /// Write a buffer to specific location to the current buffer
+        /// </summary>
+        /// <param name="x">x origin</param>
+        /// <param name="y">y origin</param>
+        /// <param name="buffer">buffer to write</param>
+        public override void WriteBuffer(int x, int y, IPixelBuffer buffer)
+        {
+            if (buffer.ColorMode == ColorMode)
             {
-                for (int j = 0; j < buffer.Height; j++)
+                for (int i = 0; i < buffer.Width; i++)
                 {
-                    //if we got really clever we could find other alignment points but this is a good start
-                    if(y%8 == 0 && j + 8 <= buffer.Height)
+                    for (int j = 0; j < buffer.Height; j++)
                     {
-                        //copy an entire byte - fast
-                        Buffer[((y + j) >> 3) * Width + x + i] = buffer.Buffer[(j >> 3) * buffer.Width + i];
-                        j += 7; //the main loop will add 1 to make it 8
-                    }
-                    else
-                    {   //else 1 bit at a time 
-                        SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsColored(i, j));
+                        //if we got really clever we could find other alignment points but this is a good start
+                        if (y % 8 == 0 && j + 8 <= buffer.Height)
+                        {
+                            //copy an entire byte - fast
+                            Buffer[((y + j) >> 3) * Width + x + i] = buffer.Buffer[(j >> 3) * buffer.Width + i];
+                            j += 7; //the main loop will add 1 to make it 8
+                        }
+                        else
+                        {   //else 1 bit at a time 
+                            SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsColored(i, j));
+                        }
                     }
                 }
             }
-        }
-
-        public Buffer1bpp Rotate(RotationType rotation)
-        {
-            Buffer1bpp newBuffer;
-
-            switch(rotation)
+            else
             {
-                case RotationType._90Degrees:
-                    newBuffer = new Buffer1bpp(Height, Width);
-                    for(int i = 0; i < Width; i++)
-                    {
-                        for(int j = 0; j < Height; j++)
-                        {   
-                            newBuffer.SetPixel(Height - j - 1, i, GetPixel(i, j));
-                        }
-                    }
-                    break;
-                case RotationType._270Degrees:
-                    newBuffer = new Buffer1bpp(Height, Width);
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {   
-                            newBuffer.SetPixel(j, Width - i - 1, GetPixel(i, j));
-                        }
-                    }
-                    break;
-                case RotationType._180Degrees:
-                    newBuffer = new Buffer1bpp(Width, Height);
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {   
-                            newBuffer.SetPixel(Width - i - 1, Height - j - 1, GetPixel(i, j));
-                        }
-                    }
-                    break;
-                case RotationType.Default:
-                default:
-                    newBuffer = new Buffer1bpp(Width, Height);
-                    Array.Copy(Buffer, newBuffer.Buffer, ByteCount);
-                    break;
-
+                base.WriteBuffer(x, y, buffer);
             }
-
-            return newBuffer;
         }
     }
 }

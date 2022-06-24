@@ -2,11 +2,15 @@
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
-    public class BufferGray8 : BufferBase
+    /// <summary>
+    /// Represents a 8bpp greyscale pixel buffer
+    /// </summary>
+    public class BufferGray8 : PixelBufferBase
     {
-        public override int ByteCount => Width * Height;
-
-        public override ColorType displayColorMode => ColorType.Format8bppGray;
+        /// <summary>
+        /// Color mode of the buffer
+        /// </summary>
+        public override ColorType ColorMode => ColorType.Format8bppGray;
 
         public BufferGray8(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
@@ -50,7 +54,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
         }
 
-        public override void Fill(Color color, int x, int y, int width, int height)
+        public override void Fill(int x, int y, int width, int height, Color color)
         {
             if (x < 0 || x + width > Width ||
                    y < 0 || y + height > Height)
@@ -78,23 +82,40 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
-        public new void WriteBuffer(int x, int y, IDisplayBuffer buffer)
+        /// <summary>
+        /// Invert the pixel
+        /// </summary>
+        /// <param name="x">x position of pixel</param>
+        /// <param name="y">y position of pixel</param>
+        public override void InvertPixel(int x, int y)
         {
-            if (base.WriteBuffer(x, y, buffer))
-            {   //call the base for validation
-                //and to handle the slow path when buffers don't match
-                return;
-            }
+            throw new NotImplementedException();
+        }
 
-            int sourceIndex, destinationIndex;
-            int length = buffer.Width;
-
-            for (int i = 0; i < buffer.Height; i++)
+        /// <summary>
+        /// Write a buffer to specific location to the current buffer
+        /// </summary>
+        /// <param name="x">x origin</param>
+        /// <param name="y">y origin</param>
+        /// <param name="buffer">buffer to write</param>
+        public override void WriteBuffer(int x, int y, IPixelBuffer buffer)
+        {
+            if (buffer.ColorMode == ColorMode)
             {
-                sourceIndex = length * i;
-                destinationIndex = Width * (y + i) + x;
+                int sourceIndex, destinationIndex;
+                int length = buffer.Width;
 
-                Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length); ;
+                for (int i = 0; i < buffer.Height; i++)
+                {
+                    sourceIndex = length * i;
+                    destinationIndex = Width * (y + i) + x;
+
+                    Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length); ;
+                }
+            }
+            else
+            {   // fall back to a slow write
+                base.WriteBuffer(x, y, buffer);
             }
         }
     }

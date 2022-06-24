@@ -33,10 +33,10 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
                 width: 240, height: 320
             )
             {
-                IgnoreOutOfBoundsPixels = true
             };
 
             graphics = new MicroGraphics(display);
+            graphics.IgnoreOutOfBoundsPixels = true;
 
             int delay = 5000;
 
@@ -89,7 +89,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
             int x = 0;
             int y = (240 - decoder.Height) / 2;
 
-            display.DrawBuffer(x, y, jpgImage);
+            display.WriteBuffer(x, y, jpgImage);
 
             Console.WriteLine("Jpeg show");
 

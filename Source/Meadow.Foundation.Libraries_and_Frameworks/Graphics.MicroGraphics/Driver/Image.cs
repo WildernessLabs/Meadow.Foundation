@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Graphics
 {
     public partial class Image
     {
-        public IDisplayBuffer DisplayBuffer { get; private set; }
+        public IPixelBuffer DisplayBuffer { get; private set; }
 
         public int Width => DisplayBuffer.Width;
         public int Height => DisplayBuffer.Height;

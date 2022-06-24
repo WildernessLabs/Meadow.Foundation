@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Leds
         Task? animationTask = null;
         CancellationTokenSource? cancellationTokenSource = null;
 
-        readonly int DEFAULT_FREQUENCY = 200; //hz
+        static readonly Frequency DefaultFrequency = new Frequency(200, Frequency.UnitType.Hertz);
         readonly float DEFAULT_DUTY_CYCLE = 0f;
         readonly double maxRedDutyCycle = 1;
         readonly double maxGreenDutyCycle = 1;
@@ -140,9 +140,9 @@ namespace Meadow.Foundation.Leds
             IPin bluePwmPin,
             CommonType commonType = CommonType.CommonCathode) :
             this(
-                device.CreatePwmPort(redPwmPin),
-                device.CreatePwmPort(greenPwmPin),
-                device.CreatePwmPort(bluePwmPin),
+                device.CreatePwmPort(redPwmPin, DefaultFrequency),
+                device.CreatePwmPort(greenPwmPin, DefaultFrequency),
+                device.CreatePwmPort(bluePwmPin, DefaultFrequency),
                 commonType)
         { }
 
@@ -168,9 +168,9 @@ namespace Meadow.Foundation.Leds
             Voltage blueLedForwardVoltage,
             CommonType commonType = CommonType.CommonCathode) :
             this(
-                device.CreatePwmPort(redPwmPin),
-                device.CreatePwmPort(greenPwmPin),
-                device.CreatePwmPort(bluePwmPin),
+                device.CreatePwmPort(redPwmPin, DefaultFrequency),
+                device.CreatePwmPort(greenPwmPin, DefaultFrequency),
+                device.CreatePwmPort(bluePwmPin, DefaultFrequency),
                 redLedForwardVoltage, 
                 greenLedForwardVoltage, 
                 blueLedForwardVoltage,
@@ -238,7 +238,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         protected void ResetPwms()
         {
-            RedPwm.Frequency = GreenPwm.Frequency = BluePwm.Frequency = DEFAULT_FREQUENCY;
+            RedPwm.Frequency = GreenPwm.Frequency = BluePwm.Frequency = DefaultFrequency;
             RedPwm.DutyCycle = GreenPwm.DutyCycle = BluePwm.DutyCycle = DEFAULT_DUTY_CYCLE;
             // invert the PWM signal if it common anode
             RedPwm.Inverted = GreenPwm.Inverted = BluePwm.Inverted

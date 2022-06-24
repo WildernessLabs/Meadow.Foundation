@@ -32,12 +32,14 @@ namespace Displays.Tft.Gc9a01_Sample
                 resetPin: Device.Pins.D00
             )
             {
-                IgnoreOutOfBoundsPixels = true
             };
 
-            graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display)
+            {
+                IgnoreOutOfBoundsPixels = true,
+                CurrentFont = new Font12x20()
+            };
 
-            graphics.CurrentFont = new Font12x20();
             graphics.Clear();
             graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
             graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, false);
