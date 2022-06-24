@@ -33,12 +33,14 @@ namespace Displays.Tft.Ili9486_Sample
                 width: 320, height: 480
             )
             {
-                IgnoreOutOfBoundsPixels = true
             };
 
-            graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display)
+            {
+                IgnoreOutOfBoundsPixels = true,
+                CurrentFont = new Font8x8()
+            };
 
-            graphics.CurrentFont = new Font8x8();
             graphics.Clear();
             graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
             graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, false);

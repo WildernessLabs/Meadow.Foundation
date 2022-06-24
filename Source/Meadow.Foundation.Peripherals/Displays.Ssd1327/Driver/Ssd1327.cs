@@ -15,8 +15,6 @@ namespace Meadow.Foundation.Displays
 
         public int Height => 128;
 
-        public bool IgnoreOutOfBoundsPixels { get; set; }
-
         /// <summary>
         /// The buffer the holds the pixel data for the display
         /// </summary>
@@ -95,23 +93,11 @@ namespace Meadow.Foundation.Displays
 
         public void DrawPixel(int x, int y, byte gray)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             imageBuffer.SetPixel(x, y, gray);
         }
 
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             imageBuffer.InvertPixel(x, y);
         }
 
@@ -177,14 +163,6 @@ namespace Meadow.Foundation.Displays
 
         public void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0) x = 0;
-                if (y < 0) y = 0;
-                if (x > width - 1) x = width - 1;
-                if (y > height - 1) y = height - 1;
-            }
-
             imageBuffer.Fill(x, y, width, height, color);
         }
 

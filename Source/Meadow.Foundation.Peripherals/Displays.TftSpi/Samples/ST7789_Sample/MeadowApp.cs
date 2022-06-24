@@ -49,11 +49,16 @@ namespace Displays.Tft.ST7789_Sample
                 resetPin: Device.Pins.A05,
                 width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
             {
-                IgnoreOutOfBoundsPixels = true
             };
 
-            graphics = new MicroGraphics(display);
-            graphics.Rotation = RotationType._180Degrees;
+            display.Clear(Color.AliceBlue);
+            display.Show();
+
+            graphics = new MicroGraphics(display)
+            {
+                Rotation = RotationType._90Degrees,
+                IgnoreOutOfBoundsPixels = true
+            };
 
             graphics.Clear(true);
 
@@ -66,6 +71,8 @@ namespace Displays.Tft.ST7789_Sample
             graphics.DrawRectangle(0, 100, 120, 20, Color.Orange, true);
 
             graphics.Show();
+
+            DisplayTest();
         }
 
         //<!=SNOP=>
@@ -75,11 +82,14 @@ namespace Displays.Tft.ST7789_Sample
         { 
             Thread.Sleep(sleepDuration);
 
+            var stopwatch = new Stopwatch();
+
             while (true)
             {
+                stopwatch.Restart();
+
                 BufferRotationTest();
                 Thread.Sleep(sleepDuration);
-                break;
 
                 PathTest();
                 Thread.Sleep(sleepDuration);
@@ -116,6 +126,9 @@ namespace Displays.Tft.ST7789_Sample
 
                 InvertTest();
                 Thread.Sleep(sleepDuration);
+
+                stopwatch.Stop();
+                Console.WriteLine($"Total time: {stopwatch.ElapsedMilliseconds}ms");
             }
         }
 
