@@ -11,13 +11,16 @@ namespace Meadow.Foundation.Leds
     /// Represents an LED whose voltage is limited by the duty-cycle of a PWM
     /// signal.
     /// </summary>
-    public class PwmLed : IPwmLed
+    public class PwmLed : IPwmLed, IDisposable
     {
-        Task? animationTask;
-        CancellationTokenSource? cancellationTokenSource;
+        private Task? animationTask;
+        private CancellationTokenSource? cancellationTokenSource;
+        private bool createdPwm = false;
 
-        readonly float maximumPwmDuty = 1;
-        readonly bool inverted;
+        private float maximumPwmDuty = 1;
+        private bool inverted;
+
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Gets the brightness of the LED, controlled by a PWM signal, and limited by the 
@@ -82,12 +85,13 @@ namespace Meadow.Foundation.Leds
             IPwmOutputController device, 
             IPin pin,
             Voltage forwardVoltage, 
-            CircuitTerminationType terminationType = CircuitTerminationType.CommonGround) : 
-            this (
-                device.CreatePwmPort(pin), 
-                forwardVoltage, 
-                terminationType) 
-        { }
+            CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
+        {
+            var pwm = device.CreatePwmPort(pin, new Frequency(100, Frequency.UnitType.Hertz));
+            createdPwm = true; // signal that we created it, so we should dispose of it
+            pwm.DutyCycle = 0;
+            Initialize(pwm, forwardVoltage, terminationType);
+        }
 
         /// <summary>
         /// Creates a new PwmLed on the specified PWM pin and limited to the appropriate 
@@ -102,12 +106,20 @@ namespace Meadow.Foundation.Leds
             Voltage forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
+            Initialize(pwmPort, forwardVoltage, terminationType);
+        }
+
+        private void Initialize(
+            IPwmPort pwmPort,
+            Voltage forwardVoltage,
+            CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
+        {
             // validate and persist forward voltage
             if (forwardVoltage < new Voltage(0) || forwardVoltage > new Voltage(3.3))
             {
                 throw new ArgumentOutOfRangeException(nameof(forwardVoltage), "error, forward voltage must be between 0, and 3.3");
             }
-            
+
             ForwardVoltage = forwardVoltage;
 
             inverted = (terminationType == CircuitTerminationType.High);
@@ -116,9 +128,27 @@ namespace Meadow.Foundation.Leds
 
             Port = pwmPort;
             Port.Inverted = inverted;
-            Port.Frequency = 100;
-            Port.DutyCycle = 0;
             Port.Start();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPwm)
+                {
+                    Port.Dispose();
+
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
