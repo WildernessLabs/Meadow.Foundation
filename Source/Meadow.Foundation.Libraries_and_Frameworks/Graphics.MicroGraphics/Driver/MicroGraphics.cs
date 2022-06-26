@@ -1351,10 +1351,19 @@ namespace Meadow.Foundation.Graphics
         {
             if (IgnoreOutOfBoundsPixels)
             {
+                if (x >= Width || 
+                    y >= Height ||
+                    width < 1 || 
+                    height < 1)
+                {
+                    return;
+                }
+
                 if (x < 0) x = 0;
                 if (y < 0) y = 0;
+ 
                 if (x + width >= Width) width = Width - x - 1;
-                if (y + height >= Height) height = Height - x - 1;
+                if (y + height >= Height) height = Height - y - 1;
             }
 
             switch (Rotation)
