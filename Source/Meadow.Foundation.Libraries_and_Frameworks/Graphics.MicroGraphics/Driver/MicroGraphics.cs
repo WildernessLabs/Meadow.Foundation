@@ -851,8 +851,6 @@ namespace Meadow.Foundation.Graphics
                 width--;
                 height--;
 
-                Console.WriteLine($"DrawRect {x},{y},{width},{height}");
-
                 DrawLine(x, y, x + width, y, color);
                 DrawLine(x + width, y, x + width, y + height, color);
                 DrawLine(x, y + height, x + width + 1, y + height, color);
