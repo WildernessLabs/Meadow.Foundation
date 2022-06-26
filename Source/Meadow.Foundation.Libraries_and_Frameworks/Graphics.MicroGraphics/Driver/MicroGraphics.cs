@@ -848,13 +848,12 @@ namespace Meadow.Foundation.Graphics
             }
             else
             {
-                //because we include the starting pixel 
                 width--;
                 height--;
 
                 DrawLine(x, y, x + width, y, color);
                 DrawLine(x + width, y, x + width, y + height, color);
-                DrawLine(x + width, y + height, x, y + height, color);
+                DrawLine(x, y + height, x + width + 1, y + height, color);
                 DrawLine(x, y, x, y + height, color);
             }
         }
@@ -1351,10 +1350,19 @@ namespace Meadow.Foundation.Graphics
         {
             if (IgnoreOutOfBoundsPixels)
             {
+                if (x >= Width || 
+                    y >= Height ||
+                    width < 1 || 
+                    height < 1)
+                {
+                    return;
+                }
+
                 if (x < 0) x = 0;
                 if (y < 0) y = 0;
-                if (x + width >= Width) width = Width - x - 1;
-                if (y + height >= Height) height = Height - x - 1;
+ 
+                if (x + width >= Width) width = Width - x;
+                if (y + height >= Height) height = Height - y;
             }
 
             switch (Rotation)
