@@ -21,5 +21,12 @@
             /// </summary>
             Default = Address_0x6b
         }
+
+        public enum FlashRegister18
+        {
+            DeviceID = 0xFF0000,
+            DeviceRevision = 0xFF0002,
+            DeviceUuid = 0x801600
+        }
     }
 }

@@ -4,7 +4,7 @@ using Meadow.Foundation.ICs.IOExpanders;
 using System;
 using System.Threading.Tasks;
 
-namespace MeadowApp
+namespace ICs.IOExpanders.Sw18AB_Samples
 {
     public class MeadowApp : App<F7FeatherV2>
     {
@@ -13,6 +13,10 @@ namespace MeadowApp
         private Sw18AB _wombat;
 
         public MeadowApp()
+        {
+        }
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize...");
 
@@ -25,16 +29,20 @@ namespace MeadowApp
                 Console.WriteLine($"error: {ex.Message}");
             }
 
-            Task.Run(ShowInfo);
+            return Task.CompletedTask;
         }
 
-        public async Task ShowInfo()
+        public override async Task Run()
         {
             Console.WriteLine("getting version...");
 
             var version = _wombat.Version; // this doesn't change, so read once
+            var info = _wombat.Info;
 
-            Console.WriteLine($"Version: {version.Version}");
+            Console.WriteLine($"Version   : {version.Version}");
+            Console.WriteLine($"Identifier: {info.Identifier}");
+            Console.WriteLine($"Revision  : {info.Revision}");
+            Console.WriteLine($"UUID      : {_wombat.Uuid}");
 
             while (true)
             {

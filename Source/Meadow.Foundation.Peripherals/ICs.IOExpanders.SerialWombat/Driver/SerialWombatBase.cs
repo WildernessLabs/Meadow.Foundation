@@ -7,8 +7,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public abstract partial class SerialWombatBase
     {
-        private II2cBus _bus;
+        private II2cBus _bus; // TODO: add uart support
         private WombatVersion _version = null!;
+        private WombatInfo _info;
+        private Guid? _uuid;
 
         public Address _address { get; }
 
@@ -29,19 +31,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             get
             {
-                if (_version == null)
+                if (_version == null) // lazy load
                 {
-
-                    Console.WriteLine("Version command...");
-
                     try
                     {
                         var response = SendCommand(Commands.GetVersion);
-
-                        //                        Span<byte> command = stackalloc byte[8] { (byte)'V', 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55 };
-                        //                        Span<byte> response = stackalloc byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-                        //                        SendPacket(command, response);
-
                         _version = new WombatVersion(Encoding.ASCII.GetString(response));
                     }
                     catch (Exception ex)
@@ -54,14 +48,68 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        public WombatInfo Info
+        {
+            get
+            {
+                if (_info == null) // lazy load
+                {
+                    try
+                    {
+                        var id = (ushort)ReadFlash(FlashRegister18.DeviceID);
+                        var rev = (ushort)(ReadFlash(FlashRegister18.DeviceRevision) & 0xf);
+                        _info = new WombatInfo(id, rev);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"{ex.Message}");
+
+                    }
+                }
+                return _info;
+            }
+        }
+
+        public Guid Uuid
+        {
+            get
+            {
+                if (_uuid == null) // lazy load
+                {
+                    var address = FlashRegister18.DeviceUuid;
+
+                    var bytes = new byte[16];
+                    var index = 0;
+
+                    for (var offset = 0; offset <= 8; offset += 2)
+                    {
+                        var data = ReadFlash(address + offset);
+                        bytes[index++] = (byte)(data & 0xff);
+                        bytes[index++] = (byte)(data & 0xff >> 8);
+                        bytes[index++] = (byte)(data & 0xff >> 16);
+                    }
+
+                    _uuid = new Guid(bytes);
+                }
+
+                return _uuid.Value;
+            }
+        }
+
         protected byte[] SendCommand(in Span<byte> command)
         {
             lock (SyncRoot)
             {
                 var rx = new byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
                 _bus.Exchange((byte)_address, command, rx);
+                // TODO: check return for errors
                 return rx;
             }
+        }
+
+        protected ushort ReadPublicData(Pin pin)
+        {
+            return ReadPublicData((byte)pin);
         }
 
         protected ushort ReadPublicData(byte pin)
@@ -70,6 +118,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             command[1] = pin;
             var response = SendCommand(command);
             return (ushort)(response[2] | response[3] << 8);
+        }
+
+        protected ushort WritePublicData(Pin pin, ushort data)
+        {
+            return WritePublicData((byte)pin, data);
         }
 
         protected ushort WritePublicData(byte pin, ushort data)
@@ -82,15 +135,31 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (ushort)(response[2] | response[3] << 8);
         }
 
+        protected uint ReadFlash(FlashRegister18 register)
+        {
+            return ReadFlash((uint)register);
+        }
+
+        protected uint ReadFlash(uint address)
+        {
+            var command = Commands.ReadFlash;
+            command[1] = (byte)((address >> 0) & 0xff);
+            command[2] = (byte)((address >> 8) & 0xff);
+            command[3] = (byte)((address >> 16) & 0xff);
+            command[4] = (byte)((address >> 24) & 0xff);
+            var response = SendCommand(command);
+            return (uint)(response[4] | response[5] << 8 | response[6] << 16 | response[7] << 24);
+        }
+
         public Voltage GetSupplyVoltage()
         {
-            var count = ReadPublicData(66);
+            var count = ReadPublicData(Pin.Voltage);
             return new Voltage(0x4000000 / (double)count, Voltage.UnitType.Millivolts);
         }
 
         public Temperature GetTemperature()
         {
-            var d = ReadPublicData(70);
+            var d = ReadPublicData(Pin.Temperature);
             return new Temperature(d / 100d, Temperature.UnitType.Celsius);
         }
     }
