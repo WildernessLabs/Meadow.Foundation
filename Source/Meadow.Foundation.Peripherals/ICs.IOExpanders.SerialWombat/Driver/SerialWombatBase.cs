@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public abstract partial class SerialWombatBase
+    public abstract partial class SerialWombatBase : IDigitalOutputController
     {
         private II2cBus _bus; // TODO: add uart support
         private WombatVersion _version = null!;
@@ -21,6 +21,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             _bus = bus;
             _address = address;
         }
+
+        public PinDefinitions Pins { get; } = new PinDefinitions();
 
         protected void SendPacket(Span<byte> tx, Span<byte> rx)
         {
@@ -107,7 +109,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        protected ushort ReadPublicData(Pin pin)
+        protected ushort ReadPublicData(SwPin pin)
         {
             return ReadPublicData((byte)pin);
         }
@@ -120,7 +122,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (ushort)(response[2] | response[3] << 8);
         }
 
-        protected ushort WritePublicData(Pin pin, ushort data)
+        protected ushort WritePublicData(SwPin pin, ushort data)
         {
             return WritePublicData((byte)pin, data);
         }
@@ -151,16 +153,34 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (uint)(response[4] | response[5] << 8 | response[6] << 16 | response[7] << 24);
         }
 
+        protected void ConfigurePin(byte pin, bool input, ResistorMode mode, OutputType type = OutputType.PushPull)
+        {
+            var command = Commands.SetPinMode;
+            command[1] = pin;
+            command[2] = 0;
+            command[3] = (byte)(input ? (mode == ResistorMode.InternalPullUp ? 2 : 0) : 1);
+            command[4] = (byte)(mode == ResistorMode.InternalPullUp ? 1 : 0);
+            command[5] = (byte)(mode == ResistorMode.InternalPullDown ? 1 : 0);
+            command[6] = (byte)(type == OutputType.OpenDrain ? 1 : 0);
+
+            var response = SendCommand(command);
+        }
+
         public Voltage GetSupplyVoltage()
         {
-            var count = ReadPublicData(Pin.Voltage);
+            var count = ReadPublicData(SwPin.Voltage);
             return new Voltage(0x4000000 / (double)count, Voltage.UnitType.Millivolts);
         }
 
         public Temperature GetTemperature()
         {
-            var d = ReadPublicData(Pin.Temperature);
+            var d = ReadPublicData(SwPin.Temperature);
             return new Temperature(d / 100d, Temperature.UnitType.Celsius);
+        }
+
+        public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType outputType = OutputType.PushPull)
+        {
+            return new SerialWombatBase.DigitalOutputPort(this, pin, initialState, outputType);
         }
     }
 }

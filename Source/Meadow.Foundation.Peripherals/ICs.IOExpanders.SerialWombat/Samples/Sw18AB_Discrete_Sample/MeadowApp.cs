@@ -1,6 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
+using Meadow.Hardware;
 using System;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace ICs.IOExpanders.Sw18AB_Samples
         //<!=SNIP=>
 
         private Sw18AB _wombat;
+        private IDigitalOutputPort _output;
 
         public MeadowApp()
         {
@@ -18,15 +20,16 @@ namespace ICs.IOExpanders.Sw18AB_Samples
 
         public override Task Initialize()
         {
-            Resolver.Log.Info("Initialize...");
+            Console.WriteLine("Initialize...");
 
             try
             {
                 _wombat = new Sw18AB(Device.CreateI2cBus());
+                _output = _wombat.CreateDigitalOutputPort(_wombat.Pins.WP0);
             }
             catch (Exception ex)
             {
-                Resolver.Log.Error($"error: {ex.Message}");
+                Console.WriteLine($"error: {ex.Message}");
             }
 
             return Task.CompletedTask;
@@ -34,20 +37,15 @@ namespace ICs.IOExpanders.Sw18AB_Samples
 
         public override async Task Run()
         {
-            Resolver.Log.Info("getting version...");
+            Resolver.Log.Info("Running...");
 
-            var version = _wombat.Version; // this doesn't change, so read once
-            var info = _wombat.Info;
-
-            Resolver.Log.Info($"Version   : {version.Version}");
-            Resolver.Log.Info($"Identifier: {info.Identifier}");
-            Resolver.Log.Info($"Revision  : {info.Revision}");
-            Resolver.Log.Info($"UUID      : {_wombat.Uuid}");
+            bool state = false;
 
             while (true)
             {
-                Resolver.Log.Info($"Temperature   : {_wombat.GetTemperature().Fahrenheit}F");
-                Resolver.Log.Info($"Supply Voltage: {_wombat.GetSupplyVoltage().Volts}V");
+                Console.WriteLine($"SW0 = {(state ? "high" : "low")}");
+                _output.State = state;
+                state = !state;
 
                 await Task.Delay(1000);
             }

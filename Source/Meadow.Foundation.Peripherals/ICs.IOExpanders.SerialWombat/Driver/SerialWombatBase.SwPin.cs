@@ -2,7 +2,7 @@
 {
     public abstract partial class SerialWombatBase
     {
-        public enum Pin : byte
+        public enum SwPin : byte
         {
             Voltage = 66,
             Temperature = 70
