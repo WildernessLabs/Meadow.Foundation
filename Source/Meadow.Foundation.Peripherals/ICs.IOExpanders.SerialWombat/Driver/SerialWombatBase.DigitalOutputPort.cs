@@ -12,16 +12,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], initialState, outputType)
             {
                 _controller = controller;
-                _controller.ConfigurePin((byte)pin.Key, false, ResistorMode.Disabled);
+                _controller.ConfigureOutputPin((byte)pin.Key, false, OutputType.PushPull);
             }
 
             public override bool State
             {
                 get => _controller.ReadPublicData((byte)Pin.Key) != 0;
-                set
-                {
-                    _controller.ConfigurePin((byte)Pin.Key, false, ResistorMode.Disabled);
-                }
+                set => _controller.ConfigureOutputPin((byte)Pin.Key, value, OutputType.PushPull);
             }
 
             public override void Dispose()

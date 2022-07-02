@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public abstract partial class SerialWombatBase : IDigitalOutputController
+    public abstract partial class SerialWombatBase : IDigitalInputOutputController
     {
         private II2cBus _bus; // TODO: add uart support
         private WombatVersion _version = null!;
@@ -153,15 +153,28 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (uint)(response[4] | response[5] << 8 | response[6] << 16 | response[7] << 24);
         }
 
-        protected void ConfigurePin(byte pin, bool input, ResistorMode mode, OutputType type = OutputType.PushPull)
+        protected void ConfigureOutputPin(byte pin, bool state, OutputType type = OutputType.PushPull)
         {
             var command = Commands.SetPinMode;
             command[1] = pin;
             command[2] = 0;
-            command[3] = (byte)(input ? (mode == ResistorMode.InternalPullUp ? 2 : 0) : 1);
+            command[3] = (byte)(state ? 1 : 0);
+            command[4] = 0;
+            command[5] = 0;
+            command[6] = (byte)(type == OutputType.OpenDrain ? 1 : 0);
+
+            var response = SendCommand(command);
+        }
+
+        protected void ConfigureInputPin(byte pin, ResistorMode mode)
+        {
+            var command = Commands.SetPinMode;
+            command[1] = pin;
+            command[2] = 0;
+            command[3] = (byte)(mode == ResistorMode.InternalPullUp ? 2 : 0);
             command[4] = (byte)(mode == ResistorMode.InternalPullUp ? 1 : 0);
             command[5] = (byte)(mode == ResistorMode.InternalPullDown ? 1 : 0);
-            command[6] = (byte)(type == OutputType.OpenDrain ? 1 : 0);
+            command[6] = 0;
 
             var response = SendCommand(command);
         }
@@ -181,6 +194,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType outputType = OutputType.PushPull)
         {
             return new SerialWombatBase.DigitalOutputPort(this, pin, initialState, outputType);
+        }
+
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled, double debounceDuration = 0, double glitchDuration = 0)
+        {
+            return new SerialWombatBase.DigitalInputPort(this, pin, interruptMode, resistorMode);
         }
     }
 }

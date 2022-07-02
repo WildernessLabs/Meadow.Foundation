@@ -13,6 +13,7 @@ namespace ICs.IOExpanders.Sw18AB_Samples
 
         private Sw18AB _wombat;
         private IDigitalOutputPort _output;
+        private IDigitalInputPort _input;
 
         public MeadowApp()
         {
@@ -26,6 +27,7 @@ namespace ICs.IOExpanders.Sw18AB_Samples
             {
                 _wombat = new Sw18AB(Device.CreateI2cBus());
                 _output = _wombat.CreateDigitalOutputPort(_wombat.Pins.WP0);
+                _input = _wombat.CreateDigitalInputPort(_wombat.Pins.WP1);
             }
             catch (Exception ex)
             {
@@ -43,8 +45,9 @@ namespace ICs.IOExpanders.Sw18AB_Samples
 
             while (true)
             {
-                Console.WriteLine($"SW0 = {(state ? "high" : "low")}");
+                Resolver.Log.Info($"WP0 = {(state ? "high" : "low")}");
                 _output.State = state;
+                Resolver.Log.Info($"WP1 = {(_input.State ? "high" : "low")}");
                 state = !state;
 
                 await Task.Delay(1000);
