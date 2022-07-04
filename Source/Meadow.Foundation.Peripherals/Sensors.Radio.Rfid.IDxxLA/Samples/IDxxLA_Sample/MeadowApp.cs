@@ -4,7 +4,7 @@ using Meadow.Foundation.Helpers;
 
 namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

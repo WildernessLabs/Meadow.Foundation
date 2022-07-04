@@ -12,7 +12,7 @@ using SimpleJpegDecoder;
 
 namespace Displays.TftSpi.Ili9341_Jpg_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         Ili9341 display;
         MicroGraphics graphics;

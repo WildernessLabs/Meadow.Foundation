@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Leds.Apa102_Display_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         Apa102 display;
 

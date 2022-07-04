@@ -6,7 +6,7 @@ using System;
 
 namespace ICs.IOExpanders.Pca9685_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -15,7 +15,7 @@ namespace ICs.IOExpanders.Pca9685_Sample
             Console.WriteLine("Initialize hardware...");
             var i2CBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
 
-            var pca9685 = new Pca9685(i2CBus, (byte)Pca9685.Addresses.Default, 50);
+            var pca9685 = new Pca9685(i2CBus, new Meadow.Units.Frequency(50, Meadow.Units.Frequency.UnitType.Hertz), (byte)Pca9685.Addresses.Default);
             pca9685.Initialize();
         
               var port0 = pca9685.CreatePwmPort(0, 0.05f);

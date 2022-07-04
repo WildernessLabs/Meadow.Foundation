@@ -8,7 +8,7 @@ using Meadow.Units;
 
 namespace Leds.PwmLedBarGraph_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

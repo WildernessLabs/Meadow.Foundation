@@ -8,7 +8,7 @@ using AU = Meadow.Units.Acceleration.UnitType;
 
 namespace Sensors.Motion.Adxl335_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

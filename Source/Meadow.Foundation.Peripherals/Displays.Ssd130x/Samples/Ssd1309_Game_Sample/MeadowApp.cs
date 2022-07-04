@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Displays.Ssd130x.Ssd1309_Game_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         MicroGraphics graphics;
         Ssd1309 display;

@@ -8,7 +8,7 @@ using Meadow.Foundation.Leds;
 
 namespace Leds.RgbPwmLed_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -28,21 +28,25 @@ namespace Leds.RgbPwmLed_Sample
             rgbPwmLeds = new List<RgbPwmLed>()
             {
                 new RgbPwmLed(
-                    Device.CreatePwmPort(Device.Pins.D02),
-                    Device.CreatePwmPort(Device.Pins.D03),
-                    Device.CreatePwmPort(Device.Pins.D04)),
+                    Device,
+                    Device.Pins.D02,
+                    Device.Pins.D03,
+                    Device.Pins.D04),
                 new RgbPwmLed(
-                    Device.CreatePwmPort(Device.Pins.D05),
-                    Device.CreatePwmPort(Device.Pins.D06),
-                    Device.CreatePwmPort(Device.Pins.D07)),
+                    Device,
+                    Device.Pins.D05,
+                    Device.Pins.D06,
+                    Device.Pins.D07),
                 new RgbPwmLed(
-                    Device.CreatePwmPort(Device.Pins.D08),
-                    Device.CreatePwmPort(Device.Pins.D09),
-                    Device.CreatePwmPort(Device.Pins.D10)),
+                    Device,
+                    Device.Pins.D08,
+                    Device.Pins.D09,
+                    Device.Pins.D10),
                 new RgbPwmLed(
-                    Device.CreatePwmPort(Device.Pins.D11),
-                    Device.CreatePwmPort(Device.Pins.D12),
-                    Device.CreatePwmPort(Device.Pins.D13))
+                    Device,
+                    Device.Pins.D11,
+                    Device.Pins.D12,
+                    Device.Pins.D13)
             };
 
             onRgbLed.SetColor(RgbLed.Colors.Green);

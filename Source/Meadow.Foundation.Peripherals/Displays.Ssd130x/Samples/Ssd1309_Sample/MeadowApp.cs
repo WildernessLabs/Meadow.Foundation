@@ -8,7 +8,7 @@ using Meadow.Units;
 
 namespace Displays.Ssd130x.Ssd1309_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

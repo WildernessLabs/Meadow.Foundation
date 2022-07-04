@@ -7,7 +7,7 @@ using Meadow.Units;
 
 namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         MicroGraphics graphics;
         Ssd1309 display;

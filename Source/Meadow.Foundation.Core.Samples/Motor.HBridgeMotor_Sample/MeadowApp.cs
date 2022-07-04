@@ -3,10 +3,11 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Motors;
+using Meadow.Units;
 
 namespace Motor.HBridgeMotor_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -18,8 +19,8 @@ namespace Motor.HBridgeMotor_Sample
 
             motor1 = new HBridgeMotor
             (
-                a1Port: Device.CreatePwmPort(Device.Pins.D07),
-                a2Port: Device.CreatePwmPort(Device.Pins.D08),
+                a1Port: Device.CreatePwmPort(Device.Pins.D07, new Frequency(100, Frequency.UnitType.Hertz)),
+                a2Port: Device.CreatePwmPort(Device.Pins.D08, new Frequency(100, Frequency.UnitType.Hertz)),
                 enablePort: Device.CreateDigitalOutputPort(Device.Pins.D09)
             );
             

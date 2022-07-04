@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Graphics
         resetPin: Device.Pins.D04,
     */
 
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         private MicroGraphics graphics;
 

@@ -14,7 +14,7 @@ using System.Reflection;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         RgbPwmLed onboardLed;
 

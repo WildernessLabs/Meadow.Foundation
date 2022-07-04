@@ -6,7 +6,7 @@ using System;
 
 namespace Sensors.Gnss.Mt3339_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
         Mt3339 gps;

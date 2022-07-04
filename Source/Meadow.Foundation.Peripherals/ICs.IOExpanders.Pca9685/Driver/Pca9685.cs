@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 
@@ -11,7 +12,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Pca9685
     {
         private readonly II2cPeripheral i2cPeripheral;
-        private readonly int frequency;
+        private readonly Frequency frequency;
 
         //# Registers/etc.
         protected const byte Mode1 = 0x00;
@@ -44,12 +45,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         readonly byte address;
 
-        public Pca9685(II2cBus i2cBus, byte address = (byte)Addresses.Default, int frequency = 100)
+        public Pca9685(II2cBus i2cBus, Frequency frequency, byte address = (byte)Addresses.Default)
         {
             i2CBus = i2cBus;
             this.address = address;
             i2cPeripheral = new I2cPeripheral(i2CBus, address);
             this.frequency = frequency;
+        }
+
+        public Pca9685(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        : this(i2cBus, new Frequency(IPwmOutputController.DefaultPwmFrequency, Frequency.UnitType.Hertz), address)
+        {
+
         }
 
         /// <summary>
@@ -147,11 +154,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             i2cPeripheral.WriteRegister(register, value);
         }
 
-        protected virtual void SetFrequency(int frequency)
+        protected virtual void SetFrequency(Frequency frequency)
         {
             double prescaleval = 25000000.0;  //  # 25MHz
             prescaleval = prescaleval / 4096.0;       //# 12-bit
-            prescaleval = prescaleval / frequency;
+            prescaleval = prescaleval / frequency.Hertz;
             prescaleval -= 1.0;
 
             double prescale = Math.Floor(prescaleval + 0.5);

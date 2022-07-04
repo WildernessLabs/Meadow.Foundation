@@ -6,14 +6,15 @@ using Meadow.Foundation.Leds;
 using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Peripherals.Sensors.Rotary;
+using Meadow.Units;
 
 namespace ElectronicSpeedController_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        float frequency = 50f;
+        Frequency frequency = new Frequency(50, Frequency.UnitType.Hertz);
         const float armMs = 0.5f;
         const float powerIncrement = 0.05f;
 

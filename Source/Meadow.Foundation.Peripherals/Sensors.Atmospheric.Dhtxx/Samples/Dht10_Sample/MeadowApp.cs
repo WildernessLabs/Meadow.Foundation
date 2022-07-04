@@ -4,7 +4,7 @@ using Meadow.Foundation.Sensors.Atmospheric.Dhtxx;
 
 namespace Dht10_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         Dht10 dht10;
 

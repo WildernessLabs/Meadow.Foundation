@@ -8,7 +8,7 @@ using Meadow.Hardware;
 
 namespace Displays.Tft.Gc9a01_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

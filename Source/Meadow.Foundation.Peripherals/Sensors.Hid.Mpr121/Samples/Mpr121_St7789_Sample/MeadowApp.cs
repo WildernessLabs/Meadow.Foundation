@@ -9,7 +9,7 @@ using Meadow.Units;
 
 namespace Sensors.Distance.Mpr121_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         Mpr121 sensor;
         St7789 display;

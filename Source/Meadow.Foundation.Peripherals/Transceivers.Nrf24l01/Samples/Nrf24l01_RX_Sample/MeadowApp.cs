@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Transceivers.Nrf24l01_RX_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         RgbLed led;
         Nrf24l01 radio;

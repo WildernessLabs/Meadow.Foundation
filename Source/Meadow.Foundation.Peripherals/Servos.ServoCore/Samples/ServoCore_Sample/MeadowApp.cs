@@ -8,7 +8,7 @@ using AU = Meadow.Units.Angle.UnitType;
 
 namespace Servos.Servo_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -18,7 +18,7 @@ namespace Servos.Servo_Sample
         {
             Console.WriteLine("Initializing...");
 
-            servo = new Servo(Device.CreatePwmPort(Device.Pins.D02), NamedServoConfigs.SG90);
+            servo = new Servo(Device, Device.Pins.D02, NamedServoConfigs.SG90);
 
             servo.RotateTo(new Angle(0, AU.Degrees));
 

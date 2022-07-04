@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ads1015_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         private Ads1x15 _adc;
 

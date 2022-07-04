@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using Meadow.Devices;
 using Meadow.Hardware;
+using static Meadow.Units.Frequency;
 
 namespace Meadow.Foundation.Motors
 {
@@ -46,10 +47,11 @@ namespace Meadow.Foundation.Motors
             IPin? inB1, IPin? inB2, IPin? pwmB,
             IPin? fault1, IPin? fault2,
             IPin? hbMode = null, IPin? tblkab = null) : this(
-                inA1: device.CreatePwmPort(inA1), inA2: device.CreatePwmPort(inA2),
+                inA1: device.CreatePwmPort(inA1, new Units.Frequency(100, UnitType.Hertz)), 
+                inA2: device.CreatePwmPort(inA2, new Units.Frequency(100, UnitType.Hertz)),
                 pwmA: device.CreateDigitalOutputPort(pwmA),
-                inB1: inB1 is null ? null : device.CreatePwmPort(inB1),
-                inB2: inB2 is null ? null : device.CreatePwmPort(inB2),
+                inB1: inB1 is null ? null : device.CreatePwmPort(inB1, new Units.Frequency(100, UnitType.Hertz)),
+                inB2: inB2 is null ? null : device.CreatePwmPort(inB2, new Units.Frequency(100, UnitType.Hertz)),
                 pwmB: pwmB is null ? null : device.CreateDigitalOutputPort(pwmB),
                 //fault1: null,
                 fault1 is null ? null : device.CreateDigitalInputPort(fault1),

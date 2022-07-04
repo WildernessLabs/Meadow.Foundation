@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BasicSensors.Atmospheric.SHT31D_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

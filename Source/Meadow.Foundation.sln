@@ -1044,6 +1044,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Ds3502", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ds3502_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Ds3502\Samples\Ds3502_Sample\Ds3502_Sample.csproj", "{A92F4AF5-7B31-4F48-A2FC-416CF74C1BBF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Logging", "..\..\Meadow.Logging\lib\Meadow.Logging.csproj", "{02C5745B-756A-49C4-A7A8-B8D07A818268}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2450,6 +2452,10 @@ Global
 		{A92F4AF5-7B31-4F48-A2FC-416CF74C1BBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A92F4AF5-7B31-4F48-A2FC-416CF74C1BBF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A92F4AF5-7B31-4F48-A2FC-416CF74C1BBF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{02C5745B-756A-49C4-A7A8-B8D07A818268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02C5745B-756A-49C4-A7A8-B8D07A818268}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02C5745B-756A-49C4-A7A8-B8D07A818268}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02C5745B-756A-49C4-A7A8-B8D07A818268}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2969,6 +2975,7 @@ Global
 		{C6E0BE66-399B-449A-B3A0-3D594EFFE1A1} = {853477A1-9B58-4893-AFDD-577471C62DB1}
 		{8EEDC98C-AC87-490C-8C36-846EE82E9D0D} = {853477A1-9B58-4893-AFDD-577471C62DB1}
 		{A92F4AF5-7B31-4F48-A2FC-416CF74C1BBF} = {C6E0BE66-399B-449A-B3A0-3D594EFFE1A1}
+		{02C5745B-756A-49C4-A7A8-B8D07A818268} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

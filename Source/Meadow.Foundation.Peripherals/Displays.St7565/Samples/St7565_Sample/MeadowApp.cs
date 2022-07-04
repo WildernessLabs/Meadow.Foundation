@@ -6,7 +6,7 @@ using Meadow.Foundation.Graphics;
 
 namespace Displays.ST7565_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

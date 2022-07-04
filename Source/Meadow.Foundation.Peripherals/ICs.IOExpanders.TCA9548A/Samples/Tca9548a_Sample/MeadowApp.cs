@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace ICs.IOExpanders.Tca9685_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

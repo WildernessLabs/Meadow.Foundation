@@ -7,7 +7,7 @@ using Meadow.Foundation.Sensors.Distance;
 namespace Sensors.Distance.SFSR02_Sample
 {
     /* Driver in development */
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

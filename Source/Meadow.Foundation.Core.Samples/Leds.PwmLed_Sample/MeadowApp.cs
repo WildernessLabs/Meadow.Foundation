@@ -4,10 +4,11 @@ using System.Threading;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
+using Meadow.Units;
 
 namespace Leds.PwmLed_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -26,18 +27,18 @@ namespace Leds.PwmLed_Sample
 
             pwmLeds = new List<PwmLed>
             {
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D02), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D03), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D04), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D05), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D06), TypicalForwardVoltage.Blue), // This pin throws an exception as PWM Port
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D07), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D08), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D09), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D10), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D11), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D12), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D13), TypicalForwardVoltage.Blue)
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D02, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D03, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D04, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D05, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D06, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue), // This pin throws an exception as PWM Port
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D07, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D08, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D09, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D10, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D11, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D12, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
+                new PwmLed(Device.CreatePwmPort(Device.Pins.D13, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue)
             };
 
             onRgbLed.SetColor(RgbLed.Colors.Green);

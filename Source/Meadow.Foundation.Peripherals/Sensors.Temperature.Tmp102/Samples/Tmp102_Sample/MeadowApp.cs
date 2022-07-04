@@ -9,7 +9,7 @@ namespace Sensors.Temperature.Tmp102_Sample
     // TODO: This sample needs a rewrite. See the other atmospheric samples for
     // an example of the sample pattern.
 
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

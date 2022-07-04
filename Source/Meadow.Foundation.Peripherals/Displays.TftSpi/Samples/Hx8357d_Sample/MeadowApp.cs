@@ -11,7 +11,7 @@ using Meadow.Units;
 
 namespace Displays.Tft.Hx8357d_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

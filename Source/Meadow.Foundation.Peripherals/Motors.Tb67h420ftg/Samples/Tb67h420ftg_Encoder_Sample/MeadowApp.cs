@@ -10,7 +10,7 @@ using System;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //RgbPwmLed onboardLed;
         Tb67h420ftg motorDriver;

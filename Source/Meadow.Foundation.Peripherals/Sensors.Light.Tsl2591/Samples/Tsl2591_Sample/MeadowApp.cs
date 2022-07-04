@@ -6,7 +6,7 @@ using Meadow.Foundation.Sensors.Light;
 
 namespace Sensors.Light.Tsl2591_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

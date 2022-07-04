@@ -7,7 +7,7 @@ using Meadow.Peripherals.Switches;
 
 namespace Sensors.Switches.DipSwitch_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

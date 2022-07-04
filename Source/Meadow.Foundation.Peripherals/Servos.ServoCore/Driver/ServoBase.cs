@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Servos
         protected float CalculateDutyCycle(float pulseDuration)
         {
             // the pulse duration is dependent on the frequency we're driving the servo at
-            return pulseDuration / ((1.0f / (float)Config.Frequency) * 1000000f);
+            return pulseDuration / ((1.0f / (float)Config.Frequency.Hertz) * 1000000f);
         }
 
         protected virtual void SendCommandPulse(float pulseDuration)
