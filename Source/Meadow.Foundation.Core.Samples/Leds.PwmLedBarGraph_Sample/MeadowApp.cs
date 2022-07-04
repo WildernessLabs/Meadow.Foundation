@@ -3,8 +3,8 @@ using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using Meadow.Hardware;
 using System;
-using System.Threading;
 using Meadow.Units;
+using System.Threading.Tasks;
 
 namespace Leds.PwmLedBarGraph_Sample
 {
@@ -14,7 +14,7 @@ namespace Leds.PwmLedBarGraph_Sample
 
         PwmLedBarGraph pwmLedBarGraph;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -34,14 +34,14 @@ namespace Leds.PwmLedBarGraph_Sample
             };
             pwmLedBarGraph = new PwmLedBarGraph(Device, pins, new Voltage(3.3));
 
-            TestPwmLedBarGraph();
+            return Task.CompletedTask;
         }
 
-        protected void TestPwmLedBarGraph()
+        public override async Task Run()
         {
             Console.WriteLine("TestLedBarGraph...");
 
-            decimal percentage = 0;
+            double percentage = 0;
 
             while (true)
             {
@@ -49,60 +49,60 @@ namespace Leds.PwmLedBarGraph_Sample
                 for (int i = 0; i < pwmLedBarGraph.Count; i++)
                 {
                     pwmLedBarGraph.SetLed(i, true);
-                    Thread.Sleep(300);
+                    await Task.Delay(300);
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Turning them off using SetLed...");
                 for (int i = pwmLedBarGraph.Count - 1; i >= 0; i--)
                 {
                     pwmLedBarGraph.SetLed(i, false);
-                    Thread.Sleep(300);
+                    await Task.Delay(300);
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Turning them on using Percentage...");
                 while (percentage < 1)
                 {
-                    percentage += 0.01m;
-                    pwmLedBarGraph.Percentage = (float) Math.Min(1.0m, percentage);
-                    Thread.Sleep(100);
+                    percentage += 0.01;
+                    pwmLedBarGraph.Percentage = (float) Math.Min(1.0, percentage);
+                    await Task.Delay(100);
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Turning them off using Percentage...");
                 while (percentage > 0)
                 {
-                    percentage -= 0.01m;
-                    pwmLedBarGraph.Percentage = (float)Math.Max(0.0m, percentage);
-                    Thread.Sleep(100);
+                    percentage -= 0.01;
+                    pwmLedBarGraph.Percentage = (float)Math.Max(0.0, percentage);
+                    await Task.Delay(100);
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Bar blinking on and off...");
                 pwmLedBarGraph.StartBlink();
-                Thread.Sleep(3000);
+                await Task.Delay(3000);
                 pwmLedBarGraph.Stop();
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Bar blinking with high and low brightness...");
                 pwmLedBarGraph.StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 1f, 0.25f);
-                Thread.Sleep(3000);
+                await Task.Delay(3000);
                 pwmLedBarGraph.Stop();
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Bar pulsing...");
                 pwmLedBarGraph.StartPulse();
-                Thread.Sleep(3000);
+                await Task.Delay(3000);
                 pwmLedBarGraph.Stop();
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
             }
         }
 

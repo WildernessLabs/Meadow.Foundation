@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Generators;
@@ -13,14 +14,20 @@ namespace Generators.SoftPwmPort_Sample
 
         protected SoftPwmPort softPwmPort;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
             IDigitalOutputPort digiOut = Device.CreateDigitalOutputPort(Device.Pins.D00);
-            softPwmPort = new SoftPwmPort(digiOut);           
-            
+            softPwmPort = new SoftPwmPort(digiOut);
+
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             TestSoftPwmPort();
+            return Task.CompletedTask;
         }
 
         protected void TestSoftPwmPort()

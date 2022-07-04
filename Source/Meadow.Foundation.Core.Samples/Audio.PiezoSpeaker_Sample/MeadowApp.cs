@@ -13,13 +13,18 @@ namespace Audio.PiezoSpeaker_Sample
 
         protected PiezoSpeaker piezoSpeaker;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
             piezoSpeaker = new PiezoSpeaker(Device.CreatePwmPort(Device.Pins.D05, new Frequency(100, Frequency.UnitType.Hertz)));
 
-            _ = PlayTriad();
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
+            return PlayTriad();
         }
 
         async Task PlayTriad()
