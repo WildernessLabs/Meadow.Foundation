@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.ePaper;
@@ -10,7 +11,9 @@ namespace Displays.ePaper.IL0398_Sample
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        MicroGraphics graphics;
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize ...");
  
@@ -23,16 +26,23 @@ namespace Displays.ePaper.IL0398_Sample
                 width: 300,
                 height: 400);
 
-            var graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display);
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             //any color but black will show the ePaper alternate color 
             graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Red, false);
 
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(2, 2, "IL0398", Meadow.Foundation.Color.Black);
+            graphics.DrawText(2, 2, "IL0373", Meadow.Foundation.Color.Black);
             graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
 
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

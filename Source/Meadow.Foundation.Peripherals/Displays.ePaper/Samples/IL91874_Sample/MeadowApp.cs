@@ -1,16 +1,19 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.ePaper;
 using Meadow.Foundation.Graphics;
+using System;
+using System.Threading.Tasks;
 
 namespace Displays.ePaper.IL91874_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
-        
-        public MeadowApp()
+
+        MicroGraphics graphics;
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize ...");
  
@@ -23,8 +26,13 @@ namespace Displays.ePaper.IL91874_Sample
                 width: 176,
                 height: 264);
 
-            var graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display);
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             //any color but black will show the ePaper alternate color 
             graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Red, false);
 
@@ -33,6 +41,8 @@ namespace Displays.ePaper.IL91874_Sample
             graphics.DrawText(2, 20, "Hello, Honeybees!", Meadow.Foundation.Color.Black);
 
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

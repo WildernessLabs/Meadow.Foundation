@@ -1,14 +1,17 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.ePaper;
 using Meadow.Foundation.Graphics;
+using System;
+using System.Threading.Tasks;
 
 namespace Displays.ePaper.SSD1608_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
+
+        MicroGraphics graphics;
 
         public MeadowApp()
         {
@@ -23,15 +26,20 @@ namespace Displays.ePaper.SSD1608_Sample
                 width: 200,
                 height: 200);
 
-            var graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display);
+        }
 
-           graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Black);
+        public override Task Run()
+        {
+            graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Black);
 
             graphics.CurrentFont = new Font8x12();
             graphics.DrawText(2, 2, "SSD1608", Meadow.Foundation.Color.Black);
             graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
 
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>
