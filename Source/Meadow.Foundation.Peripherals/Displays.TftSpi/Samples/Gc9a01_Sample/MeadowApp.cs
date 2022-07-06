@@ -1,10 +1,11 @@
-﻿using System;
-using Meadow;
-using Meadow.Units;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
+using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Displays.Tft.Gc9a01_Sample
 {
@@ -14,7 +15,7 @@ namespace Displays.Tft.Gc9a01_Sample
 
         MicroGraphics graphics;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing ...");
 
@@ -25,14 +26,12 @@ namespace Displays.Tft.Gc9a01_Sample
 
             var display = new Gc9a01
             (
-                device: Device, 
+                device: Device,
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00
-            )
-            {
-            };
+            );
 
             graphics = new MicroGraphics(display)
             {
@@ -40,12 +39,19 @@ namespace Displays.Tft.Gc9a01_Sample
                 CurrentFont = new Font12x20()
             };
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             graphics.Clear();
             graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
             graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, false);
             graphics.DrawCircle(50, 50, 40, Meadow.Foundation.Color.Blue, false);
             graphics.DrawText(5, 5, "Meadow F7");
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

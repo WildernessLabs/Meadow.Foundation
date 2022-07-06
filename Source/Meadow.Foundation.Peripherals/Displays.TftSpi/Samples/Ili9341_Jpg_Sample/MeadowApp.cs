@@ -1,14 +1,15 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using SimpleJpegDecoder;
+using System;
+using System.IO;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Displays.TftSpi.Ili9341_Jpg_Sample
 {
@@ -17,7 +18,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
         Ili9341 display;
         MicroGraphics graphics;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -31,39 +32,12 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
                 dcPin: Device.Pins.D14,
                 resetPin: Device.Pins.D15,
                 width: 240, height: 320
-            )
-            {
-            };
+            );
 
             graphics = new MicroGraphics(display);
             graphics.IgnoreOutOfBoundsPixels = true;
 
-            int delay = 5000;
-
-            while (true)
-            {
-                JpegTest();
-
-                Thread.Sleep(delay);
-
-                CharacterTest();
-
-                Thread.Sleep(delay);
-
-                DrawMeadowLogo();
-
-                Thread.Sleep(delay);
-
-                FontTest();
-
-                Thread.Sleep(delay);
-
-                TestDisplay();
-
-                Thread.Sleep(delay);
-
-                TestDisplay();
-            }
+            return base.Initialize();
         }
 
         void JpegTest()
@@ -146,7 +120,6 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
             }
 
             graphics.Show();
-
         }
 
         void CharacterTest()
@@ -234,6 +207,38 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
 
             graphics.DrawText(5, 5, "Meadow F7 SPI", Color.White);
             graphics.Show();
+        }
+
+        public override Task Run()
+        {
+            int delay = 5000;
+
+            while (true)
+            {
+                JpegTest();
+
+                Thread.Sleep(delay);
+
+                CharacterTest();
+
+                Thread.Sleep(delay);
+
+                DrawMeadowLogo();
+
+                Thread.Sleep(delay);
+
+                FontTest();
+
+                Thread.Sleep(delay);
+
+                TestDisplay();
+
+                Thread.Sleep(delay);
+
+                TestDisplay();
+            }
+
+            return base.Run();
         }
     }
 }

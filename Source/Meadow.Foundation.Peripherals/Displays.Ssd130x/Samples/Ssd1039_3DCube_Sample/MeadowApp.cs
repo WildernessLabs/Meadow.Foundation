@@ -1,9 +1,10 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Graphics;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
 {
@@ -20,16 +21,10 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
         int[,] cubeWireframe = new int[12, 3];
         int[,] cubeVertices;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             // CreateSpiDisplay();
             CreateI2CDisplay();
-
-            /*   display.Clear(true);
-
-               Console.WriteLine("Create Graphics Library");
-               TestDisplayGraphicsAPI();
-               Thread.Sleep(500); */
 
             int cubeSize = 20;
 
@@ -57,10 +52,7 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
 
             graphics = new MicroGraphics(display);
 
-            Show3dCube();
-
-            //  Grid();
-
+            return base.Initialize();
         }
 
         void CreateSpiDisplay()
@@ -205,6 +197,21 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
             graphics.DrawText(0, 48, "86x IO perf");
 
             graphics.Show();
+        }
+
+        public override Task Run()
+        {
+            /*   display.Clear(true);
+
+               Console.WriteLine("Create Graphics Library");
+               TestDisplayGraphicsAPI();
+               Thread.Sleep(500); */
+
+            Show3dCube();
+
+            //  Grid();
+
+            return base.Run();
         }
     }
 }

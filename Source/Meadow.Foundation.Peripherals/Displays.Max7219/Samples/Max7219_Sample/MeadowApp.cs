@@ -1,8 +1,9 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -12,17 +13,13 @@ namespace MeadowApp
 
         Max7219 display;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize...");
 
             display = new Max7219(Device, Device.CreateSpiBus(), Device.Pins.D01, 1, Max7219.Max7219Mode.Character);
 
-            while (true)
-            {
-                TestDigitalMode();
-                TestCharacterMode();
-            }
+            return base.Initialize();
         }
 
         void TestCharacterMode()
@@ -52,6 +49,15 @@ namespace MeadowApp
                     display.SetDigit(i, d);
                 }
                 display.Show();
+            }
+        }
+
+        public override Task Run()
+        {
+            while (true)
+            {
+                TestDigitalMode();
+                TestCharacterMode();
             }
         }
 

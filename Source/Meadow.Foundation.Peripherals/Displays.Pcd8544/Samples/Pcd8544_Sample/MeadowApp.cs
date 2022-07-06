@@ -1,8 +1,9 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using System;
+using System.Threading.Tasks;
 
 namespace Displays.Pcd8854_Sample
 {
@@ -10,7 +11,9 @@ namespace Displays.Pcd8854_Sample
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        MicroGraphics graphics;
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -25,14 +28,21 @@ namespace Displays.Pcd8854_Sample
                 resetPin: Device.Pins.D02
             );
 
-            var graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display);
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             graphics.Clear(true);
             graphics.CurrentFont = new Font8x12();
             graphics.DrawText(0, 0, "PCD8544");
             graphics.DrawRectangle(5, 14, 30, 10, true);
 
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

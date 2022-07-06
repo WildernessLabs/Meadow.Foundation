@@ -1,9 +1,10 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Graphics;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Displays.Ssd130x.Ssd1306_Sample
 {
@@ -14,19 +15,14 @@ namespace Displays.Ssd130x.Ssd1306_Sample
         MicroGraphics graphics;
         Ssd1306 display;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             //CreateSpiDisplay();
             CreateI2CDisplay();
 
             graphics = new MicroGraphics(display);
 
-            graphics.Clear();
-            graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(0, 0, "Meadow F7", Meadow.Foundation.Color.White);
-            graphics.DrawRectangle(5, 14, 30, 10, true);
-
-            graphics.Show();
+            return base.Initialize();
         }
 
         void CreateSpiDisplay()
@@ -54,6 +50,18 @@ namespace Displays.Ssd130x.Ssd1306_Sample
                 address: 60,
                 displayType: Ssd1306.DisplayType.OLED128x32
             );
+        }
+
+        public override Task Run()
+        {
+            graphics.Clear();
+            graphics.CurrentFont = new Font8x12();
+            graphics.DrawText(0, 0, "Meadow F7", Meadow.Foundation.Color.White);
+            graphics.DrawRectangle(5, 14, 30, 10, true);
+
+            graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

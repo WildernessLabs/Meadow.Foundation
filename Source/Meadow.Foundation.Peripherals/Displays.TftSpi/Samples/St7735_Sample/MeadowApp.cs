@@ -1,9 +1,10 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
+using System;
+using System.Threading.Tasks;
 
 namespace Displays.TftSpi.St7735_Sample
 {
@@ -11,7 +12,9 @@ namespace Displays.TftSpi.St7735_Sample
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        MicroGraphics graphics;
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing ...");
 
@@ -24,12 +27,17 @@ namespace Displays.TftSpi.St7735_Sample
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                width: 128, 
-                height: 160, 
+                width: 128,
+                height: 160,
                 St7735.DisplayType.ST7735R);
 
-            var graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display);
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             graphics.Clear();
 
             graphics.DrawCircle(60, 60, 20, Color.Purple);
@@ -43,6 +51,8 @@ namespace Displays.TftSpi.St7735_Sample
             graphics.DrawLine(10, 120, 110, 130, Color.SlateGray);
 
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

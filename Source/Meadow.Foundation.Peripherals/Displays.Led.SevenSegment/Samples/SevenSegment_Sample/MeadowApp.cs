@@ -1,8 +1,9 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.Led;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Displays.Led.SevenSegment_Sample
 {
@@ -10,11 +11,13 @@ namespace Displays.Led.SevenSegment_Sample
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        SevenSegment sevenSegment;
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
-            var sevenSegment = new SevenSegment
+            sevenSegment = new SevenSegment
             (
                 portA: Device.CreateDigitalOutputPort(Device.Pins.D14),
                 portB: Device.CreateDigitalOutputPort(Device.Pins.D15),
@@ -27,7 +30,14 @@ namespace Displays.Led.SevenSegment_Sample
                 isCommonCathode: false
             );
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             sevenSegment.SetDisplay(character: '1', showDecimal: true);
+
+            return base.Run();
         }
 
         //<!=SNOP=>

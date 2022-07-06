@@ -1,9 +1,10 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -12,27 +13,7 @@ namespace MeadowApp
         MicroGraphics graphics;
         Max7219 display;
 
-        public MeadowApp()
-        {
-            Init();
-
-            while (true)
-            {
-                ShowText();
-                Thread.Sleep(2000);
-
-                ScrollText();
-                Thread.Sleep(2000);
-
-                Counter();
-                Thread.Sleep(2000);
-
-                DrawPixels();
-                Thread.Sleep(2000);
-            }
-        }
-
-        void Init()
+        public override Task Initialize()
         {
             Console.WriteLine("Init...");
 
@@ -61,6 +42,8 @@ namespace MeadowApp
             graphics.Show();
 
             Thread.Sleep(2000);
+
+            return base.Initialize();
         }
 
         void ScrollText()
@@ -113,6 +96,24 @@ namespace MeadowApp
                 graphics.Clear();
                 graphics.DrawText(0, 0, $"{i}");
                 graphics.Show();
+            }
+        }
+
+        public override Task Run()
+        {
+            while (true)
+            {
+                ShowText();
+                Thread.Sleep(2000);
+
+                ScrollText();
+                Thread.Sleep(2000);
+
+                Counter();
+                Thread.Sleep(2000);
+
+                DrawPixels();
+                Thread.Sleep(2000);
             }
         }
     }

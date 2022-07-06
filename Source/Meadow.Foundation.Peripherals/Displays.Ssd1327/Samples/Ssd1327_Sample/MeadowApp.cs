@@ -5,6 +5,7 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -14,7 +15,7 @@ namespace MeadowApp
 
         MicroGraphics graphics;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize display...");
 
@@ -27,14 +28,21 @@ namespace MeadowApp
             graphics = new MicroGraphics(display);
             graphics.CurrentFont = new Font8x12();
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             graphics.Clear();
 
-            for(int i = 10; i > 0; i--)
+            for (int i = 10; i > 0; i--)
             {   //interate across different brightnesses
                 graphics.DrawText(0, i * 11, "SSD1327", Color.FromRgb(i * 0.1, i * 0.1, i * 0.1));
-            } 
+            }
 
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

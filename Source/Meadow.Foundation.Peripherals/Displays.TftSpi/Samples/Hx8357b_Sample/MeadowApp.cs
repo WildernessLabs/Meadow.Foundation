@@ -1,13 +1,14 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Displays.Tft.Hx8357b_Sample
 {
@@ -17,7 +18,7 @@ namespace Displays.Tft.Hx8357b_Sample
 
         MicroGraphics graphics;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing ...");
 
@@ -27,20 +28,21 @@ namespace Displays.Tft.Hx8357b_Sample
             Console.WriteLine("Create display driver instance");
 
             var display = new Hx8357b(
-			    device: Device, 
-				spiBus: spiBus,
+                device: Device,
+                spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
-                width: 320, height: 480, displayColorMode: ColorType.Format16bppRgb565)
-            {
-            };
-
-            Console.WriteLine("Create graphics lib");
+                width: 320, height: 480, displayColorMode: ColorType.Format16bppRgb565);
 
             graphics = new MicroGraphics(display);
             graphics.IgnoreOutOfBoundsPixels = true;
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             graphics.Clear();
 
             graphics.DrawRectangle(120, 0, 120, 220, Color.White, true);
@@ -52,6 +54,8 @@ namespace Displays.Tft.Hx8357b_Sample
             graphics.DrawRectangle(0, 120, 120, 20, Color.Orange, true);
 
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>
