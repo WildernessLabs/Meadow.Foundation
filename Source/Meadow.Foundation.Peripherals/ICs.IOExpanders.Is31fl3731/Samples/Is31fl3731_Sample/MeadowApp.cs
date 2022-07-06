@@ -1,8 +1,9 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ICs.IOExpanders.Is31fl3731_Sample
 {
@@ -11,13 +12,18 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
         //<!=SNIP=>
 
         Is31fl3731 iS31FL3731;
-        public MeadowApp()
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
-
             iS31FL3731 = new Is31fl3731(Device.CreateI2cBus());
             iS31FL3731.Initialize();
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             iS31FL3731.ClearAllFrames();
             iS31FL3731.SetFrame(frame: 0);
             iS31FL3731.DisplayFrame(frame: 0);
@@ -26,12 +32,14 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
             for (byte i = 0; i <= 144; i++)
             {
                 iS31FL3731.SetLedPwm(
-                    frame: 0, 
-                    ledIndex: i, 
+                    frame: 0,
+                    ledIndex: i,
                     brightness: 128);
 
                 Thread.Sleep(50);
             }
+
+            return base.Run();
         }
 
         //<!=SNOP=>
@@ -51,7 +59,6 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
 
             iS31FL3731.Clear();
         }
-
 
         void DarkToBright()
         {

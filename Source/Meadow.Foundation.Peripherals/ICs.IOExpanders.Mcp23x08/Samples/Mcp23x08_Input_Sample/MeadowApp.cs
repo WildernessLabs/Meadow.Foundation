@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Meadow;
+using Meadow.Devices;
+using Meadow.Foundation.ICs.IOExpanders;
+using Meadow.Hardware;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Meadow;
-using Meadow.Devices;
-using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Hardware;
+using System.Threading.Tasks;
 
 namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 {
@@ -14,60 +15,27 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
     {
         Mcp23x08 _mcp;
 
-        public MeadowApp()
+        public override async Task Initialize()
         {
             Console.WriteLine("Initializing.");
 
-            if (ConfigurePeripherals())
-            {
-                TestInterrupts(); TestInterrupts();
-            }
-
-            //while (true) {
-            //    TestBulkPinReads(10);
-            //    TestDigitalInputPorts(10);
-            //}
-
-        }
-
-        public bool ConfigurePeripherals()
-        {
             IDigitalInputPort interruptPort =
                 Device.CreateDigitalInputPort(
                     Device.Pins.D00,
                     InterruptMode.EdgeRising);
-            // create a new mcp with all the address pins pulled low for
-            // an address of 0x20/32
-            while (true)
-            {
-                try
-                {
+            
                     // create a new mcp with all the address pins pulled low for
                     // an address of 0x20/32
-                    _mcp = new Mcp23x08(Device.CreateI2cBus(), false, false, false, interruptPort);
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Configuring peripherals failed: {ex.Message}");
-                    /*
-                    Console.WriteLine($"Pulsing outputs...");
-                    while (true)
-                    {
-                        using (var o1 = Device.CreateDigitalOutputPort(Device.Pins.D07, true))
-                        using (var o2 = Device.CreateDigitalOutputPort(Device.Pins.D08, true))
-                        {
-                            Console.WriteLine($".");
-                            Thread.Sleep(500);
-                            o1.State = o2.State = false;
-                            Thread.Sleep(500);
-                            o1.State = o2.State = true;
-                        }
-                    }
-                    */
-                }
-                Thread.Sleep(1000);
-            }
+            _mcp = new Mcp23x08(Device.CreateI2cBus(), false, false, false, interruptPort);
+
+            await Task.Delay(1000);
+        }
+
+        public override Task Run()
+        {
+            TestInterrupts();
+
+            return base.Run();
         }
 
         void TestBulkPinReads(int loopCount)
