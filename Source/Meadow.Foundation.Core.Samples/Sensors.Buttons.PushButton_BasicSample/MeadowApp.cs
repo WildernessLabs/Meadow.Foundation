@@ -1,10 +1,11 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -18,12 +19,7 @@ namespace MeadowApp
         RgbPwmLed onboardLed;
         PushButton pushButton;
 
-        public MeadowApp()
-        {
-            Initialize();
-        }
-
-        void Initialize()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
 
@@ -68,6 +64,8 @@ namespace MeadowApp
             };
 
             Console.WriteLine("Hardware initialized.");
+
+            return Task.CompletedTask;
         }
 
     }

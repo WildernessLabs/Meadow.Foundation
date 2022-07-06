@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using Meadow.Units;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Leds.PwmLed_Sample
 {
@@ -14,7 +14,7 @@ namespace Leds.PwmLed_Sample
 
         List<PwmLed> pwmLeds;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -43,10 +43,10 @@ namespace Leds.PwmLed_Sample
 
             onRgbLed.SetColor(RgbLed.Colors.Green);
 
-            TestPwmLeds();
+            return Task.CompletedTask;
         }
 
-        protected void TestPwmLeds()
+        public override async Task Run()
         {
             Console.WriteLine("TestPwmLeds...");
 
@@ -58,67 +58,67 @@ namespace Leds.PwmLed_Sample
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.IsOn = true;
-                    Thread.Sleep(1000);
+                    await Task.Delay(1000);
                     pwmLed.IsOn = false;
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Blinking the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartBlink();
-                    Thread.Sleep(3000);
+                    await Task.Delay(3000);
                     pwmLed.Stop();
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Blinking the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-                    Thread.Sleep(3000);
+                    await Task.Delay(3000);
                     pwmLed.Stop();
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Pulsing the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartPulse();
-                    Thread.Sleep(1000);
+                    await Task.Delay(1000);
                     pwmLed.Stop();
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Pulsing the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartPulse();
-                    Thread.Sleep(1000);
+                    await Task.Delay(1000);
                     pwmLed.Stop();
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Set brightness the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.Brightness = 0.25f;
-                    Thread.Sleep(250);
+                    await Task.Delay(250);
                     pwmLed.Brightness = 0.5f;
-                    Thread.Sleep(250);
+                    await Task.Delay(250);
                     pwmLed.Brightness = 0.75f;
-                    Thread.Sleep(250);
+                    await Task.Delay(250);
                     pwmLed.Brightness = 1.0f;
-                    Thread.Sleep(250);
+                    await Task.Delay(250);
                     pwmLed.Stop();
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
             }
         }
 

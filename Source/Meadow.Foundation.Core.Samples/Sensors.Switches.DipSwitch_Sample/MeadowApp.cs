@@ -1,9 +1,10 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Switches;
 using Meadow.Hardware;
 using Meadow.Peripherals.Switches;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Switches.DipSwitch_Sample
 {
@@ -13,7 +14,7 @@ namespace Sensors.Switches.DipSwitch_Sample
 
         protected DipSwitch dipSwitch;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -29,6 +30,8 @@ namespace Sensors.Switches.DipSwitch_Sample
             };
 
             Console.WriteLine("DipSwitch...");
+
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

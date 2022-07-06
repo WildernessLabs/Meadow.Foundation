@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Leds.RgbPwmLed_Sample
 {
@@ -14,7 +15,7 @@ namespace Leds.RgbPwmLed_Sample
 
         List<RgbPwmLed> rgbPwmLeds;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -51,10 +52,10 @@ namespace Leds.RgbPwmLed_Sample
 
             onRgbLed.SetColor(RgbLed.Colors.Green);
 
-            TestRgbPwmLed();
+            return Task.CompletedTask;
         }
 
-        protected void TestRgbPwmLed()
+        public override Task Run()
         {
             Console.WriteLine("TestRgbPwmLed...");
 

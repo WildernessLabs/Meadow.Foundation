@@ -1,8 +1,9 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Peripherals.Sensors.Rotary;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Rotary.RotaryEncoder_Sample
 {
@@ -13,12 +14,7 @@ namespace Sensors.Rotary.RotaryEncoder_Sample
         protected int value = 0;
         protected RotaryEncoder rotaryEncoder;
 
-        public MeadowApp()
-        {
-            Initialize();
-        }
-
-        void Initialize()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing Hardware...");
 
@@ -48,6 +44,8 @@ namespace Sensors.Rotary.RotaryEncoder_Sample
             rotaryEncoder.Subscribe(observer);
 
             Console.WriteLine("Hardware initialization complete.");
+
+            return Task.CompletedTask;
         }
 
         void RotaryEncoder_Rotated(object sender, RotaryChangeResult e)

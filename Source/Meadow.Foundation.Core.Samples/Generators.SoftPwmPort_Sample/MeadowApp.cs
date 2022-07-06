@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Generators;
 using Meadow.Hardware;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Generators.SoftPwmPort_Sample
 {

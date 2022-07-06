@@ -2,8 +2,8 @@
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using Meadow.Hardware;
-using System;
 using Meadow.Units;
+using System;
 using System.Threading.Tasks;
 
 namespace Leds.PwmLedBarGraph_Sample

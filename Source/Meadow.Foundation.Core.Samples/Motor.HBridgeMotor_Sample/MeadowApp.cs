@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Motors;
@@ -13,7 +14,7 @@ namespace Motor.HBridgeMotor_Sample
 
         protected HBridgeMotor motor1;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -23,11 +24,11 @@ namespace Motor.HBridgeMotor_Sample
                 a2Port: Device.CreatePwmPort(Device.Pins.D08, new Frequency(100, Frequency.UnitType.Hertz)),
                 enablePort: Device.CreateDigitalOutputPort(Device.Pins.D09)
             );
-            
-            TestMotor();
+
+            return Task.CompletedTask;
         }
 
-        protected void TestMotor()
+        public override async Task Run()
         {
             Console.WriteLine("TestMotor...");
 
@@ -35,15 +36,15 @@ namespace Motor.HBridgeMotor_Sample
             {
                 // Motor Forwards
                 motor1.Power = 1f;
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 // Motor Stops
                 motor1.Power = 0f;
-                Thread.Sleep(500);
+                await Task.Delay(500);
 
                 // Motor Backwards
                 motor1.Power = -1f;
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
             }
         }
 

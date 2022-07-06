@@ -1,8 +1,9 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Switches;
 using Meadow.Hardware;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Switches.SpdtSwitch_Sample
 {
@@ -12,7 +13,7 @@ namespace Sensors.Switches.SpdtSwitch_Sample
 
         protected SpdtSwitch spdtSwitch;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -23,6 +24,8 @@ namespace Sensors.Switches.SpdtSwitch_Sample
             };
 
             Console.WriteLine("SpdtSwitch ready...");
+
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

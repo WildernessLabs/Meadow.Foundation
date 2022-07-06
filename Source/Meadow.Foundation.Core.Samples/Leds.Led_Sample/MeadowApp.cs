@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Leds.Led_Sample

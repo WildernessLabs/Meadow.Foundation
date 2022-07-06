@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
+using System;
 using System.Threading.Tasks;
 
 namespace Leds.PwmLed_Onboard_Sample
@@ -35,19 +34,19 @@ namespace Leds.PwmLed_Onboard_Sample
         {
             for (int i = 0; i < loopCount; i++) {
                 Console.WriteLine("Blue On @ 1.0");
-                bluePwmLed.SetBrightness(1);
+                bluePwmLed.Brightness = 1;
                 await Task.Delay(1000);
 
                 Console.WriteLine("Blue at 98.5%");
-                bluePwmLed.SetBrightness(0.985f);
+                bluePwmLed.Brightness = 0.985f;
                 await Task.Delay(1000);
 
                 Console.WriteLine("Blue Off");
-                bluePwmLed.SetBrightness(0);
+                bluePwmLed.Brightness = 0;
                 await Task.Delay(1000);
 
                 Console.WriteLine("Blue 50%");
-                bluePwmLed.SetBrightness(0.5f);
+                bluePwmLed.Brightness = 0.5f;
                 await Task.Delay(1000);
                 bluePwmLed.Stop();
             }

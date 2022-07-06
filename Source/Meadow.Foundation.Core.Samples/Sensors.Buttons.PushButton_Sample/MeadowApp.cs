@@ -7,6 +7,7 @@ using Meadow.Hardware;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensors.Buttons.PushButton_Sample
 {
@@ -17,7 +18,7 @@ namespace Sensors.Buttons.PushButton_Sample
         RgbPwmLed led;
         List<PushButton> pushButtons;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -25,6 +26,8 @@ namespace Sensors.Buttons.PushButton_Sample
             TestMultiplePorts();
 
             Console.WriteLine("PushButton(s) ready!!!");
+
+            return Task.CompletedTask;
         }
 
         void TestAllResistorTypes()

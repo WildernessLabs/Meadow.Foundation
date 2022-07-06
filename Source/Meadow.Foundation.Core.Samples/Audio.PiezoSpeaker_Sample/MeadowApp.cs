@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Audio;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Audio.PiezoSpeaker_Sample
 {
@@ -22,12 +22,7 @@ namespace Audio.PiezoSpeaker_Sample
             return Task.CompletedTask;
         }
 
-        public override Task Run()
-        {
-            return PlayTriad();
-        }
-
-        async Task PlayTriad()
+        public override async Task Run()
         {
             for (int i = 0; i < 5; i++)
             {
