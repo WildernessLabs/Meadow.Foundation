@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.RTCs;
+using System;
+using System.Threading.Tasks;
 
 namespace RTCs.DS1307_Sample
 {
@@ -10,12 +10,19 @@ namespace RTCs.DS1307_Sample
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        Ds1307 rtc;
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
-            var rtc = new Ds1307(Device.CreateI2cBus());
+            rtc = new Ds1307(Device.CreateI2cBus());
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             var dateTime = new DateTime();
             var running = rtc.IsRunning;
 
@@ -26,7 +33,7 @@ namespace RTCs.DS1307_Sample
                 Console.WriteLine(" Starting RTC...");
                 rtc.IsRunning = true;
             }
-  
+
             dateTime = rtc.GetTime();
             Console.WriteLine($" RTC current time is: {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
 
@@ -37,7 +44,7 @@ namespace RTCs.DS1307_Sample
             dateTime = rtc.GetTime();
             Console.WriteLine($" RTC current time is: {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
 
-            Random rand = new Random();
+            var rand = new Random();
 
             var data = new byte[56];
 
@@ -51,6 +58,8 @@ namespace RTCs.DS1307_Sample
             Console.Write($" Reading from RTC RAM : ");
             data = rtc.ReadRAM(0, 56);
             Console.WriteLine(BitConverter.ToString(data));
+
+            return base.Run();
         }
 
         //<!=SNOP=>

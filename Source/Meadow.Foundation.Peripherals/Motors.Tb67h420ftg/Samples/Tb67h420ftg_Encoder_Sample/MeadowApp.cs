@@ -7,8 +7,9 @@ using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Hardware;
 using System;
+using System.Threading.Tasks;
 
-namespace MeadowApp
+namespace Motors.Tb67h420ftg_Encoder_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
@@ -20,12 +21,7 @@ namespace MeadowApp
         PushButton button1;
         PushButton button2;
 
-        public MeadowApp()
-        {
-            Initialize();
-        }
-
-        void Initialize()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
 
@@ -56,7 +52,7 @@ namespace MeadowApp
 
             Console.WriteLine("Init encoder");
             encoder = new RotaryEncoder(Device, Device.Pins.D09, Device.Pins.D15);
-        //    encoder.Rotated += Encoder_Rotated;
+            //encoder.Rotated += Encoder_Rotated;
 
             Console.WriteLine("Init display");
             var ssd1306 = new Ssd1306(Device.CreateI2cBus(), 60, Ssd1306.DisplayType.OLED128x32);
@@ -65,6 +61,8 @@ namespace MeadowApp
 
             Console.WriteLine("Initialization complete.");
             UpdateDisplay("Initialization", "Complete");
+
+            return base.Initialize();
         }
 
         int forwardCount = 0;

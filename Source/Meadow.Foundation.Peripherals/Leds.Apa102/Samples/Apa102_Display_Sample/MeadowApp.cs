@@ -5,6 +5,7 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Leds.Apa102_Display_Sample
 {
@@ -14,29 +15,7 @@ namespace Leds.Apa102_Display_Sample
 
         MicroGraphics canvas;
 
-        public MeadowApp()
-        {
-            Initialize();
-
-            canvas.CurrentFont = new Font4x8();
-
-            while (true) {
-                canvas.Clear();
-                canvas.DrawText(0, 1, "MEADOW", Colors.AzureBlue);
-                canvas.DrawText(24, 1, "F7", Colors.ChileanFire);
-                canvas.Show();
-
-                Thread.Sleep(1000);
-
-                canvas.Clear();
-                canvas.DrawText(0, 1, "Rocks", Colors.PearGreen);
-                canvas.Show();
-
-                Thread.Sleep(1000);
-            }
-        }
-
-        void Initialize()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
 
@@ -44,6 +23,29 @@ namespace Leds.Apa102_Display_Sample
             canvas = new MicroGraphics(display);
 
             Console.WriteLine("Hardware intitialized.");
+
+            return base.Initialize();
+        }
+
+        public override async Task Run()
+        {
+            canvas.CurrentFont = new Font4x8();
+
+            while (true)
+            {
+                canvas.Clear();
+                canvas.DrawText(0, 1, "MEADOW", Colors.AzureBlue);
+                canvas.DrawText(24, 1, "F7", Colors.ChileanFire);
+                canvas.Show();
+
+                await Task.Delay(1000);
+
+                canvas.Clear();
+                canvas.DrawText(0, 1, "Rocks", Colors.PearGreen);
+                canvas.Show();
+
+                await Task.Delay(1000);
+            }
         }
 
         static class Colors

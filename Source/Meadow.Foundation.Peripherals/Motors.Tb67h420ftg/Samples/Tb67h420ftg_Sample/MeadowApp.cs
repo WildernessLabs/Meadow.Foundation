@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 
-namespace MeadowApp
+namespace Motors.Tb67h420ftg_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
@@ -16,12 +17,12 @@ namespace MeadowApp
         PushButton button1;
         PushButton button2;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
 
-            button1 = new PushButton(Device, Device.Pins.D12, Meadow.Hardware.ResistorMode.InternalPullDown);
-            button2 =  new PushButton(Device, Device.Pins.D13, Meadow.Hardware.ResistorMode.InternalPullDown);
+            button1 = new PushButton(Device, Device.Pins.D12, ResistorMode.InternalPullDown);
+            button2 =  new PushButton(Device, Device.Pins.D13, ResistorMode.InternalPullDown);
 
             button1.PressStarted += Button1_PressStarted;
             button1.PressEnded += Button1_PressEnded;
@@ -39,6 +40,8 @@ namespace MeadowApp
             motorDriver.Motor2.MotorCalibrationMultiplier = 0.5f;
 
             Console.WriteLine("Initialization complete.");
+
+            return base.Initialize();
         }
 
         private void Button1_PressStarted(object sender, EventArgs e)

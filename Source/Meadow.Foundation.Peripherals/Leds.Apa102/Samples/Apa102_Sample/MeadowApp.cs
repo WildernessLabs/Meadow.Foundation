@@ -4,6 +4,7 @@ using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Leds.APA102_Sample
 {
@@ -15,11 +16,16 @@ namespace Leds.APA102_Sample
         int numberOfLeds = 49;
         float maxBrightness = 0.25f;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
             apa102 = new Apa102(Device.CreateSpiBus(Apa102.DefaultSpiBusSpeed), numberOfLeds, Apa102.PixelOrder.BGR);
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             apa102.Clear();
 
             apa102.SetLed(index: 0, color: Color.Red, brightness: 0.5f);
@@ -30,6 +36,8 @@ namespace Leds.APA102_Sample
             apa102.SetLed(index: 5, color: Color.Orange, brightness: 1.0f);
 
             apa102.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>
@@ -135,7 +143,7 @@ namespace Leds.APA102_Sample
             }
         }
 
-        void Run()
+        void Start()
         {
             Console.WriteLine("Run...");
             apa102.Clear();

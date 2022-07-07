@@ -1,12 +1,12 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Peripherals.Sensors.Rotary;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace ElectronicSpeedController_Sample
 {
@@ -21,19 +21,13 @@ namespace ElectronicSpeedController_Sample
         ElectronicSpeedController esc;
         RotaryEncoderWithButton rotary;
 
-        public MeadowApp()
-        {
-            Initialize();
-            DisplayPowerOnLed(esc.Power);
-        }
-
-        void Initialize()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
 
             //==== rotary encoder
             rotary = new RotaryEncoderWithButton(Device, Device.Pins.D07, Device.Pins.D08, Device.Pins.D06);
-            rotary.Rotated += Rotary_Rotated;
+            rotary.Rotated += RotaryRotated;
             rotary.Clicked += (s, e) => {
                 Console.WriteLine($"Arming the device.");
                 esc.Arm();
@@ -43,9 +37,11 @@ namespace ElectronicSpeedController_Sample
             esc = new ElectronicSpeedController(Device, Device.Pins.D02, frequency);
 
             Console.WriteLine("Hardware initialized.");
+
+            return base.Initialize();
         }
 
-        private void Rotary_Rotated(object sender, Meadow.Peripherals.Sensors.Rotary.RotaryChangeResult e)
+        private void RotaryRotated(object sender, RotaryChangeResult e)
         {
             esc.Power += (e.New == RotationDirection.Clockwise) ? powerIncrement : -powerIncrement;
             DisplayPowerOnLed(esc.Power);
@@ -61,15 +57,17 @@ namespace ElectronicSpeedController_Sample
         void DisplayPowerOnLed(float power)
         {
             // `0.0` - `1.0`
-            int r = (int)Map(power, 0f, 1f, 0f, 255f);
-            int b = (int)Map(power, 0f, 1f, 255f, 0f);
+            int r = (int)ExtensionMethods.Map(power, 0f, 1f, 0f, 255f);
+            int b = (int)ExtensionMethods.Map(power, 0f, 1f, 255f, 0f);
 
             var color = Color.FromRgb(r, 0, b);
         }
 
-        float Map(float value, float fromSource, float toSource, float fromTarget, float toTarget)
+        public override Task Run()
         {
-            return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
+            DisplayPowerOnLed(esc.Power);
+
+            return base.Run();
         }
 
         //<!=SNOP=>
