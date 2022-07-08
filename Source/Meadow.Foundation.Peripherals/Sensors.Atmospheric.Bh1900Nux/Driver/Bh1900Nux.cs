@@ -4,13 +4,13 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.mikroBUS
+namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    public partial class Bh1900Nux : ByteCommsSensorBase<Temperature>, ITemperatureSensor
+    public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
     {
-        public event EventHandler<IChangeResult<Temperature>> TemperatureUpdated;
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
 
-        public Temperature? Temperature => Conditions;
+        public Units.Temperature? Temperature => Conditions;
 
         public Bh1900Nux(II2cBus i2cBus, Address address)
             : base(i2cBus, (byte)address, 2, 2)
@@ -111,42 +111,42 @@ namespace Meadow.Foundation.mikroBUS
             get => ((GetConfig() >> 14) & 0x01) != 0;
         }
 
-        public Temperature LowLimit
+        public Units.Temperature LowLimit
         {
             get
             {
-                Peripheral.ReadRegister((byte)Register.TLow, ReadBuffer.Span[0..2]);
+                Peripheral?.ReadRegister((byte)Register.TLow, ReadBuffer.Span[0..2]);
 
                 return RegisterToTemp(ReadBuffer);
             }
             set
             {
-                Peripheral.WriteRegister((byte)Register.TLow, TempToBytes(value));
+                Peripheral?.WriteRegister((byte)Register.TLow, TempToBytes(value));
             }
         }
 
-        public Temperature HighLimit
+        public Units.Temperature HighLimit
         {
             get
             {
-                Peripheral.ReadRegister((byte)Register.THigh, ReadBuffer.Span[0..2]);
+                Peripheral?.ReadRegister((byte)Register.THigh, ReadBuffer.Span[0..2]);
 
                 return RegisterToTemp(ReadBuffer);
             }
             set
             {
-                Peripheral.WriteRegister((byte)Register.THigh, TempToBytes(value));
+                Peripheral?.WriteRegister((byte)Register.THigh, TempToBytes(value));
             }
         }
 
-        private byte[] TempToBytes(Temperature t)
+        private byte[] TempToBytes(Units.Temperature t)
         {
             var binary = (int)(t.Celsius * 16);
             binary <<= 4;
             return new byte[] { (byte)(binary >> 8), (byte)(binary & 0xff) };
         }
 
-        private Temperature RegisterToTemp(Memory<byte> data)
+        private Units.Temperature RegisterToTemp(Memory<byte> data)
         {
             var c = (data.Span[0] << 8 | ReadBuffer.Span[1]) >> 4; // if that's confusing, see the data sheet for more info
 
@@ -157,10 +157,10 @@ namespace Meadow.Foundation.mikroBUS
                 c = ((~c & 0xffff) + 1) * -1;
             }
 
-            return new Temperature(c * 0.0625d, Units.Temperature.UnitType.Celsius);
+            return new Units.Temperature(c * 0.0625d, Units.Temperature.UnitType.Celsius);
         }
 
-        protected override async Task<Temperature> ReadSensor()
+        protected override async Task<Units.Temperature> ReadSensor()
         {
             return await Task.Run(() =>
             {
@@ -176,7 +176,7 @@ namespace Meadow.Foundation.mikroBUS
             });
         }
 
-        protected override void RaiseEventsAndNotify(IChangeResult<Temperature> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
         {
             TemperatureUpdated?.Invoke(this, changeResult);
 

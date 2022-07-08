@@ -1,6 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.mikroBUS;
+using Meadow.Foundation.Sensors.Atmospheric;
 using System;
 using System.Threading.Tasks;
 
@@ -13,7 +13,7 @@ namespace Bh1900Nux_Sample
 
         private Bh1900Nux _sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -40,17 +40,17 @@ namespace Bh1900Nux_Sample
             {
                 Console.WriteLine($"  Temperature: {result.New.Celsius:N2}C");
             };
-
-            ReadConditions().Wait();
-
-            _sensor.StartUpdating(TimeSpan.FromSeconds(1));
+   
+            return Task.CompletedTask;
         }
 
-        async Task ReadConditions()
+        public async override Task Run()
         {
             var conditions = await _sensor.Read();
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"  Temperature: {conditions.Celsius:N2}C");
+
+            _sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         //<!=SNOP=>

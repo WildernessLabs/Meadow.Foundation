@@ -1,4 +1,4 @@
-﻿namespace Meadow.Foundation.mikroBUS
+﻿namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Bh1900Nux
     {
