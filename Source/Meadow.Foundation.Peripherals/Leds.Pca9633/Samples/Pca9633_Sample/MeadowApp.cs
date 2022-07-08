@@ -4,30 +4,42 @@ using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Leds.Pca9633_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
-        public MeadowApp()
+
+        Pca9633 pca9633;
+
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
-            var driver = new Pca9633(Device.CreateI2cBus());
+            pca9633 = new Pca9633(Device.CreateI2cBus());
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             //set the location of R,G,B leds for color control
-            driver.SetRgbLedPositions(redLed: Pca9633.LedPosition.Led2, 
-                                      greenLed: Pca9633.LedPosition.Led1, 
+            pca9633.SetRgbLedPositions(redLed: Pca9633.LedPosition.Led2,
+                                      greenLed: Pca9633.LedPosition.Led1,
                                       blueLed: Pca9633.LedPosition.Led0);
 
             //set a single color
-            driver.SetColor(Color.Red);
+            pca9633.SetColor(Color.Red);
             Thread.Sleep(1000);
-            driver.SetColor(Color.Blue);
+            pca9633.SetColor(Color.Blue);
             Thread.Sleep(1000);
-            driver.SetColor(Color.Yellow);
+            pca9633.SetColor(Color.Yellow);
+
+            return base.Run();
         }
+
         //<!=SNOP=>
     }
 }

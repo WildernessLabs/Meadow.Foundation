@@ -1,23 +1,31 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.EEPROM;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        At24Cxx eeprom;
+
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             //256kbit = 256*1024 bits = 262144 bits = 262144 / 8 bytes = 32768 bytes
             //if you're using the ZS-042 board, it has an AT24C32 and uses the default value of 8192
-            var eeprom = new At24Cxx(i2cBus: Device.CreateI2cBus(), memorySize: 32768);
+            eeprom = new At24Cxx(i2cBus: Device.CreateI2cBus(), memorySize: 32768);
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             Console.WriteLine("Write to eeprom");
             eeprom.Write(0, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
@@ -39,6 +47,8 @@ namespace MeadowApp
                 Thread.Sleep(50);
                 Console.WriteLine("Byte: " + index + ", Value: " + memory[index]);
             }
+
+            return base.Run();
         }
 
         //<!=SNOP=>

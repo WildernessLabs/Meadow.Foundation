@@ -1,37 +1,43 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
+using System;
+using System.Threading.Tasks;
 
 namespace BasicDisplays.Tft.Ssd1351_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        MicroGraphics graphics;
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing ...");
-  
+
             var spiBus = Device.CreateSpiBus(Ssd1351.DefaultSpiBusSpeed);
 
             var display = new Ssd1351(
-                       device: Device, 
-                       spiBus: spiBus,
-                       chipSelectPin: Device.Pins.D02,
-                       dcPin: Device.Pins.D01,
-                       resetPin: Device.Pins.D00,
-                       width: 128, height: 128)
-            {
-            };
+                device: Device,
+                spiBus: spiBus,
+                chipSelectPin: Device.Pins.D02,
+                dcPin: Device.Pins.D01,
+                resetPin: Device.Pins.D00,
+                width: 128, height: 128);
 
-            var graphics = new MicroGraphics(display)
+            graphics = new MicroGraphics(display)
             {
                 CurrentFont = new Font8x12(),
                 IgnoreOutOfBoundsPixels = true
             };
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             graphics.Clear();
 
             graphics.DrawCircle(80, 80, 40, Meadow.Foundation.Color.Cyan, false);
@@ -54,6 +60,8 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
             graphics.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
 
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

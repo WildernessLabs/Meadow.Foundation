@@ -1,19 +1,20 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Hid;
 using Meadow.Peripherals.Sensors.Hid;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         AnalogJoystick joystick;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             joystick = new AnalogJoystick(
                 Device.CreateAnalogInputPort(Device.Pins.A01, 1, TimeSpan.FromMilliseconds(10), new Voltage(3.3)),
@@ -28,6 +29,8 @@ namespace MeadowApp
 
             //==== IObservable
             joystick.StartUpdating(TimeSpan.FromMilliseconds(20));
+
+            return Task.CompletedTask;
         }
 
         void JoystickUpdated(object sender, IChangeResult<AnalogJoystickPosition> e)

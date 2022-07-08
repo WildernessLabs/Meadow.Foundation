@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Servos;
@@ -8,36 +8,41 @@ using AU = Meadow.Units.Angle.UnitType;
 
 namespace Servos.Servo_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         protected Servo servo;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("Initialize...");
 
-            servo = new Servo(Device.CreatePwmPort(Device.Pins.D02), NamedServoConfigs.SG90);
+            servo = new Servo(Device, Device.Pins.D02, NamedServoConfigs.SG90);
 
-            servo.RotateTo(new Angle(0, AU.Degrees));
+            return Task.CompletedTask;
+        }
+
+        public async override Task Run()
+        { 
+            await servo.RotateTo(new Angle(0, AU.Degrees));
 
             while (true)
             {
                 for (int i = 0; i <= servo.Config.MaximumAngle.Degrees; i++)
                 {
-                    servo.RotateTo(new Angle(i, AU.Degrees));
+                    await servo.RotateTo(new Angle(i, AU.Degrees));
                     Console.WriteLine($"Rotating to {i}");
-                    Thread.Sleep(40);
                 }
-                Thread.Sleep(2000);
+
+                await Task.Delay(2000);
+
                 for (int i = 180; i >= servo.Config.MinimumAngle.Degrees; i--)
                 {
-                    servo.RotateTo(new Angle(i, AU.Degrees));
+                    await servo.RotateTo(new Angle(i, AU.Degrees));
                     Console.WriteLine($"Rotating to {i}");
-                    Thread.Sleep(40);
                 }
-                Thread.Sleep(2000);
+                await Task.Delay(2000);
             }
         }
 

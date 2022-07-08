@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         RgbPwmLed onboardLed;
 
@@ -29,14 +29,9 @@ namespace MeadowApp
         IButton left = null;
         IButton right = null;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Initialize();
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             onboardLed = new RgbPwmLed(device: Device,
                 redPwmPin: Device.Pins.OnboardLedRed,
@@ -87,6 +82,8 @@ namespace MeadowApp
             down.Clicked += Down_Clicked;
 
             menu.Enable();
+
+            return Task.CompletedTask;
         }
 
         private void Down_Clicked(object sender, EventArgs e)

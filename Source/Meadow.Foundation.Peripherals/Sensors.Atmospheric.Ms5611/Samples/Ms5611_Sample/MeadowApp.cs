@@ -3,22 +3,28 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Ms5611_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Ms5611 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
             //CreateSpiSensor();
             CreateI2CSensor();
 
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             while (true)
             {
                 Thread.Sleep(1000);
@@ -33,6 +39,8 @@ namespace Ms5611_Sample
 
                 Thread.Sleep(1000);
             }
+
+            return Task.CompletedTask;
         }
 
         void CreateI2CSensor()

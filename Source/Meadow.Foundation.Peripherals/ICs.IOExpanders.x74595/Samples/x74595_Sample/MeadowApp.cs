@@ -1,23 +1,29 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         x74595 shiftRegister;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             shiftRegister = new x74595(Device, Device.CreateSpiBus(), Device.Pins.D00, 8);
 
+            return base.Initialize();
+        }
+
+        public override async Task Run()
+        {
             shiftRegister.Clear(true);
 
             Console.WriteLine("Set Pin 3 to high");
@@ -31,11 +37,11 @@ namespace MeadowApp
 
             Console.WriteLine("Toggle pin 4");
 
-            Thread.Sleep(1000);
+            await Task.Delay(1000);
             port4.State = false;
-            Thread.Sleep(1000);
+            await Task.Delay(1000);
             port4.State = true;
-            Thread.Sleep(1000);
+            await Task.Delay(1000);
 
             Console.WriteLine("Raise all pins to high");
             while (true)
@@ -45,7 +51,7 @@ namespace MeadowApp
                 foreach (var pin in shiftRegister.Pins.AllPins)
                 {
                     shiftRegister.WriteToPin(pin, true);
-                    Thread.Sleep(50);
+                    await Task.Delay(50);
                 }
             }
         }

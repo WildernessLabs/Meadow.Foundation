@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Displays.TextDisplayMenu;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
@@ -11,15 +10,13 @@ using Meadow.Peripherals.Sensors.Buttons;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
-        RgbPwmLed onboardLed;
-
         Menu menu;
-    //    St7789 st7789;
 
         Ssd1309 ssd1309;
         ITextDisplay display;
@@ -28,22 +25,9 @@ namespace MeadowApp
         IButton previous = null;
         IButton select = null;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Initialize();
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
-
-            onboardLed = new RgbPwmLed(device: Device,
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
-
-            Console.WriteLine("Create Display with SPI...");
+            Console.WriteLine("Initialize...");
 
             var config = new SpiClockConfiguration(Ssd1309.DefaultSpiBusSpeed, Ssd1309.DefaultSpiClockMode);
 
@@ -69,8 +53,6 @@ namespace MeadowApp
             gl.DrawText(0, 0, "Loading Menu");
             gl.Show();
 
-            display = gl as ITextDisplay;
-
             Console.WriteLine("Load menu data...");
 
             var menuData = LoadResource("menu.json");
@@ -81,7 +63,7 @@ namespace MeadowApp
 
             Console.WriteLine("Create menu...");
 
-            menu = new Menu(display, menuData, false);
+            menu = new Menu(display as ITextDisplay, menuData, false);
 
             next = new PushButton(Device, Device.Pins.D10);
             next.Clicked += (s, e) => { menu.Next(); };
@@ -95,6 +77,8 @@ namespace MeadowApp
             Console.WriteLine("Enable menu...");
 
             menu.Enable();
+
+            return Task.CompletedTask;
         }
 
         byte[] LoadResource(string filename)

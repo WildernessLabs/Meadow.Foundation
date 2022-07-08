@@ -1,40 +1,43 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Audio.Mp3;
+using System;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        Yx5300 mp3Player;
+
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
-            var mp3Player = new Yx5300(Device, Device.SerialPortNames.Com4);
+            mp3Player = new Yx5300(Device, Device.SerialPortNames.Com4);
 
-            //using an async task - this code would likely go in an async method
-            Task.Run(async () =>
-            {
-                mp3Player.SetVolume(15);
+            return Task.CompletedTask;
+        }
 
-                var status = await mp3Player.GetStatus();
-                Console.WriteLine($"Status: {status}");
+        public override async Task Run()
+        {
+            mp3Player.SetVolume(15);
 
-                var count = await mp3Player.GetNumberOfTracksInFolder(0);
-                Console.WriteLine($"Number of tracks: {count}");
+            var status = await mp3Player.GetStatus();
+            Console.WriteLine($"Status: {status}");
 
-                mp3Player.Play();
+            var count = await mp3Player.GetNumberOfTracksInFolder(0);
+            Console.WriteLine($"Number of tracks: {count}");
 
-                await Task.Delay(5000); //leave playing for 5 seconds
+            mp3Player.Play();
 
-                mp3Player.Next();
+            await Task.Delay(5000); //leave playing for 5 seconds
 
-                await Task.Delay(5000); //leave playing for 5 seconds
-            });
+            mp3Player.Next();
+
+            await Task.Delay(5000); //leave playing for 5 seconds
         }
 
         //<!=SNOP=>

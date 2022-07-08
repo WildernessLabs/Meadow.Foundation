@@ -1,18 +1,19 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Switches;
 using Meadow.Hardware;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Switches.SpstSwitch_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         protected SpstSwitch spstSwitch;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -24,6 +25,8 @@ namespace Sensors.Switches.SpstSwitch_Sample
             };
 
             Console.WriteLine("SpstSwitch ready...");
+
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

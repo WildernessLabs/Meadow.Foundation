@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Ags01Db ags10Db;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize ...");
             ags10Db = new Ags01Db(Device.CreateI2cBus());
@@ -22,8 +23,8 @@ namespace MeadowApp
             var consumer = Ags01Db.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Concentration New Value { result.New.PartsPerMillion}ppm");
-                    Console.WriteLine($"Concentration Old Value { result.Old?.PartsPerMillion}ppm");
+                    Console.WriteLine($"Concentration New Value {result.New.PartsPerMillion}ppm");
+                    Console.WriteLine($"Concentration Old Value {result.Old?.PartsPerMillion}ppm");
                 },
                 filter: null
             );
@@ -34,7 +35,14 @@ namespace MeadowApp
                 Console.WriteLine($"Concentration Updated: {e.New.PartsPerMillion:N2}ppm");
             };
 
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             ags10Db.StartUpdating(TimeSpan.FromSeconds(1));
+
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

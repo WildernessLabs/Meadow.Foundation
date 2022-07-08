@@ -50,9 +50,7 @@ namespace Meadow.Foundation.Motors
         /// construction, and increase for higher quality ESC's that allow a
         /// higher frequency PWM control signal.
         /// </summary>
-        public float Frequency {
-            get => pwmPort.Frequency;
-        }
+        public Units.Frequency Frequency => pwmPort.Frequency;
 
         /// <summary>
         /// Initializes an electronic speed controller on the specified device 
@@ -60,25 +58,21 @@ namespace Meadow.Foundation.Motors
         /// </summary>
         /// <param name="device">IIODevice capable of creating a PWM port.</param>
         /// <param name="pwmPin">PWM capable pin.</param>
-        /// <param name="pwmFrequency">Frequency of the PWM signal. All ESCs should
+        /// <param name="frequency">Frequency of the PWM signal. All ESCs should
         /// support 50Hz, but some support much higher. Increase for finer grained
         /// control of speed in time.</param>
-        public ElectronicSpeedController(IPwmOutputController device, IPin pwmPin, float pwmFrequency = 50) :
-            this(device.CreatePwmPort(pwmPin, pwmFrequency, 0), pwmFrequency) { }
+        public ElectronicSpeedController(IPwmOutputController device, IPin pwmPin, Units.Frequency frequency) :
+            this(device.CreatePwmPort(pwmPin, frequency)) { }
 
         /// <summary>
         /// Initializes an electronic speed controller on the specified device 
         /// pin, at the specified frequency.
         /// </summary>
         /// <param name="port">The `IPwmPort` that will drive the ESC.</param>
-        /// <param name="pwmFrequency">Frequency of the PWM signal. All ESCs should
-        /// support 50Hz, but some support much higher. Increase for finer grained
-        /// control of speed in time.</param>
-        public ElectronicSpeedController(IPwmPort port, float pwmFrequency = 50)
+        public ElectronicSpeedController(IPwmPort port)
         {
-            this.pwmPort = port;
-            this.pwmPort.Frequency = pwmFrequency;
-            this.pwmPort.Start();
+            pwmPort = port;
+            pwmPort.Start();
         }
 
         /// <summary>
@@ -96,10 +90,10 @@ namespace Meadow.Foundation.Motors
         /// <param name="pulseDuration">The duration of the target pulse, in milliseconds.</param>
         /// <param name="frequency">The frequency of the PWM.</param>
         /// <returns>A duty cycle value expressed as a percentage between 0.0 and 1.0.</returns>
-        protected float CalculateDutyCycle(float pulseDuration, float frequency)
+        protected float CalculateDutyCycle(float pulseDuration, Units.Frequency frequency)
         {
             // the pulse duration is dependent on the frequency we're driving the servo at
-            return pulseDuration / ((1.0f / frequency) * 1000f);
+            return pulseDuration / ((1.0f / (float)frequency.Hertz) * 1000f);
         }
 
         /// <summary>
