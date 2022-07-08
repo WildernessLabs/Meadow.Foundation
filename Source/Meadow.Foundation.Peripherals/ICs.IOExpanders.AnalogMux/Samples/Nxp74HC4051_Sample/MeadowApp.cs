@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
+using System.Threading.Tasks;
 
 namespace ICs.IOExpanders.Nxp74HC4051_Sample
 {
@@ -15,7 +13,11 @@ namespace ICs.IOExpanders.Nxp74HC4051_Sample
 
         public MeadowApp()
         {
-            Console.WriteLine("Initialize...");
+        }
+
+        public override Task Initialize()
+        {
+            Resolver.Log.Info("Initialize...");
 
             _mux = new Nxp74HC4051(
                 Device.CreateAnalogInputPort(Device.Pins.A00),      // input
@@ -25,7 +27,14 @@ namespace ICs.IOExpanders.Nxp74HC4051_Sample
                 Device.CreateDigitalOutputPort(Device.Pins.D03)     // enable
                 );
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             Task.Run(ReadRoundRobin);
+
+            return base.Run();
         }
 
         public async Task ReadRoundRobin()
@@ -36,7 +45,7 @@ namespace ICs.IOExpanders.Nxp74HC4051_Sample
                 {
                     _mux.SetInputChannel(channel);
                     var read = await _mux.Signal.Read();
-                    Console.WriteLine($"ADC Channel {channel} = {read.Volts:0.0}V");
+                    Resolver.Log.Info($"ADC Channel {channel} = {read.Volts:0.0}V");
                     await Task.Delay(1000);
                 }
             }
