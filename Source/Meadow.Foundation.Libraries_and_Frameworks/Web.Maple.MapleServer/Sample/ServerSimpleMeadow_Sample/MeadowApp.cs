@@ -12,22 +12,17 @@ namespace Maple.ServerSimpleMeadow_Sample
     {
         MapleServer server;
 
-        public MeadowApp()
+        public override async Task Initialize()
         {
-            //Thread.Sleep(5000);
-
-            Initialize().Wait();
-            server.Start();
-        }
-
-        async Task Initialize()
-        {
+            Console.WriteLine("Initialize hardware...");
             Console.WriteLine("Initialize hardware...");
 
             // connnect to the wifi network.
             Console.WriteLine($"Connecting to WiFi Network {Secrets.WIFI_NAME}");
             var connectionResult = await Device.WiFiAdapter.Connect(Secrets.WIFI_NAME, Secrets.WIFI_PASSWORD);
-            if (connectionResult.ConnectionStatus != ConnectionStatus.Success) {
+
+            if (connectionResult.ConnectionStatus != ConnectionStatus.Success) 
+            {
                 throw new Exception($"Cannot connect to network: {connectionResult.ConnectionStatus}");
             }
             Console.WriteLine($"Connected. IP: {Device.WiFiAdapter.IpAddress}");
@@ -38,8 +33,13 @@ namespace Maple.ServerSimpleMeadow_Sample
                 advertise: true,
                 processMode: RequestProcessMode.Parallel
                 );
+        }
 
-            Console.WriteLine("Finished initialization.");
+        public override Task Run()
+        {
+            server.Start();
+
+            return Task.CompletedTask;
         }
     }
 }

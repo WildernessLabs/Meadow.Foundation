@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation.Audio.Radio;
 using Meadow.Units;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Audio.Radio.Tea5767_Sample
@@ -23,12 +22,12 @@ namespace Audio.Radio.Tea5767_Sample
             return Task.CompletedTask;
         }
 
-        public override Task Run()
+        public async override Task Run()
         {
             //scan through avaliable stations
             for (int i = 0; i < 8; i++)
             {
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 radio.SearchNextSilent();
 
@@ -37,8 +36,6 @@ namespace Audio.Radio.Tea5767_Sample
 
             //set a known station
             radio.SelectFrequency(new Frequency(94.5, Frequency.UnitType.Megahertz));
-
-            return base.Run();
         }
 
         //<!=SNOP=>

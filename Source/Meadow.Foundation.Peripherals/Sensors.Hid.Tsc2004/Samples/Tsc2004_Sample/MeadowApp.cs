@@ -15,9 +15,10 @@ namespace Bbq10Keyboard_Sample
 
         Tsc2004 touchScreen;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
+
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Fast, 0);
 
             touchScreen = new Tsc2004(i2cBus)
@@ -31,7 +32,12 @@ namespace Bbq10Keyboard_Sample
                 Rotation = RotationType._90Degrees
             };
 
-            Task.Run(() =>
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
+            return Task.Run(() =>
             {
                 Point3d pt;
 

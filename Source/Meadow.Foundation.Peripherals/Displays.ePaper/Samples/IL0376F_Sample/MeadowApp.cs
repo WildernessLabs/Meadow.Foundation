@@ -28,7 +28,7 @@ namespace Displays.ePaper.IL0376F_Sample
 
             var graphics = new MicroGraphics(display);
 
-            return base.Initialize();
+            return Task.CompletedTask;
         }
 
         public override Task Run()
@@ -42,7 +42,7 @@ namespace Displays.ePaper.IL0376F_Sample
 
             graphics.Show();
 
-            return base.Run();
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

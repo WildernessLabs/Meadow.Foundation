@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Relays;
@@ -12,19 +13,17 @@ namespace Relays.Relay_Sample
 
         protected Relay relay;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("Initialize hardware...");
 
             relay = new Relay(Device.CreateDigitalOutputPort(Device.Pins.D02));
 
-            TestRelay();
+            return Task.CompletedTask;
         }
 
-        protected void TestRelay()
+        public override Task Run()
         {
-            Console.WriteLine("TestRelay...");
-
             var state = false;
 
             while (true)

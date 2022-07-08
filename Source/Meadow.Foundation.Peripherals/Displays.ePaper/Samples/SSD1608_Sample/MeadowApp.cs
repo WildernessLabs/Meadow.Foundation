@@ -13,10 +13,10 @@ namespace Displays.ePaper.SSD1608_Sample
 
         MicroGraphics graphics;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize ...");
- 
+            Console.WriteLine("Initialize hardware...");
+
             var display = new Ssd1608(device: Device,
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
@@ -27,6 +27,8 @@ namespace Displays.ePaper.SSD1608_Sample
                 height: 200);
 
             graphics = new MicroGraphics(display);
+
+            return Task.CompletedTask;
         }
 
         public override Task Run()
@@ -39,7 +41,7 @@ namespace Displays.ePaper.SSD1608_Sample
 
             graphics.Show();
 
-            return base.Run();
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

@@ -28,12 +28,11 @@ namespace Displays.ePaper.IL3897_Sample
 
             graphics = new MicroGraphics(display);
 
-            return base.Initialize();
+            return Task.CompletedTask;
         }
 
         public override Task Run()
         {
-            //any color but black will show the ePaper alternate color 
             graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Red, false);
 
             graphics.CurrentFont = new Font8x12();
@@ -42,7 +41,7 @@ namespace Displays.ePaper.IL3897_Sample
 
             graphics.Show();
 
-            return base.Run();
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Location.Gnss;
@@ -14,24 +15,23 @@ namespace MeadowApp
         List<string> sentences;
         NmeaSentenceProcessor nmeaProcessor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Initialize();
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize");
-            this.sentences = GetSampleNmeaSentences();
+            Console.WriteLine("Initialize hardware...");
+            
+            sentences = GetSampleNmeaSentences();
 
             InitDecoders();
 
-            foreach (string sentence in sentences) {
+            foreach (string sentence in sentences) 
+            {
                 Console.WriteLine($"About to process:{sentence}");
                 nmeaProcessor.ProcessNmeaMessage(sentence);
             }
 
             Console.WriteLine("Made it through all sentences");
+
+            return Task.CompletedTask;
         }
 
         void InitDecoders()
@@ -96,7 +96,6 @@ namespace MeadowApp
                 Console.WriteLine($"{satellites}");
                 Console.WriteLine("*********************************************");
             };
-
         }
 
         List<string> GetSampleNmeaSentences()
