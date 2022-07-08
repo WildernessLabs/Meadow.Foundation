@@ -8,8 +8,11 @@
     <OutputType>Library</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\ICs.IOExpanders.AnalogMux.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Bh1900Nux.csproj" />
   </ItemGroup>
 </Project>
