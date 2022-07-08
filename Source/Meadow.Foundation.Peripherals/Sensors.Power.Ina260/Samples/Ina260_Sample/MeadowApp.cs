@@ -14,7 +14,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             var bus = Device.CreateI2cBus();
             ina260 = new Ina260(bus);

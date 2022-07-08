@@ -14,7 +14,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             mp3Player = new Yx5300(Device, Device.SerialPortNames.Com4);
 

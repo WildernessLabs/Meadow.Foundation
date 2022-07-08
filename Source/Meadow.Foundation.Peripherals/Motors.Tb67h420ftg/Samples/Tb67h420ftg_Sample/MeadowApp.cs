@@ -19,7 +19,7 @@ namespace Motors.Tb67h420ftg_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             button1 = new PushButton(Device, Device.Pins.D12, ResistorMode.InternalPullDown);
             button2 =  new PushButton(Device, Device.Pins.D13, ResistorMode.InternalPullDown);

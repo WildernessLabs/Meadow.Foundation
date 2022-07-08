@@ -16,7 +16,7 @@ namespace Servos.Servo_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             servo = new Servo(Device, Device.Pins.D02, NamedServoConfigs.SG90);
 

@@ -13,7 +13,7 @@ namespace MeadowApp
 
         public async override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             var bus = Device.CreateSpiBus();
             var chipSelect = Device.CreateDigitalOutputPort(Device.Pins.D00);

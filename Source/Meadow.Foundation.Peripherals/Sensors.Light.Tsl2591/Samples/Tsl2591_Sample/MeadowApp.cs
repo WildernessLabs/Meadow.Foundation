@@ -14,7 +14,7 @@ namespace Sensors.Light.Tsl2591_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             // configure our sensor on the I2C Bus
             var i2c = Device.CreateI2cBus();

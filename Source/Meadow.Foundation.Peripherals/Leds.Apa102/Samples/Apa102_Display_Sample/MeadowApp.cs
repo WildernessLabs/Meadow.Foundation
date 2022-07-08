@@ -17,7 +17,7 @@ namespace Leds.Apa102_Display_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             display = new Apa102(Device.CreateSpiBus(Apa102.DefaultSpiBusSpeed), 32, 8, Apa102.PixelOrder.BGR);
             canvas = new MicroGraphics(display);

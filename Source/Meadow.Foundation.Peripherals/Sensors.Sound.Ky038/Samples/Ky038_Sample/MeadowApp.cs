@@ -14,7 +14,7 @@ namespace Sensors.Sound.Ky038_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Ky038(Device, Device.Pins.A00, Device.Pins.D10);
 

@@ -14,7 +14,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             // configure our sensor
             sensor = new Alspt19315C(Device, Device.Pins.A03);

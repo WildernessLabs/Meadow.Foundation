@@ -14,7 +14,7 @@ namespace Sensors.Light.Max44009_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Max44009(Device.CreateI2cBus());
 

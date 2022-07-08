@@ -14,7 +14,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Si1145(Device.CreateI2cBus());
 

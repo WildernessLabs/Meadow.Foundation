@@ -14,8 +14,7 @@ namespace Maple.ServerSimpleMeadow_Sample
 
         public override async Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             // connnect to the wifi network.
             Console.WriteLine($"Connecting to WiFi Network {Secrets.WIFI_NAME}");
@@ -33,6 +32,7 @@ namespace Maple.ServerSimpleMeadow_Sample
                 advertise: true,
                 processMode: RequestProcessMode.Parallel
                 );
+
         }
 
         public override Task Run()

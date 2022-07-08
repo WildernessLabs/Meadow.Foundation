@@ -15,7 +15,7 @@ namespace Relays.Relay_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             relay = new Relay(Device.CreateDigitalOutputPort(Device.Pins.D02));
 

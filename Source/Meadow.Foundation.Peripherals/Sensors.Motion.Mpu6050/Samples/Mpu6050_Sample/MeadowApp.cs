@@ -17,7 +17,7 @@ namespace Sensors.Motion.mpu5060_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Mpu6050(Device.CreateI2cBus());
 

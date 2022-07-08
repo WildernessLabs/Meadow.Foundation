@@ -13,7 +13,7 @@ namespace Dht10_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             dht10 = new Dht10(Device.CreateI2cBus());
 

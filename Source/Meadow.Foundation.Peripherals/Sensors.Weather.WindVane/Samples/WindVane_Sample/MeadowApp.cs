@@ -15,7 +15,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             // initialize the wind vane driver
             windVane = new WindVane(Device, Device.Pins.A00);

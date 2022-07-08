@@ -23,7 +23,7 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             // this causes unterrupts to fail, for some reason:
             //IDigitalInputPort test = Device.CreateDigitalInputPort(Device.Pins.D07);

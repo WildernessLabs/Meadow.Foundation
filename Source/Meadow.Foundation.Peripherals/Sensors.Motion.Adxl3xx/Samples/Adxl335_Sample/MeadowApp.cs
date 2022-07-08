@@ -16,7 +16,7 @@ namespace Sensors.Motion.Adxl335_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             // create the sensor driver
             sensor = new Adxl335(Device, Device.Pins.A00, Device.Pins.A01, Device.Pins.A02, null);

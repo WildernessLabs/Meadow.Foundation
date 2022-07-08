@@ -15,7 +15,7 @@ namespace Sensors.Camera.Vc0706_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             camera = new Vc0706(Device, Device.SerialPortNames.Com4, 38400);
 

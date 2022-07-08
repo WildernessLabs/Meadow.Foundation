@@ -27,7 +27,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             Console.WriteLine("Create Display with SPI...");
 

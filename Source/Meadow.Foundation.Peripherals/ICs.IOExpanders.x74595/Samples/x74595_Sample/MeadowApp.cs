@@ -15,7 +15,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             shiftRegister = new x74595(Device, Device.CreateSpiBus(), Device.Pins.D00, 8);
 

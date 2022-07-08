@@ -14,7 +14,7 @@ namespace Sensors.Motion.Adxl345_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Adxl345(Device.CreateI2cBus());
             sensor.SetPowerState(false, false, true, false, Adxl345.Frequencies.TwoHz);

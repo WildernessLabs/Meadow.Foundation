@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             rfidReader = new IDxxLA(Device, Device.SerialPortNames.Com1);
 

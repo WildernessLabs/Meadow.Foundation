@@ -14,7 +14,7 @@ namespace Sensors.Temperature.Mcp9808_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             mcp9808 = new Mcp9808(Device.CreateI2cBus());
 

@@ -19,7 +19,7 @@ namespace Sensors.LoadCell.Nau7802_Sample
 
         public override async Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             loadSensor = new Nau7802(Device.CreateI2cBus());
 

@@ -15,7 +15,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             //256kbit = 256*1024 bits = 262144 bits = 262144 / 8 bytes = 32768 bytes
             //if you're using the ZS-042 board, it has an AT24C32 and uses the default value of 8192

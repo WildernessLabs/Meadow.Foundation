@@ -14,7 +14,7 @@ namespace Sensors.Motion.ParallaxPir_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Hcsens0040(Device.CreateDigitalInputPort(Device.Pins.D05));
             sensor.OnMotionDetected += Sensor_OnMotionDetected;

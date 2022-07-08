@@ -14,7 +14,7 @@ namespace Sensors.Temperature.Lm75_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             lm75 = new Lm75(Device.CreateI2cBus());
 

@@ -15,7 +15,7 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
             iS31FL3731 = new Is31fl3731(Device.CreateI2cBus());
             iS31FL3731.Initialize();
 

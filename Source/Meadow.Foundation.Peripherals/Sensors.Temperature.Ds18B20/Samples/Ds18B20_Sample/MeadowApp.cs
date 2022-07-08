@@ -13,7 +13,7 @@ namespace Sensors.Temperature.Ds18B20_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             ds18B20 = new ds18B20(Device.CreateI2cBus());
 

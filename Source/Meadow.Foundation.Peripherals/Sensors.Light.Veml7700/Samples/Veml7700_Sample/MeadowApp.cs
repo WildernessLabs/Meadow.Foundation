@@ -14,7 +14,7 @@ namespace Sensors.Light.Veml7700_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Veml7700(Device.CreateI2cBus());
             sensor.DataSource = Veml7700.SensorTypes.Ambient;

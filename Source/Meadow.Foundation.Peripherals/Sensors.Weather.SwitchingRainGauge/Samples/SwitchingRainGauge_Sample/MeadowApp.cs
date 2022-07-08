@@ -15,7 +15,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             // initialize the rain gauge driver
             rainGauge = new SwitchingRainGauge(Device, Device.Pins.D15);

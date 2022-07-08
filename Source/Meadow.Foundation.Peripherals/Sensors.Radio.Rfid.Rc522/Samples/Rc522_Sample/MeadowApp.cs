@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Rfid_Sample
     {
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             return Task.CompletedTask;
         }

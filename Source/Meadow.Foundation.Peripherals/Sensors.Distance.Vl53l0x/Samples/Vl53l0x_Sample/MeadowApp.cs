@@ -52,7 +52,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
 
         void InitializeWithShutdownPin()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
             sensor = new Vl53l0x(Device, i2cBus, Device.Pins.D05, 250);
         }

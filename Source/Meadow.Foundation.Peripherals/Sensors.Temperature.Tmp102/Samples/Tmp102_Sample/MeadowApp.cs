@@ -17,7 +17,7 @@ namespace Sensors.Temperature.Tmp102_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             tmp102 = new Tmp102(Device.CreateI2cBus());
 

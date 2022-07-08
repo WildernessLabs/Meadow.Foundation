@@ -16,7 +16,7 @@ namespace Sensors.Temperature.MLX90640_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Fast);
             sensor = new Mlx90640(i2cBus);

@@ -15,7 +15,7 @@ namespace Sensors.Distance.Mb10x0_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Mb10x0(Device, Device.SerialPortNames.Com4);
 

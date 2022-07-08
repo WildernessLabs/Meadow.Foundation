@@ -15,7 +15,7 @@ namespace ICs.IOExpanders.Pca9685_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
             var i2CBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
 
             var pca9685 = new Pca9685(i2CBus, new Meadow.Units.Frequency(50, Meadow.Units.Frequency.UnitType.Hertz), (byte)Pca9685.Addresses.Default);

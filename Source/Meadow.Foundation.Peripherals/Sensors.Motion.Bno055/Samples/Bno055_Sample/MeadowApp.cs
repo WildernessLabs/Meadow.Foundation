@@ -16,7 +16,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             // create the sensor driver
             sensor = new Bno055(Device.CreateI2cBus());

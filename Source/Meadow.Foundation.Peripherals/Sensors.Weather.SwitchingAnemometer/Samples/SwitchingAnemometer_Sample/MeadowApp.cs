@@ -18,7 +18,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             //==== onboard LED
             onboardLed = new RgbPwmLed(device: Device,

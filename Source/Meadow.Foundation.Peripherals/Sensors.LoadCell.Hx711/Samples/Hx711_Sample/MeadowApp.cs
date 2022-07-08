@@ -19,7 +19,7 @@ namespace Sensors.LoadCell.Hx711_Sample
 
         public override async Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             loadSensor = new Hx711(Device, Device.Pins.D04, Device.Pins.D03);
 

@@ -12,7 +12,7 @@ namespace Ads1015_Sample
 
         public override async Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             _adc = new Ads1015(
                 Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.FastPlus),

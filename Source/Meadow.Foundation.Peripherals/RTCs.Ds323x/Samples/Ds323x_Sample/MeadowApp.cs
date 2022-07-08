@@ -14,7 +14,7 @@ namespace RTCs.Ds323x_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Ds3231(Device, Device.CreateI2cBus(), Device.Pins.D06);
             sensor.OnAlarm1Raised += Sensor_OnAlarm1Raised;

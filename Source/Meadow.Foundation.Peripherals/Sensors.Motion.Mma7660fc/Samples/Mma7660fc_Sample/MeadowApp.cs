@@ -16,7 +16,7 @@ namespace Sensors.Motion.Mma7660fc_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             // create the sensor driver
             sensor = new Mma7660fc(Device.CreateI2cBus());
