@@ -2,6 +2,9 @@
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
+    /// <summary>
+    /// Represents a pixel buffer
+    /// </summary>
     public abstract class PixelBufferBase : IPixelBuffer
     {
         /// <summary>
@@ -88,19 +91,51 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
+        /// <summary>
+        /// Clear the array that stores the pixel buffer
+        /// </summary>
         public void Clear()
         {
             Array.Clear(Buffer, 0, Buffer.Length);
         }
 
+        /// <summary>
+        /// Fill the entire pixel buffer with a color
+        /// </summary>
+        /// <param name="color">Fill color</param>
         public abstract void Fill(Color color);
         
+        /// <summary>
+        /// Fill a region of the pixel buffer with a color
+        /// </summary>
+        /// <param name="originX">X pixel to start fill</param>
+        /// <param name="originY">Y pixel to start fill</param>
+        /// <param name="width">Width to fill</param>
+        /// <param name="height">height to fill</param>
+        /// <param name="color">Fill color</param>
         public abstract void Fill(int originX, int originY, int width, int height, Color color);
 
+        /// <summary>
+        /// Get pixel at location
+        /// </summary>
+        /// <param name="x">X pixel location</param>
+        /// <param name="y">Y pixel location</param>
+        /// <returns></returns>
         public abstract Color GetPixel(int x, int y);
 
+        /// <summary>
+        /// Set pixel at location to a color
+        /// </summary>
+        /// <param name="x">X pixel location</param>
+        /// <param name="y">Y pixel location</param>
+        /// <param name="color">Pixel color</param>
         public abstract void SetPixel(int x, int y, Color color);
 
+        /// <summary>
+        /// Invert pixel color at location
+        /// </summary>
+        /// <param name="x">X pixel location</param>
+        /// <param name="y">Y pixel location</param>
         public abstract void InvertPixel(int x, int y);
 
         /// <summary>
@@ -144,7 +179,8 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <typeparam name="T">Buffer type</typeparam>
         /// <param name="rotation">Rotation</param>
         /// <returns>The new buffer</returns>
-        public T Rotate<T>(RotationType rotation) where T : PixelBufferBase, new()
+        public T RotateAndConvert<T>(RotationType rotation) 
+            where T : PixelBufferBase, new()
         {
             T newBuffer;
 
@@ -156,6 +192,8 @@ namespace Meadow.Foundation.Graphics.Buffers
                         Width = Height,
                         Height = Width
                     };
+                    newBuffer.InitializeBuffer();
+
                     for (int i = 0; i < Width; i++)
                     {
                         for (int j = 0; j < Height; j++)
@@ -170,6 +208,8 @@ namespace Meadow.Foundation.Graphics.Buffers
                         Width = Height,
                         Height = Width
                     };
+                    newBuffer.InitializeBuffer();
+
                     for (int i = 0; i < Width; i++)
                     {
                         for (int j = 0; j < Height; j++)
@@ -184,6 +224,8 @@ namespace Meadow.Foundation.Graphics.Buffers
                         Width = Width,
                         Height = Height
                     };
+                    newBuffer.InitializeBuffer();
+
                     for (int i = 0; i < Width; i++)
                     {
                         for (int j = 0; j < Height; j++)
@@ -194,7 +236,20 @@ namespace Meadow.Foundation.Graphics.Buffers
                     break;
                 case RotationType.Default:
                 default:
-                    newBuffer = Clone<T>();
+                    newBuffer = new T
+                    {
+                        Width = Height,
+                        Height = Width
+                    };
+                    newBuffer.InitializeBuffer();
+
+                    for (int i = 0; i < Width; i++)
+                    {
+                        for (int j = 0; j < Height; j++)
+                        {
+                            newBuffer.SetPixel(i, j, GetPixel(i, j));
+                        }
+                    }
                     break;
             }
 
@@ -207,18 +262,18 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <typeparam name="T">The buffer type to convert to</typeparam>
         /// <returns>A pixel buffer derrived from PixelBufferBase</returns>
-        public T ConvertToPixelBuffer<T>() 
+        public T ConvertPixelBuffer<T>() 
             where T : PixelBufferBase, new()
         {
-            if(this.GetType() == typeof(T))
-            {   //clone
+            if(GetType() == typeof(T))
+            {   
                 return Clone<T>();
             }
 
             T newBuffer = new T()
             {
-                Width = this.Width,
-                Height = this.Height,
+                Width = Width,
+                Height = Height,
             };
             newBuffer.InitializeBuffer();
 
@@ -234,11 +289,12 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
         
         /// <summary>
-        /// Make a copy of the buffer object
+        /// Make a copy of the buffer object 
+        /// Intentionally private
         /// </summary>
         /// <typeparam name="T">The buffer type</typeparam>
         /// <returns>A new pixel buffer object</returns>
-        public T Clone<T>() where T : PixelBufferBase, new()
+        T Clone<T>() where T : PixelBufferBase, new()
         {
             var newBuffer = new T
             {

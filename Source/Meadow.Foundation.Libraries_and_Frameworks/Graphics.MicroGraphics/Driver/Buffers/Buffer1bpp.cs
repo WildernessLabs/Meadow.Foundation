@@ -22,6 +22,8 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public Buffer1bpp(int width, int height) : base(width, height) { }
 
+        public Buffer1bpp() : base() { }
+
         public Buffer1bpp(int width, int height, int pageSize)
         {
             Width = width;
