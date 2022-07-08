@@ -144,7 +144,8 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <typeparam name="T">Buffer type</typeparam>
         /// <param name="rotation">Rotation</param>
         /// <returns>The new buffer</returns>
-        public T Rotate<T>(RotationType rotation) where T : PixelBufferBase, new()
+        public T RotateAndConvert<T>(RotationType rotation) 
+            where T : PixelBufferBase, new()
         {
             T newBuffer;
 
@@ -156,6 +157,11 @@ namespace Meadow.Foundation.Graphics.Buffers
                         Width = Height,
                         Height = Width
                     };
+                    newBuffer.InitializeBuffer();
+
+                    Console.WriteLine($"{Width}, {Height}");
+                    Console.WriteLine($"{newBuffer.Width}, {newBuffer.Height}");
+
                     for (int i = 0; i < Width; i++)
                     {
                         for (int j = 0; j < Height; j++)
@@ -170,6 +176,8 @@ namespace Meadow.Foundation.Graphics.Buffers
                         Width = Height,
                         Height = Width
                     };
+                    newBuffer.InitializeBuffer();
+
                     for (int i = 0; i < Width; i++)
                     {
                         for (int j = 0; j < Height; j++)
@@ -184,6 +192,8 @@ namespace Meadow.Foundation.Graphics.Buffers
                         Width = Width,
                         Height = Height
                     };
+                    newBuffer.InitializeBuffer();
+
                     for (int i = 0; i < Width; i++)
                     {
                         for (int j = 0; j < Height; j++)
@@ -194,7 +204,20 @@ namespace Meadow.Foundation.Graphics.Buffers
                     break;
                 case RotationType.Default:
                 default:
-                    newBuffer = Clone<T>();
+                    newBuffer = new T
+                    {
+                        Width = Height,
+                        Height = Width
+                    };
+                    newBuffer.InitializeBuffer();
+
+                    for (int i = 0; i < Width; i++)
+                    {
+                        for (int j = 0; j < Height; j++)
+                        {
+                            newBuffer.SetPixel(i, j, GetPixel(i, j));
+                        }
+                    }
                     break;
             }
 
@@ -207,7 +230,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <typeparam name="T">The buffer type to convert to</typeparam>
         /// <returns>A pixel buffer derrived from PixelBufferBase</returns>
-        public T ConvertToPixelBuffer<T>() 
+        public T ConvertPixelBuffer<T>() 
             where T : PixelBufferBase, new()
         {
             if(this.GetType() == typeof(T))
@@ -217,8 +240,8 @@ namespace Meadow.Foundation.Graphics.Buffers
 
             T newBuffer = new T()
             {
-                Width = this.Width,
-                Height = this.Height,
+                Width = Width,
+                Height = Height,
             };
             newBuffer.InitializeBuffer();
 
@@ -234,11 +257,12 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
         
         /// <summary>
-        /// Make a copy of the buffer object
+        /// Make a copy of the buffer object 
+        /// Intentionally private
         /// </summary>
         /// <typeparam name="T">The buffer type</typeparam>
         /// <returns>A new pixel buffer object</returns>
-        public T Clone<T>() where T : PixelBufferBase, new()
+        T Clone<T>() where T : PixelBufferBase, new()
         {
             var newBuffer = new T
             {
