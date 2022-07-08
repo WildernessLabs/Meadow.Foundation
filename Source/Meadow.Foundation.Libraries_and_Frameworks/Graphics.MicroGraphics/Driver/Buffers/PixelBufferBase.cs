@@ -49,6 +49,10 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public int ByteCount => (Width * Height * BitDepth) / 8;
 
+        /// <summary>
+        /// The buffer that holds the pixel data
+        /// The packing structure in buffer-specific
+        /// </summary>
         public byte[] Buffer { get; protected set; }
 
         public PixelBufferBase() { }
@@ -57,7 +61,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             Width = width;
             Height = height;
-            Buffer = new byte[ByteCount];
+            InitializeBuffer();
         }
 
         public PixelBufferBase(int width, int height, byte[] buffer)
@@ -69,6 +73,19 @@ namespace Meadow.Foundation.Graphics.Buffers
                 throw new ArgumentException($"Provided buffer length ({buffer.Length}) does not match this buffer's ByteCount ({ByteCount}).");
             }
             Buffer = buffer;
+        }
+
+        /// <summary>
+        /// Initialize the pixel buffer based on the current
+        /// width, height and color depth
+        /// </summary>
+        /// <param name="replaceIfExists">If true, will recreates the buffer if it already exists</param>
+        public void InitializeBuffer(bool replaceIfExists = false)
+        {
+            if(Buffer == null || replaceIfExists)
+            {
+                Buffer = new byte[ByteCount];
+            }
         }
 
         public void Clear()
@@ -129,7 +146,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <returns>The new buffer</returns>
         public T Rotate<T>(RotationType rotation) where T : PixelBufferBase, new()
         {
-            PixelBufferBase newBuffer;
+            T newBuffer;
 
             switch (rotation)
             {
@@ -177,16 +194,60 @@ namespace Meadow.Foundation.Graphics.Buffers
                     break;
                 case RotationType.Default:
                 default:
-                    newBuffer = new T
-                    {
-                        Width = Width,
-                        Height = Height
-                    };
-                    Array.Copy(Buffer, newBuffer.Buffer, ByteCount);
+                    newBuffer = Clone<T>();
                     break;
             }
 
-            return (T)newBuffer;
+            return newBuffer;
+        }
+
+        /// <summary>
+        /// Create a new pixel buffer and 
+        /// copy/convert pixel data from existing buffer
+        /// </summary>
+        /// <typeparam name="T">The buffer type to convert to</typeparam>
+        /// <returns>A pixel buffer derrived from PixelBufferBase</returns>
+        public T ConvertToPixelBuffer<T>() 
+            where T : PixelBufferBase, new()
+        {
+            if(this.GetType() == typeof(T))
+            {   //clone
+                return Clone<T>();
+            }
+
+            T newBuffer = new T()
+            {
+                Width = this.Width,
+                Height = this.Height,
+            };
+            newBuffer.InitializeBuffer();
+
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    newBuffer.SetPixel(x, y, GetPixel(x, y));
+                }
+            }
+
+            return newBuffer;
+        }
+        
+        /// <summary>
+        /// Make a copy of the buffer object
+        /// </summary>
+        /// <typeparam name="T">The buffer type</typeparam>
+        /// <returns>A new pixel buffer object</returns>
+        public T Clone<T>() where T : PixelBufferBase, new()
+        {
+            var newBuffer = new T
+            {
+                Width = Width,
+                Height = Height
+            };
+            Array.Copy(Buffer, newBuffer.Buffer, ByteCount);
+
+            return newBuffer;
         }
     }
 }
