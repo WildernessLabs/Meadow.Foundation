@@ -3,6 +3,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
 using Meadow.Units;
 using System;
+using System.Threading.Tasks;
 
 namespace MaxBotix_Sample
 {
@@ -11,15 +12,15 @@ namespace MaxBotix_Sample
     {
         MaxBotix maxBotix;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
 
             //Analog
-           // maxBotix = new MaxBotix(Device, Device.Pins.A00, MaxBotix.SensorType.HR10Meter);
+            // maxBotix = new MaxBotix(Device, Device.Pins.A00, MaxBotix.SensorType.HR10Meter);
 
             //Serial
-          //  maxBotix = new MaxBotix(Device, Device.SerialPortNames.Com4, MaxBotix.SensorType.HR10Meter);
+            //  maxBotix = new MaxBotix(Device, Device.SerialPortNames.Com4, MaxBotix.SensorType.HR10Meter);
 
             //I2C - don't forget external pullup resistors 
             maxBotix = new MaxBotix(Device.CreateI2cBus(), MaxBotix.SensorType.HR10Meter);
@@ -38,15 +39,17 @@ namespace MaxBotix_Sample
                     return false;
                 }
             );
-
-            var distance = maxBotix.Read();
-            distance.Wait();
-
-            Console.WriteLine($"Distance is: {distance.Result.Centimeters}cm");
-
             maxBotix.Subscribe(consumer);
 
             maxBotix.DistanceUpdated += MaxBotix_DistanceUpdated;
+
+            return Task.CompletedTask;
+        }
+
+        public override async Task Run()
+        {
+            var distance = await maxBotix.Read();
+            Console.WriteLine($"Distance is: {distance.Centimeters}cm");
 
             maxBotix.StartUpdating(new TimeSpan(0, 0, 1));
         }

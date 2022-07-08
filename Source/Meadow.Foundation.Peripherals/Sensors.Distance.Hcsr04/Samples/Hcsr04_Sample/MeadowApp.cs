@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
@@ -14,21 +15,29 @@ namespace Sensors.Distance.HCSR04_Sample
 
         Hcsr04 hCSR04;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-             Console.WriteLine($"Hello HC-SR04 sample");
+            Console.WriteLine($"Hello HC-SR04 sample");
 
-            hCSR04 = new Hcsr04(Device, Device.Pins.D05, Device.Pins.D06);
+            hCSR04 = new Hcsr04(
+                device: Device, 
+                triggerPin: Device.Pins.D05, 
+                echoPin: Device.Pins.D06);
             hCSR04.DistanceUpdated += HCSR04_DistanceUpdated;
 
-            Console.WriteLine("Starting loop");
+            return Task.CompletedTask;
+        }
 
+        public override Task Run()
+        {
             while (true)
             {
                 // Sends a trigger signal
                 hCSR04.MeasureDistance();
                 Thread.Sleep(2000);
             }
+
+            return Task.CompletedTask;
         }
 
         private void HCSR04_DistanceUpdated(object sender, IChangeResult<Meadow.Units.Length> e)

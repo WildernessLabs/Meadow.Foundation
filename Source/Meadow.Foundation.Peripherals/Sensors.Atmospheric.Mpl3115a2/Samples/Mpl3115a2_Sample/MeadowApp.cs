@@ -10,16 +10,16 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
     {
         //<!=SNIP=>
 
-        readonly Mpl3115a2 sensor;
+        Mpl3115a2 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
             sensor = new Mpl3115a2(Device.CreateI2cBus());
 
             var consumer = Mpl3115a2.CreateObserver(
-                handler: result => 
+                handler: result =>
                 {
                     Console.WriteLine($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
                 },
@@ -41,15 +41,15 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
                 Console.WriteLine($"  Pressure: {result.New.Pressure?.Bar:N2}bar");
             };
 
-            ReadConditions().Wait();
-
-            sensor.StartUpdating(TimeSpan.FromSeconds(1));
+            return Task.CompletedTask;
         }
 
-        async Task ReadConditions()
+        public override async Task Run()
         {
             var conditions = await sensor.Read();
             Console.WriteLine($"Temperature: {conditions.Temperature?.Celsius}°C, Pressure: {conditions.Pressure?.Pascal}Pa");
+
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         //<!=SNOP=>

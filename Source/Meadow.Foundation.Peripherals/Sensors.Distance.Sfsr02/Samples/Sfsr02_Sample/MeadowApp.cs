@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
@@ -13,18 +14,22 @@ namespace Sensors.Distance.SFSR02_Sample
 
         Sfsr02 sFSR02;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             sFSR02 = new Sfsr02(Device, Device.Pins.D03);
             sFSR02.DistanceUpdated += SFSR02_DistanceUpdated;
 
+            return Task.CompletedTask;
+        }
+
+        public override async Task Run()
+        {
             while (true)
             {
                 Console.WriteLine("Measure Distance:");
 
-                // Sends a trigger signal
                 sFSR02.MeasureDistance();
-                Thread.Sleep(1500);
+                await Task.Delay(1500);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Camera;
@@ -10,15 +11,20 @@ namespace MeadowApp
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        ArducamMini camera;
+
+        public override async Task Initialize()
         {
             Console.WriteLine("Initialize...");
 
             var spiBus = Device.CreateSpiBus(new Meadow.Units.Frequency(8, Meadow.Units.Frequency.UnitType.Megahertz));
-            var camera = new ArducamMini(Device, spiBus, Device.Pins.D00, Device.CreateI2cBus());
+            camera = new ArducamMini(Device, spiBus, Device.Pins.D00, Device.CreateI2cBus());
 
-            Thread.Sleep(1000);
+            await Task.Delay(1000);
+        }
 
+        public override Task Run()
+        {
             Console.WriteLine("Attempting single capture");
             camera.FlushFifo();
             camera.FlushFifo();
@@ -36,6 +42,8 @@ namespace MeadowApp
 
                 Console.WriteLine($"Jpeg captured {data.Length}");
             }
+
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>
