@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BasicSensors.Atmospheric.SI7021_Sample
 {
-    public class MeadowApp : App<F7FeatherV1, MeadowApp>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
@@ -14,25 +14,29 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
         public MeadowApp()
         {
-            Console.WriteLine("Initializing...");
+        }
+
+        public override Task Initialize()
+        {
+            Resolver.Log.Info("Initializing...");
 
             sensor = new Sgp40(Device.CreateI2cBus());
 
-            Console.WriteLine($"Sensor SN: {sensor.SerialNumber:x6}");
+            Resolver.Log.Info($"Sensor SN: {sensor.SerialNumber:x6}");
 
             if (sensor.RunSelfTest())
             {
-                Console.WriteLine("Self test successful");
+                Resolver.Log.Info("Self test successful");
             }
             else
             {
-                Console.WriteLine("Self test failed");
+                Resolver.Log.Warn("Self test failed");
             }
 
             var consumer = Sgp40.CreateObserver(
-                handler: result => 
+                handler: result =>
                 {
-                    Console.WriteLine($"Observer: VOC changed by threshold; new index: {result.New}");
+                    Resolver.Log.Info($"Observer: VOC changed by threshold; new index: {result.New}");
                 },
                 filter: result =>
                 {
@@ -44,10 +48,15 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
             sensor.Updated += (sender, result) =>
             {
-                Console.WriteLine($"  VOC: {result.New}");
+                Resolver.Log.Info($"  VOC: {result.New}");
             };
 
-            ReadConditions().Wait();
+            return base.Initialize();
+        }
+
+        public override async Task Run()
+        {
+            await ReadConditions();
 
             sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
@@ -55,8 +64,8 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
         async Task ReadConditions()
         {
             var result = await sensor.Read();
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {result}");
+            Resolver.Log.Info("Initial Readings:");
+            Resolver.Log.Info($"  Temperature: {result}");
         }
 
         //<!=SNOP=>
