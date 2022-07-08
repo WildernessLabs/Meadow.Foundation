@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Hid;
 using System;
+using System.Threading.Tasks;
 
 namespace Bbq10Keyboard_Sample
 {
@@ -9,12 +10,15 @@ namespace Bbq10Keyboard_Sample
     {
         BBQ10Keyboard keyboard;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
+
             var i2cBus = Device.CreateI2cBus(0);
             keyboard = new BBQ10Keyboard(Device, i2cBus, Device.Pins.D10);
             keyboard.OnKeyEvent += Keyboard_OnKeyEvent;
+
+            return Task.CompletedTask;
         }
 
         private void Keyboard_OnKeyEvent(object sender, BBQ10Keyboard.KeyEvent e)

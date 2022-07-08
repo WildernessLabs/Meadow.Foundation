@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Hid;
 using System;
+using System.Threading.Tasks;
 
 namespace As5013_Sample
 {
@@ -10,15 +11,24 @@ namespace As5013_Sample
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        As5013 joystick;
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing ...");
 
             var joystick = new As5013(Device.CreateI2cBus());
 
+            joystick.Updated += As5013_Updated;
+
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             joystick.StartUpdating(TimeSpan.FromMilliseconds(100));
 
-            joystick.Updated += As5013_Updated;
+            return Task.CompletedTask;
         }
 
         private void As5013_Updated(object sender, IChangeResult<Meadow.Peripherals.Sensors.Hid.AnalogJoystickPosition> e)

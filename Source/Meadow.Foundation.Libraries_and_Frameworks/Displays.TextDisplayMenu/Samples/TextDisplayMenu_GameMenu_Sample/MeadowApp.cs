@@ -29,12 +29,7 @@ namespace MeadowApp
         IButton left = null;
         IButton right = null;
 
-        public MeadowApp()
-        {
-            Initialize();
-        }
-
-        void Initialize()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
 
@@ -87,6 +82,8 @@ namespace MeadowApp
             down.Clicked += Down_Clicked;
 
             menu.Enable();
+
+            return Task.CompletedTask;
         }
 
         private void Down_Clicked(object sender, EventArgs e)

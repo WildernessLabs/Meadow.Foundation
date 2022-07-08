@@ -3,27 +3,22 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Gnss;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Gnss.Mt3339_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
+
         Mt3339 gps;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing ...");
 
             gps = new Mt3339(Device, Device.SerialPortNames.Com4);
 
-            Subscribe();
-
-            gps.StartUpdating();
-        }
-
-        void Subscribe()
-        {
             gps.GgaReceived += (object sender, GnssPositionInfo location) => {
                 Console.WriteLine("*********************************************");
                 Console.WriteLine(location);
@@ -60,7 +55,17 @@ namespace Sensors.Gnss.Mt3339_Sample
                 Console.WriteLine($"{satellites}");
                 Console.WriteLine("*********************************************");
             };
+
+            return Task.CompletedTask;
         }
+
+        public override Task Run()
+        {
+            gps.StartUpdating();
+
+            return Task.CompletedTask;
+        }
+
         //<!=SNOP=>
     }
 }
