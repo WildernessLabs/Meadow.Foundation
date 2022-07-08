@@ -8,15 +8,15 @@ using AU = Meadow.Units.Acceleration.UnitType;
 
 namespace Sensors.Motion.Mma7660fc_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Mma7660fc sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing");
+            Console.WriteLine("Initialize...");
 
             // create the sensor driver
             sensor = new Mma7660fc(Device.CreateI2cBus());
@@ -42,20 +42,19 @@ namespace Sensors.Motion.Mma7660fc_Sample
                 });
             sensor.Subscribe(consumer);
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating
-            sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public async override Task Run()
         {
+            //==== one-off read
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"Accel: [X:{result.X.MetersPerSecondSquared:N2}," +
                 $"Y:{result.Y.MetersPerSecondSquared:N2}," +
                 $"Z:{result.Z.MetersPerSecondSquared:N2} (m/s^2)]");
+
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
         }
 
         //<!=SNOP=>

@@ -1,13 +1,14 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         MicroGraphics graphics;
         Max7219 display;
@@ -20,7 +21,7 @@ namespace MeadowApp
         int[,] cubeWireframe = new int[12, 3];
         int[,] cubeVertices;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             int cubeSize = 5;
 
@@ -35,35 +36,6 @@ namespace MeadowApp
                  { -cubeSize,  cubeSize, -cubeSize},
             };
 
-            Init();
-
-            Show3dCube();
-
-            graphics.Clear();
-            graphics.DrawRectangle(0, 0, 16, 16);
-            graphics.Show();
-
-            Thread.Sleep(1000);
-
-            graphics.Clear();
-            graphics.DrawRectangle(0, 0, 20, 10);
-            graphics.Show();
-
-            /*   while (true)
-               {
-                   Counter();
-                   Thread.Sleep(2000);
-
-                   DrawPixels();
-                   Thread.Sleep(2000);
-
-                   ShowText();
-                   Thread.Sleep(2000);
-               } */
-        }
-
-        void Init()
-        {
             Console.WriteLine("Init...");
 
             var spiBus = Device.CreateSpiBus(Max7219.DefaultSpiBusSpeed);
@@ -75,6 +47,8 @@ namespace MeadowApp
             graphics.Rotation = RotationType._90Degrees;
 
             Console.WriteLine("Max7219 instantiated");
+
+            return base.Initialize();
         }
 
         void Show3dCube()
@@ -152,5 +126,33 @@ namespace MeadowApp
             graphics.DrawLine(cubeWireframe[3, 0], cubeWireframe[3, 1], cubeWireframe[7, 0], cubeWireframe[7, 1], true);
         }
 
+        public override Task Run()
+        {
+            Show3dCube();
+
+            graphics.Clear();
+            graphics.DrawRectangle(0, 0, 16, 16);
+            graphics.Show();
+
+            Thread.Sleep(1000);
+
+            graphics.Clear();
+            graphics.DrawRectangle(0, 0, 20, 10);
+            graphics.Show();
+
+            /*   while (true)
+               {
+                   Counter();
+                   Thread.Sleep(2000);
+
+                   DrawPixels();
+                   Thread.Sleep(2000);
+
+                   ShowText();
+                   Thread.Sleep(2000);
+               } */
+
+            return base.Run();
+        }
     }
 }

@@ -1,28 +1,21 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Hardware;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using static Meadow.Peripherals.Leds.IRgbLed;
 
 namespace Leds.RgbPwmLed_Onboard_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         RgbPwmLed onboardLed;
 
-        public MeadowApp()
-        {
-            ConfigurePeripherals();
-            TestColors();
-            RunColors();
-        }
-
-        public void ConfigurePeripherals()
+        public override Task Initialize()
         {
             Console.WriteLine("Creating peripherals...");
             this.onboardLed = new RgbPwmLed(
@@ -31,6 +24,15 @@ namespace Leds.RgbPwmLed_Onboard_Sample
                 Device.Pins.OnboardLedGreen,
                 Device.Pins.OnboardLedBlue,
                 commonType: CommonType.CommonAnode);
+
+            return Task.CompletedTask;
+        }
+
+        public override async Task Run()
+        {
+            TestColors();
+
+            RunColors();
         }
 
         public void TestColors()

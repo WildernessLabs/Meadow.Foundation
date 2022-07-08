@@ -3,17 +3,17 @@ using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using Meadow.Hardware;
 using System;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace Leds.LedBarGraph_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         LedBarGraph ledBarGraph;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -34,10 +34,10 @@ namespace Leds.LedBarGraph_Sample
 
             ledBarGraph = new LedBarGraph(Device, pins);
 
-            TestLedBarGraph();
+            return Task.CompletedTask;
         }
 
-        protected void TestLedBarGraph()
+        public override async Task Run()
         {
             Console.WriteLine("TestLedBarGraph...");
 
@@ -49,11 +49,11 @@ namespace Leds.LedBarGraph_Sample
                 for (int i = 0; i < ledBarGraph.Count; i++)
                 {
                     ledBarGraph.SetLed(i, true);
-                    Thread.Sleep(1000);
+                    await Task.Delay(1000);
                     ledBarGraph.SetLed(i, false);
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Turning them on using Percentage...");
                 while (percentage < 1)
@@ -61,10 +61,10 @@ namespace Leds.LedBarGraph_Sample
                     percentage += 0.10m;
                     Console.WriteLine($"{percentage}");
                     ledBarGraph.Percentage = (float) Math.Min(1.0m, percentage);
-                    Thread.Sleep(500);
+                    await Task.Delay(1000);
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Turning them off using Percentage...");
                 while (percentage > 0)
@@ -72,24 +72,24 @@ namespace Leds.LedBarGraph_Sample
                     percentage -= 0.10m;
                     Console.WriteLine($"{percentage}");
                     ledBarGraph.Percentage = (float) Math.Max(0.0m, percentage);
-                    Thread.Sleep(500);
+                    await Task.Delay(1000);
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Blinking for 3 seconds...");
                 ledBarGraph.StartBlink();
-                Thread.Sleep(3000);
+                await Task.Delay(3000);
                 ledBarGraph.Stop();
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Blinking for 3 seconds...");
                 ledBarGraph.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-                Thread.Sleep(3000);
+                await Task.Delay(3000);
                 ledBarGraph.Stop();
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
             }
         }
 

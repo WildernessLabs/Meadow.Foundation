@@ -1,20 +1,21 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Displays.Tft.Ili9481_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         MicroGraphics graphics;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing ...");
 
@@ -25,15 +26,13 @@ namespace Displays.Tft.Ili9481_Sample
 
             var display = new Ili9481
             (
-                device: Device, 
+                device: Device,
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
                 width: 320, height: 480
-            )
-            {
-            };
+            );
 
             graphics = new MicroGraphics(display)
             {
@@ -41,12 +40,21 @@ namespace Displays.Tft.Ili9481_Sample
                 CurrentFont = new Font8x8()
             };
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             graphics.Clear();
+
             graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
             graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, false);
             graphics.DrawCircle(50, 50, 40, Meadow.Foundation.Color.Blue, false);
             graphics.DrawText(5, 5, "Meadow F7");
+
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

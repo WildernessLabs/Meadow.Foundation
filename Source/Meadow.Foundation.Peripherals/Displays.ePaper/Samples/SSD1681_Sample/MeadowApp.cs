@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.ePaper;
@@ -6,11 +7,13 @@ using Meadow.Foundation.Graphics;
 
 namespace Displays.ePaper.SSD1681_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        MicroGraphics graphics;
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize ...");
  
@@ -23,15 +26,22 @@ namespace Displays.ePaper.SSD1681_Sample
                 width: 200,
                 height: 200);
 
-            var graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display);
 
-           graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Black);
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
+            graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Black);
 
             graphics.CurrentFont = new Font8x12();
             graphics.DrawText(2, 2, "SSD1681", Meadow.Foundation.Color.Black);
             graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
 
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

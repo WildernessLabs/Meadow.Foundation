@@ -16,6 +16,8 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public BufferRgb332(int width, int height) : base(width, height) { }
 
+        public BufferRgb332() : base() { }
+
         public int GetPixel8bpp(int x, int y)
         {
             return Buffer[y * Width + x];

@@ -5,45 +5,47 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Leds.Apa102_Display_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         Apa102 display;
 
         MicroGraphics canvas;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Initialize();
-
-            canvas.CurrentFont = new Font4x8();
-
-            while (true) {
-                canvas.Clear();
-                canvas.DrawText(0, 1, "MEADOW", Colors.AzureBlue);
-                canvas.DrawText(24, 1, "F7", Colors.ChileanFire);
-                canvas.Show();
-
-                Thread.Sleep(1000);
-
-                canvas.Clear();
-                canvas.DrawText(0, 1, "Rocks", Colors.PearGreen);
-                canvas.Show();
-
-                Thread.Sleep(1000);
-            }
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             display = new Apa102(Device.CreateSpiBus(Apa102.DefaultSpiBusSpeed), 32, 8, Apa102.PixelOrder.BGR);
             canvas = new MicroGraphics(display);
 
             Console.WriteLine("Hardware intitialized.");
+
+            return base.Initialize();
+        }
+
+        public override async Task Run()
+        {
+            canvas.CurrentFont = new Font4x8();
+
+            while (true)
+            {
+                canvas.Clear();
+                canvas.DrawText(0, 1, "MEADOW", Colors.AzureBlue);
+                canvas.DrawText(24, 1, "F7", Colors.ChileanFire);
+                canvas.Show();
+
+                await Task.Delay(1000);
+
+                canvas.Clear();
+                canvas.DrawText(0, 1, "Rocks", Colors.PearGreen);
+                canvas.Show();
+
+                await Task.Delay(1000);
+            }
         }
 
         static class Colors

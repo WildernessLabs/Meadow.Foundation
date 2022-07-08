@@ -9,15 +9,16 @@ using System.Threading.Tasks;
 
 namespace Bbq10Keyboard_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Tsc2004 touchScreen;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
+
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Fast, 0);
 
             touchScreen = new Tsc2004(i2cBus)
@@ -31,7 +32,12 @@ namespace Bbq10Keyboard_Sample
                 Rotation = RotationType._90Degrees
             };
 
-            Task.Run(() =>
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
+            return Task.Run(() =>
             {
                 Point3d pt;
 

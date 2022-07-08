@@ -7,15 +7,15 @@ using Mode = Meadow.Foundation.Sensors.Light.Bh1750.MeasuringModes;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Bh1750 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("Initialize...");
 
             var i2c = Device.CreateI2cBus();
             sensor = new Bh1750(
@@ -42,18 +42,16 @@ namespace MeadowApp
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) => Console.WriteLine($"Light: {result.New.Lux:N2}Lux");
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating continuously
-            sensor.StartUpdating(TimeSpan.FromSeconds(1));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public override async Task Run()
         {
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"   Light: {result.Lux:N2}Lux");
+            Console.WriteLine($" Light: {result.Lux:N2}Lux");
+
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         //<!=SNOP=>

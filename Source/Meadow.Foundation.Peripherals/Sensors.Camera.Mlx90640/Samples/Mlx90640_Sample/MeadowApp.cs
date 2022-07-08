@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Camera;
@@ -7,25 +8,26 @@ using Meadow.Hardware;
 
 namespace Sensors.Temperature.MLX90640_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Mlx90640 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Fast);
             sensor = new Mlx90640(i2cBus);
-  
-            //View sensor data as temperature values
-            Run(showTempArrayAsAsciiArt: false);
+
+            return Task.CompletedTask;
         }
 
-        void Run(bool showTempArrayAsAsciiArt)
+        public override Task Run()
         {
+            bool showTempArrayAsAsciiArt = false;
+
             Console.WriteLine("Run sample...");
 
             float[] frame;
@@ -33,7 +35,7 @@ namespace Sensors.Temperature.MLX90640_Sample
             Console.WriteLine($"Serial #:{sensor.SerialNumber}");
 
             sensor.SetMode(Mlx90640.Mode.Chess);
-            Console.WriteLine($"Current Mode: {sensor.GetMode()}");  
+            Console.WriteLine($"Current Mode: {sensor.GetMode()}");
 
             sensor.SetResolution(Mlx90640.Resolution.EighteenBit);
             Console.WriteLine($"Current resolution: {sensor.GetResolution()}");
@@ -88,7 +90,9 @@ namespace Sensors.Temperature.MLX90640_Sample
 
                     Console.WriteLine();
                 }
-           }
+            }
+
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

@@ -16,6 +16,8 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public BufferGray8(int width, int height) : base(width, height) { }
 
+        public BufferGray8() : base() { }
+
         public byte GetPixel8bpp(int x, int y)
         {
             return Buffer[y * Width + x];
