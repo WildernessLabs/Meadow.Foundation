@@ -6,7 +6,7 @@ using Meadow.Hardware;
 using Meadow.Units;
 using System;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transceivers.Nrf24l01_RX_Sample
 {
@@ -18,7 +18,7 @@ namespace Transceivers.Nrf24l01_RX_Sample
 
         Memory<byte> readBuffer;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             led = new RgbLed(Device, Device.Pins.OnboardLedRed, Device.Pins.OnboardLedGreen, Device.Pins.OnboardLedBlue);
             led.SetColor(RgbLed.Colors.Red);
@@ -33,6 +33,11 @@ namespace Transceivers.Nrf24l01_RX_Sample
                 chipSelectLine: Device.Pins.D12,
                 interruptPin: Device.Pins.D00);
 
+            return Task.CompletedTask;
+        }
+
+        public async override Task Run()
+        { 
             radio.SetChannel(76);
             radio.OpenReadingPipe(0, Encoding.UTF8.GetBytes(address));
             radio.SetPALevel(0);
@@ -46,7 +51,7 @@ namespace Transceivers.Nrf24l01_RX_Sample
                 {
                     readBuffer = radio.Read(32);
 
-                    Thread.Sleep(1000);
+                    await Task.Delay(1000);
                 }
             }           
         }

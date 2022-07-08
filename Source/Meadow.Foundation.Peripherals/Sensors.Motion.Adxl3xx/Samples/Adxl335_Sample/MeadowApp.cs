@@ -14,9 +14,9 @@ namespace Sensors.Motion.Adxl335_Sample
 
         Adxl335 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing");
+            Console.WriteLine("Initialize hardware...");
 
             // create the sensor driver
             sensor = new Adxl335(Device, Device.Pins.A00, Device.Pins.A01, Device.Pins.A02, null);
@@ -40,20 +40,18 @@ namespace Sensors.Motion.Adxl335_Sample
                 });
             sensor.Subscribe(consumer);
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating
-            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public async override Task Run()
         {
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"Accel: [X:{result.X.MetersPerSecondSquared:N2}," +
                 $"Y:{result.Y.MetersPerSecondSquared:N2}," +
                 $"Z:{result.Z.MetersPerSecondSquared:N2} (m/s^2)]");
+
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
         }
 
         //<!=SNOP=>

@@ -15,9 +15,9 @@ namespace Sensors.Motion.mpu5060_Sample
 
         Mpu6050 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing");
+            Console.WriteLine("Initialize hardware...");
 
             sensor = new Mpu6050(Device.CreateI2cBus());
 
@@ -46,17 +46,14 @@ namespace Sensors.Motion.mpu5060_Sample
                 });
             sensor.Subscribe(consumer);
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating
-            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public async override Task Run()
         {
+            //==== one-off read
             var result = await sensor.Read();
-            Console.WriteLine("Initial Readings:");
+
             Console.WriteLine($"Accel: [X:{result.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
                 $"Y:{result.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
                 $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
@@ -66,6 +63,8 @@ namespace Sensors.Motion.mpu5060_Sample
                 $"Z:{result.AngularVelocity3D?.Z.DegreesPerSecond:N2} (dps)]");
 
             Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
+
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
         }
 
         //<!=SNOP=>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
@@ -12,11 +13,16 @@ namespace Sensors.Motion.ParallaxPir_Sample
 
         ParallaxPir parallaxPir;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
+            Console.WriteLine("Initialize hardware...");
+            
             parallaxPir = new ParallaxPir(Device.CreateDigitalInputPort(Device.Pins.D05, InterruptMode.EdgeBoth, ResistorMode.Disabled));
+
             parallaxPir.OnMotionStart += (sender)=> Console.WriteLine($"Motion start  {DateTime.Now}");
             parallaxPir.OnMotionEnd += (sender) => Console.WriteLine($"Motion end  {DateTime.Now}");
+
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

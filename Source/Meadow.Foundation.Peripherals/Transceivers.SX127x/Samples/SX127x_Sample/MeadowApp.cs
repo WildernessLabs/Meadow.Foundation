@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Transceivers;
@@ -10,19 +11,15 @@ namespace MeadowApp
     {
         SX127x radio;
 
-        public MeadowApp()
+        public async override Task Initialize()
         {
-            InitHardware();
-        }
+            Console.WriteLine("Initialize hardware...");
 
-        public void InitHardware()
-        {
-            Console.WriteLine("Initialize...");
             var bus = Device.CreateSpiBus();
             var chipSelect = Device.CreateDigitalOutputPort(Device.Pins.D00);
             radio = new SX127x(bus, chipSelect);
 
-            while (true)
+             while (true)
             {
                 // this is purely a test for supporting changing bus speed in SPI - remove when the radio is implemented
                 foreach (var spd in bus.SupportedSpeeds)
@@ -40,7 +37,7 @@ namespace MeadowApp
                         Console.WriteLine($" {ex.Message}");
                     }
 
-                    Thread.Sleep(2000);
+                    await Task.Delay(2000);
                 }
             }
         }

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Units;
-using AU = Meadow.Units.Acceleration.UnitType;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
 
@@ -14,9 +13,9 @@ namespace MeadowApp
 
         Qmc5883 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing");
+            Console.WriteLine("Initialize hardware...");
 
             sensor = new Qmc5883(Device.CreateI2cBus());
 
@@ -34,19 +33,14 @@ namespace MeadowApp
                 handler: result => Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{Qmc5883.DirectionToHeading(result.New):N2}," +
                         $" old: X:{((result.Old != null) ? Qmc5883.DirectionToHeading(result.Old.Value) : "n/a"):N2} degrees"),
                 // only notify if there's a greater than 5° of heading change
-                filter: result => {
-                    return result.Old is { } old ? Qmc5883.DirectionToHeading(result.New - old) > new Azimuth(5) : false;
-                });
+                filter: result => result.Old is { } old && Qmc5883.DirectionToHeading(result.New - old) > new Azimuth(5));
+               
             sensor.Subscribe(consumer);
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating
-            sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public async override Task Run()
         {
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
@@ -55,8 +49,11 @@ namespace MeadowApp
                 $"Z:{result.Z:N2}]");
 
             Console.WriteLine($"Heading: [{Hmc5883.DirectionToHeading(result).DecimalDegrees:N2}] degrees");
-        }
 
+            // start updating
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
+        }
+    
         //<!=SNOP=>
     }
 }

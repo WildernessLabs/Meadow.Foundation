@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow.Devices;
 using Meadow.Foundation.Helpers;
 
@@ -8,9 +9,9 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
     {
         //<!=SNIP=>
 
-        readonly IRfidReader rfidReader;
+        IRfidReader rfidReader;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
 
@@ -22,9 +23,14 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
             // subscribe to IObservable
             rfidReader.Subscribe(new RfidObserver());
 
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        { 
             rfidReader.StartReading();
 
-            Console.WriteLine("Ready...");
+            return Task.CompletedTask;
         }
 
         private void RfidReaderOnTagRead(object sender, RfidReadResult e)

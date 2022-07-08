@@ -7,6 +7,7 @@ using Meadow.Units;
 using System;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transceivers.Nrf24l01_TX_Sample
 {
@@ -16,7 +17,7 @@ namespace Transceivers.Nrf24l01_TX_Sample
         Nrf24l01 radio;
         string address = "00001";
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             led = new RgbLed(Device, Device.Pins.OnboardLedRed, Device.Pins.OnboardLedGreen, Device.Pins.OnboardLedBlue);
             led.SetColor(RgbLed.Colors.Red);
@@ -31,6 +32,11 @@ namespace Transceivers.Nrf24l01_TX_Sample
                 chipSelectLine: Device.Pins.D12,
                 interruptPin: Device.Pins.D00);
 
+            return Task.CompletedTask;
+        }
+
+        public async override Task Run()
+        {
             radio.SetChannel(76);
             radio.OpenWritingPipe(Encoding.UTF8.GetBytes(address));
             radio.SetPALevel(0);
@@ -43,7 +49,7 @@ namespace Transceivers.Nrf24l01_TX_Sample
                 string helloWorld = "Hello World";
                 radio.Write(Encoding.UTF8.GetBytes(helloWorld), (byte)(helloWorld.Length));
                 Console.WriteLine($"Sending: {helloWorld} \n");
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
             }
         }
     }

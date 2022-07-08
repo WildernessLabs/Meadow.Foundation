@@ -14,9 +14,9 @@ namespace MeadowApp
 
         Bno055 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing");
+            Console.WriteLine("Initialize hardware...");
 
             // create the sensor driver
             sensor = new Bno055(Device.CreateI2cBus());
@@ -40,12 +40,10 @@ namespace MeadowApp
                     $"Y:{result.New.GravityVector?.Y.MetersPerSecondSquared:N2}," +
                     $"Z:{result.New.GravityVector?.Z.MetersPerSecondSquared:N2} (meters/s^2)]");
 
-                // TODO: what is the unit here. quaternion need to be unitized.
                 Console.WriteLine($"Quaternion orientation: [X:{result.New.QuaternionOrientation?.X:N2}," +
                     $"Y:{result.New.QuaternionOrientation?.Y:N2}," +
                     $"Z:{result.New.QuaternionOrientation?.Z:N2}]");
 
-                // TODO: what is the unit here. euler angles need to be unitized.
                 Console.WriteLine($"Euler orientation: [heading: {result.New.EulerOrientation?.Heading:N2}," +
                     $"Roll: {result.New.EulerOrientation?.Roll:N2}," +
                     $"Pitch: {result.New.EulerOrientation?.Pitch:N2}]");
@@ -72,10 +70,13 @@ namespace MeadowApp
                 });
             sensor.Subscribe(consumer);
 
-            //==== one-off read
-            ReadConditions().Wait();
+            return Task.CompletedTask;
+        }
 
-            // start updating
+        public async override Task Run()
+        { 
+            await ReadConditions();
+
             sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
         }
 
@@ -99,12 +100,10 @@ namespace MeadowApp
                 $"Y:{result.GravityVector?.Y.MetersPerSecondSquared:N2}," +
                 $"Z:{result.GravityVector?.Z.MetersPerSecondSquared:N2} (meters/s^2)]");
 
-            // TODO: what is the unit here. quaternion need to be unitized.
             Console.WriteLine($"Quaternion orientation: [X:{result.QuaternionOrientation?.X:N2}," +
                 $"Y:{result.QuaternionOrientation?.Y:N2}," +
                 $"Z:{result.QuaternionOrientation?.Z:N2}]");
 
-            // TODO: what is the unit here. euler angles need to be unitized.
             Console.WriteLine($"Euler orientation: [heading: {result.EulerOrientation?.Heading:N2}," +
                 $"Roll: {result.EulerOrientation?.Roll:N2}," +
                 $"Pitch: {result.EulerOrientation?.Pitch:N2}]");

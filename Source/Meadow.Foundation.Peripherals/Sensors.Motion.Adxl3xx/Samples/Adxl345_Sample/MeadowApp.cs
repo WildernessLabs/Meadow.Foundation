@@ -12,9 +12,9 @@ namespace Sensors.Motion.Adxl345_Sample
 
         Adxl345 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing");
+            Console.WriteLine("Initialize hardware...");
 
             sensor = new Adxl345(Device.CreateI2cBus());
             sensor.SetPowerState(false, false, true, false, Adxl345.Frequencies.TwoHz);
@@ -27,48 +27,18 @@ namespace Sensors.Motion.Adxl345_Sample
                     $"Z:{result.New.Z.MetersPerSecondSquared:N2} (m/s^2)]");
             };
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating
-            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public async override Task Run()
         {
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"Accel: [X:{result.X.MetersPerSecondSquared:N2}," +
                 $"Y:{result.Y.MetersPerSecondSquared:N2}," +
                 $"Z:{result.Z.MetersPerSecondSquared:N2} (m/s^2)]");
+
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
         }
-
-        //<!=SNOP=>
-
-        //==== IObservable 
-        // Example that uses an IObservable subscription to only be notified
-        // when the temperature changes by at least a degree, and humidty by 5%.
-        // (blowing hot breath on the sensor should trigger)
-        // TODO/BUG: uncommenting this means no events are raised.
-        //var consumer = Mpu6050.CreateObserver(
-        //    handler: result => {
-        //        Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.Acceleration3D?.X:N2}, old: X:{result.Old?.Acceleration3D?.X:N2}");
-        //    },
-        //    // only notify if the change is greater than 0.5°C
-        //    filter: result => {
-        //        if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
-        //            return (
-        //            (result.New.Acceleration3D.Value - old.Acceleration3D.Value).X > 0.1 // returns true if > 0.1 X change.
-        //            // can add addtional constraints, too:
-        //            //&&
-        //            //(result.New.AngularAcceleration3D.Value - old.AngularAcceleration3D.Value).X > 0.05 // 
-        //            );
-        //        }
-        //        return false;
-        //    }
-        //    // if you want to always get notified, pass null for the filter:
-        //    //filter: null
-        //    );
-        //sensor.Subscribe(consumer);
     }
 }

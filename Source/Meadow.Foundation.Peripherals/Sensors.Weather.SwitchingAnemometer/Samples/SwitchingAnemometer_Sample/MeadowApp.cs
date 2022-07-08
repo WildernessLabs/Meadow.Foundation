@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
@@ -15,9 +16,8 @@ namespace MeadowApp
         RgbPwmLed onboardLed;
         SwitchingAnemometer anemometer;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-        
             Console.WriteLine("Initialize hardware...");
 
             //==== onboard LED
@@ -46,10 +46,16 @@ namespace MeadowApp
                 );
             anemometer.Subscribe(observer);
 
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             // start raising updates
             anemometer.StartUpdating();
-
             Console.WriteLine("Hardware initialized.");
+            
+            return Task.CompletedTask;
         }
 
         /// <summary>

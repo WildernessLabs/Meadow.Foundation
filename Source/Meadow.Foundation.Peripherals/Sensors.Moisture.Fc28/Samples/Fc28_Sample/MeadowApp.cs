@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Moisture;
 using Meadow.Units;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using VU = Meadow.Units.Voltage.UnitType;
 
@@ -15,9 +14,9 @@ namespace Sensors.Moisture.FC28_Sample
 
         Fc28 fc28;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("Initialize hardware...");
 
             fc28 = new Fc28(
                 Device.CreateAnalogInputPort(Device.Pins.A01, 5, TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
@@ -43,22 +42,17 @@ namespace Sensors.Moisture.FC28_Sample
                 Console.WriteLine($"Moisture Updated: {e.New}");
             };
 
+            return Task.CompletedTask;
+        }
+
+        public async override Task Run()
+        {
+            var moisture = await fc28.Read();
+            Console.WriteLine($"Moisture Value { moisture}");
+
             fc28.StartUpdating();
         }
 
         //<!=SNOP=>
-
-        async Task TestFC28Read()
-        {
-            Console.WriteLine("TestFC28Sensor...");
-
-            while (true)
-            {
-                var moisture = await fc28.Read();
-
-                Console.WriteLine($"Moisture Value { moisture}");
-                Thread.Sleep(1000);
-            }
-        }
     }
 }

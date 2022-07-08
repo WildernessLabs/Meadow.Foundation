@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Weather;
@@ -12,7 +13,7 @@ namespace MeadowApp
 
         WindVane windVane;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
 
@@ -29,8 +30,13 @@ namespace MeadowApp
             );
             windVane.Subscribe(observer);
 
+            return Task.CompletedTask;
+        }
+
+        public override async Task Run()
+        {
             // get initial reading, just to test the API
-            Azimuth azi = windVane.Read().Result;
+            Azimuth azi = await windVane.Read();
             Console.WriteLine($"Initial azimuth: {azi.Compass16PointCardinalName}");
 
             // start updating

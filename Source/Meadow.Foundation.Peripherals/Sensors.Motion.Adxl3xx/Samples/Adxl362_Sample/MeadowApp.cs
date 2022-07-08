@@ -14,9 +14,9 @@ namespace Sensors.Motion.Adxl362_Sample
 
         Adxl362 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing");
+            Console.WriteLine("Initialize hardware...");
 
             // create the sensor driver
             sensor = new Adxl362(Device, Device.CreateSpiBus(), Device.Pins.D00);
@@ -40,16 +40,14 @@ namespace Sensors.Motion.Adxl362_Sample
                     return false;
                 });
             sensor.Subscribe(consumer);
-            //==== get the device id
-            Console.WriteLine($"Device ID: {sensor.DeviceID}");
-            //==== one-off read
-            ReadConditions().Wait();
-            // start updating
-            sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
+
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public async override Task Run()
         {
+            Console.WriteLine($"Device ID: {sensor.DeviceID}");
+
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"Accel: [X:{result.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
@@ -57,6 +55,8 @@ namespace Sensors.Motion.Adxl362_Sample
                 $"Z:{result.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
 
             Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
+
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
         }
 
         //<!=SNOP=>

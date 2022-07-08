@@ -13,9 +13,9 @@ namespace MeadowApp
 
         Hmc5883 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing");
+            Console.WriteLine("Initialize hardware...");
 
             sensor = new Hmc5883(Device.CreateI2cBus());
 
@@ -42,14 +42,10 @@ namespace MeadowApp
 
             sensor.Subscribe(consumer);
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating
-            sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public async override Task Run()
         {
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
@@ -58,9 +54,10 @@ namespace MeadowApp
                 $"Z:{result.Z:N2}]");
 
             Console.WriteLine($"Heading: [{Hmc5883.DirectionToHeading(result).DecimalDegrees:N2}] degrees");
+
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
         }
 
         //<!=SNOP=>
-
     }
 }
