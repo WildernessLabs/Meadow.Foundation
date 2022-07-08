@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Light;
-using Meadow.Units;
 
 namespace MeadowApp
 {
@@ -14,9 +12,9 @@ namespace MeadowApp
 
         Si1145 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("Initialize hardware...");
 
             sensor = new Si1145(Device.CreateI2cBus());
 
@@ -37,25 +35,24 @@ namespace MeadowApp
 
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) => {
-                Console.WriteLine($"  Visible Light: {result.New.VisibleLight?.Lux:N2}Lux");
-                Console.WriteLine($"  Infrared Light: {result.New.Infrared?.Lux:N2}Lux");
-                Console.WriteLine($"  UV Index: {result.New.UltravioletIndex:N2}Lux");
+                Console.WriteLine($" Visible Light: {result.New.VisibleLight?.Lux:N2}Lux");
+                Console.WriteLine($" Infrared Light: {result.New.Infrared?.Lux:N2}Lux");
+                Console.WriteLine($" UV Index: {result.New.UltravioletIndex:N2}Lux");
             };
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating continuously
-            sensor.StartUpdating(TimeSpan.FromSeconds(1));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public override async Task Run()
         {
-            var result = await sensor.Read();
+            var (VisibleLight, UltravioletIndex, Infrared) = await sensor.Read();
+
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Visible Light: {result.VisibleLight?.Lux:N2}Lux");
-            Console.WriteLine($"  Infrared Light: {result.Infrared?.Lux:N2}Lux");
-            Console.WriteLine($"  UV Index: {result.UltravioletIndex:N2}Lux");
+            Console.WriteLine($" Visible Light: {VisibleLight?.Lux:N2}Lux");
+            Console.WriteLine($" Infrared Light: {Infrared?.Lux:N2}Lux");
+            Console.WriteLine($" UV Index: {UltravioletIndex:N2}Lux");
+
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         //<!=SNOP=>

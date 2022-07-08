@@ -12,9 +12,9 @@ namespace Sensors.Light.Tsl2591_Sample
 
         Tsl2591 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("Initialize hardware...");
 
             // configure our sensor on the I2C Bus
             var i2c = Device.CreateI2cBus();
@@ -41,14 +41,10 @@ namespace Sensors.Light.Tsl2591_Sample
                 Console.WriteLine($"  Integrated Light: {result.New.Integrated?.Lux:N2}Lux");
             };
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating continuously
-            sensor.StartUpdating(TimeSpan.FromSeconds(1));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public override async Task Run()
         {
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
@@ -56,6 +52,8 @@ namespace Sensors.Light.Tsl2591_Sample
             Console.WriteLine($"  Infrared Light: {result.Infrared?.Lux:N2}Lux");
             Console.WriteLine($"  Visible Light: {result.VisibleLight?.Lux:N2}Lux");
             Console.WriteLine($"  Integrated Light: {result.Integrated?.Lux:N2}Lux");
+
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         //<!=SNOP=>

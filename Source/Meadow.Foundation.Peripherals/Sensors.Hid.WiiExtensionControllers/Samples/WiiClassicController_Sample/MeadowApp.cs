@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Hid;
 using System;
+using System.Threading.Tasks;
 
 namespace WiiClassicController_Sample
 {
@@ -9,11 +10,12 @@ namespace WiiClassicController_Sample
     {
         //<!=SNIP=>
 
-        readonly WiiClassicController classicController;
+        WiiClassicController classicController;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize hardware...");
+
             var i2cBus = Device.CreateI2cBus(WiiClassicController.DefaultSpeed);
 
             classicController = new WiiClassicController(i2cBus: i2cBus, 
@@ -42,16 +44,19 @@ namespace WiiClassicController_Sample
 
             classicController.DPad.Updated += (s, e) => Console.WriteLine($"DPad {e.New}");
 
-           
             classicController.LeftTrigger.Updated += (s, e) => Console.WriteLine($"Left Trigger {e.New}");
             classicController.RightTrigger.Updated += (s, e) => Console.WriteLine($"Left Trigger {e.New}");
 
             classicController.LeftAnalogStick.Updated += (s, e) => Console.WriteLine($"Left Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
             classicController.RightAnalogStick.Updated += (s, e) => Console.WriteLine($"Right Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
-            
 
-            //Start reading updates
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             classicController.StartUpdating(TimeSpan.FromMilliseconds(200));
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>
