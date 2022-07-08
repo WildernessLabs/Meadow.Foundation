@@ -6,10 +6,11 @@ using Meadow.Hardware;
 using Meadow.Units;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Displays.Ssd130x.Ssd1309_Game_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         MicroGraphics graphics;
         Ssd1309 display;
@@ -24,16 +25,60 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
         BreakoutGame breakoutGame;
         SnakeGame snakeGame;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Initialize();
+            Console.WriteLine("Initialize...");
 
-            breakoutGame = new BreakoutGame(64, 128);
-            StartBreakoutLoop();
+            Console.WriteLine("Create Display with SPI...");
 
-            snakeGame = new SnakeGame(64, 128);
-          //  StartSnakeLoop();
+            var config = new SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode0);
 
+            var bus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
+
+            display = new Ssd1309
+            (
+                device: Device,
+                spiBus: bus,
+                chipSelectPin: Device.Pins.D02,
+                dcPin: Device.Pins.D01,
+                resetPin: Device.Pins.D00
+            );
+
+            Console.WriteLine("Create Graphics Library...");
+
+            graphics = new MicroGraphics(display);
+            graphics.Rotation = RotationType._270Degrees;
+            graphics.CurrentFont = new Font8x12();
+
+            graphics.Clear();
+            graphics.DrawText(0, 0, "Hello");
+            graphics.Show();
+
+            Console.WriteLine("Create buttons...");
+
+            portLeft = Device.CreateDigitalInputPort(Device.Pins.D12, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
+            portUp = Device.CreateDigitalInputPort(Device.Pins.D13, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
+            portRight = Device.CreateDigitalInputPort(Device.Pins.D07, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
+            portDown = Device.CreateDigitalInputPort(Device.Pins.D11, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
+
+            portRight.Changed += PortRight_Changed;
+            portLeft.Changed += PortLeft_Changed;
+            portUp.Changed += PortUp_Changed;
+            portDown.Changed += PortDown_Changed;
+
+            /*     btnUp = new PushButton(Device, Device.Pins.D13);
+                 btnLeft = new PushButton(Device, Device.Pins.D12);
+                 btnDown = new PushButton(Device, Device.Pins.D11);
+                 btnRight = new PushButton(Device, Device.Pins.D10);
+
+                 btnUp.Clicked += BtnUp_Clicked;
+                 btnLeft.Clicked += BtnLeft_Clicked;
+                 btnDown.Clicked += BtnDown_Clicked;
+                 btnRight.Clicked += BtnRight_Clicked;  */
+
+            Console.WriteLine("Initialize complete");
+
+            return base.Initialize();
         }
 
         void StartBreakoutLoop()
@@ -92,61 +137,6 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
                 Thread.Sleep(250 - snakeGame.Level * 5);
             }
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
-
-            Console.WriteLine("Create Display with SPI...");
-
-            var config = new SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode0);
-
-            var bus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
-
-            display = new Ssd1309
-            (
-                device: Device,
-                spiBus: bus,
-                chipSelectPin: Device.Pins.D02,
-                dcPin: Device.Pins.D01,
-                resetPin: Device.Pins.D00
-            );
-
-            Console.WriteLine("Create Graphics Library...");
-
-            graphics = new MicroGraphics(display);
-            graphics.Rotation = RotationType._270Degrees;
-            graphics.CurrentFont = new Font8x12();
-
-            graphics.Clear();
-            graphics.DrawText(0, 0, "Hello");
-            graphics.Show();
-
-            Console.WriteLine("Create buttons...");
-
-            portLeft = Device.CreateDigitalInputPort(Device.Pins.D12, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
-            portUp = Device.CreateDigitalInputPort(Device.Pins.D13, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
-            portRight = Device.CreateDigitalInputPort(Device.Pins.D07, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
-            portDown = Device.CreateDigitalInputPort(Device.Pins.D11, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
-
-            portRight.Changed += PortRight_Changed;
-            portLeft.Changed += PortLeft_Changed;
-            portUp.Changed += PortUp_Changed;
-            portDown.Changed += PortDown_Changed;
-
-            /*     btnUp = new PushButton(Device, Device.Pins.D13);
-                 btnLeft = new PushButton(Device, Device.Pins.D12);
-                 btnDown = new PushButton(Device, Device.Pins.D11);
-                 btnRight = new PushButton(Device, Device.Pins.D10);
-
-                 btnUp.Clicked += BtnUp_Clicked;
-                 btnLeft.Clicked += BtnLeft_Clicked;
-                 btnDown.Clicked += BtnDown_Clicked;
-                 btnRight.Clicked += BtnRight_Clicked;  */
-
-            Console.WriteLine("Initialize complete");
-
         }
 
         private void PortRight_Changed(object sender, DigitalPortResult e)
@@ -220,6 +210,17 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
         void OutputText()
         {
 
+        }
+
+        public override Task Run()
+        {
+            breakoutGame = new BreakoutGame(64, 128);
+            StartBreakoutLoop();
+
+            snakeGame = new SnakeGame(64, 128);
+            //  StartSnakeLoop();
+
+            return base.Run();
         }
     }
 }

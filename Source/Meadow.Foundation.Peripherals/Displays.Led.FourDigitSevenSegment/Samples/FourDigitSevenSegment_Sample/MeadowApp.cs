@@ -1,18 +1,19 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.Led;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Displays.Led.SevenSegment_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         FourDigitSevenSegment sevenSegment;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.Write("Initializing...");
 
@@ -33,7 +34,14 @@ namespace Displays.Led.SevenSegment_Sample
                 isCommonCathode: true
             );
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             sevenSegment.SetDisplay("1234");
+
+            return base.Run();
         }
 
         //<!=SNOP=>

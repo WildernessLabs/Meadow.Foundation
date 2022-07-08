@@ -1,38 +1,19 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         MicroGraphics graphics;
         Max7219 display;
 
-        public MeadowApp()
-        {
-            Init();
-
-            while (true)
-            {
-                ShowText();
-                Thread.Sleep(2000);
-
-                ScrollText();
-                Thread.Sleep(2000);
-
-                Counter();
-                Thread.Sleep(2000);
-
-                DrawPixels();
-                Thread.Sleep(2000);
-            }
-        }
-
-        void Init()
+        public override Task Initialize()
         {
             Console.WriteLine("Init...");
 
@@ -41,11 +22,10 @@ namespace MeadowApp
                 Device.Pins.D00, deviceCount: 4,
                 maxMode: Max7219.Max7219Mode.Display);
 
-            display.IgnoreOutOfBoundsPixels = true;
-
             graphics = new MicroGraphics(display)
             {
-                CurrentFont = new Font4x8()
+                CurrentFont = new Font4x8(),
+                IgnoreOutOfBoundsPixels = true,
             };
 
             Console.WriteLine($"Display W: {display.Width}, H: {display.Height}");
@@ -62,6 +42,8 @@ namespace MeadowApp
             graphics.Show();
 
             Thread.Sleep(2000);
+
+            return base.Initialize();
         }
 
         void ScrollText()
@@ -114,6 +96,24 @@ namespace MeadowApp
                 graphics.Clear();
                 graphics.DrawText(0, 0, $"{i}");
                 graphics.Show();
+            }
+        }
+
+        public override Task Run()
+        {
+            while (true)
+            {
+                ShowText();
+                Thread.Sleep(2000);
+
+                ScrollText();
+                Thread.Sleep(2000);
+
+                Counter();
+                Thread.Sleep(2000);
+
+                DrawPixels();
+                Thread.Sleep(2000);
             }
         }
     }

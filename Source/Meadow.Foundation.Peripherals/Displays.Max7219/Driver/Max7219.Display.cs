@@ -24,10 +24,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public int Height => 8 * DigitRows; //each digit takes 8 bits so multiply by 8
 
-        /// <summary>
-        /// Will display ignore out of bounds pixels
-        /// </summary>
-        public bool IgnoreOutOfBoundsPixels { get; set; }
+        public IPixelBuffer PixelBuffer => this;
 
         /// <summary>
         /// Partial screen update
@@ -40,6 +37,14 @@ namespace Meadow.Foundation.Displays
         {
             //ToDo Check if partial updates are possible (although it's pretty fast as is)
             Show();
+        }
+
+        /// <summary>
+        /// Clear the display buffer
+        /// </summary>
+        public void Clear()
+        {
+            Clear(false);
         }
 
         /// <summary>
@@ -75,12 +80,6 @@ namespace Meadow.Foundation.Displays
 
         public void DrawPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             var index = x % 8;
 
             var display = y / 8 + (x / 8) * DigitRows;
@@ -107,12 +106,6 @@ namespace Meadow.Foundation.Displays
         /// <param name="y">y position</param>
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             var index = x % 8;
 
             var display = y / 8 + (x / 8) * DigitRows;
@@ -147,14 +140,6 @@ namespace Meadow.Foundation.Displays
         /// <param name="fillColor">color - converted to on/off</param>
         public void Fill(int x, int y, int width, int height, Color fillColor)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0) x = 0;
-                if (y < 0) y = 0;
-                if (x > width - 1) x = width - 1;
-                if (y > height - 1) y = height - 1;
-            }
-
             bool isColored = fillColor.Color1bpp;
             for (int i = 0; i < width; i++)
             {
@@ -171,7 +156,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="x">x position</param>
         /// <param name="y">y position</param>
         /// <param name="displayBuffer">buffer to draw</param>
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {   //need to refactor to use a proper buffer
             for (int i = 0; i < displayBuffer.Width; i++)
             {

@@ -8,15 +8,15 @@ using Meadow.Foundation.Sensors.Motion;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Mag3110 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing");
+            Console.WriteLine("Initialize...");
 
             sensor = new Mag3110(Device.CreateI2cBus());
 
@@ -41,14 +41,10 @@ namespace MeadowApp
                 });
             sensor.Subscribe(consumer);
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating
-            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public async override Task Run()
         {
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
@@ -57,6 +53,8 @@ namespace MeadowApp
                 $"Z:{result.MagneticField3D?.Z.MicroTesla:N2} (microteslas)]");
 
             Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
+
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
         }
 
         //<!=SNOP=>

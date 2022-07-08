@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Leds
         Task? animationTask = null;
         CancellationTokenSource? cancellationTokenSource = null;
 
-        readonly int DEFAULT_FREQUENCY = 200; //hz
+        static readonly Frequency DefaultFrequency = new Frequency(200, Frequency.UnitType.Hertz);
         readonly float DEFAULT_DUTY_CYCLE = 0f;
         readonly double maxRedDutyCycle = 1;
         readonly double maxGreenDutyCycle = 1;
@@ -140,9 +140,9 @@ namespace Meadow.Foundation.Leds
             IPin bluePwmPin,
             CommonType commonType = CommonType.CommonCathode) :
             this(
-                device.CreatePwmPort(redPwmPin),
-                device.CreatePwmPort(greenPwmPin),
-                device.CreatePwmPort(bluePwmPin),
+                device.CreatePwmPort(redPwmPin, DefaultFrequency),
+                device.CreatePwmPort(greenPwmPin, DefaultFrequency),
+                device.CreatePwmPort(bluePwmPin, DefaultFrequency),
                 commonType)
         { }
 
@@ -168,9 +168,9 @@ namespace Meadow.Foundation.Leds
             Voltage blueLedForwardVoltage,
             CommonType commonType = CommonType.CommonCathode) :
             this(
-                device.CreatePwmPort(redPwmPin),
-                device.CreatePwmPort(greenPwmPin),
-                device.CreatePwmPort(bluePwmPin),
+                device.CreatePwmPort(redPwmPin, DefaultFrequency),
+                device.CreatePwmPort(greenPwmPin, DefaultFrequency),
+                device.CreatePwmPort(bluePwmPin, DefaultFrequency),
                 redLedForwardVoltage, 
                 greenLedForwardVoltage, 
                 blueLedForwardVoltage,
@@ -238,7 +238,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         protected void ResetPwms()
         {
-            RedPwm.Frequency = GreenPwm.Frequency = BluePwm.Frequency = DEFAULT_FREQUENCY;
+            RedPwm.Frequency = GreenPwm.Frequency = BluePwm.Frequency = DefaultFrequency;
             RedPwm.DutyCycle = GreenPwm.DutyCycle = BluePwm.DutyCycle = DEFAULT_DUTY_CYCLE;
             // invert the PWM signal if it common anode
             RedPwm.Inverted = GreenPwm.Inverted = BluePwm.Inverted
@@ -458,10 +458,8 @@ namespace Meadow.Foundation.Leds
             float brightness = lowBrightness;
             bool ascending = true;
             TimeSpan intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
-            float steps = pulseDuration.Milliseconds / intervalTime.Milliseconds;
-            float changeAmount = (highBrightness - lowBrightness) / steps;
-            float changeUp = changeAmount;
-            float changeDown = -1 * changeAmount;
+            float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
+            float delta = (highBrightness - lowBrightness) / steps;
 
             while (true)
             {
@@ -474,12 +472,12 @@ namespace Meadow.Foundation.Leds
                 {
                     ascending = true;
                 }
-                else if (Math.Abs(brightness - highBrightness) < 0.001)
+                else if (brightness >= highBrightness)
                 {
                     ascending = false;
                 }
 
-                brightness += (ascending) ? changeUp : changeDown;
+                brightness += delta * (ascending ? 1 : -1);
 
                 if (brightness < 0)
                 {

@@ -16,6 +16,11 @@ namespace Meadow.Foundation.Displays.ePaper
         public ColorType ColorMode => ColorType.Format1bpp;
 
         /// <summary>
+        /// The buffer the holds the pixel data for the display
+        /// </summary>
+        public IPixelBuffer PixelBuffer => imageBuffer;
+
+        /// <summary>
         /// Buffer to hold display data
         /// </summary>
         protected readonly Buffer1bpp imageBuffer;
@@ -29,11 +34,6 @@ namespace Meadow.Foundation.Displays.ePaper
         /// Height of display in pixels
         /// </summary>
         public int Height => imageBuffer.Height;
-
-        /// <summary>
-        /// Ignore out of bounds pixel writes 
-        /// </summary>
-        public bool IgnoreOutOfBoundsPixels { get; set; }
 
         private EpdBase()
         { }
@@ -99,15 +99,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="color">color to fill</param>
         public void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0) x = 0;
-                if (y < 0) y = 0;
-                if (x > width - 1) x = width - 1;
-                if (y > height - 1) y = height - 1;
-            }
-
-            imageBuffer.Fill(color, x, y, width, height);
+            imageBuffer.Fill(x, y, width, height, color);
         }
 
         /// <summary>
@@ -136,12 +128,6 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public void DrawPixel(int x, int y, bool colored)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             if (colored)
             {
                 imageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
@@ -170,12 +156,6 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="y">y coordinate of pixel</param>
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             imageBuffer.Buffer[(x + y * Width) / 8] ^= (byte)(0x80 >> (x % 8));
         }
 
@@ -207,7 +187,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="x">x location in pixels</param>
         /// <param name="y">y location in pixels</param>
         /// <param name="displayBuffer"></param>
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }

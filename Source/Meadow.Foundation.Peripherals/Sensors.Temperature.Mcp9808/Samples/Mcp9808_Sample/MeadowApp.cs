@@ -2,19 +2,19 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
 using System;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensors.Temperature.Mcp9808_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Mcp9808 mcp9808;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("Initialize...");
 
             mcp9808 = new Mcp9808(Device.CreateI2cBus());
 
@@ -33,22 +33,18 @@ namespace Sensors.Temperature.Mcp9808_Sample
                 Console.WriteLine($"Temperature Updated: {e.New.Celsius:N2}C");
             };
 
+            return Task.CompletedTask;
+        }
+
+        public override async Task Run()
+        {
+            var temp = await mcp9808.Read();
+
+            Console.WriteLine($"Temperature New Value {temp.Celsius}C");
+
             mcp9808.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         //<!=SNOP=>
-
-        void TestRead()
-        {
-            Console.WriteLine("TestMcp9808Sensor...");
-
-            while (true)
-            {
-                var temp = mcp9808.Read().Result;
-
-                Console.WriteLine($"Temperature New Value {temp.Celsius}C");
-                Thread.Sleep(1000);
-            }
-        }
     }
 }

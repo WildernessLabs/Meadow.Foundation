@@ -3,16 +3,17 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Sensors.HallEffect;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensors.HallEffect_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         LinearHallEffectTachometer hallSensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.Write("Initializing...");
 
@@ -24,6 +25,8 @@ namespace Sensors.HallEffect_Sample
             hallSensor.RPMsChanged += HallSensorRPMsChanged;
 
             Console.WriteLine("done");
+
+            return Task.CompletedTask;
         }
 
         void HallSensorRPMsChanged(object sender, ChangeResult<float> e)

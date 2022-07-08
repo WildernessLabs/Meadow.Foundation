@@ -8,20 +8,20 @@ using static Meadow.Peripherals.Leds.IRgbLed;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Tcs3472x sensor;
         RgbPwmLed rgbLed;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Tcs3472x(Device.CreateI2cBus());
 
-            // instantiate our onboard LED that we'll show the color with
+            // instantiate our onboard LED
             rgbLed = new RgbPwmLed(
                 Device,
                 Device.Pins.OnboardLedRed,
@@ -45,25 +45,24 @@ namespace MeadowApp
 
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) => {
-                Console.WriteLine($"  Ambient Light: {result.New.AmbientLight?.Lux:N2}Lux");
-                Console.WriteLine($"  Color: {result.New.Color}");
+                Console.WriteLine($" Ambient Light: {result.New.AmbientLight?.Lux:N2}Lux");
+                Console.WriteLine($" Color: {result.New.Color}");
                 if (result.New.Color is { } color) { rgbLed.SetColor(color); }
             };
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating continuously
-            sensor.StartUpdating(TimeSpan.FromSeconds(1));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public override async Task Run()
         {
-            var result = await sensor.Read();
+            var (AmbientLight, Color, Valid) = await sensor.Read();
+
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Visible Light: {result.AmbientLight?.Lux:N2}Lux");
-            Console.WriteLine($"  Color: {result.Color}");
-            if (result.Color is { } color) { rgbLed.SetColor(color); }
+            Console.WriteLine($" Visible Light: {AmbientLight?.Lux:N2}Lux");
+            Console.WriteLine($" Color: {Color}");
+            if (Color is { } color) { rgbLed.SetColor(color); }
+
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         //<!=SNOP=>

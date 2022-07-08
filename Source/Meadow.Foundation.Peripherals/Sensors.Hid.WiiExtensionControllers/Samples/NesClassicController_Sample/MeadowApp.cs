@@ -2,18 +2,20 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Hid;
 using System;
+using System.Threading.Tasks;
 
 namespace NesClassicController_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        readonly NesClassicController nesController;
+        NesClassicController nesController;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
+
             var i2cBus = Device.CreateI2cBus(NesClassicController.DefaultSpeed);
 
             nesController = new NesClassicController(i2cBus: i2cBus);
@@ -33,8 +35,13 @@ namespace NesClassicController_Sample
 
             nesController.DPad.Updated += (s, e) => Console.WriteLine($"DPad {e.New}");
 
-            //Start reading updates
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             nesController.StartUpdating(TimeSpan.FromMilliseconds(200));
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

@@ -1,22 +1,27 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
+using System;
+using System.Threading.Tasks;
 
 namespace ICs.IOExpanders.HT16K33_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        protected Ht16k33 ht16k33;
+        Ht16k33 ht16k33;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize...");
             ht16k33 = new Ht16k33(Device.CreateI2cBus());
 
+            return base.Initialize();
+        }
+
+        public override async Task Run()
+        {
             int index = 0;
             bool on = true;
 
@@ -32,7 +37,7 @@ namespace ICs.IOExpanders.HT16K33_Sample
                     on = !on;
                 }
 
-                Thread.Sleep(100);
+                await Task.Delay(100);
             }
         }
 

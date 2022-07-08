@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Graphics
     /// <summary>
     /// Provide high level graphics functions
     /// </summary>
-    public partial class MicroGraphics 
+    public partial class MicroGraphics
     {
         /// <summary>
         /// Display object reponsible for managing the buffer and rendering
@@ -15,7 +15,18 @@ namespace Meadow.Foundation.Graphics
         protected readonly IGraphicsDisplay display;
 
         /// <summary>
-        /// Current font used for displaying text on the display.
+        /// PixelBuffer draw target, this will be reference to the display pizel buffer 
+        /// when drawing to a device driver
+        /// </summary>
+        protected IPixelBuffer pixelBuffer;
+
+        /// <summary>
+        /// Ingore pixel that are outside of the pixel buffer coordinate space
+        /// </summary>
+        public bool IgnoreOutOfBoundsPixels = true;
+
+        /// <summary>
+        /// Current font used for displaying text on the display
         /// </summary>
         public IFont CurrentFont
         {
@@ -23,7 +34,7 @@ namespace Meadow.Foundation.Graphics
             set
             {
                 currentFont = value;
-                if(currentFont == null) { return; }
+                if (currentFont == null) { return; }
 
                 DisplayConfig.Width = (ushort)(Width / currentFont.Width);
                 DisplayConfig.Height = (ushort)(Height / CurrentFont.Height);
@@ -34,7 +45,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Current color mode
         /// </summary>
-        public ColorType ColorMode => display.ColorMode;
+        public ColorType ColorMode => pixelBuffer.ColorMode;
 
         /// <summary>
         /// Current rotation used for drawing pixels to the display
@@ -54,12 +65,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Return the height of the display after accounting for the rotation.
         /// </summary>
-        public int Height => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Height : display.Width;
+        public int Height => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? pixelBuffer.Height : pixelBuffer.Width;
 
         /// <summary>
         /// Return the width of the display after accounting for the rotation.
         /// </summary>
-        public int Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? display.Width : display.Height;
+        public int Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? pixelBuffer.Width : pixelBuffer.Height;
 
         /// <summary>
         /// Text display configuration for use with text display menu
@@ -67,13 +78,24 @@ namespace Meadow.Foundation.Graphics
         public TextDisplayConfig DisplayConfig { get; private set; } = new TextDisplayConfig();
 
         /// <summary>
+        /// Create a new MicroGraphics instance from a display perihperal driver instance
         /// </summary>
-        /// <param name="display"></param>
+        /// <param name="display">An IGraphicsDisplay object</param>
         public MicroGraphics(IGraphicsDisplay display)
         {
             this.display = display;
-            CurrentFont = null;
+
+            this.pixelBuffer = display.PixelBuffer;
         }
+
+        /// <summary>
+        /// Create a new MicroGraphics instance from a pixel buffer instance
+        /// </summary>
+        /// <param name="pixelBuffer">The pixel buffer</param>
+    /*    public MicroGraphics(IPixelBuffer pixelBuffer)
+        {
+            this.pixelBuffer = pixelBuffer;
+        }*/
 
         /// <summary>
         /// Draw a single pixel using the pen color
@@ -82,7 +104,12 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">y location</param>
         public virtual void DrawPixel(int x, int y)
         {
-            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor);
+            if(IgnoreOutOfBoundsPixels && IsCoordinateInBounds(x, y) == false)
+            {
+                return;
+            }
+
+            pixelBuffer.SetPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor);
         }
 
         /// <summary>
@@ -93,7 +120,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public void DrawPixel(int x, int y, bool colored)
         {
-            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), colored);
+            DrawPixel(x, y, colored ? Color.White : Color.Black);
         }
 
         /// <summary>
@@ -104,7 +131,9 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">Color of pixel.</param>
         public virtual void DrawPixel(int x, int y, Color color)
         {
-            display.DrawPixel(GetXForRotation(x, y), GetYForRotation(x, y), PenColor = color);
+            PenColor = color;
+
+            DrawPixel(x, y);
         }
 
         /// <summary>
@@ -112,8 +141,13 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="index">pixel location in buffer</param>
         public virtual void DrawPixel(int index)
-        {   
-            display.DrawPixel(index % display.Width, index / display.Width, PenColor);
+        {
+            if(IgnoreOutOfBoundsPixels && (index < 0 || index >= Width * Height))
+            {
+                return;
+            }
+
+            pixelBuffer.SetPixel(index % pixelBuffer.Width, index / pixelBuffer.Width, PenColor);
         }
 
         /// <summary>
@@ -123,7 +157,12 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">y location</param>
         public void InvertPixel(int x, int y)
         {
-            display.InvertPixel(GetXForRotation(x, y), GetYForRotation(x, y));
+            if (IgnoreOutOfBoundsPixels && IsCoordinateInBounds(x, y) == false)
+            {
+                return;
+            }
+
+            pixelBuffer.InvertPixel(GetXForRotation(x, y), GetYForRotation(x, y));
         }
 
         /// <summary>
@@ -236,8 +275,8 @@ namespace Meadow.Foundation.Graphics
         }
 
         private void DrawLine(int x0, int y0, int x1, int y1)
-        { 
-            if(y0 == y1)
+        {
+            if (y0 == y1)
             {
                 DrawHorizontalLine(x0, y0, x1 - x0);
                 return;
@@ -247,7 +286,7 @@ namespace Meadow.Foundation.Graphics
             {
                 DrawVerticalLine(x0, y0, y1 - y0);
                 return;
-            } 
+            }
 
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
             if (steep)
@@ -323,10 +362,7 @@ namespace Meadow.Foundation.Graphics
                 length *= -1;
             }
 
-            for (var i = x; (i - x) <= length; i++)
-            {
-                DrawPixel(i, y);
-            }
+            Fill(x, y, length, 1, PenColor);
         }
 
         /// <summary>
@@ -375,10 +411,7 @@ namespace Meadow.Foundation.Graphics
                 length *= -1;
             }
 
-            for (var i = y; (i - y) < length; i++)
-            {
-                DrawPixel(x, i);
-            }
+            Fill(x, y, 1, length, PenColor);
         }
 
         /// <summary>
@@ -394,7 +427,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Draw a filled triangle?</param>
         public void DrawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, Color color, bool filled = false)
         {
-            if(filled)
+            if (filled)
             {
                 DrawTriangleFilled(x0, y0, x1, y1, x2, y2, color);
             }
@@ -536,6 +569,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="radius">Radius of the circle.</param>
         /// <param name="colored">Show the circle when true.</param>
         /// <param name="filled">Draw a filled circle?</param>
+        /// <param name="centerBetweenPixels">Set center between pixels</param>
         public void DrawCircle(int centerX, int centerY, int radius, bool colored = true, bool filled = false, bool centerBetweenPixels = false)
         {
             DrawCircle(centerX, centerY, radius, (colored ? Color.White : Color.Black), filled, centerBetweenPixels);
@@ -674,7 +708,7 @@ namespace Meadow.Foundation.Graphics
 
             while (x <= y)
             {
-                switch(quadrant)
+                switch (quadrant)
                 {
                     case 3:
                         DrawPixel(centerX + x - offset, centerY + y - offset);
@@ -753,10 +787,10 @@ namespace Meadow.Foundation.Graphics
 
             while (x <= y)
             {
-                DrawLine(centerX + x - offset, centerY + y - offset, centerX - x, centerY + y - offset);
-                DrawLine(centerX + x - offset, centerY - y, centerX - x, centerY - y);
-                DrawLine(centerX - y, centerY + x - offset, centerX + y - offset, centerY + x - offset);
-                DrawLine(centerX - y, centerY - x, centerX + y - offset, centerY - x);
+                DrawHorizontalLine(centerX - x, centerY + y - offset, 2 * x - offset);
+                DrawHorizontalLine(centerX - x, centerY - y,          2 * x - offset);
+                DrawHorizontalLine(centerX - y, centerY + x - offset, 2 * y - offset);
+                DrawHorizontalLine(centerX - y, centerY - x,          2 * y - offset);
 
                 if (d < 0)
                 {
@@ -796,7 +830,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default).</param>
         public void DrawRectangle(int x, int y, int width, int height, Color color, bool filled = false)
         {
-            if(width < 0)
+            if (width < 0)
             {
                 width *= -1;
                 x -= width;
@@ -810,37 +844,22 @@ namespace Meadow.Foundation.Graphics
 
             if (filled)
             {
-                switch(Rotation)
-                {
-                    case RotationType.Default:
-                        display.Fill(x, y, width, height, color);
-                        break;
-                    case RotationType._90Degrees:
-                        display.Fill(GetXForRotation(x, y) - height + 1, GetYForRotation(x, y), height, width, color);
-                        break;
-                    case RotationType._180Degrees:
-                        display.Fill(GetXForRotation(x, y) - width + 1, GetYForRotation(x, y) - height + 1, width, height, color);
-                        break;
-                    case RotationType._270Degrees:
-                        display.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width, color);
-                        break;
-                }
+                Fill(x, y, width, height, color);
             }
             else
             {
-                //because we include the starting pixel 
                 width--;
                 height--;
 
                 DrawLine(x, y, x + width, y, color);
                 DrawLine(x + width, y, x + width, y + height, color);
-                DrawLine(x + width, y + height, x, y + height, color);
+                DrawLine(x, y + height, x + width + 1, y + height, color);
                 DrawLine(x, y, x, y + height, color);
             }
         }
 
         /// <summary>
-        /// Draw a rounded rectangle.
+        /// Draw a rounded rectangle
         /// </summary>
         /// <param name="x">Abscissa of the top left corner.</param>
         /// <param name="y">Ordinate of the top left corner.</param>
@@ -851,9 +870,9 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default).</param>
         public void DrawRoundedRectangle(int x, int y, int width, int height, int cornerRadius, Color color, bool filled = false)
         {
-            if(cornerRadius < 0) { throw new ArgumentOutOfRangeException("Radius must be positive"); }
+            if (cornerRadius < 0) { throw new ArgumentOutOfRangeException("Radius must be positive"); }
 
-            if(cornerRadius == 0)
+            if (cornerRadius == 0)
             {
                 DrawRectangle(x, y, width, height, color, filled);
                 return;
@@ -901,9 +920,9 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Get the size in pixels of a string for a given font and scale factor
         /// </summary>
-        /// <param name="text">The string to measure.</param>
-        /// <param name="font">The font used to calculate the text size.</param>
-        /// <param name="scaleFactor">Scalefactor used to calculate the size.</param>
+        /// <param name="text">The string to measure</param>
+        /// <param name="font">The font used to calculate the text size</param>
+        /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
         public Size MeasureText(string text, IFont font, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             return new Size(text.Length * (int)scaleFactor * font.Width, (int)scaleFactor * font.Height);
@@ -912,11 +931,11 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a text message on the display using the current font.
         /// </summary>
-        /// <param name="x">Abscissa of the location of the text.</param>
-        /// <param name="y">Ordinate of the location of the text.</param>
-        /// <param name="text">Text to display.</param>
-        /// <param name="scaleFactor">Scalefactor used to calculate the size.</param>
-        /// <param name="alignment">Left, Center or right aligned text.</param>
+        /// <param name="x">Abscissa of the location of the text</param>
+        /// <param name="y">Ordinate of the location of the text</param>
+        /// <param name="text">Text to display</param>
+        /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
+        /// <param name="alignment">Left, Center or right aligned text</param>
         public void DrawText(int x, int y, string text,
             ScaleFactor scaleFactor = ScaleFactor.X1, TextAlignment alignment = TextAlignment.Left)
         {
@@ -927,11 +946,11 @@ namespace Meadow.Foundation.Graphics
 
             byte[] bitMap = GetBytesForTextBitmap(text);
 
-            if(alignment == TextAlignment.Center)
+            if (alignment == TextAlignment.Center)
             {
                 x -= MeasureText(text, scaleFactor).Width / 2;
             }
-            else if(alignment == TextAlignment.Right)
+            else if (alignment == TextAlignment.Right)
             {
                 x -= MeasureText(text, scaleFactor).Width;
             }
@@ -949,21 +968,29 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">x location of target to draw buffer</param>
         /// <param name="buffer">the source buffer to write to the display buffer</param>
         /// /// <param name="rotateBufferForDisplay">rotate the buffer if the display is rotated - maybe be slower</param>
-        public void DrawBuffer(int x, int y, IDisplayBuffer buffer, bool rotateBufferForDisplay = true)
+        public void DrawBuffer(int x, int y, IPixelBuffer buffer, bool rotateBufferForDisplay = true)
         {
-            //fast and happy path
-            if(Rotation == RotationType.Default)
+            if (IgnoreOutOfBoundsPixels)
             {
-                display.DrawBuffer(x, y, buffer);
+                if (x < 0 || y < 0 || x + buffer.Width >= Width || y + buffer.Height >= Height)
+                {
+                    return;
+                }
+            }
+
+            //fast and happy path
+            if (Rotation == RotationType.Default)
+            {
+                pixelBuffer.WriteBuffer(x, y, buffer);
             }
             //rotate buffer if the display is rotated (slow)
-            else if(rotateBufferForDisplay) //loop over every pixel
+            else if (rotateBufferForDisplay) //loop over every pixel
             {
-                for(int i = 0; i < buffer.Width; i++)
+                for (int i = 0; i < buffer.Width; i++)
                 {
-                    for(int j = 0; j < buffer.Height; j++)
+                    for (int j = 0; j < buffer.Height; j++)
                     {
-                        display.DrawPixel(GetXForRotation(x + i, y + j),
+                        pixelBuffer.SetPixel(GetXForRotation(x + i, y + j),
                             GetYForRotation(x + i, y + j),
                             buffer.GetPixel(i, j));
                     }
@@ -972,7 +999,7 @@ namespace Meadow.Foundation.Graphics
             //don't rotate buffer with the display (fast)
             else
             {
-                display.DrawBuffer(GetXForRotation(x, y), GetYForRotation(x, y), buffer);
+                pixelBuffer.WriteBuffer(GetXForRotation(x, y), GetYForRotation(x, y), buffer);
             }
         }
 
@@ -997,14 +1024,14 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Draw a text message on the display using the current font.
+        /// Draw a text message on the display using the current font
         /// </summary>
-        /// <param name="x">Abscissa of the location of the text.</param>
-        /// <param name="y">Ordinate of the location of the text.</param>
-        /// <param name="text">Text to display.</param>
-        /// <param name="color">Color of the text.</param>
-        /// <param name="scaleFactor">Scalefactor used to calculate the size.</param>
-        /// <param name="alignment">Left, Center or right aligned text.</param>
+        /// <param name="x">Abscissa of the location of the text</param>
+        /// <param name="y">Ordinate of the location of the text</param>
+        /// <param name="text">Text to display</param>
+        /// <param name="color">Color of the text</param>
+        /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
+        /// <param name="alignment">Left, Center or right aligned text</param>
         public void DrawText(int x, int y, string text, Color color,
             ScaleFactor scaleFactor = ScaleFactor.X1, TextAlignment alignment = TextAlignment.Left)
         {
@@ -1023,7 +1050,7 @@ namespace Meadow.Foundation.Graphics
             }
 
             byte[] bitmap = GetBytesForTextBitmap(text);
-            
+
             DrawBitmap(x, y, bitmap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitmap, color, scaleFactor);
         }
 
@@ -1061,18 +1088,18 @@ namespace Meadow.Foundation.Graphics
                     //grab two characters at once
                     charMap1 = CurrentFont[text[i]];
                     charMap2 = (i + 1 < text.Length) ? CurrentFont[text[i + 1]] : CurrentFont[' '];
-                    
+
                     int cIndex = 0;
                     for (int j = 0; j < CurrentFont.Height; j += 2)
                     {
                         //first row - spans 3 bytes (for 2 chars)
-                        bitmap[index + (j    ) * len + 0] = charMap1[cIndex]; //good
-                        bitmap[index + (j    ) * len + 1] = (byte)((charMap1[cIndex + 1] & 0x0F) | (charMap2[cIndex] << 4)); 
-                        bitmap[index + (j    ) * len + 2] = (byte)((charMap2[cIndex] >> 4) | (charMap2[cIndex + 1] << 4)); //good
+                        bitmap[index + (j) * len + 0] = charMap1[cIndex]; //good
+                        bitmap[index + (j) * len + 1] = (byte)((charMap1[cIndex + 1] & 0x0F) | (charMap2[cIndex] << 4));
+                        bitmap[index + (j) * len + 2] = (byte)((charMap2[cIndex] >> 4) | (charMap2[cIndex + 1] << 4)); //good
 
                         //2nd row
                         bitmap[index + (j + 1) * len + 0] = (byte)((charMap1[cIndex + 1] >> 4) | charMap1[cIndex + 2] << 4); //good
-                        bitmap[index + (j + 1) * len + 1] = (byte)((charMap1[cIndex + 2] >> 4) | charMap2[cIndex + 1] & 0xF0); 
+                        bitmap[index + (j + 1) * len + 1] = (byte)((charMap1[cIndex + 2] >> 4) | charMap2[cIndex + 1] & 0xF0);
                         bitmap[index + (j + 1) * len + 2] = charMap2[cIndex + 2]; //good
 
                         cIndex += 3;
@@ -1080,11 +1107,11 @@ namespace Meadow.Foundation.Graphics
                     index += 3;
                 }
             }
-            else if(CurrentFont.Width == 6)
+            else if (CurrentFont.Width == 6)
             {
                 var len = text.Length;
 
-                if(text.Length % 4 != 0)
+                if (text.Length % 4 != 0)
                 {
                     len += 4 - text.Length % 4; //chacter length
                 }
@@ -1095,7 +1122,7 @@ namespace Meadow.Foundation.Graphics
                 byte[] charMap1, charMap2, charMap3, charMap4;
                 int index = 0;
 
-                for(int i = 0; i < len; i += 3) 
+                for (int i = 0; i < len; i += 3)
                 {
                     //grab four characters at once
                     charMap1 = CurrentFont[text[index++]];
@@ -1183,24 +1210,28 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Clear the display.
+        /// Clear the pixel buffer
         /// </summary>
-        /// <param name="updateDisplay">Update the display immediately when true.</param>
+        /// <param name="updateDisplay">Update the display immediately when true</param>
         public virtual void Clear(bool updateDisplay = false)
         {
-            display.Clear(updateDisplay);
+            pixelBuffer.Clear();
+            if (updateDisplay)
+            {
+                Show();
+            }
         }
 
         /// <summary>
-        /// Clear the display to a color
+        /// Clear the pixel buffer to a color
         /// </summary>
-        /// <param name="updateDisplay">Update the display immediately when true.</param>
-        /// <param name="color">Color to set display.</param>
+        /// <param name="updateDisplay">Update the display immediately when true</param>
+        /// <param name="color">Color to set display</param>
         public virtual void Clear(Color color, bool updateDisplay = false)
         {
             DrawRectangle(0, 0, Width, Height, color, true);
 
-            if(updateDisplay) { Show(); }
+            if (updateDisplay) { Show(); }
         }
 
         /// <summary>
@@ -1283,8 +1314,8 @@ namespace Meadow.Foundation.Graphics
         {
             return Rotation switch
             {
-                RotationType._90Degrees => display.Width - y - 1,
-                RotationType._180Degrees => display.Width - x - 1,
+                RotationType._90Degrees => pixelBuffer.Width - y - 1,
+                RotationType._180Degrees => pixelBuffer.Width - x - 1,
                 RotationType._270Degrees => y,
                 _ => x,
             };
@@ -1301,10 +1332,54 @@ namespace Meadow.Foundation.Graphics
             return Rotation switch
             {
                 RotationType._90Degrees => x,
-                RotationType._180Degrees => display.Height - y - 1,
-                RotationType._270Degrees => display.Height - x - 1,
+                RotationType._180Degrees => pixelBuffer.Height - y - 1,
+                RotationType._270Degrees => pixelBuffer.Height - x - 1,
                 _ => y,
             };
+        }
+
+        bool IsCoordinateInBounds(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= Width || y >= Height)
+                return false;
+
+            return true;
+        }
+
+        void Fill(int x, int y, int width, int height, Color color)
+        {
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x >= Width || 
+                    y >= Height ||
+                    width < 1 || 
+                    height < 1)
+                {
+                    return;
+                }
+
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+ 
+                if (x + width >= Width) width = Width - x;
+                if (y + height >= Height) height = Height - y;
+            }
+
+            switch (Rotation)
+            {
+                case RotationType.Default:
+                    pixelBuffer.Fill(x, y, width, height, color);
+                    break;
+                case RotationType._90Degrees:
+                    pixelBuffer.Fill(GetXForRotation(x, y) - height + 1, GetYForRotation(x, y), height, width, color);
+                    break;
+                case RotationType._180Degrees:
+                    pixelBuffer.Fill(GetXForRotation(x, y) - width + 1, GetYForRotation(x, y) - height + 1, width, height, color);
+                    break;
+                case RotationType._270Degrees:
+                    pixelBuffer.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width, color);
+                    break;
+            }
         }
     }
 }

@@ -4,25 +4,24 @@ using Meadow.Foundation.Displays.Lcd;
 using Meadow.Hardware;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Displays.Lcd.CharacterDisplay_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         CharacterDisplay display;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             //InitGpio();
             //InitGpioWithPWM();
             //InitI2c();
             InitGrove();
 
-            TestCharacterDisplay();
-
-            Console.WriteLine("Test complete");
+            return base.Initialize();
         }
 
         void InitGpio() 
@@ -119,6 +118,15 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 
             display.ClearLines();
             display.WriteLine("Complete!", 0);
+        }
+
+        public override Task Run()
+        {
+            TestCharacterDisplay();
+
+            Console.WriteLine("Test complete");
+
+            return base.Run();
         }
 
         //<!=SNOP=>

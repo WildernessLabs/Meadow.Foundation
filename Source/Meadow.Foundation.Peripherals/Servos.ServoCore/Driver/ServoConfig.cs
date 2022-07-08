@@ -1,4 +1,3 @@
-using System;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Servos
@@ -10,7 +9,7 @@ namespace Meadow.Foundation.Servos
         public int MinimumPulseDuration { get; private set; }
         public int MaximumPulseDuration { get; private set; }
 
-        public int Frequency { get; private set; } // almost always 50hz
+        public Frequency Frequency { get; private set; } // almost always 50hz
 
         /// <summary>
         /// 
@@ -21,16 +20,24 @@ namespace Meadow.Foundation.Servos
         /// <param name="maximumPulseDuration">The maximum angle's pulse duratino (in microseconds). Default is 2,000 (2.0 milleseconds).</param>
         /// <param name="frequency"></param>
         public ServoConfig(
+            Frequency frequency,
             Angle? minimumAngle = null, Angle? maximumAngle = null,
-            int minimumPulseDuration = 1000, int maximumPulseDuration = 2000,
-            int frequency = 50)
+            int minimumPulseDuration = 1000, int maximumPulseDuration = 2000)
         {
             MinimumAngle = minimumAngle?? new Angle(0, Angle.UnitType.Degrees);
             MaximumAngle = maximumAngle?? new Angle(180, Angle.UnitType.Degrees);
             MinimumPulseDuration = minimumPulseDuration;
             MaximumPulseDuration = maximumPulseDuration;
             Frequency = frequency;
+        }
 
+        public ServoConfig(
+            Angle? minimumAngle = null, Angle? maximumAngle = null,
+            int minimumPulseDuration = 1000, int maximumPulseDuration = 2000)
+            : this(new Frequency(50, Frequency.UnitType.Hertz), 
+                minimumAngle, maximumAngle, 
+                minimumPulseDuration, maximumPulseDuration)
+        {
         }
     }
 }
