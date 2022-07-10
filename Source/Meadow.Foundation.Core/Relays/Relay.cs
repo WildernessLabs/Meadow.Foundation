@@ -1,18 +1,26 @@
 using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Peripherals.Relays;
+using System;
 
 namespace Meadow.Foundation.Relays
 {
     /// <summary>
     /// Electrical switch (usually mechanical) that switches on an isolated circuit.
     /// </summary>
-    public class Relay : IRelay
+    public class Relay : IRelay, IDisposable
     {
+        bool createdPort = false;
+
+        /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
         /// <summary>
         /// Returns digital output port
         /// </summary>
-        protected IDigitalOutputPort DigitalOut { get; set; }
+        protected IDigitalOutputPort Port { get; set; }
 
         /// <summary>
         /// Returns type of relay.
@@ -28,7 +36,7 @@ namespace Meadow.Foundation.Relays
             set
             {
                 isOn = value;
-                DigitalOut.State = isOn ? onValue : !onValue;
+                Port.State = isOn ? onValue : !onValue;
             }
         } 
         bool isOn = false;
@@ -41,7 +49,10 @@ namespace Meadow.Foundation.Relays
         /// <param name="pin">Pin connected to relay</param>
         /// <param name="type">Relay type</param>
         public Relay(IDigitalOutputController device, IPin pin, RelayType type = RelayType.NormallyOpen) :
-            this(device.CreateDigitalOutputPort(pin), type) { }
+            this(device.CreateDigitalOutputPort(pin), type)
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Creates a new Relay on an IDigitalOutputPort. Allows you 
@@ -56,7 +67,7 @@ namespace Meadow.Foundation.Relays
             Type = type;
             onValue = Type != RelayType.NormallyClosed;
 
-            DigitalOut = port;
+            Port = port;
         }
 
         /// <summary>
@@ -65,6 +76,31 @@ namespace Meadow.Foundation.Relays
         public void Toggle()
         {
             IsOn = !IsOn;
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    Port.Dispose();
+                }
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

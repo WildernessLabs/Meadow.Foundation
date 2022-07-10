@@ -9,7 +9,12 @@ namespace Meadow.Foundation.Sensors.Buttons
     /// </summary>
     public class PushButton : IButton, IDisposable
     {
-        private bool _shouldDisposeInput = false;
+        bool createdPort = false;
+
+        /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// This duration controls the debounce filter. It also has the effect
@@ -18,11 +23,8 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         public TimeSpan DebounceDuration
         {
-            get => (DigitalIn != null) ? new TimeSpan(0, 0, 0, 0, (int)DigitalIn.DebounceDuration) : TimeSpan.MinValue;
-            set
-            {
-                DigitalIn.DebounceDuration = (int)value.TotalMilliseconds;
-            }
+            get => (Port != null) ? new TimeSpan(0, 0, 0, 0, (int)Port.DebounceDuration) : TimeSpan.MinValue;
+            set => Port.DebounceDuration = (int)value.TotalMilliseconds;
         }
 
         event EventHandler clickDelegate = delegate { };
@@ -38,7 +40,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             get
             {
-                bool currentState = DigitalIn?.Resistor == ResistorMode.InternalPullDown;
+                bool currentState = Port?.Resistor == ResistorMode.InternalPullDown;
 
                 return (state == currentState);
             }
@@ -52,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Returns digital input port.
         /// </summary>
-        protected IDigitalInputPort DigitalIn { get; set; }
+        protected IDigitalInputPort Port { get; set; }
 
         /// <summary>
         /// Raised when a press starts (the button is pushed down; circuit is closed).
@@ -61,7 +63,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
-                if (DigitalIn.InterruptMode == InterruptMode.None)
+                if (Port.InterruptMode == InterruptMode.None)
                 {
                     throw new DeviceConfigurationException("PressStarted event requires InteruptMode to be anything but None");
                 }
@@ -78,7 +80,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
-                if (DigitalIn.InterruptMode == InterruptMode.None)
+                if (Port.InterruptMode == InterruptMode.None)
                 {
                     throw new DeviceConfigurationException("PressEnded event requires InteruptMode to be anything but None");
                 }
@@ -95,7 +97,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
-                if (DigitalIn.InterruptMode == InterruptMode.None)
+                if (Port.InterruptMode == InterruptMode.None)
                 {
                     throw new DeviceConfigurationException("Clicked event requires InteruptMode to be anything but None");
                 }
@@ -112,7 +114,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             add
             {
-                if (DigitalIn.InterruptMode == InterruptMode.None)
+                if (Port.InterruptMode == InterruptMode.None)
                 {
                     throw new DeviceConfigurationException("LongPressClicked event requires InteruptMode to be anything but None");
                 }
@@ -125,7 +127,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Returns the current raw state of the switch.
         /// </summary>
-        protected bool state => (DigitalIn != null) ? !DigitalIn.State : false;
+        protected bool state => (Port != null) ? !Port.State : false;
 
         /// <summary>
         /// Maximum DateTime value when the button was just pushed
@@ -147,7 +149,7 @@ namespace Meadow.Foundation.Sensors.Buttons
             : this(device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistorMode, 50, 25)) 
         {
             // only Dispose the input if we created it
-            _shouldDisposeInput = true;
+            createdPort = true;
         }
 
         /// <summary>
@@ -158,8 +160,8 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             resistorMode = interruptPort.Resistor;
 
-            DigitalIn = interruptPort;
-            DigitalIn.Changed += DigitalInChanged;
+            Port = interruptPort;
+            Port.Changed += DigitalInChanged;
         }
 
         void DigitalInChanged(object sender, DigitalPortResult result)
@@ -233,14 +235,28 @@ namespace Meadow.Foundation.Sensors.Buttons
         }
 
         /// <summary>
-        /// Disposes the Digital Input resources
+		/// Dispose peripheral
+		/// </summary>
+		/// <param name="disposing"></param>
+		protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    Port.Dispose();
+                }
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
         /// </summary>
         public void Dispose()
         {
-            if (_shouldDisposeInput)
-            {
-                DigitalIn.Dispose();
-            }
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

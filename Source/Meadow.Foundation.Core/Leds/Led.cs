@@ -9,10 +9,16 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents a simple LED
     /// </summary>
-    public class Led : ILed
+    public class Led : ILed, IDisposable
 	{
 		Task? animationTask;
 		CancellationTokenSource? cancellationTokenSource;
+		bool createdPort = false;
+
+		/// <summary>
+		/// Is the peripheral disposed
+		/// </summary>
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Gets the port that is driving the LED
@@ -42,7 +48,9 @@ namespace Meadow.Foundation.Leds
 		/// <param name="pin"></param>
 		public Led(IDigitalOutputController device, IPin pin) :
 			this(device.CreateDigitalOutputPort(pin, false))
-		{ }
+		{
+			createdPort = true;
+		}
 
 		/// <summary>
 		/// Creates a LED through a DigitalOutPutPort from an IO Expander
@@ -120,6 +128,31 @@ namespace Meadow.Foundation.Leds
 			}
 
 			Port.State = IsOn;
+		}
+
+		/// <summary>
+		/// Dispose peripheral
+		/// </summary>
+		/// <param name="disposing"></param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!IsDisposed)
+			{
+				if (disposing && createdPort)
+				{
+					Port.Dispose();
+				}
+				IsDisposed = true;
+			}
+		}
+
+		/// <summary>
+		/// Dispose Peripheral
+		/// </summary>
+		public void Dispose()
+		{
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
 		}
 	}
 }

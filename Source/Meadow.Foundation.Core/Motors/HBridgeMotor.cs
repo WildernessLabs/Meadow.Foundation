@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Motors
     /// <summary>
     /// Generic h-bridge motor controller.
     /// </summary>
-    public class HBridgeMotor : IDCMotor
+    public class HBridgeMotor : IDCMotor, IDisposable
     {
         static readonly Frequency DefaultFrequency = new Frequency(1600, Frequency.UnitType.Hertz);
 
@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Motors
         /// <summary>
         /// PWM port for right motor
         /// </summary>
-        protected IPwmPort motorRighPwm; // H-Bridge 2A pin
+        protected IPwmPort motorRightPwm; // H-Bridge 2A pin
         /// <summary>
         /// Digital output port to enable h-bridge
         /// </summary>
@@ -48,9 +48,10 @@ namespace Meadow.Foundation.Motors
         public float Power 
         {
             get => power;
-            set {
+            set 
+            {
                 motorLeftPwm.Stop();
-                motorRighPwm.Stop();
+                motorRightPwm.Stop();
 
                 power = value;
 
@@ -59,11 +60,11 @@ namespace Meadow.Foundation.Motors
                 var isForward = calibratedSpeed > 0;
 
                 motorLeftPwm.DutyCycle = (isForward) ? absoluteSpeed : 0;
-                motorRighPwm.DutyCycle = (isForward) ? 0 : absoluteSpeed;
+                motorRightPwm.DutyCycle = (isForward) ? 0 : absoluteSpeed;
                 IsNeutral = false;
 
                 motorLeftPwm.Start();
-                motorRighPwm.Start();
+                motorRightPwm.Start();
             }
         }
         float power = 0;
@@ -109,7 +110,6 @@ namespace Meadow.Foundation.Motors
         /// <param name="a1Port"></param>
         /// <param name="a2Port"></param>
         /// <param name="enablePort"></param>
-        /// <param name="pwmFrequency"></param>
         public HBridgeMotor(IPwmPort a1Port, IPwmPort a2Port, IDigitalOutputPort enablePort)
             : this(a1Port, a2Port, enablePort, DefaultFrequency)
         {
@@ -128,11 +128,33 @@ namespace Meadow.Foundation.Motors
             motorLeftPwm.Frequency = pwmFrequency;
             motorLeftPwm.Start();
 
-            motorRighPwm = a2Port;
-            motorRighPwm.Frequency = pwmFrequency;
-            motorRighPwm.Start();
+            motorRightPwm = a2Port;
+            motorRightPwm.Frequency = pwmFrequency;
+            motorRightPwm.Start();
 
             this.enablePort = enablePort;
+        }
+
+        /// <summary>
+		/// Dispose peripheral
+		/// </summary>
+		/// <param name="disposing"></param>
+		protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                motorLeftPwm.Dispose();
+                motorRightPwm.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

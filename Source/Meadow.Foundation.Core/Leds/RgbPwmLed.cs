@@ -144,7 +144,8 @@ namespace Meadow.Foundation.Leds
                 device.CreatePwmPort(greenPwmPin, DefaultFrequency),
                 device.CreatePwmPort(bluePwmPin, DefaultFrequency),
                 commonType)
-        { }
+        {
+        }
 
         /// <summary>
         /// Instantiates a RgbPwmLed object with the especified IO device, connected
@@ -493,6 +494,29 @@ namespace Meadow.Foundation.Leds
 
                 await Task.Delay(intervalTime);
             }
+        }
+
+        /// <summary>
+		/// Dispose peripheral
+		/// </summary>
+		/// <param name="disposing"></param>
+		protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                RedPwm.Dispose();
+                GreenPwm.Dispose();
+                BluePwm.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

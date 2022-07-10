@@ -13,13 +13,16 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class PwmLed : IPwmLed, IDisposable
     {
-        private Task? animationTask;
-        private CancellationTokenSource? cancellationTokenSource;
-        private bool createdPwm = false;
+        Task? animationTask;
+        CancellationTokenSource? cancellationTokenSource;
+        bool createdPort = false;
 
-        private float maximumPwmDuty = 1;
-        private bool inverted;
+        float maximumPwmDuty = 1;
+        bool inverted;
 
+        /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
         public bool IsDisposed { get; private set; }
 
         /// <summary>
@@ -88,7 +91,7 @@ namespace Meadow.Foundation.Leds
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
             var pwm = device.CreatePwmPort(pin, new Frequency(100, Frequency.UnitType.Hertz));
-            createdPwm = true; // signal that we created it, so we should dispose of it
+            createdPort = true; // signal that we created it, so we should dispose of it
             pwm.DutyCycle = 0;
             Initialize(pwm, forwardVoltage, terminationType);
         }
@@ -129,26 +132,6 @@ namespace Meadow.Foundation.Leds
             Port = pwmPort;
             Port.Inverted = inverted;
             Port.Start();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!IsDisposed)
-            {
-                if (disposing && createdPwm)
-                {
-                    Port.Dispose();
-
-                }
-
-                IsDisposed = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -375,6 +358,31 @@ namespace Meadow.Foundation.Leds
         {
             cancellationTokenSource?.Cancel();
             IsOn = false;
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    Port.Dispose();
+                }
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

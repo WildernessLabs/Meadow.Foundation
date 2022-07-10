@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents an LED bar graph composed on multiple PWM LEDs
     /// </summary>
-    public class PwmLedBarGraph
+    public class PwmLedBarGraph: IDisposable
     {
         /// <summary>
         /// Array to hold pwm leds for bar graph
@@ -325,6 +325,31 @@ namespace Meadow.Foundation.Leds
             {
                 pwmLed.Stop();
             }
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                foreach (var led in pwmLeds)
+                {
+                    led.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

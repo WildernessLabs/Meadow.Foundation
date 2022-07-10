@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System;
 
 namespace Meadow.Foundation.Leds
@@ -7,7 +6,7 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents an LED bar graph composed on multiple LEDs
     /// </summary>
-    public class LedBarGraph
+    public class LedBarGraph: IDisposable
     {
         /// <summary>
         /// Array to hold LED objects for bar 
@@ -177,6 +176,31 @@ namespace Meadow.Foundation.Leds
             {
                 led.Stop();
             }
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+               foreach(var led in leds)
+                {
+                    led.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
