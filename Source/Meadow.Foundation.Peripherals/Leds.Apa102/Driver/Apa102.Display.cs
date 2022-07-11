@@ -101,7 +101,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="colored">if true draw white, if false draw black</param>
         public void DrawPixel(int x, int y, bool colored)
         {
-            DrawPixel(0, 0, colored ? Color.White : Color.Black);
+            DrawPixel(x, y, colored ? Color.White : Color.Black);
         }
 
         /// <summary>
