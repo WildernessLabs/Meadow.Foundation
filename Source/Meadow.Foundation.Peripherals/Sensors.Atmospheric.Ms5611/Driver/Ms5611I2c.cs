@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using System;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -16,7 +15,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public override void Reset()
         {
             var cmd = (byte)Commands.Reset;
-            Console.WriteLine($"Sending {cmd:X2}");
 
             i2CPeripheral.Write(cmd);
         }
@@ -24,14 +22,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public override void BeginTempConversion()
         {
             var cmd = (byte)((byte)Commands.ConvertD2 + 2 * (byte)Resolution);
-            Console.WriteLine($"Sending {cmd:X2}");
             i2CPeripheral.Write(cmd);
         }
 
         public override void BeginPressureConversion()
         {
             var cmd = (byte)((byte)Commands.ConvertD1 + 2 * (byte)Resolution);
-            Console.WriteLine($"Sending {cmd:X2}");
             i2CPeripheral.Write(cmd);
         }
 

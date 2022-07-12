@@ -1,18 +1,19 @@
 ﻿using Meadow.Hardware;
 using System;
 
+/*
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     internal class Ms5611Spi : Ms5611Base
     {
-        private ISpiBus _spi;
-        private IPin _chipSelect;
+        private ISpiBus spiBus;
+        private IPin chipSelect;
 
         internal Ms5611Spi(ISpiBus spi, IPin chipSelect, Ms5611.Resolution resolution)
             : base(resolution)
         {
-            _spi = spi;
-            _chipSelect = chipSelect;
+            spiBus = spi;
+            this.chipSelect = chipSelect;
 
             throw new NotImplementedException();
         }
@@ -38,3 +39,4 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
     }
 }
+*/
