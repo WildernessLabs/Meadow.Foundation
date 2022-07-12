@@ -27,9 +27,9 @@ namespace Audio.PiezoSpeaker_Sample
             for (int i = 0; i < 5; i++)
             {
                 Console.WriteLine("Playing A major triad starting at A4");
-                await piezoSpeaker.PlayTone(new Frequency(440, Frequency.UnitType.Hertz), 500); //A
-                await piezoSpeaker.PlayTone(new Frequency(554.37f, Frequency.UnitType.Hertz), 500); //C#
-                await piezoSpeaker.PlayTone(new Frequency(659.25f, Frequency.UnitType.Hertz), 500); //E
+                await piezoSpeaker.PlayTone(new Frequency(440, Frequency.UnitType.Hertz), TimeSpan.FromMilliseconds(500)); //A
+                await piezoSpeaker.PlayTone(new Frequency(554.37f, Frequency.UnitType.Hertz), TimeSpan.FromMilliseconds(500)); //C#
+                await piezoSpeaker.PlayTone(new Frequency(659.25f, Frequency.UnitType.Hertz), TimeSpan.FromMilliseconds(500)); //E
 
                 await Task.Delay(2500);
             }
