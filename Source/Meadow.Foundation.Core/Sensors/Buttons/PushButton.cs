@@ -192,11 +192,8 @@ namespace Meadow.Foundation.Sensors.Buttons
                     RaiseClicked();
                 }
 
-                if (pressDuration.TotalMilliseconds > 0)
-                {
-                    // raise the other events
-                    RaisePressEnded();
-                }
+                // raise the other events
+                RaisePressEnded();
             }
         }
 
