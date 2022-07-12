@@ -1,6 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
+using Meadow.Peripherals.Leds;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace Leds.Led_Sample
                 redPin: Device.Pins.OnboardLedRed,
                 greenPin: Device.Pins.OnboardLedGreen,
                 bluePin: Device.Pins.OnboardLedBlue);
-            onRgbLed.SetColor(RgbLed.Colors.Red);
+            onRgbLed.SetColor(RgbLedColors.Red);
 
             leds = new List<Led>
             {
@@ -42,7 +43,7 @@ namespace Leds.Led_Sample
                 new Led(Device.CreateDigitalOutputPort(Device.Pins.D15, false))
             };
 
-            onRgbLed.SetColor(RgbLed.Colors.Green);
+            onRgbLed.SetColor(RgbLedColors.Green);
 
             return Task.CompletedTask;
         }

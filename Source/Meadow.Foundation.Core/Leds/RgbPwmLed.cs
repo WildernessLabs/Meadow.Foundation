@@ -3,7 +3,7 @@ using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using static Meadow.Peripherals.Leds.IRgbLed;
+using Meadow.Peripherals.Leds;
 
 namespace Meadow.Foundation.Leds
 {

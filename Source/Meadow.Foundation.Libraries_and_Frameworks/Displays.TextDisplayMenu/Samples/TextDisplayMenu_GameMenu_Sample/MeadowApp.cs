@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation.Displays.Ssd130x;
 using Meadow.Foundation.Displays.TextDisplayMenu;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
@@ -17,8 +16,6 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2>
     {
-        RgbPwmLed onboardLed;
-
         Menu menu;
 
         MicroGraphics graphics;
@@ -32,12 +29,6 @@ namespace MeadowApp
         public override Task Initialize()
         {
             Console.WriteLine("Initialize...");
-
-            onboardLed = new RgbPwmLed(device: Device,
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
 
             Console.WriteLine("Create Display with SPI...");
 
@@ -177,7 +168,7 @@ namespace MeadowApp
 
             DisableMenu();
 
-            var t = StartGame(e.Command);
+            _ = StartGame(e.Command);
         }
 
         byte[] LoadResource(string filename)
@@ -185,14 +176,10 @@ namespace MeadowApp
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = $"Graphics.TextDisplayMenu_GameMenu_Sample.{filename}";
 
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            {
-                using (var ms = new MemoryStream())
-                {
-                    stream.CopyTo(ms);
-                    return ms.ToArray();
-                }
-            }
+            using Stream stream = assembly.GetManifestResourceStream(resourceName);
+            using var ms = new MemoryStream();
+            stream.CopyTo(ms);
+            return ms.ToArray();
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
+using Meadow.Peripherals.Leds;
 
 namespace Leds.RgbLed_Sample
 {
@@ -23,7 +23,7 @@ namespace Leds.RgbLed_Sample
                 redPin: Device.Pins.OnboardLedRed,
                 greenPin: Device.Pins.OnboardLedGreen,
                 bluePin: Device.Pins.OnboardLedBlue);
-            onRgbLed.SetColor(RgbLed.Colors.Red);
+            onRgbLed.SetColor(RgbLedColors.Red);
 
             rgbLeds = new List<RgbLed>
             {
@@ -45,7 +45,7 @@ namespace Leds.RgbLed_Sample
                     Device.CreateDigitalOutputPort(Device.Pins.D13))
             };
 
-            onRgbLed.SetColor(RgbLed.Colors.Green);
+            onRgbLed.SetColor(RgbLedColors.Green);
 
             return Task.CompletedTask;
         }
@@ -59,9 +59,9 @@ namespace Leds.RgbLed_Sample
                 Console.WriteLine("Going through each color on each RGB LED...");
                 foreach (var rgbLed in rgbLeds)
                 {
-                    for (int i = 0; i < (int)RgbLed.Colors.count; i++)
+                    for (int i = 0; i < (int)RgbLedColors.count; i++)
                     {
-                        rgbLed.SetColor((RgbLed.Colors)i);
+                        rgbLed.SetColor((RgbLedColors)i);
                         await Task.Delay(500);
                     }
                 }
@@ -71,9 +71,9 @@ namespace Leds.RgbLed_Sample
                 Console.WriteLine("Blinking through each color on each RGB LED...");
                 foreach (var rgbLed in rgbLeds)
                 {
-                    for (int i = 0; i < (int)RgbLed.Colors.count; i++)
+                    for (int i = 0; i < (int)RgbLedColors.count; i++)
                     {
-                        rgbLed.StartBlink((RgbLed.Colors)i);
+                        rgbLed.StartBlink((RgbLedColors)i);
                         await Task.Delay(3000);
                     }
                 }
@@ -83,9 +83,9 @@ namespace Leds.RgbLed_Sample
                 Console.WriteLine("Blinking through each color on each RGB LED...");
                 foreach (var rgbLed in rgbLeds)
                 {
-                    for (int i = 0; i < (int)RgbLed.Colors.count; i++)
+                    for (int i = 0; i < (int)RgbLedColors.count; i++)
                     {
-                        rgbLed.StartBlink((RgbLed.Colors)i, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                        rgbLed.StartBlink((RgbLedColors)i, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
                         await Task.Delay(3000);
                     }
                 }

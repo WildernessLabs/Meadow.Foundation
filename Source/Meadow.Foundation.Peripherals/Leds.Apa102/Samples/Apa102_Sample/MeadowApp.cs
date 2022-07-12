@@ -13,7 +13,7 @@ namespace Leds.APA102_Sample
         //<!=SNIP=>
 
         Apa102 apa102;
-        int numberOfLeds = 49;
+        int numberOfLeds = 256;
         float maxBrightness = 0.25f;
 
         public override Task Initialize()
@@ -37,7 +37,9 @@ namespace Leds.APA102_Sample
 
             apa102.Show();
 
-            return base.Run();
+            Apa102Tests();
+
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

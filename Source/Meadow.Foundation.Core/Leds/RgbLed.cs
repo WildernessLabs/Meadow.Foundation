@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Peripherals.Leds;
-using static Meadow.Peripherals.Leds.IRgbLed;
 using System;
 
 namespace Meadow.Foundation.Leds
@@ -18,7 +17,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Get the color the LED has been set to.
         /// </summary>
-        public Colors Color { get; protected set; } = Colors.White;
+        public RgbLedColors Color { get; protected set; } = RgbLedColors.White;
 
         /// <summary>
         /// Get the red LED port
@@ -48,7 +47,7 @@ namespace Meadow.Foundation.Leds
             get => isOn;
             set
             {
-                SetColor(value? Color : Colors.Black);
+                SetColor(value? Color : RgbLedColors.Black);
                 isOn = value;
             }
         }
@@ -106,7 +105,7 @@ namespace Meadow.Foundation.Leds
         /// Sets the current color of the LED.
         /// </summary>
         /// <param name="color"></param>
-        public void SetColor(Colors color)
+        public void SetColor(RgbLedColors color)
         {
             Color = color;
 
@@ -114,42 +113,42 @@ namespace Meadow.Foundation.Leds
 
             switch (color)
             {
-                case Colors.Red:
+                case RgbLedColors.Red:
                     RedPort.State = onState;
                     GreenPort.State = !onState;
                     BluePort.State = !onState;
                     break;
-                case Colors.Green:
+                case RgbLedColors.Green:
                     RedPort.State = !onState;
                     GreenPort.State = onState;
                     BluePort.State = !onState;
                     break;
-                case Colors.Blue:
+                case RgbLedColors.Blue:
                     RedPort.State = !onState;
                     GreenPort.State = !onState;
                     BluePort.State = onState;
                     break;
-                case Colors.Yellow:
+                case RgbLedColors.Yellow:
                     RedPort.State = onState;
                     GreenPort.State = onState;
                     BluePort.State = !onState;
                     break;
-                case Colors.Magenta:
+                case RgbLedColors.Magenta:
                     RedPort.State = onState;
                     GreenPort.State = !onState;
                     BluePort.State = onState;
                     break;
-                case Colors.Cyan:
+                case RgbLedColors.Cyan:
                     RedPort.State = !onState;
                     GreenPort.State = onState;
                     BluePort.State = onState;
                     break;
-                case Colors.White:
+                case RgbLedColors.White:
                     RedPort.State = onState;
                     GreenPort.State = onState;
                     BluePort.State = onState;
                     break;
-                case Colors.Black:
+                case RgbLedColors.Black:
                     RedPort.State = !onState;
                     GreenPort.State = !onState;
                     BluePort.State = !onState;
@@ -161,7 +160,7 @@ namespace Meadow.Foundation.Leds
         /// Starts the blink animation LED turning it on (500) and off (500)
         /// </summary>
         /// <param name="color"></param>
-        public void StartBlink(Colors color)
+        public void StartBlink(RgbLedColors color)
         {
             var onDuration = TimeSpan.FromMilliseconds(500);
             var offDuration = TimeSpan.FromMilliseconds(500);
@@ -182,7 +181,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="color"></param>
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
-        public void StartBlink(Colors color, TimeSpan onDuration, TimeSpan offDuration)
+        public void StartBlink(RgbLedColors color, TimeSpan onDuration, TimeSpan offDuration)
         {
             Stop();
 
@@ -202,7 +201,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="offDuration"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        protected async Task StartBlinkAsync(Colors color, TimeSpan onDuration, TimeSpan offDuration, CancellationToken cancellationToken)
+        protected async Task StartBlinkAsync(RgbLedColors color, TimeSpan onDuration, TimeSpan offDuration, CancellationToken cancellationToken)
         {
             while (true)
             {
@@ -213,7 +212,7 @@ namespace Meadow.Foundation.Leds
 
                 SetColor(color);
                 await Task.Delay(onDuration);
-                SetColor(Colors.Black);
+                SetColor(RgbLedColors.Black);
                 await Task.Delay(offDuration);
             }
         }
