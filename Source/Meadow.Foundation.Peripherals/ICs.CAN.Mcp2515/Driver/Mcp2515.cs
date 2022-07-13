@@ -1,4 +1,5 @@
 using Meadow.Hardware;
+using Meadow.Logging;
 using System;
 
 namespace Meadow.Foundation.ICs.CAN
@@ -12,11 +13,13 @@ namespace Meadow.Foundation.ICs.CAN
 
         private ISpiBus Bus { get; }
         private IDigitalOutputPort ChipSelect { get; }
+        private Logger? Logger { get; }
 
-        public Mcp2515(ISpiBus bus, IDigitalOutputPort chipSelect)
+        public Mcp2515(ISpiBus bus, IDigitalOutputPort chipSelect, Logger? logger = null)
         {
             Bus = bus;
             ChipSelect = chipSelect;
+            Logger = logger;
         }
 
         public void Reset()
@@ -45,6 +48,8 @@ namespace Meadow.Foundation.ICs.CAN
             tx[1] = 0;
 
             Bus.Exchange(ChipSelect, tx, rx);
+
+            Logger?.Trace($"Status: {rx[1]:X2}");
 
             return (Status)rx[1];
         }
@@ -107,6 +112,8 @@ namespace Meadow.Foundation.ICs.CAN
 
         private Frame ReadFrame(RxBufferNumber bufferNumber)
         {
+            Logger?.Trace($"Reading frame from {bufferNumber}");
+
             var sidh_reg = bufferNumber == RxBufferNumber.RXB0 ? Register.RXB0SIDH : Register.RXB1SIDH;
             var ctrl_reg = bufferNumber == RxBufferNumber.RXB0 ? Register.RXB0CTRL : Register.RXB1CTRL;
             var data_reg = bufferNumber == RxBufferNumber.RXB0 ? Register.RXB0DATA : Register.RXB1DATA;
@@ -114,6 +121,8 @@ namespace Meadow.Foundation.ICs.CAN
 
             // read 5 bytes
             var buffer = ReadRegister(sidh_reg, 5);
+
+            Logger?.Trace($"SIDH: {BitConverter.ToString(buffer)}");
 
             uint id = (uint)(buffer[MCP_SIDH << 3] + (buffer[MCP_SIDL] >> 5));
 
@@ -127,7 +136,7 @@ namespace Meadow.Foundation.ICs.CAN
             }
 
             var dlc = buffer[MCP_DLC] & DLC_MASK;
-            if (dlc > 8) throw new Exception("DLC is > 8 bytes");
+            if (dlc > 8) throw new Exception($"DLC of {dlc} is > 8 bytes");
 
             // see if it's a remote transmission request
             var ctrl = ReadRegister(ctrl_reg);

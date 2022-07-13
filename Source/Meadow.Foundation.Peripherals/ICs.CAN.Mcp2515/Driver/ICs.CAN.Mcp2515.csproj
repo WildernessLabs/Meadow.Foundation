@@ -21,4 +21,7 @@
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation" Version="0.31.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Meadow.Logging\lib\Meadow.Logging.csproj" />
+  </ItemGroup>
 </Project>

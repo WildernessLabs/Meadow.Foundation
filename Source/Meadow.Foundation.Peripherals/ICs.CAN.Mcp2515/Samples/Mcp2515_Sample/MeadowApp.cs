@@ -57,10 +57,11 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV1>
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            Console.WriteLine("Main...");
-            MeadowOS.Main(args);
+            Console.WriteLine("+Main");
+            await MeadowOS.Main(args);
+            Console.WriteLine("-Main");
         }
 
         //<!=SNIP=>
@@ -69,22 +70,49 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine($"Init log level {Resolver.Log.Loglevel}");
             Resolver.Log.Info("Initialize...");
+
+            Resolver.Log.Loglevel = Meadow.Logging.LogLevel.Trace;
 
             //            var chipSelect = Device.CreateDigitalOutputPort(Device.Pins.MB1_CS(), true);
             var chipSelect = Device.CreateDigitalOutputPort(ProjLab.Pins.MB2_CS, true);
 
             Resolver.Log.Info($"CS = {chipSelect.Pin.Name}");
+            var spi = Device.CreateSpiBus();
+            spi.Configuration.Phase = SpiClockConfiguration.ClockPhase.Zero;
+            spi.Configuration.Polarity = SpiClockConfiguration.ClockPolarity.Normal;
+            spi.Configuration.Speed = new Meadow.Units.Frequency(250, Meadow.Units.Frequency.UnitType.Kilohertz);
 
-            _controller = new Mcp2515(Device.CreateSpiBus(), chipSelect);
+            _controller = new Mcp2515(spi, chipSelect, Resolver.Log);
 
             return base.Initialize();
         }
 
-        public override Task Run()
+        public override async Task Run()
         {
-            return base.Run();
+            while (true)
+            {
+                try
+                {
+                    var frame = _controller.ReadFrame();
+
+                    if (frame == null)
+                    {
+                        Resolver.Log.Info("No frames available");
+                    }
+                    else
+                    {
+                        Resolver.Log.Info($"ID: {frame.Value.ID}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Resolver.Log.Error(ex.Message);
+                }
+
+                await Task.Delay(1000);
+
+            }
         }
 
         //<!=SNOP=>
