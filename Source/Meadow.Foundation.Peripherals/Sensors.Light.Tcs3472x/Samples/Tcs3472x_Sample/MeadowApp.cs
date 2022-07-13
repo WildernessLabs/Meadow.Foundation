@@ -4,7 +4,7 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Light;
-using static Meadow.Peripherals.Leds.IRgbLed;
+using Meadow.Peripherals.Leds;
 
 namespace MeadowApp
 {

@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
+using Meadow.Peripherals.Leds;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -24,7 +25,7 @@ namespace Leds.RgbPwmLed_Sample
                 redPin: Device.Pins.OnboardLedRed,
                 greenPin: Device.Pins.OnboardLedGreen,
                 bluePin: Device.Pins.OnboardLedBlue);
-            onRgbLed.SetColor(RgbLed.Colors.Red);
+            onRgbLed.SetColor(RgbLedColors.Red);
 
             rgbPwmLeds = new List<RgbPwmLed>()
             {
@@ -50,7 +51,7 @@ namespace Leds.RgbPwmLed_Sample
                     Device.Pins.D13)
             };
 
-            onRgbLed.SetColor(RgbLed.Colors.Green);
+            onRgbLed.SetColor(RgbLedColors.Green);
 
             return Task.CompletedTask;
         }

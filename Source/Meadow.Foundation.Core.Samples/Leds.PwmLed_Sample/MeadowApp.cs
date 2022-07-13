@@ -1,6 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
+using Meadow.Peripherals.Leds;
 using Meadow.Units;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace Leds.PwmLed_Sample
                 redPin: Device.Pins.OnboardLedRed,
                 greenPin: Device.Pins.OnboardLedGreen,
                 bluePin: Device.Pins.OnboardLedBlue);
-            onRgbLed.SetColor(RgbLed.Colors.Red);
+            onRgbLed.SetColor(RgbLedColors.Red);
 
             pwmLeds = new List<PwmLed>
             {
@@ -41,7 +42,7 @@ namespace Leds.PwmLed_Sample
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D13, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue)
             };
 
-            onRgbLed.SetColor(RgbLed.Colors.Green);
+            onRgbLed.SetColor(RgbLedColors.Green);
 
             return Task.CompletedTask;
         }
