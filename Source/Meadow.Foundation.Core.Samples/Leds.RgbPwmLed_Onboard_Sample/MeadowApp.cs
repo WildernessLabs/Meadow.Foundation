@@ -2,10 +2,10 @@
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
+using Meadow.Peripherals.Leds;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using static Meadow.Peripherals.Leds.IRgbLed;
 
 namespace Leds.RgbPwmLed_Onboard_Sample
 {
@@ -28,11 +28,13 @@ namespace Leds.RgbPwmLed_Onboard_Sample
             return Task.CompletedTask;
         }
 
-        public override async Task Run()
+        public override Task Run()
         {
             TestColors();
 
             RunColors();
+
+            return Task.CompletedTask;
         }
 
         public void TestColors()

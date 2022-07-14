@@ -34,14 +34,14 @@ namespace Leds.Apa102_Display_Sample
             while (true)
             {
                 canvas.Clear();
-                canvas.DrawText(0, 1, "MEADOW", Colors.AzureBlue);
-                canvas.DrawText(24, 1, "F7", Colors.ChileanFire);
+                canvas.DrawText(0, 1, "MEADOW", Colors.AzureBlue.WithBrightness(0.25));
+                canvas.DrawText(24, 1, "F7", Colors.ChileanFire.WithBrightness(0.25));
                 canvas.Show();
 
                 await Task.Delay(1000);
 
                 canvas.Clear();
-                canvas.DrawText(0, 1, "Rocks", Colors.PearGreen);
+                canvas.DrawText(0, 1, "Rocks", Colors.PearGreen.WithBrightness(0.25));
                 canvas.Show();
 
                 await Task.Delay(1000);

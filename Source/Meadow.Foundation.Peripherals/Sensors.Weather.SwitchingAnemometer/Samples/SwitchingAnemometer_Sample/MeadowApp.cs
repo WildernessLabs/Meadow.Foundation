@@ -5,6 +5,7 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Weather;
+using Meadow.Peripherals.Leds;
 using Meadow.Units;
 
 namespace MeadowApp
@@ -25,7 +26,7 @@ namespace MeadowApp
                 redPwmPin: Device.Pins.OnboardLedRed,
                 greenPwmPin: Device.Pins.OnboardLedGreen,
                 bluePwmPin: Device.Pins.OnboardLedBlue,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
+                CommonType.CommonAnode);
 
             //==== create the anemometer
             anemometer = new SwitchingAnemometer(Device, Device.Pins.A01);
