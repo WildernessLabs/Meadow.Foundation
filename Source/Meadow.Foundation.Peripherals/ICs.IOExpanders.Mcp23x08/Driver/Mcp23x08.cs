@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Meadow.Hardware;
-using Meadow.Utilities;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -187,11 +187,25 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         public IDigitalInputPort CreateDigitalInputPort(
+            IPin pin)
+        {
+            return CreateDigitalInputPort(pin, InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero);
+        }
+
+        public IDigitalInputPort CreateDigitalInputPort(
             IPin pin,
             InterruptMode interruptMode = InterruptMode.None,
-            ResistorMode resistorMode = ResistorMode.Disabled,
-            double debounceDuration = 0,
-            double glitchFilterCycleCount = 0)
+            ResistorMode resistorMode = ResistorMode.Disabled)
+        {
+            return CreateDigitalInputPort(pin, interruptMode, resistorMode, TimeSpan.Zero, TimeSpan.Zero);
+        }
+
+        public IDigitalInputPort CreateDigitalInputPort(
+            IPin pin,
+            InterruptMode interruptMode,
+            ResistorMode resistorMode,
+            TimeSpan debounceDuration,
+            TimeSpan glitchFilterCycleCount)
         {
             if (IsValidPin(pin))
             {

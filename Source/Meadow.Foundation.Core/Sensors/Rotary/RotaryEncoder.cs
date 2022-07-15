@@ -64,8 +64,8 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
         public RotaryEncoder(IDigitalInputController device, IPin aPhasePin, IPin bPhasePin) :
-            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, 0, 0.1),
-                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, 0, 0.1))
+            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)),
+                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)))
         { }
 
         /// <summary>
@@ -87,7 +87,8 @@ namespace Meadow.Foundation.Sensors.Rotary
             // Clear bit A bit
             int new2LsBits = dynamicOffset & 0x02;    // Save bit 2 (B)
 
-            if (result.New.State) {
+            if (result.New.State)
+            {
                 new2LsBits |= 0x01;                     // Set bit 1 (A)
             }
 
@@ -99,7 +100,8 @@ namespace Meadow.Foundation.Sensors.Rotary
             // Clear bit B bit
             int new2LsBits = dynamicOffset & 0x01;    // Save bit 1 (A)
 
-            if (result.New.State) {
+            if (result.New.State)
+            {
                 new2LsBits |= 0x02;                     // Set bit 2 (B)
             }
 
@@ -117,7 +119,8 @@ namespace Meadow.Foundation.Sensors.Rotary
             // save state
             var oldRotation = LastDirectionOfRotation;
 
-            switch (direction) {
+            switch (direction)
+            {
                 case 0: // no valid change
                     return;
                 case 1: // clockwise

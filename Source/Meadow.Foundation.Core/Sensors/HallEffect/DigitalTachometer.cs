@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <summary>
         /// Returns number of revolutions per minute.
         /// </summary>
-        public int RPMs => (int)rpms; 
+        public int RPMs => (int)rpms;
 
         /// <summary>
         /// Revolutions pers minute 
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <summary>
         /// Number of reads
         /// </summary>
-        protected ushort numberOfReads = 0; 
+        protected ushort numberOfReads = 0;
 
         /// <summary>
         /// LinearHallEffectTachometer driver
@@ -64,9 +64,9 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <param name="rpmChangeNotificationThreshold"></param>
         public LinearHallEffectTachometer(IDigitalInputController device, IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F) :
-            this(device.CreateDigitalInputPort(inputPin), type, numberOfMagnets, rpmChangeNotificationThreshold)
+            this(device.CreateDigitalInputPort(inputPin, InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero), type, numberOfMagnets, rpmChangeNotificationThreshold)
         {
-           
+
         }
 
         /// <summary>
@@ -116,7 +116,8 @@ namespace Meadow.Foundation.Sensors.HallEffect
 
                 //S.Console.WriteLine("RevTime Milliseconds: " + revolutionTime.Milliseconds.ToString());
 
-                if (revolutionTime.Milliseconds < 3) {
+                if (revolutionTime.Milliseconds < 3)
+                {
                     //S.Console.WriteLine("rev time < 3. Garbage, bailing.");
                     numberOfReads = 0;
                     revolutionTimeStart = time;
