@@ -16,6 +16,8 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public BufferRgb444(int width, int height) : base(width, height) { }
 
+        public BufferRgb444() : base() { }
+
         public ushort GetPixel12bpp(int x, int y)
         {
             byte r, g, b;

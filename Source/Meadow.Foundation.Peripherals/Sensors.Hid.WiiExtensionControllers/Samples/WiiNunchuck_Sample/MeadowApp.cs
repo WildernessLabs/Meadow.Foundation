@@ -2,18 +2,19 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Hid;
 using System;
+using System.Threading.Tasks;
 
 namespace WiiNunchuck_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        readonly WiiNunchuck nunchuck;
+        WiiNunchuck nunchuck;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             nunchuck = new WiiNunchuck(Device.CreateI2cBus(WiiNunchuck.DefaultSpeed));
 
@@ -33,8 +34,13 @@ namespace WiiNunchuck_Sample
 
             nunchuck.AnalogStick.Updated += (s, e) => Console.WriteLine($"Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
 
-            //Start reading updates
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             nunchuck.StartUpdating(TimeSpan.FromMilliseconds(200));
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

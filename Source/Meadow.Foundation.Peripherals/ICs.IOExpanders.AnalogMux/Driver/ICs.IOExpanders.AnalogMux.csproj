@@ -1,0 +1,25 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>AnalogMux</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.ICs.IOExpanders.AnalogMux</PackageId>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation, IOExpanders, Analog, Input, Multiplexer, 74HC4051, 74HC4067, HP4067</PackageTags>
+    <Version>0.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Library for various analog multiplexers</Description>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="0.33.1" />
+  </ItemGroup>
+</Project>

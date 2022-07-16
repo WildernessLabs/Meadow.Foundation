@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Displays.TftSpi
             if (chipSelectPin != null) { chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false); }
 
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
-
+            
             CreateBuffer(mode, width, height);
         }
 
@@ -88,6 +88,11 @@ namespace Meadow.Foundation.Displays.TftSpi
             if (updateDisplay) { Show(); }
         }
 
+        /// <summary>
+        /// Fill the display buffer with a color
+        /// </summary>
+        /// <param name="color">The fill color</param>
+        /// <param name="updateDisplay">If true, update the display after filling the buffer</param>
         public void Fill(Color color, bool updateDisplay = false)
         {
             Clear(color);
@@ -162,7 +167,6 @@ namespace Meadow.Foundation.Displays.TftSpi
 
             dataCommandPort.State = Data;
 
-            //spiDisplay.Write(imageBuffer.Buffer);
             spiDisplay.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer.Span);
         }
 
@@ -195,57 +199,91 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 sourceIndex = ((y * Width) + left) * sizeof(ushort);
 
-                //  spiDisplay.Write(imageBuffer.Buffer[sourceIndex..(sourceIndex + len)]);
                 spiDisplay.Bus.Exchange(
                     chipSelectPort,
                     imageBuffer.Buffer[sourceIndex..(sourceIndex + len)],
                     readBuffer.Span[0..len]);
             }
         }
-
+        /// <summary>
+        /// Write a byte to the display
+        /// </summary>
+        /// <param name="value">The byte to send</param>
         protected void Write(byte value)
         {
             spiDisplay.Write(value);
         }
 
+        /// <summary>
+        /// Write a buffer to the display
+        /// </summary>
+        /// <param name="data">The data to send</param>
         protected void Write(byte[] data)
         {
             spiDisplay.Write(data);
         }
 
+        /// <summary>
+        /// Delay 
+        /// </summary>
+        /// <param name="millseconds">Milliseconds to delay</param>
         protected void DelayMs(int millseconds)
         {
             Thread.Sleep(millseconds);
         }
 
+        /// <summary>
+        /// Send a command to the display
+        /// </summary>
+        /// <param name="command">The command to send</param>
         protected void SendCommand(Register command)
         {
             SendCommand((byte)command);
         }
 
+        /// <summary>
+        /// Send a command to the display
+        /// </summary>
+        /// <param name="command">The command to send as a byte</param>
         protected void SendCommand(byte command)
         {
             dataCommandPort.State = Command;
             Write(command);
         }
 
+        /// <summary>
+        /// Send a single byte to the display (convenience method)
+        /// </summary>
+        /// <param name="data">The data to send </param>
         protected void SendData(int data)
         {
             SendData((byte)data);
         }
 
+        /// <summary>
+        /// Send a single byte to the display
+        /// </summary>
+        /// <param name="data">The byte to send</param>
         protected void SendData(byte data)
         {
             dataCommandPort.State = Data;
             Write(data);
         }
 
+        /// <summary>
+        /// Send a byte array of data to the display
+        /// </summary>
+        /// <param name="data">The data</param>
         protected void SendData(byte[] data)
         {
             dataCommandPort.State = Data;
             spiDisplay.Write(data);
         }
 
+        /// <summary>
+        /// Clear the display buffer to a color
+        /// </summary>
+        /// <param name="color">The clear color</param>
         public void Clear(Color color)
         {
             imageBuffer.Fill(color);

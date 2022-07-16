@@ -4,31 +4,17 @@ using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ICs.IOExpanders.Mcp23x08_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Mcp23x08 _mcp;
-        public MeadowApp()
-        {
-            TestOutputs();            
-        }
 
-        void TestOutputs() 
-        {
-            InitializeOutputs();
-
-            while (true)
-            {
-                TestBulkDigitalOutputPortWrites(20);
-                TestDigitalOutputPorts(2);
-            }
-        }
-
-        void InitializeOutputs()
+        public override Task Initialize()
         {
             IDigitalInputPort interruptPort =
                 Device.CreateDigitalInputPort(
@@ -37,6 +23,19 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
             // create a new mcp with all the address pins pulled low for
             // an address of 0x20/32
             _mcp = new Mcp23x08(Device.CreateI2cBus(), false, false, false, interruptPort);
+
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
+            while (true)
+            {
+                TestBulkDigitalOutputPortWrites(20);
+                TestDigitalOutputPorts(2);
+            }
+
+            return base.Run();
         }
 
         void TestDigitalOutputPorts(int loopCount)

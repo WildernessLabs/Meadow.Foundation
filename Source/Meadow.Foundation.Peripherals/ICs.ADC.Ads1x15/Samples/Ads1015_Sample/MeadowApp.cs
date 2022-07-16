@@ -6,18 +6,14 @@ using System.Threading.Tasks;
 
 namespace Ads1015_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         private Ads1x15 _adc;
 
-        public MeadowApp()
+        public override async Task Initialize()
         {
-            Initialize();
-        }
+            Console.WriteLine("Initialize...");
 
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
             _adc = new Ads1015(
                 Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.FastPlus),
                 Ads1x15.Addresses.Default,
@@ -46,13 +42,12 @@ namespace Ads1015_Sample
                 );
             _adc.Subscribe(observer);
 
-            _adc.Updated += (sender, result) => {
+            _adc.Updated += (sender, result) => 
+            {
                 Console.WriteLine($"  Voltage: {result.New.Volts:N2}V");
             };
 
-            _adc.Read().Wait();
-
-            _adc.StartUpdating(TimeSpan.FromMilliseconds(500));
+            await _adc.Read();
         }
 
         async Task TestSpeed()
@@ -90,6 +85,13 @@ namespace Ads1015_Sample
                 }
                 await Task.Delay(5000);
             }
+        }
+
+        public override Task Run()
+        {
+            _adc.StartUpdating(TimeSpan.FromMilliseconds(500));
+
+            return base.Run();
         }
     }
 }

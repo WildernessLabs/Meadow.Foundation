@@ -16,6 +16,8 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public BufferGray4(int width, int height) : base(width, height) { }
 
+        public BufferGray4() : base() { }
+
         public override void Fill(Color color)
         {
             // split the color in to two byte values

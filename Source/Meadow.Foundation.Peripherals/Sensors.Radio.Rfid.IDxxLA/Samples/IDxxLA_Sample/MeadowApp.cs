@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow.Devices;
 using Meadow.Foundation.Helpers;
 
 namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        readonly IRfidReader rfidReader;
+        IRfidReader rfidReader;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             rfidReader = new IDxxLA(Device, Device.SerialPortNames.Com1);
 
@@ -22,9 +23,14 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
             // subscribe to IObservable
             rfidReader.Subscribe(new RfidObserver());
 
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        { 
             rfidReader.StartReading();
 
-            Console.WriteLine("Ready...");
+            return Task.CompletedTask;
         }
 
         private void RfidReaderOnTagRead(object sender, RfidReadResult e)

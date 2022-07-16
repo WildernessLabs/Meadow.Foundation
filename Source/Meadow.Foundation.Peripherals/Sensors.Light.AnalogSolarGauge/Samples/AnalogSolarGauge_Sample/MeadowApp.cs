@@ -1,21 +1,20 @@
 ﻿using System;
-using System.Threading;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Hardware;
 using Meadow.Foundation.Sensors.Light;
 using System.Threading.Tasks;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
         AnalogSolarGauge solarGauge;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
+
             solarGauge = new AnalogSolarGauge(Device, Device.Pins.A02, updateInterval: TimeSpan.FromSeconds(1));
 
             //==== classic .NET Event
@@ -33,20 +32,17 @@ namespace MeadowApp
                 });
             solarGauge.Subscribe(observer);
 
-            Console.WriteLine("Hardware initialized.");
-
-            // do a one-off read
-            ReadSolarIntensityGauge().Wait();
-
-            // start updating
-            solarGauge.StartUpdating(TimeSpan.FromSeconds(1));
+            return Task.CompletedTask;
         }
 
-        async Task ReadSolarIntensityGauge()
+        public override async Task Run()
         {
             var result = await solarGauge.Read();
             Console.WriteLine($"Solar Intensity: {result * 100:n2}%");
+
+            solarGauge.StartUpdating(TimeSpan.FromSeconds(1));
         }
+
         //<!=SNOP=>
     }
 }

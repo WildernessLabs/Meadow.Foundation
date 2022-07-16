@@ -1,34 +1,35 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Audio;
+using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Audio.PiezoSpeaker_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         protected PiezoSpeaker piezoSpeaker;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
-            piezoSpeaker = new PiezoSpeaker(Device.CreatePwmPort(Device.Pins.D05));
+            piezoSpeaker = new PiezoSpeaker(Device.CreatePwmPort(Device.Pins.D05, new Frequency(100, Frequency.UnitType.Hertz)));
 
-            _ = PlayTriad();
+            return Task.CompletedTask;
         }
 
-        async Task PlayTriad()
+        public override async Task Run()
         {
             for (int i = 0; i < 5; i++)
             {
                 Console.WriteLine("Playing A major triad starting at A4");
-                await piezoSpeaker.PlayTone(440, 500); //A
-                await piezoSpeaker.PlayTone(554.37f, 500); //C#
-                await piezoSpeaker.PlayTone(659.25f, 500); //E
+                await piezoSpeaker.PlayTone(new Frequency(440, Frequency.UnitType.Hertz), TimeSpan.FromMilliseconds(500)); //A
+                await piezoSpeaker.PlayTone(new Frequency(554.37f, Frequency.UnitType.Hertz), TimeSpan.FromMilliseconds(500)); //C#
+                await piezoSpeaker.PlayTone(new Frequency(659.25f, Frequency.UnitType.Hertz), TimeSpan.FromMilliseconds(500)); //E
 
                 await Task.Delay(2500);
             }

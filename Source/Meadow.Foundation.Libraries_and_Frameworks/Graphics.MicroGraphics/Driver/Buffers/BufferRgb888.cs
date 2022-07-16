@@ -16,6 +16,8 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public BufferRgb888(int width, int height) : base(width, height) { }
 
+        public BufferRgb888() : base() { }
+
         public int GetPixelInt(int x, int y)
         {
             //get current color

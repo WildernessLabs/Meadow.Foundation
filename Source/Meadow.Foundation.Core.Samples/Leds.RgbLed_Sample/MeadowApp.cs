@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
+using Meadow.Peripherals.Leds;
 
 namespace Leds.RgbLed_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         protected List<RgbLed> rgbLeds;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -22,7 +23,7 @@ namespace Leds.RgbLed_Sample
                 redPin: Device.Pins.OnboardLedRed,
                 greenPin: Device.Pins.OnboardLedGreen,
                 bluePin: Device.Pins.OnboardLedBlue);
-            onRgbLed.SetColor(RgbLed.Colors.Red);
+            onRgbLed.SetColor(RgbLedColors.Red);
 
             rgbLeds = new List<RgbLed>
             {
@@ -44,12 +45,12 @@ namespace Leds.RgbLed_Sample
                     Device.CreateDigitalOutputPort(Device.Pins.D13))
             };
 
-            onRgbLed.SetColor(RgbLed.Colors.Green);
+            onRgbLed.SetColor(RgbLedColors.Green);
 
-            TestRgbLeds();
+            return Task.CompletedTask;
         }
 
-        protected void TestRgbLeds()
+        public override async Task Run()
         {
             Console.WriteLine("TestRgbLeds...");
 
@@ -58,38 +59,38 @@ namespace Leds.RgbLed_Sample
                 Console.WriteLine("Going through each color on each RGB LED...");
                 foreach (var rgbLed in rgbLeds)
                 {
-                    for (int i = 0; i < (int)RgbLed.Colors.count; i++)
+                    for (int i = 0; i < (int)RgbLedColors.count; i++)
                     {
-                        rgbLed.SetColor((RgbLed.Colors)i);
-                        Thread.Sleep(500);
+                        rgbLed.SetColor((RgbLedColors)i);
+                        await Task.Delay(500);
                     }
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Blinking through each color on each RGB LED...");
                 foreach (var rgbLed in rgbLeds)
                 {
-                    for (int i = 0; i < (int)RgbLed.Colors.count; i++)
+                    for (int i = 0; i < (int)RgbLedColors.count; i++)
                     {
-                        rgbLed.StartBlink((RgbLed.Colors)i);
-                        Thread.Sleep(3000);
+                        rgbLed.StartBlink((RgbLedColors)i);
+                        await Task.Delay(3000);
                     }
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 Console.WriteLine("Blinking through each color on each RGB LED...");
                 foreach (var rgbLed in rgbLeds)
                 {
-                    for (int i = 0; i < (int)RgbLed.Colors.count; i++)
+                    for (int i = 0; i < (int)RgbLedColors.count; i++)
                     {
-                        rgbLed.StartBlink((RgbLed.Colors)i, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-                        Thread.Sleep(3000);
+                        rgbLed.StartBlink((RgbLedColors)i, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                        await Task.Delay(3000);
                     }
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
             }
         }
 

@@ -16,6 +16,8 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public BufferRgb565(int width, int height) : base(width, height) { }
 
+        public BufferRgb565() : base() { }
+
         public ushort GetPixel16bpp(int x, int y)
         {
             //get current color

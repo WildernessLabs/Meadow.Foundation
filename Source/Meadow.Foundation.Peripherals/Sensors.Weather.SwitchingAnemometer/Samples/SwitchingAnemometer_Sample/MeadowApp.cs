@@ -1,31 +1,32 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Weather;
+using Meadow.Peripherals.Leds;
 using Meadow.Units;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         RgbPwmLed onboardLed;
         SwitchingAnemometer anemometer;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-        
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             //==== onboard LED
             onboardLed = new RgbPwmLed(device: Device,
                 redPwmPin: Device.Pins.OnboardLedRed,
                 greenPwmPin: Device.Pins.OnboardLedGreen,
                 bluePwmPin: Device.Pins.OnboardLedBlue,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
+                CommonType.CommonAnode);
 
             //==== create the anemometer
             anemometer = new SwitchingAnemometer(Device, Device.Pins.A01);
@@ -46,10 +47,16 @@ namespace MeadowApp
                 );
             anemometer.Subscribe(observer);
 
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             // start raising updates
             anemometer.StartUpdating();
-
             Console.WriteLine("Hardware initialized.");
+            
+            return Task.CompletedTask;
         }
 
         /// <summary>

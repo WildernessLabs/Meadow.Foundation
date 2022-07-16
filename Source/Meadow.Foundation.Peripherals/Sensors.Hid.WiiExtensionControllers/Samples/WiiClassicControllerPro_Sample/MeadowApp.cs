@@ -2,18 +2,20 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Hid;
 using System;
+using System.Threading.Tasks;
 
 namespace WiiClassicControllerPro_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        readonly WiiClassicControllerPro classicControllerPro;
+        WiiClassicControllerPro classicControllerPro;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
+
             var i2cBus = Device.CreateI2cBus(WiiClassicControllerPro.DefaultSpeed);
 
             classicControllerPro = new WiiClassicControllerPro(i2cBus: i2cBus, 
@@ -45,8 +47,13 @@ namespace WiiClassicControllerPro_Sample
             classicControllerPro.LeftAnalogStick.Updated += (s, e) => Console.WriteLine($"Left Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
             classicControllerPro.RightAnalogStick.Updated += (s, e) => Console.WriteLine($"Right Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
 
-            //Start reading updates
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             classicControllerPro.StartUpdating(TimeSpan.FromMilliseconds(200));
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

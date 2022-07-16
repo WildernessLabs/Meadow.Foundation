@@ -1,26 +1,23 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Light;
-using Meadow.Units;
-using static Meadow.Peripherals.Leds.IRgbLed;
+using Meadow.Peripherals.Leds;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Bh1745 sensor;
         RgbPwmLed rgbLed;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("Initialize...");
 
             sensor = new Bh1745(Device.CreateI2cBus());
 
@@ -32,9 +29,7 @@ namespace MeadowApp
                 Device.Pins.OnboardLedBlue,
                 commonType: CommonType.CommonAnode);
 
-            //==== IObservable 
             // Example that uses an IObservable subscription to only be notified
-            // when the filter is satisfied
             var consumer = Bh1745.CreateObserver(
                 handler: result => Console.WriteLine($"Observer: filter satisifed: {result.New.AmbientLight?.Lux:N2}Lux, old: {result.Old?.AmbientLight?.Lux:N2}Lux"),
                 
@@ -54,23 +49,30 @@ namespace MeadowApp
             sensor.Updated += (sender, result) => {
                 Console.WriteLine($"  Ambient Light: {result.New.AmbientLight?.Lux:N2}Lux");
                 Console.WriteLine($"  Color: {result.New.Color}");
-                if(result.New.Color is { } color) { rgbLed.SetColor(color); }
+                
+                if(result.New.Color is { } color) 
+                {
+                    rgbLed.SetColor(color); 
+                }
             };
 
-            //==== one-off read
-            ReadConditions().Wait();
-
-            // start updating continuously
-            sensor.StartUpdating(TimeSpan.FromSeconds(1));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadConditions()
+        public override async Task Run()
         {
             var result = await sensor.Read();
+
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Visible Light: {result.AmbientLight?.Lux:N2}Lux");
-            Console.WriteLine($"  Color: {result.Color}");
-            if (result.Color is { } color) { rgbLed.SetColor(color); }
+            Console.WriteLine($" Visible Light: {result.AmbientLight?.Lux:N2}Lux");
+            Console.WriteLine($" Color: {result.Color}");
+            
+            if (result.Color is { } color) 
+            {
+                rgbLed.SetColor(color); 
+            }
+
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         //<!=SNOP=>

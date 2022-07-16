@@ -1,4 +1,4 @@
-using Meadow.Peripherals.Controllers.PID;
+ï»¿using Meadow.Peripherals.Controllers.PID;
 using System;
 
 namespace Meadow.Foundation.Controllers.Pid
@@ -32,15 +32,15 @@ namespace Meadow.Foundation.Controllers.Pid
         /// <summary>
         /// Represents the ProcessVariable (PV), or the actual signal
         /// reading of the system in its current state. For example, 
-        /// when heating a cup of coffee to 75º, if the temp sensor
-        /// says the coffee is currently at 40º, the 40º is the 
+        /// when heating a cup of coffee to 75Â°, if the temp sensor
+        /// says the coffee is currently at 40Â°, the 40ï¿½ is the 
         /// actual input value.
         /// </summary>
         public float ActualInput { get; set; }
         /// <summary>
         /// Represents the SetPoint (SP), or the reference target signal
         /// to achieve. For example, when heating a cup of coffee to 
-        /// 75º, 75º is the target input value.
+        /// 75Â°, 75Â° is the target input value.
         /// </summary>
         public float TargetInput { get; set; }
 

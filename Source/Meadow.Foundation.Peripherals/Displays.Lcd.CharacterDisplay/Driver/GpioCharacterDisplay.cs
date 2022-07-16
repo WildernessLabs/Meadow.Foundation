@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Displays.Lcd
             IPin pinD7,
             byte rows = 4, byte columns = 20) :
             this(
-                device.CreatePwmPort(pinV0, 100, 0.5f, true),
+                device.CreatePwmPort(pinV0, new Units.Frequency(IPwmOutputController.DefaultPwmDutyCycle, Units.Frequency.UnitType.Hertz), 0.5f, true),
                 device.CreateDigitalOutputPort(pinRS),
                 device.CreateDigitalOutputPort(pinE),
                 device.CreateDigitalOutputPort(pinD4),

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Weather;
@@ -6,15 +7,15 @@ using Meadow.Units;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         SwitchingRainGauge rainGauge;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             // initialize the rain gauge driver
             rainGauge = new SwitchingRainGauge(Device, Device.Pins.D15);
@@ -29,8 +30,13 @@ namespace MeadowApp
             );
             rainGauge.Subscribe(observer);
 
+            return Task.CompletedTask;
+        }
+
+        public override async Task Run()
+        {
             // get initial reading, just to test the API - should be 0
-            Length rainFall = rainGauge.Read().Result;
+            Length rainFall = await rainGauge.Read();
             Console.WriteLine($"Initial depth: {rainFall.Millimeters}mm");
 
             // start the sensor

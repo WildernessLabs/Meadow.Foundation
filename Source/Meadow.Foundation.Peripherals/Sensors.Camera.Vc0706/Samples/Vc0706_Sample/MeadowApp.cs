@@ -7,26 +7,31 @@ using Meadow.Foundation.Sensors.Camera;
 
 namespace Sensors.Camera.Vc0706_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        readonly Vc0706 camera;
+        Vc0706 camera;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             camera = new Vc0706(Device, Device.SerialPortNames.Com4, 38400);
 
-            Console.WriteLine("Set resolution");
+            return Task.CompletedTask;
+        }
 
+        public override Task Run()
+        {
             if (!camera.SetCaptureResolution(Vc0706.ImageResolution._160x120))
             {
                 Console.WriteLine("Set resolution failed");
             }
 
             _ = TakePicture();
+
+            return Task.CompletedTask;
         }
 
         async Task TakePicture()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
@@ -27,14 +28,14 @@ namespace Displays.Tft.ST7789_Sample
         resetPin: Device.Pins.A05,
     */
 
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         MicroGraphics graphics;
         St7789 display;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing ...");
 
@@ -47,9 +48,7 @@ namespace Displays.Tft.ST7789_Sample
                 chipSelectPin: Device.Pins.A03,
                 dcPin: Device.Pins.A04,
                 resetPin: Device.Pins.A05,
-                width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
-            {
-            };
+                width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565);
 
             display.Clear(Color.AliceBlue);
             display.Show();
@@ -60,6 +59,11 @@ namespace Displays.Tft.ST7789_Sample
                 IgnoreOutOfBoundsPixels = true
             };
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             graphics.Clear(true);
 
             graphics.DrawRectangle(120, 0, 120, 220, Color.White, true);
@@ -73,6 +77,8 @@ namespace Displays.Tft.ST7789_Sample
             graphics.Show();
 
             DisplayTest();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

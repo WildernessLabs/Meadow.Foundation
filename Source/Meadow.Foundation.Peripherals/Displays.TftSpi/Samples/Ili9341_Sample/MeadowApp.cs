@@ -1,23 +1,24 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays.TftSpi;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Displays.Tft.Ili9341_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Ili9341 display;
         MicroGraphics graphics;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing ...");
 
@@ -26,7 +27,7 @@ namespace Displays.Tft.Ili9341_Sample
 
             Console.WriteLine("Create display driver instance");
 
-            display = new Ili9341
+            var display = new Ili9341
             (
                 device: Device,
                 spiBus: spiBus,
@@ -34,9 +35,7 @@ namespace Displays.Tft.Ili9341_Sample
                 dcPin: Device.Pins.D14,
                 resetPin: Device.Pins.D15,
                 width: 240, height: 320
-            )
-            {
-            };
+            );
 
             graphics = new MicroGraphics(display)
             {
@@ -44,15 +43,24 @@ namespace Displays.Tft.Ili9341_Sample
                 CurrentFont = new Font12x16()
             };
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             graphics.Clear();
+
             graphics.DrawTriangle(10, 30, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
             graphics.DrawRectangle(20, 45, 40, 20, Meadow.Foundation.Color.Yellow, false);
             graphics.DrawCircle(50, 50, 40, Meadow.Foundation.Color.Blue, false);
             graphics.DrawText(5, 5, "Meadow F7", Meadow.Foundation.Color.White);
+
             graphics.Show();
 
             DisplayTest();
-       }
+
+            return base.Run();
+        }
 
         //<!=SNOP=>
 

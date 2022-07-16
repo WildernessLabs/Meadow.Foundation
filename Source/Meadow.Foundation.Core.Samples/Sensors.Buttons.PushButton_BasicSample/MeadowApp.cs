@@ -1,10 +1,12 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
+using Meadow.Peripherals.Leds;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -13,26 +15,21 @@ namespace MeadowApp
     /// terminates on the `3V3` rail on one end, and `D02` on the other, such
     /// that when the button is pressed, `D02` is raised `HIGH`.
     /// </summary>
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         RgbPwmLed onboardLed;
         PushButton pushButton;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Initialize();
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             //==== onboard RGB LED
             onboardLed = new RgbPwmLed(device: Device,
                 redPwmPin: Device.Pins.OnboardLedRed,
                 greenPwmPin: Device.Pins.OnboardLedGreen,
                 bluePwmPin: Device.Pins.OnboardLedBlue,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
+                CommonType.CommonAnode);
 
             //===== Push Button
             // intialize the push button
@@ -68,6 +65,8 @@ namespace MeadowApp
             };
 
             Console.WriteLine("Hardware initialized.");
+
+            return Task.CompletedTask;
         }
 
     }
