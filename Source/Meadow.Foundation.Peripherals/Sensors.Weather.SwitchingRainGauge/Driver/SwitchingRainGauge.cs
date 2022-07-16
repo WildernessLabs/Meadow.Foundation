@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Weather
         }
 
         public SwitchingRainGauge(IDigitalInputController device, IPin rainSensorPin, Length depthPerClick) :
-            this(device.CreateDigitalInputPort(rainSensorPin, InterruptMode.EdgeRising, ResistorMode.InternalPullUp, 500), depthPerClick)
+            this(device.CreateDigitalInputPort(rainSensorPin, InterruptMode.EdgeRising, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(50), TimeSpan.Zero), depthPerClick)
         {
 
         }

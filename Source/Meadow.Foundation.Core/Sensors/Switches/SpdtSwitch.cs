@@ -37,10 +37,22 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="pin"></param>
         /// <param name="interruptMode"></param>
         /// <param name="resistorMode"></param>
+        public SpdtSwitch(IDigitalInputController device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode) :
+            this(device.CreateDigitalInputPort(pin, interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
+        { }
+
+        /// <summary>
+        /// Instantiates a new SpdtSwitch object with the center pin connected to the specified digital pin, one pin connected to common/ground and one pin connected to high/3.3V.
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="pin"></param>
+        /// <param name="interruptMode"></param>
+        /// <param name="resistorMode"></param>
         /// <param name="debounceDuration"></param>
         /// <param name="glitchFilterCycleCount"></param>
-        public SpdtSwitch(IDigitalInputController device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, int debounceDuration = 20, int glitchFilterCycleCount = 0) :
-            this (device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount)) {}
+        public SpdtSwitch(IDigitalInputController device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount) :
+            this(device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
+        { }
 
         /// <summary>
         /// Creates a SpdtSwitch on a especified interrupt port
