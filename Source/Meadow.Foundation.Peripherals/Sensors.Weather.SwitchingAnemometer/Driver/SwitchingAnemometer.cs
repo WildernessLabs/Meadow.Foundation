@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Weather;
 using Meadow.Units;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using SU = Meadow.Units.Speed.UnitType;
 
 namespace Meadow.Foundation.Sensors.Weather
@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Weather
         //==== internals
         IDigitalInputPort inputPort;
         bool running = false;
-        
+
         System.Timers.Timer? noWindTimer;
         List<DigitalPortResult>? samples;
 
@@ -59,13 +59,16 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// Number of samples to take for a reading.
         /// </summary>
-        public int SampleCount {
+        public int SampleCount
+        {
             get => sampleCount;
-            set {
-                if(value < 2) { throw new ArgumentException("Sample count must be 2 or more."); }
+            set
+            {
+                if (value < 2) { throw new ArgumentException("Sample count must be 2 or more."); }
                 sampleCount = value;
             }
-        } protected int sampleCount = 3;
+        }
+        protected int sampleCount = 3;
 
         /// <summary>
         /// Calibration for how fast the wind speed is when the switch is hit
@@ -83,7 +86,7 @@ namespace Meadow.Foundation.Sensors.Weather
         public SwitchingAnemometer(IDigitalInputController device, IPin digitalInputPin)
             : this(device.CreateDigitalInputPort(
                 digitalInputPin, InterruptMode.EdgeFalling,
-                ResistorMode.InternalPullUp, 20, 20))
+                ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(2), TimeSpan.FromMilliseconds(2)))
         {
         }
 
@@ -93,7 +96,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="inputPort"></param>
         public SwitchingAnemometer(IDigitalInputPort inputPort)
         {
-            this.inputPort = inputPort;         
+            this.inputPort = inputPort;
         }
 
         protected void SubscribeToinputPortEvents()
@@ -110,7 +113,7 @@ namespace Meadow.Foundation.Sensors.Weather
         {
             if (!running) { return; }
 
-            if(samples == null) { samples = new List<DigitalPortResult>(); }
+            if (samples == null) { samples = new List<DigitalPortResult>(); }
 
             // reset our nowind timer, since a sample has come in. note that the API is awkward
             noWindTimer?.Stop();
@@ -126,14 +129,17 @@ namespace Meadow.Foundation.Sensors.Weather
             if (samples.Count < 1) { return; }
 
             // if we've reached our sample count
-            if (samples.Count >= SampleCount) {
+            if (samples.Count >= SampleCount)
+            {
                 float speedSum = 0f;
                 float oversampledSpeed = 0f;
 
                 // sum up the speeds
-                foreach (var sample in samples) {
+                foreach (var sample in samples)
+                {
                     // skip the first (old will be null)
-                    if (sample.Old is { } old) {
+                    if (sample.Old is { } old)
+                    {
                         speedSum += SwitchIntervalToKmh(sample.New.Time - old.Time);
                     }
                 }
@@ -151,7 +157,8 @@ namespace Meadow.Foundation.Sensors.Weather
                 RaiseUpdated(new ChangeResult<Speed>(newSpeed, oldSpeed));
 
                 // if we need to wait before taking another sample set, 
-                if (UpdateInterval > TimeSpan.Zero) {
+                if (UpdateInterval > TimeSpan.Zero)
+                {
                     this.UnsubscribeToInputPortEvents();
                     Thread.Sleep(UpdateInterval);
                     this.SubscribeToinputPortEvents();
@@ -203,15 +210,18 @@ namespace Meadow.Foundation.Sensors.Weather
             // that we're not getting input events (because there is no wind)
             noWindTimer = new System.Timers.Timer(NoWindTimeout.Seconds * 1000);
             //noWindTimer = new System.Timers.Timer(5000);
-            noWindTimer.Elapsed += (object sender, System.Timers.ElapsedEventArgs e) => {
+            noWindTimer.Elapsed += (object sender, System.Timers.ElapsedEventArgs e) =>
+            {
                 if (debug) { Console.WriteLine("No wind timer elapsed."); }
                 // if not running, clear the timer and bail out.
-                if (!running) {
+                if (!running)
+                {
                     noWindTimer.Stop();
                     return;
                 }
                 // if there aren't enough samples to make a reading
-                if (samples == null || samples.Count <= SampleCount ) {
+                if (samples == null || samples.Count <= SampleCount)
+                {
                     // capture the old value
                     Speed? oldSpeed = WindSpeed;
                     // save state
@@ -221,7 +231,8 @@ namespace Meadow.Foundation.Sensors.Weather
                     // raise the wind updated event with `0` wind speed
                     RaiseUpdated(new ChangeResult<Speed>(newSpeed, oldSpeed));
                     // sleep for the standby duration
-                    if (UpdateInterval > TimeSpan.Zero) {
+                    if (UpdateInterval > TimeSpan.Zero)
+                    {
                         if (debug) { Console.WriteLine("Sleeping for a bit."); }
                         Thread.Sleep(UpdateInterval);
                         if (debug) { Console.WriteLine("Woke up."); }
@@ -230,7 +241,8 @@ namespace Meadow.Foundation.Sensors.Weather
                     if (debug) { Console.WriteLine($"timer enabled? {noWindTimer.Enabled}"); }
 
                     // if still running, start the timer again
-                    if (running) {
+                    if (running)
+                    {
                         if (debug) { Console.WriteLine("restarting timer."); }
                         noWindTimer.Start();
                     }
@@ -246,10 +258,12 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public void StopUpdating()
         {
-            if(running) {
+            if (running)
+            {
                 UnsubscribeToInputPortEvents();
             }
-            if (noWindTimer != null && noWindTimer.Enabled) {
+            if (noWindTimer != null && noWindTimer.Enabled)
+            {
                 noWindTimer.Stop();
             }
 

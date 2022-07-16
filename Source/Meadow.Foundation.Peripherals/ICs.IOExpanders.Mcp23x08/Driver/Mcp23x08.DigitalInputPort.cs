@@ -1,6 +1,6 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Utilities;
+using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -23,9 +23,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             public override ResistorMode Resistor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-            public override double DebounceDuration { get; set; } //Todo not currently used
+            public override TimeSpan DebounceDuration { get; set; } //Todo not currently used
 
-            public override double GlitchDuration { get; set; } //Todo not currently used
+            public override TimeSpan GlitchDuration { get; set; } //Todo not currently used
 
             public DigitalInputPort(
                 Mcp23x08 mcpController,
@@ -58,7 +58,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         switch (InterruptMode)
                         {
                             case InterruptMode.EdgeFalling:
-                                if (currentState) {
+                                if (currentState)
+                                {
                                     RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(false, now), new DigitalState(true, _lastChangeTime)));
                                     // BC: 2021.05.21 updating to the new b5.0 result type.
                                     // old code below. TODO: passing an assumption for the old result, but
@@ -67,7 +68,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                                 }
                                 break;
                             case InterruptMode.EdgeRising:
-                                if (currentState) {
+                                if (currentState)
+                                {
                                     RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(true, now), new DigitalState(false, _lastChangeTime)));
                                     /*new DigitalPortResult(true, now, _lastChangeTime));*/
                                 }
@@ -75,7 +77,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                             case InterruptMode.EdgeBoth:
                                 RaiseChangedAndNotify(
                                     new DigitalPortResult(new DigitalState(currentState, now), new DigitalState(!currentState, _lastChangeTime)));
-                                    /*new DigitalPortResult(currentState, now, _lastChangeTime));*/
+                                /*new DigitalPortResult(currentState, now, _lastChangeTime));*/
                                 break;
                             case InterruptMode.None:
                                 break;
