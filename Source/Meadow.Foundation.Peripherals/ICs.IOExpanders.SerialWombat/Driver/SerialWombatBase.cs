@@ -1,11 +1,12 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public abstract partial class SerialWombatBase : IDigitalInputOutputController
+    public abstract partial class SerialWombatBase : IDigitalInputOutputController, IPwmOutputController
     {
         private II2cBus _bus; // TODO: add uart support
         private WombatVersion _version = null!;
@@ -104,7 +105,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 var rx = new byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
                 _bus.Exchange((byte)_address, command, rx);
+
                 // TODO: check return for errors
+
                 return rx;
             }
         }
@@ -155,29 +158,94 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         protected void ConfigureOutputPin(byte pin, bool state, OutputType type = OutputType.PushPull)
         {
-            var command = Commands.SetPinMode;
+            var command = Commands.SetPinMode0;
             command[1] = pin;
-            command[2] = 0;
+            command[2] = (byte)PinMode.DigitalIO;
             command[3] = (byte)(state ? 1 : 0);
             command[4] = 0;
             command[5] = 0;
             command[6] = (byte)(type == OutputType.OpenDrain ? 1 : 0);
 
-            var response = SendCommand(command);
+            SendCommand(command);
         }
 
         protected void ConfigureInputPin(byte pin, ResistorMode mode)
         {
-            var command = Commands.SetPinMode;
+            var command = Commands.SetPinMode0;
             command[1] = pin;
-            command[2] = 0;
+            command[2] = (byte)PinMode.DigitalIO;
             command[3] = (byte)(mode == ResistorMode.InternalPullUp ? 2 : 0);
             command[4] = (byte)(mode == ResistorMode.InternalPullUp ? 1 : 0);
             command[5] = (byte)(mode == ResistorMode.InternalPullDown ? 1 : 0);
             command[6] = 0;
 
-            var response = SendCommand(command);
+            SendCommand(command);
         }
+
+        protected void ConfigurePwm(byte pin, float dutyCycle, bool inverted)
+        {
+            // dutyCycle A value from 0 to 65535 representing duty cycle
+            var duty = (ushort)(dutyCycle * 65535);
+
+            var command = Commands.SetPinMode0;
+            command[1] = pin;
+            command[2] = (byte)PinMode.PWM;
+            command[3] = pin;
+            command[4] = (byte)(duty & 0xFF);
+            command[5] = (byte)(duty >> 8);
+            command[6] = (byte)(inverted ? 1 : 0);
+
+            SendCommand(command);
+        }
+
+        protected void ConfigurePwmDutyCycle(byte pin, float dutyCycle)
+        {
+            var duty = (ushort)(dutyCycle * 65535);
+
+            var command = Commands.WritePublicData;
+            command[1] = pin;
+            command[2] = (byte)(duty & 0xFF);
+            command[3] = (byte)(duty >> 8);
+            command[4] = 0xff;
+            command[5] = 0x55;
+            command[6] = 0x55;
+
+            SendCommand(command);
+        }
+
+        protected void ConfigurePwm(byte pin, Frequency frequency)
+        {
+            uint periodUs = (uint)(1000000 / frequency.Hertz);
+            ConfigurePwm(pin, periodUs);
+        }
+
+        protected void ConfigurePwm(byte pin, uint periodMicroseconds)
+        {
+            var command = Commands.SetPinModeHW0;
+            command[1] = pin;
+            command[2] = (byte)PinMode.PWM;
+            command[3] = (byte)((periodMicroseconds >> 0) & 0xFF);
+            command[4] = (byte)((periodMicroseconds >> 8) & 0xFF);
+            command[5] = (byte)((periodMicroseconds >> 16) & 0xFF);
+            command[6] = (byte)((periodMicroseconds >> 24) & 0xFF);
+
+            SendCommand(command);
+        }
+
+        /*
+        void SerialWombatPWM_18AB::writeFrequency_Hz(uint32_t frequency_Hz)
+{
+	uint8_t tx[] = { 220,_pin,PIN_MODE_PWM,SW_LE32(1000000 / frequency_Hz),0x55 };
+	_sw.sendPacket(tx);
+
+}
+
+void SerialWombatPWM_18AB::writePeriod_uS(uint32_t period_uS)
+{
+	uint8_t tx[] = { 220,_pin,PIN_MODE_PWM,SW_LE32(period_uS),0x55 };
+	_sw.sendPacket(tx);
+}
+        */
 
         public Voltage GetSupplyVoltage()
         {
@@ -193,12 +261,32 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType outputType = OutputType.PushPull)
         {
-            return new SerialWombatBase.DigitalOutputPort(this, pin, initialState, outputType);
+            return new DigitalOutputPort(this, pin, initialState, outputType);
         }
 
-        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled, double debounceDuration = 0, double glitchDuration = 0)
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled)
         {
-            return new SerialWombatBase.DigitalInputPort(this, pin, interruptMode, resistorMode);
+            // if (debounceDuration != TimeSpan.Zero) throw new NotSupportedException("Debounce not supported");
+            // if (glitchDuration != TimeSpan.Zero) throw new NotSupportedException("Glitch Filtering not supported");
+
+            return new DigitalInputPort(this, pin, interruptMode, resistorMode);
+        }
+
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
+        {
+            // if (debounceDuration != TimeSpan.Zero) throw new NotSupportedException("Debounce not supported");
+            // if (glitchDuration != TimeSpan.Zero) throw new NotSupportedException("Glitch Filtering not supported");
+
+            return new DigitalInputPort(this, pin, interruptMode, resistorMode);
+        }
+
+        public IPwmPort CreatePwmPort(IPin pin, Frequency frequency, float dutyCycle = 0.5F, bool invert = false)
+        {
+            Console.WriteLine("+create");
+            var channel = pin.SupportedChannels.OfType<IPwmChannelInfo>().FirstOrDefault();
+            Console.WriteLine($"channel: {channel}");
+
+            return new PwmPort(this, pin, channel);
         }
     }
 }

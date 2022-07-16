@@ -10,8 +10,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             private SerialWombatBase _controller;
             private ResistorMode _resistor;
 
-            public override double DebounceDuration { get; set; }
-            public override double GlitchDuration { get; set; }
+            public override TimeSpan DebounceDuration { get; set; }
+            public override TimeSpan GlitchDuration { get; set; }
 
             public DigitalInputPort(SerialWombatBase controller, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode)
                 : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], interruptMode)
@@ -37,10 +37,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     _resistor = value;
                     _controller.ConfigureInputPin((byte)Pin.Key, Resistor);
                 }
-            }
-
-            public override void Dispose()
-            {
             }
         }
     }

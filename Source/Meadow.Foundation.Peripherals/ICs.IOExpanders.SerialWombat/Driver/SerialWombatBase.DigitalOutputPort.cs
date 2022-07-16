@@ -21,9 +21,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 set => _controller.ConfigureOutputPin((byte)Pin.Key, value, OutputType.PushPull);
             }
 
-            public override void Dispose()
-            {
-            }
         }
     }
 }
