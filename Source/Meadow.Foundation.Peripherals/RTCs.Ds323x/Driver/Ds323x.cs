@@ -90,7 +90,7 @@ namespace Meadow.Foundation.RTCs
 
             if (interruptPin != null)
             {
-                var interruptPort = device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, 10, 10);
+                var interruptPort = device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
                 _interruptCreatedInternally = true;
 
                 Initialize(interruptPort);
@@ -130,14 +130,18 @@ namespace Meadow.Foundation.RTCs
                 }
 
                 InterruptPort = interruptPort;
-                InterruptPort.Changed += (s, cr) => {
+                InterruptPort.Changed += (s, cr) =>
+                {
                     //Alarm interrupt has been raised, work out which one and raise the necessary event.
-                    if ((_alarm1Delegate != null) || (_alarm2Delegate != null)) {
+                    if ((_alarm1Delegate != null) || (_alarm2Delegate != null))
+                    {
                         var alarm = WhichAlarm;
-                        if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm1Delegate != null)) {
+                        if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm1Delegate != null))
+                        {
                             _alarm1Delegate(this);
                         }
-                        if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm2Delegate != null)) {
+                        if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm2Delegate != null))
+                        {
                             _alarm2Delegate(this);
                         }
                     }
@@ -193,9 +197,9 @@ namespace Meadow.Foundation.RTCs
                 ds323x.ReadRegister(Registers.Seconds, data);
                 return DecodeDateTimeRegisters(data);
             }
-            set 
-            { 
-                ds323x.WriteRegister(Registers.Seconds, EncodeDateTimeRegisters(value)); 
+            set
+            {
+                ds323x.WriteRegister(Registers.Seconds, EncodeDateTimeRegisters(value));
             }
         }
 
