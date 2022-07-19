@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Logging;
 using Meadow.Units;
 using System;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public abstract partial class SerialWombatBase : IDigitalInputOutputController, IPwmOutputController
+    public abstract partial class SerialWombatBase : IDigitalInputOutputController, IPwmOutputController, IAnalogInputController
     {
         private II2cBus _bus; // TODO: add uart support
         private WombatVersion _version = null!;
@@ -16,11 +17,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public Address _address { get; }
 
         protected object SyncRoot { get; } = new object();
+        protected Logger Logger { get; }
 
-        protected SerialWombatBase(II2cBus bus, Address address = SerialWombatBase.Address.Default)
+        protected SerialWombatBase(II2cBus bus, Address address = SerialWombatBase.Address.Default, Logger? logger = null)
         {
             _bus = bus;
             _address = address;
+            Logger = logger;
         }
 
         public PinDefinitions Pins { get; } = new PinDefinitions();
@@ -106,6 +109,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 var rx = new byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
                 _bus.Exchange((byte)_address, command, rx);
 
+                Logger?.Trace($"SW: TX {BitConverter.ToString(command.ToArray())}");
+                Logger?.Trace($"SW: RX {BitConverter.ToString(rx)}");
+
                 // TODO: check return for errors
 
                 return rx;
@@ -122,7 +128,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             var command = Commands.ReadPublicData;
             command[1] = pin;
             var response = SendCommand(command);
-            return (ushort)(response[2] | response[3] << 8);
+            return (ushort)(response[2] | (response[3] << 8));
         }
 
         protected ushort WritePublicData(SwPin pin, ushort data)
@@ -232,20 +238,28 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SendCommand(command);
         }
 
-        /*
-        void SerialWombatPWM_18AB::writeFrequency_Hz(uint32_t frequency_Hz)
-{
-	uint8_t tx[] = { 220,_pin,PIN_MODE_PWM,SW_LE32(1000000 / frequency_Hz),0x55 };
-	_sw.sendPacket(tx);
+        protected void ConfigureAnalogInput(byte pin, ushort sampleCount = 64, ushort iirFilterConstant = 0xff80)
+        {
+            var command = Commands.SetPinMode0;
+            command[1] = pin;
+            command[2] = (byte)PinMode.AnalogInput;
+            command[3] = 0;
+            command[4] = 0;
+            command[5] = 0;
+            command[6] = 0;
 
-}
+            SendCommand(command);
 
-void SerialWombatPWM_18AB::writePeriod_uS(uint32_t period_uS)
-{
-	uint8_t tx[] = { 220,_pin,PIN_MODE_PWM,SW_LE32(period_uS),0x55 };
-	_sw.sendPacket(tx);
-}
-        */
+            command = Commands.SetPinMode1;
+            command[1] = pin;
+            command[2] = (byte)PinMode.AnalogInput;
+            command[3] = (byte)(sampleCount & 0xff);
+            command[4] = (byte)(sampleCount >> 8);
+            command[5] = (byte)(iirFilterConstant & 0xff);
+            command[6] = (byte)(iirFilterConstant >> 8);
+
+            SendCommand(command);
+        }
 
         public Voltage GetSupplyVoltage()
         {
@@ -282,11 +296,25 @@ void SerialWombatPWM_18AB::writePeriod_uS(uint32_t period_uS)
 
         public IPwmPort CreatePwmPort(IPin pin, Frequency frequency, float dutyCycle = 0.5F, bool invert = false)
         {
-            Console.WriteLine("+create");
             var channel = pin.SupportedChannels.OfType<IPwmChannelInfo>().FirstOrDefault();
-            Console.WriteLine($"channel: {channel}");
+
+            if (channel == null) throw new NotSupportedException($"Pin {pin.Name} Does not support PWM");
 
             return new PwmPort(this, pin, channel);
+        }
+
+        public IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount = 64)
+        {
+            return CreateAnalogInputPort((IPin)pin, sampleCount, TimeSpan.FromSeconds(1), new Voltage(0));
+        }
+
+        public IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount, TimeSpan sampleInterval, Voltage voltageReference)
+        {
+            var channel = pin.SupportedChannels.OfType<IAnalogChannelInfo>().FirstOrDefault();
+
+            if (channel == null) throw new NotSupportedException($"Pin {pin.Name} Does not support ADC");
+
+            return new AnalogInputPort(this, pin, channel, sampleCount);
         }
     }
 }

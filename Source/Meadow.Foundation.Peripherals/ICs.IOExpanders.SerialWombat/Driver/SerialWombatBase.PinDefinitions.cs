@@ -8,6 +8,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         public class PinDefinitions : IPinDefinitions
         {
+            public const int ADCPrecisionBits = 12;
+
             public IList<IPin> AllPins { get; } = new List<IPin>();
 
             public PinDefinitions()
@@ -20,7 +22,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 (byte)0x00,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("WP0", interruptCapable: false),
-                    new PwmChannelInfo("PWM0", 0, 0)
+                    new PwmChannelInfo("PWM0", 0, 0),
+                    new AnalogChannelInfo("A0", ADCPrecisionBits, true, false),
                 }
             );
 
@@ -29,7 +32,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 (byte)0x01,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("WP1", interruptCapable: false),
-                    new PwmChannelInfo("PWM1", 0, 0)
+                    new PwmChannelInfo("PWM1", 0, 0),
+                    new AnalogChannelInfo("A1", ADCPrecisionBits, true, false),
                 }
             );
 
@@ -38,7 +42,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 (byte)0x02,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("WP2", interruptCapable: false),
-                    new PwmChannelInfo("PWM2", 0, 0)
+                    new PwmChannelInfo("PWM2", 0, 0),
+                    new AnalogChannelInfo("A2", ADCPrecisionBits, true, false),
                 }
             );
 
@@ -143,7 +148,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 (byte)0x10,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("WP16", interruptCapable: false),
-                    new PwmChannelInfo("PWM16", 0, 0)
+                    new PwmChannelInfo("PWM16", 0, 0),
+                    new AnalogChannelInfo("A16", ADCPrecisionBits, true, false),
                 }
             );
 
@@ -152,7 +158,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 (byte)0x11,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("WP17", interruptCapable: false),
-                    new PwmChannelInfo("PWM17", 0, 0)
+                    new PwmChannelInfo("PWM17", 0, 0),
+                    new AnalogChannelInfo("A17", ADCPrecisionBits, true, false),
                 }
             );
 
@@ -161,7 +168,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 (byte)0x12,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("WP18", interruptCapable: false),
-                    new PwmChannelInfo("PWM18", 0, 0)
+                    new PwmChannelInfo("PWM18", 0, 0),
+                    new AnalogChannelInfo("A18", ADCPrecisionBits, true, false),
                 }
             );
 
@@ -170,7 +178,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 (byte)0x13,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("WP19", interruptCapable: false),
-                    new PwmChannelInfo("PWM19", 0, 0)
+                    new PwmChannelInfo("PWM19", 0, 0),
+                    new AnalogChannelInfo("A19", ADCPrecisionBits, true, false),
                 }
             );
 
