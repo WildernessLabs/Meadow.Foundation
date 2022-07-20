@@ -25,5 +25,6 @@
     <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\..\..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\Sensors.Distance.Hcsr04\Driver\Sensors.Distance.Hcsr04.csproj" />
   </ItemGroup>
 </Project>

@@ -1,19 +1,19 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
     /// <summary>
     /// HCSR04 Distance Sensor
     /// </summary>
-    public class Hcsr04: SensorBase<Length>, IRangeFinder
+    public class Hcsr04 : SensorBase<Length>, IRangeFinder
     {
 
-		/// <summary>
+        /// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
         public event EventHandler<IChangeResult<Length>> DistanceUpdated;
@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Returns current distance
         /// </summary>
-        public Length? Distance { get; private set; }
+        public Length? Distance { get; protected set; }
 
         /// <summary>
         /// Minimum valid distance in cm
@@ -51,8 +51,9 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="triggerPin"></param>
         /// <param name="echoPin"></param>
         public Hcsr04(IDigitalInputOutputController device, IPin triggerPin, IPin echoPin) :
-            this (device.CreateDigitalOutputPort(triggerPin, false), 
-                  device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth)) { }
+            this(device.CreateDigitalOutputPort(triggerPin, false),
+                  device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth))
+        { }
 
         /// <summary>
         /// Create a new HCSR04 object 
@@ -67,10 +68,14 @@ namespace Meadow.Foundation.Sensors.Distance
             this.echoPort.Changed += OnEchoPortChanged;
         }
 
+        protected Hcsr04()
+        {
+        }
+
         /// <summary>
         /// Sends a trigger signal
         /// </summary>
-        public void MeasureDistance()
+        public virtual void MeasureDistance()
         {
             //Distance = -1;
 

@@ -29,7 +29,8 @@
             public static readonly byte[] WritePublicData = new byte[] { 0x82, 0x00, 0x00, 0x00, 0xff, 0x55, 0x55, 0x55 }; // byte[1] == pin, 2-3 == value. must be replaced at command time
             public static readonly byte[] ReadFlash = new byte[] { 0xA1, 0x00, 0x00, 0x00, 0x00, 0x55, 0x55, 0x55 }; // byte[2-4] == address. must be replaced at command time
             public static readonly byte[] SetPinMode0 = new byte[] { (byte)Command.CONFIGURE_PIN_MODE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55 }; // byte[1-6] == pin mode declarations. must be replaced at command time
-            public static readonly byte[] SetPinMode1 = new byte[] { (byte)Command.CONFIGURE_PIN_MODE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55 }; // byte[1-6] == pin mode declarations. must be replaced at command time
+            public static readonly byte[] SetPinMode1 = new byte[] { (byte)Command.CONFIGURE_PIN_MODE1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55 }; // byte[1-6] == pin mode declarations. must be replaced at command time
+            public static readonly byte[] SetPinMode2 = new byte[] { (byte)Command.CONFIGURE_PIN_MODE2, 0x00, 0x00, 0x55, 0x55, 0x55, 0x55, 0x55 }; // byte[1-6] == pin mode declarations. must be replaced at command time
             public static readonly byte[] SetPinModeHW0 = new byte[] { (byte)Command.CONFIGURE_PIN_MODE_HW_0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55 };
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Logging;
+using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using System;
 using System.Linq;
@@ -121,6 +122,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected ushort ReadPublicData(SwPin pin)
         {
             return ReadPublicData((byte)pin);
+        }
+
+        protected ushort ReadPublicData(IPin pin)
+        {
+            return ReadPublicData((byte)pin.Key);
         }
 
         protected ushort ReadPublicData(byte pin)
@@ -261,6 +267,41 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SendCommand(command);
         }
 
+        protected void ConfigureUltrasonicSensor(IPin trigger, IPin echo, bool autoTrigger = true)
+        {
+            var command = Commands.SetPinMode0;
+            command[1] = (byte)echo.Key;
+            command[2] = (byte)PinMode.UltrasonicDistance;
+            command[3] = 0; // <-- driver type. HC-SR04 is the only supported driver
+            command[4] = (byte)trigger.Key;
+            command[5] = 0; // pull up disabled (1 == enabled. not sure what this is for?)
+            command[6] = (byte)(autoTrigger ? 1 : 0);
+
+            SendCommand(command);
+        }
+
+        protected ushort ReadUltrasonicSensorPulses(IPin echo)
+        {
+            var command = Commands.SetPinMode2;
+            command[1] = (byte)echo.Key;
+            command[2] = (byte)PinMode.UltrasonicDistance;
+
+            var response = SendCommand(command);
+            return (ushort)((response[5] << 8) | response[6]);
+        }
+
+        protected void ManualTriggerUltrasonicSensor(IPin echo)
+        {
+            var command = Commands.SetPinMode1;
+            command[1] = (byte)echo.Key;
+            command[2] = (byte)PinMode.UltrasonicDistance;
+            command[3] = 1;
+
+            SendCommand(command);
+        }
+
+        //-----------------------------------------------------------------------
+
         public Voltage GetSupplyVoltage()
         {
             var count = ReadPublicData(SwPin.Voltage);
@@ -315,6 +356,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (channel == null) throw new NotSupportedException($"Pin {pin.Name} Does not support ADC");
 
             return new AnalogInputPort(this, pin, channel, sampleCount);
+        }
+
+        public IRangeFinder CreateDistanceSensor(IPin trigger, IPin echo)
+        {
+            return CreateDistanceSensor(trigger, echo, Hcsr04.DefaultReadPeriod);
+        }
+
+        public IRangeFinder CreateDistanceSensor(IPin trigger, IPin echo, TimeSpan readPeriod)
+        {
+            return new Hcsr04(this, trigger, echo, readPeriod);
         }
     }
 }
