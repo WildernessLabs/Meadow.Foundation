@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Foundation.Servos;
+using Meadow.Hardware;
 using Meadow.Logging;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
@@ -366,6 +367,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public IRangeFinder CreateDistanceSensor(IPin trigger, IPin echo, TimeSpan readPeriod)
         {
             return new Hcsr04(this, trigger, echo, readPeriod);
+        }
+
+        public IServo CreateServo(IPin pin)
+        {
+            return new Servo(pin);
         }
     }
 }
