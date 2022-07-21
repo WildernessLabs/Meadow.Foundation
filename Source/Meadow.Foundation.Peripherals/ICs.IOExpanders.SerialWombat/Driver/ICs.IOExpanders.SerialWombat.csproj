@@ -1,0 +1,30 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>AnalogMux</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.ICs.IOExpanders.AnalogMux</PackageId>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation, IOExpanders, Analog, Input, Multiplexer, 74HC4051, 74HC4067, HP4067</PackageTags>
+    <Version>0.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Library for various analog multiplexers</Description>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj" />
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <ProjectReference Include="..\..\Sensors.Distance.Hcsr04\Driver\Sensors.Distance.Hcsr04.csproj" />
+  </ItemGroup>
+</Project>
