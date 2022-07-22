@@ -92,10 +92,15 @@ namespace Meadow.Foundation.Graphics
         /// Create a new MicroGraphics instance from a pixel buffer instance
         /// </summary>
         /// <param name="pixelBuffer">The pixel buffer</param>
-    /*    public MicroGraphics(IPixelBuffer pixelBuffer)
+        public MicroGraphics(PixelBufferBase pixelBuffer, bool initializeBuffer)
         {
             this.pixelBuffer = pixelBuffer;
-        }*/
+
+            if(initializeBuffer)
+            {
+                pixelBuffer.InitializeBuffer();
+            }
+        }
 
         /// <summary>
         /// Draw a single pixel using the pen color
@@ -972,7 +977,7 @@ namespace Meadow.Foundation.Graphics
         {
             if (IgnoreOutOfBoundsPixels)
             {
-                if (x < 0 || y < 0 || x + buffer.Width >= Width || y + buffer.Height >= Height)
+                if (x < 0 || y < 0 || x + buffer.Width > Width || y + buffer.Height > Height)
                 {
                     return;
                 }
