@@ -51,8 +51,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 var d = controller.ReadPublicData(echoPin);
 
-                controller.Logger.Debug($"d: {d}");
-
                 var newDistance = new Length(d, Length.UnitType.Millimeters);
                 base.RaiseEventsAndNotify(new ChangeResult<Length>(newDistance, oldDistance));
 

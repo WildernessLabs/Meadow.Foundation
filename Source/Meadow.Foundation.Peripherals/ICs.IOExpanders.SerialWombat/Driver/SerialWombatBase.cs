@@ -111,8 +111,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 var rx = new byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
                 _bus.Exchange((byte)_address, command, rx);
 
-                Logger?.Trace($"SW: TX {BitConverter.ToString(command.ToArray())}");
-                Logger?.Trace($"SW: RX {BitConverter.ToString(rx)}");
+                //                Logger?.Trace($"SW: TX {BitConverter.ToString(command.ToArray())}");
+                //                Logger?.Trace($"SW: RX {BitConverter.ToString(rx)}");
 
                 // TODO: check return for errors
 

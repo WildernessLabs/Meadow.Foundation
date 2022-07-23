@@ -26,6 +26,10 @@ namespace ICs.IOExpanders.Sw18AB_Samples
             {
                 Resolver.Log.Info(" creating Wombat...");
                 _wombat = new Sw18AB(Device.CreateI2cBus(), logger: Resolver.Log);
+
+                Resolver.Log.Info($"  rev : {_wombat.Version.Firmware}");
+                Resolver.Log.Info($"  core: {_wombat.GetSupplyVoltage().Volts:0.0}V");
+
                 Resolver.Log.Info(" creating Sensor...");
                 _sensor = _wombat.CreateDistanceSensor(_wombat.Pins.WP11, _wombat.Pins.WP10, TimeSpan.FromSeconds(1));
             }
