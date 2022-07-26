@@ -960,14 +960,12 @@ namespace Meadow.Foundation.Graphics
                 x -= MeasureText(text, scaleFactor).Width;
             }
 
-            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, BitmapMode.And, scaleFactor);
+            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, scaleFactor);
         }
 
         /// <summary>
         /// Draw a buffer onto the display buffer at the given location
-        ///
         /// For best performance, source buffer should be the same color depth as the target display
-        /// Note: DrawBuffer will not rotate the source buffer, it will always be oriented relative to base display rotation
         /// </summary>
         /// <param name="x">x location of target to draw buffer</param>
         /// <param name="y">x location of target to draw buffer</param>
@@ -1240,16 +1238,15 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Display a 1-bit bitmap stored in a byte array
+        /// Writes a 1-bit bitmap stored in a byte array
         /// </summary>
         /// <param name="x">Abscissa of the top left corner of the bitmap</param>
         /// <param name="y">Ordinate of the top left corner of the bitmap</param>
         /// <param name="width">Width of the bitmap in pixels</param>
         /// <param name="height">Height of the bitmap in pixels</param>
         /// <param name="bitmap">Bitmap to display</param>
-        /// <param name="bitmapMode">How  the bitmap should be transferred to the buffer (not implemented)</param>
         /// <param name="scaleFactor">The integer scale factor (default is 1)</param>
-        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, BitmapMode bitmapMode, ScaleFactor scaleFactor = ScaleFactor.X1)
+        protected void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             width /= 8;
 
@@ -1273,13 +1270,11 @@ namespace Meadow.Foundation.Graphics
                         {
                             if (scaleFactor != ScaleFactor.X1)
                             {
-                                for (int i = 0; i < scale; i++)
-                                {
-                                    for (int j = 0; j < scale; j++)
-                                    {
-                                        DrawPixel(x + (8 * abscissa) * scale + pixel * scale + i, y + ordinate * scale + j);
-                                    }
-                                }
+                                Fill(x: x + (8 * abscissa) * scale + pixel * scale,
+                                    y: y + ordinate * scale,
+                                    width: scale,
+                                    height: scale,
+                                    color: PenColor);
                             }
                             else
                             {   //1x
@@ -1293,7 +1288,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Display a 1-bit bitmap
+        /// Writes a 1-bit bitmap to the buffer - used for font rendering
         /// </summary>
         /// <param name="x">Abscissa of the top left corner of the bitmap</param>
         /// <param name="y">Ordinate of the top left corner of the bitmap</param>
@@ -1302,11 +1297,11 @@ namespace Meadow.Foundation.Graphics
         /// <param name="bitmap">Bitmap to display</param>
         /// <param name="color">The color of the bitmap</param>
         /// <param name="scaleFactor">The integer scale factor (default is 1)</param>
-        public void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color, ScaleFactor scaleFactor = ScaleFactor.X1)
+        protected void DrawBitmap(int x, int y, int width, int height, byte[] bitmap, Color color, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             PenColor = color;
 
-            DrawBitmap(x, y, width, height, bitmap, BitmapMode.Copy, scaleFactor);
+            DrawBitmap(x, y, width, height, bitmap, scaleFactor);
         }
 
         /// <summary>
