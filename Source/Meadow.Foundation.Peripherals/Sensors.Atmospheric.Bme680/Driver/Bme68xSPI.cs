@@ -3,13 +3,13 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    internal class Bme680SPI : Bme680Comms
+    internal class Bme68xSPI : Bme680Comms
     {
         ISpiPeripheral spiPeripheral;
 
         public override byte ReadRegister(byte register) => spiPeripheral.ReadRegister(register);
 
-        internal Bme680SPI(ISpiBus spi, IDigitalOutputPort? chipSelect = null)
+        internal Bme68xSPI(ISpiBus spi, IDigitalOutputPort? chipSelect = null)
         {
             spiPeripheral = new SpiPeripheral(spi, chipSelect);
         }

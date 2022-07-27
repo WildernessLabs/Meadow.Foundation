@@ -3,11 +3,11 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    internal class Bme680I2C : Bme680Comms
+    internal class Bme68xI2C : Bme680Comms
     {
         protected I2cPeripheral i2CPeripheral;
 
-        internal Bme680I2C(II2cBus i2c, byte busAddress)
+        internal Bme68xI2C(II2cBus i2c, byte busAddress)
         {
             i2CPeripheral = new I2cPeripheral(i2c, busAddress);
         }

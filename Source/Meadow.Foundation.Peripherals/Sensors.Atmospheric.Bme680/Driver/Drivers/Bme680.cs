@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="address">I2C address of the sensor.</param>
         public Bme680(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
-			bme680Comms = new Bme680I2C(i2cBus, address);
+			bme680Comms = new Bme68xI2C(i2cBus, address);
             configuration = new Configuration(); // here to avoid the warning
 			Initialize();
         }
