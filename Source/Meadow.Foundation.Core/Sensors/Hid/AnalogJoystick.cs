@@ -18,6 +18,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// Number of samples used to calculate position
         /// </summary>
         protected int sampleCount;
+
         /// <summary>
         /// Interval between samples 
         /// </summary>
@@ -27,6 +28,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// Analog port connected to horizonal joystick pin
         /// </summary>
         protected IAnalogInputPort HorizontalInputPort { get; set; }
+
         /// <summary>
         /// Analog port connected to vertical joystick pin
         /// </summary>

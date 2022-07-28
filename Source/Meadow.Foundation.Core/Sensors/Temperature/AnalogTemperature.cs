@@ -40,13 +40,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
-        //==== internals
         ///<Summary>
         /// AnalogInputPort connected to temperature sensor
         ///</Summary>
         protected IAnalogInputPort AnalogInputPort { get; }
 
-        //==== properties
         /// <summary>
         /// Type of temperature sensor.
         /// </summary>
@@ -88,7 +86,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             /// LM50 temperature sensor
             ///</Summary>
             LM50,
-
         }
 
         ///<Summary>
@@ -122,8 +119,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             int sampleCount = 5, TimeSpan? sampleInterval = null)
                 : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
                       sensorType, calibration)
-        {
-        }
+        { }
 
         /// <summary>
         /// Creates a new instance of the AnalogTemperature class.
@@ -245,9 +241,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public void StopUpdating()
         {
-            lock (samplingLock) {
+            lock (samplingLock) 
+            {
                 if (!IsSampling) return;
-                base.IsSampling = false;
+                IsSampling = false;
                 AnalogInputPort.StopUpdating();
             }
         }
@@ -255,13 +252,16 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Method to notify subscribers to TemperatureUpdated event handler
         /// </summary>
+        /// <param name="changeResult"></param>
         protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
         { 
             TemperatureUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        
+        /// <summary>
+        /// Converts voltage to temperature in Celcius
+        /// </summary>
         /// <param name="voltage"></param>
         /// <returns>temperature in celcius</returns>
         protected Units.Temperature VoltageToTemperature(Voltage voltage)

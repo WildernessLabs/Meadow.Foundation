@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Analog port connected to sensor
         /// </summary>
-		protected IAnalogInputPort AnalogInputPort { get; }
+        protected IAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         /// Raised when the value of the reading changes.
@@ -31,8 +31,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Current illuminance value read by sensor
         /// </summary>
         public Illuminance? Illuminance => illuminance;
-
-        Illuminance illuminance;
+        private Illuminance illuminance;
 
         /// <summary>
         /// New instance of the AnalogLightSensor class.
@@ -48,15 +47,15 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="sampleInterval">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         public AnalogLightSensor(
-			IAnalogInputController device,
-			IPin analogPin,
-			Calibration? calibration = null,
+            IAnalogInputController device,
+            IPin analogPin,
+            Calibration? calibration = null,
             TimeSpan? updateInterval = null,
-			int sampleCount = 5, TimeSpan? sampleInterval = null)
-				: this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 40), new Voltage(3.3)), calibration)
-		{
+            int sampleCount = 5, TimeSpan? sampleInterval = null)
+                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 40), new Voltage(3.3)), calibration)
+        {
             base.UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 10);
-		}
+        }
 
         /// <summary>
         /// New instance of the AnalogLightSensor class.

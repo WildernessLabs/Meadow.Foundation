@@ -176,6 +176,10 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start a Blink animation which sets the brightness of the LED alternating between a low and high brightness setting.
         /// </summary>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="Exception"></exception>
         public void StartBlink(float highBrightness = 1f, float lowBrightness = 0f)
         {
             var onDuration = TimeSpan.FromMilliseconds(500);
@@ -207,6 +211,12 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
         /// </summary>
+        /// <param name="onDuration"></param>
+        /// <param name="offDuration"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="Exception"></exception>
         public void StartBlink(TimeSpan onDuration, TimeSpan offDuration, float highBrightness = 1f, float lowBrightness = 0f)
         {
             if (highBrightness > 1 || highBrightness <= 0)
@@ -240,7 +250,6 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness">maximum brightness</param>
         /// <param name="lowBrightness">minimum brightness</param>
         /// <param name="cancellationToken">token for cancellation</param>
-        /// <returns></returns>
         protected async Task StartBlinkAsync(TimeSpan onDuration, TimeSpan offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             while (true)
@@ -262,6 +271,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting.
         /// </summary>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
         public void StartPulse(float highBrightness = 1, float lowBrightness = 0.15F)
         {
             var pulseDuration = TimeSpan.FromMilliseconds(600);
@@ -292,6 +303,9 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
         /// </summary>
+        /// <param name="pulseDuration"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
         public void StartPulse(TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0) 
@@ -324,7 +338,6 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness">maximum brightness</param>
         /// <param name="lowBrightness">minimum brightness</param>
         /// <param name="cancellationToken">token used to cancel pulse</param>
-        /// <returns></returns>
         protected async Task StartPulseAsync(TimeSpan pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;
