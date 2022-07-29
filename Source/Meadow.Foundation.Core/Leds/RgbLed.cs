@@ -11,8 +11,8 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public partial class RgbLed : IRgbLed
     {
-        Task? animationTask;
-        CancellationTokenSource? cancellationTokenSource;
+        private Task? animationTask;
+        private CancellationTokenSource? cancellationTokenSource;
 
         /// <summary>
         /// Get the color the LED has been set to.
@@ -200,7 +200,6 @@ namespace Meadow.Foundation.Leds
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         protected async Task StartBlinkAsync(RgbLedColors color, TimeSpan onDuration, TimeSpan offDuration, CancellationToken cancellationToken)
         {
             while (true)

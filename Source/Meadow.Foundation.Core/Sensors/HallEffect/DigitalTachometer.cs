@@ -5,7 +5,6 @@ namespace Meadow.Foundation.Sensors.HallEffect
 {
     /// <summary>
     /// Represents a Lineal Hall Effect tachometer.
-    /// 
     /// </summary>
     public class LinearHallEffectTachometer
     {
@@ -65,9 +64,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         public LinearHallEffectTachometer(IDigitalInputController device, IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F) :
             this(device.CreateDigitalInputPort(inputPin, InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero), type, numberOfMagnets, rpmChangeNotificationThreshold)
-        {
-
-        }
+        { }
 
         /// <summary>
         /// LinearHallEffectTachometer driver

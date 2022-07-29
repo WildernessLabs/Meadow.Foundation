@@ -109,11 +109,9 @@ namespace Meadow.Foundation.Motors
         /// <param name="a1Port"></param>
         /// <param name="a2Port"></param>
         /// <param name="enablePort"></param>
-        /// <param name="pwmFrequency"></param>
         public HBridgeMotor(IPwmPort a1Port, IPwmPort a2Port, IDigitalOutputPort enablePort)
             : this(a1Port, a2Port, enablePort, DefaultFrequency)
-        {
-        }
+        { }
 
         /// <summary>
         /// Create an HBridgeMotor object

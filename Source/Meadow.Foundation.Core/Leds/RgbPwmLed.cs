@@ -16,8 +16,8 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class RgbPwmLed
     {
-        Task? animationTask = null;
-        CancellationTokenSource? cancellationTokenSource = null;
+        private Task? animationTask = null;
+        private CancellationTokenSource? cancellationTokenSource = null;
 
         static readonly Frequency DefaultFrequency = new Frequency(200, Frequency.UnitType.Hertz);
         readonly float DEFAULT_DUTY_CYCLE = 0f;
@@ -356,7 +356,6 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness">maximum brightness</param>
         /// <param name="lowBrightness">minimum brightness</param>
         /// <param name="cancellationToken">token to cancel blink</param>
-        /// <returns></returns>
         protected async Task StartBlinkAsync(Color color, TimeSpan onDuration, TimeSpan offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             while (true)
@@ -452,7 +451,6 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness">maximum brightness</param>
         /// <param name="lowBrightness">minimum brightness</param>
         /// <param name="cancellationToken">token to cancel pulse</param>
-        /// <returns></returns>
         protected async Task StartPulseAsync(Color color, TimeSpan pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;

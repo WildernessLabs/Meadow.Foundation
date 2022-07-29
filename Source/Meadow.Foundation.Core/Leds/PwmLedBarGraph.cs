@@ -265,9 +265,9 @@ namespace Meadow.Foundation.Leds
 
         /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting.
-        /// <param name="highBrightness">High brigtness.</param>
-        /// <param name="lowBrightness">Low brightness.</param>
         /// </summary>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
         public void StartPulse(float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0)
@@ -291,10 +291,10 @@ namespace Meadow.Foundation.Leds
 
         /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
-        /// <param name="pulseDuration">Pulse duration.</param>
-        /// <param name="highBrightness">High brigtness.</param>
-        /// <param name="lowBrightness">Low brightness.</param>
         /// </summary>
+        /// <param name="pulseDuration"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
         public void StartPulse(TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0)
