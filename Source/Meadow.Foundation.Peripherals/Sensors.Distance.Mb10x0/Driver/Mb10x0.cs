@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 using LU = Meadow.Units.Length.UnitType;
 
 namespace Meadow.Foundation.Sensors.Distance
@@ -48,21 +48,21 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             var len = serialPort.BytesToRead;
 
-            if(len == 0) 
+            if (len == 0)
             {
                 Console.WriteLine("No data");
-                return new Length(0, LU.Millimeters); 
+                return new Length(0, LU.Millimeters);
             }
 
             var data = new byte[len];
 
             serialPort.Read(data, 0, len);
 
-            for(int i = 0; i <data.Length - 3; i++)
+            for (int i = 0; i < data.Length - 3; i++)
             {
-                if(data[i] == 'R')
+                if (data[i] == 'R')
                 {
-                    Console.WriteLine($"i:{i} -- {(char)data[i + 1]}, {(char)data[i + 2]}, {(char) data[i + 3]}");
+                    Console.WriteLine($"i:{i} -- {(char)data[i + 1]}, {(char)data[i + 2]}, {(char)data[i + 3]}");
                 }
             }
 
@@ -71,6 +71,11 @@ namespace Meadow.Foundation.Sensors.Distance
             Console.WriteLine($"Length: {len}");
 
             return new Length(0, LU.Millimeters);
+        }
+
+        public void MeasureDistance()
+        {
+            _ = ReadSensor();
         }
 
         protected override Task<Length> ReadSensor()
