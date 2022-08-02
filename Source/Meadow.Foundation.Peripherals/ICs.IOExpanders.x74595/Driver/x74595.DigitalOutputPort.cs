@@ -1,5 +1,4 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -22,7 +21,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public DigitalOutputPort(
                 x74595 x74595,
                 IPin pin,
-                bool initialState, 
+                bool initialState,
                 OutputType outputType)
                 : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], initialState, outputType)
             {
@@ -30,13 +29,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 _x74595 = x74595;
             }
 
-            public override void Dispose()
-            {
-                Dispose(true);
-                GC.SuppressFinalize(this);
-            }
-
-            protected virtual void Dispose(bool disposing)
+            protected override void Dispose(bool disposing)
             {
                 if (!disposed)
                 {
@@ -46,12 +39,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     }
                     disposed = true;
                 }
-            }
-
-            // Finalizer
-            ~DigitalOutputPort()
-            {
-                Dispose(false);
             }
         }
     }

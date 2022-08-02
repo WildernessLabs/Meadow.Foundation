@@ -94,11 +94,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     Console.WriteLine(ex.ToString());
                 }
             }
-
-            public override void Dispose()
-            {
-
-            }
         }
     }
 }
