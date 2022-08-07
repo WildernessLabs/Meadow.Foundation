@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Web.Maple;
 using Meadow.Gateway.WiFi;
+using Meadow.Hardware;
+using System;
+using System.Threading.Tasks;
 
 namespace Maple.ServerSimpleMeadow_Sample
 {
@@ -17,18 +17,19 @@ namespace Maple.ServerSimpleMeadow_Sample
             Console.WriteLine("Initialize...");
 
             // connnect to the wifi network.
+            var wifi = Device.NetworkAdapters.Primary<IWiFiNetworkAdapter>();
             Console.WriteLine($"Connecting to WiFi Network {Secrets.WIFI_NAME}");
-            var connectionResult = await Device.WiFiAdapter.Connect(Secrets.WIFI_NAME, Secrets.WIFI_PASSWORD);
+            var connectionResult = await wifi.Connect(Secrets.WIFI_NAME, Secrets.WIFI_PASSWORD);
 
-            if (connectionResult.ConnectionStatus != ConnectionStatus.Success) 
+            if(connectionResult.ConnectionStatus != ConnectionStatus.Success)
             {
                 throw new Exception($"Cannot connect to network: {connectionResult.ConnectionStatus}");
             }
-            Console.WriteLine($"Connected. IP: {Device.WiFiAdapter.IpAddress}");
+            Console.WriteLine($"Connected. IP: {wifi.IpAddress}");
 
             // create our maple web server
             server = new MapleServer(
-                Device.WiFiAdapter.IpAddress,
+                wifi.IpAddress,
                 advertise: true,
                 processMode: RequestProcessMode.Parallel
                 );
