@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Leds.LedBarGraph_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
@@ -72,6 +72,30 @@ namespace Leds.LedBarGraph_Sample
                     percentage -= 0.10m;
                     Console.WriteLine($"{percentage}");
                     ledBarGraph.Percentage = (float) Math.Max(0.0m, percentage);
+                    await Task.Delay(1000);
+                }
+
+                await Task.Delay(1000);
+
+                Console.WriteLine("Charging animation...");
+                while (percentage < 1)
+                {
+                    percentage += 0.10m;
+                    Console.WriteLine($"{percentage}");
+                    ledBarGraph.Percentage = (float)Math.Min(1.0m, percentage);
+                    ledBarGraph.SetLedBlink(ledBarGraph.GetTopLedForPercentage());
+                    await Task.Delay(1000);
+                }
+
+                await Task.Delay(1000);
+
+                Console.WriteLine("Discharging animation...");
+                while (percentage > 1)
+                {
+                    percentage -= 0.10m;
+                    Console.WriteLine($"{percentage}");
+                    ledBarGraph.Percentage = (float)Math.Max(0.0m, percentage);
+                    ledBarGraph.SetLedBlink(ledBarGraph.GetTopLedForPercentage());
                     await Task.Delay(1000);
                 }
 
