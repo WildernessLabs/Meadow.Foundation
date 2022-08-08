@@ -47,6 +47,11 @@ namespace Meadow.Foundation.Displays.TftSpi
             CreateBuffer(mode, width, height);
         }
 
+        /// <summary>
+        /// Is the color mode supported on this display
+        /// </summary>
+        /// <param name="mode">The color mode</param>
+        /// <returns>true if supported</returns>
         public virtual bool IsColorModeSupported(ColorType mode)
         {
             if (mode == ColorType.Format12bppRgb444 ||
@@ -64,7 +69,12 @@ namespace Meadow.Foundation.Displays.TftSpi
                 throw new ArgumentException($"Mode {mode} not supported");
             }
 
-            if (mode == ColorType.Format16bppRgb565)
+            if (mode == ColorType.Format24bppRgb888)
+            {
+                imageBuffer = new BufferRgb888(width, height);
+            }
+
+            else if (mode == ColorType.Format16bppRgb565)
             {
                 imageBuffer = new BufferRgb565(width, height);
             }

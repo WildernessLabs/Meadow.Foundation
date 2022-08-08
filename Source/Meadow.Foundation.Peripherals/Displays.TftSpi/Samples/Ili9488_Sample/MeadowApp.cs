@@ -29,9 +29,8 @@ namespace Displays.Tft.Ili9488_Sample
                 device: Device, 
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
-                dcPin: Device.Pins.D01,
-                resetPin: Device.Pins.D00,
-                width: 320, height: 480
+                dcPin: Device.Pins.D00,
+                resetPin: Device.Pins.D01
             );
 
             graphics = new MicroGraphics(display)
@@ -45,6 +44,8 @@ namespace Displays.Tft.Ili9488_Sample
 
         public override Task Run()
         {
+            Console.WriteLine("Run");
+
             graphics.Clear();
 
             graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
