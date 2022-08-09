@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using Meadow.Devices;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
@@ -7,10 +6,21 @@ namespace Meadow.Foundation.Displays.TftSpi
 {
     public class Ili9488 : TftSpiBase
     {
-        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
+        public override ColorType DefautColorMode => ColorType.Format24bppRgb888;
 
+        /// <summary>
+        /// Create a new Ili9488 display instance
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="spiBus"></param>
+        /// <param name="chipSelectPin"></param>
+        /// <param name="dcPin"></param>
+        /// <param name="resetPin"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="displayColorMode"></param>
         public Ili9488(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480, ColorType displayColorMode = ColorType.Format12bppRgb444) 
+            int width = 320, int height = 480, ColorType displayColorMode = ColorType.Format24bppRgb888) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
         {
             Initialize();
@@ -18,8 +28,20 @@ namespace Meadow.Foundation.Displays.TftSpi
             SetRotation(Rotation.Normal);
         }
 
+        public override bool IsColorModeSupported(ColorType mode)
+        {
+            return mode == ColorType.Format24bppRgb888;
+        }
+
         protected override void Initialize()
         {
+            resetPort.State = true;
+            DelayMs(5);
+            resetPort.State = false;
+            DelayMs(120);
+            resetPort.State = true;
+            DelayMs(150);
+
             SendCommand(0xE0); // Positive Gamma Control
             SendData(0x00);
             SendData(0x03);
@@ -70,40 +92,39 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendData(0x48);          // MX, BGR
 
             SendCommand((byte)Register.COLOR_MODE); // Pixel Interface Format
-            if (ColorMode == ColorType.Format16bppRgb565)
-                SendData(0x55);  // 16 bit colour for SPI
-            else
-                SendData(0x53); //12 bit RGB444
+            SendData(0x66); //24bpp
 
             SendCommand(0xB0); // Interface Mode Control
             SendData(0x00);
 
             SendCommand(0xB1); // Frame Rate Control
-            SendData(0xA0);
+            SendData(0xA0); //60hz
 
             SendCommand(0xB4); // Display Inversion Control
-            SendData(0x02);
+            SendData(0x02); //2-dot
 
             SendCommand(0xB6); // Display Function Control
             SendData(0x02);
             SendData(0x02);
             SendData(0x3B);
 
-            SendCommand(0xB7); // Entry Mode Set
-            SendData(0xC6);
+            SendCommand(0xE9); //set image funcion 
+            SendData(0x00); //disable 24 bit data
 
             SendCommand(0xF7); // Adjust Control 3
             SendData(0xA9);
             SendData(0x51);
             SendData(0x2C);
-            SendData(0x82);
+            SendData(0x82);// D7 stream, loose
+
+            SendCommand(0xB7); // Entry Mode Set
+            SendData(0xC6);
 
             SendCommand(TFT_SLPOUT);  //Exit Sleep
             Thread.Sleep(120);
 
             SendCommand(TFT_DISPON);  //Display on
             Thread.Sleep(25);
-
         }
 
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
