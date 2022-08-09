@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
 
             byte[] value = { color.R, color.G, color.B };
-            int index = y * Width * 3 + x * 3 - 1;
+            int index = (y * Width + x) * 3 - 1;
 
             //fill the first line
             for (int i = 0; i < width; i++)
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     (y + j) * Width * 3 + x * 3,
                     Buffer,
                     (y + j + 1) * Width * 3 + x * 3,
-                    width);
+                    width * 3);
             }
         }
 
