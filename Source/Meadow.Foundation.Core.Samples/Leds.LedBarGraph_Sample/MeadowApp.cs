@@ -103,17 +103,22 @@ namespace Leds.LedBarGraph_Sample
 
                 Console.WriteLine("Blinking for 3 seconds...");
                 ledBarGraph.StartBlink();
-                await Task.Delay(3000);
+                await Task.Delay(5000);
                 ledBarGraph.Stop();
 
                 await Task.Delay(1000);
 
                 Console.WriteLine("Blinking for 3 seconds...");
-                ledBarGraph.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-                await Task.Delay(3000);
+                ledBarGraph.StartBlink(TimeSpan.FromSeconds(500), TimeSpan.FromSeconds(500));
+                await Task.Delay(5000);
                 ledBarGraph.Stop();
 
                 await Task.Delay(1000);
+
+                for (int i = 0; i < ledBarGraph.Count; i++)
+                {
+                    ledBarGraph.SetLed(i, false);
+                }
             }
         }
 

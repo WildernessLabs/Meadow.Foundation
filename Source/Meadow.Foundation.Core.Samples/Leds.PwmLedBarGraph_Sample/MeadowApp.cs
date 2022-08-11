@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Leds.PwmLedBarGraph_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
@@ -32,7 +32,8 @@ namespace Leds.PwmLedBarGraph_Sample
                  Device.Pins.D03,
                  Device.Pins.D02
             };
-            pwmLedBarGraph = new PwmLedBarGraph(Device, pins, new Voltage(3.3));
+
+            pwmLedBarGraph = new PwmLedBarGraph(Device, pins, new Voltage(2.2));
 
             return Task.CompletedTask;
         }
@@ -85,24 +86,29 @@ namespace Leds.PwmLedBarGraph_Sample
 
                 Console.WriteLine("Bar blinking on and off...");
                 pwmLedBarGraph.StartBlink();
-                await Task.Delay(3000);
+                await Task.Delay(5000);
                 pwmLedBarGraph.Stop();
 
                 await Task.Delay(1000);
 
                 Console.WriteLine("Bar blinking with high and low brightness...");
                 pwmLedBarGraph.StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 1f, 0.25f);
-                await Task.Delay(3000);
+                await Task.Delay(5000);
                 pwmLedBarGraph.Stop();
 
                 await Task.Delay(1000);
 
                 Console.WriteLine("Bar pulsing...");
                 pwmLedBarGraph.StartPulse();
-                await Task.Delay(3000);
+                await Task.Delay(5000);
                 pwmLedBarGraph.Stop();
 
                 await Task.Delay(1000);
+                
+                for (int i = pwmLedBarGraph.Count - 1; i >= 0; i--)
+                {
+                    pwmLedBarGraph.SetLed(i, false);
+                }
             }
         }
 

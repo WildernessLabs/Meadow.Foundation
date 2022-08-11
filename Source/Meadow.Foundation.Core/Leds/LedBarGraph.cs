@@ -44,6 +44,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPins
         /// </summary>
+        /// <param name="device"></param>
+        /// <param name="pins"></param>
         public LedBarGraph(IDigitalOutputController device, IPin[] pins)
         {
             leds = new Led[pins.Length];
@@ -57,6 +59,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance from an array of IDigitalOutputPort
         /// </summary>
+        /// <param name="ports"></param>
         public LedBarGraph(IDigitalOutputPort[] ports)
         {
             leds = new Led[ports.Length];

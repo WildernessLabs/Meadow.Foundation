@@ -2,6 +2,8 @@
 using Meadow.Hardware;
 using Meadow.Units;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Leds
 {
@@ -10,10 +12,20 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class PwmLedBarGraph
     {
+        private const int NONE_LED_BLINKING = -1;
+
+        private Task? animationTask;
+        private CancellationTokenSource? cancellationTokenSource;
+
         /// <summary>
         /// Array to hold pwm leds for bar graph
         /// </summary>
         protected PwmLed[] pwmLeds;
+
+        /// <summary>
+        /// Index of specific LED blinking
+        /// </summary>
+        protected int indexLedBlinking = NONE_LED_BLINKING;
 
         /// <summary>
         /// The number of the LEDs in the bar graph
@@ -23,12 +35,12 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// A value between 0 and 1 that controls the number of LEDs that are activated
         /// </summary>
-        public float Percentage
+        public double Percentage
         {
             get => percentage;
             set => SetPercentage(percentage = value);
         }
-        float percentage;
+        double percentage;
 
         /// <summary>
         /// Create an LedBarGraph instance for single color LED bar graphs
@@ -96,14 +108,14 @@ namespace Meadow.Foundation.Leds
         /// Set the percentage of LEDs that are on starting from index 0
         /// </summary>
         /// <param name="percentage">Percentage (Range from 0 - 1)</param>
-        void SetPercentage(float percentage)
+        void SetPercentage(double percentage)
         {
             if (percentage < 0 || percentage > 1)
             {
                 throw new ArgumentOutOfRangeException();
             }
 
-            float value = percentage * Count;
+            var value = percentage * Count;
 
             for (int i = 1; i <= Count; i++)
             {
@@ -152,7 +164,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="index"></param>
         /// <param name="brightness"></param>
-        public void SetLedBrightness(int index, float brightness)
+        public void SetLedBrightness(int index, double brightness)
         {
             if (index >= Count)
             {
@@ -161,7 +173,7 @@ namespace Meadow.Foundation.Leds
 
             pwmLeds[index].Stop();
             pwmLeds[index].IsOn = false;
-            pwmLeds[index].Brightness = brightness;
+            pwmLeds[index].Brightness = (float)brightness;
         }
 
         /// <summary>
@@ -242,10 +254,14 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightness">Low brightness.</param>
         public void StartBlink(float highBrightness = 1, float lowBrightness = 0)
         {
-            foreach (var pwmLed in pwmLeds)
+            Stop();
+
+            animationTask = new Task(async () =>
             {
-                pwmLed.StartBlink(highBrightness, lowBrightness);
-            }
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartBlinkAsync(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1), highBrightness, lowBrightness, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
         }
 
         /// <summary>
@@ -257,9 +273,50 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightness">Low brightness.</param>
         public void StartBlink(TimeSpan onDuration, TimeSpan offDuration, float highBrightness = 1, float lowBrightness = 0)
         {
-            foreach (var pwmLed in pwmLeds)
+            Stop();
+
+            animationTask = new Task(async () =>
             {
-                pwmLed.StartBlink(onDuration, offDuration, highBrightness, lowBrightness);
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartBlinkAsync(onDuration, offDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
+        }
+
+        /// <summary>
+        /// Set LED to blink
+        /// </summary>
+        /// <param name="onDuration"></param>
+        /// <param name="offDuration"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        protected async Task StartBlinkAsync(TimeSpan onDuration, TimeSpan offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                foreach (var led in pwmLeds)
+                {
+                    led.Brightness = highBrightness;
+                }
+                await Task.Delay(onDuration);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                foreach (var led in pwmLeds)
+                {
+                    led.Brightness = lowBrightness;
+                }
+                await Task.Delay(offDuration);
             }
         }
 
@@ -283,10 +340,14 @@ namespace Meadow.Foundation.Leds
                 throw new Exception("lowBrightness must be less than highbrightness");
             }
 
-            foreach (var pwmLed in pwmLeds)
+            Stop();
+
+            animationTask = new Task(async () =>
             {
-                pwmLed.StartPulse(highBrightness, lowBrightness);
-            }
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartPulseAsync(TimeSpan.FromSeconds(1), highBrightness, lowBrightness, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
         }
 
         /// <summary>
@@ -310,9 +371,56 @@ namespace Meadow.Foundation.Leds
                 throw new Exception("lowBrightness must be less than highbrightness");
             }
 
-            foreach (var pwmLed in pwmLeds)
+            Stop();
+
+            animationTask = new Task(async () =>
             {
-                pwmLed.StartPulse(pulseDuration, highBrightness, lowBrightness);
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartPulseAsync(pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
+        }
+
+        /// <summary>
+        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
+        /// </summary>
+        /// <param name="pulseDuration"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        protected async Task StartPulseAsync(TimeSpan pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
+        {
+            float brightness = lowBrightness;
+            bool ascending = true;
+            TimeSpan intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
+            float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
+            float delta = (highBrightness - lowBrightness) / steps;
+
+            while (true)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                if (brightness <= lowBrightness)
+                {
+                    ascending = true;
+                }
+                else if (brightness >= highBrightness)
+                {
+                    ascending = false;
+                }
+
+                brightness += delta * (ascending ? 1 : -1);
+
+                foreach (var led in pwmLeds)
+                {
+                    led.Brightness = Math.Clamp(brightness, 0, 1);
+                }
+
+                await Task.Delay(intervalTime);
             }
         }
 
@@ -321,9 +429,14 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Stop()
         {
-            foreach (var pwmLed in pwmLeds)
+            if (indexLedBlinking != NONE_LED_BLINKING)
             {
-                pwmLed.Stop();
+                pwmLeds[indexLedBlinking].Stop();
+                indexLedBlinking = NONE_LED_BLINKING;
+            }
+            else
+            {
+                cancellationTokenSource?.Cancel();
             }
         }
     }
