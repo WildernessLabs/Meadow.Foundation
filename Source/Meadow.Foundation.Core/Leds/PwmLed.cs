@@ -346,8 +346,6 @@ namespace Meadow.Foundation.Leds
             float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
             float delta = (highBrightness - lowBrightness) / steps;
 
-            Console.WriteLine($"Steps: {steps}, ChangeAmount {delta}");
-
             while (true)
             {
                 if (cancellationToken.IsCancellationRequested)
