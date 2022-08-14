@@ -1,6 +1,4 @@
-﻿using Meadow;
-using Meadow.Foundation;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 using System;
@@ -9,6 +7,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public partial class As1115 : IGraphicsDisplay
     {
+        public event EventHandler<KeyScanEventArgs> KeyScanPressStarted = null;
+
+        public event EventHandler KeyScanPressEnded = null;
+
         /// <summary>
         /// As1115 I2C driver
         /// </summary>
@@ -18,10 +20,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public ColorType ColorMode => ColorType.Format1bpp;
 
+        /// <summary>
+        /// Display width in pixels for 8x8 matrix displays
+        /// </summary>
         public int Width => 8;
 
+        /// <summary>
+        /// Display height in pixels for 8x8 matrix displays
+        /// </summary>
         public int Height => 8;
 
+        /// <summary>
+        /// The buffer that holds the pixel data for 8x8 matrix displays
+        /// </summary>
         public IPixelBuffer PixelBuffer => buffer;
 
         Buffer1bpp buffer = new Buffer1bpp(8, 8);
@@ -36,7 +47,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
-            interruptPort = device.CreateDigitalInputPort(buttonInterruptPin, InterruptMode.EdgeBoth, ResistorMode.ExternalPullDown);
+            interruptPort = device.CreateDigitalInputPort(buttonInterruptPin, 
+                InterruptMode.EdgeFalling, 
+                ResistorMode.InternalPullUp);
 
             interruptPort.Changed += InterruptPort_Changed;
 
@@ -45,7 +58,60 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private void InterruptPort_Changed(object sender, DigitalPortResult e)
         {
-            Console.WriteLine("button");
+            byte[] data = new byte[2];
+            i2cPeripheral.ReadRegister(REG_KEYA, data);
+
+            var btn = GetButtonFromKeyScanRegister(data[0], data[1]);
+
+            if (btn != KeyScanButton.None)
+            {
+                KeyScanPressStarted?.Invoke(this, new KeyScanEventArgs(btn, data[0], data[1]));    
+            }
+            else
+            {
+                KeyScanPressEnded?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        KeyScanButton GetButtonFromKeyScanRegister(byte keyA, byte keyB)
+        {
+            KeyScanButton ret;
+
+            if (keyA == 255)
+            {
+                ret = keyB switch
+                {
+                    127 => KeyScanButton.Button9,
+                    191 => KeyScanButton.Button10,
+                    223 => KeyScanButton.Button11,
+                    239 => KeyScanButton.Button12,
+                    247 => KeyScanButton.Button13,
+                    251 => KeyScanButton.Button14,
+                    253 => KeyScanButton.Button15,
+                    254 => KeyScanButton.Button16,
+                    _ => KeyScanButton.None,
+                };
+            }
+            else if(keyB == 255)
+            {
+                ret = keyA switch
+                {
+                    127 => KeyScanButton.Button1,
+                    191 => KeyScanButton.Button2,
+                    223 => KeyScanButton.Button3,
+                    239 => KeyScanButton.Button4,
+                    247 => KeyScanButton.Button5,
+                    251 => KeyScanButton.Button6,
+                    253 => KeyScanButton.Button7,
+                    254 => KeyScanButton.Button8,
+                    _ => KeyScanButton.None,
+                };
+            }
+            else
+            {
+                ret = KeyScanButton.None;
+            }
+            return ret;
         }
 
         void Initialize()
@@ -61,6 +127,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             i2cPeripheral.WriteRegister(REG_SCAN_LIMIT, 0x07);
 
             SetDecode(0);
+
+            byte[] data = new byte[2];
+
+            i2cPeripheral.ReadRegister(REG_KEYA, data);
         }
 
         public void SetDecode(byte decode)
