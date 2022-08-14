@@ -17,7 +17,7 @@
             Default = Address_0x00
         }
 
-        public enum KeyScanButton : byte
+        public enum KeyScanButtonType : byte
         {
             Button1,
             Button2,

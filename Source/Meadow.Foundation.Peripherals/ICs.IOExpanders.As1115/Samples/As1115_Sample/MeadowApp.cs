@@ -4,6 +4,7 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using System;
 using System.Threading.Tasks;
+using static Meadow.Foundation.ICs.IOExpanders.As1115;
 
 namespace ICs.IOExpanders.As1115_Sample
 {
@@ -18,11 +19,28 @@ namespace ICs.IOExpanders.As1115_Sample
         {
             Console.WriteLine("Initialize...");
             as1115 = new As1115(Device, Device.CreateI2cBus(), Device.Pins.D03);
+
+            //general key scan events - will raise for all buttons
             as1115.KeyScanPressStarted += KeyScanPressStarted;
+
+            //or access buttons as IButtons individually
+            as1115.KeyScanButtons[KeyScanButtonType.Button1].LongClickedThreshold = TimeSpan.FromSeconds(1);
+            as1115.KeyScanButtons[KeyScanButtonType.Button1].Clicked += Button1_Clicked;
+            as1115.KeyScanButtons[KeyScanButtonType.Button1].LongClicked += Button1_LongClicked; ;
 
             graphics = new MicroGraphics(as1115);
 
             return base.Initialize();
+        }
+
+        private void Button1_LongClicked(object sender, EventArgs e)
+        {
+            Console.WriteLine("Button 1 long press");
+        }
+
+        private void Button1_Clicked(object sender, EventArgs e)
+        {
+            Console.WriteLine("Button 1 clicked");
         }
 
         private void KeyScanPressStarted(object sender, KeyScanEventArgs e)

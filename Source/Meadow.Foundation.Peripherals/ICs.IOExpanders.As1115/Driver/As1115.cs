@@ -1,23 +1,47 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Buttons;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     public partial class As1115 : IGraphicsDisplay
     {
+        /// <summary>
+        /// Event raised when any key scan button is pressed
+        /// </summary>
         public event EventHandler<KeyScanEventArgs> KeyScanPressStarted = null;
 
-        public event EventHandler KeyScanPressEnded = null;
+        /// <summary>
+        /// Event raised when any key scan button is released
+        /// </summary>
+        public event EventHandler<KeyScanEventArgs> KeyScanPressEnded = null;
+
+        /// <summary>
+        /// Readonly collection that contains all 16 key scan button objects
+        /// </summary>
+        public ReadOnlyDictionary<KeyScanButtonType, KeyScanButton> KeyScanButtons { get; protected set; }
+
+        /// <summary>
+        /// Helper method to get IButton object references for keyscan buttons
+        /// </summary>
+        /// <param name="buttonType">The button type</param>
+        /// <returns>The button object reference</returns>
+        public IButton GetButton(KeyScanButtonType buttonType) => KeyScanButtons[buttonType];
+
+        KeyScanButtonType lastButtonPressed = KeyScanButtonType.None;
 
         /// <summary>
         /// As1115 I2C driver
         /// </summary>
         protected II2cPeripheral i2cPeripheral;
 
-        protected IDigitalInputPort interruptPort;
-
+        /// <summary>
+        /// The display color mode (1 bit per pixel)
+        /// </summary>
         public ColorType ColorMode => ColorType.Format1bpp;
 
         /// <summary>
@@ -35,19 +59,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public IPixelBuffer PixelBuffer => buffer;
 
-        Buffer1bpp buffer = new Buffer1bpp(8, 8);
+        readonly Buffer1bpp buffer = new Buffer1bpp(8, 8);
 
         /// <summary>
         /// Create a new AS1115 object using the default parameters for
         /// </summary>
+        /// <param name="device">Meadow device object</param>
         /// <param name="i2cBus">I2cBus connected to display</param>
+        /// <param name="buttonInterruptPin">Interrupt pin</param>
         /// <param name="address">Address of the bus on the I2C display.</param>
         public As1115(IMeadowDevice device, II2cBus i2cBus, IPin buttonInterruptPin,
             byte address = (byte)Addresses.Default)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
-            interruptPort = device.CreateDigitalInputPort(buttonInterruptPin, 
+            var interruptPort = device.CreateDigitalInputPort(buttonInterruptPin, 
                 InterruptMode.EdgeFalling, 
                 ResistorMode.InternalPullUp);
 
@@ -56,71 +82,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Initialize();
         }
 
-        private void InterruptPort_Changed(object sender, DigitalPortResult e)
-        {
-            byte[] data = new byte[2];
-            i2cPeripheral.ReadRegister(REG_KEYA, data);
-
-            var btn = GetButtonFromKeyScanRegister(data[0], data[1]);
-
-            if (btn != KeyScanButton.None)
-            {
-                KeyScanPressStarted?.Invoke(this, new KeyScanEventArgs(btn, data[0], data[1]));    
-            }
-            else
-            {
-                KeyScanPressEnded?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        KeyScanButton GetButtonFromKeyScanRegister(byte keyA, byte keyB)
-        {
-            KeyScanButton ret;
-
-            if (keyA == 255)
-            {
-                ret = keyB switch
-                {
-                    127 => KeyScanButton.Button9,
-                    191 => KeyScanButton.Button10,
-                    223 => KeyScanButton.Button11,
-                    239 => KeyScanButton.Button12,
-                    247 => KeyScanButton.Button13,
-                    251 => KeyScanButton.Button14,
-                    253 => KeyScanButton.Button15,
-                    254 => KeyScanButton.Button16,
-                    _ => KeyScanButton.None,
-                };
-            }
-            else if(keyB == 255)
-            {
-                ret = keyA switch
-                {
-                    127 => KeyScanButton.Button1,
-                    191 => KeyScanButton.Button2,
-                    223 => KeyScanButton.Button3,
-                    239 => KeyScanButton.Button4,
-                    247 => KeyScanButton.Button5,
-                    251 => KeyScanButton.Button6,
-                    253 => KeyScanButton.Button7,
-                    254 => KeyScanButton.Button8,
-                    _ => KeyScanButton.None,
-                };
-            }
-            else
-            {
-                ret = KeyScanButton.None;
-            }
-            return ret;
-        }
-
         void Initialize()
         {
-        //    i2cPeripheral.WriteRegister(REG_SHUTDOWN, REG_SHUTDOWN_RUNNING | REG_SHUTDOWN_PRESERVE_FEATUREREG);
+            var keyDictionary = new Dictionary<KeyScanButtonType, KeyScanButton>();
 
-        //    i2cPeripheral.WriteRegister(REG_SELF_ADDR, 0x01);
+            //instantiate IButton objects
+            for (int i = 0; i < 16; i++)
+            {
+                keyDictionary.Add((KeyScanButtonType)i, new KeyScanButton());
+            }
 
-        //    Thread.Sleep(20);
+            KeyScanButtons = new ReadOnlyDictionary<KeyScanButtonType, KeyScanButton>(keyDictionary);
 
             i2cPeripheral.WriteRegister(REG_SHUTDOWN, REG_SHUTDOWN_RUNNING | REG_SHUTDOWN_RESET_FEATUREREG);
 
@@ -130,25 +102,105 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             byte[] data = new byte[2];
 
+            //read the key scan registers to clear
             i2cPeripheral.ReadRegister(REG_KEYA, data);
         }
 
+        private void InterruptPort_Changed(object sender, DigitalPortResult e)
+        {
+            byte[] data = new byte[2];
+            i2cPeripheral.ReadRegister(REG_KEYA, data);
+
+            var keyScanButton = GetButtonFromKeyScanRegister(data[0], data[1]);
+
+            if (keyScanButton != KeyScanButtonType.None)
+            {
+                KeyScanPressStarted?.Invoke(this, new KeyScanEventArgs(keyScanButton, data[0], data[1]));
+
+                KeyScanButtons[keyScanButton].Update(true);
+
+                lastButtonPressed = keyScanButton;
+            }
+            else
+            {
+                KeyScanPressEnded?.Invoke(this, new KeyScanEventArgs(lastButtonPressed, data[0], data[1]));
+
+                if(lastButtonPressed != KeyScanButtonType.None)
+                {
+                    KeyScanButtons[lastButtonPressed].Update(false);
+                }
+            }
+        }
+
+        KeyScanButtonType GetButtonFromKeyScanRegister(byte keyA, byte keyB)
+        {
+            KeyScanButtonType ret;
+
+            if (keyA == 255)
+            {
+                ret = keyB switch
+                {
+                    127 => KeyScanButtonType.Button9,
+                    191 => KeyScanButtonType.Button10,
+                    223 => KeyScanButtonType.Button11,
+                    239 => KeyScanButtonType.Button12,
+                    247 => KeyScanButtonType.Button13,
+                    251 => KeyScanButtonType.Button14,
+                    253 => KeyScanButtonType.Button15,
+                    254 => KeyScanButtonType.Button16,
+                    _ => KeyScanButtonType.None,
+                };
+            }
+            else if(keyB == 255)
+            {
+                ret = keyA switch
+                {
+                    127 => KeyScanButtonType.Button1,
+                    191 => KeyScanButtonType.Button2,
+                    223 => KeyScanButtonType.Button3,
+                    239 => KeyScanButtonType.Button4,
+                    247 => KeyScanButtonType.Button5,
+                    251 => KeyScanButtonType.Button6,
+                    253 => KeyScanButtonType.Button7,
+                    254 => KeyScanButtonType.Button8,
+                    _ => KeyScanButtonType.None,
+                };
+            }
+            else
+            {
+                ret = KeyScanButtonType.None;
+            }
+            return ret;
+        }
+        
         public void SetDecode(byte decode)
         {
             i2cPeripheral.WriteRegister(REG_DECODE_MODE, decode);
         }
 
-        //0-15
+        /// <summary>
+        /// Set display intensity (0-15)
+        /// </summary>
+        /// <param name="intensity">Instensity from 0-15 (clamps above 15)</param>
         public void SetIntensity(byte intensity)
         {
+            intensity = Math.Max(intensity, (byte)15);
+
             i2cPeripheral.WriteRegister(REG_GLOBAL_INTEN, intensity);
         }
 
+        /// <summary>
+        /// Enable/disable test mode
+        /// </summary>
+        /// <param name="testOn">True to enable, false to disable</param>
         public void TestMode(bool testOn)
         {
             i2cPeripheral.WriteRegister(REG_DECODE_MODE, (byte)(testOn?0x01:0x00));
         }
 
+        /// <summary>
+        /// Update the display
+        /// </summary>
         public void Show()
         {
             i2cPeripheral.WriteRegister(REG_DIGIT0, buffer.Buffer[0]);
@@ -161,23 +213,49 @@ namespace Meadow.Foundation.ICs.IOExpanders
             i2cPeripheral.WriteRegister(REG_DIGIT7, buffer.Buffer[7]);
         }
 
+        /// <summary>
+        /// Update the display from the display buffer
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="top"></param>
+        /// <param name="right"></param>
+        /// <param name="bottom"></param>
         public void Show(int left, int top, int right, int bottom)
         {
             Show();
         }
 
+        /// <summary>
+        /// Clear the display buffer
+        /// </summary>
+        /// <param name="updateDisplay">If true, update the display</param>
         public void Clear(bool updateDisplay = false)
         {
             buffer.Clear();
             if(updateDisplay) { Show(); }
         }
 
+        /// <summary>
+        /// Fill the display buffer with a color
+        /// Black will clear the display, any other color will turn on all leds
+        /// </summary>
+        /// <param name="fillColor">The color to fill</param>
+        /// <param name="updateDisplay">Update the display</param>
         public void Fill(Color fillColor, bool updateDisplay = false)
         {
             buffer.Fill(fillColor);
             if (updateDisplay) { Show(); }
         }
 
+        /// <summary>
+        /// Fill a region of the display buffer with a color
+        /// Black will clear the display, any other color will turn on all leds
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="fillColor"></param>
         public void Fill(int x, int y, int width, int height, Color fillColor)
         {
             buffer.Fill(x, y, width, height, fillColor);
