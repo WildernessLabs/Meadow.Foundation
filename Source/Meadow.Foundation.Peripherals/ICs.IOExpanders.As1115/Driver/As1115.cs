@@ -217,19 +217,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Hexidecimal for matrix leds, or character for 7-segment displays
         /// </summary>
         /// <param name="mode">The decode mode enum</param>
-        public void SetDecodeMode(DecodeMode mode)
+        /// Not currently supported - driver is pixel mode only
+        void SetDecodeMode(DecodeMode mode)
         {
             buffer.Clear(true);
 
             switch (mode)
             {
-                case DecodeMode.Hexidecimal:
-                    i2cPeripheral.WriteRegister(REG_DECODE_MODE, 0xFF);
-                //    i2cPeripheral.WriteRegister()
-                    break;
-                case DecodeMode.BCD:
-                    i2cPeripheral.WriteRegister(REG_DECODE_MODE, 0xFF);
-                    break;
                 case DecodeMode.Pixel:
                     i2cPeripheral.WriteRegister(REG_DECODE_MODE, 0);
                     break;

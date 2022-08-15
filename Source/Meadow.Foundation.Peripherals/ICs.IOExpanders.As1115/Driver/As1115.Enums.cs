@@ -26,12 +26,12 @@
             /// Hexicemial charcter encoding  for 7-segment displays
             /// characters 0 to 9, E, H, L, P, and -
             /// </summary>
-            Hexidecimal,
+            //Hexidecimal,
             /// <summary>
             /// BCD character encoding for 7-segment displays
             ///  characters 0 to 9 and A to F
             /// </summary>
-            BCD,
+            //BCD,
             /// <summary>
             /// Direct pixel mapping for 8x8 matrix displays (default)
             /// </summary>
