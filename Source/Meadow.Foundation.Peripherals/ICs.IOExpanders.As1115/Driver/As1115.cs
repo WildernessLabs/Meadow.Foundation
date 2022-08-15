@@ -32,6 +32,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <returns>The button object reference</returns>
         public IButton GetButton(KeyScanButtonType buttonType) => KeyScanButtons[buttonType];
 
+        /// <summary>
+        /// Last button pressed, used internally to raise key up events
+        /// </summary>
         KeyScanButtonType lastButtonPressed = KeyScanButtonType.None;
 
         /// <summary>
@@ -59,6 +62,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public IPixelBuffer PixelBuffer => buffer;
 
+        /// <summary>
+        /// The buffer used to store pixel data
+        /// </summary>
         readonly Buffer1bpp buffer = new Buffer1bpp(8, 8);
 
         /// <summary>
@@ -98,7 +104,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             i2cPeripheral.WriteRegister(REG_SCAN_LIMIT, 0x07);
 
-            SetDecode(0);
+            SetDecodeMode(DecodeMode.Pixel);
 
             byte[] data = new byte[2];
 
@@ -172,10 +178,62 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
             return ret;
         }
-        
-        public void SetDecode(byte decode)
+
+        /// <summary>
+        /// Enable or disable display blinking
+        /// </summary>
+        /// <param name="isEnabled">Display will blink if true</param>
+        /// <param name="fastBlink">True for fast blink (period of 1s), False for slow blink (period of 2s)</param>
+        public void EnableBlink(bool isEnabled, bool fastBlink = true)
         {
-            i2cPeripheral.WriteRegister(REG_DECODE_MODE, decode);
+            var reg = i2cPeripheral.ReadRegister(REG_FEATURE);
+
+            byte mask = 1 << REG_FEATURE_BLINK;
+
+            if(isEnabled)
+            {
+                reg |= mask;
+            }
+            else
+            {
+                reg &= (byte)~mask;
+            }
+
+            mask = 1 << REG_FEATURE_BLINKFREQ;
+            if (!fastBlink)
+            {
+                reg |= mask;
+            }
+            else
+            {
+                reg &= (byte)~mask;
+            }
+
+            i2cPeripheral.WriteRegister(REG_FEATURE, reg);
+        }
+
+        /// <summary>
+        /// Set the display decode mode
+        /// Hexidecimal for matrix leds, or character for 7-segment displays
+        /// </summary>
+        /// <param name="mode">The decode mode enum</param>
+        public void SetDecodeMode(DecodeMode mode)
+        {
+            buffer.Clear(true);
+
+            switch (mode)
+            {
+                case DecodeMode.Hexidecimal:
+                    i2cPeripheral.WriteRegister(REG_DECODE_MODE, 0xFF);
+                //    i2cPeripheral.WriteRegister()
+                    break;
+                case DecodeMode.BCD:
+                    i2cPeripheral.WriteRegister(REG_DECODE_MODE, 0xFF);
+                    break;
+                case DecodeMode.Pixel:
+                    i2cPeripheral.WriteRegister(REG_DECODE_MODE, 0);
+                    break;
+            }
         }
 
         /// <summary>

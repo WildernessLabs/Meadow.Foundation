@@ -18,6 +18,27 @@
         }
 
         /// <summary>
+        /// The decode mode used for displaying pixels or characters
+        /// </summary>
+        public enum DecodeMode : byte
+        {
+            /// <summary>
+            /// Hexicemial charcter encoding  for 7-segment displays
+            /// characters 0 to 9, E, H, L, P, and -
+            /// </summary>
+            Hexidecimal,
+            /// <summary>
+            /// BCD character encoding for 7-segment displays
+            ///  characters 0 to 9 and A to F
+            /// </summary>
+            BCD,
+            /// <summary>
+            /// Direct pixel mapping for 8x8 matrix displays (default)
+            /// </summary>
+            Pixel,
+        }
+
+        /// <summary>
         /// Key scan buttons
         /// </summary>
         public enum KeyScanButtonType : byte
