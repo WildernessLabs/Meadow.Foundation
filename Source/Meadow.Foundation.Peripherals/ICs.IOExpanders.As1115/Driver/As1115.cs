@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class As1115 : IGraphicsDisplay
+    public partial class As1115 : IGraphicsDisplay, IDisposable
     {
         /// <summary>
         /// Event raised when any key scan button is pressed
@@ -68,6 +68,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         readonly Buffer1bpp buffer = new Buffer1bpp(8, 8);
 
         /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        readonly IDigitalInputPort interruptPort;
+
+        /// <summary>
         /// Create a new AS1115 object using the default parameters for
         /// </summary>
         /// <param name="device">Meadow device object</param>
@@ -79,7 +86,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
-            var interruptPort = device.CreateDigitalInputPort(buttonInterruptPin, 
+            interruptPort = device.CreateDigitalInputPort(buttonInterruptPin, 
                 InterruptMode.EdgeFalling, 
                 ResistorMode.InternalPullUp);
 
@@ -303,34 +310,82 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Fill a region of the display buffer with a color
         /// Black will clear the display, any other color will turn on all leds
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="fillColor"></param>
+        /// <param name="x">X postion in pixels</param>
+        /// <param name="y">Y position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
+        /// <param name="fillColor">Color to fill - Black will turn pixels off, any color will turn pixels on</param>
         public void Fill(int x, int y, int width, int height, Color fillColor)
         {
             buffer.Fill(x, y, width, height, fillColor);
         }
 
+        /// <summary>
+        /// Draw a pixel at a given location
+        /// </summary>
+        /// <param name="x">X postion in pixels</param>
+        /// <param name="y">Y position in pixels</param>
+        /// <param name="color">Color to draw - Black will turn pixels off, any color will turn pixels on</param>
         public void DrawPixel(int x, int y, Color color)
         {
             buffer.SetPixel(x, y, color);
         }
 
+        /// <summary>
+        /// Draw a pixel at a given location
+        /// </summary>
+        /// <param name="x">X postion in pixels</param>
+        /// <param name="y">Y position in pixels</param>
+        /// <param name="colored">If true, turn led on at location</param>
         public void DrawPixel(int x, int y, bool colored)
         {
             buffer.SetPixel(x, y, colored);
         }
 
+        /// <summary>
+        /// Invert pixel at location (switch on/off)
+        /// </summary>
+        /// <param name="x">X postion in pixels</param>
+        /// <param name="y">Y position in pixels</param>
         public void InvertPixel(int x, int y)
         {
             buffer.InvertPixel(x, y);
         }
 
+        /// <summary>
+        /// Write a pixel buffer to the display buffer
+        /// </summary>
+        /// <param name="x">X postion in pixels</param>
+        /// <param name="y">Y position in pixels</param>
+        /// <param name="displayBuffer">Display buffer to write</param>
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             buffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing)
+                {
+                    interruptPort.Dispose();
+                }
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
