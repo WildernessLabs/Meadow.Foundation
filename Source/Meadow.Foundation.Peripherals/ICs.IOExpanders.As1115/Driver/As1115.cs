@@ -8,6 +8,9 @@ using System.Collections.ObjectModel;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
+    /// <summary>
+    /// Represents an As1115 led driver and key scanner
+    /// </summary>
     public partial class As1115 : IGraphicsDisplay, IDisposable
     {
         /// <summary>
@@ -68,6 +71,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         readonly Buffer1bpp buffer = new Buffer1bpp(8, 8);
 
         /// <summary>
+        /// The display decode mode 
+        /// BCD character / Hex character / Pixel
+        /// </summary>
+        public DecodeType DecodeMode { get; private set; }
+
+        /// <summary>
         /// Is the peripheral disposed
         /// </summary>
         public bool IsDisposed { get; private set; }
@@ -111,7 +120,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             i2cPeripheral.WriteRegister(REG_SCAN_LIMIT, 0x07);
 
-            SetDecodeMode(DecodeMode.Pixel);
+            SetDecodeMode(DecodeType.Pixel);
 
             byte[] data = new byte[2];
 
@@ -225,16 +234,87 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="mode">The decode mode enum</param>
         /// Not currently supported - driver is pixel mode only
-        void SetDecodeMode(DecodeMode mode)
+        void SetDecodeMode(DecodeType mode)
         {
+            DecodeMode = mode;
+
             buffer.Clear(true);
 
             switch (mode)
             {
-                case DecodeMode.Pixel:
+                case DecodeType.Pixel:
                     i2cPeripheral.WriteRegister(REG_DECODE_MODE, 0);
                     break;
             }
+        }
+
+        /// <summary>
+        /// Set number to display (left aligned)
+        /// </summary>
+        /// <param name="value">the number to display</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public void SetNumber(int value)
+        {
+            //12345678
+            if (value > 99999999)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                if(DecodeMode == DecodeType.Hexidecimal)
+                {
+                    SetCharacter((HexCharacterType)(value % 10), i, false);
+                }
+                else
+                {
+                    SetCharacter((BcdCharacterType)(value % 10), i, false);
+                }
+               
+                value /= 10;
+
+                if (value == 0)
+                {
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Set a single character
+        /// </summary>
+        /// <param name="character">the chracter to display</param>
+        /// <param name="digit">the digit index starting from the left</param>
+        /// <param name="showDecimal">show the decimal with the character</param>
+        public void SetCharacter(BcdCharacterType character, int digit, bool showDecimal = false)
+        {
+            if(DecodeMode != DecodeType.BCD)
+            {
+                throw new Exception("SetCharacterBcd requires DecodeMode to be BCD");
+            }
+
+            var data = (byte)((byte)character + (showDecimal ? 0x10000000 : 0));
+
+            buffer.Buffer[digit] = data;
+        }
+
+        /// <summary>
+        /// Set a single character
+        /// </summary>
+        /// <param name="character">the chracter to display</param>
+        /// <param name="digit">the digit index starting from the left</param>
+        /// <param name="showDecimal">show the decimal with the character</param>
+        public void SetCharacter(HexCharacterType character, int digit, bool showDecimal = false)
+        {
+            if (DecodeMode != DecodeType.Hexidecimal)
+            {
+                throw new Exception("SetCharacterBcd requires DecodeMode to be Hexidecimal");
+            }
+
+            var data = (byte)((byte)character + (showDecimal ? 0x10000000 : 0));
+
+            buffer.Buffer[digit] = data;
         }
 
         /// <summary>
