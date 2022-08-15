@@ -136,7 +136,7 @@ namespace Meadow.Foundation.Displays
         public void SetNumber(int value, int deviceId = 0)
         {
             //12345678
-            if(value > 999999999)
+            if(value > 99999999)
             {
                 throw new ArgumentOutOfRangeException();
             }

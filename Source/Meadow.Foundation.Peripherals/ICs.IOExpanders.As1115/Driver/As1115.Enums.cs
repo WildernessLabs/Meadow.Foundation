@@ -20,18 +20,18 @@
         /// <summary>
         /// The decode mode used for displaying pixels or characters
         /// </summary>
-        public enum DecodeMode : byte
+        public enum DecodeType : byte
         {
             /// <summary>
             /// Hexicemial charcter encoding  for 7-segment displays
             /// characters 0 to 9, E, H, L, P, and -
             /// </summary>
-            //Hexidecimal,
+            Hexidecimal,
             /// <summary>
             /// BCD character encoding for 7-segment displays
             ///  characters 0 to 9 and A to F
             /// </summary>
-            //BCD,
+            BCD,
             /// <summary>
             /// Direct pixel mapping for 8x8 matrix displays (default)
             /// </summary>
@@ -127,6 +127,156 @@
             /// No button pressed or selected
             /// </summary>
             None,
+        }
+
+        /// <summary>
+        /// BCD Character type
+        /// </summary>
+        public enum BcdCharacterType : byte
+        {
+            /// <summary>
+            /// Zero (0)
+            /// </summary>
+            _0 = 0x00,
+            /// <summary>
+            /// One (1) 
+            /// </summary>
+            _1 = 0x01,
+            /// <summary>
+            /// Two (2)
+            /// </summary>
+            _2 = 0x02,
+            /// <summary>
+            /// Three (3)
+            /// </summary>
+            _3 = 0x03,
+            /// <summary>
+            /// Four (4)
+            /// </summary>
+            _4 = 0x04,
+            /// <summary>
+            /// Five (5)
+            /// </summary>
+            _5 = 0x05,
+            /// <summary>
+            /// Six (6)
+            /// </summary>
+            _6 = 0x06,
+            /// <summary>
+            /// Seven (7)
+            /// </summary>
+            _7 = 0x07,
+            /// <summary>
+            /// Eight (8)
+            /// </summary>
+            _8 = 0x08,
+            /// <summary>
+            /// Nine (9)
+            /// </summary>
+            _9 = 0x09,
+            /// <summary>
+            /// Hyphen (-)
+            /// </summary>
+            Hyphen = 0x0A,
+            /// <summary>
+            /// E
+            /// </summary>
+            E = 0x0B,
+            /// <summary>
+            /// H
+            /// </summary>
+            H = 0x0C,
+            /// <summary>
+            /// L
+            /// </summary>
+            L = 0x0D,
+            /// <summary>
+            /// P
+            /// </summary>
+            P = 0x0E,
+            /// <summary>
+            /// Space ( )
+            /// </summary>
+            Blank = 0x0F,
+            /// <summary>
+            /// Count of characters
+            /// </summary>
+            Count = 16
+        }
+
+        /// <summary>
+        /// Hex Character type
+        /// </summary>
+        public enum HexCharacterType : byte
+        {
+            /// <summary>
+            /// Zero (0)
+            /// </summary>
+            _0 = 0x00,
+            /// <summary>
+            /// One (1) 
+            /// </summary>
+            _1 = 0x01,
+            /// <summary>
+            /// Two (2)
+            /// </summary>
+            _2 = 0x02,
+            /// <summary>
+            /// Three (3)
+            /// </summary>
+            _3 = 0x03,
+            /// <summary>
+            /// Four (4)
+            /// </summary>
+            _4 = 0x04,
+            /// <summary>
+            /// Five (5)
+            /// </summary>
+            _5 = 0x05,
+            /// <summary>
+            /// Six (6)
+            /// </summary>
+            _6 = 0x06,
+            /// <summary>
+            /// Seven (7)
+            /// </summary>
+            _7 = 0x07,
+            /// <summary>
+            /// Eight (8)
+            /// </summary>
+            _8 = 0x08,
+            /// <summary>
+            /// Nine (9)
+            /// </summary>
+            _9 = 0x09,
+            /// <summary>
+            /// A
+            /// </summary>
+            A = 0x0A,
+            /// <summary>
+            /// B
+            /// </summary>
+            B = 0x0B,
+            /// <summary>
+            /// C
+            /// </summary>
+            C = 0x0C,
+            /// <summary>
+            /// D
+            /// </summary>
+            D = 0x0D,
+            /// <summary>
+            /// E
+            /// </summary>
+            E = 0x0E,
+            /// <summary>
+            /// F
+            /// </summary>
+            F = 0x0F,
+            /// <summary>
+            /// Count of characters
+            /// </summary>
+            Count = 16
         }
     }
 }
