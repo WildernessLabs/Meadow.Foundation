@@ -11,8 +11,6 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class LedBarGraph
     {
-        private const int NONE_LED_BLINKING = -1;
-
         private Task? animationTask;
         private CancellationTokenSource? cancellationTokenSource;
 
@@ -22,11 +20,6 @@ namespace Meadow.Foundation.Leds
         protected Led[] leds;
 
         /// <summary>
-        /// Index of specific LED blinking
-        /// </summary>
-        protected int indexLedBlinking = NONE_LED_BLINKING;
-
-        /// <summary>
         /// The number of the LEDs in the bar graph
         /// </summary>
         public int Count => leds.Length;
@@ -34,12 +27,12 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// A value between 0 and 1 that controls the number of LEDs that are activated
         /// </summary>
-        public double Percentage
+        public float Percentage
         {
             get => percentage;
             set => SetPercentage(percentage = value);
         }
-        double percentage;
+        float percentage;
 
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPins
@@ -90,7 +83,7 @@ namespace Meadow.Foundation.Leds
         /// Set the percentage of LEDs that are on starting from index 0
         /// </summary>
         /// <param name="percentage">Percentage (Range from 0 - 1)</param>
-        protected void SetPercentage(double percentage)
+        protected void SetPercentage(float percentage)
         {
             if (percentage < 0 || percentage > 1)
             {
@@ -126,23 +119,14 @@ namespace Meadow.Foundation.Leds
         /// Starts a blink animation on an individual LED on (500ms) and off (500ms)
         /// </summary>
         /// <param name="index"></param>
-        public void SetLedBlink(int index)
+        public void StartBlink(int index)
         {
-            var onDuration = TimeSpan.FromMilliseconds(500);
-            var offDuration = TimeSpan.FromMilliseconds(500);
-
             if (index >= Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
 
-            if (indexLedBlinking != NONE_LED_BLINKING) 
-            { 
-                leds[indexLedBlinking].Stop();
-            }
-
-            indexLedBlinking = index;
-            leds[index].StartBlink(onDuration, offDuration);
+            leds[index].StartBlink();
         }
 
         /// <summary>
@@ -151,15 +135,13 @@ namespace Meadow.Foundation.Leds
         /// <param name="index"></param>
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
-        public void SetLedBlink(int index, TimeSpan onDuration, TimeSpan offDuration)
+        public void StartBlink(int index, TimeSpan onDuration, TimeSpan offDuration)
         {
             if (index >= Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
 
-            leds[indexLedBlinking].Stop();
-            indexLedBlinking = index;
             leds[index].StartBlink(onDuration, offDuration);
         }
 
@@ -238,15 +220,20 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Stop()
         {
-            if (indexLedBlinking != NONE_LED_BLINKING)
+            cancellationTokenSource?.Cancel();
+
+            foreach (var led in leds)
             {
-                leds[indexLedBlinking].Stop();
-                indexLedBlinking = NONE_LED_BLINKING;
+                led.Stop();
             }
-            else
-            {
-                cancellationTokenSource?.Cancel();
-            }
+        }
+
+        /// <summary>
+        /// Stops the blinking animation on an individual LED and/or turns it off
+        /// </summary>
+        public void Stop(int index)
+        {
+            leds[index].Stop();
         }
     }
 }

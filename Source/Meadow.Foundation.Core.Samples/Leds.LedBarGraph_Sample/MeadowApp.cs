@@ -41,15 +41,15 @@ namespace Leds.LedBarGraph_Sample
         {
             Console.WriteLine("TestLedBarGraph...");
 
-            decimal percentage = 0;
+            float percentage = 0;
 
             while (true)
             {
-                Console.WriteLine("Turning them on and off for 1 second using SetLed...");
+                Console.WriteLine("Turning them on and off for 200ms using SetLed...");
                 for (int i = 0; i < ledBarGraph.Count; i++)
                 {
                     ledBarGraph.SetLed(i, true);
-                    await Task.Delay(1000);
+                    await Task.Delay(100);
                     ledBarGraph.SetLed(i, false);
                 }
 
@@ -58,10 +58,10 @@ namespace Leds.LedBarGraph_Sample
                 Console.WriteLine("Turning them on using Percentage...");
                 while (percentage < 1)
                 {
-                    percentage += 0.10m;
+                    percentage += 0.10f;
                     Console.WriteLine($"{percentage}");
-                    ledBarGraph.Percentage = (float) Math.Min(1.0m, percentage);
-                    await Task.Delay(1000);
+                    ledBarGraph.Percentage = Math.Min(1.0f, percentage);
+                    await Task.Delay(100);
                 }
 
                 await Task.Delay(1000);
@@ -69,10 +69,10 @@ namespace Leds.LedBarGraph_Sample
                 Console.WriteLine("Turning them off using Percentage...");
                 while (percentage > 0)
                 {
-                    percentage -= 0.10m;
+                    percentage -= 0.10f;
                     Console.WriteLine($"{percentage}");
-                    ledBarGraph.Percentage = (float) Math.Max(0.0m, percentage);
-                    await Task.Delay(1000);
+                    ledBarGraph.Percentage = Math.Max(0.0f, percentage);
+                    await Task.Delay(100);
                 }
 
                 await Task.Delay(1000);
@@ -80,45 +80,40 @@ namespace Leds.LedBarGraph_Sample
                 Console.WriteLine("Charging animation...");
                 while (percentage < 1)
                 {
-                    percentage += 0.10m;
+                    percentage += 0.10f;
                     Console.WriteLine($"{percentage}");
-                    ledBarGraph.Percentage = (float)Math.Min(1.0m, percentage);
-                    ledBarGraph.SetLedBlink(ledBarGraph.GetTopLedForPercentage());
-                    await Task.Delay(1000);
+                    ledBarGraph.Percentage = Math.Min(1.0f, percentage);
+                    ledBarGraph.StartBlink(ledBarGraph.GetTopLedForPercentage());
+                    await Task.Delay(2000);
                 }
 
                 await Task.Delay(1000);
 
                 Console.WriteLine("Discharging animation...");
-                while (percentage > 1)
+                while (percentage > 0)
                 {
-                    percentage -= 0.10m;
+                    percentage -= 0.10f;
                     Console.WriteLine($"{percentage}");
-                    ledBarGraph.Percentage = (float)Math.Max(0.0m, percentage);
-                    ledBarGraph.SetLedBlink(ledBarGraph.GetTopLedForPercentage());
-                    await Task.Delay(1000);
+                    ledBarGraph.Percentage = Math.Max(0.0f, percentage);
+                    ledBarGraph.StartBlink(ledBarGraph.GetTopLedForPercentage());
+                    await Task.Delay(2000);
                 }
 
                 await Task.Delay(1000);
 
-                Console.WriteLine("Blinking for 3 seconds...");
+                Console.WriteLine("Blinking for 5 seconds at 500ms on/off...");
                 ledBarGraph.StartBlink();
                 await Task.Delay(5000);
                 ledBarGraph.Stop();
 
                 await Task.Delay(1000);
 
-                Console.WriteLine("Blinking for 3 seconds...");
-                ledBarGraph.StartBlink(TimeSpan.FromSeconds(500), TimeSpan.FromSeconds(500));
+                Console.WriteLine("Blinking for 5 seconds at 200ms on/off...");
+                ledBarGraph.StartBlink(TimeSpan.FromMilliseconds(200), TimeSpan.FromMilliseconds(200));
                 await Task.Delay(5000);
                 ledBarGraph.Stop();
 
                 await Task.Delay(1000);
-
-                for (int i = 0; i < ledBarGraph.Count; i++)
-                {
-                    ledBarGraph.SetLed(i, false);
-                }
             }
         }
 
