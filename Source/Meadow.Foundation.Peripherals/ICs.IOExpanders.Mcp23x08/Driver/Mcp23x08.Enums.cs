@@ -76,4 +76,5 @@
             /// </remarks>
             Segregated = 0x01
         }
+    }
 }

@@ -43,11 +43,23 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Instantiates an Mcp23008 on the specified I2C bus, with the specified
         /// peripheral address.
         /// </summary>
-        /// <param name="i2cBus"></param>
-        /// <param name="address"></param>
-        /// <param name="interruptPort">optional interupt port</param>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
         public Mcp23x08(II2cBus i2cBus, byte address = (byte)Addresses.Default, IDigitalInputPort interruptPort = null) :
             this(new I2cMcpDeviceComms(i2cBus, address), interruptPort) // use the internal constructor that takes an IMcpDeviceComms
+        {
+        }
+
+        /// <summary>
+        /// Instantiates an Mcp23008 on the specified SPI bus, with the specified
+        /// peripheral address.
+        /// </summary>
+        /// <param name="spiBus"></param>
+        /// <param name="chipSelectPort">Chip select port</param>
+        /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
+        public Mcp23x08(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) :
+            this(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort) // use the internal constructor that takes an IMcpDeviceComms
         {
         }
 
