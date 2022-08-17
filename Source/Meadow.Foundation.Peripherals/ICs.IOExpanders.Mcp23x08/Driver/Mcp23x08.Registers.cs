@@ -3,7 +3,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public partial class Mcp23x08
     {
-        public static class RegisterAddresses
+        public static class Registers
         {
             /// <summary>
             /// IODIR. Controls the direction of the data I/O.
@@ -147,7 +147,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// latches that modify the pins configured as outputs.
             /// </remarks>
             public const byte OutputLatchRegister = 0x0A; //OLAT
-
         }
     }
 }

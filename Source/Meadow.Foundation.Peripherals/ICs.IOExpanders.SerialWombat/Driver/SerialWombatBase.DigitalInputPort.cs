@@ -18,9 +18,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 if (interruptMode != InterruptMode.None) throw new NotSupportedException("Interrupts not supported");
 
-                Resistor = resistorMode;
+                PortResistorMode = resistorMode;
                 _controller = controller;
-                _controller.ConfigureInputPin((byte)pin.Key, Resistor);
+                _controller.ConfigureInputPin((byte)pin.Key, PortResistorMode);
             }
 
             public override bool State
@@ -28,14 +28,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 get => _controller.ReadPublicData((byte)Pin.Key) != 0;
             }
 
-            public override ResistorMode Resistor
+            public override ResistorMode PortResistorMode
             {
                 get => _resistor;
                 set
                 {
-                    if (value == Resistor) return;
+                    if (value == PortResistorMode) return;
                     _resistor = value;
-                    _controller.ConfigureInputPin((byte)Pin.Key, Resistor);
+                    _controller.ConfigureInputPin((byte)Pin.Key, PortResistorMode);
                 }
             }
         }

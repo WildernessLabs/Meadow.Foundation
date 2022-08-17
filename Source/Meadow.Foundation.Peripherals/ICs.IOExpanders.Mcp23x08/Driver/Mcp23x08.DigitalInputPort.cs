@@ -6,93 +6,97 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public partial class Mcp23x08
     {
+        /// <summary>
+        /// Represents an Mcp23xxx digital input port
+        /// </summary>
         public class DigitalInputPort : DigitalInputPortBase
         {
-            Mcp23x08 _mcp;
+            /// <summary>
+            /// The port state
+            /// True is high, false is low
+            /// </summary>
+            public override bool State => state;
+            private bool state = false;
 
-            private readonly IPin _pin;
-            private DateTime _lastChangeTime;
-            private bool _lastState;
+            private DateTime lastUpdate;
 
-            public override bool State
+            /// <summary>
+            /// The resistor mode of the port
+            /// </summary>
+            public override ResistorMode Resistor
+            { 
+                get => portResistorMode;
+                set => throw new NotSupportedException("Cannot change port resistor mode after the port is created");
+            }
+            private ResistorMode portResistorMode;
+
+
+            /// <summary>
+            /// Debouce durration
+            /// </summary>
+            public override TimeSpan DebounceDuration { get; set; } = TimeSpan.Zero;
+
+            /// <summary>
+            /// Glitch durration
+            /// </summary>
+            public override TimeSpan GlitchDuration
             {
-                get
-                {
-                    return _mcp.ReadPort(this.Pin);
-                }
+                get => TimeSpan.FromMilliseconds(0.00015);
+                set => throw new NotSupportedException("It's not possible to change the glitch filter on the MCP23xxx");
             }
 
-            public override ResistorMode Resistor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-            public override TimeSpan DebounceDuration { get; set; } //Todo not currently used
-
-            public override TimeSpan GlitchDuration { get; set; } //Todo not currently used
-
-            public DigitalInputPort(
-                Mcp23x08 mcpController,
-                IPin pin,
-                InterruptMode interruptMode = InterruptMode.None)
+            /// <summary>
+            /// Create a new DigitalInputPort object
+            /// </summary>
+            /// <param name="pin">The interrupt pin</param>
+            /// <param name="interruptMode">The interrupt mode used for the interrupt pin</param>
+            /// <param name="resistorMode">The resistor mode used by the interrupt pin</param>
+            public DigitalInputPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled)
                 : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], interruptMode)
             {
-                _mcp = mcpController;
-                _pin = pin;
-                if (interruptMode != InterruptMode.None)
-                {
-                    _mcp.InputChanged += PinChanged;
-                }
+                portResistorMode = resistorMode;
             }
 
-            internal void PinChanged(object sender, IOExpanderInputChangedEventArgs e)
+            /// <summary>
+            /// Update the port value 
+            /// </summary>
+            /// <param name="newState">The new port state</param>
+            internal void Update(bool newState)
             {
-                try
+                if(DateTime.UtcNow - lastUpdate > DebounceDuration)
                 {
-                    var now = DateTime.UtcNow;
-                    var isInterrupt = BitHelpers.GetBitValue(e.InterruptPins, (byte)_pin.Key);
-                    if (!isInterrupt)
-                    {
-                        return;
-                    }
-
-                    var currentState = BitHelpers.GetBitValue(e.InputState, (byte)_pin.Key);
-                    if (currentState != _lastState)
-                    {
-                        switch (InterruptMode)
-                        {
-                            case InterruptMode.EdgeFalling:
-                                if (currentState)
-                                {
-                                    RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(false, now), new DigitalState(true, _lastChangeTime)));
-                                    // BC: 2021.05.21 updating to the new b5.0 result type.
-                                    // old code below. TODO: passing an assumption for the old result, but
-                                    // if it's the first time through, the old result should be `null`
-                                    /*new DigitalPortResult(false, now, _lastChangeTime));*/
-                                }
-                                break;
-                            case InterruptMode.EdgeRising:
-                                if (currentState)
-                                {
-                                    RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(true, now), new DigitalState(false, _lastChangeTime)));
-                                    /*new DigitalPortResult(true, now, _lastChangeTime));*/
-                                }
-                                break;
-                            case InterruptMode.EdgeBoth:
-                                RaiseChangedAndNotify(
-                                    new DigitalPortResult(new DigitalState(currentState, now), new DigitalState(!currentState, _lastChangeTime)));
-                                /*new DigitalPortResult(currentState, now, _lastChangeTime));*/
-                                break;
-                            case InterruptMode.None:
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                    }
-
-                    _lastState = currentState;
-                    _lastChangeTime = now;
+                    return;
                 }
-                catch (Exception ex)
+
+                var now = DateTime.UtcNow;
+
+                if(newState != state)
                 {
-                    Console.WriteLine(ex.ToString());
+                    switch (InterruptMode)
+                    {
+                        case InterruptMode.EdgeFalling:
+                            if (newState)
+                            {
+                                RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(false, now), new DigitalState(true, lastUpdate)));
+                            }
+                            break;
+                        case InterruptMode.EdgeRising:
+                            if (newState)
+                            {
+                                RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(true, now), new DigitalState(false, lastUpdate)));
+                            }
+                            break;
+                        case InterruptMode.EdgeBoth:
+                            RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(newState, now), new DigitalState(!newState, lastUpdate)));
+                            break;
+                        case InterruptMode.None:
+                        default:
+                            break;
+                    }
                 }
+
+                state = newState;
+                lastUpdate = now;
             }
         }
     }

@@ -8,21 +8,17 @@ using System.Threading.Tasks;
 
 namespace ICs.IOExpanders.Mcp23x08_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
-        Mcp23x08 _mcp;
+        Mcp23x08 mcp;
 
         public override Task Initialize()
         {
-            IDigitalInputPort interruptPort =
-                Device.CreateDigitalInputPort(
-                    Device.Pins.D00,
-                    InterruptMode.EdgeRising);
-            // create a new mcp with all the address pins pulled low for
-            // an address of 0x20/32
-            _mcp = new Mcp23x08(Device.CreateI2cBus(), false, false, false, interruptPort);
+            IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeRising);
+            // create a new mcp with all the address pins pulled low - address 0x20 (32)
+            mcp = new Mcp23x08(Device.CreateI2cBus(), 0x20, interruptPort);
 
             return base.Initialize();
         }
@@ -34,44 +30,50 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
                 TestBulkDigitalOutputPortWrites(20);
                 TestDigitalOutputPorts(2);
             }
-
-            return base.Run();
         }
 
         void TestDigitalOutputPorts(int loopCount)
         {
-            var out00 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP0);
-            var out01 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP1);
-            var out02 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP2);
-            var out03 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP3);
-            var out04 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP4);
-            var out05 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP5);
-            var out06 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP6);
-            var out07 = _mcp.CreateDigitalOutputPort(_mcp.Pins.GP7);
+            var out00 = mcp.CreateDigitalOutputPort(mcp.Pins.GP0);
+            var out01 = mcp.CreateDigitalOutputPort(mcp.Pins.GP1);
+            var out02 = mcp.CreateDigitalOutputPort(mcp.Pins.GP2);
+            var out03 = mcp.CreateDigitalOutputPort(mcp.Pins.GP3);
+            var out04 = mcp.CreateDigitalOutputPort(mcp.Pins.GP4);
+            var out05 = mcp.CreateDigitalOutputPort(mcp.Pins.GP5);
+            var out06 = mcp.CreateDigitalOutputPort(mcp.Pins.GP6);
+            var out07 = mcp.CreateDigitalOutputPort(mcp.Pins.GP7);
 
-            var outs = new List<IDigitalOutputPort>() {
+            var outputPorts = new List<IDigitalOutputPort>() 
+            {
                 out00, out01, out02, out03, out04, out05, out06, out07
             };
 
-            foreach (var outie in outs) {
-                outie.State = true;
+            foreach (var outputPort in outputPorts)
+            {
+                outputPort.State = true;
             }
 
-            for(int l = 0; l < loopCount; l++) {
+            for(int l = 0; l < loopCount; l++) 
+            {
                 // loop through all the outputs
-                for (int i = 0; i < outs.Count; i++) {
+                for (int i = 0; i < outputPorts.Count; i++) 
+                {
                     // turn them all off
-                    foreach (var outie in outs) { outie.State = false; }
+                    foreach (var outputPort in outputPorts) 
+                    {
+                        outputPort.State = false; 
+                    }
 
                     // turn on just one
-                    outs[i].State = true;
+                    outputPorts[i].State = true;
                     Thread.Sleep(250);
                 }
             }
 
             // cleanup
-            for (int i = 0; i < outs.Count; i++) {
-                outs[i].Dispose();
+            for (int i = 0; i < outputPorts.Count; i++) 
+            {
+                outputPorts[i].Dispose();
             }
         }
 
@@ -79,16 +81,16 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
         {
             byte mask = 0x0;
 
-            for (int l = 0; l < loopCount; l++) {
-
-                for (int i = 0; i < 8; i++) {
-                    _mcp.WriteToPorts(mask);
+            for (int l = 0; l < loopCount; l++) 
+            {
+                for (int i = 0; i < 8; i++) 
+                {
+                    mcp.WriteToPorts(mask);
                     mask = (byte)(1 << i);
                     Thread.Sleep(5);
                 }
             }
         }
-
         //<!=SNOP=>
     }
 }

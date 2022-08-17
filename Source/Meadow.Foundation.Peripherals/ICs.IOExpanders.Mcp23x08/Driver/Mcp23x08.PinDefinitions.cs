@@ -96,6 +96,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 InitAllPins();
             }
 
+            /// <summary>
+            /// Initalize all pins
+            /// </summary>
             protected void InitAllPins()
             {
                 // add all our pins to the collection
