@@ -28,7 +28,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 get => portResistorMode;
                 set => throw new NotSupportedException("Cannot change port resistor mode after the port is created");
             }
-            private ResistorMode portResistorMode;
+            private readonly ResistorMode portResistorMode;
 
 
             /// <summary>

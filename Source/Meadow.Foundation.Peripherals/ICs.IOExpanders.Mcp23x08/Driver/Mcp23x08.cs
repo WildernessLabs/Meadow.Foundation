@@ -35,7 +35,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         byte iocon;
 
         /// <summary>
-        /// object for using lock() to do thread synch
+        /// object for using lock() to do thread sync
         /// </summary>
         protected object _lock = new object();
 
@@ -76,7 +76,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         void HandleChangedInterrupt(object sender, DigitalPortResult e)
         {
-            try
             {   // sus out which pin fired
                 byte interruptFlag = mcpDevice.ReadRegister(Registers.InterruptFlagRegister);
                 byte currentStates = mcpDevice.ReadRegister(Registers.GPIORegister);
@@ -90,11 +89,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     port.Value.Update(state);
                 }
                 InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptFlag, currentStates));
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
             }
         }
 
@@ -265,11 +259,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     defVal = BitHelpers.SetBit(defVal, (byte)pin.Key, enablePullUp);
                     mcpDevice.WriteRegister(Registers.DefaultComparisonValueRegister, defVal);
                    */
-
-                    // Set the input polarity of the pin. Basically if its normally high, we want to flip the polarity.
-                    var pol = mcpDevice.ReadRegister(Registers.InputPolarityRegister);
-                    pol = BitHelpers.SetBit(pol, (byte)pin.Key, !enablePullUp);
-                    mcpDevice.WriteRegister(Registers.InputPolarityRegister, pol);
 
                     // interrupt control register; whether or not the change is based 
                     // on default comparison value, or if a change from previous. We 
