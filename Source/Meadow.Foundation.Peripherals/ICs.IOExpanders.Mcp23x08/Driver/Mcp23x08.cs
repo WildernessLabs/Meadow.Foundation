@@ -64,8 +64,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             //interruptPort.InterruptMode = InterruptMode.EdgeRising;
             if (interruptPort != null)
             {
-                if(interruptPort.Resistor == ResistorMode.ExternalPullUp )
-
                 this.interruptPort = interruptPort;
                 this.interruptPort.Changed += HandleChangedInterrupt;
             }

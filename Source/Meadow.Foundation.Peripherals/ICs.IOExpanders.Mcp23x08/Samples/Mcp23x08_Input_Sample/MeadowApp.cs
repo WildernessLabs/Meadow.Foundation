@@ -18,7 +18,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 
         public override async Task Initialize()
         {
-            Console.WriteLine("Initializing.");
+            Console.WriteLine("Initializing...");
 
             //we only want to be notified as it goes high 
             IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
@@ -26,17 +26,12 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
             // create a new mcp with all the address pins pulled low - address 0x20 (32)
             mcp = new Mcp23x08(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort);
 
-         //   mcp.InputChanged += Mcp_InputChanged;
+            mcp.InputChanged += Mcp_InputChanged;
         }
 
         private void Mcp_InputChanged(object sender, IOExpanderInputChangedEventArgs e)
         {
-            Console.WriteLine($"InputChanged: {e.InterruptPins}, {e.InputState}");
-        }
-
-        private void InterruptPort_Changed(object sender, DigitalPortResult e)
-        {
-            Console.WriteLine("Interrupted");
+            Console.WriteLine($"Input changed {e.InputState}, {e.InterruptPins}");
         }
 
         public override Task Run()
@@ -109,7 +104,6 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 
         void TestInterrupts()
         {
-        //    return;
             Console.WriteLine("Test Interrupts");
 
             var inputPort00 = mcp.CreateDigitalInputPort(mcp.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
@@ -120,8 +114,6 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
             var inputPort05 = mcp.CreateDigitalInputPort(mcp.Pins.GP5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             var inputPort06 = mcp.CreateDigitalInputPort(mcp.Pins.GP6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             var inputPort07 = mcp.CreateDigitalInputPort(mcp.Pins.GP7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-
-         //   return;
 
             inputPort00.Changed += (s, e) => Console.WriteLine($"Port 0 interrupt {e.New.State}");
             inputPort01.Changed += (s, e) => Console.WriteLine($"Port 1 interrupt {e.New.State}");
