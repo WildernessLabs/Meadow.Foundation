@@ -1,15 +1,13 @@
 ﻿using Meadow;
 using System.Threading;
 
-namespace ICs.IOExpanders.Mcp23x08_Input_Sample
+namespace ICs.IOExpanders.Sw18AB_Samples
 {
     class Program
     {
-        static IApp app;
         public static void Main(string[] args)
         {
-            // instantiate and run new meadow app
-            app = new SuperMeadowApp();
+            MeadowOS.Main(args);
 
             Thread.Sleep(Timeout.Infinite);
         }

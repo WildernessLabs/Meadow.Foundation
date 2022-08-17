@@ -1,67 +1,121 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Foundation.Leds;
+using Meadow.Hardware;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using static Meadow.Foundation.ICs.IOExpanders.Mcp23x08;
 
 namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 {
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7FeatherV1>
     {
-        private readonly List<Led> leds;
-        private readonly IMcp23x08 mcp;
-        private long time;
+        Mcp23x08 mcp;
 
-        public MeadowApp()
+        public override async Task Initialize()
         {
-            Console.Write("Initialize hardware...");
+            Console.WriteLine("Initializing...");
 
-            mcp = new Mcp23x08(Device.CreateI2cBus(), false, false, false);
+            //we only want to be notified as it goes high 
+            IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
 
-            leds = new List<Led>();
-            //leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D04)));
-            //leds.Add(new Led(Device.CreateDigitalOutputPort(Device.Pins.D03)));
-            //leds.Add(new Led(mcp.CreateDigitalOutputPort(mcp.Pins.GP7)));
-            //leds.Add(new Led(mcp.CreateDigitalOutputPort(mcp.Pins.GP6)));
-            //leds.Add(new Led(mcp.CreateDigitalOutputPort(mcp.Pins.GP5)));
-            //leds.Add(new Led(mcp.CreateDigitalOutputPort(mcp.Pins.GP4)));
-            //leds.Add(new Led(mcp.CreateDigitalOutputPort(mcp.Pins.GP3)));
-            //leds.Add(new Led(mcp.CreateDigitalOutputPort(mcp.Pins.GP2)));
-            //leds.Add(new Led(mcp.CreateDigitalOutputPort(mcp.Pins.GP1)));
-            //leds.Add(new Led(mcp.CreateDigitalOutputPort(mcp.Pins.GP0)));
-            throw new NotImplementedException();
-            Console.WriteLine("done.");
-            CycleLeds();
+            // create a new mcp with all the address pins pulled low - address 0x20 (32)
+            mcp = new Mcp23x08(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort);
+        }
+        
+        public override Task Run()
+        {
+            TestInterrupts();
+
+         //   return TestDigitalInputPorts(1000);
+
+            return base.Run();
         }
 
-        private void CycleLeds()
+        void TestBulkPinReads(int loopCount)
         {
-            Console.WriteLine("Cycle leds...");
-
-            while (true)
+            for (int l = 0; l < loopCount; l++) 
             {
-                foreach (var led in leds)
+                byte mask = mcp.ReadFromPorts();
+                var bits = new BitArray(new byte[] { mask });
+
+                var bitsString = new StringBuilder();
+            
+                foreach (var bit in bits) 
                 {
-                    led.IsOn = true;
-                    WaitTime();
+                    bitsString.Append((bool)bit ? "1":"0");
                 }
 
-                foreach (var led in leds)
-                {
-                    led.IsOn = false;
-                    WaitTime();
-                }
+                Console.WriteLine($"Port Values, raw:{mask:X}, bits: { bitsString}");
+
+                Thread.Sleep(100);
             }
         }
 
-        private void WaitTime()
+        async Task TestDigitalInputPorts(int loopCount)
         {
-            var x = (int) (Math.Cos(time / 5000.0) * 100 + 101);
+            var in00 = mcp.CreateDigitalInputPort(mcp.Pins.GP0, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
+            var in01 = mcp.CreateDigitalInputPort(mcp.Pins.GP1, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
+            var in02 = mcp.CreateDigitalInputPort(mcp.Pins.GP2, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
+            var in03 = mcp.CreateDigitalInputPort(mcp.Pins.GP3, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
+            var in04 = mcp.CreateDigitalInputPort(mcp.Pins.GP4, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
+            var in05 = mcp.CreateDigitalInputPort(mcp.Pins.GP5, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
+            var in06 = mcp.CreateDigitalInputPort(mcp.Pins.GP6, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
+            var in07 = mcp.CreateDigitalInputPort(mcp.Pins.GP7, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
 
-            time += x;
-            Thread.Sleep(x);
+            var inputPorts = new List<IDigitalInputPort>() 
+            {
+                in00, in01, in02, in03, in04, in05, in06, in07
+            };
+
+            string output;
+
+            // read all the ports, sleep for 100ms and repeat a few times.
+            for (int l = 0; l < loopCount; l++) 
+            {
+                output = string.Empty;
+
+                foreach (var inputPort in inputPorts) 
+                {
+                    //Console.WriteLine($"InputPort {inputPort.Pin.Name} Read: {inputPort.State}");
+                    output += $"{(inputPort.State ? 1 : 0)}";
+                }
+                Console.WriteLine(output);
+                await Task.Delay(500);
+            }
+
+            // cleanup
+            for (int i = 0; i < inputPorts.Count; i++) 
+            {
+                inputPorts[i].Dispose();
+            }
+        }
+
+        void TestInterrupts()
+        {
+            Console.WriteLine("Test Interrupts");
+
+            var inputPort00 = mcp.CreateDigitalInputPort(mcp.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var inputPort01 = mcp.CreateDigitalInputPort(mcp.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var inputPort02 = mcp.CreateDigitalInputPort(mcp.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var inputPort03 = mcp.CreateDigitalInputPort(mcp.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var inputPort04 = mcp.CreateDigitalInputPort(mcp.Pins.GP4, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var inputPort05 = mcp.CreateDigitalInputPort(mcp.Pins.GP5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var inputPort06 = mcp.CreateDigitalInputPort(mcp.Pins.GP6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var inputPort07 = mcp.CreateDigitalInputPort(mcp.Pins.GP7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+
+            inputPort00.Changed += (s, e) => Console.WriteLine($"Port 0 interrupt {e.New.State}");
+            inputPort01.Changed += (s, e) => Console.WriteLine($"Port 1 interrupt {e.New.State}");
+            inputPort02.Changed += (s, e) => Console.WriteLine($"Port 2 interrupt {e.New.State}");
+            inputPort03.Changed += (s, e) => Console.WriteLine($"Port 3 interrupt {e.New.State}");
+            inputPort04.Changed += (s, e) => Console.WriteLine($"Port 4 interrupt {e.New.State}");
+            inputPort05.Changed += (s, e) => Console.WriteLine($"Port 5 interrupt {e.New.State}");
+            inputPort06.Changed += (s, e) => Console.WriteLine($"Port 6 interrupt {e.New.State}");
+            inputPort07.Changed += (s, e) => Console.WriteLine($"Port 7 interrupt {e.New.State}");
         }
     }
 }
