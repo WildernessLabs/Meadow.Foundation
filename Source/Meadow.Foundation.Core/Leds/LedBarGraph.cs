@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -121,7 +120,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="index"></param>
         public void StartBlink(int index)
         {
-            if (index >= Count)
+            if (index < 0 || index >= Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
@@ -137,7 +136,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="offDuration"></param>
         public void StartBlink(int index, TimeSpan onDuration, TimeSpan offDuration)
         {
-            if (index >= Count)
+            if (index < 0 || index >= Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
@@ -233,6 +232,11 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Stop(int index)
         {
+            if (index < 0 || index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
             leds[index].Stop();
         }
     }

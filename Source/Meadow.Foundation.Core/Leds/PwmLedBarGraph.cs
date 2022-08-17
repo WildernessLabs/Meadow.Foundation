@@ -1,8 +1,6 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -144,7 +142,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="isOn"></param>
         public void SetLed(int index, bool isOn)
         {
-            if (index >= Count)
+            if (index < 0 || index >= Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
@@ -174,7 +172,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness"></param>
         public void SetLedBrightness(int index, float brightness)
         {
-            if (index >= Count)
+            if (index < 0 || index >= Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
@@ -192,11 +190,11 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightness"></param>
         public void StartBlink(int index, float highBrightness = 1, float lowBrightness = 0)
         {
-            if (index >= Count)
+            if (index < 0 || index >= Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
-            
+
             pwmLeds[index].StartBlink(highBrightness, lowBrightness);
         }
 
@@ -210,11 +208,11 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightness"></param>
         public void StartBlink(int index, TimeSpan highBrightnessDuration, TimeSpan lowBrightnessDuration, float highBrightness = 1, float lowBrightness = 0) 
         {
-            if (index >= Count)
+            if (index < 0 || index >= Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
-            
+
             pwmLeds[index].StartBlink(highBrightnessDuration, lowBrightnessDuration, highBrightness, lowBrightness);
         }
 
@@ -302,7 +300,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightness"></param>
         public void StartPulse(int index, float highBrightness = 1, float lowBrightness = 0.15F)
         {
-            if (index >= Count)
+            if (index < 0 || index >= Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
@@ -319,7 +317,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightness"></param>
         public void StartPulse(int index, TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F)
         {
-            if (index >= Count)
+            if (index < 0 || index >= Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
@@ -449,6 +447,11 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Stop(int index)
         {
+            if (index < 0 || index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
             pwmLeds[index].Stop();
         }
     }
