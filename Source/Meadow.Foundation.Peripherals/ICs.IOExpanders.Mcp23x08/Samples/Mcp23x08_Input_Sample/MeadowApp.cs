@@ -25,15 +25,8 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 
             // create a new mcp with all the address pins pulled low - address 0x20 (32)
             mcp = new Mcp23x08(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort);
-
-            mcp.InputChanged += Mcp_InputChanged;
         }
-
-        private void Mcp_InputChanged(object sender, IOExpanderInputChangedEventArgs e)
-        {
-            Console.WriteLine($"Input changed {e.InputState}, {e.InterruptPins}");
-        }
-
+        
         public override Task Run()
         {
             TestInterrupts();
