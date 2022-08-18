@@ -30,6 +30,26 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         /// <summary>
+        /// Create a new Il0373 ePaper display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="busyPort">Busy input port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        public Il0373(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
+            IDigitalOutputPort resetPort,
+            IDigitalInputPort busyPort,
+            int width, int height):
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, width, height)
+        {
+        }
+
+        /// <summary>
         /// Is black inverted on this display
         /// </summary>
         protected override bool IsBlackInverted => false;

@@ -2,6 +2,7 @@
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
+using Meadow.Gateways.Bluetooth;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
@@ -50,13 +51,36 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         public EpdBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+            int width, int height):
+            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), device.CreateDigitalOutputPort(dcPin, false),
+                device.CreateDigitalOutputPort(resetPin, true), device.CreateDigitalInputPort(busyPin),
+                width, height)
+        {
+        }
+
+        /// <summary>
+        /// Create a new ePaper display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="busyPort">Busy input port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        public EpdBase(ISpiBus spiBus, 
+            IDigitalOutputPort chipSelectPort, 
+            IDigitalOutputPort dataCommandPort, 
+            IDigitalOutputPort resetPort,
+            IDigitalInputPort busyPort,
             int width, int height)
         {
-            dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
-            resetPort = device.CreateDigitalOutputPort(resetPin, true);
-            busyPort = device.CreateDigitalInputPort(busyPin);
+            this.dataCommandPort = dataCommandPort;
+            this.chipSelectPort = chipSelectPort;
+            this.resetPort = resetPort;
+            this.busyPort = busyPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin));
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
             imageBuffer = new Buffer1bpp(width, height);
 
