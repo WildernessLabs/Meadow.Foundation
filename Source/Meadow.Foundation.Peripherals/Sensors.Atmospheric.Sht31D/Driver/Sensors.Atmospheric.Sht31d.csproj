@@ -13,13 +13,10 @@
     <PackageTags>Meadow.Foundation, Meadow, Atmospheric, Temperature, Humidity, SHT31D</PackageTags>
     <Version>0.1.54</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>SHT31-D temperature and humidity sensor</Description>
+    <Description>SHT31-D I2C temperature and humidity sensor</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
