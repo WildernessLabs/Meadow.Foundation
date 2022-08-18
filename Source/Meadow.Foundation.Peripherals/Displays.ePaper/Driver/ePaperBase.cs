@@ -1,8 +1,6 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
-using Meadow.Gateways.Bluetooth;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
