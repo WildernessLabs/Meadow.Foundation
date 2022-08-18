@@ -1,18 +1,29 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays
 {
+    /// <summary>
+    /// Provides an interface to the Ssd1327 greyscale OLED display
+    /// </summary>
     public partial class Ssd1327 : IGraphicsDisplay
     {
+        /// <summary>
+        /// The display color mode (4 bit per pixel grayscale)
+        /// </summary>
         public ColorType ColorMode => ColorType.Format4bppGray;
 
+        /// <summary>
+        /// The display width in pixels
+        /// </summary>
         public int Width => 128;
 
+        /// <summary>
+        /// The display height in pixels
+        /// </summary>
         public int Height => 128;
 
         /// <summary>
@@ -31,6 +42,14 @@ namespace Meadow.Foundation.Displays
         protected const bool DataState = true;
         protected const bool CommandState = false;
 
+        /// <summary>
+        /// Create a new Ssd1327 object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
         public Ssd1327(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
             imageBuffer = new BufferGray4(Width, Height);
@@ -44,6 +63,31 @@ namespace Meadow.Foundation.Displays
             Initialize();
         }
 
+        /// <summary>
+        /// Create a new Ssd1327 display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        public Ssd1327(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
+            IDigitalOutputPort resetPort)
+        {
+            this.dataCommandPort = dataCommandPort;
+            this.chipSelectPort = chipSelectPort;
+            this.resetPort = resetPort;
+
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+
+            Initialize();
+        }
+
+        /// <summary>
+        /// Set the disply contrast
+        /// </summary>
+        /// <param name="contrast">The constrast value (0-255)</param>
         public void SetContrast(byte contrast)
         {
             SendCommand(0x81);  //set contrast control
@@ -172,7 +216,7 @@ namespace Meadow.Foundation.Displays
         }
 
         // Init sequence, make sure its under 32 bytes, or split into multiples
-        byte[] init128x128 = {
+        readonly byte[] init128x128 = {
               // Init sequence for 128x32 OLED module
               (byte)Command.SSD1327_DISPLAYOFF, // 0xAE
               (byte)Command.SSD1327_SETCONTRAST,
