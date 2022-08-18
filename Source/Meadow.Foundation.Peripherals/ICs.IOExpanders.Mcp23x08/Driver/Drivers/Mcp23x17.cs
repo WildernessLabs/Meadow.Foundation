@@ -21,7 +21,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPort">The interrupt port</param>
-        internal Mcp23x17(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null) 
+        public Mcp23x17(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null) 
             : base(i2cBus, address, interruptPort)
         {
         }
@@ -32,10 +32,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">The chip select port</param>
         /// <param name="interruptPort">The interrupt port</param>
-        internal Mcp23x17(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) : base(spiBus, chipSelectPort, interruptPort)
+        public Mcp23x17(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) : base(spiBus, chipSelectPort, interruptPort)
         {
         }
 
+        /// <summary>
+        /// Get the pin from the name
+        /// </summary>
+        /// <param name="pinName">The pin name to look up</param>
+        /// <returns>IPin reference if found</returns>
         public override IPin GetPin(string pinName)
         {
             return Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);

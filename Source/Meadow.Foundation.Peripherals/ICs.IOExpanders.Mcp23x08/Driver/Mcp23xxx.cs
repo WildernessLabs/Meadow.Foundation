@@ -209,10 +209,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Sets the direction of a particular port.
+        /// Sets the direction of a particular port
         /// </summary>
-        /// <param name="pin"></param>
-        /// <param name="direction"></param>
+        /// <param name="pin">The pin representing the port</param>
+        /// <param name="direction">The direction to change to</param>
         public void SetPortDirection(IPin pin, PortDirectionType direction)
         {
             if (IsValidPin(pin))

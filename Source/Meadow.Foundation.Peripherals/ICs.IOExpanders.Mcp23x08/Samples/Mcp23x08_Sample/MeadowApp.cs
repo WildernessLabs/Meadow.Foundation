@@ -12,7 +12,7 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
     {
         //<!=SNIP=>
 
-        Mcp23xxx mcp;
+        Mcp23x08 mcp;
 
         public override Task Initialize()
         {
@@ -34,14 +34,14 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
 
         void TestDigitalOutputPorts(int loopCount)
         {
-            var out00 = mcp.CreateDigitalOutputPort(mcp.Pins.GP0);
-            var out01 = mcp.CreateDigitalOutputPort(mcp.Pins.GP1);
-            var out02 = mcp.CreateDigitalOutputPort(mcp.Pins.GP2);
-            var out03 = mcp.CreateDigitalOutputPort(mcp.Pins.GP3);
-            var out04 = mcp.CreateDigitalOutputPort(mcp.Pins.GP4);
-            var out05 = mcp.CreateDigitalOutputPort(mcp.Pins.GP5);
-            var out06 = mcp.CreateDigitalOutputPort(mcp.Pins.GP6);
-            var out07 = mcp.CreateDigitalOutputPort(mcp.Pins.GP7);
+            var out00 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA0);
+            var out01 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA1);
+            var out02 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA2);
+            var out03 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA3);
+            var out04 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA4);
+            var out05 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA5);
+            var out06 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA6);
+            var out07 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA7);
 
             var outputPorts = new List<IDigitalOutputPort>() 
             {
