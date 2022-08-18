@@ -2,14 +2,13 @@
 using Meadow.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Provide an interface to connect to a MCP23008 port expander.
     /// </summary>
-    public partial class Mcp23x08 : IDigitalInputController, IDigitalOutputController
+    abstract partial class Mcp23xxx : IDigitalInputController, IDigitalOutputController
     {
         /// <summary> 
         /// Raised when the value of any pin configured for input interrupts changes.
@@ -21,11 +20,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private readonly IMcpDeviceComms mcpDevice;
         private readonly IDigitalInputPort interruptPort;
         private readonly IDictionary<IPin, DigitalInputPort> inputPorts;
-
-        /// <summary>
-        /// MCP230x8 pin definitions
-        /// </summary>
-        public PinDefinitions Pins { get; } = new PinDefinitions();
 
         // state
         byte ioDir;
@@ -46,29 +40,29 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
-        public Mcp23x08(II2cBus i2cBus, byte address = (byte)Addresses.Default, IDigitalInputPort interruptPort = null) :
+        public Mcp23xxx(II2cBus i2cBus, byte address, IDigitalInputPort interruptPort = null) :
             this(new I2cMcpDeviceComms(i2cBus, address), interruptPort) // use the internal constructor that takes an IMcpDeviceComms
         {
         }
 
         /// <summary>
-        /// Instantiates an Mcp23008 on the specified SPI bus, with the specified
+        /// Mcpxxx base class contructor
         /// peripheral address.
         /// </summary>
         /// <param name="spiBus"></param>
         /// <param name="chipSelectPort">Chip select port</param>
         /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
-        public Mcp23x08(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) :
+        public Mcp23xxx(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) :
             this(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort) // use the internal constructor that takes an IMcpDeviceComms
         {
         }
 
         /// <summary>
-        /// Instantiates an Mcp23008 
+        /// Mcp23xxx base class
         /// </summary>
         /// <param name="device"></param>
         /// <param name="interruptPort"></param>
-        internal Mcp23x08(IMcpDeviceComms device, IDigitalInputPort interruptPort = null)
+        internal Mcp23xxx(IMcpDeviceComms device, IDigitalInputPort interruptPort = null)
         {   // TODO: more interrupt stuff to solve
             // at a minimum, we need to check the interrupt mode and make sure
             // it's correct, raise an exception if not. also, doc in constructor
@@ -109,7 +103,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// * Puts all IOs into an input state
         /// * zeros out all setting and state registers
         /// </summary>
-        protected void Initialize()
+        protected virtual void Initialize()
         {
             mcpDevice.WriteRegister(Registers.IODirectionRegister, 0xFF); // set all the other registers to zeros (we skip the last one, output latch)
             mcpDevice.WriteRegister(Registers.InputPolarityRegister, 0x00);
@@ -151,6 +145,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             mcpDevice.WriteRegister(Registers.InterruptControlRegister, 0x00);
             mcpDevice.WriteRegister(Registers.InputPolarityRegister, 0x00);
         }
+
+        /// <summary>
+        /// Checks whether or not the pin passed in exists on the chip.
+        /// </summary>
+        protected abstract bool IsValidPin(IPin pin);
 
         /// <summary>
         /// Creates a new DigitalOutputPort using the specified pin and initial state.
@@ -372,11 +371,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Checks whether or not the pin passed in exists on the chip.
-        /// </summary>
-        protected bool IsValidPin(IPin pin) => Pins.AllPins.Contains(pin);
-
-        /// <summary>
         /// Sets the pin back to an input
         /// </summary>
         /// <param name="pin"></param>
@@ -387,9 +381,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="pinName">The pin name</param>
         /// <returns>IPin object if found</returns>
-        public IPin GetPin(string pinName)
-        {
-            return Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);
-        }
+        public abstract IPin GetPin(string pinName);
     }
 }

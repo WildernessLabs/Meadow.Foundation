@@ -4,7 +4,7 @@ using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp23x08
+    public partial class Mcp23xxx
     {
         /// <summary>
         /// Represents an Mcp23xxx digital input port
@@ -42,7 +42,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public override TimeSpan GlitchDuration
             {
                 get => TimeSpan.FromMilliseconds(0.00015);
-                set => throw new NotSupportedException("It's not possible to change the glitch filter on the MCP23xxx");
+                set => _ = value; //fail silently
             }
 
             /// <summary>

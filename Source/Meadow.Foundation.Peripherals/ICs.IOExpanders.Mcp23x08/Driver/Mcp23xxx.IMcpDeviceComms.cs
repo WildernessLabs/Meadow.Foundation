@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp23x08
+    public partial class Mcp23xxx
     {
         internal interface IMcpDeviceComms
         {

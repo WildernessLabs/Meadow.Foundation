@@ -2,11 +2,11 @@
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp23x08
+    public partial class Mcp23xxx
     {
         public class DigitalOutputPort : DigitalOutputPortBase
         {
-            Mcp23x08 mcp;
+            Mcp23xxx mcp;
 
             /// <summary>
             /// The port state
@@ -20,7 +20,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             bool state;
 
             public DigitalOutputPort(
-                Mcp23x08 mcpController,
+                Mcp23xxx mcpController,
                 IPin pin,
                 bool initialState = false,
                 OutputType outputType = OutputType.OpenDrain)

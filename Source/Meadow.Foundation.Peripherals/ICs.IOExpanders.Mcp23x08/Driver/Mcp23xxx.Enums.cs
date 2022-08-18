@@ -1,9 +1,9 @@
 ﻿namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp23x08
+    public partial class Mcp23xxx
     {
         /// <summary>
-        /// Valid addresses for the sensor
+        /// Valid I2C addresses for the sensor
         /// </summary>
         public enum Addresses : byte
         {

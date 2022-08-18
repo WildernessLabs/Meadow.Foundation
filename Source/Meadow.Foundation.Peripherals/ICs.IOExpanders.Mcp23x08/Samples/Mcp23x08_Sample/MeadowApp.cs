@@ -12,7 +12,7 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
     {
         //<!=SNIP=>
 
-        Mcp23x08 mcp;
+        Mcp23xxx mcp;
 
         public override Task Initialize()
         {
