@@ -27,6 +27,11 @@ namespace Meadow.Foundation.Sensors.Buttons
         public static readonly TimeSpan DefaultGlitchDuration = TimeSpan.FromMilliseconds(50);
 
         /// <summary>
+        /// Default threshold for LongPress events
+        /// </summary>
+        public readonly static TimeSpan DefaultLongPressThreshold = TimeSpan.FromMilliseconds(500);
+
+        /// <summary>
         /// This duration controls the debounce filter. It also has the effect
         /// of rate limiting clicks. Decrease this time to allow users to click
         /// more quickly.
@@ -167,6 +172,8 @@ namespace Meadow.Foundation.Sensors.Buttons
 
             DigitalIn = interruptPort;
             DigitalIn.Changed += DigitalInChanged;
+
+            LongClickedThreshold = DefaultLongPressThreshold;
         }
 
         void DigitalInChanged(object sender, DigitalPortResult result)
