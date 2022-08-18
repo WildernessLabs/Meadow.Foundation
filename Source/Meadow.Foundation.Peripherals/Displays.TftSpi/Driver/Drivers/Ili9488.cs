@@ -4,24 +4,48 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
+    /// <summary>
+    /// Represents a Ili9488 TFT color display
+    /// </summary>
     public class Ili9488 : TftSpiBase
     {
+        /// <summary>
+        /// The default display color mode
+        /// </summary>
         public override ColorType DefautColorMode => ColorType.Format24bppRgb888;
 
         /// <summary>
-        /// Create a new Ili9488 display instance
+        /// Create a new Ili9488 display object
         /// </summary>
-        /// <param name="device"></param>
-        /// <param name="spiBus"></param>
-        /// <param name="chipSelectPin"></param>
-        /// <param name="dcPin"></param>
-        /// <param name="resetPin"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="displayColorMode"></param>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
         public Ili9488(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480, ColorType displayColorMode = ColorType.Format24bppRgb888) 
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
+            int width = 320, int height = 480) 
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorType.Format24bppRgb888)
+        {
+            Initialize();
+
+            SetRotation(Rotation.Normal);
+        }
+
+        /// <summary>
+        /// Create a new Ili9488 color display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        public Ili9488(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
+                IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
+                int width = 320, int height = 480) :
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, ColorType.Format24bppRgb888)
         {
             Initialize();
 
