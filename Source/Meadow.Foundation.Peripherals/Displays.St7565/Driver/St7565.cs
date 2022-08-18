@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
@@ -12,10 +11,19 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public partial class St7565 : IGraphicsDisplay
     {
+        /// <summary>
+        /// The display color mode - 1 bit per pixel monochrome
+        /// </summary>
         public ColorType ColorMode => ColorType.Format1bpp;
 
+        /// <summary>
+        /// The display width in pixels
+        /// </summary>
         public int Width => imageBuffer.Width;
 
+        /// <summary>
+        /// The display height in pixels
+        /// </summary>
         public int Height => imageBuffer.Height;
 
         /// <summary>
@@ -24,7 +32,7 @@ namespace Meadow.Foundation.Displays
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
-        /// SPI object
+        /// SPI peripheral object
         /// </summary>
         protected ISpiPeripheral spiPerihperal;
 
@@ -37,6 +45,50 @@ namespace Meadow.Foundation.Displays
 
         protected Buffer1bpp imageBuffer;
         protected byte[] pageBuffer;
+
+        /// <summary>
+        /// Create a new ST7565 object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        public St7565(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+            int width = 128, int height = 64) :
+            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), device.CreateDigitalOutputPort(dcPin),
+                device.CreateDigitalOutputPort(resetPin), width, height)
+        {
+        }
+
+        /// <summary>
+        /// Create a new St7565 display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        public St7565(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
+            IDigitalOutputPort resetPort,
+            int width = 128, int height = 64)
+        {
+            this.dataCommandPort = dataCommandPort;
+            this.chipSelectPort = chipSelectPort;
+            this.resetPort = resetPort;
+
+            spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
+
+            imageBuffer = new Buffer1bpp(width, height);
+            pageBuffer = new byte[PageSize];
+
+            Initialize();
+        }
 
         /// <summary>
         /// Invert the entire display (true) or return to normal mode (false).
@@ -59,30 +111,12 @@ namespace Meadow.Foundation.Displays
             SendCommand(DisplayCommand.AllPixelsOn);
         }
 
-        /// <summary>
-        /// Create a new ST7565 object using the default parameters for
-        /// </summary>
-        public St7565(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 128, int height = 64)
-        {
-            dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
-            resetPort = device.CreateDigitalOutputPort(resetPin, false);
-            chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
-
-            spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
-
-            imageBuffer = new Buffer1bpp(width, height);
-            pageBuffer = new byte[PageSize];
-
-            InitST7565();
-        }
-
         void SendCommand(DisplayCommand command)
         {
             SendCommand((byte)command);
         }
 
-        private void InitST7565()
+        private void Initialize()
         {
             resetPort.State = false;
             Thread.Sleep(50);
