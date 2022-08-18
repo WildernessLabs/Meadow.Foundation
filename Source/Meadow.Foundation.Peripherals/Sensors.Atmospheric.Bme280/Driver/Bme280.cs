@@ -6,7 +6,6 @@ using Meadow.Units;
 using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
-using Meadow.Devices;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -28,7 +27,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     // duration threshold is for that. i'm guessing 5 seconds might be a
     // good value.
 
-
     /// <summary>
     /// BME280 Temperature, Pressure and Humidity Sensor.
     /// </summary>
@@ -40,18 +38,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         SamplingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
-        //==== events
         /// <summary>
+        /// Temperature changed event
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+
+        /// <summary>
+        /// Pressure changed event
+        /// </summary>
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+
+        /// <summary>
+        /// Humidity changed event
+        /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
-        //==== internals
         protected Memory<byte> readBuffer = new byte[32];
         protected Memory<byte> writeBuffer = new byte[32];
 
-        //==== properties
         public Oversample TemperatureSampleCount { get; set; } = Oversample.OversampleX8;
         public Oversample PressureSampleCount { get; set; } = Oversample.OversampleX8;
         public Oversample HumiditySampleCount { get; set; } = Oversample.OversampleX8;
@@ -94,10 +98,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME280" /> class.
+        /// Initializes a new instance of the BME280 class
         /// </summary>
-        /// <param name="i2c">I2C Bus to use for communicating with the sensor</param>
-        /// <param name="address">I2C address of the sensor (default = 0x77).</param>
+        /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
+        /// <param name="address">I2C address of the sensor (default = 0x77)</param>
         public Bme280(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             bme280Comms = new Bme280I2C(i2cBus, address);
@@ -105,6 +109,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Initialize();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the BME280 class
+        /// </summary>
+        /// <param name="device">The meadow device used to create the chip select port</param>
+        /// <param name="spiBus">The SPI bus connected to the BME280</param>
+        /// <param name="chipSelectPin">The chip select pin</param>
         public Bme280(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
             this(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
         {
