@@ -99,10 +99,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
 	    public byte PowerMode
         {
-            get
-            {
-                return (Peripheral.ReadRegister(Registers.PowerMode));
-            }
+            get => Peripheral.ReadRegister(Registers.PowerMode);
             set
             {
                 Peripheral.WriteRegister(Registers.PowerMode, value);
@@ -118,10 +115,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
 	    public byte OperatingMode
         {
-            get
-            {
-                return (Peripheral.ReadRegister(Registers.OperatingMode));
-            }
+            get => Peripheral.ReadRegister(Registers.OperatingMode);
             set
             {
                 if (value > OperatingModes.MAXIMUM_VALUE)
@@ -145,10 +139,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
 	    private byte Page
         {
-            get
-            {
-                return Peripheral.ReadRegister(Registers.PageID);
-            }
+            get => Peripheral.ReadRegister(Registers.PageID;
             set
             {
                 if ((value != 0) && (value != 1))
@@ -162,58 +153,31 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Check if sensor is currently working in Fusion mode.
         /// </summary>
-	    public bool IsInFusionMode
-        {
-            get
-            {
-                return ((OperatingMode == OperatingModes.COMPASS) ||
+	    public bool IsInFusionMode => ((OperatingMode == OperatingModes.COMPASS) ||
                         (OperatingMode == OperatingModes.MAGNET_FOR_GYROSCOPE) ||
                         (OperatingMode == OperatingModes.NINE_DEGREES_OF_FREEDOM) ||
                         (OperatingMode == OperatingModes.INERTIAL_MEASUREMENT_UNIT) ||
-                        (OperatingMode == OperatingModes.NINE_DEGREES_OF_FREEDOM));
-            }
-        }
-
+                        (OperatingMode == OperatingModes.NINE_DEGREES_OF_FREEDOM);
+            
         /// <summary>
         /// Get the system calibration status.
         /// </summary>
-        public bool IsSystemCalibrated
-        {
-            get
-            {
-                return (((Peripheral.ReadRegister(Registers.CalibrationStatus) >> 6) & 0x03) != 0);
-            }
-        }
+        public bool IsSystemCalibrated => ((Peripheral.ReadRegister(Registers.CalibrationStatus) >> 6) & 0x03) != 0;
 
         /// <summary>
         /// Get the accelerometer calibration status.
         /// </summary>
-        public bool IsAccelerometerCalibrated
-        {
-            get
-            {
-                return (((Peripheral.ReadRegister(Registers.CalibrationStatus) >> 2) & 0x03) != 0);
-            }
-        }
+        public bool IsAccelerometerCalibrated => ((Peripheral.ReadRegister(Registers.CalibrationStatus) >> 2) & 0x03) != 0;
 
         /// <summary>
         /// Get the gyroscope calibration status.
         /// </summary>
-        public bool IsGyroscopeCalibrated
-        {
-            get
-            {
-                return (((Peripheral.ReadRegister(Registers.CalibrationStatus) >> 4) & 0x03) != 0);
-            }
-        }
+        public bool IsGyroscopeCalibrated => ((Peripheral.ReadRegister(Registers.CalibrationStatus) >> 4) & 0x03) != 0;
 
         /// <summary>
         /// Get the magnetometer status.
         /// </summary>
-        public bool IsMagnetometerCalibrated
-        {
-            get { return ((Peripheral.ReadRegister(Registers.CalibrationStatus) & 0x03) != 0); }
-        }
+        public bool IsMagnetometerCalibrated => (Peripheral.ReadRegister(Registers.CalibrationStatus) & 0x03) != 0; 
 
         /// <summary>
         /// Is the system fully calibrated?
@@ -222,14 +186,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// The sensor is fully calibrated if the system, accelerometer, gyroscope and megnetometer
         /// are all calibrated.
         /// </remarks>
-        public bool IsFullyCalibrated
-        {
-            get
-            {
-                return (IsAccelerometerCalibrated && IsGyroscopeCalibrated && IsSystemCalibrated &&
-                        IsMagnetometerCalibrated);
-            }
-        }
+        public bool IsFullyCalibrated => IsAccelerometerCalibrated && IsGyroscopeCalibrated && IsSystemCalibrated &&
+                        IsMagnetometerCalibrated;
 
         /// <summary>
         /// Create a new BNO055 object using the default parameters for the component.
@@ -239,7 +197,6 @@ namespace Meadow.Foundation.Sensors.Motion
         public Bno055(II2cBus i2cBus, Addresses address = Addresses.Default)
             : this(i2cBus, (byte)address)
         {
-
         }
 
         /// <summary>
@@ -254,7 +211,6 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 throw new Exception("Sensor ID should be 0xa0.");
             }
-
         }
 
         public override void StartUpdating(TimeSpan? updateInterval = null)
