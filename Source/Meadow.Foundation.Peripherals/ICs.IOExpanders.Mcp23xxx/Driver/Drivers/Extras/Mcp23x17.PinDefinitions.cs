@@ -52,7 +52,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GP4
+            /// GPA4
             /// </summary>
             public readonly IPin GPA4 = new Pin(
                 "GPA4", (byte)0x04,
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GP5
+            /// GPA5
             /// </summary>
             public readonly IPin GPA5 = new Pin(
                 "GPA5", (byte)0x05,
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GP6
+            /// GPA6
             /// </summary>
             public readonly IPin GPA6 = new Pin(
                 "GPA6", (byte)0x06,
