@@ -11,14 +11,16 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
         public Bmi270(II2cBus i2cBus, byte address = (byte)Addresses.Address_0x68)
         {
+            //Read buffer: 16
             //Write buffer: 256 bytes for the config data + 1 for the address
-            i2cPeripheral = new I2cPeripheral(i2cBus, address, 8, 256 + 1);
+            i2cPeripheral = new I2cPeripheral(i2cBus, address, 16, 256 + 1);
 
             var id = i2cPeripheral.ReadRegister(BMI2_CHIP_ID_ADDR);
 
             Console.WriteLine($"Device ID: {id}");
 
             Initialize();
+            EnableNormalPowerMode();
         }
 
         void Initialize()
@@ -32,52 +34,31 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             //Write INIT_CTRL 0x00 to prepare config load
             i2cPeripheral.WriteRegister(BMI2_INIT_CTRL_ADDR, 0);
 
-            Console.WriteLine("A" + bmi270_config_file.Length);
-
             //upload a configuration file to register INIT_DATA
             ushort index = 0;
-
             ushort length = 128;
+            byte[] dmaLocation = new byte[2]; 
 
-            byte[] addr_array = new byte[2]; //matching C naming for now 
-
-            while (index < 8096)
-            {
-                /* Store 0 to 3 bits of address in first byte */
-                addr_array[0] = (byte)((index / 2) & 0x0F);
+            while (index < bmi270_config_file.Length) //8096
+            {   /* Store 0 to 3 bits of address in first byte */
+                dmaLocation[0] = (byte)((index / 2) & 0x0F);
 
                 /* Store 4 to 11 bits of address in the second byte */
-                addr_array[1] = (byte)((index / 2) >> 4);
+                dmaLocation[1] = (byte)((index / 2) >> 4);
 
-                Thread.Sleep(1);
+                Thread.Sleep(1); //probably not needed ... data sheet wants a 2us delay
 
-                Console.WriteLine($"Set DMA address to {index}");
+                i2cPeripheral.WriteRegister(BMI2_INIT_ADDR_0, dmaLocation);
 
-                i2cPeripheral.WriteRegister(BMI2_INIT_ADDR_0, addr_array);
-                
-
-                var buffer = bmi270_config_file.Skip(index).Take(length).ToArray();
-
-                Console.WriteLine($"Write {buffer.Length} bytes to {index}");
-
-                i2cPeripheral.WriteRegister(BMI2_INIT_DATA_ADDR, buffer);
-
-                Console.WriteLine($"Success");
+                i2cPeripheral.WriteRegister(BMI2_INIT_DATA_ADDR, bmi270_config_file.Skip(index).Take(length).ToArray());
 
                 index += length;
             }
 
-          //  i2cPeripheral.WriteRegister(BMI2_INIT_DATA_ADDR, bmi270_config_file);
-
-            Console.WriteLine("B");
-
             //Write INIT_CTRL 0x01 to complete config load
             i2cPeripheral.WriteRegister(BMI2_INIT_CTRL_ADDR, 1);
 
-            Console.WriteLine("C");
-
             byte status;
-
             ushort x, y, z;
 
             //wait until register INTERNAL_STATUS contains 0b0001 (~20 ms)
@@ -92,18 +73,47 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
                 if (status == 0x01)
                 {
-                    Console.WriteLine("Happy");
                     break;
                 }
                 else
                 {
-                    Console.WriteLine($"Status {status} {x}, {y}, {z}");
+                    Console.WriteLine($"Device not ready: {status} {x}, {y}, {z}");
                 }
             }
 
-            Console.WriteLine("D");
+            Console.WriteLine("Initialization complete");
 
             //Afer initialization - power mode is set to "configuration mode"
+        }
+
+        public void EnableLowPowerMode()
+        {
+            //PWR_CTRL
+            i2cPeripheral.WriteRegister(0x7D, 0x04);
+            //ACC_CONF
+            i2cPeripheral.WriteRegister(0x40, 0x17);
+            //PWR_CONF
+            i2cPeripheral.WriteRegister(0x7C, 0x03);
+        }
+
+        public void EnableNormalPowerMode()
+        {
+            //PWR_CTRL
+            i2cPeripheral.WriteRegister(0x7D, 0x0E);
+            //ACC_CONF
+            i2cPeripheral.WriteRegister(0x40, 0xA8);
+            //GYR_CONF
+            i2cPeripheral.WriteRegister(0x42, 0xA9);
+            //PWR_CONF
+            i2cPeripheral.WriteRegister(0x7C, 0x02);
+        }
+
+        public byte[] ReadAccelerationData()
+        {
+            byte[] readBuffer = new byte[12];
+            i2cPeripheral.ReadRegister(0x0C, readBuffer);
+
+            return readBuffer;
         }
 
         void EnableAccelerometer()
