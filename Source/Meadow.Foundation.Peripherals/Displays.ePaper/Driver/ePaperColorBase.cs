@@ -11,34 +11,94 @@ namespace Meadow.Foundation.Displays.ePaper
     /// </summary>
     public abstract partial class EpdColorBase : SpiDisplayBase, IGraphicsDisplay
     {
+        /// <summary>
+        /// Is the black pixel data inverted
+        /// </summary>
         protected abstract bool IsBlackInverted { get; }
+
+        /// <summary>
+        /// Is the color pixel data inverted
+        /// </summary>
         protected abstract bool IsColorInverted { get; }
 
+        /// <summary>
+        /// Display color mode 
+        /// </summary>
         public ColorType ColorMode => ColorType.Format2bpp;
 
+        /// <summary>
+        /// The buffer the holds the black pixel data for the display
+        /// </summary>
+
         protected readonly Buffer1bpp blackImageBuffer;
+
+        /// <summary>
+        /// The buffer the holds the color pixel data for the display
+        /// </summary>
         protected readonly Buffer1bpp colorImageBuffer;
 
+        /// <summary>
+        /// Width of display in pixels
+        /// </summary>
         public int Width => blackImageBuffer.Width;
+
+        /// <summary>
+        /// Height of display in pixels
+        /// </summary>
         public int Height => blackImageBuffer.Height;
 
+        /// <summary>
+        /// The buffer the holds the black pixel data for the display
+        /// </summary>
         public IPixelBuffer PixelBuffer => blackImageBuffer;
 
+        /// <summary>
+        /// The buffer the holds the color pixel data for the display
+        /// </summary>
         public IPixelBuffer ColorPixelBuffer => colorImageBuffer;
 
-
-
-        private EpdColorBase()
-        { }
-
+        /// <summary>
+        /// Create a new color ePaper display object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="busyPin">Busy pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
         public EpdColorBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+            int width, int height) :
+            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), device.CreateDigitalOutputPort(dcPin, false),
+                device.CreateDigitalOutputPort(resetPin, true), device.CreateDigitalInputPort(busyPin),
+                width, height)
+        {
+        }
+
+        /// <summary>
+        /// Create a new ePaper display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="busyPort">Busy input port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        public EpdColorBase(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
+            IDigitalOutputPort resetPort,
+            IDigitalInputPort busyPort,
             int width, int height)
         {
-            dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
-            resetPort = device.CreateDigitalOutputPort(resetPin, true);
-            busyPort = device.CreateDigitalInputPort(busyPin);
+            this.dataCommandPort = dataCommandPort;
+            this.chipSelectPort = chipSelectPort;
+            this.resetPort = resetPort;
+            this.busyPort = busyPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin));
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
             blackImageBuffer = new Buffer1bpp(width, height);
             colorImageBuffer = new Buffer1bpp(width, height);

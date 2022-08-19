@@ -1,18 +1,50 @@
-﻿using Meadow.Devices;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
+    /// <summary>
+    /// Represents a Ssd1331 S6D02A1 TFT color display
+    /// </summary>
     public class Ssd1331 : TftSpiBase
     {
         //the SSD1331 also supports 8 bit RGB332 color but this isn't currently supported (but should be quick to add if anyone wants it
+        /// <summary>
+        /// The default display color mode
+        /// </summary>
         public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
 
+        /// <summary>
+        /// Create a new Ssd1331 color display object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
         public Ssd1331(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
            int width = 96, int height = 64) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorType.Format16bppRgb565)
+        {
+            Initialize();
+        }
+
+        /// <summary>
+        /// Create a new Ssd1331 color display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        public Ssd1331(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
+                IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
+                int width = 96, int height = 64) :
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, ColorType.Format16bppRgb565)
         {
             Initialize();
         }

@@ -13,7 +13,7 @@
     <PackageTags>Meadow, Meadow.Foundation, Wind, WindVane</PackageTags>
     <Version>0.1.22</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for wind vanes that outputs variable voltage, based on the azimuth of the wind.</Description>
+    <Description>WindVane analog wind direction sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
