@@ -13,6 +13,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public PinDefinitions Pins { get; } = new PinDefinitions();
 
+        /// <summary>
+        /// Is the pin valid for this device instance
+        /// </summary>
+        /// <param name="pin">The IPin to validate</param>
+        /// <returns>True if pin is valid</returns>
         protected override bool IsValidPin(IPin pin) => Pins.AllPins.Contains(pin);
 
         /// <summary>
@@ -27,9 +32,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         /// <summary>
         /// Creates an Mcp23s08 object
-        /// peripheral address.
         /// </summary>
-        /// <param name="spiBus"></param>
+        /// <param name="spiBus">The SPI bus connected to the Mcp23x08</param>
         /// <param name="chipSelectPort">Chip select port</param>
         /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
         public Mcp23x08(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) :

@@ -139,7 +139,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
 	    private byte Page
         {
-            get => Peripheral.ReadRegister(Registers.PageID;
+            get => Peripheral.ReadRegister(Registers.PageID);
             set
             {
                 if ((value != 0) && (value != 1))
@@ -157,7 +157,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         (OperatingMode == OperatingModes.MAGNET_FOR_GYROSCOPE) ||
                         (OperatingMode == OperatingModes.NINE_DEGREES_OF_FREEDOM) ||
                         (OperatingMode == OperatingModes.INERTIAL_MEASUREMENT_UNIT) ||
-                        (OperatingMode == OperatingModes.NINE_DEGREES_OF_FREEDOM);
+                        (OperatingMode == OperatingModes.NINE_DEGREES_OF_FREEDOM));
             
         /// <summary>
         /// Get the system calibration status.
