@@ -2,45 +2,44 @@
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp23x08
+    public partial class Mcp23xxx
     {
         public class DigitalOutputPort : DigitalOutputPortBase
         {
-            Mcp23x08 _mcp;
+            Mcp23xxx mcp;
 
+            /// <summary>
+            /// The port state
+            /// True for high, false for low
+            /// </summary>
             public override bool State
             {
-                get => this.state;
-                set
-                {
-                    _mcp.WriteToPort(this.Pin, value);
-                }
+                get => state;
+                set => mcp.WriteToPort(Pin, value);
             }
-            protected bool state;
+            bool state;
 
             public DigitalOutputPort(
-                Mcp23x08 mcpController,
+                Mcp23xxx mcpController,
                 IPin pin,
                 bool initialState = false,
                 OutputType outputType = OutputType.OpenDrain)
                 : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], initialState, outputType)
             {
-                _mcp = mcpController;
+                mcp = mcpController;
             }
 
             protected override void Dispose(bool disposing)
             {
                 // TODO: we should consider moving this logic to the finalizer
                 // but the problem with that is that we don't know when it'll be called
-                // but if we do it in here, we may need to check the _disposed field
-                // elsewhere
-
+                // but if we do it in here, we may need to check the disposed field elsewhere
                 if (!disposed)
                 {
                     if (disposing)
                     {
-                        this.state = false;
-                        _mcp.ResetPin(this.Pin);
+                        state = false;
+                        mcp?.ResetPin(Pin);
                     }
                     disposed = true;
                 }
@@ -51,7 +50,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 Dispose(false);
             }
-
         }
     }
 }
