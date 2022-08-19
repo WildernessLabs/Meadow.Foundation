@@ -5,10 +5,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Help method to get address from address pin configuation
         /// </summary>
-        /// <param name="pinA0">true if high</param>
-        /// <param name="pinA1">true if high</param>
-        /// <param name="pinA2">true if high</param>
-        /// <returns></returns>
+        /// <param name="pinA0">State of A0 address pin - true if high</param>
+        /// <param name="pinA1">State of A1 address pin - true if high</param>
+        /// <param name="pinA2">State of A2 address pin - true if high</param>
+        /// <returns>The device address</returns>
         public static byte GetAddressFromPins(bool pinA0, bool pinA1, bool pinA2)
         {
             /*

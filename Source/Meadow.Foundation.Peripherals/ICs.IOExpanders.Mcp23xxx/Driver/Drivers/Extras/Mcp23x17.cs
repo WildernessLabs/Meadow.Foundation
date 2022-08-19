@@ -13,6 +13,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public PinDefinitions Pins { get; } = new PinDefinitions();
 
+        /// <summary>
+        /// Is the pin valid for this device instance
+        /// </summary>
+        /// <param name="pin">The IPin to validate</param>
+        /// <returns>True if pin is valid</returns>
         protected override bool IsValidPin(IPin pin) => Pins.AllPins.Contains(pin);
 
         /// <summary>
