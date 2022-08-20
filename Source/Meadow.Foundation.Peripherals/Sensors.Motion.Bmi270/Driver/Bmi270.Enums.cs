@@ -72,5 +72,32 @@
             /// </summary>
             _125dps,
         }
+
+        /// <summary>
+        /// The device power mode
+        /// </summary>
+        public enum PowerMode : byte
+        {
+            /// <summary>
+            /// Lowest power mode, will still maintain configuration, no motion sensing
+            /// </summary>
+            Suspend,
+            /// <summary>
+            /// Configuration mode, all features accessible, no motion sensing
+            /// </summary>
+            Configuration,
+            /// <summary>
+            /// Low power mode, motion sensing at lowest possible power consumption
+            /// </summary>
+            LowPower,
+            /// <summary>
+            /// Normal power mode, alias free motion sensing 
+            /// </summary>
+            Normal,
+            /// <summary>
+            /// Performance mode, motion sensing at maximum sensor performance
+            /// </summary>
+            Performance,
+        }
     }
 }

@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             Console.WriteLine($"Device ID: {id}");
 
             Initialize();
-            EnableNormalPowerMode();
+            SetPowerMode(PowerMode.Normal);
         }
 
         void Initialize()
@@ -237,41 +237,56 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         }
 
         /// <summary>
-        /// Enable or disable the temperature sensor
-        /// Sensor is on by default, disabling minorly reduces power consumption 
+        /// Set the device power mode
         /// </summary>
-        /// <param name="enabled"></param>
-        public void EnableTemperatureSensor(bool enabled)
+        /// <param name="powerMode">The power mode</param>
+        public void SetPowerMode(PowerMode powerMode)
         {
-
-        }
-
-        /// <summary>
-        /// Set device to low power mode
-        /// </summary>
-        public void EnableLowPowerMode()
-        {
-            //PWR_CTRL
-            i2cPeripheral.WriteRegister(0x7D, 0x04);
-            //ACC_CONF
-            i2cPeripheral.WriteRegister(0x40, 0x17);
-            //PWR_CONF
-            i2cPeripheral.WriteRegister(0x7C, 0x03);
-        }
-
-        /// <summary>
-        /// Set device to normal power mode
-        /// </summary>
-        public void EnableNormalPowerMode()
-        {
-            //PWR_CTRL
-            i2cPeripheral.WriteRegister(0x7D, 0x0E);
-            //ACC_CONF
-            i2cPeripheral.WriteRegister(0x40, 0xA8);
-            //GYR_CONF
-            i2cPeripheral.WriteRegister(0x42, 0xA9);
-            //PWR_CONF
-            i2cPeripheral.WriteRegister(0x7C, 0x02);
+            switch(powerMode)
+            {
+                case PowerMode.Suspend:
+                    //PWR_CTRL
+                    i2cPeripheral.WriteRegister(0x7D, 0x00);
+                    //PWR_CONF
+                    i2cPeripheral.WriteRegister(0x7C, 0x00);
+                    break;
+                case PowerMode.Configuration:
+                    //PWR_CTRL
+                    i2cPeripheral.WriteRegister(0x7D, 0x00);
+                    //PWR_CONF
+                    i2cPeripheral.WriteRegister(0x7C, 0x00);
+                    break;
+                case PowerMode.LowPower:
+                    //PWR_CTRL
+                    i2cPeripheral.WriteRegister(0x7D, 0x04);
+                    //ACC_CONF
+                    i2cPeripheral.WriteRegister(0x40, 0x17);
+                    //GYR_CONF
+                    i2cPeripheral.WriteRegister(0x42, 0xA9);
+                    //PWR_CONF
+                    i2cPeripheral.WriteRegister(0x7C, 0x03);
+                    break;
+                case PowerMode.Normal:
+                    //PWR_CTRL
+                    i2cPeripheral.WriteRegister(0x7D, 0x0E);
+                    //ACC_CONF
+                    i2cPeripheral.WriteRegister(0x40, 0xA8);
+                    //GYR_CONF
+                    i2cPeripheral.WriteRegister(0x42, 0xA9);
+                    //PWR_CONF
+                    i2cPeripheral.WriteRegister(0x7C, 0x02);
+                    break;
+                case PowerMode.Performance:
+                    //PWR_CTRL
+                    i2cPeripheral.WriteRegister(0x7D, 0x0E);
+                    //ACC_CONF
+                    i2cPeripheral.WriteRegister(0x40, 0xA8);
+                    //GYR_CONF
+                    i2cPeripheral.WriteRegister(0x42, 0xE9);
+                    //PWR_CONF
+                    i2cPeripheral.WriteRegister(0x7C, 0x02);
+                    break;
+            }
         }
 
         byte[] ReadAccelerationData()
