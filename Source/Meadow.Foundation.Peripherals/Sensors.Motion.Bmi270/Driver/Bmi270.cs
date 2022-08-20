@@ -16,12 +16,12 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
 
         /// <summary>
-        /// Event raised when angular acceleration changes
+        /// Event raised when angular velocity (gyro) changes
         /// </summary>
         public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
 
         /// <summary>
-        /// Event raised when angular acceleration changes
+        /// Event raised when temperature changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
@@ -136,7 +136,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// Set the range of values the sensor can read for angular velocity (gyro)
         /// </summary>
         /// <param name="angRange">AngularAccelerationRange</param>
-        public void SetAngularAccelerationRange(AngularVelocityRange angRange)
+        public void SetAngularVelocityRange(AngularVelocityRange angRange)
         {   //This register also sets the OIS range but it's not implemented so we can ignore it 
             i2cPeripheral.WriteRegister(GYR_RANGE, (byte)angRange);
         }
