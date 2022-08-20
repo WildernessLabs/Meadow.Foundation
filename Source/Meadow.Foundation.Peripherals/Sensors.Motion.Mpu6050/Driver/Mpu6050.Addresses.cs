@@ -3,7 +3,7 @@
     public partial class Mpu6050
     {
         /// <summary>
-        /// Valid addresses for the sensor.
+        /// Valid addresses for the sensor
         /// </summary>
         public enum Addresses : byte
         {
@@ -16,7 +16,7 @@
             /// </summary>
             Address_0x69 = 0x69,
             /// <summary>
-            /// Bus address 0x68
+            /// Default bus address 0x68
             /// </summary>
             Default = Address_0x68
         }
