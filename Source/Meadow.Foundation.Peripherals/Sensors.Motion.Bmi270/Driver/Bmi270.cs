@@ -26,17 +26,17 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
-        /// Acceleration 3D
+        /// Current Acceleration 3D
         /// </summary>
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
 
         /// <summary>
-        /// Angular Velocity (Gyro) 3D
+        /// Current Angular Velocity (Gyro) 3D
         /// </summary>
         public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
 
         /// <summary>
-        /// Acceleration 3D
+        /// Current Temperature
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
