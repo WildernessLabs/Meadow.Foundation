@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Accelerometers
 {
     public partial class Bmi270 :
-        ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D)>
+        ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>
     {
         /// <summary>
         /// Event raised when linear acceleration changes
@@ -21,14 +21,24 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
 
         /// <summary>
+        /// Event raised when angular acceleration changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+
+        /// <summary>
         /// Acceleration 3D
         /// </summary>
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
 
         /// <summary>
-        /// Acceleration 3D
+        /// Angular Velocity (Gyro) 3D
         /// </summary>
         public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
+
+        /// <summary>
+        /// Acceleration 3D
+        /// </summary>
+        public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
         /// The range of values that can be read for acceleration on each axis
@@ -97,19 +107,13 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             //Write INIT_CTRL 0x01 to complete config load
             i2cPeripheral.WriteRegister(INIT_CTRL, 1);
 
-            byte status;
-            ushort x, y, z;
-
             //wait until register INTERNAL_STATUS contains 0b0001 (~20 ms)
             while (true)
             {
                 Thread.Sleep(10);
-                status = i2cPeripheral.ReadRegister(INTERNAL_STATUS);
+                byte status = i2cPeripheral.ReadRegister(INTERNAL_STATUS);
 
-                if (status == 0x01)
-                {
-                    break;
-                }
+                if (status == 0x01) { break; }
             }
             //Afer initialization - power mode is set to "configuration mode"
             //Need to change power modes before you can sample data
@@ -134,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             i2cPeripheral.WriteRegister(GYR_RANGE, (byte)angRange);
         }
 
-        protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> changeResult)
         {
             if (changeResult.New.AngularVelocity3D is { } angular)
             {
@@ -144,14 +148,18 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             {
                 Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
             }
+            if (changeResult.New.Temperature is { } temp)
+            {
+                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+            }
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        protected override Task<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D)> ReadSensor()
+        protected override Task<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() =>
             {
-            (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D) conditions;
+                (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature) conditions;
 
                 //12 bytes - includes accel and gyro
                 var data = ReadAccelerationData();
@@ -203,8 +211,39 @@ namespace Meadow.Foundation.Sensors.Accelerometers
                     new AngularVelocity(dpsY, AngularVelocity.UnitType.DegreesPerSecond),
                     new AngularVelocity(dpsZ, AngularVelocity.UnitType.DegreesPerSecond));
 
+                //Get the temperature
+                ushort tempRaw = (ushort)(i2cPeripheral.ReadRegister(TEMPERATURE_1) << 8 | i2cPeripheral.ReadRegister(TEMPERATURE_0));
+                double tempC;
+
+                if (tempRaw < 0x8000)
+                {
+                    tempC = 23 + tempRaw * 0.001953125; //in celcius
+                }
+                else
+                {
+                    tempC = -41 + (tempRaw - 0x8000) * 0.001953125;
+                }
+
+                if(tempRaw == 0x8000)
+                {
+                    conditions.Temperature = null;
+                }
+                else
+                {
+                    conditions.Temperature = new Units.Temperature(tempC, Units.Temperature.UnitType.Celsius);
+                }
                 return conditions;
             });
+        }
+
+        /// <summary>
+        /// Enable or disable the temperature sensor
+        /// Sensor is on by default, disabling minorly reduces power consumption 
+        /// </summary>
+        /// <param name="enabled"></param>
+        public void EnableTemperatureSensor(bool enabled)
+        {
+
         }
 
         public void EnableLowPowerMode()

@@ -15,20 +15,21 @@ namespace MeadowApp
         {
             Console.WriteLine("Initialize hardware...");
             bmi270 = new Bmi270(Device.CreateI2cBus());
-         //   bmi270.SetAccelerationRange(Bmi270.AccelerationRange._8g);
 
             bmi270.Updated += Bmi270_Updated;
 
             return base.Initialize();
         }
 
-        private void Bmi270_Updated(object sender, IChangeResult<(Meadow.Units.Acceleration3D? Acceleration3D, Meadow.Units.AngularVelocity3D? AngularVelocity3D)> e)
+        private void Bmi270_Updated(object sender, 
+                                    IChangeResult<(Meadow.Units.Acceleration3D? Acceleration3D, 
+                                                   Meadow.Units.AngularVelocity3D? AngularVelocity3D, 
+                                                   Meadow.Units.Temperature? Temperature)> e)
         {
             var accel = e.New.Acceleration3D.Value;
             var gyro = e.New.AngularVelocity3D.Value;
 
-            Console.WriteLine($"X={accel.X.Gravity:0.##}g, Y={accel.Y.Gravity:0.##}g, Z={accel.Z.Gravity:0.##}g");
-            Console.WriteLine($"X={gyro.X.RadiansPerMinute:0.##}rpm, Y={gyro.Y.RadiansPerMinute:0.##}rpm, Z={gyro.Z.RadiansPerMinute:0.##}rpm");
+            Console.WriteLine($"AX={accel.X.Gravity:0.##}g, AY={accel.Y.Gravity:0.##}g, AZ={accel.Z.Gravity:0.##}g, GX={gyro.X.RadiansPerMinute:0.##}rpm, GY={gyro.Y.RadiansPerMinute:0.##}rpm, GZ={gyro.Z.RadiansPerMinute:0.##}rpm, {e.New.Temperature.Value.Celsius}C");
         }
 
         public override Task Run()

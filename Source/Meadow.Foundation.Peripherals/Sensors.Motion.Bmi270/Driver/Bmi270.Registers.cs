@@ -41,6 +41,8 @@
         const byte SYNC_COMMAND               = 0x1E;
         const byte GYR_CAS_GPIO0              = 0x1E;
         const byte INTERNAL_STATUS            = 0x21;
+        const byte TEMPERATURE_0 = 0x20;
+        const byte TEMPERATURE_1 = 0x21;
         const byte FIFO_LENGTH_0              = 0x24;
         const byte FIFO_DATA                  = 0x26;
         const byte FEAT_PAGE                  = 0x2F;
