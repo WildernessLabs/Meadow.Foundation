@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public abstract partial class SerialWombatBase : IDigitalInputOutputController, IPwmOutputController, IAnalogInputController
+    public abstract partial class SerialWombatBase : IDigitalInputOutputController, IPwmOutputController, IAnalogInputController, ICounterController
     {
         private II2cBus _bus; // TODO: add uart support
         private WombatVersion _version = null!;
@@ -357,6 +357,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (channel == null) throw new NotSupportedException($"Pin {pin.Name} Does not support ADC");
 
             return new AnalogInputPort(this, pin, channel, sampleCount);
+        }
+
+        public ICounter CreateCounter(IPin pin, InterruptMode edge)
+        {
+            throw new NotImplementedException();
         }
 
         public IRangeFinder CreateDistanceSensor(IPin trigger, IPin echo)
