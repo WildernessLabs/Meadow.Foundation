@@ -29,7 +29,7 @@ namespace MeadowApp
             var accel = e.New.Acceleration3D.Value;
             var gyro = e.New.AngularVelocity3D.Value;
 
-            Console.WriteLine($"AX={accel.X.Gravity:0.##}g, AY={accel.Y.Gravity:0.##}g, AZ={accel.Z.Gravity:0.##}g, GX={gyro.X.RadiansPerMinute:0.##}rpm, GY={gyro.Y.RadiansPerMinute:0.##}rpm, GZ={gyro.Z.RadiansPerMinute:0.##}rpm, {e.New.Temperature.Value.Celsius}C");
+            Console.WriteLine($"AX={accel.X.Gravity:0.##}g, AY={accel.Y.Gravity:0.##}g, AZ={accel.Z.Gravity:0.##}g, GX={gyro.X.RadiansPerMinute:0.##}rpm, GY={gyro.Y.RadiansPerMinute:0.##}rpm, GZ={gyro.Z.RadiansPerMinute:0.##}rpm, {e.New.Temperature.Value.Celsius:0.##}C");
         }
 
         public override Task Run()

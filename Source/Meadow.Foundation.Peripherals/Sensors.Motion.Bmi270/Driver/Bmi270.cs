@@ -193,9 +193,9 @@ namespace Meadow.Foundation.Sensors.Accelerometers
                     _ => throw new ArgumentException("CurrentAngularAccelerationRange is out of range")
                 };
 
-                var gyroX = data[7] << 8 | data[6];
-                var gyroY = data[9] << 8 | data[8];
-                var gyroZ = data[11] << 8 | data[10];
+                var gyroX = (short)(data[7] << 8 | data[6]);
+                var gyroY = (short)(data[9] << 8 | data[8]);
+                var gyroZ = (short)(data[11] << 8 | data[10]);
 
                 var dpsX = gyroX / divisor;
                 var dpsY = gyroY / divisor;
@@ -246,6 +246,9 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
         }
 
+        /// <summary>
+        /// Set device to low power mode
+        /// </summary>
         public void EnableLowPowerMode()
         {
             //PWR_CTRL
@@ -256,6 +259,9 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             i2cPeripheral.WriteRegister(0x7C, 0x03);
         }
 
+        /// <summary>
+        /// Set device to normal power mode
+        /// </summary>
         public void EnableNormalPowerMode()
         {
             //PWR_CTRL
