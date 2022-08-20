@@ -65,7 +65,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
             var id = i2cPeripheral.ReadRegister(CHIP_ID);
 
-            Console.WriteLine($"Device ID: {id}");
+            if(id != 36)
+            {
+                throw new Exception("Could not detect BMI270");
+            }
 
             Initialize();
             SetPowerMode(PowerMode.Normal);
@@ -215,17 +218,19 @@ namespace Meadow.Foundation.Sensors.Accelerometers
                 ushort tempRaw = (ushort)(i2cPeripheral.ReadRegister(TEMPERATURE_1) << 8 | i2cPeripheral.ReadRegister(TEMPERATURE_0));
                 double tempC;
 
+                double degreePerByte = 0.001953125; //in celcius
+
                 if (tempRaw < 0x8000)
                 {
-                    tempC = 23 + tempRaw * 0.001953125; //in celcius
+                    tempC = 23 + tempRaw * degreePerByte;
                 }
                 else
                 {
-                    tempC = -41 + (tempRaw - 0x8000) * 0.001953125;
+                    tempC = -41 + (tempRaw - 0x8000) * degreePerByte;
                 }
 
                 if(tempRaw == 0x8000)
-                {
+                {   //means we have an invalid temperature reading
                     conditions.Temperature = null;
                 }
                 else
@@ -291,10 +296,8 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
         byte[] ReadAccelerationData()
         {
-            byte[] readBuffer = new byte[12];
-            i2cPeripheral.ReadRegister(0x0C, readBuffer);
-
-            return readBuffer;
+            i2cPeripheral.ReadRegister(0x0C, ReadBuffer.Span.Slice(0, 12));
+            return ReadBuffer.Span.Slice(0, 12).ToArray();
         }
     }
 }
