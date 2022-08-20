@@ -26,7 +26,8 @@ namespace Meadow.Foundation.Audio
         /// <param name="frequency">PWM frequency</param>
         /// <param name="dutyCycle">Duty cycle</param>
         public PiezoSpeaker(IPwmOutputController device, IPin pin, Frequency frequency, float dutyCycle = 0) :
-            this (device.CreatePwmPort(pin, frequency, dutyCycle)) { }
+            this (device.CreatePwmPort(pin, frequency, dutyCycle)) 
+        { }
 
         /// <summary>
         /// Create a new PiezoSpeaker instance

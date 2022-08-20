@@ -1,6 +1,7 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Leds
 {
@@ -9,6 +10,9 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class LedBarGraph
     {
+        private Task? animationTask;
+        private CancellationTokenSource? cancellationTokenSource;
+
         /// <summary>
         /// Array to hold LED objects for bar 
         /// </summary>
@@ -32,6 +36,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPins
         /// </summary>
+        /// <param name="device"></param>
+        /// <param name="pins"></param>
         public LedBarGraph(IDigitalOutputController device, IPin[] pins)
         {
             leds = new Led[pins.Length];
@@ -45,6 +51,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance from an array of IDigitalOutputPort
         /// </summary>
+        /// <param name="ports"></param>
         public LedBarGraph(IDigitalOutputPort[] ports)
         {
             leds = new Led[ports.Length];
@@ -75,15 +82,14 @@ namespace Meadow.Foundation.Leds
         /// Set the percentage of LEDs that are on starting from index 0
         /// </summary>
         /// <param name="percentage">Percentage (Range from 0 - 1)</param>
-        void SetPercentage(float percentage)
+        protected void SetPercentage(float percentage)
         {
             if (percentage < 0 || percentage > 1)
             {
                 throw new ArgumentOutOfRangeException();
             }
 
-            float value = percentage * Count;
-            
+            var value = percentage * Count;
             value += 0.5f;
 
             for (int i = 1; i <= Count; i++)
@@ -109,6 +115,36 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
+        /// Starts a blink animation on an individual LED on (500ms) and off (500ms)
+        /// </summary>
+        /// <param name="index"></param>
+        public void StartBlink(int index)
+        {
+            if (index < 0 || index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            leds[index].StartBlink();
+        }
+
+        /// <summary>
+        /// Starts a blink animation on an individual LED
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="onDuration"></param>
+        /// <param name="offDuration"></param>
+        public void StartBlink(int index, TimeSpan onDuration, TimeSpan offDuration)
+        {
+            if (index < 0 || index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            leds[index].StartBlink(onDuration, offDuration);
+        }
+
+        /// <summary>
         /// Blink animation that turns the LED bar graph on (500ms) and off (500ms)
         /// </summary>
         public void StartBlink()
@@ -116,10 +152,14 @@ namespace Meadow.Foundation.Leds
             var onDuration = TimeSpan.FromMilliseconds(500);
             var offDuration = TimeSpan.FromMilliseconds(500);
 
-            foreach (var led in leds)
+            Stop();
+
+            animationTask = new Task(async () =>
             {
-                led.StartBlink(onDuration, offDuration);
-            }
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartBlinkAsync(onDuration, offDuration, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
         }
 
         /// <summary>
@@ -129,43 +169,49 @@ namespace Meadow.Foundation.Leds
         /// <param name="offDuration"></param>
         public void StartBlink(TimeSpan onDuration, TimeSpan offDuration)
         {
-            foreach (var led in leds)
+            Stop();
+
+            animationTask = new Task(async () =>
             {
-                led.StartBlink(onDuration, offDuration);
-            }
+                cancellationTokenSource = new CancellationTokenSource();
+                await StartBlinkAsync(onDuration, offDuration, cancellationTokenSource.Token);
+            });
+            animationTask.Start();
         }
 
         /// <summary>
-        /// Starts a blink animation on an individual LED on (500ms) and off (500ms)
+        /// Set LED to blink
         /// </summary>
-        /// <param name="index"></param>
-        public void SetLedBlink(int index)
+        /// <param name="onDuration">on duration in ms</param>
+        /// <param name="offDuration">off duration in ms</param>
+        /// <param name="cancellationToken">cancellation token used to cancel blink</param>
+        /// <returns></returns>
+        protected async Task StartBlinkAsync(TimeSpan onDuration, TimeSpan offDuration, CancellationToken cancellationToken)
         {
-            var onDuration = TimeSpan.FromMilliseconds(500);
-            var offDuration = TimeSpan.FromMilliseconds(500);
-
-            if (index >= Count)
+            while (true)
             {
-                throw new ArgumentOutOfRangeException();
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                foreach (var led in leds)
+                {
+                    led.IsOn = true;
+                }
+                await Task.Delay(onDuration);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                foreach (var led in leds)
+                {
+                    led.IsOn = false;
+                }
+                await Task.Delay(offDuration);
             }
-
-            leds[index].StartBlink(onDuration, offDuration);
-        }
-
-        /// <summary>
-        /// Starts a blink animation on an individual LED
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="onDuration"></param>
-        /// <param name="offDuration"></param>
-        public void SetLedBlink(int index, TimeSpan onDuration, TimeSpan offDuration)
-        {
-            if (index >= Count)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-
-            leds[index].StartBlink(onDuration, offDuration);
         }
 
         /// <summary>
@@ -173,10 +219,25 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Stop()
         {
+            cancellationTokenSource?.Cancel();
+
             foreach (var led in leds)
             {
                 led.Stop();
             }
+        }
+
+        /// <summary>
+        /// Stops the blinking animation on an individual LED and/or turns it off
+        /// </summary>
+        public void Stop(int index)
+        {
+            if (index < 0 || index >= Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            leds[index].Stop();
         }
     }
 }

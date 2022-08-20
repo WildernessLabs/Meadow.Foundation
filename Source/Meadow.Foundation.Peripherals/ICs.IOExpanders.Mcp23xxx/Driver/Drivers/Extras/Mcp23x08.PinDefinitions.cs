@@ -96,17 +96,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 InitAllPins();
             }
 
+            /// <summary>
+            /// Initalize all pins
+            /// </summary>
             protected void InitAllPins()
             {
                 // add all our pins to the collection
-                AllPins.Add(this.GP0);
-                AllPins.Add(this.GP1);
-                AllPins.Add(this.GP2);
-                AllPins.Add(this.GP3);
-                AllPins.Add(this.GP4);
-                AllPins.Add(this.GP5);
-                AllPins.Add(this.GP6);
-                AllPins.Add(this.GP7);
+                AllPins.Add(GP0);
+                AllPins.Add(GP1);
+                AllPins.Add(GP2);
+                AllPins.Add(GP3);
+                AllPins.Add(GP4);
+                AllPins.Add(GP5);
+                AllPins.Add(GP6);
+                AllPins.Add(GP7);
             }
 
             public IEnumerator<IPin> GetEnumerator() => AllPins.GetEnumerator();

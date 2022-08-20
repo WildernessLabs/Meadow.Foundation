@@ -1,26 +1,67 @@
-﻿using Meadow.Devices;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
+    /// <summary>
+    /// Represents a St7735 TFT color display
+    /// </summary>
     public class St7735 : TftSpiBase
     {
+        /// <summary>
+        /// The default SPI bus frequency
+        /// </summary>
         public static Frequency DefaultSpiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The default display color mode
+        /// </summary>
+        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
         private DisplayType displayType;
 
         private byte xOffset;
         private byte yOffset;
 
-        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
-
+        /// <summary>
+        /// Create a new St7735 color display object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        /// <param name="displayType">The St7735 display types (displays vary from manufacturer and screen size)</param>
+        /// <param name="colorMode">The color mode to use for the display buffer</param>
         public St7735(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height,
-            DisplayType displayType = DisplayType.ST7735R, ColorType displayColorMode = ColorType.Format12bppRgb444)
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
+            DisplayType displayType = DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444)
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
+        {
+            this.displayType = displayType;
+
+            Initialize();
+        }
+
+        /// <summary>
+        /// Create a new St7735 color display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        /// <param name="displayType">The St7735 display types (displays vary from manufacturer and screen size)</param>
+        /// <param name="colorMode">The color mode to use for the display buffer</param>
+        public St7735(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
+                IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
+                int width, int height, DisplayType displayType = DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444) :
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             this.displayType = displayType;
 

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Distance
         public Length MaximumDistance => new Length(2000, Length.UnitType.Millimeters);
 
         readonly IDigitalOutputPort shutdownPort;
-       
+
         byte stopVariable;
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Meadow.Foundation.Sensors.Distance
         public Vl53l0x(
             IDigitalOutputController device, II2cBus i2cBus,
             byte address = (byte)Addresses.Default)
-                : this (device, i2cBus, null, address)
+                : this(device, i2cBus, null, address)
         {
         }
 
@@ -80,7 +80,8 @@ namespace Meadow.Foundation.Sensors.Distance
             byte address = (byte)Addresses.Default)
                 : base(i2cBus, address)
         {
-            if(shutdownPin != null) {
+            if (shutdownPin != null)
+            {
                 device.CreateDigitalOutputPort(shutdownPin, true);
             }
             Initialize().Wait();
@@ -138,7 +139,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
             var first_spad_to_enable = (spad_is_aperture) ? 12 : 0;
             var spads_enabled = 0;
-            
+
             for (int i = 0; i < 48; i++)
             {
                 if (i < first_spad_to_enable || spads_enabled == spadCount)
@@ -247,6 +248,11 @@ namespace Meadow.Foundation.Sensors.Distance
             Peripheral.WriteRegister((byte)Register.SystemSequenceConfig, 0xE8);
         }
 
+        public void MeasureDistance()
+        {
+            _ = ReadSensor();
+        }
+
         /// <summary>
         /// Returns the current distance/range
         /// </summary>
@@ -255,19 +261,21 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             //Console.WriteLine("ReadSensor");
 
-            if (IsShutdown) {
+            if (IsShutdown)
+            {
                 return new Length(-1f, Length.UnitType.Millimeters);
             }
 
             // get the distance
-            var distance = new Length(await GetRawRangeData(), Length.UnitType.Millimeters);
+            Distance = new Length(await GetRawRangeData(), Length.UnitType.Millimeters);
 
             // throw away invalid distances if out of range
-            if (distance > MaximumDistance) {
-                distance = new Length(-1, Length.UnitType.Millimeters);
+            if (Distance > MaximumDistance)
+            {
+                Distance = new Length(-1, Length.UnitType.Millimeters);
             }
 
-            return distance;
+            return Distance.Value;
         }
 
         /// <summary>

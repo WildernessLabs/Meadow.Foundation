@@ -38,6 +38,8 @@ namespace Meadow.Foundation.Sensors.Switches
         /// </summary>
         /// <param name="device"></param>
         /// <param name="pin"></param>
+        /// <param name="interruptMode"></param>
+        /// <param name="resistorMode"></param>
         public SpstSwitch(IDigitalInputController device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode) :
             this(device.CreateDigitalInputPort(pin, interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
         { }

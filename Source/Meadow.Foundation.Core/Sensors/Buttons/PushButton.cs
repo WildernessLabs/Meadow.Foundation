@@ -9,16 +9,27 @@ namespace Meadow.Foundation.Sensors.Buttons
     /// </summary>
     public class PushButton : IButton, IDisposable
     {
+        private bool shouldDisposeInput = false;
+
+        event EventHandler clickDelegate = delegate { };
+        event EventHandler pressStartDelegate = delegate { };
+        event EventHandler pressEndDelegate = delegate { };
+        event EventHandler longClickDelegate = delegate { };
+
         /// <summary>
         /// Default Debounce used on the PushButton Input if an InputPort is auto-created
         /// </summary>
         public static readonly TimeSpan DefaultDebounceDuration = TimeSpan.FromMilliseconds(50);
+
         /// <summary>
         /// Default Glitch Filter used on the PushButton Input if an InputPort is auto-created
         /// </summary>
         public static readonly TimeSpan DefaultGlitchDuration = TimeSpan.FromMilliseconds(50);
 
-        private bool shouldDisposeInput = false;
+        /// <summary>
+        /// Default threshold for LongPress events
+        /// </summary>
+        public readonly static TimeSpan DefaultLongPressThreshold = TimeSpan.FromMilliseconds(500);
 
         /// <summary>
         /// This duration controls the debounce filter. It also has the effect
@@ -30,11 +41,6 @@ namespace Meadow.Foundation.Sensors.Buttons
             get => (DigitalIn != null) ? DigitalIn.DebounceDuration : TimeSpan.MinValue;
             set => DigitalIn.DebounceDuration = value;
         }
-
-        event EventHandler clickDelegate = delegate { };
-        event EventHandler pressStartDelegate = delegate { };
-        event EventHandler pressEndDelegate = delegate { };
-        event EventHandler longClickDelegate = delegate { };
 
         /// <summary>
         /// Returns the sanitized state of the switch. If the switch 
@@ -166,6 +172,8 @@ namespace Meadow.Foundation.Sensors.Buttons
 
             DigitalIn = interruptPort;
             DigitalIn.Changed += DigitalInChanged;
+
+            LongClickedThreshold = DefaultLongPressThreshold;
         }
 
         void DigitalInChanged(object sender, DigitalPortResult result)

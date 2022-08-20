@@ -1,16 +1,46 @@
-﻿using System.Threading;
-using Meadow.Devices;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.TftSpi
 {
+    /// <summary>
+    /// Represents a Gc9a01 TFT color display
+    /// </summary>
     public class Gc9a01 : TftSpiBase
     {
+        /// <summary>
+        /// The display default color mode
+        /// </summary>
         public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
 
+        /// <summary>
+        /// Create a new Gc9a01 color display object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
         public Gc9a01(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, 240, 240, ColorType.Format16bppRgb565)
+        {
+            Initialize();
+
+            SetRotation(Rotation.Normal);
+        }
+
+        /// <summary>
+        /// Create a new Gc9a01 color display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        public Gc9a01(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
+            IDigitalOutputPort resetPort) :
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, 240, 240, ColorType.Format16bppRgb565)
         {
             Initialize();
 
@@ -244,9 +274,9 @@ namespace Meadow.Foundation.Displays.TftSpi
             SendCommand(GC9A01_INVON);
 
             SendCommand(GC9A01_SLPOUT);
-            Thread.Sleep(GC9A01_SLPOUT_DELAY);
+            DelayMs(GC9A01_SLPOUT_DELAY);
             SendCommand(GC9A01_DISPON);
-            Thread.Sleep(20);
+            DelayMs(20);
         }
 
         public override bool IsColorModeSupported(ColorType mode)

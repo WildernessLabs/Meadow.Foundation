@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
 
             byte[] value = { color.R, color.G, color.B, color.A };
-            int index = y * Width * 4 + x * 4 - 1;
+            int index = (y * Width + x) * 4 - 1;
 
             //fill the first line
             for (int i = 0; i < width; i++)
@@ -95,7 +95,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     (y + j) * Width * 4 + x * 4,
                     Buffer,
                     (y + j + 1) * Width * 4 + x * 4,
-                    width);
+                    width * 4);
             }
         }
 
@@ -106,7 +106,14 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="y">y position of pixel</param>
         public override void InvertPixel(int x, int y)
         {
-            throw new NotImplementedException();
+            var color = GetPixel(x, y);
+
+            //split into R,G,B & invert
+            byte r = (byte)~color.R;
+            byte g = (byte)~color.G;
+            byte b = (byte)~color.B;
+
+            SetPixel(x, y, new Color(r, g, b, color.A));
         }
 
         /// <summary>

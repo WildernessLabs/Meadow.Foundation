@@ -11,12 +11,29 @@ namespace Meadow.Foundation.Displays.TftSpi
     {
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
+        /// <summary>
+        /// The current display color mode
+        /// </summary>
         public ColorType ColorMode => imageBuffer.ColorMode;
 
+        /// <summary>
+        /// The display default color mode
+        /// </summary>
         public abstract ColorType DefautColorMode { get; }
+
+        /// <summary>
+        /// Width of display in pixels
+        /// </summary>
         public int Width => imageBuffer.Width;
+
+        /// <summary>
+        /// Height of display in pixels
+        /// </summary>
         public int Height => imageBuffer.Height;
 
+        /// <summary>
+        /// The buffer used to store the pixel data for the display
+        /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         protected IDigitalOutputPort dataCommandPort;
@@ -32,11 +49,19 @@ namespace Meadow.Foundation.Displays.TftSpi
 
         protected abstract void Initialize();
 
-        internal TftSpiBase()
-        { }
-
+        /// <summary>
+        /// Represents an abstract TftSpiBase object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        /// <param name="colorMode">The color mode to use for the display buffer</param>
         public TftSpiBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, ColorType mode = ColorType.Format16bppRgb565)
+            int width, int height, ColorType colorMode = ColorType.Format16bppRgb565)
         {
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }
@@ -44,9 +69,40 @@ namespace Meadow.Foundation.Displays.TftSpi
 
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
             
-            CreateBuffer(mode, width, height);
+            CreateBuffer(colorMode, width, height);
         }
 
+        /// <summary>
+        /// Represents an abstract TftSpiBase object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        /// <param name="colorMode">The color mode to use for the display buffer</param>
+        public TftSpiBase(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
+            IDigitalOutputPort resetPort,
+            int width, int height, 
+            ColorType colorMode = ColorType.Format16bppRgb565)
+        {
+            this.dataCommandPort = dataCommandPort;
+            this.chipSelectPort = chipSelectPort;
+            this.resetPort = resetPort;
+
+            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
+
+            CreateBuffer(colorMode, width, height);
+        }
+
+        /// <summary>
+        /// Is the color mode supported on this display
+        /// </summary>
+        /// <param name="mode">The color mode</param>
+        /// <returns>true if supported</returns>
         public virtual bool IsColorModeSupported(ColorType mode)
         {
             if (mode == ColorType.Format12bppRgb444 ||
@@ -64,7 +120,12 @@ namespace Meadow.Foundation.Displays.TftSpi
                 throw new ArgumentException($"Mode {mode} not supported");
             }
 
-            if (mode == ColorType.Format16bppRgb565)
+            if (mode == ColorType.Format24bppRgb888)
+            {
+                imageBuffer = new BufferRgb888(width, height);
+            }
+
+            else if (mode == ColorType.Format16bppRgb565)
             {
                 imageBuffer = new BufferRgb565(width, height);
             }

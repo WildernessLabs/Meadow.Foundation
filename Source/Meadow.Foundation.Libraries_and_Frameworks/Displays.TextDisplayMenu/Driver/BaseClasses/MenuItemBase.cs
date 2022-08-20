@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         [JsonProperty("value")]
         public object Value { get; set; }
 
-        public bool HasSubItems => SubItems != null && SubItems.Length > 1;
+        public bool HasSubItems => SubItems != null && SubItems.Length > 0;
 
         public bool IsEditable => Value != null;
 

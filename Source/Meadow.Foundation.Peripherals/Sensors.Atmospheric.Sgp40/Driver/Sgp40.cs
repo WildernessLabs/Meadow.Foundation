@@ -2,18 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Units;
-using HU = Meadow.Units.RelativeHumidity.UnitType;
-using TU = Meadow.Units.Temperature.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Provides access to the Sensiron SGP40 VOC sensor
     /// </summary>
-    public partial class Sgp40 :
-        ByteCommsSensorBase<int>
+    public partial class Sgp40 : ByteCommsSensorBase<int>
     {
         /// <summary>
         /// </summary>
@@ -130,7 +126,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             _compensationData[5] = t[0];
             _compensationData[6] = t[1];
             _compensationData[7] = Crc(t);
-
         }
 
         public void ClearCompensationData()

@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System;
 
 namespace Meadow.Foundation.Motors.Stepper
@@ -15,7 +14,8 @@ namespace Meadow.Foundation.Motors.Stepper
         /// </summary>
         /// <remarks>Default revolutions per minute for 28BYJ-48 is approximately 15.</remarks>
         public Units.AngularVelocity AngularVelocity { get; set; } = new Units.AngularVelocity(15, Units.AngularVelocity.UnitType.RevolutionsPerMinute);
-        public double RPM => AngularVelocity.RevolutionsPerMinute;
+        
+        double RPM => AngularVelocity.RevolutionsPerMinute;
 
         /// <summary>
         /// Sets the stepper's mode.
@@ -107,12 +107,13 @@ namespace Meadow.Foundation.Motors.Stepper
         DateTime startTime;
 
         /// <summary>
-        /// Initialize a Uln2003 class.
+        /// Initialize a Uln2003 class
         /// </summary>
-        /// <param name="pin1">The GPIO pin number which corresponds pin A on ULN2003 driver board.</param>
-        /// <param name="pin2">The GPIO pin number which corresponds pin B on ULN2003 driver board.</param>
-        /// <param name="pin3">The GPIO pin number which corresponds pin C on ULN2003 driver board.</param>
-        /// <param name="pin4">The GPIO pin number which corresponds pin D on ULN2003 driver board.</param>
+        /// <param name="device">The digital input controller to create the output ports (usually Meadow)</param>
+        /// <param name="pin1">The GPIO pin number which corresponds pin A on ULN2003 driver board</param>
+        /// <param name="pin2">The GPIO pin number which corresponds pin B on ULN2003 driver board</param>
+        /// <param name="pin3">The GPIO pin number which corresponds pin C on ULN2003 driver board</param>
+        /// <param name="pin4">The GPIO pin number which corresponds pin D on ULN2003 driver board</param>
         public Uln2003(IDigitalOutputController device, IPin pin1, IPin pin2, IPin pin3, IPin pin4)
         {
             outputPort1 = device.CreateDigitalOutputPort(pin1);
@@ -122,7 +123,22 @@ namespace Meadow.Foundation.Motors.Stepper
         }
 
         /// <summary>
-        /// Stop the motor.
+        /// Initialize a Uln2003 class
+        /// </summary>
+        /// <param name="outputPort1">The output port for pin A on ULN2003 driver board</param>
+        /// <param name="outputPort2">The output port for pin B on ULN2003 driver board</param>
+        /// <param name="outputPort3">The output port for pin C on ULN2003 driver board</param>
+        /// <param name="outputPort4">The output port for pin D on ULN2003 driver board</param>
+        public Uln2003(IDigitalOutputPort outputPort1, IDigitalOutputPort outputPort2, IDigitalOutputPort outputPort3, IDigitalOutputPort outputPort4)
+        {
+            this.outputPort1 = outputPort1;
+            this.outputPort2 = outputPort1;
+            this.outputPort3 = outputPort1;
+            this.outputPort4 = outputPort1;
+        }
+
+        /// <summary>
+        /// Stop the motor
         /// </summary>
         public void Stop()
         {
@@ -135,9 +151,9 @@ namespace Meadow.Foundation.Motors.Stepper
         }
 
         /// <summary>
-        /// Moves the motor. If the number is negative, the motor moves in the reverse direction.
+        /// Moves the motor - If the number is negative, the motor moves in the reverse direction
         /// </summary>
-        /// <param name="steps">Number of steps.</param>
+        /// <param name="steps">Number of steps</param>
         public void Step(int steps)
         {
             double lastStepTime = 0;
