@@ -250,46 +250,30 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             switch(powerMode)
             {
                 case PowerMode.Suspend:
-                    //PWR_CTRL
-                    i2cPeripheral.WriteRegister(0x7D, 0x00);
-                    //PWR_CONF
-                    i2cPeripheral.WriteRegister(0x7C, 0x00);
+                    i2cPeripheral.WriteRegister(PWR_CTRL, 0x00);
+                    i2cPeripheral.WriteRegister(PWR_CONF, 0x00);
                     break;
                 case PowerMode.Configuration:
-                    //PWR_CTRL
-                    i2cPeripheral.WriteRegister(0x7D, 0x00);
-                    //PWR_CONF
-                    i2cPeripheral.WriteRegister(0x7C, 0x00);
+                    i2cPeripheral.WriteRegister(PWR_CTRL, 0x00);
+                    i2cPeripheral.WriteRegister(PWR_CONF, 0x00);
                     break;
                 case PowerMode.LowPower:
-                    //PWR_CTRL
-                    i2cPeripheral.WriteRegister(0x7D, 0x04);
-                    //ACC_CONF
-                    i2cPeripheral.WriteRegister(0x40, 0x17);
-                    //GYR_CONF
-                    i2cPeripheral.WriteRegister(0x42, 0xA9);
-                    //PWR_CONF
-                    i2cPeripheral.WriteRegister(0x7C, 0x03);
+                    i2cPeripheral.WriteRegister(PWR_CTRL, 0x04);
+                    i2cPeripheral.WriteRegister(ACC_CONF, 0x17);
+                    i2cPeripheral.WriteRegister(GYR_CONF, 0xA9);
+                    i2cPeripheral.WriteRegister(PWR_CONF, 0x03);
                     break;
                 case PowerMode.Normal:
-                    //PWR_CTRL
-                    i2cPeripheral.WriteRegister(0x7D, 0x0E);
-                    //ACC_CONF
-                    i2cPeripheral.WriteRegister(0x40, 0xA8);
-                    //GYR_CONF
-                    i2cPeripheral.WriteRegister(0x42, 0xA9);
-                    //PWR_CONF
-                    i2cPeripheral.WriteRegister(0x7C, 0x02);
+                    i2cPeripheral.WriteRegister(PWR_CTRL, 0x0E);
+                    i2cPeripheral.WriteRegister(ACC_CONF, 0xA8);
+                    i2cPeripheral.WriteRegister(GYR_CONF, 0xA9);
+                    i2cPeripheral.WriteRegister(PWR_CONF, 0x02);
                     break;
                 case PowerMode.Performance:
-                    //PWR_CTRL
-                    i2cPeripheral.WriteRegister(0x7D, 0x0E);
-                    //ACC_CONF
-                    i2cPeripheral.WriteRegister(0x40, 0xA8);
-                    //GYR_CONF
-                    i2cPeripheral.WriteRegister(0x42, 0xE9);
-                    //PWR_CONF
-                    i2cPeripheral.WriteRegister(0x7C, 0x02);
+                    i2cPeripheral.WriteRegister(PWR_CTRL, 0x0E);
+                    i2cPeripheral.WriteRegister(ACC_CONF, 0xA8);
+                    i2cPeripheral.WriteRegister(GYR_CONF, 0xE9);
+                    i2cPeripheral.WriteRegister(PWR_CONF, 0x02);
                     break;
             }
         }
