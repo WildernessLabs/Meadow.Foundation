@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
             var id = i2cPeripheral.ReadRegister(CHIP_ID);
 
-            if(id != 36)
+            if (id != 36)
             {
                 throw new Exception("Could not detect BMI270");
             }
@@ -296,8 +296,9 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
         byte[] ReadAccelerationData()
         {
-            i2cPeripheral.ReadRegister(0x0C, ReadBuffer.Span.Slice(0, 12));
-            return ReadBuffer.Span.Slice(0, 12).ToArray();
+            var readBuffer = new byte[12];
+            i2cPeripheral.ReadRegister(0x0C, readBuffer);
+            return readBuffer;
         }
     }
 }
