@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         public override byte ReadRegister(byte register) => i2CPeripheral.ReadRegister(register);
 
-        public override void ReadRegisters(byte register, Span<byte> readBuffer)
+        public override void ReadRegister(byte register, Span<byte> readBuffer)
         {
             i2CPeripheral.ReadRegister(register, readBuffer);
         }
