@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sensors.Atmospheric.BME680_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
@@ -18,8 +18,6 @@ namespace Sensors.Atmospheric.BME680_Sample
 
             //CreateSpiSensor();
             CreateI2CSensor();
-
-            Console.WriteLine("A");
 
             var consumer = Bme680.CreateObserver(
                 handler: result =>
@@ -43,8 +41,6 @@ namespace Sensors.Atmospheric.BME680_Sample
 
             sensor?.Subscribe(consumer);
 
-            Console.WriteLine("B");
-
             if(sensor != null)
             {
                 sensor.Updated += (sender, result) => {
@@ -54,23 +50,17 @@ namespace Sensors.Atmospheric.BME680_Sample
                 };
             }
 
-            Console.WriteLine("D");
-
             sensor?.StartUpdating(TimeSpan.FromSeconds(1));
 
-            Console.WriteLine("C");
-
             ReadConditions().Wait();
-
-            Console.WriteLine("E");
         }
 
         void CreateSpiSensor()
         {
             Console.WriteLine("Create BME680 sensor with SPI...");
 
-          //  var spiBus = Device.CreateSpiBus();
-          //  sensor = new Bme680(spiBus, Device.CreateDigitalOutputPort(Device.Pins.D14));
+            var spiBus = Device.CreateSpiBus();
+            sensor = new Bme680(spiBus, Device.CreateDigitalOutputPort(Device.Pins.D14));
         }
 
         void CreateI2CSensor()
@@ -79,7 +69,6 @@ namespace Sensors.Atmospheric.BME680_Sample
 
             var i2c = Device.CreateI2cBus();
             sensor = new Bme680(i2c, (byte)Bme680.Addresses.Address_0x76); // SDA pulled down
-
         }
 
         async Task ReadConditions()
@@ -87,6 +76,7 @@ namespace Sensors.Atmospheric.BME680_Sample
             if(sensor == null) { return; }
 
             var (Temperature, Humidity, Pressure) = await sensor.Read();
+
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"  Temperature: {Temperature?.Celsius:N2}C");
             Console.WriteLine($"  Pressure: {Pressure?.Hectopascal:N2}hPa");
