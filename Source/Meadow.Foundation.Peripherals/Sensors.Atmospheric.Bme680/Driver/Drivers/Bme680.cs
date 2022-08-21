@@ -63,23 +63,22 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
 
         /// <summary>
-        /// The temperature, in degrees celsius (°C), from the last reading.
+        /// The current temperature
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// The pressure, in hectopascals (hPa), from the last reading. 1 hPa
-        /// is equal to one millibar, or 1/10th of a kilopascal (kPa)/centibar.
+        /// The current pressure
         /// </summary>
         public Pressure? Pressure => Conditions.Pressure;
 
         /// <summary>
-        /// The humidity, in percent relative humidity, from the last reading..
+        /// The current humidity, in percent relative humidity
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Sensors.Barometric.BME680" /> class.
+        /// Initializes a new instance of the BME680 class
         /// </summary>
         /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
         /// <param name="address">I2C address of the sensor.</param>
@@ -90,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 			Initialize();
         }
 
-        /*
+        
         public Bme680(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
             this(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
         {
@@ -98,7 +97,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         public Bme680(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration? configuration = null)
         {
-            bme680Comms = new Bme680SPI(spiBus, chipSelectPort);
+            bme680Comms = new Bme68xSPI(spiBus, chipSelectPort);
 
             if(configuration != null)
             {
@@ -108,12 +107,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 this.configuration = new Configuration();
             }
-            
+
+            Console.WriteLine("Status read/write");
+
             //https://github.com/Zanduino/BME680/blob/master/src/Zanshin_BME680.cpp
             bme680Comms.WriteRegister(0x73, bme680Comms.ReadRegister(0x73));
 
+            Console.WriteLine("Initialize");
+
             Initialize();
-        }*/
+        }
 
         /// <summary>
         /// 
@@ -170,17 +173,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 } while (BitHelpers.GetBitValue(status, 0x00));
 
                 var sensorData = readBuffer.Span[0..RegisterAddresses.AllSensors.Length];
-                bme680Comms.ReadRegisters(RegisterAddresses.AllSensors.Address, sensorData);
+                bme680Comms.ReadRegister(RegisterAddresses.AllSensors.Address, sensorData);
 
                 var rawPressure = GetRawValue(sensorData.Slice(0, 3));
                 var rawTemperature = GetRawValue(sensorData.Slice(3, 3));
                 var rawHumidity = GetRawValue(sensorData.Slice(6, 2));
                 //var rawVoc = GetRawValue(sensorData.Slice(8, 2));
 
-                bme680Comms.ReadRegisters(RegisterAddresses.CompensationData1.Address, readBuffer.Span[0..RegisterAddresses.CompensationData1.Length]);
+                bme680Comms.ReadRegister(RegisterAddresses.CompensationData1.Address, readBuffer.Span[0..RegisterAddresses.CompensationData1.Length]);
                 var compensationData1 = readBuffer.Span[0..RegisterAddresses.CompensationData1.Length].ToArray();
 
-                bme680Comms.ReadRegisters(RegisterAddresses.CompensationData2.Address, readBuffer.Span[0..RegisterAddresses.CompensationData2.Length]);
+                bme680Comms.ReadRegister(RegisterAddresses.CompensationData2.Address, readBuffer.Span[0..RegisterAddresses.CompensationData2.Length]);
                 var compensationData2 = readBuffer.Span[0..RegisterAddresses.CompensationData2.Length].ToArray();
 
                 var compensationData = ArrayPool<byte>.Shared.Rent(64);
@@ -222,10 +225,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
             return 0;
         }
-
-        //In celcius
+        
         private static double RawToTemperature(int adcTemperature, TemperatureCompensation temperatureCompensation)
-        {
+        {   //value is in celcius
             var var1 = ((adcTemperature / 16384.0) - (temperatureCompensation.T1 / 1024.0)) *
                        temperatureCompensation.T2;
             var var2 = ((adcTemperature / 131072) - (temperatureCompensation.T1 / 8192.0));
@@ -257,11 +259,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             /* Avoid exception caused by division by zero */
             if ((int)var1 != 0)
             {
-                calc_pres = (((calc_pres - (var2 / 4096.0)) * 6250.0) / var1);
-                var1 = ((PC.P9) * calc_pres * calc_pres) / 2147483648.0f;
+                calc_pres = ((calc_pres - (var2 / 4096.0)) * 6250.0) / var1;
+                var1 = (PC.P9 * calc_pres * calc_pres) / 2147483648.0f;
                 var2 = calc_pres * ((PC.P8) / 32768.0);
-                var3 = ((calc_pres / 256.0) * (calc_pres / 256.0) * (calc_pres / 256.0) * (PC.P10 / 131072.0));
-                calc_pres = (calc_pres + (var1 + var2 + var3 + (PC.P7 * 128.0)) / 16.0);
+                var3 = calc_pres / 256.0 * (calc_pres / 256.0) * (calc_pres / 256.0) * (PC.P10 / 131072.0);
+                calc_pres += (var1 + var2 + var3 + (PC.P7 * 128.0)) / 16.0;
             }
             else
             {
@@ -280,14 +282,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return var2 + ((var3 + (var4 * temp)) * var2 * var2);
         }
 
-        private byte ReadRegister(Register register)
-        {
-            return bme680Comms.ReadRegister(register.Address);
-        }
-
         private Span<byte> ReadRegisters(Register register)
         {
-            bme680Comms.ReadRegisters(register.Address, readBuffer.Span[0..register.Length]);
+            bme680Comms.ReadRegister(register.Address, readBuffer.Span[0..register.Length]);
             return readBuffer.Slice(0, register.Length).Span;
         }
 
