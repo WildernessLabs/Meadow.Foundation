@@ -78,7 +78,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        /// Initializes a new instance of the BME680 class
+        /// Creates a new instance of the BME680 class
         /// </summary>
         /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
         /// <param name="address">I2C address of the sensor.</param>
@@ -89,12 +89,23 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 			Initialize();
         }
 
-        
+        /// <summary>
+        /// Creates a new instance of the BME680 class
+        /// </summary>
+        /// <param name="device">The Meadow device to create the chip select port</param>
+        /// <param name="spiBus">The SPI bus connected to the device</param>
+        /// <param name="chipSelectPin">The chip select pin</param>
         public Bme680(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
             this(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of the BME680 class
+        /// </summary>
+        /// <param name="spiBus">The SPI bus connected to the device</param>
+        /// <param name="chipSelectPort">The chip select pin</param>
+        /// <param name="configuration">The BMP680 configuration (optional)</param>
         public Bme680(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration? configuration = null)
         {
             bme680Comms = new Bme68xSPI(spiBus, chipSelectPort);
