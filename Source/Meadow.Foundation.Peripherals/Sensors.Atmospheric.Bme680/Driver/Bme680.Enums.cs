@@ -3,6 +3,25 @@
     public partial class Bme680
     {
         /// <summary>
+		/// Valid addresses for the sensor.
+		/// </summary>
+		public enum Addresses : byte
+        {
+            /// <summary>
+            /// Bus address 0x77
+            /// </summary>
+            Address_0x77 = 0x77,
+            /// <summary>
+            /// Bus address 0x76
+            /// </summary>
+            Address_0x76 = 0x76,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x77
+        }
+
+        /// <summary>
         /// 10 addressable heater profiles stored on the Bme680.
         /// </summary>
         public enum HeaterProfile : byte
