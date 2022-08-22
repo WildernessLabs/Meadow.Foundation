@@ -1,10 +1,9 @@
 ﻿using System;
 using Meadow.Hardware;
-using static Meadow.Foundation.Sensors.Atmospheric.Bme680;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    internal class Bme68xSPI : Bme680Comms
+    internal class Bme68xSPI : Bme68xComms
     {
         /// <summary>
         /// Register pages (for SPI only)

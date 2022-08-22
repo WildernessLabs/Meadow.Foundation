@@ -3,7 +3,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    internal class Bme68xI2C : Bme680Comms
+    internal class Bme68xI2C : Bme68xComms
     {
         protected I2cPeripheral i2CPeripheral;
 

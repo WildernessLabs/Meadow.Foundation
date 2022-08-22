@@ -47,6 +47,7 @@ namespace Sensors.Atmospheric.BME688_Sample
                     Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
                     Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
                     Console.WriteLine($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
+                    Console.WriteLine($"  Gas Resistance: {result.New.GasResistance:N2}Ohms");
                 };
             }
 
@@ -75,12 +76,13 @@ namespace Sensors.Atmospheric.BME688_Sample
         {
             if(sensor == null) { return; }
 
-            var (Temperature, Humidity, Pressure) = await sensor.Read();
+            var (Temperature, Humidity, Pressure, Resistance) = await sensor.Read();
 
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"  Temperature: {Temperature?.Celsius:N2}C");
             Console.WriteLine($"  Pressure: {Pressure?.Hectopascal:N2}hPa");
             Console.WriteLine($"  Relative Humidity: {Humidity?.Percent:N2}%");
+            Console.WriteLine($"  Gas Resistance: {Resistance?.Ohms:N2}Ohms");
         }
 
         //<!=SNOP=>

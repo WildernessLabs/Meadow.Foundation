@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
         /// selection to be made in the constructor.
         /// </remarks>
-        readonly Bme680Comms bme680Comms;
+        readonly Bme68xComms sensor;
 
         /// <summary>
         /// The current temperature
@@ -117,11 +117,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         internal Calibration calibration;
 
-        /// <summary>
-        /// The variable TemperatureFine carries a fine resolution temperature value over to the
-        /// pressure compensation formula and could be implemented as a global variable.
-        /// </summary>
-        protected double TemperatureFine { get; set; }
+        private double temperatureFine;
+
+        private static readonly byte[] s_osToMeasCycles = { 0, 1, 2, 4, 8, 16 };
+        private static readonly byte[] s_osToSwitchCount = { 0, 1, 1, 1, 1, 1 };
+        private static readonly double[] s_k1Lookup = { 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, -0.8, 0.0, 0.0, -0.2, -0.5, 0.0, -1.0, 0.0, 0.0 };
+        private static readonly double[] s_k2Lookup = { 0.0, 0.0, 0.0, 0.0, 0.1, 0.7, 0.0, -0.8, -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+
 
         /// <summary>
         /// Creates a new instance of the BME680 class
@@ -132,7 +134,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             configuration = new Configuration();
 
-            bme680Comms = new Bme68xI2C(i2cBus, address);
+            sensor = new Bme68xI2C(i2cBus, address);
 
             Initialize();
         }
@@ -156,12 +158,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="configuration">The BMP680 configuration (optional)</param>
         public Bme680(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration? configuration = null)
         {
-            bme680Comms = new Bme68xSPI(spiBus, chipSelectPort);
+            sensor = new Bme68xSPI(spiBus, chipSelectPort);
 
             this.configuration = (configuration == null) ? new Configuration() : configuration;
 
-            byte value = bme680Comms.ReadRegister((byte)Registers.STATUS);
-            bme680Comms.WriteRegister((byte)Registers.STATUS, value);
+            byte value = sensor.ReadRegister((byte)Registers.STATUS);
+            sensor.WriteRegister((byte)Registers.STATUS, value);
 
             Initialize();
         }
@@ -172,18 +174,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected void Initialize()
         {
             calibration = new Calibration();
-            calibration.LoadCalibrationDataFromSensor(bme680Comms);
+            calibration.LoadCalibrationDataFromSensor(sensor);
 
             // Init the temp and pressure registers
             // Clear the registers so they're in a known state.
             var status = (byte)((((byte)configuration.TemperatureOversample << 5) & 0xe0) |
                                     (((byte)configuration.PressureOversample << 2) & 0x1c));
 
-            bme680Comms.WriteRegister((byte)Registers.CTRL_MEAS, status);
+            sensor.WriteRegister((byte)Registers.CTRL_MEAS, status);
 
             // Init the humidity registers
             status = (byte)((byte)configuration.HumidityOversample & 0x07);
-            bme680Comms.WriteRegister((byte)Registers.CTRL_HUM, status);
+            sensor.WriteRegister((byte)Registers.CTRL_HUM, status);
         }
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> changeResult)
@@ -215,35 +217,40 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure, Resistance GasResistance) conditions;
 
                 // Read the current control register
-                var status = bme680Comms.ReadRegister((byte)Registers.CTRL_MEAS);
+                var status = sensor.ReadRegister((byte)Registers.CTRL_MEAS);
 
                 // Force a sample
                 status = BitHelpers.SetBit(status, 0x00, true);
 
-                bme680Comms.WriteRegister((byte)Registers.CTRL_MEAS, status);
+                sensor.WriteRegister((byte)Registers.CTRL_MEAS, status);
                 // Wait for the sample to be taken.
                 do
                 {
-                    status = bme680Comms.ReadRegister((byte)Registers.CTRL_MEAS);
+                    status = sensor.ReadRegister((byte)Registers.CTRL_MEAS);
                 } while (BitHelpers.GetBitValue(status, 0x00));
 
                 //read temperature
                 byte[] data = new byte[3];
-                bme680Comms.ReadRegister((byte)Registers.TEMPDATA, data);
+                sensor.ReadRegister((byte)Registers.TEMPDATA, data);
                 var rawTemperature = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
 
                 //read humidity
-                var rawHumidity = bme680Comms.ReadRegisterAsUShort((byte)Registers.HUMIDITYDATA, ByteOrder.BigEndian);
+                var rawHumidity = sensor.ReadRegisterAsUShort((byte)Registers.HUMIDITYDATA, ByteOrder.BigEndian);
 
                 //read pressure
-                bme680Comms.ReadRegister((byte)Registers.PRESSUREDATA, data);
+                sensor.ReadRegister((byte)Registers.PRESSUREDATA, data);
                 var rawPressure = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
 
-                //read resistance
+                // Read 10 bit gas resistance value from registers
+                var gasResRaw = sensor.ReadRegister((byte)Registers.GAS_RES);
+                var gasRange = sensor.ReadRegister((byte)Registers.GAS_RANGE);
+                var gasRes = (ushort)((ushort)(gasResRaw << 2) + (byte)(gasRange >> 6));
+                gasRange &= 0x0F;
 
                 conditions.Temperature = CompensateTemperature(rawTemperature);
                 conditions.Pressure = CompensatePressure(rawPressure);
                 conditions.Humidity = CompensateHumidity(rawHumidity);
+                conditions.GasResistance = CalculateGasResistance(gasRes, gasRange);
 
                 return conditions;
             });
@@ -260,9 +267,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             double var2 = (rawTemperature / 131072.0) - (calibration.T1 / 8192.0);
             var2 *= var2 * calibration.T3 * 16;
 
-            TemperatureFine = var1 + var2;
+            temperatureFine = var1 + var2;
 
-            double temp = TemperatureFine / 5120.0;
+            double temp = temperatureFine / 5120.0;
             return new Units.Temperature(temp, TU.Celsius);
         }
 
@@ -273,7 +280,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>The measured pressure.</returns>
         private Pressure CompensatePressure(long adcPressure)
         {
-            var var1 = (TemperatureFine / 2.0) - 64000.0;
+            var var1 = (temperatureFine / 2.0) - 64000.0;
             var var2 = var1 * var1 * (calibration.P6 / 131072.0);
             var2 += (var1 * calibration.P5 * 2.0);
             var2 = (var2 / 4.0) + (calibration.P4 * 65536.0);
@@ -306,7 +313,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>The percentage relative humidity.</returns>
         private RelativeHumidity CompensateHumidity(int adcHumidity)
         {
-            var temperature = TemperatureFine / 5120.0;
+            var temperature = temperatureFine / 5120.0;
             var var1 = adcHumidity - ((calibration.H1 * 16.0) + ((calibration.H3 / 2.0) * temperature));
             var var2 = var1 * ((calibration.H2 / 262144.0) * (1.0 + ((calibration.H4 / 16384.0) * temperature)
                 + ((calibration.H5 / 1048576.0) * temperature * temperature)));
@@ -318,6 +325,21 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             humidity = Math.Min(humidity, 100.0);
 
             return new RelativeHumidity(humidity, HU.Percent);
+        }
+
+        Resistance CalculateGasResistance(ushort adcGasRes, byte gasRange)
+        {
+            if (calibration is null)
+            {
+                throw new Exception($"{nameof(Bme680)} is incorrectly configured.");
+            }
+
+            var var1 = 1340.0 + 5.0 * calibration.RangeSwErr;
+            var var2 = var1 * (1.0 + s_k1Lookup[gasRange] / 100.0);
+            var var3 = 1.0 + s_k2Lookup[gasRange] / 100.0;
+            var gasResistance = 1.0 / (var3 * 0.000000125 * (1 << gasRange) * ((adcGasRes - 512.0) / var2 + 1.0));
+
+            return new Resistance(gasResistance, Resistance.UnitType.Ohms);
         }
     }
 }

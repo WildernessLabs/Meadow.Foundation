@@ -41,7 +41,7 @@
             public sbyte ResHeatVal { get; set; }
             public sbyte RangeSwErr { get; set; }
 
-            public void LoadCalibrationDataFromSensor(Bme680Comms sensor)
+            public void LoadCalibrationDataFromSensor(Bme68xComms sensor)
             {
                 // Read temperature calibration data.
                 T1 = sensor.ReadRegisterAsUShort((byte)Registers.T1);

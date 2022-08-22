@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    internal abstract class Bme680Comms
+    internal abstract class Bme68xComms
     {
         public abstract void WriteRegister(byte address, byte value);
         
