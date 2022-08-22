@@ -37,17 +37,29 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The temperature oversampling mode
         /// </summary>
-        public Oversample TemperatureOversampleMode { get; set; } = Oversample.OversampleX8;
+        public Oversample TemperatureOversampleMode
+        {
+            get => configuration.TemperatureOversample;
+            set => configuration.TemperatureOversample = value;
+        }
        
         /// <summary>
         /// The pressure oversampling mode
         /// </summary>
-        public Oversample PressureOversampleMode { get; set; } = Oversample.OversampleX8;
-        
+        public Oversample PressureOversampleMode
+        {
+            get => configuration.PressureOversample;
+            set => configuration.PressureOversample = value;
+        }
+
         /// <summary>
         /// The humidity oversampling mode
         /// </summary>
-        public Oversample HumidityOversampleMode { get; set; } = Oversample.OversampleX8;
+        public Oversample HumidityOversampleMode
+        {
+            get => configuration.HumidityOversample;
+            set => configuration.HumidityOversample = value;
+        }
 
         /// <summary>
         /// Communication bus used to read and write to the BME280 sensor.
@@ -86,8 +98,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
-        private Memory<byte> readBuffer = new byte[32];
-        private Memory<byte> writeBuffer = new byte[32];
+        private readonly Memory<byte> readBuffer = new byte[32];
+        private readonly Memory<byte> writeBuffer = new byte[32];
 
         private readonly Configuration configuration;
 
@@ -98,8 +110,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="address">I2C address of the sensor.</param>
         public Bme680(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
-			bme680Comms = new Bme68xI2C(i2cBus, address);
-            configuration = new Configuration(); // here to avoid the warning
+            configuration = new Configuration();
+
+            bme680Comms = new Bme68xI2C(i2cBus, address);
+            
 			Initialize();
         }
 
@@ -124,20 +138,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             bme680Comms = new Bme68xSPI(spiBus, chipSelectPort);
 
-            if(configuration != null)
-            {
-                this.configuration = configuration;
-            }
-            else
-            {
-                this.configuration = new Configuration();
-            }
+            this.configuration = (configuration == null) ? new Configuration() : configuration;
 
-            //https://github.com/Zanduino/BME680/blob/master/src/Zanshin_BME680.cpp
             byte value = bme680Comms.ReadRegister(Registers.Status.Address);
             bme680Comms.WriteRegister(Registers.Status.Address, value);
-
-            Console.WriteLine($"Chip ID: {bme680Comms.ReadRegister(0x61)}");
 
             Initialize();
         }

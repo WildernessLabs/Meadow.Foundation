@@ -55,12 +55,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             spiPeripheral.ReadRegister(startRegister, readBuffer);
 
             return;
-
-            // skip past the byte where we clocked out the register address
-            for (int i = 1; i < readBuffer.Length; i++) 
-            {
-                readBuffer[i - 1] = readBuffer[i];
-            }
         }
 
         public override void WriteRegister(byte register, byte value)
