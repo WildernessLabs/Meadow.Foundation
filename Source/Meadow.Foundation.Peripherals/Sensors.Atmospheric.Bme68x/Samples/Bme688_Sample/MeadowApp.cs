@@ -16,8 +16,8 @@ namespace Sensors.Atmospheric.BME688_Sample
         {
             Console.WriteLine("Initializing...");
 
-            CreateSpiSensor();
-            //CreateI2CSensor();
+            //CreateSpiSensor();
+            CreateI2CSensor();
 
             var consumer = Bme688.CreateObserver(
                 handler: result =>

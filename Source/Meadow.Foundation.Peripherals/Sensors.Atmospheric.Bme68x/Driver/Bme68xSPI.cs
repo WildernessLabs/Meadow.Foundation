@@ -1,5 +1,6 @@
 ﻿using System;
 using Meadow.Hardware;
+using static Meadow.Foundation.Sensors.Atmospheric.Bme680;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -35,14 +36,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             spiPeripheral = new SpiPeripheral(spi, chipSelect, 32, 32);
         }
 
-        public override byte ReadRegister(byte register)
+        public override byte ReadRegister(byte address)
         {
-            SetPageForRegister(register);
+            SetPageForRegister(address);
 
             //adjust register for paging
-            if (register > 0x7F) { register -= 0x7F; }
+            if (address > 0x7F) { address -= 0x7F; }
 
-            return spiPeripheral.ReadRegister(register);
+            return spiPeripheral.ReadRegister(address);
+        }
+
+        public override ushort ReadRegisterAsUShort(byte address, ByteOrder order = ByteOrder.LittleEndian)
+        {
+            SetPageForRegister(address);
+
+            //adjust register for paging
+            if (address > 0x7F) { address -= 0x7F; }
+
+            return spiPeripheral.ReadRegisterAsUShort(address, order);
         }
 
         public override void ReadRegister(byte startRegister, Span<byte> readBuffer)

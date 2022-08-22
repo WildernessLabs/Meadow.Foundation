@@ -11,12 +11,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             i2CPeripheral = new I2cPeripheral(i2c, busAddress);
         }
+                    
+        public override byte ReadRegister(byte address) => i2CPeripheral.ReadRegister(address);
 
-        public override byte ReadRegister(byte register) => i2CPeripheral.ReadRegister(register);
+        public override ushort ReadRegisterAsUShort(byte address, ByteOrder order = ByteOrder.LittleEndian) => i2CPeripheral.ReadRegisterAsUShort(address, order);
 
-        public override void ReadRegister(byte register, Span<byte> readBuffer)
+        public override void ReadRegister(byte address, Span<byte> readBuffer)
         {
-            i2CPeripheral.ReadRegister(register, readBuffer);
+            i2CPeripheral.ReadRegister(address, readBuffer);
         }
 
         public override void WriteRegister(byte register, byte value)

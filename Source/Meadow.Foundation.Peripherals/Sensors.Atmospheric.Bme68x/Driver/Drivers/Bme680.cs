@@ -3,12 +3,10 @@ using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using Meadow.Utilities;
 using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
-
-using System.Buffers;
-using Meadow.Utilities;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -16,7 +14,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Represents the Bosch BME680 Temperature, Pressure and Humidity Sensor.
     /// </summary>
     public partial class Bme680:
-        SamplingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
+        SamplingSensorBase<(Units.Temperature? Temperature, 
+                            RelativeHumidity? Humidity, 
+                            Pressure? Pressure, 
+                            Resistance? GasResistance)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         /// <summary>
@@ -33,6 +34,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Raised when the humidity value changes
         /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the gas resistance value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Resistance>> GasResistanceUpdated = delegate { };
 
         /// <summary>
         /// The temperature oversampling mode
@@ -96,10 +102,26 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
+        /// <summary>
+        /// The current gas resistance
+        /// </summary>
+        public Resistance? GetResistance => Conditions.GasResistance;
+
         readonly Memory<byte> readBuffer = new byte[32];
         readonly Memory<byte> writeBuffer = new byte[32];
 
         readonly Configuration configuration;
+
+        /// <summary>
+        /// Calibration data for the sensor
+        /// </summary>
+        internal Calibration calibration;
+
+        /// <summary>
+        /// The variable TemperatureFine carries a fine resolution temperature value over to the
+        /// pressure compensation formula and could be implemented as a global variable.
+        /// </summary>
+        protected double TemperatureFine { get; set; }
 
         /// <summary>
         /// Creates a new instance of the BME680 class
@@ -111,8 +133,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             configuration = new Configuration();
 
             bme680Comms = new Bme68xI2C(i2cBus, address);
-            
-			Initialize();
+
+            Initialize();
         }
 
         /// <summary>
@@ -138,8 +160,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             this.configuration = (configuration == null) ? new Configuration() : configuration;
 
-            byte value = bme680Comms.ReadRegister(Registers.Status.Address);
-            bme680Comms.WriteRegister(Registers.Status.Address, value);
+            byte value = bme680Comms.ReadRegister((byte)Registers.STATUS);
+            bme680Comms.WriteRegister((byte)Registers.STATUS, value);
 
             Initialize();
         }
@@ -149,34 +171,22 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected void Initialize()
         {
+            calibration = new Calibration();
+            calibration.LoadCalibrationDataFromSensor(bme680Comms);
+
             // Init the temp and pressure registers
             // Clear the registers so they're in a known state.
             var status = (byte)((((byte)configuration.TemperatureOversample << 5) & 0xe0) |
                                     (((byte)configuration.PressureOversample << 2) & 0x1c));
 
-            bme680Comms.WriteRegister(Registers.ControlTemperatureAndPressure.Address, status);
+            bme680Comms.WriteRegister((byte)Registers.CTRL_MEAS, status);
 
             // Init the humidity registers
             status = (byte)((byte)configuration.HumidityOversample & 0x07);
-            bme680Comms.WriteRegister(Registers.ControlHumidity.Address, status);
-
-            SetGasHeater(new Units.Temperature(320, Units.Temperature.UnitType.Celsius), TimeSpan.FromMilliseconds(150));
+            bme680Comms.WriteRegister((byte)Registers.CTRL_HUM, status);
         }
 
-        void SetGasHeater(Units.Temperature temperature, TimeSpan heaterTime)
-        {
-            if(heaterTime == TimeSpan.Zero)
-            {
-                //turn off 
-            }
-            else
-            {
-                bme680Comms.WriteRegister(0x59, (byte)heaterTime.TotalMilliseconds);
-            }
-
-        }
-
-        protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp) {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
@@ -187,10 +197,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             if (changeResult.New.Pressure is { } pressure) {
                 PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
             }
+            if (changeResult.New.GasResistance is { } gasResistance)
+            {
+                GasResistanceUpdated?.Invoke(this, new ChangeResult<Units.Resistance>(gasResistance, changeResult.Old?.GasResistance));
+            }
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
+        protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> ReadSensor()
         {
             configuration.TemperatureOversample = TemperatureOversampleMode;
             configuration.PressureOversample = PressureOversampleMode;
@@ -198,140 +212,112 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             return await Task.Run(() =>
             {
-                (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
+                (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure, Resistance GasResistance) conditions;
 
                 // Read the current control register
-                var status = bme680Comms.ReadRegister(Registers.ControlTemperatureAndPressure.Address);
+                var status = bme680Comms.ReadRegister((byte)Registers.CTRL_MEAS);
 
                 // Force a sample
                 status = BitHelpers.SetBit(status, 0x00, true);
 
-                bme680Comms.WriteRegister(Registers.ControlTemperatureAndPressure.Address, status);
+                bme680Comms.WriteRegister((byte)Registers.CTRL_MEAS, status);
                 // Wait for the sample to be taken.
                 do
                 {
-                    status = bme680Comms.ReadRegister(Registers.ControlTemperatureAndPressure.Address);
+                    status = bme680Comms.ReadRegister((byte)Registers.CTRL_MEAS);
                 } while (BitHelpers.GetBitValue(status, 0x00));
 
-                var sensorData = readBuffer.Span[0..Registers.AllSensors.Length];
-                bme680Comms.ReadRegister(Registers.AllSensors.Address, sensorData);
+                //read temperature
+                byte[] data = new byte[3];
+                bme680Comms.ReadRegister((byte)Registers.TEMPDATA, data);
+                var rawTemperature = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
 
-                var rawPressure = GetRawValue(sensorData.Slice(0, 3));
-                var rawTemperature = GetRawValue(sensorData.Slice(3, 3));
-                var rawHumidity = GetRawValue(sensorData.Slice(6, 2));
-                //var rawVoc = GetRawValue(sensorData.Slice(8, 2));
+                //read humidity
+                var rawHumidity = bme680Comms.ReadRegisterAsUShort((byte)Registers.HUMIDITYDATA, ByteOrder.BigEndian);
 
-                bme680Comms.ReadRegister(Registers.CompensationData1.Address, readBuffer.Span[0..Registers.CompensationData1.Length]);
-                var compensationData1 = readBuffer.Span[0..Registers.CompensationData1.Length].ToArray();
+                //read pressure
+                bme680Comms.ReadRegister((byte)Registers.PRESSUREDATA, data);
+                var rawPressure = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
 
-                bme680Comms.ReadRegister(Registers.CompensationData2.Address, readBuffer.Span[0..Registers.CompensationData2.Length]);
-                var compensationData2 = readBuffer.Span[0..Registers.CompensationData2.Length].ToArray();
+                //read resistance
 
-                var compensationData = ArrayPool<byte>.Shared.Rent(64);
-                try
-                {
-                    Array.Copy(compensationData1, 0, compensationData, 0, compensationData1.Length);
-                    Array.Copy(compensationData2, 0, compensationData, 25, compensationData2.Length);
-
-                    var temp = RawToTemperature(rawTemperature,
-                        new TemperatureCompensation(compensationData));
-
-                    var pressure = RawToPressure(temp, rawPressure,
-                        new PressureCompensation(compensationData));
-                    var humidity = RawToHumidity(temp, rawHumidity,
-                        new HumidityCompensation(compensationData));
-
-                    conditions.Temperature = new Units.Temperature(temp, TU.Celsius);
-                    conditions.Pressure = new Pressure(pressure, PU.Pascal);
-                    conditions.Humidity = new RelativeHumidity(humidity, HU.Percent);
-                }
-                finally
-                {
-                    ArrayPool<byte>.Shared.Return(compensationData, true);
-                }
+                conditions.Temperature = CompensateTemperature(rawTemperature);
+                conditions.Pressure = CompensatePressure(rawPressure);
+                conditions.Humidity = CompensateHumidity(rawHumidity);
 
                 return conditions;
             });
         }
 
-        static int GetRawValue(Span<byte> data)
+        /// <summary>
+        /// Compensates the temperature
+        /// </summary>
+        /// <param name="rawTemperature">The temperature value read from the device</param>
+        /// <returns>The temperature</returns>
+        protected Units.Temperature CompensateTemperature(int rawTemperature)
         {
-            if (data.Length == 3)
-            {
-                return (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
-            }
-            if (data.Length == 2)
-            {
-                return (data[0] << 8) | data[1];
-            }
-            return 0;
-        }
-        
-        static double RawToTemperature(int adcTemperature, TemperatureCompensation temperatureCompensation)
-        {   //value is in celcius
-            var var1 = ((adcTemperature / 16384.0) - (temperatureCompensation.T1 / 1024.0)) * temperatureCompensation.T2;
-            var var2 = (adcTemperature / 131072) - (temperatureCompensation.T1 / 8192.0);
-            var var3 = var2 * ((adcTemperature / 131072.0) - (temperatureCompensation.T1 / 8192.0));
-            var var4 = var3 * temperatureCompensation.T3 * 16.0;
-            var tFine = var1 + var4;
-            return tFine / 5120.0;
+            double var1 = ((rawTemperature / 16384.0) - (calibration.T1 / 1024.0)) * calibration.T2;
+            double var2 = (rawTemperature / 131072.0) - (calibration.T1 / 8192.0);
+            var2 *= var2 * calibration.T3 * 16;
+
+            TemperatureFine = var1 + var2;
+
+            double temp = TemperatureFine / 5120.0;
+            return new Units.Temperature(temp, TU.Celsius);
         }
 
-        static double RawToPressure(double temperature, int adcPressure, PressureCompensation pressureCompensation)
+        /// <summary>
+        /// Compensates the pressure.
+        /// </summary>
+        /// <param name="adcPressure">The pressure value read from the device.</param>
+        /// <returns>The measured pressure.</returns>
+        private Pressure CompensatePressure(long adcPressure)
         {
-            double var1;
-            double var2;
-            double var3;
-            double calc_pres;
+            var var1 = (TemperatureFine / 2.0) - 64000.0;
+            var var2 = var1 * var1 * (calibration.P6 / 131072.0);
+            var2 += (var1 * calibration.P5 * 2.0);
+            var2 = (var2 / 4.0) + (calibration.P4 * 65536.0);
+            var1 = ((calibration.P3 * var1 * var1 / 16384.0) + (calibration.P2 * var1)) / 524288.0;
+            var1 = (1.0 + (var1 / 32768.0)) * calibration.P1;
+            var pressure = 1048576.0 - adcPressure;
 
-            var PC = pressureCompensation;
-
-            var tFine = temperature * 5120;
-
-            var1 = (tFine / 2.0) - 64000.0;
-            var2 = var1 * var1 * (PC.P6 / 131072.0);
-            var2 += var1 * PC.P5 * 2.0;
-            var2 = (var2 / 4.0) + (PC.P4 * 65536.0);
-            var1 = ((PC.P3 * var1 * var1 / 16384.0) + (PC.P2 * var1)) / 524288.0;
-            var1 = (1.0f + (var1 / 32768.0)) * (PC.P1);
-            calc_pres = (1048576.0 - adcPressure);
-
-            /* Avoid exception caused by division by zero */
-            if ((int)var1 != 0)
+            // Avoid divide by zero exception
+            if (var1 != 0)
             {
-                calc_pres = (calc_pres - (var2 / 4096.0)) * 6250.0 / var1;
-                var1 = PC.P9 * calc_pres * calc_pres / 2147483648.0f;
-                var2 = calc_pres * ((PC.P8) / 32768.0);
-                var3 = calc_pres / 256.0 * (calc_pres / 256.0) * (calc_pres / 256.0) * (PC.P10 / 131072.0);
-                calc_pres += (var1 + var2 + var3 + (PC.P7 * 128.0)) / 16.0;
+                pressure = (pressure - (var2 / 4096.0)) * 6250.0 / var1;
+                var1 = calibration.P9 * pressure * pressure / 2147483648.0;
+                var2 = pressure * (calibration.P8 / 32768.0);
+                var var3 = (pressure / 256.0) * (pressure / 256.0) * (pressure / 256.0)
+                    * (calibration.P10 / 131072.0);
+                pressure += (var1 + var2 + var3 + (calibration.P7 * 128.0)) / 16.0;
             }
             else
             {
-                calc_pres = 0;
+                pressure = 0;
             }
 
-            return calc_pres;
+            return new Pressure(pressure, PU.Pascal);
         }
 
-        static double RawToHumidity(double ambientTemperature, int adcHumidity, HumidityCompensation humidityCompensation)
+        /// <summary>
+        /// Compensates the humidity.
+        /// </summary>
+        /// <param name="adcHumidity">The humidity value read from the device.</param>
+        /// <returns>The percentage relative humidity.</returns>
+        private RelativeHumidity CompensateHumidity(int adcHumidity)
         {
-            var var1 = adcHumidity - ((humidityCompensation.H1 * 16.0) + ((humidityCompensation.H3 / 2.0) * ambientTemperature));
-            var var2 = var1 * (humidityCompensation.H2 / 262144.0 * (1.0 + (humidityCompensation.H4 / 16384.0 * ambientTemperature) + (humidityCompensation.H5 / 1048576.0 * ambientTemperature * ambientTemperature)));
-            var var3 = humidityCompensation.H6 / 16384.0;
-            var var4 = humidityCompensation.H7 / 2097152.0;
-            return var2 + (var3 + var4 * ambientTemperature) * var2 * var2;
+            var temperature = TemperatureFine / 5120.0;
+            var var1 = adcHumidity - ((calibration.H1 * 16.0) + ((calibration.H3 / 2.0) * temperature));
+            var var2 = var1 * ((calibration.H2 / 262144.0) * (1.0 + ((calibration.H4 / 16384.0) * temperature)
+                + ((calibration.H5 / 1048576.0) * temperature * temperature)));
+            var var3 = calibration.H6 / 16384.0;
+            var var4 = calibration.H7 / 2097152.0;
+            var humidity = var2 + ((var3 + (var4 * temperature)) * var2 * var2);
+
+            humidity = Math.Max(humidity, 0);
+            humidity = Math.Min(humidity, 100.0);
+
+            return new RelativeHumidity(humidity, HU.Percent);
         }
-
-        /*
-        double CalculateHeaterRegisterCode(Units.Temperature targetTemperature, double ambientTemperature, GasHeaterCompensation heaterCompensation)
-        {
-            var var1 = heaterCompensation.Gh1 / 16.0 + 49.0;
-            var var2 = heaterCompensation.Gh2 / 32768.0 * 0.0005 + 0.00235;
-            var var3 = heaterCompensation.Gh3 / 1024.0;
-            var var4 = var1 * (1.0 + (var2 * targetTemperature.Celsius));
-            var var5 = var4 + var3 * ambientTemperature;
-
-            var resHeatX = (byte)(3.4 * ((var5 * 4.0 / (4.0 + res))))
-        }*/
     }
 }
