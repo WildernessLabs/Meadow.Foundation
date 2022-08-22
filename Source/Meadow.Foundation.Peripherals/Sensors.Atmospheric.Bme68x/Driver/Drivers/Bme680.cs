@@ -7,6 +7,7 @@ using Meadow.Utilities;
 using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
+using System.Collections.Generic;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -67,16 +68,91 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             set => configuration.HumidityOversample = value;
         }
 
+        /// <summary>
+        /// Gets or sets the heater profile to be used for measurements.
+        /// Current heater profile is only set if the chosen profile is configured.
+        /// </summary>
         public HeaterProfileType HeaterProfile
         {
             get => heaterProfile;
             set
             {
+                if (heaterConfigs.Exists(config => config.HeaterProfile == value))
+                {
+                    if (!Enum.IsDefined(typeof(HeaterProfileType), value))
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(value));
+                    }
 
+                    var profile = sensor.ReadRegister((byte)Registers.CTRL_GAS_1);
+                    profile = (byte)((profile & 0x0F) | (byte)value);
 
+                    sensor.WriteRegister((byte)Registers.CTRL_GAS_1, profile);
+
+                    heaterProfile = value;
+                }
             }
         }
         HeaterProfileType heaterProfile;
+
+        /// <summary>
+        /// Gets / sets the filtering mode to be used for measurements
+        /// </summary>
+        public FilteringMode FilterMode
+        {
+            get => filterMode;
+            set
+            {
+                if (!Enum.IsDefined(typeof(FilteringMode), value))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value));
+                }
+
+                var filter = sensor.ReadRegister((byte)Registers.CONFIG);
+                byte mask = 0x1C;
+                filter = (byte)((filter & (byte)~mask) | (byte)value << 2);
+
+                sensor.WriteRegister((byte)Registers.CONFIG, filter);
+                filterMode = value;
+            }
+        }
+        FilteringMode filterMode;
+
+        /// <summary>
+        /// Enable / disable the sensor heater
+        /// </summary>
+        public bool HeaterIsEnabled
+        {
+            get => heaterIsEnabled;
+            set
+            {
+                var heaterStatus = sensor.ReadRegister((byte)Registers.CTRL_GAS_0);
+                var mask = 0x08;
+                heaterStatus = (byte)((heaterStatus & (byte)~mask) | Convert.ToByte(!value) << 3);
+
+                sensor.WriteRegister((byte)Registers.CTRL_GAS_0, heaterStatus);
+                heaterIsEnabled = value;
+            }
+        }
+        bool heaterIsEnabled;
+
+        /// <summary>
+        /// Enable / disable gas conversions
+        /// </summary>
+        public bool GasConversionIsEnabled
+        {
+            get => gasConversionIsEnabled;
+            set
+            {
+                var gasConversion = sensor.ReadRegister((byte)Registers.CTRL_GAS_1);
+                byte mask = 0x10;
+                gasConversion = (byte)((gasConversion & (byte)~mask) | Convert.ToByte(value) << 4);
+
+                sensor.WriteRegister((byte)Registers.CTRL_GAS_1, gasConversion);
+                gasConversionIsEnabled = value;
+            }
+        }
+        bool gasConversionIsEnabled;
 
         /// <summary>
         /// Communication bus used to read and write to the BME280 sensor.
@@ -124,6 +200,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private static readonly double[] s_k1Lookup = { 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, -0.8, 0.0, 0.0, -0.2, -0.5, 0.0, -1.0, 0.0, 0.0 };
         private static readonly double[] s_k2Lookup = { 0.0, 0.0, 0.0, 0.0, 0.1, 0.7, 0.0, -0.8, -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
+        private readonly List<HeaterProfileConfiguration> heaterConfigs = new List<HeaterProfileConfiguration>();
 
         /// <summary>
         /// Creates a new instance of the BME680 class
@@ -340,6 +417,56 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             var gasResistance = 1.0 / (var3 * 0.000000125 * (1 << gasRange) * ((adcGasRes - 512.0) / var2 + 1.0));
 
             return new Resistance(gasResistance, Resistance.UnitType.Ohms);
+        }
+
+        byte CalculateHeaterResistance(Units.Temperature setTemp, Units.Temperature ambientTemp)
+        {
+            if (calibration is null)
+            {
+                throw new Exception($"{nameof(Bme680)} is incorrectly configured.");
+            }
+
+            // limit maximum temperature to 400°C
+            double temp = setTemp.Celsius;
+            if (temp > 400)
+            {
+                temp = 400;
+            }
+
+            var var1 = calibration.Gh1 / 16.0 + 49.0;
+            var var2 = calibration.Gh2 / 32768.0 * 0.0005 + 0.00235;
+            var var3 = calibration.Gh3 / 1024.0;
+            var var4 = var1 * (1.0 + var2 * temp);
+            var var5 = var4 + var3 * ambientTemp.Celsius;
+            var heaterResistance = (byte)(3.4 * (var5 * (4.0 / (4.0 + calibration.ResHeatRange)) * (1.0 / (1.0 + calibration.ResHeatVal * 0.002)) - 25));
+
+            return heaterResistance;
+        }
+
+        // The duration is interpreted as follows:
+        // Byte [7:6]: multiplication factor of 1, 4, 16 or 64
+        // Byte [5:0]: 64 timer values, 1ms step size, rounded down
+        byte CalculateHeaterDuration(TimeSpan duration)
+        {
+            byte factor = 0;
+            byte durationValue;
+
+            ushort shortDuration = (ushort)duration.Milliseconds;
+            // check if value exceeds maximum duration
+            if (shortDuration > 0xFC0)
+            {
+                durationValue = 0xFF;
+            }
+            else
+            {
+                while (shortDuration > 0x3F)
+                {
+                    shortDuration = (ushort)(shortDuration >> 2);
+                    factor += 1;
+                }
+                durationValue = (byte)(shortDuration + factor * 64);
+            }
+            return durationValue;
         }
     }
 }
