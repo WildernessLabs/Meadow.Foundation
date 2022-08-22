@@ -22,9 +22,9 @@
         }
 
         /// <summary>
-        /// 10 addressable heater profiles stored on the Bme680.
+        /// bbME68X heater profiles
         /// </summary>
-        public enum HeaterProfile : byte
+        public enum HeaterProfileType : byte
         {
             /// <summary>
             /// Heating Profile 1

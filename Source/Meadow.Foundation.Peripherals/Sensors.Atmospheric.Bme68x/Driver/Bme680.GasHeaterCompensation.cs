@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    public partial class Bme68x
+    public partial class Bme680
     {
         protected class GasHeaterCompensation
         {

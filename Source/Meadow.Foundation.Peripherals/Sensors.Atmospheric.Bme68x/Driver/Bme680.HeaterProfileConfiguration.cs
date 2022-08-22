@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             /// <summary>
             /// The chosen heater profile slot, ranging from 0-9
             /// </summary>
-            public HeaterProfile HeaterProfile { get; set; }
+            public HeaterProfileType HeaterProfile { get; set; }
             /// <summary>
             /// The heater resistance.
             /// </summary>
@@ -25,13 +25,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             /// <summary>
             /// 
             /// </summary>
-            /// <param name="profile">The used heater profile</param>
-            /// <param name="heaterResistance">The heater resistance in Ohm</param>
-            /// <param name="heaterDuration">The heating duration in ms</param>
+            /// <param name="profile">The heater profile</param>
+            /// <param name="heaterResistance">The heater resistance (Ohms)</param>
+            /// <param name="heaterDuration">The heating duration</param>
             /// <exception cref="ArgumentOutOfRangeException"></exception>
-            public HeaterProfileConfiguration(HeaterProfile profile, ushort heaterResistance, byte heaterDuration)
+            public HeaterProfileConfiguration(HeaterProfileType profile, ushort heaterResistance, byte heaterDuration)
             {
-                if (!Enum.IsDefined(typeof(HeaterProfile), profile))
+                if (!Enum.IsDefined(typeof(HeaterProfileType), profile))
                     throw new ArgumentOutOfRangeException();
 
                 HeaterProfile = profile;

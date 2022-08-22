@@ -61,6 +61,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             set => configuration.HumidityOversample = value;
         }
 
+        public HeaterProfileType HeaterProfile
+        {
+            get => heaterProfile;
+            set
+            {
+
+
+            }
+        }
+        HeaterProfileType heaterProfile;
+
         /// <summary>
         /// Communication bus used to read and write to the BME280 sensor.
         /// </summary>
@@ -68,20 +79,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
         /// selection to be made in the constructor.
         /// </remarks>
-        private readonly Bme680Comms bme680Comms;
-
-        /// <summary>
-        /// Temperature compensation data
-        /// </summary>
-        protected TemperatureCompensation? temperatureCompensation;
-        /// <summary>
-        /// Pressire compensation data
-        /// </summary>
-        protected PressureCompensation? pressureCompensation;
-        /// <summary>
-        /// Humidity compensation data
-        /// </summary>
-        protected HumidityCompensation? humidityCompensation;
+        readonly Bme680Comms bme680Comms;
 
         /// <summary>
         /// The current temperature
@@ -98,10 +96,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
-        private readonly Memory<byte> readBuffer = new byte[32];
-        private readonly Memory<byte> writeBuffer = new byte[32];
+        readonly Memory<byte> readBuffer = new byte[32];
+        readonly Memory<byte> writeBuffer = new byte[32];
 
-        private readonly Configuration configuration;
+        readonly Configuration configuration;
 
         /// <summary>
         /// Creates a new instance of the BME680 class
@@ -147,7 +145,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// 
+        /// Initialize the sensor
         /// </summary>
         protected void Initialize()
         {
@@ -161,6 +159,21 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // Init the humidity registers
             status = (byte)((byte)configuration.HumidityOversample & 0x07);
             bme680Comms.WriteRegister(Registers.ControlHumidity.Address, status);
+
+            SetGasHeater(new Units.Temperature(320, Units.Temperature.UnitType.Celsius), TimeSpan.FromMilliseconds(150));
+        }
+
+        void SetGasHeater(Units.Temperature temperature, TimeSpan heaterTime)
+        {
+            if(heaterTime == TimeSpan.Zero)
+            {
+                //turn off 
+            }
+            else
+            {
+                bme680Comms.WriteRegister(0x59, (byte)heaterTime.TotalMilliseconds);
+            }
+
         }
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
@@ -241,7 +254,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             });
         }
 
-        private static int GetRawValue(Span<byte> data)
+        static int GetRawValue(Span<byte> data)
         {
             if (data.Length == 3)
             {
@@ -254,7 +267,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return 0;
         }
         
-        private static double RawToTemperature(int adcTemperature, TemperatureCompensation temperatureCompensation)
+        static double RawToTemperature(int adcTemperature, TemperatureCompensation temperatureCompensation)
         {   //value is in celcius
             var var1 = ((adcTemperature / 16384.0) - (temperatureCompensation.T1 / 1024.0)) * temperatureCompensation.T2;
             var var2 = (adcTemperature / 131072) - (temperatureCompensation.T1 / 8192.0);
@@ -264,7 +277,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return tFine / 5120.0;
         }
 
-        private static double RawToPressure(double temperature, int adcPressure, PressureCompensation pressureCompensation)
+        static double RawToPressure(double temperature, int adcPressure, PressureCompensation pressureCompensation)
         {
             double var1;
             double var2;
@@ -300,13 +313,25 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return calc_pres;
         }
 
-        private static double RawToHumidity(double temp, int adcHumidity, HumidityCompensation humidityCompensation)
+        static double RawToHumidity(double ambientTemperature, int adcHumidity, HumidityCompensation humidityCompensation)
         {
-            var var1 = adcHumidity - ((humidityCompensation.H1 * 16.0) + ((humidityCompensation.H3 / 2.0) * temp));
-            var var2 = var1 * ((humidityCompensation.H2 / 262144.0) * (1.0 + ((humidityCompensation.H4 / 16384.0) * temp) + ((humidityCompensation.H5 / 1048576.0) * temp * temp)));
+            var var1 = adcHumidity - ((humidityCompensation.H1 * 16.0) + ((humidityCompensation.H3 / 2.0) * ambientTemperature));
+            var var2 = var1 * (humidityCompensation.H2 / 262144.0 * (1.0 + (humidityCompensation.H4 / 16384.0 * ambientTemperature) + (humidityCompensation.H5 / 1048576.0 * ambientTemperature * ambientTemperature)));
             var var3 = humidityCompensation.H6 / 16384.0;
             var var4 = humidityCompensation.H7 / 2097152.0;
-            return var2 + (var3 + var4 * temp) * var2 * var2;
+            return var2 + (var3 + var4 * ambientTemperature) * var2 * var2;
         }
+
+        /*
+        double CalculateHeaterRegisterCode(Units.Temperature targetTemperature, double ambientTemperature, GasHeaterCompensation heaterCompensation)
+        {
+            var var1 = heaterCompensation.Gh1 / 16.0 + 49.0;
+            var var2 = heaterCompensation.Gh2 / 32768.0 * 0.0005 + 0.00235;
+            var var3 = heaterCompensation.Gh3 / 1024.0;
+            var var4 = var1 * (1.0 + (var2 * targetTemperature.Celsius));
+            var var5 = var4 + var3 * ambientTemperature;
+
+            var resHeatX = (byte)(3.4 * ((var5 * 4.0 / (4.0 + res))))
+        }*/
     }
 }
