@@ -9,10 +9,10 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Bme68x</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, Atmospheric, BME680, BME688</PackageTags>
+    <PackageTags>Meadow.Foundation,Atmospheric,BME680,BME688,temperature,pressure,humidity,gas,VOC</PackageTags>
     <Version>0.1.7</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Bosch BME68x I2C humidity, barometric pressure, ambient temperature and gas (VOC) sensor</Description>
+    <Description>Bosch BME68x SPI / I2C humidity, barometric pressure, ambient temperature and gas (VOC) sensor</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>

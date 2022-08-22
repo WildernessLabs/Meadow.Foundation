@@ -13,31 +13,41 @@ using Meadow.Utilities;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// BME680 Temperature, Pressure and Humidity Sensor.
-    /// This driver is functional but not complete.
+    /// Represents the Bosch BME680 Temperature, Pressure and Humidity Sensor.
     /// </summary>
-    /// <remarks>
-    /// This class implements the functionality necessary to read the temperature, pressure and humidity
-    /// from the Bosch BME680 sensor.
-    /// </remarks>
     public partial class Bme680:
         SamplingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
-        //==== events
-         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        /// <summary>
+        /// Raised when the temperature value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+       
+        /// <summary>
+        /// Raised when the pressure value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+       
+        /// <summary>
+        /// Raised when the humidity value changes
+        /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
-        //==== internals
-        protected Memory<byte> readBuffer = new byte[32];
-        protected Memory<byte> writeBuffer = new byte[32];
-
-        //==== properties
-        public Oversample TemperatureSampleCount { get; set; } = Oversample.OversampleX8;
-        public Oversample PressureSampleCount { get; set; } = Oversample.OversampleX8;
-        public Oversample HumiditySampleCount { get; set; } = Oversample.OversampleX8;
-        private readonly Configuration configuration;
+        /// <summary>
+        /// The temperature oversampling mode
+        /// </summary>
+        public Oversample TemperatureOversampleMode { get; set; } = Oversample.OversampleX8;
+       
+        /// <summary>
+        /// The pressure oversampling mode
+        /// </summary>
+        public Oversample PressureOversampleMode { get; set; } = Oversample.OversampleX8;
+        
+        /// <summary>
+        /// The humidity oversampling mode
+        /// </summary>
+        public Oversample HumidityOversampleMode { get; set; } = Oversample.OversampleX8;
 
         /// <summary>
         /// Communication bus used to read and write to the BME280 sensor.
@@ -61,7 +71,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected HumidityCompensation? humidityCompensation;
 
-
         /// <summary>
         /// The current temperature
         /// </summary>
@@ -76,6 +85,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// The current humidity, in percent relative humidity
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
+
+        private Memory<byte> readBuffer = new byte[32];
+        private Memory<byte> writeBuffer = new byte[32];
+
+        private readonly Configuration configuration;
 
         /// <summary>
         /// Creates a new instance of the BME680 class
@@ -119,12 +133,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 this.configuration = new Configuration();
             }
 
-            Console.WriteLine("Status read/write");
-
             //https://github.com/Zanduino/BME680/blob/master/src/Zanshin_BME680.cpp
-            bme680Comms.WriteRegister(0x73, bme680Comms.ReadRegister(0x73));
+            byte value = bme680Comms.ReadRegister(Registers.Status.Address);
+            bme680Comms.WriteRegister(Registers.Status.Address, value);
 
-            Console.WriteLine("Initialize");
+            Console.WriteLine($"Chip ID: {bme680Comms.ReadRegister(0x61)}");
 
             Initialize();
         }
@@ -139,11 +152,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             var status = (byte)((((byte)configuration.TemperatureOversample << 5) & 0xe0) |
                                     (((byte)configuration.PressureOversample << 2) & 0x1c));
 
-            bme680Comms.WriteRegister(RegisterAddresses.ControlTemperatureAndPressure.Address, status);
+            bme680Comms.WriteRegister(Registers.ControlTemperatureAndPressure.Address, status);
 
             // Init the humidity registers
             status = (byte)((byte)configuration.HumidityOversample & 0x07);
-            bme680Comms.WriteRegister(RegisterAddresses.ControlHumidity.Address, status);
+            bme680Comms.WriteRegister(Registers.ControlHumidity.Address, status);
         }
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
@@ -162,40 +175,40 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
         {
-            configuration.TemperatureOversample = TemperatureSampleCount;
-            configuration.PressureOversample = PressureSampleCount;
-            configuration.HumidityOversample = HumiditySampleCount;
+            configuration.TemperatureOversample = TemperatureOversampleMode;
+            configuration.PressureOversample = PressureOversampleMode;
+            configuration.HumidityOversample = HumidityOversampleMode;
 
             return await Task.Run(() =>
             {
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
 
                 // Read the current control register
-                var status = bme680Comms.ReadRegister(RegisterAddresses.ControlTemperatureAndPressure.Address);
+                var status = bme680Comms.ReadRegister(Registers.ControlTemperatureAndPressure.Address);
 
                 // Force a sample
                 status = BitHelpers.SetBit(status, 0x00, true);
 
-                bme680Comms.WriteRegister(RegisterAddresses.ControlTemperatureAndPressure.Address, status);
+                bme680Comms.WriteRegister(Registers.ControlTemperatureAndPressure.Address, status);
                 // Wait for the sample to be taken.
                 do
                 {
-                    status = bme680Comms.ReadRegister(RegisterAddresses.ControlTemperatureAndPressure.Address);
+                    status = bme680Comms.ReadRegister(Registers.ControlTemperatureAndPressure.Address);
                 } while (BitHelpers.GetBitValue(status, 0x00));
 
-                var sensorData = readBuffer.Span[0..RegisterAddresses.AllSensors.Length];
-                bme680Comms.ReadRegister(RegisterAddresses.AllSensors.Address, sensorData);
+                var sensorData = readBuffer.Span[0..Registers.AllSensors.Length];
+                bme680Comms.ReadRegister(Registers.AllSensors.Address, sensorData);
 
                 var rawPressure = GetRawValue(sensorData.Slice(0, 3));
                 var rawTemperature = GetRawValue(sensorData.Slice(3, 3));
                 var rawHumidity = GetRawValue(sensorData.Slice(6, 2));
                 //var rawVoc = GetRawValue(sensorData.Slice(8, 2));
 
-                bme680Comms.ReadRegister(RegisterAddresses.CompensationData1.Address, readBuffer.Span[0..RegisterAddresses.CompensationData1.Length]);
-                var compensationData1 = readBuffer.Span[0..RegisterAddresses.CompensationData1.Length].ToArray();
+                bme680Comms.ReadRegister(Registers.CompensationData1.Address, readBuffer.Span[0..Registers.CompensationData1.Length]);
+                var compensationData1 = readBuffer.Span[0..Registers.CompensationData1.Length].ToArray();
 
-                bme680Comms.ReadRegister(RegisterAddresses.CompensationData2.Address, readBuffer.Span[0..RegisterAddresses.CompensationData2.Length]);
-                var compensationData2 = readBuffer.Span[0..RegisterAddresses.CompensationData2.Length].ToArray();
+                bme680Comms.ReadRegister(Registers.CompensationData2.Address, readBuffer.Span[0..Registers.CompensationData2.Length]);
+                var compensationData2 = readBuffer.Span[0..Registers.CompensationData2.Length].ToArray();
 
                 var compensationData = ArrayPool<byte>.Shared.Rent(64);
                 try
@@ -239,11 +252,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         
         private static double RawToTemperature(int adcTemperature, TemperatureCompensation temperatureCompensation)
         {   //value is in celcius
-            var var1 = ((adcTemperature / 16384.0) - (temperatureCompensation.T1 / 1024.0)) *
-                       temperatureCompensation.T2;
-            var var2 = ((adcTemperature / 131072) - (temperatureCompensation.T1 / 8192.0));
+            var var1 = ((adcTemperature / 16384.0) - (temperatureCompensation.T1 / 1024.0)) * temperatureCompensation.T2;
+            var var2 = (adcTemperature / 131072) - (temperatureCompensation.T1 / 8192.0);
             var var3 = var2 * ((adcTemperature / 131072.0) - (temperatureCompensation.T1 / 8192.0));
-            var var4 = var3 * (temperatureCompensation.T3 * 16.0);
+            var var4 = var3 * temperatureCompensation.T3 * 16.0;
             var tFine = var1 + var4;
             return tFine / 5120.0;
         }
@@ -259,19 +271,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             var tFine = temperature * 5120;
 
-            var1 = ((tFine / 2.0) - 64000.0);
-            var2 = var1 * var1 * ((PC.P6) / (131072.0));
-            var2 = var2 + (var1 * (PC.P5) * 2.0);
-            var2 = (var2 / 4.0) + ((PC.P4) * 65536.0);
-            var1 = ((((PC.P3 * var1 * var1) / 16384.0) + (PC.P2 * var1)) / 524288.0);
-            var1 = ((1.0f + (var1 / 32768.0)) * (PC.P1));
-            calc_pres = (1048576.0 - ((float)adcPressure));
+            var1 = (tFine / 2.0) - 64000.0;
+            var2 = var1 * var1 * (PC.P6 / 131072.0);
+            var2 += var1 * PC.P5 * 2.0;
+            var2 = (var2 / 4.0) + (PC.P4 * 65536.0);
+            var1 = ((PC.P3 * var1 * var1 / 16384.0) + (PC.P2 * var1)) / 524288.0;
+            var1 = (1.0f + (var1 / 32768.0)) * (PC.P1);
+            calc_pres = (1048576.0 - adcPressure);
 
             /* Avoid exception caused by division by zero */
             if ((int)var1 != 0)
             {
-                calc_pres = ((calc_pres - (var2 / 4096.0)) * 6250.0) / var1;
-                var1 = (PC.P9 * calc_pres * calc_pres) / 2147483648.0f;
+                calc_pres = (calc_pres - (var2 / 4096.0)) * 6250.0 / var1;
+                var1 = PC.P9 * calc_pres * calc_pres / 2147483648.0f;
                 var2 = calc_pres * ((PC.P8) / 32768.0);
                 var3 = calc_pres / 256.0 * (calc_pres / 256.0) * (calc_pres / 256.0) * (PC.P10 / 131072.0);
                 calc_pres += (var1 + var2 + var3 + (PC.P7 * 128.0)) / 16.0;
@@ -290,14 +302,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             var var2 = var1 * ((humidityCompensation.H2 / 262144.0) * (1.0 + ((humidityCompensation.H4 / 16384.0) * temp) + ((humidityCompensation.H5 / 1048576.0) * temp * temp)));
             var var3 = humidityCompensation.H6 / 16384.0;
             var var4 = humidityCompensation.H7 / 2097152.0;
-            return var2 + ((var3 + (var4 * temp)) * var2 * var2);
+            return var2 + (var3 + var4 * temp) * var2 * var2;
         }
-
-        private Span<byte> ReadRegisters(Register register)
-        {
-            bme680Comms.ReadRegister(register.Address, readBuffer.Span[0..register.Length]);
-            return readBuffer.Slice(0, register.Length).Span;
-        }
-
     }
 }

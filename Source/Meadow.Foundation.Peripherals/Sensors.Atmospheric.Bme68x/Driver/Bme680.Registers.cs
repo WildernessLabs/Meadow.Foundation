@@ -2,7 +2,19 @@
 {
 	public partial class Bme680
 	{
-		internal class RegisterAddresses
+        internal struct Register
+        {
+            public Register(byte address, byte length)
+            {
+                Address = address;
+                Length = length;
+            }
+
+            public byte Address { get; }
+            public byte Length { get; }
+        }
+
+        internal class Registers
 		{
 			public static readonly Register Status = new Register(0x73, 1);
 			public const byte Reset = 0xE0;

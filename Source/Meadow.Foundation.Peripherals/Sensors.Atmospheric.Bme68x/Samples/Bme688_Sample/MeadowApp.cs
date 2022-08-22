@@ -57,15 +57,15 @@ namespace Sensors.Atmospheric.BME688_Sample
 
         void CreateSpiSensor()
         {
-            Console.WriteLine("Create BME680 sensor with SPI...");
+            Console.WriteLine("Create BME688 sensor with SPI...");
 
             var spiBus = Device.CreateSpiBus();
-            sensor = new Bme688(spiBus, Device.CreateDigitalOutputPort(Device.Pins.D01));
+            sensor = new Bme688(spiBus, Device.CreateDigitalOutputPort(Device.Pins.D01, false));
         }
 
         void CreateI2CSensor()
         {
-            Console.WriteLine("Create BME680 sensor with I2C...");
+            Console.WriteLine("Create BME688 sensor with I2C...");
 
             var i2c = Device.CreateI2cBus();
             sensor = new Bme688(i2c, (byte)Bme680.Addresses.Address_0x76); // SDA pulled down
