@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             /// <summary>
             /// The heater duration in the internally used format
             /// </summary>
-            public byte HeaterDuration { get; set; }
+            public TimeSpan HeaterDuration { get; set; }
 
             /// <summary>
             /// 
@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             /// <param name="heaterResistance">The heater resistance (Ohms)</param>
             /// <param name="heaterDuration">The heating duration</param>
             /// <exception cref="ArgumentOutOfRangeException"></exception>
-            public HeaterProfileConfiguration(HeaterProfileType profile, ushort heaterResistance, byte heaterDuration)
+            public HeaterProfileConfiguration(HeaterProfileType profile, ushort heaterResistance, TimeSpan heaterDuration)
             {
                 if (!Enum.IsDefined(typeof(HeaterProfileType), profile))
                     throw new ArgumentOutOfRangeException();
@@ -37,19 +37,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 HeaterProfile = profile;
                 HeaterResistance = heaterResistance;
                 HeaterDuration = heaterDuration;
-            }
-
-            /// <summary>
-            /// Gets the configured heater duration in ms
-            /// </summary>
-            /// <returns></returns>
-            public ushort GetHeaterDurationInMilliseconds()
-            {
-                var factorLookup = new[] { 1, 4, 16, 64 };
-                var factor = factorLookup[HeaterDuration >> 6];
-                var value = HeaterDuration & 0b0011_1111;
-
-                return (ushort)(factor * value);
             }
         }
     }

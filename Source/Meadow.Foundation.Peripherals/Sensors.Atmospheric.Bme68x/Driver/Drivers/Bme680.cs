@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
@@ -7,7 +8,7 @@ using Meadow.Utilities;
 using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -69,8 +70,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Gets or sets the heater profile to be used for measurements.
-        /// Current heater profile is only set if the chosen profile is configured.
+        /// Gets / sets the heater profile to be used for measurements
         /// </summary>
         public HeaterProfileType HeaterProfile
         {
@@ -155,7 +155,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         bool gasConversionIsEnabled;
 
         /// <summary>
-        /// Communication bus used to read and write to the BME280 sensor.
+        /// Communication bus used to read and write to the BME68x sensor
         /// </summary>
         /// <remarks>
         /// The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
@@ -195,8 +195,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private double temperatureFine;
 
-        private static readonly byte[] s_osToMeasCycles = { 0, 1, 2, 4, 8, 16 };
-        private static readonly byte[] s_osToSwitchCount = { 0, 1, 1, 1, 1, 1 };
+        private static readonly byte[] osToMeasCycles = { 0, 1, 2, 4, 8, 16 };
+        private static readonly byte[] osToSwitchCount = { 0, 1, 1, 1, 1, 1 };
         private static readonly double[] s_k1Lookup = { 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, -0.8, 0.0, 0.0, -0.2, -0.5, 0.0, -1.0, 0.0, 0.0 };
         private static readonly double[] s_k2Lookup = { 0.0, 0.0, 0.0, 0.0, 0.1, 0.7, 0.0, -0.8, -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
@@ -263,6 +263,80 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // Init the humidity registers
             status = (byte)((byte)configuration.HumidityOversample & 0x07);
             sensor.WriteRegister((byte)Registers.CTRL_HUM, status);
+        }
+
+        /// <summary>
+        /// Configures a heater profile, making it ready for use.
+        /// </summary>
+        /// <param name="profile">The heater profile to configure</param>
+        /// <param name="targetTemperature">The target temperature (0-400 C)</param>
+        /// <param name="duration">The measurement duration (0-4032ms)</param>
+        /// <param name="ambientTemperature">The ambient temperature</param>
+        public void ConfigureHeatingProfile(HeaterProfileType profile, Units.Temperature targetTemperature, TimeSpan duration, Units.Temperature ambientTemperature)
+        {
+            // read ambient temperature for resistance calculation
+            var heaterResistance = CalculateHeaterResistance(targetTemperature, ambientTemperature);
+            var heaterDuration = CalculateHeaterDuration(duration);
+
+            sensor.WriteRegister((byte)(Registers.RES_HEAT_0 + (byte)profile), heaterResistance);
+            sensor.WriteRegister((byte)(Registers.GAS_WAIT_0 + (byte)profile), heaterDuration);
+
+            // cache heater configuration
+            if (heaterConfigs.Exists(config => config.HeaterProfile == profile))
+            {
+                heaterConfigs.Remove(heaterConfigs.Single(config => config.HeaterProfile == profile));
+            }
+
+            heaterConfigs.Add(new HeaterProfileConfiguration(profile, heaterResistance, duration));
+        }
+
+        /// <summary>
+        /// Get the current power mode
+        /// </summary>
+        /// <returns>The power mode</returns>
+        public PowerMode GetPowerMode()
+        {
+            var status = sensor.ReadRegister((byte)Registers.CTRL_MEAS);
+
+            return (PowerMode)(status & 0x03);
+        }
+
+        /// <summary>
+        /// Gets the required time in to perform a measurement. The duration of the gas
+        /// measurement is not considered if <see cref="GasConversionIsEnabled"/> is set to false
+        /// or the chosen <see cref="HeaterProfile"/> is not configured.
+        /// The precision of this duration is within 1ms of the actual measurement time.
+        /// </summary>
+        /// <param name="profile">The used <see cref="HeaterProfile"/>. </param>
+        /// <returns></returns>
+        public TimeSpan GetMeasurementDuration(HeaterProfileType profile)
+        {
+            var measCycles = osToMeasCycles[(int)configuration.TemperatureOversample];
+            measCycles += osToMeasCycles[(int)configuration.PressureOversample];
+            measCycles += osToMeasCycles[(int)configuration.HumidityOversample];
+
+            var switchCount = osToSwitchCount[(int)configuration.TemperatureOversample];
+            switchCount += osToSwitchCount[(int)configuration.PressureOversample];
+            switchCount += osToSwitchCount[(int)configuration.HumidityOversample];
+
+            double measDuration = measCycles * 1963;
+            measDuration += 477 * switchCount;      // TPH switching duration
+
+            if (GasConversionIsEnabled)
+            {
+                measDuration += 477 * 5;            // Gas measurement duration
+            }
+
+            measDuration += 500;                    // get it to the closest whole number
+            measDuration /= 1000.0;                 // convert to ms
+            measDuration += 1;                      // wake up duration of 1ms
+
+            if (GasConversionIsEnabled && heaterConfigs.Exists(config => config.HeaterProfile == profile))
+            {
+                measDuration += heaterConfigs.Single(config => config.HeaterProfile == profile).HeaterDuration.Milliseconds;
+            }
+
+            return TimeSpan.FromMilliseconds(Math.Ceiling(measDuration));
         }
 
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> changeResult)
