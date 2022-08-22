@@ -1,23 +1,26 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
+using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
 namespace Sensors.Atmospheric.BME688_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Bme688? sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
             //CreateSpiSensor();
             CreateI2CSensor();
+
+            sensor.ConfigureHeatingProfile(Bme680.HeaterProfileType.Profile1, new Temperature(300), TimeSpan.FromMilliseconds(100), new Temperature(22));
 
             var consumer = Bme688.CreateObserver(
                 handler: result =>
@@ -43,17 +46,20 @@ namespace Sensors.Atmospheric.BME688_Sample
 
             if(sensor != null)
             {
-                sensor.Updated += (sender, result) => {
+                sensor.Updated += (sender, result) =>
+                {
                     Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
                     Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
                     Console.WriteLine($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
                     Console.WriteLine($"  Gas Resistance: {result.New.GasResistance:N2}Ohms");
-                };
+                };           
             }
 
             sensor?.StartUpdating(TimeSpan.FromSeconds(1));
 
             ReadConditions().Wait();
+
+            return base.Initialize();
         }
 
         void CreateSpiSensor()

@@ -9,6 +9,7 @@ using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
 using System.Linq;
+using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -302,6 +303,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
+        /// Sets the power mode to the given mode
+        /// </summary>
+        /// <param name="powerMode">The <see cref="PowerMode"/> to set.</param>
+        public void SetPowerMode(PowerMode powerMode)
+        {
+            var status = sensor.ReadRegister((byte)Registers.CTRL_MEAS);
+            byte mask = 0x03;
+            status = (byte)((status & (byte)~mask) | (byte)powerMode);
+            sensor.WriteRegister((byte)Registers.CTRL_MEAS, status);
+        }
+
+        /// <summary>
         /// Gets the required time in to perform a measurement. The duration of the gas
         /// measurement is not considered if <see cref="GasConversionIsEnabled"/> is set to false
         /// or the chosen <see cref="HeaterProfile"/> is not configured.
@@ -366,6 +379,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return await Task.Run(() =>
             {
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure, Resistance GasResistance) conditions;
+
+//                SetPowerMode(PowerMode.Forced);
+
+  //              Thread.Sleep(GetMeasurementDuration(HeaterProfile));
 
                 // Read the current control register
                 var status = sensor.ReadRegister((byte)Registers.CTRL_MEAS);
