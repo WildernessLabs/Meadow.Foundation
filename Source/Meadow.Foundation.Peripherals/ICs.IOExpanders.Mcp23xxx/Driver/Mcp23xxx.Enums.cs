@@ -46,35 +46,67 @@
         }
 
         /// <summary>
-        /// Bank configuration changes how the registers are mapped.
-        /// Only has an affect on MCP23x17 chips (and I guess any future chip that includes 2+ GPIO ports).
+        /// The MCP28XXX family has an address mapping concept for accessing registers.
+        /// This provides a way to easily address registers by group or type. This is only
+        /// relevant for 16-bit devices where it has two banks (Port A and B) of 8-bit
+        /// GPIO pins.
         /// </summary>
-        /// <remarks>
-        /// As changing this bit can break future calls read/writes to the device, it must be done in isolation.
-        /// Please use the dedicated SetBank() method to change this value as it uses locks to prevent errors.
-        /// </remarks>
-        public enum BankConfiguration : byte
+        public enum BankStyle
         {
             /// <summary>
-            /// The A/B registers are paired. For example (for the MCP23x17), IODIRA is mapped to address 0x00 and IODIRB is mapped to
-            /// the next address
-            /// (address 0x01).
+            /// This mode is used specifically for 16-bit devices where it treats the
+            /// two 8-bit banks as one 16-bit bank.
             /// </summary>
             /// <remarks>
-            /// Paired is ideal when you expect to read all GPIO ports at once and will result in faster reads.
-            /// The common use case is when you have a single interrupt pin for all GPIO ports.
+            /// Each of the registers are interleaved so that sending two bytes in a
+            /// row will set the equivalent register for the second bank. This way you
+            /// can set all 16 GPIO pins/settings with one command sequence.
+            ///
+            /// Note that this behavior is also dependent on the default behavior
+            /// of IOCON.SEQOP = 0 (the default) which automatically increments the
+            /// register address as bytes come in.
+            ///
+            /// This is IOCON.BANK = 0 and is the default.
             /// </remarks>
-            Paired = 0x00,
+            Sequential = 0,
 
             /// <summary>
-            /// The registers associated with each port are segregated. (For the MCP23x17), registers associated with PORTA are mapped
-            /// from address 0x00 - 0x0A and registers associated with PORTB are mapped from 0x10 - 0x1A
+            /// This mode keeps the two 8-bit banks registers separate.
             /// </summary>
             /// <remarks>
-            /// Segregated is ideal for reading inputs from single GPIO ports and will result in faster reads in this case.
-            /// The common use case is when you have a different interrupt pin for each GPIO port.
+            /// While this keeps the register addresses for bank A the same as the
+            /// 8-bit controllers it requires sending a separate command sequence to
+            /// set all 16-bits as the second bank's register addresses are not
+            /// sequential.
+            ///
+            /// Changing IOCON.SEQOP to 1 (not the default) will cause the
+            /// register address pointer to toggle between Port A and B for the
+            /// given register if in this mode.
+            ///
+            /// This is IOCON.BANK = 1.
             /// </remarks>
-            Segregated = 0x01
+            Separated = 1
+        }
+
+        /// <summary>
+        /// The I/O port used with registers.
+        /// </summary>
+        /// <remarks>
+        /// 16-bit controllers are logically separated into two 8-bit ports. 8-bit
+        /// controllers only have one "port" of GPIO pins so this concept is irrelevant
+        /// in that case.
+        /// </remarks>
+        public enum Port
+        {
+            /// <summary>
+            /// The first set of 8 GPIO pins.
+            /// </summary>
+            PortA,
+
+            /// <summary>
+            /// The second set of 8 GPIO pins.
+            /// </summary>
+            PortB
         }
     }
 }
