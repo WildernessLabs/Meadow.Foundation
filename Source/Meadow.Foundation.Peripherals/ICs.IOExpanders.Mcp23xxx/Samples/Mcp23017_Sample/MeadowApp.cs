@@ -6,19 +6,19 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ICs.IOExpanders.Mcp23x08_Sample
+namespace ICs.IOExpanders.Mcp23017_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        Mcp23x08 mcp;
+        Mcp23017 mcp;
 
         public override Task Initialize()
         {
             IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeRising);
-            // create a new mcp with all the address pins pulled low - address 0x20 (32)
-            mcp = new Mcp23x08(Device.CreateI2cBus(), 0x20, interruptPort);
+       
+            mcp = new Mcp23017(Device.CreateI2cBus(), 0x20, interruptPort);
 
             return base.Initialize();
         }
@@ -34,14 +34,14 @@ namespace ICs.IOExpanders.Mcp23x08_Sample
 
         void TestDigitalOutputPorts(int loopCount)
         {
-            var out00 = mcp.CreateDigitalOutputPort(mcp.Pins.GP0);
-            var out01 = mcp.CreateDigitalOutputPort(mcp.Pins.GP1);
-            var out02 = mcp.CreateDigitalOutputPort(mcp.Pins.GP2);
-            var out03 = mcp.CreateDigitalOutputPort(mcp.Pins.GP3);
-            var out04 = mcp.CreateDigitalOutputPort(mcp.Pins.GP4);
-            var out05 = mcp.CreateDigitalOutputPort(mcp.Pins.GP5);
-            var out06 = mcp.CreateDigitalOutputPort(mcp.Pins.GP6);
-            var out07 = mcp.CreateDigitalOutputPort(mcp.Pins.GP7);
+            var out00 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA0);
+            var out01 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA1);
+            var out02 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA2);
+            var out03 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA3);
+            var out04 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA4);
+            var out05 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA5);
+            var out06 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA6);
+            var out07 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA7);
 
             var outputPorts = new List<IDigitalOutputPort>() 
             {
