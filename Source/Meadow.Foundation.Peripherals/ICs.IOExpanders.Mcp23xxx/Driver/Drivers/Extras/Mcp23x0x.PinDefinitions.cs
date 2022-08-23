@@ -1,14 +1,19 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp23x0x
+    public abstract partial class Mcp23x0x
     {
+        /// <summary>
+        /// Pin definitions for 8 pin MCP IO expanders
+        /// </summary>
         public class PinDefinitions : IPinDefinitions
         {
+            /// <summary>
+            /// List of pins
+            /// </summary>
             public IList<IPin> AllPins { get; } = new List<IPin>();
 
             /// <summary>

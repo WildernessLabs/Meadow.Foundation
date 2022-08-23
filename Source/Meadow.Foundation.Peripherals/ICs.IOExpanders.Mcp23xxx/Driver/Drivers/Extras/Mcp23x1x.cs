@@ -6,7 +6,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represent an MCP23x1x I2C port expander
     /// </summary>
-    public partial class Mcp23x1x : Mcp23xxx
+    public abstract partial class Mcp23x1x : Mcp23xxx
     {
         /// <summary>
         /// MCP23x17 pin definitions

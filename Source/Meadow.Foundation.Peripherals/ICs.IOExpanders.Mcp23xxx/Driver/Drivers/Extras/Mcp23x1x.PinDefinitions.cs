@@ -5,10 +5,16 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp23x1x
+    public abstract partial class Mcp23x1x
     {
+        /// <summary>
+        /// Pin definitions for 16 pin MCP IO expanders
+        /// </summary>
         public class PinDefinitions : IPinDefinitions
         {
+            /// <summary>
+            /// List of pins
+            /// </summary>
             public IList<IPin> AllPins { get; } = new List<IPin>();
 
             /// <summary>

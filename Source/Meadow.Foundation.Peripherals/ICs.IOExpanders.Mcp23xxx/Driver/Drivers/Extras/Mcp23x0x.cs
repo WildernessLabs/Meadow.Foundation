@@ -6,7 +6,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represent an MCP23x08 I2C/SPI port expander
     /// </summary>
-    public partial class Mcp23x08 : Mcp23xxx
+    public abstract partial class Mcp23x0x : Mcp23xxx
     {
         /// <summary>
         /// MCP23x08 pin definitions
@@ -31,7 +31,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPort">The interrupt port</param>
-        public Mcp23x08(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null) : base(i2cBus, address, interruptPort)
+        public Mcp23x0x(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null) : base(i2cBus, address, interruptPort)
         {
         }
 
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="spiBus">The SPI bus connected to the Mcp23x08</param>
         /// <param name="chipSelectPort">Chip select port</param>
         /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
-        public Mcp23x08(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) :
+        public Mcp23x0x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) :
             base(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort) // use the internal constructor that takes an IMcpDeviceComms
         {
         }

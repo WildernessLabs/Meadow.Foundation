@@ -20,8 +20,8 @@ namespace ICs.IOExpanders.Tca9685_Sample
 
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Standard);
             var tca9548a = new Tca9548a(i2cBus, 0x70);
-            var mcp0 = new Mcp23x0x(tca9548a.Bus0);
-            var mcp1 = new Mcp23x0x(tca9548a.Bus1);
+            var mcp0 = new Mcp23008(tca9548a.Bus0);
+            var mcp1 = new Mcp23008(tca9548a.Bus1);
 
             bus0Port0 = mcp0.CreateDigitalOutputPort(mcp0.Pins.GP0);
             bus1Port0 = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP0);
