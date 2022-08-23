@@ -26,7 +26,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected override bool IsValidPin(IPin pin) => Pins.AllPins.Contains(pin);
 
         /// <summary>
-        /// Creates an Mcp23017 object
+        /// Creates an Mcp23x1x object
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
@@ -37,7 +37,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Creates an Mcp23s17 object
+        /// Creates an Mcp23x1x object
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">The chip select port</param>
@@ -47,9 +47,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Get the pin from the name
+        /// Get pin reference by name
         /// </summary>
-        /// <param name="pinName">The pin name to look up</param>
+        /// <param name="pinName">The pin name as a string</param>
         /// <returns>IPin reference if found</returns>
         public override IPin GetPin(string pinName)
         {
