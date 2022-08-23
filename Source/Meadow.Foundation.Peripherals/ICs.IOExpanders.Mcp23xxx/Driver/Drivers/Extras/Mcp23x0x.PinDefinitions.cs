@@ -5,7 +5,7 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp23x08
+    public partial class Mcp23x0x
     {
         public class PinDefinitions : IPinDefinitions
         {
