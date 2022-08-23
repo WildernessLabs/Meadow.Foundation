@@ -14,7 +14,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 {
     public class MeadowApp : App<F7FeatherV1>
     {
-        Mcp23x17 mcp;
+        Mcp23x1x mcp;
 
         public override async Task Initialize()
         {
@@ -24,7 +24,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
             IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D02, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown);
 
             // create a new mcp with all the address pins pulled low - address 0x20 (32)
-            mcp = new Mcp23x17(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort);
+            mcp = new Mcp23x1x(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort);
 
         //    IDigitalOutputPort chipSelectPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
         //    mcp = new Mcp23s08(Device.CreateSpiBus(), chipSelectPort, interruptPort);

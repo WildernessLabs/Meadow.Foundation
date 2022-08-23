@@ -4,9 +4,9 @@ using System.Linq;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represent an MCP23x17 I2C port expander
+    /// Represent an MCP23x1x I2C port expander
     /// </summary>
-    public partial class Mcp23x17 : Mcp23xxx
+    public partial class Mcp23x1x : Mcp23xxx
     {
         /// <summary>
         /// MCP23x17 pin definitions
@@ -31,7 +31,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPort">The interrupt port</param>
-        public Mcp23x17(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null) 
+        public Mcp23x1x(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null) 
             : base(i2cBus, address, interruptPort)
         {
         }
@@ -42,7 +42,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">The chip select port</param>
         /// <param name="interruptPort">The interrupt port</param>
-        public Mcp23x17(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) : base(spiBus, chipSelectPort, interruptPort)
+        public Mcp23x1x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) : base(spiBus, chipSelectPort, interruptPort)
         {
         }
 
