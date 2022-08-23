@@ -31,7 +31,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPort">The interrupt port</param>
-        public Mcp23x0x(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null) : base(i2cBus, address, interruptPort)
+        protected Mcp23x0x(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null) : base(i2cBus, address, interruptPort)
         {
         }
 
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="spiBus">The SPI bus connected to the Mcp23x08</param>
         /// <param name="chipSelectPort">Chip select port</param>
         /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
-        public Mcp23x0x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) :
+        protected Mcp23x0x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) :
             base(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPortA: interruptPort) // use the internal constructor that takes an IMcpDeviceComms
         {
         }

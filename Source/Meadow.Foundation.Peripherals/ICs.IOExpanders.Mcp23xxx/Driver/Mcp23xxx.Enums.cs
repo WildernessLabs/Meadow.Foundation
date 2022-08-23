@@ -88,23 +88,23 @@
         }
         
         /// <summary>
-        /// The I/O port used with registers
+        /// The I/O port bank for 16 pin devices
         /// </summary>
         /// <remarks>
         /// 16-bit controllers are logically separated into two 8-bit ports. 8-bit
         /// controllers only have one "port" of GPIO pins so this concept is irrelevant
         /// in that case.
         /// </remarks>
-        public enum Port
+        public enum PortBank
         {
             /// <summary>
-            /// The first set of 8 GPIO pins.
+            /// The first set of 8 GPIO pins
             /// </summary>
-            PortA,
+            A,
             /// <summary>
-            /// The second set of 8 GPIO pins.
+            /// The second set of 8 GPIO pins (Mcp23x1x only)
             /// </summary>
-            PortB
+            B
         }
     }
 }
