@@ -452,7 +452,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// 0110 0000, means that pins GP5 and GP6 are high.
         /// </summary>
         /// <returns>A little-endian byte mask of the pin values.</returns>
-        public byte ReadFromPorts(PortBank bank)
+        public byte ReadFromPorts(PortBank bank = PortBank.A)
         {
             byte ioDir;
             if(bank == PortBank.A)
