@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Utilities;
 using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -29,7 +28,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 set => throw new NotSupportedException("Cannot change port resistor mode after the port is created");
             }
             private readonly ResistorMode portResistorMode;
-
 
             /// <summary>
             /// Debouce durration

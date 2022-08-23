@@ -1158,6 +1158,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp23009_Sample", "Meadow.F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp23018_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23xxx\Samples\Mcp23018_Sample\Mcp23018_Sample.csproj", "{92F2B28F-AD70-47D2-BC9A-437C862908D4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp23x17_Input_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23xxx\Samples\Mcp23x17_Input_Sample\Mcp23x17_Input_Sample.csproj", "{0C14E200-87E9-4F1D-93D2-4738B0D6F918}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2678,6 +2680,12 @@ Global
 		{92F2B28F-AD70-47D2-BC9A-437C862908D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92F2B28F-AD70-47D2-BC9A-437C862908D4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{92F2B28F-AD70-47D2-BC9A-437C862908D4}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{0C14E200-87E9-4F1D-93D2-4738B0D6F918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C14E200-87E9-4F1D-93D2-4738B0D6F918}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C14E200-87E9-4F1D-93D2-4738B0D6F918}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{0C14E200-87E9-4F1D-93D2-4738B0D6F918}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C14E200-87E9-4F1D-93D2-4738B0D6F918}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C14E200-87E9-4F1D-93D2-4738B0D6F918}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3254,6 +3262,7 @@ Global
 		{B23C6117-7396-4FDA-A08D-7E329CF453FE} = {1A91B800-DC03-4199-AE38-4BD57195416F}
 		{0F507104-F919-44C6-A940-CAE7EAE4FD3B} = {1A91B800-DC03-4199-AE38-4BD57195416F}
 		{92F2B28F-AD70-47D2-BC9A-437C862908D4} = {1A91B800-DC03-4199-AE38-4BD57195416F}
+		{0C14E200-87E9-4F1D-93D2-4738B0D6F918} = {1A91B800-DC03-4199-AE38-4BD57195416F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
