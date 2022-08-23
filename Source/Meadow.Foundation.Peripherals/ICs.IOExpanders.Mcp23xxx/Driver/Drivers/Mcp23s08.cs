@@ -3,7 +3,7 @@
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represent an MCP23008 SPI port expander
+    /// Represent an MCP23S08 SPI port expander
     /// </summary>
     public class Mcp23s08 : Mcp23x08
     {

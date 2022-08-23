@@ -8,7 +8,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public class Mcp23009 : Mcp23x08
     {
         /// <summary>
-        /// Creates an Mcp23008 object
+        /// Creates an Mcp23009 object
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
