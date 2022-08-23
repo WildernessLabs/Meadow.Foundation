@@ -34,6 +34,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         byte gppu;
         byte iocon;
 
+        PortBankType portBankType = PortBankType.Segregated; //default
+
         /// <summary>
         /// object for using lock() to do thread sync
         /// </summary>
@@ -89,8 +91,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         void HandleChangedInterrupt(object sender, DigitalPortResult e)
         {
             {   // sus out which pin fired
-                byte interruptFlag = mcpDevice.ReadRegister(Registers.InterruptFlagRegister);
-                byte currentStates = mcpDevice.ReadRegister(Registers.GPIORegister);
+                byte interruptFlag = mcpDevice.ReadRegister(Registers.InterruptFlag);
+                byte currentStates = mcpDevice.ReadRegister(Registers.GPIO);
 
                 //Console.WriteLine($"Input flag:          {intflag:X2}");
                 //Console.WriteLine($"Input Current Value: {currentValues:X2}");
@@ -113,24 +115,24 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if(NumberOfPins == 8)
             {
-                mcpDevice.WriteRegister(Registers.IODirectionRegister, 0xFF); // set all the other registers to zeros (we skip the last one, output latch)
-                mcpDevice.WriteRegister(Registers.InputPolarityRegister, 0x00);
-                mcpDevice.WriteRegister(Registers.GPIORegister, 0x00);
+                mcpDevice.WriteRegister(Registers.IODirection, 0xFF); // set all the other registers to zeros (we skip the last one, output latch)
+                mcpDevice.WriteRegister(Registers.InputPolarity, 0x00);
+                mcpDevice.WriteRegister(Registers.GPIO, 0x00);
             }
             else
             {
-                mcpDevice.WriteRegister(Registers.IODirectionRegister, new byte[] {0xFF, 0xFF}); // set all the other registers to zeros (we skip the last one, output latch)
-                mcpDevice.WriteRegister(Registers.InputPolarityRegister, new byte[] { 0, 0 });
-                mcpDevice.WriteRegister(Registers.GPIORegister, new byte[] { 0, 0 });
+                mcpDevice.WriteRegister(Registers.IODirection, new byte[] {0xFF, 0xFF}); // set all the other registers to zeros (we skip the last one, output latch)
+                mcpDevice.WriteRegister(Registers.InputPolarity, new byte[] { 0, 0 });
+                mcpDevice.WriteRegister(Registers.GPIO, new byte[] { 0, 0 });
             }
             
-            mcpDevice.WriteRegister(Registers.InterruptOnChangeRegister, 0x00);
-            mcpDevice.WriteRegister(Registers.DefaultComparisonValueRegister, 0x00);
-            mcpDevice.WriteRegister(Registers.InterruptControlRegister, 0x00);
-            mcpDevice.WriteRegister(Registers.IOConfigurationRegister, 0x00);
-            mcpDevice.WriteRegister(Registers.PullupResistorConfigurationRegister, 0x00);
-            mcpDevice.WriteRegister(Registers.InterruptFlagRegister, 0x00);
-            mcpDevice.WriteRegister(Registers.InterruptCaptureRegister, 0x00);
+            mcpDevice.WriteRegister(Registers.InterruptOnChange, 0x00);
+            mcpDevice.WriteRegister(Registers.DefaultComparisonValue, 0x00);
+            mcpDevice.WriteRegister(Registers.InterruptControl, 0x00);
+            mcpDevice.WriteRegister(Registers.IOConfiguration, 0x00);
+            mcpDevice.WriteRegister(Registers.PullupResistorConfiguration, 0x00);
+            mcpDevice.WriteRegister(Registers.InterruptFlag, 0x00);
+            mcpDevice.WriteRegister(Registers.InterruptCapture, 0x00);
             
 
             // save our state
@@ -140,9 +142,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             gppu = 0x00;
             iocon = 0x00;
 
-            ioDir = mcpDevice.ReadRegister(Registers.IODirectionRegister);
-            gpio = mcpDevice.ReadRegister(Registers.GPIORegister);
-            olat = mcpDevice.ReadRegister(Registers.OutputLatchRegister);
+            ioDir = mcpDevice.ReadRegister(Registers.IODirection);
+            gpio = mcpDevice.ReadRegister(Registers.GPIO);
+            olat = mcpDevice.ReadRegister(Registers.OutputLatch);
 
             bool intHigh = true;
             if(interruptPortA.Resistor == ResistorMode.InternalPullUp || 
@@ -154,13 +156,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
             iocon = BitHelpers.SetBit(iocon, 0x01, intHigh); //set interrupt pin to active high (true), low (false)
             iocon = BitHelpers.SetBit(iocon, 0x02, false); //don't set interrupt to open drain (should be the default)
 
-            mcpDevice.WriteRegister(Registers.IOConfigurationRegister, iocon);
+            mcpDevice.WriteRegister(Registers.IOConfiguration, iocon);
 
             // Clear out I/O Settings
-            mcpDevice.WriteRegister(Registers.DefaultComparisonValueRegister, 0x00);
-            mcpDevice.WriteRegister(Registers.InterruptOnChangeRegister, 0x00);
-            mcpDevice.WriteRegister(Registers.InterruptControlRegister, 0x00);
-            mcpDevice.WriteRegister(Registers.InputPolarityRegister, 0x00);
+            mcpDevice.WriteRegister(Registers.DefaultComparisonValue, 0x00);
+            mcpDevice.WriteRegister(Registers.InterruptOnChange, 0x00);
+            mcpDevice.WriteRegister(Registers.InterruptControl, 0x00);
+            mcpDevice.WriteRegister(Registers.InputPolarity, 0x00);
         }
 
         /// <summary>
@@ -245,7 +247,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 // set the IODIR bit and write the setting
                 ioDir = BitHelpers.SetBit(ioDir, (byte)pin.Key, (byte)direction);
-                mcpDevice.WriteRegister(Registers.IODirectionRegister, ioDir);
+                mcpDevice.WriteRegister(Registers.IODirection, ioDir);
             }
             else
             {
@@ -267,33 +269,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 // set the port direction
                 SetPortDirection(pin, PortDirectionType.Input);
 
-                gppu = mcpDevice.ReadRegister(Registers.PullupResistorConfigurationRegister);
+                gppu = mcpDevice.ReadRegister(Registers.PullupResistorConfiguration);
                 gppu = BitHelpers.SetBit(gppu, (byte)pin.Key, enablePullUp);
-                mcpDevice.WriteRegister(Registers.PullupResistorConfigurationRegister, gppu);
+                mcpDevice.WriteRegister(Registers.PullupResistorConfiguration, gppu);
 
                 if (interruptMode != InterruptMode.None)
                 {
                     // interrupt on change (whether or not we want to raise an interrupt on the interrupt pin on change)
-                    byte gpinten = mcpDevice.ReadRegister(Registers.InterruptOnChangeRegister);
+                    byte gpinten = mcpDevice.ReadRegister(Registers.InterruptOnChange);
                     gpinten = BitHelpers.SetBit(gpinten, (byte)pin.Key, true);
-                    mcpDevice.WriteRegister(Registers.InterruptOnChangeRegister, gpinten);
-
-                    // Set the default value for the pin for interrupts.
-                    /* Adrian - this isn't needed because we're not comparing the default value
-                     * Code here as a reference if we want to enable in the future */
-                    
-                   /* var interruptValue = interruptMode == InterruptMode.EdgeFalling;
-                    byte defVal = mcpDevice.ReadRegister(Registers.DefaultComparisonValueRegister);
-                    defVal = BitHelpers.SetBit(defVal, (byte)pin.Key, enablePullUp);
-                    mcpDevice.WriteRegister(Registers.DefaultComparisonValueRegister, defVal);
-                   */
-
-                    // interrupt control register; whether or not the change is based 
-                    // on default comparison value, or if a change from previous. We 
-                    // want to raise on change, so we set it to 0, always.
-                    //     var intCon = mcpDevice.ReadRegister(Registers.InterruptControlRegister);
-                    //     intCon = BitHelpers.SetBit(intCon, (byte)pin.Key, 0);
-                    //     mcpDevice.WriteRegister(Registers.InterruptControlRegister, intCon);
+                    mcpDevice.WriteRegister(Registers.InterruptOnChange, gpinten);
                 }
             }
             else
@@ -320,7 +305,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 olat = BitHelpers.SetBit(olat, (byte)pin.Key, value);
 
                 // write to the output latch (actually does the output setting)
-                mcpDevice.WriteRegister(Registers.OutputLatchRegister, olat);
+                mcpDevice.WriteRegister(Registers.OutputLatch, olat);
             }
             else
             {
@@ -342,7 +327,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 SetPortDirection(pin, PortDirectionType.Input);
 
                 // update our GPIO values
-                gpio = mcpDevice.ReadRegister(Registers.GPIORegister);
+                gpio = mcpDevice.ReadRegister(Registers.GPIO);
 
                 // return the value on that port
                 return BitHelpers.GetBitValue(gpio, (byte)pin.Key);
@@ -362,11 +347,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (ioDir != 0)
             {
                 ioDir = 0;
-                mcpDevice.WriteRegister(Registers.IODirectionRegister, ioDir);
+                mcpDevice.WriteRegister(Registers.IODirection, ioDir);
             }
             // write the output
             olat = mask;
-            mcpDevice.WriteRegister(Registers.OutputLatchRegister, olat);
+            mcpDevice.WriteRegister(Registers.OutputLatch, olat);
         }
 
         /// <summary>
@@ -380,10 +365,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (ioDir != 1)
             {
                 ioDir = 1;
-                mcpDevice.WriteRegister(Registers.IODirectionRegister, ioDir);
+                mcpDevice.WriteRegister(Registers.IODirection, ioDir);
             }
             // read the input
-            gpio = mcpDevice.ReadRegister(Registers.GPIORegister);
+            gpio = mcpDevice.ReadRegister(Registers.GPIO);
             return gpio;
         }
 
@@ -401,28 +386,23 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public abstract IPin GetPin(string pinName);
 
         /// <summary>
-        /// Gets the mapped address for a register
+        /// Gets the mapped address for a register.
         /// </summary>
         /// <param name="address">The register address</param>
         /// <param name="port">The bank of I/O ports used with the register</param>
         /// <param name="bankStyle">The bank style that determines how the register addresses are grouped</param>
-        /// <returns>The byte address of the register for the given port bank and bank style./returns>
-        private byte GetMappedAddress(byte address, Port port = Port.PortA, BankStyle bankStyle = BankStyle.Sequential)
+        /// <returns>The  address of the register</returns>
+        byte MapAddress(byte address, Port port = Port.PortA, PortBankType bankStyle = PortBankType.Segregated)
         {
-            // There is no mapping for 8 bit io expanders
-            if (NumberOfPins == 8)
-            {
-                return address;
-            }
+            // There is no mapping for 8 bit expanders
+            if (NumberOfPins == 8) { return address; }
 
-            if (bankStyle == BankStyle.Sequential)
-            {
-                // Registers for each bank are sequential
+            if (bankStyle == PortBankType.Segregated)
+            {   // Registers for each bank are sequential
                 // (IODIRA = 0x00, IODIRB = 0x01, IPOLA = 0x02, IPOLB = 0x03, ...)
                 address += address;
                 return port == Port.PortA ? address : ++address;
             }
-
             // Registers for each bank are separated
             // (IODIRA = 0x00, ... OLATA = 0x0A, IODIRB = 0x10, ... OLATB = 0x1A)
             return port == Port.PortA ? address : address += 0x10;

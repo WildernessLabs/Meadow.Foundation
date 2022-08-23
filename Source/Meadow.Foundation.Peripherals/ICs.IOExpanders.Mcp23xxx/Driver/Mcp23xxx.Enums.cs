@@ -51,11 +51,10 @@
         /// relevant for 16-bit devices where it has two banks (Port A and B) of 8-bit
         /// GPIO pins.
         /// </summary>
-        public enum BankStyle
+        public enum PortBankType : byte
         {
             /// <summary>
-            /// This mode is used specifically for 16-bit devices where it treats the
-            /// two 8-bit banks as one 16-bit bank.
+            /// This mode is used by 16-bit devices - it treats the two 8-bit banks as one 16-bit bank
             /// </summary>
             /// <remarks>
             /// Each of the registers are interleaved so that sending two bytes in a
@@ -68,10 +67,10 @@
             ///
             /// This is IOCON.BANK = 0 and is the default.
             /// </remarks>
-            Sequential = 0,
+            Segregated = 0,
 
             /// <summary>
-            /// This mode keeps the two 8-bit banks registers separate.
+            /// This mode keeps the two 8-bit banks registers separate
             /// </summary>
             /// <remarks>
             /// While this keeps the register addresses for bank A the same as the
@@ -83,13 +82,13 @@
             /// register address pointer to toggle between Port A and B for the
             /// given register if in this mode.
             ///
-            /// This is IOCON.BANK = 1.
+            /// This is IOCON.BANK = 1
             /// </remarks>
-            Separated = 1
+            Paired = 1
         }
-
+        
         /// <summary>
-        /// The I/O port used with registers.
+        /// The I/O port used with registers
         /// </summary>
         /// <remarks>
         /// 16-bit controllers are logically separated into two 8-bit ports. 8-bit
@@ -102,7 +101,6 @@
             /// The first set of 8 GPIO pins.
             /// </summary>
             PortA,
-
             /// <summary>
             /// The second set of 8 GPIO pins.
             /// </summary>
