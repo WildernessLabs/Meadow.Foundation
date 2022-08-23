@@ -2,8 +2,6 @@
 using Meadow.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using YamlDotNet.Core.Tokens;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -207,13 +205,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public virtual IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType outputType = OutputType.OpenDrain)
         {
             if (IsValidPin(pin))
-            {   // setup the port internally for output
+            {   // setup the port on the device for output
                 SetPortDirection(pin, PortDirectionType.Output);
-
-                // create the convenience class
+                // create the port model object
                 return new DigitalOutputPort(this, pin, initialState);
             }
-
             throw new Exception("Pin is out of range");
         }
 
@@ -474,7 +470,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // read the input
             var gpio = mcpDevice.ReadRegister(MapAddress(Registers.GPIO, bank));
             return gpio;
-
         }
 
         /// <summary>
