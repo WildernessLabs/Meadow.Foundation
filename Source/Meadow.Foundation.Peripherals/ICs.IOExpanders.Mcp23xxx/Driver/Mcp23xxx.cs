@@ -17,8 +17,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public event EventHandler<IOExpanderInputChangedEventArgs> InputChanged = delegate { };
 
+        /// <summary>
+        /// The number of IO pins avaliable on the device
+        /// </summary>
+        public abstract int NumberOfPins { get; }
+
         private readonly IMcpDeviceComms mcpDevice;
-        private readonly IDigitalInputPort interruptPort;
+        private readonly IDigitalInputPort interruptPortA;
+        private readonly IDigitalInputPort interruptPortB;
         private readonly IDictionary<IPin, DigitalInputPort> inputPorts;
 
         // state
@@ -70,8 +76,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             //interruptPort.InterruptMode = InterruptMode.EdgeRising;
             if (interruptPort != null)
             {
-                this.interruptPort = interruptPort;
-                this.interruptPort.Changed += HandleChangedInterrupt;
+                this.interruptPortA = interruptPort;
+                this.interruptPortA.Changed += HandleChangedInterrupt;
             }
 
             inputPorts = new Dictionary<IPin, DigitalInputPort>();
@@ -105,8 +111,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         protected virtual void Initialize()
         {
-            mcpDevice.WriteRegister(Registers.IODirectionRegister, 0xFF); // set all the other registers to zeros (we skip the last one, output latch)
-            mcpDevice.WriteRegister(Registers.InputPolarityRegister, 0x00);
+            if(NumberOfPins == 8)
+            {
+                mcpDevice.WriteRegister(Registers.IODirectionRegister, 0xFF); // set all the other registers to zeros (we skip the last one, output latch)
+                mcpDevice.WriteRegister(Registers.InputPolarityRegister, 0x00);
+                mcpDevice.WriteRegister(Registers.GPIORegister, 0x00);
+            }
+            else
+            {
+                mcpDevice.WriteRegister(Registers.IODirectionRegister, new byte[] {0xFF, 0xFF}); // set all the other registers to zeros (we skip the last one, output latch)
+                mcpDevice.WriteRegister(Registers.InputPolarityRegister, new byte[] { 0, 0 });
+                mcpDevice.WriteRegister(Registers.GPIORegister, new byte[] { 0, 0 });
+            }
+            
             mcpDevice.WriteRegister(Registers.InterruptOnChangeRegister, 0x00);
             mcpDevice.WriteRegister(Registers.DefaultComparisonValueRegister, 0x00);
             mcpDevice.WriteRegister(Registers.InterruptControlRegister, 0x00);
@@ -114,7 +131,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             mcpDevice.WriteRegister(Registers.PullupResistorConfigurationRegister, 0x00);
             mcpDevice.WriteRegister(Registers.InterruptFlagRegister, 0x00);
             mcpDevice.WriteRegister(Registers.InterruptCaptureRegister, 0x00);
-            mcpDevice.WriteRegister(Registers.GPIORegister, 0x00);
+            
 
             // save our state
             ioDir = 0xFF;
@@ -128,8 +145,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             olat = mcpDevice.ReadRegister(Registers.OutputLatchRegister);
 
             bool intHigh = true;
-            if(interruptPort.Resistor == ResistorMode.InternalPullUp || 
-               interruptPort.Resistor == ResistorMode.ExternalPullUp)
+            if(interruptPortA.Resistor == ResistorMode.InternalPullUp || 
+               interruptPortA.Resistor == ResistorMode.ExternalPullUp)
             {
                 intHigh = false;
             }
@@ -382,5 +399,33 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="pinName">The pin name</param>
         /// <returns>IPin object if found</returns>
         public abstract IPin GetPin(string pinName);
+
+        /// <summary>
+        /// Gets the mapped address for a register
+        /// </summary>
+        /// <param name="address">The register address</param>
+        /// <param name="port">The bank of I/O ports used with the register</param>
+        /// <param name="bankStyle">The bank style that determines how the register addresses are grouped</param>
+        /// <returns>The byte address of the register for the given port bank and bank style./returns>
+        private byte GetMappedAddress(byte address, Port port = Port.PortA, BankStyle bankStyle = BankStyle.Sequential)
+        {
+            // There is no mapping for 8 bit io expanders
+            if (NumberOfPins == 8)
+            {
+                return address;
+            }
+
+            if (bankStyle == BankStyle.Sequential)
+            {
+                // Registers for each bank are sequential
+                // (IODIRA = 0x00, IODIRB = 0x01, IPOLA = 0x02, IPOLB = 0x03, ...)
+                address += address;
+                return port == Port.PortA ? address : ++address;
+            }
+
+            // Registers for each bank are separated
+            // (IODIRA = 0x00, ... OLATA = 0x0A, IODIRB = 0x10, ... OLATB = 0x1A)
+            return port == Port.PortA ? address : address += 0x10;
+        }
     }
 }
