@@ -23,9 +23,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public abstract int NumberOfPins { get; }
 
         private readonly IMcpDeviceComms mcpDevice;
-        private readonly IDigitalInputPort interruptPortA;
-        private readonly IDigitalInputPort interruptPortB;
-        private readonly IDigitalOutputPort resetPort;
+        private readonly IDigitalInputPort interruptPort;
         private readonly IDictionary<IPin, DigitalInputPort> inputPorts;
 
         // state
@@ -42,14 +40,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        /// <param name="interruptPortA">optional interupt port, needed for input interrupts (pins 1-8)</param>
-        /// <param name="interruptPortB">optional interupt port, needed for input interrupts (pins 9-16)</param>
-        /// <param name="resetPort">optional reset port, used to reset the device</param>
+        /// <param name="interruptPort">optional interupt port, needed for input interrupts (pins 1-8)</param>
         protected Mcp23xxx(II2cBus i2cBus, byte address,
-            IDigitalInputPort interruptPortA = null,
-            IDigitalInputPort interruptPortB = null,
-            IDigitalOutputPort resetPort = null) :
-            this(new I2cMcpDeviceComms(i2cBus, address), interruptPortA, interruptPortB, resetPort) // use the internal constructor that takes an IMcpDeviceComms
+            IDigitalInputPort interruptPort = null) :
+            this(new I2cMcpDeviceComms(i2cBus, address), interruptPort) // use the internal constructor that takes an IMcpDeviceComms
         {
         }
 
@@ -58,15 +52,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="spiBus"></param>
         /// <param name="chipSelectPort">Chip select port</param>
-        /// <param name="interruptPortA">optional interupt port, needed for input interrupts (pins 1-8)</param>
-        /// <param name="interruptPortB">optional interupt port, needed for input interrupts (pins 9-16)</param>
-        /// <param name="resetPort">optional reset port, used to reset the device</param>
+        /// <param name="interruptPort">optional interupt port, needed for input interrupts (pins 1-8)</param>
         protected Mcp23xxx(ISpiBus spiBus, 
             IDigitalOutputPort chipSelectPort,
-            IDigitalInputPort interruptPortA = null,
-            IDigitalInputPort interruptPortB = null,
-            IDigitalOutputPort resetPort = null) :
-            this(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPortA, interruptPortB, resetPort) // use the internal constructor that takes an IMcpDeviceComms
+            IDigitalInputPort interruptPort) :
+            this(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort) // use the internal constructor that takes an IMcpDeviceComms
         {
         }
 
@@ -74,29 +64,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Mcp23xxx base class
         /// </summary>
         /// <param name="device"></param>
-        /// <param name="interruptPortA">optional interupt port, needed for input interrupts (pins 1-8)</param>
-        /// <param name="interruptPortB">optional interupt port, needed for input interrupts (pins 9-16)</param>
-        /// <param name="resetPort">optional reset port, used to reset the device</param>
+        /// <param name="interruptPort">optional interupt port, needed for input interrupts (pins 1-8)</param>
         internal Mcp23xxx(IMcpDeviceComms device, 
-                            IDigitalInputPort interruptPortA = null,
-                            IDigitalInputPort interruptPortB = null,
-                            IDigitalOutputPort resetPort = null)
+                            IDigitalInputPort interruptPort)
         {   // TODO: more interrupt 
             // check the interrupt mode and make sure it's correct
             // raise an exception if not. also, doc in constructor what we expect from an interrupt port
-            if (interruptPortA != null)
+            if (interruptPort != null)
             {
-                this.interruptPortA = interruptPortA;
-                interruptPortA.Changed += InterruptPortAChanged;
+                this.interruptPort = interruptPort;
+                interruptPort.Changed += InterruptPortChanged;
             }
-
-            if (interruptPortB != null)
-            {
-                this.interruptPortB = interruptPortB;
-                interruptPortB.Changed += InterruptPortBChanged;
-            }
-
-            this.resetPort = resetPort;
 
             inputPorts = new Dictionary<IPin, DigitalInputPort>();
             mcpDevice = device;
@@ -104,7 +82,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Initialize();
         }
 
-        private void InterruptPortAChanged(object sender, DigitalPortResult e)
+        private void InterruptPortChanged(object sender, DigitalPortResult e)
         {
             // determine which pin caused the interrupt
             byte interruptFlag = mcpDevice.ReadRegister(MapRegister(Registers.InterruptFlag, PortBank.A));
@@ -119,19 +97,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
       //      interruptFlag = mcpDevice.ReadRegister(MapRegister(Registers.InterruptFlag, PortBank.B));
       //      currentStates = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.B));
-        }
-
-        private void InterruptPortBChanged(object sender, DigitalPortResult e)
-        {
-            // determine which pin caused the interrupt
-            byte interruptFlag = mcpDevice.ReadRegister(MapRegister(Registers.InterruptFlag, PortBank.B));
-            byte currentStates = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.B));
-
-            foreach (var port in inputPorts)
-            {   //looks ugly but it's correct
-                var state = BitHelpers.GetBitValue(currentStates, (byte)port.Key.Key);
-                port.Value.Update(state);
-            }
         }
 
         /// <summary>
@@ -160,11 +125,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             ioDirA = ioDirB = 0xFF;
             olatA = olatB = 0x00;
 
-            if (interruptPortA != null)
+            if (interruptPort != null)
             {
                 bool intHigh = true;
-                if (interruptPortA.Resistor == ResistorMode.InternalPullUp ||
-                   interruptPortA.Resistor == ResistorMode.ExternalPullUp)
+                if (interruptPort.Resistor == ResistorMode.InternalPullUp ||
+                   interruptPort.Resistor == ResistorMode.ExternalPullUp)
                 {
                     intHigh = false;
                 }
@@ -174,22 +139,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 ioconA = BitHelpers.SetBit(ioconA, 0x02, false); //don't set interrupt to open drain (should be the default)
 
                 mcpDevice.WriteRegister(MapRegister(Registers.IOConfiguration), ioconA);
-            }
 
-            if (NumberOfPins == 16 && interruptPortB != null)
-            {
-                bool intHigh = true;
-                if (interruptPortB.Resistor == ResistorMode.InternalPullUp ||
-                   interruptPortB.Resistor == ResistorMode.ExternalPullUp)
+                if (NumberOfPins == 16)
                 {
-                    intHigh = false;
+                    mcpDevice.WriteRegister(MapRegister(Registers.IOConfiguration, PortBank.B), ioconA);
                 }
-
-                byte ioconB = 0x00;
-                ioconB = BitHelpers.SetBit(ioconB, 0x01, intHigh); //set interrupt pin to active high (true), low (false)
-                ioconB = BitHelpers.SetBit(ioconB, 0x02, false); //don't set interrupt to open drain (should be the default)
-
-                mcpDevice.WriteRegister(MapRegister(Registers.IOConfiguration, PortBank.B), ioconB);
             }
         }
 

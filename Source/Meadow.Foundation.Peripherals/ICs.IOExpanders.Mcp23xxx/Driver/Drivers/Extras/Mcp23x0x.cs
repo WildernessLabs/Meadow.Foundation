@@ -42,7 +42,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="chipSelectPort">Chip select port</param>
         /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
         protected Mcp23x0x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) :
-            base(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPortA: interruptPort) // use the internal constructor that takes an IMcpDeviceComms
+            base(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort) // use the internal constructor that takes an IMcpDeviceComms
         {
         }
 
