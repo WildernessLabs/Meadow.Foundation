@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sensors.Atmospheric.BME688_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
@@ -20,7 +20,7 @@ namespace Sensors.Atmospheric.BME688_Sample
             //CreateSpiSensor();
             CreateI2CSensor();
 
-            sensor.ConfigureHeatingProfile(Bme680.HeaterProfileType.Profile1, new Temperature(300), TimeSpan.FromMilliseconds(100), new Temperature(22));
+           // sensor.ConfigureHeatingProfile(Bme680.HeaterProfileType.Profile1, new Temperature(300), TimeSpan.FromMilliseconds(100), new Temperature(22));
 
             var consumer = Bme688.CreateObserver(
                 handler: result =>
@@ -55,7 +55,7 @@ namespace Sensors.Atmospheric.BME688_Sample
                 };           
             }
 
-            sensor?.StartUpdating(TimeSpan.FromSeconds(1));
+            sensor?.StartUpdating(TimeSpan.FromSeconds(5));
 
             ReadConditions().Wait();
 
