@@ -4,14 +4,19 @@ using System.Linq;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represent an MCP23x17 I2C port expander
+    /// Represent an MCP23x0x I2C/SPI port expander
     /// </summary>
-    public partial class Mcp23x17 : Mcp23xxx
+    public abstract partial class Mcp23x0x : Mcp23xxx
     {
         /// <summary>
-        /// MCP23x17 pin definitions
+        /// MCP23x0x pin definitions
         /// </summary>
         public PinDefinitions Pins { get; } = new PinDefinitions();
+
+        /// <summary>
+        /// The number of IO pins avaliable on the device
+        /// </summary>
+        public override int NumberOfPins => 8;
 
         /// <summary>
         /// Is the pin valid for this device instance
@@ -21,30 +26,30 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected override bool IsValidPin(IPin pin) => Pins.AllPins.Contains(pin);
 
         /// <summary>
-        /// Creates an Mcp23017 object
+        /// Creates an Mcp23x0x object
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPort">The interrupt port</param>
-        public Mcp23x17(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null) 
-            : base(i2cBus, address, interruptPort)
+        protected Mcp23x0x(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null) : base(i2cBus, address, interruptPort)
         {
         }
 
         /// <summary>
-        /// Creates an Mcp23s17 object
+        /// Creates an Mcp23x0x object
         /// </summary>
-        /// <param name="spiBus">The SPI bus</param>
-        /// <param name="chipSelectPort">The chip select port</param>
-        /// <param name="interruptPort">The interrupt port</param>
-        public Mcp23x17(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) : base(spiBus, chipSelectPort, interruptPort)
+        /// <param name="spiBus">The SPI bus connected to the Mcp23x08</param>
+        /// <param name="chipSelectPort">Chip select port</param>
+        /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
+        protected Mcp23x0x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) :
+            base(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort) // use the internal constructor that takes an IMcpDeviceComms
         {
         }
 
         /// <summary>
-        /// Get the pin from the name
+        /// Get pin reference by name
         /// </summary>
-        /// <param name="pinName">The pin name to look up</param>
+        /// <param name="pinName">The pin name as a string</param>
         /// <returns>IPin reference if found</returns>
         public override IPin GetPin(string pinName)
         {

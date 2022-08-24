@@ -5,7 +5,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represent an MCP23017 SPI port expander
     /// </summary>
-    public class Mcp23s17 : Mcp23x17
+    public class Mcp23s17 : Mcp23x1x
     {
         /// <summary>
         /// Creates an Mcp23s17 object

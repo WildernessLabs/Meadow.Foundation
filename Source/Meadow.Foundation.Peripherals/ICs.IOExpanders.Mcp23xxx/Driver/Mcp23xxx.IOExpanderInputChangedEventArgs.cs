@@ -12,9 +12,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The values of pins that were interrupted
         /// </summary>
-        public byte InputState { get; }
+        public ushort InputState { get; }
     
-        public IOExpanderInputChangedEventArgs(byte interruptPins, byte inputState)
+        public IOExpanderInputChangedEventArgs(byte interruptPins, ushort inputState)
         {
             InterruptPins = interruptPins;
             InputState = inputState;
