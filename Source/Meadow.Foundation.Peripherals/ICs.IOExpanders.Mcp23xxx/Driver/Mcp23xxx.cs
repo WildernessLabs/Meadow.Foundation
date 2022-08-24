@@ -165,7 +165,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {   // setup the port on the device for output
                 SetPortDirection(pin, PortDirectionType.Output);
                 // create the port model object
-                return new DigitalOutputPort(this, pin, initialState);
+                var port = new DigitalOutputPort(pin, initialState);
+
+                port.SetPinState += (pin, state) => WriteToPort(pin, state);
+
+                return port;
             }
             throw new Exception("Pin is out of range");
         }

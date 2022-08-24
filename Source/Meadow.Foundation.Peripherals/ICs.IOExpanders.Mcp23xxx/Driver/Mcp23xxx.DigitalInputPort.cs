@@ -10,6 +10,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class DigitalInputPort : DigitalInputPortBase
         {
+            public delegate void UpdateStateDelegate(bool state);
+
+            public UpdateStateDelegate UpdateState;
+
             /// <summary>
             /// The port state
             /// True is high, false is low
