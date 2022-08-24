@@ -127,7 +127,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             get => heaterIsEnabled;
             set
             {
-                Console.WriteLine("HeaterIsEnabled");
                 var heaterStatus = sensor.ReadRegister((byte)Registers.CTRL_GAS_0);
                 var mask = 0x08;
                 heaterStatus = (byte)((heaterStatus & (byte)~mask) | Convert.ToByte(!value) << 3);
@@ -146,7 +145,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             get => gasConversionIsEnabled;
             set
             {
-                Console.WriteLine("GasConversionIsEnabled");
                 var gasConversion = sensor.ReadRegister((byte)Registers.CTRL_GAS_1);
                 byte mask = 0x10;
                 gasConversion = (byte)((gasConversion & (byte)~mask) | Convert.ToByte(value) << 4);
@@ -155,7 +153,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 gasConversionIsEnabled = value;
             }
         }
-        bool gasConversionIsEnabled;
+        bool gasConversionIsEnabled = false;
 
         /// <summary>
         /// Communication bus used to read and write to the BME68x sensor
@@ -261,6 +259,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // Init the humidity registers
             status = (byte)((byte)configuration.HumidityOversample & 0x07);
             sensor.WriteRegister((byte)Registers.CTRL_HUM, status);
+
+            //enable gas readings
+            GasConversionIsEnabled = true;
         }
 
         /// <summary>
@@ -284,8 +285,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             var heaterResistance = CalculateHeaterResistance(targetTemperature, ambientTemperature);
             var heaterDuration = CalculateHeaterDuration(duration);
 
-            sensor.WriteRegister((byte)(Registers.RES_HEAT_0 + (byte)profile), heaterResistance);
             sensor.WriteRegister((byte)(Registers.GAS_WAIT_0 + (byte)profile), heaterDuration);
+            sensor.WriteRegister((byte)(Registers.RES_HEAT_0 + (byte)profile), heaterResistance);
 
             // cache heater configuration
             if (heaterConfigs.Exists(config => config.HeaterProfile == profile))
@@ -385,9 +386,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure, Resistance GasResistance) conditions;
 
+                //set onetime measurement
                 SetPowerMode(PowerMode.Forced);
-
-             //   Thread.Sleep(GetMeasurementDuration(HeaterProfile));
 
                 // Read the current control register
                 var status = sensor.ReadRegister((byte)Registers.CTRL_MEAS);
@@ -414,16 +414,26 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 sensor.ReadRegister((byte)Registers.PRESSUREDATA, data);
                 var rawPressure = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
 
-                // Read 10 bit gas resistance value from registers
-                var gasResRaw = sensor.ReadRegister((byte)Registers.GAS_RES);
-                var gasRange = sensor.ReadRegister((byte)Registers.GAS_RANGE);
-                var gasRes = (ushort)((ushort)(gasResRaw << 2) + (byte)(gasRange >> 6));
-                gasRange &= 0x0F;
+                if(GasConversionIsEnabled)
+                {
+                    Thread.Sleep(GetMeasurementDuration(HeaterProfile));
+
+                    // Read 10 bit gas resistance value from registers
+                    var gasResRaw = sensor.ReadRegister((byte)Registers.GAS_RES);
+                    var gasRange = sensor.ReadRegister((byte)Registers.GAS_RANGE);
+                    var gasRes = (ushort)((ushort)(gasResRaw << 2) + (byte)(gasRange >> 6));
+                    gasRange &= 0x0F;
+                    conditions.GasResistance = CalculateGasResistance(gasRes, gasRange);
+                }
+                else
+                {
+                    conditions.GasResistance = new Resistance(0);
+                }
 
                 conditions.Temperature = CompensateTemperature(rawTemperature);
                 conditions.Pressure = CompensatePressure(rawPressure);
                 conditions.Humidity = CompensateHumidity(rawHumidity);
-                conditions.GasResistance = CalculateGasResistance(gasRes, gasRange);
+                
 
                 return conditions;
             });

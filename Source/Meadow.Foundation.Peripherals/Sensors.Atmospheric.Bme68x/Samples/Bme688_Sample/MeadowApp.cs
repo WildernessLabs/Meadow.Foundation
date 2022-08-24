@@ -20,7 +20,8 @@ namespace Sensors.Atmospheric.BME688_Sample
             //CreateSpiSensor();
             CreateI2CSensor();
 
-            //sensor.ConfigureHeatingProfile(Bme688.HeaterProfileType.Profile1, new Temperature(300), TimeSpan.FromMilliseconds(100), new Temperature(22));
+            //uncomment to enable on sensor heater for gas readings
+            //EnableGasHeater();
 
             var consumer = Bme688.CreateObserver(
                 handler: result =>
@@ -51,8 +52,11 @@ namespace Sensors.Atmospheric.BME688_Sample
                     Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
                     Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
                     Console.WriteLine($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
-                    Console.WriteLine($"  Gas Resistance: {result.New.GasResistance:N2}Ohms");
-                };           
+                    if (sensor.GasConversionIsEnabled)
+                    {
+                        Console.WriteLine($"  Gas Resistance: {result.New.GasResistance:N0}Ohms");
+                    }
+                };
             }
 
             sensor?.StartUpdating(TimeSpan.FromSeconds(2));
@@ -62,12 +66,20 @@ namespace Sensors.Atmospheric.BME688_Sample
             return base.Initialize();
         }
 
+        void EnableGasHeater()
+        {
+            sensor.GasConversionIsEnabled = true;
+            sensor.HeaterIsEnabled = true;
+            sensor.ConfigureHeatingProfile(Bme688.HeaterProfileType.Profile1, new Temperature(300), TimeSpan.FromMilliseconds(100), new Temperature(22));
+            sensor.HeaterProfile = Bme688.HeaterProfileType.Profile1;
+        }
+
         void CreateSpiSensor()
         {
             Console.WriteLine("Create BME688 sensor with SPI...");
 
             var spiBus = Device.CreateSpiBus();
-            sensor = new Bme688(spiBus, Device.CreateDigitalOutputPort(Device.Pins.D01, false));
+            sensor = new Bme688(spiBus, Device.CreateDigitalOutputPort(Device.Pins.D01));
         }
 
         void CreateI2CSensor()
@@ -88,7 +100,7 @@ namespace Sensors.Atmospheric.BME688_Sample
             Console.WriteLine($"  Temperature: {Temperature?.Celsius:N2}C");
             Console.WriteLine($"  Pressure: {Pressure?.Hectopascal:N2}hPa");
             Console.WriteLine($"  Relative Humidity: {Humidity?.Percent:N2}%");
-            Console.WriteLine($"  Gas Resistance: {Resistance?.Ohms:N2}Ohms");
+            Console.WriteLine($"  Gas Resistance: {Resistance?.Ohms:N0}Ohms");
         }
 
         //<!=SNOP=>

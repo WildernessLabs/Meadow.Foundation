@@ -12,12 +12,15 @@ namespace Sensors.Atmospheric.BME680_Sample
 
         Bme680? sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
             //CreateSpiSensor();
             CreateI2CSensor();
+
+            //uncomment to enable on sensor heater for gas readings
+            //EnableGasHeater();
 
             var consumer = Bme680.CreateObserver(
                 handler: result =>
@@ -43,16 +46,31 @@ namespace Sensors.Atmospheric.BME680_Sample
 
             if(sensor != null)
             {
-                sensor.Updated += (sender, result) => {
+                sensor.Updated += (sender, result) =>
+                {
                     Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
                     Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
                     Console.WriteLine($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
+                    if (sensor.GasConversionIsEnabled)
+                    {
+                        Console.WriteLine($"  Gas Resistance: {result.New.GasResistance:N0}Ohms");
+                    }
                 };
             }
 
-            sensor?.StartUpdating(TimeSpan.FromSeconds(1));
+            sensor?.StartUpdating(TimeSpan.FromSeconds(2));
 
             ReadConditions().Wait();
+
+            return base.Initialize();
+        }
+
+        void EnableGasHeater()
+        {
+            sensor.GasConversionIsEnabled = true;
+            sensor.HeaterIsEnabled = true;
+            sensor.ConfigureHeatingProfile(Bme688.HeaterProfileType.Profile1, new Temperature(300), TimeSpan.FromMilliseconds(100), new Temperature(22));
+            sensor.HeaterProfile = Bme688.HeaterProfileType.Profile1;
         }
 
         void CreateSpiSensor()
@@ -81,7 +99,7 @@ namespace Sensors.Atmospheric.BME680_Sample
             Console.WriteLine($"  Temperature: {Temperature?.Celsius:N2}C");
             Console.WriteLine($"  Pressure: {Pressure?.Hectopascal:N2}hPa");
             Console.WriteLine($"  Relative Humidity: {Humidity?.Percent:N2}%");
-            Console.WriteLine($"  Gas Resistance: {Resistance?.Ohms:N2}Ohms");
+            Console.WriteLine($"  Gas Resistance: {Resistance?.Ohms:N0}Ohms");
         }
 
         //<!=SNOP=>
