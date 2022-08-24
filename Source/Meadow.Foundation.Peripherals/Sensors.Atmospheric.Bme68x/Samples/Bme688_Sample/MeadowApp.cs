@@ -20,7 +20,7 @@ namespace Sensors.Atmospheric.BME688_Sample
             //CreateSpiSensor();
             CreateI2CSensor();
 
-            sensor.ConfigureHeatingProfile(Bme688.HeaterProfileType.Profile1, new Temperature(300), TimeSpan.FromMilliseconds(100), new Temperature(22));
+            //sensor.ConfigureHeatingProfile(Bme688.HeaterProfileType.Profile1, new Temperature(300), TimeSpan.FromMilliseconds(100), new Temperature(22));
 
             var consumer = Bme688.CreateObserver(
                 handler: result =>

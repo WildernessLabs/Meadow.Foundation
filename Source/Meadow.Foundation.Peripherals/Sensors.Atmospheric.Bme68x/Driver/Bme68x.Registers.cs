@@ -7,6 +7,8 @@
         /// </summary>
         internal enum Registers : byte
         {
+            RESET = 0xE1,
+
             H1_LSB = 0xE2,
             H1_MSB = 0xE3,
             H2_LSB = 0xE2,

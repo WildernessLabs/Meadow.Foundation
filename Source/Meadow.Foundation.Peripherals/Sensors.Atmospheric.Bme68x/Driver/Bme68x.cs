@@ -210,7 +210,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected Bme68x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             configuration = new Configuration();
-
             sensor = new Bme68xI2C(i2cBus, address);
 
             Initialize();
@@ -224,8 +223,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="chipSelectPin">The chip select pin</param>
         protected Bme68x(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
             this(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
-        {
-        }
+        { }
 
         /// <summary>
         /// Creates a new instance of the BME68x class
@@ -236,7 +234,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected Bme68x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration? configuration = null)
         {
             sensor = new Bme68xSPI(spiBus, chipSelectPort);
-
             this.configuration = configuration ?? new Configuration();
 
             byte value = sensor.ReadRegister((byte)Registers.STATUS);
@@ -250,19 +247,28 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected void Initialize()
         {
+            Reset();
+
             calibration = new Calibration();
             calibration.LoadCalibrationDataFromSensor(sensor);
 
             // Init the temp and pressure registers
-            // Clear the registers so they're in a known state.
             var status = (byte)((((byte)configuration.TemperatureOversample << 5) & 0xe0) |
-                                    (((byte)configuration.PressureOversample << 2) & 0x1c));
+                                (((byte)configuration.PressureOversample << 2) & 0x1c));
 
             sensor.WriteRegister((byte)Registers.CTRL_MEAS, status);
 
             // Init the humidity registers
             status = (byte)((byte)configuration.HumidityOversample & 0x07);
             sensor.WriteRegister((byte)Registers.CTRL_HUM, status);
+        }
+
+        /// <summary>
+        /// Perform a complete power-on-reset
+        /// </summary>
+        public void Reset()
+        {
+            sensor.WriteRegister((byte)Registers.RESET, 0xB6);
         }
 
         /// <summary>
