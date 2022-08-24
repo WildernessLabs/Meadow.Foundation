@@ -5,7 +5,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represent an MCP23008 I2C port expander
     /// </summary>
-    public class Mcp23008 : Mcp23x08
+    public class Mcp23008 : Mcp23x0x
     {
         /// <summary>
         /// Creates an Mcp23008 object
