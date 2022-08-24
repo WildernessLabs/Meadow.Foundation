@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
@@ -9,7 +10,6 @@ using Meadow.Utilities;
 using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
-using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -186,9 +186,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Resistance? GetResistance => Conditions.GasResistance;
 
-        readonly Memory<byte> readBuffer = new byte[32];
-        readonly Memory<byte> writeBuffer = new byte[32];
-
         readonly Configuration configuration;
 
         /// <summary>
@@ -200,8 +197,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private static readonly byte[] osToMeasCycles = { 0, 1, 2, 4, 8, 16 };
         private static readonly byte[] osToSwitchCount = { 0, 1, 1, 1, 1, 1 };
-        private static readonly double[] s_k1Lookup = { 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, -0.8, 0.0, 0.0, -0.2, -0.5, 0.0, -1.0, 0.0, 0.0 };
-        private static readonly double[] s_k2Lookup = { 0.0, 0.0, 0.0, 0.0, 0.1, 0.7, 0.0, -0.8, -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+        private static readonly double[] k1Lookup = { 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, -0.8, 0.0, 0.0, -0.2, -0.5, 0.0, -1.0, 0.0, 0.0 };
+        private static readonly double[] k2Lookup = { 0.0, 0.0, 0.0, 0.0, 0.1, 0.7, 0.0, -0.8, -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
         private readonly List<HeaterProfileConfiguration> heaterConfigs = new List<HeaterProfileConfiguration>();
 
@@ -240,7 +237,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             sensor = new Bme68xSPI(spiBus, chipSelectPort);
 
-            this.configuration = (configuration == null) ? new Configuration() : configuration;
+            this.configuration = configuration ?? new Configuration();
 
             byte value = sensor.ReadRegister((byte)Registers.STATUS);
             sensor.WriteRegister((byte)Registers.STATUS, value);
@@ -360,14 +357,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             if (changeResult.New.Humidity is { } humidity) {
-                HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
+                HumidityUpdated?.Invoke(this, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
             if (changeResult.New.Pressure is { } pressure) {
-                PressureUpdated?.Invoke(this, new ChangeResult<Units.Pressure>(pressure, changeResult.Old?.Pressure));
+                PressureUpdated?.Invoke(this, new ChangeResult<Pressure>(pressure, changeResult.Old?.Pressure));
             }
             if (changeResult.New.GasResistance is { } gasResistance)
             {
-                GasResistanceUpdated?.Invoke(this, new ChangeResult<Units.Resistance>(gasResistance, changeResult.Old?.GasResistance));
+                GasResistanceUpdated?.Invoke(this, new ChangeResult<Resistance>(gasResistance, changeResult.Old?.GasResistance));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -384,7 +381,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 SetPowerMode(PowerMode.Forced);
 
-                Thread.Sleep(GetMeasurementDuration(HeaterProfile));
+             //   Thread.Sleep(GetMeasurementDuration(HeaterProfile));
 
                 // Read the current control register
                 var status = sensor.ReadRegister((byte)Registers.CTRL_MEAS);
@@ -433,6 +430,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>The temperature</returns>
         protected Units.Temperature CompensateTemperature(int rawTemperature)
         {
+            if (calibration == null) throw new NullReferenceException("Calibration must be defined");
+
             double var1 = ((rawTemperature / 16384.0) - (calibration.T1 / 1024.0)) * calibration.T2;
             double var2 = (rawTemperature / 131072.0) - (calibration.T1 / 8192.0);
             var2 *= var2 * calibration.T3 * 16;
@@ -450,6 +449,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>The measured pressure.</returns>
         private Pressure CompensatePressure(long adcPressure)
         {
+            if (calibration == null) throw new NullReferenceException("Calibration must be defined");
+
             var var1 = (temperatureFine / 2.0) - 64000.0;
             var var2 = var1 * var1 * (calibration.P6 / 131072.0);
             var2 += (var1 * calibration.P5 * 2.0);
@@ -483,6 +484,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>The percentage relative humidity.</returns>
         private RelativeHumidity CompensateHumidity(int adcHumidity)
         {
+            if (calibration == null) throw new NullReferenceException("Calibration must be defined");
+
             var temperature = temperatureFine / 5120.0;
             var var1 = adcHumidity - ((calibration.H1 * 16.0) + ((calibration.H3 / 2.0) * temperature));
             var var2 = var1 * ((calibration.H2 / 262144.0) * (1.0 + ((calibration.H4 / 16384.0) * temperature)
@@ -499,14 +502,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         Resistance CalculateGasResistance(ushort adcGasRes, byte gasRange)
         {
-            if (calibration is null)
-            {
-                throw new Exception($"{nameof(Bme68x)} is incorrectly configured.");
-            }
+            if (calibration == null) throw new NullReferenceException("Calibration must be defined");
 
             var var1 = 1340.0 + 5.0 * calibration.RangeSwErr;
-            var var2 = var1 * (1.0 + s_k1Lookup[gasRange] / 100.0);
-            var var3 = 1.0 + s_k2Lookup[gasRange] / 100.0;
+            var var2 = var1 * (1.0 + k1Lookup[gasRange] / 100.0);
+            var var3 = 1.0 + k2Lookup[gasRange] / 100.0;
             var gasResistance = 1.0 / (var3 * 0.000000125 * (1 << gasRange) * ((adcGasRes - 512.0) / var2 + 1.0));
 
             return new Resistance(gasResistance, Resistance.UnitType.Ohms);
@@ -514,10 +514,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         byte CalculateHeaterResistance(Units.Temperature setTemp, Units.Temperature ambientTemp)
         {
-            if (calibration is null)
-            {
-                throw new Exception($"{nameof(Bme68x)} is incorrectly configured.");
-            }
+            if (calibration == null) throw new NullReferenceException("Calibration must be defined");
 
             // limit maximum temperature to 400°C
             double temp = setTemp.Celsius;
