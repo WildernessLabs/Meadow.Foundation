@@ -331,7 +331,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     mcpDevice.WriteRegister(MapRegister(Registers.InterruptOnChange, bank), gpinten);
 
                     gpinten = mcpDevice.ReadRegister(MapRegister(Registers.InterruptOnChange, bank));
-                    Console.WriteLine($"GPINTEN: {gpinten}");
                 }
             }
             else
