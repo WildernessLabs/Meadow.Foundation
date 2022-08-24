@@ -1,7 +1,7 @@
 ﻿namespace Meadow.Foundation.Sensors.Atmospheric
 {
     partial class Bme68x
-	{
+    {
         /// <summary>
         /// Control registers for the BME68x
         /// </summary>

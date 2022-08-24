@@ -23,12 +23,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             public TimeSpan HeaterDuration { get; set; }
 
             /// <summary>
-            /// 
+            /// Creates a heater profile configuration object
             /// </summary>
             /// <param name="profile">The heater profile</param>
             /// <param name="heaterResistance">The heater resistance (Ohms)</param>
             /// <param name="heaterDuration">The heating duration</param>
-            /// <exception cref="ArgumentOutOfRangeException"></exception>
             public HeaterProfileConfiguration(HeaterProfileType profile, ushort heaterResistance, TimeSpan heaterDuration)
             {
                 if (!Enum.IsDefined(typeof(HeaterProfileType), profile))

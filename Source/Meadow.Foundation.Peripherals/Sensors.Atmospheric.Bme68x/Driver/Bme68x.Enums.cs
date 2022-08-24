@@ -3,9 +3,9 @@
     partial class Bme68x
     {
         /// <summary>
-		/// Valid addresses for the sensor.
-		/// </summary>
-		public enum Addresses : byte
+        /// Valid addresses for the sensor
+        /// </summary>
+        public enum Addresses : byte
         {
             /// <summary>
             /// Bus address 0x77
