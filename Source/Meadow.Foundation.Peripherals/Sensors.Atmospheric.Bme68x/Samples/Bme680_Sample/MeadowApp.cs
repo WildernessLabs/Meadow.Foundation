@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sensors.Atmospheric.BME680_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -68,19 +68,20 @@ namespace Sensors.Atmospheric.BME680_Sample
             Console.WriteLine("Create BME680 sensor with I2C...");
 
             var i2c = Device.CreateI2cBus();
-            sensor = new Bme680(i2c, (byte)Bme680.Addresses.Address_0x76);
+            sensor = new Bme680(i2c, (byte)Bme688.Addresses.Address_0x76);
         }
 
         async Task ReadConditions()
         {
             if(sensor == null) { return; }
 
-            var (Temperature, Humidity, Pressure) = await sensor.Read();
+            var (Temperature, Humidity, Pressure, Resistance) = await sensor.Read();
 
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"  Temperature: {Temperature?.Celsius:N2}C");
             Console.WriteLine($"  Pressure: {Pressure?.Hectopascal:N2}hPa");
             Console.WriteLine($"  Relative Humidity: {Humidity?.Percent:N2}%");
+            Console.WriteLine($"  Gas Resistance: {Resistance?.Ohms:N2}Ohms");
         }
 
         //<!=SNOP=>

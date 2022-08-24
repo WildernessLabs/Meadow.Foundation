@@ -1,13 +1,10 @@
 ﻿namespace Meadow.Foundation.Sensors.Atmospheric
 {
-	public partial class Bme680
+    partial class Bme68x
 	{
         /// <summary>
         /// Control registers for the BME68x
         /// </summary>
-        /// <remarks>
-        /// See section 5.2 Memory map
-        /// </remarks>
         internal enum Registers : byte
         {
             H1_LSB = 0xE2,

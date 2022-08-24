@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    public partial class Bme680
+    partial class Bme68x
     {
         /// <summary>
         /// The heater profile configuration saved on the device.

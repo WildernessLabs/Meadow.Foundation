@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    public partial class Bme680
+    partial class Bme68x
     {
         /// <summary>
         /// The oversampling configuration for oversampling performed by the Bme68x

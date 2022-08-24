@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sensors.Atmospheric.BME688_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -75,7 +75,7 @@ namespace Sensors.Atmospheric.BME688_Sample
             Console.WriteLine("Create BME688 sensor with I2C...");
 
             var i2c = Device.CreateI2cBus();
-            sensor = new Bme688(i2c, (byte)Bme680.Addresses.Address_0x76);
+            sensor = new Bme688(i2c, (byte)Bme688.Addresses.Address_0x76);
         }
 
         async Task ReadConditions()

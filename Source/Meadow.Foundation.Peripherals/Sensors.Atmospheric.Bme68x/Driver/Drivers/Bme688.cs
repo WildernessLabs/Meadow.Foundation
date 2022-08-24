@@ -3,13 +3,12 @@
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// BME688 Temperature, Pressure and Humidity Sensor
+    /// BME688 Temperature, Pressure, Humidity and gas sensor
     /// </summary>
     /// <remarks>
-    /// This class implements the functionality necessary to read the temperature, pressure and humidity
-    /// from the Bosch BME688 sensor
+    /// This class implements the functionality necessary to read the temperature, pressure, humidity and VOS
     /// </remarks>
-    public partial class Bme688 : Bme680
+    public partial class Bme688 : Bme68x
     {
         /// <summary>
         /// Creates a new instance of the BME688 class
