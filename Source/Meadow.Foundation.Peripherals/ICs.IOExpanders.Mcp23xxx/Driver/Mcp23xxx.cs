@@ -87,16 +87,27 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // determine which pin caused the interrupt
             byte interruptFlag = mcpDevice.ReadRegister(MapRegister(Registers.InterruptFlag, PortBank.A));
             byte currentStates = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.A));
+            byte currentStatesB = 0;
+
+            if(NumberOfPins == 16)
+            {
+                currentStatesB = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.B));
+            }
+            bool state;
 
             foreach(var port in inputPorts)
             {   //looks ugly but it's correct
-                var state = BitHelpers.GetBitValue(currentStates, (byte)port.Key.Key);
+                if(GetPortBankForPin(port.Key) == PortBank.A)
+                {
+                    state = BitHelpers.GetBitValue(currentStates, (byte)port.Key.Key);
+                }
+                else
+                {
+                    state = BitHelpers.GetBitValue(currentStatesB, (byte)((byte)port.Key.Key - 8));
+                }
                 port.Value.Update(state);
             }
-            InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptFlag, currentStates));
-
-      //      interruptFlag = mcpDevice.ReadRegister(MapRegister(Registers.InterruptFlag, PortBank.B));
-      //      currentStates = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.B));
+            InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptFlag, (ushort)(currentStatesB << 8 | currentStates)));
         }
 
         /// <summary>
@@ -243,7 +254,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 var port = new DigitalInputPort(pin, interruptMode)
                 {
-                    DebounceDuration = debounceDuration
+                    DebounceDuration = debounceDuration,
+                    UpdateState = (pin) => ReadPort(pin)
                 };
 
                 inputPorts.Add(pin, port);

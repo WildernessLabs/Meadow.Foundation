@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using System;
+using System.Data;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -10,15 +11,25 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class DigitalInputPort : DigitalInputPortBase
         {
-            public delegate void UpdateStateDelegate(bool state);
-
-            public UpdateStateDelegate UpdateState;
+            /// <summary>
+            /// Update state function 
+            /// Assign this when the Update method isn't reliable 
+            /// e.g. when not using interrupts/events
+            /// </summary>
+            public Func<IPin, bool> UpdateState;
 
             /// <summary>
             /// The port state
             /// True is high, false is low
             /// </summary>
-            public override bool State => state;
+            public override bool State
+            {
+                get
+                {
+                    if (UpdateState != null) { Update(UpdateState.Invoke(Pin)); }
+                    return state;
+                }
+            }
             private bool state = false;
 
             private DateTime lastUpdate;
