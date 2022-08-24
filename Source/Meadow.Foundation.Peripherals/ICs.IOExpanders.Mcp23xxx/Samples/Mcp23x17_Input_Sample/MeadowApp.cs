@@ -12,7 +12,7 @@ using static Meadow.Foundation.ICs.IOExpanders.Mcp23xxx;
 
 namespace ICs.IOExpanders.Mcp23x17_Input_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         Mcp23017 mcp;
 
@@ -121,7 +121,6 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
 
             var debounceTime = TimeSpan.FromMilliseconds(50);
 
-
             var inputPort00 = mcp.CreateDigitalInputPort(mcp.Pins.GPA0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
             var inputPort01 = mcp.CreateDigitalInputPort(mcp.Pins.GPA1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
             var inputPort02 = mcp.CreateDigitalInputPort(mcp.Pins.GPA2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
@@ -139,7 +138,6 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
             var inputPort13 = mcp.CreateDigitalInputPort(mcp.Pins.GPB5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
             var inputPort14 = mcp.CreateDigitalInputPort(mcp.Pins.GPB6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
             var inputPort15 = mcp.CreateDigitalInputPort(mcp.Pins.GPB7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            
 
             inputPort00.Changed += (s, e) => Console.WriteLine($"Port A0 interrupt {e.New.State}");
             inputPort01.Changed += (s, e) => Console.WriteLine($"Port A1 interrupt {e.New.State}");
@@ -154,10 +152,8 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
             inputPort09.Changed += (s, e) => Console.WriteLine($"Port B1 interrupt {e.New.State}");
             inputPort10.Changed += (s, e) => Console.WriteLine($"Port B2 interrupt {e.New.State}");
             inputPort11.Changed += (s, e) => Console.WriteLine($"Port B3 interrupt {e.New.State}");
-            
             inputPort12.Changed += (s, e) => Console.WriteLine($"Port B4 interrupt {e.New.State}");
             inputPort13.Changed += (s, e) => Console.WriteLine($"Port B5 interrupt {e.New.State}");
-            
             inputPort14.Changed += (s, e) => Console.WriteLine($"Port B6 interrupt {e.New.State}");
             inputPort15.Changed += (s, e) => Console.WriteLine($"Port B7 interrupt {e.New.State}");
         }

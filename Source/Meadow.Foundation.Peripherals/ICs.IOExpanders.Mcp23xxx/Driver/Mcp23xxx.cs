@@ -145,15 +145,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     intHigh = false;
                 }
 
-                byte ioconA = 0x00;
-                ioconA = BitHelpers.SetBit(ioconA, 0x01, intHigh); //set interrupt pin to active high (true), low (false)
-                ioconA = BitHelpers.SetBit(ioconA, 0x02, false); //don't set interrupt to open drain (should be the default)
+                byte iocon = 0x00;
+                iocon = BitHelpers.SetBit(iocon, 0x01, intHigh); //set interrupt pin to active high (true), low (false)
+                iocon = BitHelpers.SetBit(iocon, 0x02, false); //don't set interrupt to open drain (should be the default)
 
-                mcpDevice.WriteRegister(MapRegister(Registers.IOConfiguration), ioconA);
+                mcpDevice.WriteRegister(MapRegister(Registers.IOConfiguration), iocon);
 
                 if (NumberOfPins == 16)
                 {
-                    mcpDevice.WriteRegister(MapRegister(Registers.IOConfiguration, PortBank.B), ioconA);
+                    mcpDevice.WriteRegister(MapRegister(Registers.IOConfiguration, PortBank.B), iocon);
                 }
             }
         }
@@ -290,7 +290,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     mcpDevice.WriteRegister(MapRegister(Registers.IODirection, PortBank.A), ioDirA);
                 }
                 else {
-                    
                     ioDirB = BitHelpers.SetBit(ioDirB, bitIndex, (byte)direction);
                     mcpDevice.WriteRegister(MapRegister(Registers.IODirection, PortBank.B), ioDirB);
                 }
