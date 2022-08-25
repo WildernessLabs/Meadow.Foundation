@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// <summary>
     /// Represents an Ssd1608 ePaper display
     /// </summary>
-    public class Ssd1608 : EpdBase
+    public class Ssd1608 : EPaperMonoBase
     {
         /// <summary>
         /// Create a new Ssd1608 object

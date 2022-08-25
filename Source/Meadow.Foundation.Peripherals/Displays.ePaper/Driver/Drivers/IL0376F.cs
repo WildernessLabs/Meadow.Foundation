@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// Represents an Il0376F ePaper color display
     /// 200x200, e-Ink three-color display, SPI interface 
     /// </summary>
-    public class Il0376F : EpdColorBase
+    public class Il0376F : EPaperTriColorBase
     {
         /// <summary>
         /// Create a new Il0376F object

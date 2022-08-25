@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// Represents IL91874 ePaper color displays
     /// 264x176, 2.7inch tri color e-Ink display / SPI interface 
     /// </summary>
-    public class Il91874 : EpdColorBase
+    public class Il91874 : EPaperTriColorBase
     {
         /// <summary>
         /// Create a new Il91874 object

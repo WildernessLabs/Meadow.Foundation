@@ -19,12 +19,12 @@ namespace Displays.ePaper.IL0373_Sample
  
             var display = new Il0373(device: Device, 
                 spiBus: Device.CreateSpiBus(),
-                chipSelectPin: Device.Pins.D02,
-                dcPin: Device.Pins.D01,
-                resetPin: Device.Pins.D00,
-                busyPin: Device.Pins.D03,
-                width: 176,
-                height: 264);
+                chipSelectPin: Device.Pins.D03,
+                dcPin: Device.Pins.D02,
+                resetPin: Device.Pins.D01,
+                busyPin: Device.Pins.D00,
+                width: 400,
+                height: 300);
 
             graphics = new MicroGraphics(display);
 

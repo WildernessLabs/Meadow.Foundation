@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// <summary>
     /// Represents an Il3897 ePaper display
     /// </summary>
-    public class Il3897 : EpdBase
+    public class Il3897 : EPaperMonoBase
     {
         /// <summary>
         /// Create a new Il3897 object

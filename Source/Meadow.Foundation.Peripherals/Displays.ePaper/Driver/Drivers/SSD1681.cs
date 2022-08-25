@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// 200x200, e-Ink three-color display, SPI interface 
     /// DRIVER NOT COMPLETE
     /// </summary>
-    public class Ssd1681 : EpdColorBase
+    public class Ssd1681 : EPaperTriColorBase
     {
         protected override bool IsBlackInverted => false;
 
