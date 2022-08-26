@@ -197,9 +197,18 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <summary>
         /// Draw the display buffer to screen
         /// </summary>
-        public void Show(int left, int top, int right, int bottom)
+        public virtual void Show(int left, int top, int right, int bottom)
         {
             SetFrameMemory(imageBuffer.Buffer, left, top, right - left, top - bottom);
+            DisplayFrame();
+        }
+
+        /// <summary>
+        /// Draw the display buffer to screen
+        /// </summary>
+        public virtual void Show()
+        {
+            SetFrameMemory(imageBuffer.Buffer);
             DisplayFrame();
         }
 
@@ -215,68 +224,57 @@ namespace Meadow.Foundation.Displays.ePaper
         }
 
         /// <summary>
-        /// Draw the display buffer to screen
-        /// </summary>
-        public void Show()
-        {
-            SetFrameMemory(imageBuffer.Buffer);
-            DisplayFrame();
-        }
-
-        /// <summary>
         /// Set frame buffer memory of display
         /// </summary>
-        /// <param name="image_buffer">buffer</param>
+        /// <param name="buffer">buffer</param>
         /// <param name="x">x location</param>
         /// <param name="y">y location</param>
-        /// <param name="image_width">width in pixels</param>
-        /// <param name="image_height">height in pixels</param>
-        public virtual void SetFrameMemory(byte[] image_buffer,
+        /// <param name="width">width in pixels</param>
+        /// <param name="height">height in pixels</param>
+        public virtual void SetFrameMemory(byte[] buffer,
                                 int x,
                                 int y,
-                                int image_width,
-                                int image_height)
+                                int width,
+                                int height)
         {
-            int x_end;
-            int y_end;
+            int xEnd;
+            int yEnd;
 
-            if (image_buffer == null ||
-                x < 0 || image_width < 0 ||
-                y < 0 || image_height < 0)
+            if (buffer == null ||  x < 0 || width < 0 ||  y < 0 || height < 0)
             {
                 return;
             }
 
             /* x point must be the multiple of 8 or the last 3 bits will be ignored */
             x &= 0xF8;
-            image_width &= 0xF8;
-            if (x + image_width >= Width)
+            width &= 0xF8;
+            if (x + width >= Width)
             {
-                x_end = Width - 1;
+                xEnd = Width - 1;
             }
             else
             {
-                x_end = x + image_width - 1;
+                xEnd = x + width - 1;
             }
 
-            if (y + image_height >= Height)
+            if (y + height >= Height)
             {
-                y_end = Height - 1;
+                yEnd = Height - 1;
             }
             else
             {
-                y_end = y + image_height - 1;
+                yEnd = y + height - 1;
             }
 
-            SetMemoryArea(x, y, x_end, y_end);
+            SetMemoryArea(x, y, xEnd, yEnd);
             SetMemoryPointer(x, y);
             SendCommand(Command.WRITE_RAM);
             /* send the image data */
-            for (int j = 0; j < y_end - y + 1; j++)
+            for (int j = 0; j < yEnd - y + 1; j++)
             {
-                for (int i = 0; i < (x_end - x + 1) / 8; i++)
+                for (int i = 0; i < (xEnd - x + 1) / 8; i++)
                 {
-                    SendData(image_buffer[i + j * (image_width / 8)]);
+                    SendData(buffer[i + j * (width / 8)]);
                 }
             }
         }
@@ -284,9 +282,9 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <summary>
         /// Set frame buffer memory of display (full screen)
         /// </summary>
-        /// <param name="image_buffer">buffer</param>
+        /// <param name="buffer">buffer</param>
 
-        public virtual void SetFrameMemory(byte[] image_buffer)
+        public virtual void SetFrameMemory(byte[] buffer)
         {
             SetMemoryArea(0, 0, Width - 1, Height - 1);
             SetMemoryPointer(0, 0);
@@ -296,7 +294,7 @@ namespace Meadow.Foundation.Displays.ePaper
             dataCommandPort.State = DataState;
             for (int i = 0; i < Width / 8 * Height; i++)
             {
-                spiPeripheral.Write(image_buffer[i]);
+                spiPeripheral.Write(buffer[i]);
             }
         }
 
