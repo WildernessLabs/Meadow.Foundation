@@ -3,7 +3,7 @@ using Meadow.Hardware;
 using Meadow.Units;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.TftSpi
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a St7789 TFT color display

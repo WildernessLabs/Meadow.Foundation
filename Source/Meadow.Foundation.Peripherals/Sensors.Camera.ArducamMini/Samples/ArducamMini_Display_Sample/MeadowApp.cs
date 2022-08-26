@@ -5,7 +5,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Camera;
 using Meadow.Foundation.Graphics;
 using NanoJpeg;
-using Meadow.Foundation.Displays.TftSpi;
+using Meadow.Foundation.Displays;
 using System.Threading.Tasks;
 
 namespace MeadowApp

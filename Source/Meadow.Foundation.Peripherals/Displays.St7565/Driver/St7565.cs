@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using Meadow.Hardware;
-using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Graphics.Buffers;
 
 namespace Meadow.Foundation.Displays
 {

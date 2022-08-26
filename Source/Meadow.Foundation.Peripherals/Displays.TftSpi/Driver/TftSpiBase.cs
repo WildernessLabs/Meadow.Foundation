@@ -1,11 +1,10 @@
-using Meadow.Devices;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 using System;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.TftSpi
+namespace Meadow.Foundation.Displays
 {
     public abstract partial class TftSpiBase : IGraphicsDisplay
     {
