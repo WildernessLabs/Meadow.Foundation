@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <returns>true if pixel is set / colored</returns>
         public override bool GetPixelIsColored(int x, int y)
         {
-            throw new NotImplementedException();
+            return (Buffer[(x + y * Width) / 8] & (0x80 >> (x % 8))) != 0;
         }
 
         /// <summary>
