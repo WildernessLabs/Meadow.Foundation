@@ -50,8 +50,8 @@ namespace Meadow.Foundation.Displays.ePaper
             Reset();
 
             SendCommand(Command.DRIVER_OUTPUT_CONTROL);
-            SendData((int)(Width - 1));
-            SendData((int)(Width - 1) >> 8);
+            SendData(Width - 1);
+            SendData((Width - 1) >> 8);
             SendData(0x00);                     // GD = 0; SM = 0; TB = 0;
 
             SendCommand(Command.BOOSTER_SOFT_START_CONTROL);
