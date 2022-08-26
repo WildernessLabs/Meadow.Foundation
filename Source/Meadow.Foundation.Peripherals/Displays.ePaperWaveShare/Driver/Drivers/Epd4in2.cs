@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using System;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays.ePaper
 {
@@ -50,6 +49,7 @@ namespace Meadow.Foundation.Displays.ePaper
             SendData(0x2b);  // VDH
             SendData(0x2b);  // VDL
 
+            SendCommand(0x06);
             SendData(0x17);
             SendData(0x17);
             SendData(0x17);  //07 0f 17 1f 27 2F 37 2f
@@ -150,8 +150,6 @@ namespace Meadow.Foundation.Displays.ePaper
 
         protected override void Reset()
         {
-            Console.WriteLine("Reset");
-
             resetPort.State = false;
             DelayMs(2);
             resetPort.State = true;
@@ -251,8 +249,6 @@ namespace Meadow.Foundation.Displays.ePaper
 
         void DisplayFrame(byte[] buffer)
         {
-            Console.WriteLine($"Display frame - width {Width}, height {Height}");
-
             SendCommand(RESOLUTION_SETTING);
             SendData(Width >> 8);
             SendData(Width & 0xff);
@@ -278,6 +274,7 @@ namespace Meadow.Foundation.Displays.ePaper
                 {
                     SendData(buffer[i]);
                 }
+            
                 DelayMs(2);
             }
 
@@ -290,7 +287,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         public void DisplayFrame()
         {
-            SendCommand(0x12);
+            SendCommand(DISPLAY_REFRESH);
             DelayMs(100);
             WaitUntilIdle();
         }

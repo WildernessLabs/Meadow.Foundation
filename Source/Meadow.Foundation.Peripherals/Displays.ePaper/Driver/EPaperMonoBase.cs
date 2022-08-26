@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Buffer to hold display data
         /// </summary>
-        protected readonly Buffer1bpp imageBuffer;
+        protected readonly Buffer1bppV imageBuffer;
 
         /// <summary>
         /// Width of display in pixels
@@ -80,7 +80,7 @@ namespace Meadow.Foundation.Displays
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
-            imageBuffer = new Buffer1bpp(width, height);
+            imageBuffer = new Buffer1bppV(width, height);
 
             imageBuffer.Clear(true);
 
