@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// Represents a WaveShare epd4in2bc tri color 4.2" ePaper color display (red or yellow)
     /// 400x300, 4.2inch e-Ink three-color display, SPI interface 
     /// </summary>
-    public class WaveShare_epd4in2bc : Il0398
+    public class WaveShareEpd4in2bc : Il0398
     {
         /// <summary>
         /// Create a new WaveShare_epd4in2bc 400x300 pixel display object ePaper display object
@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="busyPin">Busy pin</param>
-        public WaveShare_epd4in2bc(IMeadowDevice device, 
+        public WaveShareEpd4in2bc(IMeadowDevice device, 
                                     ISpiBus spiBus, 
                                     IPin chipSelectPin, 
                                     IPin dcPin, 
@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="dataCommandPort">Data command output port</param>
         /// <param name="resetPort">Reset output port</param>
         /// <param name="busyPort">Busy input port</param>
-        public WaveShare_epd4in2bc(ISpiBus spiBus,
+        public WaveShareEpd4in2bc(ISpiBus spiBus,
                                     IDigitalOutputPort chipSelectPort,
                                     IDigitalOutputPort dataCommandPort,
                                     IDigitalOutputPort resetPort,

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.32228.430
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32802.440
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meadow.Foundation.Core.Samples", "Meadow.Foundation.Core.Samples", "{7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}"
 EndProject
@@ -1161,6 +1161,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp23018_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23xxx\Samples\Mcp23018_Sample\Mcp23018_Sample.csproj", "{92F2B28F-AD70-47D2-BC9A-437C862908D4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp23x17_Input_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23xxx\Samples\Mcp23x17_Input_Sample\Mcp23x17_Input_Sample.csproj", "{0C14E200-87E9-4F1D-93D2-4738B0D6F918}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaveShareEpd4in2bV2_Sample", "Meadow.Foundation.Peripherals\Displays.ePaper\Samples\WaveShareEpd4in2bV2_Sample\WaveShareEpd4in2bV2_Sample.csproj", "{1F4996D6-B5AB-48C8-BC34-68B46F002D93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2694,6 +2696,12 @@ Global
 		{0C14E200-87E9-4F1D-93D2-4738B0D6F918}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C14E200-87E9-4F1D-93D2-4738B0D6F918}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0C14E200-87E9-4F1D-93D2-4738B0D6F918}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{1F4996D6-B5AB-48C8-BC34-68B46F002D93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F4996D6-B5AB-48C8-BC34-68B46F002D93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F4996D6-B5AB-48C8-BC34-68B46F002D93}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{1F4996D6-B5AB-48C8-BC34-68B46F002D93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F4996D6-B5AB-48C8-BC34-68B46F002D93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F4996D6-B5AB-48C8-BC34-68B46F002D93}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3272,6 +3280,7 @@ Global
 		{0F507104-F919-44C6-A940-CAE7EAE4FD3B} = {1A91B800-DC03-4199-AE38-4BD57195416F}
 		{92F2B28F-AD70-47D2-BC9A-437C862908D4} = {1A91B800-DC03-4199-AE38-4BD57195416F}
 		{0C14E200-87E9-4F1D-93D2-4738B0D6F918} = {1A91B800-DC03-4199-AE38-4BD57195416F}
+		{1F4996D6-B5AB-48C8-BC34-68B46F002D93} = {06BFC6F2-9D39-46B2-8E9B-A2204481EED2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
