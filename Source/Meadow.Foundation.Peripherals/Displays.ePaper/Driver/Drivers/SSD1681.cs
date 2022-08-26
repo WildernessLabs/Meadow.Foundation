@@ -1,6 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Foundation.Displays.ePaper;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {

@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {

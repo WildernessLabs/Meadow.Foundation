@@ -1,4 +1,3 @@
-using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays

@@ -1,6 +1,4 @@
 using Meadow.Hardware;
-using System;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -187,44 +185,44 @@ namespace Meadow.Foundation.Displays
         protected virtual void ClearFrame()
         {
             SendCommand(Command.DATA_START_TRANSMISSION_1);
-            Thread.Sleep(2);
+            DelayMs(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(0xFF);
             }
-            Thread.Sleep(2);
+            DelayMs(2);
 
             SendCommand(Command.DATA_START_TRANSMISSION_2);
-            Thread.Sleep(2);
+            DelayMs(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(0xFF);
             }
-            Thread.Sleep(2);
+            DelayMs(2);
         }
 
         void DisplayFrame(byte[] blackBuffer, byte[] colorBuffer)
         {
             SendCommand(Command.DATA_START_TRANSMISSION_1);
-            Thread.Sleep(2);
+            DelayMs(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
                SendData(blackBuffer[i]);
 
             }
-            Thread.Sleep(2);
+            DelayMs(2);
 
             
             SendCommand(Command.DATA_START_TRANSMISSION_2);
-            Thread.Sleep(2);
+            DelayMs(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 //SendData(0xFF); //white for clear, black for on
                 SendData(colorBuffer[i]);
             }
-            Thread.Sleep(2);
+            DelayMs(2);
 
             DisplayFrame();
         }
