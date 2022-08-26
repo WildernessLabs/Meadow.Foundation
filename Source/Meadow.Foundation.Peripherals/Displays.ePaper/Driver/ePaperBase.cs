@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Displays
             spiPeripheral.Write(commandBuffer);
         }
 
-        protected void Reset()
+        protected virtual void Reset()
         {
             resetPort.State = (false);
             DelayMs(200);

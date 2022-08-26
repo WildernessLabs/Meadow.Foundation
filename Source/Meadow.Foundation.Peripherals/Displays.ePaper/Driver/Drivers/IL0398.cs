@@ -206,8 +206,6 @@ namespace Meadow.Foundation.Displays.ePaper
 
         void DisplayFrame(byte[] blackBuffer, byte[] colorBuffer)
         {
-            Console.WriteLine($"Display frame - width {Width}, height {Height}");
-
             SendCommand(Command.DATA_START_TRANSMISSION_1);
             Thread.Sleep(2);
 

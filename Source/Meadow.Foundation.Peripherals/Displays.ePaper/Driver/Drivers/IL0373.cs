@@ -1,6 +1,4 @@
-
 using System.Threading;
-using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.ePaper
@@ -26,8 +24,7 @@ namespace Meadow.Foundation.Displays.ePaper
         public Il0373(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
-        {
-        }
+        { }
 
         /// <summary>
         /// Create a new Il0373 ePaper display object
