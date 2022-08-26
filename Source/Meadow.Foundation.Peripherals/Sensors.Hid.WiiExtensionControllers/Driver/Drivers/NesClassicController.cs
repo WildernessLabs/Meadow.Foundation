@@ -1,5 +1,4 @@
-﻿using Meadow.Foundation.Sensors.Hid;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Hid;
 
