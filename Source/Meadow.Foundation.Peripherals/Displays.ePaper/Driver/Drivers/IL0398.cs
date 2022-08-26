@@ -167,7 +167,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="bottom">bottom bounds of region in pixels</param>
         public override void Show(int left, int top, int right, int bottom)
         {
-            SetPartialWindow(blackImageBuffer.Buffer, colorImageBuffer.Buffer,
+            SetPartialWindow(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer,
                 left, top, right - left, top - bottom);
 
             DisplayFrame();
@@ -178,7 +178,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         public override void Show()
         {
-            DisplayFrame(blackImageBuffer.Buffer, colorImageBuffer.Buffer);
+            DisplayFrame(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer);
         }
 
         /// <summary>
@@ -206,6 +206,8 @@ namespace Meadow.Foundation.Displays.ePaper
 
         void DisplayFrame(byte[] blackBuffer, byte[] colorBuffer)
         {
+            Console.WriteLine($"Display frame - width {Width}, height {Height}");
+
             SendCommand(Command.DATA_START_TRANSMISSION_1);
             Thread.Sleep(2);
 
@@ -216,10 +218,12 @@ namespace Meadow.Foundation.Displays.ePaper
             }
             Thread.Sleep(2);
 
+            
             SendCommand(Command.DATA_START_TRANSMISSION_2);
             Thread.Sleep(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
+                //SendData(0xFF); //white for clear, black for on
                 SendData(colorBuffer[i]);
             }
             Thread.Sleep(2);

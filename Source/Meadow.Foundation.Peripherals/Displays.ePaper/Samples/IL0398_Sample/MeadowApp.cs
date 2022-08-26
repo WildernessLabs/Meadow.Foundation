@@ -35,27 +35,20 @@ namespace Displays.ePaper.IL0398_Sample
         {
             Console.WriteLine("Run");
 
-            //any color but black will show the ePaper alternate color 
-            //graphics.DrawRectangle(1, 1, 126, 32, Color.Red, false);
-
-            graphics.CurrentFont = new Font8x12();
-            //graphics.DrawText(2, 2, "IL0398", Color.Black);
-            //graphics.DrawText(2, 20, "Meadow F7", Color.Black);
-
-            // graphics.DrawRectangle(10, 20, 30, 40, false, false);
-
             for (int i = 0; i < 100; i++)
             {
-                // display.DrawPixel(i, i, true);
-                graphics.DrawPixel(i, i, true);
+                graphics.DrawPixel(i, i, Color.Black);
             }
 
-            graphics.DrawRectangle(10, 20, 30, 40, true, false);
+            graphics.DrawRectangle(10, 40, 160, 60, Color.Black, true);
+            graphics.DrawRectangle(20, 80, 200, 60, Color.Yellow, true);
 
-            graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(2, 20, "Meadow F7", Color.White);
+            graphics.CurrentFont = new Font12x16();
+            graphics.DrawText(2, 20, "Meadow F7", Color.Black);
+            graphics.DrawText(2, 50, "White", Color.White);
+            graphics.DrawText(2, 60, "Yellow", Color.Yellow);
 
-            graphics.Show();
+            display.Show();
 
             Console.WriteLine("Run complete");
 

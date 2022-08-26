@@ -87,7 +87,7 @@ namespace Meadow.Foundation.Displays.ePaper
         protected void DisplayFrame()
         {
             byte temp;
-            if (blackImageBuffer != null)
+            if (imageBuffer.BlackBuffer != null)
             {
                 SendCommand(Command.DATA_START_TRANSMISSION_1);
                 DelayMs(2);
@@ -96,7 +96,7 @@ namespace Meadow.Foundation.Displays.ePaper
                     temp = 0x00;
                     for (int bit = 0; bit < 4; bit++)
                     {
-                        if ((blackImageBuffer.Buffer[i] & (0x80 >> bit)) != 0)
+                        if ((imageBuffer.BlackBuffer[i] & (0x80 >> bit)) != 0)
                         {
                             temp |= (byte)(0xC0 >> (bit * 2));
                         }
@@ -105,7 +105,7 @@ namespace Meadow.Foundation.Displays.ePaper
                     temp = 0x00;
                     for (int bit = 4; bit < 8; bit++)
                     {
-                        if ((blackImageBuffer.Buffer[i] & (0x80 >> bit)) != 0)
+                        if ((imageBuffer.BlackBuffer[i] & (0x80 >> bit)) != 0)
                         {
                             temp |= (byte)(0xC0 >> ((bit - 4) * 2));
                         }
@@ -115,11 +115,11 @@ namespace Meadow.Foundation.Displays.ePaper
                 DelayMs(2);
             }
 
-            if (colorImageBuffer != null)
+            if (imageBuffer.ColorBuffer != null)
             {
                 SendCommand(Command.DATA_START_TRANSMISSION_2);
                 DelayMs(2);
-                SendData(colorImageBuffer.Buffer);
+                SendData(imageBuffer.ColorBuffer);
                 DelayMs(2);
             }
             SendCommand(Command.DISPLAY_REFRESH);
