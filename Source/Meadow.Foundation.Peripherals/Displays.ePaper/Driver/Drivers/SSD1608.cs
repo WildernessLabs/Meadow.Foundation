@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
             SendCommand(Command.DRIVER_OUTPUT_CONTROL);
             SendData((byte)(Height - 1));
-            SendData((int)(Height - 1) >> 8);
+            SendData((Height - 1) >> 8);
             SendData(0x00);                     // GD = 0; SM = 0; TB = 0;
 
             SendCommand(Command.BOOSTER_SOFT_START_CONTROL);
