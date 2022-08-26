@@ -1165,7 +1165,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp23018_Sample", "Meadow.F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp23x17_Input_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23xxx\Samples\Mcp23x17_Input_Sample\Mcp23x17_Input_Sample.csproj", "{0C14E200-87E9-4F1D-93D2-4738B0D6F918}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ePaperWaveShare", "ePaperWaveShare", "{8EAB8189-9D27-4A9B-B0FC-F4A0172D68FE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.ePaperWaveShare", "Displays.ePaperWaveShare", "{8EAB8189-9D27-4A9B-B0FC-F4A0172D68FE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{7311794D-7D2F-47E8-A5B0-C216CBD64A13}"
 EndProject
