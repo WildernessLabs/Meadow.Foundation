@@ -1,6 +1,6 @@
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     //EPD1i54B
     //EPD1i54C

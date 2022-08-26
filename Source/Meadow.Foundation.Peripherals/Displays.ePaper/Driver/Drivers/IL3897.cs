@@ -1,7 +1,7 @@
 using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     //aka WaveShare EPD2i13
     /// <summary>

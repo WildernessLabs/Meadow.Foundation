@@ -1,7 +1,7 @@
 using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     //similar to IL91874 ... appears to be an old version v0.3
     //GxGDEW027W3

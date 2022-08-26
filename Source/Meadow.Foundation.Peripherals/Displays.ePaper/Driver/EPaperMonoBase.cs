@@ -2,7 +2,7 @@
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Provide an interface for ePaper monochrome displays

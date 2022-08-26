@@ -1,13 +1,13 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays.ePaper;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using System;
 using System.Threading.Tasks;
 
 namespace Displays.ePaper.IL0373_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

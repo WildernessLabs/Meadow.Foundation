@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
-using Meadow.Foundation.Displays.ePaper;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 
 namespace Displays.ePaper.IL0398_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

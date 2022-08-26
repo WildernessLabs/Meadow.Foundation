@@ -1,7 +1,7 @@
 using System.Threading;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     //aka WaveShare EPD 2i9B
     /// <summary>

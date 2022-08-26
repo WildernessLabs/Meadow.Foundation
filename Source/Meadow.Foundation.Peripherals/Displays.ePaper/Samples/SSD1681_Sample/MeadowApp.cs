@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays.ePaper;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 
 namespace Displays.ePaper.SSD1681_Sample

@@ -2,7 +2,7 @@
 using Meadow.Foundation.Displays.ePaper;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
 
     /// <summary>

@@ -2,7 +2,7 @@ using Meadow.Hardware;
 using System;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents an Il0398 ePaper color display
