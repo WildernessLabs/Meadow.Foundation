@@ -1,4 +1,4 @@
-﻿namespace Meadow.Foundation.Displays.TftSpi
+﻿namespace Meadow.Foundation.Displays
 {
     public abstract partial class TftSpiBase
     {

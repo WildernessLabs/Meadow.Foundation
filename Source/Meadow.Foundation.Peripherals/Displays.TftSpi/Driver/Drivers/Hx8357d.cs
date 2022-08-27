@@ -2,7 +2,7 @@
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.TftSpi
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a Hx8357d TFT color display

@@ -3,7 +3,7 @@ using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
 
-namespace Meadow.Foundation.Displays.TftSpi
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a Ili9341 TFT color display

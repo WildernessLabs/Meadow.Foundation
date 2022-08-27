@@ -2,7 +2,7 @@
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.TftSpi
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a Rm68140 TFT color display

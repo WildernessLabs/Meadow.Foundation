@@ -1,7 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
 
-namespace Meadow.Foundation.Displays.Ssd130x
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Provide an interface to the SSD1309 family of OLED displays

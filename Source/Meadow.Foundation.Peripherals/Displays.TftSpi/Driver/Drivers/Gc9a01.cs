@@ -1,7 +1,7 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.TftSpi
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a Gc9a01 TFT color display

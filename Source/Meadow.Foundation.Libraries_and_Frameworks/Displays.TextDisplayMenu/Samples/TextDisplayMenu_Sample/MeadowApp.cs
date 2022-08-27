@@ -1,6 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays.Ssd130x;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.TextDisplayMenu;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Buttons;

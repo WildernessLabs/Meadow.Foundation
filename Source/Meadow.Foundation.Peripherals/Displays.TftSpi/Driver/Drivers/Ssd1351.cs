@@ -3,7 +3,7 @@ using Meadow.Hardware;
 using Meadow.Units;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.TftSpi
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a Ssd1351 TFT color display

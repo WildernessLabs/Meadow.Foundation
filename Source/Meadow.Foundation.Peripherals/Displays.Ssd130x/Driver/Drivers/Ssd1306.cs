@@ -1,7 +1,7 @@
 ﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.Ssd130x
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Provide an interface to the SSD1306 family of OLED displays

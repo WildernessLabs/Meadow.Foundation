@@ -2,7 +2,7 @@
 using Meadow.Hardware;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.TftSpi
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a Ili9163 TFT color display
