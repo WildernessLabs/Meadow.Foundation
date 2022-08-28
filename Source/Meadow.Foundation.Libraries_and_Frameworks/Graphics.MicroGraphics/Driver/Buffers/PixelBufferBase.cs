@@ -94,7 +94,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <summary>
         /// Clear the array that stores the pixel buffer
         /// </summary>
-        public void Clear()
+        public virtual void Clear()
         {
             Array.Clear(Buffer, 0, Buffer.Length);
         }
