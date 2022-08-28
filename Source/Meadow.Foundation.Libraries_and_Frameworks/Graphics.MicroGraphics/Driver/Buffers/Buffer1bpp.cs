@@ -14,6 +14,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         public override ColorType ColorMode => ColorType.Format1bpp;
 
         /// <summary>
+        /// Invert meaning of colored parameter from white to black
+        /// </summary>
+        public bool InvertColor { get; set; } = false;
+
+        /// <summary>
         /// Creates a new Buffer1bpp object
         /// </summary>
         /// <param name="width">width of buffer in pixels</param>
@@ -65,7 +70,8 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             var index = (y >> 8) * Width + x;
 
-            return (Buffer[index] & (1 << y % 8)) != 0;
+            var ret = (Buffer[index] & (1 << y % 8)) != 0;
+            return ret != InvertColor;
         }
 
         /// <summary>
@@ -136,7 +142,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     if((j + y) % 8 == 0 && j + y + 8 <= height)
                     {
                         //set an entire byte - fast
-                        Buffer[((j + y) >> 3) * Width + x + i] = (byte)(isColored ? 0xFF : 0);
+                        Buffer[((j + y) >> 3) * Width + x + i] = (byte)((isColored != InvertColor) ? 0xFF : 0);
                         j += 7; //the main loop will add 1 to make it 8
                     }
                     else
@@ -154,7 +160,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         public void Clear(bool isColored)
         {
             // split the color in to two byte values
-            Buffer[0] = (byte)(isColored ? 0xFF : 0);
+            Buffer[0] = (byte)((isColored != InvertColor) ? 0xFF : 0);
 
             int arrayMidPoint = Buffer.Length / 2;
             int copyLength;

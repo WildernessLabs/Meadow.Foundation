@@ -44,13 +44,13 @@ namespace Displays.ePaper.Epd4in2_Sample
             }
 
             graphics.DrawRectangle(10, 40, 160, 60, Color.Black, true);
-            graphics.DrawRectangle(20, 80, 200, 90, Color.Red, true);
+            graphics.DrawRectangle(20, 80, 200, 90, Color.White, true);
+            graphics.DrawRectangle(20, 80, 200, 90, Color.Black, false);
 
             graphics.CurrentFont = new Font12x16();
             graphics.DrawText(2, 20, "Meadow F7", Color.Black);
-            graphics.DrawText(30, 50, "Red", Color.Yellow);
+            graphics.DrawText(30, 50, "White", Color.Yellow);
             graphics.DrawText(50, 90, "Black", Color.Black);
-            graphics.DrawText(50, 120, "White", Color.White);
 
             graphics.Show();
 

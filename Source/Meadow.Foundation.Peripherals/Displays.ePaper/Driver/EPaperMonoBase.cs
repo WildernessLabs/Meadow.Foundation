@@ -34,9 +34,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public int Height => imageBuffer.Height;
 
-        private EPaperMonoBase()
-        { }
-
         /// <summary>
         /// Create a new ePaper display object
         /// </summary>
@@ -80,7 +77,10 @@ namespace Meadow.Foundation.Displays
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
-            imageBuffer = new Buffer1bppV(width, height);
+            imageBuffer = new Buffer1bppV(width, height)
+            {
+                InvertColor = true
+            };
 
             imageBuffer.Clear(true);
 
@@ -131,10 +131,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
         public void Clear(bool colored, bool updateDisplay = false)
         {
-            for (int i = 0; i < imageBuffer.ByteCount; i++)
-            {
-                imageBuffer.Buffer[i] = colored ? (byte)0 : (byte)255;
-            }
+            imageBuffer.Clear(colored);
 
             if (updateDisplay)
             {
@@ -150,14 +147,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colored">Turn the pixel on (true) or off (false).</param>
         public void DrawPixel(int x, int y, bool colored)
         {
-            if (colored)
-            {
-                imageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
-            }
-            else
-            {
-                imageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
-            }
+            imageBuffer.SetPixel(x, y, colored);
         }
 
         /// <summary>
@@ -178,20 +168,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="y">y coordinate of pixel</param>
         public void InvertPixel(int x, int y)
         {
-            imageBuffer.Buffer[(x + y * Width) / 8] ^= (byte)(0x80 >> (x % 8));
-        }
-
-        /// <summary>
-        /// Draw a single pixel 
-        /// </summary>
-        /// <param name="x">x location</param>
-        /// <param name="y">y location</param>
-        /// <param name="r">red component of color in bytes (0-255)</param>
-        /// <param name="g">green component of color in bytes (0-255)</param>
-        /// <param name="b">blue component of color in bytes (0-255)</param>
-        public void DrawPixel(int x, int y, byte r, byte g, byte b)
-        {
-            DrawPixel(x, y, r > 0 || g > 0 || b > 0);
+            imageBuffer.InvertPixel(x, y);
         }
 
         /// <summary>
@@ -283,7 +260,6 @@ namespace Meadow.Foundation.Displays
         /// Set frame buffer memory of display (full screen)
         /// </summary>
         /// <param name="buffer">buffer</param>
-
         public virtual void SetFrameMemory(byte[] buffer)
         {
             SetMemoryArea(0, 0, Width - 1, Height - 1);
@@ -295,22 +271,6 @@ namespace Meadow.Foundation.Displays
             for (int i = 0; i < Width / 8 * Height; i++)
             {
                 spiPeripheral.Write(buffer[i]);
-            }
-        }
-
-        /// <summary>
-        /// Clear frame buffer memory
-        /// </summary>
-        /// <param name="color">color to clear to</param>
-        public virtual void ClearFrameMemory(byte color)
-        {
-            SetMemoryArea(0, 0, Width - 1, Height - 1);
-            SetMemoryPointer(0, 0);
-            SendCommand(Command.WRITE_RAM);
-            /* send the color data */
-            for (int i = 0; i < Width / 8 * Height; i++)
-            {
-                SendData(color);
             }
         }
 
@@ -329,7 +289,7 @@ namespace Meadow.Foundation.Displays
         void SetMemoryArea(int x_start, int y_start, int x_end, int y_end)
         {
             SendCommand(Command.SET_RAM_X_ADDRESS_START_END_POSITION);
-            /* x point must be the multiple of 8 or the last 3 bits will be ignored */
+            // x point must be the multiple of 8 or the last 3 bits will be ignored 
             SendData((x_start >> 3) & 0xFF);
             SendData((x_end >> 3) & 0xFF);
             SendCommand(Command.SET_RAM_Y_ADDRESS_START_END_POSITION);
@@ -342,7 +302,7 @@ namespace Meadow.Foundation.Displays
         void SetMemoryPointer(int x, int y)
         {
             SendCommand(Command.SET_RAM_X_ADDRESS_COUNTER);
-            /* x point must be the multiple of 8 or the last 3 bits will be ignored */
+            // x point must be the multiple of 8 or the last 3 bits will be ignored
             SendData((x >> 3) & 0xFF);
             SendCommand(Command.SET_RAM_Y_ADDRESS_COUNTER);
             SendData(y & 0xFF);

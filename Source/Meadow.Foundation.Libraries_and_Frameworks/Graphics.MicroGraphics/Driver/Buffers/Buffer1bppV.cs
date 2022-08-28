@@ -58,7 +58,8 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <returns>true if pixel is set / colored</returns>
         public override bool GetPixelIsColored(int x, int y)
         {
-            return (Buffer[(x + y * Width) / 8] & (0x80 >> (x % 8))) != 0;
+            var ret = (Buffer[(x + y * Width) / 8] & (0x80 >> (x % 8))) != 0;
+            return ret != InvertColor;
         }
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="colored">is pixel colored (on)</param>
         public override void SetPixel(int x, int y, bool colored)
         {
-            if (colored)
+            if (colored != !InvertColor)
             {   //0x80 = 128 = 0b_10000000
                 Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
             }
