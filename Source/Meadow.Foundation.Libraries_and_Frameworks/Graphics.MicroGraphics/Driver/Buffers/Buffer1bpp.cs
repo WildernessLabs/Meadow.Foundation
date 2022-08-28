@@ -154,7 +154,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         public void Clear(bool enabled)
         {
             // split the color in to two byte values
-            Buffer[0] = (byte)((enabled) ? 0xFF : 0);
+            Buffer[0] = (byte)(enabled ? 0xFF : 0);
 
             int arrayMidPoint = Buffer.Length / 2;
             int copyLength;
