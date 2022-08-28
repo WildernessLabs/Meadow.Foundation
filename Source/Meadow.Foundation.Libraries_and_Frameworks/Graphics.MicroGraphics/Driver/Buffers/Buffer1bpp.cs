@@ -14,11 +14,6 @@ namespace Meadow.Foundation.Graphics.Buffers
         public override ColorType ColorMode => ColorType.Format1bpp;
 
         /// <summary>
-        /// Invert meaning of colored parameter from white to black
-        /// </summary>
-        public bool InvertColor { get; set; } = false;
-
-        /// <summary>
         /// Creates a new Buffer1bpp object
         /// </summary>
         /// <param name="width">width of buffer in pixels</param>
@@ -66,12 +61,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="x">x location in pixels</param>
         /// <param name="y">y location in pixels</param>
         /// <returns>true if pixel is set / colored</returns>
-        public virtual bool GetPixelIsColored(int x, int y)
+        public virtual bool GetPixelIsEnabled(int x, int y)
         {
             var index = (y >> 8) * Width + x;
 
-            var ret = (Buffer[index] & (1 << y % 8)) != 0;
-            return ret != InvertColor;
+            return (Buffer[index] & (1 << y % 8)) != 0;
         }
 
         /// <summary>
@@ -82,7 +76,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <returns>The pixel color as a Color object - will be black or white only</returns>
         public override Color GetPixel(int x, int y)
         {
-            return GetPixelIsColored(x, y) ? Color.White : Color.Black;
+            return GetPixelIsEnabled(x, y) ? Color.White : Color.Black;
         }
 
         /// <summary>
@@ -142,7 +136,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     if((j + y) % 8 == 0 && j + y + 8 <= height)
                     {
                         //set an entire byte - fast
-                        Buffer[((j + y) >> 3) * Width + x + i] = (byte)((isColored != InvertColor) ? 0xFF : 0);
+                        Buffer[((j + y) >> 3) * Width + x + i] = (byte)((isColored) ? 0xFF : 0);
                         j += 7; //the main loop will add 1 to make it 8
                     }
                     else
@@ -156,11 +150,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <summary>
         /// Clear the display
         /// </summary>
-        /// <param name="isColored">should the display be colored or blank</param>
-        public void Clear(bool isColored)
+        /// <param name="enabled">should the display pixels be enabled / on or clear / off</param>
+        public void Clear(bool enabled)
         {
             // split the color in to two byte values
-            Buffer[0] = (byte)((isColored != InvertColor) ? 0xFF : 0);
+            Buffer[0] = (byte)((enabled) ? 0xFF : 0);
 
             int arrayMidPoint = Buffer.Length / 2;
             int copyLength;
@@ -208,7 +202,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                         }
                         else
                         {   //else 1 bit at a time 
-                            SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsColored(i, j));
+                            SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsEnabled(i, j));
                         }
                     }
                 }

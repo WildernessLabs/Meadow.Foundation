@@ -51,15 +51,14 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Is the pixel colored for a given location
+        /// Is the pixel enabled / on for a given location
         /// </summary>
         /// <param name="x">x location in pixels</param>
         /// <param name="y">y location in pixels</param>
         /// <returns>true if pixel is set / colored</returns>
-        public override bool GetPixelIsColored(int x, int y)
+        public override bool GetPixelIsEnabled(int x, int y)
         {
-            var ret = (Buffer[(x + y * Width) / 8] & (0x80 >> (x % 8))) != 0;
-            return ret != InvertColor;
+            return (Buffer[(x + y * Width) / 8] & (0x80 >> (x % 8))) != 0;
         }
 
         /// <summary>
@@ -67,16 +66,16 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="x">x position in pixels from left</param>
         /// <param name="y">y position in pixels from top</param>
-        /// <param name="colored">is pixel colored (on)</param>
-        public override void SetPixel(int x, int y, bool colored)
+        /// <param name="enabled">is pixel enabled (on)</param>
+        public override void SetPixel(int x, int y, bool enabled)
         {
-            if (colored != !InvertColor)
+            if (enabled)
             {   //0x80 = 128 = 0b_10000000
-                Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
+                Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
             }
             else
             {
-                Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
+                Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
             }
         }
 
@@ -125,7 +124,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     for (int j = 0; j < buffer.Height; j++)
                     {
                         //1 bit at a time 
-                        SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsColored(i, j));
+                        SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsEnabled(i, j));
                     }
                 }
             }
