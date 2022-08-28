@@ -20,6 +20,16 @@ namespace Meadow.Foundation.Displays
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
+        /// The color to draw when a pixel is enabled
+        /// </summary>
+        public Color EnabledColor => Color.Black;
+
+        /// <summary>
+        /// The color to draw when a pixel is disabled
+        /// </summary>
+        public Color DisabledColor => Color.White;
+
+        /// <summary>
         /// Buffer to hold display data
         /// </summary>
         protected readonly Buffer1bppV imageBuffer;
@@ -77,12 +87,9 @@ namespace Meadow.Foundation.Displays
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
-            imageBuffer = new Buffer1bppV(width, height)
-            {
-                InvertColor = true
-            };
+            imageBuffer = new Buffer1bppV(width, height);
 
-            imageBuffer.Clear(true);
+            imageBuffer.Clear();
 
             Initialize();
         }

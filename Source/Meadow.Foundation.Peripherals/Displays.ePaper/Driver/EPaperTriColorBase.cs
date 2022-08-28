@@ -11,6 +11,16 @@ namespace Meadow.Foundation.Displays
     public abstract partial class EPaperTriColorBase : EPaperBase, IGraphicsDisplay
     {
         /// <summary>
+        /// The color to draw when a pixel is enabled
+        /// </summary>
+        public Color EnabledColor => Color.Black;
+
+        /// <summary>
+        /// The color to draw when a pixel is disabled
+        /// </summary>
+        public Color DisabledColor => Color.White;
+
+        /// <summary>
         /// Is the black pixel data inverted
         /// </summary>
         protected abstract bool IsBlackInverted { get; }
