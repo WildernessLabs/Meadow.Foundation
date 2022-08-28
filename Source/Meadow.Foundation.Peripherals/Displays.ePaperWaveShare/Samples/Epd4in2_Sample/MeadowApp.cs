@@ -38,6 +38,8 @@ namespace Displays.ePaper.Epd4in2_Sample
         {
             Console.WriteLine("Run");
 
+            graphics.Clear();
+
             for (int i = 0; i < 100; i++)
             {
                 graphics.DrawPixel(i, i, Color.Black);
@@ -49,7 +51,7 @@ namespace Displays.ePaper.Epd4in2_Sample
 
             graphics.CurrentFont = new Font12x16();
             graphics.DrawText(2, 20, "Meadow F7", Color.Black);
-            graphics.DrawText(30, 50, "White", Color.Yellow);
+            graphics.DrawText(30, 50, "White", Color.White);
             graphics.DrawText(50, 90, "Black", Color.Black);
 
             graphics.Show();
