@@ -36,8 +36,7 @@ namespace Meadow.Foundation.Displays.ePaper
             IDigitalOutputPort resetPort,
             IDigitalInputPort busyPort) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, 400, 300)
-        {
-        }
+        { }
 
         protected override void Initialize()
         {
@@ -62,16 +61,16 @@ namespace Meadow.Foundation.Displays.ePaper
             SendData(0x3c);  // 3A 100HZ   29 150Hz 39 200HZ  31 171HZ
 
             SendCommand(0x61); // resolution setting
-            SendData(0x01);
-            SendData(0x90); //128
-            SendData(0x01); //
+            SendData(0x01);    // 400 
+            SendData(0x90); 
+            SendData(0x01);    // 300
             SendData(0x2c);
 
             SendCommand(0x82); // vcom_DC setting
             SendData(0x12);
 
             SendCommand(0X50); // VCOM AND DATA INTERVAL SETTING
-            SendData(0x97); // 97white border 77black border    VBDF 17|D7 VBDW 97 VBDB 57    VBDF F7 VBDW 77 VBDB 37  VBDR B7
+            SendData(0x97);    // 97 white border 77 black border    VBDF 17|D7 VBDW 97 VBDB 57    VBDF F7 VBDW 77 VBDB 37  VBDR B7
 
             SetLookupTable();
         }
@@ -80,14 +79,14 @@ namespace Meadow.Foundation.Displays.ePaper
         void InitializeGrey()
         {
             Reset();
-            SendCommand(0x01);          //POWER SETTING
+            SendCommand(0x01);  //POWER SETTING
             SendData(0x03);
-            SendData(0x00);       //VGH=20V,VGL=-20V
+            SendData(0x00);     //VGH=20V,VGL=-20V
             SendData(0x2b);     //VDH=15V															 
             SendData(0x2b);     //VDL=-15V
             SendData(0x13);
 
-            SendCommand(0x06);         //booster soft start
+            SendCommand(0x06);  //booster soft start
             SendData(0x17);     //A
             SendData(0x17);     //B
             SendData(0x17);     //C 
@@ -95,28 +94,28 @@ namespace Meadow.Foundation.Displays.ePaper
             SendCommand(0x04);
             WaitUntilIdle();
 
-            SendCommand(0x00);          //panel setting
+            SendCommand(0x00);  //panel setting
             SendData(0x3f);     //KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
 
-            SendCommand(0x30);          //PLL setting
-            SendData(0x3c);         //100hz 
+            SendCommand(0x30);  //PLL setting
+            SendData(0x3c);     //100hz 
 
-            SendCommand(0x61);          //resolution setting
+            SendCommand(0x61);  // resolution setting
             SendData(0x01);     //400
             SendData(0x90);
             SendData(0x01);     //300
             SendData(0x2c);
 
-            SendCommand(0x82);          //vcom_DC setting
+            SendCommand(0x82);  //vcom_DC setting
             SendData(0x12);
 
-            SendCommand(0X50);          //VCOM AND DATA INTERVAL SETTING			
+            SendCommand(0X50);  //VCOM AND DATA INTERVAL SETTING			
             SendData(0x97);
         }
 
         void SetLookupTable()
         {
-            SendCommand(0x20);                            //vcom
+            SendCommand(0x20);                      //vcom
             int count;
             for (count = 0; count < 36; count++)
             {
@@ -265,13 +264,13 @@ namespace Meadow.Foundation.Displays.ePaper
             {
                 SendCommand(DATA_START_TRANSMISSION_1);
                 for (int i = 0; i < Width / 8 * Height; i++)
-                {
-                    SendData(0xFF);      // bit set: white, bit reset: black
+                {   // bit set: white, bit reset: black
+                    SendData(0xFF);      
                 }
                 DelayMs(2);
                 SendCommand(DATA_START_TRANSMISSION_2);
                 for (int i = 0; i < Width / 8 * Height; i++)
-                {
+                {   //Set this to 0xFF for white when in single color mode
                     SendData(buffer[i]);
                 }
             
