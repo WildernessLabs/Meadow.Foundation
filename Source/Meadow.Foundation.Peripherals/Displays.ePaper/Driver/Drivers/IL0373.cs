@@ -74,9 +74,9 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.VCOM_AND_DATA_INTERVAL_SETTING);
             SendData(0x77);
             SendCommand(Command.RESOLUTION_SETTING);
-            SendData((byte)(Height & 0xFF));//width 128
-            SendData((byte)(Width >> 8) & 0xFF);
             SendData((byte)(Width & 0xFF));
+            SendData((byte)(Height >> 8) & 0xFF);
+            SendData((byte)(Height & 0xFF));
             SendCommand(Command.VCM_DC_SETTING);
             SendData(0x0A);
         }
