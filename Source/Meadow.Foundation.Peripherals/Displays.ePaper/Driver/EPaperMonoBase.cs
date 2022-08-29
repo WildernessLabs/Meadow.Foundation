@@ -293,17 +293,17 @@ namespace Meadow.Foundation.Displays
             WaitUntilIdle();
         }
 
-        void SetMemoryArea(int x_start, int y_start, int x_end, int y_end)
+        void SetMemoryArea(int x0, int y0, int x1, int y1)
         {
             SendCommand(Command.SET_RAM_X_ADDRESS_START_END_POSITION);
             // x point must be the multiple of 8 or the last 3 bits will be ignored 
-            SendData((x_start >> 3) & 0xFF);
-            SendData((x_end >> 3) & 0xFF);
+            SendData((x0 >> 3) & 0xFF);
+            SendData((x1 >> 3) & 0xFF);
             SendCommand(Command.SET_RAM_Y_ADDRESS_START_END_POSITION);
-            SendData(y_start & 0xFF);
-            SendData((y_start >> 8) & 0xFF);
-            SendData(y_end & 0xFF);
-            SendData((y_end >> 8) & 0xFF);
+            SendData(y0 & 0xFF);
+            SendData((y0 >> 8) & 0xFF);
+            SendData(y1 & 0xFF);
+            SendData((y1 >> 8) & 0xFF);
         }
 
         void SetMemoryPointer(int x, int y)

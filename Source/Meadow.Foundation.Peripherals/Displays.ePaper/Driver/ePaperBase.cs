@@ -24,9 +24,9 @@ namespace Meadow.Foundation.Displays
 
         protected virtual void Reset()
         {
-            resetPort.State = (false);
+            resetPort.State = false;
             DelayMs(200);
-            resetPort.State = (true);
+            resetPort.State = true;
             DelayMs(200);
         }
 

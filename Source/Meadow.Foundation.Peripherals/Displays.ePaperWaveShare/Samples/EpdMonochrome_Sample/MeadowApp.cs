@@ -26,9 +26,10 @@ namespace Displays.ePaper.EpdMonochrome_Sample
         public override Task Initialize()
         {
             Console.WriteLine("Initialize ...");
-            Console.WriteLine("Change displayType to select a different display");
+            
+            var displayType = EpdMonochromeDisplay.Epd1in54;
 
-            var displayType = EpdMonochromeDisplay.Epd4in2;
+            Console.WriteLine($"{displayType} selected - change displayType to select a different display");
 
             //Intialize the display based on the displayType enum
             display = displayType switch

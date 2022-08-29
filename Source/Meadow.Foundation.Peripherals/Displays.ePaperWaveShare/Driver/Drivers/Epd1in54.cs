@@ -3,10 +3,10 @@
 namespace Meadow.Foundation.Displays.ePaper
 {
     /// <summary>
-    /// Represents a WaveShare epd4in2bc ePaper display
+    /// Represents a WaveShare Epd1in54 ePaper display
     /// 200x200, 1.54 inch e-Ink display, SPI interface 
     /// </summary>
-    public class Epd1in54 : Il3897
+    public class Epd1in54 : Ssd1608
     {
         /// <summary>
         /// Create a new WaveShare Epd1in54 200x200 pixel display object ePaper display object
