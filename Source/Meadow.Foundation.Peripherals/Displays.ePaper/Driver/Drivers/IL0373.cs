@@ -2,7 +2,6 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {
-    //aka WaveShare EPD 2i9B
     /// <summary>
     /// Represents an Il0373 ePaper color display
     /// 104x212, 2.13inch E-Ink three-color display, SPI interface 
