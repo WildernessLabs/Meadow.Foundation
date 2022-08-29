@@ -134,13 +134,13 @@
         {
             if (isOn)
             {
-                colorBuffer.SetPixel(x, y, true);
-                blackBuffer.SetPixel(x, y, false);
+                colorBuffer.SetPixel(x, y, false);
+                blackBuffer.SetPixel(x, y, true);
             }
             else
             {
-                colorBuffer.SetPixel(x, y, false);
-                blackBuffer.SetPixel(x, y, false);
+                colorBuffer.SetPixel(x, y, true);
+                blackBuffer.SetPixel(x, y, true);
             }
         }
 
@@ -154,13 +154,13 @@
         {
             if (isOn)
             {
-                colorBuffer.SetPixel(x, y, false);
-                blackBuffer.SetPixel(x, y, true);
+                colorBuffer.SetPixel(x, y, true);
+                blackBuffer.SetPixel(x, y, false);
             }
             else
             {
-                colorBuffer.SetPixel(x, y, false);
-                blackBuffer.SetPixel(x, y, false);
+                colorBuffer.SetPixel(x, y, true);
+                blackBuffer.SetPixel(x, y, true);
             }
         }
 
@@ -176,18 +176,18 @@
 
             if(state == PixelState.ColorOn)
             {
-                colorBuffer.SetPixel(x, y, true);
-                blackBuffer.SetPixel(x, y, false);
-            }
-            else if(state == PixelState.On)
-            {
                 colorBuffer.SetPixel(x, y, false);
                 blackBuffer.SetPixel(x, y, true);
             }
+            else if(state == PixelState.On)
+            {
+                colorBuffer.SetPixel(x, y, true);
+                blackBuffer.SetPixel(x, y, false);
+            }
             else
             {
-                colorBuffer.SetPixel(x, y, false);
-                blackBuffer.SetPixel(x, y, false);
+                colorBuffer.SetPixel(x, y, true);
+                blackBuffer.SetPixel(x, y, true);
             }
         }
 
