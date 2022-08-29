@@ -23,14 +23,13 @@ namespace Displays.ePaper.EpdColor_Sample
             Epd4in2bV2,
         }
 
-        EPaperTriColorBase display;
         MicroGraphics graphics;
 
         public override Task Initialize()
         {
             Console.WriteLine("Initialize ...");
 
-            var displayType = EpdColorDisplay.Epd2in9b;
+            var displayType = EpdColorDisplay.Epd4in2bV2;
 
             Console.WriteLine($"{displayType} selected - change displayType to select a different display");
 
@@ -53,8 +52,8 @@ namespace Displays.ePaper.EpdColor_Sample
                 graphics.DrawPixel(i, i, Color.Black);
             }
 
-            graphics.DrawRectangle(10, 40, 100, 60, Color.Black, true);
-            graphics.DrawRectangle(20, 80, 100, 90, Color.Red, true);
+            graphics.DrawRectangle(10, 40, 120, 60, Color.Black, true);
+            graphics.DrawRectangle(20, 80, 120, 90, Color.Red, true);
 
             graphics.CurrentFont = new Font12x16();
             graphics.DrawText(2, 20, "Meadow F7", Color.Black);
