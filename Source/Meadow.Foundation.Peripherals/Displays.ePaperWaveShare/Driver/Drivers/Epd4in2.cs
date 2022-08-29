@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays.ePaper
     public class Epd4in2 : EPaperMonoBase
     {
         /// <summary>
-        /// Create a new WaveShare Epd4in V2 400x300 pixel display object
+        /// Create a new WaveShare Epd4in2 400x300 pixel display object
         /// </summary>
         /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
