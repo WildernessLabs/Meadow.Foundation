@@ -15,6 +15,9 @@ namespace Displays.ePaper.EpdColor_Sample
 
         enum EpdColorDisplay
         {
+            Epd1in54b,
+            Epd1in54c,
+            Epd2in13b,
             Epd2in9b,
             Epd4in2bc,
             Epd4in2bV2,
@@ -26,34 +29,12 @@ namespace Displays.ePaper.EpdColor_Sample
         public override Task Initialize()
         {
             Console.WriteLine("Initialize ...");
-            Console.WriteLine("Change displayType to select a different display");
 
             var displayType = EpdColorDisplay.Epd2in9b;
 
-            //Intialize the display based on the displayType enum
-            display = displayType switch
-            {
-                EpdColorDisplay.Epd2in9b => new Epd2in9b(device: Device,
-                    spiBus: Device.CreateSpiBus(),
-                    chipSelectPin: Device.Pins.D03,
-                    dcPin: Device.Pins.D02,
-                    resetPin: Device.Pins.D01,
-                    busyPin: Device.Pins.D00),
+            Console.WriteLine($"{displayType} selected - change displayType to select a different display");
 
-                EpdColorDisplay.Epd4in2bV2 => new Epd4in2bV2(device: Device,
-                    spiBus: Device.CreateSpiBus(),
-                    chipSelectPin: Device.Pins.D03,
-                    dcPin: Device.Pins.D02,
-                    resetPin: Device.Pins.D01,
-                    busyPin: Device.Pins.D00),
-
-                EpdColorDisplay.Epd4in2bc => new Epd4in2bc(device: Device,
-                    spiBus: Device.CreateSpiBus(),
-                    chipSelectPin: Device.Pins.D03,
-                    dcPin: Device.Pins.D02,
-                    resetPin: Device.Pins.D01,
-                    busyPin: Device.Pins.D00)
-            };
+            var display = GetDisplay(displayType);
 
             graphics = new MicroGraphics(display)
             {
@@ -86,6 +67,57 @@ namespace Displays.ePaper.EpdColor_Sample
             Console.WriteLine("Run complete");
 
             return Task.CompletedTask;
+        }
+
+        EPaperTriColorBase GetDisplay(EpdColorDisplay displayType)
+        {
+            //Intialize the display based on the displayType enum
+            EPaperTriColorBase display = displayType switch
+            {
+                EpdColorDisplay.Epd1in54b => new Epd1in54b(device: Device,
+                    spiBus: Device.CreateSpiBus(),
+                    chipSelectPin: Device.Pins.D03,
+                    dcPin: Device.Pins.D02,
+                    resetPin: Device.Pins.D01,
+                    busyPin: Device.Pins.D00),
+
+                EpdColorDisplay.Epd1in54c => new Epd1in54c(device: Device,
+                    spiBus: Device.CreateSpiBus(),
+                    chipSelectPin: Device.Pins.D03,
+                    dcPin: Device.Pins.D02,
+                    resetPin: Device.Pins.D01,
+                    busyPin: Device.Pins.D00),
+
+                EpdColorDisplay.Epd2in13b => new Epd2in13b(device: Device,
+                    spiBus: Device.CreateSpiBus(),
+                    chipSelectPin: Device.Pins.D03,
+                    dcPin: Device.Pins.D02,
+                    resetPin: Device.Pins.D01,
+                    busyPin: Device.Pins.D00),
+
+                EpdColorDisplay.Epd2in9b => new Epd2in9b(device: Device,
+                    spiBus: Device.CreateSpiBus(),
+                    chipSelectPin: Device.Pins.D03,
+                    dcPin: Device.Pins.D02,
+                    resetPin: Device.Pins.D01,
+                    busyPin: Device.Pins.D00),
+
+                EpdColorDisplay.Epd4in2bV2 => new Epd4in2bV2(device: Device,
+                    spiBus: Device.CreateSpiBus(),
+                    chipSelectPin: Device.Pins.D03,
+                    dcPin: Device.Pins.D02,
+                    resetPin: Device.Pins.D01,
+                    busyPin: Device.Pins.D00),
+
+                EpdColorDisplay.Epd4in2bc => new Epd4in2bc(device: Device,
+                    spiBus: Device.CreateSpiBus(),
+                    chipSelectPin: Device.Pins.D03,
+                    dcPin: Device.Pins.D02,
+                    resetPin: Device.Pins.D01,
+                    busyPin: Device.Pins.D00)
+            };
+
+            return display;
         }
 
         //<!=SNOP=>

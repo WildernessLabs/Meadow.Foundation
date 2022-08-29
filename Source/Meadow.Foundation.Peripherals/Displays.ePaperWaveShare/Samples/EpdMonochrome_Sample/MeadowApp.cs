@@ -16,7 +16,8 @@ namespace Displays.ePaper.EpdMonochrome_Sample
         enum EpdMonochromeDisplay
         {
             Epd1in54,
-            Epd2in3,
+            Epd2in13,
+            Epd2in9,
             Epd4in2,
         }
 
@@ -32,29 +33,7 @@ namespace Displays.ePaper.EpdMonochrome_Sample
             Console.WriteLine($"{displayType} selected - change displayType to select a different display");
 
             //Intialize the display based on the displayType enum
-            display = displayType switch
-            {
-                EpdMonochromeDisplay.Epd1in54 => new Epd1in54(device: Device,
-                    spiBus: Device.CreateSpiBus(),
-                    chipSelectPin: Device.Pins.D03,
-                    dcPin: Device.Pins.D02,
-                    resetPin: Device.Pins.D01,
-                    busyPin: Device.Pins.D00),
-
-                EpdMonochromeDisplay.Epd2in3 => new Epd2in3(device: Device,
-                    spiBus: Device.CreateSpiBus(),
-                    chipSelectPin: Device.Pins.D03,
-                    dcPin: Device.Pins.D02,
-                    resetPin: Device.Pins.D01,
-                    busyPin: Device.Pins.D00),
-
-                EpdMonochromeDisplay.Epd4in2 => new Epd4in2(device: Device,
-                    spiBus: Device.CreateSpiBus(),
-                    chipSelectPin: Device.Pins.D03,
-                    dcPin: Device.Pins.D02,
-                    resetPin: Device.Pins.D01,
-                    busyPin: Device.Pins.D00)
-            };
+            display = GetDisplay(displayType);
 
             graphics = new MicroGraphics(display)
             {
@@ -87,6 +66,42 @@ namespace Displays.ePaper.EpdMonochrome_Sample
             Console.WriteLine("Run complete");
 
             return Task.CompletedTask;
+        }
+
+        EPaperMonoBase GetDisplay(EpdMonochromeDisplay displayType)
+        {
+            EPaperMonoBase display = displayType switch
+            {
+                EpdMonochromeDisplay.Epd1in54 => new Epd1in54(device: Device,
+                    spiBus: Device.CreateSpiBus(),
+                    chipSelectPin: Device.Pins.D03,
+                    dcPin: Device.Pins.D02,
+                    resetPin: Device.Pins.D01,
+                    busyPin: Device.Pins.D00),
+
+                EpdMonochromeDisplay.Epd2in13 => new Epd2in13(device: Device,
+                    spiBus: Device.CreateSpiBus(),
+                    chipSelectPin: Device.Pins.D03,
+                    dcPin: Device.Pins.D02,
+                    resetPin: Device.Pins.D01,
+                    busyPin: Device.Pins.D00),
+
+                EpdMonochromeDisplay.Epd2in9 => new Epd2in9(device: Device,
+                    spiBus: Device.CreateSpiBus(),
+                    chipSelectPin: Device.Pins.D03,
+                    dcPin: Device.Pins.D02,
+                    resetPin: Device.Pins.D01,
+                    busyPin: Device.Pins.D00),
+
+                EpdMonochromeDisplay.Epd4in2 => new Epd4in2(device: Device,
+                    spiBus: Device.CreateSpiBus(),
+                    chipSelectPin: Device.Pins.D03,
+                    dcPin: Device.Pins.D02,
+                    resetPin: Device.Pins.D01,
+                    busyPin: Device.Pins.D00)
+            };
+
+            return display;
         }
 
         //<!=SNOP=>
