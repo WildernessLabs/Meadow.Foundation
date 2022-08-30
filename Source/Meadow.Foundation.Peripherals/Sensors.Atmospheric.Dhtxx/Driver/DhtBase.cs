@@ -5,9 +5,8 @@ using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 
-namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
+namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    // TODO: BC: this sensor needs to be tested after updating it to the new pattern.
     /// <summary>
     /// Provide a mechanism for reading the Temperature and Humidity from
     /// a DHT temperature and Humidity sensor.
@@ -55,12 +54,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// </summary>
         internal virtual void ReadData()
         {
-            // Dht device reads should be at least 1s apart, use the previous measurement if less than 1000ms
-            if (Environment.TickCount - lastMeasurement < 1000) 
-            {
-                return;
-            }
-
             if (protocol == BusType.OneWire) 
             {
                 ReadDataOneWire();
@@ -102,14 +95,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
         /// <summary>
         /// Converting data to humidity
         /// </summary>
-        /// <param name="data">Data</param>
         /// <returns>Humidity</returns>
         internal abstract float GetHumidity();
 
         /// <summary>
         /// Converting data to Temperature
         /// </summary>
-        /// <param name="data">Data</param>
         /// <returns>Temperature</returns>
         internal abstract float GetTemperature();
 
@@ -126,7 +117,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
 
         protected override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
-            // TODO: shouldn't this fire up a task and read on a background thread?
             (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
             if (protocol == BusType.I2C) 

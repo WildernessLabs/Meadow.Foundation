@@ -1,6 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Atmospheric.Dhtxx;
+using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;

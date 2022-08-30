@@ -94,14 +94,15 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Draw pixel at location
+        /// Draw pixel at a location
+        /// Primarily used for monochrome displays, prefer overload that accepts a Color
         /// </summary>
         /// <param name="x">x position of pixel</param>
         /// <param name="y">y position of pixel</param>
-        /// <param name="colored">if true draw white, if false draw black</param>
-        public void DrawPixel(int x, int y, bool colored)
+        /// <param name="enabled">if true draw white, if false draw black</param>
+        public void DrawPixel(int x, int y, bool enabled)
         {
-            DrawPixel(x, y, colored ? Color.White : Color.Black);
+            DrawPixel(x, y, enabled ? Color.White : Color.Black);
         }
 
         /// <summary>

@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="x">x location in pixels</param>
         /// <param name="y">y location in pixels</param>
-        /// <returns>true if pixel is set / colored</returns>
+        /// <returns>true if pixel is set / enabled</returns>
         public override bool GetPixelIsEnabled(int x, int y)
         {
             return (Buffer[(x + y * Width) / 8] & (0x80 >> (x % 8))) != 0;

@@ -154,7 +154,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Send a command to the display.
         /// </summary>
-        /// <param name="command">Command byte to send to the display.</param>
+        /// <param name="command">Command byte to send to the display</param>
         private void SendCommand(byte command)
         {
             dataCommandPort.State = Command;
@@ -162,9 +162,9 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Send a sequence of commands to the display.
+        /// Send a sequence of commands to the display
         /// </summary>
-        /// <param name="commands">List of commands to send.</param>
+        /// <param name="commands">List of commands to send</param>
         private void SendCommands(byte[] commands)
         {
             var data = new byte[commands.Length + 1];
@@ -179,7 +179,7 @@ namespace Meadow.Foundation.Displays
         protected const int PageSize = 128;
 
         /// <summary>
-        /// Send the internal pixel buffer to display.
+        /// Send the internal pixel buffer to display
         /// </summary>
         public void Show()
         {
@@ -223,9 +223,9 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Clear the display buffer.
+        /// Clear the display buffer
         /// </summary>
-        /// <param name="updateDisplay">Immediately update the display when true.</param>
+        /// <param name="updateDisplay">Immediately update the display when true</param>
         public void Clear(bool updateDisplay = false)
         {
             imageBuffer.Clear();
@@ -234,10 +234,10 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Coordinates start with index 0
+        /// Draw pixel at a location
         /// </summary>
-        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
-        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
+        /// <param name="x">Abscissa of the pixel to the set / reset</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset</param>
         /// <param name="color">Any color = turn on pixel, black = turn off pixel</param>
         public void DrawPixel(int x, int y, Color color)
         {
@@ -245,16 +245,21 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Coordinates start with index 0
+        /// Draw pixel at a location
         /// </summary>
-        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
-        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
-        /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
-        public void DrawPixel(int x, int y, bool colored)
+        /// <param name="x">Abscissa of the pixel to the set / reset</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset</param>
+        /// <param name="enabled">True = turn on pixel, false = turn off pixel</param>
+        public void DrawPixel(int x, int y, bool enabled)
         {
-            imageBuffer.SetPixel(x, y, colored);
+            imageBuffer.SetPixel(x, y, enabled);
         }
 
+        /// <summary>
+        /// Invert a pixel at a location
+        /// </summary>
+        /// <param name="x">Abscissa of the pixel to the set / reset</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset</param>
         public void InvertPixel(int x, int y)
         {
             imageBuffer.InvertPixel(x, y);
@@ -263,22 +268,22 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Start the display scrollling in the specified direction.
         /// </summary>
-        /// <param name="direction">Direction that the display should scroll.</param>
+        /// <param name="direction">Direction that the display should scroll</param>
         public void StartScrolling(ScrollDirection direction)
         {
             StartScrolling(direction, 0x00, 0xff);
         }
 
         /// <summary>
-        /// Start the display scrolling.
+        /// Start the display scrolling
         /// </summary>
         /// <remarks>
         /// In most cases setting startPage to 0x00 and endPage to 0xff will achieve an
-        /// acceptable scrolling effect.
+        /// acceptable scrolling effect
         /// </remarks>
-        /// <param name="direction">Direction that the display should scroll.</param>
-        /// <param name="startPage">Start page for the scroll.</param>
-        /// <param name="endPage">End oage for the scroll.</param>
+        /// <param name="direction">Direction that the display should scroll</param>
+        /// <param name="startPage">Start page for the scroll</param>
+        /// <param name="endPage">End oage for the scroll</param>
         public void StartScrolling(ScrollDirection direction, byte startPage, byte endPage)
         {
             StopScrolling();
@@ -311,11 +316,11 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Turn off scrolling.
+        /// Turn off scrolling
         /// </summary>
         /// <remarks>
         /// Datasheet states that scrolling must be turned off before changing the
-        /// scroll direction in order to prevent RAM corruption.
+        /// scroll direction in order to prevent RAM corruption
         /// </remarks>
         public void StopScrolling()
         {

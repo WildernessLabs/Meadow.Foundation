@@ -135,26 +135,31 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Coordinates start with index 0
+        /// Draw pixel at location
         /// </summary>
-        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
-        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
-        /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
-        public void DrawPixel(int x, int y, bool colored)
+        /// <param name="x">x position in pixels</param>
+        /// <param name="y">y position in pixels</param>
+        /// <param name="enabled">True = turn on pixel, false = turn off pixel</param>
+        public void DrawPixel(int x, int y, bool enabled)
         {
-            imageBuffer.SetPixel(x, y, colored);
+            imageBuffer.SetPixel(x, y, enabled);
         }
 
+        /// <summary>
+        /// Invert pixel at a location
+        /// </summary>
+        /// <param name="x">x position in pixels</param>
+        /// <param name="y">y position in pixels</param>
         public void InvertPixel(int x, int y)
         {
             imageBuffer.InvertPixel(x, y);
         }
 
         /// <summary>
-        /// Coordinates start with index 0
+        /// Draw pixel at location
         /// </summary>
-        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
-        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
+        /// <param name="x">x position in pixels</param>
+        /// <param name="y">y position in pixels</param>
         /// <param name="color">any value other than black will make the pixel visible</param>
         public void DrawPixel(int x, int y, Color color)
         {
@@ -167,11 +172,14 @@ namespace Meadow.Foundation.Displays
         }
 
         public void Show(int left, int top, int right, int bottom)
-        {
-            //ToDo implement partial screen updates for PCD8544
+        {   //ToDo implement partial screen updates for PCD8544
             Show();
         }
 
+        /// <summary>
+        /// Invert the entire display
+        /// </summary>
+        /// <param name="inverse">Invert if true, normal if false</param>
         public void InvertDisplay(bool inverse)
         {
             IsDisplayInverted = inverse;

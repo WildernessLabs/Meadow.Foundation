@@ -2,14 +2,23 @@
 {
     public partial class MicroGraphics
     {
-        public void DrawPath(GraphicsPath path, bool colored)
+        /// <summary>
+        /// Draw a graphics path 
+        /// </summary>
+        /// <param name="path">The path</param>
+        /// <param name="enabled">Should pixels be enabled (on) or disabled (off)</param>
+        public void DrawPath(GraphicsPath path, bool enabled)
         {
-            DrawPath(path, (colored ? Color.White : Color.Black));
+            DrawPath(path, (enabled ? Color.White : Color.Black));
         }
 
+        /// <summary>
+        /// Draw a graphics path
+        /// </summary>
+        /// <param name="path">The path</param>
+        /// <param name="color">The color to draw the path</param>
         public void DrawPath(GraphicsPath path, Color color)
         {
-            //simple for now 
             for (int i = 0; i < path.PointCount; i++)
             {
                 if (path.PathActions[i].Verb == VerbType.Move || i == 0)

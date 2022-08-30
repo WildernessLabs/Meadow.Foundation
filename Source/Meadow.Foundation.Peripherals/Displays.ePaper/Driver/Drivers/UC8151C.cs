@@ -4,7 +4,7 @@ namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents an Uc8151c ePaper color display
-    /// 152x152, 1.54inch E-Ink three-color display, SPI interface 
+    /// Commonly a 152x152, 1.54inch E-Ink three-color display, SPI interface 
     /// </summary>
     public class Uc8151c : EPaperTriColorBase
     {
