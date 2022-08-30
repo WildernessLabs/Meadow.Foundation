@@ -56,11 +56,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Is the pixel colored for a given location
+        /// Is the pixel on / enabled for a given location
         /// </summary>
         /// <param name="x">x location in pixels</param>
         /// <param name="y">y location in pixels</param>
-        /// <returns>true if pixel is set / colored</returns>
+        /// <returns>true if pixel is set / enabled</returns>
         public virtual bool GetPixelIsEnabled(int x, int y)
         {
             var index = (y >> 8) * Width + x;
@@ -84,12 +84,12 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="x">x position in pixels from left</param>
         /// <param name="y">y position in pixels from top</param>
-        /// <param name="colored">is pixel colored (on)</param>
-        public virtual void SetPixel(int x, int y, bool colored)
+        /// <param name="enabled">is pixel enabled (on)</param>
+        public virtual void SetPixel(int x, int y, bool enabled)
         {
             var index = (y >> 3) * Width + x; //divide by 8
 
-            if (colored)
+            if (enabled)
             {
                 Buffer[index] = (byte)(Buffer[index] | (byte)(1 << (y % 8)));
             }

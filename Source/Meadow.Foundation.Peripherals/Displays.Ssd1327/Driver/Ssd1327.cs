@@ -125,21 +125,44 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        /// <summary>
+        /// Draw pixel at a location
+        /// </summary>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
+        /// <param name="color">The pixel color which will be transformed to 4bpp greyscale</param>
         public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color.Color4bppGray);
         }
 
-        public void DrawPixel(int x, int y, bool colored)
+        /// <summary>
+        /// Draw pixel at a location
+        /// </summary>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
+        /// <param name="enabled">True = turn on pixel, false = turn off pixel</param>
+        public void DrawPixel(int x, int y, bool enabled)
         {
-            DrawPixel(x, y, (byte)(colored ? 0x0F : 0));
+            DrawPixel(x, y, (byte)(enabled ? 0x0F : 0));
         }
 
+        /// <summary>
+        /// Draw pixel at a location
+        /// </summary>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
+        /// <param name="gray">The pixel color as a 4 bit grayscale value</param>
         public void DrawPixel(int x, int y, byte gray)
         {
             imageBuffer.SetPixel(x, y, gray);
         }
 
+        /// <summary>
+        /// Invert a pixel at a location
+        /// </summary>
+        /// <param name="x">Abscissa of the pixel to the set / reset</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset</param>
         public void InvertPixel(int x, int y)
         {
             imageBuffer.InvertPixel(x, y);

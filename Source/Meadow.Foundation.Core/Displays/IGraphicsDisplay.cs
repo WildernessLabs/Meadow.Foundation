@@ -85,8 +85,8 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        /// <param name="colored"></param>
-        public abstract void DrawPixel(int x, int y, bool colored);
+        /// <param name="enabled"></param>
+        public abstract void DrawPixel(int x, int y, bool enabled);
 
         /// <summary>
         /// Invert the color of a single pixel

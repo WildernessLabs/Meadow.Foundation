@@ -116,23 +116,41 @@ namespace Meadow.Foundation.Displays
             Clear(false, updateDisplay);
         }
 
+        /// <summary>
+        /// Fill the display buffer with a color
+        /// </summary>
+        /// <param name="color">The color - normalized to black, white or color</param>
+        /// <param name="updateDisplay">Refresh the display if true</param>
         public void Fill(Color color, bool updateDisplay = false)
         {
-            bool colored = false;
+            bool enabled = false;
             if (color.B > 0 || color.R > 0 || color.G > 0)
-                colored = true;
+                enabled = true;
 
-            Clear(colored, updateDisplay);
+            Clear(enabled, updateDisplay);
         }
 
+        /// <summary>
+        /// Fill a region of the display buffer with a color
+        /// </summary>
+        /// <param name="x">The x location</param>
+        /// <param name="y">The y location</param>
+        /// <param name="width">The width to fill in pixels</param>
+        /// <param name="height">The height to fill in pixels</param>
+        /// <param name="color">The color to fill - normalized to black, white or color</param>
         public void Fill(int x, int y, int width, int height, Color color)
         {
             imageBuffer.Fill(color);
         }
 
-        public void Clear(bool colored, bool updateDisplay = false)
+        /// <summary>
+        /// Clear the display buffer
+        /// </summary>
+        /// <param name="enabled">If true, fill with the enabled color (default is white)</param>
+        /// <param name="updateDisplay">If true, refresh the display</param>
+        public void Clear(bool enabled, bool updateDisplay = false)
         {
-            imageBuffer.Fill(colored?Color.Black : Color.White);
+            imageBuffer.Fill(enabled ? Color.Black : Color.White);
 
             if (updateDisplay)
             {
@@ -140,15 +158,32 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public void DrawPixel(int x, int y, bool isOn) => DrawBlackPixel(x, y, isOn);
+        /// <summary>
+        /// Draw a pixel
+        /// </summary>
+        /// <param name="x">The x location in pixels</param>
+        /// <param name="y">The y location in pixels</param>
+        /// <param name="enabled">If true, use the enabled color (default is white)</param>
+        public void DrawPixel(int x, int y, bool enabled) => DrawBlackPixel(x, y, enabled);
 
-        public void DrawBlackPixel(int x, int y, bool isOn)
+        /// <summary>
+        /// Draw a black pixel
+        /// </summary>
+        /// <param name="x">The x location in pixels</param>
+        /// <param name="y">The y location in pixels</param>
+        /// <param name="enabled">If true, use the enabled color (default is white)</param>
+        public void DrawBlackPixel(int x, int y, bool enabled)
         {
-            if(IsBlackInverted) { isOn = !isOn; }
+            if(IsBlackInverted) { enabled = !enabled; }
 
-            imageBuffer.SetBlackPixel(x, y, isOn);
+            imageBuffer.SetBlackPixel(x, y, enabled);
         }
 
+        /// <summary>
+        /// Invert a pixel 
+        /// </summary>
+        /// <param name="x">The x location in pixels</param>
+        /// <param name="y">The y location in pixels</param>
         public void InvertPixel(int x, int y)
         {
             imageBuffer.InvertPixel(x, y);

@@ -168,23 +168,24 @@ namespace Meadow.Foundation.Displays.TftSpi
         {
             imageBuffer.WriteBuffer(x, y, buffer);
         }
-   
+
         /// <summary>
-        /// Draw a single pixel 
+        /// Draw pixel at a location
+        /// Primarily used for monochrome displays, prefer overload that accepts a Color
         /// </summary>
-        /// <param name="x">x location </param>
-        /// <param name="y">y location</param>
-        /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public void DrawPixel(int x, int y, bool colored)
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
+        /// <param name="enabled">Turn the pixel on (true) or off (false).</param>
+        public void DrawPixel(int x, int y, bool enabled)
         {
-            DrawPixel(x, y, colored ? Color.White : Color.Black);
+            DrawPixel(x, y, enabled ? Color.White : Color.Black);
         }
 
         /// <summary>
         /// Draw a single pixel 
         /// </summary>
-        /// <param name="x">x location </param>
-        /// <param name="y">y location</param>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
         /// <param name="color">Color of pixel.</param>
         public void DrawPixel(int x, int y, Color color)
         {
@@ -194,8 +195,8 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <summary>
         /// Draw a single pixel 
         /// </summary>
-        /// <param name="x">x location</param>
-        /// <param name="y">y location</param>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
         /// <param name="r">8 bit red value</param>
         /// <param name="g">8 bit green value</param>
         /// <param name="b">8 bit blue value</param>
@@ -207,8 +208,8 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// <summary>
         /// Invert the color of a single pixel as represented in the display buffer
         /// </summary>
-        /// <param name="x">x location</param>
-        /// <param name="y">y location</param>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
         public void InvertPixel(int x, int y)
         {
             PixelBuffer.InvertPixel(x, y);

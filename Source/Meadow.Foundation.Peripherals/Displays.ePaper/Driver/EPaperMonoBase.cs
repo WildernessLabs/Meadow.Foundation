@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Displays
         /// Clear the display.
         /// </summary>
         /// <param name="color">Color to set the display (not used on ePaper displays)</param>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
+        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
         public void Fill(Color color, bool updateDisplay = false)
         {
             Clear(color.Color1bpp, updateDisplay);
@@ -132,13 +132,13 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Clear the display.
+        /// Clear the display
         /// </summary>
-        /// <param name="colored">Set the display dark when true</param>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
-        public void Clear(bool colored, bool updateDisplay = false)
+        /// <param name="enabled">Set the display to the enabled or disabled color (defaults are black and white)</param>
+        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
+        public void Clear(bool enabled, bool updateDisplay = false)
         {
-            imageBuffer.Clear(colored);
+            imageBuffer.Clear(enabled);
 
             if (updateDisplay)
             {
@@ -149,12 +149,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Draw a single pixel 
         /// </summary>
-        /// <param name="x">x location </param>
+        /// <param name="x">x location</param>
         /// <param name="y">y location</param>
-        /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public void DrawPixel(int x, int y, bool colored)
+        /// <param name="enabled">Turn the pixel on (true) or off (false)</param>
+        public void DrawPixel(int x, int y, bool enabled)
         {
-            imageBuffer.SetPixel(x, y, colored);
+            imageBuffer.SetPixel(x, y, enabled);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
-        /// <param name="color">Color of pixel.</param>
+        /// <param name="color">Color of pixel</param>
         public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color.Color1bpp);

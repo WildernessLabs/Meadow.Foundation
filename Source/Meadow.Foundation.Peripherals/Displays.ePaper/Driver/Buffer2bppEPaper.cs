@@ -169,7 +169,7 @@
         /// </summary>
         /// <param name="x">x location in pixels</param>
         /// <param name="y">y location in pixels</param>
-        /// <param name="color">The color - will normalize to black, white or colored</param>
+        /// <param name="color">The color - will normalize to black, white or color</param>
         public void SetPixel(int x, int y, Color color)
         {
             var state = GetStateFromColor(color);

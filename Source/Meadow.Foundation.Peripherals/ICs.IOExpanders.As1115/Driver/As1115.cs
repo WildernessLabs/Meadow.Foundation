@@ -416,10 +416,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="x">X postion in pixels</param>
         /// <param name="y">Y position in pixels</param>
-        /// <param name="colored">If true, turn led on at location</param>
-        public void DrawPixel(int x, int y, bool colored)
+        /// <param name="enabled">If true, turn led on at location</param>
+        public void DrawPixel(int x, int y, bool enabled)
         {
-            buffer.SetPixel(x, y, colored);
+            buffer.SetPixel(x, y, enabled);
         }
 
         /// <summary>
