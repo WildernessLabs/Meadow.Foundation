@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 
-namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
+namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Represents a DHT10 temp / humidity sensor
@@ -11,10 +11,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
     public class Dht12 : DhtBase
     {
         /// <summary>
-        /// Create a new Dht12 object.
+        /// Create a new Dht12 object
         /// </summary>
-        /// <param name="address">Address of the Dht12 (default = 0x27).</param>
-        /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
+        /// <param name="address">Address of the Dht12 (default = 0x27)</param>
+        /// <param name="i2cBus">I2C bus (default = 100 KHz)</param>
         public Dht12(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         { }

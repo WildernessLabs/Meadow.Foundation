@@ -1,4 +1,4 @@
-﻿namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
+﻿namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Represents a DHT10 temp / humidity sensor
@@ -8,7 +8,7 @@
     public abstract partial class DhtBase
     {
         /// <summary>
-		/// Valid addresses for the sensor.
+		/// Valid addresses for the sensor
 		/// </summary>
 		public enum Addresses : byte
         {
