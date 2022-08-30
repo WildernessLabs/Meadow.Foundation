@@ -1,7 +1,6 @@
-using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     //similar to IL91874 ... appears to be an old version v0.3
     //GxGDEW027W3
@@ -10,7 +9,7 @@ namespace Meadow.Foundation.Displays.ePaper
     /// Represents the older v0.3 Il91874V03 ePaper color displays
     /// 264x176, 2.7inch tri color e-Ink display / SPI interface 
     /// </summary>
-    public class Il91874V03 : EpdBase
+    public class Il91874V03 : EPaperMonoBase
     {
         /// <summary>
         /// Create a new Il91874V03 object

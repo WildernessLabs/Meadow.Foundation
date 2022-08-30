@@ -3,7 +3,8 @@
 namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
-    /// Represents a 1bpp pixel buffer
+    /// Represents a 1bpp pixel buffer with horizontal pixel packing
+    /// 1 byte represents 8 pixels on the x-axis
     /// </summary>
     public class Buffer1bpp : PixelBufferBase
     {
@@ -18,12 +19,31 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="width">width of buffer in pixels</param>
         /// <param name="height">height of buffer in pixels</param>
         /// <param name="buffer">data to copy into buffer</param>
-        public Buffer1bpp(int width, int height, byte[] buffer) : base(width, height, buffer) { }
+        public Buffer1bpp(int width, int height, byte[] buffer) : 
+            base(width, height, buffer) 
+        { }
 
-        public Buffer1bpp(int width, int height) : base(width, height) { }
+        /// <summary>
+        /// Creates a new Buffer1bpp object
+        /// </summary>
+        /// <param name="width">width of buffer in pixels</param>
+        /// <param name="height">height of buffer in pixels</param>
+        public Buffer1bpp(int width, int height) : 
+            base(width, height) 
+        { }
 
-        public Buffer1bpp() : base() { }
+        /// <summary>
+        /// Creates a new empty Buffer1bpp object
+        /// </summary>
+        public Buffer1bpp() : base()
+        { }
 
+        /// <summary>
+        /// Creates a new Buffer1bpp object
+        /// </summary>
+        /// <param name="width">width of buffer in pixels</param>
+        /// <param name="height">height of buffer in pixels</param>
+        /// <param name="pageSize">the display page size, this will pad the total buffer size to multiples of the page size</param>
         public Buffer1bpp(int width, int height, int pageSize)
         {
             Width = width;
@@ -35,19 +55,37 @@ namespace Meadow.Foundation.Graphics.Buffers
             Buffer = new byte[bufferSize];
         }
 
-        public bool GetPixelIsColored(int x, int y)
+        /// <summary>
+        /// Is the pixel colored for a given location
+        /// </summary>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
+        /// <returns>true if pixel is set / colored</returns>
+        public virtual bool GetPixelIsEnabled(int x, int y)
         {
             var index = (y >> 8) * Width + x;
 
             return (Buffer[index] & (1 << y % 8)) != 0;
         }
 
+        /// <summary>
+        /// Get the pixel color 
+        /// </summary>
+        /// <param name="x">x location of pixel</param>
+        /// <param name="y">y location of pixel</param>
+        /// <returns>The pixel color as a Color object - will be black or white only</returns>
         public override Color GetPixel(int x, int y)
         {
-            return GetPixelIsColored(x, y) ? Color.White : Color.Black;
+            return GetPixelIsEnabled(x, y) ? Color.White : Color.Black;
         }
 
-        public void SetPixel(int x, int y, bool colored)
+        /// <summary>
+        /// Set a pixel in the display buffer
+        /// </summary>
+        /// <param name="x">x position in pixels from left</param>
+        /// <param name="y">y position in pixels from top</param>
+        /// <param name="colored">is pixel colored (on)</param>
+        public virtual void SetPixel(int x, int y, bool colored)
         {
             var index = (y >> 3) * Width + x; //divide by 8
 
@@ -61,11 +99,21 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
+        /// <summary>
+        /// Set a pixel in the display buffer
+        /// </summary>
+        /// <param name="x">x position in pixels from left</param>
+        /// <param name="y">y position in pixels from top</param>
+        /// <param name="color">the color of the pixel - will snap to black or white (on/off)</param>
         public override void SetPixel(int x, int y, Color color)
         {
             SetPixel(x, y, color.Color1bpp);
         }
 
+        /// <summary>
+        /// Fill the buffer with a color
+        /// </summary>
+        /// <param name="color">the fill color - will snap to black or white (on/off)</param>
         public override void Fill(Color color)
         {
             Clear(color.Color1bpp);
@@ -88,7 +136,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     if((j + y) % 8 == 0 && j + y + 8 <= height)
                     {
                         //set an entire byte - fast
-                        Buffer[((j + y) >> 3) * Width + x + i] = (byte)(isColored ? 0xFF : 0);
+                        Buffer[((j + y) >> 3) * Width + x + i] = (byte)((isColored) ? 0xFF : 0);
                         j += 7; //the main loop will add 1 to make it 8
                     }
                     else
@@ -99,10 +147,14 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
-        public void Clear(bool isColored)
+        /// <summary>
+        /// Clear the display
+        /// </summary>
+        /// <param name="enabled">should the display pixels be enabled / on or clear / off</param>
+        public void Clear(bool enabled)
         {
             // split the color in to two byte values
-            Buffer[0] = (byte)(isColored ? 0xFF : 0);
+            Buffer[0] = (byte)(enabled ? 0xFF : 0);
 
             int arrayMidPoint = Buffer.Length / 2;
             int copyLength;
@@ -116,7 +168,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Invert the pixel
+        /// Invert a pixel
         /// </summary>
         /// <param name="x">x position of pixel</param>
         /// <param name="y">y position of pixel</param>
@@ -150,7 +202,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                         }
                         else
                         {   //else 1 bit at a time 
-                            SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsColored(i, j));
+                            SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsEnabled(i, j));
                         }
                     }
                 }

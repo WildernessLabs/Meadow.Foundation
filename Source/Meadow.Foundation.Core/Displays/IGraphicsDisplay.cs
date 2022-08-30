@@ -29,6 +29,16 @@ namespace Meadow.Foundation.Graphics
         public IPixelBuffer PixelBuffer { get; }
 
         /// <summary>
+        /// The color to draw when a pixel is enabled
+        /// </summary>
+        public Color EnabledColor => Color.White;
+
+        /// <summary>
+        /// The color to draw when a pixel is disabled
+        /// </summary>
+        public Color DisabledColor => Color.Black;
+
+        /// <summary>
         /// Transfer the contents of the buffer to the display.
         /// </summary>
         public void Show();

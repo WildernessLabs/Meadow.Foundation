@@ -1,16 +1,25 @@
 ﻿using System;
-using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Provide an interface for ePaper 3 color displays
     /// </summary>
-    public abstract partial class EpdColorBase : SpiDisplayBase, IGraphicsDisplay
+    public abstract partial class EPaperTriColorBase : EPaperBase, IGraphicsDisplay
     {
+        /// <summary>
+        /// The color to draw when a pixel is enabled
+        /// </summary>
+        public Color EnabledColor => Color.Black;
+
+        /// <summary>
+        /// The color to draw when a pixel is disabled
+        /// </summary>
+        public Color DisabledColor => Color.White;
+
         /// <summary>
         /// Is the black pixel data inverted
         /// </summary>
@@ -30,32 +39,23 @@ namespace Meadow.Foundation.Displays.ePaper
         /// The buffer the holds the black pixel data for the display
         /// </summary>
 
-        protected readonly Buffer1bpp blackImageBuffer;
-
-        /// <summary>
-        /// The buffer the holds the color pixel data for the display
-        /// </summary>
-        protected readonly Buffer1bpp colorImageBuffer;
+        protected readonly Buffer2bppEPaper imageBuffer;
 
         /// <summary>
         /// Width of display in pixels
         /// </summary>
-        public int Width => blackImageBuffer.Width;
+        public int Width => imageBuffer.Width;
 
         /// <summary>
         /// Height of display in pixels
         /// </summary>
-        public int Height => blackImageBuffer.Height;
+        public int Height => imageBuffer.Height;
 
         /// <summary>
-        /// The buffer the holds the black pixel data for the display
+        /// The pixel buffer - not directly accessible
+        /// Use buffer.BlackBuffer and buffer.ColorBuffer to access byte arrays
         /// </summary>
-        public IPixelBuffer PixelBuffer => blackImageBuffer;
-
-        /// <summary>
-        /// The buffer the holds the color pixel data for the display
-        /// </summary>
-        public IPixelBuffer ColorPixelBuffer => colorImageBuffer;
+        public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
         /// Create a new color ePaper display object
@@ -68,13 +68,12 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="busyPin">Busy pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public EpdColorBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public EPaperTriColorBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height) :
             this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), device.CreateDigitalOutputPort(dcPin, false),
                 device.CreateDigitalOutputPort(resetPin, true), device.CreateDigitalInputPort(busyPin),
                 width, height)
-        {
-        }
+        { }
 
         /// <summary>
         /// Create a new ePaper display object
@@ -86,7 +85,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <param name="busyPort">Busy input port</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public EpdColorBase(ISpiBus spiBus,
+        public EPaperTriColorBase(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
@@ -100,17 +99,18 @@ namespace Meadow.Foundation.Displays.ePaper
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
-            blackImageBuffer = new Buffer1bpp(width, height);
-            colorImageBuffer = new Buffer1bpp(width, height);
-
-            blackImageBuffer.Clear(true);
-            colorImageBuffer.Clear(true);
+            imageBuffer = new Buffer2bppEPaper(width, height);
+            imageBuffer.Clear();
 
             Initialize();
         }
 
         protected abstract void Initialize();
 
+        /// <summary>
+        /// Clear the display buffer 
+        /// </summary>
+        /// <param name="updateDisplay">Update the display if true</param>
         public void Clear(bool updateDisplay = false)
         {
             Clear(false, updateDisplay);
@@ -127,20 +127,12 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public void Fill(int x, int y, int width, int height, Color color)
         {
-            if (color == Color.Black)
-            {
-                blackImageBuffer.Fill(x, y, width, height, color);
-            }
-            else if (color != Color.White)
-            {
-                colorImageBuffer.Fill(x, y, width, height, color);
-            }
+            imageBuffer.Fill(color);
         }
 
         public void Clear(bool colored, bool updateDisplay = false)
         {
-            blackImageBuffer.Clear(IsBlackInverted);
-            colorImageBuffer.Clear(IsColorInverted);
+            imageBuffer.Fill(colored?Color.Black : Color.White);
 
             if (updateDisplay)
             {
@@ -148,79 +140,33 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
-        public void DrawPixel(int x, int y, bool colored)
+        public void DrawPixel(int x, int y, bool isOn) => DrawBlackPixel(x, y, isOn);
+
+        public void DrawBlackPixel(int x, int y, bool isOn)
         {
-            if(IsBlackInverted) { colored = !colored; }
+            if(IsBlackInverted) { isOn = !isOn; }
 
-            //could move this to the buffer but need to support horizonal bit storage 
-            if (colored)
-            {   //0x80 = 128 = 0b_10000000
-                blackImageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
-            }
-            else
-            {
-                blackImageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
-            }
-
-            //clear the pixels in the color buffer regardless of colored state
-            if (!IsColorInverted)
-            {
-                colorImageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
-            }
-            else
-            {
-                colorImageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
-            }
+            imageBuffer.SetBlackPixel(x, y, isOn);
         }
 
         public void InvertPixel(int x, int y)
         {
-            blackImageBuffer.Buffer[(x + y * Width) / 8] ^= (byte)~(0x80 >> (x % 8));
+            imageBuffer.InvertPixel(x, y);
         }
 
-        public void DrawColoredPixel(int x, int y, bool colored)
+        public void DrawColoredPixel(int x, int y, bool isOn)
         {
-            if (IsBlackInverted) { colored = !colored; }
-
-            if ((colored && !IsColorInverted) ||
-                (!colored && IsColorInverted))
-            {
-                colorImageBuffer.Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
-            }
-            else
-            {
-                colorImageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
-            }
-            blackImageBuffer.Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
+            imageBuffer.SetColorPixel(x, y, isOn);
         }
 
         public void DrawPixel(int x, int y, Color color)
         {
-            if (color.B == 0 && color.G == 0 && color.R > 0.5)
-            {
-                DrawColoredPixel(x, y, true);
-            }
-            else
-            {
-                DrawPixel(x, y, color.Color1bpp);
-            }
-        }
-
-        public void DrawPixel(int x, int y, byte r, byte g, byte b)
-        {
-            if (g == 0 && b == 0 && r > 127)
-            {
-                DrawColoredPixel(x, y, true);
-            }
-            else
-            {
-                DrawPixel(x, y, r > 0 || g > 0 || b > 0);
-            }
+            imageBuffer.SetPixel(x, y, color);
         }
 
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
-            blackImageBuffer.WriteBuffer(x, y, displayBuffer);
+            imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
 
         /// <summary>
@@ -248,7 +194,7 @@ namespace Meadow.Foundation.Displays.ePaper
         
         // 2.13b + 2.7b (red) commands
 
-        public enum Command : byte
+        protected enum Command : byte
         {
             PANEL_SETTING = 0x00,
             POWER_SETTING = 0x01,

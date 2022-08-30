@@ -1,15 +1,17 @@
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System;
+using System.Threading;
 
-namespace Meadow.Foundation.Displays
+namespace Meadow.Foundation.Displays.ePaper
 {
     /// <summary>
-    /// Represents an Il0398 ePaper color display
+    /// Represents an WaveShare Epd4in2b V2 ePaper color display
     /// 400x300, 4.2inch e-Ink three-color display, SPI interface 
     /// </summary>
-    public class Il0398 : EPaperTriColorBase
+    public class Epd4in2bV2 : EPaperTriColorBase
     {
         /// <summary>
-        /// Create a new Il0398 400x300 pixel display object
+        /// Create a new WaveShare Epd4in2b V2 400x300 pixel display object
         /// </summary>
         /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
@@ -17,19 +19,19 @@ namespace Meadow.Foundation.Displays
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="busyPin">Busy pin</param>
-        public Il0398(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
+        public Epd4in2bV2(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, 400, 300)
         { }
 
         /// <summary>
-        /// Create a new Il0398 ePaper 400x300 pixel display object
+        /// Create a new WaveShare Epd4in2b V2 ePaper 400x300 pixel display object
         /// </summary>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPort">Chip select output port</param>
         /// <param name="dataCommandPort">Data command output port</param>
         /// <param name="resetPort">Reset output port</param>
         /// <param name="busyPort">Busy input port</param>
-        public Il0398(ISpiBus spiBus,
+        public Epd4in2bV2(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
@@ -39,26 +41,29 @@ namespace Meadow.Foundation.Displays
         }
 
         protected override bool IsBlackInverted => false;
+        
         protected override bool IsColorInverted => false;
 
         protected override void Initialize()
         {
             Reset();
 
-            SendCommand(Command.BOOSTER_SOFT_START);
-            SendData(0x17);
-            SendData(0x17);
-            SendData(0x17);
             SendCommand(Command.POWER_ON);
-
             WaitUntilIdle();
-            SendCommand(0x0F);
+            SendCommand(Command.PANEL_SETTING);
+            SendData(0x0F);
+        }
 
-            SendCommand(Command.RESOLUTION_SETTING);
-            SendData((byte)(Width >> 8) & 0xFF);
-            SendData((byte)(Width & 0xFF));
-            SendData((byte)(Height >> 8) & 0xFF);
-            SendData((byte)(Height & 0xFF));
+        protected override void Reset()
+        {
+            Console.WriteLine("Reset");
+
+            resetPort.State = true;
+            DelayMs(200);
+            resetPort.State = false;
+            DelayMs(2);
+            resetPort.State = true;
+            DelayMs(200);
         }
 
         protected void SetPartialWindow(byte[] bufferBlack, byte[] bufferColor, int x, int y, int width, int height)
@@ -185,44 +190,46 @@ namespace Meadow.Foundation.Displays
         protected virtual void ClearFrame()
         {
             SendCommand(Command.DATA_START_TRANSMISSION_1);
-            DelayMs(2);
+            Thread.Sleep(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(0xFF);
             }
-            DelayMs(2);
+            Thread.Sleep(2);
 
             SendCommand(Command.DATA_START_TRANSMISSION_2);
-            DelayMs(2);
+            Thread.Sleep(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(0xFF);
             }
-            DelayMs(2);
+            Thread.Sleep(2);
         }
 
         void DisplayFrame(byte[] blackBuffer, byte[] colorBuffer)
         {
+            Console.WriteLine($"Display frame - width {Width}, height {Height}");
+
             SendCommand(Command.DATA_START_TRANSMISSION_1);
-            DelayMs(2);
+            Thread.Sleep(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
-               SendData(blackBuffer[i]);
+                SendData(blackBuffer[i]);
 
             }
-            DelayMs(2);
+            Thread.Sleep(2);
 
-            
+
             SendCommand(Command.DATA_START_TRANSMISSION_2);
-            DelayMs(2);
+            Thread.Sleep(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 //SendData(0xFF); //white for clear, black for on
                 SendData(colorBuffer[i]);
             }
-            DelayMs(2);
+            Thread.Sleep(2);
 
             DisplayFrame();
         }

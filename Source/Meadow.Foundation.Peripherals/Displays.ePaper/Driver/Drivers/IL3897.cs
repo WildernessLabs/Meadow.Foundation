@@ -1,13 +1,11 @@
-using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
-    //aka WaveShare EPD2i13
     /// <summary>
     /// Represents an Il3897 ePaper display
     /// </summary>
-    public class Il3897 : EpdBase
+    public class Il3897 : EPaperMonoBase
     {
         /// <summary>
         /// Create a new Il3897 object
@@ -50,8 +48,8 @@ namespace Meadow.Foundation.Displays.ePaper
             Reset();
 
             SendCommand(Command.DRIVER_OUTPUT_CONTROL);
-            SendData((int)(Width - 1));
-            SendData((int)(Width - 1) >> 8);
+            SendData(Height - 1);
+            SendData((Height - 1) >> 8);
             SendData(0x00);                     // GD = 0; SM = 0; TB = 0;
 
             SendCommand(Command.BOOSTER_SOFT_START_CONTROL);

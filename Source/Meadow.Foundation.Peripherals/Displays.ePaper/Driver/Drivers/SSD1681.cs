@@ -1,16 +1,13 @@
-﻿using Meadow.Devices;
-using Meadow.Foundation.Displays.ePaper;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
-
     /// <summary>
     /// Represents an Ssd1681 ePaper B/W or color display commonly 1.54"
     /// 200x200, e-Ink three-color display, SPI interface 
     /// DRIVER NOT COMPLETE
     /// </summary>
-    public class Ssd1681 : EpdColorBase
+    public class Ssd1681 : EPaperTriColorBase
     {
         protected override bool IsBlackInverted => false;
 

@@ -1,13 +1,12 @@
-using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     //WaveShare 1.54" BW
     /// <summary>
     /// Represents an Ssd1608 ePaper display
     /// </summary>
-    public class Ssd1608 : EpdBase
+    public class Ssd1608 : EPaperMonoBase
     {
         /// <summary>
         /// Create a new Ssd1608 object
@@ -52,7 +51,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
             SendCommand(Command.DRIVER_OUTPUT_CONTROL);
             SendData((byte)(Height - 1));
-            SendData((int)(Height - 1) >> 8);
+            SendData((Height - 1) >> 8);
             SendData(0x00);                     // GD = 0; SM = 0; TB = 0;
 
             SendCommand(Command.BOOSTER_SOFT_START_CONTROL);

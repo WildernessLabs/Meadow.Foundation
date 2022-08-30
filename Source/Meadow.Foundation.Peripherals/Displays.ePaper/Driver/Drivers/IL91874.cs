@@ -1,13 +1,12 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents IL91874 ePaper color displays
     /// 264x176, 2.7inch tri color e-Ink display / SPI interface 
     /// </summary>
-    public class Il91874 : EpdColorBase
+    public class Il91874 : EPaperTriColorBase
     {
         /// <summary>
         /// Create a new Il91874 object
@@ -122,7 +121,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void Show(int left, int top, int right, int bottom)
         {
-            TransmitPartial(blackImageBuffer.Buffer, colorImageBuffer.Buffer,
+            TransmitPartial(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer,
                         left, top,
                         right - left,
                         top - bottom);
@@ -134,7 +133,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void Show()
         {
-            DisplayFrame(blackImageBuffer.Buffer, colorImageBuffer.Buffer);
+            DisplayFrame(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer);
         }
 
         void SetLut()
