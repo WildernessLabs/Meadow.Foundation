@@ -2,6 +2,7 @@
 using Meadow.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -24,6 +25,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private readonly IMcpDeviceComms mcpDevice;
         private readonly IDigitalInputPort interruptPort;
+        private readonly IDigitalOutputPort resetPort;
         private readonly IDictionary<IPin, DigitalInputPort> inputPorts;
 
         // state
@@ -40,23 +42,26 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        /// <param name="interruptPort">optional interupt port, needed for input interrupts (pins 1-8)</param>
+        /// <param name="interruptPort">Optional interupt port, needed for input interrupts (pins 1-8)</param>
+        /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         protected Mcp23xxx(II2cBus i2cBus, byte address,
-            IDigitalInputPort interruptPort = null) :
-            this(new I2cMcpDeviceComms(i2cBus, address), interruptPort) // use the internal constructor that takes an IMcpDeviceComms
+            IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) :
+            this(new I2cMcpDeviceComms(i2cBus, address), interruptPort, resetPort) // use the internal constructor that takes an IMcpDeviceComms
         {
         }
 
         /// <summary>
         /// Mcpxxx base class contructor
         /// </summary>
-        /// <param name="spiBus"></param>
+        /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">Chip select port</param>
-        /// <param name="interruptPort">optional interupt port, needed for input interrupts (pins 1-8)</param>
+        /// <param name="interruptPort">Optional interupt port, needed for input interrupts (pins 1-8)</param>
+        /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         protected Mcp23xxx(ISpiBus spiBus, 
             IDigitalOutputPort chipSelectPort,
-            IDigitalInputPort interruptPort) :
-            this(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort) // use the internal constructor that takes an IMcpDeviceComms
+            IDigitalInputPort interruptPort = null,
+            IDigitalOutputPort resetPort = null) :
+            this(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort, resetPort) // use the internal constructor that takes an IMcpDeviceComms
         {
         }
 
@@ -65,9 +70,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="device"></param>
         /// <param name="interruptPort">optional interupt port, needed for input interrupts (pins 1-8)</param>
+        /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         internal Mcp23xxx(IMcpDeviceComms device, 
-                            IDigitalInputPort interruptPort)
-        {   // TODO: more interrupt 
+                          IDigitalInputPort interruptPort = null,
+                          IDigitalOutputPort resetPort = null)
+        {
+            if (resetPort != null)
+            {   //disable and enable the mcp before initializing
+                this.resetPort = resetPort;
+                ResetMcp();
+            }
+
+            // TODO: more interrupt 
             // check the interrupt mode and make sure it's correct
             // raise an exception if not. also, doc in constructor what we expect from an interrupt port
             if (interruptPort != null)
@@ -80,6 +94,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
             mcpDevice = device;
         
             Initialize();
+        }
+
+        /// <summary>
+        /// Reset the MCPxxxx expander
+        /// Requires using a reset port
+        /// </summary>
+        public void ResetMcp()
+        {
+            if(resetPort == null)
+            {
+                throw new Exception("You must provide a reset port to reset the MCPxxxx");
+            }
+            resetPort.State = false;
+            Thread.Sleep(10);
+            resetPort.State = true;
         }
 
         private void InterruptPortChanged(object sender, DigitalPortResult e)

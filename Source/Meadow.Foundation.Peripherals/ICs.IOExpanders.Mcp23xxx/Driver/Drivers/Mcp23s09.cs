@@ -13,8 +13,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">Chip select port</param>
         /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
-        public Mcp23s09(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null) :
-            base(spiBus, chipSelectPort, interruptPort)
+        /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
+        public Mcp23s09(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) :
+            base(spiBus, chipSelectPort, interruptPort, resetPort)
         {
         }
 

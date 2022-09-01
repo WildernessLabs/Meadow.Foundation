@@ -13,8 +13,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPort">The interrupt port</param>
-        public Mcp23017(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null) :
-            base(i2cBus, address, interruptPort)
+        /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
+        public Mcp23017(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) :
+            base(i2cBus, address, interruptPort, resetPort)
         { }
     }
 }
