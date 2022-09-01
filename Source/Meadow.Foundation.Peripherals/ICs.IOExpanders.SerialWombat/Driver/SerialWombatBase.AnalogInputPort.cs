@@ -48,6 +48,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 var data = controller.ReadPublicData((byte)Pin.Key);
                 Voltage = new Voltage((data * supplyVoltage) >> 16, Voltage.UnitType.Millivolts);
+
                 if (buffer.Count == 0)
                 {
                     buffer.Add(Voltage);
@@ -137,8 +138,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 public Unsubscriber(List<IObserver<IChangeResult<Voltage>>> observers, IObserver<IChangeResult<Voltage>> observer)
                 {
-                    this._observers = observers;
-                    this._observer = observer;
+                    _observers = observers;
+                    _observer = observer;
                 }
 
                 public void Dispose()
