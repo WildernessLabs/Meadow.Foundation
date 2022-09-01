@@ -329,8 +329,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                     gpinten = BitHelpers.SetBit(gpinten, bitIndex, true);
                     mcpDevice.WriteRegister(MapRegister(Registers.InterruptOnChange, bank), gpinten);
-
-                    gpinten = mcpDevice.ReadRegister(MapRegister(Registers.InterruptOnChange, bank));
                 }
             }
             else
@@ -350,23 +348,26 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (IsValidPin(pin))
             {
-                // if the pin isn't configured for output, configure it
-                SetPortDirection(pin, PortDirectionType.Output);
+                lock(_lock)
+                {
+                    // if the pin isn't configured for output, configure it
+                    SetPortDirection(pin, PortDirectionType.Output);
 
-                var bank = GetPortBankForPin(pin);
-                byte bitIndex = (byte)(((byte)pin.Key) % 8);
+                    var bank = GetPortBankForPin(pin);
+                    byte bitIndex = (byte)(((byte)pin.Key) % 8);
 
-                if (bank == PortBank.A)
-                {   // update our output latch 
-                    olatA = BitHelpers.SetBit(olatA, bitIndex, value);
-                    // write to the output latch (actually does the output setting)
-                    mcpDevice.WriteRegister(MapRegister(Registers.OutputLatch, PortBank.A), olatA);
-                }
-                else
-                {   // update our output latch 
-                    olatB = BitHelpers.SetBit(olatB, bitIndex, value);
-                    // write to the output latch (actually does the output setting)
-                    mcpDevice.WriteRegister(MapRegister(Registers.OutputLatch, PortBank.B), olatB);
+                    if (bank == PortBank.A)
+                    {   // update our output latch 
+                        olatA = BitHelpers.SetBit(olatA, bitIndex, value);
+                        // write to the output latch (actually does the output setting)
+                        mcpDevice.WriteRegister(MapRegister(Registers.OutputLatch, PortBank.A), olatA);
+                    }
+                    else
+                    {   // update our output latch 
+                        olatB = BitHelpers.SetBit(olatB, bitIndex, value);
+                        // write to the output latch (actually does the output setting)
+                        mcpDevice.WriteRegister(MapRegister(Registers.OutputLatch, PortBank.B), olatB);
+                    }
                 }
             }
             else
