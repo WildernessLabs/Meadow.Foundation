@@ -2,6 +2,7 @@
 using Meadow.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -281,11 +282,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 ConfigureMcpInputPort(pin, resistorMode == ResistorMode.InternalPullUp, interruptMode);
 
-                var port = new DigitalInputPort(pin, interruptMode)
+                var port = new DigitalInputPort(pin, interruptMode, resistorMode)
                 {
                     DebounceDuration = debounceDuration,
-                    UpdateState = (pin) => ReadPort(pin)
+                    
                 };
+
+                if(interruptPort == null)
+                {   //no interrupts so we'll pull the state 
+                    port.UpdateState = (pin) => ReadPort(pin);
+                }
 
                 inputPorts.Add(pin, port);
                 return port;

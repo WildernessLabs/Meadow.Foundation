@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using System;
-using System.Data;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -83,7 +82,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 var now = DateTime.UtcNow;
 
-                if(newState != state)
+                if (newState != state)
                 {
                     switch (InterruptMode)
                     {
