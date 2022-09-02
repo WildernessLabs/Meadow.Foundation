@@ -114,8 +114,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private void InterruptPortChanged(object sender, DigitalPortResult e)
         {
-            Console.WriteLine("InterruptPortChanged");
-
             // determine which pin caused the interrupt
             byte interruptFlag = mcpDevice.ReadRegister(MapRegister(Registers.InterruptFlag, PortBank.A));
             byte currentStates = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.A));
