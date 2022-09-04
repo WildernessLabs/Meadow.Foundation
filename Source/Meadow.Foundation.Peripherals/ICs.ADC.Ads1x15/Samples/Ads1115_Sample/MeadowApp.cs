@@ -4,28 +4,28 @@ using Meadow.Foundation.ICs.ADC;
 using System;
 using System.Threading.Tasks;
 
-namespace ADC.Ads1015_Sample
+namespace Ads1115_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        Ads1015 adc;
+        Ads1115 adc;
 
         public override async Task Initialize()
         {
             Console.WriteLine("Initialize...");
 
-            adc = new Ads1015(
+            adc = new Ads1115(
                 Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.FastPlus),
                 Ads1x15.Addresses.Default,
                 Ads1x15.MeasureMode.Continuous,
                 Ads1x15.ChannelSetting.A0SingleEnded,
-                Ads1015.SampleRateSetting.Sps3300);
+                Ads1115.SampleRateSetting.Sps128);
 
             adc.Gain = Ads1x15.FsrGain.TwoThirds;
 
-            var observer = Ads1015.CreateObserver(
+            var observer = Ads1115.CreateObserver(
                 handler: result =>
                 {
                     Console.WriteLine($"Observer: Voltage changed by threshold; new temp: {result.New.Volts:N2}C, old: {result.Old?.Volts:N2}C");

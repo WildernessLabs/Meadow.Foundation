@@ -1,9 +1,9 @@
 ﻿namespace Meadow.Foundation.ICs.ADC
 {
-    public partial class Ads1x15
+    public abstract partial class Ads1x15
     {
         /// <summary>
-        /// Valid addresses for the sensor.
+        /// Valid addresses for the sensor
         /// </summary>
         public enum Addresses : byte
         {
