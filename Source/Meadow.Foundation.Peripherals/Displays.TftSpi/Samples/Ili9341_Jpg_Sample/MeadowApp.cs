@@ -73,7 +73,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
         byte[] LoadResource(string filename)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = $"Displays.TftSpi.Ili9341_Jpg_Sample.{filename}";
+            var resourceName = $"Ili9341_Jpg_Sample.{filename}";
 
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             {
