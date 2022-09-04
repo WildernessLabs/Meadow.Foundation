@@ -5,18 +5,14 @@ using Meadow.Hardware;
 using System;
 using System.Threading.Tasks;
 
-namespace ICs.IOExpanders.Sw18AB_Samples
+namespace ICs.IOExpanders.Sw18AB_PWM_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        private Sw18AB _wombat;
-        private IPwmPort _pwm;
-
-        public MeadowApp()
-        {
-        }
+        private Sw18AB serialWombat;
+        private IPwmPort pwmPort;
 
         public override Task Initialize()
         {
@@ -25,9 +21,9 @@ namespace ICs.IOExpanders.Sw18AB_Samples
             try
             {
                 Resolver.Log.Info(" creating Wombat...");
-                _wombat = new Sw18AB(Device.CreateI2cBus());
+                serialWombat = new Sw18AB(Device.CreateI2cBus());
                 Resolver.Log.Info(" creating PWM...");
-                _pwm = _wombat.CreatePwmPort(_wombat.Pins.WP0, new Meadow.Units.Frequency(1, Meadow.Units.Frequency.UnitType.Hertz));
+                pwmPort = serialWombat.CreatePwmPort(serialWombat.Pins.WP0, new Meadow.Units.Frequency(1, Meadow.Units.Frequency.UnitType.Hertz));
             }
             catch (Exception ex)
             {
@@ -41,16 +37,16 @@ namespace ICs.IOExpanders.Sw18AB_Samples
         {
             Resolver.Log.Info("Running...");
 
-            _pwm.Start();
+            pwmPort.Start();
 
             for (int i = 1; i < 1000; i += 10)
             {
                 Resolver.Log.Info($"{i}Hz");
-                _pwm.Frequency = new Meadow.Units.Frequency(i, Meadow.Units.Frequency.UnitType.Hertz);
+                pwmPort.Frequency = new Meadow.Units.Frequency(i, Meadow.Units.Frequency.UnitType.Hertz);
                 await Task.Delay(2000);
             }
 
-            _pwm.Stop();
+            pwmPort.Stop();
         }
 
         //<!=SNOP=>

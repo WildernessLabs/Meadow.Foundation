@@ -1121,7 +1121,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.SerialWomba
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{5F4B9D7E-81B4-4562-BEDC-3499A8DDE648}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sw18AB_Discrete_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.SerialWombat\Samples\Sw18AB_Discrete_Sample\Sw18AB_Discrete_Sample.csproj", "{BF2A6BEE-F7E7-49AE-9BA4-7E510BC02389}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sw18AB_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.SerialWombat\Samples\Sw18AB_Discrete_Sample\Sw18AB_Sample.csproj", "{BF2A6BEE-F7E7-49AE-9BA4-7E510BC02389}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sw18AB_PWM_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.SerialWombat\Samples\Sw18AB_PWM_Sample\Sw18AB_PWM_Sample.csproj", "{71290423-6A82-4263-B592-8266EAB58D9B}"
 EndProject
