@@ -9,17 +9,13 @@ namespace ICs.IOExpanders.Nxp74HC4051_Sample
     {
         //<!=SNIP=>
 
-        private Nxp74HC4051 _mux;
-
-        public MeadowApp()
-        {
-        }
+        private Nxp74HC4051 mux;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
-            _mux = new Nxp74HC4051(
+            mux = new Nxp74HC4051(
                 Device.CreateAnalogInputPort(Device.Pins.A00),      // input
                 Device.CreateDigitalOutputPort(Device.Pins.D00),    // s0
                 Device.CreateDigitalOutputPort(Device.Pins.D01),    // s1
@@ -43,8 +39,8 @@ namespace ICs.IOExpanders.Nxp74HC4051_Sample
             {
                 for (var channel = 0; channel < 8; channel++)
                 {
-                    _mux.SetInputChannel(channel);
-                    var read = await _mux.Signal.Read();
+                    mux.SetInputChannel(channel);
+                    var read = await mux.Signal.Read();
                     Resolver.Log.Info($"ADC Channel {channel} = {read.Volts:0.0}V");
                     await Task.Delay(1000);
                 }
