@@ -56,7 +56,7 @@ namespace Meadow.Foundation.Sensors.Moisture
                 : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 0, 40), new Voltage(3.3)),
                       device.CreateDigitalOutputPort(digitalPin), minimumVoltageCalibration, maximumVoltageCalibration)
         {
-            this.UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 1);
+            UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 1);
         }
 
         /// <summary>
