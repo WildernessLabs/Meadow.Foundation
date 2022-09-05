@@ -1121,7 +1121,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.IOExpanders.SerialWomba
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{5F4B9D7E-81B4-4562-BEDC-3499A8DDE648}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sw18AB_Discrete_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.SerialWombat\Samples\Sw18AB_Discrete_Sample\Sw18AB_Discrete_Sample.csproj", "{BF2A6BEE-F7E7-49AE-9BA4-7E510BC02389}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sw18AB_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.SerialWombat\Samples\Sw18AB_Discrete_Sample\Sw18AB_Sample.csproj", "{BF2A6BEE-F7E7-49AE-9BA4-7E510BC02389}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sw18AB_PWM_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.SerialWombat\Samples\Sw18AB_PWM_Sample\Sw18AB_PWM_Sample.csproj", "{71290423-6A82-4263-B592-8266EAB58D9B}"
 EndProject
@@ -1180,6 +1180,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Servos", "Servos", "{A259504D-1EB9-4B1F-955A-95713EF4733A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.AnalogLightSensor_Sample", "Meadow.Foundation.Core.Samples\Sensors.Light.AnalogLightSensor_Sample - Copy\Sensors.Light.AnalogLightSensor_Sample.csproj", "{33D6CB44-D7F5-45F2-855F-9E80E0C91466}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ads1115_Sample", "Meadow.Foundation.Peripherals\ICs.ADC.Ads1x15\Samples\Ads1115_Sample\Ads1115_Sample.csproj", "{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2743,6 +2745,12 @@ Global
 		{33D6CB44-D7F5-45F2-855F-9E80E0C91466}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33D6CB44-D7F5-45F2-855F-9E80E0C91466}.Release|Any CPU.Build.0 = Release|Any CPU
 		{33D6CB44-D7F5-45F2-855F-9E80E0C91466}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3329,6 +3337,7 @@ Global
 		{26DE539B-517B-489D-BB9C-78D4A7B0BE3A} = {06BFC6F2-9D39-46B2-8E9B-A2204481EED2}
 		{A259504D-1EB9-4B1F-955A-95713EF4733A} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{33D6CB44-D7F5-45F2-855F-9E80E0C91466} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
+		{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8} = {96A79D41-1FBE-45D0-8BBB-EC8FED8D3F60}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

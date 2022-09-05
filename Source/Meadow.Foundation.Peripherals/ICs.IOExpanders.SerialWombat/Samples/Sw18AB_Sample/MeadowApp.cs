@@ -5,29 +5,24 @@ using Meadow.Hardware;
 using System;
 using System.Threading.Tasks;
 
-namespace ICs.IOExpanders.Sw18AB_Samples
+namespace ICs.IOExpanders.Sw18AB_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        private Sw18AB _wombat;
-        private IDigitalOutputPort _output;
-        private IDigitalInputPort _input;
-
-        public MeadowApp()
-        {
-        }
-
+        private Sw18AB serialWombat;
+        private IDigitalOutputPort digitalOutputPort;
+        private IDigitalInputPort digitalInputPort;
         public override Task Initialize()
         {
             Console.WriteLine("Initialize...");
 
             try
             {
-                _wombat = new Sw18AB(Device.CreateI2cBus());
-                _output = _wombat.CreateDigitalOutputPort(_wombat.Pins.WP0);
-                _input = _wombat.CreateDigitalInputPort(_wombat.Pins.WP1);
+                serialWombat = new Sw18AB(Device.CreateI2cBus());
+                digitalOutputPort = serialWombat.CreateDigitalOutputPort(serialWombat.Pins.WP0);
+                digitalInputPort = serialWombat.CreateDigitalInputPort(serialWombat.Pins.WP1);
             }
             catch (Exception ex)
             {
@@ -46,8 +41,8 @@ namespace ICs.IOExpanders.Sw18AB_Samples
             while (true)
             {
                 Resolver.Log.Info($"WP0 = {(state ? "high" : "low")}");
-                _output.State = state;
-                Resolver.Log.Info($"WP1 = {(_input.State ? "high" : "low")}");
+                digitalOutputPort.State = state;
+                Resolver.Log.Info($"WP1 = {(digitalInputPort.State ? "high" : "low")}");
                 state = !state;
 
                 await Task.Delay(1000);
