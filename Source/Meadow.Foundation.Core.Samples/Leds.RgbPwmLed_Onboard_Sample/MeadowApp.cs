@@ -18,7 +18,8 @@ namespace Leds.RgbPwmLed_Onboard_Sample
         public override Task Initialize()
         {
             Console.WriteLine("Creating peripherals...");
-            this.onboardLed = new RgbPwmLed(
+            
+            onboardLed = new RgbPwmLed(
                 Device,
                 Device.Pins.OnboardLedRed,
                 Device.Pins.OnboardLedGreen,

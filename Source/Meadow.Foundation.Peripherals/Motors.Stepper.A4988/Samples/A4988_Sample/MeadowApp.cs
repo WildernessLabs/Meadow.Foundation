@@ -19,9 +19,9 @@ namespace MeadowApp
                 device: Device, 
                 step: Device.Pins.D01,
                 direction: Device.Pins.D00, 
-                ms1: Device.Pins.D04, 
-                ms2: Device.Pins.D03, 
-                ms3: Device.Pins.D02);
+                ms1Pin: Device.Pins.D04, 
+                ms2Pin: Device.Pins.D03, 
+                ms3Pin: Device.Pins.D02);
 
             return base.Initialize();
         }
@@ -57,9 +57,9 @@ namespace MeadowApp
                 device: Device, 
                 step: Device.Pins.D01, 
                 direction: Device.Pins.D00, 
-                ms1: Device.Pins.D04, 
-                ms2: Device.Pins.D03, 
-                ms3: Device.Pins.D02);
+                ms1Pin: Device.Pins.D04, 
+                ms2Pin: Device.Pins.D03, 
+                ms3Pin: Device.Pins.D02);
 
             var s = (StepDivisor[])Enum.GetValues(typeof(StepDivisor));
             while (true)
