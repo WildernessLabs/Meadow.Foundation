@@ -13,6 +13,7 @@
     <Version>0.5.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Maple is an ultra-lightweight RESTful web API Server, built specifically for Meadow. It provides an easy to extend architecture, and has integrated JSON support via System.Text.Json.</Description>
+	  <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -30,5 +31,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SimpleJson" Version="0.38.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Meadow.Logging\lib\Meadow.Logging.csproj" />
   </ItemGroup>
 </Project>
