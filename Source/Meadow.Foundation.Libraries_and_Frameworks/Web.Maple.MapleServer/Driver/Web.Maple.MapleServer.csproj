@@ -26,9 +26,6 @@
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ActionResults\" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="SimpleJson" Version="0.38.0" />
   </ItemGroup>
 </Project>
