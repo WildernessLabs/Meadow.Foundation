@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32802.440
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meadow.Foundation.Core.Samples", "Meadow.Foundation.Core.Samples", "{7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}"
 EndProject
@@ -1182,6 +1182,16 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.AnalogLightSensor_Sample", "Meadow.Foundation.Core.Samples\Sensors.Light.AnalogLightSensor_Sample - Copy\Sensors.Light.AnalogLightSensor_Sample.csproj", "{33D6CB44-D7F5-45F2-855F-9E80E0C91466}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ads1115_Sample", "Meadow.Foundation.Peripherals\ICs.ADC.Ads1x15\Samples\Ads1115_Sample\Ads1115_Sample.csproj", "{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FanControllers", "FanControllers", "{7CB0117E-E2DA-45D6-BE69-46CDE6B7A148}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ICs.FanControllers.Emc2101", "ICs.FanControllers.Emc2101", "{89A7C08F-5956-4C72-88AC-86EB9FADCEC9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{374EE6C8-205D-4416-92CB-AC1CCB279226}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.FanControllers.Emc2101", "Meadow.Foundation.Peripherals\ICs.FanControllers.Emc2101\Driver\ICs.FanControllers.Emc2101.csproj", "{25256C84-8B6B-4ED2-910E-DF0A70834AB6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emc2101_Sample", "Meadow.Foundation.Peripherals\ICs.FanControllers.Emc2101\Samples\Emc2101_Sample\Emc2101_Sample.csproj", "{49345834-BE10-4E23-AF72-A80EF5E82932}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2751,6 +2761,18 @@ Global
 		{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{25256C84-8B6B-4ED2-910E-DF0A70834AB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25256C84-8B6B-4ED2-910E-DF0A70834AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25256C84-8B6B-4ED2-910E-DF0A70834AB6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{25256C84-8B6B-4ED2-910E-DF0A70834AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25256C84-8B6B-4ED2-910E-DF0A70834AB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25256C84-8B6B-4ED2-910E-DF0A70834AB6}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{49345834-BE10-4E23-AF72-A80EF5E82932}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49345834-BE10-4E23-AF72-A80EF5E82932}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49345834-BE10-4E23-AF72-A80EF5E82932}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{49345834-BE10-4E23-AF72-A80EF5E82932}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49345834-BE10-4E23-AF72-A80EF5E82932}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49345834-BE10-4E23-AF72-A80EF5E82932}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3338,6 +3360,11 @@ Global
 		{A259504D-1EB9-4B1F-955A-95713EF4733A} = {64623FCA-6086-4F0A-A59D-2BF372EA38AA}
 		{33D6CB44-D7F5-45F2-855F-9E80E0C91466} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
 		{1BBA1CB6-8A03-49D6-AB0B-89CE1A445CE8} = {96A79D41-1FBE-45D0-8BBB-EC8FED8D3F60}
+		{7CB0117E-E2DA-45D6-BE69-46CDE6B7A148} = {A1917BD0-881F-4775-88D9-38D42D448CF5}
+		{89A7C08F-5956-4C72-88AC-86EB9FADCEC9} = {7CB0117E-E2DA-45D6-BE69-46CDE6B7A148}
+		{374EE6C8-205D-4416-92CB-AC1CCB279226} = {89A7C08F-5956-4C72-88AC-86EB9FADCEC9}
+		{25256C84-8B6B-4ED2-910E-DF0A70834AB6} = {89A7C08F-5956-4C72-88AC-86EB9FADCEC9}
+		{49345834-BE10-4E23-AF72-A80EF5E82932} = {374EE6C8-205D-4416-92CB-AC1CCB279226}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
