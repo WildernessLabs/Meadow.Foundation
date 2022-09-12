@@ -1,4 +1,5 @@
 ﻿using Meadow.Foundation.Web.Maple.Routing;
+using Meadow.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +22,10 @@ namespace Meadow.Foundation.Web.Maple
         // this is a VERB:NAME:METHOD lookup
         private Dictionary<string, Dictionary<string, MethodInfo>> _methodCache = new Dictionary<string, Dictionary<string, MethodInfo>>(StringComparer.InvariantCultureIgnoreCase);
 
-        public ILogger? Logger { get; }
+        public Logger? Logger { get; }
         private Regex ParamRegex { get; } = new Regex("{(.*?)}");
 
-        public RequestMethodCache(ILogger? logger)
+        public RequestMethodCache(Logger? logger)
         {
             Logger = logger;
         }
@@ -149,7 +150,12 @@ namespace Meadow.Foundation.Web.Maple
             {
                 // absolute.  Prefix with handler type name
                 var prefix = method.DeclaringType.Name;
-                if (prefix.EndsWith("Handler"))
+                if (prefix.EndsWith("RequestHandler"))
+                {
+                    // crop "RequestHandler" suffix
+                    prefix = prefix.Substring(0, prefix.Length - 14);
+                }
+                else if (prefix.EndsWith("Handler"))
                 {
                     // crop "Handler" suffix
                     prefix = prefix.Substring(0, prefix.Length - 7);
@@ -182,7 +188,7 @@ namespace Meadow.Foundation.Web.Maple
                 // generate the regex to test against urls
                 var rgx = template
                     .Replace(match.Value, "(.*?)", StringComparison.OrdinalIgnoreCase)
-                    .Replace("/", "\\/");                
+                    .Replace("/", "\\/");
                 rgx += "$";
 
                 if (!_templateToTypeMap.ContainsKey(verb))
@@ -227,7 +233,7 @@ namespace Meadow.Foundation.Web.Maple
         {
             if ((t.GetInterfaces() ?? null).Contains(typeof(IRequestHandler)))
             {
-                foreach(var m in t.GetMethods())
+                foreach (var m in t.GetMethods())
                 {
                     //first, let's see if the method has the correct http verb
                     foreach (var attr in m.GetCustomAttributes())
