@@ -38,7 +38,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 this.controller = controller;
 
-                supplyVoltage = (int)(this.controller.GetSupplyVoltage().Millivolts);
+                supplyVoltage = (int)(controller.GetSupplyVoltage().Millivolts);
                 ReferenceVoltage = new Voltage(supplyVoltage, Voltage.UnitType.Millivolts);
 
                 controller.ConfigureAnalogInput((byte)pin.Key, (ushort)sampleCount);

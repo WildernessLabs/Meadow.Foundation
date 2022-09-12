@@ -149,6 +149,7 @@ namespace Meadow.Foundation.Web.Maple
             {
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
+                    // netsh http add urlacl url=http://+:5000/ user=Everyone
                     throw new Exception(
                         $"The server application needs elevated privileges or you must open permission on the URL (e.g. `netsh http add urlacl url=http://{IPAddress}:{Port}/ user=DOMAIN\\user`)");
                 }

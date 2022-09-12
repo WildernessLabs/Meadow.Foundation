@@ -142,7 +142,7 @@ namespace Meadow.Foundation.Sensors.Weather
         {
             var windAzimuth = LookupWindDirection(result.New);
             ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>() {
-                Old = this.WindAzimuth,
+                Old = WindAzimuth,
                 New = windAzimuth
             };
             // save state
@@ -184,7 +184,9 @@ namespace Meadow.Foundation.Sensors.Weather
         protected void LoadDefaultAzimuthVoltages()
         {
             Console.WriteLine("Loading default azimuth voltages");
-            this.AzimuthVoltages = new Dictionary<Voltage, Azimuth> {
+            
+            AzimuthVoltages = new Dictionary<Voltage, Azimuth> 
+            {
                 { new Voltage(2.9f), new Azimuth(Azimuth16PointCardinalNames.N) },
                 { new Voltage(2.04f), new Azimuth(Azimuth16PointCardinalNames.NNE) },
                 { new Voltage(2.19f), new Azimuth(Azimuth16PointCardinalNames.NE) },

@@ -19,8 +19,6 @@
             Converters.HsvToRgb(hue, saturation, value, out double red, out double green, out double blue);
 
             return new Color((byte)(red*255), (byte)(green*255), (byte)(blue*255), (byte)(alpha*255));
-
-           // return Color.FromArgb((int)(255.0 * alpha), (int)(255.0 * red), (int)(255.0 * green), (int)(255.0 * blue));
         }
     }
 }
