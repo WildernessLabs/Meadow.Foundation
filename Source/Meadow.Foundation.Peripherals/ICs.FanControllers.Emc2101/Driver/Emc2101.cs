@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using Meadow.Utilities;
+using System;
 using System.ComponentModel.Design;
 
 namespace Meadow.Foundation.ICs.FanControllers
@@ -61,5 +62,41 @@ namespace Meadow.Foundation.ICs.FanControllers
             i2cPeripherl.WriteRegister((byte)Registers.FanConfiguration, config);
         }
 
+        void ConfigurePwmClock(bool clockSelect, bool clockOverride)
+        {
+            byte config = i2cPeripherl.ReadRegister((byte)Registers.FanConfiguration);
+
+            config = BitHelpers.SetBit(config, 3, clockSelect);
+            config = BitHelpers.SetBit(config, 2, clockOverride);
+
+            i2cPeripherl.WriteRegister((byte)Registers.FanConfiguration, config);
+        }
+
+        void ConfigureFanSpinup(byte spinupDrive, byte spinupTime)
+        {
+          //  byte config = i2cPeripherl.ReadRegister((byte)Registers.FanConfiguration);
+
+          //  config = BitHelpers.SetBit(config, 3, clockSelect);
+          //  config = BitHelpers.SetBit(config, 2, clockOverride);
+
+          //  i2cPeripherl.WriteRegister((byte)Registers.FanConfiguration, config);
+
+        }
+
+        public void SetDataRate(DataRate dataRate)
+        {
+            i2cPeripherl.WriteRegister((byte)Registers.DataRate, (byte)dataRate);
+        }
+
+        public DataRate GetDataRate => (DataRate)i2cPeripherl.ReadRegister((byte)Registers.DataRate);
+
+        public void EnableDACOutput(bool enable)
+        {
+            byte config = i2cPeripherl.ReadRegister((byte)Registers.Configuration);
+
+            config = BitHelpers.SetBit(config, 4, enable);
+
+            i2cPeripherl.WriteRegister((byte)Registers.Configuration, config);
+        }
     }
 }
