@@ -1,4 +1,6 @@
 using Meadow.Hardware;
+using Meadow.Utilities;
+using System.ComponentModel.Design;
 
 namespace Meadow.Foundation.ICs.FanControllers
 {
@@ -20,6 +22,44 @@ namespace Meadow.Foundation.ICs.FanControllers
         public Emc2101(II2cBus i2cBus, byte address = (byte)Address.Default)
         {
             i2cPeripherl = new I2cPeripheral(i2cBus, address);
+
+            Initialize();
         }
+
+        void Initialize()
+        {
+            EnableTachInput(true);
+            
+            InvertFanSpeed(false);
+            //SetPwmFrequency(0x1F);
+            //configPWMClock(1, 0);
+            //DACOutEnabled(false); // output PWM mode by default
+            //LUTEnabled(false);
+            //setDutyCycle(100);
+
+            //enableForcedTemperature(false);
+
+            // Set to highest rate
+            ///setDataRate(EMC2101_RATE_32_HZ);
+        }
+
+        public void EnableTachInput(bool enable)
+        {
+            byte config = i2cPeripherl.ReadRegister((byte)Registers.Configuration);
+
+            config = BitHelpers.SetBit(config, 2, enable);
+
+            i2cPeripherl.WriteRegister((byte)Registers.Configuration, config);
+        }
+
+        public void InvertFanSpeed(bool invert)
+        {
+            byte config = i2cPeripherl.ReadRegister((byte)Registers.FanConfiguration);
+
+            config = BitHelpers.SetBit(config, 4, invert);
+
+            i2cPeripherl.WriteRegister((byte)Registers.FanConfiguration, config);
+        }
+
     }
 }
