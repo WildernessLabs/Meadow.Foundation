@@ -1,4 +1,5 @@
 using Meadow.Hardware;
+using Meadow.Units;
 using Meadow.Utilities;
 using System;
 
@@ -9,6 +10,165 @@ namespace Meadow.Foundation.ICs.FanControllers
     /// </summary>
     public partial class Emc2101
     {
+        /// <summary>
+        /// The temperature as read by the external sensor
+        /// </summary>
+        public Temperature ExternalTemperature
+        {
+            get
+            {
+                byte lsb = i2cPeripheral.ReadRegister((byte)Registers.ExternalTemperatureLSB);
+                byte msb = i2cPeripheral.ReadRegister((byte)Registers.ExternalTemperatureMSB);
+                short raw = (short)(msb << 8 | lsb);
+                raw >>= 5;
+                return new Temperature(raw * TemperatureBit, Temperature.UnitType.Celsius);
+            }
+        }
+
+        /// <summary>
+        /// The temperature as read by the internal sensor
+        /// </summary>
+        public Temperature InternalTemperature
+        {
+            get => new Temperature(i2cPeripheral.ReadRegister((byte)Registers.InternalTemperature), Temperature.UnitType.Celsius);
+        }
+
+        /// <summary>
+        /// The current fan speed
+        /// </summary>
+        public AngularVelocity FanSpeed
+        {
+            get
+            {
+                byte lsb = i2cPeripheral.ReadRegister((byte)Registers.TachLSB);
+                byte msb = i2cPeripheral.ReadRegister((byte)Registers.TachMSB);
+                short speed = (short)(msb << 8 | lsb);
+                return new AngularVelocity(FanRpmNumerator / speed, AngularVelocity.UnitType.RevolutionsPerMinute);
+            }
+        }
+
+        /// <summary>
+        /// Get/Set the minimum fan speed for the currently connected fan
+        /// </summary>
+        public AngularVelocity MinimumFanSpeed
+        {
+            get
+            {
+                byte lsb = i2cPeripheral.ReadRegister((byte)Registers.TachLimitLSB);
+                byte msb = i2cPeripheral.ReadRegister((byte)Registers.TachLimitMSB);
+                ushort speed = (ushort)(msb << 8 | lsb);
+                return new AngularVelocity(FanRpmNumerator / speed, AngularVelocity.UnitType.RevolutionsPerMinute);
+            }
+            set
+            {
+                ushort raw = (ushort)(value.RevolutionsPerMinute * FanRpmNumerator);
+                i2cPeripheral.WriteRegister((byte)Registers.TachLimitLSB, raw);
+            }
+        }
+
+        /// <summary>
+        /// Scales the PWM frequency against the current fan settings
+        /// Recommended to leave at max value of 0x1F
+        /// The is a 5 bit value
+        /// </summary>
+        public byte PwmFrequencyScaler
+        {
+            get => i2cPeripheral.ReadRegister((byte)Registers.PwmFrequency);
+            set => i2cPeripheral.WriteRegister((byte)Registers.PwmFrequency, Math.Min(value, (byte)0x1F));
+        }
+
+        /// <summary>
+        /// The alternate PWM divide value that can be used instead of CLK_SEL bit function
+        /// This can set anytime but will only be used if the clock override bit is enabled
+        /// </summary>
+        public byte PwmDivisor
+        {
+            get => i2cPeripheral.ReadRegister((byte)Registers.PwmDivisor);
+            set => i2cPeripheral.WriteRegister((byte)Registers.PwmDivisor, value);
+        }
+
+        /// <summary>
+        /// Get/Set the current manually set fan PWM duty cycle (0 - 1.0)
+        /// </summary>
+        public float FanPwmDutyCycle
+        {
+            get
+            {
+                var setting = i2cPeripheral.ReadRegister((byte)Registers.FanSetting);
+                return setting / (float)MaxFanSpeed;
+            }
+            set
+            {
+                value = Math.Min(Math.Max(value, 0), 1);
+                i2cPeripheral.WriteRegister((byte)Registers.FanSetting, (byte)(value * MaxFanSpeed));
+            }
+        }
+
+        /// <summary>
+        /// Get / set the amount of hysteresis applied to the temerateure readings
+        /// used in the fan speed lookup table
+        /// </summary>
+        /// <returns>The hysteresis temperature value</returns>
+        public Temperature Hysteresis
+        {
+            get
+            {
+                byte hysteresis = i2cPeripheral.ReadRegister((byte)Registers.LutHysteresis);
+                return new Temperature(hysteresis, Temperature.UnitType.Celsius);
+            }
+            set
+            {
+                byte hysteresis = (byte)value.Celsius;
+                i2cPeripheral.WriteRegister((byte)Registers.LutHysteresis, hysteresis);
+            }
+        }
+
+        /// <summary>
+        /// The temperature sensor data rate
+        /// </summary>
+        public DataRate SensorDataRate
+        {
+            get => (DataRate)i2cPeripheral.ReadRegister((byte)Registers.DataRate);
+            set => i2cPeripheral.WriteRegister((byte)Registers.DataRate, (byte)value);
+        }
+
+        /// <summary>
+        /// Is the fan lookup table enabled
+        /// </summary>
+        /// <returns>true if enabled</returns>
+        bool LutEnabled
+        {
+            get
+            {
+                byte config = i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration);
+                return BitHelpers.GetBitValue(config, 5);
+            }
+            set
+            {
+                byte config = i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration);
+                BitHelpers.SetBit(config, 5, value);
+                i2cPeripheral.WriteRegister((byte)Registers.FanConfiguration, config);
+            }
+        }
+
+        /// <summary>
+        /// Enable or disable outputting the fan control signal as a DC voltage
+        /// </summary>
+        public bool DACOutputEnabled
+        {
+            get
+            {
+                byte config = i2cPeripheral.ReadRegister((byte)Registers.Configuration);
+                return BitHelpers.GetBitValue(config, 4);
+            }
+            set
+            {
+                byte config = i2cPeripheral.ReadRegister((byte)Registers.Configuration);
+                config = BitHelpers.SetBit(config, 4, value);
+                i2cPeripheral.WriteRegister((byte)Registers.Configuration, config);
+            }
+        }
+
         /// <summary>
         /// Communication bus used to communicate with the Emc2101
         /// </summary>
@@ -31,16 +191,13 @@ namespace Meadow.Foundation.ICs.FanControllers
             EnableTachInput(true);
             
             InvertFanSpeed(false);
-            //SetPwmFrequency(0x1F);
-            //configPWMClock(1, 0);
-            //DACOutEnabled(false); // output PWM mode by default
-            //LUTEnabled(false);
-            //setDutyCycle(100);
+            PwmFrequencyScaler = 0x1F;
+            ConfigurePwmClock(true, false);
+            DACOutputEnabled = false;
+            LutEnabled = false;
+            FanPwmDutyCycle = 1.0f;
 
-            //enableForcedTemperature(false);
-
-            // Set to highest rate
-            ///setDataRate(EMC2101_RATE_32_HZ);
+            SensorDataRate = DataRate._32hz;
         }
 
         /// <summary>
@@ -101,29 +258,6 @@ namespace Meadow.Foundation.ICs.FanControllers
         }
 
         /// <summary>
-        /// Get the amount of hysteresis applied to the temerateure readings
-        /// used in the fan speed lookup table
-        /// </summary>
-        /// <returns>The hysteresis temperature value</returns>
-        public Units.Temperature GetLookupTableHysteresis()
-        {
-            byte hysteresis = i2cPeripheral.ReadRegister((byte)Registers.LutHysteresis);
-
-            return new Units.Temperature(hysteresis, Units.Temperature.UnitType.Celsius);
-        }
-
-        /// <summary>
-        /// Set the amount of hysteresis applied to the temerateure readings
-        /// </summary>
-        /// <param name="temperature">The hysteresis temperature value</param>
-        public void SetLookupTableHysteresis(Units.Temperature temperature)
-        {
-            byte hysteresis = (byte)temperature.Celsius;
-
-            i2cPeripheral.WriteRegister((byte)Registers.LutHysteresis, hysteresis);
-        }
-
-        /// <summary>
         /// Set a temperature and fan duty cycle to the lookup table
         /// </summary>
         /// <param name="index">The LUT index to set</param>
@@ -141,10 +275,10 @@ namespace Meadow.Foundation.ICs.FanControllers
                 temperatureThreshhold = new Units.Temperature(MaxLutTemperature, Units.Temperature.UnitType.Celsius);
             }
 
-            bool lutState = IsLutEnabled();
+            bool lutState = LutEnabled;
 
             //disable lut
-            EnableLut(false);
+            LutEnabled = false;
 
             //Oh C# and bytes/enums ... best to leave as an int and cast when it's used
             int address = (byte)Registers.LutStartRegister + (byte)index * 2;
@@ -153,63 +287,7 @@ namespace Meadow.Foundation.ICs.FanControllers
             i2cPeripheral.WriteRegister((byte)(address + 1), (byte)(pwmDutyCycle * MaxFanSpeed));
 
             //restore lut state 
-            EnableLut(lutState);
-        }
-
-        /// <summary>
-        /// Get the current manually set fan PWM duty cycle
-        /// </summary>
-        /// <returns>The PWM duty cycle from 0 to 1</returns>
-        public float GetDutyCycle()
-        {
-            var setting = i2cPeripheral.ReadRegister((byte)Registers.FanSetting);
-
-            return setting / (float)MaxFanSpeed;
-        }
-
-        /// <summary>
-        /// Set the current fan duty cycle
-        /// </summary>
-        /// <param name="pwmDutyCycle">The duty cycle as a value from 0 to 1</param>
-        public void SetDutyCycle(float pwmDutyCycle)
-        {
-            if (pwmDutyCycle < 0) { pwmDutyCycle = 0; }
-            if (pwmDutyCycle > 1) { pwmDutyCycle = 1; }
-
-            i2cPeripheral.WriteRegister((byte)Registers.FanSetting, (byte)(pwmDutyCycle * MaxFanSpeed));
-        }
-
-        bool IsLutEnabled()
-        {
-            byte config = i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration);
-
-            return BitHelpers.GetBitValue(config, 5);
-        }
-
-        void EnableLut(bool enable)
-        {
-            byte config = i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration);
-
-            BitHelpers.SetBit(config, 5, enable);
-
-            i2cPeripheral.WriteRegister((byte)Registers.FanConfiguration, config);
-        }
-
-
-        public void SetDataRate(DataRate dataRate)
-        {
-            i2cPeripheral.WriteRegister((byte)Registers.DataRate, (byte)dataRate);
-        }
-
-        public DataRate GetDataRate => (DataRate)i2cPeripheral.ReadRegister((byte)Registers.DataRate);
-
-        public void EnableDACOutput(bool enable)
-        {
-            byte config = i2cPeripheral.ReadRegister((byte)Registers.Configuration);
-
-            config = BitHelpers.SetBit(config, 4, enable);
-
-            i2cPeripheral.WriteRegister((byte)Registers.Configuration, config);
+            LutEnabled = lutState;
         }
     }
 }

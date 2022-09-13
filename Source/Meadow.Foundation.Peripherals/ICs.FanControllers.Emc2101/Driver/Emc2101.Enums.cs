@@ -11,12 +11,16 @@
             DataRate = 0x04,
             ExternalTemperatureMSB = 0x10,
             ForceTemperature = 0x0C, //for LUT testing
+            TachLSB = 0x46,
+            TachMSB = 0x47,
             TachLimitLSB = 0x48,
             TachLimitMSB = 0x49,
             FanConfiguration = 0x4A,
             FanSpinup = 0x4B,
             FanSetting = 0x4C,
             ChipID = 0xFD,
+            PwmFrequency = 0x4D,
+            PwmDivisor = 0x4E,
             LutHysteresis = 0x4F,
             LutStartRegister = 0x50,
         }
