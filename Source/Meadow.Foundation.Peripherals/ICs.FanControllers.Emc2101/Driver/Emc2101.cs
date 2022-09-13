@@ -87,16 +87,8 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// </summary>
         public float FanPwmDutyCycle
         {
-            get
-            {
-                var setting = i2cPeripheral.ReadRegister((byte)Registers.FanSetting);
-                return setting / (float)MaxFanSpeed;
-            }
-            set
-            {
-                value = Math.Min(Math.Max(value, 0), 1);
-                i2cPeripheral.WriteRegister((byte)Registers.FanSetting, (byte)(value * MaxFanSpeed));
-            }
+            get => i2cPeripheral.ReadRegister((byte)Registers.FanSetting) / (float)MaxFanSpeed;
+            set => i2cPeripheral.WriteRegister((byte)Registers.FanSetting, (byte)(Math.Clamp(value, 0, 1) * MaxFanSpeed));
         }
 
         /// <summary>
@@ -106,16 +98,8 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <returns>The hysteresis temperature value</returns>
         public Temperature Hysteresis
         {
-            get
-            {
-                byte hysteresis = i2cPeripheral.ReadRegister((byte)Registers.LutHysteresis);
-                return new Temperature(hysteresis, Temperature.UnitType.Celsius);
-            }
-            set
-            {
-                byte hysteresis = (byte)value.Celsius;
-                i2cPeripheral.WriteRegister((byte)Registers.LutHysteresis, hysteresis);
-            }
+            get => new Temperature(i2cPeripheral.ReadRegister((byte)Registers.LutHysteresis), Temperature.UnitType.Celsius);
+            set => i2cPeripheral.WriteRegister((byte)Registers.LutHysteresis, (byte)value.Celsius);
         }
 
         /// <summary>
@@ -133,11 +117,7 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <returns>true if enabled</returns>
         bool LutEnabled
         {
-            get
-            {
-                byte config = i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration);
-                return BitHelpers.GetBitValue(config, 5);
-            }
+            get => BitHelpers.GetBitValue(i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration), 5);
             set
             {
                 byte config = i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration);
@@ -151,11 +131,7 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// </summary>
         public bool DACOutputEnabled
         {
-            get
-            {
-                byte config = i2cPeripheral.ReadRegister((byte)Registers.Configuration);
-                return BitHelpers.GetBitValue(config, 4);
-            }
+            get => BitHelpers.GetBitValue(i2cPeripheral.ReadRegister((byte)Registers.Configuration), 4);
             set
             {
                 byte config = i2cPeripheral.ReadRegister((byte)Registers.Configuration);
@@ -307,11 +283,10 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <param name="temperatureThreshhold">the temperature threshhold</param>
         /// <param name="pwmDutyCycle">the fan PWM duty cycle</param>
         public void SetLookupTable(LutIndex index, 
-            Units.Temperature temperatureThreshhold, 
+            Temperature temperatureThreshhold, 
             float pwmDutyCycle)
         {
-            if(pwmDutyCycle < 0) { pwmDutyCycle = 0;}
-            if(pwmDutyCycle > 1) { pwmDutyCycle = 1;}
+            pwmDutyCycle = Math.Clamp(pwmDutyCycle, 0, 1);
 
             if(temperatureThreshhold.Celsius > MaxLutTemperature)
             {
