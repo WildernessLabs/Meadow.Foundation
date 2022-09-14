@@ -18,6 +18,7 @@ namespace Displays.ePaper.EpdColor_Sample
             Epd1in54b,
             Epd1in54c,
             Epd2in13b,
+            Epd2in13b_V4,
             Epd2in9b,
             Epd4in2bc,
             Epd4in2bV2,
@@ -88,6 +89,13 @@ namespace Displays.ePaper.EpdColor_Sample
                     busyPin: Device.Pins.D00),
 
                 EpdColorDisplay.Epd2in13b => new Epd2in13b(device: Device,
+                    spiBus: Device.CreateSpiBus(),
+                    chipSelectPin: Device.Pins.D03,
+                    dcPin: Device.Pins.D02,
+                    resetPin: Device.Pins.D01,
+                    busyPin: Device.Pins.D00),
+
+                EpdColorDisplay.Epd2in13b_V4 => new Epd2in13b_V4(device: Device,
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
