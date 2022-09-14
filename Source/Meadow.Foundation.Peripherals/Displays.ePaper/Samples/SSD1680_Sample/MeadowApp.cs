@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 
@@ -12,41 +13,43 @@ namespace Displays.ePaper.SSD1680_Sample
         //<!=SNIP=>
 
         MicroGraphics graphics;
+        Ssd1680 display;
 
         public override Task Initialize()
         {
             Console.WriteLine("Initialize ...");
  
-            var display = new Ssd1680(device: Device,
+            display = new Ssd1680(device: Device,
                 spiBus: Device.CreateSpiBus(),
-                chipSelectPin: Device.Pins.D03,
-                dcPin: Device.Pins.D02,
-                resetPin: Device.Pins.D01,
-                busyPin: Device.Pins.D00,
-                width: 250,
-                height: 128);
+                chipSelectPin: Device.Pins.A04,
+                dcPin: Device.Pins.A03,
+                resetPin: Device.Pins.A02,
+                busyPin: Device.Pins.A01,
+                width: 122,
+                height: 250);
 
-            graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display)
+            {
+                Rotation = RotationType._270Degrees
+            };
 
             return base.Initialize();
         }
 
         public override Task Run()
         {
+            Console.WriteLine("Run ...");
+
             graphics.Clear();
 
-            for(int i = 0; i < 20; i++)
-            {
-                graphics.DrawPixel(i, i, Meadow.Foundation.Color.Black);
-            }
+            graphics.DrawRectangle(10, 40, 120, 60, Color.Black, true);
+            graphics.DrawRectangle(20, 80, 120, 90, Color.Red, true);
 
-            /*
-
-            graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Black);
-
-            graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(2, 2, "SSD1680", Meadow.Foundation.Color.Black);
-            graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);*/
+            graphics.CurrentFont = new Font12x16();
+            graphics.DrawText(2, 20, "Meadow F7", Color.Black);
+            graphics.DrawText(30, 50, "Color", Color.Red);
+            graphics.DrawText(50, 90, "Black", Color.Black);
+            graphics.DrawText(50, 120, "White", Color.White);
 
             graphics.Show();
 
