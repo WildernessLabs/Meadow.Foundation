@@ -39,23 +39,25 @@ namespace Meadow.Foundation.Displays
         /// The buffer the holds the black pixel data for the display
         /// </summary>
 
-        protected readonly Buffer2bppEPaper imageBuffer;
+        protected Buffer2bppEPaper imageBuffer;
 
         /// <summary>
         /// Width of display in pixels
         /// </summary>
-        public int Width => imageBuffer.Width;
+        public virtual int Width => width;
 
         /// <summary>
         /// Height of display in pixels
         /// </summary>
-        public int Height => imageBuffer.Height;
+        public virtual int Height => height;
 
         /// <summary>
         /// The pixel buffer - not directly accessible
         /// Use buffer.BlackBuffer and buffer.ColorBuffer to access byte arrays
         /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
+
+        int width, height;
 
         /// <summary>
         /// Create a new color ePaper display object
@@ -99,10 +101,20 @@ namespace Meadow.Foundation.Displays
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
-            imageBuffer = new Buffer2bppEPaper(width, height);
+            this.width = width;
+            this.height = height;
+
+            int bufferWidth = width % 8 > 0 ? width + 8 - (width % 8) : width;
+
+            CreateBuffer(bufferWidth, height);
             imageBuffer.Clear();
 
             Initialize();
+        }
+
+        protected virtual void CreateBuffer(int width, int height)
+        {
+            imageBuffer = new Buffer2bppEPaper(width, height);
         }
 
         protected abstract void Initialize();
