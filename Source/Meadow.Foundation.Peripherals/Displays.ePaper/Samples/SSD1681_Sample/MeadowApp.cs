@@ -8,7 +8,7 @@ using Meadow.Foundation.Graphics;
 
 namespace Displays.ePaper.SSD1681_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
