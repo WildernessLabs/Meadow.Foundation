@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Displays
         {
         }
 
-        protected override bool IsBlackInverted => true;
+        protected override bool IsBlackInverted => false;
 
         protected override bool IsColorInverted => false;
 
@@ -223,7 +223,7 @@ namespace Meadow.Foundation.Displays
 
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    SendData(bufferRed[i]);
+                    SendData(~bufferRed[i]);
                 }
                 DelayMs(2);
             }
@@ -255,30 +255,25 @@ namespace Meadow.Foundation.Displays
             if (bufferBlack != null)
             {
                 SendCommand(Command.DATA_START_TRANSMISSION_1);
-                DelayMs(2);
 
                 dataCommandPort.State = DataState;
 
                 for (int i = 0; i < Width * Height / 8; i++)
-                {   //I bet we can optimize this .... seems silly to send a byte at a time
+                {   
                     spiPeripheral.Write(bufferBlack[i]);
                 }
-
-                DelayMs(2);
             }
 
             if (bufferRed != null)
             {
                 SendCommand(Command.DATA_START_TRANSMISSION_2);
-                DelayMs(2);
 
                 dataCommandPort.State = DataState;
 
                 for (int i = 0; i < Width * Height / 8; i++)
                 {
-                    spiPeripheral.Write(bufferRed[i]);
+                    spiPeripheral.Write((byte)~bufferRed[i]);
                 }
-                DelayMs(2);
             }
 
             SendCommand(Command.DISPLAY_REFRESH);
