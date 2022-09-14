@@ -13,13 +13,12 @@ namespace Displays.ePaper.SSD1680_Sample
         //<!=SNIP=>
 
         MicroGraphics graphics;
-        Ssd1680 display;
 
         public override Task Initialize()
         {
             Console.WriteLine("Initialize ...");
  
-            display = new Ssd1680(device: Device,
+            var display = new Ssd1680(device: Device,
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.A04,
                 dcPin: Device.Pins.A03,

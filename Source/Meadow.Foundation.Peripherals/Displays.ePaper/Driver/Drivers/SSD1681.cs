@@ -5,16 +5,20 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents an Ssd1681 ePaper B/W or color display commonly 1.54"
     /// 200x200, e-Ink three-color display, SPI interface 
-    /// DRIVER NOT COMPLETE
     /// </summary>
     public class Ssd1681 : EPaperTriColorBase
     {
+        /// <summary>
+        /// Is black inverted on this display
+        /// </summary>
         protected override bool IsBlackInverted => false;
 
+        /// <summary>
+        /// Is color inverted on this display
+        /// </summary>
         protected override bool IsColorInverted => false;
 
-        public static byte[] LutData = { 0x02, 0x02, 0x01, 0x11, 0x12, 0x12 }; //""fiiYX\x99\x99\x88\x00\x00\x00\x00\xf8\xb4\x13Q5QQ\x19\x01\x00' };
-                                                                               //_LUT_DATA = b'\x02\x02\x01\x11\x12\x12""fiiYX\x99\x99\x88\x00\x00\x00\x00\xf8\xb4\x13Q5QQ\x19\x01\x00'
+        static byte[] LutData = { 0x02, 0x02, 0x01, 0x11, 0x12, 0x12 };
 
         /// <summary>
         /// Create a new Ssd1681 object
@@ -30,8 +34,7 @@ namespace Meadow.Foundation.Displays
         public Ssd1681(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
-        {
-        }
+        { }
 
         /// <summary>
         /// Create a new Ssd1681 ePaper display object
@@ -50,114 +53,164 @@ namespace Meadow.Foundation.Displays
             IDigitalInputPort busyPort,
             int width, int height) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, width, height)
-        {
-        }
+        { }
 
+        /// <summary>
+        /// Initialize the display
+        /// </summary>
         protected override void Initialize()
         {
             Reset();
 
-            SendCommand(CommandSsd1681.SW_RESET);
-            SendCommand(CommandSsd1681.DRIVER_CONTROL);
-            SendData(new byte[] { (byte)(Width - 1), (byte)((Height - 1) >> 8), 0x0 });
+            DelayMs(100);
 
-            SendCommand(CommandSsd1681.DATA_MODE);
+            SendCommand(SSD1681_SW_RESET);
+            WaitUntilIdle();
+
+            SendCommand(SSD1681_DATA_MODE);
             SendData(0x03);
 
-            SendCommand(CommandSsd1681.SET_RAMXPOS);
-            SendData(new byte[] { 0x0, (byte)(Height / 8 - 1) });
-
-            SendCommand(CommandSsd1681.SET_RAMYPOS);
-            SendData(new byte[] { 0x0, 0x0, (byte)(Height - 1), (byte)((Height - 1) >> 8) });
-
-            SendCommand(CommandSsd1681.WRITE_BORDER);
+            SendCommand(SSD1681_WRITE_BORDER);
             SendData(0x05);
 
-            SendCommand(CommandSsd1681.TEMP_CONTROL);
+            SendCommand(SSD1681_TEMP_CONTROL);
             SendData(0x80);
 
-            WaitUntilIdle();
+            SendCommand(SSD1681_SET_RAMXCOUNT);
+            SendData(0x0);
+
+            SendCommand(SSD1681_SET_RAMYCOUNT);
+            SendData(0x0);
+            SendData(0x0);
+
+            SendCommand(SSD1681_DRIVER_CONTROL);
+            SendData(Width - 1);
+            SendData((Height - 1) >> 8);
+            SendData(0x0);
+
+            SetRamWindow();
         }
 
-        public override void Show()
-        {
-            SendCommand(CommandSsd1681.WRITE_BWRAM);
-        }
 
+        /// <summary>
+        /// Send the display buffer to the display and refresh
+        /// </summary>
         public override void Show(int left, int top, int right, int bottom)
-        {   //ToDo check if this display supports partial updates (don't think it does)
+        {
             Show();
         }
 
-        public void PowerDown()
+        /// <summary>
+        /// Send the display buffer to the display and refresh
+        /// </summary>
+        public override void Show()
         {
-            SendCommand(CommandSsd1681.DEEP_SLEEP);
-            SendData(0x01);
+            DisplayFrame(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer);
         }
 
-        public void Update()
+        /// <summary>
+        /// Clear the on-display frame buffer
+        /// </summary>
+        protected void ClearFrame()
         {
-            SendCommand(CommandSsd1681.DISP_CTRL2);
-            SendData(0x07);
-            SendCommand(CommandSsd1681.MASTER_ACTIVATE);
+            SetRamAddress();
+
+            SendCommand(SSD1681_WRITE_RAM1);
+
+            for (int i = 0; i < Width * Height / 8; i++)
+            {
+                SendData(0xFF);
+            }
+
+            SetRamAddress();
+
+            SendCommand(SSD1681_WRITE_RAM2);
+            for (int i = 0; i < Width * Height / 8; i++)
+            {
+                SendData(0xFF);
+            }
+        }
+
+        void DisplayFrame(byte[] blackBuffer, byte[] colorBuffer)
+        {
+            SetRamAddress();
+            SendCommand(SSD1681_WRITE_RAM1);
+            SendData(blackBuffer);
+            
+            SetRamAddress();
+            SendCommand(SSD1681_WRITE_RAM2);
+
+            for(int i = 0; i < colorBuffer.Length; i++)
+            {   //invert the color data
+                SendData(~colorBuffer[i]);
+            }
+
+            DisplayFrame();
+        }
+
+        void DisplayFrame()
+        {
+            SendCommand(SSD1681_DISP_CTRL2);
+            SendData(0xF7);
+            SendCommand(SSD1681_MASTER_ACTIVATE);
+
             WaitUntilIdle();
         }
 
-        protected enum CommandSsd1681 : byte
+        void SetRamWindow()
         {
-            DRIVER_CONTROL = 0x01,
-            GATE_VOLTAGE = 0x03,
-            SOURCE_VOLTAGE = 0x04,
-            INIT_SETTING = 0x08,
-            INIT_WRITE_REG = 0x09,
-            INIT_READ_REG = 0x0A,
-            BOOSTER_SOFT_START = 0x0C,
-            DEEP_SLEEP = 0x10,
-            DATA_MODE = 0x11,
-            SW_RESET = 0x12,
-            HV_DETECT = 0x14,
-            VCI_DETECT = 0x15,
-            TEMP_CONTROL = 0x18,
-            TEMP_WRITE = 0x1A,
-            TEMP_READ = 0x1B,
-            EXTTEMP_WRITE = 0x1C,
-            MASTER_ACTIVATE = 0x20,
-            DISP_CTRL1 = 0x21,
-            DISP_CTRL2 = 0x22,
-            WRITE_BWRAM = 0x24,
-            WRITE_REDRAM = 0x26,
-            READ_RAM = 0x27,
-            VCOM_SENSE = 0x28,
-            VCOM_DURATION = 0x29,
-            WRITE_VCOM_OTP = 0x2A,
-            WRITE_VCOM_CTRL = 0x2B,
-            WRITE_VCOM_REG = 0x2C,
-            READ_OTP = 0x2D,
-            READ_USERID = 0x2E,
-            READ_STATUS = 0x2F,
-            WRITE_WS_OTP = 0x30,
-            LOAD_WS_OTP = 0x31,
-            WRITE_LUT = 0x32,
-            CRC_CALC = 0x34,
-            CRC_READ = 0x35,
-            PROG_OTP = 0x36,
-            WRITE_DISPLAY_OPT = 0x37,
-            WRITE_USERID = 0x38,
-            OTP_PROGMODE = 0x39,
-            WRITE_BORDER = 0x3C,
-            END_OPTION = 0x3F,
-            SET_RAMXPOS = 0x44,
-            SET_RAMYPOS = 0x45,
-            AUTOWRITE_RED = 0x46,
-            AUTOWRITE_BW = 0x47,
-            SET_RAMXCOUNT = 0x4E,
-            SET_RAMYCOUNT = 0x4F,
-            NOP = 0xFF,
+            SendCommand(SSD1681_SET_RAMXPOS);
+            SendData(0);
+            SendData(Width/8 - 1);
+
+            SendCommand(SSD1681_SET_RAMYPOS);
+            SendData(0);
+            SendData(Height - 1);
         }
 
-        void SendCommand(CommandSsd1681 command)
+        void SetRamAddress()
         {
-            SendCommand((byte)command);
+            SendCommand(SSD1681_SET_RAMXCOUNT);
+            SendData(0x00);
+
+            SendCommand(SSD1681_SET_RAMYCOUNT);
+            SendData(0x00);
+            SendData(0x00);
         }
+
+        void PowerDown()
+        {
+            SendCommand(SSD1681_DEEP_SLEEP);
+            SendData(0x01);
+
+            DelayMs(100);
+        }
+
+        const byte SSD1681_DRIVER_CONTROL = 0x01;
+        const byte SSD1681_GATE_VOLTAGE = 0x03;
+        const byte SSD1681_SOURCE_VOLTAGE = 0x04;
+        const byte SSD1681_PROGOTP_INITIAL = 0x08;
+        const byte SSD1681_PROGREG_INITIAL = 0x09;
+        const byte SSD1681_READREG_INITIAL = 0x0A;
+        const byte SSD1681_BOOST_SOFTSTART = 0x0C;
+        const byte SSD1681_DEEP_SLEEP = 0x10;
+        const byte SSD1681_DATA_MODE = 0x11;
+        const byte SSD1681_SW_RESET = 0x12;
+        const byte SSD1681_TEMP_CONTROL = 0x18;
+        const byte SSD1681_TEMP_WRITE = 0x1A;
+        const byte SSD1681_MASTER_ACTIVATE = 0x20;
+        const byte SSD1681_DISP_CTRL1 = 0x21;
+        const byte SSD1681_DISP_CTRL2 = 0x22;
+        const byte SSD1681_WRITE_RAM1 = 0x24;
+        const byte SSD1681_WRITE_RAM2 = 0x26;
+        const byte SSD1681_WRITE_VCOM = 0x2C;
+        const byte SSD1681_READ_OTP = 0x2D;
+        const byte SSD1681_READ_STATUS = 0x2F;
+        const byte SSD1681_WRITE_LUT = 0x32;
+        const byte SSD1681_WRITE_BORDER = 0x3C;
+        const byte SSD1681_SET_RAMXPOS = 0x44;
+        const byte SSD1681_SET_RAMYPOS = 0x45;
+        const byte SSD1681_SET_RAMXCOUNT = 0x4E;
+        const byte SSD1681_SET_RAMYCOUNT = 0x4F;
     }
 }

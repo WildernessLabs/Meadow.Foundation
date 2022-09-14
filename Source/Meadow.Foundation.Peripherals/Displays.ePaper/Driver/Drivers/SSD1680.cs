@@ -88,8 +88,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(SSD1680_WRITE_BORDER);
             SendData(0x05);
 
-            //read temperature sensor (might not be needed)
-            SendCommand(0x18); 
+            SendCommand(SSD1680_TEMP_CONTROL); 
             SendData(0x05);
 
             SendCommand(SSD1680_DISP_CTRL1);
