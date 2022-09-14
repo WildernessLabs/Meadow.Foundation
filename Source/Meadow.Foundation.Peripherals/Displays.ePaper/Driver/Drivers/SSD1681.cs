@@ -18,8 +18,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected override bool IsColorInverted => false;
 
-        static byte[] LutData = { 0x02, 0x02, 0x01, 0x11, 0x12, 0x12 };
-
         /// <summary>
         /// Create a new Ssd1681 object
         /// </summary>
@@ -140,9 +138,11 @@ namespace Meadow.Foundation.Displays
             SetRamAddress();
             SendCommand(SSD1681_WRITE_RAM2);
 
-            for(int i = 0; i < colorBuffer.Length; i++)
+            dataCommandPort.State = DataState;
+
+            for (int i = 0; i < colorBuffer.Length; i++)
             {   //invert the color data
-                SendData(~colorBuffer[i]);
+                spiPeripheral.Write((byte)~colorBuffer[i]);
             }
 
             DisplayFrame();
