@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using System;
 
 namespace Meadow.Foundation.Displays
 {
@@ -8,6 +7,16 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class Ssd1680 : EPaperTriColorBase
     {
+        /// <summary>
+        /// Is black inverted on this display
+        /// </summary>
+        protected override bool IsBlackInverted => false;
+
+        /// <summary>
+        /// Is color inverted on this display
+        /// </summary>
+        protected override bool IsColorInverted => false;
+
         /// <summary>
         /// Create a new Ssd1680 object
         /// </summary>
@@ -41,18 +50,7 @@ namespace Meadow.Foundation.Displays
             IDigitalInputPort busyPort,
             int width, int height) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, width, height)
-        {
-        }
-
-        /// <summary>
-        /// Is black inverted on this display
-        /// </summary>
-        protected override bool IsBlackInverted => false;
-
-        /// <summary>
-        /// Is color inverted on this display
-        /// </summary>
-        protected override bool IsColorInverted => false;
+        { }
 
         /// <summary>
         /// Initialize the display
@@ -64,113 +62,97 @@ namespace Meadow.Foundation.Displays
             DelayMs(100);
 
             WaitUntilIdle();
-            
+
+            SendCommand(SSD1680_DRIVER_CONTROL);
+            SendData(0xF9);
+            SendData(0x00);
+            SendData(0x00);
+
             SendCommand(SSD1680_DATA_MODE);
             SendData(0x03);
-            SendCommand(SSD1680_WRITE_BORDER);
-            SendData(0x05);
-            SendCommand(SSD1680_WRITE_VCOM);
-            SendData(0x36);
-            SendCommand(SSD1680_GATE_VOLTAGE);
-            SendData(0x17);
-            SendCommand(SSD1680_SOURCE_VOLTAGE);
-            SendData(0x41);
-            SendData(0x00);
-            SendData(0x32);
 
-            SendCommand(SSD1680_SET_RAMXCOUNT);
-            SendData(0x01);
-            SendCommand(SSD1680_SET_RAMYCOUNT);
-            SendData(0x00);
-            SendData(0x00);
-
+            //set window
             SendCommand(SSD1680_SET_RAMXPOS);
-            SendData(0x01);
-            SendData(Height / 8);
+            SendData(0x00);
+            SendData(Width / 8);
 
             SendCommand(SSD1680_SET_RAMYPOS);
             SendData(0x00);
             SendData(0x00);
-            SendData(Width - 1);
-            SendData((Width - 1) >> 8);
+            SendData(Height);
+            SendData(Height >> 8);
 
-            SendCommand(SSD1680_DRIVER_CONTROL);
-            SendData(Width - 1);
-            SendData((Width - 1) >> 8);
-            SendData(0x00);
+            //set cursor
+            SetRamAddress();
+
+            SendCommand(SSD1680_WRITE_BORDER);
+            SendData(0x05);
+
+            //read temperature sensor (might not be needed)
+            SendCommand(0x18); 
+            SendData(0x05);
+
+            SendCommand(SSD1680_DISP_CTRL1);
+            SendData(0x80);
+            SendData(0x80);
+
+            WaitUntilIdle();
         }
 
+
+        /// <summary>
+        /// Send the display buffer to the display and refresh
+        /// </summary>
         public override void Show(int left, int top, int right, int bottom)
         {
             Show();
         }
 
+        /// <summary>
+        /// Send the display buffer to the display and refresh
+        /// </summary>
         public override void Show()
         {
             DisplayFrame(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer);
         }
 
-        //clear the frame data from the SRAM, this doesn't update the display
+        /// <summary>
+        /// Clear the on-display frame buffer
+        /// </summary>
         protected void ClearFrame()
         {
             SetRamAddress();
 
             SendCommand(SSD1680_WRITE_RAM1);
-            DelayMs(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
-                SendData(0x00);
+                SendData(0xFF);
             }
 
             SetRamAddress();
 
             SendCommand(SSD1680_WRITE_RAM2);
-            DelayMs(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(0xFF);
             }
-            DelayMs(2);
         }
 
-        //0xFF, 0xFF = red
-        //0xFF, 0x00 = white ... so color is inverted
-        //0x00, 0x00 = black
-        //0x00, 0xFF = 
         void DisplayFrame(byte[] blackBuffer, byte[] colorBuffer)
         {
-            Console.WriteLine("Display Frame");
-
-       //     SetRamAddress();
-
+            SetRamAddress();
             SendCommand(SSD1680_WRITE_RAM1);
-
-            for (int i = 0; i < Width * Height / 8; i++)
-            {
-                if (i < 8)
-                    SendData(0x0F);
-                else
-                    SendData(0xFF);
-                //SendData(blackBuffer[i]);
-            }
-
-        //    SetRamAddress();
-
+            SendData(blackBuffer);
+                        
+            SetRamAddress();
             SendCommand(SSD1680_WRITE_RAM2);
-        
-            for (int i = 0; i < Width * Height / 8; i++)
-            {
-                SendData(0x00);
-                //SendData(colorBuffer[i]);
-            }
+            SendData(colorBuffer);
 
             DisplayFrame();
-
-            Console.WriteLine("Display Frame complete");
         }
 
-        public void DisplayFrame()
+        void DisplayFrame()
         {
             SendCommand(SSD1680_DISP_CTRL2);
             SendData(0xF4);
@@ -183,7 +165,7 @@ namespace Meadow.Foundation.Displays
         void SetRamAddress()
         {
             SendCommand(SSD1680_SET_RAMXCOUNT);
-            SendData(0x01);
+            SendData(0x00);
 
             SendCommand(SSD1680_SET_RAMYCOUNT);
             SendData(0x00);
