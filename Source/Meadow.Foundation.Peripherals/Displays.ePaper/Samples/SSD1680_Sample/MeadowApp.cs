@@ -6,7 +6,7 @@ using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 
-namespace Displays.ePaper.SSD1681_Sample
+namespace Displays.ePaper.SSD1680_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
@@ -18,16 +18,19 @@ namespace Displays.ePaper.SSD1681_Sample
         {
             Console.WriteLine("Initialize ...");
  
-            var display = new Ssd1681(device: Device,
+            var display = new Ssd1680(device: Device,
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.A04,
                 dcPin: Device.Pins.A03,
                 resetPin: Device.Pins.A02,
                 busyPin: Device.Pins.A01,
-                width: 200,
-                height: 200);
+                width: 122,
+                height: 250);
 
-            graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display)
+            {
+                Rotation = RotationType._270Degrees
+            };
 
             return base.Initialize();
         }

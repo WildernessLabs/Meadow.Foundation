@@ -55,9 +55,14 @@
         /// </summary>
         public byte[] ColorBuffer => colorBuffer.Buffer;
 
-        Buffer1bppV blackBuffer;
-        Buffer1bppV colorBuffer;
+        readonly Buffer1bppV blackBuffer;
+        readonly Buffer1bppV colorBuffer;
 
+        /// <summary>
+        /// Create a new Buffer2bppEPaper object
+        /// </summary>
+        /// <param name="width">the buffer width in pixels</param>
+        /// <param name="height">the buffer height in pixels</param>
         public Buffer2bppEPaper(int width, int height)
         {
             blackBuffer = new Buffer1bppV(width, height);
@@ -67,6 +72,9 @@
             colorBuffer.InitializeBuffer();
         }
 
+        /// <summary>
+        /// Clear the buffer
+        /// </summary>
         public void Clear()
         {
             blackBuffer.Clear(true);
