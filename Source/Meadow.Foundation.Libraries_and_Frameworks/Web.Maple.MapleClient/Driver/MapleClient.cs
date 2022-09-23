@@ -5,12 +5,16 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Web.Maple
 {
+    /// <summary>
+    /// Represents a simplified web client to detect and communicate to Maple Servers
+    /// </summary>
     public class MapleClient
     {
         /// <summary>
@@ -43,7 +47,7 @@ namespace Meadow.Foundation.Web.Maple
         /// Starts scanning for Maple servers
         /// </summary>
         public async Task StartScanningForAdvertisingServers()
-        {            
+        {
             //var hostList = new List<ServerModel>();
             var listener = new UdpClient(ListenPort);
             var ipEndPoint = new IPEndPoint(IPAddress.Any, ListenPort);
@@ -122,36 +126,131 @@ namespace Meadow.Foundation.Web.Maple
             return new UdpReceiveResult();
         }
 
-        [Obsolete("Use PostAsync method.")]
-        protected async Task<bool> SendCommandAsync(string command, string hostAddress)
+        /// <summary>
+        /// Sends a simple GET request
+        /// </summary>
+        /// <param name="hostAddress">Host Address</param>
+        /// <param name="port">Port</param>
+        /// <param name="endPoint">API Endpoint</param>
+        /// <param name="contentType">HTTP entity-header</param>
+        public async Task<string> GetAsync(string hostAddress, int port, string endPoint, string contentType = "text/plain")
         {
-            var client = new HttpClient
+            using (HttpClient client = new HttpClient())
             {
-                BaseAddress = new Uri("http://" + hostAddress + "/"),
-                Timeout = ListenTimeout
-            };
+                try
+                {
+                    client.BaseAddress = new Uri($"http://{hostAddress}:{port}/{endPoint}");
+                    client.Timeout = ListenTimeout;
+                    client.DefaultRequestHeaders
+                        .Accept
+                        .Add(new MediaTypeWithQualityHeaderValue(contentType));
 
-            try
-            {
-                var response = await client.PostAsync(command, null);
-                return response.IsSuccessStatusCode;
+                    var response = await client.GetAsync(endPoint);
+                    return await response.Content.ReadAsStringAsync();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    return string.Empty;
+                }
             }
-            catch (Exception ex)
+        }
+
+        /// <summary>
+        /// Sends a GET request with one parameter
+        /// </summary>
+        /// <param name="hostAddress">Host Address</param>
+        /// <param name="port">Port</param>
+        /// <param name="endPoint">API Endpoint</param>
+        /// <param name="param">Parameter</param>
+        /// <param name="value">Value</param>
+        public async Task<string> GetAsync(string hostAddress, int port, string endPoint, string param, string value)
+        {
+            if (string.IsNullOrEmpty(param) || value == null)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                return false;
+                throw new ArgumentException("error, either 'param' or 'value' parameters cant be null or empty strings.");
+            }
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    client.BaseAddress = new Uri($"http://{hostAddress}:{port}/");
+                    client.Timeout = ListenTimeout;
+
+                    var response = await client.GetAsync($"{endPoint}?{param}={value}");
+                    return await response.Content.ReadAsStringAsync();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    return string.Empty;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sends a GET request with list of parameters
+        /// </summary>
+        /// <param name="hostAddress">Host Address</param>
+        /// <param name="port">Port</param>
+        /// <param name="endpoint">API Endpoint</param>
+        /// <param name="parameters">List of parameters</param>
+        public async Task<string> GetAsync(string hostAddress, int port, string endpoint, IDictionary<string, string> parameters)
+        {
+            foreach (var parameter in parameters)
+            {
+                if (parameter.Value == null)
+                {
+                    throw new ArgumentException("error, items on 'parameters' cannot be null.");
+                }
+            }
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    client.BaseAddress = new Uri($"http://{hostAddress}:{port}/");
+                    client.Timeout = ListenTimeout;
+
+                    var uri = $"{endpoint}?";
+
+                    bool isFirst = true;
+                    foreach (var param in parameters)
+                    {
+                        if (isFirst) 
+                        {
+                            isFirst = false; 
+                        }
+                        else 
+                        { 
+                            uri += "&"; 
+                        }
+
+                        uri += $"{param.Key}={param.Value}";
+                    }
+
+                    var response = await client.GetAsync(uri);
+
+                    var msg = await response.Content.ReadAsStringAsync();
+                    return msg;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    return string.Empty;
+                }
             }
         }
 
         /// <summary>
         /// Sends a POST request
         /// </summary>
-        /// <param name="hostAddress"></param>
-        /// <param name="port"></param>
-        /// <param name="endPoint"></param>
-        /// <param name="data"></param>
+        /// <param name="hostAddress">Host Address</param>
+        /// <param name="port">Port</param>
+        /// <param name="endPoint">API Endpoint</param>
+        /// <param name="data">Http Content</param>
         /// <param name="contentType"></param>
-        /// <returns></returns>
         public async Task<bool> PostAsync(string hostAddress, int port, string endPoint, string data, string contentType = "text/plain")
         {
             var client = new HttpClient();
@@ -170,80 +269,6 @@ namespace Meadow.Foundation.Web.Maple
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return false;
-            }
-        }
-
-        /// <summary>
-        /// Sends a GET request with one parameter
-        /// </summary>
-        /// <param name="hostAddress"></param>
-        /// <param name="port"></param>
-        /// <param name="endpoint"></param>
-        /// <param name="param"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public async Task<string> GetAsync(string hostAddress, int port, string endpoint, string param, string value)
-        {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri($"http://{hostAddress}:{port}/"),
-                Timeout = ListenTimeout
-            };
-
-            try
-            {
-                var uri = $"{endpoint}?{param}={value}";
-
-                var response = await client.GetAsync(uri);
-
-                var msg = await response.Content.ReadAsStringAsync();
-                return msg;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                return string.Empty;
-            }
-        }
-
-        /// <summary>
-        /// Sends a GET request with list of parameters
-        /// </summary>
-        /// <param name="hostAddress"></param>
-        /// <param name="port"></param>
-        /// <param name="endpoint"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        public async Task<string> GetAsync(string hostAddress, int port, string endpoint, IDictionary<string, string> parameters)
-        {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri($"http://{hostAddress}:{port}/"),
-                Timeout = ListenTimeout
-            };
-
-            try
-            {
-                var uri = $"{endpoint}?";
-
-                bool isFirst = true;
-                foreach (var param in parameters)
-                {
-                    if (isFirst) isFirst = false;
-                    else uri += "&";
-
-                    uri += $"{param.Key}={param.Value}";
-                }
-
-                var response = await client.GetAsync(uri);
-
-                var msg = await response.Content.ReadAsStringAsync();
-                return msg;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                return string.Empty;
             }
         }
     }

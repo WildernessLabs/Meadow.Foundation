@@ -33,12 +33,13 @@ namespace Maple.ServerSimpleMeadow_Sample
                 advertise: true,
                 processMode: RequestProcessMode.Parallel
                 );
-
         }
 
         public override Task Run()
         {
             server.Start();
+
+            Console.WriteLine("Ready...");
 
             return Task.CompletedTask;
         }
