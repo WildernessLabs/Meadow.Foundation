@@ -5,12 +5,18 @@ using IU = Meadow.Units.Illuminance.UnitType;
 using System;
 using System.Buffers.Binary;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Light
 {
+    /// <summary>
+    /// Represents a BH1750 ambient light sensor
+    /// </summary>
     public partial class Bh1750 : ByteCommsSensorBase<Illuminance>, ILightSensor
     {
-        //==== events
+        /// <summary>
+        /// Raised when a new Illuminance value is read by the sensor
+        /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
         /// <summary>
@@ -28,6 +34,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public MeasuringModes MeasuringMode { get; set; }
 
+        /// <summary>
+        /// The current illuminance read by the sensor
+        /// </summary>
         public Illuminance? Illuminance => Conditions;
 
         private const byte DefaultLightTransmittance = 0b_0100_0101;
@@ -55,6 +64,10 @@ namespace Meadow.Foundation.Sensors.Light
             Peripheral.Write((byte)Commands.Reset);
         }
 
+        /// <summary>
+        /// Read the current luminocity 
+        /// </summary>
+        /// <returns>The current Illuminance value</returns>
         protected override Task<Illuminance> ReadSensor()
         {
             return Task.Run(() =>
@@ -67,6 +80,10 @@ namespace Meadow.Foundation.Sensors.Light
                 }
 
                 Peripheral.Write((byte)MeasuringMode);
+
+                //wait for the measurement to complete before reading
+                Thread.Sleep(GetMeasurementTime(MeasuringMode));
+
                 Peripheral.Read(ReadBuffer.Span[0..2]);
 
                 ushort raw = BinaryPrimitives.ReadUInt16BigEndian(ReadBuffer.Span[0..2]);
@@ -81,6 +98,20 @@ namespace Meadow.Foundation.Sensors.Light
 
                 return new Illuminance(result, IU.Lux);
             });
+        }
+
+        TimeSpan GetMeasurementTime(MeasuringModes mode)
+        {
+            return mode switch
+            {   //high res modes are 120ms, low res 16ms
+                MeasuringModes.ContinuouslyLowResolutionMode => TimeSpan.FromMilliseconds(16),
+                MeasuringModes.OneTimeLowResolutionMode => TimeSpan.FromMilliseconds(16),
+                MeasuringModes.ContinuouslyHighResolutionMode => TimeSpan.FromMilliseconds(120),
+                MeasuringModes.ContinuouslyHighResolutionMode2 => TimeSpan.FromMilliseconds(120),
+                MeasuringModes.OneTimeHighResolutionMode => TimeSpan.FromMilliseconds(120),
+                MeasuringModes.OneTimeHighResolutionMode2 => TimeSpan.FromMilliseconds(120),
+                _ => TimeSpan.FromMilliseconds(120)
+            };
         }
 
         /// <summary>

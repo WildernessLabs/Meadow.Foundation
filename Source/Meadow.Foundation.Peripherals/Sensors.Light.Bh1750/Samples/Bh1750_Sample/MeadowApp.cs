@@ -5,7 +5,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Light;
 using Mode = Meadow.Foundation.Sensors.Light.Bh1750.MeasuringModes;
 
-namespace MeadowApp
+namespace Sensors.Light.Bh1750_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
@@ -38,7 +38,6 @@ namespace MeadowApp
                 });
             sensor.Subscribe(consumer);
 
-            //==== Events
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) => Console.WriteLine($"Light: {result.New.Lux:N2}Lux");
 
