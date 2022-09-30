@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// </summary>
     public partial class SwitchingRainGauge : SensorBase<Length>
     {
-        readonly IDigitalInputPort  rainGaugePort;
+        readonly IDigitalInputPort rainGaugePort;
 
         /// <summary>
         /// The number of times the rain tilt sensor has triggered
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Weather
             ChangeResult<Length> changeResult = new ChangeResult<Length>()
             {
                 New = RainDepth,
-                Old = DepthPerClick * (ClickCount - 1), //last reading, ClickCount will always be at least 1
+                Old = RainDepth - DepthPerClick, //last reading, ClickCount will always be at least 1
             };
 
             // notify
