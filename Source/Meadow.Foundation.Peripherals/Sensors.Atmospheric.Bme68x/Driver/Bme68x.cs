@@ -14,7 +14,7 @@ using HU = Meadow.Units.RelativeHumidity.UnitType;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Represents the Bosch BME68x Temperature, Pressure and Humidity Sensor.
+    /// Represents the Bosch BME68x Temperature, Pressure and Humidity Sensor
     /// </summary>
     public abstract partial class Bme68x:
         SamplingSensorBase<(Units.Temperature? Temperature, 
@@ -198,7 +198,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private static readonly double[] k1Lookup = { 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, -0.8, 0.0, 0.0, -0.2, -0.5, 0.0, -1.0, 0.0, 0.0 };
         private static readonly double[] k2Lookup = { 0.0, 0.0, 0.0, 0.0, 0.1, 0.7, 0.0, -0.8, -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
-        private readonly List<HeaterProfileConfiguration> heaterConfigs = new List<HeaterProfileConfiguration>();
+        private readonly List<HeaterProfileConfiguration> heaterConfigs = new();
 
         /// <summary>
         /// Creates a new instance of the BME68x class
