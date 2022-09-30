@@ -19,13 +19,8 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public event EventHandler<IChangeResult<Speed>> WindSpeedUpdated = delegate { };
 
-        readonly IDigitalInputPort inputPort;
-        bool running = false;
-
-        Queue<DigitalPortResult>? samples;
-
         /// <summary>
-        /// The last recored wind speed
+        /// The current wind speed
         /// </summary>
         public Speed? WindSpeed { get; protected set; }
 
@@ -55,6 +50,11 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public float KmhPerSwitchPerSecond { get; set; } = 2.4f;
 
+        readonly IDigitalInputPort inputPort;
+        bool running = false;
+
+        readonly Queue<DigitalPortResult>? samples;
+
         /// <summary>
         /// Creates a new `SwitchingAnemometer` using the specific digital input
         /// on the device.
@@ -74,6 +74,8 @@ namespace Meadow.Foundation.Sensors.Weather
         public SwitchingAnemometer(IDigitalInputPort inputPort)
         {
             this.inputPort = inputPort;
+
+            samples = new Queue<DigitalPortResult>();
         }
 
         protected void SubscribeToInputPortEvents() => inputPort.Changed += HandleInputPortChange;
@@ -84,11 +86,9 @@ namespace Meadow.Foundation.Sensors.Weather
         {
             if (!running) { return; }
 
-            samples ??= new Queue<DigitalPortResult>();
+            samples?.Enqueue(result);
 
-            samples.Enqueue(result);
-
-            if(samples.Count > sampleCount)
+            if(samples?.Count > sampleCount)
             {   
                 samples.Dequeue();
             }
@@ -98,16 +98,6 @@ namespace Meadow.Foundation.Sensors.Weather
         {
             WindSpeedUpdated?.Invoke(this, changeResult);
             base.NotifyObservers(changeResult);
-        }
-
-        /// <summary>
-        /// A wind speed of 2.4km/h causes the switch to close once per second
-        /// </summary>
-        /// <param name="interval">The interval between signals</param>
-        /// <returns></returns>
-        protected float SwitchIntervalToKmh(TimeSpan interval)
-        {   
-            return KmhPerSwitchPerSecond / ((float)interval.TotalMilliseconds / 1000f);
         }
 
         /// <summary>
@@ -145,13 +135,12 @@ namespace Meadow.Foundation.Sensors.Weather
 
         protected override Task<Speed> ReadSensor()
         {
-            if(DateTime.Now - samples?.Peek().New.Time > NoWindTimeout)
+            if(samples?.Count > 0 && (DateTime.Now - samples?.Peek().New.Time > NoWindTimeout))
             {   //we've exceeded the no wind interval time 
                 samples?.Clear(); //will force a zero reading
             }
-
             // if we've reached our sample count
-            if (samples != null && samples.Count >= SampleCount)
+            else if (samples?.Count >= SampleCount)
             {
                 float speedSum = 0f;
 
@@ -164,16 +153,24 @@ namespace Meadow.Foundation.Sensors.Weather
                     }
                 }
 
-                speedSum += SwitchIntervalToKmh(DateTime.Now - samples.Peek().New.Time);
-
                 // average the speeds
-                float oversampledSpeed = speedSum / samples.Count;
+                float oversampledSpeed = speedSum / (samples.Count -1);
 
                 return Task.FromResult(new Speed(oversampledSpeed, SU.KilometersPerHour));
             }
 
             //otherwise return 0 speed
             return Task.FromResult(new Speed(0));
+        }
+
+        /// <summary>
+        /// A wind speed of 2.4km/h causes the switch to close once per second
+        /// </summary>
+        /// <param name="interval">The interval between signals</param>
+        /// <returns></returns>
+        protected float SwitchIntervalToKmh(TimeSpan interval)
+        {
+            return KmhPerSwitchPerSecond / (float)interval.TotalSeconds;
         }
     }
 }
