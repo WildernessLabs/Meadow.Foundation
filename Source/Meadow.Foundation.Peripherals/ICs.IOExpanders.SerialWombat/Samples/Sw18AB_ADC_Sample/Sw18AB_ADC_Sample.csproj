@@ -17,11 +17,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Logging\lib\Meadow.Logging.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj" />
     <ProjectReference Include="..\..\Driver\ICs.IOExpanders.SerialWombat.csproj" />
   </ItemGroup>
 </Project>

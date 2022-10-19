@@ -49,8 +49,6 @@ namespace Meadow.Foundation.Servos
             // wait for completion
             var rotationRequired = Math.Abs((Angle.HasValue ? Angle.Value.Degrees : 360) - angle.Degrees);
             var delay = (int)(8 * rotationRequired); // estimating 8ms / degree
-            Console.WriteLine($"Start: {Angle?.Degrees??-1} End:={angle.Degrees}");
-            Console.WriteLine($"degrees={rotationRequired}  Delay={delay}");
             await Task.Delay(delay);
 
             // update the state
