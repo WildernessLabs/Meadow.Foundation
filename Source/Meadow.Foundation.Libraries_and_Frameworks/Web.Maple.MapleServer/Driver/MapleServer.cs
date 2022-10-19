@@ -245,7 +245,7 @@ namespace Meadow.Foundation.Web.Maple
         {
             if (Running)
             {
-                Logger.Error("Already running.");
+                Logger?.Error("Already running.");
                 return;
             }
 
