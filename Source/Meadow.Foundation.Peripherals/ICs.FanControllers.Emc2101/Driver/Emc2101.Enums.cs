@@ -97,7 +97,7 @@
             /// </summary>
             _1_16hz,
             /// <summary>
-            /// 1.9hz
+            /// 1.8hz
             /// </summary>
             _1_8hz,
             /// <summary>
