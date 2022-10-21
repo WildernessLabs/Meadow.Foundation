@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.ICs.FanControllers
 {
     /// <summary>
-    /// Repreents an EMC2101 fan controller and temperature monitor
+    /// Represents an EMC2101 fan controller and temperature monitor
     /// </summary>
     public partial class Emc2101 :
         SamplingSensorBase<(Temperature? InternalTemperature, Temperature? ExternalTemperature, AngularVelocity? FanSpeed)>
@@ -249,7 +249,7 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// Configure the PWM clock
         /// </summary>
         /// <param name="clockSelect">true to use a 1.4kHz base PWM clock, false to use the default 360kHz PWM clock</param>
-        /// <param name="clockOverride">rtue to override the base clock and use the frequency divisor to se the PWM frequency</param>
+        /// <param name="clockOverride">true to override the base clock and use the frequency divisor to set the PWM frequency</param>
         public void ConfigurePwmClock(bool clockSelect, bool clockOverride)
         {
             byte config = i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration);
