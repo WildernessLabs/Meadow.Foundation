@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Graphics.Buffers
     public class Buffer1bppV : Buffer1bpp
     {
         /// <summary>
-        /// Creates a new Buffer1bpp object
+        /// Creates a new Buffer1bppV object
         /// </summary>
         /// <param name="width">width of buffer in pixels</param>
         /// <param name="height">height of buffer in pixels</param>
@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         { }
 
         /// <summary>
-        /// Creates a new Buffer1bpp object
+        /// Creates a new Buffer1bppV object
         /// </summary>
         /// <param name="width">width of buffer in pixels</param>
         /// <param name="height">height of buffer in pixels</param>
@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         { }
 
         /// <summary>
-        /// Creates a new Buffer1bpp object
+        /// Creates a new Buffer1bppV object
         /// </summary>
         /// <param name="width">width of buffer in pixels</param>
         /// <param name="height">height of buffer in pixels</param>
@@ -43,6 +43,8 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             Width = width;
             Height = height;
+
+            width = width % 8 > 0 ? width + 8 - (width % 8) : width;
 
             int bufferSize = width * height / 8;
             bufferSize += bufferSize % pageSize;

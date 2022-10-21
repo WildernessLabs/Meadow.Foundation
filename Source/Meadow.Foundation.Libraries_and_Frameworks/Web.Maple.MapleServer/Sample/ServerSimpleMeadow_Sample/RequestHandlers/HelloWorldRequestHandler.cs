@@ -7,33 +7,54 @@ namespace Maple.ServerSimpleMeadow_Sample.RequestHandlers
 {
     public class HelloRequestHandler : RequestHandlerBase
     {
-        [HttpGet]
-        public void Hello()
+        [HttpGet("/getjsonsample")]
+        public IActionResult GetJsonSample()
         {
-            Console.WriteLine("GET::Hello");
-            this.Context.Response.ContentType = ContentTypes.Application_Text;
-            this.Context.Response.StatusCode = 200;
-            this.Send("hello world").Wait();
-        }
+            Console.WriteLine("GET::GetJsonSample");
 
-
-        [HttpGet]
-        public void JsonSample()
-        {
-            Console.WriteLine("GET::JsonSample");
-
-            List<string> names = new List<string> {
+            List<string> data = new List<string> {
                 "johnny",
                 "deedee",
                 "joey",
                 "tommy"
             };
 
-
-            this.Context.Response.ContentType = ContentTypes.Application_Json;
-            this.Context.Response.StatusCode = 200;
-            this.Send(names).Wait();
+            return new JsonResult(data);
         }
 
+        [HttpGet("/getwithparameter")]
+        public IActionResult GetWithParameter()
+        {
+            Console.WriteLine("GET::GetWithParameter");
+
+            string name = QueryString["name"];
+
+            Console.WriteLine($"name:{name}");
+            return new OkObjectResult($"hello, {name}");
+        }
+
+        [HttpGet("/getwithparameters")]
+        public IActionResult GetWithParameters()
+        {
+            Console.WriteLine("GET::GetWithParameters");
+
+            string name = QueryString["name"];
+            string nickname = QueryString["nickname"];
+
+            Console.WriteLine($"name:{name}, nickname:{nickname}");
+            return new OkObjectResult($"hello, {name} aka {nickname}");
+        }
+
+        [HttpPost("/posttest")]
+        public IActionResult PostTest()
+        {
+            Console.WriteLine("GET::PostTest");
+
+            string name = Body;
+
+            Console.WriteLine($"name:{name}");
+
+            return new OkResult();
+        }
     }
 }

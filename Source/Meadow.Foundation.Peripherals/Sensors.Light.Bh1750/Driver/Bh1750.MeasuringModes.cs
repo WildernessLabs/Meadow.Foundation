@@ -1,5 +1,4 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Light
+﻿namespace Meadow.Foundation.Sensors.Light
 {
     public partial class Bh1750
     {
@@ -36,15 +35,15 @@ namespace Meadow.Foundation.Sensors.Light
 
             /// <summary>
             /// Start measurement at 0.5lx resolution once
-            /// Measurement Time is typically 120ms.
-            /// It is automatically set to Power Down mode after measurement.
+            /// Measurement Time is typically 120ms
+            /// It is automatically set to Power Down mode after measurement
             /// </summary>
             OneTimeHighResolutionMode2 = 0b_0010_0001,
 
             /// <summary>
             /// Start measurement at 4lx resolution once
-            /// Measurement Time is typically 16ms.
-            /// It is automatically set to Power Down mode after measurement.
+            /// Measurement Time is typically 16ms
+            /// It is automatically set to Power Down mode after measurement
             /// </summary>
             OneTimeLowResolutionMode = 0b_0010_0011
         }
