@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         public string NmeaSentence { get; set; } = string.Empty;
     }
 
-    public class NeoM8
+    public partial class NeoM8
     {
         //public int BaudRate {
         //    get => serialPort.BaudRate;
