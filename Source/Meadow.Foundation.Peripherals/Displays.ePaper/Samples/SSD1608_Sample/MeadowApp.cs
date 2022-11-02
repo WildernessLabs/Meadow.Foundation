@@ -1,19 +1,22 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays.ePaper;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using System;
+using System.Threading.Tasks;
 
 namespace Displays.ePaper.SSD1608_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        MicroGraphics graphics;
+
+        public override Task Initialize()
         {
-            Console.WriteLine("Initialize ...");
- 
+            Console.WriteLine("Initialize...");
+
             var display = new Ssd1608(device: Device,
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
@@ -23,15 +26,22 @@ namespace Displays.ePaper.SSD1608_Sample
                 width: 200,
                 height: 200);
 
-            var graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display);
 
-           graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Black);
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
+            graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Black);
 
             graphics.CurrentFont = new Font8x12();
             graphics.DrawText(2, 2, "SSD1608", Meadow.Foundation.Color.Black);
             graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
 
             graphics.Show();
+
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

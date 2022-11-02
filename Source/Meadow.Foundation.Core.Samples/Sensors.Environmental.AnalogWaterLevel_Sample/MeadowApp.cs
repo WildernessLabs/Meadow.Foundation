@@ -1,18 +1,18 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Temperature.AnalogWaterLevel_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         AnalogWaterLevel analogWaterLevel;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -39,6 +39,8 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
 
             // Spin up the sampling thread so that events are raised and IObservable notifications are sent.
             analogWaterLevel.StartUpdating(TimeSpan.FromSeconds(5));
+
+            return Task.CompletedTask;
         }
 
         protected async Task ReadLevel()

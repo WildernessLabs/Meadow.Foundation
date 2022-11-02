@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Peripherals.Motors;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Motors
 {
@@ -10,6 +11,8 @@ namespace Meadow.Foundation.Motors
     /// </summary>
     public class HBridgeMotor : IDCMotor
     {
+        static readonly Frequency DefaultFrequency = new Frequency(1600, Frequency.UnitType.Hertz);
+
         /// <summary>
         /// PWM port for left motor
         /// </summary>
@@ -69,7 +72,7 @@ namespace Meadow.Foundation.Motors
         /// The frequency of the PWM used to drive the motors. 
         /// Default value is 1600.
         /// </summary>
-        public float PwmFrequency => motorLeftPwm.Frequency;
+        public Frequency PwmFrequency => motorLeftPwm.Frequency;
 
         /// <summary>
         /// Not all motors are created equally. This number scales the Speed Input so
@@ -84,9 +87,30 @@ namespace Meadow.Foundation.Motors
         /// <param name="a1Pin"></param>
         /// <param name="a2Pin"></param>
         /// <param name="enablePin"></param>
+        public HBridgeMotor(IMeadowDevice device, IPin a1Pin, IPin a2Pin, IPin enablePin) :
+            this(device.CreatePwmPort(a1Pin, DefaultFrequency), device.CreatePwmPort(a2Pin, DefaultFrequency), device.CreateDigitalOutputPort(enablePin), DefaultFrequency)
+        { }
+
+        /// <summary>
+        /// Create an HBridgeMotor object
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="a1Pin"></param>
+        /// <param name="a2Pin"></param>
+        /// <param name="enablePin"></param>
         /// <param name="pwmFrequency"></param>
-        public HBridgeMotor(IMeadowDevice device, IPin a1Pin, IPin a2Pin, IPin enablePin, float pwmFrequency = 1600) :
-            this(device.CreatePwmPort(a1Pin), device.CreatePwmPort(a2Pin), device.CreateDigitalOutputPort(enablePin), pwmFrequency)
+        public HBridgeMotor(IMeadowDevice device, IPin a1Pin, IPin a2Pin, IPin enablePin, Frequency pwmFrequency) :
+            this(device.CreatePwmPort(a1Pin, pwmFrequency), device.CreatePwmPort(a2Pin, pwmFrequency), device.CreateDigitalOutputPort(enablePin), pwmFrequency)
+        { }
+
+        /// <summary>
+        /// Create an HBridgeMotor object
+        /// </summary>
+        /// <param name="a1Port"></param>
+        /// <param name="a2Port"></param>
+        /// <param name="enablePort"></param>
+        public HBridgeMotor(IPwmPort a1Port, IPwmPort a2Port, IDigitalOutputPort enablePort)
+            : this(a1Port, a2Port, enablePort, DefaultFrequency)
         { }
 
         /// <summary>
@@ -96,7 +120,7 @@ namespace Meadow.Foundation.Motors
         /// <param name="a2Port"></param>
         /// <param name="enablePort"></param>
         /// <param name="pwmFrequency"></param>
-        public HBridgeMotor(IPwmPort a1Port, IPwmPort a2Port, IDigitalOutputPort enablePort, float pwmFrequency = 1600)
+        public HBridgeMotor(IPwmPort a1Port, IPwmPort a2Port, IDigitalOutputPort enablePort, Frequency pwmFrequency)
         {
             motorLeftPwm = a1Port;
             motorLeftPwm.Frequency = pwmFrequency;

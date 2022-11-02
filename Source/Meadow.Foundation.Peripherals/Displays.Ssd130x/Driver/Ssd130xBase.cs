@@ -2,21 +2,34 @@
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
+using System.Drawing;
 
-namespace Meadow.Foundation.Displays.Ssd130x
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Provide an interface to the SSD1306 family of OLED displays.
+    /// Provide an interface to the SSD130x family of OLED displays
     /// </summary>
     public abstract partial class Ssd130xBase : IGraphicsDisplay
     {
+        /// <summary>
+        /// The display color mode
+        /// </summary>
         public ColorType ColorMode => ColorType.Format1bpp;
 
+        /// <summary>
+        /// The width of the display in pixels
+        /// </summary>
         public int Width => imageBuffer.Width;
 
+        /// <summary>
+        /// The height of the display in pixels
+        /// </summary>
         public int Height => imageBuffer.Height;
 
-        public bool IgnoreOutOfBoundsPixels { get; set; }
+        /// <summary>
+        /// The buffer the holds the pixel data for the display
+        /// </summary>
+        public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
         /// SSD1306 SPI display
@@ -38,7 +51,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         protected II2cPeripheral i2cPeripheral;
 
         /// <summary>
-        /// Buffer holding the pixels in the display.
+        /// Buffer holding the pixels in the display
         /// </summary>
         protected Buffer1bpp imageBuffer;
         protected byte[] readBuffer;
@@ -47,12 +60,11 @@ namespace Meadow.Foundation.Displays.Ssd130x
 
         /// <summary>
         /// Sequence of command bytes that must be sent to the display before
-        /// the Show method can send the data buffer.
         /// </summary>
         protected byte[] showPreamble;
 
         /// <summary>
-        /// Invert the entire display (true) or return to normal mode (false).
+        /// Invert the entire display (true) or return to normal mode (false)
         /// </summary>
         /// <remarks>
         /// See section 10.1.10 in the datasheet.
@@ -67,12 +79,12 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
         }
         /// <summary>
-        /// Backing variable for the InvertDisplay property.
+        /// Backing variable for the InvertDisplay property
         /// </summary>
         private bool invertDisplay;
 
         /// <summary>
-        /// Get / Set the contrast of the display.
+        /// Get / Set the contrast of the display
         /// </summary>
         public byte Contrast
         {
@@ -85,12 +97,12 @@ namespace Meadow.Foundation.Displays.Ssd130x
             }
         }
         /// <summary>
-        /// Backing variable for the Contrast property.
+        /// Backing variable for the Contrast property
         /// </summary>
         private byte contrast;
 
         /// <summary>
-        /// Put the display to sleep (turns the display off).
+        /// Put the display to sleep (turns the display off)
         /// </summary>
         public bool Sleep
         {
@@ -103,16 +115,19 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        /// Backing variable for the Sleep property.
+        /// Backing variable for the Sleep property
         /// </summary>
         private bool sleep;
 
+        /// <summary>
+        /// The Ssd1306 display type used to specify the resolution
+        /// </summary>
         protected DisplayType displayType;
 
         /// <summary>
-        /// Send a command to the display.
+        /// Send a command to the display
         /// </summary>
-        /// <param name="command">Command byte to send to the display.</param>
+        /// <param name="command">Command byte to send to the display</param>
         private void SendCommand(byte command)
         {
             if (connectionType == ConnectionType.SPI)
@@ -129,9 +144,9 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        /// Send a sequence of commands to the display.
+        /// Send a sequence of commands to the display
         /// </summary>
-        /// <param name="commands">List of commands to send.</param>
+        /// <param name="commands">List of commands to send</param>
         protected void SendCommands(Span<byte> commands)
         {
             if (connectionType == ConnectionType.SPI)
@@ -150,7 +165,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        /// Send the internal pixel buffer to display.
+        /// Send the internal pixel buffer to display
         /// </summary>
         public void Show()
         {
@@ -183,9 +198,9 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        /// Clear the display buffer.
+        /// Clear the display buffer
         /// </summary>
-        /// <param name="updateDisplay">Immediately update the display when true.</param>
+        /// <param name="updateDisplay">Immediately update the display when true</param>
         public void Clear(bool updateDisplay = false)
         {
             Array.Clear(imageBuffer.Buffer, 0, imageBuffer.ByteCount);
@@ -197,10 +212,10 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        /// Draw a pixel to the display - coordinates start with index 0
+        /// Draw pixel at a location
         /// </summary>
-        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
-        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
         /// <param name="color">Black - pixel off, any color - turn on pixel</param>
         public void DrawPixel(int x, int y, Color color)
         {
@@ -208,54 +223,45 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        /// Draw a pixel to the display - coordinates start with index 0
+        /// Draw pixel at a location
         /// </summary>
-        /// <param name="x">Abscissa of the pixel to the set / reset.</param>
-        /// <param name="y">Ordinate of the pixel to the set / reset.</param>
-        /// <param name="colored">True = turn on pixel, false = turn off pixel</param>
-        public void DrawPixel(int x, int y, bool colored)
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
+        /// <param name="enabled">True = turn on pixel, false = turn off pixel</param>
+        public void DrawPixel(int x, int y, bool enabled)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
-            imageBuffer.SetPixel(x, y, colored);
-        }
-
-        public void InvertPixel(int x, int y)
-        {
-            if(IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
-            var index = (y >> 8) * Width + x;
-
-            imageBuffer.Buffer[index] = (imageBuffer.Buffer[index] ^= (byte)(1 << y % 8));
+            imageBuffer.SetPixel(x, y, enabled);
         }
 
         /// <summary>
-        /// Start the display scrollling in the specified direction.
+        /// Invert a pixel at a location
         /// </summary>
-        /// <param name="direction">Direction that the display should scroll.</param>
+        /// <param name="x">Abscissa of the pixel to the set / reset</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset</param>
+        public void InvertPixel(int x, int y)
+        {
+            imageBuffer.InvertPixel(x, y);
+        }
+
+        /// <summary>
+        /// Start the display scrollling in the specified direction
+        /// </summary>
+        /// <param name="direction">Direction that the display should scroll</param>
         public void StartScrolling(ScrollDirection direction)
         {
             StartScrolling(direction, 0x00, 0xff);
         }
 
         /// <summary>
-        /// Start the display scrolling.
+        /// Start the display scrolling
         /// </summary>
         /// <remarks>
         /// In most cases setting startPage to 0x00 and endPage to 0xff will achieve an
         /// acceptable scrolling effect.
         /// </remarks>
-        /// <param name="direction">Direction that the display should scroll.</param>
-        /// <param name="startPage">Start page for the scroll.</param>
-        /// <param name="endPage">End oage for the scroll.</param>
+        /// <param name="direction">Direction that the display should scroll</param>
+        /// <param name="startPage">Start page for the scroll</param>
+        /// <param name="endPage">End oage for the scroll</param>
         public void StartScrolling(ScrollDirection direction, byte startPage, byte endPage)
         {
             StopScrolling();
@@ -286,7 +292,7 @@ namespace Meadow.Foundation.Displays.Ssd130x
         }
 
         /// <summary>
-        /// Turn off scrolling.
+        /// Turn off scrolling
         /// </summary>
         /// <remarks>
         /// Datasheet states that scrolling must be turned off before changing the
@@ -297,19 +303,24 @@ namespace Meadow.Foundation.Displays.Ssd130x
             SendCommand(0x2e);
         }
 
-        public virtual void Fill(Color fillColor, bool updateDisplay = false)
+        public virtual void Fill(Color color, bool updateDisplay = false)
         {
-            throw new NotImplementedException();
+            imageBuffer.Clear(color.Color1bpp);
+
+            if (updateDisplay)
+            {
+                Show();
+            }
         }
 
-        public virtual void Fill(int x, int y, int width, int height, Color fillColor)
+        public virtual void Fill(int x, int y, int width, int height, Color color)
         {
-            throw new NotImplementedException();
+            imageBuffer.Fill(x, y, width, height, color);
         }
 
-        public virtual void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public virtual void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
-            throw new NotImplementedException();
+            imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
     }
 }

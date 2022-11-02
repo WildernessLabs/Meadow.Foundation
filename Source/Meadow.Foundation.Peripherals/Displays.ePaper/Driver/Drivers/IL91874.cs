@@ -1,21 +1,51 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents IL91874 ePaper color displays
     /// 264x176, 2.7inch tri color e-Ink display / SPI interface 
     /// </summary>
-    public class Il91874 : EpdColorBase
+    public class Il91874 : EPaperTriColorBase
     {
+        /// <summary>
+        /// Create a new Il91874 object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="busyPin">Busy pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
         public Il91874(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width = 176, int height = 264) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         {
         }
 
-        protected override bool IsBlackInverted => true;
+        /// <summary>
+        /// Create a new Il91874 ePaper display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="busyPort">Busy input port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        public Il91874(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
+            IDigitalOutputPort resetPort,
+            IDigitalInputPort busyPort,
+            int width, int height) :
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, width, height)
+        {
+        }
+
+        protected override bool IsBlackInverted => false;
 
         protected override bool IsColorInverted => false;
 
@@ -91,7 +121,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void Show(int left, int top, int right, int bottom)
         {
-            TransmitPartial(blackImageBuffer.Buffer, colorImageBuffer.Buffer,
+            TransmitPartial(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer,
                         left, top,
                         right - left,
                         top - bottom);
@@ -103,7 +133,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void Show()
         {
-            DisplayFrame(blackImageBuffer.Buffer, colorImageBuffer.Buffer);
+            DisplayFrame(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer);
         }
 
         void SetLut()
@@ -193,7 +223,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    SendData(bufferRed[i]);
+                    SendData(~bufferRed[i]);
                 }
                 DelayMs(2);
             }
@@ -225,30 +255,25 @@ namespace Meadow.Foundation.Displays.ePaper
             if (bufferBlack != null)
             {
                 SendCommand(Command.DATA_START_TRANSMISSION_1);
-                DelayMs(2);
 
                 dataCommandPort.State = DataState;
 
                 for (int i = 0; i < Width * Height / 8; i++)
-                {   //I bet we can optimize this .... seems silly to send a byte at a time
+                {   
                     spiPeripheral.Write(bufferBlack[i]);
                 }
-
-                DelayMs(2);
             }
 
             if (bufferRed != null)
             {
                 SendCommand(Command.DATA_START_TRANSMISSION_2);
-                DelayMs(2);
 
                 dataCommandPort.State = DataState;
 
                 for (int i = 0; i < Width * Height / 8; i++)
                 {
-                    spiPeripheral.Write(bufferRed[i]);
+                    spiPeripheral.Write((byte)~bufferRed[i]);
                 }
-                DelayMs(2);
             }
 
             SendCommand(Command.DISPLAY_REFRESH);

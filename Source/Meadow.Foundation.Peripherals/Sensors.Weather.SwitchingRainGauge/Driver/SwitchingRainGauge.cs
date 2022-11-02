@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Weather
 {
-    public partial class SwitchingRainGauge
-    : SensorBase<Length>
+    /// <summary>
+    /// Represents a simple switching rain gauge
+    /// </summary>
+    public partial class SwitchingRainGauge : SensorBase<Length>
     {
-        protected IDigitalInputPort rainGaugePort;
+        readonly IDigitalInputPort rainGaugePort;
 
         /// <summary>
         /// The number of times the rain tilt sensor has triggered
@@ -17,42 +19,47 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public int ClickCount { get; protected set; }
 
+        /// <summary>
+        /// The total accumulated rain depth
+        /// </summary>
         public Length RainDepth => DepthPerClick * ClickCount;
 
+        /// <summary>
+        /// The amount of rain recorded per raingauge event
+        /// </summary>
         public Length DepthPerClick { get; set; }
 
         public SwitchingRainGauge(IDigitalInputController device, IPin rainSensorPin) :
             this(device, rainSensorPin, new Length(0.2794, Length.UnitType.Millimeters))
-        {
-        }
+        { }
 
         public SwitchingRainGauge(IDigitalInputController device, IPin rainSensorPin, Length depthPerClick) :
-            this(device.CreateDigitalInputPort(rainSensorPin, InterruptMode.EdgeRising, ResistorMode.InternalPullUp, 500), depthPerClick)
-        {
-
-        }
+            this(device.CreateDigitalInputPort(rainSensorPin, InterruptMode.EdgeRising, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(100), TimeSpan.Zero), depthPerClick)
+        { }
 
         public SwitchingRainGauge(IDigitalInputPort rainSensorPort, Length depthPerClick)
         {
-            this.DepthPerClick = depthPerClick;
-            this.rainGaugePort = rainSensorPort;
+            DepthPerClick = depthPerClick;
+            rainGaugePort = rainSensorPort;
         }
 
+        /// <summary>
+        /// Reset the rain height
+        /// </summary>
         public void Reset()
         {
             ClickCount = 0;
         }
 
-        private void RainSensorPort_Changed(object sender, DigitalPortResult e)
+        private void RainSensorPortChanged(object sender, DigitalPortResult e)
         {
-            //state
             ClickCount++;
 
             // create a new change result from the new value
             ChangeResult<Length> changeResult = new ChangeResult<Length>()
             {
                 New = RainDepth,
-                Old = DepthPerClick * (ClickCount - 1), //last reading, ClickCount will always be at least 1
+                Old = RainDepth - DepthPerClick, //last reading, ClickCount will always be at least 1
             };
 
             // notify
@@ -64,32 +71,31 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public void StartUpdating()
         {
-            // thread safety
             lock (samplingLock)
             {
                 if (IsSampling) return;
 
                 IsSampling = true;
-                rainGaugePort.Changed += RainSensorPort_Changed;
+                rainGaugePort.Changed += RainSensorPortChanged;
             }
         }
 
         /// <summary>
-        /// Stops sampling the sensor.
+        /// Stops sampling the sensor
         /// </summary>
         public void StopUpdating()
         {
             lock (samplingLock)
             {
-                if (!IsSampling) return;
+                if (!IsSampling) { return; }
 
-                base.IsSampling = false;
-                rainGaugePort.Changed -= RainSensorPort_Changed;
+                IsSampling = false;
+                rainGaugePort.Changed -= RainSensorPortChanged;
             }
         }
 
         /// <summary>
-        /// Convenience method to get the current rain depth. 
+        /// Convenience method to get the current rain depth
         /// </summary>
         protected override Task<Length> ReadSensor()
         {

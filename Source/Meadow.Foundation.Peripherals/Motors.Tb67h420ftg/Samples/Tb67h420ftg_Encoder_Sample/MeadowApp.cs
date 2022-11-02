@@ -1,16 +1,17 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays.Ssd130x;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Hardware;
 using System;
+using System.Threading.Tasks;
 
-namespace MeadowApp
+namespace Motors.Tb67h420ftg_Encoder_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //RgbPwmLed onboardLed;
         Tb67h420ftg motorDriver;
@@ -20,14 +21,9 @@ namespace MeadowApp
         PushButton button1;
         PushButton button2;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Initialize();
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
+            Console.WriteLine("Initialize...");
 
             // this causes unterrupts to fail, for some reason:
             //IDigitalInputPort test = Device.CreateDigitalInputPort(Device.Pins.D07);
@@ -56,7 +52,7 @@ namespace MeadowApp
 
             Console.WriteLine("Init encoder");
             encoder = new RotaryEncoder(Device, Device.Pins.D09, Device.Pins.D15);
-        //    encoder.Rotated += Encoder_Rotated;
+            //encoder.Rotated += Encoder_Rotated;
 
             Console.WriteLine("Init display");
             var ssd1306 = new Ssd1306(Device.CreateI2cBus(), 60, Ssd1306.DisplayType.OLED128x32);
@@ -65,6 +61,8 @@ namespace MeadowApp
 
             Console.WriteLine("Initialization complete.");
             UpdateDisplay("Initialization", "Complete");
+
+            return base.Initialize();
         }
 
         int forwardCount = 0;

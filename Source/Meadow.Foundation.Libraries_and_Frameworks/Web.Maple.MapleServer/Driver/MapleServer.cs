@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace Meadow.Foundation.Web.Maple
         private readonly HttpListener _httpListener = new HttpListener();
         private ErrorPageGenerator ErrorPageGenerator { get; }
 
-        public ILogger Logger { get; }
+        public Logger? Logger { get; }
         public IPAddress IPAddress { get; private set; }
         public int Port { get; private set; }
 
@@ -60,7 +61,7 @@ namespace Meadow.Foundation.Web.Maple
             int port = DefaultPort,
             bool advertise = false,
             RequestProcessMode processMode = RequestProcessMode.Serial,
-            ILogger logger = null)
+            Logger logger = null)
             : this(IPAddress.Parse(ipAddress), port, advertise, processMode, logger)
         {
         }
@@ -80,9 +81,9 @@ namespace Meadow.Foundation.Web.Maple
             int port = DefaultPort,
             bool advertise = false,
             RequestProcessMode processMode = RequestProcessMode.Serial,
-            ILogger logger = null)
+            Logger? logger = null)
         {
-            Logger = logger ?? new ConsoleLogger();
+            Logger = logger;
             MethodCache = new RequestMethodCache(Logger);
             ErrorPageGenerator = new ErrorPageGenerator();
 
@@ -112,7 +113,7 @@ namespace Meadow.Foundation.Web.Maple
                         // for now, just use IPv4
                         Console.WriteLine($"Listening on http://{ni.Address}:{port}/");
 
-//                        _httpListener.Prefixes.Add($"http://{ni.Address}:{port}/");
+                        //                        _httpListener.Prefixes.Add($"http://{ni.Address}:{port}/");
                     }
                 }
 
@@ -148,6 +149,7 @@ namespace Meadow.Foundation.Web.Maple
             {
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
+                    // netsh http add urlacl url=http://+:5000/ user=Everyone
                     throw new Exception(
                         $"The server application needs elevated privileges or you must open permission on the URL (e.g. `netsh http add urlacl url=http://{IPAddress}:{Port}/ user=DOMAIN\\user`)");
                 }
@@ -243,7 +245,7 @@ namespace Meadow.Foundation.Web.Maple
         {
             if (Running)
             {
-                Logger.Error("Already running.");
+                Logger?.Error("Already running.");
                 return;
             }
 
@@ -360,7 +362,7 @@ namespace Meadow.Foundation.Web.Maple
                 {
                     paramObjects.Add(param);
                 }
-                
+
 
                 // does the method have a [FromBody] parameter?
                 if (handlerInfo.Method.GetParameters().FirstOrDefault(p => p.CustomAttributes.Any(a => a.AttributeType.Equals(typeof(FromBodyAttribute)))) is { } p)
@@ -388,7 +390,7 @@ namespace Meadow.Foundation.Web.Maple
                             }
                         }
                         else
-                        { 
+                        {
                             var o = SimpleJson.SimpleJson.DeserializeObject(json, p.ParameterType);
                             paramObjects.Add(o);
                         }

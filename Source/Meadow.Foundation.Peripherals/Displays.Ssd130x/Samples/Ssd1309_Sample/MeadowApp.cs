@@ -1,21 +1,22 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays.Ssd130x;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Displays.Ssd130x.Ssd1309_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         MicroGraphics graphics;
         Ssd1309 display;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             CreateSpiDisplay();
             //CreateI2CDisplay();
@@ -23,14 +24,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
             Console.WriteLine("Create canvas...");
             graphics = new MicroGraphics(display);
 
-            graphics.Clear();
-            graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(0, 0, "Meadow F7", Meadow.Foundation.Color.White);
-            graphics.DrawRectangle(5, 14, 30, 10, true);
-
-            Console.WriteLine("Show...");
-            graphics.Show();
-            Console.WriteLine("Show Complete");
+            return base.Initialize();
         }
 
         void CreateSpiDisplay()
@@ -60,6 +54,20 @@ namespace Displays.Ssd130x.Ssd1309_Sample
                 i2cBus: Device.CreateI2cBus(),
                 address: 60
             );
+        }
+
+        public override Task Run()
+        {
+            graphics.Clear();
+            graphics.CurrentFont = new Font8x12();
+            graphics.DrawText(0, 0, "Meadow F7", Meadow.Foundation.Color.White);
+            graphics.DrawRectangle(5, 14, 30, 10, true);
+
+            Console.WriteLine("Show...");
+            graphics.Show();
+            Console.WriteLine("Show Complete");
+
+            return base.Run();
         }
 
         //<!=SNOP=>

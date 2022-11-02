@@ -1,21 +1,55 @@
 ﻿using System.Threading;
-using Meadow.Devices;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.TftSpi
+namespace Meadow.Foundation.Displays
 {
+    /// <summary>
+    /// Represents a St7796s TFT color display
+    /// </summary>
     public class St7796s : TftSpiBase
     {
-		public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
+        /// <summary>
+        /// The default display color mode
+        /// </summary>
+        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
-		public St7796s(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480, ColorType displayColorMode = ColorType.Format12bppRgb444)
-			: base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
+        /// <summary>
+        /// Create a new St7796s color display object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        /// <param name="colorMode">The color mode to use for the display buffer</param>
+        public St7796s(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+            int width = 320, int height = 480, ColorType colorMode = ColorType.Format12bppRgb444)
+			: base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
 
             SetRotation(Rotation.Normal);
+        }
+
+        /// <summary>
+        /// Create a new St7796s color display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        /// <param name="colorMode">The color mode to use for the display buffer</param>
+        public St7796s(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
+                IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
+                int width = 320, int height = 480, ColorType colorMode = ColorType.Format12bppRgb444) :
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
+        {
+            Initialize();
         }
 
         protected override void Initialize()

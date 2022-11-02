@@ -18,10 +18,10 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Description>Core peripheral drivers for Wilderness Labs Meadow</Description>
     <Nullable>enable</Nullable>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\Source\icon.png" Pack="true" PackagePath="" />
-    <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
+    <PackageReference Include="Meadow" Version="0.*" />
   </ItemGroup>
 </Project>

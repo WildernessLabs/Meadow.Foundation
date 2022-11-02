@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         {
             this.serialPort = serialPort;
 
-            this.serialPort.MessageReceived += SerialPort_MessageReceived;
+            serialPort.MessageReceived += SerialPort_MessageReceived;
 
             Init();
         }

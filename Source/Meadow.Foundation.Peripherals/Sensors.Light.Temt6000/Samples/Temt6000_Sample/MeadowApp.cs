@@ -1,22 +1,20 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Light;
-using Meadow.Units;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         Temt6000 sensor;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Console.WriteLine("Initialize...");
 
             // configure our sensor
             sensor = new Temt6000(Device, Device.Pins.A03);
@@ -39,16 +37,15 @@ namespace MeadowApp
                 Console.WriteLine($"Voltage Changed, new: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V");
             };
 
-            //==== One-off reading use case/pattern
-            ReadTemp().Wait();
-
-            sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
+            return Task.CompletedTask;
         }
 
-        protected async Task ReadTemp()
+        public override async Task Run()
         {
             var result = await sensor.Read();
             Console.WriteLine($"Initial temp: {result.Volts:N2}V");
+
+            sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
         }
 
         //<!=SNOP=>

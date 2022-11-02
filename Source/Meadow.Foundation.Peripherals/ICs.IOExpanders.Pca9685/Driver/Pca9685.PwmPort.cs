@@ -7,13 +7,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         public class PwmPort : IPwmPort
         {
-            readonly byte _address;
-            readonly II2cBus _i2cBus;
-            readonly byte _portNumber;
-            readonly byte _led0OnL;
+            readonly byte address;
+            readonly II2cBus i2cBus;
+            readonly byte portNumber;
+            readonly byte led0OnL;
 
-            float _dutyCycle;
-            float _frequency;
+            float dutyCycle;
+            Units.Frequency frequency;
 
             public IPwmChannelInfo Channel => throw new NotImplementedException();
 
@@ -23,7 +23,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Gets the overall PWM Frequency set for the PCA9685. Can't be changed per port.
             /// </summary>
-            public float Frequency { get => _frequency; set { } }
+            public Units.Frequency Frequency { get => frequency; set { } }
 
             public bool State => throw new NotImplementedException();
 
@@ -31,10 +31,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             public float DutyCycle
             {
-                get => _dutyCycle;
+                get => dutyCycle;
                 set
                 {
-                    _dutyCycle = value;
+                    dutyCycle = value;
                     Start();
                 }
             }
@@ -45,14 +45,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             IDigitalChannelInfo IPort<IDigitalChannelInfo>.Channel => throw new NotImplementedException();
 
-            public PwmPort(II2cBus i2cBus, byte address, byte led0OnL, float frequency, byte portNumber, float dutyCycle)
+            public PwmPort(II2cBus i2cBus, byte address, byte led0OnL, Units.Frequency frequency, byte portNumber, float dutyCycle)
             {
-                _i2cBus = i2cBus;
-                _address = address;
-                _dutyCycle = dutyCycle;
-                _portNumber = portNumber;
-                _frequency = frequency;
-                _led0OnL = led0OnL;
+                this.i2cBus = i2cBus;
+                this.address = address;
+                this.dutyCycle = dutyCycle;
+                this.portNumber = portNumber;
+                this.frequency = frequency;
+                this.led0OnL = led0OnL;
             }
 
             public void Dispose()
@@ -64,27 +64,27 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 if (Inverted)
                 {
-                    SetPwm(_portNumber, (int)(_dutyCycle * 4096), 0);
+                    SetPwm(portNumber, (int)(dutyCycle * 4096), 0);
                 }
                 else
                 {
-                    SetPwm(_portNumber, 0, (int)(_dutyCycle * 4096));
+                    SetPwm(portNumber, 0, (int)(dutyCycle * 4096));
                 }
             }
 
             public void Stop()
             {
-                SetPwm(_portNumber, 0, 0);
+                SetPwm(portNumber, 0, 0);
             }
 
             private void SetPwm(byte port, int on, int off)
             {
-                Write((byte)(_led0OnL + (4 * port)), (byte)(on & 0xFF), (byte)(on >> 8), (byte)(off & 0xFF), (byte)(off >> 8));
+                Write((byte)(led0OnL + (4 * port)), (byte)(on & 0xFF), (byte)(on >> 8), (byte)(off & 0xFF), (byte)(off >> 8));
             }
 
             private void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
             {
-                _i2cBus.Write(_address, new byte[] {register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
+                i2cBus.Write(address, new byte[] {register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
             }
         }
     }

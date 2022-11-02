@@ -1,26 +1,33 @@
-﻿using System;
-using System.Threading;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Generators;
 using Meadow.Hardware;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Generators.SoftPwmPort_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         protected SoftPwmPort softPwmPort;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
             IDigitalOutputPort digiOut = Device.CreateDigitalOutputPort(Device.Pins.D00);
-            softPwmPort = new SoftPwmPort(digiOut);           
-            
+            softPwmPort = new SoftPwmPort(digiOut);
+
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             TestSoftPwmPort();
+            return Task.CompletedTask;
         }
 
         protected void TestSoftPwmPort()

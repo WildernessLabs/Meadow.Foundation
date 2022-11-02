@@ -1,16 +1,19 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays.ePaper;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using System;
+using System.Threading.Tasks;
 
 namespace Displays.ePaper.IL3897_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        MicroGraphics graphics;
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initialize ...");
  
@@ -23,15 +26,22 @@ namespace Displays.ePaper.IL3897_Sample
                 width: 122,
                 height: 250);
 
-            var graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display);
 
-            graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Black, false);
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
+            graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Red, false);
 
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(2, 2, "IL3897", Meadow.Foundation.Color.Black);
+            graphics.DrawText(2, 2, "IL0373", Meadow.Foundation.Color.Black);
             graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
 
             graphics.Show();
+
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

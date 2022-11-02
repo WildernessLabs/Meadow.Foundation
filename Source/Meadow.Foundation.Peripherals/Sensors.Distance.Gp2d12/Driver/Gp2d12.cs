@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Distance
     {
         protected IAnalogInputPort AnalogInputPort { get; set; }
 
-		/// <summary>
+        /// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
         public event EventHandler<IChangeResult<Length>> DistanceUpdated;
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Create a new Gp2d12 object with an IO Device
         /// </summary>
-        public Gp2d12(IAnalogInputController device, 
+        public Gp2d12(IAnalogInputController device,
             IPin analogInputPin,
             int sampleCount = 5,
             TimeSpan? sampleInterval = null,
@@ -54,9 +54,11 @@ namespace Meadow.Foundation.Sensors.Distance
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    result => {
+                    result =>
+                    {
                         // create a new change result from the new value
-                        ChangeResult<Length> changeResult = new ChangeResult<Length>() {
+                        ChangeResult<Length> changeResult = new ChangeResult<Length>()
+                        {
                             New = VoltageToDistance(result.New),
                             Old = Distance
                         };
@@ -68,6 +70,11 @@ namespace Meadow.Foundation.Sensors.Distance
                 )
            );
 
+        }
+
+        public void MeasureDistance()
+        {
+            _ = ReadSensor();
         }
 
         /// <summary>
@@ -101,7 +108,8 @@ namespace Meadow.Foundation.Sensors.Distance
         public void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety
-            lock (samplingLock) {
+            lock (samplingLock)
+            {
                 if (IsSampling) return;
                 IsSampling = true;
                 AnalogInputPort.StartUpdating(updateInterval);
@@ -113,7 +121,8 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public void StopUpdating()
         {
-            lock (samplingLock) {
+            lock (samplingLock)
+            {
                 if (!IsSampling) return;
                 base.IsSampling = false;
                 AnalogInputPort.StopUpdating();

@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Transceivers
         {
             try
             {
-                return this.ReadRegister(REG_VERSION);
+                return ReadRegister(REG_VERSION);
             }
             catch (Exception ex)
             {

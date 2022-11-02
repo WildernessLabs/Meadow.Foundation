@@ -25,6 +25,11 @@ namespace Meadow.Foundation.Sensors.Distance
         readonly CommunicationType communication;
         readonly SensorType sensorType;
 
+        public void MeasureDistance()
+        {
+            _ = ReadSensor();
+        }
+
         /// <summary>
         /// Read the distance from the sensor
         /// </summary>
@@ -63,7 +68,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 if (IsSampling) return;
                 IsSampling = true;
 
-                switch(communication)
+                switch (communication)
                 {
                     case CommunicationType.Analog:
                         analogInputPort.StartUpdating(updateInterval);
@@ -92,7 +97,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 {
                     analogInputPort.StopUpdating();
                 }
-                else if(communication != CommunicationType.Serial)
+                else if (communication != CommunicationType.Serial)
                 {
                     serialMessagePort.Close();
                 }
@@ -105,7 +110,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
         Length.UnitType GetUnitsForSensor(SensorType sensor)
         {
-            switch(sensor)
+            switch (sensor)
             {
                 case SensorType.LV:
                     return Units.Length.UnitType.Inches;

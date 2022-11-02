@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Weather;
@@ -17,40 +18,40 @@ namespace Meadow.Foundation.Sensors.Weather
     /// 4.7kΩ / 1kΩ, as can be found in the SparkFun weather shield, or Wilderness
     /// Labs Clima Pro board.
     /// </summary>
-    public partial class WindVane
-        : SensorBase<Azimuth>, IWindVane
+    public partial class WindVane : SensorBase<Azimuth>, IWindVane
     {
-        //==== internals
-        protected IAnalogInputPort inputPort;
-
-        //==== Properties
         /// <summary>
-        /// The last recorded azimuth of the wind.
+        /// The last recorded azimuth of the wind
         /// </summary>
         public Azimuth? WindAzimuth { get; protected set; }
 
         /// <summary>
-        /// Number of samples to take per reading. Default is 2.
+        /// Number of samples to take per reading. Default is 2
         /// </summary>
         public int SampleCount { get; set; } = 2;
+
         /// <summary>
-        /// Duration of time between samples. Default is 40ms.
+        /// Duration of time between samples (default is 40ms)
         /// </summary>
         public TimeSpan SampleInterval { get; set; } = TimeSpan.FromMilliseconds(40);
 
-        // TODO: consider making an `ImmutableDictionary` (need to add package
         /// <summary>
-        /// Voltage -> wind azimuth lookup dictionary.
+        /// Voltage -> wind azimuth lookup dictionary
         /// </summary>
-        public IDictionary<Voltage, Azimuth> AzimuthVoltages { get; protected set; }
+        public ReadOnlyDictionary<Voltage, Azimuth> AzimuthVoltages { get; protected set; }
+
+        readonly IAnalogInputPort inputPort;
 
         /// <summary>
-        /// Creates a new `WindVane` on the specified IO Device's analog input.
-        /// Optionally, with a custom voltage to azimuth lookup.
+        /// Creates a new `WindVane` on the specified IO Device's analog input
+        /// Optionally, with a custom voltage to azimuth lookup
         /// </summary>
-        /// <param name="device">The IO Device.</param>
-        /// <param name="analogInputPin">The analog input pin.</param>
-        /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages.</param>
+        /// <param name="device">The IO Device</param>
+        /// <param name="analogInputPin">The analog input pin</param>
+        /// <param name="azimuthVoltages">Optional - Supply if you have custom azimuth voltages</param>
+        /// <param name="updateInterval">The sensor update interval</param>
+        /// <param name="sampleCount">Sample couple</param>
+        /// <param name="sampleInterval">Sample interval</param>
         public WindVane(
             IAnalogInputController device, IPin analogInputPin,
             IDictionary<Voltage, Azimuth> azimuthVoltages = null,
@@ -59,32 +60,32 @@ namespace Meadow.Foundation.Sensors.Weather
             : this(device.CreateAnalogInputPort(analogInputPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3))
                   , azimuthVoltages)
         {
-            this.UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 1);
+            UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 1);
         }
 
         /// <summary>
         /// Creates a new `WindVane` on the specified input port. Optionally,
         /// with a custom voltage to azimuth lookup.
         /// </summary>
-        /// <param name="inputPort">The analog input.</param>
-        /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages.</param>
+        /// <param name="inputPort">The analog input</param>
+        /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages</param>
         public WindVane(IAnalogInputPort inputPort, IDictionary<Voltage, Azimuth> azimuthVoltages = null)
         {
-            this.AzimuthVoltages = azimuthVoltages;
             this.inputPort = inputPort;
-            this.Init();
+
+            
+            Initialize(azimuthVoltages);
         }
 
-        protected void Init()
-        {
-            // if no lookup has been provided, load the defaults
-            if (AzimuthVoltages == null) { LoadDefaultAzimuthVoltages(); }
+        void Initialize(IDictionary<Voltage, Azimuth> azimuthVoltages)
+        {   // if no lookup has been provided, load the defaults
+            AzimuthVoltages = (azimuthVoltages == null) ? 
+                GetDefaultAzimuthVoltages() : new ReadOnlyDictionary<Voltage, Azimuth>(azimuthVoltages);
 
             inputPort.Subscribe(
                 IAnalogInputPort.CreateObserver(
                 handler: result => HandleAnalogUpdate(result),
-                filter: null
-                ));
+                filter: null));
         }
 
         /// <summary>
@@ -101,8 +102,9 @@ namespace Meadow.Foundation.Sensors.Weather
         public void StartUpdating(TimeSpan updateInterval)
         {
             // thread safety
-            lock (samplingLock) {
-                if (IsSampling) return;
+            lock (samplingLock) 
+            {
+                if (IsSampling) { return; }
 
                 IsSampling = true;
                 inputPort.StartUpdating(updateInterval);
@@ -110,30 +112,26 @@ namespace Meadow.Foundation.Sensors.Weather
         }
 
         /// <summary>
-        /// Stops sampling the sensor.
+        /// Stops sampling the sensor
         /// </summary>
         public void StopUpdating()
         {
-            lock (samplingLock) {
-                if (!IsSampling) return;
+            lock (samplingLock) 
+            {
+                if (!IsSampling) { return; }
 
-                base.IsSampling = false;
+                IsSampling = false;
                 inputPort.StopUpdating();
             }
         }
 
         /// <summary>
         /// Convenience method to get the current wind azimuth. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer
         /// </summary>
-        /// <param name="sampleCount">The number of sample readings to take. 
-        /// Must be greater than 0. These samples are automatically averaged.</param>
-        /// <param name="sampleIntervalDuration">The time, in milliseconds,
-        /// to wait in between samples during a reading.</param>
-        /// <returns>A float value that's ann average value of all the samples taken.</returns>
+        /// <returns>A float value that's an average value of all the samples taken</returns>
         protected override async Task<Azimuth> ReadSensor()
-        {
-            // read the voltage
+        {   // read the voltage
             Voltage voltage = await inputPort.Read();
             // get the azimuth
             return LookupWindDirection(voltage);
@@ -141,26 +139,26 @@ namespace Meadow.Foundation.Sensors.Weather
 
         /// <summary>
         /// Takes the analog reading and converts to the wind azimuth, then
-        /// raises the event/updates subscribers.
+        /// raises the event/updates subscribers
         /// </summary>
         protected void HandleAnalogUpdate(IChangeResult<Voltage> result)
         {
             var windAzimuth = LookupWindDirection(result.New);
             ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>() {
-                Old = this.WindAzimuth,
+                Old = WindAzimuth,
                 New = windAzimuth
             };
             // save state
-            this.WindAzimuth = windAzimuth;
+            WindAzimuth = windAzimuth;
             base.RaiseEventsAndNotify(windChangeResult);
         }
 
         /// <summary>
         /// Finds the closest wind azimuth that matches the passed in voltage,
-        /// based on the `AziumuthVoltages`.
+        /// based on the `AziumuthVoltages`
         /// </summary>
-        /// <param name="voltage"></param>
-        /// <returns></returns>
+        /// <param name="voltage">The voltage</param>
+        /// <returns>The Azimuth value</returns>
         protected Azimuth LookupWindDirection(Voltage voltage)
         {
             Tuple<Azimuth, Voltage> closestFit = null;
@@ -184,12 +182,14 @@ namespace Meadow.Foundation.Sensors.Weather
 
         /// <summary>
         /// Loads a default set of voltage -> azimuth lookup values based on
-        /// a 4.7kΩ / 1kΩ voltage divider.
+        /// a 4.7kΩ / 1kΩ voltage divider
         /// </summary>
-        protected void LoadDefaultAzimuthVoltages()
+        protected ReadOnlyDictionary<Voltage, Azimuth> GetDefaultAzimuthVoltages()
         {
             Console.WriteLine("Loading default azimuth voltages");
-            this.AzimuthVoltages = new Dictionary<Voltage, Azimuth> {
+            
+            return new ReadOnlyDictionary<Voltage, Azimuth>(new Dictionary<Voltage, Azimuth> 
+            {
                 { new Voltage(2.9f), new Azimuth(Azimuth16PointCardinalNames.N) },
                 { new Voltage(2.04f), new Azimuth(Azimuth16PointCardinalNames.NNE) },
                 { new Voltage(2.19f), new Azimuth(Azimuth16PointCardinalNames.NE) },
@@ -206,8 +206,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 { new Voltage(2.98f), new Azimuth(Azimuth16PointCardinalNames.WNW) },
                 { new Voltage(3.08f), new Azimuth(Azimuth16PointCardinalNames.NW) },
                 { new Voltage(2.74f), new Azimuth(Azimuth16PointCardinalNames.NNW) },
-            };
+            });
         }
-
     }
 }

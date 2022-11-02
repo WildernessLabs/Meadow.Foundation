@@ -1,21 +1,35 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays
 {
+    /// <summary>
+    /// Provides an interface to the Ssd1327 greyscale OLED display
+    /// </summary>
     public partial class Ssd1327 : IGraphicsDisplay
     {
+        /// <summary>
+        /// The display color mode (4 bit per pixel grayscale)
+        /// </summary>
         public ColorType ColorMode => ColorType.Format4bppGray;
 
+        /// <summary>
+        /// The display width in pixels
+        /// </summary>
         public int Width => 128;
 
+        /// <summary>
+        /// The display height in pixels
+        /// </summary>
         public int Height => 128;
 
-        public bool IgnoreOutOfBoundsPixels { get; set; }
+        /// <summary>
+        /// The buffer the holds the pixel data for the display
+        /// </summary>
+        public IPixelBuffer PixelBuffer => imageBuffer;
 
         protected ISpiPeripheral spiPeripheral;
 
@@ -28,6 +42,14 @@ namespace Meadow.Foundation.Displays
         protected const bool DataState = true;
         protected const bool CommandState = false;
 
+        /// <summary>
+        /// Create a new Ssd1327 object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
         public Ssd1327(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
             imageBuffer = new BufferGray4(Width, Height);
@@ -41,6 +63,31 @@ namespace Meadow.Foundation.Displays
             Initialize();
         }
 
+        /// <summary>
+        /// Create a new Ssd1327 display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        public Ssd1327(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
+            IDigitalOutputPort resetPort)
+        {
+            this.dataCommandPort = dataCommandPort;
+            this.chipSelectPort = chipSelectPort;
+            this.resetPort = resetPort;
+
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+
+            Initialize();
+        }
+
+        /// <summary>
+        /// Set the disply contrast
+        /// </summary>
+        /// <param name="contrast">The constrast value (0-255)</param>
         public void SetContrast(byte contrast)
         {
             SendCommand(0x81);  //set contrast control
@@ -78,34 +125,47 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        /// <summary>
+        /// Draw pixel at a location
+        /// </summary>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
+        /// <param name="color">The pixel color which will be transformed to 4bpp greyscale</param>
         public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color.Color4bppGray);
         }
 
-        public void DrawPixel(int x, int y, bool colored)
+        /// <summary>
+        /// Draw pixel at a location
+        /// </summary>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
+        /// <param name="enabled">True = turn on pixel, false = turn off pixel</param>
+        public void DrawPixel(int x, int y, bool enabled)
         {
-            DrawPixel(x, y, (byte)(colored ? 0x0F : 0));
+            DrawPixel(x, y, (byte)(enabled ? 0x0F : 0));
         }
 
+        /// <summary>
+        /// Draw pixel at a location
+        /// </summary>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
+        /// <param name="gray">The pixel color as a 4 bit grayscale value</param>
         public void DrawPixel(int x, int y, byte gray)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             imageBuffer.SetPixel(x, y, gray);
         }
 
+        /// <summary>
+        /// Invert a pixel at a location
+        /// </summary>
+        /// <param name="x">Abscissa of the pixel to the set / reset</param>
+        /// <param name="y">Ordinate of the pixel to the set / reset</param>
         public void InvertPixel(int x, int y)
         {
-            byte color = imageBuffer.GetPixel4bpp(x, y);
-
-            color = (byte)(((byte)~color) & 0x0f);
-
-            DrawPixel(x, y, color);
+            imageBuffer.InvertPixel(x, y);
         }
 
         public void Show(int left, int top, int right, int bottom)
@@ -168,26 +228,18 @@ namespace Meadow.Foundation.Displays
             imageBuffer.Fill(fillColor);
         }
 
-        public void Fill(int x, int y, int width, int height, Color fillColor)
+        public void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0) x = 0;
-                if (y < 0) y = 0;
-                if (x > width - 1) x = width - 1;
-                if (y > height - 1) y = height - 1;
-            }
-
-            imageBuffer.Fill(fillColor, x, y, width, height);
+            imageBuffer.Fill(x, y, width, height, color);
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
 
         // Init sequence, make sure its under 32 bytes, or split into multiples
-        byte[] init128x128 = {
+        readonly byte[] init128x128 = {
               // Init sequence for 128x32 OLED module
               (byte)Command.SSD1327_DISPLAYOFF, // 0xAE
               (byte)Command.SSD1327_SETCONTRAST,

@@ -5,30 +5,44 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Camera;
 using Meadow.Foundation.Graphics;
 using NanoJpeg;
-using Meadow.Foundation.Displays.TftSpi;
+using Meadow.Foundation.Displays;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         ArducamMini camera;
         MicroGraphics graphics;
         St7789 display;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Initialize();
+            Console.WriteLine("Creating output ports...");
 
-         /*   Console.WriteLine("Draw text");
-            graphics.Clear();
-            graphics.DrawText(0, 0, "Camera sample", Meadow.Foundation.Color.AliceBlue);
-            Console.WriteLine("Show text");
-            graphics.Show();
-            Console.WriteLine("Draw complete"); */
+            var spiBus = Device.CreateSpiBus();
 
+            camera = new ArducamMini(Device, spiBus, Device.Pins.D00, Device.CreateI2cBus());
+
+            display = new St7789(Device, spiBus,
+                Device.Pins.D04, Device.Pins.D03, Device.Pins.D02, 135, 240);
+
+            graphics = new MicroGraphics(display)
+            {
+                CurrentFont = new Font12x20(),
+                Rotation = RotationType._90Degrees
+            };
+
+            return Task.CompletedTask;
+        }
+
+        public override Task Run()
+        {
             var data = CaptureImage();
 
             JpegTest(data);
+
+            return Task.CompletedTask;
         }
 
         void JpegTest(byte[] data)
@@ -76,25 +90,6 @@ namespace MeadowApp
             Console.WriteLine("Jpeg show");
 
             display.Show();
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Creating output ports...");
-
-            var spiBus = Device.CreateSpiBus();
-
-            camera = new ArducamMini(Device, spiBus, Device.Pins.D00, Device.CreateI2cBus());
-
-            display = new St7789(Device, spiBus,
-                Device.Pins.D04, Device.Pins.D03, Device.Pins.D02, 135, 240);
-
-            graphics = new MicroGraphics(display)
-            {
-                CurrentFont = new Font12x20(),
-                Rotation = RotationType._90Degrees
-            };
-
         }
 
         byte[] CaptureImage()

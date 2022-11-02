@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Meadow;
+using System.Threading.Tasks;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Displays.TftSpi;
-using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Displays;
 using Meadow.Hardware;
 using Meadow.Units;
 
@@ -23,33 +20,38 @@ namespace Meadow.Foundation.Graphics
         resetPin: Device.Pins.D04,
     */
 
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         private MicroGraphics graphics;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Console.WriteLine("Getting SPI bus...");
+            Console.WriteLine("Initialize...");
 
             var config = new SpiClockConfiguration(new Frequency(48000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode3);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-            Console.WriteLine("Creating a Display...");
             var display = new St7789(
                 device: Device,
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D15,
                 dcPin: Device.Pins.D11,
                 resetPin: Device.Pins.D14,
-                width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
+                width: 240, height: 240, colorMode: ColorType.Format16bppRgb565)
             {
+            };
+
+            graphics = new MicroGraphics(display)
+            {
+                Rotation = RotationType._180Degrees,
                 IgnoreOutOfBoundsPixels = true
             };
 
-            Console.WriteLine("Creating a MicroGraphics...");
-            graphics = new MicroGraphics(display);
-            graphics.Rotation = RotationType._180Degrees;
+            return Task.CompletedTask;
+        }
 
+        public override Task Run()
+        {
             graphics.Clear();
             graphics.CurrentFont = new Font12x20();
 

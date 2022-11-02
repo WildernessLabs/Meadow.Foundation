@@ -62,11 +62,11 @@ namespace Meadow.Foundation.Generators
         /// <summary>
         /// Frequency of soft PWM
         /// </summary>
-        public float Frequency 
+        public Frequency Frequency 
         {
-            get => (float)frequency.Hertz;
+            get => frequency;
             set {
-                frequency = new Frequency(value, Units.Frequency.UnitType.Hertz);
+                frequency = value;
                 onTimeMilliseconds = CalculateOnTimeMillis();
                 offTimeMilliseconds = CalculateOffTimeMillis();
             }
@@ -121,14 +121,14 @@ namespace Meadow.Foundation.Generators
         /// </summary>
         /// <param name="outputPort"></param>
         /// <param name="dutyCycle"></param>
-        /// <param name="frequency"></param>
-        public SoftPwmPort(IDigitalOutputPort outputPort, float dutyCycle = 0.0f, float frequency = 1000)
+        /// <param name="frequencyInHertz"></param>
+        public SoftPwmPort(IDigitalOutputPort outputPort, float dutyCycle = 0.0f, float frequencyInHertz = 1000)
         {
             Port = outputPort;
             DutyCycle = dutyCycle;
-            this.frequency = new Frequency(frequency, Units.Frequency.UnitType.Hertz);
+            frequency = new Frequency(frequencyInHertz, Units.Frequency.UnitType.Hertz);
 
-            this.Channel = new PwmChannelInfo("SoftPwmChannel", 0, 0, 1000, 1000, false, false);
+            Channel = new PwmChannelInfo("SoftPwmChannel", 0, 0, 1000, 1000, false, false);
         }
 
         /// <summary>

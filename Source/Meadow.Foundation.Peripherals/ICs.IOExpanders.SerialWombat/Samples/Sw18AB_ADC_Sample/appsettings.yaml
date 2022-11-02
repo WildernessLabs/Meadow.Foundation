@@ -1,0 +1,5 @@
+﻿Logging:
+  LogLevel:
+    Default: "Debug"
+Telemetry:
+  RosBridge: "192.168.1.70:9090"

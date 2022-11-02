@@ -20,7 +20,6 @@ namespace Meadow.Foundation.Sensors.Base
         /// </summary>
         public Voltage Voltage { get; protected set; }
 
-
         /// <summary>
         /// Creates a new AnalogObservableBase driver
         /// </summary>
@@ -31,8 +30,7 @@ namespace Meadow.Foundation.Sensors.Base
         /// <param name="voltage">max voltage of analog port</param>
         public AnalogObservableBase(IAnalogInputController device, IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
             : this(device.CreateAnalogInputPort(pin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
-        {
-        }
+        { }
 
         /// <summary>
         /// Creates a new AnalogObservableBase driver
@@ -96,7 +94,7 @@ namespace Meadow.Foundation.Sensors.Base
             lock (samplingLock)
             {
                 if (!IsSampling) return;
-                base.IsSampling = false;
+                IsSampling = false;
                 AnalogInputPort.StopUpdating();
             }
         }

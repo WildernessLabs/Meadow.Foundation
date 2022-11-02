@@ -3,22 +3,31 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
+using System.Threading.Tasks;
 
 namespace AdafruitMPRLSSensorExample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        public MeadowApp()
+        AdafruitMPRLS sensor;
+
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
-            var PressureSensor = new AdafruitMPRLS(Device.CreateI2cBus());
+            sensor = new AdafruitMPRLS(Device.CreateI2cBus());
+            sensor.Updated += PressureSensor_Updated;
 
-            PressureSensor.StartUpdating(TimeSpan.FromSeconds(1));
+            return Task.CompletedTask;
+        }
 
-            PressureSensor.Updated += PressureSensor_Updated;
+        public override Task Run()
+        {
+            sensor.StartUpdating(TimeSpan.FromSeconds(1));
+
+            return Task.CompletedTask;
         }
 
         void PressureSensor_Updated(object sender, IChangeResult<(Pressure? Pressure, Pressure? RawPsiMeasurement)> result)

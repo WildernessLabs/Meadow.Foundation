@@ -25,9 +25,9 @@ namespace Meadow.Foundation.Leds
         readonly int height;
 
         /// <summary>
-        /// Ignore out of bounds pixels
+        /// PixelBuffer representation of the Apa102
         /// </summary>
-        public bool IgnoreOutOfBoundsPixels { get; set; }
+        public IPixelBuffer PixelBuffer => this;
 
         /// <summary>
         /// Creates a new APA102 object
@@ -90,25 +90,19 @@ namespace Meadow.Foundation.Leds
         /// <param name="color">color of pixel</param>
         public void DrawPixel(int x, int y, Color color)
         {
-            if(IgnoreOutOfBoundsPixels)
-            {
-                if(x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             SetLed(GetIndexForCoordinate(x, y), color);
-    
         }
 
         /// <summary>
-        /// Draw pixel at location
+        /// Draw pixel at a location
+        /// Primarily used for monochrome displays, prefer overload that accepts a Color
         /// </summary>
         /// <param name="x">x position of pixel</param>
         /// <param name="y">y position of pixel</param>
-        /// <param name="colored">if true draw white, if false draw black</param>
-        public void DrawPixel(int x, int y, bool colored)
+        /// <param name="enabled">if true draw white, if false draw black</param>
+        public void DrawPixel(int x, int y, bool enabled)
         {
-            DrawPixel(0, 0, colored ? Color.White : Color.Black);
+            DrawPixel(x, y, enabled ? Color.White : Color.Black);
         }
 
         /// <summary>
@@ -118,12 +112,6 @@ namespace Meadow.Foundation.Leds
         /// <param name="y">y position of pixel</param>
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
             var index = 3 * GetIndexForCoordinate(x, y);
 
             buffer[index] ^= 0xFF;
@@ -176,7 +164,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="x">x position</param>
         /// <param name="y">y position</param>
         /// <param name="displayBuffer">buffer to draw</param>
-        public void DrawBuffer(int x, int y, IDisplayBuffer displayBuffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             for (int i = 0; i < displayBuffer.Width; i++)
             {

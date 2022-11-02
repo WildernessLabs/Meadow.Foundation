@@ -1,15 +1,48 @@
-﻿using Meadow.Devices;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.TftSpi
+namespace Meadow.Foundation.Displays
 {
+    /// <summary>
+    /// Represents a Hx8357b TFT color display
+    /// </summary>
     public class Hx8357b : Hx8357d
     {
+        /// <summary>
+        /// Create a new Hx8357b color display object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Hx8357b(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480, ColorType displayColorMode = ColorType.Format16bppRgb565)
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, displayColorMode)
+            int width = 320, int height = 480, ColorType colorMode = ColorType.Format16bppRgb565)
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
+        {
+            Initialize();
+
+            SetRotation(Rotation.Normal);
+        }
+
+        /// <summary>
+        /// Create a new Hx8357b color display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        /// <param name="colorMode">The color mode to use for the display buffer</param>
+        public Hx8357b(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
+                IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
+                int width = 320, int height = 480, ColorType colorMode = ColorType.Format16bppRgb565) :
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             Initialize();
 

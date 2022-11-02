@@ -1,20 +1,48 @@
-using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
-    //EPD1i54B
-    //EPD1i54C
     /// <summary>
     /// Represents an Il0376F ePaper color display
     /// 200x200, e-Ink three-color display, SPI interface 
     /// </summary>
-    public class Il0376F : EpdColorBase
+    public class Il0376F : EPaperTriColorBase
     {
+        /// <summary>
+        /// Create a new Il0376F object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="busyPin">Busy pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
         public Il0376F(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width = 200, int height = 200) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }
+
+        /// <summary>
+        /// Create a new Il0376F ePaper display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="busyPort">Busy input port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        public Il0376F(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
+            IDigitalOutputPort resetPort,
+            IDigitalInputPort busyPort,
+            int width, int height) :
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, width, height)
+        {
+        }
 
         protected override bool IsBlackInverted => false;
         protected override bool IsColorInverted => false;
@@ -56,7 +84,7 @@ namespace Meadow.Foundation.Displays.ePaper
         protected void DisplayFrame()
         {
             byte temp;
-            if (blackImageBuffer != null)
+            if (imageBuffer.BlackBuffer != null)
             {
                 SendCommand(Command.DATA_START_TRANSMISSION_1);
                 DelayMs(2);
@@ -65,7 +93,7 @@ namespace Meadow.Foundation.Displays.ePaper
                     temp = 0x00;
                     for (int bit = 0; bit < 4; bit++)
                     {
-                        if ((blackImageBuffer.Buffer[i] & (0x80 >> bit)) != 0)
+                        if ((imageBuffer.BlackBuffer[i] & (0x80 >> bit)) != 0)
                         {
                             temp |= (byte)(0xC0 >> (bit * 2));
                         }
@@ -74,7 +102,7 @@ namespace Meadow.Foundation.Displays.ePaper
                     temp = 0x00;
                     for (int bit = 4; bit < 8; bit++)
                     {
-                        if ((blackImageBuffer.Buffer[i] & (0x80 >> bit)) != 0)
+                        if ((imageBuffer.BlackBuffer[i] & (0x80 >> bit)) != 0)
                         {
                             temp |= (byte)(0xC0 >> ((bit - 4) * 2));
                         }
@@ -84,11 +112,11 @@ namespace Meadow.Foundation.Displays.ePaper
                 DelayMs(2);
             }
 
-            if (colorImageBuffer != null)
+            if (imageBuffer.ColorBuffer != null)
             {
                 SendCommand(Command.DATA_START_TRANSMISSION_2);
                 DelayMs(2);
-                SendData(colorImageBuffer.Buffer);
+                SendData(imageBuffer.ColorBuffer);
                 DelayMs(2);
             }
             SendCommand(Command.DISPLAY_REFRESH);

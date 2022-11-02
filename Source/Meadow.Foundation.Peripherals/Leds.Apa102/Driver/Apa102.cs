@@ -48,12 +48,7 @@ namespace Meadow.Foundation.Leds
         public float Brightness
         {
             get => brightness;
-            set
-            {
-                if (value < 0) { brightness = 0; }
-                else if (value > 1f) { brightness = 1f; }
-                else { brightness = value; }
-            }
+            set => brightness = Math.Clamp(brightness, 0.0f, 1.0f);
         }
         float brightness;
 
@@ -131,7 +126,7 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Set the color of the specified LED
+        /// Set the color of the specified LED using the global brightness balue
         /// </summary>
         /// <param name="index">Index of the LED to change</param>
         /// <param name="color">The color</param>
@@ -169,14 +164,12 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, byte[] rgb, float brightness = 1f)
         {
-            if (index > numberOfLeds)
+            if (index > numberOfLeds || index < 0)
             {
                 throw new ArgumentOutOfRangeException("Index must be less than the number of leds specified");
             }
 
-            // clamp
-            if (brightness > 1) { brightness = 1; }
-            if (brightness < 0) { brightness = 0; }
+            brightness = Math.Clamp(brightness, 0f, 1f);
 
             var offset = index * 4 + StartHeaderSize;
 
@@ -188,8 +181,17 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Turn off all the Leds
+        /// Clear the display buffer
         /// </summary>
+        public void Clear()
+        {
+            Clear(false);
+        }
+
+        /// <summary>
+        /// Clear the display buffer
+        /// </summary>
+        /// <param name="update">Update the leds if true</param>
         public void Clear(bool update = false)
         {
             byte[] off = { 0, 0, 0 };
@@ -201,7 +203,7 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Transmit the changes to the LEDs 
+        /// Transmit the buffer to the LEDs 
         /// </summary>
         public void Show()
         {

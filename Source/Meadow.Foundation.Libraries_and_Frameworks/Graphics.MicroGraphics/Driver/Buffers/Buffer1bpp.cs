@@ -3,19 +3,15 @@
 namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
-    /// Represents a 1bpp buffer
+    /// Represents a 1bpp pixel buffer with horizontal pixel packing
+    /// 1 byte represents 8 pixels on the x-axis
     /// </summary>
-    public class Buffer1bpp : BufferBase
+    public class Buffer1bpp : PixelBufferBase
     {
-        /// <summary>
-        /// Total bytes used by the buffer
-        /// </summary>
-        public override int ByteCount => Width * Height / 8;
-
         /// <summary>
         /// Color mode of the buffer - 1 bit per pixel 
         /// </summary>
-        public override ColorType displayColorMode => ColorType.Format1bpp;
+        public override ColorType ColorMode => ColorType.Format1bpp;
 
         /// <summary>
         /// Creates a new Buffer1bpp object
@@ -23,10 +19,31 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="width">width of buffer in pixels</param>
         /// <param name="height">height of buffer in pixels</param>
         /// <param name="buffer">data to copy into buffer</param>
-        public Buffer1bpp(int width, int height, byte[] buffer) : base(width, height, buffer) { }
+        public Buffer1bpp(int width, int height, byte[] buffer) : 
+            base(width, height, buffer) 
+        { }
 
-        public Buffer1bpp(int width, int height) : base(width, height) { }
+        /// <summary>
+        /// Creates a new Buffer1bpp object
+        /// </summary>
+        /// <param name="width">width of buffer in pixels</param>
+        /// <param name="height">height of buffer in pixels</param>
+        public Buffer1bpp(int width, int height) : 
+            base(width, height) 
+        { }
 
+        /// <summary>
+        /// Creates a new empty Buffer1bpp object
+        /// </summary>
+        public Buffer1bpp() : base()
+        { }
+
+        /// <summary>
+        /// Creates a new Buffer1bpp object
+        /// </summary>
+        /// <param name="width">width of buffer in pixels</param>
+        /// <param name="height">height of buffer in pixels</param>
+        /// <param name="pageSize">the display page size, this will pad the total buffer size to multiples of the page size</param>
         public Buffer1bpp(int width, int height, int pageSize)
         {
             Width = width;
@@ -38,23 +55,41 @@ namespace Meadow.Foundation.Graphics.Buffers
             Buffer = new byte[bufferSize];
         }
 
-        public bool GetPixelIsColored(int x, int y)
+        /// <summary>
+        /// Is the pixel on / enabled for a given location
+        /// </summary>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
+        /// <returns>true if pixel is set / enabled</returns>
+        public virtual bool GetPixelIsEnabled(int x, int y)
         {
             var index = (y >> 8) * Width + x;
 
             return (Buffer[index] & (1 << y % 8)) != 0;
         }
 
+        /// <summary>
+        /// Get the pixel color 
+        /// </summary>
+        /// <param name="x">x location of pixel</param>
+        /// <param name="y">y location of pixel</param>
+        /// <returns>The pixel color as a Color object - will be black or white only</returns>
         public override Color GetPixel(int x, int y)
         {
-            return GetPixelIsColored(x, y) ? Color.White : Color.Black;
+            return GetPixelIsEnabled(x, y) ? Color.White : Color.Black;
         }
 
-        public void SetPixel(int x, int y, bool colored)
+        /// <summary>
+        /// Set a pixel in the display buffer
+        /// </summary>
+        /// <param name="x">x position in pixels from left</param>
+        /// <param name="y">y position in pixels from top</param>
+        /// <param name="enabled">is pixel enabled (on)</param>
+        public virtual void SetPixel(int x, int y, bool enabled)
         {
             var index = (y >> 3) * Width + x; //divide by 8
 
-            if (colored)
+            if (enabled)
             {
                 Buffer[index] = (byte)(Buffer[index] | (byte)(1 << (y % 8)));
             }
@@ -64,17 +99,27 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
+        /// <summary>
+        /// Set a pixel in the display buffer
+        /// </summary>
+        /// <param name="x">x position in pixels from left</param>
+        /// <param name="y">y position in pixels from top</param>
+        /// <param name="color">the color of the pixel - will snap to black or white (on/off)</param>
         public override void SetPixel(int x, int y, Color color)
         {
             SetPixel(x, y, color.Color1bpp);
         }
 
+        /// <summary>
+        /// Fill the buffer with a color
+        /// </summary>
+        /// <param name="color">the fill color - will snap to black or white (on/off)</param>
         public override void Fill(Color color)
         {
             Clear(color.Color1bpp);
         }
 
-        public override void Fill(Color color, int x, int y, int width, int height)
+        public override void Fill(int x, int y, int width, int height, Color color)
         {
             if (x < 0 || x + width > Width ||
                 y < 0 || y + height > Height)
@@ -91,7 +136,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     if((j + y) % 8 == 0 && j + y + 8 <= height)
                     {
                         //set an entire byte - fast
-                        Buffer[((j + y) >> 3) * Width + x + i] = (byte)(isColored ? 0xFF : 0);
+                        Buffer[((j + y) >> 3) * Width + x + i] = (byte)((isColored) ? 0xFF : 0);
                         j += 7; //the main loop will add 1 to make it 8
                     }
                     else
@@ -102,10 +147,14 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
-        public void Clear(bool isColored)
+        /// <summary>
+        /// Clear the display
+        /// </summary>
+        /// <param name="enabled">should the display pixels be enabled / on or clear / off</param>
+        public void Clear(bool enabled)
         {
             // split the color in to two byte values
-            Buffer[0] = (byte)(isColored ? 0xFF : 0);
+            Buffer[0] = (byte)(enabled ? 0xFF : 0);
 
             int arrayMidPoint = Buffer.Length / 2;
             int copyLength;
@@ -118,78 +167,50 @@ namespace Meadow.Foundation.Graphics.Buffers
             Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
         }
 
-        public new void WriteBuffer(int x, int y, IDisplayBuffer buffer)
+        /// <summary>
+        /// Invert a pixel
+        /// </summary>
+        /// <param name="x">x position of pixel</param>
+        /// <param name="y">y position of pixel</param>
+        public override void InvertPixel(int x, int y)
         {
-            if (base.WriteBuffer(x, y, buffer))
-            {   //call the base for validation
-                //and to handle the slow path when buffers don't match
-                return;
-            }
+            var index = (y / 8 * Width) + x;
 
-            for (int i = 0; i < buffer.Width; i++)
+            Buffer[index] = Buffer[index] ^= (byte)(1 << y % 8);
+        }
+
+        /// <summary>
+        /// Write a buffer to specific location to the current buffer
+        /// </summary>
+        /// <param name="x">x origin</param>
+        /// <param name="y">y origin</param>
+        /// <param name="buffer">buffer to write</param>
+        public override void WriteBuffer(int x, int y, IPixelBuffer buffer)
+        {
+            if (buffer.ColorMode == ColorMode)
             {
-                for (int j = 0; j < buffer.Height; j++)
+                for (int i = 0; i < buffer.Width; i++)
                 {
-                    //if we got really clever we could find other alignment points but this is a good start
-                    if(y%8 == 0 && j + 8 <= buffer.Height)
+                    for (int j = 0; j < buffer.Height; j++)
                     {
-                        //copy an entire byte - fast
-                        Buffer[((y + j) >> 3) * Width + x + i] = buffer.Buffer[(j >> 3) * buffer.Width + i];
-                        j += 7; //the main loop will add 1 to make it 8
-                    }
-                    else
-                    {   //else 1 bit at a time 
-                        SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsColored(i, j));
+                        //if we got really clever we could find other alignment points but this is a good start
+                        if (y % 8 == 0 && j + 8 <= buffer.Height)
+                        {
+                            //copy an entire byte - fast
+                            Buffer[((y + j) >> 3) * Width + x + i] = buffer.Buffer[(j >> 3) * buffer.Width + i];
+                            j += 7; //the main loop will add 1 to make it 8
+                        }
+                        else
+                        {   //else 1 bit at a time 
+                            SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsEnabled(i, j));
+                        }
                     }
                 }
             }
-        }
-
-        public Buffer1bpp Rotate(RotationType rotation)
-        {
-            Buffer1bpp newBuffer;
-
-            switch(rotation)
+            else
             {
-                case RotationType._90Degrees:
-                    newBuffer = new Buffer1bpp(Height, Width);
-                    for(int i = 0; i < Width; i++)
-                    {
-                        for(int j = 0; j < Height; j++)
-                        {   
-                            newBuffer.SetPixel(Height - j - 1, i, GetPixel(i, j));
-                        }
-                    }
-                    break;
-                case RotationType._270Degrees:
-                    newBuffer = new Buffer1bpp(Height, Width);
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {   
-                            newBuffer.SetPixel(j, Width - i - 1, GetPixel(i, j));
-                        }
-                    }
-                    break;
-                case RotationType._180Degrees:
-                    newBuffer = new Buffer1bpp(Width, Height);
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {   
-                            newBuffer.SetPixel(Width - i - 1, Height - j - 1, GetPixel(i, j));
-                        }
-                    }
-                    break;
-                case RotationType.Default:
-                default:
-                    newBuffer = new Buffer1bpp(Width, Height);
-                    Array.Copy(Buffer, newBuffer.Buffer, ByteCount);
-                    break;
-
+                base.WriteBuffer(x, y, buffer);
             }
-
-            return newBuffer;
         }
     }
 }

@@ -7,17 +7,18 @@ using Meadow.Hardware;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensors.Buttons.PushButton_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         RgbPwmLed led;
         List<PushButton> pushButtons;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -25,6 +26,8 @@ namespace Sensors.Buttons.PushButton_Sample
             TestMultiplePorts();
 
             Console.WriteLine("PushButton(s) ready!!!");
+
+            return Task.CompletedTask;
         }
 
         void TestAllResistorTypes()
@@ -41,7 +44,7 @@ namespace Sensors.Buttons.PushButton_Sample
             var inputInternalPullUp = Device.CreateDigitalInputPort(
                 Device.Pins.MISO,
                 InterruptMode.EdgeBoth,
-                ResistorMode.InternalPullUp, 20);
+                ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(20), TimeSpan.Zero);
             var buttonInternalPullUp = new PushButton(inputInternalPullUp);
 
             pushButtons.Add(buttonInternalPullUp);
@@ -49,7 +52,7 @@ namespace Sensors.Buttons.PushButton_Sample
             var inputInternalPullDown = Device.CreateDigitalInputPort(
                 pin: Device.Pins.D02,
                 InterruptMode.EdgeBoth,
-                resistorMode: ResistorMode.InternalPullDown, 20);
+                resistorMode: ResistorMode.InternalPullDown, TimeSpan.FromMilliseconds(20), TimeSpan.Zero);
             var buttonInternalPullDown = new PushButton(inputInternalPullDown);
 
             pushButtons.Add(buttonInternalPullDown);
@@ -72,7 +75,7 @@ namespace Sensors.Buttons.PushButton_Sample
 
             foreach (var pushButton in pushButtons)
             {
-                pushButton.LongClickedThreshold = new TimeSpan(0,0,1);
+                pushButton.LongClickedThreshold = new TimeSpan(0, 0, 1);
 
                 pushButton.Clicked += PushButtonClicked;
                 pushButton.PressStarted += PushButtonPressStarted;
@@ -83,7 +86,7 @@ namespace Sensors.Buttons.PushButton_Sample
             led.SetColor(Color.Green);
         }
 
-        void TestMultiplePorts() 
+        void TestMultiplePorts()
         {
             // Important note: You can only use on Push Button per Group Set (GSXX)
             pushButtons = new List<PushButton>

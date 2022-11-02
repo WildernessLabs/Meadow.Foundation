@@ -1,54 +1,107 @@
-using Meadow.Devices;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 using System;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.TftSpi
+namespace Meadow.Foundation.Displays
 {
     public abstract partial class TftSpiBase : IGraphicsDisplay
     {
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
-        public ColorType ColorMode => colorMode;
-        protected ColorType colorMode;
+        /// <summary>
+        /// The current display color mode
+        /// </summary>
+        public ColorType ColorMode => imageBuffer.ColorMode;
 
+        /// <summary>
+        /// The display default color mode
+        /// </summary>
         public abstract ColorType DefautColorMode { get; }
+
+        /// <summary>
+        /// Width of display in pixels
+        /// </summary>
         public int Width => imageBuffer.Width;
+
+        /// <summary>
+        /// Height of display in pixels
+        /// </summary>
         public int Height => imageBuffer.Height;
-        public bool IgnoreOutOfBoundsPixels { get; set; }
+
+        /// <summary>
+        /// The buffer used to store the pixel data for the display
+        /// </summary>
+        public IPixelBuffer PixelBuffer => imageBuffer;
 
         protected IDigitalOutputPort dataCommandPort;
         protected IDigitalOutputPort resetPort;
         protected IDigitalOutputPort chipSelectPort;
         protected ISpiPeripheral spiDisplay;
 
-        protected IDisplayBuffer imageBuffer;
+        protected IPixelBuffer imageBuffer;
         protected Memory<byte> readBuffer;
-
-       // protected int xMin, xMax, yMin, yMax;
 
         protected const bool Data = true;
         protected const bool Command = false;
 
         protected abstract void Initialize();
 
-        internal TftSpiBase()
-        { }
-
+        /// <summary>
+        /// Represents an abstract TftSpiBase object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="dcPin">Data command pin</param>
+        /// <param name="resetPin">Reset pin</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        /// <param name="colorMode">The color mode to use for the display buffer</param>
         public TftSpiBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, ColorType mode = ColorType.Format16bppRgb565)
+            int width, int height, ColorType colorMode = ColorType.Format16bppRgb565)
         {
             dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
             if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }
             if (chipSelectPin != null) { chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false); }
 
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
-
-            CreateBuffer(mode, width, height);
+            
+            CreateBuffer(colorMode, width, height);
         }
 
+        /// <summary>
+        /// Represents an abstract TftSpiBase object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        /// <param name="colorMode">The color mode to use for the display buffer</param>
+        public TftSpiBase(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
+            IDigitalOutputPort resetPort,
+            int width, int height, 
+            ColorType colorMode = ColorType.Format16bppRgb565)
+        {
+            this.dataCommandPort = dataCommandPort;
+            this.chipSelectPort = chipSelectPort;
+            this.resetPort = resetPort;
+
+            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
+
+            CreateBuffer(colorMode, width, height);
+        }
+
+        /// <summary>
+        /// Is the color mode supported on this display
+        /// </summary>
+        /// <param name="mode">The color mode</param>
+        /// <returns>true if supported</returns>
         public virtual bool IsColorModeSupported(ColorType mode)
         {
             if (mode == ColorType.Format12bppRgb444 ||
@@ -66,7 +119,12 @@ namespace Meadow.Foundation.Displays.TftSpi
                 throw new ArgumentException($"Mode {mode} not supported");
             }
 
-            if (mode == ColorType.Format16bppRgb565)
+            if (mode == ColorType.Format24bppRgb888)
+            {
+                imageBuffer = new BufferRgb888(width, height);
+            }
+
+            else if (mode == ColorType.Format16bppRgb565)
             {
                 imageBuffer = new BufferRgb565(width, height);
             }
@@ -75,7 +133,6 @@ namespace Meadow.Foundation.Displays.TftSpi
                 imageBuffer = new BufferRgb444(width, height);
             }
             readBuffer = new byte[imageBuffer.ByteCount];
-            colorMode = mode;
         }
 
         protected abstract void SetAddressWindow(int x0, int y0, int x1, int y1);
@@ -91,14 +148,14 @@ namespace Meadow.Foundation.Displays.TftSpi
             if (updateDisplay) { Show(); }
         }
 
+        /// <summary>
+        /// Fill the display buffer with a color
+        /// </summary>
+        /// <param name="color">The fill color</param>
+        /// <param name="updateDisplay">If true, update the display after filling the buffer</param>
         public void Fill(Color color, bool updateDisplay = false)
         {
-            Clear(GetUShortFromColor(color), updateDisplay);
-        }
-
-        protected void Clear(ushort color, bool updateDisplay = false)
-        {
-            ClearScreen(color);
+            Clear(color);
 
             if (updateDisplay)
             {
@@ -106,156 +163,60 @@ namespace Meadow.Foundation.Displays.TftSpi
             }
         }
 
-        public void DrawBuffer(int x, int y, IDisplayBuffer buffer)
+        public void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
             imageBuffer.WriteBuffer(x, y, buffer);
         }
-   
+
         /// <summary>
-        /// Draw a single pixel 
+        /// Draw pixel at a location
+        /// Primarily used for monochrome displays, prefer overload that accepts a Color
         /// </summary>
-        /// <param name="x">x location </param>
-        /// <param name="y">y location</param>
-        /// <param name="colored">Turn the pixel on (true) or off (false).</param>
-        public void DrawPixel(int x, int y, bool colored)
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
+        /// <param name="enabled">Turn the pixel on (true) or off (false).</param>
+        public void DrawPixel(int x, int y, bool enabled)
         {
-            //this works for now but it's a bit of a hack for 444
-            SetPixel(x, y, colored ? (ushort)0xFF : (ushort)0);
+            DrawPixel(x, y, enabled ? Color.White : Color.Black);
         }
 
         /// <summary>
         /// Draw a single pixel 
         /// </summary>
-        /// <param name="x">x location </param>
-        /// <param name="y">y location</param>
-        /// <param name="color">16bpp 5/6/5 or 4/4/4 ushort value for pixel color</param>
-        public void DrawPixel(int x, int y, ushort color)
-        {
-            SetPixel(x, y, color);
-        }
-
-        /// <summary>
-        /// Draw a single pixel 
-        /// </summary>
-        /// <param name="x">x location </param>
-        /// <param name="y">y location</param>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
         /// <param name="color">Color of pixel.</param>
         public void DrawPixel(int x, int y, Color color)
         {
-            SetPixel(x, y, GetUShortFromColor(color));
+            imageBuffer.SetPixel(x, y, color);
         }
 
         /// <summary>
         /// Draw a single pixel 
         /// </summary>
-        /// <param name="x">x location</param>
-        /// <param name="y">y location</param>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
         /// <param name="r">8 bit red value</param>
         /// <param name="g">8 bit green value</param>
         /// <param name="b">8 bit blue value</param>
         public void DrawPixel(int x, int y, byte r, byte g, byte b)
         {
-            SetPixel(x, y, GetUShortFromColor(new Color(r, g, b)));
+            DrawPixel(x, y, new Color(r, g, b));
         }
 
         /// <summary>
         /// Invert the color of a single pixel as represented in the display buffer
         /// </summary>
-        /// <param name="x">x location</param>
-        /// <param name="y">y location</param>
+        /// <param name="x">x location in pixels</param>
+        /// <param name="y">y location in pixels</param>
         public void InvertPixel(int x, int y)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
-            if (colorMode == ColorType.Format16bppRgb565)
-            {
-                InvertPixelRgb565(x, y);
-            }
-            else
-            {
-                InvertPixelRgb444(x, y);
-            }
-        }
-
-        void InvertPixelRgb565(int x, int y)
-        {
-            //get current color
-            ushort color = (imageBuffer as BufferRgb565).GetPixel16bpp(x, y);
-
-            //split into R,G,B & invert
-            byte r = (byte)(0x1F - ((color >> 11) & 0x1F));
-            byte g = (byte)(0x3F - ((color >> 5) & 0x3F));
-            byte b = (byte)(0x1F - (color) & 0x1F);
-
-            //get new color
-            color = (ushort)(r << 11 | g << 5 | b);
-
-            (imageBuffer as BufferRgb565).SetPixel(x, y, color);
-        }
-
-        public void InvertPixelRgb444(int x, int y)
-        {
-            byte r, g, b;
-            int index;
-            if(x % 2 == 0)
-            {
-                index = (x + y * Width) * 3 / 2;
-
-                r = (byte)(imageBuffer.Buffer[index] >> 4);
-                g = (byte)(imageBuffer.Buffer[index] & 0x0F);
-                b = (byte)(imageBuffer.Buffer[index + 1] >> 4);
-            }
-            else
-            {
-                index = ((x - 1 + y * Width) * 3 / 2) + 1;
-                r = (byte)(imageBuffer.Buffer[index] & 0x0F);
-                g = (byte)(imageBuffer.Buffer[index + 1] >> 4);
-                b = (byte)(imageBuffer.Buffer[index + 1] & 0x0F);
-            }
-
-            r = (byte)(~r & 0x0F);
-            g = (byte)(~g & 0x0F);
-            b = (byte)(~b & 0x0F);
-
-            //get new color
-            var color = (ushort)(r << 8 | g << 4 | b);
-
-            (imageBuffer as BufferRgb444).SetPixel(x, y, color);
+            PixelBuffer.InvertPixel(x, y);
         }
 
         public void Fill(int x, int y, int width, int height, Color color)
         {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0) x = 0;
-                if (y < 0) y = 0;
-                if (x > Width - 1) x = Width - 1;
-                if (y > Height - 1) y = Height - 1;
-            }
-
-            imageBuffer.Fill(color, x, y, width, height);
-        }
-
-        private void SetPixel(int x, int y, ushort color)
-        {
-            if (IgnoreOutOfBoundsPixels)
-            {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                { return; }
-            }
-
-            if (colorMode == ColorType.Format16bppRgb565)
-            {
-                (imageBuffer as BufferRgb565).SetPixel(x, y, color);
-            }
-            else
-            {
-                (imageBuffer as BufferRgb444).SetPixel(x, y, color);
-            }
+            imageBuffer.Fill(x, y, width, height, color);
         }
 
         /// <summary>
@@ -267,7 +228,6 @@ namespace Meadow.Foundation.Displays.TftSpi
 
             dataCommandPort.State = Data;
 
-            //spiDisplay.Write(imageBuffer.Buffer);
             spiDisplay.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer.Span);
         }
 
@@ -278,9 +238,10 @@ namespace Meadow.Foundation.Displays.TftSpi
         /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
-            if(colorMode != ColorType.Format16bppRgb565)
+            if(PixelBuffer.ColorMode != ColorType.Format16bppRgb565)
             {   //only supported in 565 mode 
                 Show();
+                return;
             }
 
             if(right < left || bottom < top)
@@ -299,59 +260,81 @@ namespace Meadow.Foundation.Displays.TftSpi
             {
                 sourceIndex = ((y * Width) + left) * sizeof(ushort);
 
-                //  spiDisplay.Write(imageBuffer.Buffer[sourceIndex..(sourceIndex + len)]);
                 spiDisplay.Bus.Exchange(
                     chipSelectPort,
                     imageBuffer.Buffer[sourceIndex..(sourceIndex + len)],
                     readBuffer.Span[0..len]);
             }
         }
-
-        private ushort GetUShortFromColor(Color color)
-        {
-            if (colorMode == ColorType.Format16bppRgb565)
-                return color.Color16bppRgb565;
-            else //asume 12BppRgb444
-                return color.Color12bppRgb444;
-        }
-
+        /// <summary>
+        /// Write a byte to the display
+        /// </summary>
+        /// <param name="value">The byte to send</param>
         protected void Write(byte value)
         {
             spiDisplay.Write(value);
         }
 
+        /// <summary>
+        /// Write a buffer to the display
+        /// </summary>
+        /// <param name="data">The data to send</param>
         protected void Write(byte[] data)
         {
             spiDisplay.Write(data);
         }
 
+        /// <summary>
+        /// Delay 
+        /// </summary>
+        /// <param name="millseconds">Milliseconds to delay</param>
         protected void DelayMs(int millseconds)
         {
             Thread.Sleep(millseconds);
         }
 
+        /// <summary>
+        /// Send a command to the display
+        /// </summary>
+        /// <param name="command">The command to send</param>
         protected void SendCommand(Register command)
         {
             SendCommand((byte)command);
         }
 
+        /// <summary>
+        /// Send a command to the display
+        /// </summary>
+        /// <param name="command">The command to send as a byte</param>
         protected void SendCommand(byte command)
         {
             dataCommandPort.State = Command;
             Write(command);
         }
 
+        /// <summary>
+        /// Send a single byte to the display (convenience method)
+        /// </summary>
+        /// <param name="data">The data to send </param>
         protected void SendData(int data)
         {
             SendData((byte)data);
         }
 
+        /// <summary>
+        /// Send a single byte to the display
+        /// </summary>
+        /// <param name="data">The byte to send</param>
         protected void SendData(byte data)
         {
             dataCommandPort.State = Data;
             Write(data);
         }
 
+        /// <summary>
+        /// Send a byte array of data to the display
+        /// </summary>
+        /// <param name="data">The data</param>
         protected void SendData(byte[] data)
         {
             dataCommandPort.State = Data;
@@ -359,24 +342,9 @@ namespace Meadow.Foundation.Displays.TftSpi
         }
 
         /// <summary>
-        /// Directly sets the display to a 16bpp color value
+        /// Clear the display buffer to a color
         /// </summary>
-        /// <param name="color">16bpp color value (565)</param>
-        public void ClearScreen(ushort color = 0)
-        {
-            // split the color in to two byte values
-            var high = (byte)(color >> 8);
-            var low = (byte)color;
-
-            int index = 0;
-            while (index < imageBuffer.Buffer.Length)
-            {
-                imageBuffer.Buffer[index] = high;
-                imageBuffer.Buffer[index + 1] = low;
-                index += 2;
-            }
-        }
-
+        /// <param name="color">The clear color</param>
         public void Clear(Color color)
         {
             imageBuffer.Fill(color);

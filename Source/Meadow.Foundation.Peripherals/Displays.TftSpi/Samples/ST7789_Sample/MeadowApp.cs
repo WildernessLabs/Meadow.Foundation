@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
-using Meadow.Foundation.Displays.TftSpi;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
@@ -21,16 +22,20 @@ namespace Displays.Tft.ST7789_Sample
         chipSelectPin: Device.Pins.D14,
         dcPin: Device.Pins.D03,
         resetPin: Device.Pins.D04,
+       ProjLab:
+        chipSelectPin: Device.Pins.A03,
+        dcPin: Device.Pins.A04,
+        resetPin: Device.Pins.A05,
     */
 
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
         MicroGraphics graphics;
         St7789 display;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing ...");
 
@@ -40,17 +45,25 @@ namespace Displays.Tft.ST7789_Sample
             display = new St7789(
                 device: Device,
                 spiBus: spiBus,
-                chipSelectPin: Device.Pins.D15,
-                dcPin: Device.Pins.D11,
-                resetPin: Device.Pins.D14,
-                width: 240, height: 240, displayColorMode: ColorType.Format16bppRgb565)
+                chipSelectPin: Device.Pins.A03,
+                dcPin: Device.Pins.A04,
+                resetPin: Device.Pins.A05,
+                width: 240, height: 240, colorMode: ColorType.Format16bppRgb565);
+
+            display.Clear(Color.AliceBlue);
+            display.Show();
+
+            graphics = new MicroGraphics(display)
             {
+                Rotation = RotationType._90Degrees,
                 IgnoreOutOfBoundsPixels = true
             };
 
-            graphics = new MicroGraphics(display);
-            graphics.Rotation = RotationType._180Degrees;
+            return base.Initialize();
+        }
 
+        public override Task Run()
+        {
             graphics.Clear(true);
 
             graphics.DrawRectangle(120, 0, 120, 220, Color.White, true);
@@ -63,7 +76,9 @@ namespace Displays.Tft.ST7789_Sample
 
             graphics.Show();
 
-            BufferRotationTest();
+            DisplayTest();
+
+            return base.Run();
         }
 
         //<!=SNOP=>
@@ -71,15 +86,15 @@ namespace Displays.Tft.ST7789_Sample
         int sleepDuration = 500;
         void DisplayTest()
         { 
-
             Thread.Sleep(sleepDuration);
+
+            var stopwatch = new Stopwatch();
 
             while (true)
             {
-                BufferRotationTest();
-                Thread.Sleep(sleepDuration);
+                stopwatch.Restart();
 
-                PartialUpdateTest();
+                BufferRotationTest();
                 Thread.Sleep(sleepDuration);
 
                 PathTest();
@@ -117,6 +132,9 @@ namespace Displays.Tft.ST7789_Sample
 
                 InvertTest();
                 Thread.Sleep(sleepDuration);
+
+                stopwatch.Stop();
+                Console.WriteLine($"Total time: {stopwatch.ElapsedMilliseconds}ms");
             }
         }
 
@@ -184,7 +202,7 @@ namespace Displays.Tft.ST7789_Sample
 
             graphics.Clear(true);
 
-            for(int i = 0; i < 200; i++)
+            for(int i = 0; i < 1; i++)
             {
                 if(i == 0) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Blue, true);
                 if (i == 50) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.LawnGreen, true);

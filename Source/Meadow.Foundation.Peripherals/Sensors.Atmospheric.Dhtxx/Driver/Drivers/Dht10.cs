@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
+namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Represents a DHT10 temp / humidity sensor
@@ -36,9 +36,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric.Dhtxx
 
             Peripheral.Write(CMD_START);
             Thread.Sleep(75);
-            // TODO: what's up with this?? it's just thrown away?
+            
+            //data stored in the read buffer
             Peripheral.Read(ReadBuffer.Span);
-            //_readBuffer = Peripheral.ReadBytes(6);
         }
 
         internal override float GetHumidity()

@@ -11,13 +11,16 @@ namespace Meadow.Foundation.Leds
     /// Represents an LED whose voltage is limited by the duty-cycle of a PWM
     /// signal.
     /// </summary>
-    public class PwmLed : IPwmLed
+    public class PwmLed : IPwmLed, IDisposable
     {
-        Task? animationTask;
-        CancellationTokenSource? cancellationTokenSource;
+        private Task? animationTask;
+        private CancellationTokenSource? cancellationTokenSource;
+        private bool createdPwm = false;
 
-        readonly float maximumPwmDuty = 1;
-        readonly bool inverted;
+        private float maximumPwmDuty = 1;
+        private bool inverted;
+
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Gets the brightness of the LED, controlled by a PWM signal, and limited by the 
@@ -82,12 +85,13 @@ namespace Meadow.Foundation.Leds
             IPwmOutputController device, 
             IPin pin,
             Voltage forwardVoltage, 
-            CircuitTerminationType terminationType = CircuitTerminationType.CommonGround) : 
-            this (
-                device.CreatePwmPort(pin), 
-                forwardVoltage, 
-                terminationType) 
-        { }
+            CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
+        {
+            var pwm = device.CreatePwmPort(pin, new Frequency(100, Frequency.UnitType.Hertz));
+            createdPwm = true; // signal that we created it, so we should dispose of it
+            pwm.DutyCycle = 0;
+            Initialize(pwm, forwardVoltage, terminationType);
+        }
 
         /// <summary>
         /// Creates a new PwmLed on the specified PWM pin and limited to the appropriate 
@@ -102,12 +106,20 @@ namespace Meadow.Foundation.Leds
             Voltage forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
+            Initialize(pwmPort, forwardVoltage, terminationType);
+        }
+
+        private void Initialize(
+            IPwmPort pwmPort,
+            Voltage forwardVoltage,
+            CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
+        {
             // validate and persist forward voltage
             if (forwardVoltage < new Voltage(0) || forwardVoltage > new Voltage(3.3))
             {
                 throw new ArgumentOutOfRangeException(nameof(forwardVoltage), "error, forward voltage must be between 0, and 3.3");
             }
-            
+
             ForwardVoltage = forwardVoltage;
 
             inverted = (terminationType == CircuitTerminationType.High);
@@ -116,9 +128,27 @@ namespace Meadow.Foundation.Leds
 
             Port = pwmPort;
             Port.Inverted = inverted;
-            Port.Frequency = 100;
-            Port.DutyCycle = 0;
             Port.Start();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPwm)
+                {
+                    Port.Dispose();
+
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -146,6 +176,10 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start a Blink animation which sets the brightness of the LED alternating between a low and high brightness setting.
         /// </summary>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="Exception"></exception>
         public void StartBlink(float highBrightness = 1f, float lowBrightness = 0f)
         {
             var onDuration = TimeSpan.FromMilliseconds(500);
@@ -177,6 +211,12 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
         /// </summary>
+        /// <param name="onDuration"></param>
+        /// <param name="offDuration"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="Exception"></exception>
         public void StartBlink(TimeSpan onDuration, TimeSpan offDuration, float highBrightness = 1f, float lowBrightness = 0f)
         {
             if (highBrightness > 1 || highBrightness <= 0)
@@ -210,7 +250,6 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness">maximum brightness</param>
         /// <param name="lowBrightness">minimum brightness</param>
         /// <param name="cancellationToken">token for cancellation</param>
-        /// <returns></returns>
         protected async Task StartBlinkAsync(TimeSpan onDuration, TimeSpan offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             while (true)
@@ -232,6 +271,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting.
         /// </summary>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
         public void StartPulse(float highBrightness = 1, float lowBrightness = 0.15F)
         {
             var pulseDuration = TimeSpan.FromMilliseconds(600);
@@ -262,6 +303,9 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
         /// </summary>
+        /// <param name="pulseDuration"></param>
+        /// <param name="highBrightness"></param>
+        /// <param name="lowBrightness"></param>
         public void StartPulse(TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (highBrightness > 1 || highBrightness <= 0) 
@@ -294,16 +338,13 @@ namespace Meadow.Foundation.Leds
         /// <param name="highBrightness">maximum brightness</param>
         /// <param name="lowBrightness">minimum brightness</param>
         /// <param name="cancellationToken">token used to cancel pulse</param>
-        /// <returns></returns>
         protected async Task StartPulseAsync(TimeSpan pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
         {
             float brightness = lowBrightness;
             bool ascending = true;
             TimeSpan intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
-            float steps = pulseDuration.Milliseconds / intervalTime.Milliseconds;
-            float changeAmount = (highBrightness - lowBrightness) / steps;
-            float changeUp = changeAmount;
-            float changeDown = -1 * changeAmount;
+            float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
+            float delta = (highBrightness - lowBrightness) / steps;
 
             while (true)
             {
@@ -316,19 +357,18 @@ namespace Meadow.Foundation.Leds
                 {
                     ascending = true;
                 }
-                else if (Math.Abs(brightness - highBrightness) < 0.001)
+                else if (brightness >= highBrightness)
                 {
                     ascending = false;
                 }
 
-                brightness += (ascending) ? changeUp : changeDown;
+                brightness += delta * (ascending ? 1 : -1);
 
                 if (brightness < 0)
                 {
                     brightness = 0;
                 }
-                else
-                if (brightness > 1)
+                else if (brightness > 1)
                 {
                     brightness = 1;
                 }

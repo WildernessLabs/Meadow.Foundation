@@ -1,16 +1,12 @@
-
-using System.Threading;
-using Meadow.Devices;
 using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
-    //aka WaveShare EPD 2i9B
     /// <summary>
     /// Represents an Il0373 ePaper color display
     /// 104x212, 2.13inch E-Ink three-color display, SPI interface 
     /// </summary>
-    public class Il0373 : EpdColorBase
+    public class Il0373 : EPaperTriColorBase
     {
         /// <summary>
         /// Create a new IL0373 object
@@ -26,6 +22,25 @@ namespace Meadow.Foundation.Displays.ePaper
         public Il0373(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height) :
             base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
+        { }
+
+        /// <summary>
+        /// Create a new Il0373 ePaper display object
+        /// </summary>
+        /// <param name="spiBus">SPI bus connected to display</param>
+        /// <param name="chipSelectPort">Chip select output port</param>
+        /// <param name="dataCommandPort">Data command output port</param>
+        /// <param name="resetPort">Reset output port</param>
+        /// <param name="busyPort">Busy input port</param>
+        /// <param name="width">Width of display in pixels</param>
+        /// <param name="height">Height of display in pixels</param>
+        public Il0373(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
+            IDigitalOutputPort resetPort,
+            IDigitalInputPort busyPort,
+            int width, int height):
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, width, height)
         {
         }
 
@@ -58,9 +73,9 @@ namespace Meadow.Foundation.Displays.ePaper
             SendCommand(Command.VCOM_AND_DATA_INTERVAL_SETTING);
             SendData(0x77);
             SendCommand(Command.RESOLUTION_SETTING);
-            SendData((byte)(Height & 0xFF));//width 128
-            SendData((byte)(Width >> 8) & 0xFF);
             SendData((byte)(Width & 0xFF));
+            SendData((byte)(Height >> 8) & 0xFF);
+            SendData((byte)(Height & 0xFF));
             SendCommand(Command.VCM_DC_SETTING);
             SendData(0x0A);
         }
@@ -186,7 +201,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void Show(int left, int top, int right, int bottom)
         {
-            SetPartialWindow(blackImageBuffer.Buffer, colorImageBuffer.Buffer,
+            SetPartialWindow(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer,
                 left, top, right - left, top - bottom);
 
             DisplayFrame();
@@ -194,48 +209,48 @@ namespace Meadow.Foundation.Displays.ePaper
 
         public override void Show()
         {
-            DisplayFrame(blackImageBuffer.Buffer, colorImageBuffer.Buffer);
+            DisplayFrame(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer);
         }
 
         //clear the frame data from the SRAM, this doesn't update the display
         protected void ClearFrame()
         {
             SendCommand(Command.DATA_START_TRANSMISSION_1);
-            Thread.Sleep(2);
+            DelayMs(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(0xFF);
             }
-            Thread.Sleep(2);
+            DelayMs(2);
 
             SendCommand(Command.DATA_START_TRANSMISSION_2);
-            Thread.Sleep(2);
+            DelayMs(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(0xFF);
             }
-            Thread.Sleep(2);
+            DelayMs(2);
         }
 
         void DisplayFrame(byte[] blackBuffer, byte[] colorBuffer)
         {
             SendCommand(Command.DATA_START_TRANSMISSION_1);
-            Thread.Sleep(2);
+            DelayMs(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(blackBuffer[i]);
             }
-            Thread.Sleep(2);
+            DelayMs(2);
 
             SendCommand(Command.DATA_START_TRANSMISSION_2);
-            Thread.Sleep(2);
+            DelayMs(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(colorBuffer[i]);
             }
-            Thread.Sleep(2);
+            DelayMs(2);
 
             DisplayFrame();
         }

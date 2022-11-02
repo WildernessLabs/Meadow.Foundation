@@ -2,58 +2,16 @@
 
 namespace Meadow.Foundation
 {
-    //TODO: some of these are no longer needed because we have full .NET
-    // consider mari-kondo'ing this.
-
     /// <summary>
-    /// Provide a mechanism to convert from on type (typically string) to
-    /// another .NET type.
-    /// This class provide methods that are available in .NET not in NETMF, for
-    /// example double.TryParse is available, but int.TryParse is not.
+    /// Provide a mechanism to convert from on type to another .NET type
     /// </summary>
     public class Converters
     {
         /// <summary>
-        /// Parse a string and return the integer representation of the string or the
-        /// default value.
+        /// Convert a BCD value in a byte into a decimal representation
         /// </summary>
-        /// <param name="value">String containing the value to be converted.</param>
-        /// <param name="defaultValue">Default value in the case where the string cannot be parsed.</param>
-        /// <returns>Integer representation of the string or the default value.</returns>
-        public static int Integer(string value, int defaultValue = 0)
-        {
-            double result;
-
-            if (!double.TryParse(value, out result))
-            {
-                result = defaultValue;
-            }
-            return (int) result;
-        }
-
-        /// <summary>
-        /// Parse a string and return the double representation of the string or the
-        /// default value.
-        /// </summary>
-        /// <param name="value">String containing the value to be converted.</param>
-        /// <param name="defaultValue">Default value in the case where the string cannot be parsed.</param>
-        /// <returns>Double representation of the string or the default value.</returns>
-        public static double Double(string value, double defaultValue = 0.0)
-        {
-            double result;
-
-            if (!double.TryParse(value, out result))
-            {
-                result = defaultValue;
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Convert a BCD value in a byte into a decimal representation.
-        /// </summary>
-        /// <param name="bcd">BCD value to decode.</param>
-        /// <returns>Decimal version of the BCD value.</returns>
+        /// <param name="bcd">BCD value to decode</param>
+        /// <returns>Decimal version of the BCD value</returns>
         public static byte BCDToByte(byte bcd)
         {
             var result = bcd & 0x0f;
@@ -62,10 +20,10 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        /// Convert a byte to BCD.
+        /// Convert a byte to BCD
         /// </summary>
-        /// <returns>BCD encoded version of the byte value.</returns>
-        /// <param name="v">Byte value to encode.</param>
+        /// <returns>BCD encoded version of the byte value</returns>
+        /// <param name="v">Byte value to encode</param>
         public static byte ByteToBCD(byte v)
         {
             if (v > 99)
@@ -78,15 +36,14 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        /// HSV to rgb. Note that for RGB LED use, you probably want a constant 100% brightness. This doesn't do that. 
-        /// For that Algorithm, check out: https://blog.adafruit.com/2012/03/14/constant-brightness-hsb-to-rgb-algorithm/
+        /// HSV to RGB 
         /// </summary>
-        /// <param name="hue">Hue in degress (0-359°).</param>
-        /// <param name="saturation">Saturation.</param>
-        /// <param name="brightValue">Brightness value.</param>
-        /// <param name="r">The red component. (0-1)</param>
-        /// <param name="g">The green component. (0-1)</param>
-        /// <param name="b">The blue component. (0-1)</param>
+        /// <param name="hue">Hue in degress (0-359°)</param>
+        /// <param name="saturation">Saturation</param>
+        /// <param name="brightValue">Brightness value</param>
+        /// <param name="r">The red component (0-1)</param>
+        /// <param name="g">The green component (0-1)</param>
+        /// <param name="b">The blue component (0-1)</param>
         public static void HsvToRgb(double hue, double saturation, double brightValue, out double r, out double g, out double b)
         {
             double H = hue;

@@ -13,11 +13,11 @@
     <PackageTags>Meadow.Foundation, BNO055, Motion</PackageTags>
     <Version>0.1.54</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Bosch BNO055 9 axis absolute orientation sensor</Description>
+    <Description>Bosch BNO055 I2C 9 axis absolute orientation sensor</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.*" />
   </ItemGroup>
 </Project>

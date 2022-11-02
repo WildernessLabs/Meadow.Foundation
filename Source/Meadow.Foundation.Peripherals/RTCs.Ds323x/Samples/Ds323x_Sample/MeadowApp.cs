@@ -1,21 +1,29 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.RTCs;
 
-namespace MeadowApp
+namespace RTCs.Ds323x_Sample
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        public MeadowApp()
-        {
-            Console.WriteLine("Initialize hardware...");
+        Ds3231 sensor;
 
-            var sensor = new Ds3231(Device, Device.CreateI2cBus(), Device.Pins.D06);
+        public override Task Initialize()
+        {
+            Console.WriteLine("Initialize...");
+
+            sensor = new Ds3231(Device, Device.CreateI2cBus(), Device.Pins.D06);
             sensor.OnAlarm1Raised += Sensor_OnAlarm1Raised;
 
+            return base.Initialize();
+        }
+
+        public override Task Run()
+        {
             sensor.CurrentDateTime = new DateTime(2020, 1, 1);
 
             Console.WriteLine($"Current time: {sensor.CurrentDateTime}");
@@ -23,11 +31,13 @@ namespace MeadowApp
 
             sensor.ClearInterrupt(Ds323x.Alarm.BothAlarmsRaised);
 
-            sensor.SetAlarm(Ds323x.Alarm.Alarm1Raised, 
-                            new DateTime(2020, 1, 1, 1, 0, 0),
-                            Ds323x.AlarmType.WhenSecondsMatch);
+            sensor.SetAlarm(Ds323x.Alarm.Alarm1Raised,
+                new DateTime(2020, 1, 1, 1, 0, 0),
+                Ds323x.AlarmType.WhenSecondsMatch);
 
             sensor.DisplayRegisters();
+
+            return base.Run();
         }
 
         private void Sensor_OnAlarm1Raised(object sender)

@@ -1,9 +1,8 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays.Ssd130x;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.TextDisplayMenu;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
@@ -15,10 +14,8 @@ using System.Threading.Tasks;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
-        RgbPwmLed onboardLed;
-
         Menu menu;
 
         MicroGraphics graphics;
@@ -29,20 +26,9 @@ namespace MeadowApp
         IButton left = null;
         IButton right = null;
 
-        public MeadowApp()
+        public override Task Initialize()
         {
-            Initialize();
-        }
-
-        void Initialize()
-        {
-            Console.WriteLine("Initialize hardware...");
-
-            onboardLed = new RgbPwmLed(device: Device,
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                Meadow.Peripherals.Leds.IRgbLed.CommonType.CommonAnode);
+            Console.WriteLine("Initialize...");
 
             Console.WriteLine("Create Display with SPI...");
 
@@ -87,6 +73,8 @@ namespace MeadowApp
             down.Clicked += Down_Clicked;
 
             menu.Enable();
+
+            return Task.CompletedTask;
         }
 
         private void Down_Clicked(object sender, EventArgs e)
@@ -180,7 +168,7 @@ namespace MeadowApp
 
             DisableMenu();
 
-            var t = StartGame(e.Command);
+            _ = StartGame(e.Command);
         }
 
         byte[] LoadResource(string filename)
@@ -188,14 +176,10 @@ namespace MeadowApp
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = $"Graphics.TextDisplayMenu_GameMenu_Sample.{filename}";
 
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            {
-                using (var ms = new MemoryStream())
-                {
-                    stream.CopyTo(ms);
-                    return ms.ToArray();
-                }
-            }
+            using Stream stream = assembly.GetManifestResourceStream(resourceName);
+            using var ms = new MemoryStream();
+            stream.CopyTo(ms);
+            return ms.ToArray();
         }
     }
 }
