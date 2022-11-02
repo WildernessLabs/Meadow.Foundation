@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Web.Maple.MapleServer.csproj" />
+    <PackageReference Include="Meadow.Foundation.Web.Maple.Server" Version="0.*" />
   </ItemGroup>
 
 </Project>

@@ -16,7 +16,7 @@
     <Description>Emc2101 I2C fan controller and temperature monitor</Description>
   </PropertyGroup>
   <ItemGroup>
-	<ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.*" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>
