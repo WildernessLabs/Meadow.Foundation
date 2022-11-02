@@ -30,6 +30,6 @@
     <PackageReference Include="SimpleJson" Version="0.38.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Meadow.Logging\lib\Meadow.Logging.csproj" />
+    <PackageReference Include="Meadow.Logging" Version="0.*" />
   </ItemGroup>
 </Project>
