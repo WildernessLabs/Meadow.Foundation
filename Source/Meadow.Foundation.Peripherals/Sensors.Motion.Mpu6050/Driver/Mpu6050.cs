@@ -79,6 +79,10 @@ namespace Meadow.Foundation.Sensors.Motion
             AccelerometerScale = (ReadBuffer.Span[2] & 0b00011000) >> 3;
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> changeResult)
         {
             if (changeResult.New.AngularVelocity3D is { } angular)
@@ -96,6 +100,10 @@ namespace Meadow.Foundation.Sensors.Motion
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() =>

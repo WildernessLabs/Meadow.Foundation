@@ -63,8 +63,6 @@ namespace Meadow.Foundation.Sensors.Light
            );
         }
 
-        //==== methods
-
         /// <summary>
         /// Starts continuously sampling the sensor.
         ///

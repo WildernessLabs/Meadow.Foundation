@@ -18,19 +18,13 @@ namespace Meadow.Foundation.Sensors.Light
             ILightSensor//, IColorSensor
     {
         // TODO: missing event for ColorUpdated
-        //==== events
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
-        //==== internals
         private byte integrationTimeByte;
         private double integrationTime;
         private bool isLongTime;
         private GainType gain;
 
-        //==== properties
-        /// <summary>
-        /// 
-        /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
 
         /// <summary>
@@ -80,8 +74,6 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        //==== ctors
-
         /// <summary>
         /// Create a new instance of the Tcs3472x class with the specified I2C address
         /// </summary>
@@ -109,14 +101,15 @@ namespace Meadow.Foundation.Sensors.Light
             PowerOn();
         }
 
-        //==== internal methods
-
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(Illuminance? AmbientLight, Color? Color, bool Valid)> ReadSensor()
         {
             return Task.Run(async () =>
             {
                 (Illuminance? AmbientLight, Color? Color, bool Valid) conditions;
-
 
                 // To have a new reading, you need to wait for integration time to happen
                 // If you don't wait, then you'll read the previous value
@@ -150,6 +143,10 @@ namespace Meadow.Foundation.Sensors.Light
             });
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> changeResult)
         {
             if (changeResult.New.AmbientLight is { } ambient)

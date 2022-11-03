@@ -135,7 +135,10 @@ namespace Meadow.Foundation.Displays
             WaitUntilIdle();
         }
 
-        protected void SetLutBlack()
+        /// <summary>
+        /// Set the black lookup table (LUT)
+        /// </summary>
+        void SetLutBlack()
         {
             SendCommand(0x20);         //g vcom
             SendData(lut_vcom0);
@@ -147,7 +150,10 @@ namespace Meadow.Foundation.Displays
             SendData(lut_g1);
         }
 
-        protected void SetLutRed()
+        /// <summary>
+        /// Set the red lookup table (LUT)
+        /// </summary>
+        void SetLutRed()
         {
             SendCommand(0x25);
             SendData(lut_vcom1);

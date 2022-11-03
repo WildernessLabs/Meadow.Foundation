@@ -13,15 +13,12 @@ namespace Meadow.Foundation.Sensors.Light
     /// </summary>
     public partial class Veml7700 : ByteCommsSensorBase<Illuminance>, ILightSensor, IDisposable
     {
-        //==== events
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
         public event EventHandler RangeExceededHigh = delegate { };
         public event EventHandler RangeExceededLow = delegate { };
 
-        //==== internals
-        private ushort _config;
+        ushort config;
 
-        //==== properties
         /// <summary>
         /// Luminosity reading from the TSL2561 sensor.
         /// </summary>
@@ -42,6 +39,10 @@ namespace Meadow.Foundation.Sensors.Light
         private bool _firstRead = true;
         private bool _outOfRange = false;
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected async override Task<Illuminance> ReadSensor()
         {
             return await Task.Run(async () =>
@@ -167,6 +168,10 @@ namespace Meadow.Foundation.Sensors.Light
             return CalculateCorrectedLux(scale * 0.0036d * data);
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
         {
             LuminosityUpdated?.Invoke(this, changeResult);
@@ -186,15 +191,15 @@ namespace Meadow.Foundation.Sensors.Light
 
             if (on)
             {
-                cfg = (ushort)(_config & 0xfffe);
+                cfg = (ushort)(config & 0xfffe);
             }
             else
             {
-                cfg = (ushort)(_config | 0x0001);
+                cfg = (ushort)(config | 0x0001);
             }
 
             WriteRegister(Registers.AlsConf0, cfg);
-            _config = cfg;
+            config = cfg;
         }
 
         private async Task SetGain(int gain)
@@ -202,7 +207,7 @@ namespace Meadow.Foundation.Sensors.Light
             ushort cfg;
 
             // bits 11 & 12
-            cfg = (ushort)(_config & ~0x1800); // clear bits
+            cfg = (ushort)(config & ~0x1800); // clear bits
 
             switch (gain)
             {
@@ -221,7 +226,7 @@ namespace Meadow.Foundation.Sensors.Light
             }
 
             WriteRegister(Registers.AlsConf0, cfg);
-            _config = cfg;
+            config = cfg;
 
             // Console.WriteLine($"Gain is {gain}");
 
@@ -234,7 +239,7 @@ namespace Meadow.Foundation.Sensors.Light
 
             // bits 6-9
 
-            cfg = (ushort)(_config & ~0x03C0); // clear bits
+            cfg = (ushort)(config & ~0x03C0); // clear bits
             switch (it)
             {
                 case -2: // 25ms
@@ -258,7 +263,7 @@ namespace Meadow.Foundation.Sensors.Light
             }
 
             WriteRegister(Registers.AlsConf0, cfg);
-            _config = cfg;
+            config = cfg;
 
             // Console.WriteLine($"Integration Time is {it}");
 

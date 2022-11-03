@@ -74,6 +74,10 @@ namespace Meadow.Foundation.Sensors.Moisture
             if (maximumVoltageCalibration is { } max) { MaximumVoltageCalibration = max; }
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<double> ReadSensor()
         {
             DigitalPort.State = true;
@@ -143,6 +147,10 @@ namespace Meadow.Foundation.Sensors.Moisture
             }
         }
 
+        /// <summary>
+        /// Raise change events for subscribers
+        /// </summary>
+        /// <param name="changeResult">The change result with the current sensor data</param>
         protected void RaiseChangedAndNotify(IChangeResult<double> changeResult)
         {
             HumidityUpdated?.Invoke(this, changeResult);

@@ -50,7 +50,6 @@ namespace Meadow.Foundation.Sensors.Motion
         EulerAngles? EulerOrientation, Units.Temperature? Temperature)>,
         IAccelerometer, IGyroscope, ITemperatureSensor
     {
-        //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
         public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
         public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
@@ -60,9 +59,6 @@ namespace Meadow.Foundation.Sensors.Motion
         public event EventHandler<IChangeResult<EulerAngles>> EulerOrientationUpdated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
-        //==== internals
-
-        //==== properties
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
         public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
         public MagneticField3D? MagneticField3D => Conditions.MagneticField3D;
@@ -227,6 +223,10 @@ namespace Meadow.Foundation.Sensors.Motion
             base.StopUpdating();
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<
             (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
             MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
@@ -307,6 +307,10 @@ namespace Meadow.Foundation.Sensors.Motion
             });
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<
             (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
             MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,

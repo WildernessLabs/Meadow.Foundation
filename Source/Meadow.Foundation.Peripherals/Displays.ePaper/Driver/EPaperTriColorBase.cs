@@ -209,11 +209,23 @@ namespace Meadow.Foundation.Displays
             imageBuffer.InvertPixel(x, y);
         }
 
+        /// <summary>
+        /// Set a colored pixel (on or off)
+        /// </summary>
+        /// <param name="x">The x pixel location</param>
+        /// <param name="y">The y pixel location</param>
+        /// <param name="isOn">True for on, false for off</param>
         public void DrawColoredPixel(int x, int y, bool isOn)
         {
             imageBuffer.SetColorPixel(x, y, isOn);
         }
 
+        /// <summary>
+        /// Draw a pixel
+        /// </summary>
+        /// <param name="x">The x pixel location</param>
+        /// <param name="y">The y pixel location</param>
+        /// <param name="color">The pixel color</param>
         public void DrawPixel(int x, int y, Color color)
         {
             imageBuffer.SetPixel(x, y, color);
@@ -234,7 +246,7 @@ namespace Meadow.Foundation.Displays
         /// Send a command to the display
         /// </summary>
         /// <param name="command">The command</param>
-        protected void SendCommand(Command command)
+        internal void SendCommand(Command command)
         {
             SendCommand((byte)command);
         }
@@ -263,7 +275,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Display commands
         /// </summary>
-        protected enum Command : byte
+        internal enum Command : byte
         {
             PANEL_SETTING = 0x00,
             POWER_SETTING = 0x01,

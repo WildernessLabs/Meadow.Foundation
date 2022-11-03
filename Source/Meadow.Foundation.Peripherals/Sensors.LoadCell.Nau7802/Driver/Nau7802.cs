@@ -267,6 +267,10 @@ namespace Meadow.Foundation.Sensors.LoadCell
             return adc;
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<Mass> ReadSensor()
         {
             return await Task.Run(() =>

@@ -17,19 +17,15 @@ namespace Meadow.Foundation.Sensors.Motion
     public partial class Mag3110 :
         ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
         ITemperatureSensor
-    //IMagnetometer
     {
-        //==== events
         public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated = delegate { };
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
-        //==== internals
         /// <summary>
         /// Interrupt port used to detect then end of a conversion.
         /// </summary>
         protected readonly IDigitalInputPort interruptPort;
 
-        //==== properties
         public MagneticField3D? MagneticField3d => Conditions.MagneticField3D;
 
         /// <summary>
@@ -147,10 +143,14 @@ namespace Meadow.Foundation.Sensors.Motion
             WriteBuffer.Span[0] = Registers.X_OFFSET_MSB;
             WriteBuffer.Span[1] = WriteBuffer.Span[2] = WriteBuffer.Span[3] = 0;
             WriteBuffer.Span[4] = WriteBuffer.Span[5] = WriteBuffer.Span[6] = 0;
-            //Peripheral.WriteRegisters(Registers.X_OFFSET_MSB, new byte[] { 0, 0, 0, 0, 0, 0 });
+            
             Peripheral.Write(WriteBuffer.Span[0..7]);
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> changeResult)
         {
             if (changeResult.New.MagneticField3D is { } mag)
@@ -164,6 +164,10 @@ namespace Meadow.Foundation.Sensors.Motion
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() =>

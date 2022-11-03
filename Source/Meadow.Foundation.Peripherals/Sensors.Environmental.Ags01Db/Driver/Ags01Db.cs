@@ -75,7 +75,11 @@ namespace Meadow.Foundation.Sensors.Environmental
             return ReadBuffer.Span[0];
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<Units.Concentration> changeResult)
+        /// <summary>
+        /// Raise change events for subscribers
+        /// </summary>
+        /// <param name="changeResult">The change result with the current sensor data</param>
+        protected void RaiseChangedAndNotify(IChangeResult<Concentration> changeResult)
         {
             ConcentrationUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);

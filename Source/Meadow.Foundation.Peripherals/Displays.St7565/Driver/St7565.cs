@@ -103,6 +103,9 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        /// <summary>
+        /// Set display into power saving mode
+        /// </summary>
         public void PowerSaveMode()
         {
             SendCommand(DisplayCommand.DisplayOff);
@@ -138,15 +141,14 @@ namespace Meadow.Foundation.Displays
             SendCommand(DisplayCommand.AllPixelsOff);
         }
 
-        public const uint ContrastHigh = 34;
-        public const uint ContrastMedium = 24;
-        public const uint ContrastLow = 15;
-
-        // 0-63
-        public void SetContrast(uint contrast)
+        /// <summary>
+        /// Set the display contrast 
+        /// </summary>
+        /// <param name="contrast">The contrast value (0-63)</param>
+        public void SetContrast(byte contrast)
         {
             SendCommand(DisplayCommand.ContrastRegister);
-            SendCommand((byte)((int)(DisplayCommand.ContrastValue) | (contrast & 0x3f)));
+            SendCommand((byte)((int)DisplayCommand.ContrastValue | (contrast & 0x3f)));
         }
 
         /// <summary>
@@ -173,8 +175,8 @@ namespace Meadow.Foundation.Displays
             spiPerihperal.Write(commands);
         }
 
-        protected const int StartColumnOffset = 0; // 1;
-        protected const int PageSize = 128;
+        const int StartColumnOffset = 0;
+        const int PageSize = 128;
 
         /// <summary>
         /// Send the internal pixel buffer to display

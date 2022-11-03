@@ -69,8 +69,10 @@ namespace Meadow.Foundation.Sensors.Motion
             Initialize();
         }
 
-        //==== Sensor overrides
-
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(Color? Color, Illuminance? AmbientLight)> ReadSensor()
         {
             return Task.Run(() => {
@@ -103,6 +105,10 @@ namespace Meadow.Foundation.Sensors.Motion
             });
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Color? Color, Illuminance? AmbientLight)> changeResult)
         {
             if (changeResult.New.AmbientLight is { } ambient) {
@@ -113,8 +119,6 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             base.RaiseEventsAndNotify(changeResult);
         }
-
-        //==== methods
 
         private void InterruptPort_Changed(object sender, DigitalPortResult e)
         {

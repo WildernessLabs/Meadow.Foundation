@@ -119,6 +119,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
+            /// <summary>
+            /// Raise change events for subscribers
+            /// </summary>
+            /// <param name="changeResult">The change result with the current sensor data</param>
             protected void RaiseChangedAndNotify(IChangeResult<Voltage> changeResult)
             {
                 Updated?.Invoke(this, changeResult);

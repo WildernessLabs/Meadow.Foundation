@@ -17,13 +17,11 @@ namespace Meadow.Foundation.Sensors.Light
         ILightSensor,
         IDisposable
     {
-        //==== events
         public event EventHandler<IChangeResult<Illuminance>> FullSpectrumUpdated = delegate { };
         public event EventHandler<IChangeResult<Illuminance>> InfraredUpdated = delegate { };
         public event EventHandler<IChangeResult<Illuminance>> VisibleLightUpdated = delegate { };
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
-        //==== internals
         private IntegrationTimes _integrationTime;
         private GainFactor _gain;
 
@@ -58,6 +56,10 @@ namespace Meadow.Foundation.Sensors.Light
             PowerOn();
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> ReadSensor()
         {
             (Illuminance FullSpectrum, Illuminance Infrared, Illuminance VisibleLight, Illuminance Integrated) conditions;
@@ -88,6 +90,10 @@ namespace Meadow.Foundation.Sensors.Light
             });
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> changeResult)
         {
             if (changeResult.New.FullSpectrum is { } ill)

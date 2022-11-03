@@ -266,7 +266,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Set frame buffer memory of display (full screen)
         /// </summary>
-        /// <param name="buffer">buffer</param>
+        /// <param name="buffer">The image buffer</param>
         public virtual void SetFrameMemory(byte[] buffer)
         {
             SetMemoryArea(0, 0, Width - 1, Height - 1);

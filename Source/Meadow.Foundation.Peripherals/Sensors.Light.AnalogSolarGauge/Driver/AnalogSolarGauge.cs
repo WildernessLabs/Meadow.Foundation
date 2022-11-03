@@ -14,13 +14,10 @@ namespace Meadow.Foundation.Sensors.Light
     public class AnalogSolarGauge : SensorBase<float>,
         ISolarIntensityGauge, ISensor
     {
-        //==== events
         public event EventHandler<IChangeResult<float>> SolarIntensityUpdated = delegate { };
 
-        //==== internals
         protected IAnalogInputPort analogInputPort;
 
-        //==== properties
         public Voltage MinVoltageReference { get; protected set; } = new Voltage(0, VU.Volts);
         public Voltage MaxVoltageReference { get; protected set; } = new Voltage(3.3, VU.Volts);
 
@@ -98,6 +95,10 @@ namespace Meadow.Foundation.Sensors.Light
             analogInputPort.Subscribe(observer);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<float> ReadSensor()
         {
             // read the voltage
@@ -136,6 +137,10 @@ namespace Meadow.Foundation.Sensors.Light
             analogInputPort.StopUpdating();
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<float> changeResult)
         {
             this.SolarIntensityUpdated?.Invoke(this, changeResult);

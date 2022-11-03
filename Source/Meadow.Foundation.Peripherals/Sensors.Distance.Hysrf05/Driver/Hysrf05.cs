@@ -120,12 +120,20 @@ namespace Meadow.Foundation.Sensors.Distance
             RaiseEventsAndNotify(result);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<Length> ReadSensor()
         {
             // TODO:
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
         {
             DistanceUpdated?.Invoke(this, changeResult);

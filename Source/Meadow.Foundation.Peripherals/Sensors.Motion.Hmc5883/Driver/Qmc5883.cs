@@ -36,6 +36,10 @@ namespace Meadow.Foundation.Sensors.Motion
             Peripheral.WriteRegister(0x09, 0x0D);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<Vector> ReadSensor()
         {
             return Task.Run(() => {

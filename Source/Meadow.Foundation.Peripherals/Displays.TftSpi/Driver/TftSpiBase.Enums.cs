@@ -28,19 +28,33 @@
             RADRD = 0x2E
         };
 
-        // TODO: @Adrian - should this use the graphics rotation?
+        /// <summary>
+        /// The display rotation
+        /// </summary>
         public enum Rotation
         {
+            /// <summary>
+            /// Normal / default rotation
+            /// </summary>
             Normal, //zero
-            Rotate_90, //in degrees
+            /// <summary>
+            /// Rotate 90 degrees
+            /// </summary>
+            Rotate_90,
+            /// <summary>
+            /// Rotate 180 degrees
+            /// </summary>
             Rotate_180,
+            /// <summary>
+            /// Rotate 270 degrees
+            /// </summary>
             Rotate_270,
         }
 
         /// <summary>
         /// Display registers
         /// </summary>
-        protected enum Register : byte
+        internal enum Register : byte
         {
             NO_OP = 0x0,
             MADCTL = 0x36,

@@ -156,7 +156,7 @@ namespace Meadow.Foundation.Displays.Lcd
         }
 
         /// <summary>
-        /// Save a custom character to the dislay
+        /// Save a custom character to the display
         /// </summary>
         /// <param name="characterMap">The character data</param>
         /// <param name="address">The display character address (0-7)</param>

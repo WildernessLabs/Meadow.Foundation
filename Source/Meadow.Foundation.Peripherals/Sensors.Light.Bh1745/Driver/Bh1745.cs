@@ -25,9 +25,6 @@ namespace Meadow.Foundation.Sensors.Light
     {
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
-        /// <summary>
-        /// 
-        /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
         
         public InterruptStatus InterruptReset
@@ -225,8 +222,6 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public ChannelMultipliers CompensationMultipliers { get; set; }
 
-        //==== ctors
-
         /// <summary>
         /// Create a new BH17545 color sensor object
         /// </summary>
@@ -244,8 +239,10 @@ namespace Meadow.Foundation.Sensors.Light
             Reset();
         }
 
-        //==== internal methods
-
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(Illuminance? AmbientLight, Color? Color, bool Valid)> ReadSensor()
         {
             return Task.Run(() =>
@@ -282,6 +279,10 @@ namespace Meadow.Foundation.Sensors.Light
             });
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> changeResult)
         {
             if (changeResult.New.AmbientLight is { } ambient)

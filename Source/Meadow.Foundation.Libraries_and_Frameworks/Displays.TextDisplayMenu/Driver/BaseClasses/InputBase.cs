@@ -30,6 +30,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
         public abstract void GetInput(string itemID, object currentValue);
         protected abstract void ParseValue(object value);
 
+        /// <summary>
+        /// Initialize the input
+        /// </summary>
+        /// <param name="display">The display to show the input item</param>
         public void Init(ITextDisplay display)
         {
             this.display = display;

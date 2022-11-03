@@ -93,6 +93,10 @@ namespace Meadow.Foundation.Sensors.Temperature
             Peripheral?.WriteRegister(MCP_RESOLUTION, resolution);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<Units.Temperature> ReadSensor()
         {
             return await Task.Run(() =>
@@ -114,6 +118,10 @@ namespace Meadow.Foundation.Sensors.Temperature
             });
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
         {
             TemperatureUpdated?.Invoke(this, changeResult);

@@ -44,9 +44,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
         public Sht31d(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 6, writeBufferSize: 2)
-        {
-        }
+        { }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp)

@@ -72,6 +72,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return ReadBuffer.Span[0..1][0] == 0xd4;
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected async override Task<int> ReadSensor()
         {
             return await Task.Run(() =>

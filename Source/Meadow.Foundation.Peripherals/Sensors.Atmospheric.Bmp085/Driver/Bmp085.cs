@@ -14,17 +14,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
-        //==== Events
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+     
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
-        //==== Internals
         // Oversampling for measurements.  Please see the datasheet for this sensor for more information.
-        private byte oversamplingSetting;
+        byte oversamplingSetting;
 
         // These wait times correspond to the oversampling settings.  
         // Please see the datasheet for this sensor for more information.
-        private readonly byte[] pressureWaitTime = { 5, 8, 14, 26 };
+        readonly byte[] pressureWaitTime = { 5, 8, 14, 26 };
 
         // Calibration data backing stores
         private short _ac1;
@@ -39,8 +38,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private short _mc;
         private short _md;
 
-
-        //==== properties
         /// <summary>
         /// Last value read from the Pressure sensor.
         /// </summary>
@@ -67,6 +64,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             GetCalibrationData();
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp)

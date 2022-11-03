@@ -94,6 +94,10 @@ namespace Meadow.Foundation.Sensors.Weather
             }
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Speed> changeResult)
         {
             WindSpeedUpdated?.Invoke(this, changeResult);
@@ -133,6 +137,10 @@ namespace Meadow.Foundation.Sensors.Weather
             running = false;
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<Speed> ReadSensor()
         {
             if(samples?.Count > 0 && (DateTime.Now - samples?.Peek().New.Time > NoWindTimeout))

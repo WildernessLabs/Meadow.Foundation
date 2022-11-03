@@ -47,6 +47,10 @@ namespace Meadow.Foundation.Sensors.Power
             }
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<(Units.Power? Power, Voltage? Voltage, Current? Current)> ReadSensor()
         {
             return await Task.Run(() =>
@@ -63,6 +67,10 @@ namespace Meadow.Foundation.Sensors.Power
             });
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)> changeResult)
         {
             if (changeResult.New.Power is { } power)

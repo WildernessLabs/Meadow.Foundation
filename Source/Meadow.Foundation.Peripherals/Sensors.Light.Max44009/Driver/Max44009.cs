@@ -24,6 +24,10 @@ namespace Meadow.Foundation.Sensors.Light
             Peripheral.WriteRegister(0x02, 0x00);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<Illuminance> ReadSensor()
         {
             return Task.Run(() => {

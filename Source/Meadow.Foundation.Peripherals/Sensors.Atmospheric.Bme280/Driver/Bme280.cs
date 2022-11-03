@@ -159,6 +159,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             UpdateConfiguration(configuration);
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp) {

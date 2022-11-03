@@ -13,13 +13,11 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public abstract class Adxl3xxBase : SamplingSensorBase<Acceleration3D>, IAccelerometer
     {
-        //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
-
-        //==== internals
         protected IAnalogInputPort XAnalogIn { get; }
         protected IAnalogInputPort YAnalogIn { get; }
         protected IAnalogInputPort ZAnalogIn { get; }
+        
         /// <summary>
         /// Power supply voltage applied to the sensor.  This will be set (in the constructor)
         /// to 3.3V by default.
@@ -27,7 +25,6 @@ namespace Meadow.Foundation.Sensors.Motion
         protected Voltage SupplyVoltage { get; } = new Voltage(3.3, Voltage.UnitType.Volts);
         protected double GravityRange { get; }
 
-        //==== properties
         public Acceleration3D? Acceleration3D => Conditions;
 
         /// <summary>
@@ -54,12 +51,20 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
         {
             Acceleration3DUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<Acceleration3D> ReadSensor()
         {
             return Task.Run(async () => {

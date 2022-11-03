@@ -75,8 +75,6 @@ namespace Meadow.Foundation.Sensors.Gnss
             serialPort.Open();
             Console.WriteLine("serial port opened.");
 
-            //==== setup commands
-
             // get release and version
             Console.WriteLine("Asking for release and version.");
             this.serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_Q_RELEASE));

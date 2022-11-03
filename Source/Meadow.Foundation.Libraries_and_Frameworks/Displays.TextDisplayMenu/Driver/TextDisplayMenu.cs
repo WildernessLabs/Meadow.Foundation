@@ -46,28 +46,20 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             var menuString = System.Text.Encoding.Default.GetString(menuJson);
 
             return JsonConvert.DeserializeObject<MenuItem[]>(menuString);
-
-            //   old System.Text.Json 
-            //   return JsonSerializer.Deserialize<MenuItem[]>(menuJson);
-            //   JsonSerializer.Create().Deserialize(new JsonTextReader()
         }
 
-        private void Init(ITextDisplay display, MenuPage menuPage)
+        void Init(ITextDisplay display, MenuPage menuPage)
         {
-            //good here
             this.display = display;
 
             rootMenuPage = menuPage;
 
             pageStack = new Stack<IPage>();
-
-            // Save our custom characters
-            // ToDo
-            display.SaveCustomCharacter(TextCharacters.RightArrow.CharMap, TextCharacters.RightArrow.MemorySlot);
-            display.SaveCustomCharacter(TextCharacters.RightArrowSelected.CharMap, TextCharacters.RightArrow.MemorySlot);
-            display.SaveCustomCharacter(TextCharacters.BoxSelected.CharMap, TextCharacters.BoxSelected.MemorySlot);
         }
 
+        /// <summary>
+        /// Enable the menu
+        /// </summary>
         public void Enable()
         {
             IsEnabled = true;
@@ -77,6 +69,9 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             ShowCurrentPage();
         }
 
+        /// <summary>
+        /// Disable the menu
+        /// </summary>
         public void Disable()
         {
             IsEnabled = false;
@@ -102,6 +97,9 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             return menuPage;
         }
 
+        /// <summary>
+        /// Show the current page
+        /// </summary>
         protected void ShowCurrentPage()
         {
             if (!IsEnabled) {
@@ -109,7 +107,6 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
                 return;
             }
 
-            // clear the display
             display.ClearLines();
 
             // if there are no items to render, get out.
@@ -147,6 +144,12 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             display.Show();
         }
 
+        /// <summary>
+        /// Get the text for a menu item
+        /// </summary>
+        /// <param name="item">The menu item</param>
+        /// <param name="isSelected">Is the menu selected</param>
+        /// <returns>The item text</returns>
         protected string GetItemText(MenuItem item, bool isSelected)
         {
             if(item == null)

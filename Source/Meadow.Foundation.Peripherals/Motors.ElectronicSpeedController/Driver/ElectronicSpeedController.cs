@@ -18,10 +18,8 @@ namespace Meadow.Foundation.Motors
     /// </summary>
     public class ElectronicSpeedController
     {
-        //==== internals
         IPwmPort pwmPort;
 
-        //==== properties
         /// <summary>
         /// The pulse duration, in milliseconds, neccessary to "arm" the ESC.
         /// Default value is 0.5ms.

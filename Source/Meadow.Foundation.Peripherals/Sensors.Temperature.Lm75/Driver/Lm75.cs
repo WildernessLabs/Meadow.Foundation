@@ -36,9 +36,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             return Task.Run(() =>
             {
-                Peripheral.Write((byte)Registers.LM_TEMP);
+                Peripheral?.Write((byte)Registers.LM_TEMP);
 
-                Peripheral.ReadRegister((byte)Registers.LM_TEMP, ReadBuffer.Span[0..2]);
+                Peripheral?.ReadRegister((byte)Registers.LM_TEMP, ReadBuffer.Span[0..2]);
 
                 // Details in Datasheet P10
                 double temp = 0;
@@ -62,6 +62,10 @@ namespace Meadow.Foundation.Sensors.Temperature
             });
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
         {
             TemperatureUpdated?.Invoke(this, changeResult);

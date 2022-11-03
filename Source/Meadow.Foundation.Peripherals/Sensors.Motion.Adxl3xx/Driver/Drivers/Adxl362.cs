@@ -27,11 +27,9 @@ namespace Meadow.Foundation.Sensors.Motion
         : ByteCommsSensorBase<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)>,
         IAccelerometer, ITemperatureSensor
     {
-        //==== events
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
 
-        //==== internals
         const double ADXL362_MG2G_MULTIPLIER = (0.004);
         const double AVERAGE_TEMPERATURE_BIAS = 350;
 
@@ -245,14 +243,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="chipSelect">Chip select pin.</param>
         public Adxl362(IDigitalOutputController device, ISpiBus spiBus, IPin chipSelect)
             : base(spiBus, device.CreateDigitalOutputPort(chipSelect))
-        {
-            //
-            //  ADXL362 works in SPI mode 0 (CPOL = 0, CPHA = 0).
-            //
-            //Reset();
-            //Start();
-        }
+        { }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp)
@@ -321,6 +317,10 @@ namespace Meadow.Foundation.Sensors.Motion
             base.StopUpdating();
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() =>

@@ -219,13 +219,13 @@ namespace Meadow.Foundation.Displays
             SendData((byte)data);
         }
 
-        protected void SendData(byte data)
+        void SendData(byte data)
         {
             dataCommandPort.State = DataState;
             spiPeripheral.Write(data);
         }
 
-        protected void SendData(byte[] data)
+        void SendData(byte[] data)
         {
             dataCommandPort.State = DataState;
             spiPeripheral.Write(data);

@@ -10,13 +10,10 @@ namespace Meadow.Foundation.Sensors.Distance
     // In progress and not working - DistanceUpdated currently is never called 
     public class Mb10x0 : SensorBase<Length>, IRangeFinder
     {
-        //==== events
         public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
 
-        //==== internals
         ISerialPort serialPort;
 
-        //==== public properties
         public int Baud => 9600;
 
         /// <summary>
@@ -78,6 +75,10 @@ namespace Meadow.Foundation.Sensors.Distance
             _ = ReadSensor();
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<Length> ReadSensor()
         {
             throw new NotImplementedException();
