@@ -27,7 +27,7 @@ namespace Displays.Tft.Ili9341_Sample
 
             Console.WriteLine("Create display driver instance");
 
-            var display = new Ili9341
+            display = new Ili9341
             (
                 device: Device,
                 spiBus: spiBus,

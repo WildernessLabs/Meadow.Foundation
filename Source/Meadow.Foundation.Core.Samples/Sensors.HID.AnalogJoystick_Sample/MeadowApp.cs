@@ -6,7 +6,7 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace MeadowApp
+namespace Sensors.Hid.AnalogJoystick_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
