@@ -96,6 +96,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Create a new PinDefinitions object
+            /// </summary>
             public PinDefinitions()
             {
                 InitAllPins();
@@ -117,6 +120,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 AllPins.Add(GP7);
             }
 
+            /// <summary>
+            /// Get Pins
+            /// </summary>
+            /// <returns>IEnumerator of IPin with all pins</returns>
             public IEnumerator<IPin> GetEnumerator() => AllPins.GetEnumerator();
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
