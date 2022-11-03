@@ -67,10 +67,13 @@ namespace Sensors.Atmospheric.BME680_Sample
 
         void EnableGasHeater()
         {
-            sensor.GasConversionIsEnabled = true;
-            sensor.HeaterIsEnabled = true;
-            sensor.ConfigureHeatingProfile(Bme688.HeaterProfileType.Profile1, new Meadow.Units.Temperature(300), TimeSpan.FromMilliseconds(100), new Meadow.Units.Temperature(22));
-            sensor.HeaterProfile = Bme688.HeaterProfileType.Profile1;
+            if(sensor != null)
+            {
+                sensor.GasConversionIsEnabled = true;
+                sensor.HeaterIsEnabled = true;
+                sensor.ConfigureHeatingProfile(Bme688.HeaterProfileType.Profile1, new Meadow.Units.Temperature(300), TimeSpan.FromMilliseconds(100), new Meadow.Units.Temperature(22));
+                sensor.HeaterProfile = Bme688.HeaterProfileType.Profile1;
+            }
         }
 
         void CreateSpiSensor()

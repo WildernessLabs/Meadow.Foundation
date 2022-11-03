@@ -1,7 +1,5 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.Led
@@ -11,26 +9,29 @@ namespace Meadow.Foundation.Displays.Led
     /// </summary>
     public class FourDigitSevenSegment
     {
-        protected Task animationThread = null;
-        protected CancellationTokenSource cts = null;
+        CancellationTokenSource cts = null;
 
-        protected readonly IDigitalOutputPort[] digits;
+        readonly IDigitalOutputPort[] digits;
 
-        protected SevenSegment[] sevenSegments;
+        SevenSegment[] sevenSegments;
 
         /// <summary>
         /// Creates a SevenSegment connected to the especified IPins to a IODevice
         /// </summary>
-        /// <param name="device"></param>
-        /// <param name="pinA"></param>
-        /// <param name="pinB"></param>
-        /// <param name="pinC"></param>
-        /// <param name="pinD"></param>
-        /// <param name="pinE"></param>
-        /// <param name="pinF"></param>
-        /// <param name="pinG"></param>
-        /// <param name="pinDecimal"></param>
-        /// <param name="isCommonCathode"></param>
+        /// <param name="device">The device connected to the display</param>
+        /// <param name="pinDigit1">Digit 1 pin</param>
+        /// <param name="pinDigit2">Digit 2 pin</param>
+        /// <param name="pinDigit3">Digit 3 pin</param>
+        /// <param name="pinDigit4">Digit 4 pin</param>
+        /// <param name="pinA">A pin</param>
+        /// <param name="pinB">B pin</param>
+        /// <param name="pinC">C pin</param>
+        /// <param name="pinD">D pin</param>
+        /// <param name="pinE">E pin</param>
+        /// <param name="pinF">F pin</param>
+        /// <param name="pinG">G pin</param>
+        /// <param name="pinDecimal">Decimal pin</param>
+        /// <param name="isCommonCathode">Is the display common cathode (true)</param>
         public FourDigitSevenSegment(
             IMeadowDevice device, 
             IPin pinDigit1, IPin pinDigit2,
@@ -58,15 +59,19 @@ namespace Meadow.Foundation.Displays.Led
         /// <summary>
         /// Creates a SevenSegment connected to the especified IDigitalOutputPorts
         /// </summary>
-        /// <param name="portA"></param>
-        /// <param name="portB"></param>
-        /// <param name="portC"></param>
-        /// <param name="portD"></param>
-        /// <param name="portE"></param>
-        /// <param name="portF"></param>
-        /// <param name="portG"></param>
-        /// <param name="portDecimal"></param>
-        /// <param name="isCommonCathode"></param>
+        /// <param name="portDigit1">Port for digit 1</param>
+        /// <param name="portDigit2">Port for digit 2</param>
+        /// <param name="portDigit3">Port for digit 3</param>
+        /// <param name="portDigit4">Port for digit 4</param>
+        /// <param name="portA">Port for pin A</param>
+        /// <param name="portB">Port for pin B</param>
+        /// <param name="portC">Port for pin C</param>
+        /// <param name="portD">Port for pin D</param>
+        /// <param name="portE">Port for pin E</param>
+        /// <param name="portF">Port for pin F</param>
+        /// <param name="portG">Port for pin G</param>
+        /// <param name="portDecimal">Port for decimal pin</param>
+        /// <param name="isCommonCathode">Is the display common cathode (true)</param>
         public FourDigitSevenSegment(
             IDigitalOutputPort portDigit1, IDigitalOutputPort portDigit2,
             IDigitalOutputPort portDigit3, IDigitalOutputPort portDigit4,
@@ -94,8 +99,8 @@ namespace Meadow.Foundation.Displays.Led
         /// <summary>
         /// Displays the specified characters
         /// </summary>
-        /// <param name="characters"></param>
-        /// <param name="showDecimal"></param>
+        /// <param name="characters">The chracters to display</param>
+        /// <param name="decimalLocation">The decimal position (0 indexed)</param>
         public void SetDisplay(string characters, int decimalLocation = -1)
         {
             SetDisplay(characters.ToCharArray(), decimalLocation);
@@ -104,8 +109,8 @@ namespace Meadow.Foundation.Displays.Led
         /// <summary>
         /// Displays the specified characters
         /// </summary>
-        /// <param name="characters"></param>
-        /// <param name="showDecimal"></param>
+        /// <param name="characters">The chracters to display</param>
+        /// <param name="decimalLocation">The decimal position (0 indexed)</param>
         public void SetDisplay(char[] characters, int decimalLocation = -1)
         {
             if (!cts.Token.IsCancellationRequested)
@@ -118,7 +123,7 @@ namespace Meadow.Foundation.Displays.Led
             Task.Run(async ()=> await StartDisplayLoop(characters, decimalLocation, cts.Token));
         }
 
-        protected async Task StartDisplayLoop(char[] characters, int decimalLocation, CancellationToken cancellationToken) 
+        async Task StartDisplayLoop(char[] characters, int decimalLocation, CancellationToken cancellationToken) 
         {
             while (true)
             {
@@ -137,11 +142,6 @@ namespace Meadow.Foundation.Displays.Led
 
                 await Task.Delay(7);
             }
-        }
-
-        public void Stop()
-        {
-            cts.Cancel();
         }
     }
 }

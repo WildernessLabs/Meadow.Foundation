@@ -22,21 +22,35 @@ namespace Meadow.Foundation.Displays.Lcd
         private const byte LCD_SETDDRAMADDR = 0x80;
         private const byte LCD_SETCGRAMADDR = 0x40;
 
-        protected IPwmPort LCD_V0;
-        protected IDigitalOutputPort LCD_E;
-        protected IDigitalOutputPort LCD_RS;
-        protected IDigitalOutputPort LCD_D4;
-        protected IDigitalOutputPort LCD_D5;
-        protected IDigitalOutputPort LCD_D6;
-        protected IDigitalOutputPort LCD_D7;
-        protected IDigitalOutputPort LED_ON;
+        readonly IPwmPort LCD_V0;
+        readonly IDigitalOutputPort LCD_E;
+        readonly IDigitalOutputPort LCD_RS;
+        readonly IDigitalOutputPort LCD_D4;
+        readonly IDigitalOutputPort LCD_D5;
+        readonly IDigitalOutputPort LCD_D6;
+        readonly IDigitalOutputPort LCD_D7;
 
-        private bool LCD_INSTRUCTION = false;
-        private bool LCD_DATA = true;
-        private static object _lock = new object();
+        bool LCD_INSTRUCTION = false;
+        bool LCD_DATA = true;
+        static object _lock = new object();
 
+        /// <summary>
+        /// The text display menu configuration
+        /// </summary>
         public TextDisplayConfig DisplayConfig { get; protected set; }
 
+        /// <summary>
+        /// Create a new GpioCharacterDisplay
+        /// </summary>
+        /// <param name="device">The device connected to the display</param>
+        /// <param name="pinRS">The RS pin</param>
+        /// <param name="pinE">The E pin</param>
+        /// <param name="pinD4">The D4 pin</param>
+        /// <param name="pinD5">The D5 pin</param>
+        /// <param name="pinD6">The D6 pin</param>
+        /// <param name="pinD7">The D7 pin</param>
+        /// <param name="rows">The number of character rows</param>
+        /// <param name="columns">The number of character columns</param>
         public GpioCharacterDisplay(
             IMeadowDevice device,
             IPin pinRS,
@@ -56,6 +70,17 @@ namespace Meadow.Foundation.Displays.Lcd
                 rows, columns)
         { }
 
+        /// <summary>
+        /// Create a new GpioCharacterDisplay object
+        /// </summary>
+        /// <param name="portRS">Port for RS pin</param>
+        /// <param name="portE">Port for W pin</param>
+        /// <param name="portD4">Port for D4 pin</param>
+        /// <param name="portD5">Port for D5 pin</param>
+        /// <param name="portD6">Port for D6 pin</param>
+        /// <param name="portD7">Port for D7 pin</param>
+        /// <param name="rows">Number of character rows</param>
+        /// <param name="columns">Number of character columns</param>
         public GpioCharacterDisplay(
             IDigitalOutputPort portRS,
             IDigitalOutputPort portE,
@@ -77,6 +102,19 @@ namespace Meadow.Foundation.Displays.Lcd
             Initialize();
         }
 
+        /// <summary>
+        /// Create a new GpioCharacterDisplay object
+        /// </summary>
+        /// <param name="device">The device connected to the display</param>
+        /// <param name="pinV0">V0 pin</param>
+        /// <param name="pinRS">RS pin</param>
+        /// <param name="pinE">W pin</param>
+        /// <param name="pinD4">D4 pin</param>
+        /// <param name="pinD5">D5 pin</param>
+        /// <param name="pinD6">D6 pin</param>
+        /// <param name="pinD7">D7 pin</param>
+        /// <param name="rows">Number of character rows</param>
+        /// <param name="columns">Number of character columns</param>
         public GpioCharacterDisplay(
             IMeadowDevice device,
             IPin pinV0,
@@ -98,6 +136,18 @@ namespace Meadow.Foundation.Displays.Lcd
                 rows, columns)
         { }
 
+        /// <summary>
+        /// Create a new GpioCharacterDisplay object
+        /// </summary>
+        /// <param name="portV0">PWM port for backlight</param>
+        /// <param name="portRS">Port for RS pin</param>
+        /// <param name="portE">Port for W pin</param>
+        /// <param name="portD4">Port for D4 pin</param>
+        /// <param name="portD5">Port for D5 pin</param>
+        /// <param name="portD6">Port for D6 pin</param>
+        /// <param name="portD7">Port for D7 pin</param>
+        /// <param name="rows">Number of character rows</param>
+        /// <param name="columns">Number of character columns</param>
         public GpioCharacterDisplay(
             IPwmPort portV0,
             IDigitalOutputPort portRS,
@@ -186,6 +236,12 @@ namespace Meadow.Foundation.Displays.Lcd
             SendByte(GetLineAddress(line), LCD_INSTRUCTION);
         }
 
+        /// <summary>
+        /// Write text to a line
+        /// </summary>
+        /// <param name="text">The text to dislay</param>
+        /// <param name="lineNumber">The target line</param>
+        /// <param name="showCursor">If true, show the cursor</param>
         public void WriteLine(string text, byte lineNumber, bool showCursor = false)
         {
             SetLineAddress(lineNumber);
@@ -204,6 +260,10 @@ namespace Meadow.Foundation.Displays.Lcd
             }
         }
 
+        /// <summary>
+        /// Write a string to the display
+        /// </summary>
+        /// <param name="text">The text to show as a string</param>
         public void Write(string text)
         {
             string screentText = text;
@@ -220,6 +280,11 @@ namespace Meadow.Foundation.Displays.Lcd
             }
         }
 
+        /// <summary>
+        /// Set the cursor position
+        /// </summary>
+        /// <param name="column">The cursor column</param>
+        /// <param name="line">The cursor line</param>
         public void SetCursorPosition(byte column, byte line)
         {
             if (column >= DisplayConfig.Width || line >= DisplayConfig.Height)
@@ -235,6 +300,9 @@ namespace Meadow.Foundation.Displays.Lcd
             SendByte(((byte)(LCD_SETDDRAMADDR | address)), LCD_INSTRUCTION);
         }
 
+        /// <summary>
+        /// Clear all lines
+        /// </summary>
         public void ClearLines()
         {
             SendByte(0x01, LCD_INSTRUCTION);
@@ -242,6 +310,10 @@ namespace Meadow.Foundation.Displays.Lcd
             Thread.Sleep(5);
         }
 
+        /// <summary>
+        /// Clear a line of text
+        /// </summary>
+        /// <param name="lineNumber">The line to clear (0 indexed)</param>
         public void ClearLine(byte lineNumber)
         {
             SetLineAddress(lineNumber);
@@ -252,11 +324,12 @@ namespace Meadow.Foundation.Displays.Lcd
             }
         }
 
-        public void SetBrightness(float brightness = 0.75F)
-        {
-            Console.WriteLine("Set brightness not enabled");
-        }
-
+    
+        /// <summary>
+        /// Set the displa conrtast
+        /// </summary>
+        /// <param name="contrast">The constrast as a float (0-1)</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void SetContrast(float contrast = 0.5f)
         {
             if (contrast < 0 || contrast > 1)
@@ -268,6 +341,11 @@ namespace Meadow.Foundation.Displays.Lcd
             LCD_V0.DutyCycle = contrast;
         }
 
+        /// <summary>
+        /// Save a custom character to the dislay
+        /// </summary>
+        /// <param name="characterMap">The character data</param>
+        /// <param name="address">The display character address (0-7)</param>
         public void SaveCustomCharacter(byte[] characterMap, byte address)
         {
             address &= 0x7; // we only have 8 locations 0-7
@@ -279,10 +357,11 @@ namespace Meadow.Foundation.Displays.Lcd
             }
         }
 
+        /// <summary>
+        /// Update the display
+        /// </summary>
         public void Show()
-        {
-            //can safely ignore
-            //required for ITextDisplayMenu
-        }
+        {   //can safely ignore
+        }   //required for ITextDisplayMenu
     }
 }

@@ -119,6 +119,15 @@ namespace Meadow.Foundation.Graphics.Buffers
             Clear(color.Color1bpp);
         }
 
+        /// <summary>
+        /// Fill the buffer with a color
+        /// </summary>
+        /// <param name="x">The x position in pixels</param>
+        /// <param name="y">The y position in pixels</param>
+        /// <param name="width">Width to fill in pixels</param>
+        /// <param name="height">Height to fill in pixels</param>
+        /// <param name="color">The color to fill</param>
+        /// <exception cref="ArgumentOutOfRangeException">Throws an exception if the fill region is outside of the buffer</exception>
         public override void Fill(int x, int y, int width, int height, Color color)
         {
             if (x < 0 || x + width > Width ||

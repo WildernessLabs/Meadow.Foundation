@@ -34,17 +34,16 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// SPI peripheral object
         /// </summary>
-        protected ISpiPeripheral spiPerihperal;
+        ISpiPeripheral spiPerihperal;
 
-        protected IDigitalOutputPort dataCommandPort;
-        protected IDigitalOutputPort resetPort;
-        protected IDigitalOutputPort chipSelectPort;
+        IDigitalOutputPort dataCommandPort;
+        IDigitalOutputPort resetPort;
 
-        protected const bool Data = true;
-        protected const bool Command = false;
+        const bool Data = true;
+        const bool Command = false;
 
-        protected Buffer1bpp imageBuffer;
-        protected byte[] pageBuffer;
+        Buffer1bpp imageBuffer;
+        byte[] pageBuffer;
 
         /// <summary>
         /// Create a new ST7565 object
@@ -79,7 +78,6 @@ namespace Meadow.Foundation.Displays
             int width = 128, int height = 64)
         {
             this.dataCommandPort = dataCommandPort;
-            this.chipSelectPort = chipSelectPort;
             this.resetPort = resetPort;
 
             spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);

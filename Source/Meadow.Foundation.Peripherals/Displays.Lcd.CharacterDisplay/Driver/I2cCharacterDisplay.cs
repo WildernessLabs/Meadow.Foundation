@@ -14,9 +14,20 @@ namespace Meadow.Foundation.Displays.Lcd
         /// </summary>
         protected readonly II2cPeripheral i2cPeripheral;
 
+        /// <summary>
+        /// Display control value
+        /// </summary>
         protected byte displayControl;
+        
+        /// <summary>
+        /// Display mode value
+        /// </summary>
         protected byte displayMode;
-        private byte backlightValue;
+
+        /// <summary>
+        /// Display backlight value
+        /// </summary>
+        protected byte backlightValue;
 
         /// <summary>
         /// The cursor current line 
@@ -80,10 +91,10 @@ namespace Meadow.Foundation.Displays.Lcd
         protected static byte LCD_BLINKON = 0x01;
         protected static byte LCD_BLINKOFF = 0x00;
         // flags for display/cursor shift
-        protected static byte LCD_DISPLAYMOVE = 0x08;
-        protected static byte LCD_CURSORMOVE = 0x00;
-        protected static byte LCD_MOVERIGHT = 0x04;
-        protected static byte LCD_MOVELEFT = 0x00;
+        static byte LCD_DISPLAYMOVE = 0x08;
+        static byte LCD_CURSORMOVE = 0x00;
+        static byte LCD_MOVERIGHT = 0x04;
+        static byte LCD_MOVELEFT = 0x00;
         // flags for function set
         protected static byte LCD_8BITMODE = 0x10;
         protected static byte LCD_4BITMODE = 0x00;
@@ -92,17 +103,24 @@ namespace Meadow.Foundation.Displays.Lcd
         protected static byte LCD_5x10DOTS = 0x04;
         protected static byte LCD_5x8DOTS = 0x00;
         // flags for backlight control
-        protected static byte LCD_BACKLIGHT = 0x08;
-        protected static byte LCD_NOBACKLIGHT = 0x00;
-        protected static byte En = 0b00000100;  // Enable bit
-        protected static byte Rw = 0b00000010;  // Read/Write bit
-        protected static byte Rs = 0b00000001;  // Register select bit
+        static byte LCD_BACKLIGHT = 0x08;
+        static byte LCD_NOBACKLIGHT = 0x00;
+        static byte En = 0b00000100;  // Enable bit
+        static byte Rw = 0b00000010;  // Read/Write bit
+        static byte Rs = 0b00000001;  // Register select bit
 
         /// <summary>
         /// The text display configuration
         /// </summary>
         public TextDisplayConfig DisplayConfig { get; protected set; }
 
+        /// <summary>
+        /// Create a new I2cCharacterDisplay
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">I2C address</param>
+        /// <param name="rows">Number of character rows</param>
+        /// <param name="columns">Number of character columns</param>
         public I2cCharacterDisplay(II2cBus i2cBus, byte address = (byte)Addresses.Default, byte rows = 4, byte columns = 20)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
@@ -113,6 +131,9 @@ namespace Meadow.Foundation.Displays.Lcd
             Initialize();
         }
 
+        /// <summary>
+        /// Initialize the display
+        /// </summary>
         protected virtual void Initialize()
         {
             var displayFunction = (byte)(LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS);
@@ -205,6 +226,10 @@ namespace Meadow.Foundation.Displays.Lcd
             Thread.Sleep(1);	// commands need > 37us to settle
         }
 
+        /// <summary>
+        /// Clear a line of text
+        /// </summary>
+        /// <param name="lineNumber">The line to clear (0 indexed)</param>
         public void ClearLine(byte lineNumber)
         {
             SetCursorPosition(0, lineNumber);
@@ -215,6 +240,9 @@ namespace Meadow.Foundation.Displays.Lcd
             SetCursorPosition(0, lineNumber);
         }
 
+        /// <summary>
+        /// Clear all lines
+        /// </summary>
         public void ClearLines()
         {
             // clear display, set cursor position to zero
@@ -223,6 +251,11 @@ namespace Meadow.Foundation.Displays.Lcd
             SetCursorPosition(0, 0);
         }
 
+        /// <summary>
+        /// Set the cursor position
+        /// </summary>
+        /// <param name="column">The cursor column</param>
+        /// <param name="line">The cursor line</param>
         public void SetCursorPosition(byte column, byte line)
         {
             int[] rowOffsets = { 0x00, 0x40, 0x14, 0x54 };
@@ -237,6 +270,10 @@ namespace Meadow.Foundation.Displays.Lcd
             cursorColumn = column;
         }
 
+        /// <summary>
+        /// Write a string to the display
+        /// </summary>
+        /// <param name="text">The text to show as a string</param>
         public void Write(string text)
         {
             string screentText = text;
@@ -389,27 +426,38 @@ namespace Meadow.Foundation.Displays.Lcd
             }
         }
 
-        // Turn the (optional) backlight off/on
+        /// <summary>
+        /// Turn the backlight on
+        /// </summary>
         public void BacklightOn()
         {
             backlightValue = LCD_BACKLIGHT;
             ExpanderWrite(0);
         }
 
+        /// <summary>
+        /// Turn the backlight off
+        /// </summary>
         public void BacklightOff()
         {
             backlightValue = LCD_NOBACKLIGHT;
             ExpanderWrite(0);
         }
+
+        /// <summary>
+        /// Get the backlight state
+        /// </summary>
+        /// <returns>True if On, false if off</returns>
         public bool IsBacklightOn()
         {
             return backlightValue == LCD_BACKLIGHT;
         }
 
+        /// <summary>
+        /// Update the display
+        /// </summary>
         public void Show()
-        {
-            //can safely ignore
-            //required for ITextDisplayMenu
-        }
+        {   //can safely ignore
+        }   //required for ITextDisplayMenu
     }
 }

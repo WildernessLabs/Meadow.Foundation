@@ -13,23 +13,77 @@ namespace Meadow.Foundation.Displays.Led
         /// </summary>
         public enum CharacterType
         {
+            /// <summary>
+            /// Zero (0) chracter
+            /// </summary>
             Zero,
+            /// <summary>
+            /// One (1) chracter
+            /// </summary>
             One,
+            /// <summary>
+            /// Two (2) chracter
+            /// </summary>
             Two,
+            /// <summary>
+            /// Three (3) chracter
+            /// </summary>
             Three,
+            /// <summary>
+            /// Four (4) chracter
+            /// </summary>
             Four,
+            /// <summary>
+            /// Five (5) chracter
+            /// </summary>
             Five,
+            /// <summary>
+            /// Six (6) chracter
+            /// </summary>
             Six,
+            /// <summary>
+            /// Seven (7) chracter
+            /// </summary>
             Seven,
+            /// <summary>
+            /// Eight (8) chracter
+            /// </summary>
             Eight,
+            /// <summary>
+            /// Nine (9) chracter
+            /// </summary>
             Nine,
+            /// <summary>
+            /// A chracter
+            /// </summary>
             A,
+            /// <summary>
+            /// B chracter
+            /// </summary>
             B,
+            /// <summary>
+            /// C chracter
+            /// </summary>
             C,
+            /// <summary>
+            /// D chracter
+            /// </summary>
             D,
+            /// <summary>
+            /// E chracter
+            /// </summary>
             E,
+            /// <summary>
+            /// F chracter
+            /// </summary>
             F,
+            /// <summary>
+            /// Blank chracter
+            /// </summary>
             Blank,
+            /// <summary>
+            /// The count of values in CharacterType
+            /// </summary>
             count
         }
 
@@ -76,6 +130,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="pinE">Pin E</param>
         /// <param name="pinF">Pin F</param>
         /// <param name="pinG">Pin G</param>
+        /// <param name="pinDecimal">Pin decimal</param>
         /// <param name="isCommonCathode">Is the display using common cathod (true) or common annode (false)</param>
         public SevenSegment(
             IDigitalOutputController device, 
