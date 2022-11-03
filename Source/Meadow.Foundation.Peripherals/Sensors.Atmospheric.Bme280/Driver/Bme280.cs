@@ -53,11 +53,29 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
+        /// <summary>
+        /// The read buffer
+        /// </summary>
         protected Memory<byte> readBuffer = new byte[32];
+
+        /// <summary>
+        /// The write buffer
+        /// </summary>
         protected Memory<byte> writeBuffer = new byte[32];
 
+        /// <summary>
+        /// Temperature oversample count
+        /// </summary>
         public Oversample TemperatureSampleCount { get; set; } = Oversample.OversampleX8;
+        
+        /// <summary>
+        /// Pressure oversample count
+        /// </summary>
         public Oversample PressureSampleCount { get; set; } = Oversample.OversampleX8;
+
+        /// <summary>
+        /// Humidity oversample count
+        /// </summary>
         public Oversample HumiditySampleCount { get; set; } = Oversample.OversampleX8;
 
         /// <summary>

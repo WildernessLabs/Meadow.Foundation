@@ -52,6 +52,11 @@ namespace Meadow.Foundation.Displays
             SetRotation(Rotation.Normal);
         }
 
+        /// <summary>
+        /// Is the color mode supported by the display
+        /// </summary>
+        /// <param name="mode">The color mode</param>
+        /// <returns>True if supported</returns>
         public override bool IsColorModeSupported(ColorType mode)
         {
             return mode == ColorType.Format24bppRgb888;

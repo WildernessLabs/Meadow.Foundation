@@ -38,7 +38,14 @@ namespace Meadow.Foundation.Displays
         {
         }
 
+        /// <summary>
+        /// Does the display invert data for black pixels
+        /// </summary>
         protected override bool IsBlackInverted => false;
+
+        /// <summary>
+        /// Does the display invert data for color pixels
+        /// </summary>
         protected override bool IsColorInverted => false;
 
         /// <summary>

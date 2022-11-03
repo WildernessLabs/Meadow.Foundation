@@ -147,7 +147,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //Peripheral.WriteBytes(new byte[] { 0xF4, 0x2E });
             WriteBuffer.Span[0] = 0xf4;
             WriteBuffer.Span[1] = 0x2e;
-            Peripheral.Write(WriteBuffer.Span[0..2]);
+            Peripheral?.Write(WriteBuffer.Span[0..2]);
 
             // Required as per datasheet.
             Thread.Sleep(5);
@@ -156,13 +156,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // TODO: Delete after validating
             //Peripheral.WriteBytes(new byte[] { 0xF6 });
             WriteBuffer.Span[0] = 0xf6;
-            Peripheral.Write(WriteBuffer.Span[0]);
+            Peripheral?.Write(WriteBuffer.Span[0]);
 
             // get MSB and LSB result
             // TODO: Delete after validating
             //byte[] data = new byte[2];
             //data = Peripheral.ReadBytes(2);
-            Peripheral.Read(ReadBuffer.Span[0..2]);
+            Peripheral?.Read(ReadBuffer.Span[0..2]);
 
             return ((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
         }
@@ -182,7 +182,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // TODO: delete after validating
             //byte[] data = new byte[3];
             //data = Peripheral.ReadRegisters(0xF6, 3);
-            Peripheral.ReadRegister(0xf6, ReadBuffer.Span[0..3]);
+            Peripheral?.ReadRegister(0xf6, ReadBuffer.Span[0..3]);
 
             return ((ReadBuffer.Span[0] << 16) | (ReadBuffer.Span[1] << 8) | (ReadBuffer.Span[2])) >> (8 - oversamplingSetting);
         }
@@ -214,7 +214,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // TODO: delete after validating
             //byte[] data = new byte[2];
             //data = Peripheral.ReadRegisters(address, 2);
-            Peripheral.ReadRegister(address, ReadBuffer.Span[0..2]);
+            Peripheral?.ReadRegister(address, ReadBuffer.Span[0..2]);
 
             return (short)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
         }

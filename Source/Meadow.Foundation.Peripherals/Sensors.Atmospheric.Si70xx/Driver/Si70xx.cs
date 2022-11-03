@@ -59,10 +59,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             Initialize();
         }
-
+        /// <summary>
+        /// Reset the sensor
+        /// </summary>
         protected void Reset()
         {
-            Peripheral.Write(CMD_RESET);
+            Peripheral?.Write(CMD_RESET);
             Thread.Sleep(100);
         }
 
@@ -83,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // this device is...interesting.  Most registers are 1-byte addressing, but a few are 2-bytes?
             tx[0] = READ_ID_PART1;
             tx[1] = READ_ID_PART2;
-            Peripheral.Exchange(tx, ReadBuffer.Span);
+            Peripheral?.Exchange(tx, ReadBuffer.Span);
             for (var index = 0; index < 4; index++)
             {
                 SerialNumber <<= 8;
@@ -92,7 +94,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             tx[0] = READ_2ND_ID_PART1;
             tx[1] = READ_2ND_ID_PART2;
-            Peripheral.Exchange(tx, ReadBuffer.Span);
+            Peripheral?.Exchange(tx, ReadBuffer.Span);
 
             SerialNumber <<= 8;
             SerialNumber += ReadBuffer.Span[0];
@@ -120,10 +122,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             return await Task.Run(() =>
             {
-                // ---- HUMIDITY
-                Peripheral.Write(HUMDITY_MEASURE_NOHOLD);
+                Peripheral?.Write(HUMDITY_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-                Peripheral.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+                Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
                 var humidityReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
                 conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, HU.Percent);
                 if (conditions.Humidity < new RelativeHumidity(0, HU.Percent))
@@ -138,10 +139,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     }
                 }
 
-                // ---- TEMPERATURE
-                Peripheral.Write(TEMPERATURE_MEASURE_NOHOLD);
+                Peripheral?.Write(TEMPERATURE_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-                Peripheral.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+                Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
                 var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
                 conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), TU.Celsius);
 
@@ -168,36 +168,38 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Turn the heater on or off.
+        /// Turn the heater on or off
         /// </summary>
         /// <param name="onOrOff">Heater status, true = turn heater on, false = turn heater off.</param>
         public void Heater(bool onOrOff)
         {
-            var register = Peripheral.ReadRegister((byte)Register.USER_REG_1);
+            var register = Peripheral?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
             register &= 0xfd;
 
             if (onOrOff)
             {
                 register |= 0x02;
             }
-            Peripheral.WriteRegister((byte)Register.USER_REG_1, register);
+            Peripheral?.WriteRegister((byte)Register.USER_REG_1, register);
         }
 
-        //Set sensor resolution
+        //
         /*******************************************************************************************/
-        //Sets the sensor resolution to one of four levels
-        //Page 12:
-        // 0/0 = 12bit RH, 14bit Temp
-        // 0/1 = 8bit RH, 12bit Temp
-        // 1/0 = 10bit RH, 13bit Temp
-        // 1/1 = 11bit RH, 11bit Temp
-        //Power on default is 0/0
+
+
+        /// <summary>
+        /// Sets the sensor resolution to one of four levels
+        /// Page 12:
+        /// 0/0 = 12bit RH, 14bit Temp
+        /// 0/1 = 8bit RH, 12bit Temp
+        /// 1/0 = 10bit RH, 13bit Temp
+        /// 1/1 = 11bit RH, 11bit Temp
+        ///Power on default is 0/0
+        /// </summary>
+        /// <param name="resolution">The resolution to set</param>
         void SetResolution(SensorResolution resolution)
         {
-            var register = Peripheral.ReadRegister((byte)Register.USER_REG_1);
-            //userRegister &= 0b01111110; //Turn off the resolution bits
-            //resolution &= 0b10000001; //Turn off all other bits but resolution bits
-            //userRegister |= resolution; //Mask in the requested resolution bits
+            var register = Peripheral?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
 
             var res = (byte)resolution;
 
@@ -206,7 +208,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             register |= res; //Mask in the requested resolution bits
 
             //Request a write to user register
-            Peripheral.WriteRegister((byte)Register.USER_REG_1, register); //Write the new resolution bits
+            Peripheral?.WriteRegister((byte)Register.USER_REG_1, register); //Write the new resolution bits
         }
     }
 }

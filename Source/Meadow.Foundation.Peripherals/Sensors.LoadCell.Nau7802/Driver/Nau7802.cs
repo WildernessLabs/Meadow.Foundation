@@ -64,8 +64,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 Thread.Sleep(1);
             }
 
-            //Bus.ReadRegisterBytes((byte)Register.ADCO_B2, _read);
-            Peripheral.ReadRegister((byte)Register.ADCO_B2, _read);
+            Peripheral?.ReadRegister((byte)Register.ADCO_B2, _read);
             return _read[0] << 16 | _read[1] << 8 | _read[2];
         }
 
@@ -89,17 +88,16 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
             // Set and clear the RR bit in 0x00, to guarantee a reset of all register values
             _currentPU_CTRL = PU_CTRL_BITS.RR;
-            //Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
-            Peripheral.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
             Thread.Sleep(1); // make sure it has time to do it's thing
             _currentPU_CTRL &= ~PU_CTRL_BITS.RR;
-            //Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
-            Peripheral.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            
+            Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
 
             // turn on the analog and digital power
             _currentPU_CTRL |= (PU_CTRL_BITS.PUD | PU_CTRL_BITS.PUA);
-            //Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
-            Peripheral.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+          
+            Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
             // wait for power-up ready
             var timeout = 100;
             do
@@ -146,7 +144,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private bool IsConversionComplete()
         {
-            //var puctrl = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
             var puctrl = (PU_CTRL_BITS)Peripheral.ReadRegister((byte)Register.PU_CTRL);
             return (puctrl & PU_CTRL_BITS.CR) == PU_CTRL_BITS.CR;
         }
@@ -154,8 +151,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         private void EnableCh2DecouplingCap()
         {
             // app note - enable ch2 decoupling cap
-            //var pga_pwr = Bus.ReadRegisterByte((byte)Register.PGA_PWR);
-            var pga_pwr = Peripheral.ReadRegister((byte)Register.PGA_PWR);
+            var pga_pwr = Peripheral?.ReadRegister((byte)Register.PGA_PWR) ?? 0;
             pga_pwr |= 1 << 7;
             //Bus.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
             Peripheral.WriteRegister((byte)Register.PGA_PWR, pga_pwr);

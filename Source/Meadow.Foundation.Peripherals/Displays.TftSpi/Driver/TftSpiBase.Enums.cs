@@ -1,12 +1,30 @@
 ﻿namespace Meadow.Foundation.Displays
 {
+    /// <summary>
+    /// Represents an abstract color TFT display using SPI communication
+    /// </summary>
     public abstract partial class TftSpiBase
     {
+        /// <summary>
+        /// TFT SPI commands
+        /// </summary>
         protected enum LcdCommand
         {
+            /// <summary>
+            /// CASET
+            /// </summary>
             CASET = 0x2A,
+            /// <summary>
+            /// RASET
+            /// </summary>
             RASET = 0x2B,
+            /// <summary>
+            /// RAMWR
+            /// </summary>
             RAMWR = 0x2C,
+            /// <summary>
+            /// RADRD
+            /// </summary>
             RADRD = 0x2E
         };
 
@@ -19,6 +37,9 @@
             Rotate_270,
         }
 
+        /// <summary>
+        /// Display registers
+        /// </summary>
         protected enum Register : byte
         {
             NO_OP = 0x0,

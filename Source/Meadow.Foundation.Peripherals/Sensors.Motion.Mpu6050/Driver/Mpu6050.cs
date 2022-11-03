@@ -35,9 +35,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
         /// <summary>
-        /// Angualr acceleration 3D
+        /// Angualar acceleration 3D
         /// </summary>
         public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
+
         /// <summary>
         /// Temperature
         /// </summary>
@@ -61,15 +62,18 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             WriteBuffer.Span[0] = Registers.POWER_MANAGEMENT;
             WriteBuffer.Span[1] = 0x00;
-            Peripheral.Write(WriteBuffer.Span[0..2]);
+            Peripheral?.Write(WriteBuffer.Span[0..2]);
 
             LoadConfiguration();
         }
 
+        /// <summary>
+        /// Load the sensor configuration
+        /// </summary>
         protected void LoadConfiguration()
         {
             // read all 3 config bytes
-            Peripheral.ReadRegister(Registers.CONFIG, ReadBuffer.Span[0..3]);
+            Peripheral?.ReadRegister(Registers.CONFIG, ReadBuffer.Span[0..3]);
 
             GyroScale = (ReadBuffer.Span[1] & 0b00011000) >> 3;
             AccelerometerScale = (ReadBuffer.Span[2] & 0b00011000) >> 3;

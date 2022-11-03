@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             //get current color
             var index = ((y * Width) + x) * 4;
 
-            return (int)(Buffer[index] << 24 | Buffer[++index] << 16 | Buffer[++index] << 8 | Buffer[++index]);
+            return (Buffer[index] << 24 | Buffer[++index] << 16 | Buffer[++index] << 8 | Buffer[++index]);
         }
         /// <summary>
         /// Get the pixel color

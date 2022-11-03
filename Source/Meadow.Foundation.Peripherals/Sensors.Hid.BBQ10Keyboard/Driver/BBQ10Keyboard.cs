@@ -5,24 +5,36 @@ using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
+    /// <summary>
+    /// Represents a BBQ10Keyboard Featherwing
+    /// </summary>
     public partial class BBQ10Keyboard
     {
-        I2cPeripheral i2CPeripheral;
+        readonly I2cPeripheral i2CPeripheral;
 
-        IDigitalInterruptPort interruptPort;
+        readonly IDigitalInterruptPort interruptPort;
 
+        /// <summary>
+        /// Raised when a key press is detected
+        /// </summary>
         public event EventHandler<KeyEvent> OnKeyEvent = delegate { };
 
         byte Status => i2CPeripheral.ReadRegister((byte)Registers.KEY);
 
         byte KeyCount => (byte)(i2CPeripheral.ReadRegister(KEY_COUNT_MASK) & Status);
 
+        /// <summary>
+        /// Get or set the backlight
+        /// </summary>
         public byte BackLight
         {
             get => i2CPeripheral.ReadRegister((byte)Registers.BKL);
             set => i2CPeripheral.WriteRegister((byte)Registers.BKL, value);
         }
 
+        /// <summary>
+        /// Get or set the 2nd backlight 
+        /// </summary>
         public byte BackLight2
         {
             get => i2CPeripheral.ReadRegister((byte)Registers.BK2);
@@ -42,6 +54,10 @@ namespace Meadow.Foundation.Sensors.Hid
             Reset();
         }
 
+        /// <summary>
+        /// Get the last key event
+        /// </summary>
+        /// <returns>The event</returns>
         public KeyEvent GetLastKeyEvent()
         {
             if (KeyCount == 0)
@@ -54,13 +70,19 @@ namespace Meadow.Foundation.Sensors.Hid
             return new KeyEvent((char)(keyData >> 8), (KeyState)(keyData & 0xFF));
         }
 
+        /// <summary>
+        /// Reset the keyboard
+        /// </summary>
         public void Reset()
         {
-            i2CPeripheral.Write((byte)Registers.RST);
+            i2CPeripheral?.Write((byte)Registers.RST);
             Thread.Sleep(100);
         }
 
-        void ClearInerruptStatus()
+        /// <summary>
+        /// Clear the interrupt status
+        /// </summary>
+        protected void ClearInerruptStatus()
         {
             i2CPeripheral.WriteRegister((byte)Registers.INT, 0x00);
         }

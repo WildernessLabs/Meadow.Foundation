@@ -247,6 +247,12 @@ namespace Meadow.Foundation.Displays
             imageBuffer.Fill(x, y, width, height, color);
         }
 
+        /// <summary>
+        /// Write a buffer to the display offscreen buffer
+        /// </summary>
+        /// <param name="x">The x position in pixels to write the buffer</param>
+        /// <param name="y">The y position in pixels to write the buffer</param>
+        /// <param name="displayBuffer">The buffer to write</param>
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);

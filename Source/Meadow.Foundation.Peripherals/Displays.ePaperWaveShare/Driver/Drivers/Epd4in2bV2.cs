@@ -40,8 +40,15 @@ namespace Meadow.Foundation.Displays.ePaper
         {
         }
 
+        /// <summary>
+        /// Does the display invert data for black pixels
+        /// </summary>
         protected override bool IsBlackInverted => false;
-        
+
+        /// <summary>
+        /// Does the display invert data for color pixels
+        /// </summary>
+
         protected override bool IsColorInverted => false;
 
         /// <summary>
@@ -57,6 +64,9 @@ namespace Meadow.Foundation.Displays.ePaper
             SendData(0x0F);
         }
 
+        /// <summary>
+        /// Reset the display
+        /// </summary>
         protected override void Reset()
         {
             Console.WriteLine("Reset");

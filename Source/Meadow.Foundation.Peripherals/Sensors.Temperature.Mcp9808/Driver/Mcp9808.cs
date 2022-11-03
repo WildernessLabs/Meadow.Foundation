@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Mcp9808(II2cBus i2CBus, byte address = (byte)Addresses.Default)
             : base(i2CBus, address, readBufferSize: 8, writeBufferSize: 8)
         {
-            Peripheral.WriteRegister(MCP_REG_CONFIG, (ushort)0x0);
+            Peripheral?.WriteRegister(MCP_REG_CONFIG, (ushort)0x0);
         }
 
         /// <summary>
@@ -44,11 +44,11 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public void Wake()
         {
-            ushort config = Peripheral.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
+            ushort config = Peripheral?.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian) ?? 0; 
 
             config = (ushort)(config & (~MCP_CONFIG_SHUTDOWN));
 
-            Peripheral.WriteRegister(MCP_REG_CONFIG, config);
+            Peripheral?.WriteRegister(MCP_REG_CONFIG, config);
         }
 
         /// <summary>
@@ -56,9 +56,9 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public void Sleep()
         {
-            ushort config = Peripheral.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian);
+            ushort config = Peripheral?.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian) ?? 0;
 
-            Peripheral.WriteRegister(MCP_REG_CONFIG, (ushort)(config | MCP_CONFIG_SHUTDOWN));
+            Peripheral?.WriteRegister(MCP_REG_CONFIG, (ushort)(config | MCP_CONFIG_SHUTDOWN));
          }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public ushort GetDeviceId()
         {
-            return Peripheral.ReadRegisterAsUShort(MCP_DEVICE_ID, ByteOrder.BigEndian);
+            return Peripheral?.ReadRegisterAsUShort(MCP_DEVICE_ID, ByteOrder.BigEndian) ?? 0;
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public ushort GetManufactureId()
         {
-            return Peripheral.ReadRegisterAsUShort(MCP_MANUFACTURER_ID, ByteOrder.BigEndian);
+            return Peripheral?.ReadRegisterAsUShort(MCP_MANUFACTURER_ID, ByteOrder.BigEndian) ?? 0;
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public byte GetResolution()
         {
-            return Peripheral.ReadRegister(MCP_RESOLUTION);
+            return Peripheral?.ReadRegister(MCP_RESOLUTION) ?? 0;
         }
 
         /// <summary>
@@ -90,14 +90,14 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public void SetResolution(byte resolution)
         {
-            Peripheral.WriteRegister(MCP_RESOLUTION, resolution);
+            Peripheral?.WriteRegister(MCP_RESOLUTION, resolution);
         }
 
         protected override async Task<Units.Temperature> ReadSensor()
         {
             return await Task.Run(() =>
             {
-                ushort value = Peripheral.ReadRegisterAsUShort(MCP_AMBIENT_TEMP, ByteOrder.BigEndian);
+                ushort value = Peripheral?.ReadRegisterAsUShort(MCP_AMBIENT_TEMP, ByteOrder.BigEndian) ?? 0;
                 double temp = value & 0x0FFF;
 
                 temp /= 16.0;

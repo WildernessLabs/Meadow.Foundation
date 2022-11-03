@@ -112,6 +112,11 @@ namespace Meadow.Foundation.Displays
             Initialize();
         }
 
+        /// <summary>
+        /// Create an offscreen buffer for the display
+        /// </summary>
+        /// <param name="width">The width in pixels</param>
+        /// <param name="height">The height in pixels</param>
         protected virtual void CreateBuffer(int width, int height)
         {
             imageBuffer = new Buffer2bppEPaper(width, height);
@@ -214,6 +219,12 @@ namespace Meadow.Foundation.Displays
             imageBuffer.SetPixel(x, y, color);
         }
 
+        /// <summary>
+        /// Write a buffer to the display buffer
+        /// </summary>
+        /// <param name="x">The x position in pixels to write the buffer</param>
+        /// <param name="y">The y position in pixels to write the buffer</param>
+        /// <param name="displayBuffer">The buffer to write</param>
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);

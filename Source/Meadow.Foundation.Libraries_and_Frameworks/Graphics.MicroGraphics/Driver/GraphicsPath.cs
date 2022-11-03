@@ -59,14 +59,16 @@ namespace Meadow.Foundation.Graphics
         }
 
         public GraphicsPath()
-        {
-        }
+        { }
 
         public GraphicsPath(GraphicsPath path)
         {
             AddPath(path);
         }
 
+        /// <summary>
+        /// Reset the path
+        /// </summary>
         public void Reset()
         {
             PathActions = new List<PathAction>();

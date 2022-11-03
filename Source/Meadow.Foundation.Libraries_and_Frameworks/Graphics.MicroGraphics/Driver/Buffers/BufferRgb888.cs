@@ -42,7 +42,6 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             var index = ((y * Width) + x) * 3;
 
-            //split into R,G,B & invert
             byte r = Buffer[index];
             byte g = Buffer[index + 1];
             byte b = Buffer[index + 2];
@@ -71,7 +70,6 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="color">The fill color</param>
         public override void Fill(Color color)
         {
-            // split the color in to two byte values
             Buffer[0] = color.R;
             Buffer[1] = color.G;
             Buffer[2] = color.B;
@@ -135,7 +133,6 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             var color = GetPixel(x, y);
 
-            //split into R,G,B & invert
             byte r = (byte)~color.R;
             byte g = (byte)~color.G;
             byte b = (byte)~color.B;

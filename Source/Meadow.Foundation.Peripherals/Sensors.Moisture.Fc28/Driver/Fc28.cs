@@ -62,6 +62,8 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
+        /// <param name="minimumVoltageCalibration">The minimum voltage</param>
+        /// <param name="maximumVoltageCalibration">The maximum volage</param>
         public Fc28(
             IAnalogInputPort analogPort, IDigitalOutputPort digitalPort,
             Voltage? minimumVoltageCalibration, Voltage? maximumVoltageCalibration)

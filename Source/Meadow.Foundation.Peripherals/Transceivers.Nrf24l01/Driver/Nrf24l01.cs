@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System;
 using System.Linq;
 using System.Text;
@@ -7,6 +6,9 @@ using System.Threading;
 
 namespace Meadow.Foundation.Transceivers
 {
+    /// <summary>
+    /// Represents a Nrf24l01 tranciever
+    /// </summary>
     public class Nrf24l01
     {
         /* Memory Map */

@@ -145,6 +145,12 @@
             throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// Invert the pixel
+        /// Not currently supported
+        /// </summary>
+        /// <param name="x">x position of pixel</param>
+        /// <param name="y">y position of pixel</param>
         public void InvertPixel(int x, int y)
         {
             throw new System.NotImplementedException();
@@ -217,9 +223,15 @@
             }
         }
 
-        public void WriteBuffer(int originX, int originY, IPixelBuffer buffer)
+        /// <summary>
+        /// Write a buffer to the buffer
+        /// </summary>
+        /// <param name="x">The x position in pixels to write the buffer</param>
+        /// <param name="y">The y position in pixels to write the buffer</param>
+        /// <param name="buffer">The buffer to write</param>
+        public void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
-            blackBuffer.WriteBuffer(originX, originY, buffer);
+            blackBuffer.WriteBuffer(x, y, buffer);
         }
 
         PixelState GetStateFromColor(Color color)

@@ -122,6 +122,11 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = Data;
         }
 
+        /// <summary>
+        /// Is the color mode supported by the display
+        /// </summary>
+        /// <param name="mode">The color mode</param>
+        /// <returns>True if supported</returns>
         public override bool IsColorModeSupported(ColorType mode)
         {
             if (mode == ColorType.Format16bppRgb565)

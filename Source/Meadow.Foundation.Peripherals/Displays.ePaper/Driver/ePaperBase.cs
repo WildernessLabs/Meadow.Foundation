@@ -22,6 +22,9 @@ namespace Meadow.Foundation.Displays
             spiPeripheral.Write(commandBuffer);
         }
 
+        /// <summary>
+        /// Reset the display
+        /// </summary>
         protected virtual void Reset()
         {
             resetPort.State = false;

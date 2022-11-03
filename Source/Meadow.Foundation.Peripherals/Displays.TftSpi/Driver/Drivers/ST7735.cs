@@ -68,15 +68,39 @@ namespace Meadow.Foundation.Displays
             Initialize();
         }
 
+        /// <summary>
+        /// The ST7735 display type
+        /// </summary>
         public enum DisplayType
         {
+            /// <summary>
+            /// ST7735R
+            /// </summary>
             ST7735R,
+            /// <summary>
+            /// Green tab
+            /// </summary>
             ST7735R_GreenTab,
+            /// <summary>
+            /// Black tab
+            /// </summary>
             ST7735R_BlackTab,
+            /// <summary>
+            /// 128x128 resolution
+            /// </summary>
             ST7735R_128x128,
+            /// <summary>
+            /// 144x144 resolution
+            /// </summary>
             ST7735R_144x144,
+            /// <summary>
+            /// 80x160 resolution
+            /// </summary>
             ST7735R_80x160,
-            ST7735B, //done
+            /// <summary>
+            /// ST7735B
+            /// </summary>
+            ST7735B,
         }
 
         const byte SWRESET = 0x01;

@@ -6,7 +6,7 @@ namespace Meadow.Foundation
     /// <summary>
     /// ByteCommsSensorBase abstract class 
     /// </summary>
-    /// <typeparam name="UNIT"></typeparam>
+    /// <typeparam name="UNIT">The unit type</typeparam>
     public abstract class ByteCommsSensorBase<UNIT> :
         SamplingSensorBase<UNIT>, IDisposable where UNIT : struct
     {
@@ -25,6 +25,13 @@ namespace Meadow.Foundation
         /// </summary>
         protected Memory<byte> WriteBuffer { get; private set; }
 
+        /// <summary>
+        /// Creates a new ByteCommsSensorBase object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        /// <param name="readBufferSize">Read buffer size in bytes</param>
+        /// <param name="writeBufferSize"></param>
         protected ByteCommsSensorBase(
             II2cBus i2cBus, byte address,
             int readBufferSize = 8, int writeBufferSize = 8)

@@ -144,6 +144,13 @@ namespace Meadow.Foundation.Displays
             return false;
         }
 
+        /// <summary>
+        /// Create an offscreen buffer for the display
+        /// </summary>
+        /// <param name="mode">The color type</param>
+        /// <param name="width">The width in pixels</param>
+        /// <param name="height">The height in pixels</param>
+        /// <exception cref="ArgumentException">Throws an exception if the color mode isn't supported</exception>
         protected void CreateBuffer(ColorType mode, int width, int height)
         {
             if (IsColorModeSupported(mode) == false)
@@ -202,6 +209,12 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        /// <summary>
+        /// Write a buffer to the display offscreen buffer
+        /// </summary>
+        /// <param name="x">The x position in pixels to write the buffer</param>
+        /// <param name="y">The y position in pixels to write the buffer</param>
+        /// <param name="buffer">The buffer to write</param>
         public void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
             imageBuffer.WriteBuffer(x, y, buffer);

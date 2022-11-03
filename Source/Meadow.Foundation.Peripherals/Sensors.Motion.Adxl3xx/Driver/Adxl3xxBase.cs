@@ -31,11 +31,14 @@ namespace Meadow.Foundation.Sensors.Motion
         public Acceleration3D? Acceleration3D => Conditions;
 
         /// <summary>
-        /// Create a new ADXL335 sensor object.
+        /// Create a new ADXL335 sensor object
         /// </summary>
+        /// <param name="device">The device connected to the sensor</param>
         /// <param name="xPin">Analog pin connected to the X axis output from the ADXL335 sensor.</param>
         /// <param name="yPin">Analog pin connected to the Y axis output from the ADXL335 sensor.</param>
         /// <param name="zPin">Analog pin connected to the Z axis output from the ADXL335 sensor.</param>
+        /// <param name="gravityRange">The gravity rangy</param>
+        /// <param name="supplyVoltage">The supply voltage (typically 3.3V)</param>
         protected Adxl3xxBase(IAnalogInputController device,
             IPin xPin, IPin yPin, IPin zPin,
             int gravityRange, Voltage? supplyVoltage)

@@ -42,11 +42,16 @@ namespace Meadow.Foundation.Displays
             IDigitalInputPort busyPort,
             int width, int height) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, width, height)
-        {
-        }
+        { }
 
+        /// <summary>
+        /// Does the display invert data for black pixels
+        /// </summary>
         protected override bool IsBlackInverted => false;
 
+        /// <summary>
+        /// Does the display invert data for color pixels
+        /// </summary>
         protected override bool IsColorInverted => false;
 
         /// <summary>
