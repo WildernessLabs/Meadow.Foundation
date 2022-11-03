@@ -150,6 +150,9 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
+        /// <summary>
+        /// Reset the display
+        /// </summary>
         protected override void Reset()
         {
             resetPort.State = false;
@@ -166,6 +169,14 @@ namespace Meadow.Foundation.Displays.ePaper
             DelayMs(20);
         }
 
+        /// <summary>
+        /// Set partial address window to update display
+        /// </summary>
+        /// <param name="buffer">The interal display buffer</param>
+        /// <param name="x">X start position in pixels</param>
+        /// <param name="y">Y start position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
         protected void SetPartialWindow(byte[] buffer, int x, int y, int width, int height)
         {
             SendCommand(PARTIAL_IN);

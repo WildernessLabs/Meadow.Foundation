@@ -1,15 +1,32 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays.Lcd
 {
+    /// <summary>
+    /// Represents a single or multirow LCD character display
+    /// </summary>
     public class CharacterDisplay : ITextDisplay
     {
-        protected ICharacterDisplay characterDisplay;
+        ICharacterDisplay characterDisplay;
 
+        /// <summary>
+        /// The display configuration for text display menu
+        /// </summary>
         public TextDisplayConfig DisplayConfig => characterDisplay?.DisplayConfig;
 
+        /// <summary>
+        /// Create a new character display object using GPIO
+        /// </summary>
+        /// <param name="device">The device connected to the display</param>
+        /// <param name="pinRS">The RS pin</param>
+        /// <param name="pinE">The E pin</param>
+        /// <param name="pinD4">The D4 pin</param>
+        /// <param name="pinD5">The D5 pin</param>
+        /// <param name="pinD6">The D6 pin</param>
+        /// <param name="pinD7">The D7 pin</param>
+        /// <param name="rows">The number of character rows</param>
+        /// <param name="columns">The number of character columns</param>
         public CharacterDisplay(
             IMeadowDevice device,
             IPin pinRS,

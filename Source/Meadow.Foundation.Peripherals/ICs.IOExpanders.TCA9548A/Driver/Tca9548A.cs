@@ -49,16 +49,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create a <see cref="Tca9548a"/> i2c multiplexer.
         /// </summary>
-        /// <param name="i2cBus">The <see cref="I2cBus"/> the device is attached to</param>
+        /// <param name="i2cBus">The i2cBus the device is attached to</param>
         /// <param name="a0">The logic high/low state of pin A0</param>
         /// <param name="a1">The logic high/low state of pin A1</param>
         /// <param name="a2">The logic high/low state of pin A2</param>
-        /// <exception cref="ArgumentOutOfRangeException">The device address was invalid</exception>
-        /// <exception cref="ArgumentNullException">The bus was null</exception>
         public Tca9548a(II2cBus i2cBus, bool a0, bool a1, bool a2)
             : this(i2cBus, TcaAddressTable.GetAddressFromPins(a0, a1, a2))
-        {
-        }
+        { }
 
         /// <summary>
         /// The <see cref="II2cBus"/> this device is connected to.
@@ -155,8 +152,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             throw new NotSupportedException("This method is not supported for this device");
         }
-
-        /// <inheritdoc cref="WriteRegister"/>
+        
         /// <exception cref="NotSupportedException">This method is not supported for this device</exception>
         public void WriteRegister(byte address,
                                 ushort value,
@@ -210,7 +206,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return data;
         }
 
-        /// <inheritdoc cref="ReadRegister"/>
         /// <exception cref="NotSupportedException">This method is not supported for this device</exception>
         public byte ReadRegister(byte address)
         {

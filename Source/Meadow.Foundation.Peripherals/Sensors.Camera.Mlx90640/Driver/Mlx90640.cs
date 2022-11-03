@@ -164,7 +164,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <param name="rate">RefreshRate type</param>
         public void SetRefreshRate(RefreshRate rate) => SetRefreshRate((byte)rate);
 
-        protected virtual bool GetFrameData(ref ushort[] frameData)
+        bool GetFrameData(ref ushort[] frameData)
         {
             ushort dataReady = 1;
             ushort[] controlRegister1 = new ushort[1];

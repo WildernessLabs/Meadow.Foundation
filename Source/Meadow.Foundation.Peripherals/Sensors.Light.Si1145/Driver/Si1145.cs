@@ -27,6 +27,10 @@ namespace Meadow.Foundation.Sensors.Light
             Initialize();
         }
 
+        /// <summary>
+        /// Read data from the sensor
+        /// </summary>
+        /// <returns>Returns visible, ultraviolet index and ifrared data</returns>
         protected async override Task<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)> ReadSensor()
         {
             return await Task.Run(() =>

@@ -6,6 +6,9 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays.Lcd
 {
+    /// <summary>
+    /// Represents a GPIO character display
+    /// </summary>
     public class GpioCharacterDisplay : ICharacterDisplay
     {
         private byte LCD_LINE_1 = 0x80; // # LCD RAM address for the 1st line

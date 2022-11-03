@@ -54,6 +54,9 @@ namespace Meadow.Foundation.Displays
             Initialize();
         }
 
+        /// <summary>
+        /// Initialize the display
+        /// </summary>
         protected override void Initialize()
         {
             // Initialization Sequence
@@ -132,6 +135,11 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = Data;
         }
 
+        /// <summary>
+        /// Is a color mode supported by the display
+        /// </summary>
+        /// <param name="mode">The color mode</param>
+        /// <returns>true if supported</returns>
         public override bool IsColorModeSupported(ColorType mode)
         {
             if (mode == ColorType.Format16bppRgb565)
@@ -141,7 +149,13 @@ namespace Meadow.Foundation.Displays
             return false;
         }
 
-        //looks like this display only supports dimensions of 255 or less
+        /// <summary>
+        /// Set address window to update
+        /// </summary>
+        /// <param name="x0">Start x position in pixels</param>
+        /// <param name="y0">End x position in pixels</param>
+        /// <param name="x1">Start y position in pixels</param>
+        /// <param name="y1">End y position in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             SendCommand(CMD_SETCOLUMN);  // column addr set

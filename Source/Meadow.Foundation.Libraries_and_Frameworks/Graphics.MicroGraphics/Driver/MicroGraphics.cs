@@ -91,6 +91,7 @@ namespace Meadow.Foundation.Graphics
         /// Create a new MicroGraphics instance from a pixel buffer instance
         /// </summary>
         /// <param name="pixelBuffer">The pixel buffer</param>
+        /// <param name="initializeBuffer">Initialize the offscreen buffer if true</param>
         public MicroGraphics(PixelBufferBase pixelBuffer, bool initializeBuffer)
         {
             this.pixelBuffer = pixelBuffer;
@@ -595,6 +596,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="radius">Radius of the circle</param>
         /// <param name="color">The color of the circle</param>
         /// <param name="filled">Draw a filled circle?</param>
+        /// <param name="centerBetweenPixels">If true, the center of the circle is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawCircle(int centerX, int centerY, int radius, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
             PenColor = color;

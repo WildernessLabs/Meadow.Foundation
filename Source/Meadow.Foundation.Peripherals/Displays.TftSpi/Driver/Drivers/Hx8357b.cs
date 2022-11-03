@@ -49,6 +49,9 @@ namespace Meadow.Foundation.Displays
             SetRotation(Rotation.Normal);
         }
 
+        /// <summary>
+        /// Initialize the display
+        /// </summary>
         protected override void Initialize()
         {
             SendCommand(RegisterHX8357B.SETPOWER);
@@ -117,11 +120,18 @@ namespace Meadow.Foundation.Displays
             Thread.Sleep(10);
         }
 
+        /// <summary>
+        /// Send a command to the display
+        /// </summary>
+        /// <param name="command">The command to send</param>
         protected void SendCommand(RegisterHX8357B command)
         {
             SendCommand((byte)command);
         }
 
+        /// <summary>
+        /// Display registers
+        /// </summary>
         protected enum RegisterHX8357B : byte
         {
             /// <summary>

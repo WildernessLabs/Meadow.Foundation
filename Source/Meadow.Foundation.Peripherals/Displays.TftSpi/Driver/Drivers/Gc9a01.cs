@@ -47,6 +47,9 @@ namespace Meadow.Foundation.Displays
             SetRotation(Rotation.Normal);
         }
             
+        /// <summary>
+        /// Initialize the display
+        /// </summary>
         protected override void Initialize()
         {
             SendCommand(0xEF);
@@ -279,6 +282,11 @@ namespace Meadow.Foundation.Displays
             DelayMs(20);
         }
 
+        /// <summary>
+        /// Is a color mode supported by the display
+        /// </summary>
+        /// <param name="mode">The color mode</param>
+        /// <returns>true if supported</returns>
         public override bool IsColorModeSupported(ColorType mode)
         {
             if (mode == ColorType.Format16bppRgb565)
@@ -288,6 +296,13 @@ namespace Meadow.Foundation.Displays
             return false;
         }
 
+        /// <summary>
+        /// Set address window to update
+        /// </summary>
+        /// <param name="x0">Start x position in pixels</param>
+        /// <param name="y0">End x position in pixels</param>
+        /// <param name="x1">Start y position in pixels</param>
+        /// <param name="y1">End y position in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             SendCommand((byte)LcdCommand.CASET);  // column addr set
@@ -307,6 +322,10 @@ namespace Meadow.Foundation.Displays
             SendCommand((byte)LcdCommand.RAMWR);  // write to RAM
         }
 
+        /// <summary>
+        /// Set the rotation of the display
+        /// </summary>
+        /// <param name="rotation">The rotation</param>
         public void SetRotation(Rotation rotation)
         {
             SendCommand(GC9A01_MADCTL);
