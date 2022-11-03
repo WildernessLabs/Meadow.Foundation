@@ -45,8 +45,6 @@ namespace MeadowApp
                 }
                 a4988.Direction = (a4988.Direction == RotationDirection.Clockwise) ? RotationDirection.Counterclockwise : RotationDirection.Clockwise;
             }
-
-            return base.Run();
         }
 
         //<!=SNOP=>

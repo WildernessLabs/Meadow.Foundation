@@ -62,8 +62,6 @@ namespace Meadow.Foundation.Sensors.Camera
 
             //non jpeg
             WriteI2cRegisters(InitSettings.QVGA);
-            return;
-
 
             Console.WriteLine("OV2640_JPEG_INIT...");
             WriteI2cRegisters(InitSettings.JPEG_INIT);

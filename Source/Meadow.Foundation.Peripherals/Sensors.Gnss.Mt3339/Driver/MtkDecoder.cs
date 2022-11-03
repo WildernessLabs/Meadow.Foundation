@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Process the data from a RMC
         /// </summary>
-        /// <param name="data">String array of the message components for a RMC message.</param>
+        /// <param name="sentence">String array of the message components for a RMC message.</param>
         public void Process(NmeaSentence sentence)
         {
             // get the packet type (command number)

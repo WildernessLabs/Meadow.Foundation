@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Process the data from a GLL message.
         /// </summary>
-        /// <param name="data">String array of the message components for a GLL message.</param>
+        /// <param name="sentence">String array of the message components for a GLL message.</param>
         public void Process(NmeaSentence sentence)
         {
             //

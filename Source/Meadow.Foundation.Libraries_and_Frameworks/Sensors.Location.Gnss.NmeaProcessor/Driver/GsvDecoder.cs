@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Process the message from the GPS.
         /// </summary>
-        /// <param name="data">String array of the elements of the message.</param>
+        /// <param name="sentence">String array of the elements of the message.</param>
         /// https://gpsd.gitlab.io/gpsd/NMEA.html#_gsv_satellites_in_view
         public void Process(NmeaSentence sentence)
         {

@@ -169,7 +169,6 @@ namespace Meadow.Foundation.Sensors.Camera
             ushort dataReady = 1;
             ushort[] controlRegister1 = new ushort[1];
             ushort[] statusRegister = new ushort[1];
-            bool error = false;
             byte cnt = 0;
 
             dataReady = 0;

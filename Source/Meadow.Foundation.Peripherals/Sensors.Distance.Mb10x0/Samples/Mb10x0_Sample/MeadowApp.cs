@@ -30,8 +30,6 @@ namespace Sensors.Distance.Mb10x0_Sample
 
                 Thread.Sleep(500);
             }
-
-            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

@@ -28,9 +28,9 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         }
 
         /// <summary>
-        /// Process the data from a GSA message.
+        /// Process the data from a GSA message
         /// </summary>
-        /// <param name="data">String array of the message components for a GSA message.</param>
+        /// <param name="sentence">String array of the message components for a GSA message.</param>
         public void Process(NmeaSentence sentence)
         {
             //if (DebugMode) { Console.WriteLine($"GSADecoder.Process"); }
