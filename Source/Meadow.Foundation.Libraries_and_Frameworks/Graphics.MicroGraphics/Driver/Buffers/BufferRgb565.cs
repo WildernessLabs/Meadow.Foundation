@@ -18,6 +18,12 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public BufferRgb565() : base() { }
 
+        /// <summary>
+        /// Get the pixel color
+        /// </summary>
+        /// <param name="x">The X pixel position</param>
+        /// <param name="y">The Y pixel position</param>
+        /// <returns>The pixel color as a 565 16bpp value</returns>
         public ushort GetPixel16bpp(int x, int y)
         {
             //get current color
@@ -26,6 +32,12 @@ namespace Meadow.Foundation.Graphics.Buffers
             return (ushort)(Buffer[index] << 8 | Buffer[++index]);
         }
 
+        /// <summary>
+        /// Get the pixel color
+        /// </summary>
+        /// <param name="x">The X pixel position</param>
+        /// <param name="y">The Y pixel position</param>
+        /// <returns>The pixel color</returns>
         public override Color GetPixel(int x, int y)
         {
             ushort color = GetPixel16bpp(x, y);
@@ -37,6 +49,12 @@ namespace Meadow.Foundation.Graphics.Buffers
             return new Color(r, g, b);
         }
 
+        /// <summary>
+        /// Set the pixel color
+        /// </summary>
+        /// <param name="x">X pixel position</param>
+        /// <param name="y">Y pixel position</param>
+        /// <param name="color">The pixel color packed as a 565 16bpp ushort</param>
         public void SetPixel(int x, int y, ushort color)
         {
             var index = ((y * Width) + x) * 2;
@@ -45,16 +63,35 @@ namespace Meadow.Foundation.Graphics.Buffers
             Buffer[++index] = (byte)color;
         }
 
+        /// <summary>
+        /// Set the pixel color
+        /// </summary>
+        /// <param name="x">X pixel position</param>
+        /// <param name="y">Y pixel position</param>
+        /// <param name="color">The pixel color</param>
         public override void SetPixel(int x, int y, Color color)
         {
             SetPixel(x, y, color.Color16bppRgb565);
         }
 
+        /// <summary>
+        /// Fill buffer with a color
+        /// </summary>
+        /// <param name="color">The fill color</param>
         public override void Fill(Color color)
         {
             Clear(color.Color16bppRgb565);
         }
 
+        /// <summary>
+        /// Fill with a color
+        /// </summary>
+        /// <param name="x">X start position in pixels</param>
+        /// <param name="y">Y start position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
+        /// <param name="color">The fill color</param>
+        /// <exception cref="ArgumentOutOfRangeException">Throws an exception if fill area is beyond the buffer bounds</exception>
         public override void Fill(int x, int y, int width, int height, Color color)
         {
             if(x < 0 || x + width > Width ||

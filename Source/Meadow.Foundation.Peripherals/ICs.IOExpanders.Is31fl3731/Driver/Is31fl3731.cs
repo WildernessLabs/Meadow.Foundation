@@ -5,7 +5,7 @@ using System.Threading;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represents the IS31FL3731 IC.
+    /// Represents the IS31FL3731 IC
     /// The Is31fl3731 is a compact LED driver for 144 single LEDs
     /// </summary>
     /// <remarks>Based on https://github.com/adafruit/Adafruit_IS31FL3731 </remarks>

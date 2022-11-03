@@ -66,6 +66,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Thread.Sleep(100);
         }
 
+        /// <summary>
+        /// Initalize the sensor
+        /// </summary>
         protected void Initialize()
         {
             // write buffer for initialization commands only can be two bytes.

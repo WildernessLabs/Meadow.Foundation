@@ -60,7 +60,9 @@ namespace Meadow.Foundation.Sensors.Motion
             Initialize();
         }
 
-
+        /// <summary>
+        /// Initalize the sensor
+        /// </summary>
         protected virtual void Initialize()
         {
             byte configA = (byte)(sampleAmount | (outputRate << 2) | measurementConfig);

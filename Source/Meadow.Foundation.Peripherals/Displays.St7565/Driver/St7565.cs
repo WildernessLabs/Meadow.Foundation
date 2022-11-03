@@ -325,6 +325,11 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x2e);
         }
 
+        /// <summary>
+        /// Fill display buffer with a color
+        /// </summary>
+        /// <param name="clearColor">The fill color</param>
+        /// <param name="updateDisplay">If true, update display</param>
         public void Fill(Color clearColor, bool updateDisplay = false)
         {
             imageBuffer.Clear(clearColor.Color1bpp);
@@ -332,6 +337,14 @@ namespace Meadow.Foundation.Displays
             if (updateDisplay) Show();
         }
 
+        /// <summary>
+        /// Fill with a color
+        /// </summary>
+        /// <param name="x">X start position in pixels</param>
+        /// <param name="y">Y start position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
+        /// <param name="color">The fill color</param>
         public void Fill(int x, int y, int width, int height, Color color)
         {
             imageBuffer.Fill(x, y, width, height, color);

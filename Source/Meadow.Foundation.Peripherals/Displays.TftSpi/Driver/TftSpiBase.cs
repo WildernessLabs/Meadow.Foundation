@@ -35,17 +35,49 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
+        /// <summary>
+        /// The data command port
+        /// </summary>
         protected IDigitalOutputPort dataCommandPort;
+
+        /// <summary>
+        /// The reset port
+        /// </summary>
         protected IDigitalOutputPort resetPort;
+
+        /// <summary>
+        /// The chip select port
+        /// </summary>
         protected IDigitalOutputPort chipSelectPort;
+
+        /// <summary>
+        /// The spi peripheral for the display
+        /// </summary>
         protected ISpiPeripheral spiDisplay;
 
+        /// <summary>
+        /// The offscreen image buffer
+        /// </summary>
         protected IPixelBuffer imageBuffer;
+
+        /// <summary>
+        /// The read buffer
+        /// </summary>
         protected Memory<byte> readBuffer;
 
+        /// <summary>
+        /// Data convience bool
+        /// </summary>
         protected const bool Data = true;
+
+        /// <summary>
+        /// Command convenience bool
+        /// </summary>
         protected const bool Command = false;
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected abstract void Initialize();
 
         /// <summary>
@@ -135,6 +167,13 @@ namespace Meadow.Foundation.Displays
             readBuffer = new byte[imageBuffer.ByteCount];
         }
 
+        /// <summary>
+        /// Set addrees window for display updates
+        /// </summary>
+        /// <param name="x0">X start in pixels</param>
+        /// <param name="y0">Y start in pixels</param>
+        /// <param name="x1">X end in pixels</param>
+        /// <param name="y1">Y end in pixels</param>
         protected abstract void SetAddressWindow(int x0, int y0, int x1, int y1);
 
         /// <summary>
@@ -214,6 +253,14 @@ namespace Meadow.Foundation.Displays
             PixelBuffer.InvertPixel(x, y);
         }
 
+        /// <summary>
+        /// Fill with a color
+        /// </summary>
+        /// <param name="x">X start position in pixels</param>
+        /// <param name="y">Y start position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
+        /// <param name="color">The fill color</param>
         public void Fill(int x, int y, int width, int height, Color color)
         {
             imageBuffer.Fill(x, y, width, height, color);

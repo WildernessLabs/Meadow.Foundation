@@ -47,6 +47,9 @@ namespace Meadow.Foundation.Displays
         {
         }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             Reset();
@@ -235,12 +238,12 @@ namespace Meadow.Foundation.Displays
             DelayMs(2);
         }
 
-        protected void SendCommand(CommandIL91874V03 command)
+        internal void SendCommand(CommandIL91874V03 command)
         {
             SendCommand((byte)command);
         }
 
-        protected enum CommandIL91874V03 : byte
+        internal enum CommandIL91874V03 : byte
         {
             PANEL_SETTING = 0x00,
             POWER_SETTING = 0x01,

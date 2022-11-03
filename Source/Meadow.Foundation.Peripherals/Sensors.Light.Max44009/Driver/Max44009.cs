@@ -16,6 +16,9 @@ namespace Meadow.Foundation.Sensors.Light
             Initialize();
         }
 
+        /// <summary>
+        /// Initalize the sensor
+        /// </summary>
         protected void Initialize()
         {
             Peripheral.WriteRegister(0x02, 0x00);

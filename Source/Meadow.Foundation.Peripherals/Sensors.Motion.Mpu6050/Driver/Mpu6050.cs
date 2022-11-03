@@ -51,23 +51,12 @@ namespace Meadow.Foundation.Sensors.Motion
         public Mpu6050(II2cBus i2cBus, byte address)
             : base(i2cBus, address, readBufferSize: 14)
         {
-            Initialize(address);
-        }
-
-        protected void Initialize(byte address)
-        {
-            switch (address)
-            {
-                case 0x68:
-                case 0x69:
-                    // valid;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("MPU6050 device address must be either 0x68 or 0x69");
-            }
             Wake();
         }
 
+        /// <summary>
+        /// Wake the sensor 
+        /// </summary>
         public void Wake()
         {
             WriteBuffer.Span[0] = Registers.POWER_MANAGEMENT;

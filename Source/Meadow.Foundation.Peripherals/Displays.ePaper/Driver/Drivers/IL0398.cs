@@ -41,6 +41,9 @@ namespace Meadow.Foundation.Displays
         protected override bool IsBlackInverted => false;
         protected override bool IsColorInverted => false;
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             Reset();
@@ -61,6 +64,15 @@ namespace Meadow.Foundation.Displays
             SendData((byte)(Height & 0xFF));
         }
 
+        /// <summary>
+        /// Set partial window for display updates
+        /// </summary>
+        /// <param name="bufferBlack">The buffer with black pixel data</param>
+        /// <param name="bufferColor">The buffer with color pixel data</param>
+        /// <param name="x">The x start position in pixels</param>
+        /// <param name="y">The y stary position in pixels</param>
+        /// <param name="width">The width to update in pixels</param>
+        /// <param name="height">The height to update in pixels</param>
         protected void SetPartialWindow(byte[] bufferBlack, byte[] bufferColor, int x, int y, int width, int height)
         {
             SendCommand(Command.PARTIAL_IN);
@@ -100,6 +112,14 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.PARTIAL_OUT);
         }
 
+        /// <summary>
+        /// Set partial window for display updates
+        /// </summary>
+        /// <param name="bufferBlack">The buffer with black pixel data</param>
+        /// <param name="x">The x start position in pixels</param>
+        /// <param name="y">The y stary position in pixels</param>
+        /// <param name="width">The width to update in pixels</param>
+        /// <param name="height">The height to update in pixels</param>
         protected void SetPartialWindowBlack(byte[] bufferBlack, int x, int y, int width, int height)
         {
             SendCommand(Command.PARTIAL_IN);
@@ -128,6 +148,14 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.PARTIAL_OUT);
         }
 
+        /// <summary>
+        /// Set partial window for display updates
+        /// </summary>
+        /// <param name="bufferColor">The buffer with color pixel data</param>
+        /// <param name="x">The x start position in pixels</param>
+        /// <param name="y">The y stary position in pixels</param>
+        /// <param name="width">The width to update in pixels</param>
+        /// <param name="height">The height to update in pixels</param>
         protected void SetPartialWindowColor(byte[] bufferColor, int x, int y, int width, int height)
         {
             SendCommand(Command.PARTIAL_IN);

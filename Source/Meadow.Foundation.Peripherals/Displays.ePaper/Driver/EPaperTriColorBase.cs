@@ -117,6 +117,9 @@ namespace Meadow.Foundation.Displays
             imageBuffer = new Buffer2bppEPaper(width, height);
         }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected abstract void Initialize();
 
         /// <summary>

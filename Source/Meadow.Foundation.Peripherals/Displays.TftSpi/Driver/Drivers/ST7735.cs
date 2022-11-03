@@ -115,6 +115,9 @@ namespace Meadow.Foundation.Displays
             SendData(data);
         }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             if (resetPort != null)
@@ -357,6 +360,13 @@ namespace Meadow.Foundation.Displays
             Thread.Sleep(10);
         }
 
+        /// <summary>
+        /// Set addrees window for display updates
+        /// </summary>
+        /// <param name="x0">X start in pixels</param>
+        /// <param name="y0">Y start in pixels</param>
+        /// <param name="x1">X end in pixels</param>
+        /// <param name="y1">Y end in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             x0 += xOffset;

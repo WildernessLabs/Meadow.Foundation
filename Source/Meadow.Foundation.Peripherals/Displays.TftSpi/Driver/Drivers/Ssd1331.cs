@@ -49,6 +49,9 @@ namespace Meadow.Foundation.Displays
             Initialize();
         }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             // Initialization Sequence
@@ -128,7 +131,13 @@ namespace Meadow.Foundation.Displays
             return false;
         }
 
-        //looks like this display only supports dimensions of 255 or less
+        /// <summary>
+        /// Set addrees window for display updates
+        /// </summary>
+        /// <param name="x0">X start in pixels</param>
+        /// <param name="y0">Y start in pixels</param>
+        /// <param name="x1">X end in pixels</param>
+        /// <param name="y1">Y end in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             SendCommand(0x15);  // column addr set

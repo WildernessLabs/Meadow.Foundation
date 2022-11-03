@@ -2,6 +2,9 @@
 
 namespace Meadow.Foundation.Displays
 {
+    /// <summary>
+    /// Display characters
+    /// </summary>
     [Flags]
     public enum Character : byte
     {

@@ -40,9 +40,11 @@ namespace Meadow.Foundation.Displays
             IDigitalInputPort busyPort,
             int width, int height) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, width, height)
-        {
-        }
+        { }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             Reset();

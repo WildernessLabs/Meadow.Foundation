@@ -19,6 +19,9 @@ namespace Meadow.Foundation.Sensors.Motion
             Initialize();
         }
 
+        /// <summary>
+        /// Initalize the sensor
+        /// </summary>
         override protected void Initialize()
         {
             Peripheral.WriteRegister(0x0B, 0x01);

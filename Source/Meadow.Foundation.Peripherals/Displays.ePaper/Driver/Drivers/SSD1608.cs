@@ -45,6 +45,9 @@ namespace Meadow.Foundation.Displays
         {
         }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             Reset();

@@ -18,6 +18,10 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         public BufferGray4() : base() { }
 
+        /// <summary>
+        /// Fill buffer with a color
+        /// </summary>
+        /// <param name="color">The fill color</param>
         public override void Fill(Color color)
         {
             // split the color in to two byte values
@@ -34,6 +38,14 @@ namespace Meadow.Foundation.Graphics.Buffers
             Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
         }
 
+        /// <summary>
+        /// Fill with a color
+        /// </summary>
+        /// <param name="x">X start position in pixels</param>
+        /// <param name="y">Y start position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
+        /// <param name="color">The fill color</param>
         public override void Fill(int x, int y, int width, int height, Color color)
         {
             if (x < 0 || x + width > Width ||
@@ -53,7 +65,13 @@ namespace Meadow.Foundation.Graphics.Buffers
                 }
             }
         }
-		
+
+        /// <summary>
+        /// Get the pixel color
+        /// </summary>
+        /// <param name="x">The X pixel position</param>
+        /// <param name="y">The Y pixel position</param>
+        /// <returns>The pixel color</returns>
         public override Color GetPixel(int x, int y)
         {   //comes back as a 4bit value
             var gray = GetPixel4bpp(x, y);
@@ -61,11 +79,23 @@ namespace Meadow.Foundation.Graphics.Buffers
             return new Color(gray << 4, gray << 4, gray << 4);
         }
 
+        /// <summary>
+        /// Set the pixel color
+        /// </summary>
+        /// <param name="x">X pixel position</param>
+        /// <param name="y">Y pixel position</param>
+        /// <param name="color">The pixel color</param>
         public override void SetPixel(int x, int y, Color color)
         {
             SetPixel(x, y, color.Color4bppGray);
         }
-				
+
+        /// <summary>
+        /// Set the pixel to a shade of gray
+        /// </summary>
+        /// <param name="x">X pixel position</param>
+        /// <param name="y">Y pixel position</param>
+        /// <param name="gray">The pixel grey value</param>
         public void SetPixel(int x, int y, byte gray)
         {
             int index = y * Width / 2 + x / 2;
@@ -124,6 +154,12 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
+        /// <summary>
+        /// Get the pixel color
+        /// </summary>
+        /// <param name="x">The X pixel position</param>
+        /// <param name="y">The Y pixel position</param>
+        /// <returns>The pixel color as a 4bpp gray value</returns>
         public byte GetPixel4bpp(int x, int y)
         {
             int index = y * Width / 2 + x / 2;

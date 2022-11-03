@@ -224,11 +224,24 @@ namespace Meadow.Foundation.Displays
             spiPeripheral.Write(data);
         }
 
-        public void Fill(Color fillColor, bool updateDisplay = false)
+        /// <summary>
+        /// Fill display buffer with a color
+        /// </summary>
+        /// <param name="color">The fill color</param>
+        /// /// <param name="updateDisplay">If true, update display</param>
+        public void Fill(Color color, bool updateDisplay = false)
         {
-            imageBuffer.Fill(fillColor);
+            imageBuffer.Fill(color);
         }
 
+        /// <summary>
+        /// Fill with a color
+        /// </summary>
+        /// <param name="x">X start position in pixels</param>
+        /// <param name="y">Y start position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
+        /// <param name="color">The fill color</param>
         public void Fill(int x, int y, int width, int height, Color color)
         {
             imageBuffer.Fill(x, y, width, height, color);

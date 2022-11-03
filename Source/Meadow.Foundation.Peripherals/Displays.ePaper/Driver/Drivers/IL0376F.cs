@@ -47,6 +47,9 @@ namespace Meadow.Foundation.Displays
         protected override bool IsBlackInverted => false;
         protected override bool IsColorInverted => false;
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             Reset();

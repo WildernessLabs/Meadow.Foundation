@@ -49,6 +49,9 @@ namespace Meadow.Foundation.Displays
 
         protected override bool IsColorInverted => false;
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             /* EPD hardware init start */
