@@ -15,8 +15,8 @@ namespace Displays.Tft.Ili9341_Sample
     {
         //<!=SNIP=>
 
-        Ili9341 display;
         MicroGraphics graphics;
+        Ili9341 display;
 
         public override Task Initialize()
         {

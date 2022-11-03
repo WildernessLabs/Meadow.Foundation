@@ -38,6 +38,9 @@ namespace Meadow.Foundation.Displays.ePaper
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, 400, 300)
         { }
 
+        /// <summary>
+        /// Initialize the display driver
+        /// </summary>
         protected override void Initialize()
         {
             Reset();
@@ -284,7 +287,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// Send a refresh command to the display 
         /// Does not transfer new data
         /// </summary>
-        public void DisplayFrame()
+        public override void DisplayFrame()
         {
             SendCommand(DISPLAY_REFRESH);
             DelayMs(100);
@@ -294,7 +297,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <summary>
         /// Set the device to low power mode
         /// </summary>
-        protected virtual void Sleep()
+        protected override void Sleep()
         {
             SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
             SendData(0x17);                       //border floating    
@@ -316,7 +319,7 @@ namespace Meadow.Foundation.Displays.ePaper
             SendData(0xA5);
         }
 
-        byte[] lut_vcom0 = {
+        readonly byte[] lut_vcom0 = {
               0x00, 0x08, 0x08, 0x00, 0x00, 0x02,
               0x00, 0x0F, 0x0F, 0x00, 0x00, 0x01,
               0x00, 0x08, 0x08, 0x00, 0x00, 0x02,
@@ -327,7 +330,7 @@ namespace Meadow.Foundation.Displays.ePaper
               0x00, 0x00,
         };
 
-        byte[] lut_ww = {
+        readonly byte[] lut_ww = {
               0x50, 0x08, 0x08, 0x00, 0x00, 0x02,
               0x90, 0x0F, 0x0F, 0x00, 0x00, 0x01,
               0xA0, 0x08, 0x08, 0x00, 0x00, 0x02,
@@ -337,7 +340,7 @@ namespace Meadow.Foundation.Displays.ePaper
               0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         };
 
-        byte[] lut_bw = {
+        readonly byte[] lut_bw = {
               0x50, 0x08, 0x08, 0x00, 0x00, 0x02,
               0x90, 0x0F, 0x0F, 0x00, 0x00, 0x01,
               0xA0, 0x08, 0x08, 0x00, 0x00, 0x02,
@@ -347,7 +350,7 @@ namespace Meadow.Foundation.Displays.ePaper
               0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         };
 
-        byte[] lut_bb = {
+        readonly byte[] lut_bb = {
               0xA0, 0x08, 0x08, 0x00, 0x00, 0x02,
               0x90, 0x0F, 0x0F, 0x00, 0x00, 0x01,
               0x50, 0x08, 0x08, 0x00, 0x00, 0x02,
@@ -357,7 +360,7 @@ namespace Meadow.Foundation.Displays.ePaper
               0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         };
 
-        byte[] lut_wb = {
+        readonly byte[] lut_wb = {
               0x20, 0x08, 0x08, 0x00, 0x00, 0x02,
               0x90, 0x0F, 0x0F, 0x00, 0x00, 0x01,
               0x10, 0x08, 0x08, 0x00, 0x00, 0x02,

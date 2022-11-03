@@ -54,8 +54,8 @@ namespace Meadow.Foundation.Web.Maple.Routing
         /// doesn't define a value on the controller.
         /// </summary>
         public int Order {
-            get { return _order ?? 0; }
-            set { _order = value; }
+            get => _order ?? 0; 
+            set => _order = value; 
         }
 
         /// <inheritdoc />

@@ -26,7 +26,7 @@ namespace Displays.ePaper.IL0376F_Sample
                 width: 200,
                 height: 200);
 
-            var graphics = new MicroGraphics(display);
+            graphics = new MicroGraphics(display);
 
             return Task.CompletedTask;
         }

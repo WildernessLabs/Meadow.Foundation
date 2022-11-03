@@ -124,28 +124,90 @@ namespace Meadow.Foundation.Displays
 
         protected enum RegisterHX8357B : byte
         {
-            PTLON = 0x12, ///< Partial mode on
-            NORON = 0x13, ///< Normal mode
-            PTLAR = 0x30,   ///< (unknown)
-            SETDISPLAY = 0xB2, ///< Set display mode
-            SETDISPMODE = 0xB4, ///< Set display mode
-            SETOTP = 0xB7,      ///< Set OTP memory
-            SET_PANEL_DRIVING = 0xC0, ///< Set panel drive mode
-            SETDGC = 0xC1,            ///< Set DGC settings
-            SETID = 0xC3,             ///< Set ID
-            SETDDB = 0xC4,            ///< Set DDB
-            SETDISPLAYFRAME = 0xC5,   ///< Set display frame
-            GAMMASET = 0xC8,          ///< Set Gamma correction
-            SETCABC = 0xC9,           ///< Set CABC
-            SETPOWER = 0xD0,     ///< Set power control
-            SETVCOM = 0xD1,      ///< Set VCOM
-            SETPWRNORMAL = 0xD2, ///< Set power normal
-            RDID1 = 0xDA, ///< Read ID #1
-            RDID2 = 0xDB, ///< Read ID #2
-            RDID3 = 0xDC, ///< Read ID #3
-            RDID4 = 0xDD, ///< Read ID #4
-            SETGAMMA = 0xC8,        ///< Set Gamma
-            SETPANELRELATED = 0xE9, ///< Set panel related
+            /// <summary>
+            /// Partial mode on
+            /// </summary>
+            PTLON = 0x12, 
+            /// <summary>
+            /// Normal mode
+            /// </summary>
+            NORON = 0x13,
+            /// <summary>
+            /// Unknown
+            /// </summary>
+            PTLAR = 0x30,
+            /// <summary>
+            /// Set display
+            /// </summary>
+            SETDISPLAY = 0xB2,
+            /// <summary>
+            /// Set display mode
+            /// </summary>
+            SETDISPMODE = 0xB4,
+            /// <summary>
+            /// Set OTP memory
+            /// </summary>
+            SETOTP = 0xB7,
+            /// <summary>
+            /// Set panel drive mode
+            /// </summary>
+            SET_PANEL_DRIVING = 0xC0,
+            /// <summary>
+            /// Set DGC settings
+            /// </summary>
+            SETDGC = 0xC1,
+            /// <summary>
+            /// Set ID
+            /// </summary>
+            SETID = 0xC3,
+            /// <summary>
+            /// Set DDB
+            /// </summary>
+            SETDDB = 0xC4,
+            /// <summary>
+            /// Set display frame
+            /// </summary>
+            SETDISPLAYFRAME = 0xC5,
+            /// <summary>
+            /// Set gamma correction
+            /// </summary>
+            GAMMASET = 0xC8,
+            /// <summary>
+            /// Set CABC
+            /// </summary>
+            SETCABC = 0xC9,
+            /// <summary>
+            /// Set power control
+            /// </summary>
+            SETPOWER = 0xD0,
+            /// <summary>
+            /// Set VCOM
+            /// </summary>
+            SETVCOM = 0xD1,
+            /// <summary>
+            /// Set power normal
+            /// </summary>
+            SETPWRNORMAL = 0xD2,
+            /// <summary>
+            /// Read ID #1
+            /// </summary>
+            RDID1 = 0xDA,
+            /// <summary>
+            /// Read ID #2
+            /// </summary>
+            RDID2 = 0xDB,
+            /// <summary>
+            /// Read ID #3
+            /// </summary>
+            RDID3 = 0xDC,
+            /// <summary>
+            /// Set Gamma
+            /// </summary>
+            SETGAMMA = 0xC8,
+            /// <summary>
+            /// Set panel related
+            /// </summary>
+            SETPANELRELATED = 0xE9,
         }
     }
 }

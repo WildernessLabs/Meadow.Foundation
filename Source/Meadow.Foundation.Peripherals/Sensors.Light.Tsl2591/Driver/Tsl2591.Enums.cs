@@ -66,10 +66,22 @@ namespace Meadow.Foundation.Sensors.Light
         [Flags]
         public enum GainFactor : byte
         {
-            Low = 0x00,     /// Low gain (1x)
-            Medium = 0x10,  /// Medium gain (25x)
-            High = 0x20,    /// High gain (428x)
-            Maximum = 0x30  /// Maximum gain (9876x)
+            /// <summary>
+            /// Low gain (1x)
+            /// </summary>
+            Low = 0x00,
+            /// <summary>
+            /// /// Medium gain (25x)
+            /// </summary>
+            Medium = 0x10,  
+            /// <summary>
+            /// /// High gain (428x)
+            /// </summary>
+            High = 0x20,    
+            /// <summary>
+            ///  /// Maximum gain (9876x)
+            /// </summary>
+            Maximum = 0x30 
         }
 
         [Flags]

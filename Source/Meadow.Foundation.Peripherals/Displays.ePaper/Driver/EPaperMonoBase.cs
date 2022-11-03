@@ -320,7 +320,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Set display to sleep mode
         /// </summary>
-        protected void Sleep()
+        protected virtual void Sleep()
         {
             SendCommand(Command.DEEP_SLEEP_MODE);
             WaitUntilIdle();
