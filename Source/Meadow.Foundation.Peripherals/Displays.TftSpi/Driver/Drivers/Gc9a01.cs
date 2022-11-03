@@ -328,9 +328,9 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        const byte GC9A01_RST_DELAY = 100;    ///< delay ms wait for reset finish
-        const byte GC9A01_SLPIN_DELAY = 120;  ///< delay ms wait for sleep in finish
-        const byte GC9A01_SLPOUT_DELAY = 120; ///< delay ms wait for sleep out finish
+        const byte GC9A01_RST_DELAY = 100;    // delay ms wait for reset finish
+        const byte GC9A01_SLPIN_DELAY = 120;  // delay ms wait for sleep in finish
+        const byte GC9A01_SLPOUT_DELAY = 120; // delay ms wait for sleep out finish
 
         const byte GC9A01_SWRESET = 0x01;
         const byte GC9A01_RDDID = 0x04;

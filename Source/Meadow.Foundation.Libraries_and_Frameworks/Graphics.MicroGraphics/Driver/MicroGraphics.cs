@@ -119,9 +119,9 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a single pixel 
         /// </summary>
-        /// <param name="x">x location </param>
+        /// <param name="x">x location</param>
         /// <param name="y">y location</param>
-        /// <param name="enabled">Turn the pixel on (true) or off (false)>/param>
+        /// <param name="enabled">Turn the pixel on (true) or off (false)</param>
         public void DrawPixel(int x, int y, bool enabled)
         {
             DrawPixel(x, y, enabled ? display.EnabledColor : display.DisabledColor);
@@ -132,7 +132,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
-        /// <param name="color">Color of pixel>/param>
+        /// <param name="color">Color of pixel</param>
         public virtual void DrawPixel(int x, int y, Color color)
         {
             PenColor = color;
@@ -205,9 +205,9 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="x">Abscissa of the starting point of the line</param>
         /// <param name="y">Ordinate of the starting point of the line</param>
-        /// <param name="length">Length of line>/param>
+        /// <param name="length">Length of line</param>
         /// <param name="angle">Angle in radians</param>
-        /// <param name="enabled">Turn the pixel on (true) or off (false)>/param>
+        /// <param name="enabled">Turn the pixel on (true) or off (false)</param>
         public void DrawLine(int x, int y, int length, float angle, bool enabled)
         {
             DrawLine(x, y, length, angle, enabled ? display.EnabledColor : display.DisabledColor);
@@ -323,10 +323,10 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a horizontal line.
         /// </summary>
-        /// <param name="x">Abscissa of the starting point of the line>/param>
-        /// <param name="y">Ordinate of the starting point of the line>/param>
-        /// <param name="length">Length of the line to draw>/param>
-        /// <param name="enabled">Turn the pixel on (true) or off (false)>/param>
+        /// <param name="x">Abscissa of the starting point of the line</param>
+        /// <param name="y">Ordinate of the starting point of the line</param>
+        /// <param name="length">Length of the line to draw</param>
+        /// <param name="enabled">Turn the pixel on (true) or off (false)</param>
         public void DrawHorizontalLine(int x, int y, int length, bool enabled)
         {
             DrawHorizontalLine(x, y, length, enabled ? display.EnabledColor : display.DisabledColor);
@@ -335,10 +335,10 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a horizontal line.
         /// </summary>
-        /// <param name="x">Abscissa of the starting point of the line>/param>
-        /// <param name="y">Ordinate of the starting point of the line>/param>
-        /// <param name="length">Length of the line to draw>/param>
-        /// <param name="color">The color of the line>/param>
+        /// <param name="x">Abscissa of the starting point of the line</param>
+        /// <param name="y">Ordinate of the starting point of the line</param>
+        /// <param name="length">Length of the line to draw</param>
+        /// <param name="color">The color of the line</param>
         public void DrawHorizontalLine(int x, int y, int length, Color color)
         {
             PenColor = color;
@@ -372,10 +372,10 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a vertical line.
         /// </summary>
-        /// <param name="x">Abscissa of the starting point of the line>/param>
-        /// <param name="y">Ordinate of the starting point of the line>/param>
-        /// <param name="length">Length of the line to draw>/param>
-        /// <param name="enabled">Show the line when (true) or off (false)>/param>
+        /// <param name="x">Abscissa of the starting point of the line</param>
+        /// <param name="y">Ordinate of the starting point of the line</param>
+        /// <param name="length">Length of the line to draw</param>
+        /// <param name="enabled">Show the line when (true) or off (false)</param>
         public void DrawVerticalLine(int x, int y, int length, bool enabled)
         {
             DrawVerticalLine(x, y, length, enabled ? display.EnabledColor : display.DisabledColor);
@@ -384,10 +384,10 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a vertical line.
         /// </summary>
-        /// <param name="x">Abscissa of the starting point of the line>/param>
-        /// <param name="y">Ordinate of the starting point of the line>/param>
-        /// <param name="length">Length of the line to draw>/param>
-        /// <param name="color">The color of the line>/param>
+        /// <param name="x">Abscissa of the starting point of the line</param>
+        /// <param name="y">Ordinate of the starting point of the line</param>
+        /// <param name="length">Length of the line to draw</param>
+        /// <param name="color">The color of the line</param>
         public void DrawVerticalLine(int x, int y, int length, Color color)
         {
             PenColor = color;
@@ -568,10 +568,10 @@ namespace Meadow.Foundation.Graphics
         /// A C# implementation can be found here:
         /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle>/param>
-        /// <param name="centerY">Ordinate of the centre point of the circle>/param>
-        /// <param name="radius">Radius of the circle>/param>
-        /// <param name="enabled">Show the circle when true>/param>
+        /// <param name="centerX">Abscissa of the centre point of the circle</param>
+        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="enabled">Show the circle when true</param>
         /// <param name="filled">Draw a filled circle?</param>
         /// <param name="centerBetweenPixels">Set center between pixels</param>
         public void DrawCircle(int centerX, int centerY, int radius, bool enabled = true, bool filled = false, bool centerBetweenPixels = false)
@@ -590,10 +590,10 @@ namespace Meadow.Foundation.Graphics
         /// A C# implementation can be found here:
         /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle>/param>
-        /// <param name="centerY">Ordinate of the centre point of the circle>/param>
-        /// <param name="radius">Radius of the circle>/param>
-        /// <param name="color">The color of the circle>/param>
+        /// <param name="centerX">Abscissa of the centre point of the circle</param>
+        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="color">The color of the circle</param>
         /// <param name="filled">Draw a filled circle?</param>
         public void DrawCircle(int centerX, int centerY, int radius, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
@@ -914,7 +914,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Get the size in pixels of a string using the current font
         /// </summary>
-        /// <param name="text">The string to measure>/param>
+        /// <param name="text">The string to measure</param>
         /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
         public Size MeasureText(string text, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
