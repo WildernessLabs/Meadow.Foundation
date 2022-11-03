@@ -30,15 +30,39 @@ namespace Meadow.Foundation.Graphics
         }
     }
 
+    /// <summary>
+    /// Represents a 2D graphics paths
+    /// </summary>
     public class GraphicsPath
     {
+        /// <summary>
+        /// The last point added to the path
+        /// </summary>
         public Point LastPoint => PathActions.LastOrDefault().PathPoint;
+
+        /// <summary>
+        /// The number of points in th path
+        /// </summary>
         public int PointCount => PathActions.Count;
+
+        /// <summary>
+        /// The collection of points 
+        /// </summary>
         public Point[] Points;
+
+        /// <summary>
+        /// The number of verbs/actions used
+        /// </summary>
         public int VerbCount => PathActions.Count; //need to figure out if/when this wouldn't be equal to PointCount
 
+        /// <summary>
+        /// The collection of actions 
+        /// </summary>
         internal List<PathAction> PathActions { get; private set; } = new List<PathAction>();
 
+        /// <summary>
+        /// A rect that defines the full bounds of the path
+        /// </summary>
         public Rect Bounds
         {
             get
@@ -58,9 +82,16 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        /// <summary>
+        /// Create a new GraphicsPath object
+        /// </summary>
         public GraphicsPath()
         { }
 
+        /// <summary>
+        /// Create a new GraphicsPath object
+        /// </summary>
+        /// <param name="path">Initial path data</param>
         public GraphicsPath(GraphicsPath path)
         {
             AddPath(path);
@@ -74,11 +105,20 @@ namespace Meadow.Foundation.Graphics
             PathActions = new List<PathAction>();
         }
 
+        /// <summary>
+        /// Add a new point to the path
+        /// </summary>
+        /// <param name="x">The x position</param>
+        /// <param name="y">The y position</param>
         public void MoveTo(int x, int y)
         {
             MoveTo(new Point(x, y));
         }
 
+        /// <summary>
+        /// Add a new point to the path
+        /// </summary>
+        /// <param name="point">The point position</param>
         public void MoveTo(Point point)
         {
             if(PathActions.Count > 0)
@@ -95,6 +135,11 @@ namespace Meadow.Foundation.Graphics
             PathActions.Add(new PathAction(point, VerbType.Move));
         }
 
+        /// <summary>
+        /// Add a new relative point to the path
+        /// </summary>
+        /// <param name="x">The relative x position</param>
+        /// <param name="y">The relative y position</param>
         public void RelativeMoveTo(int x, int y)
         {
             int count = PathActions.Count;
@@ -109,6 +154,10 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        /// <summary>
+        /// Add a new relative point to the path
+        /// </summary>
+        /// <param name="point">The relative point position</param>
         public void RelativeMoveTo(Point point)
         {
             int count = PathActions.Count;
@@ -123,6 +172,11 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        /// <summary>
+        /// Add a line to the path
+        /// </summary>
+        /// <param name="x">The x line end location</param>
+        /// <param name="y">The y line end location</param>
         public void LineTo(int x, int y)
         {
             if(PathActions.Count == 0)
@@ -134,6 +188,10 @@ namespace Meadow.Foundation.Graphics
             PathActions.Add(new PathAction(new Point(x, y), VerbType.Line));
         }
 
+        /// <summary>
+        /// Add a line to the path
+        /// </summary>
+        /// <param name="point">The point line end location</param>
         public void LineTo(Point point)
         {
             if (PathActions.Count == 0)
@@ -145,6 +203,11 @@ namespace Meadow.Foundation.Graphics
             PathActions.Add(new PathAction(point, VerbType.Line));
         }
 
+        /// <summary>
+        /// Add a line to the path
+        /// </summary>
+        /// <param name="x">The relative x line end location</param>
+        /// <param name="y">The relative y line end location</param>
         public void RelativeLineTo(int x, int y)
         {
             int count = PathActions.Count;
@@ -159,6 +222,10 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        /// <summary>
+        /// Add a line to the path
+        /// </summary>
+        /// <param name="point">The relative point line end location</param>
         public void RelativeLineTo(Point point)
         {
             int count = PathActions.Count;
@@ -173,6 +240,10 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        /// <summary>
+        /// Add an array of lines to the path
+        /// </summary>
+        /// <param name="points">The points defining the lines to add</param>
         public void AddPolyLine(Point[] points)
         {
             foreach(var point in points)
@@ -181,6 +252,10 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        /// <summary>
+        /// Add an existing path to the end of the path
+        /// </summary>
+        /// <param name="path">The path to add</param>
         public void AddPath(GraphicsPath path)
         {
             foreach(var action in path.PathActions)
@@ -189,6 +264,10 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        /// <summary>
+        /// Add an existing path to the end of the path in reverse order
+        /// </summary>
+        /// <param name="path">The path to add</param>
         public void AddPathReverse(GraphicsPath path)
         {
             for(int i = path.PathActions.Count - 1; i > 0; i--)
@@ -197,6 +276,9 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
+        /// <summary>
+        /// Close the path
+        /// </summary>
         public void Close()
         {
             if(PathActions.Count == 0)

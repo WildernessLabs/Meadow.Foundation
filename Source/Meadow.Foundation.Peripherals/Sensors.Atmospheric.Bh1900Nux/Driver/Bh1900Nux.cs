@@ -6,10 +6,16 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
+    /// <summary>
+    /// Represents a Bh1900Nux temperature sensor
+    /// </summary>
     public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
     {
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
 
+        /// <summary>
+        /// The current temperature
+        /// </summary>
         public Units.Temperature? Temperature => Conditions;
 
         public Bh1900Nux(II2cBus i2cBus, Address address)
@@ -41,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
         }
 
-        private void SetConfig(int cfg)
+        void SetConfig(int cfg)
         {
             Peripheral?.WriteRegister((byte)Register.Configuration, new byte[] { (byte)(cfg >> 8), (byte)(cfg & 0xff) });
         }
@@ -67,6 +73,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
+        /// <summary>
+        /// Set the sensor to sleep state
+        /// </summary>
         public void Sleep()
         {
             var currentMode = GetConfig();

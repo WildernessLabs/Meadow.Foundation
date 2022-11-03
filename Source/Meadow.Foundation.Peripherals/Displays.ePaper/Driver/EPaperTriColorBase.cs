@@ -248,13 +248,21 @@ namespace Meadow.Foundation.Displays
             throw new NotImplementedException("Show must be implimented in the ePaper display driver");
         }
 
+        /// <summary>
+        /// Update a region of the display from the offscreen buffer
+        /// </summary>
+        /// <param name="left">Left bounds in pixels</param>
+        /// <param name="top">Top bounds in pixels</param>
+        /// <param name="right">Right bounds in pixels</param>
+        /// <param name="bottom">Bottom bounds in pixels</param>
         public virtual void Show(int left, int top, int right, int bottom)
         {
             throw new NotImplementedException("Show must be implimented in the ePaper display driver");
         }
         
-        // 2.13b + 2.7b (red) commands
-
+        /// <summary>
+        /// Display commands
+        /// </summary>
         protected enum Command : byte
         {
             PANEL_SETTING = 0x00,

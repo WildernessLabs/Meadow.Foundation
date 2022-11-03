@@ -12,10 +12,24 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public override ColorType ColorMode => ColorType.Format16bppRgb565;
 
+        /// <summary>
+        /// Create a new BufferRgb565 object
+        /// </summary>
+        /// <param name="width">The width in pixels</param>
+        /// <param name="height">The height in pixels</param>
+        /// <param name="buffer">The backing buffer</param>
         public BufferRgb565(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
+        /// <summary>
+        /// Create a new BufferRgb565 object
+        /// </summary>
+        /// <param name="width">The width in pixels</param>
+        /// <param name="height">The height in pixels</param>
         public BufferRgb565(int width, int height) : base(width, height) { }
 
+        /// <summary>
+        /// Create a new BufferRgb565 object
+        /// </summary>
         public BufferRgb565() : base() { }
 
         /// <summary>
@@ -121,6 +135,10 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
         }
 
+        /// <summary>
+        /// Clear the buffer to a 565 16bpp color value
+        /// </summary>
+        /// <param name="color">The color as a ushort</param>
         public void Clear(ushort color)
         { 
             // split the color in to two byte values

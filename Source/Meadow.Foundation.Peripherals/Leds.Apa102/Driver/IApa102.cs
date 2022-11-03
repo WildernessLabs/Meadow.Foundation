@@ -8,6 +8,10 @@
         void SetLed(int index, byte[] rgb);
         void SetLed(int index, byte[] rgb, float brightness = 1f);
         void Clear(bool update = false);
+
+        /// <summary>
+        /// Update from the offscreen buffer
+        /// </summary>
         void Show();
     }
 }

@@ -12,10 +12,24 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public override ColorType ColorMode => ColorType.Format32bppRgba8888;
 
+        /// <summary>
+        /// Create a new BufferRgb888 object
+        /// </summary>
+        /// <param name="width">The width in pixels</param>
+        /// <param name="height">The height in pixels</param>
+        /// <param name="buffer">The backing buffer</param>
         public BufferRgb8888(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
+        /// <summary>
+        /// Create a new BufferRgb888 object
+        /// </summary>
+        /// <param name="width">The width in pixels</param>
+        /// <param name="height">The height in pixels</param>
         public BufferRgb8888(int width, int height) : base(width, height) { }
 
+        /// <summary>
+        /// Create a new BufferRgb888 object
+        /// </summary>
         public BufferRgb8888() : base() { }
 
         /// <summary>

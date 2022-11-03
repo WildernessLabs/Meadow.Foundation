@@ -12,10 +12,24 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public override ColorType ColorMode => ColorType.Format4bppGray;
 
+        /// <summary>
+        /// Create a new BufferGray4 object
+        /// </summary>
+        /// <param name="width">The width in pixels</param>
+        /// <param name="height">The height in pixels</param>
+        /// <param name="buffer">The backing buffer</param>
         public BufferGray4(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
+        /// <summary>
+        /// Create a new BufferGray4 object
+        /// </summary>
+        /// <param name="width">The width in pixels</param>
+        /// <param name="height">The height in pixels</param>
         public BufferGray4(int width, int height) : base(width, height) { }
 
+        /// <summary>
+        /// Create a new BufferGray4 object
+        /// </summary>
         public BufferGray4() : base() { }
 
         /// <summary>

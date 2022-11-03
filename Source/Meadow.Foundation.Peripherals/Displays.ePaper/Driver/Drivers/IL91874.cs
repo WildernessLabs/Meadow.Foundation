@@ -127,6 +127,13 @@ namespace Meadow.Foundation.Displays
             /* EPD hardware init end */
         }
 
+        /// <summary>
+        /// Update a region of the display from the offscreen buffer
+        /// </summary>
+        /// <param name="left">Left bounds in pixels</param>
+        /// <param name="top">Top bounds in pixels</param>
+        /// <param name="right">Right bounds in pixels</param>
+        /// <param name="bottom">Bottom bounds in pixels</param>
         public override void Show(int left, int top, int right, int bottom)
         {
             TransmitPartial(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer,
@@ -139,6 +146,9 @@ namespace Meadow.Foundation.Displays
                         top - bottom);
         }
 
+        /// <summary>
+        /// Update the display from the offscreen buffer
+        /// </summary>
         public override void Show()
         {
             DisplayFrame(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer);

@@ -5,12 +5,9 @@ using System.Threading;
 namespace Meadow.Foundation.Sensors.Camera
 {
     /// <summary>
-    /// Represents the MLX90640 32x24 IR array.
-    /// The MLX90640 is a fully calibrated 32x24 pixels thermal IR array.
+    /// Represents the MLX90640 32x24 IR array
+    /// The MLX90640 is a fully calibrated 32x24 pixels thermal IR array
     /// </summary>
-    /// <remarks>
-    /// Based on https://github.com/adafruit/Adafruit_MLX90640 and https://github.com/melexis/mlx90640-library/tree/master/functions
-    /// </remarks>
     public partial class Mlx90640
     {
         /// <summary>

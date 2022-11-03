@@ -195,6 +195,13 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        /// <summary>
+        /// Update a region of the display from the offscreen buffer
+        /// </summary>
+        /// <param name="left">Left bounds in pixels</param>
+        /// <param name="top">Top bounds in pixels</param>
+        /// <param name="right">Right bounds in pixels</param>
+        /// <param name="bottom">Bottom bounds in pixels</param>
         public void Show(int left, int top, int right, int bottom)
         {
             const int pageHeight = 8;

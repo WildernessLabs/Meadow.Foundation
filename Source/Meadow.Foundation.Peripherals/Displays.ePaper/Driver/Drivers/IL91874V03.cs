@@ -212,12 +212,19 @@ namespace Meadow.Foundation.Displays
             WaitUntilIdle();
         }
 
+        /// <summary>
+        /// Display data from the display controller SRAM
+        /// </summary>
         public override void DisplayFrame()
         {
             SendCommand(CommandIL91874V03.DISPLAY_REFRESH);
             WaitUntilIdle();
         }
 
+        /// <summary>
+        /// Clears the SRAM on the display controller
+        /// Doesn't update the display
+        /// </summary>
         public void ClearFrame()
         {
             SendCommand(CommandIL91874V03.DATA_START_TRANSMISSION_1);

@@ -235,6 +235,13 @@ namespace Meadow.Foundation.Displays
             SendData((byte)Command.PARTIAL_OUT);
         }
 
+        /// <summary>
+        /// Update a region of the display from the offscreen buffer
+        /// </summary>
+        /// <param name="left">Left bounds in pixels</param>
+        /// <param name="top">Top bounds in pixels</param>
+        /// <param name="right">Right bounds in pixels</param>
+        /// <param name="bottom">Bottom bounds in pixels</param>
         public override void Show(int left, int top, int right, int bottom)
         {
             SetPartialWindow(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer,
@@ -243,12 +250,18 @@ namespace Meadow.Foundation.Displays
             DisplayFrame();
         }
 
+        /// <summary>
+        /// Update the display from the offscreen buffer
+        /// </summary>
         public override void Show()
         {
             DisplayFrame(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer);
         }
 
-        //clear the frame data from the SRAM, this doesn't update the display
+        /// <summary>
+        /// Clears the SRAM on the display controller
+        /// Doesn't update the display
+        /// </summary>
         protected void ClearFrame()
         {
             SendCommand(Command.DATA_START_TRANSMISSION_1);
@@ -291,12 +304,18 @@ namespace Meadow.Foundation.Displays
             DisplayFrame();
         }
 
+        /// <summary>
+        /// Display data from the display controller SRAM
+        /// </summary>
         public void DisplayFrame()
         {
             SendCommand(Command.DISPLAY_REFRESH);
             WaitUntilIdle();
         }
 
+        /// <summary>
+        /// Set the sensor to sleep state
+        /// </summary>
         protected virtual void Sleep()
         {
             SendCommand(Command.POWER_OFF);
