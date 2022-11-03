@@ -92,10 +92,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected CompensationData compensationData;
 
-        ///// <summary>
-        ///// Update interval in milliseconds
-        ///// </summary>
-        //private ushort _updateInterval = 100;
 
         protected Configuration configuration;
 

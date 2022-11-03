@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
     {
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
         /// The current temperature

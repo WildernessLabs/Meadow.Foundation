@@ -78,11 +78,11 @@ namespace Meadow.Foundation.Sensors.Weather
             samples = new Queue<DigitalPortResult>();
         }
 
-        protected void SubscribeToInputPortEvents() => inputPort.Changed += HandleInputPortChange;
+        void SubscribeToInputPortEvents() => inputPort.Changed += HandleInputPortChange;
 
-        protected void UnsubscribeToInputPortEvents() => inputPort.Changed -= HandleInputPortChange;
+        void UnsubscribeToInputPortEvents() => inputPort.Changed -= HandleInputPortChange;
 
-        protected void HandleInputPortChange(object sender, DigitalPortResult result)
+        void HandleInputPortChange(object sender, DigitalPortResult result)
         {
             if (!running) { return; }
 

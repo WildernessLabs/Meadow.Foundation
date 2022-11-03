@@ -18,11 +18,11 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public event EventHandler<IChangeResult<Vector>> DirectionUpdated = delegate { };
 
-        protected byte measuringMode;
-        protected byte outputRate;
-        protected byte gain;
-        protected byte sampleAmount;
-        protected byte measurementConfig;
+        internal byte measuringMode;
+        internal byte outputRate;
+        internal byte gain;
+        internal byte sampleAmount;
+        internal byte measurementConfig;
 
         /// <summary>
         /// HMC5883L Direction as a Vector

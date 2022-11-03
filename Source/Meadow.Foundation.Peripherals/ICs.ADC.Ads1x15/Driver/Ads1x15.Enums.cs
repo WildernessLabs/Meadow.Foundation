@@ -83,15 +83,42 @@
             HighThresh = 0x03,
         }
 
+        /// <summary>
+        /// Channel setting
+        /// </summary>
         public enum ChannelSetting
         {
+            /// <summary>
+            /// A0A1 Differential
+            /// </summary>
             A0A1Differential,
+            /// <summary>
+            /// A0A3 Differential
+            /// </summary>
             A0A3Differential,
+            /// <summary>
+            /// A1A3 Differential
+            /// </summary>
             A1A3Differential,
+            /// <summary>
+            /// A2A3 Differential
+            /// </summary>
             A2A3Differential,
+            /// <summary>
+            /// A0 Single Ended
+            /// </summary>
             A0SingleEnded,
+            /// <summary>
+            /// A1 Single Ended
+            /// </summary>
             A1SingleEnded,
+            /// <summary>
+            /// A2 Single Ended
+            /// </summary>
             A2SingleEnded,
+            /// <summary>
+            /// A3 Single Ended
+            /// </summary>
             A3SingleEnded,
         }
     }

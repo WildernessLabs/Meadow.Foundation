@@ -41,7 +41,8 @@ namespace Meadow.Foundation.Motors
                 power = value;
                 pwmPort.DutyCycle = CalculateDutyCycle(CalculatePulseDuration(value), Frequency);
             }
-        } protected float power = 0f;
+        } 
+        float power = 0f;
 
         /// <summary>
         /// Frequency (in Hz) of the PWM signal. Default is 50Hz. Set during

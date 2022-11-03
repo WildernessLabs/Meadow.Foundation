@@ -246,7 +246,7 @@ namespace Meadow.Foundation.Displays
         /// Send a command to the display
         /// </summary>
         /// <param name="command">The command</param>
-        internal void SendCommand(Command command)
+        protected void SendCommand(Command command)
         {
             SendCommand((byte)command);
         }
@@ -275,48 +275,171 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Display commands
         /// </summary>
-        internal enum Command : byte
+        protected enum Command : byte
         {
+            /// <summary>
+            /// PANEL_SETTING
+            /// </summary>
             PANEL_SETTING = 0x00,
+            /// <summary>
+            /// POWER_SETTING
+            /// </summary>
             POWER_SETTING = 0x01,
+            /// <summary>
+            /// POWER_OFF
+            /// </summary>
             POWER_OFF = 0x02,
+            /// <summary>
+            /// POWER_OFF_SEQUENCE_SETTING
+            /// </summary>
             POWER_OFF_SEQUENCE_SETTING = 0x03,
+            /// <summary>
+            /// POWER_ON
+            /// </summary>
             POWER_ON = 0x04,
+            /// <summary>
+            /// POWER_ON_MEASURE
+            /// </summary>
             POWER_ON_MEASURE = 0x05,
+            /// <summary>
+            /// BOOSTER_SOFT_START
+            /// </summary>
             BOOSTER_SOFT_START = 0x06,
+            /// <summary>
+            /// DEEP_SLEEP
+            /// </summary>
             DEEP_SLEEP = 0x07,
+            /// <summary>
+            /// DATA_START_TRANSMISSION_1
+            /// </summary>
             DATA_START_TRANSMISSION_1 = 0x10,
+            /// <summary>
+            /// DATA_STOP
+            /// </summary>
             DATA_STOP = 0x11,
+            /// <summary>
+            /// DISPLAY_REFRESH
+            /// </summary>
             DISPLAY_REFRESH = 0x12,
+            /// <summary>
+            /// DATA_START_TRANSMISSION_2
+            /// </summary>
             DATA_START_TRANSMISSION_2 = 0x13,
+            /// <summary>
+            /// PARTIAL_DATA_START_TRANSMISSION_1
+            /// </summary>
             PARTIAL_DATA_START_TRANSMISSION_1 = 0x14,
+            /// <summary>
+            /// PARTIAL_DATA_START_TRANSMISSION_2
+            /// </summary>
             PARTIAL_DATA_START_TRANSMISSION_2 = 0x15,
+            /// <summary>
+            /// PARTIAL_DISPLAY_REFRESH
+            /// </summary>
             PARTIAL_DISPLAY_REFRESH = 0x16,
+            /// <summary>
+            /// LUT_FOR_VCOM
+            /// </summary>
             LUT_FOR_VCOM = 0x20,
+            /// <summary>
+            /// LUT_WHITE_TO_WHITE
+            /// </summary>
             LUT_WHITE_TO_WHITE = 0x21,
+            /// <summary>
+            /// LUT_BLACK_TO_WHITE
+            /// </summary>
             LUT_BLACK_TO_WHITE = 0x22,
+            /// <summary>
+            /// LUT_WHITE_TO_BLACK
+            /// </summary>
             LUT_WHITE_TO_BLACK = 0x23,
+            /// <summary>
+            /// 
+            /// </summary>
             LUT_BLACK_TO_BLACK = 0x24,
+            /// <summary>
+            /// PLL_CONTROL
+            /// </summary>
             PLL_CONTROL = 0x30,
+            /// <summary>
+            /// TEMPERATURE_SENSOR_CALIBRATION
+            /// </summary>
             TEMPERATURE_SENSOR_CALIBRATION = 0x40,
+            /// <summary>
+            /// TEMPERATURE_SENSOR_SELECTION
+            /// </summary>
             TEMPERATURE_SENSOR_SELECTION = 0x41,
+            /// <summary>
+            /// TEMPERATURE_SENSOR_WRITE
+            /// </summary>
             TEMPERATURE_SENSOR_WRITE = 0x42,
+            /// <summary>
+            /// TEMPERATURE_SENSOR_READ
+            /// </summary>
             TEMPERATURE_SENSOR_READ = 0x43,
+            /// <summary>
+            /// VCOM_AND_DATA_INTERVAL_SETTING
+            /// </summary>
             VCOM_AND_DATA_INTERVAL_SETTING = 0x50,
+            /// <summary>
+            /// LOW_POWER_DETECTION
+            /// </summary>
             LOW_POWER_DETECTION = 0x51,
+            /// <summary>
+            /// TCON_SETTING
+            /// </summary>
             TCON_SETTING = 0x60,
+            /// <summary>
+            /// RESOLUTION_SETTING
+            /// </summary>
             RESOLUTION_SETTING = 0x61,
+            /// <summary>
+            /// SOURCE_AND_GATE_START_SETTING
+            /// </summary>
             SOURCE_AND_GATE_START_SETTING = 0x62,
+            /// <summary>
+            /// GET_STATUS
+            /// </summary>
             GET_STATUS = 0x71,
+            /// <summary>
+            /// AUTO_MEASURE_VCOM
+            /// </summary>
             AUTO_MEASURE_VCOM = 0x80,
+            /// <summary>
+            /// READ_VCOM_VALUE
+            /// </summary>
             READ_VCOM_VALUE = 0x81,
+            /// <summary>
+            /// VCM_DC_SETTING
+            /// </summary>
             VCM_DC_SETTING = 0x82,
+            /// <summary>
+            /// PARTIAL_WINDOW
+            /// </summary>
             PARTIAL_WINDOW = 0x90,
+            /// <summary>
+            /// PARTIAL_IN
+            /// </summary>
             PARTIAL_IN = 0x91,
+            /// <summary>
+            /// PARTIAL_OUT
+            /// </summary>
             PARTIAL_OUT = 0x92,
+            /// <summary>
+            /// PROGRAM_MODE
+            /// </summary>
             PROGRAM_MODE = 0xA0,
+            /// <summary>
+            /// ACTIVE_PROGRAM
+            /// </summary>
             ACTIVE_PROGRAM = 0xA1,
+            /// <summary>
+            /// READ_OTP_DATA
+            /// </summary>
             READ_OTP_DATA = 0xA2,
+            /// <summary>
+            /// POWER_SAVING
+            /// </summary>
             POWER_SAVING = 0xE3,
         }
     }

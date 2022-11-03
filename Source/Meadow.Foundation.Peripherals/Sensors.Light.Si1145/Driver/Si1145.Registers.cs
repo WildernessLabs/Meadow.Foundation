@@ -2,7 +2,7 @@
 {
     public partial class Si1145
     {
-        protected static class Registers
+        internal static class Registers
         {
             /* REGISTERS */
             public static readonly byte REG_PARTID = 0x00;
