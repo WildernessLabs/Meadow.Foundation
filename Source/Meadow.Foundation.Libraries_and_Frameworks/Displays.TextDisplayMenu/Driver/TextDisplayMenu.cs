@@ -8,27 +8,49 @@ using Newtonsoft.Json;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu
 {
+    /// <summary>
+    /// TextDisplayMenu Menu class
+    /// </summary>
     public class Menu
     {
         const string INPUT_TYPES_NAMESPACE = "Meadow.Foundation.Displays.TextDisplayMenu.InputTypes.";
-        protected ITextDisplay display;
+        ITextDisplay display;
 
-        protected int navigatedDepth;
-        protected MenuPage rootMenuPage;
-        protected MenuPage currentMenuPage;
-        protected IMenuInputItem currentInputItem; //also effectively a "page"
-        protected int topDisplayLine;
+        MenuPage rootMenuPage;
+        MenuPage currentMenuPage;
+        IMenuInputItem currentInputItem; //also effectively a "page"
+        int topDisplayLine;
 
-        private Stack<IPage> pageStack = null;
-        private bool isEditMode = false;
-        private bool showBackOnRoot = false;
+        Stack<IPage> pageStack = null;
+        bool isEditMode = false;
+        bool showBackOnRoot = false;
 
+        /// <summary>
+        /// Raised when the menu receieves a selected input
+        /// </summary>
         public event MenuSelectedHandler Selected = delegate { };
+
+        /// <summary>
+        /// Raised when a value changes
+        /// </summary>
         public event ValueChangedHandler ValueChanged = delegate { };
+
+        /// <summary>
+        /// Raised when the user exits the menu
+        /// </summary>
         public event EventHandler Exited = delegate { };
 
+        /// <summary>
+        /// Is the menu enabled
+        /// </summary>
         public bool IsEnabled { get; protected set; } = false;
 
+        /// <summary>
+        /// Create a new Menu object
+        /// </summary>
+        /// <param name="display">The display to render the menu</param>
+        /// <param name="menuJson">Json to define the menu structure</param>
+        /// <param name="showBackOnRoot">True to show Back item on root menu</param>
         public Menu(ITextDisplay display, byte[] menuJson, bool showBackOnRoot = false)
         {
             this.showBackOnRoot = showBackOnRoot;
@@ -36,12 +58,18 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             Init(display, CreateMenuPage(items, showBackOnRoot));
         }
 
+        /// <summary>
+        /// Create a new Menu object
+        /// </summary>
+        /// <param name="display">The display to render the menu</param>
+        /// <param name="menuItems">Menu items array</param>
+        /// <param name="showBackOnRoot">True to show Back item on root menu</param>
         public Menu(ITextDisplay display, MenuItem[] menuItems, bool showBackOnRoot = false)
         {
             Init(display, CreateMenuPage(menuItems, showBackOnRoot));
         }
 
-        private MenuItem[] ParseMenuData(byte[] menuJson)
+        MenuItem[] ParseMenuData(byte[] menuJson)
         {
             var menuString = System.Text.Encoding.Default.GetString(menuJson);
 
@@ -80,6 +108,12 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             display.Show();
         }
 
+        /// <summary>
+        /// Create a Menu page
+        /// </summary>
+        /// <param name="items">Items to populate page</param>
+        /// <param name="addBack">True to add a back item</param>
+        /// <returns>The new MenuPage object</returns>
         protected MenuPage CreateMenuPage(MenuItem[] items, bool addBack)
         {
             var menuPage = new MenuPage();
@@ -194,18 +228,12 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         protected void UpdateCurrentMenuPage()
         {
             currentMenuPage = rootMenuPage;
-
-            /*if (navigatedDepth == 0) { currentMenuPage = rootMenuPage; }
-            else
-            {
-                MenuPage page = rootMenuPage;
-              //  for (int i = 0; i < navigatedDepth; i++)
-              //  {
-              //      page = (page.MenuItems[page.ScrollPosition] as IMenuItem).SubMenu;
-              //  }
-                currentMenuPage = page; */
         } 
 
+        /// <summary>
+        /// Next input - navigates down/forward in the list of items
+        /// </summary>
+        /// <returns>True if successful, false in menu is disabled</returns>
         public bool Next()
         {
             if(IsEnabled == false) { return false; }
@@ -224,6 +252,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             return true;
         }
 
+        /// <summary>
+        /// Previous input - navigates up/back in the list of items
+        /// </summary>
+        /// <returns>True if successful, false in menu is disabled</returns>
         public bool Previous()
         {
             if (IsEnabled == false) { return false; }
@@ -242,6 +274,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             return true;
         }
 
+        /// <summary>
+        /// Back input - navigates back in the navigation stack
+        /// </summary>
+        /// <returns>True if successful, false in menu is disabled</returns>
         public bool Back()
         {
             if (IsEnabled == false) { return false; }
@@ -269,6 +305,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             return false;
         }
 
+        /// <summary>
+        /// Select input - selects the current item
+        /// </summary>
+        /// <returns>True if successful, false in menu is disabled</returns>
         public bool Select()
         {
             if (currentInputItem != null)
@@ -360,18 +400,30 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             }
         }
 
+        /// <summary>
+        /// Refresh / redraw the menu
+        /// </summary>
         public void Refresh()
         {
             ShowCurrentPage();
         }
 
+        /// <summary>
+        /// Update menu item value
+        /// </summary>
+        /// <param name="id">Item id</param>
+        /// <param name="value">New value</param>
         public void UpdateItemValue(string id, object value)
         {
-            Hashtable values = new Hashtable(1);
+            var values = new Hashtable(1);
             values[id] = value;
             UpdateItemValue(values);
         }
 
+        /// <summary>
+        /// Update menu item value
+        /// </summary>
+        /// <param name="values">Values for all items</param>
         public void UpdateItemValue(Hashtable values)
         {
             foreach (DictionaryEntry item in values)

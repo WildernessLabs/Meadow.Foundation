@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {
-    public static class InputHelpers
+    internal static class InputHelpers
     {
         public static string PadLeft(string text, char filler, int size)
         {
