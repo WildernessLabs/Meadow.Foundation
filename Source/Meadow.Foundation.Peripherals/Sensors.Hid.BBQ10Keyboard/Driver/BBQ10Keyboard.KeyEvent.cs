@@ -2,11 +2,26 @@
 {
     public partial class BBQ10Keyboard
     {
-        public  struct KeyEvent
+        /// <summary>
+        /// Key event struct
+        /// </summary>
+        public struct KeyEvent
         {
+            /// <summary>
+            /// Key ascii value
+            /// </summary>
             public char AsciiValue { get; private set; }
+
+            /// <summary>
+            /// The key state at the time of the event
+            /// </summary>
             public KeyState KeyState { get; private set; }
 
+            /// <summary>
+            /// Create a new KeyEvent object
+            /// </summary>
+            /// <param name="asciiValue">The ascii value</param>
+            /// <param name="keyState">The key state</param>
             public KeyEvent(char asciiValue, KeyState keyState)
             {
                 AsciiValue = asciiValue;
