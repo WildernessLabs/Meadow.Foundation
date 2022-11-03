@@ -35,13 +35,14 @@ namespace Meadow.Foundation.Sensors.Motion
         public Color? Color => Conditions.Color;
         public Illuminance? AmbientLight => Conditions.AmbientLight;
 
-        Memory<byte> readBuffer = new byte[256]; 
+        Memory<byte> readBuffer = new byte[256];
 
         /// <summary>
         /// Create a new instance of the APDS9960 communicating over the I2C interface.
         /// </summary>
-        /// <param name="address">Address of the I2C sensor</param>
+        /// <param name="device">The device connected to the sensor</param>
         /// <param name="i2cBus">SI2C bus object</param>
+        /// <param name="interruptPin">The interrupt pin</param>
         public Apds9960(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin)
             : base(i2cBus, (byte)Addresses.Default)
         {

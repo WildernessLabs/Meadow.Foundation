@@ -91,8 +91,6 @@ namespace Sensors.Temperature.MLX90640_Sample
                     Console.WriteLine();
                 }
             }
-
-            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

@@ -11,10 +11,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             public static TimeSpan DefaultReadPeriod = TimeSpan.FromMilliseconds(250);
 
-            private SerialWombatBase controller;
-            private bool disposed;
-            private TimeSpan readPeriod;
-            private IPin echoPin;
+            SerialWombatBase controller;
+            bool disposed;
+            TimeSpan readPeriod;
+            IPin echoPin;
 
             public Hcsr04(SerialWombatBase controller, IPin trigger, IPin echo)
                 : this(controller, trigger, echo, DefaultReadPeriod)

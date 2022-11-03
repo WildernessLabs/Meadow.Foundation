@@ -91,27 +91,27 @@ namespace Meadow.Foundation.Transceivers
         static byte W_REGISTER = 0x20;
         static byte REGISTER_MASK = 0x1F;
         static byte ACTIVATE = 0x50;
-        static byte R_RX_PL_WID = 0x60;
+        //static byte R_RX_PL_WID = 0x60;
         static byte R_RX_PAYLOAD = 0x61;
         static byte W_TX_PAYLOAD = 0xA0;
-        static byte W_ACK_PAYLOAD = 0xA8;
+        //static byte W_ACK_PAYLOAD = 0xA8;
         static byte FLUSH_TX = 0xE1;
         static byte FLUSH_RX = 0xE2;
-        static byte REUSE_TX_PL = 0xE3;
+        //static byte REUSE_TX_PL = 0xE3;
         static byte RF24_NOP = 0xFF;
 
         /* Non-P omissions */
-        static byte LNA_HCURR = 0;
+        //static byte LNA_HCURR = 0;
 
         /* P model memory Map */
-        static byte RPD = 0x09;
+        //static byte RPD = 0x09;
         static byte W_TX_PAYLOAD_NO_ACK = 0xB0;
 
         /* P model bit Mnemonics */
         static byte RF_DR_LOW = 5;
         static byte RF_DR_HIGH = 3;
-        static byte RF_PWR_LOW = 1;
-        static byte RF_PWR_HIGH = 2;
+        //static byte RF_PWR_LOW = 1;
+        //static byte RF_PWR_HIGH = 2;
 
         public enum PowerAmplifierLevel : byte
         {

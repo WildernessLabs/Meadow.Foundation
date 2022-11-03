@@ -14,15 +14,15 @@ namespace Meadow.Foundation.Servos
         public RotationDirection CurrentDirection { get; protected set; } = RotationDirection.None;
 
         /// <summary>
-        /// Gets the current rotation speed.
+        /// Gets the current rotation speed
         /// </summary>
         public float CurrentSpeed { get; protected set; } = -1;
 
         /// <summary>
-        /// Instantiates a new continuous rotation servo on the specified pin, with the specified configuration.
+        /// Instantiates a new continuous rotation servo on the specified pin, with the specified configuration
         /// </summary>
-        /// <param name="pin"></param>
-        /// <param name="config"></param>
+        /// <param name="pwm">The PWM port</param>
+        /// <param name="config">The servo configuration</param>
         public ContinuousRotationServoBase(IPwmPort pwm, ServoConfig config)
             : base(pwm, config)
         {

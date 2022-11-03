@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Displays.Lcd
         protected static byte LCD_BLINKOFF = 0x00;
         // flags for display/cursor shift
         static byte LCD_DISPLAYMOVE = 0x08;
-        static byte LCD_CURSORMOVE = 0x00;
+        //static byte LCD_CURSORMOVE = 0x00;
         static byte LCD_MOVERIGHT = 0x04;
         static byte LCD_MOVELEFT = 0x00;
         // flags for function set
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Displays.Lcd
         static byte LCD_BACKLIGHT = 0x08;
         static byte LCD_NOBACKLIGHT = 0x00;
         static byte En = 0b00000100;  // Enable bit
-        static byte Rw = 0b00000010;  // Read/Write bit
+        //static byte Rw = 0b00000010;  // Read/Write bit
         static byte Rs = 0b00000001;  // Register select bit
 
         /// <summary>

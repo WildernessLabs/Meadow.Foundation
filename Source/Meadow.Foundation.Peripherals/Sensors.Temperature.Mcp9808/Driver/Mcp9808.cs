@@ -28,7 +28,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         const byte MCP_DEVICE_ID = 0x07;    // device ID
         const byte MCP_RESOLUTION = 0x08;     // resolution
 
-        // <summary>
+        /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }

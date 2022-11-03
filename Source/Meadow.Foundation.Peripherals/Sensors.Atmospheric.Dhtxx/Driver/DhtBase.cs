@@ -32,14 +32,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        /// How last read went, <c>true</c> for success, <c>false</c> for failure
+        /// How last read went, true for success, false for failure
         /// </summary>
         public bool WasLastReadSuccessful { get; internal set; }
 
         /// <summary>
         /// Create a DHT sensor through I2C (Only DHT12)
         /// </summary>
-        /// <param name="i2cDevice">The I2C device used for communication.</param>
+        /// <param name="i2cBus">The I2C bus connected to the sensor</param>
+        /// <param name="address">The I2C address</param>
         public DhtBase(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, writeBufferSize: 8, readBufferSize: 6)
         {
@@ -77,8 +78,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         internal virtual void ReadDataI2c()
         {
-            Peripheral.Write(0x00);
-            Peripheral.Read(ReadBuffer.Span[0..5]);
+            Peripheral?.Write(0x00);
+            Peripheral?.Read(ReadBuffer.Span[0..5]);
 
             lastMeasurement = Environment.TickCount;
 

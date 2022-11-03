@@ -45,20 +45,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private Coefficients coefficients;
 
         /// <summary>
-        /// Create a new MPL115A2 temperature and humidity sensor object.
+        /// Create a new MPL115A2 temperature and humidity sensor object
         /// </summary>
-        /// <param name="address">Sensor address (default to 0x60).</param>
-        /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
-        public Mpl115a2(II2cBus i2cBus, byte address = (byte)Addresses.Default, int updateIntervalMs = 1000)
-            : base(i2cBus, address, updateIntervalMs)
+        /// <param name="address">Sensor address (default to 0x60)</param>
+        /// <param name="i2cBus">I2CBus (default to 100 KHz)</param>
+        public Mpl115a2(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+            : base(i2cBus, address)
         {
-            //var device = new I2cPeripheral(i2cBus, address);
-            //mpl115a2 = device;
-            //
             //  Update the compensation data from the sensor.  The location and format of the
             //  compensation data can be found on pages 5 and 6 of the datasheet.
-            //
-            Peripheral.ReadRegister(Registers.A0MSB, ReadBuffer.Span);
+            Peripheral?.ReadRegister(Registers.A0MSB, ReadBuffer.Span);
             var a0 = (short)(ushort)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
             var b1 = (short)(ushort)((ReadBuffer.Span[2] << 8) | ReadBuffer.Span[3]);
             var b2 = (short)(ushort)((ReadBuffer.Span[4] << 8) | ReadBuffer.Span[5]);
@@ -124,24 +120,20 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //
                 WriteBuffer.Span[0] = Registers.StartConversion;
                 WriteBuffer.Span[1] = 0x00;
-                Peripheral.Write(WriteBuffer.Span[0..2]);
-                //Peripheral.WriteBytes(new byte[] { Registers.StartConversion, 0x00 });
+                Peripheral?.Write(WriteBuffer.Span[0..2]);
 
                 await Task.Delay(5);
 
-                //var data = Peripheral.ReadRegisters(Registers.PressureMSB, 4);
-                Peripheral.ReadRegister(Registers.PressureMSB, ReadBuffer.Span[0..4]);
-                //
+                Peripheral?.ReadRegister(Registers.PressureMSB, ReadBuffer.Span[0..4]);
+             
                 //  Extract the sensor data, note that this is a 10-bit reading so move
                 //  the data right 6 bits (see section 3.1 of the datasheet).
-                //
                 var pAdc = (ushort)(((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]) >> 6);
                 var tAdc = (ushort)(((ReadBuffer.Span[2] << 8) + ReadBuffer.Span[3]) >> 6);
                 conditions.Temperature = new Units.Temperature((float)((tAdc - 498.0) / -5.35) + 25, TU.Celsius);
-                //
+               
                 //  Now use the calculations in section 3.2 to determine the
                 //  current pressure reading.
-                //
                 const double PRESSURE_CONSTANT = 65.0 / 1023.0;
 
                 // from section 3.2
@@ -151,7 +143,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //   Padc is the raw pressure reading
                 //   Tadc is the raw temperature reading
                 var compensatedPressure = coefficients.A0 + ((coefficients.B1 + (coefficients.C12 * (double)tAdc))
-                                                              * (double)pAdc) + (coefficients.B2 * (double)tAdc);
+                                                              * pAdc) + (coefficients.B2 * (double)tAdc);
 
                 // Pcomp will produce a value of 0 with an input pressure of 50
                 // kPa and will produce a full-scale value of 1023 with an input pressure of 115 kPa.

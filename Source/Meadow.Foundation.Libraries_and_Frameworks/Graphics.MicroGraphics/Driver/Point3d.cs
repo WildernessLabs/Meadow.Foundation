@@ -31,6 +31,10 @@ namespace Meadow.Foundation.Graphics
             Z += z;
         }
 
+        /// <summary>
+        /// Offset the current value
+        /// </summary>
+        /// <param name="point3d">The point3d value to offset</param>
         public void Offset(Point3d point3d)
         {
             X += point3d.X;
@@ -44,8 +48,8 @@ namespace Meadow.Foundation.Graphics
         /// <param name="point3d">
         /// The <see cref="Point3d"/> instance to translate.
         /// </param>
-        /// <param name="size">
-        /// The <see cref="Size"/> instance to translate point with.
+        /// <param name="amount3d">
+        /// The <see cref="Point3d"/> instance to translate point with.
         /// </param>
         /// <returns>
         /// A new <see cref="Point3d"/> instance translated by size.
@@ -91,7 +95,7 @@ namespace Meadow.Foundation.Graphics
             return !left.Equals(right);
         }
 
-        // <summary>
+        /// <summary>
         /// Indicates whether this instance is equal to the specified object.
         /// </summary>
         /// <param name="obj">The object instance to compare to.</param>

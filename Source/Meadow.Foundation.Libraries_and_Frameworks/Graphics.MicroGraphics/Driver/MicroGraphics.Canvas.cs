@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Graphics
 
         /// <summary>
         /// Restore saved state variables and apply them to the MicroGraphics instance 
-        /// Includes: CurrentFont, Stroke, & Rotation
+        /// Includes: CurrentFont, Stroke, and Rotation
         /// </summary>
         public void RestoreState()
         {

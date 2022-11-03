@@ -10,32 +10,21 @@ namespace Meadow.Foundation
     public abstract class ByteCommsSensorBase<UNIT> :
         SamplingSensorBase<UNIT>, IDisposable where UNIT : struct
     {
-        //==== events
-
-        //==== internals
         /// <summary>
         /// Peripheral object, i.e. an I2CPeripheral or SpiPeripheral
         /// </summary>
         protected IByteCommunications? Peripheral { get; set; }
 
-        //==== properties
         /// <summary>
-        /// 
+        /// The read buffer
         /// </summary>
         protected Memory<byte> ReadBuffer { get; private set; }
+
         /// <summary>
-        /// 
+        /// The write buffer
         /// </summary>
         protected Memory<byte> WriteBuffer { get; private set; }
 
-        //==== ctors
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="i2cBus"></param>
-        /// <param name="address"></param>
-        /// <param name="readBufferSize"></param>
-        /// <param name="writeBufferSize"></param>
         protected ByteCommsSensorBase(
             II2cBus i2cBus, byte address,
             int readBufferSize = 8, int writeBufferSize = 8)
@@ -80,8 +69,8 @@ namespace Meadow.Foundation
         /// <param name="writeBufferSize"></param>
         protected virtual void Init(int readBufferSize = 8, int writeBufferSize = 8)
         {
-            this.ReadBuffer = new byte[readBufferSize];
-            this.WriteBuffer = new byte[writeBufferSize];
+            ReadBuffer = new byte[readBufferSize];
+            WriteBuffer = new byte[writeBufferSize];
         }
 
         /// <summary>

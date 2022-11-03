@@ -25,26 +25,30 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         public Bh1900Nux(II2cBus i2cBus, byte address)
             : this(i2cBus, (Address)address)
-        {
+        { }
 
-        }
-
+        /// <summary>
+        /// Reset the sensor
+        /// </summary>
         public void Reset()
         {
-            Peripheral.WriteRegister((byte)Register.Reset, 0x01);
+            Peripheral?.WriteRegister((byte)Register.Reset, 0x01);
         }
 
-        private int GetConfig()
+        int GetConfig()
         {
-            Peripheral.ReadRegister((byte)Register.Configuration, ReadBuffer.Span[0..2]);
+            Peripheral?.ReadRegister((byte)Register.Configuration, ReadBuffer.Span[0..2]);
             return ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
         }
 
         private void SetConfig(int cfg)
         {
-            Peripheral.WriteRegister((byte)Register.Configuration, new byte[] { (byte)(cfg >> 8), (byte)(cfg & 0xff) });
+            Peripheral?.WriteRegister((byte)Register.Configuration, new byte[] { (byte)(cfg >> 8), (byte)(cfg & 0xff) });
         }
 
+        /// <summary>
+        /// The measurement mode
+        /// </summary>
         public Mode MeasurementMode
         {
             get => (Mode)(GetConfig() >> 15);
@@ -160,6 +164,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return new Units.Temperature(c * 0.0625d, Units.Temperature.UnitType.Celsius);
         }
 
+        /// <summary>
+        /// Read the temperature
+        /// </summary>
+        /// <returns>The current temperature value</returns>
         protected override async Task<Units.Temperature> ReadSensor()
         {
             return await Task.Run(() =>
@@ -169,8 +177,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 // Temperature Register is 0x0000 until the first conversion complete after a software
                 // reset or power - on.
                 // Measurement Temperature Value [°C] = Temperature Data [11:0] x 0.0625
-
-                Peripheral.ReadRegister((byte)Register.Temperature, ReadBuffer.Span[0..2]);
+                Peripheral?.ReadRegister((byte)Register.Temperature, ReadBuffer.Span[0..2]);
 
                 return RegisterToTemp(ReadBuffer);
             });

@@ -59,7 +59,7 @@
             return !left.Equals(right);
         }
 
-        // <summary>
+        /// <summary>
         /// Indicates whether this instance is equal to the specified object.
         /// </summary>
         /// <param name="obj">The object instance to compare to.</param>

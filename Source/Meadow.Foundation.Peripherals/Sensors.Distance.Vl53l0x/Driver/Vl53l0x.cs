@@ -82,7 +82,7 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             if (shutdownPin != null)
             {
-                device.CreateDigitalOutputPort(shutdownPin, true);
+                shutdownPort = device.CreateDigitalOutputPort(shutdownPin, true);
             }
             Initialize().Wait();
         }

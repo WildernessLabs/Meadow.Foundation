@@ -29,25 +29,23 @@ namespace Meadow.Foundation.Sensors.Moisture
         protected IDigitalOutputPort DigitalPort { get; }
 
         /// <summary>
-        /// Last value read from the moisture sensor.
+        /// Last value read from the moisture sensor
         /// </summary>
         public double? Moisture { get; private set; } = double.NaN;
 
         /// <summary>
-        /// Voltage value of most dry soil. Default of `0V`.
+        /// Voltage value of most dry soil. Default of `0V`
         /// </summary>
         public Voltage MinimumVoltageCalibration { get; set; } = new Voltage(0);
 
         /// <summary>
-        /// Voltage value of most moist soil. Default of `3.3V`.
+        /// Voltage value of most moist soil. Default of `3.3V`
         /// </summary>
         public Voltage MaximumVoltageCalibration { get; set; } = new Voltage(3.3);
 
         /// <summary>
-        /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device.
+        /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device
         /// </summary>
-        /// <param name="analogPin"></param>
-        /// <param name="digitalPin"></param>
         public Fc28(
             IMeadowDevice device, IPin analogPin, IPin digitalPin,
             Voltage? minimumVoltageCalibration, Voltage? maximumVoltageCalibration,
@@ -60,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         }
 
         /// <summary>
-        /// Creates a FC28 soil moisture sensor object with the especified analog pin and digital pin.
+        /// Creates a FC28 soil moisture sensor object with the especified analog pin and digital pin
         /// </summary>
         /// <param name="analogPort"></param>
         /// <param name="digitalPort"></param>
@@ -83,25 +81,14 @@ namespace Meadow.Foundation.Sensors.Moisture
         }
 
         /// <summary>
-        /// Starts continuously sampling the sensor.
-        ///
-        /// This method also starts raising `Updated` events and IObservable
-        /// subscribers getting notified. Use the `standbyDuration` parameter
-        /// to specify how often events and notifications are raised/sent.
+        /// Starts continuously sampling the sensor
         /// </summary>
-        /// <param name="sampleCount">How many samples to take during a given
-        /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleIntervalDuration">The time, in milliseconds,
-        /// to wait in between samples during a reading.</param>
-        /// <param name="standbyDuration">The time, in milliseconds, to wait
-        /// between sets of sample readings. This value determines how often
-        /// `Updated` events are raised and `IObservable` consumers are notified.</param>
         public void StartUpdating()
         {
-            // thread safety
-            lock (samplingLock) {
-                if (IsSampling)
-                    return;
+            lock (samplingLock) 
+            {
+                if (IsSampling) { return; }
+                    
                 IsSampling = true;
 
                 SamplingTokenSource = new CancellationTokenSource();
@@ -111,8 +98,10 @@ namespace Meadow.Foundation.Sensors.Moisture
                 ChangeResult<double> result;
                 Task.Factory.StartNew(async () => 
                 {
-                    while (true) {
-                        if (ct.IsCancellationRequested) {
+                    while (true) 
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
                             // do task clean up here
                             observers.ForEach(x => x.OnCompleted());
                             break;
@@ -137,7 +126,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         }
 
         /// <summary>
-        /// Stops sampling the sensor.
+        /// Stops sampling the sensor
         /// </summary>
         public void StopUpdating()
         {

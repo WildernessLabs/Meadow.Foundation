@@ -11,34 +11,31 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
     public partial class Nau7802 :
-        ByteCommsSensorBase<Units.Mass>,
+        ByteCommsSensorBase<Mass>,
         IMassSensor,
         IDisposable
 
     {
-        //==== events
         public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
 
-        //==== internals
         private byte[] _read = new byte[3];
         private double _gramsPerAdcUnit = 0;
         private PU_CTRL_BITS _currentPU_CTRL;
         private int _tareValue;
 
-        //==== Properties
         public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
 
         /// <summary>
-        /// The last read Mass.
+        /// The last read Mass
         /// </summary>
         public Mass? Mass { get; private set; }
 
         /// <summary>
         /// Creates an instance of the NAU7802 Driver class
         /// </summary>
-        /// <param name="bus"></param>
-        public Nau7802(II2cBus bus, int updateIntervalMs = 1000)
-            : base(bus, (byte)Addresses.Default, updateIntervalMs)
+        /// <param name="i2cBus">The I2C bus</param>
+        public Nau7802(II2cBus i2cBus)
+            : base(i2cBus, (byte)Addresses.Default)
         {
             Initialize((byte)Addresses.Default);
         }
@@ -230,12 +227,12 @@ namespace Meadow.Foundation.Sensors.LoadCell
         }
 
         /// <summary>
-        /// Calculates the calibration factor of the load cell.  Call this method with a known weight on the sensor, and then use the returned value in a call to <see cref="SetCalibrationFactor(int, Weight)"/> before using the sensor.
+        /// Calculates the calibration factor of the load cell
+        /// Call this method with a known weight on the sensor, and then use the returned value in a call before using the sensor
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The calibration factor as an int</returns>
         public int CalculateCalibrationFactor()
-        {
-            // do a few reads, then return the difference between tare (zero) and this value.
+        {   
             var reads = 5;
             var sum = 0;
 
@@ -251,15 +248,13 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <summary>
         /// Sets the sensor's calibration factor based on a factor calculated with a know weight by calling <see cref="CalculateCalibrationFactor"/>.
         /// </summary>
-        /// <param name="factor"></param>
-        /// <param name="knownValue"></param>
         public void SetCalibrationFactor(int factor, Mass knownValue)
         {
             Console.WriteLine($"SetCalibrationFactor: knownValue.Grams: {knownValue.Grams:N1}");
             _gramsPerAdcUnit = knownValue.Grams / (double)factor;
         }
 
-        private int DoConversion()
+        int DoConversion()
         {
             if (!IsConversionComplete())
             {
