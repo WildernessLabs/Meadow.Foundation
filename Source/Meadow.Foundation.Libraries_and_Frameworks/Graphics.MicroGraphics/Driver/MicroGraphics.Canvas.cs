@@ -4,14 +4,35 @@ namespace Meadow.Foundation.Graphics
 {
     public partial class MicroGraphics
     {
+        /// <summary>
+        /// Represents a canvas state
+        /// </summary>
         protected class CanvasState
         {
+            /// <summary>
+            /// The current font
+            /// </summary>
             public IFont CurrentFont { get; set; }
+
+            /// <summary>
+            /// The current stroke when drawing primitives
+            /// </summary>
             public int Stroke { get; set; }
+
+            /// <summary>
+            /// The canvas rotation
+            /// </summary>
             public RotationType Rotation { get; set; }
+
+            /// <summary>
+            /// The current pen color
+            /// </summary>
             public Color PenColor { get; set; }
         }
 
+        /// <summary>
+        /// The current canvas state
+        /// </summary>
         protected CanvasState canvasState;
 
         /// <summary>
@@ -20,10 +41,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public void SaveState()
         {
-            if (canvasState == null)
-            {
-                canvasState = new CanvasState();
-            }
+            canvasState ??= new CanvasState();
 
             canvasState.CurrentFont = currentFont;
             canvasState.Stroke = Stroke;

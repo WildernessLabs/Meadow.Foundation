@@ -4,9 +4,18 @@ using System.Linq;
 
 namespace Meadow.Foundation.Graphics
 {
+    /// <summary>
+    /// The path direction
+    /// </summary>
     public enum PathDirection
     {
+        /// <summary>
+        /// Clockwise
+        /// </summary>
         Clockwise,
+        /// <summary>
+        /// Counter-clockwise
+        /// </summary>
         CounterClockwise
     }
 
