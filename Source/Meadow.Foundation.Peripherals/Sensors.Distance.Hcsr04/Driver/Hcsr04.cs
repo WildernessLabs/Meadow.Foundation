@@ -12,7 +12,6 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public class Hcsr04 : SensorBase<Length>, IRangeFinder
     {
-
         /// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
@@ -34,12 +33,12 @@ namespace Meadow.Foundation.Sensors.Distance
         public double MaximumDistance => 400;
 
         /// <summary>
-        /// Trigger Pin.
+        /// Port for trigger Pin
         /// </summary>
         protected IDigitalOutputPort triggerPort;
 
         /// <summary>
-        /// Echo Pin.
+        /// Port for echo Pin
         /// </summary>
         protected IDigitalInputPort echoPort;
 
@@ -54,6 +53,12 @@ namespace Meadow.Foundation.Sensors.Distance
         public Hcsr04(IDigitalInputOutputController device, IPin triggerPin, IPin echoPin) :
             this(device.CreateDigitalOutputPort(triggerPin, false),
                   device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth))
+        { }
+
+        /// <summary>
+        /// Create a new HCSR04 object
+        /// </summary>
+        protected Hcsr04()
         { }
 
         /// <summary>

@@ -18,42 +18,47 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
+        /// Raised when the temperature value changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        
+        /// <summary>
+        /// Raised when the humidity value changes
+        /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         public int DEFAULT_SPEED = 400;
 
         /// <summary>
-        /// The temperature, from the last reading.
+        /// The temperature, from the last reading
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// The humidity, in percent relative humidity, from the last reading..
+        /// The humidity, in percent relative humidity, from the last reading
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        /// Serial number of the device.
+        /// Serial number of the device
         /// </summary>
         public ulong SerialNumber { get; private set; }
 
         /// <summary>
-        /// Device type as extracted from the serial number.
+        /// Device type as extracted from the serial number
         /// </summary>
         public DeviceType SensorType { get; private set; }
 
         /// <summary>
-        /// Firmware revision of the sensor.
+        /// Firmware revision of the sensor
         /// </summary>
         public byte FirmwareRevision { get; private set; }
 
         /// <summary>
-        /// Create a new SI7021 temperature and humidity sensor.
+        /// Create a new SI7021 temperature and humidity sensor
         /// </summary>
-        /// <param name="address">Sensor address (default to 0x40).</param>
-        /// <param name="i2cBus">I2CBus.</param>
+        /// <param name="i2cBus">I2CBus</param>
+        /// <param name="address">I2C address (default to 0x40)</param>
         public Si70xx(II2cBus i2cBus, byte address = (byte)Address.Default)
             : base(i2cBus, address, 8, 3)
         {
@@ -73,16 +78,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected void Initialize()
         {
-            // write buffer for initialization commands only can be two bytes.
             Span<byte> tx = WriteBuffer.Span[0..2];
 
             Reset();
 
-            //
-            //  Get the device ID.
             SerialNumber = 0;
 
-            // this device is...interesting.  Most registers are 1-byte addressing, but a few are 2-bytes?
             tx[0] = READ_ID_PART1;
             tx[1] = READ_ID_PART2;
             Peripheral?.Exchange(tx, ReadBuffer.Span);
@@ -186,10 +187,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
             Peripheral?.WriteRegister((byte)Register.USER_REG_1, register);
         }
-
-        //
-        /*******************************************************************************************/
-
 
         /// <summary>
         /// Sets the sensor resolution to one of four levels

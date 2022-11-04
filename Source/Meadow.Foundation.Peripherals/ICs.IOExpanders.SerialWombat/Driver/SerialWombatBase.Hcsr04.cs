@@ -18,8 +18,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             public Hcsr04(SerialWombatBase controller, IPin trigger, IPin echo)
                 : this(controller, trigger, echo, DefaultReadPeriod)
-            {
-            }
+            { }
 
             public Hcsr04(SerialWombatBase controller, IPin trigger, IPin echo, TimeSpan readPeriod)
             {

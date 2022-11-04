@@ -5,6 +5,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public partial class Pca9685
     {
+        /// <summary>
+        /// Pca9685 PWM port
+        /// </summary>
         public class PwmPort : IPwmPort
         {
             readonly byte address;
@@ -15,9 +18,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
             float dutyCycle;
             Units.Frequency frequency;
 
+            /// <summary>
+            /// Channel info
+            /// </summary>
             public IPwmChannelInfo Channel => throw new NotImplementedException();
 
+            /// <summary>
+            /// Durration
+            /// </summary>
             public float Duration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            
+            /// <summary>
+            /// Period
+            /// </summary>
             public float Period { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
             /// <summary>
@@ -25,10 +38,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public Units.Frequency Frequency { get => frequency; set { } }
 
+            /// <summary>
+            /// State
+            /// </summary>
             public bool State => throw new NotImplementedException();
 
+            /// <summary>
+            /// Pin
+            /// </summary>
             public IPin Pin => throw new NotImplementedException();
 
+            /// <summary>
+            /// Duty cycle
+            /// </summary>
             public float DutyCycle
             {
                 get => dutyCycle;
@@ -39,8 +61,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
+            /// <summary>
+            /// Get or set inversion
+            /// </summary>
             public bool Inverted { get; set; }
 
+            /// <summary>
+            /// Get or set the time scale
+            /// </summary>
             public TimeScale TimeScale { get; set; }
 
             IDigitalChannelInfo IPort<IDigitalChannelInfo>.Channel => throw new NotImplementedException();

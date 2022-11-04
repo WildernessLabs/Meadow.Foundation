@@ -9,6 +9,9 @@ using PU = Meadow.Units.Pressure.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
+    /// <summary>
+    /// Represents a Mpl115a2 temperature and pressure sensor
+    /// </summary>
     public partial class Mpl115a2 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor

@@ -3,7 +3,10 @@ namespace Meadow.Foundation.Sensors.Light
 {
     public partial class Si1145
     {
-        protected static class Commands
+        /// <summary>
+        /// SI1145 commands
+        /// </summary>
+        static class Commands
         {
             /* COMMANDS*/
             public static readonly byte PARAM_QUERY = 0x80;
