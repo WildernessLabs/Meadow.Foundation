@@ -73,6 +73,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             IDigitalChannelInfo IPort<IDigitalChannelInfo>.Channel => throw new NotImplementedException();
 
+            /// <summary>
+            /// Create new PwmPort
+            /// </summary>
+            /// <param name="i2cBus">I2C bus</param>
+            /// <param name="address">I2C address</param>
+            /// <param name="led0OnL">Led 0 On</param>
+            /// <param name="frequency">PWM frequency</param>
+            /// <param name="portNumber">Port number</param>
+            /// <param name="dutyCycle">Duty cycle</param>
             public PwmPort(II2cBus i2cBus, byte address, byte led0OnL, Units.Frequency frequency, byte portNumber, float dutyCycle)
             {
                 this.i2cBus = i2cBus;
@@ -83,11 +92,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 this.led0OnL = led0OnL;
             }
 
-            public void Dispose()
-            {
-
-            }
-
+            /// <summary>
+            /// Start PWM ports
+            /// </summary>
             public void Start()
             {
                 if (Inverted)
@@ -100,6 +107,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
+            /// <summary>
+            /// Stop PWM ports
+            /// </summary>
             public void Stop()
             {
                 SetPwm(portNumber, 0, 0);
@@ -113,6 +123,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
             private void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
             {
                 i2cBus.Write(address, new byte[] {register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
+            }
+
+            /// <summary>
+            /// Dispose
+            /// </summary>
+            /// <exception cref="NotImplementedException"></exception>
+            public void Dispose()
+            {
+                throw new NotImplementedException();
             }
         }
     }
