@@ -1,9 +1,8 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Motion
+﻿namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Apds9960
     {
-        public static class GainValues
+        static class GainValues
         {
             /* Proximity Gain (PGAIN) values */
             public const byte PGAIN_1X = 0;

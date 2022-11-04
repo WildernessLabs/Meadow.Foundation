@@ -11,22 +11,36 @@ namespace Meadow.Foundation.Sensors.Motion
     // Temp: 16.00C
 
     // TODO: Interrupt handling is commented out
+
+    /// <summary>
+    /// Represents the Xtrinsic MAG3110 Three-Axis, Digital Magnetometer
+    /// </summary>
     public partial class Mag3110 :
         ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
         ITemperatureSensor
     {
+        /// <summary>
+        /// Raised when the magnetic field value changes
+        /// </summary>
         public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated = delegate { };
+        
+        /// <summary>
+        /// Raised when the temperature value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
-        /// Interrupt port used to detect then end of a conversion.
+        /// Interrupt port used to detect then end of a conversion
         /// </summary>
         protected readonly IDigitalInputPort interruptPort;
 
+        /// <summary>
+        /// The current magnetic field value
+        /// </summary>
         public MagneticField3D? MagneticField3d => Conditions.MagneticField3D;
 
         /// <summary>
-        /// Temperature of the sensor die
+        /// Current emperature of the die
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
@@ -61,10 +75,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         /// See section 5.1.1 of the datasheet.
         /// </remarks>
-        public bool IsDataReady
-        {
-            get { return (Peripheral.ReadRegister(Registers.DR_STATUS) & 0x08) > 0; }
-        }
+        public bool IsDataReady => (Peripheral.ReadRegister(Registers.DR_STATUS) & 0x08) > 0; 
+        
 
         /// <summary>
         /// Enable or disable interrupts.
@@ -76,7 +88,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public bool DigitalInputsEnabled
         {
-            get { return digitalInputsEnabled; }
+            get => digitalInputsEnabled; 
             set
             {
                 Standby = true;
@@ -93,25 +105,26 @@ namespace Meadow.Foundation.Sensors.Motion
                 digitalInputsEnabled = value;
             }
         }
-        protected bool digitalInputsEnabled;
+        bool digitalInputsEnabled;
 
         /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component.
         /// </summary>
-        /// <param name="device">IO Device.</param>
-        /// <param name="interruptPin">Interrupt pin used to detect end of conversions.</param>
-        /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
-        /// <param name="speed">Speed of the I2C bus (default = 400 KHz).</param>        
+        /// <param name="device">IO Device</param>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="interruptPin">Interrupt pin used to detect end of conversions</param>
+        /// <param name="address">Address of the MAG3110 (default = 0x0e)</param>
+        /// <param name="speed">Speed of the I2C bus (default = 400 KHz)</param>        
         public Mag3110(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default, ushort speed = 400) :
                 this(i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address)
         { }
 
         /// <summary>
-        /// Create a new MAG3110 object using the default parameters for the component.
+        /// Create a new MAG3110 object using the default parameters for the component
         /// </summary>
-        /// <param name="interruptPort">Interrupt port used to detect end of conversions.</param>
-        /// <param name="address">Address of the MAG3110 (default = 0x0e).</param>
-        /// <param name="i2cBus">I2C bus object - default = 400 KHz).</param>        
+        /// <param name="interruptPort">Interrupt port used to detect end of conversions</param>
+        /// <param name="address">Address of the MAG3110 (default = 0x0e)</param>
+        /// <param name="i2cBus">I2C bus object - default = 400 KHz)</param>        
         public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
@@ -130,7 +143,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Reset the sensor.
+        /// Reset the sensor
         /// </summary>
         public void Reset()
         {
@@ -174,7 +187,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
                 controlRegister |= 0x02;
                 Peripheral.WriteRegister(Registers.CONTROL_1, controlRegister);
-                //var data = Peripheral.ReadRegisters(Registers.X_MSB, 6);
+                
                 Peripheral.ReadRegister(Registers.X_MSB, ReadBuffer.Span[0..6]);
 
                 conditions.MagneticField3D = new MagneticField3D(

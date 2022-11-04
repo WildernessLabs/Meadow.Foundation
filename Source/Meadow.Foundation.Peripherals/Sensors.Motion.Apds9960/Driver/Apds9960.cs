@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -11,12 +10,22 @@ namespace Meadow.Foundation.Sensors.Motion
     //  haven't tested any of the gesture stuff.
     //  need to add distance
 
+    /// <summary>
+    /// Represents the APDS9960 Proximity, Light, RGB, and Gesture Sensor
+    /// </summary>
     public partial class Apds9960 : ByteCommsSensorBase<(Color? Color, Illuminance? AmbientLight)>
     {
+        /// <summary>
+        /// Raised when the ambient light value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = delegate { };
+        
+        /// <summary>
+        /// Raised when the color value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Color>> ColorUpdated = delegate { };
 
-        IDigitalInputPort interruptPort;
+        readonly IDigitalInputPort interruptPort;
 
         GestureData gestureData;
         int gestureUdDelta;
@@ -32,10 +41,17 @@ namespace Meadow.Foundation.Sensors.Motion
 
         static readonly byte FIFO_PAUSE_TIME = 30;      // Wait period (ms) between FIFO reads
 
+        /// <summary>
+        /// The current color value
+        /// </summary>
         public Color? Color => Conditions.Color;
+
+        /// <summary>
+        /// The current abient light value
+        /// </summary>
         public Illuminance? AmbientLight => Conditions.AmbientLight;
 
-        Memory<byte> readBuffer = new byte[256];
+        readonly Memory<byte> readBuffer = new byte[256];
 
         /// <summary>
         /// Create a new instance of the APDS9960 communicating over the I2C interface.
@@ -243,6 +259,10 @@ namespace Meadow.Foundation.Sensors.Motion
             Peripheral.WriteRegister(Registers.APDS9960_ENABLE, reg_val);
         }
 
+        /// <summary>
+        /// Enable light sensor
+        /// </summary>
+        /// <param name="interrupts">True to enable interrupts for light</param>
         public void EnableLightSensor(bool interrupts)
         {
             /* Set default gain, interrupts, enable power, and enable sensor */
@@ -254,12 +274,19 @@ namespace Meadow.Foundation.Sensors.Motion
             SetMode(OperatingModes.AMBIENT_LIGHT, 1);
         }
 
+        /// <summary>
+        /// Disable light sensor
+        /// </summary>
         public void DisableLightSensor()
         {
             SetAmbientLightIntEnable(false);
             SetMode(OperatingModes.AMBIENT_LIGHT, 0);
         }
 
+        /// <summary>
+        /// Enable proximity sensor
+        /// </summary>
+        /// <param name="interrupts">True to enable interrupts for proximity</param>
         public void EnableProximitySensor(bool interrupts)
         {
             /* Set default gain, LED, interrupts, enable power, and enable sensor */
@@ -278,39 +305,36 @@ namespace Meadow.Foundation.Sensors.Motion
             SetMode(OperatingModes.PROXIMITY, 1);
         }
 
+        /// <summary>
+        /// Disable proximity sensor
+        /// </summary>
         public void DisableProximitySensor()
         {
             SetProximityIntEnable(0);
             SetMode(OperatingModes.PROXIMITY, 0);
         }
 
-        /**
-         * @brief Starts the gesture recognition engine on the APDS-9960
-         *
-         * @param[in] interrupts true to enable hardware external interrupt on gesture
-         * @return True if engine enabled correctly. False on error.
-         */
+        /// <summary>
+        /// Starts the gesture recognition engine on the APDS-9960
+        /// </summary>
+        /// <param name="interrupts"></param>
+        /// <returns>Enable interrupts for gestures</returns>
         public bool EnableGestureSensor(bool interrupts)
         {
-
             /* Enable gesture mode
                Set ENABLE to 0 (power off)
                Set WTIME to 0xFF
                Set AUX to LED_BOOST_100
                Enable PON, WEN, PEN, GEN in ENABLE 
             */
-            Console.WriteLine("ResetGestureParameters");
             ResetGestureParameters();
             Peripheral.WriteRegister(Registers.APDS9960_WTIME, 0xFF);
             Peripheral.WriteRegister(Registers.APDS9960_PPULSE, DefaultValues.DEFAULT_GESTURE_PPULSE);
 
-            Console.WriteLine("SetLEDBoost");
             SetLEDBoost(GainValues.LED_BOOST_100);
 
-            Console.WriteLine("SetGestureIntEnable");
             SetGestureIntEnable((byte)(interrupts?1:0));
 
-            Console.WriteLine("SetGestureMode");
             SetGestureMode(1);
             EnablePower(true);
             SetMode(OperatingModes.WAIT, 1);
@@ -320,6 +344,9 @@ namespace Meadow.Foundation.Sensors.Motion
             return true;
         }
 
+        /// <summary>
+        /// Disable gestures
+        /// </summary>
         public void DisableGestureSensor()
         {
             ResetGestureParameters();
@@ -328,6 +355,10 @@ namespace Meadow.Foundation.Sensors.Motion
             SetMode(OperatingModes.GESTURE, 0);
         }
 
+        /// <summary>
+        /// Is a gesture reading available
+        /// </summary>
+        /// <returns>True if available</returns>
         public bool IsGestureAvailable()
         {
             byte val = Peripheral.ReadRegister(Registers.APDS9960_GSTATUS);
@@ -339,16 +370,18 @@ namespace Meadow.Foundation.Sensors.Motion
             return val == 1;
         }
 
+        /// <summary>
+        /// Read the current gesure
+        /// </summary>
+        /// <returns>The direction</returns>
+        /// <exception cref="Exception">Throws if reading gesture data failed</exception>
         public Direction ReadGesture()
         {
             /* Make sure that power and gesture is on and data is valid */
             if (!IsGestureAvailable() || (GetMode() & 0b01000001) == 0x0)
             {
-                Console.WriteLine("Read Gesture failed");
                 return (int)Direction.NONE;
             }
-
-            Console.WriteLine("ReadGesture");
 
             /* Keep looping as long as gesture data is valid */
             while (true)
@@ -359,21 +392,16 @@ namespace Meadow.Foundation.Sensors.Motion
                 /* Wait some time to collect next batch of FIFO data */
                 Thread.Sleep(FIFO_PAUSE_TIME);
 
-                Console.WriteLine("Read: APDS9960_GSTATUS");
                 var gstatus = Peripheral.ReadRegister(Registers.APDS9960_GSTATUS);
 
                 /* If we have valid data, read in FIFO */
-                Console.WriteLine("Read: APDS9960_GVALID");
                 if ((gstatus & BitFields.APDS9960_GVALID) == BitFields.APDS9960_GVALID)
                 {
-                    Console.WriteLine("Read: APDS9960_GFLVL");
                     fifo_level = Peripheral.ReadRegister(Registers.APDS9960_GFLVL);
 
                     /* If there's stuff in the FIFO, read it into our data block */
                     if (fifo_level > 0)
                     {
-                        Console.WriteLine($"fifo level {fifo_level}");
-
                         byte len = (byte)(fifo_level * 4);
 
                         Peripheral.ReadRegister(Registers.APDS9960_GFIFO_U, readBuffer.Span[0..len]);
@@ -381,8 +409,6 @@ namespace Meadow.Foundation.Sensors.Motion
                         Console.WriteLine(BitConverter.ToString(readBuffer.Span[0..len].ToArray()));
 
                         bytes_read = len; //ToDo should we have a check> (byte)fifo_data.Length;
-
-                        Console.WriteLine($"Fifo bytes read {bytes_read}");
 
                         if (bytes_read < 1)
                         {
@@ -403,10 +429,8 @@ namespace Meadow.Foundation.Sensors.Motion
                             }
 
                             /* Filter and process gesture data. Decode near/far state */
-                            Console.WriteLine("ProcessGestureData");
                             if (ProcessGestureData())
                             {
-                                Console.WriteLine("DecodeGesture");
                                 if (DecodeGesture())
                                 {
                                     //***TODO: U-Turn Gestures
@@ -423,24 +447,27 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     /* Determine best guessed gesture and clean up */
                     Thread.Sleep(FIFO_PAUSE_TIME);
-                    Console.WriteLine("DecodeGesture");
                     DecodeGesture();
 
-                    Console.WriteLine("ResetGestureParameters");
                     ResetGestureParameters();
                     return gestureDirection;
                 }
             }
         }
 
+        /// <summary>
+        /// Enable power
+        /// </summary>
+        /// <param name="enable">True to enable, false to disable</param>
         public void EnablePower(bool enable)
         {
             SetMode(OperatingModes.POWER, (byte)(enable ? 1 : 0));
         }
 
-        /*******************************************************************************
-         * Ambient light and color sensor controls
-         ******************************************************************************/
+        /// <summary>
+        /// Read ambient light value
+        /// </summary>
+        /// <returns></returns>
         protected ushort ReadAmbientLight()
         {
             byte val = Peripheral.ReadRegister(Registers.APDS9960_CDATAL);
@@ -450,6 +477,10 @@ namespace Meadow.Foundation.Sensors.Motion
             return (ushort)(val + (val_byte << 8));
         }
 
+        /// <summary>
+        /// Read red light value
+        /// </summary>
+        /// <returns></returns>
         protected ushort ReadRedLight()
         {
             byte val = Peripheral.ReadRegister(Registers.APDS9960_RDATAL);
@@ -459,6 +490,10 @@ namespace Meadow.Foundation.Sensors.Motion
             return (ushort)(val + (val_byte << 8));
         }
 
+        /// <summary>
+        /// Read green light value
+        /// </summary>
+        /// <returns></returns>
         protected ushort ReadGreenLight()
         {
             byte val = Peripheral.ReadRegister(Registers.APDS9960_GDATAL);
@@ -468,6 +503,10 @@ namespace Meadow.Foundation.Sensors.Motion
             return (ushort)(val + (val_byte << 8));
         }
 
+        /// <summary>
+        /// Read blue light value
+        /// </summary>
+        /// <returns></returns>
         protected ushort ReadBlueLight()
         {
             byte val = Peripheral.ReadRegister(Registers.APDS9960_BDATAL);
@@ -477,21 +516,18 @@ namespace Meadow.Foundation.Sensors.Motion
             return (ushort)(val + (val_byte << 8));
         }
 
-        /*******************************************************************************
-         * Proximity sensor controls
-         ******************************************************************************/
+        /// <summary>
+        /// Read proximity
+        /// </summary>
+        /// <returns></returns>
         public byte ReadProximity()
         {
             return Peripheral.ReadRegister(Registers.APDS9960_PDATA);
         }
 
-        /*******************************************************************************
-         * High-level gesture controls
-         ******************************************************************************/
-
-        /**
-         * @brief Resets all the parameters in the gesture data member
-         */
+        /// <summary>
+        /// Reset all gesture data parameters
+        /// </summary>
         void ResetGestureParameters()
         {
             gestureData.Index = 0;
@@ -510,11 +546,10 @@ namespace Meadow.Foundation.Sensors.Motion
             gestureDirection = (int)Direction.NONE;
         }
 
-        /**
-         * @brief Processes the raw gesture data to determine swipe direction
-         *
-         * @return True if near or far state seen. False otherwise.
-         */
+        /// <summary>
+        /// Processes the raw gesture data to determine swipe direction
+        /// </summary>
+        /// <returns>True if near or far state seen, false otherwise</returns>
         bool ProcessGestureData()
         {
             byte u_first = 0;
@@ -1541,7 +1576,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /* Container for gesture data */
-        public class GestureData
+        class GestureData
         {
             public byte[] UData { get; set; } = new byte[32]; 
             public byte[] DData { get; set; } = new byte[32];

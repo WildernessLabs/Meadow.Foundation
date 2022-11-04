@@ -13,8 +13,19 @@ namespace Meadow.Foundation.Sensors.Light
     /// </summary>
     public partial class Veml7700 : ByteCommsSensorBase<Illuminance>, ILightSensor, IDisposable
     {
+        /// <summary>
+        /// Raised when the luminosity value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
+        
+        /// <summary>
+        /// Raised when the high range is exceeded
+        /// </summary>
         public event EventHandler RangeExceededHigh = delegate { };
+
+        /// <summary>
+        /// Raised when the low range is exceeded
+        /// </summary>
         public event EventHandler RangeExceededLow = delegate { };
 
         ushort config;
@@ -24,20 +35,27 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public Illuminance? Illuminance { get; protected set; }
 
+        /// <summary>
+        /// Sensor types Data source
+        /// </summary>
         public SensorTypes DataSource { get; set; } = SensorTypes.White;
 
         private const ushort DATA_FLOOR = 100;
         private const ushort DATA_CEILING = 10000;
 
+        /// <summary>
+        /// Create a new Veml7700 object with the default address
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
         public Veml7700(II2cBus i2cBus)
             : base(i2cBus, (byte)Addresses.Default)
         {
         }
 
-        private int _gain = 3;
-        private int _integrationTime = 0;
-        private bool _firstRead = true;
-        private bool _outOfRange = false;
+        int _gain = 3;
+        int _integrationTime = 0;
+        bool _firstRead = true;
+        bool _outOfRange = false;
 
         /// <summary>
         /// Reads data from the sensor

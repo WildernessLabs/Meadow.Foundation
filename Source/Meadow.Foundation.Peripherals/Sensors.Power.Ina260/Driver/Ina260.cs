@@ -11,8 +11,6 @@ namespace Meadow.Foundation.Sensors.Power
     public partial class Ina260
         : ByteCommsSensorBase<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)>
     {
-        public delegate void ValueChangedHandler(float previousValue, float newValue);
-
         /// <summary>
         /// Raised when the power value changes
         /// </summary>
@@ -45,10 +43,15 @@ namespace Meadow.Foundation.Sensors.Power
         /// </summary>
         public Units.Power? Power => Conditions.Power;
 
+        /// <summary>
+        /// Create a new INA260 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public Ina260(II2cBus i2cBus,
-            byte address = (byte)Addresses.Default,
-            int updateIntervalMs = 1000)
-            : base(i2cBus, address, updateIntervalMs)
+            byte address = (byte)Addresses.Default)
+            : base(i2cBus, address)
         {
             switch (address)
             {
@@ -70,11 +73,8 @@ namespace Meadow.Foundation.Sensors.Power
             return await Task.Run(() =>
             {
                 (Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current) conditions;
-                //conditions.Voltage = new Units.Voltage(Bus.ReadRegisterShort((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
                 conditions.Voltage = new Units.Voltage(Peripheral.ReadRegister((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
-                //conditions.Current = new Units.Current(Bus.ReadRegisterShort((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
                 conditions.Current = new Units.Current(Peripheral.ReadRegister((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
-                //conditions.Power = new Units.Power(Bus.ReadRegisterShort((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
                 conditions.Power = new Units.Power(Peripheral.ReadRegister((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
 
                 return conditions;

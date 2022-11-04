@@ -108,23 +108,17 @@ namespace Meadow.Foundation.Sensors.Moisture
                     {
                         if (ct.IsCancellationRequested)
                         {
-                            // do task clean up here
                             observers.ForEach(x => x.OnCompleted());
                             break;
                         }
-                        // capture history
                         oldConditions = Moisture;
 
-                        // read                        
-                        await Read();
+                        Moisture = await Read();
 
-                        // build a new result with the old and new conditions
                         result = new ChangeResult<double>(Moisture.Value, oldConditions);
 
-                        // let everyone know
                         RaiseChangedAndNotify(result);
 
-                        // sleep for the appropriate interval
                         await Task.Delay(base.UpdateInterval);
                     }
                 }, SamplingTokenSource.Token);
@@ -157,7 +151,7 @@ namespace Meadow.Foundation.Sensors.Moisture
             base.NotifyObservers(changeResult);
         }
 
-        protected double VoltageToMoisture(Voltage voltage)
+        double VoltageToMoisture(Voltage voltage)
         {
             if (MinimumVoltageCalibration > MaximumVoltageCalibration) 
             {

@@ -27,7 +27,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
-        public int DEFAULT_SPEED = 400;
+        /// <summary>
+        /// Default SPI bus speed
+        /// </summary>
+        public static Frequency DEFAULT_SPEED = new Frequency(400, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The temperature, from the last reading

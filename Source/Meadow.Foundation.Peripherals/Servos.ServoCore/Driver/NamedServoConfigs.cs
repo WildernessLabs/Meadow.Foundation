@@ -3,25 +3,28 @@ using AU = Meadow.Units.Angle.UnitType;
 
 namespace Meadow.Foundation.Servos
 {
+    /// <summary>
+    /// NamedServoConfigs class to hold names servo configurations
+    /// </summary>
     public static class NamedServoConfigs
     {
         /// <summary>
-        /// Represents an ideal 180? servo that has a minimum pulse of 1ms and a max of 2ms.
+        /// Represents an ideal 180? servo that has a minimum pulse of 1ms and a max of 2ms
         /// </summary>
         public static ServoConfig Ideal180Servo = new ServoConfig();
         
         /// <summary>
-        /// Represents an ideal 270? servo that has a minimum pulse of 1ms and a max of 2ms.
+        /// Represents an ideal 270? servo that has a minimum pulse of 1ms and a max of 2ms
         /// </summary>
         public static ServoConfig Ideal270Servo = new ServoConfig(maximumAngle: new Angle(270, AU.Degrees));
 
         /// <summary>
-        /// Represents an ideal continuous rotation servo that has a min and max pulse of 1ms and 2ms.
+        /// Represents an ideal continuous rotation servo that has a min and max pulse of 1ms and 2ms
         /// </summary>
         public static ServoConfig IdealContinuousRotationServo = new ServoConfig();
 
         /// <summary>
-        /// Represents the BlueBird BMS models. Maximum angle is 120. Pulse range is 900?s - 2,100?s.
+        /// Represents the BlueBird BMS models. Maximum angle is 120. Pulse range is 900?s - 2,100?s
         /// See: https://www.blue-bird-model.com/products_detail/309.htm
         /// </summary>
         public static ServoConfig BlueBirdBMS120 = new ServoConfig(minimumPulseDuration: 900, maximumPulseDuration: 2100, maximumAngle: new Angle(120, AU.Degrees));

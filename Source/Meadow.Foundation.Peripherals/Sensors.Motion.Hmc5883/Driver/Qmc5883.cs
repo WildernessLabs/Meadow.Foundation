@@ -6,8 +6,21 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
+    /// <summary>
+    /// Represents the  QMC5883L multi-chip three-axis magnetic sensor
+    /// </summary>
     public class Qmc5883 : Hmc5883
     {
+        /// <summary>
+        /// Create a new Qmc5883 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        /// <param name="gain">Gain</param>
+        /// <param name="measuringMode">Measuring mode</param>
+        /// <param name="outputRate">Output rate</param>
+        /// <param name="samplesAmount">Samples amount</param>
+        /// <param name="measurementConfig">Measurement configuration</param>
         public Qmc5883(II2cBus i2cBus, byte address = (byte)Addresses.Qmc5883,
             GainLevels gain = GainLevels.Gain1090,
             MeasuringModes measuringMode = MeasuringModes.Continuous,

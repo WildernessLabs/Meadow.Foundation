@@ -39,6 +39,16 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Statuses DeviceStatus => GetStatus();
 
+        /// <summary>
+        /// Create a new Hmc5883 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        /// <param name="gain">Gain</param>
+        /// <param name="measuringMode">Measuring mode</param>
+        /// <param name="outputRate">Output rate</param>
+        /// <param name="samplesAmount">Samples amount</param>
+        /// <param name="measurementConfig">Measurement configuration</param>
         public Hmc5883(II2cBus i2cBus, byte address = (byte)Addresses.Default,
             GainLevels gain = GainLevels.Gain1090,
             MeasuringModes measuringMode = MeasuringModes.Continuous,
@@ -51,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Motion
             this.gain = (byte)gain;
             this.measuringMode = (byte)measuringMode;
             this.outputRate = (byte)outputRate;
-            sampleAmount = (byte)samplesAmount;
+            this.sampleAmount = (byte)samplesAmount;
             this.measurementConfig = (byte)measurementConfig;
 
             Initialize();

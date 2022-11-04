@@ -21,8 +21,19 @@ namespace Meadow.Foundation.Sensors.Motion
         ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
         IAccelerometer, IGyroscope, ITemperatureSensor
     {
+        /// <summary>
+        /// Raised when the acceration value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        
+        /// <summary>
+        /// Raised when the angular acceleration value changes
+        /// </summary>
         public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
+        
+        /// <summary>
+        /// Raised when the temperature value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         private const float GyroScaleBase = 131f;
@@ -40,15 +51,24 @@ namespace Meadow.Foundation.Sensors.Motion
         public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
 
         /// <summary>
-        /// Temperature
+        /// Current Temperature value
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
+        /// <summary>
+        /// Create a new Mpu6050 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
         public Mpu6050(II2cBus i2cBus, Addresses address = Addresses.Default)
             : this(i2cBus, (byte)address)
-        {
-        }
+        { }
 
+        /// <summary>
+        /// Create a new Mpu6050 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
         public Mpu6050(II2cBus i2cBus, byte address)
             : base(i2cBus, address, readBufferSize: 14)
         {
@@ -111,7 +131,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature) conditions;
 
                 // we'll just read 14 bytes (7 registers), starting at 0x3b
-                Peripheral.ReadRegister(Registers.ACCELEROMETER_X, ReadBuffer.Span);
+                Peripheral?.ReadRegister(Registers.ACCELEROMETER_X, ReadBuffer.Span);
 
                 //---- acceleration
                 // get the acceleration 3d
@@ -136,16 +156,12 @@ namespace Meadow.Foundation.Sensors.Motion
                     );
                 conditions.AngularVelocity3D = angularVelocity;
 
-                //ushort rawTemp = Peripheral.ReadRegisterAsUShort(Registers.TEMPERATURE, ByteOrder.BigEndian);
-                //return new Units.Temperature(rawTemp * (1 << GyroScale) / GyroScaleBase, TU.Celsius);
-
                 return conditions;
             });
         }
 
         private float ScaleAndOffset(Span<byte> data, int index, float scale, float offset = 0)
-        {
-            // convert to a signed number
+        {   // convert to a signed number
             unchecked
             {
                 var s = (short)(data[index] << 8 | data[index + 1]);

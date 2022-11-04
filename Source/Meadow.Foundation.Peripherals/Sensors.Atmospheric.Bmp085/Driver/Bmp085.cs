@@ -8,14 +8,20 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Bosch BMP085 digital pressure and temperature sensor.
+    /// Bosch BMP085 digital pressure and temperature sensor
     /// </summary>
     public partial class Bmp085 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
+        /// <summary>
+        /// Raised when the temperature value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
      
+        /// <summary>
+        /// Raised when the pressure value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
         // Oversampling for measurements.  Please see the datasheet for this sensor for more information.
@@ -48,19 +54,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Pressure? Pressure => Conditions.Pressure;
 
-        public static int DEFAULT_SPEED = 40000; // BMP085 clock rate
-
         /// <summary>
-        /// Provide a mechanism for reading the temperature and humidity from
-        /// a Bmp085 temperature / humidity sensor.
+        /// Create a new BMP085 object
         /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        /// <param name="deviceMode">The device mode</param>
         public Bmp085(II2cBus i2cBus, byte address = (byte)Addresses.Default,
             DeviceMode deviceMode = DeviceMode.Standard)
                 : base(i2cBus, address)
         {
             oversamplingSetting = (byte)deviceMode;
 
-            // Get calibration data that will be used for future measurement taking.
             GetCalibrationData();
         }
 

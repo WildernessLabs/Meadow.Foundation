@@ -5,7 +5,7 @@
         /// <summary>
         /// Compensation data.
         /// </summary>
-        protected struct CompensationData
+        struct CompensationData
         {
             public ushort T1;
             public short T2;

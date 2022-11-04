@@ -33,6 +33,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
         
+        /// <summary>
+        /// Interrupt reset status
+        /// </summary>
         public InterruptStatus InterruptReset
         {
             get
@@ -54,7 +57,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Gets or sets the currently set measurement time.
+        /// Gets or sets the currently set measurement time
         /// </summary>
         public MeasurementTimeType MeasurementTime
         {

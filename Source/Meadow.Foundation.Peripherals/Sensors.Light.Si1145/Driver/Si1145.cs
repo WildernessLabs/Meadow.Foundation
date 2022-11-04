@@ -11,6 +11,9 @@ namespace Meadow.Foundation.Sensors.Light
     // cause that pin to fire, then the sensor measures the time of flight.
     // it's basically a completely different sensor.
 
+    /// <summary>
+    /// Represents a SiLabs Proximity, UV, and ambient light sensor
+    /// </summary>
     public partial class Si1145
         : ByteCommsSensorBase<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)>
     {

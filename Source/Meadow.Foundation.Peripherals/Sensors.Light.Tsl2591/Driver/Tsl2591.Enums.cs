@@ -55,14 +55,35 @@ namespace Meadow.Foundation.Sensors.Light
         [Flags]
         public enum IntegrationTimes : byte
         {
-            Time_100Ms = 0x00, // 100 milliseconds
-            Time_200Ms = 0x01, // 200 milliseconds
-            Time_300Ms = 0x02, // 300 milliseconds
-            Time_400Ms = 0x03, // 400 milliseconds
-            Time_500Ms = 0x04, // 500 milliseconds
-            Time_600Ms = 0x05  // 600 milliseconds
+            /// <summary>
+            /// 100 milliseconds
+            /// </summary>
+            Time_100Ms = 0x00, 
+            /// <summary>
+            /// 200 milliseconds
+            /// </summary>
+            Time_200Ms = 0x01,
+            /// <summary>
+            /// 300 milliseconds
+            /// </summary>
+            Time_300Ms = 0x02,
+            /// <summary>
+            /// 400 milliseconds
+            /// </summary>
+            Time_400Ms = 0x03,
+            /// <summary>
+            /// 500 milliseconds
+            /// </summary>
+            Time_500Ms = 0x04,
+            /// <summary>
+            /// 600 milliseconds
+            /// </summary>
+            Time_600Ms = 0x05
         }
 
+        /// <summary>
+        /// Gain factor
+        /// </summary>
         [Flags]
         public enum GainFactor : byte
         {
@@ -84,13 +105,31 @@ namespace Meadow.Foundation.Sensors.Light
             Maximum = 0x30 
         }
 
+        /// <summary>
+        /// Power enable states
+        /// </summary>
         [Flags]
         public enum EnableStates : byte
         {
+            /// <summary>
+            /// Power off
+            /// </summary>
             PowerOff = 0x00,
+            /// <summary>
+            /// Power on
+            /// </summary>
             PowerOn = 0x01,
+            /// <summary>
+            /// Aen
+            /// </summary>
             Aen = 0x02,
+            /// <summary>
+            /// Aien
+            /// </summary>
             Aien = 0x10,
+            /// <summary>
+            /// Npien
+            /// </summary>
             Npien = 0x80
         }
     }

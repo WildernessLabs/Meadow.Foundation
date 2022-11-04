@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Sensors.Camera
             spiDevice.WriteRegister((byte)(address | 0x80), value);
         } 
 
-        protected void WriteI2cRegisters(SensorReg[] regs)
+        void WriteI2cRegisters(SensorReg[] regs)
         {
             for (int i = 0; i < regs.Length; i++)
             {
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Camera
             i2cDevice.WriteRegister(address, value);
         }
 
-        private void Initialize()
+        void Initialize()
         {
             Console.WriteLine("Initialize");
 

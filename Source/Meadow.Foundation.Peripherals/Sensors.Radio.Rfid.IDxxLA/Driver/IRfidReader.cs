@@ -2,6 +2,9 @@
 
 namespace Meadow.Foundation.Sensors.Radio.Rfid
 {
+    /// <summary>
+    /// RFID reader abstraction
+    /// </summary>
     public interface IRfidReader : IObservable<byte[]>, IDisposable
     {
         /// <summary>
@@ -29,5 +32,10 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         void StopReading();
     }
 
+    /// <summary>
+    /// RRfid Read Event Handler
+    /// </summary>
+    /// <param name="sender">The sender object</param>
+    /// <param name="e">RfidReadResult event args</param>
     public delegate void RfidReadEventHandler(object sender, RfidReadResult e);
 }

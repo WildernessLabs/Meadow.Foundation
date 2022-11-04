@@ -44,6 +44,8 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
+        /// <param name="minimumVoltageCalibration">Minimum calibration voltage</param>
+        /// <param name="maximumVoltageCalibration">Maximum calibration voltage</param>
         /// <param name="updateInterval">The time, to wait between sets of sample readings. 
         /// This value determines how often`Changed` events are raised and `IObservable` consumers are notified.</param>
         /// <param name="sampleCount">How many samples to take during a given
@@ -57,18 +59,20 @@ namespace Meadow.Foundation.Sensors.Moisture
                 : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3)),
                       minimumVoltageCalibration, maximumVoltageCalibration)
         {
-            this.UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(5);
+            UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(5);
         }
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort.
         /// </summary>
-        /// <param name="analogPort"></param>
+        /// <param name="analogInputPin">The port for the analog input pin</param>
+        /// <param name="minimumVoltageCalibration">Minimum calibration voltage</param>
+        /// <param name="maximumVoltageCalibration">Maximum calibration voltage</param>
         public Capacitive(
-            IAnalogInputPort analogPort,
+            IAnalogInputPort analogInputPin,
             Voltage? minimumVoltageCalibration, Voltage? maximumVoltageCalibration)
         {
-            AnalogInputPort = analogPort;
+            AnalogInputPort = analogInputPin;
 
             if(minimumVoltageCalibration is { } min) { MinimumVoltageCalibration = min; }
             if(maximumVoltageCalibration is { } max) { MaximumVoltageCalibration = max; }
@@ -142,9 +146,10 @@ namespace Meadow.Foundation.Sensors.Moisture
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        protected double VoltageToMoisture(Voltage voltage)
+        double VoltageToMoisture(Voltage voltage)
         {
-            if (MinimumVoltageCalibration > MaximumVoltageCalibration) {
+            if (MinimumVoltageCalibration > MaximumVoltageCalibration) 
+            {
                 return (1f - voltage.Volts.Map(MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0f, 1.0f));
             }
 

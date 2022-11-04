@@ -10,12 +10,11 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// <summary>
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
-    public partial class Nau7802 :
-        ByteCommsSensorBase<Mass>,
-        IMassSensor,
-        IDisposable
-
+    public partial class Nau7802 : ByteCommsSensorBase<Mass>, IMassSensor, IDisposable
     {
+        /// <summary>
+        /// Raised when the mass value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
 
         private byte[] _read = new byte[3];
@@ -23,7 +22,10 @@ namespace Meadow.Foundation.Sensors.LoadCell
         private PU_CTRL_BITS _currentPU_CTRL;
         private int _tareValue;
 
-        public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
+        /// <summary>
+        /// Default sample period
+        /// </summary>
+        public TimeSpan DefaultSamplePeriod => TimeSpan.FromSeconds(1);
 
         /// <summary>
         /// The last read Mass
@@ -108,8 +110,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                     throw new Exception("Timeout powering up");
                 }
                 Thread.Sleep(10);
-                //_currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
-                _currentPU_CTRL = (PU_CTRL_BITS)Peripheral.ReadRegister((byte)Register.PU_CTRL);
+                _currentPU_CTRL = (PU_CTRL_BITS)(Peripheral?.ReadRegister((byte)Register.PU_CTRL) ?? 0);
             } while ((_currentPU_CTRL & PU_CTRL_BITS.PUR) != PU_CTRL_BITS.PUR);
 
 
@@ -118,8 +119,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             SetLDO(LdoVoltage.LDO_3V3);
             SetGain(AdcGain.Gain128);
             SetConversionRate(ConversionRate.SamplePerSecond80);
-            //Bus.WriteRegister((byte)Register.OTP_ADC, 0x30); // turn off CLK_CHP
-            Peripheral.WriteRegister((byte)Register.OTP_ADC, 0x30); // turn off CLK_CHP
+            Peripheral?.WriteRegister((byte)Register.OTP_ADC, 0x30); // turn off CLK_CHP
             EnableCh2DecouplingCap();
 
             if (!CalibrateAdc())
@@ -128,11 +128,10 @@ namespace Meadow.Foundation.Sensors.LoadCell
             }
 
             // turn on cycle start
-            //_currentPU_CTRL = (PU_CTRL_BITS)Bus.ReadRegisterByte((byte)Register.PU_CTRL);
-            _currentPU_CTRL = (PU_CTRL_BITS)Peripheral.ReadRegister((byte)Register.PU_CTRL);
+            _currentPU_CTRL = (PU_CTRL_BITS)(Peripheral?.ReadRegister((byte)Register.PU_CTRL) ?? 0);
             _currentPU_CTRL |= PU_CTRL_BITS.CS;
-            //Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
-            Peripheral.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+           
+            Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
 
 
             Output.WriteLine($"PU_CTRL: {_currentPU_CTRL}"); // 0xBE
@@ -144,68 +143,61 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private bool IsConversionComplete()
         {
-            var puctrl = (PU_CTRL_BITS)Peripheral.ReadRegister((byte)Register.PU_CTRL);
+            var puctrl = (PU_CTRL_BITS)(Peripheral?.ReadRegister((byte)Register.PU_CTRL) ?? 0);
             return (puctrl & PU_CTRL_BITS.CR) == PU_CTRL_BITS.CR;
         }
 
         private void EnableCh2DecouplingCap()
-        {
-            // app note - enable ch2 decoupling cap
+        {   // app note - enable ch2 decoupling cap
             var pga_pwr = Peripheral?.ReadRegister((byte)Register.PGA_PWR) ?? 0;
             pga_pwr |= 1 << 7;
-            //Bus.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
-            Peripheral.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
+            
+            Peripheral?.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
         }
 
         private void SetLDO(LdoVoltage value)
         {
-            //var ctrl1 = Bus.ReadRegisterByte((byte)Register.CTRL1);
-            var ctrl1 = Peripheral.ReadRegister((byte)Register.CTRL1);
+            var ctrl1 = Peripheral?.ReadRegister((byte)Register.CTRL1) ?? 0;
             ctrl1 &= 0b11000111; // clear LDO
             ctrl1 |= (byte)((byte)value << 3);
-            //Bus.WriteRegister((byte)Register.CTRL1, ctrl1);
-            Peripheral.WriteRegister((byte)Register.CTRL1, ctrl1);
+          
+            Peripheral?.WriteRegister((byte)Register.CTRL1, ctrl1);
             _currentPU_CTRL |= PU_CTRL_BITS.AVDDS;
-            //Bus.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL); // enable internal LDO
-            Peripheral.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL); // enable internal LDO
+            
+            Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL); // enable internal LDO
         }
 
         private void SetGain(AdcGain value)
         {
-            //var ctrl1 = Bus.ReadRegisterByte((byte)Register.CTRL1);
-            var ctrl1 = Peripheral.ReadRegister((byte)Register.CTRL1);
+            var ctrl1 = Peripheral?.ReadRegister((byte)Register.CTRL1) ?? 0;
+
             ctrl1 &= 0b11111000; // clear gain
             ctrl1 |= (byte)value;
             //Bus.WriteRegister((byte)Register.CTRL1, ctrl1);
-            Peripheral.WriteRegister((byte)Register.CTRL1, ctrl1);
+            Peripheral?.WriteRegister((byte)Register.CTRL1, ctrl1);
         }
 
-        private void SetConversionRate(ConversionRate value)
+        void SetConversionRate(ConversionRate value)
         {
-            //var ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
-            var ctrl2 = Peripheral.ReadRegister((byte)Register.CTRL2);
+            var ctrl2 = Peripheral?.ReadRegister((byte)Register.CTRL2) ?? 0;
             ctrl2 &= 0b10001111; // clear gain
             ctrl2 |= (byte)((byte)value << 4);
-            //Bus.WriteRegister((byte)Register.CTRL2, ctrl2);
-            Peripheral.WriteRegister((byte)Register.CTRL2, ctrl2);
+            
+            Peripheral?.WriteRegister((byte)Register.CTRL2, ctrl2);
         }
 
-        private bool CalibrateAdc()
+        bool CalibrateAdc()
         {
-            // read ctrl2
-            //var ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
-            var ctrl2 = Peripheral.ReadRegister((byte)Register.CTRL2);
+            var ctrl2 = Peripheral?.ReadRegister((byte)Register.CTRL2) ?? 0;
 
             // turn on the calibration bit
             ctrl2 |= (byte)CTRL2_BITS.CALS;
-            //Bus.WriteRegister((byte)Register.CTRL2, ctrl2);
-            Peripheral.WriteRegister((byte)Register.CTRL2, ctrl2);
+            
+            Peripheral?.WriteRegister((byte)Register.CTRL2, ctrl2);
 
-            // now wiat for either completion or error
             do
             {
-                //ctrl2 = Bus.ReadRegisterByte((byte)Register.CTRL2);
-                ctrl2 = Peripheral.ReadRegister((byte)Register.CTRL2);
+                ctrl2 = Peripheral?.ReadRegister((byte)Register.CTRL2) ?? 0;
                 if ((ctrl2 & (byte)CTRL2_BITS.CAL_ERROR) != 0)
                 {
                     // calibration error
