@@ -18,6 +18,9 @@ namespace Meadow.Foundation.Sensors.Light
             ILightSensor//, IColorSensor
     {
         // TODO: missing event for ColorUpdated
+        /// <summary>
+        /// Raised when the luminosity value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
         private byte integrationTimeByte;
@@ -25,6 +28,9 @@ namespace Meadow.Foundation.Sensors.Light
         private bool isLongTime;
         private GainType gain;
 
+        /// <summary>
+        /// Current luminosiy value
+        /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
 
         /// <summary>
@@ -81,6 +87,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// By default the sensor will be set to low gain
         /// </remarks>
         /// <param name="i2cBus">I2C bus</param>
+        /// <param name="address">I2C address</param>
+        /// <param name="integrationTime">The integration time</param>
+        /// <param name="gain">The sensor gain</param>
         public Tcs3472x(
             II2cBus i2cBus, byte address = (byte)Addresses.Default,
             double integrationTime = 0.700, GainType gain = GainType.Gain60X)
@@ -246,7 +255,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
 
-        protected ushort I2cRead16(Registers reg)
+        ushort I2cRead16(Registers reg)
         {
             return Peripheral.ReadRegisterAsUShort((byte)(Registers.COMMAND_BIT | reg), ByteOrder.BigEndian);
         }

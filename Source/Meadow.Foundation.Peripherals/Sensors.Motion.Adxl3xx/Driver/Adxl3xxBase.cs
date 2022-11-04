@@ -13,22 +13,44 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public abstract class Adxl3xxBase : SamplingSensorBase<Acceleration3D>, IAccelerometer
     {
+        /// <summary>
+        /// Raised when the acceleration value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        
+        /// <summary>
+        /// The X analog input port
+        /// </summary>
         protected IAnalogInputPort XAnalogIn { get; }
+
+        /// <summary>
+        /// The Y analog input port
+        /// </summary>
         protected IAnalogInputPort YAnalogIn { get; }
+
+        /// <summary>
+        /// The Z analog input port
+        /// </summary>
         protected IAnalogInputPort ZAnalogIn { get; }
         
         /// <summary>
-        /// Power supply voltage applied to the sensor.  This will be set (in the constructor)
-        /// to 3.3V by default.
+        /// Power supply voltage applied to the sensor - this will be set (in the constructor)
+        /// to 3.3V by default
         /// </summary>
         protected Voltage SupplyVoltage { get; } = new Voltage(3.3, Voltage.UnitType.Volts);
+
+        /// <summary>
+        /// Gravity range
+        /// </summary>
         protected double GravityRange { get; }
 
+        /// <summary>
+        /// The current acceration value
+        /// </summary>
         public Acceleration3D? Acceleration3D => Conditions;
 
         /// <summary>
-        /// Create a new ADXL335 sensor object
+        /// Create a new Adxl3xxBase sensor object
         /// </summary>
         /// <param name="device">The device connected to the sensor</param>
         /// <param name="xPin">Analog pin connected to the X axis output from the ADXL335 sensor.</param>
@@ -76,6 +98,11 @@ namespace Meadow.Foundation.Sensors.Motion
             });
         }
 
+        /// <summary>
+        /// Convert voltage to gravity
+        /// </summary>
+        /// <param name="voltage">The voltage to convert</param>
+        /// <returns>Acceleration value</returns>
         protected Acceleration VoltageToGravity(Voltage voltage)
         {
             return new Acceleration((voltage.Volts - (SupplyVoltage.Volts / 2)) / (SupplyVoltage.Volts / GravityRange), Acceleration.UnitType.Gravity);

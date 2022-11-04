@@ -27,7 +27,14 @@ namespace Meadow.Foundation.Sensors.Motion
         : ByteCommsSensorBase<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)>,
         IAccelerometer, ITemperatureSensor
     {
+        /// <summary>
+        /// Raised when the acceleration value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
+
+        /// <summary>
+        /// Raised when the temperature value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
 
         const double ADXL362_MG2G_MULTIPLIER = (0.004);
@@ -36,19 +43,25 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Digital input port attached to interrupt pin 1 on the ADXL362.
         /// </summary>
-        private IDigitalInputPort _digitalInputPort1;
+        private IDigitalInputPort digitalInputPort1;
 
         /// <summary>
         /// Digital Input port attached to interrupt pin 2 on the ADXL362.
         /// </summary>
-        private IDigitalInputPort _digitalInputPort2;
+        private IDigitalInputPort digitalInputPort2;
 
+        /// <summary>
+        /// The current acceleration value
+        /// </summary>
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
 
+        /// <summary>
+        /// The current temperature value
+        /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// Indicate of data is ready to be read.
+        /// Indicate of data is ready to be read
         /// </summary>
         public bool DataReady
         {
@@ -62,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Indicate if there is any data in the FIFO buffer.
+        /// Indicate if there is any data in the FIFO buffer
         /// </summary>
         public bool FIFOReady
         {
@@ -77,7 +90,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         /// <summary>
         /// Indicate if there are at least the desired number
-        /// of samples in the FIFO buffer.
+        /// of samples in the FIFO buffer
         /// </summary>
         public bool FIFOWatermark
         {
@@ -92,7 +105,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         /// <summary>
         /// Indicate if the FIFO buffer has overrun (newly generated data
-        /// is overwriting data already stored in the FIFO buffer.
+        /// is overwriting data already stored in the FIFO buffer
         /// </summary>
         public bool FIFOOverrun
         {
@@ -107,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         /// <summary>
         /// Indicate if any activity has been detected over the
-        /// specified threshold.
+        /// specified threshold
         /// </summary>
         public bool ActivityDetected
         {
@@ -122,7 +135,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         /// <summary>
         /// Indicate if the sensor has detected inactivity or a
-        /// free fall condition.
+        /// free fall condition
         /// </summary>
         public bool InactivityDetected
         {
@@ -136,7 +149,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Indicate if the sensor is awake or inactive.
+        /// Indicate if the sensor is awake or inactive
         /// </summary>
         public bool IsAwake
         {
@@ -151,7 +164,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         /// <summary>
         /// Read the device ID, MEMS ID, Part ID and silicon revision ID and
-        /// encode the value in a 32-bit integer.
+        /// encode the value in a 32-bit integer
         /// </summary>
         public int DeviceID
         {
@@ -169,7 +182,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Read the status register.
+        /// Read the status register
         /// </summary>
         public byte Status
         {
@@ -183,7 +196,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Activity / Inactivity control register (see page 29 of the data sheet).
+        /// Activity / Inactivity control register (see page 29 of the data sheet)
         /// </summary>
         public byte ActivityInactivityControl
         {
@@ -203,7 +216,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Set the value of the self test register.  Setting this to true will put
         /// the device into self test mode, setting this to false will turn off the
-        /// self test.
+        /// self test
         /// </summary>
         public bool SelfTest
         {
@@ -219,7 +232,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Get / set the filter control register (see page 33 of the data sheet).   
+        /// Get / set the filter control register (see page 33 of the data sheet)  
         /// </summary>
         public byte FilterControl
         {
@@ -237,10 +250,11 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Create a new ADXL362 object using the specified SPI module.
+        /// Create a new ADXL362 object using the specified SPI module
         /// </summary>
+        /// <param name="device">The device connected to the sensor</param>
         /// <param name="spiBus">Spi Bus object</param>
-        /// <param name="chipSelect">Chip select pin.</param>
+        /// <param name="chipSelect">Chip select pin</param>
         public Adxl362(IDigitalOutputController device, ISpiBus spiBus, IPin chipSelect)
             : base(spiBus, device.CreateDigitalOutputPort(chipSelect))
         { }
@@ -263,7 +277,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Reset the sensor.
+        /// Reset the sensor
         /// </summary>
         public void Reset()
         {
@@ -275,7 +289,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Start making sensor readings.
+        /// Start making sensor readings
         /// </summary>
         public void Start()
         {
@@ -286,7 +300,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Stop sensor readings.
+        /// Stop sensor readings
         /// </summary>
         public void Stop()
         {
@@ -299,18 +313,29 @@ namespace Meadow.Foundation.Sensors.Motion
             Peripheral.Write(WriteBuffer.Span[0..3]);
         }
 
+        /// <summary>
+        /// Read data from the sensor
+        /// </summary>
+        /// <returns>The sensor data</returns>
         public override Task<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> Read()
         {
             Start();
             return base.Read();
         }
 
+        /// <summary>
+        /// Start updates
+        /// </summary>
+        /// <param name="updateInterval">The update interval</param>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
             Start();
             base.StartUpdating(updateInterval);
         }
 
+        /// <summary>
+        /// Stop updating
+        /// </summary>
         public override void StopUpdating()
         {
             Stop();
@@ -350,7 +375,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
 
         /// <summary>
-        /// Configure the activity threshold and activity time.   Once configured it will be
+        /// Configure the activity threshold and activity time. Once configured it will be
         /// necessary to set the activity/inactivity control and interrupts if required. 
         /// </summary>
         /// <remark>
@@ -373,9 +398,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 throw new ArgumentOutOfRangeException(nameof(threshold), "Activity threshold should be in the range 0-0x7ff");
             }
-            //
             //  The threshold and number of samples register are in consecutive locations.
-            //
             WriteBuffer.Span[0] = Commands.WRITE_REGISTER;
             WriteBuffer.Span[1] = Registers.ACTIVITY_THRESHOLD_LSB;
             WriteBuffer.Span[2] = (byte)(threshold & 0xff);
@@ -463,17 +486,17 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Set the interrupt mask for interrupt pins 1 and 2
         /// pins to the interrupt pins on the ADXL362 if requested.
         /// 
-        /// Interrupts can be disabled by passing 0 for the interrupt maps.  It is also
+        /// Interrupts can be disabled by passing 0 for the interrupt maps. It is also
         /// possible to disconnect and ADXL362 by setting the interrupt pin
         /// to GPIO_NONE.
         /// </remark>
+        /// <param name="device">The device connected to the sensor</param>
         /// <param name="interruptMap1">Bit mask for interrupt pin 1</param>
-        /// <param name="interruptPin1">Pin connected to interrupt pin 1 on the ADXL362.</param>
+        /// <param name="interruptPin1">Pin connected to interrupt pin 1 on the ADXL362</param>
         /// <param name="interruptMap2">Bit mask for interrupt pin 2</param>
-        /// <param name="interruptPin2">Pin connected to interrupt pin 2 on the ADXL362.</param>
+        /// <param name="interruptPin2">Pin connected to interrupt pin 2 on the ADXL362</param>
         private void ConfigureInterrupts(IMeadowDevice device, byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
         {
-            //Peripheral.WriteBytes(new byte[] { Commands.WRITE_REGISTER, interruptMap1, interruptMap2 });
             WriteBuffer.Span[0] = Commands.WRITE_REGISTER;
             WriteBuffer.Span[1] = interruptMap1;
             WriteBuffer.Span[2] = interruptMap2;
@@ -481,29 +504,29 @@ namespace Meadow.Foundation.Sensors.Motion
 
             if (interruptPin1 != null)
             {
-                _digitalInputPort1 = device.CreateDigitalInputPort(interruptPin1, InterruptMode.EdgeRising, MapResistorMode((interruptMap1 & 0xf0) > 0));
-                _digitalInputPort1.Changed += InterruptChanged;
+                digitalInputPort1 = device.CreateDigitalInputPort(interruptPin1, InterruptMode.EdgeRising, MapResistorMode((interruptMap1 & 0xf0) > 0));
+                digitalInputPort1.Changed += InterruptChanged;
             }
             else
             {
-                _digitalInputPort1 = null;
+                digitalInputPort1 = null;
             }
 
             if (interruptPin2 != null)
             {
-                _digitalInputPort2 = device.CreateDigitalInputPort(interruptPin2, InterruptMode.EdgeRising, MapResistorMode((interruptMap2 & 0xf0) > 0));
-                _digitalInputPort2.Changed += InterruptChanged;
+                digitalInputPort2 = device.CreateDigitalInputPort(interruptPin2, InterruptMode.EdgeRising, MapResistorMode((interruptMap2 & 0xf0) > 0));
+                digitalInputPort2.Changed += InterruptChanged;
             }
             else
             {
-                _digitalInputPort2 = null;
+                digitalInputPort2 = null;
             }
         }
 
         /// <summary>
-        /// Sensor has generated an interrupt, work out what to do.
+        /// Sensor has generated an interrupt
         /// </summary>
-        private void InterruptChanged(object sender, DigitalPortResult e)
+        void InterruptChanged(object sender, DigitalPortResult e)
         {
             var status = Status;
             if ((status & StatusBitsMasks.ACTIVITY_DETECTED) != 0)

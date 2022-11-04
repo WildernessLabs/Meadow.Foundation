@@ -25,7 +25,10 @@ namespace Sensors.Hid.AnalogJoystick_Sample
             _ = joystick?.SetCenterPosition(); //fire and forget
 
             //==== Classic Events
-            joystick.Updated += JoystickUpdated;
+            if (joystick != null)
+            {
+                joystick.Updated += JoystickUpdated;
+            }
 
             //==== IObservable
             joystick?.StartUpdating(TimeSpan.FromMilliseconds(20));

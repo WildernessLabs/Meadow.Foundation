@@ -6,7 +6,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Location.Gnss;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace MeadowApp
+namespace Sensors.Location.Gnss.NmeaProcessor_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
