@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
+    /// <summary>
+    /// Represents the MaxBotix series of distance sensors
+    /// </summary>
     public partial class MaxBotix : ByteCommsSensorBase<Length>, IRangeFinder
     {
         /// <summary>
-        /// Raised when the value of the reading changes.
+        /// Raised when the value of the reading changes
         /// </summary>
         public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
 
@@ -25,6 +28,9 @@ namespace Meadow.Foundation.Sensors.Distance
         readonly CommunicationType communication;
         readonly SensorType sensorType;
 
+        /// <summary>
+        /// Start a distance measurement
+        /// </summary>
         public void MeasureDistance()
         {
             _ = ReadSensor();
