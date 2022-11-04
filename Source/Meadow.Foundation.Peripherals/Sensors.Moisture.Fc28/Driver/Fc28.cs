@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Moisture;
 using Meadow.Units;
 using System;
@@ -9,13 +8,13 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Moisture
 {
     /// <summary>
-    /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor    
+    /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor
     /// </summary>
     public class Fc28 : SensorBase<double>, IMoistureSensor
     {
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
-        /// </summary>        
+        /// </summary>
         public event EventHandler<IChangeResult<double>> HumidityUpdated = delegate { };
 
         /// <summary>
@@ -26,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Returns the digital output port
         /// </summary>
-        protected IDigitalOutputPort DigitalPort { get; }
+        protected IDigitalOutputPort DigitalOutputPort { get; }
 
         /// <summary>
         /// Last value read from the moisture sensor
@@ -46,30 +45,49 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device
         /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="analogInputPin">Analog input pin connected</param>
+        /// <param name="digitalOutputPin">Digital output pin connected</param>
+        /// <param name="minimumVoltageCalibration">Minimum Voltage Calibration value</param>
+        /// <param name="maximumVoltageCalibration">Maximum Voltage Calibration value</param>
+        /// <param name="updateInterval">The time, to wait between sets of sample readings. 
+        /// This value determines how often`Changed` events are raised and `IObservable` consumers are notified.</param>
+        /// <param name="sampleCount">How many samples to take during a given
+        /// reading. These are automatically averaged to reduce noise.</param>
+        /// <param name="sampleInterval">The time, to wait in between samples during a reading.</param>
         public Fc28(
-            IMeadowDevice device, IPin analogPin, IPin digitalPin,
-            Voltage? minimumVoltageCalibration, Voltage? maximumVoltageCalibration,
+            IMeadowDevice device, 
+            IPin analogInputPin, 
+            IPin digitalOutputPin,
+            Voltage? minimumVoltageCalibration, 
+            Voltage? maximumVoltageCalibration,
             TimeSpan? updateInterval = null,
-            int sampleCount = 5, TimeSpan? sampleInterval = null)
-                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 0, 40), new Voltage(3.3)),
-                      device.CreateDigitalOutputPort(digitalPin), minimumVoltageCalibration, maximumVoltageCalibration)
+            int sampleCount = 5, 
+            TimeSpan? sampleInterval = null)
+                : this(
+                    device.CreateAnalogInputPort(analogInputPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 0, 40), new Voltage(3.3)),
+                    device.CreateDigitalOutputPort(digitalOutputPin), 
+                    minimumVoltageCalibration, 
+                    maximumVoltageCalibration)
         {
-            UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 1);
+            UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(5);
         }
 
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin and digital pin
         /// </summary>
-        /// <param name="analogPort"></param>
-        /// <param name="digitalPort"></param>
-        /// <param name="minimumVoltageCalibration">The minimum voltage</param>
-        /// <param name="maximumVoltageCalibration">The maximum volage</param>
+        /// <param name="analogInputPort">Analog input port connected</param>
+        /// <param name="digitalOutputPort">Digital output port connected</param>
+        /// <param name="minimumVoltageCalibration">Minimum Voltage Calibration value</param>
+        /// <param name="maximumVoltageCalibration">Maximum Voltage Calibration value</param>
         public Fc28(
-            IAnalogInputPort analogPort, IDigitalOutputPort digitalPort,
-            Voltage? minimumVoltageCalibration, Voltage? maximumVoltageCalibration)
+            IAnalogInputPort analogInputPort, 
+            IDigitalOutputPort digitalOutputPort,
+            Voltage? minimumVoltageCalibration, 
+            Voltage? maximumVoltageCalibration)
         {
-            AnalogInputPort = analogPort;
-            DigitalPort = digitalPort;
+            AnalogInputPort = analogInputPort;
+            DigitalOutputPort = digitalOutputPort;
             if (minimumVoltageCalibration is { } min) { MinimumVoltageCalibration = min; }
             if (maximumVoltageCalibration is { } max) { MaximumVoltageCalibration = max; }
         }
@@ -80,10 +98,10 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <returns>The latest sensor reading</returns>
         protected override async Task<double> ReadSensor()
         {
-            DigitalPort.State = true;
-            Voltage voltage = await AnalogInputPort.Read();
-            DigitalPort.State = false;
-            return(VoltageToMoisture(voltage));
+            DigitalOutputPort.State = true;
+            var voltage = await AnalogInputPort.Read();
+            DigitalOutputPort.State = false;
+            return (VoltageToMoisture(voltage));
         }
 
         /// <summary>
@@ -148,10 +166,14 @@ namespace Meadow.Foundation.Sensors.Moisture
         protected void RaiseChangedAndNotify(IChangeResult<double> changeResult)
         {
             HumidityUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
+            NotifyObservers(changeResult);
         }
 
-        double VoltageToMoisture(Voltage voltage)
+        /// <summary>
+        /// Converts voltage to moisture value, ranging from 0 (most dry) to 1 (most wet)
+        /// </summary>
+        /// <param name="voltage"></param>
+        protected double VoltageToMoisture(Voltage voltage)
         {
             if (MinimumVoltageCalibration > MaximumVoltageCalibration) 
             {
