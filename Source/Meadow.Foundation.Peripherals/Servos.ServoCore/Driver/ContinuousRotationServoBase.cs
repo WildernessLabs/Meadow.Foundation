@@ -91,6 +91,10 @@ namespace Meadow.Foundation.Servos
             return pulseDuration;
         }
 
+        /// <summary>
+        /// Send command pulse
+        /// </summary>
+        /// <param name="pulseDuration">Pulse duration</param>
         protected override void SendCommandPulse(float pulseDuration)
         {
             base.SendCommandPulse(pulseDuration);
