@@ -20,6 +20,9 @@ namespace Meadow.Foundation.Sensors.Light
     // 0xFF to the four registers starting at 0x62 to force the LEDs on. With
     // the default settings in these registers, the LEDS will be off.
 
+    /// <summary>
+    /// Represents a BH1745 Luminance and Colour Sensor
+    /// </summary>
     public partial class Bh1745
         : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>, ILightSensor
     {

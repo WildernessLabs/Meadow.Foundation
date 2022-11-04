@@ -5,6 +5,9 @@ using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
+    /// <summary>
+    /// Represents a TSC2004 4-wire touch screen controller
+    /// </summary>
     public partial class Tsc2004
     {
         readonly I2cPeripheral i2CPeripheral;

@@ -17,6 +17,9 @@ namespace Meadow.Foundation.Sensors.Motion
     // expose them. note the `AccelScaleBase` will need to change. Right now it's
     // hard coded to +-2G
 
+    /// <summary>
+    /// Represents an MPU6050 Six-Axis (Gyro + Accelerometer) MEMS MotionTracking device
+    /// </summary>
     public partial class Mpu6050 :
         ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
         IAccelerometer, IGyroscope, ITemperatureSensor

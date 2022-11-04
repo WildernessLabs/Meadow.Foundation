@@ -52,6 +52,9 @@ namespace Meadow.Foundation.Sensors.Light
             CH1DataH = 0x17
         }
 
+        /// <summary>
+        /// Integration times
+        /// </summary>
         [Flags]
         public enum IntegrationTimes : byte
         {
