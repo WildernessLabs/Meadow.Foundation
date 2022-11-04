@@ -5,13 +5,27 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Power
 {
+    /// <summary>
+    /// Represents a INA260 Precision Digital Current and Power Monitor
+    /// </summary>
     public partial class Ina260
         : ByteCommsSensorBase<(Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current)>
     {
         public delegate void ValueChangedHandler(float previousValue, float newValue);
 
+        /// <summary>
+        /// Raised when the power value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Power>> PowerUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the voltage value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Voltage>> VoltageUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the current value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Current>> CurrentUpdated = delegate { };
 
         private const float MeasurementScale = 0.00125f;

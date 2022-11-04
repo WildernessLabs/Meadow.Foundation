@@ -5,8 +5,14 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
+    /// <summary>
+    /// Represents a Mcp9808 temperature sensor
+    /// </summary>
     public partial class Mcp9808 : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
     {
+        /// <summary>
+        /// Raised when the temeperature value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         const ushort MCP_CONFIG_SHUTDOWN = 0x0100;   // shutdown config
@@ -33,6 +39,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
 
+        /// <summary>
+        /// Creates a new Mcp9808 object
+        /// </summary>
+        /// <param name="i2CBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
         public Mcp9808(II2cBus i2CBus, byte address = (byte)Addresses.Default)
             : base(i2CBus, address, readBufferSize: 8, writeBufferSize: 8)
         {

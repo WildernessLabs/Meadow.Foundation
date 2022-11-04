@@ -1,10 +1,7 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
@@ -29,12 +26,12 @@ namespace Meadow.Foundation.Sensors.Motion
         public MagneticField3D? MagneticField3d => Conditions.MagneticField3D;
 
         /// <summary>
-        /// Temperature of the sensor die.
+        /// Temperature of the sensor die
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// Change or get the standby status of the sensor.
+        /// Change or get the standby status of the sensor
         /// </summary>
         public bool Standby
         {

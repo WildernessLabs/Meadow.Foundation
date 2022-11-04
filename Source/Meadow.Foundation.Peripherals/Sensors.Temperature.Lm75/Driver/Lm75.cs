@@ -6,31 +6,32 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Temperature
 {
     /// <summary>
-    /// TMP102 Temperature sensor object.
+    /// TMP102 Temperature sensor object
     /// </summary>    
     public partial class Lm75 : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
     {
         /// <summary>
-        /// Raised when the value of the reading changes.
+        /// Raised when the value of the reading changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
-        /// The Temperature value from the last reading.
+        /// The Temperature value from the last reading
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
-        /// Create a new TMP102 object using the default configuration for the sensor.
+        /// Create a new TMP102 object using the default configuration for the sensor
         /// </summary>
-        /// <param name="address">I2C address of the sensor.</param>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">I2C address of the sensor</param>
         public Lm75(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
         }
 
         /// <summary>
-        /// Update the Temperature property.
+        /// Update the Temperature property
         /// </summary>
         protected override Task<Units.Temperature> ReadSensor()
         {

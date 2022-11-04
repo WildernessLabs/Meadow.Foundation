@@ -3,6 +3,9 @@ using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
+    /// <summary>
+    /// Analog input multiplexer abstraction
+    /// </summary>
     public interface IAnalogInputMultiplexer
     {
         /// <summary>

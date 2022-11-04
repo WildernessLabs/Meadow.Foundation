@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             WriteBuffer.Span[0] = 0x2c;
             WriteBuffer.Span[1] = 0x06;
 
-            Peripheral.Exchange(WriteBuffer.Span, ReadBuffer.Span);
+            Peripheral?.Exchange(WriteBuffer.Span, ReadBuffer.Span);
 
             var humidity = (100 * (float)((ReadBuffer.Span[3] << 8) + ReadBuffer.Span[4])) / 65535;
             var tempC = ((175 * (float)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1])) / 65535) - 45;

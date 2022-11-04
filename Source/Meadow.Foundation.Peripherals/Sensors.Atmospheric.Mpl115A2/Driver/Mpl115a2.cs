@@ -13,7 +13,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
+        /// <summary>
+        /// Raised when the humidity value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the pressure value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
         /// <summary>

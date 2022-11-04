@@ -37,6 +37,9 @@ namespace Meadow.Foundation.Sensors.Hid
             Channel11
         }
 
+        /// <summary>
+        /// MPR121 Configuration class
+        /// </summary>
         public class Mpr121Configuration
         {
             /// <summary>

@@ -7,26 +7,50 @@ namespace Meadow.Foundation.Sensors.Hid
 {
     public partial class Tsc2004
     {
-        I2cPeripheral i2CPeripheral;
+        readonly I2cPeripheral i2CPeripheral;
 
         //default values from arturo182
-        //Minimum X value of touchscreen
+    
+        /// <summary>
+        /// Minimum X value of touchscreen 
+        /// </summary>
         public int XMin { get; set; } = 366;
-        //Maximum X value of touchscreen
+
+        /// <summary>
+        /// Maximum X value of touchscreen
+        /// </summary>
         public int XMax { get; set; } = 3567;
-        //Minimum Y value of touchscreen
+
+        /// <summary>
+        /// Minimum Y value of touchscreen
+        /// </summary>
         public int YMin { get; set; } = 334;
-        //Maximum Y value of touchscreen
+
+        /// <summary>
+        /// Maximum Y value of touchscreen
+        /// </summary>
         public int YMax { get; set; } = 3787;
 
-        //Width of display in pixels at default rotation
+        /// <summary>
+        /// Width of display in pixels at default rotation
+        /// </summary>
         public int DisplayWidth { get; set; } = 240;
-        //Height of display in pixels at default rotation
+
+        /// <summary>
+        /// Height of display in pixels at default rotation
+        /// </summary>
         public int DisplayHeight { get; set; } = 320;
 
-        //Rotation of touchscreen
+        /// <summary>
+        /// Touchscreen rotation
+        /// </summary>
         public RotationType Rotation { get; set; } = RotationType.Default;
 
+        /// <summary>
+        /// Create a new Tsc2004 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
         public Tsc2004(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2CPeripheral = new I2cPeripheral(i2cBus, address);
@@ -55,6 +79,10 @@ namespace Meadow.Foundation.Sensors.Hid
             SendCommand(CMD_RESET);
         }
 
+        /// <summary>
+        /// Get the current scaled touch location
+        /// </summary>
+        /// <returns></returns>
         public Point3d GetPoint()
         {
             var pt = GetPointRaw();
@@ -69,10 +97,14 @@ namespace Meadow.Foundation.Sensors.Hid
             return pt;
         }
 
+        /// <summary>
+        /// Get the current raw touch location
+        /// </summary>
+        /// <returns></returns>
         public Point3d GetPointRaw()
         {
             while((ReadRegister16((byte)Registers.STATUS) & STATUS_DAV_MASK) == 0)
-            {   //don't block
+            {   
                 return new Point3d();
             }
 
@@ -103,15 +135,19 @@ namespace Meadow.Foundation.Sensors.Hid
             return new Point3d(x, y, z);
         }
 
+        /// <summary>
+        /// Does the screen detect an active touch
+        /// </summary>
+        /// <returns>True if touched</returns>
         public bool IsTouched()
-        {
-            return (ReadRegister16((byte)Registers.STATUS) & STATUS_DAV_MASK) != 0;
-        }
-
-        public bool IsBufferEmpty()
-        {
-            return !IsTouched();
-        }
+            => (ReadRegister16((byte)Registers.STATUS) & STATUS_DAV_MASK) != 0;
+        
+        
+        /// <summary>
+        /// Is the touch buffer empty
+        /// </summary>
+        /// <returns>True if empty</returns>
+        public bool IsBufferEmpty() => !IsTouched();
 
         ushort ReadRegister16(byte address)
         {
@@ -137,36 +173,26 @@ namespace Meadow.Foundation.Sensors.Hid
             i2CPeripheral.Write((byte)(CMD | CMD_12BIT | command));
         }
 
-        public int GetXForRotation(int x, int y)
+        int GetXForRotation(int x, int y)
         {
-            switch (Rotation)
+            return Rotation switch
             {
-                case RotationType._270Degrees:
-                    return DisplayHeight - y - 1;
-                case RotationType._180Degrees:
-                    return DisplayWidth - x - 1;
-                case RotationType._90Degrees:
-                    return y;
-                case RotationType.Default:
-                default:
-                    return x;
-            }
+                RotationType._270Degrees => DisplayHeight - y - 1,
+                RotationType._180Degrees => DisplayWidth - x - 1,
+                RotationType._90Degrees => y,
+                _ => x,
+            };
         }
 
-        public int GetYForRotation(int x, int y)
+        int GetYForRotation(int x, int y)
         {
-            switch (Rotation)
+            return Rotation switch
             {
-                case RotationType._270Degrees:
-                    return x;
-                case RotationType._180Degrees:
-                    return DisplayHeight - y - 1;
-                case RotationType._90Degrees:
-                    return DisplayWidth - x - 1;
-                case RotationType.Default:
-                default:
-                    return y;
-            }
+                RotationType._270Degrees => x,
+                RotationType._180Degrees => DisplayHeight - y - 1,
+                RotationType._90Degrees => DisplayWidth - x - 1,
+                _ => y,
+            };
         }
     }
 }

@@ -11,27 +11,35 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <remarks>Based on https://github.com/adafruit/Adafruit_IS31FL3731 </remarks>
     public partial class Is31fl3731
     {
-        protected const byte RegConfig = 0x00;
-        protected const byte RegConfigPictureMode = 0x00;
-        protected const byte RegConfigAutoPlayMode = 0x08;
-        protected const byte RegConfigAudioPlayMode = 0x18;
+        const byte RegConfig = 0x00;
+        const byte RegConfigPictureMode = 0x00;
+        //const byte RegConfigAutoPlayMode = 0x08;
+        //const byte RegConfigAudioPlayMode = 0x18;
 
-        protected const byte ConfPictureMode = 0x00;
-        protected const byte ConfAutoFrameMode = 0x04;
-        protected const byte ConfAudioMode = 0x08;
-        protected const byte DisplayOptionRegister = 0x05;
-        protected const byte PictureFrameReg = 0x01;
+        //const byte ConfPictureMode = 0x00;
+        //const byte ConfAutoFrameMode = 0x04;
+        //const byte ConfAudioMode = 0x08;
+        const byte DisplayOptionRegister = 0x05;
+        const byte PictureFrameReg = 0x01;
 
-        protected const byte RegShutdown = 0x0A;
-        protected const byte RegAudioSync = 0x06;
+        const byte RegShutdown = 0x0A;
+        //const byte RegAudioSync = 0x06;
 
-        protected const byte CommandRegister = 0xFD;
-        protected const byte CommandFunctionReg = 0x0B;  //'page nine'
+        const byte CommandRegister = 0xFD;
+        const byte CommandFunctionReg = 0x0B;  //'page nine'
 
-        protected readonly II2cPeripheral i2cPeripheral;
+        readonly II2cPeripheral i2cPeripheral;
 
+        /// <summary>
+        /// The current frame
+        /// </summary>
         public byte Frame { get; private set; }
-       
+
+        /// <summary>
+        /// Creaete a new Is31fl3731 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
         public Is31fl3731(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
@@ -71,7 +79,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Sets the state for all LEDs for the specified frame
         /// </summary>
         /// <param name="frame"></param>
-        /// <param name="on">true = on, false = off </param>
+        /// <param name="on">true = on, false = off</param>
         public virtual void SetLedState(byte frame, bool on)
         {
             if (frame < 0 || frame > 7)
@@ -102,11 +110,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
             WriteRegister(Frame, register, data);
         }
 
-        protected virtual void WriteRegister(byte frame, byte reg, byte data)
+        /// <summary>
+        /// Write a value to a register
+        /// </summary>
+        /// <param name="frame">The frame</param>
+        /// <param name="register">Register to write to</param>
+        /// <param name="data">The data value</param>
+        protected virtual void WriteRegister(byte frame, byte register, byte data)
         {
             SelectPage(frame);
 
-            i2cPeripheral.WriteRegister(reg, data);
+            i2cPeripheral.WriteRegister(register, data);
         }
 
         /// <summary>

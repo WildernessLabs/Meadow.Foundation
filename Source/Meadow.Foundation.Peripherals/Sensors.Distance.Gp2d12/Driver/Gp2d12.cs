@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public class Gp2d12 : SensorBase<Length>, IRangeFinder
     {
-        protected IAnalogInputPort AnalogInputPort { get; set; }
+        IAnalogInputPort AnalogInputPort { get; set; }
 
         /// <summary>
         /// Raised when an received a rebound trigger signal
@@ -72,6 +72,9 @@ namespace Meadow.Foundation.Sensors.Distance
 
         }
 
+        /// <summary>
+        /// Start a new distance measurement
+        /// </summary>
         public void MeasureDistance()
         {
             _ = ReadSensor();
@@ -139,7 +142,7 @@ namespace Meadow.Foundation.Sensors.Distance
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        protected Length VoltageToDistance(Voltage voltage)
+        Length VoltageToDistance(Voltage voltage)
         {
             var distance = 26 / voltage.Volts;
 

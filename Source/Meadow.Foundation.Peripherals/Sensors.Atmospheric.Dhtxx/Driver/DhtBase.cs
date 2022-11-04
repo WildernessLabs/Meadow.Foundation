@@ -15,7 +15,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
+        /// <summary>
+        /// Raised when the temperature value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the humidity value changes
+        /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         private readonly BusType protocol;

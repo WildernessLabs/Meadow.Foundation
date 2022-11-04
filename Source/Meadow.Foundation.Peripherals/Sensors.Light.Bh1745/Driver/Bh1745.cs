@@ -23,8 +23,14 @@ namespace Meadow.Foundation.Sensors.Light
     public partial class Bh1745
         : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>, ILightSensor
     {
+        /// <summary>
+        /// Raised when the luminosity changes
+        /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
+        /// <summary>
+        /// The current Illuminance value
+        /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
         
         public InterruptStatus InterruptReset
@@ -65,7 +71,7 @@ namespace Meadow.Foundation.Sensors.Light
                 measurementTime = value;
             }
         }
-        protected MeasurementTimeType measurementTime;
+        MeasurementTimeType measurementTime;
 
         /// <summary>
         /// Is the sensor actively measuring
@@ -81,7 +87,7 @@ namespace Meadow.Foundation.Sensors.Light
                 isMeasurementActive = value;
             }
         }
-        protected bool isMeasurementActive;
+        bool isMeasurementActive;
 
         /// <summary>
         /// Gets or sets the ADC gain of the sensor
@@ -101,7 +107,7 @@ namespace Meadow.Foundation.Sensors.Light
                 this.adcGain = value;
             }
         }
-        protected AdcGainTypes adcGain;
+        AdcGainTypes adcGain;
 
         /// <summary>
         /// Is the interrupt active
@@ -134,7 +140,7 @@ namespace Meadow.Foundation.Sensors.Light
                 latchBehavior = value;
             }
         }
-        protected LatchBehaviorTypes latchBehavior;
+        LatchBehaviorTypes latchBehavior;
 
         /// <summary>
         /// Gets or sets the source channel that triggers the interrupt
@@ -151,7 +157,7 @@ namespace Meadow.Foundation.Sensors.Light
                 interruptSource = value;
             }
         }
-        protected InterruptChannels interruptSource;
+        InterruptChannels interruptSource;
 
         /// <summary>
         /// Gets or sets whether the interrupt pin is enabled
@@ -167,7 +173,7 @@ namespace Meadow.Foundation.Sensors.Light
                 isInterruptEnabled = value;
             }
         }
-        protected bool isInterruptEnabled;
+        bool isInterruptEnabled;
 
         /// <summary>
         /// Gets or sets the persistence function of the interrupt
@@ -187,7 +193,7 @@ namespace Meadow.Foundation.Sensors.Light
                 interruptPersistence = value;
             }
         }
-        protected InterruptTypes interruptPersistence;
+        InterruptTypes interruptPersistence;
 
         /// <summary>
         /// Gets or sets the lower interrupt threshold
@@ -201,7 +207,7 @@ namespace Meadow.Foundation.Sensors.Light
                 lowerInterruptThreshold = value;
             }
         }
-        protected ushort lowerInterruptThreshold;
+        ushort lowerInterruptThreshold;
 
         /// <summary>
         /// Gets or sets the upper interrupt threshold
@@ -215,7 +221,7 @@ namespace Meadow.Foundation.Sensors.Light
                 upperInterruptThreshold = value;
             }
         }
-        protected ushort upperInterruptThreshold;
+        ushort upperInterruptThreshold;
 
         /// <summary>
         /// Gets or sets the channel compensation multipliers which are used to scale the channel measurements

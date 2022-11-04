@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Accelerometers
 {
+    /// <summary>
+    /// Represents a BMI270 interial measurement unit (IMU) 
+    /// </summary>
     public partial class Bmi270 :
         ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>
     {

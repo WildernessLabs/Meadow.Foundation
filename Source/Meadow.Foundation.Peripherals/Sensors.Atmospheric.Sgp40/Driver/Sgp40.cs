@@ -140,6 +140,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             _compensationData[7] = Crc(t);
         }
 
+        /// <summary>
+        /// Clear the compensation data
+        /// </summary>
         public void ClearCompensationData()
         {
             _compensationData = null;

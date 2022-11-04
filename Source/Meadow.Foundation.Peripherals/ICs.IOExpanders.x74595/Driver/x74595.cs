@@ -125,6 +125,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return Pins.AllPins.Contains(pin);
         }
 
+        /// <summary>
+        /// Get pin from name
+        /// </summary>
+        /// <param name="pinName">The pin name</param>
+        /// <returns>An IPin object</returns>
         public IPin GetPin(string pinName)
         {
             return Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);

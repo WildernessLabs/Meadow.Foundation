@@ -70,54 +70,65 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             Thread.Sleep(100);
 
-            var id = Peripheral.ReadRegister((byte)Register.HW_ID);
+            var id = Peripheral?.ReadRegister((byte)Register.HW_ID);
             if (id != 0x81)
             {
                 throw new Exception("Hardware is not identifying as a CCS811");
             }
 
-            Peripheral.Write((byte)BootloaderCommand.APP_START);
+            Peripheral?.Write((byte)BootloaderCommand.APP_START);
 
             SetMeasurementMode(MeasurementMode.ConstantPower1s);
-            var mode = Peripheral.ReadRegister((byte)Register.MEAS_MODE);
+            var mode = Peripheral?.ReadRegister((byte)Register.MEAS_MODE);
         }
 
         private void ShowDebugInfo()
         {
-            //var ver = Bus.ReadRegisterByte((byte)Register.HW_VERSION);
-            var ver = Peripheral.ReadRegister((byte)Register.HW_VERSION);
+            var ver = Peripheral?.ReadRegister((byte)Register.HW_VERSION);
             Console.WriteLine($"hardware version A = 0x{ver:x2}");
 
-            //var fwb = Bus.ReadRegisterShort((byte)Register.FW_BOOT_VERSION);
-            var fwb = Peripheral.ReadRegister((byte)Register.FW_BOOT_VERSION);
+            var fwb = Peripheral?.ReadRegister((byte)Register.FW_BOOT_VERSION);
             Console.WriteLine($"FWB version = 0x{fwb:x4}");
 
-            //var fwa = Bus.ReadRegisterShort((byte)Register.FW_APP_VERSION);
-            var fwa = Peripheral.ReadRegister((byte)Register.FW_APP_VERSION);
+            var fwa = Peripheral?.ReadRegister((byte)Register.FW_APP_VERSION);
             Console.WriteLine($"FWA version = 0x{fwa:x4}");
 
             // read status
-            //var status = Bus.ReadRegisterByte((byte)Register.STATUS);
-            var status = Peripheral.ReadRegister((byte)Register.STATUS);
+            var status = Peripheral?.ReadRegister((byte)Register.STATUS);
             Console.WriteLine($"status = 0x{status:x2}");
         }
 
+        /// <summary>
+        /// Get baseline value
+        /// </summary>
+        /// <returns>The baseline value</returns>
         public ushort GetBaseline()
         {
-            return Peripheral.ReadRegister((byte)Register.BASELINE);
-
+            return Peripheral?.ReadRegister((byte)Register.BASELINE) ?? 0;
         }
 
+        /// <summary>
+        /// Set the baseline value
+        /// </summary>
+        /// <param name="value">The new baseline</param>
         public void SetBaseline(ushort value)
         {
             Peripheral?.WriteRegister((byte)Register.BASELINE, (byte)value);
         }
 
+        /// <summary>
+        /// Get the current measurement mode
+        /// </summary>
+        /// <returns>The measurement mode</returns>
         public MeasurementMode GetMeasurementMode()
         {
-            return (MeasurementMode)Peripheral?.ReadRegister((byte)Register.MEAS_MODE);
+            return (MeasurementMode)(Peripheral?.ReadRegister((byte)Register.MEAS_MODE) ?? 0);
         }
 
+        /// <summary>
+        /// Set the Measurement mode
+        /// </summary>
+        /// <param name="mode">The new mode</param>
         public void SetMeasurementMode(MeasurementMode mode)
         {
             var m = (byte)mode;

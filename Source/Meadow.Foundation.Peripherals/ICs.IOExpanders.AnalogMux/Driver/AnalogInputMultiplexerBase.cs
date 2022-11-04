@@ -2,8 +2,14 @@
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
+    /// <summary>
+    /// Represents an AnalogInputMultiplexerBase
+    /// </summary>
     public abstract class AnalogInputMultiplexerBase : IAnalogInputMultiplexer
     {
+        /// <summary>
+        /// Get the sync root
+        /// </summary>
         protected object SyncRoot { get; }  = new object();
 
         /// <summary>
