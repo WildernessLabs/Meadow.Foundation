@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The port connected to the Enable pin of the mux (otherwise must be tied low)
         /// </summary>
-        IDigitalOutputPort EnablePort { get; }
+        IDigitalOutputPort? EnablePort { get; }
 
         /// <summary>
         /// The analog input connected to the Mux output pin (Z)
