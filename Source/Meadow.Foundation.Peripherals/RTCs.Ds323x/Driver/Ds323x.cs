@@ -4,12 +4,15 @@ using System;
 
 namespace Meadow.Foundation.RTCs
 {
+    /// <summary>
+    /// DS323X real-time clock
+    /// </summary>
     public partial class Ds323x : IDisposable
     {
         /// <summary>
-        /// Register addresses in the sensor.
+        /// Register addresses in the sensor
         /// </summary>
-        protected static class Registers
+        static class Registers
         {
             public static readonly byte Seconds = 0x00;
             public static readonly byte Minutes = 0x01;
@@ -38,42 +41,42 @@ namespace Meadow.Foundation.RTCs
         private const int DATE_TIME_REGISTERS_SIZE = 0x07;
 
         /// <summary>
-        /// Bit mask to turn Alarm1 on.
+        /// Bit mask to turn Alarm1 on
         /// </summary>
         private const byte ALARM1_ENABLE = 0x01;
 
         /// <summary>
-        /// Bit mask to turn Alarm1 off.
+        /// Bit mask to turn Alarm1 off
         /// </summary>
         private const byte ALARM1_DISABLE = 0xfe;
 
         /// <summary>
-        /// Bit mask to turn Alarm2 on.
+        /// Bit mask to turn Alarm2 on
         /// </summary>
         private const byte ALARM2_ENABLE = 0x02;
 
         /// <summary>
-        /// Bit mask to turn Alarm2 off.
+        /// Bit mask to turn Alarm2 off
         /// </summary>
         private const byte ALARM2_DISABLE = 0xfd;
 
         /// <summary>
-        /// Interrupt flag for Alarm1.
+        /// Interrupt flag for Alarm1
         /// </summary>
         private const byte ALARM1_INTERRUPT_FLAG = 0x01;
 
         /// <summary>
-        /// Bit mask to clear the Alarm1 interrupt.
+        /// Bit mask to clear the Alarm1 interrupt
         /// </summary>
         private const byte ALARM1_INTERRUPT_OFF = 0xfe;
 
         /// <summary>
-        /// Interrupt flag for the Alarm2 interrupt.
+        /// Interrupt flag for the Alarm2 interrupt
         /// </summary>
         private const byte ALARM2_INTERRUPT_FLAG = 0x02;
 
         /// <summary>
-        /// Bit mask to clear the Alarm2 interrupt.
+        /// Bit mask to clear the Alarm2 interrupt
         /// </summary>
         private const byte ALARM2_INTERRUPT_OFF = 0xfd;
 
@@ -81,10 +84,9 @@ namespace Meadow.Foundation.RTCs
         private AlarmRaised _alarm2Delegate;
         private bool _interruptCreatedInternally;
 
-        protected Memory<byte> readBuffer;
+        private Memory<byte> readBuffer;
 
-
-        protected Ds323x(I2cPeripheral peripheral, IDigitalInputController device, IPin interruptPin)
+        Ds323x(I2cPeripheral peripheral, IDigitalInputController device, IPin interruptPin)
         {
             ds323x = peripheral;
 
@@ -99,13 +101,16 @@ namespace Meadow.Foundation.RTCs
             readBuffer = new byte[0x12];
         }
 
-        protected Ds323x(I2cPeripheral peripheral, IDigitalInputPort interruptPort)
+        Ds323x(I2cPeripheral peripheral, IDigitalInputPort interruptPort)
         {
             ds323x = peripheral;
 
             Initialize(interruptPort);
         }
 
+        /// <summary>
+        /// Dispose
+        /// </summary>
         public void Dispose()
         {
             if (_interruptCreatedInternally)
