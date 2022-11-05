@@ -50,22 +50,84 @@ namespace Meadow.Foundation.Sensors.Motion
         EulerAngles? EulerOrientation, Units.Temperature? Temperature)>,
         IAccelerometer, IGyroscope, ITemperatureSensor
     {
+        /// <summary>
+        /// Raised when the acceleration value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the angular velocity value changes
+        /// </summary>
         public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the magetic field value changes
+        /// </summary>
         public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the quaernion orientation value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Quaternion>> QuaternionOrientationUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the linear acceleration value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Acceleration3D>> LinearAccelerationUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the gravity vector acceleration value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Acceleration3D>> GravityVectorUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the euler orientation value changes
+        /// </summary>
         public event EventHandler<IChangeResult<EulerAngles>> EulerOrientationUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the temperature value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
+        /// <summary>
+        /// Current Acceleration
+        /// </summary>
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
+
+        /// <summary>
+        /// Current Angular Velocity
+        /// </summary>
         public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
+
+        /// <summary>
+        /// Current Magnetic Field
+        /// </summary>
         public MagneticField3D? MagneticField3D => Conditions.MagneticField3D;
+
+        /// <summary>
+        /// Current Quaternion Orientation
+        /// </summary>
         public Quaternion? QuaternionOrientation => Conditions.QuaternionOrientation;
+
+        /// <summary>
+        /// Current Linear Acceleration
+        /// </summary>
         public Acceleration3D? LinearAcceleration => Conditions.LinearAcceleration;
+
+        /// <summary>
+        /// Current Gravity Vector
+        /// </summary>
         public Acceleration3D? GravityVector => Conditions.GravityVector;
+
+        /// <summary>
+        /// Current Euler Orientation
+        /// </summary>
         public EulerAngles? EulerOrientation => Conditions.EulerOrientation;
+
+        /// <summary>
+        /// Current Temperature value
+        /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
@@ -209,14 +271,20 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
+        /// <summary>
+        /// Start updating
+        /// </summary>
+        /// <param name="updateInterval">The time between updates</param>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
-            // set up to run
             PowerMode = PowerModes.NORMAL;
             OperatingMode = OperatingModes.NINE_DEGREES_OF_FREEDOM;
             base.StartUpdating(updateInterval);
         }
 
+        /// <summary>
+        /// Stop reading data 
+        /// </summary>
         public override void StopUpdating()
         {
             PowerMode = PowerModes.SUSPENDED;
@@ -353,9 +421,10 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Convert a section of the sensor data into a tuple.
+        /// Convert a section of the sensor data into a tuple
         /// </summary>
-        /// <param name="start">Start of the data in the _sensorReadings member variable.</param>
+        /// <param name="start">Start of the data in the sensorReadings member variable</param>
+        /// <param name="divisor">Divisor</param>
         protected (double X, double Y, double Z) GetReadings(int start, double divisor)
         {
             var x = (short)((ReadBuffer.Span[start + 1] << 8) | ReadBuffer.Span[start]);
@@ -366,11 +435,11 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Convert the sensor readings into an orientation in Euler angles.
+        /// Convert the sensor readings into an orientation in Euler angles
         /// </summary>
-        /// <param name="start">First of the sensor readings to convert.</param>
-        /// <param name="divisor">Divisor to apply to the sensor data.</param>
-        /// <returns>EulerAngles object containing the orientation informaiton.</returns>
+        /// <param name="start">First of the sensor readings to convert</param>
+        /// <param name="divisor">Divisor to apply to the sensor data</param>
+        /// <returns>EulerAngles object containing the orientation informaiton</returns>
         protected EulerAngles ConvertReadingToEulerAngles(int start, double divisor)
         {
             var x = (short)((ReadBuffer.Span[start + 1] << 8) | ReadBuffer.Span[start]);
