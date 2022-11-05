@@ -21,6 +21,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Units.Temperature? Temperature => Conditions;
 
+        /// <summary>
+        /// Create a new Bh1900Nux object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
         public Bh1900Nux(II2cBus i2cBus, Address address)
             : base(i2cBus, (byte)address, 2, 2)
         {
@@ -32,6 +37,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Reset();
         }
 
+        /// <summary>
+        /// Create a new Bh1900Nux object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
         public Bh1900Nux(II2cBus i2cBus, byte address)
             : this(i2cBus, (Address)address)
         { }
@@ -58,13 +68,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The measurement mode
         /// </summary>
-        public Mode MeasurementMode
+        public MeasurementModes MeasurementMode
         {
-            get => (Mode)(GetConfig() >> 15);
+            get => (MeasurementModes)(GetConfig() >> 15);
             set
             {
                 var currentMode = GetConfig();
-                if (value == Mode.Single)
+                if (value == MeasurementModes.Single)
                 {
                     currentMode |= (1 << 15);
                 }
@@ -86,6 +96,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             SetConfig(currentMode);
         }
 
+        /// <summary>
+        /// Wake the device
+        /// </summary>
         public void Wake()
         {
             var currentMode = GetConfig();
@@ -93,6 +106,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             SetConfig(currentMode);
         }
 
+        /// <summary>
+        /// The fault queue depth
+        /// </summary>
         public FaultQueue FaultQueueDepth
         {
             get => (FaultQueue)((GetConfig() >> 12) & 0x03);
@@ -104,6 +120,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
+        /// <summary>
+        /// The alert polarity
+        /// </summary>
         public Polarity AlertPolarity
         {
             get => (Polarity)((GetConfig() >> 11) & 0x01);
@@ -122,11 +141,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
+        /// <summary>
+        /// Is the alert active
+        /// </summary>
         public bool AlertIsActive
         {
             get => ((GetConfig() >> 14) & 0x01) != 0;
         }
 
+        /// <summary>
+        /// The temperture low limit
+        /// </summary>
         public Units.Temperature LowLimit
         {
             get
@@ -141,6 +166,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
         }
 
+        /// <summary>
+        /// The temperature high limit
+        /// </summary>
         public Units.Temperature HighLimit
         {
             get

@@ -22,6 +22,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public IAnalogInputPort Signal { get; }
 
+        /// <summary>
+        /// Set input channel
+        /// </summary>
+        /// <param name="channel">he input channel</param>
         public abstract void SetInputChannel(int channel);
 
         internal AnalogInputMultiplexerBase(IAnalogInputPort signalPort, IDigitalOutputPort? enablePort)
