@@ -6,10 +6,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public abstract partial class SerialWombatBase
     {
+        /// <summary>
+        /// Represents a serial wombat servo
+        /// </summary>
         public class Servo : IServo
         {
+            /// <summary>
+            /// Servo configuration 
+            /// </summary>
             public ServoConfig Config => throw new NotImplementedException();
 
+            /// <summary>
+            /// Create a new Servo object
+            /// </summary>
             public Servo(IPin pin)
             {
                 throw new NotImplementedException();

@@ -9,28 +9,67 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public abstract partial class SerialWombatBase
     {
+        /// <summary>
+        /// Represents a serial wombat analog input port
+        /// </summary>
         public class AnalogInputPort : AnalogPortBase, IAnalogInputPort
         {
-            public event EventHandler<IChangeResult<Voltage>> Updated;
+            /// <summary>
+            /// Raised when the port voltage value changes
+            /// </summary>
+            public event EventHandler<IChangeResult<Voltage>> Updated = (s, e) => { };
 
             private SerialWombatBase controller;
             private int supplyVoltage;
             private object _lock = new object();
+
+            /// <summary>
+            /// Collection of event observers for the Updated event
+            /// </summary>
             protected List<IObserver<IChangeResult<Voltage>>> observers { get; set; } = new List<IObserver<IChangeResult<Voltage>>>();
+           
             private List<Voltage> buffer = new List<Voltage>();
 
+            /// <summary>
+            /// Is the port sampling
+            /// </summary>
             public bool IsSampling { get; protected set; } = false;
             private CancellationTokenSource? SamplingTokenSource;
             private Voltage? _previousVoltageReading;
 
+            /// <summary>
+            /// Current port voltage
+            /// </summary>
             public Voltage Voltage { get; private set; }
+
+            /// <summary>
+            /// Port reference voltage
+            /// </summary>
             public Voltage ReferenceVoltage { get; private set; }
+
+            /// <summary>
+            /// The sample count
+            /// </summary>
             public int SampleCount { get; private set; }
+
+            /// <summary>
+            /// The update interval
+            /// </summary>
             public TimeSpan UpdateInterval { get; private set; } = TimeSpan.FromSeconds(1);
 
+            /// <summary>
+            /// The voltage sampling buffer
+            /// </summary>
             public IList<Voltage> VoltageSampleBuffer => buffer;
+
+            /// <summary>
+            /// The sampling interval
+            /// </summary>
             public TimeSpan SampleInterval => TimeSpan.Zero;
 
+            /// <summary>
+            /// Create a new AnalogInputPort object
+            /// </summary>
             public AnalogInputPort(SerialWombatBase controller, IPin pin, IAnalogChannelInfo channel, int sampleCount)
                 : base(pin, channel)
             {
@@ -44,6 +83,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 controller.ConfigureAnalogInput((byte)pin.Key, (ushort)sampleCount);
             }
 
+            /// <summary>
+            /// Take a reading
+            /// </summary>
             public Task<Voltage> Read()
             {
                 var data = controller.ReadPublicData((byte)Pin.Key);
@@ -61,6 +103,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 return Task.FromResult(Voltage);
             }
 
+            /// <summary>
+            /// Start updating
+            /// </summary>
             public void StartUpdating(TimeSpan? updateInterval = null)
             {
                 // the wombat does sampling internally
@@ -104,6 +149,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
+            /// <summary>
+            /// Stop updating the port
+            /// </summary>
             public void StopUpdating()
             {
                 lock (_lock)
@@ -129,6 +177,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 observers.ForEach(x => x.OnNext(changeResult));
             }
 
+            /// <summary>
+            /// Subscribe an obersver for update events
+            /// </summary>
             public IDisposable Subscribe(IObserver<IChangeResult<Voltage>> observer)
             {
                 if (!observers.Contains(observer)) observers.Add(observer);
